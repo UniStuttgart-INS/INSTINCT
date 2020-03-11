@@ -1,0 +1,33 @@
+{
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "C_Cpp.autoAddFileAssociations": false, // Otherwise the "files.associations" list will be filled everytime opening a file without extension (e.g. <iostream>)
+    "C_Cpp.default.cppStandard": "c++17",
+    "cSpell.words": [
+        "Doxygen",
+        "GNSS",
+        "cmake",
+        "docopt",
+        "gtest",
+        "ublox"
+    ],
+    "editor.formatOnSave": true,
+    "doxdocgen.generic.paramTemplate": "@param[in, out] {param} ",
+    "doxdocgen.generic.returnTemplate": "@retval {type} ",
+    "doxdocgen.file.fileOrder": [
+        "file",
+        "brief",
+        "author",
+        "date",
+        "custom"
+    ],
+    "files.associations": {
+        "**/C++/**": "cpp", // <-- std libraries
+        "**/tbb/**": "cpp", // <-- intel libraries
+        "**/boost/**": "cpp" // <-- boost libraries
+    }
+}

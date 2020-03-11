@@ -1,0 +1,19 @@
+# Ignore the build dir
+build/Debug/*
+build/Release/*
+
+# Ignore any executables
+bin/Debug/*
+bin/Release/*
+
+# Ignore documentation
+doc/*
+
+# Ignore logs
+logs/*
+
+# Ignore all .orig files
+*.orig
+
+# Ignore Mac specific files
+.DS_Store

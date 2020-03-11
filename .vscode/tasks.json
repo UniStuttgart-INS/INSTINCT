@@ -1,0 +1,245 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CLEAN: Remove Build Files",
+            "type": "shell",
+            "group": "build",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "build",
+                "bin",
+                "doc"
+            ],
+            "presentation": {
+                "reveal": "never",
+                "echo": false,
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "DEBUG: Build project",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "bash",
+            "args": [
+                "-c",
+                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF; make -Cbuild/Debug"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "RELEASE: Build project",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF; make -Cbuild/Release"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "DEBUG: Build & run project",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "command": "bash",
+            "args": [
+                "-c",
+                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF; make -Cbuild/Debug && ./bin/Debug/navsos $(sed \"s/#.*//\" config.ini)"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "RELEASE: Build & run project",
+            "type": "shell",
+            "group": "test",
+            "command": "bash",
+            "args": [
+                "-c",
+                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF; make -Cbuild/Release && ./bin/Release/navsos  $(sed \"s/#.*//\" config.ini)"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "TEST: Build",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=ON && make -Cbuild/Debug tests"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "TEST: Build & run",
+            "type": "shell",
+            "group": "test",
+            "command": "bash",
+            "args": [
+                "-c",
+                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=ON && make -Cbuild/Debug tests && ./bin/Debug/tests"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE-DEBUG: Configure Cmake",
+            "type": "shell",
+            "group": "build",
+            "command": "ccmake",
+            "args": [
+                "-Bbuild/Debug",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Debug"
+            ],
+            "presentation": {
+                "clear": true,
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE-RELEASE: Configure Cmake",
+            "type": "shell",
+            "group": "build",
+            "command": "ccmake",
+            "args": [
+                "-Bbuild/Release",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "presentation": {
+                "clear": true,
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE-DEBUG: Run Cmake",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "-Bbuild/Debug",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Debug"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE-RELEASE: Run Cmake",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "-Bbuild/Release",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "DOXYGEN: Create & Show",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_DOXYGEN=TRUE && make -Cbuild/Release doxygen-docs && xdg-open doc/html/index.html"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "VALGRIND-DEBUG: Run profiler",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "valgrind --callgrind-out-file=bin/Debug/callgrind.out --tool=callgrind bin/Debug/navsos $(sed \"s/#.*//\" config.ini) && kcachegrind bin/Debug/callgrind.out"
+            ],
+            "dependsOn": [
+                "DEBUG: Build project"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "VALGRIND-RELEASE: Run profiler",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "valgrind --callgrind-out-file=bin/Release/callgrind.out --tool=callgrind bin/Release/navsos $(sed \"s/#.*//\" config.ini) && kcachegrind bin/Release/callgrind.out"
+            ],
+            "dependsOn": [
+                "RELEASE: Build project"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "VALGRIND-DEBUG: Memory Leak Check",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "valgrind --leak-check=yes bin/Debug/navsos $(sed \"s/#.*//\" config.ini)"
+            ],
+            "dependsOn": [
+                "DEBUG: Build project"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "VALGRIND-RELEASE: Memory Leak Check",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "valgrind --leak-check=yes bin/Release/navsos $(sed \"s/#.*//\" config.ini)"
+            ],
+            "dependsOn": [
+                "RELEASE: Build project"
+            ],
+            "problemMatcher": []
+        },
+    ]
+}
