@@ -5,7 +5,7 @@ static volatile sig_atomic_t usr_interrupt = 0;
 
 void NAV::Sleep::handler(int /* */)
 {
-    SPDLOG_DEBUG("Signal caught");
+    LOG_DEBUG("Signal caught");
     usr_interrupt = 1;
 }
 
@@ -22,7 +22,7 @@ void NAV::Sleep::waitForSignal()
     signal(SIGINT, handler);
     signal(SIGTERM, handler);
 
-    SPDLOG_INFO("Programm waits for one of the signals: -SIGUSR1 / -SIGINT (Ctrl + c) / -SIGTERM");
+    LOG_INFO("Programm waits for one of the signals: -SIGUSR1 / -SIGINT (Ctrl + c) / -SIGTERM");
 
     /* Wait for a signal to arrive. */
     sigprocmask(SIG_BLOCK, &mask, &oldmask);
@@ -35,7 +35,7 @@ void NAV::Sleep::countDownSeconds(size_t seconds)
 {
     for (size_t i = 0; i < seconds; i++)
     {
-        SPDLOG_INFO("{} seconds till program finishes", seconds - i);
+        LOG_INFO("{} seconds till program finishes", seconds - i);
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 }

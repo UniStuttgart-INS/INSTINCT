@@ -42,7 +42,7 @@ BraceWrapping:
 BreakAfterJavaFieldAnnotations: true                    # [true/false] Break after each annotation on a field in Java files
 BreakBeforeBinaryOperators: NonAssignment               # [None/NonAssignment/All] The way to wrap binary operators
 BreakBeforeBraces: Custom                               # [Attach/Linux/Mozilla/Stroustrup/Allman/GNU/WebKit/Custom]
-BreakBeforeTernaryOperators: true                       # [true/false] BreakBeforeInheritanceComma: true
+BreakBeforeTernaryOperators: true                       # [true/false] If true, ternary operators will be placed after line breaks
 BreakConstructorInitializers: BeforeColon               # [BeforeColon/BeforeComma/AfterColon] The constructor initializers style to use
 BreakInheritanceList: BeforeColon                       # [BeforeColon/BeforeComma/AfterColon] The inheritance list style to use
 BreakStringLiterals: true                               # [true/false] Allow breaking string literals when formatting

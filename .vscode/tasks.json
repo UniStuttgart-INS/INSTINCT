@@ -60,7 +60,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF; make -Cbuild/Debug && ./bin/Debug/navsos $(sed \"s/#.*//\" config.ini)"
+                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF; make -Cbuild/Debug && ./bin/Debug/navsos -f config.ini $(sed \"s/#.*//\" config-override.ini)"
             ],
             "presentation": {
                 "clear": true
@@ -74,7 +74,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF; make -Cbuild/Release && ./bin/Release/navsos  $(sed \"s/#.*//\" config.ini)"
+                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF; make -Cbuild/Release && ./bin/Release/navsos -f config.ini $(sed \"s/#.*//\" config-override.ini)"
             ],
             "presentation": {
                 "clear": true
@@ -192,7 +192,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/Debug/callgrind.out --tool=callgrind bin/Debug/navsos $(sed \"s/#.*//\" config.ini) && kcachegrind bin/Debug/callgrind.out"
+                "valgrind --callgrind-out-file=bin/Debug/callgrind.out --tool=callgrind bin/Debug/navsos -f config.ini $(sed \"s/#.*//\" config.ini) && kcachegrind bin/Debug/callgrind.out"
             ],
             "dependsOn": [
                 "DEBUG: Build project"
@@ -206,7 +206,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/Release/callgrind.out --tool=callgrind bin/Release/navsos $(sed \"s/#.*//\" config.ini) && kcachegrind bin/Release/callgrind.out"
+                "valgrind --callgrind-out-file=bin/Release/callgrind.out --tool=callgrind bin/Release/navsos -f config.ini $(sed \"s/#.*//\" config.ini) && kcachegrind bin/Release/callgrind.out"
             ],
             "dependsOn": [
                 "RELEASE: Build project"
@@ -220,7 +220,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --leak-check=yes bin/Debug/navsos $(sed \"s/#.*//\" config.ini)"
+                "valgrind --leak-check=yes bin/Debug/navsos -f config.ini $(sed \"s/#.*//\" config.ini)"
             ],
             "dependsOn": [
                 "DEBUG: Build project"
@@ -234,7 +234,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --leak-check=yes bin/Release/navsos $(sed \"s/#.*//\" config.ini)"
+                "valgrind --leak-check=yes bin/Release/navsos -f config.ini $(sed \"s/#.*//\" config.ini)"
             ],
             "dependsOn": [
                 "RELEASE: Build project"

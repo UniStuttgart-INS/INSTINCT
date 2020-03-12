@@ -11,10 +11,6 @@ message(STATUS "${CMAKE_PROJECT_NAME}: ${PROJECT_VERSION}")
 # Basic settings
 include(cmake/StandardProjectSettings.cmake)
 
-# Specify output path for executable files
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
-
 # Link this 'library' to set the c++ standard / compile-time options requested
 add_library(project_options INTERFACE)
 target_compile_features(project_options INTERFACE cxx_std_17)
@@ -51,9 +47,17 @@ include_directories(lib/ubloxlib/include)
 
 # Find installed packages
 find_package (Threads REQUIRED)
-find_package(spdlog REQUIRED)
-find_package(docopt COMPONENTS CXX REQUIRED)
-include_directories(${DOCOPT_INCLUDE_DIRS})
+
+# Conan Packages
+set(CONAN_EXTRA_REQUIRES "")
+set(CONAN_EXTRA_OPTIONS "")
+
+include(cmake/Conan.cmake)
+run_conan()
+
+# Specify output path for executable files
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
 
 if(ENABLE_TESTING)
     # enable_testing()

@@ -2,63 +2,38 @@
 #include "util/Logger.hpp"
 #include "util/Version.hpp"
 #include "util/Sleep.hpp"
-#include "docopt/docopt.h"
-
-static const char USAGE[] =
-    R"(NavSoS - Navigation Software Stuttgart
-
-    Usage:
-      navsos (-h | --help)
-      navsos --version
-      navsos [--time=<s> | --sigterm] [--vn100] [--vn110] [--ublox]
-
-    Options:
-      -h --help                  Show this screen
-      --version                  Show version
-      --time=<s>                 Programm time in seconds [default: 5]
-      --sigterm                  Programm ends by sending -SIGUSR1 / -SIGINT / -SIGTERM
-      --vn100                    Enables VN100 Logging
-      --vn110                    Enables VN110 Logging
-      --ublox                    Enables ublox Logging
-)";
+#include "util/Config.hpp"
 
 int main(int argc, const char** argv)
 {
-    if (NAV::Logger::initialize() != NAV::NavStatus::NAV_OK)
+    if (NAV::Logger::initialize("logs/navsos.log") != NAV::NavStatus::NAV_OK)
         return EXIT_FAILURE;
 
-    // Decode the command line options
-    std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
-                                                               { argv + 1, argv + argc },
-                                                               true,                    // show help if requested
-                                                               PROJECT_VERSION_STRING); // version string
+    // Read Command Line Options
+    NAV::Config* pConfig = NAV::Config::Get();
+    if (NAV::NavStatus result = pConfig->AddOptions(argc, argv);
+        result == NAV::NavStatus::NAV_REQUEST_EXIT)
+        return EXIT_SUCCESS;
+    else if (result != NAV::NavStatus::NAV_OK)
+        return EXIT_FAILURE;
 
     // Write the Log Header
     NAV::Logger::writeHeader();
 
-    // Print the Command Line Options
-    for (auto const& arg : args)
-        SPDLOG_DEBUG("Command line arguments: \"{}\" = {}", arg.first, arg.second);
+    if (pConfig->DecodeOptions() != NAV::NavStatus::NAV_OK)
+        return EXIT_FAILURE;
 
-    if (args["--ublox"].asBool())
-    {
-        SPDLOG_TRACE("ublox logging specified");
-    }
+    LOG_TRACE("Trace");
+    LOG_DEBUG("Debug");
+    LOG_INFO("Info");
+    LOG_WARN("Warn");
+    LOG_ERROR("Error");
+    LOG_CRITICAL("Critical");
 
-    if (args["--vn100"].asBool())
-    {
-        SPDLOG_TRACE("VN100 logging specified");
-    }
-
-    if (args["--vn110"].asBool())
-    {
-        SPDLOG_TRACE("VN110 logging specified");
-    }
-
-    if (args["--sigterm"].asBool())
+    if (pConfig->GetSigterm())
         NAV::Sleep::waitForSignal();
     else
-        NAV::Sleep::countDownSeconds(static_cast<size_t>(args["--time"].asLong()));
+        NAV::Sleep::countDownSeconds(pConfig->GetProgExecTime());
 
     NAV::Logger::writeFooter();
 }

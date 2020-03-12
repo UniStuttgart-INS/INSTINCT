@@ -38,6 +38,7 @@ enum NavStatus
     NAV_ERROR_NOT_INITIALIZED,       ///< Fatal feature requested without initializing first
     NAV_WARNING_ALREADY_INITIALIZED, ///< Already initialized
     NAV_WARNING_NOT_INITIALIZED,     ///< Non fatal feature requested without initializing first
+    NAV_REQUEST_EXIT,                ///< Request exit from the main thread
 };
 
 } // namespace NAV

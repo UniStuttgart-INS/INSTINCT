@@ -26,8 +26,36 @@
         "custom"
     ],
     "files.associations": {
-        "**/C++/**": "cpp", // <-- std libraries
+        "**/C++/**": "cpp", // <-- stl libraries
         "**/tbb/**": "cpp", // <-- intel libraries
-        "**/boost/**": "cpp" // <-- boost libraries
-    }
+        "**/boost/**": "cpp", // <-- boost libraries
+        "*.log.*": "log", // <-- log files
+    },
+    "logFileHighlighter.customPatterns": [
+        {
+            "pattern": "(\\[T\\]|\\[TRACE\\]|\\[Trace\\]|\\[trace\\])",
+            "foreground": "white",
+        },
+        {
+            "pattern": "(\\[D\\]|\\[DEBUG\\]|\\[Debug\\]|\\[debug\\])",
+            "foreground": "cyan",
+        },
+        {
+            "pattern": "(\\[I\\]|\\[INFO\\]|\\[Info\\]|\\[info\\])",
+            "foreground": "green",
+        },
+        {
+            "pattern": "(\\[W\\]|\\[WARN\\w*\\]|\\[Warn\\w*\\]|\\[warn\\w*\\])",
+            "foreground": "yellow",
+        },
+        {
+            "pattern": "(\\[E\\]|\\[ERROR\\]|\\[Error\\]|\\[error\\])",
+            "foreground": "red",
+        },
+        {
+            "pattern": "(\\[C\\]|\\[CRIT\\w*\\]|\\[Crit\\w*\\]|\\[crit\\w*\\])",
+            "foreground": "white",
+            "background": "red"
+        },
+    ]
 }
