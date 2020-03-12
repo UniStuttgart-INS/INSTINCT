@@ -9,6 +9,7 @@
 
 /// Turn off irrelevant log levels during compilation
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#define SPDLOG_FMT_EXTERNAL 1
 
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"

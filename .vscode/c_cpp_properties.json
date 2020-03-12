@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "~/.conan/data/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc"
