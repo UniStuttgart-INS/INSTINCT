@@ -11,39 +11,66 @@ This software provides real-time and post processing functionality for navigatio
 ### Dependencies
 
 * Needed:
-    * [cmake](https://cmake.org/) for building the project
-    * [make](https://www.gnu.org/software/make/) for building the project
-    * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) for code formatting
+    * [cmake](https://cmake.org/)  	A cross-platform open-source make system
+    * [make](https://www.gnu.org/software/make/) GNU make utility to maintain groups of programs
+    * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) Code formatting Tool
     * C++ compiler (e.g. [gcc](https://gcc.gnu.org/), [clang](https://clang.llvm.org/)) for compiling the project
-    * [spdlog](https://github.com/gabime/spdlog) Fast C++ logging library
-    * [docopt](https://github.com/docopt/docopt.cpp) Command line arguments parser
+    * [Conan](https://conan.io) A distributed, open source, C/C++ package manager
 * Optional:
-    * [ccache](https://ccache.dev/) to speed up recompilation
-    * [googletest](https://github.com/google/googletest) for testing
-    * [valgrind](http://valgrind.org/) for CPU profiling & leak detection
-    * [kcachegrind](http://kcachegrind.sourceforge.net) for Visualization of Performance Profiling Data
-    * [doxygen](http://www.doxygen.nl/) for Documentation creation
-* Potentially (might be used in the future):
-    * [Boost](https://www.boost.org/) library
+    * [ccache](https://ccache.dev/) Compiler cache that speeds up recompilation by caching previous compilations
+    * [valgrind](http://valgrind.org/) CPU profiling & leak detection
+    * [kcachegrind](http://kcachegrind.sourceforge.net) Visualization of Performance Profiling Data
+    * [doxygen](http://www.doxygen.nl/) Documentation system for C++, C, Java, IDL and PHP
+* Libraries (Automatically installed by Conan.io):
+    * [spdlog](https://github.com/gabime/spdlog) Fast C++ logging library
+    * [fmt](https://github.com/fmtlib/fmt) A modern formatting library https://fmt.dev
+    * [Boost](https://www.boost.org/) Free peer-reviewed portable C++ source libraries
+    * [googletest](https://github.com/google/googletest) Google Testing and Mocking Framework 
 
 ### Installing
+
+Most library dependencies are managed by Conan.io, so you just need to install the basics.
 
 ArchLinux:
 ```
 # Needed
-pacman -S base-devel cmake clang docopt
-trizen -S spdlog-git # (use AUR version, as community version is broken)
+sudo pacman -S base-devel cmake clang
+trizen -S conan # AUR package
 
 # Optional
-pacman -S ccache gtest valgrind kcachegrind doxygen
-
-# Potentially
-pacman -S boost boost-libs
+sudo pacman -S ccache valgrind kcachegrind doxygen
 ```
 
 Ubuntu:
 ```
-!!! Someone with Ubuntu should provide commands here !!!
+# Needed
+sudo apt-get install build-essential cmake clang
+pip install conan
+
+# Optional
+sudo apt-get install ccache valgrind kcachegrind doxygen
+```
+
+Mac:
+```
+# Cmake
+brew install cmake # If you use Homebrew
+sudo port install cmake # If you use MacPorts
+
+# Conan
+brew install conan # If you use Homebrew
+pip install conan # Otherwise
+
+# Missing instructions for
+# clang
+# make
+# ccache
+# valgrind
+# kcachegrind
+# doxygen
+
+# Please install them yourself and add instructions here
+
 ```
 
 ### VSCode Configuration
@@ -90,9 +117,13 @@ Recommended changes to the User's ```keybindings.json```
 
 | Hotkey   | Action                                     | Default       |
 | :------: | :----------------------------------------- | ------------- |
+| ```F5``` | Debug the project                          | Default debug |
 | ```F6``` | Run Task: ```DEBUG: Build project```       | Default build |
 | ```F7``` | Run Task: ```DEBUG: Build & run project``` | Default test  |
 | ```F8``` | Open Task List                             |               |
+
+* If you have problems with the build, execute the Task ```CLEAN: Remove build files```
+* If you want to provide tests, place them in the ```tests``` directory and execute them with the task ```TEST: Build & run```
 
 ## Help
 
