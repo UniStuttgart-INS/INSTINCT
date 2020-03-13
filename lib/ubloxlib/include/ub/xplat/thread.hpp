@@ -5,16 +5,23 @@
 /// This header file provides the class Thread.
 #pragma once
 
+#include "int.hpp"
+#include "export.hpp"
 #include "ub/util/nocopy.hpp"
 
-#include <pthread.h>
-#include <unistd.h>
-#include <cstdint>
+#if _WIN32
+    #include <Windows.h>
+#elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
+    #include <pthread.h>
+    #include <unistd.h>
+#else
+    #error "Unknown System"
+#endif
 
 namespace ub::xplat
 {
 /// \brief Represents a cross-platform thread.
-class Thread : private util::NoCopy
+class ub_proglib_DLLEXPORT Thread : private util::NoCopy
 {
     // Types //////////////////////////////////////////////////////////////////
 

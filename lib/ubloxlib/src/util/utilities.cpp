@@ -2,6 +2,14 @@
 
 #include <sstream>
 
+#if defined _WINDOWS && PYTHON
+    // TODO : This needs to function in Linux as well
+    #include "dllvalidator.h"
+#else
+    #if defined __linux__
+    #endif
+#endif
+
 #if _M_IX86 || __i386__ || __x86_64 || _WIN64
     // Compiling for x86 processor.
     #define UB_LITTLE_ENDIAN 1

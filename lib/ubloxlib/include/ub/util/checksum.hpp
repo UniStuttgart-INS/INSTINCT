@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstddef>
-#include <cstdint>
+#include "ub/xplat/int.hpp"
 #include <utility>
 
 namespace ub::util

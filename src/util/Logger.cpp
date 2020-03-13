@@ -10,21 +10,29 @@ NAV::NavStatus NAV::Logger::initialize(const std::string logpath)
     try
     {
         auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-        // Level should be <= LOG_ACTIVE_LEVEL as we use Logging-Macros
+        // Only edit if console and file should log different levels
         console_sink->set_level(spdlog::level::trace);
-        // See https://github.com/gabime/spdlog/wiki/3.-Custom-formatting for formatting options
-        console_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [%s:%#] %v");
 
         auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logpath, true);
-        // Level should be <= LOG_ACTIVE_LEVEL as we use Logging-Macros
+        // Only edit if console and file should log different levels
         file_sink->set_level(spdlog::level::trace);
-        // See https://github.com/gabime/spdlog/wiki/3.-Custom-formatting for formatting options
-        file_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [%s:%#] %v");
 
         // Set the logger as default logger
         spdlog::set_default_logger(std::make_shared<spdlog::logger>("multi_sink", spdlog::sinks_init_list({ console_sink, file_sink })));
+
         // Level should be smaller or equal to the level of the sinks
         spdlog::set_level(spdlog::level::level_enum::trace);
+        // Minimum level which automatically triggers a flush
+        spdlog::flush_on(spdlog::level::trace);
+
+        // See https://github.com/gabime/spdlog/wiki/3.-Custom-formatting for formatting options
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
+        spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [%s:%3#] [%!()] %v");
+#elif SPDLOG_ACTIVE_LEVEL == SPDLOG_LEVEL_DEBUG
+        spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [%s:%3#] %v");
+#else
+        spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] %v");
+#endif
 
         return NavStatus::NAV_OK;
     }
@@ -37,7 +45,7 @@ NAV::NavStatus NAV::Logger::initialize(const std::string logpath)
 
 void NAV::Logger::writeSeparator()
 {
-    std::cout << "===========================================================================" << std::endl;
+    std::cout << "===========================================================================================" << std::endl;
 }
 
 void NAV::Logger::writeHeader()

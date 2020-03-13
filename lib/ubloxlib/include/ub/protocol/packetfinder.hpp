@@ -3,6 +3,7 @@
 #include "ub/util/nocopy.hpp"
 #include "ub/xplat/ubtime.hpp"
 #include "ub/protocol/packet.hpp"
+#include "ub/xplat/export.hpp"
 
 namespace ub::protocol::uart
 {
@@ -15,7 +16,7 @@ namespace ub::protocol::uart
 /// incoming raw data stream. When the PacketFinder receives its first byte
 /// from the user, this is given the index of 0 for the running index and
 /// incremented for each byte received.
-class PacketFinder : private util::NoCopy
+class ub_proglib_DLLEXPORT PacketFinder : private util::NoCopy
 {
   public:
     /// \brief Defines the signature for a method that can receive

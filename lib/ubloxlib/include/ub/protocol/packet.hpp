@@ -4,11 +4,13 @@
 #include <cstring>
 
 #include "ub/util/nocopy.hpp"
+#include "ub/xplat/int.hpp"
+#include "ub/xplat/export.hpp"
 
 namespace ub::protocol::uart
 {
 /// \brief Structure representing a UART packet received from the sensor.
-struct Packet
+struct ub_proglib_DLLEXPORT Packet
 {
     /// \brief The different types of UART packets.
     enum Type

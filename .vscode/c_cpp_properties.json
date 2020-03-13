@@ -7,6 +7,7 @@
                 "~/.conan/data/**"
             ],
             "defines": [],
+            "cppStandard": "c++17",
             "compilerPath": "/usr/bin/gcc"
         }
     ],

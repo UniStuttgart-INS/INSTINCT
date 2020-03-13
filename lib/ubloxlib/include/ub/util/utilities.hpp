@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "ub/xplat/int.hpp"
+
 /// \brief Defines for the specific version of the library.
 #define UBAPI_MAJOR 1
 #define UBAPI_MINOR 1

@@ -1,11 +1,12 @@
 #pragma once
 
 #include <cstddef>
+#include "export.hpp"
 
 namespace ub::xplat
 {
 /// \brief Interface for a simple port.
-class IPort
+class ub_proglib_DLLEXPORT IPort
 {
     // Types //////////////////////////////////////////////////////////////////
 

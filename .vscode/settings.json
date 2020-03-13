@@ -25,6 +25,7 @@
         "date",
         "custom"
     ],
+    "doxdocgen.generic.boolReturnsTrueFalse": false,
     "files.associations": {
         "**/C++/**": "cpp", // <-- stl libraries
         "**/tbb/**": "cpp", // <-- intel libraries

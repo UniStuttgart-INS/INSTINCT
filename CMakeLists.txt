@@ -37,6 +37,22 @@ option(ENABLE_TESTING "Enable Test Builds" OFF)
 # Include all project headers
 include_directories(src)
 
+# Conan Packages
+set(CONAN_EXTRA_REQUIRES "")
+set(CONAN_EXTRA_OPTIONS "")
+
+list(APPEND CONAN_EXTRA_REQUIRES fmt/6.1.2
+                                 spdlog/1.5.0
+                                 boost/1.72.0
+                                 gtest/1.10.0)
+
+if (BUILD_SHARED_LIBS)
+    list(APPEND CONAN_EXTRA_OPTIONS "Pkg:shared=True")
+endif()
+
+include(cmake/Conan.cmake)
+run_conan()
+
 # Include VectorNav library
 add_subdirectory(lib/vnproglib-1.1.5.0 libvncxx)
 include_directories(lib/vnproglib-1.1.5.0/include)
@@ -47,13 +63,6 @@ include_directories(lib/ubloxlib/include)
 
 # Find installed packages
 find_package (Threads REQUIRED)
-
-# Conan Packages
-set(CONAN_EXTRA_REQUIRES "")
-set(CONAN_EXTRA_OPTIONS "")
-
-include(cmake/Conan.cmake)
-run_conan()
 
 # Specify output path for executable files
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)

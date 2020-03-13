@@ -1,10 +1,11 @@
 #pragma once
 
-#include <cstdint>
+#include "int.hpp"
+#include "export.hpp"
 
 namespace ub::xplat
 {
-struct TimeStamp
+struct ub_proglib_DLLEXPORT TimeStamp
 {
   public:
     TimeStamp();
@@ -27,7 +28,7 @@ struct TimeStamp
 };
 
 /// \brief Provides simple timing capabilities.
-class Stopwatch
+class ub_proglib_DLLEXPORT Stopwatch
 {
   public:
     /// \brief Creates a new Stopwatch and starts timing.

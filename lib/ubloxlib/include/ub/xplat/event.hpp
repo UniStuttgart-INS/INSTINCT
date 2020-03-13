@@ -1,12 +1,13 @@
 #pragma once
 
 #include "ub/util/nocopy.hpp"
-#include <cstdint>
+#include "export.hpp"
+#include "int.hpp"
 
 namespace ub::xplat
 {
 /// \brief Represents a cross-platform event.
-class Event : private util::NoCopy
+class ub_proglib_DLLEXPORT Event : private util::NoCopy
 {
   public:
     /// \brief Available wait results.

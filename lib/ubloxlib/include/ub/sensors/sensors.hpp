@@ -5,6 +5,8 @@
 
 #include "ub/util/nocopy.hpp"
 #include "ub/protocol/packetfinder.hpp"
+#include "ub/xplat/export.hpp"
+#include "ub/xplat/int.hpp"
 
 namespace ub::xplat
 {
@@ -14,7 +16,7 @@ class IPort;
 namespace ub::sensors
 {
 /// \brief Helpful class for working with VectorNav sensors.
-class UbSensor : private util::NoCopy
+class ub_proglib_DLLEXPORT UbSensor : private util::NoCopy
 {
   public:
     /// \brief Defines a callback handler that can received notification when

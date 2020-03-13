@@ -1,32 +1,27 @@
 #pragma once
 
 #include "ub/util/nocopy.hpp"
+#include "export.hpp"
 
 namespace ub::xplat
 {
 /// \brief Represents a cross-platform critical section.
-class CriticalSection : private util::NoCopy
+class ub_proglib_DLLEXPORT CriticalSection : private util::NoCopy
 {
-    // Constructors ///////////////////////////////////////////////////////////
-
-  public:
+  public: // Constructors ///////////////////////////////////////////////////////////
     /// \brief Creates a new critical section.
     CriticalSection();
 
     ~CriticalSection();
 
-    // Public Methods /////////////////////////////////////////////////////////
-
-  public:
+  public: // Public Methods /////////////////////////////////////////////////////////
     /// \brief Requests and signals that a critical section is being entered.
     void enter();
 
     /// \brief Signals that a critical section is being left.
     void leave();
 
-    // Private Members ////////////////////////////////////////////////////////
-
-  private:
+  private: // Private Members ////////////////////////////////////////////////////////
     // Contains internal data, mainly stuff that is required for cross-platform
     // support.
     struct Impl;

@@ -7,11 +7,7 @@
 
 #pragma once
 
-#include <chrono>
-#include <thread>
-#include <signal.h>
-
-#include "Logger.hpp"
+#include <cstddef>
 
 namespace NAV
 {

@@ -49,6 +49,9 @@ class Config
 
     bool GetSigterm();
     size_t GetProgExecTime();
+    bool isVN100Enabled();
+    bool isVN110Enabled();
+    bool isUbloxEnabled();
 
   private:
     /// Program option description
@@ -61,6 +64,12 @@ class Config
     bool sigterm = false;
     /// Program execution duration (disabled if Config::sigterm is true)
     size_t progExecTime = 0;
+    /// Enables the vn100 sensor
+    bool vn100Enabled = false;
+    /// Enables the vn110 sensor
+    bool vn110Enabled = false;
+    /// Enables the ublox sensor
+    bool ubloxEnabled = false;
 };
 
 } // namespace NAV

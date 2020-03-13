@@ -5,6 +5,7 @@
 #include <list>
 
 #include "ub/xplat/port.hpp"
+#include "export.hpp"
 #include "ub/util/nocopy.hpp"
 
 namespace ub::xplat
@@ -19,7 +20,7 @@ namespace ub::xplat
 /// data, and when new data is available, it will alert the user code through
 /// the callback handler. Then the user can call \ref read to retrieve the
 /// data.
-class SerialPort : public IPort, util::NoCopy
+class ub_proglib_DLLEXPORT SerialPort : public IPort, util::NoCopy
 {
     // Types //////////////////////////////////////////////////////////////////
 
@@ -97,6 +98,21 @@ class SerialPort : public IPort, util::NoCopy
     /// \return The number of sections of dropped data sections. Note this is
     ///     not indicative of the total number of dropped bytes.
     size_t NumberOfReceiveDataDroppedSections();
+
+    /// \brief With regard to optimizing COM ports provided by FTDI drivers, this
+    /// method will check if the COM port has been optimized.
+    ///
+    /// \param[in] portName The COM port name to check.
+    /// \return <c>true</c> if the COM port is optimized; otherwise <c>false</c>.
+    static bool determineIfPortIsOptimized(std::string portName);
+
+    /// \brief This will perform optimization of FTDI USB serial ports.
+    ///
+    /// If calling this method on Windows, the process must have administrator
+    /// privileges to write settings to the registry. Otherwise an
+    ///
+    /// \param[in] portName The FTDI USB Serial Port to optimize.
+    static void optimizePort(std::string portName);
 
     // Private Members ////////////////////////////////////////////////////////
 
