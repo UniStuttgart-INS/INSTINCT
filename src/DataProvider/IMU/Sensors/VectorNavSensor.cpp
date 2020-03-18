@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-NAV::VectorNavSensor::VectorNavSensor(std::string name, const VNConfig sensorConfig)
+NAV::VectorNavSensor::VectorNavSensor(std::string name, const VectorNavSensor::Config sensorConfig)
     : Imu(name), UartSensor(sensorConfig.sensorPort, sensorConfig.sensorBaudrate), config(sensorConfig)
 {
     LOG_TRACE("called for {}", name);
@@ -21,7 +21,7 @@ NAV::VectorNavSensor::~VectorNavSensor()
 
 NAV::NavStatus NAV::VectorNavSensor::initialize()
 {
-    LOG_TRACE("called for {})", name);
+    LOG_TRACE("called for {}", name);
     if (initialized)
     {
         LOG_WARN("{} already initialized!!!", name);
@@ -141,7 +141,7 @@ NAV::NavStatus NAV::VectorNavSensor::initialize()
 
     vs.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
-    LOG_INFO("{} successfully initialized", name);
+    LOG_DEBUG("{} successfully initialized", name);
 
     // TODO: USB Pin reset here???
     // USBHelper::resetRTSPin(sensorPort);
@@ -156,7 +156,8 @@ NAV::NavStatus NAV::VectorNavSensor::deinitialize()
     LOG_TRACE("called for {}", name);
     if (initialized)
     {
-        removeAllObservationReceivedCallbacks();
+        removeAllCallbacks();
+        callbacksEnabled = false;
         vs.unregisterAsyncPacketReceivedHandler();
         if (vs.isConnected())
         {
@@ -167,7 +168,6 @@ NAV::NavStatus NAV::VectorNavSensor::deinitialize()
         LOG_DEBUG("{} successfully deinitialized", name);
         return NAV_OK;
     }
-    LOG_DEBUG("{} should be deinitialized but was not initialized before", name);
 
     return NAV_WARNING_NOT_INITIALIZED;
 }
@@ -198,12 +198,12 @@ std::shared_ptr<NAV::InsObs> NAV::VectorNavSensor::pollObservation()
     // Group 5 (Attitude)
     obs->quaternion = qmag.quat;
 
-    LOG_TRACE("DATA({}): {}, {}, {}, {}, {}, {}, {}",
-              name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
-              obs->vpeStatus.value(), obs->temperature.value(), obs->pressure.value(), obs->quaternion.value());
+    LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
+             name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
+             obs->vpeStatus.value(), obs->temperature.value());
 
     // Calls all the callbacks
-    observationReceived(obs);
+    invokeCallbacks(obs);
 
     return obs;
 }
@@ -256,12 +256,12 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
             obs->linearAccelNED = p.extractVec3f();
             obs->yawPitchRollUncertainty = p.extractVec3f();
 
-            LOG_TRACE("DATA({}): {}, {}, {}, {}, {}, {}, {}",
-                      vnSensor->name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
-                      obs->vpeStatus.value(), obs->temperature.value(), obs->pressure.value(), obs->quaternion.value());
+            LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
+                     vnSensor->name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
+                     obs->vpeStatus.value(), obs->temperature.value());
 
             // Calls all the callbacks
-            vnSensor->observationReceived(obs);
+            vnSensor->invokeCallbacks(obs);
         }
         else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)
         {

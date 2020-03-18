@@ -23,7 +23,16 @@
 #include "util/Sleep.hpp"
 #include "util/Config.hpp"
 
+#include "DataCallback.hpp"
 #include "DataProvider/IMU/Sensors/VectorNavSensor.hpp"
+#include "DataProvider/IMU/FileReader/VectorNavFile.hpp"
+#include "DataProcessor/DataLogger/IMU/VectorNavDataLogger.hpp"
+
+void exitFailure()
+{
+    NAV::Logger::writeFooter();
+    exit(EXIT_FAILURE);
+}
 
 int main(int argc, const char** argv)
 {
@@ -40,45 +49,153 @@ int main(int argc, const char** argv)
 
     // Write the Log Header
     NAV::Logger::writeHeader();
-
+    // Decode Options
     if (pConfig->DecodeOptions() != NAV::NavStatus::NAV_OK)
-        return EXIT_FAILURE;
+        exitFailure();
 
-    if (pConfig->isVN100Enabled())
+    // Create Data Providers which were specified in the configs
+    LOG_INFO("Creating {} Data Provider{}", pConfig->dataProviders.size(), pConfig->dataProviders.size() > 1 ? "s" : "");
+    for (auto& dataProvider : pConfig->dataProviders)
     {
-        // warning: C++ designated initializers only available with ‘-std=c++2a’ or ‘-std=gnu++2a’ [-Wpedantic]
-        // TODO: Remove after changing to C++20
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-        if (NAV::VectorNavSensor vn100("VN-100",
-                                       { .outputFrequency = 2,
-                                         // If the sensor port is wrong, all available ports will be searched (takes ~5 seconds)
-                                         .sensorPort = "/dev/ttyUSB_VN100_1" });
-            vn100.initialize() == NAV::NavStatus::NAV_OK)
-#pragma GCC diagnostic pop
+        if (dataProvider.type == "VectorNavSensor")
         {
+            NAV::VectorNavSensor::Config config;
+
+            if (dataProvider.options.size() >= 1)
+                config.outputFrequency = static_cast<uint16_t>(std::stoul(dataProvider.options.at(0)));
+            if (dataProvider.options.size() >= 2)
+                config.sensorPort = dataProvider.options.at(1);
+
+            dataProvider.provider = std::make_shared<NAV::VectorNavSensor>(dataProvider.name, config);
         }
+        else if (dataProvider.type == "VectorNavFile")
+        {
+            NAV::VectorNavFile::Config config;
+            std::string path;
+
+            if (dataProvider.options.size() >= 1)
+                path = dataProvider.options.at(0);
+
+            dataProvider.provider = std::make_shared<NAV::VectorNavFile>(dataProvider.name, path, config);
+        }
+        // TODO: Add ublox
+        else
+        {
+            LOG_CRITICAL("Data Provider {} - {} has unknown type", dataProvider.type, dataProvider.name);
+            exitFailure();
+        }
+
+        // Check if there was a problem with creation and then initialize
+        if (dataProvider.provider == nullptr || dataProvider.provider->initialize() != NAV::NavStatus::NAV_OK)
+        {
+            LOG_CRITICAL("Data Provider {} - {} could not be created", dataProvider.type, dataProvider.name);
+            exitFailure();
+        }
+        else
+            LOG_INFO("{}═⇒ {} ({}) created", dataProvider.name == pConfig->dataProviders.back().name ? "╚" : "╠", dataProvider.name, dataProvider.type);
     }
 
-    if (pConfig->isVN110Enabled())
+    // Create Data Processors
+    LOG_INFO("Creating {} Data Processor{}", pConfig->dataProcessors.size(), pConfig->dataProcessors.size() > 1 ? "s" : "");
+    for (auto& dataProcessor : pConfig->dataProcessors)
     {
-        // warning: C++ designated initializers only available with ‘-std=c++2a’ or ‘-std=gnu++2a’ [-Wpedantic]
-        // TODO: Remove after changing to C++20
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-        if (NAV::VectorNavSensor vn100("VN-110",
-                                       { .outputFrequency = 2,
-                                         // If the sensor port is wrong, all available ports will be searched (takes ~5 seconds)
-                                         .sensorPort = "/dev/ttyUSB_VN110_1" });
-            vn100.initialize() == NAV::NavStatus::NAV_OK)
-#pragma GCC diagnostic pop
+        if (dataProcessor.type == "VectorNavDataLogger")
         {
+            std::string path;
+            bool isBinary = false;
+
+            if (dataProcessor.options.size() >= 1)
+                path = dataProcessor.options.at(0);
+            if (dataProcessor.options.size() >= 2)
+            {
+                if (dataProcessor.options.at(1) == "ascii")
+                    isBinary = false;
+                else if (dataProcessor.options.at(1) == "binary")
+                    isBinary = true;
+                else
+                    LOG_WARN("Data Processor {} - {} has unknown file type {}. Using ascii instead", dataProcessor.type, dataProcessor.name, dataProcessor.options.at(1));
+            }
+
+            dataProcessor.processor = std::make_shared<NAV::VectorNavDataLogger>(dataProcessor.name, path, isBinary);
         }
+        else
+        {
+            LOG_CRITICAL("Data Processor {} - {} has unknown type", dataProcessor.type, dataProcessor.name);
+            exitFailure();
+        }
+
+        // Check if there was a problem with creation and then initialize
+        if (dataProcessor.processor == nullptr || dataProcessor.processor->initialize() != NAV::NavStatus::NAV_OK)
+        {
+            LOG_CRITICAL("Data Processor {} - {} could not be created", dataProcessor.type, dataProcessor.name);
+            exitFailure();
+        }
+        else
+            LOG_INFO("{}═⇒ {} ({}) created", dataProcessor.name == pConfig->dataProcessors.back().name ? "╚" : "╠", dataProcessor.name, dataProcessor.type);
     }
 
-    if (pConfig->isUbloxEnabled())
+    // Set up Data Links
+    LOG_INFO("Creating {} Data Link{}", pConfig->dataLinks.size(), pConfig->dataLinks.size() > 1 ? "s" : "");
+    for (auto& dataLink : pConfig->dataLinks)
     {
-        LOG_INFO("ublox enabled");
+        // Find the target
+        std::vector<NAV::Config::DataProcessorConfig>::iterator target;
+        for (target = pConfig->dataProcessors.begin(); target != pConfig->dataProcessors.end(); target++)
+            if (target->name == dataLink.target)
+                break;
+
+        if (target == pConfig->dataProcessors.end())
+        {
+            LOG_CRITICAL("Data Link {} ⇒ {} could not be created because target could not be found", dataLink.source, dataLink.target);
+            exitFailure();
+        }
+
+        // Find the source
+        std::shared_ptr<NAV::DataCallback> source = nullptr;
+        for (auto& dataProvider : pConfig->dataProviders)
+        {
+            if (dataProvider.name == dataLink.source)
+            {
+                source = dataProvider.provider;
+                break;
+            }
+        }
+        if (source == nullptr)
+        {
+            for (auto& dataProcessor : pConfig->dataProcessors)
+            {
+                if (dataProcessor.name == dataLink.source)
+                {
+                    source = dataProcessor.processor;
+                    break;
+                }
+            }
+        }
+        if (source == nullptr)
+        {
+            LOG_CRITICAL("Data Link {} ⇒ {} could not be created because source could not be found", dataLink.source, dataLink.target);
+            exitFailure();
+        }
+
+        // Source and target were found
+        if (target->type == "VectorNavDataLogger")
+        {
+            source->addCallback(std::static_pointer_cast<NAV::VectorNavDataLogger>(target->processor)->writeObservation,
+                                std::static_pointer_cast<NAV::VectorNavDataLogger>(target->processor));
+            source->callbacksEnabled = true;
+
+            // TODO: Remove this, this is only for demonstration purposes
+            while (std::static_pointer_cast<NAV::VectorNavFile>(source)->pollObservation() != nullptr)
+                ;
+        }
+        else
+        {
+            LOG_CRITICAL("Data Link {} ⇒ {} could not be created because link generation for target type {} is not supported.", dataLink.source, dataLink.target, target->type);
+            exitFailure();
+        }
+
+        LOG_INFO("{}═⇒ {} ⇒ {} created", (dataLink.source == pConfig->dataLinks.back().source && dataLink.target == pConfig->dataLinks.back().target) ? "╚" : "╠",
+                 dataLink.source, dataLink.target);
     }
 
     if (pConfig->GetSigterm())
@@ -86,12 +203,7 @@ int main(int argc, const char** argv)
     else
         NAV::Sleep::countDownSeconds(pConfig->GetProgExecTime());
 
-    LOG_TRACE("Trace");
-    LOG_DEBUG("Debug");
-    LOG_INFO("Info");
-    LOG_WARN("Warn");
-    LOG_ERROR("Error");
-    LOG_CRITICAL("Critical");
-
     NAV::Logger::writeFooter();
+
+    return EXIT_SUCCESS;
 }

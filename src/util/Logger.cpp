@@ -52,7 +52,7 @@ void NAV::Logger::writeHeader()
 {
     writeSeparator();
 
-    LOG_INFO("Software started");
+    LOG_INFO("Program started");
 
     writeSeparator();
 }
@@ -62,9 +62,9 @@ void NAV::Logger::writeFooter()
     writeSeparator();
 
 #ifdef NDEBUG
-    LOG_INFO("Programm finished in Release");
+    LOG_INFO("Program finished in Release");
 #else
-    LOG_INFO("Programm finished in Debug");
+    LOG_INFO("Program finished in Debug");
 #endif
 
     writeSeparator();

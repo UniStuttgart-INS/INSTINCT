@@ -7,6 +7,9 @@
 
 #include "Logger.hpp"
 
+#include "DataProvider/IMU/Sensors/VectorNavSensor.hpp"
+#include <boost/tokenizer.hpp>
+
 namespace bpo = boost::program_options;
 
 NAV::Config::Config() {}
@@ -28,15 +31,16 @@ NAV::NavStatus NAV::Config::AddOptions(const int argc, const char* argv[])
         LOG_TRACE("argument[{}] = '{}'", i, argv[i]);
 
     // clang-format off
+    // See https://www.boost.org/doc/libs/1_72_0/doc/html/program_options.html
     program_options.add_options()
         ("config,-f", bpo::value<std::string>(), "Read parameters from file")
         ("version,v", "Display the version number")
         ("help,h", "Display this help message")
         ("sigterm", bpo::value<bool>()->default_value(false),"Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM")
         ("duration", bpo::value<size_t>()->default_value(10), "Program execution duration [sec]")
-        ("vn100", bpo::value<bool>()->default_value(false), "Enables VN100 Logging")
-        ("vn110", bpo::value<bool>()->default_value(false), "Enables VN110 Logging")
-        ("ublox", bpo::value<bool>()->default_value(false), "Enables ublox Logging")
+        ("dataProvider", bpo::value<std::vector<std::string>>()->multitoken(), "Data Provider registration.\nFormat: Type, Name, [Options...]")
+        ("dataProcessor", bpo::value<std::vector<std::string>>()->multitoken(), "Data Processor registration.\nFormat: Type, Name, [Options...]")
+        ("dataLink", bpo::value<std::vector<std::string>>()->multitoken(), "Data Links.\nFormat: From(Name), To(Name)")
     ;
     // clang-format on
 
@@ -50,8 +54,8 @@ NAV::NavStatus NAV::Config::AddOptions(const int argc, const char* argv[])
             bpo::store(bpo::parse_config_file(ifs, program_options), vm);
         else
         {
-            std::cout << "Could not open the config file: " << vm["config"].as<std::string>() << std::endl;
-            return NAV_ERROR;
+            LOG_CRITICAL("Could not open the config file: {}", vm["config"].as<std::string>());
+            return NavStatus::NAV_ERROR;
         }
     }
     bpo::notify(vm);
@@ -61,16 +65,16 @@ NAV::NavStatus NAV::Config::AddOptions(const int argc, const char* argv[])
         std::cout << "NavSoS " << PROJECT_VERSION_STRING << " - Navigation Software Stuttgart" << std::endl
                   << std::endl
                   << program_options << std::endl;
-        return NAV_REQUEST_EXIT;
+        return NavStatus::NAV_REQUEST_EXIT;
     }
 
     if (vm.count("version"))
     {
         std::cout << PROJECT_VERSION_STRING << std::endl;
-        return NAV_REQUEST_EXIT;
+        return NavStatus::NAV_REQUEST_EXIT;
     }
 
-    return NAV_OK;
+    return NavStatus::NAV_OK;
 }
 
 NAV::NavStatus NAV::Config::DecodeOptions()
@@ -89,27 +93,121 @@ NAV::NavStatus NAV::Config::DecodeOptions()
             progExecTime = vm["duration"].as<size_t>();
             LOG_DEBUG("Option-duration = '{}'", progExecTime);
         }
-        if (vm.count("vn100"))
+
+        std::vector<std::string> names;
+        if (vm.count("dataProvider"))
         {
-            vn100Enabled = vm["vn100"].as<bool>();
-            LOG_DEBUG("Option-vn100 = '{}'", vn100Enabled);
+            for (std::string provider : vm["dataProvider"].as<std::vector<std::string>>())
+            {
+                DataProviderConfig config;
+
+                std::stringstream lineStream(provider);
+                std::string cell;
+                // Split line at comma
+                while (std::getline(lineStream, cell, ','))
+                {
+                    // Remove any trailing non text characters
+                    cell.erase(std::find_if(cell.begin(), cell.end(),
+                                            std::ptr_fun<int, int>(std::iscntrl)),
+                               cell.end());
+                    // Remove whitespaces
+                    cell.erase(cell.begin(), std::find_if(cell.begin(), cell.end(), [](int ch) { return !std::isspace(ch); }));
+                    cell.erase(std::find_if(cell.rbegin(), cell.rend(), [](int ch) { return !std::isspace(ch); }).base(), cell.end());
+
+                    if (config.type.empty())
+                        config.type = cell;
+                    else if (config.name.empty())
+                        config.name = cell;
+                    else
+                        config.options.push_back(cell);
+                }
+
+                config.provider = nullptr;
+                dataProviders.push_back(config);
+                names.push_back(config.name);
+
+                LOG_DEBUG("Option-dataProvider = {}, {}, {}", config.type, config.name, fmt::join(config.options, ", "));
+            }
         }
-        if (vm.count("vn110"))
+        if (vm.count("dataProcessor"))
         {
-            vn110Enabled = vm["vn110"].as<bool>();
-            LOG_DEBUG("Option-vn110 = '{}'", vn110Enabled);
+            for (std::string processor : vm["dataProcessor"].as<std::vector<std::string>>())
+            {
+                DataProcessorConfig config;
+
+                std::stringstream lineStream(processor);
+                std::string cell;
+                // Split line at comma
+                while (std::getline(lineStream, cell, ','))
+                {
+                    // Remove any trailing non text characters
+                    cell.erase(std::find_if(cell.begin(), cell.end(),
+                                            std::ptr_fun<int, int>(std::iscntrl)),
+                               cell.end());
+                    // Remove whitespaces
+                    cell.erase(cell.begin(), std::find_if(cell.begin(), cell.end(), [](int ch) { return !std::isspace(ch); }));
+                    cell.erase(std::find_if(cell.rbegin(), cell.rend(), [](int ch) { return !std::isspace(ch); }).base(), cell.end());
+
+                    if (config.type.empty())
+                        config.type = cell;
+                    else if (config.name.empty())
+                        config.name = cell;
+                    else
+                        config.options.push_back(cell);
+                }
+
+                config.processor = nullptr;
+                dataProcessors.push_back(config);
+                names.push_back(config.name);
+
+                LOG_DEBUG("Option-dataProcessor = {}, {}, {}", config.type, config.name, fmt::join(config.options, ", "));
+            }
         }
-        if (vm.count("ublox"))
+        if (vm.count("dataLink"))
         {
-            ubloxEnabled = vm["ublox"].as<bool>();
-            LOG_DEBUG("Option-ublox = '{}'", ubloxEnabled);
+            for (std::string link : vm["dataLink"].as<std::vector<std::string>>())
+            {
+                DataLinkConfig config;
+
+                std::stringstream lineStream(link);
+                std::string cell;
+                // Split line at comma
+                while (std::getline(lineStream, cell, ','))
+                {
+                    // Remove any trailing non text characters
+                    cell.erase(std::find_if(cell.begin(), cell.end(),
+                                            std::ptr_fun<int, int>(std::iscntrl)),
+                               cell.end());
+                    // Remove whitespaces
+                    cell.erase(cell.begin(), std::find_if(cell.begin(), cell.end(), [](int ch) { return !std::isspace(ch); }));
+                    cell.erase(std::find_if(cell.rbegin(), cell.rend(), [](int ch) { return !std::isspace(ch); }).base(), cell.end());
+
+                    if (config.source.empty())
+                        config.source = cell;
+                    else if (config.target.empty())
+                        config.target = cell;
+                }
+
+                dataLinks.push_back(config);
+
+                LOG_DEBUG("Option-dataLink = {} ==> {}", config.source, config.target);
+            }
         }
-        return NAV_OK;
+
+        // Check if duplicate names
+        auto it = std::unique(names.begin(), names.end());
+        if (it != names.end())
+        {
+            LOG_CRITICAL("Data Provider and Processor names must be unique: '{}'", fmt::join(names, ", "));
+            return NavStatus::NAV_ERROR_DUPLICATE_NAMES;
+        }
+
+        return NavStatus::NAV_OK;
     }
     catch (const boost::bad_any_cast& e)
     {
-        LOG_ERROR("Error Decoding Options: '{}'", e.what());
-        return NAV_ERROR;
+        LOG_CRITICAL("Error Decoding Options: '{}'", e.what());
+        return NavStatus::NAV_ERROR;
     }
 }
 
@@ -123,20 +221,4 @@ size_t NAV::Config::GetProgExecTime()
 {
     LOG_TRACE("called with progExecTime={}", progExecTime);
     return progExecTime;
-}
-
-bool NAV::Config::isVN100Enabled()
-{
-    LOG_TRACE("called with vn100Enabled={}", vn100Enabled);
-    return vn100Enabled;
-}
-bool NAV::Config::isVN110Enabled()
-{
-    LOG_TRACE("called with vn110Enabled={}", vn110Enabled);
-    return vn110Enabled;
-}
-bool NAV::Config::isUbloxEnabled()
-{
-    LOG_TRACE("called with ubloxEnabled={}", ubloxEnabled);
-    return ubloxEnabled;
 }

@@ -30,15 +30,17 @@ namespace NAV
 /// Enum providing return values indicating the type of failure
 enum NavStatus
 {
-    NAV_OK,                          ///< Everything OK
-    NAV_ERROR,                       ///< A general fatal problem occurred
-    NAV_ERROR_COULD_NOT_CONNECT,     ///< Could not connect to a sensor
-    NAV_ERROR_CONFIGURATION_FAULT,   ///< A faulty configuration was specified
-    NAV_ERROR_COULD_NOT_OPEN_FILE,   ///< Could not open a file
-    NAV_ERROR_NOT_INITIALIZED,       ///< Fatal feature requested without initializing first
-    NAV_WARNING_ALREADY_INITIALIZED, ///< Already initialized
-    NAV_WARNING_NOT_INITIALIZED,     ///< Non fatal feature requested without initializing first
-    NAV_REQUEST_EXIT,                ///< Request exit from the main thread
+    NAV_OK,                            ///< Everything OK
+    NAV_ERROR,                         ///< A general fatal problem occurred
+    NAV_ERROR_COULD_NOT_CONNECT,       ///< Could not connect to a sensor
+    NAV_ERROR_CONFIGURATION_FAULT,     ///< A faulty configuration was specified
+    NAV_ERROR_COULD_NOT_OPEN_FILE,     ///< Could not open a file
+    NAV_ERROR_NOT_INITIALIZED,         ///< Fatal feature requested without initializing first
+    NAV_ERROR_DETERMINATION_FILE_TYPE, ///< Could not determine file type
+    NAV_ERROR_DUPLICATE_NAMES,         ///< Data Provider and Processors must have unique names
+    NAV_WARNING_ALREADY_INITIALIZED,   ///< Already initialized
+    NAV_WARNING_NOT_INITIALIZED,       ///< Non fatal feature requested without initializing first
+    NAV_REQUEST_EXIT,                  ///< Request exit from the main thread
 };
 
 } // namespace NAV

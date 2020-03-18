@@ -18,7 +18,7 @@ class VectorNavSensor : public Imu, public UartSensor
 {
   public:
     /// Config Structure for the sensor
-    typedef struct vnConfig
+    typedef struct Config
     {
         /// OutputFrequency to calculate rateDivisor field.
         uint16_t outputFrequency = 1;
@@ -56,7 +56,7 @@ class VectorNavSensor : public Imu, public UartSensor
         // vn::protocol::uart::InsGroup insField = vn::protocol::uart::InsGroup::INSGROUP_NONE;
         // Group 7 (GPS2)
         // vn::protocol::uart::GpsGroup gps2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
-    } VNConfig;
+    } Config;
 
     /**
      * @brief Construct a new Vector Nav Sensor object
@@ -64,7 +64,7 @@ class VectorNavSensor : public Imu, public UartSensor
      * @param[in] name Name of the Sensor
      * @param[in] sensorConfig Config Structure for the VectorNavSensor
      */
-    VectorNavSensor(std::string name, const VNConfig sensorConfig);
+    VectorNavSensor(std::string name, const VectorNavSensor::Config sensorConfig);
 
     /// Default Destructor
     virtual ~VectorNavSensor();
@@ -95,8 +95,8 @@ class VectorNavSensor : public Imu, public UartSensor
      * @brief Callback handler for notifications of new asynchronous data packets received
      * 
      * @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
-     * @param[in, out] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
-     * @param[in, out] index Advanced usage item and can be safely ignored for now
+     * @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
+     * @param[in] index Advanced usage item and can be safely ignored for now
      */
     static void asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t index);
 
@@ -104,7 +104,7 @@ class VectorNavSensor : public Imu, public UartSensor
     vn::sensors::VnSensor vs;
 
     /// Config Object
-    const VNConfig config;
+    const VectorNavSensor::Config config;
 
     /// Internal Frequency of the Sensor
     const double IMU_DEFAULT_FREQUENCY = 800;

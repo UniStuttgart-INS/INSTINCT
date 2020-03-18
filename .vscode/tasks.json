@@ -29,7 +29,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF; make -Cbuild/Debug"
+                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF; make -j -Cbuild/Debug"
             ],
             "presentation": {
                 "clear": true
@@ -43,7 +43,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF; make -Cbuild/Release"
+                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF; make -j -Cbuild/Release"
             ],
             "presentation": {
                 "clear": true
@@ -60,7 +60,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF; make -Cbuild/Debug && ./bin/Debug/navsos -f config.ini $(sed \"s/#.*//\" config-override.ini)"
+                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF; make -j -Cbuild/Debug && ./bin/Debug/navsos -f config.ini $(sed \"s/#.*//\" config-override.ini)"
             ],
             "presentation": {
                 "clear": true
@@ -74,7 +74,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF; make -Cbuild/Release && ./bin/Release/navsos -f config.ini $(sed \"s/#.*//\" config-override.ini)"
+                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF; make -j -Cbuild/Release && ./bin/Release/navsos -f config.ini $(sed \"s/#.*//\" config-override.ini)"
             ],
             "presentation": {
                 "clear": true
@@ -88,7 +88,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=ON && make -Cbuild/Debug tests"
+                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=ON && make -j -Cbuild/Debug tests"
             ],
             "presentation": {
                 "clear": true
@@ -102,7 +102,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=ON && make -Cbuild/Debug tests && ./bin/Debug/tests"
+                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=ON && make -j -Cbuild/Debug tests && ./bin/Debug/tests"
             ],
             "presentation": {
                 "clear": true
@@ -178,7 +178,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_DOXYGEN=TRUE && make -Cbuild/Release doxygen-docs && xdg-open doc/html/index.html"
+                "cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_DOXYGEN=TRUE && make -j -Cbuild/Release doxygen-docs && xdg-open doc/html/index.html"
             ],
             "presentation": {
                 "clear": true

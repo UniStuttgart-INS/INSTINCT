@@ -8,7 +8,8 @@
 #pragma once
 
 /// Turn off irrelevant log levels during compilation
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#define DATA_LOGGING_ENABLED 0
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #define SPDLOG_FMT_EXTERNAL 1
 
 #include "spdlog/spdlog.h"
@@ -18,6 +19,12 @@
 #include <string>
 
 // Macros are redefined in case SPDLOG is not available anymore and it needs to be switched to another Logger
+#if DATA_LOGGING_ENABLED >= 1
+    #define LOG_DATA SPDLOG_TRACE
+#else
+    #define LOG_DATA(...) (void)0
+#endif
+
 #define LOG_TRACE SPDLOG_TRACE
 #define LOG_DEBUG SPDLOG_DEBUG
 #define LOG_INFO SPDLOG_INFO
