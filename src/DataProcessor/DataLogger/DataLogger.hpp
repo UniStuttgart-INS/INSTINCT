@@ -18,16 +18,6 @@ namespace NAV
 {
 class DataLogger : public DataProcessor
 {
-  public:
-    /**
-     * @brief Abstract write Callback function for observations
-     * 
-     * @param[in] obs The received observation
-     * @param[in, out] userData User data specified when registering the callback
-     * @retval NavStatus Indicates whether the write was successfull.
-     */
-    //NavStatus writeObservation(std::shared_ptr<InsObs> obs, std::shared_ptr<void> userData) = 0;
-
   protected:
     /**
      * @brief Construct a new Data Logger object

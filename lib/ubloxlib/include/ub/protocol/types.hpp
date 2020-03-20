@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace ub::protocol::uart
 {
 enum ErrorDetectionMode
@@ -506,5 +508,31 @@ enum UbxUpdMessages
     /// - System Restored from Backup (Length = 8; Type = Output)
     UBX_UPD_SOS = 0x14,
 };
+
+/**
+ * @brief Get the UBX Msg Class From String object
+ * 
+ * @param[in] className String of the UBX Class
+ * @retval UbxClass The UBX class
+ */
+UbxClass getMsgClassFromString(std::string className);
+
+/**
+ * @brief Get the UBX Msg Id From String object
+ * 
+ * @param[in] msgClass The Ubx Msg Class to search in
+ * @param[in] idName String of the Msg Id
+ * @retval uint8_t The Msg Id integer
+ */
+uint8_t getMsgIdFromString(UbxClass msgClass, std::string idName);
+
+/**
+ * @brief Get the UBX Msg Id From String objects
+ * 
+ * @param[in] className String of the UBX class
+ * @param[in] idName String of the Msg Id
+ * @retval uint8_t The Msg Id integer
+ */
+uint8_t getMsgIdFromString(std::string className, std::string idName);
 
 } // namespace ub::protocol::uart

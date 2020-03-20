@@ -24,9 +24,15 @@
 #include "util/Config.hpp"
 
 #include "DataCallback.hpp"
+
 #include "DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 #include "DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "DataProcessor/DataLogger/IMU/VectorNavDataLogger.hpp"
+
+#include "ub/protocol/types.hpp"
+#include "DataProvider/GNSS/Sensors/UbloxSensor.hpp"
+#include "DataProcessor/DataLogger/GNSS/UbloxDataLogger.hpp"
+#include "DataProcessor/UsbSync/GNSS/UbloxSyncSignal.hpp"
 
 void exitFailure()
 {
@@ -65,6 +71,8 @@ int main(int argc, const char** argv)
                 config.outputFrequency = static_cast<uint16_t>(std::stoul(dataProvider.options.at(0)));
             if (dataProvider.options.size() >= 2)
                 config.sensorPort = dataProvider.options.at(1);
+            if (dataProvider.options.size() >= 3)
+                config.sensorBaudrate = static_cast<NAV::UartSensor::Baudrate>(std::stoul(dataProvider.options.at(2)));
 
             dataProvider.provider = std::make_shared<NAV::VectorNavSensor>(dataProvider.name, config);
         }
@@ -78,7 +86,19 @@ int main(int argc, const char** argv)
 
             dataProvider.provider = std::make_shared<NAV::VectorNavFile>(dataProvider.name, path, config);
         }
-        // TODO: Add ublox
+        else if (dataProvider.type == "UbloxSensor")
+        {
+            NAV::UbloxSensor::Config config;
+
+            if (dataProvider.options.size() >= 1)
+                config.outputFrequency = static_cast<uint16_t>(std::stoul(dataProvider.options.at(0)));
+            if (dataProvider.options.size() >= 2)
+                config.sensorPort = dataProvider.options.at(1);
+            if (dataProvider.options.size() >= 3)
+                config.sensorBaudrate = static_cast<NAV::UartSensor::Baudrate>(std::stoul(dataProvider.options.at(2)));
+
+            dataProvider.provider = std::make_shared<NAV::UbloxSensor>(dataProvider.name, config);
+        }
         else
         {
             LOG_CRITICAL("Data Provider {} - {} has unknown type", dataProvider.type, dataProvider.name);
@@ -118,6 +138,55 @@ int main(int argc, const char** argv)
 
             dataProcessor.processor = std::make_shared<NAV::VectorNavDataLogger>(dataProcessor.name, path, isBinary);
         }
+        else if (dataProcessor.type == "UbloxDataLogger")
+        {
+            std::string path;
+            bool isBinary = true;
+
+            if (dataProcessor.options.size() >= 1)
+                path = dataProcessor.options.at(0);
+            if (dataProcessor.options.size() >= 2)
+            {
+                if (dataProcessor.options.at(1) == "ascii")
+                    isBinary = false;
+                else if (dataProcessor.options.at(1) == "binary")
+                    isBinary = true;
+                else
+                    LOG_WARN("Data Processor {} - {} has unknown file type {}. Using binary instead", dataProcessor.type, dataProcessor.name, dataProcessor.options.at(1));
+            }
+
+            dataProcessor.processor = std::make_shared<NAV::UbloxDataLogger>(dataProcessor.name, path, isBinary);
+        }
+        else if (dataProcessor.type == "UbloxSyncSignal")
+        {
+            //SensorPort           type msgClass msgId
+            std::string port;
+            ub::protocol::uart::UbxClass ubxClass;
+            uint8_t ubxMsgId;
+
+            if (dataProcessor.options.size() >= 1)
+                port = dataProcessor.options.at(0);
+            if (dataProcessor.options.size() >= 4)
+            {
+                if (dataProcessor.options.at(1) == "UBX")
+                {
+                    ubxClass = ub::protocol::uart::getMsgClassFromString(dataProcessor.options.at(2));
+                    ubxMsgId = ub::protocol::uart::getMsgIdFromString(ubxClass, dataProcessor.options.at(3));
+
+                    dataProcessor.processor = std::make_shared<NAV::UbloxSyncSignal>(dataProcessor.name, port, ubxClass, ubxMsgId);
+                }
+                else
+                {
+                    LOG_CRITICAL("Data Processor {} - {} has unknown type {}", dataProcessor.type, dataProcessor.name, dataProcessor.options.at(1));
+                    exitFailure();
+                }
+            }
+            else
+            {
+                LOG_CRITICAL("Data Processor {} - {} has not enough options", dataProcessor.type, dataProcessor.name);
+                exitFailure();
+            }
+        }
         else
         {
             LOG_CRITICAL("Data Processor {} - {} has unknown type", dataProcessor.type, dataProcessor.name);
@@ -138,6 +207,7 @@ int main(int argc, const char** argv)
     LOG_INFO("Creating {} Data Link{}", pConfig->dataLinks.size(), pConfig->dataLinks.size() > 1 ? "s" : "");
     for (auto& dataLink : pConfig->dataLinks)
     {
+        bool linkEstablished = false;
         // Find the target
         std::vector<NAV::Config::DataProcessorConfig>::iterator target;
         for (target = pConfig->dataProcessors.begin(); target != pConfig->dataProcessors.end(); target++)
@@ -152,11 +222,13 @@ int main(int argc, const char** argv)
 
         // Find the source
         std::shared_ptr<NAV::DataCallback> source = nullptr;
+        std::string sourceType;
         for (auto& dataProvider : pConfig->dataProviders)
         {
             if (dataProvider.name == dataLink.source)
             {
                 source = dataProvider.provider;
+                sourceType = dataProvider.type;
                 break;
             }
         }
@@ -178,24 +250,51 @@ int main(int argc, const char** argv)
         }
 
         // Source and target were found
-        if (target->type == "VectorNavDataLogger")
+        if (sourceType == "VectorNavSensor" || sourceType == "VectorNavFile")
         {
-            source->addCallback(std::static_pointer_cast<NAV::VectorNavDataLogger>(target->processor)->writeObservation,
-                                std::static_pointer_cast<NAV::VectorNavDataLogger>(target->processor));
-            source->callbacksEnabled = true;
+            if (target->type == "VectorNavDataLogger")
+            {
+                source->addCallback(std::static_pointer_cast<NAV::VectorNavDataLogger>(target->processor)->writeObservation,
+                                    std::static_pointer_cast<NAV::VectorNavDataLogger>(target->processor));
+                source->callbacksEnabled = true;
+                linkEstablished = true;
 
-            // TODO: Remove this, this is only for demonstration purposes
-            while (std::static_pointer_cast<NAV::VectorNavFile>(source)->pollObservation() != nullptr)
-                ;
+                // TODO: Remove this, this is only for demonstration purposes
+                if (sourceType == "VectorNavFile")
+                {
+                    while (std::static_pointer_cast<NAV::VectorNavFile>(source)->pollObservation() != nullptr)
+                        ;
+                }
+            }
+        }
+        else if (sourceType == "UbloxSensor")
+        {
+            if (target->type == "UbloxDataLogger")
+            {
+                source->addCallback(std::static_pointer_cast<NAV::UbloxDataLogger>(target->processor)->writeObservation,
+                                    std::static_pointer_cast<NAV::UbloxDataLogger>(target->processor));
+                source->callbacksEnabled = true;
+                linkEstablished = true;
+            }
+            else if (target->type == "UbloxSyncSignal")
+            {
+                source->addCallback(std::static_pointer_cast<NAV::UbloxSyncSignal>(target->processor)->triggerSync,
+                                    std::static_pointer_cast<NAV::UbloxSyncSignal>(target->processor));
+                source->callbacksEnabled = true;
+                linkEstablished = true;
+            }
+        }
+
+        if (linkEstablished)
+        {
+            LOG_INFO("{}═⇒ {} ⇒ {} created", (dataLink.source == pConfig->dataLinks.back().source && dataLink.target == pConfig->dataLinks.back().target) ? "╚" : "╠",
+                     dataLink.source, dataLink.target);
         }
         else
         {
-            LOG_CRITICAL("Data Link {} ⇒ {} could not be created because link generation for target type {} is not supported.", dataLink.source, dataLink.target, target->type);
+            LOG_CRITICAL("Data Link {} ⇒ {} could not be created because link generation for types {} ⇒ {} is not supported.", dataLink.source, dataLink.target, sourceType, target->type);
             exitFailure();
         }
-
-        LOG_INFO("{}═⇒ {} ⇒ {} created", (dataLink.source == pConfig->dataLinks.back().source && dataLink.target == pConfig->dataLinks.back().target) ? "╚" : "╠",
-                 dataLink.source, dataLink.target);
     }
 
     if (pConfig->GetSigterm())

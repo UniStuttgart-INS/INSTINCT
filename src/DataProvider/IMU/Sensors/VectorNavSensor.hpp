@@ -86,7 +86,7 @@ class VectorNavSensor : public Imu, public UartSensor
     /**
      * @brief Polls the current Imu Data
      * 
-     * @retval std::shared_ptr<InsObs> Pointer to an ImuObs object with the current data
+     * @retval std::shared_ptr<InsObs> Pointer to an VectorNavObs object with the current data
      */
     std::shared_ptr<InsObs> pollObservation() final;
 

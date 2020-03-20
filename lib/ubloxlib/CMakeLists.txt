@@ -6,6 +6,7 @@ set(CMAKE_SUPPRESS_REGENERATION TRUE)
 set(SOURCE
         src/protocol/packet.cpp
         src/protocol/packetfinder.cpp
+        src/protocol/types.cpp
         src/sensors/sensors.cpp
         src/util/checksum.cpp
         src/util/utilities.cpp
