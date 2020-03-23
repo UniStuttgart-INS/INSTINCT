@@ -4,9 +4,13 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "~/.conan/data/**"
+                "~/.conan/data/**",
+                "/usr/include/qt/**"
             ],
-            "defines": [],
+            "defines": [
+                "NODE_EDITOR_SHARED",
+                "NODE_EDITOR_EXPORTS"
+            ],
             "cppStandard": "c++17",
             "compilerPath": "/usr/bin/gcc"
         }

@@ -33,6 +33,7 @@ enable_doxygen()
 # If true, the library target will be a shared library, otherwise it will be static.
 option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 option(ENABLE_TESTING "Enable Test Builds" OFF)
+option(ENABLE_GUI "Build GUI" OFF)
 
 # Include all project headers
 include_directories(src)
@@ -75,3 +76,7 @@ if(ENABLE_TESTING)
 endif()
 
 add_subdirectory(src)
+
+if(ENABLE_GUI)
+    add_subdirectory(gui)
+endif()
