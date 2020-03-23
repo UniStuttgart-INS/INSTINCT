@@ -258,13 +258,6 @@ int main(int argc, const char** argv)
                                     std::static_pointer_cast<NAV::VectorNavDataLogger>(target->processor));
                 source->callbacksEnabled = true;
                 linkEstablished = true;
-
-                // TODO: Remove this, this is only for demonstration purposes
-                if (sourceType == "VectorNavFile")
-                {
-                    while (std::static_pointer_cast<NAV::VectorNavFile>(source)->pollObservation() != nullptr)
-                        ;
-                }
             }
         }
         else if (sourceType == "UbloxSensor")
@@ -294,6 +287,17 @@ int main(int argc, const char** argv)
         {
             LOG_CRITICAL("Data Link {} ⇒ {} could not be created because link generation for types {} ⇒ {} is not supported.", dataLink.source, dataLink.target, sourceType, target->type);
             exitFailure();
+        }
+    }
+
+    // Play all the data files
+    for (auto& dataProvider : pConfig->dataProviders)
+    {
+        // TODO: Add DataManager, which polls all data files in correct order
+        if (dataProvider.type == "VectorNavFile")
+        {
+            while (std::static_pointer_cast<NAV::VectorNavFile>(dataProvider.provider)->pollObservation() != nullptr)
+                ;
         }
     }
 
