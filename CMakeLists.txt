@@ -44,6 +44,7 @@ set(CONAN_EXTRA_OPTIONS "")
 list(APPEND CONAN_EXTRA_REQUIRES fmt/6.1.2
                                  spdlog/1.5.0
                                  boost/1.72.0
+                                 eigen/3.3.7
                                  gtest/1.10.0)
 
 if (BUILD_SHARED_LIBS)

@@ -143,9 +143,6 @@ NAV::NavStatus NAV::VectorNavSensor::initialize()
 
     LOG_DEBUG("{} successfully initialized", name);
 
-    // TODO: USB Pin reset here???
-    // USBHelper::resetRTSPin(sensorPort);
-
     initialized = true;
 
     return NavStatus::NAV_OK;
@@ -180,23 +177,23 @@ std::shared_ptr<NAV::InsObs> NAV::VectorNavSensor::pollObservation()
     // Group 1 (Common)
     auto deltaReg = vs.readDeltaThetaAndDeltaVelocity();
     obs->dtime = deltaReg.deltaTime;
-    obs->dtheta = deltaReg.deltaTheta;
-    obs->dvel = deltaReg.deltaVelocity;
+    obs->dtheta = Eigen::Array3d(deltaReg.deltaTheta.x, deltaReg.deltaTheta.y, deltaReg.deltaTheta.z);
+    obs->dvel = Eigen::Vector3d(deltaReg.deltaVelocity.x, deltaReg.deltaVelocity.y, deltaReg.deltaVelocity.z);
     // Group 2 (Time)
     // Group 3 (IMU)
     auto imuReg = vs.readImuMeasurements();
-    obs->magUncompXYZ = imuReg.mag;
-    obs->accelUncompXYZ = imuReg.accel;
-    obs->gyroUncompXYZ = imuReg.gyro;
+    obs->magUncompXYZ = Eigen::Vector3d(imuReg.mag.x, imuReg.mag.y, imuReg.mag.z);
+    obs->accelUncompXYZ = Eigen::Vector3d(imuReg.accel.x, imuReg.accel.y, imuReg.accel.z);
+    obs->gyroUncompXYZ = Eigen::Vector3d(imuReg.gyro.x, imuReg.gyro.y, imuReg.gyro.z);
     obs->temperature = imuReg.temp;
     obs->pressure = imuReg.pressure;
     auto qmag = vs.readQuaternionMagneticAccelerationAndAngularRates();
-    obs->magCompXYZ = qmag.mag;
-    obs->accelCompXYZ = qmag.accel;
-    obs->gyroCompXYZ = qmag.gyro;
+    obs->magCompXYZ = Eigen::Vector3d(qmag.mag.x, qmag.mag.y, qmag.mag.z);
+    obs->accelCompXYZ = Eigen::Vector3d(qmag.accel.x, qmag.accel.y, qmag.accel.z);
+    obs->gyroCompXYZ = Eigen::Vector3d(qmag.gyro.x, qmag.gyro.y, qmag.gyro.z);
     // Group 4 (GPS)
     // Group 5 (Attitude)
-    obs->quaternion = qmag.quat;
+    obs->quaternion = Eigen::Quaterniond(qmag.quat.w, qmag.quat.x, qmag.quat.y, qmag.quat.z);
 
     LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
              name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
@@ -233,28 +230,42 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
             obs->timeSinceStartup = p.extractUint64();
             obs->timeSinceSyncIn = p.extractUint64();
             obs->dtime = p.extractFloat();
-            obs->dtheta = p.extractVec3f();
-            obs->dvel = p.extractVec3f();
+            auto dtheta = p.extractVec3f();
+            obs->dtheta = Eigen::Array3d(dtheta.x, dtheta.y, dtheta.z);
+            auto dvel = p.extractVec3f();
+            obs->dvel = Eigen::Vector3d(dvel.x, dvel.y, dvel.z);
             obs->syncInCnt = p.extractUint32();
             // Group 2 (Time)
             // Group 3 (IMU)
-            obs->magUncompXYZ = p.extractVec3f();
-            obs->accelUncompXYZ = p.extractVec3f();
-            obs->gyroUncompXYZ = p.extractVec3f();
+            auto magUncompXYZ = p.extractVec3f();
+            obs->magUncompXYZ = Eigen::Vector3d(magUncompXYZ.x, magUncompXYZ.y, magUncompXYZ.z);
+            auto accelUncompXYZ = p.extractVec3f();
+            obs->accelUncompXYZ = Eigen::Vector3d(accelUncompXYZ.x, accelUncompXYZ.y, accelUncompXYZ.z);
+            auto gyroUncompXYZ = p.extractVec3f();
+            obs->gyroUncompXYZ = Eigen::Vector3d(gyroUncompXYZ.x, gyroUncompXYZ.y, gyroUncompXYZ.z);
             obs->temperature = p.extractFloat();
             obs->pressure = p.extractFloat();
-            obs->magCompXYZ = p.extractVec3f();
-            obs->accelCompXYZ = p.extractVec3f();
-            obs->gyroCompXYZ = p.extractVec3f();
+            auto magCompXYZ = p.extractVec3f();
+            obs->magCompXYZ = Eigen::Vector3d(magCompXYZ.x, magCompXYZ.y, magCompXYZ.z);
+            auto accelCompXYZ = p.extractVec3f();
+            obs->accelCompXYZ = Eigen::Vector3d(accelCompXYZ.x, accelCompXYZ.y, accelCompXYZ.z);
+            auto gyroCompXYZ = p.extractVec3f();
+            obs->gyroCompXYZ = Eigen::Vector3d(gyroCompXYZ.x, gyroCompXYZ.y, gyroCompXYZ.z);
             // Group 4 (GPS)
             // Group 5 (Attitude)
             obs->vpeStatus = p.extractUint16();
-            obs->quaternion = p.extractVec4f();
-            obs->magCompNED = p.extractVec3f();
-            obs->accelCompNED = p.extractVec3f();
-            obs->linearAccelXYZ = p.extractVec3f();
-            obs->linearAccelNED = p.extractVec3f();
-            obs->yawPitchRollUncertainty = p.extractVec3f();
+            auto quaternion = p.extractVec4f();
+            obs->quaternion = Eigen::Quaterniond(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+            auto magCompNED = p.extractVec3f();
+            obs->magCompNED = Eigen::Vector3d(magCompNED.x, magCompNED.y, magCompNED.z);
+            auto accelCompNED = p.extractVec3f();
+            obs->accelCompNED = Eigen::Vector3d(accelCompNED.x, accelCompNED.y, accelCompNED.z);
+            auto linearAccelXYZ = p.extractVec3f();
+            obs->linearAccelXYZ = Eigen::Vector3d(linearAccelXYZ.x, linearAccelXYZ.y, linearAccelXYZ.z);
+            auto linearAccelNED = p.extractVec3f();
+            obs->linearAccelNED = Eigen::Vector3d(linearAccelNED.x, linearAccelNED.y, linearAccelNED.z);
+            auto yawPitchRollUncertainty = p.extractVec3f();
+            obs->yawPitchRollUncertainty = Eigen::Array3d(yawPitchRollUncertainty.x, yawPitchRollUncertainty.y, yawPitchRollUncertainty.z);
 
             LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
                      vnSensor->name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),

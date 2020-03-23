@@ -9,6 +9,7 @@ add_executable(${PROJECT_NAME_LOWERCASE}
 
 target_link_libraries(${PROJECT_NAME_LOWERCASE}
                 PRIVATE project_options project_warnings
-                        CONAN_PKG::fmt CONAN_PKG::spdlog CONAN_PKG::boost
+                        CONAN_PKG::fmt CONAN_PKG::spdlog
+                        CONAN_PKG::boost CONAN_PKG::eigen
                         Threads::Threads
                         libvncxx libubcxx)

@@ -26,9 +26,9 @@ class VectorNavObs : public ImuObs
     /** The time interval that the delta angle and velocities are integrated over in [seconds]. */
     std::optional<float> dtime;
     /** The delta rotation angles in [degree] incurred due to rotation, by the local body reference frame, since the last time the values were outputted by the device. */
-    std::optional<Vector<3, double>> dtheta;
+    std::optional<Eigen::Array3d> dtheta;
     /** The delta velocity in [m/s] incurred due to motion, by the local body reference frame, since the last time the values were outputted by the device. */
-    std::optional<Vector<3, double>> dvel;
+    std::optional<Eigen::Vector3d> dvel;
 
     /** @brief The VPE status bitfield.
      * 
@@ -51,19 +51,19 @@ class VectorNavObs : public ImuObs
     std::optional<double> pressure;
 
     /** The compensated magnetic field measured in units of [Gauss], and given in the North East Down (NED) frame. */
-    std::optional<Vector<3, double>> magCompNED;
+    std::optional<Eigen::Vector3d> magCompNED;
     /** The compensated acceleration (with gravity) measured in units of [m/s^2], and given in the North East Down (NED) frame. */
-    std::optional<Vector<3, double>> accelCompNED;
+    std::optional<Eigen::Vector3d> accelCompNED;
     /** The compensated angular rate measured in units of [rad/s], and given in the North East Down (NED) frame. */
-    std::optional<Vector<3, double>> gyroCompNED;
+    std::optional<Eigen::Vector3d> gyroCompNED;
 
     /** The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the body frame. */
-    std::optional<Vector<3, double>> linearAccelXYZ;
+    std::optional<Eigen::Vector3d> linearAccelXYZ;
     /** The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the North East Down (NED) frame. */
-    std::optional<Vector<3, double>> linearAccelNED;
+    std::optional<Eigen::Vector3d> linearAccelNED;
 
     /** The estimated attitude (Yaw, Pitch, Roll) uncertainty (1 Sigma), reported in degrees. */
-    std::optional<Vector<3, double>> yawPitchRollUncertainty;
+    std::optional<Eigen::Array3d> yawPitchRollUncertainty;
 
   public: // Inline functions
     /// Extract the attitude quality from the vpe status

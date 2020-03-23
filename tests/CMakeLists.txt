@@ -15,6 +15,7 @@ include(GoogleTest)
 add_executable(tests main.cpp ${SRCFILES})
 
 target_link_libraries(tests PRIVATE project_options project_warnings
-                                    CONAN_PKG::fmt CONAN_PKG::spdlog CONAN_PKG::boost CONAN_PKG::gtest
+                                    CONAN_PKG::fmt CONAN_PKG::spdlog CONAN_PKG::gtest
+                                    CONAN_PKG::boost CONAN_PKG::eigen
                                     Threads::Threads
                                     libvncxx libubcxx)

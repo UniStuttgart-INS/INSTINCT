@@ -9,9 +9,8 @@
 
 #include "DataProvider/InsObs.hpp"
 
-// TODO: Replace with Eigen library
-#include "util/Math/Vector.hpp"
-#include "util/Math/Quaternion.hpp"
+#include "Eigen/Dense"
+#include <Eigen/Geometry>
 
 namespace NAV
 {
@@ -21,20 +20,20 @@ class ImuObs : public InsObs
   public:
     /** The estimated attitude quaternion. The first term is the scalar value.
      *  The attitude is given as the body frame with respect to the local North East Down (NED) frame. */
-    std::optional<Quaternion<double>> quaternion;
+    std::optional<Eigen::Quaterniond> quaternion;
 
     /// The IMU magnetic field measured in units of [Gauss], given in the body frame.
-    std::optional<Vector<3, double>> magUncompXYZ;
+    std::optional<Eigen::Vector3d> magUncompXYZ;
     /// The IMU acceleration measured in units of [m/s^2], given in the body frame.
-    std::optional<Vector<3, double>> accelUncompXYZ;
+    std::optional<Eigen::Vector3d> accelUncompXYZ;
     /// The IMU angular rate measured in units of [rad/s], given in the body frame.
-    std::optional<Vector<3, double>> gyroUncompXYZ;
+    std::optional<Eigen::Vector3d> gyroUncompXYZ;
     /// The compensated magnetic field measured in units of [Gauss], and given in the body frame.
-    std::optional<Vector<3, double>> magCompXYZ;
+    std::optional<Eigen::Vector3d> magCompXYZ;
     /// The compensated acceleration measured in units of [m/s^2], and given in the body frame.
-    std::optional<Vector<3, double>> accelCompXYZ;
+    std::optional<Eigen::Vector3d> accelCompXYZ;
     /// The compensated angular rate measured in units of [rad/s], and given in the body frame.
-    std::optional<Vector<3, double>> gyroCompXYZ;
+    std::optional<Eigen::Vector3d> gyroCompXYZ;
 };
 
 } // namespace NAV

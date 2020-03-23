@@ -293,7 +293,7 @@ int main(int argc, const char** argv)
     // Play all the data files
     for (auto& dataProvider : pConfig->dataProviders)
     {
-        // TODO: Add DataManager, which polls all data files in correct order
+        // TODO: Add DataManager, which polls all data files in correct order instead of just reading the files here
         if (dataProvider.type == "VectorNavFile")
         {
             while (std::static_pointer_cast<NAV::VectorNavFile>(dataProvider.provider)->pollObservation() != nullptr)

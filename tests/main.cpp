@@ -2,10 +2,6 @@
 
 #include "util/Logger.hpp"
 
-// #include "util/Math/VectorTest.hpp"
-// #include "util/Math/MatrixTest.hpp"
-// #include "util/Math/QuaternionTest.hpp"
-
 #include "DataLogger/VectorNavDataLoggerTest.hpp"
 
 int main(int argc, char* argv[])

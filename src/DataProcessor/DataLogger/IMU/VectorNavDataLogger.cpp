@@ -79,31 +79,31 @@ NAV::NavStatus NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<void> 
             logger->filestream << vnObs->syncInCnt.value();
         logger->filestream << ",";
         if (vnObs->magUncompXYZ.has_value())
-            logger->filestream << std::setprecision(9) << vnObs->magUncompXYZ.value().x;
+            logger->filestream << std::setprecision(9) << vnObs->magUncompXYZ.value().x();
         logger->filestream << ",";
         if (vnObs->magUncompXYZ.has_value())
-            logger->filestream << vnObs->magUncompXYZ.value().y;
+            logger->filestream << vnObs->magUncompXYZ.value().y();
         logger->filestream << ",";
         if (vnObs->magUncompXYZ.has_value())
-            logger->filestream << vnObs->magUncompXYZ.value().z;
+            logger->filestream << vnObs->magUncompXYZ.value().z();
         logger->filestream << ",";
         if (vnObs->accelUncompXYZ.has_value())
-            logger->filestream << vnObs->accelUncompXYZ.value().x;
+            logger->filestream << vnObs->accelUncompXYZ.value().x();
         logger->filestream << ",";
         if (vnObs->accelUncompXYZ.has_value())
-            logger->filestream << vnObs->accelUncompXYZ.value().y;
+            logger->filestream << vnObs->accelUncompXYZ.value().y();
         logger->filestream << ",";
         if (vnObs->accelUncompXYZ.has_value())
-            logger->filestream << vnObs->accelUncompXYZ.value().z;
+            logger->filestream << vnObs->accelUncompXYZ.value().z();
         logger->filestream << ",";
         if (vnObs->gyroUncompXYZ.has_value())
-            logger->filestream << vnObs->gyroUncompXYZ.value().x;
+            logger->filestream << vnObs->gyroUncompXYZ.value().x();
         logger->filestream << ",";
         if (vnObs->gyroUncompXYZ.has_value())
-            logger->filestream << vnObs->gyroUncompXYZ.value().y;
+            logger->filestream << vnObs->gyroUncompXYZ.value().y();
         logger->filestream << ",";
         if (vnObs->gyroUncompXYZ.has_value())
-            logger->filestream << vnObs->gyroUncompXYZ.value().z;
+            logger->filestream << vnObs->gyroUncompXYZ.value().z();
         logger->filestream << ",";
         if (vnObs->temperature.has_value())
             logger->filestream << vnObs->temperature.value();
@@ -115,118 +115,118 @@ NAV::NavStatus NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<void> 
             logger->filestream << vnObs->dtime.value();
         logger->filestream << ",";
         if (vnObs->dtheta.has_value())
-            logger->filestream << vnObs->dtheta.value().x;
+            logger->filestream << vnObs->dtheta.value().x();
         logger->filestream << ",";
         if (vnObs->dtheta.has_value())
-            logger->filestream << vnObs->dtheta.value().y;
+            logger->filestream << vnObs->dtheta.value().y();
         logger->filestream << ",";
         if (vnObs->dtheta.has_value())
-            logger->filestream << vnObs->dtheta.value().z;
+            logger->filestream << vnObs->dtheta.value().z();
         logger->filestream << ",";
         if (vnObs->dvel.has_value())
-            logger->filestream << vnObs->dvel.value().x;
+            logger->filestream << vnObs->dvel.value().x();
         logger->filestream << ",";
         if (vnObs->dvel.has_value())
-            logger->filestream << vnObs->dvel.value().y;
+            logger->filestream << vnObs->dvel.value().y();
         logger->filestream << ",";
         if (vnObs->dvel.has_value())
-            logger->filestream << vnObs->dvel.value().z;
+            logger->filestream << vnObs->dvel.value().z();
         logger->filestream << ",";
         if (vnObs->magCompXYZ.has_value())
-            logger->filestream << vnObs->magCompXYZ.value().x;
+            logger->filestream << vnObs->magCompXYZ.value().x();
         logger->filestream << ",";
         if (vnObs->magCompXYZ.has_value())
-            logger->filestream << vnObs->magCompXYZ.value().y;
+            logger->filestream << vnObs->magCompXYZ.value().y();
         logger->filestream << ",";
         if (vnObs->magCompXYZ.has_value())
-            logger->filestream << vnObs->magCompXYZ.value().z;
+            logger->filestream << vnObs->magCompXYZ.value().z();
         logger->filestream << ",";
         if (vnObs->accelCompXYZ.has_value())
-            logger->filestream << vnObs->accelCompXYZ.value().x;
+            logger->filestream << vnObs->accelCompXYZ.value().x();
         logger->filestream << ",";
         if (vnObs->accelCompXYZ.has_value())
-            logger->filestream << vnObs->accelCompXYZ.value().y;
+            logger->filestream << vnObs->accelCompXYZ.value().y();
         logger->filestream << ",";
         if (vnObs->accelCompXYZ.has_value())
-            logger->filestream << vnObs->accelCompXYZ.value().z;
+            logger->filestream << vnObs->accelCompXYZ.value().z();
         logger->filestream << ",";
         if (vnObs->gyroCompXYZ.has_value())
-            logger->filestream << vnObs->gyroCompXYZ.value().x;
+            logger->filestream << vnObs->gyroCompXYZ.value().x();
         logger->filestream << ",";
         if (vnObs->gyroCompXYZ.has_value())
-            logger->filestream << vnObs->gyroCompXYZ.value().y;
+            logger->filestream << vnObs->gyroCompXYZ.value().y();
         logger->filestream << ",";
         if (vnObs->gyroCompXYZ.has_value())
-            logger->filestream << vnObs->gyroCompXYZ.value().z;
+            logger->filestream << vnObs->gyroCompXYZ.value().z();
         logger->filestream << ",";
         if (vnObs->vpeStatus.has_value())
             logger->filestream << vnObs->vpeStatus.value();
         logger->filestream << ",";
         if (vnObs->quaternion.has_value())
-            logger->filestream << vnObs->quaternion.value()(1);
+            logger->filestream << vnObs->quaternion.value().w();
         logger->filestream << ",";
         if (vnObs->quaternion.has_value())
-            logger->filestream << vnObs->quaternion.value()(2);
+            logger->filestream << vnObs->quaternion.value().x();
         logger->filestream << ",";
         if (vnObs->quaternion.has_value())
-            logger->filestream << vnObs->quaternion.value()(3);
+            logger->filestream << vnObs->quaternion.value().y();
         logger->filestream << ",";
         if (vnObs->quaternion.has_value())
-            logger->filestream << vnObs->quaternion.value()(0);
+            logger->filestream << vnObs->quaternion.value().z();
         logger->filestream << ",";
         if (vnObs->magCompNED.has_value())
-            logger->filestream << vnObs->magCompNED.value().n;
+            logger->filestream << vnObs->magCompNED.value().x();
         logger->filestream << ",";
         if (vnObs->magCompNED.has_value())
-            logger->filestream << vnObs->magCompNED.value().e;
+            logger->filestream << vnObs->magCompNED.value().y();
         logger->filestream << ",";
         if (vnObs->magCompNED.has_value())
-            logger->filestream << vnObs->magCompNED.value().d;
+            logger->filestream << vnObs->magCompNED.value().z();
         logger->filestream << ",";
         if (vnObs->accelCompNED.has_value())
-            logger->filestream << vnObs->accelCompNED.value().n;
+            logger->filestream << vnObs->accelCompNED.value().x();
         logger->filestream << ",";
         if (vnObs->accelCompNED.has_value())
-            logger->filestream << vnObs->accelCompNED.value().e;
+            logger->filestream << vnObs->accelCompNED.value().y();
         logger->filestream << ",";
         if (vnObs->accelCompNED.has_value())
-            logger->filestream << vnObs->accelCompNED.value().d;
+            logger->filestream << vnObs->accelCompNED.value().z();
         logger->filestream << ",";
         if (vnObs->linearAccelXYZ.has_value())
-            logger->filestream << vnObs->linearAccelXYZ.value().x;
+            logger->filestream << vnObs->linearAccelXYZ.value().x();
         logger->filestream << ",";
         if (vnObs->linearAccelXYZ.has_value())
-            logger->filestream << vnObs->linearAccelXYZ.value().y;
+            logger->filestream << vnObs->linearAccelXYZ.value().y();
         logger->filestream << ",";
         if (vnObs->linearAccelXYZ.has_value())
-            logger->filestream << vnObs->linearAccelXYZ.value().z;
+            logger->filestream << vnObs->linearAccelXYZ.value().z();
         logger->filestream << ",";
         if (vnObs->linearAccelNED.has_value())
-            logger->filestream << vnObs->linearAccelNED.value().n;
+            logger->filestream << vnObs->linearAccelNED.value().x();
         logger->filestream << ",";
         if (vnObs->linearAccelNED.has_value())
-            logger->filestream << vnObs->linearAccelNED.value().e;
+            logger->filestream << vnObs->linearAccelNED.value().y();
         logger->filestream << ",";
         if (vnObs->linearAccelNED.has_value())
-            logger->filestream << vnObs->linearAccelNED.value().d;
+            logger->filestream << vnObs->linearAccelNED.value().z();
         logger->filestream << ",";
         if (vnObs->yawPitchRollUncertainty.has_value())
-            logger->filestream << vnObs->yawPitchRollUncertainty.value().x;
+            logger->filestream << vnObs->yawPitchRollUncertainty.value().x();
         logger->filestream << ",";
         if (vnObs->yawPitchRollUncertainty.has_value())
-            logger->filestream << vnObs->yawPitchRollUncertainty.value().y;
+            logger->filestream << vnObs->yawPitchRollUncertainty.value().y();
         logger->filestream << ",";
         if (vnObs->yawPitchRollUncertainty.has_value())
-            logger->filestream << vnObs->yawPitchRollUncertainty.value().z;
+            logger->filestream << vnObs->yawPitchRollUncertainty.value().z();
         logger->filestream << ",";
         if (vnObs->gyroCompNED.has_value())
-            logger->filestream << vnObs->gyroCompNED.value().n;
+            logger->filestream << vnObs->gyroCompNED.value().x();
         logger->filestream << ",";
         if (vnObs->gyroCompNED.has_value())
-            logger->filestream << vnObs->gyroCompNED.value().e;
+            logger->filestream << vnObs->gyroCompNED.value().y();
         logger->filestream << ",";
         if (vnObs->gyroCompNED.has_value())
-            logger->filestream << vnObs->gyroCompNED.value().d;
+            logger->filestream << vnObs->gyroCompNED.value().z();
         logger->filestream << std::endl;
     }
 
