@@ -33,7 +33,7 @@ NAV::NavStatus NAV::Config::AddOptions(const int argc, const char* argv[])
     // clang-format off
     // See https://www.boost.org/doc/libs/1_72_0/doc/html/program_options.html
     program_options.add_options()
-        ("config,-f", bpo::value<std::string>(), "Read parameters from file")
+        ("config,f", bpo::value<std::vector<std::string>>()->multitoken(), "Read parameters from file")
         ("version,v", "Display the version number")
         ("help,h", "Display this help message")
         ("sigterm", bpo::value<bool>()->default_value(false),"Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM")
@@ -49,13 +49,16 @@ NAV::NavStatus NAV::Config::AddOptions(const int argc, const char* argv[])
     // if config file is available, the parameters from file will be added
     if (vm.count("config"))
     {
-        std::ifstream ifs{ vm["config"].as<std::string>() };
-        if (ifs)
-            bpo::store(bpo::parse_config_file(ifs, program_options), vm);
-        else
+        for (std::string configFile : vm["config"].as<std::vector<std::string>>())
         {
-            LOG_CRITICAL("Could not open the config file: {}", vm["config"].as<std::string>());
-            return NavStatus::NAV_ERROR;
+            std::ifstream ifs{ configFile };
+            if (ifs)
+                bpo::store(bpo::parse_config_file(ifs, program_options), vm);
+            else
+            {
+                LOG_CRITICAL("Could not open the config file: {}", configFile);
+                return NavStatus::NAV_ERROR;
+            }
         }
     }
     bpo::notify(vm);
@@ -83,6 +86,10 @@ NAV::NavStatus NAV::Config::DecodeOptions()
 
     try
     {
+        if (vm.count("config"))
+            for (std::string configFile : vm["config"].as<std::vector<std::string>>())
+                LOG_DEBUG("Read Option file '{}'", configFile);
+
         if (vm.count("sigterm"))
         {
             sigterm = vm["sigterm"].as<bool>();

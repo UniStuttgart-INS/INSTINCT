@@ -7,8 +7,9 @@
             "request": "launch",
             "program": "${workspaceFolder}/bin/Debug/navsos",
             "preLaunchTask": "DEBUG: Build project",
-            "args": [
-                "--config=config.ini"
+            "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
+                "-fconfig.ini",
+                "config-dataflow.ini" // This expands to: navsos -fconfig.ini config-dataflow.ini
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
