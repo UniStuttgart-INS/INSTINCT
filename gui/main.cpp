@@ -24,16 +24,10 @@ static std::shared_ptr<DataModelRegistry>
 {
     auto ret = std::make_shared<DataModelRegistry>();
 
-    ret->registerModel<NaiveDataModel>();
-
-    /*
-     We could have more models registered.
-     All of them become items in the context meny of the scene.
-
-     ret->registerModel<AnotherDataModel>();
-     ret->registerModel<OneMoreDataModel>();
-
-   */
+    ret->registerModel<VectorNavSensor>("DataProvider");
+    ret->registerModel<UbloxSensor>("DataProvider");
+    ret->registerModel<VectorNavDataLogger>("Logger");
+    ret->registerModel<UbloxDataLogger>("Logger");
 
     return ret;
 }
@@ -64,8 +58,12 @@ void exportConfig()
 
     for (auto connection : scene->connections())
     {
-        std::cout << connection.second->getNode(QtNodes::PortType::Out)->id().toString().toStdString() << " ==> "
-                  << connection.second->getNode(QtNodes::PortType::In)->id().toString().toStdString() << std::endl;
+        std::cout << "(" << connection.second->getPortIndex(QtNodes::PortType::Out) << ") "
+                  << connection.second->getNode(QtNodes::PortType::Out)->id().toString().toStdString()
+                  << " ==> "
+                  << "(" << connection.second->getPortIndex(QtNodes::PortType::In) << ") "
+                  << connection.second->getNode(QtNodes::PortType::In)->id().toString().toStdString()
+                  << std::endl;
     }
 }
 
