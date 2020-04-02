@@ -129,9 +129,11 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
             }
             else if (msgId == ub::protocol::uart::UbxRxmMessages::UBX_RXM_RAWX)
             {
-                double rcvTow = p.extractDouble();
-                uint16_t week = p.extractUint16();
-                LOG_DATA("DATA({}): UBX:  RXM-RAWX, Size {}, rcvTow {}, week {}", ubSensor->name, (obs->payloadLength + 8), rcvTow, week);
+                obs->gpsTimeOfWeek = p.extractDouble();
+                obs->gpsWeek = p.extractUint16();
+
+                LOG_DATA("DATA({}): UBX:  RXM-RAWX, Size {}, rcvTow {}, week {}", ubSensor->name,
+                         (obs->payloadLength + 8), obs->gpsTimeOfWeek.value(), obs->gpsWeek.value());
             }
             else
             {

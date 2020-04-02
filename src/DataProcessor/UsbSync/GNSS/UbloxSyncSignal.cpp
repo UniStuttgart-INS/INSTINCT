@@ -58,6 +58,8 @@ NAV::NavStatus NAV::UbloxSyncSignal::triggerSync(std::shared_ptr<void> observati
             LOG_WARN("{} could not clear pin on port {}", sync->name, sync->port);
             return NavStatus::NAV_ERROR;
         }
+
+        sync->invokeCallbacks(observation);
     }
     return NavStatus::NAV_OK;
 }

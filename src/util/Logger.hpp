@@ -8,8 +8,8 @@
 #pragma once
 
 /// Turn off irrelevant log levels during compilation
-#define DATA_LOGGING_ENABLED 1
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#define DATA_LOGGING_ENABLED 0
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #define SPDLOG_FMT_EXTERNAL 1
 
 #include "spdlog/spdlog.h"
