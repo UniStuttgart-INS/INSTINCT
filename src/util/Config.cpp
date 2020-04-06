@@ -7,7 +7,6 @@
 
 #include "Logger.hpp"
 
-#include "DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 #include <boost/tokenizer.hpp>
 
 namespace bpo = boost::program_options;
@@ -38,9 +37,8 @@ NAV::NavStatus NAV::Config::AddOptions(const int argc, const char* argv[])
         ("help,h", "Display this help message")
         ("sigterm", bpo::value<bool>()->default_value(false),"Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM")
         ("duration", bpo::value<size_t>()->default_value(10), "Program execution duration [sec]")
-        ("dataProvider", bpo::value<std::vector<std::string>>()->multitoken(), "Data Provider registration.\nFormat: Type, Name, [Options...]")
-        ("dataProcessor", bpo::value<std::vector<std::string>>()->multitoken(), "Data Processor registration.\nFormat: Type, Name, [Options...]")
-        ("dataLink", bpo::value<std::vector<std::string>>()->multitoken(), "Data Links.\nFormat: From(Name), To(Name)")
+        ("node", bpo::value<std::vector<std::string>>()->multitoken(), "Node registration.\nFormat: Type, Name, [Options...]")
+        ("link", bpo::value<std::vector<std::string>>()->multitoken(), "Node Link.\nFormat: From(Name), To(Name)")
     ;
     // clang-format on
 
@@ -101,14 +99,14 @@ NAV::NavStatus NAV::Config::DecodeOptions()
             LOG_DEBUG("Option-duration = '{}'", progExecTime);
         }
 
-        std::vector<std::string> names;
-        if (vm.count("dataProvider"))
+        if (vm.count("node"))
         {
-            for (std::string provider : vm["dataProvider"].as<std::vector<std::string>>())
+            std::vector<std::string> names;
+            for (std::string line : vm["node"].as<std::vector<std::string>>())
             {
-                DataProviderConfig config;
+                NodeConfig config;
 
-                std::stringstream lineStream(provider);
+                std::stringstream lineStream(line);
                 std::string cell;
                 // Split line at comma
                 while (std::getline(lineStream, cell, ','))
@@ -129,54 +127,28 @@ NAV::NavStatus NAV::Config::DecodeOptions()
                         config.options.push_back(cell);
                 }
 
-                config.provider = nullptr;
-                dataProviders.push_back(config);
+                config.node = nullptr;
+                nodes.push_back(config);
                 names.push_back(config.name);
 
-                LOG_DEBUG("Option-dataProvider = {}, {}, {}", config.type, config.name, fmt::join(config.options, ", "));
+                LOG_DEBUG("Option-node: {}, {}, {}", config.type, config.name, fmt::join(config.options, ", "));
+            }
+            // Check if duplicate names
+            auto it = std::unique(names.begin(), names.end());
+            if (it != names.end())
+            {
+                LOG_CRITICAL("Node names must be unique: '{}'", fmt::join(names, ", "));
+                return NavStatus::NAV_ERROR_DUPLICATE_NAMES;
             }
         }
-        if (vm.count("dataProcessor"))
+
+        if (vm.count("link"))
         {
-            for (std::string processor : vm["dataProcessor"].as<std::vector<std::string>>())
+            for (std::string line : vm["link"].as<std::vector<std::string>>())
             {
-                DataProcessorConfig config;
+                NodeLink config;
 
-                std::stringstream lineStream(processor);
-                std::string cell;
-                // Split line at comma
-                while (std::getline(lineStream, cell, ','))
-                {
-                    // Remove any trailing non text characters
-                    cell.erase(std::find_if(cell.begin(), cell.end(),
-                                            std::ptr_fun<int, int>(std::iscntrl)),
-                               cell.end());
-                    // Remove whitespaces
-                    cell.erase(cell.begin(), std::find_if(cell.begin(), cell.end(), [](int ch) { return !std::isspace(ch); }));
-                    cell.erase(std::find_if(cell.rbegin(), cell.rend(), [](int ch) { return !std::isspace(ch); }).base(), cell.end());
-
-                    if (config.type.empty())
-                        config.type = cell;
-                    else if (config.name.empty())
-                        config.name = cell;
-                    else
-                        config.options.push_back(cell);
-                }
-
-                config.processor = nullptr;
-                dataProcessors.push_back(config);
-                names.push_back(config.name);
-
-                LOG_DEBUG("Option-dataProcessor = {}, {}, {}", config.type, config.name, fmt::join(config.options, ", "));
-            }
-        }
-        if (vm.count("dataLink"))
-        {
-            for (std::string link : vm["dataLink"].as<std::vector<std::string>>())
-            {
-                DataLinkConfig config;
-
-                std::stringstream lineStream(link);
+                std::stringstream lineStream(line);
                 std::string cell;
                 // Split line at comma
                 while (std::getline(lineStream, cell, ','))
@@ -191,22 +163,16 @@ NAV::NavStatus NAV::Config::DecodeOptions()
 
                     if (config.source.empty())
                         config.source = cell;
+                    else if (config.type.empty())
+                        config.type = cell;
                     else if (config.target.empty())
                         config.target = cell;
                 }
 
-                dataLinks.push_back(config);
+                nodeLinks.push_back(config);
 
-                LOG_DEBUG("Option-dataLink = {} ==> {}", config.source, config.target);
+                LOG_DEBUG("Option-link: {} == {} ==> {}", config.source, config.type, config.target);
             }
-        }
-
-        // Check if duplicate names
-        auto it = std::unique(names.begin(), names.end());
-        if (it != names.end())
-        {
-            LOG_CRITICAL("Data Provider and Processor names must be unique: '{}'", fmt::join(names, ", "));
-            return NavStatus::NAV_ERROR_DUPLICATE_NAMES;
         }
 
         return NavStatus::NAV_OK;

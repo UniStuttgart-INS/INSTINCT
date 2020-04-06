@@ -30,6 +30,7 @@
         "**/C++/**": "cpp", // <-- stl libraries
         "**/tbb/**": "cpp", // <-- intel libraries
         "**/boost/**": "cpp", // <-- boost libraries
+        "*.tpp": "cpp", // <-- Template files
         "*.log.*": "log", // <-- log files
     },
     "logFileHighlighter.customPatterns": [

@@ -9,8 +9,7 @@
 
 #include "Common.hpp"
 #include "Version.hpp"
-#include "DataProvider/DataProvider.hpp"
-#include "DataProcessor/DataProcessor.hpp"
+#include "Nodes/Node.hpp"
 
 #include <vector>
 #include <memory>
@@ -24,32 +23,23 @@ namespace NAV
 class Config
 {
   public:
-    /// Stores info to construct a data provider
-    typedef struct DataProviderConfig
+    /// Stores info to construct a node
+    typedef struct NodeConfig
     {
         std::string type;
         std::string name;
         std::vector<std::string> options;
 
-        std::shared_ptr<DataProvider> provider;
-    } DataProviderConfig;
-
-    /// Stores info to construct a data processor
-    typedef struct DataProcessorConfig
-    {
-        std::string type;
-        std::string name;
-        std::vector<std::string> options;
-
-        std::shared_ptr<DataProcessor> processor;
-    } DataProcessorConfig;
+        std::shared_ptr<Node> node;
+    } NodeConfig;
 
     /// Stores info to set up a data link
-    typedef struct DataLinkConfig
+    typedef struct NodeLink
     {
         std::string source;
         std::string target;
-    } DataLinkConfig;
+        std::string type;
+    } NodeLink;
 
     /// Construct a new Config object
     Config();
@@ -84,14 +74,11 @@ class Config
     /// Program execution duration (disabled if Config::sigterm is true)
     size_t GetProgExecTime();
 
-    /// Data Providers
-    std::vector<DataProviderConfig> dataProviders;
+    /// Nodes
+    std::vector<NodeConfig> nodes;
 
-    /// Data Processors
-    std::vector<DataProcessorConfig> dataProcessors;
-
-    /// Data Links
-    std::vector<DataLinkConfig> dataLinks;
+    /// Node links
+    std::vector<NodeLink> nodeLinks;
 
   private:
     /// Program option description
