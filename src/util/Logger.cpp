@@ -5,6 +5,12 @@
 
 #include <iostream>
 
+void exitFailure()
+{
+    NAV::Logger::writeFooter();
+    exit(EXIT_FAILURE);
+}
+
 NAV::NavStatus NAV::Logger::initialize(const std::string logpath)
 {
     try

@@ -12,6 +12,7 @@
 #include <functional>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 namespace NAV
 {
@@ -25,36 +26,48 @@ class DataCallback
     /**
      * @brief Adds the supplied callback at the end of the callback list
      * 
+     * @param[in] port Port of the data callbacks
      * @param[in] callback Function pointer which should be called
      * @param[in] userData Pointer to user data that are needed when executing the callback
      * @retval NavStatus Indicates if adding the callback was successfull
      */
-    NavStatus addCallback(std::function<NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback, std::shared_ptr<void> userData);
+    NavStatus addCallback(size_t port, std::function<NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback, std::shared_ptr<void> userData);
 
     /**
      * @brief Adds the supplied callback at the end of the callback list
      * 
+     * @param[in] port Port of the data callbacks
      * @param[in] callback Function pointer which should be called
      * @param[in] userData Pointer to user data that are needed when executing the callback
      * @param[in] index Index where to insert the callback
      * @retval NavStatus Indicates if inserting the callback was successfull
      */
-    NavStatus addCallback(std::function<NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback, std::shared_ptr<void> userData, size_t index);
+    NavStatus addCallback(size_t port, std::function<NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback, std::shared_ptr<void> userData, size_t index);
 
     /**
      * @brief Removes the last callback from the list
      * 
+     * @param[in] port Port of the data callbacks
      * @retval NavStatus Indicates if the removal was successfull
      */
-    NavStatus removeCallback();
+    NavStatus removeCallback(size_t port);
 
     /**
      * @brief Removes the callback at the specified position from the list
      * 
+     * @param[in] port Port of the data callbacks
      * @param[in] index Index where to remove the callback
      * @retval NavStatus Indicates if the removal was successfull
      */
-    NavStatus removeCallback(size_t index);
+    NavStatus removeCallback(size_t port, size_t index);
+
+    /**
+     * @brief Removes all callbacks from the list for the specified port
+     * 
+     * @param[in] port Port of the data callbacks
+     * @retval NavStatus Indicates if the removal was successfull
+     */
+    NavStatus removeAllCallbacks(size_t port);
 
     /**
      * @brief Removes all callbacks from the list
@@ -67,10 +80,11 @@ class DataCallback
      * @brief Calls all registered callbacks
      * 
      * @attention Needs to be called by all synchronous and asynchronous message receivers
+     * @param[in] port Port of the data callbacks
      * @param[in] data The received data
      * @retval NavStatus Indicates if there was a problem with one of the callbacks
      */
-    NavStatus invokeCallbacks(std::shared_ptr<void> data);
+    NavStatus invokeCallbacks(size_t port, std::shared_ptr<void> data);
 
   protected:
     /// Construct a new Data Callback object
@@ -80,19 +94,19 @@ class DataCallback
     ~DataCallback();
 
   private:
-    class Callback
+    /// Data Structure for Callbacks
+    struct Callback
     {
-      public:
         std::function<NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback = nullptr;
         std::shared_ptr<void> data = nullptr;
     };
 
     /**
-     * @brief Callback list which is called if a message is ready to be sent
+     * @brief Callback lists for each port which are called if a message is ready to be sent
      * @note std::vector is used here, as it has the faster iteration performance.
      *       Inserting and removing is only done once at the start of the program.
      */
-    std::vector<Callback> _callbacks;
+    std::unordered_map<size_t, std::vector<Callback>> _callbacks;
 };
 
 } // namespace NAV

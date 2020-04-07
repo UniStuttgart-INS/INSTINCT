@@ -27,12 +27,6 @@
 
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp" // TODO: Remove when not needed anymore
 
-void exitFailure()
-{
-    NAV::Logger::writeFooter();
-    exit(EXIT_FAILURE);
-}
-
 int main(int argc, const char** argv)
 {
     if (NAV::Logger::initialize("logs/navsos.log") != NAV::NavStatus::NAV_OK)
@@ -44,21 +38,21 @@ int main(int argc, const char** argv)
         result == NAV::NavStatus::NAV_REQUEST_EXIT)
         return EXIT_SUCCESS;
     else if (result != NAV::NavStatus::NAV_OK)
-        return EXIT_FAILURE;
+        LOG_CRITICAL("Critical problem during adding of program options");
 
     // Write the Log Header
     NAV::Logger::writeHeader();
     // Decode Options
     if (pConfig->DecodeOptions() != NAV::NavStatus::NAV_OK)
-        exitFailure();
+        LOG_CRITICAL("Critical problem during decoding of program options");
 
     // Create Nodes
     if (NAV::NodeCreator::createNodes(pConfig) != NAV::NavStatus::NAV_OK)
-        exitFailure();
+        LOG_CRITICAL("Critical problem during node creation");
 
     // Set up Node Links
     if (NAV::NodeCreator::createLinks(pConfig) != NAV::NavStatus::NAV_OK)
-        exitFailure();
+        LOG_CRITICAL("Critical problem during node link creation");
 
     // Play all the data files
     for (auto& node : pConfig->nodes)

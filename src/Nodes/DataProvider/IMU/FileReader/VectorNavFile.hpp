@@ -26,10 +26,9 @@ class VectorNavFile : public Imu, public FileReader
      * @brief Construct a new Vector Nav File object
      * 
      * @param[in] name Name of the Sensor which wrote the file
-     * @param[in] path Path to the file to read
-     * @param[in] sensorConfig Config Structure for the VectorNavFile
+     * @param[in] options Program options string list
      */
-    VectorNavFile(std::string name, std::string path, const VectorNavFile::Config sensorConfig);
+    VectorNavFile(std::string name, std::vector<std::string> options);
 
     /// Default destructor
     virtual ~VectorNavFile();
@@ -77,7 +76,7 @@ class VectorNavFile : public Imu, public FileReader
     std::vector<std::string> columns;
 
     /// Config Object
-    const VectorNavFile::Config config;
+    VectorNavFile::Config config;
 };
 
 } // namespace NAV

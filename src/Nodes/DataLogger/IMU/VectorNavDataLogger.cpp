@@ -5,11 +5,29 @@
 
 #include <iomanip> // std::setprecision
 
-NAV::VectorNavDataLogger::VectorNavDataLogger(std::string name, std::string path, bool isBinary)
-    : DataLogger(name, path, isBinary) {}
+NAV::VectorNavDataLogger::VectorNavDataLogger(std::string name, std::vector<std::string> options)
+    : DataLogger(name)
+{
+    LOG_TRACE("called for {}", name);
+
+    isBinary = false;
+    if (options.size() >= 1)
+        path = options.at(0);
+    if (options.size() >= 2)
+    {
+        if (options.at(1) == "ascii")
+            isBinary = false;
+        else if (options.at(1) == "binary")
+            isBinary = true;
+        else
+            LOG_WARN("Node {} has unknown file type {}. Using ascii instead", name, options.at(1));
+    }
+}
 
 NAV::VectorNavDataLogger::~VectorNavDataLogger()
 {
+    LOG_TRACE("called for {}", name);
+
     deinitialize();
 }
 

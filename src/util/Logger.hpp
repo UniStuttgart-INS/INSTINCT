@@ -25,12 +25,20 @@
     #define LOG_DATA(...) (void)0
 #endif
 
+void exitFailure();
+
+/// Detailled info to trace the execution of the program
 #define LOG_TRACE SPDLOG_TRACE
+/// Debug information
 #define LOG_DEBUG SPDLOG_DEBUG
+/// Info to the user on the state of the program
 #define LOG_INFO SPDLOG_INFO
+/// Error occurred, but a fallback option exists and program continues to work normally
 #define LOG_WARN SPDLOG_WARN
+/// Error occurred, which stops part of the program to work, but not everything
 #define LOG_ERROR SPDLOG_ERROR
-#define LOG_CRITICAL SPDLOG_CRITICAL
+/// Critical Event occurred, write Footer and Exit program
+#define LOG_CRITICAL(...) SPDLOG_CRITICAL(__VA_ARGS__), exitFailure()
 
 namespace NAV
 {
@@ -38,6 +46,7 @@ namespace NAV
  * @brief Static utility class for logging
  * 
  * Use the Macros to do logging, as they can be turned off during compilation
+ * - LOG_DATA("Message {} {}", variable1, variable 2);
  * - LOG_TRACE("Message {} {}", variable1, variable 2);
  * - LOG_DEBUG("Message {} {}", variable1, variable 2);
  * - LOG_INFO("Message {} {}", variable1, variable 2);

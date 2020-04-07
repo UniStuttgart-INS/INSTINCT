@@ -5,6 +5,9 @@
 NAV::DataLogger::DataLogger(std::string name, std::string path, bool isBinary)
     : Node(name), path(path), isBinary(isBinary) {}
 
+NAV::DataLogger::DataLogger(std::string name)
+    : Node(name) {}
+
 NAV::DataLogger::~DataLogger()
 {
     deinitialize();

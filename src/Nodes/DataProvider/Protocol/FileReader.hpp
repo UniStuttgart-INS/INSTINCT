@@ -32,6 +32,9 @@ class FileReader
      */
     FileReader(std::string path);
 
+    /// Default constructor
+    FileReader();
+
     /// Default destructor
     ~FileReader();
 

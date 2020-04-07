@@ -1,20 +1,35 @@
 #include "VectorNavSensor.hpp"
 
+#include "NodeCreator.hpp"
+
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
 
 #include <string>
 #include <vector>
 
-NAV::VectorNavSensor::VectorNavSensor(std::string name, const VectorNavSensor::Config sensorConfig)
-    : Imu(name), UartSensor(sensorConfig.sensorPort, sensorConfig.sensorBaudrate), config(sensorConfig)
+NAV::VectorNavSensor::VectorNavSensor(std::string name, std::vector<std::string> options)
+    : Imu(name)
 {
     LOG_TRACE("called for {}", name);
+
+    if (options.size() >= 1)
+        config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at(0)));
+    if (options.size() >= 2)
+        sensorPort = options.at(1);
+    if (options.size() >= 3)
+    {
+        if (options.at(2) == "Fastest")
+            sensorBaudrate = UartSensor::Baudrate::BAUDRATE_FASTEST;
+        else
+            sensorBaudrate = static_cast<UartSensor::Baudrate>(std::stoul(options.at(2)));
+    }
 }
 
 NAV::VectorNavSensor::~VectorNavSensor()
 {
     LOG_TRACE("called for {}", name);
+
     deinitialize();
 }
 
@@ -30,7 +45,7 @@ NAV::NavStatus NAV::VectorNavSensor::initialize()
     ASSERT(config.outputFrequency <= IMU_DEFAULT_FREQUENCY, "Configured Output Frequency has to be less than IMU_DEFAULT_FREQUENCY");
 
     // connect to the sensor
-    if (config.sensorBaudrate == BAUDRATE_FASTEST)
+    if (sensorBaudrate == BAUDRATE_FASTEST)
         sensorBaudrate = static_cast<Baudrate>(vs.supportedBaudrates()[vs.supportedBaudrates().size() - 1]);
 
     Baudrate connectedBaudrate;
@@ -199,7 +214,7 @@ std::shared_ptr<NAV::InsObs> NAV::VectorNavSensor::pollObservation()
              obs->vpeStatus.value(), obs->temperature.value());
 
     // Calls all the callbacks
-    invokeCallbacks(obs);
+    invokeCallbacks(NodeCreator::getCallbackPort("VectorNavSensor", "VectorNavObs"), obs);
 
     return obs;
 }
@@ -271,7 +286,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                      obs->vpeStatus.value(), obs->temperature.value());
 
             // Calls all the callbacks
-            vnSensor->invokeCallbacks(obs);
+            vnSensor->invokeCallbacks(NodeCreator::getCallbackPort("VectorNavSensor", "VectorNavObs"), obs);
         }
         else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)
         {

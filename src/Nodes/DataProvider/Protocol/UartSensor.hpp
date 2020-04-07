@@ -44,6 +44,9 @@ class UartSensor
      */
     UartSensor(const std::string sensorPort, const Baudrate sensorBaudrate);
 
+    /// Default constructor
+    UartSensor();
+
     /// Destroy the Uart Sensor object
     ~UartSensor();
 

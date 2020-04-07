@@ -1,14 +1,24 @@
 #include "VectorNavFile.hpp"
 
+#include "NodeCreator.hpp"
+
 #include "NodeData/IMU/VectorNavObs.hpp"
 #include "util/Logger.hpp"
 #include <ios>
 
-NAV::VectorNavFile::VectorNavFile(std::string name, std::string path, const VectorNavFile::Config sensorConfig)
-    : Imu(name), FileReader(path), config(sensorConfig) {}
+NAV::VectorNavFile::VectorNavFile(std::string name, std::vector<std::string> options)
+    : Imu(name)
+{
+    LOG_TRACE("called for {}", name);
+
+    if (options.size() >= 1)
+        path = options.at(0);
+}
 
 NAV::VectorNavFile::~VectorNavFile()
 {
+    LOG_TRACE("called for {}", name);
+
     deinitialize();
 }
 
@@ -476,7 +486,7 @@ std::shared_ptr<NAV::InsObs> NAV::VectorNavFile::pollObservation()
                  obs->vpeStatus.value(), obs->temperature.value());
 
         // Calls all the callbacks
-        invokeCallbacks(obs);
+        invokeCallbacks(NodeCreator::getCallbackPort("VectorNavFile", "VectorNavObs"), obs);
 
         return obs;
     }

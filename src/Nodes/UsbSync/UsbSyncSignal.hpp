@@ -27,6 +27,13 @@ class UsbSyncSignal : public Node
      */
     UsbSyncSignal(std::string name, std::string port);
 
+    /**
+     * @brief Construct a new Usb Sync Signal object
+     * 
+     * @param[in] name Name of the Object
+     */
+    UsbSyncSignal(std::string name);
+
     /// Default destructor
     ~UsbSyncSignal();
 
@@ -49,7 +56,7 @@ class UsbSyncSignal : public Node
     int fd;
 
     /// COM port where to send the sync to
-    const std::string port;
+    std::string port;
 
     /// Flag for the USB Pin to trigger
     int pinFlag = TIOCM_RTS;

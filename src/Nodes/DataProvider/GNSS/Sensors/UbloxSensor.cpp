@@ -1,11 +1,26 @@
 #include "UbloxSensor.hpp"
+
+#include "NodeCreator.hpp"
+
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "util/Logger.hpp"
 
-NAV::UbloxSensor::UbloxSensor(std::string name, const UbloxSensor::Config sensorConfig)
-    : Gnss(name), UartSensor(sensorConfig.sensorPort, sensorConfig.sensorBaudrate), config(sensorConfig)
+NAV::UbloxSensor::UbloxSensor(std::string name, std::vector<std::string> options)
+    : Gnss(name)
 {
     LOG_TRACE("called for {}", name);
+
+    if (options.size() >= 1)
+        config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at(0)));
+    if (options.size() >= 2)
+        sensorPort = options.at(1);
+    if (options.size() >= 3)
+    {
+        if (options.at(2) == "Fastest")
+            sensorBaudrate = UartSensor::Baudrate::BAUDRATE_FASTEST;
+        else
+            sensorBaudrate = static_cast<UartSensor::Baudrate>(std::stoul(options.at(2)));
+    }
 }
 
 NAV::UbloxSensor::~UbloxSensor()
@@ -26,6 +41,9 @@ NAV::NavStatus NAV::UbloxSensor::initialize()
     // connect to the sensor
     try
     {
+        // TODO: Update the library to handle different baudrates
+        sensorBaudrate = Baudrate::BAUDRATE_9600;
+
         ub.connect(sensorPort, sensorBaudrate);
 
         LOG_DEBUG("{} connected on port {} with baudrate {}", name, sensorPort, sensorBaudrate);
@@ -78,7 +96,7 @@ std::shared_ptr<NAV::InsObs> NAV::UbloxSensor::pollObservation()
              name, obs->msgClass, obs->msgId, obs->payloadLength);
 
     // Calls all the callbacks
-    invokeCallbacks(obs);
+    invokeCallbacks(NodeCreator::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
 
     return obs;
 }
@@ -157,7 +175,7 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
             LOG_DATA("DATA({}): UBX:  {:x}-{:x}, Size {}", ubSensor->name, obs->msgClass, obs->msgId, (obs->payloadLength + 8));
         }
 
-        ubSensor->invokeCallbacks(obs);
+        ubSensor->invokeCallbacks(NodeCreator::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
     }
     else if (p.type() == ub::protocol::uart::Packet::TYPE_ASCII)
     {
@@ -166,6 +184,6 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
         auto obs = std::make_shared<UbloxObs>();
         obs->p = &p;
 
-        ubSensor->invokeCallbacks(obs);
+        ubSensor->invokeCallbacks(NodeCreator::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
     }
 }

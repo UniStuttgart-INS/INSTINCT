@@ -8,6 +8,9 @@
 NAV::UsbSyncSignal::UsbSyncSignal(std::string name, std::string port)
     : Node(name), port(port) {}
 
+NAV::UsbSyncSignal::UsbSyncSignal(std::string name)
+    : Node(name) {}
+
 NAV::UsbSyncSignal::~UsbSyncSignal()
 {
     deinitialize();

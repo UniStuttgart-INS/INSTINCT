@@ -28,6 +28,13 @@ class DataLogger : public Node
      */
     DataLogger(std::string name, std::string path, bool isBinary);
 
+    /**
+     * @brief Construct a new Data Logger object
+     * 
+     * @param[in] name Name of the Logger
+     */
+    DataLogger(std::string name);
+
     /// Default destructor
     ~DataLogger();
 
@@ -46,10 +53,10 @@ class DataLogger : public Node
     NavStatus deinitialize() override;
 
     /// Path to the log file
-    const std::string path;
+    std::string path;
 
     /// Flag if the logfile is a binary file
-    const bool isBinary;
+    bool isBinary;
 
     /// File stream to write the file
     std::ofstream filestream;

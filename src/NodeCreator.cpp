@@ -2,10 +2,6 @@
 
 #include "util/Logger.hpp"
 
-#include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
-#include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
-#include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
-
 #include "ub/protocol/types.hpp"
 
 /// Comparision operator between Input Port Type and Output Node Data Type
@@ -19,116 +15,49 @@ bool operator==(const std::string& lhs, const NAV::InputPort& rhs)
     return (lhs == rhs.type);
 }
 
+size_t NAV::NodeCreator::getCallbackPort(std::string interfaceType, std::string messageType, bool inPort)
+{
+    if (inPort)
+    {
+        auto& port = nodeInterfaces.find(interfaceType)->second.in;
+        for (size_t i = 0; i < port.size(); i++)
+            if (port.at(i).type == messageType)
+                return i;
+    }
+    else
+    {
+        auto& port = nodeInterfaces.find(interfaceType)->second.out;
+        for (size_t i = 0; i < port.size(); i++)
+            if (port.at(i) == messageType)
+                return i;
+    }
+    return 1000;
+}
+
+bool NAV::NodeCreator::isTypeOrBase(std::string targetType, std::string messageType)
+{
+    if (targetType == messageType)
+        return true;
+
+    if (inheritance.count(messageType))
+    {
+        auto& parents = inheritance.find(messageType)->second;
+        for (size_t i = 0; i < parents.size(); i++)
+        {
+            if (isTypeOrBase(targetType, parents.at(i)))
+                return true;
+        }
+    }
+    return false;
+}
+
 NAV::NavStatus NAV::NodeCreator::createNodes(NAV::Config* pConfig)
 {
     LOG_INFO("Creating {} Node{}", pConfig->nodes.size(), pConfig->nodes.size() > 1 ? "s" : "");
     for (auto& node : pConfig->nodes)
     {
-        // Handle the program options to create a node here
-        if (node.type == "VectorNavSensor")
-        {
-            NAV::VectorNavSensor::Config config;
-
-            if (node.options.size() >= 1)
-                config.outputFrequency = static_cast<uint16_t>(std::stoul(node.options.at(0)));
-            if (node.options.size() >= 2)
-                config.sensorPort = node.options.at(1);
-            if (node.options.size() >= 3)
-                config.sensorBaudrate = static_cast<NAV::UartSensor::Baudrate>(std::stoul(node.options.at(2)));
-
-            node.node = std::make_shared<NAV::VectorNavSensor>(node.name, config);
-        }
-        else if (node.type == "VectorNavFile")
-        {
-            NAV::VectorNavFile::Config config;
-            std::string path;
-
-            if (node.options.size() >= 1)
-                path = node.options.at(0);
-
-            node.node = std::make_shared<NAV::VectorNavFile>(node.name, path, config);
-        }
-        else if (node.type == "UbloxSensor")
-        {
-            NAV::UbloxSensor::Config config;
-
-            if (node.options.size() >= 1)
-                config.outputFrequency = static_cast<uint16_t>(std::stoul(node.options.at(0)));
-            if (node.options.size() >= 2)
-                config.sensorPort = node.options.at(1);
-            if (node.options.size() >= 3)
-                config.sensorBaudrate = static_cast<NAV::UartSensor::Baudrate>(std::stoul(node.options.at(2)));
-
-            node.node = std::make_shared<NAV::UbloxSensor>(node.name, config);
-        }
-        else if (node.type == "VectorNavDataLogger")
-        {
-            std::string path;
-            bool isBinary = false;
-
-            if (node.options.size() >= 1)
-                path = node.options.at(0);
-            if (node.options.size() >= 2)
-            {
-                if (node.options.at(1) == "ascii")
-                    isBinary = false;
-                else if (node.options.at(1) == "binary")
-                    isBinary = true;
-                else
-                    LOG_WARN("Node {} - {} has unknown file type {}. Using ascii instead", node.type, node.name, node.options.at(1));
-            }
-
-            node.node = std::make_shared<NAV::VectorNavDataLogger>(node.name, path, isBinary);
-        }
-        else if (node.type == "UbloxDataLogger")
-        {
-            std::string path;
-            bool isBinary = true;
-
-            if (node.options.size() >= 1)
-                path = node.options.at(0);
-            if (node.options.size() >= 2)
-            {
-                if (node.options.at(1) == "ascii")
-                    isBinary = false;
-                else if (node.options.at(1) == "binary")
-                    isBinary = true;
-                else
-                    LOG_WARN("Node {} - {} has unknown file type {}. Using binary instead", node.type, node.name, node.options.at(1));
-            }
-
-            node.node = std::make_shared<NAV::UbloxDataLogger>(node.name, path, isBinary);
-        }
-        else if (node.type == "UbloxSyncSignal")
-        {
-            //SensorPort           type msgClass msgId
-            std::string port;
-            ub::protocol::uart::UbxClass ubxClass;
-            uint8_t ubxMsgId;
-
-            if (node.options.size() >= 1)
-                port = node.options.at(0);
-            if (node.options.size() >= 4)
-            {
-                if (node.options.at(1) == "UBX")
-                {
-                    ubxClass = ub::protocol::uart::getMsgClassFromString(node.options.at(2));
-                    ubxMsgId = ub::protocol::uart::getMsgIdFromString(ubxClass, node.options.at(3));
-
-                    node.node = std::make_shared<NAV::UbloxSyncSignal>(node.name, port, ubxClass, ubxMsgId);
-                }
-                else
-                {
-                    LOG_CRITICAL("Node {} - {} has unknown type {}", node.type, node.name, node.options.at(1));
-                    return NavStatus::NAV_ERROR;
-                }
-            }
-            else
-            {
-                LOG_CRITICAL("Node {} - {} has not enough options", node.type, node.name);
-                return NavStatus::NAV_ERROR;
-            }
-        }
+        if (nodeInterfaces.count(node.type))
+            node.node = nodeInterfaces.find(node.type)->second.constructor(node.name, node.options);
         else
         {
             LOG_CRITICAL("Node {} - {} has unknown type", node.type, node.name);
@@ -171,34 +100,28 @@ NAV::NavStatus NAV::NodeCreator::createLinks(NAV::Config* pConfig)
         }
 
         // Search matching interfaces
-        const NAV::NodeInterface *sourceInterface = nullptr, *targetInterface = nullptr;
-        for (size_t i = 0; i < nodeInterfaces.size(); i++)
+        if (!nodeInterfaces.count(sourceNode->type) || !nodeInterfaces.count(targetNode->type))
         {
-            if (sourceNode->type == nodeInterfaces[i].type)
-                sourceInterface = &nodeInterfaces[i];
-            else if (targetNode->type == nodeInterfaces[i].type)
-                targetInterface = &nodeInterfaces[i];
-        }
-        if (!sourceInterface || !targetInterface)
-        {
-            LOG_CRITICAL("Data Link {} ⇒ {} could not be created because link generation for types {} ═({})⇒ {} is not supported by any node interface.",
-                         nodeLink.source, nodeLink.target, sourceNode->type, nodeLink.type, targetNode->type);
+            LOG_CRITICAL("Data Link {} ⇒ {} could not be created because type {} is not supported by any node interface.",
+                         nodeLink.source, nodeLink.target, !nodeInterfaces.count(sourceNode->type) ? sourceNode->type : targetNode->type);
             return NavStatus::NAV_ERROR;
         }
+        auto& sourceInterface = nodeInterfaces.find(sourceNode->type)->second;
+        auto& targetInterface = nodeInterfaces.find(targetNode->type)->second;
 
         bool linkEstablished = false;
-        for (size_t i = 0; i < sourceInterface->out.size(); i++)
+        for (size_t i = 0; i < sourceInterface.out.size(); i++)
         {
             // Check if source interface provides message type
-            if (sourceInterface->out[i] == nodeLink.type)
+            if (sourceInterface.out[i] == nodeLink.type)
             {
-                for (size_t j = 0; j < targetInterface->in.size(); j++)
+                for (size_t j = 0; j < targetInterface.in.size(); j++)
                 {
-                    // Check if target interface provides message type
-                    if (targetInterface->in[j].type == nodeLink.type)
+                    // Check if target interface provides message type or any of its base classes
+                    if (isTypeOrBase(targetInterface.in[j].type, nodeLink.type))
                     {
                         // Set up callback
-                        sourceNode->node->addCallback(targetInterface->in[j].callback, targetNode->node);
+                        sourceNode->node->addCallback(i, targetInterface.in[j].callback, targetNode->node);
                         sourceNode->node->callbacksEnabled = true;
                         linkEstablished = true;
                         break;

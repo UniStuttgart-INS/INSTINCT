@@ -22,21 +22,15 @@ class UbloxSensor : public Gnss, public UartSensor
     {
         /// OutputFrequency of async packages
         uint16_t outputFrequency = 1;
-
-        /// COM port where the sensor is attached to
-        std::string sensorPort;
-
-        /// Baudrate for the sensor (factory default is 9600)
-        Baudrate sensorBaudrate = BAUDRATE_9600;
     } Config;
 
     /**
      * @brief Construct a new ublox Sensor object
      * 
      * @param[in] name Name of the Sensor
-     * @param[in] sensorConfig Config Structure for the sensor
+     * @param[in] options Program options string list
      */
-    UbloxSensor(std::string name, const UbloxSensor::Config sensorConfig);
+    UbloxSensor(std::string name, std::vector<std::string> options);
 
     /// Default Destructor
     virtual ~UbloxSensor();
@@ -76,7 +70,7 @@ class UbloxSensor : public Gnss, public UartSensor
     ub::sensors::UbSensor ub;
 
     /// Config Object
-    const UbloxSensor::Config config;
+    UbloxSensor::Config config;
 };
 
 } // namespace NAV

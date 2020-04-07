@@ -3,4 +3,6 @@
 NAV::FileReader::FileReader(std::string path)
     : path(path) {}
 
+NAV::FileReader::FileReader() {}
+
 NAV::FileReader::~FileReader() {}

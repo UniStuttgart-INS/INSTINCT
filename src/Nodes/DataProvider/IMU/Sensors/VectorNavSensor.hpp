@@ -13,6 +13,9 @@
 #include "../../Protocol/UartSensor.hpp"
 #include "vn/sensors.h"
 
+#include <vector>
+#include <string>
+
 namespace NAV
 {
 /// Vector Nav Sensor Class
@@ -24,12 +27,6 @@ class VectorNavSensor : public Imu, public UartSensor
     {
         /// OutputFrequency to calculate rateDivisor field.
         uint16_t outputFrequency = 1;
-
-        /// COM port where the sensor is attached to. If Sensor is not found under this port, others will be searched
-        std::string sensorPort;
-
-        /// Baudrate for the sensor (factory default is 115200)
-        Baudrate sensorBaudrate = BAUDRATE_FASTEST;
 
         /// The asyncMode field
         vn::protocol::uart::AsyncMode asyncMode = vn::protocol::uart::AsyncMode::ASYNCMODE_PORT1;
@@ -64,9 +61,9 @@ class VectorNavSensor : public Imu, public UartSensor
      * @brief Construct a new Vector Nav Sensor object
      * 
      * @param[in] name Name of the Sensor
-     * @param[in] sensorConfig Config Structure for the VectorNavSensor
+     * @param[in] options Program options string list
      */
-    VectorNavSensor(std::string name, const VectorNavSensor::Config sensorConfig);
+    VectorNavSensor(std::string name, std::vector<std::string> options);
 
     /// Default Destructor
     virtual ~VectorNavSensor();
@@ -106,7 +103,7 @@ class VectorNavSensor : public Imu, public UartSensor
     vn::sensors::VnSensor vs;
 
     /// Config Object
-    const VectorNavSensor::Config config;
+    VectorNavSensor::Config config;
 
     /// Internal Frequency of the Sensor
     const double IMU_DEFAULT_FREQUENCY = 800;

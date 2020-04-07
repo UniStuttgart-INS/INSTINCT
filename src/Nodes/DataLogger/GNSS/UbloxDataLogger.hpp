@@ -19,10 +19,9 @@ class UbloxDataLogger : public DataLogger
      * @brief Construct a new Data Logger object
      * 
      * @param[in] name Name of the Logger
-     * @param[in] path Path to the log file
-     * @param[in] isBinary Flag if the logfile is a binary file
+     * @param[in] options Program options string list
      */
-    UbloxDataLogger(std::string name, std::string path, bool isBinary);
+    UbloxDataLogger(std::string name, std::vector<std::string> options);
 
     /// Default destructor
     virtual ~UbloxDataLogger();

@@ -19,11 +19,9 @@ class UbloxSyncSignal : public UsbSyncSignal
      * @brief Construct a new Usb Sync Signal object
      * 
      * @param[in] name Name of the Object
-     * @param[in] port COM port where to send the sync to
-     * @param[in] triggerClass Ublox Message class to send the sync on
-     * @param[in] triggerId Ublox Message id to send the sync on
+     * @param[in] options Program options string list
      */
-    UbloxSyncSignal(std::string name, std::string port, ub::protocol::uart::UbxClass triggerClass, uint8_t triggerId);
+    UbloxSyncSignal(std::string name, std::vector<std::string> options);
 
     /// Default destructor
     virtual ~UbloxSyncSignal();

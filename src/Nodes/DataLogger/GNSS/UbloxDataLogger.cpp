@@ -5,11 +5,29 @@
 
 #include <iomanip> // std::setprecision
 
-NAV::UbloxDataLogger::UbloxDataLogger(std::string name, std::string path, bool isBinary)
-    : DataLogger(name, path, isBinary) {}
+NAV::UbloxDataLogger::UbloxDataLogger(std::string name, std::vector<std::string> options)
+    : DataLogger(name)
+{
+    LOG_TRACE("called for {}", name);
+
+    isBinary = true;
+    if (options.size() >= 1)
+        path = options.at(0);
+    if (options.size() >= 2)
+    {
+        if (options.at(1) == "ascii")
+            isBinary = false;
+        else if (options.at(1) == "binary")
+            isBinary = true;
+        else
+            LOG_WARN("Node {} has unknown file type {}. Using binary instead", name, options.at(1));
+    }
+}
 
 NAV::UbloxDataLogger::~UbloxDataLogger()
 {
+    LOG_TRACE("called for {}", name);
+
     deinitialize();
 }
 
