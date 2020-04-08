@@ -1,6 +1,6 @@
 #include "UbloxSyncSignal.hpp"
 
-#include "NodeCreator.hpp"
+#include "NodeInterface.hpp"
 
 #include "util/Logger.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
@@ -82,7 +82,7 @@ NAV::NavStatus NAV::UbloxSyncSignal::triggerSync(std::shared_ptr<void> observati
             return NavStatus::NAV_ERROR;
         }
 
-        sync->invokeCallbacks(NodeCreator::getCallbackPort("UbloxSyncSignal", "UbloxObs"), observation);
+        sync->invokeCallbacks(NodeInterface::getCallbackPort("UbloxSyncSignal", "UbloxObs"), observation);
     }
     return NavStatus::NAV_OK;
 }

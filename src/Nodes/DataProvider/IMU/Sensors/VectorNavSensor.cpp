@@ -1,6 +1,6 @@
 #include "VectorNavSensor.hpp"
 
-#include "NodeCreator.hpp"
+#include "NodeInterface.hpp"
 
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
@@ -214,7 +214,7 @@ std::shared_ptr<NAV::InsObs> NAV::VectorNavSensor::pollObservation()
              obs->vpeStatus.value(), obs->temperature.value());
 
     // Calls all the callbacks
-    invokeCallbacks(NodeCreator::getCallbackPort("VectorNavSensor", "VectorNavObs"), obs);
+    invokeCallbacks(NodeInterface::getCallbackPort("VectorNavSensor", "VectorNavObs"), obs);
 
     return obs;
 }
@@ -286,7 +286,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                      obs->vpeStatus.value(), obs->temperature.value());
 
             // Calls all the callbacks
-            vnSensor->invokeCallbacks(NodeCreator::getCallbackPort("VectorNavSensor", "VectorNavObs"), obs);
+            vnSensor->invokeCallbacks(NodeInterface::getCallbackPort("VectorNavSensor", "VectorNavObs"), obs);
         }
         else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)
         {

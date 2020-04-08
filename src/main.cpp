@@ -23,7 +23,7 @@
 #include "util/Sleep.hpp"
 #include "util/Config.hpp"
 
-#include "NodeCreator.hpp"
+#include "Nodes/NodeCreator.hpp"
 
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp" // TODO: Remove when not needed anymore
 

@@ -1,6 +1,6 @@
 #include "VectorNavFile.hpp"
 
-#include "NodeCreator.hpp"
+#include "NodeInterface.hpp"
 
 #include "NodeData/IMU/VectorNavObs.hpp"
 #include "util/Logger.hpp"
@@ -486,7 +486,7 @@ std::shared_ptr<NAV::InsObs> NAV::VectorNavFile::pollObservation()
                  obs->vpeStatus.value(), obs->temperature.value());
 
         // Calls all the callbacks
-        invokeCallbacks(NodeCreator::getCallbackPort("VectorNavFile", "VectorNavObs"), obs);
+        invokeCallbacks(NodeInterface::getCallbackPort("VectorNavFile", "VectorNavObs"), obs);
 
         return obs;
     }

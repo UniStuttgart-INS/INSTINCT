@@ -9,6 +9,7 @@
 #include <nodes/FlowView>
 #include <nodes/DataModelRegistry>
 #include <nodes/ConnectionStyle>
+#include <nodes/TypeConverter>
 
 #include "models.hpp"
 
@@ -18,16 +19,32 @@ using QtNodes::DataModelRegistry;
 using QtNodes::FlowScene;
 using QtNodes::FlowView;
 using QtNodes::ConnectionStyle;
+using QtNodes::TypeConverter;
+using QtNodes::TypeConverterId;
+
+class Converter
+{
+  public:
+    std::shared_ptr<NodeData>
+        operator()(std::shared_ptr<NodeData> /*data*/)
+    {
+        return nullptr;
+    }
+};
 
 static std::shared_ptr<DataModelRegistry>
     registerDataModels()
 {
     auto ret = std::make_shared<DataModelRegistry>();
 
-    ret->registerModel<VectorNavSensor>("DataProvider");
-    ret->registerModel<UbloxSensor>("DataProvider");
-    ret->registerModel<VectorNavDataLogger>("Logger");
-    ret->registerModel<UbloxDataLogger>("Logger");
+    ret->registerModelTemplate<NodeDataTemplate>("VectorNavSensor", "Category");
+    ret->registerModelTemplate<NodeDataTemplate>("UbloxSensor", "Category");
+    ret->registerModelTemplate<NodeDataTemplate>("VectorNavDataLogger", "Category");
+    ret->registerModelTemplate<NodeDataTemplate>("Integrator", "Category");
+
+    ret->registerTypeConverter(std::make_pair(NodeDataType{ "VectorNavObs", "VectorNavObs" },
+                                              NodeDataType{ "InsObs", "InsObs" }),
+                               TypeConverter{ Converter() });
 
     return ret;
 }
@@ -54,6 +71,10 @@ void exportConfig()
     {
         std::cout << node->nodeDataModel()->name().toStdString() << ": "
                   << node->id().toString().toStdString() << std::endl;
+        for (int i = 0; i < 5; i++)
+        {
+            std::cout << node->nodeDataModel()->embeddedWidget()->children().at(i)->objectName().toStdString() << std::endl;
+        }
     }
 
     for (auto connection : scene->connections())

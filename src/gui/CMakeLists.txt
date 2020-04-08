@@ -9,14 +9,11 @@ set (CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 
-# Include nodeeditor library
-add_subdirectory(lib/nodeeditor)
-
 add_executable("${PROJECT_NAME_LOWERCASE}-gui"
                     ${SRCFILES})
 
 target_include_directories("${PROJECT_NAME_LOWERCASE}-gui"
-                PRIVATE lib/nodeeditor/include)
+                PRIVATE ${CMAKE_SOURCE_DIR}/lib/nodeeditor/include)
 
 target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui"
                 PRIVATE project_options project_warnings

@@ -78,5 +78,8 @@ endif()
 add_subdirectory(src)
 
 if(ENABLE_GUI)
-    add_subdirectory(gui)
+    # Include nodeeditor library
+    add_subdirectory(lib/nodeeditor)
+
+    add_subdirectory(src/gui)
 endif()

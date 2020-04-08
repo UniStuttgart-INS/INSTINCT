@@ -59,5 +59,24 @@
             "foreground": "white",
             "background": "red"
         },
+    ],
+    "vsicons.associations.folders": [
+        {
+            "icon": "library",
+            "extensions": [
+                "lib",
+                ".lib",
+                "library",
+                "libraries"
+            ],
+            "format": "FileFormat.svg"
+        },
+        {
+            "icon": "blueprint",
+            "extensions": [
+                "gui"
+            ],
+            "format": "FileFormat.svg"
+        }
     ]
 }

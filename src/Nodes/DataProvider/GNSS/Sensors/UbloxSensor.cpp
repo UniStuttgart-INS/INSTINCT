@@ -1,6 +1,6 @@
 #include "UbloxSensor.hpp"
 
-#include "NodeCreator.hpp"
+#include "NodeInterface.hpp"
 
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "util/Logger.hpp"
@@ -96,7 +96,7 @@ std::shared_ptr<NAV::InsObs> NAV::UbloxSensor::pollObservation()
              name, obs->msgClass, obs->msgId, obs->payloadLength);
 
     // Calls all the callbacks
-    invokeCallbacks(NodeCreator::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
+    invokeCallbacks(NodeInterface::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
 
     return obs;
 }
@@ -175,7 +175,7 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
             LOG_DATA("DATA({}): UBX:  {:x}-{:x}, Size {}", ubSensor->name, obs->msgClass, obs->msgId, (obs->payloadLength + 8));
         }
 
-        ubSensor->invokeCallbacks(NodeCreator::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
+        ubSensor->invokeCallbacks(NodeInterface::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
     }
     else if (p.type() == ub::protocol::uart::Packet::TYPE_ASCII)
     {
@@ -184,6 +184,6 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
         auto obs = std::make_shared<UbloxObs>();
         obs->p = &p;
 
-        ubSensor->invokeCallbacks(NodeCreator::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
+        ubSensor->invokeCallbacks(NodeInterface::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
     }
 }
