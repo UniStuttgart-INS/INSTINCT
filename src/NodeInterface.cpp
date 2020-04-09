@@ -4,14 +4,14 @@ size_t NAV::NodeInterface::getCallbackPort(std::string interfaceType, std::strin
 {
     if (inPort)
     {
-        auto& port = nodeInterfaces.find(interfaceType)->second.in;
+        auto& port = nodeInterfaces.at(interfaceType).in;
         for (size_t i = 0; i < port.size(); i++)
             if (port.at(i).type == messageType)
                 return i;
     }
     else
     {
-        auto& port = nodeInterfaces.find(interfaceType)->second.out;
+        auto& port = nodeInterfaces.at(interfaceType).out;
         for (size_t i = 0; i < port.size(); i++)
             if (port.at(i) == messageType)
                 return i;
@@ -26,7 +26,7 @@ bool NAV::NodeInterface::isTypeOrBase(std::string targetType, std::string messag
 
     if (inheritance.count(messageType))
     {
-        auto& parents = inheritance.find(messageType)->second;
+        auto& parents = inheritance.at(messageType);
         for (size_t i = 0; i < parents.size(); i++)
         {
             if (isTypeOrBase(targetType, parents.at(i)))

@@ -1,0 +1,88 @@
+{
+    "connections": [
+        {
+            "in_id": "{eb478a15-5b01-4e22-b4d1-039fab62ef3a}",
+            "in_index": 0,
+            "out_id": "{409609a3-e9a8-4368-ab55-14b20a60ddc3}",
+            "out_index": 0
+        },
+        {
+            "in_id": "{a82ea3a7-04c4-4841-b0fa-ce08eab7093f}",
+            "in_index": 0,
+            "out_id": "{409609a3-e9a8-4368-ab55-14b20a60ddc3}",
+            "out_index": 0
+        },
+        {
+            "in_id": "{be3695f3-2681-4861-8312-c54fda4a2f89}",
+            "in_index": 0,
+            "out_id": "{6297645e-0d7f-46d7-9541-dd824223b678}",
+            "out_index": 0
+        }
+    ],
+    "nodes": [
+        {
+            "id": "{409609a3-e9a8-4368-ab55-14b20a60ddc3}",
+            "model": {
+                "Baudrate": "Fastest",
+                "Frequency": 4,
+                "Port": "/dev/ttyACM0",
+                "name": "UbloxSensor"
+            },
+            "position": {
+                "x": 26,
+                "y": 248
+            }
+        },
+        {
+            "id": "{eb478a15-5b01-4e22-b4d1-039fab62ef3a}",
+            "model": {
+                "Path": "logs/ublox-M8U.ubx",
+                "Type": "binary",
+                "name": "UbloxDataLogger"
+            },
+            "position": {
+                "x": 606,
+                "y": 143
+            }
+        },
+        {
+            "id": "{6297645e-0d7f-46d7-9541-dd824223b678}",
+            "model": {
+                "Baudrate": "Fastest",
+                "Frequency": 20,
+                "Port": "/dev/ttyUSB_VN100_1",
+                "name": "VectorNavSensor"
+            },
+            "position": {
+                "x": 3,
+                "y": 65
+            }
+        },
+        {
+            "id": "{a82ea3a7-04c4-4841-b0fa-ce08eab7093f}",
+            "model": {
+                "Class": "RXM",
+                "Msg Id": "RAWX",
+                "Port": "/dev/ttyUSB_VN100_1",
+                "Protocol": "UBX",
+                "name": "UbloxSyncSignal"
+            },
+            "position": {
+                "x": 605,
+                "y": 262
+            }
+        },
+        {
+            "id": "{be3695f3-2681-4861-8312-c54fda4a2f89}",
+            "model": {
+                "Path": "logs/vn100.csv",
+                "Type": "ascii",
+                "name": "VectorNavDataLogger"
+            },
+            "position": {
+                "x": 604,
+                "y": -13
+            }
+        }
+    ]
+}

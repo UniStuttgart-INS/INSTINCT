@@ -1,0 +1,6 @@
+# Ignore everything except this file (in order to push the folder)
+*
+!.gitignore
+
+!VectorNavFile.flow
+!VectorNavSensor-UbloxSensor.flow

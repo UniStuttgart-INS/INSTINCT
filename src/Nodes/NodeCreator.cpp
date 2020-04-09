@@ -11,7 +11,7 @@ NAV::NavStatus NAV::NodeCreator::createNodes(NAV::Config* pConfig)
     for (auto& node : pConfig->nodes)
     {
         if (nodeInterfaces.count(node.type))
-            node.node = nodeInterfaces.find(node.type)->second.constructor(node.name, node.options);
+            node.node = nodeInterfaces.at(node.type).constructor(node.name, node.options);
         else
         {
             LOG_CRITICAL("Node {} - {} has unknown type", node.type, node.name);
@@ -60,8 +60,8 @@ NAV::NavStatus NAV::NodeCreator::createLinks(NAV::Config* pConfig)
                          nodeLink.source, nodeLink.target, !nodeInterfaces.count(sourceNode->type) ? sourceNode->type : targetNode->type);
             return NavStatus::NAV_ERROR;
         }
-        auto& sourceInterface = nodeInterfaces.find(sourceNode->type)->second;
-        auto& targetInterface = nodeInterfaces.find(targetNode->type)->second;
+        auto& sourceInterface = nodeInterfaces.at(sourceNode->type);
+        auto& targetInterface = nodeInterfaces.at(targetNode->type);
 
         bool linkEstablished = false;
         for (size_t i = 0; i < sourceInterface.out.size(); i++)

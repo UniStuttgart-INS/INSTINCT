@@ -60,6 +60,8 @@ class NodeInterface
         CONFIG_LIST,   ///< List, use '|' to separate and [...] to specify the default option
     };
 
+    /// Catergory of the Node
+    std::string category;
     /// Constructor function to be called for creating the node
     std::function<std::shared_ptr<NGUI_V(Node)>(std::string, std::vector<std::string>)> constructor;
     /// Config information for node creation (Description, Type, Default)
@@ -102,47 +104,53 @@ const std::map<std::string, std::vector<std::string>> inheritance = {
 /// Global Definition of all possible Nodes
 const std::map<std::string, NodeInterface> nodeInterfaces = {
     { "VectorNavFile",
-      { .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<VectorNavFile>(name, options); }),
-        .config = { { CONFIG_STRING, "Path", "" } },
+      { .category = "DataProvider",
+        .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<VectorNavFile>(name, options); }),
+        .config = { { NodeInterface::CONFIG_STRING, "Path", "" } },
         .in = {},
         .out = { "VectorNavObs" } } },
 
     { "VectorNavSensor",
-      { .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<VectorNavSensor>(name, options); }),
-        .config = { { CONFIG_UINT, "Frequency", "4" },
-                    { CONFIG_STRING, "Port", "/dev/ttyUSB0" },
-                    { CONFIG_LIST, "Baudrate", "[Fastest]|9600|19200|38400|57600|115200|128000|230400|460800|921600" } },
+      { .category = "DataProvider",
+        .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<VectorNavSensor>(name, options); }),
+        .config = { { NodeInterface::CONFIG_UINT, "Frequency", "4" },
+                    { NodeInterface::CONFIG_STRING, "Port", "/dev/ttyUSB0" },
+                    { NodeInterface::CONFIG_LIST, "Baudrate", "[Fastest]|9600|19200|38400|57600|115200|128000|230400|460800|921600" } },
         .in = {},
         .out = { "VectorNavObs" } } },
 
     { "VectorNavDataLogger",
-      { .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<VectorNavDataLogger>(name, options); }),
-        .config = { { CONFIG_STRING, "Path", "logs/vn-log.csv" },
-                    { CONFIG_STRING, "ascii/binary", "ascii" } },
+      { .category = "DataLogger",
+        .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<VectorNavDataLogger>(name, options); }),
+        .config = { { NodeInterface::CONFIG_STRING, "Path", "logs/vn-log.csv" },
+                    { NodeInterface::CONFIG_LIST, "Type", "[ascii]|binary" } },
         .in = { { "VectorNavObs", NGUI(VectorNavDataLogger::writeObservation) } },
         .out = {} } },
 
     { "UbloxSensor",
-      { .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<UbloxSensor>(name, options); }),
-        .config = { { CONFIG_UINT, "Frequency", "4" },
-                    { CONFIG_STRING, "Port", "/dev/ttyACM0" },
-                    { CONFIG_LIST, "Baudrate", "[Fastest]|9600|19200|38400|57600|115200|128000|230400|460800|921600" } },
+      { .category = "DataProvider",
+        .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<UbloxSensor>(name, options); }),
+        .config = { { NodeInterface::CONFIG_UINT, "Frequency", "4" },
+                    { NodeInterface::CONFIG_STRING, "Port", "/dev/ttyACM0" },
+                    { NodeInterface::CONFIG_LIST, "Baudrate", "[Fastest]|9600|19200|38400|57600|115200|128000|230400|460800|921600" } },
         .in = {},
         .out = { { "UbloxObs" } } } },
 
     { "UbloxDataLogger",
-      { .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<UbloxDataLogger>(name, options); }),
-        .config = { { CONFIG_STRING, "Path", "logs/ub-log.ubx" },
-                    { CONFIG_STRING, "ascii/binary", "binary" } },
+      { .category = "DataLogger",
+        .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<UbloxDataLogger>(name, options); }),
+        .config = { { NodeInterface::CONFIG_STRING, "Path", "logs/ub-log.ubx" },
+                    { NodeInterface::CONFIG_LIST, "Type", "ascii|[binary]" } },
         .in = { { "UbloxObs", NGUI(UbloxDataLogger::writeObservation) } },
         .out = {} } },
 
     { "UbloxSyncSignal",
-      { .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<UbloxSyncSignal>(name, options); }),
-        .config = { { CONFIG_STRING, "Port", "/dev/ttyUSB0" },
-                    { CONFIG_STRING, "UBX/NMEA", "UBX" },
-                    { CONFIG_STRING, "UBX Class", "RXM" },
-                    { CONFIG_STRING, "UBX Msg Id", "RAWX" } },
+      { .category = "Utility",
+        .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<UbloxSyncSignal>(name, options); }),
+        .config = { { NodeInterface::CONFIG_STRING, "Port", "/dev/ttyUSB0" },
+                    { NodeInterface::CONFIG_LIST, "Protocol", "[UBX]|NMEA" },
+                    { NodeInterface::CONFIG_LIST, "Class", "RXM" },
+                    { NodeInterface::CONFIG_LIST, "Msg Id", "RAWX" } },
         .in = { { "UbloxObs", NGUI(UbloxSyncSignal::triggerSync) } },
         .out = {} } }
 };

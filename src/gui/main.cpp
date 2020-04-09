@@ -2,6 +2,11 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QMenuBar>
 
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QComboBox>
+
 #include <nodes/Node>
 #include <nodes/Connection>
 #include <nodes/NodeData>
@@ -11,9 +16,12 @@
 #include <nodes/ConnectionStyle>
 #include <nodes/TypeConverter>
 
-#include "models.hpp"
+#include "NodeModel.hpp"
+#define GUI
+#include <../NodeInterface.hpp>
 
 #include <iostream>
+#include <fstream>
 
 using QtNodes::DataModelRegistry;
 using QtNodes::FlowScene;
@@ -32,21 +40,33 @@ class Converter
     }
 };
 
+void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string child, std::string root)
+{
+    if (NAV::inheritance.count(root))
+    {
+        for (auto parent = NAV::inheritance.at(root).cbegin(); parent != NAV::inheritance.at(root).cend(); parent++)
+        {
+            std::cout << "TypeConvert: " << child << " --> " << *parent << std::endl;
+            registry->registerTypeConverter(std::make_pair(NodeDataType{ QString::fromStdString(child), QString::fromStdString(child) },
+                                                           NodeDataType{ QString::fromStdString(*parent), QString::fromStdString(*parent) }),
+                                            TypeConverter{ Converter() });
+            addTypeConverter(registry, child, *parent);
+        }
+    }
+}
+
 static std::shared_ptr<DataModelRegistry>
     registerDataModels()
 {
-    auto ret = std::make_shared<DataModelRegistry>();
+    auto registry = std::make_shared<DataModelRegistry>();
 
-    ret->registerModelTemplate<NodeDataTemplate>("VectorNavSensor", "Category");
-    ret->registerModelTemplate<NodeDataTemplate>("UbloxSensor", "Category");
-    ret->registerModelTemplate<NodeDataTemplate>("VectorNavDataLogger", "Category");
-    ret->registerModelTemplate<NodeDataTemplate>("Integrator", "Category");
+    for (auto it = NAV::nodeInterfaces.cbegin(); it != NAV::nodeInterfaces.cend(); it++)
+        registry->registerModelTemplate<NodeModel>(QString::fromStdString(it->first), QString::fromStdString(it->second.category));
 
-    ret->registerTypeConverter(std::make_pair(NodeDataType{ "VectorNavObs", "VectorNavObs" },
-                                              NodeDataType{ "InsObs", "InsObs" }),
-                               TypeConverter{ Converter() });
+    for (auto child = NAV::inheritance.cbegin(); child != NAV::inheritance.cend(); child++)
+        addTypeConverter(registry, child->first, child->first);
 
-    return ret;
+    return registry;
 }
 
 static void
@@ -64,28 +84,118 @@ static void
 
 //------------------------------------------------------------------------------
 FlowScene* scene;
+QString fileName;
 
 void exportConfig()
 {
+    std::ofstream filestream;
+    filestream.open("config-dataflow.ini", std::ios_base::trunc);
+
     for (auto node : scene->allNodes())
     {
-        std::cout << node->nodeDataModel()->name().toStdString() << ": "
-                  << node->id().toString().toStdString() << std::endl;
-        for (int i = 0; i < 5; i++)
+        auto nodeModel = static_cast<NodeModel*>(node->nodeDataModel());
+        std::string comment = "#      Type";
+        for (int i = 0; i < nodeModel->name().length() - 4; i++)
+            comment += " ";
+        comment += ", Name";
+        for (int i = 0; i < node->id().toString().length() - 4; i++)
+            comment += " ";
+
+        std::string config = "node = " + nodeModel->name().toStdString() + ", " + node->id().toString().toStdString();
+        for (size_t i = 0; i < nodeModel->widgets.size(); i++)
         {
-            std::cout << node->nodeDataModel()->embeddedWidget()->children().at(i)->objectName().toStdString() << std::endl;
+            std::string text;
+            if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_UINT
+                || nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
+                text = std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_FLOAT)
+                text = std::to_string(static_cast<QDoubleSpinBox*>(nodeModel->widgets.at(i))->value());
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_STRING)
+                text = static_cast<QLineEdit*>(nodeModel->widgets.at(i))->text().toStdString();
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
+                text = static_cast<QComboBox*>(nodeModel->widgets.at(i))->currentText().toStdString();
+
+            std::string type = nodeModel->widgets.at(i)->objectName().toStdString();
+
+            comment += ", " + type;
+            config += ", " + text;
+
+            for (int i = 0; i < static_cast<int>(type.size()) - static_cast<int>(text.size()); i++)
+                config += " ";
+            for (int i = 0; i < static_cast<int>(text.size()) - static_cast<int>(type.size()); i++)
+                comment += " ";
         }
+        filestream << comment << std::endl;
+        filestream << config << std::endl;
     }
 
+    filestream << std::endl
+               << "#      source, data type, target" << std::endl;
     for (auto connection : scene->connections())
     {
-        std::cout << "(" << connection.second->getPortIndex(QtNodes::PortType::Out) << ") "
-                  << connection.second->getNode(QtNodes::PortType::Out)->id().toString().toStdString()
-                  << " ==> "
-                  << "(" << connection.second->getPortIndex(QtNodes::PortType::In) << ") "
-                  << connection.second->getNode(QtNodes::PortType::In)->id().toString().toStdString()
-                  << std::endl;
+        auto source = connection.second->getNode(QtNodes::PortType::Out);
+        auto sourcePort = connection.second->getPortIndex(QtNodes::PortType::Out);
+        auto& sourceNodeInterface = NAV::nodeInterfaces.at(source->nodeDataModel()->name().toStdString());
+        auto target = connection.second->getNode(QtNodes::PortType::In);
+
+        filestream << "link = "
+                   << source->id().toString().toStdString() << ", "
+                   << sourceNodeInterface.out.at(static_cast<size_t>(sourcePort)) << ", "
+                   << target->id().toString().toStdString() << std::endl;
     }
+
+    filestream.close();
+}
+
+bool save()
+{
+    if (fileName.isEmpty())
+        fileName = scene->save();
+    else
+        scene->saveAs(fileName);
+
+    if (!fileName.isEmpty())
+    {
+        exportConfig();
+        return true;
+    }
+    else
+        return false;
+}
+
+bool saveAs()
+{
+    fileName = scene->save();
+
+    if (!fileName.isEmpty())
+    {
+        exportConfig();
+        return true;
+    }
+    else
+        return false;
+}
+
+void load()
+{
+    auto tmp = scene->load();
+    if (!tmp.isEmpty())
+        fileName = tmp;
+}
+
+void run()
+{
+    if (scene->nodes().size() > 0)
+    {
+        exportConfig();
+        system("./bin/Debug/navsos -f config.ini config-dataflow.ini");
+    }
+}
+
+void clearScene()
+{
+    scene->clearScene();
+    fileName = "";
 }
 
 int main(int argc, char* argv[])
@@ -98,11 +208,11 @@ int main(int argc, char* argv[])
 
     auto menuBar = new QMenuBar();
 
-    auto saveAction = menuBar->addAction("Save");
+    auto runAction = menuBar->addAction("Run NavSoS");
     auto loadAction = menuBar->addAction("Load");
+    auto saveAction = menuBar->addAction("Save As");
     auto clearAction = menuBar->addAction("Clear");
     auto clearExit = menuBar->addAction("Exit");
-    auto exportAction = menuBar->addAction("Export Config");
 
     QVBoxLayout* l = new QVBoxLayout(&mainWidget);
 
@@ -112,17 +222,17 @@ int main(int argc, char* argv[])
     l->setContentsMargins(0, 0, 0, 0);
     l->setSpacing(0);
 
-    QObject::connect(exportAction, &QAction::triggered,
-                     scene, &exportConfig);
+    QObject::connect(runAction, &QAction::triggered,
+                     scene, &run);
 
     QObject::connect(saveAction, &QAction::triggered,
-                     scene, &FlowScene::save);
+                     scene, &saveAs);
 
     QObject::connect(loadAction, &QAction::triggered,
-                     scene, &FlowScene::load);
+                     scene, &load);
 
     QObject::connect(clearAction, &QAction::triggered,
-                     scene, &FlowScene::clearScene);
+                     scene, &clearScene);
 
     QObject::connect(clearExit, &QAction::triggered,
                      scene, &app.exit);
