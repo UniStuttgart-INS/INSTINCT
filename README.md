@@ -6,6 +6,12 @@ Navigation Software of the Institut of Navigation (University of Stuttgart)
 
 This software provides real-time and post processing functionality for navigational tasks. It can read from sensors and fuse together the data. It can fuse GNSS data with IMU data and do advanced functions like RTK, RAIM, ...
 
+The software consists of 2 parts
+* Main console program "```navsos```": Reads in instructions from boost program options config files
+* GUI program "```navsos-gui```": Data flow programming Qt5 GUI which exports the config file for the main program. It has main 2 advantages:
+    * Completely automatically generated. The GUI Code needs no maintenance, it is generated from the Node Interfaces which are provided by the main program.
+    * Completely optional because the boost program option config files can be provided manually.
+
 ## Getting Started
 
 ### Dependencies
@@ -26,7 +32,9 @@ This software provides real-time and post processing functionality for navigatio
     * [fmt](https://github.com/fmtlib/fmt) A modern formatting library https://fmt.dev
     * [Boost](https://www.boost.org/) Free peer-reviewed portable C++ source libraries
     * [Eigen](http://eigen.tuxfamily.org) C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms
-    * [googletest](https://github.com/google/googletest) Google Testing and Mocking Framework 
+    * [googletest](https://github.com/google/googletest) Google Testing and Mocking Framework
+* GUI (optional):
+    * [Qt](https://www.qt.io/) A cross-platform application and UI framework
 
 ### Installing
 
@@ -40,6 +48,9 @@ sudo pacman -S base-devel cmake clang
 # Optional
 trizen -S conan # AUR package
 sudo pacman -S ccache valgrind kcachegrind doxygen
+
+# GUI (optional)
+sudo pacman -S qt5-base
 ```
 
 Ubuntu:
@@ -50,6 +61,9 @@ sudo apt-get install build-essential cmake clang
 # Optional
 pip install conan
 sudo apt-get install ccache valgrind kcachegrind doxygen
+
+# GUI (optional)
+sudo apt-get install qt5-default 
 ```
 
 Mac:
@@ -123,6 +137,7 @@ Recommended changes to the User's ```keybindings.json```
 | ```F7``` | Run Task: ```DEBUG: Build & run project``` | Default test  |
 | ```F8``` | Open Task List                             |               |
 
+* To start the GUI, execute the Task ```GUI: Build & run project```
 * If you have problems with the build, execute the Task ```CLEAN: Remove build files```
 * If you want to provide tests, place them in the ```tests``` directory and execute them with the task ```TEST: Build & run```
 
