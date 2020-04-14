@@ -237,9 +237,11 @@ int main(int argc, char* argv[])
     QObject::connect(clearExit, &QAction::triggered,
                      scene, &app.exit);
 
-    mainWidget.setWindowTitle("Node-based flow editor");
+    mainWidget.setWindowTitle("NavSoS - Navigation Software Stuttgart (Institut of Navigation)");
     mainWidget.resize(800, 600);
     mainWidget.showNormal();
+
+    scene->load("flow/Default.flow");
 
     return app.exec();
 }
