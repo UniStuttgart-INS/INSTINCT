@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/lib/**",
                 "~/.conan/data/**",
                 "/usr/include/qt/**"
             ],

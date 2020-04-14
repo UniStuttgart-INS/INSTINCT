@@ -17,6 +17,9 @@
  * @date 2020-03-12
  */
 
+#include <chrono>
+#include <thread>
+
 #include "util/Common.hpp"
 #include "util/Logger.hpp"
 #include "util/Version.hpp"
@@ -69,6 +72,14 @@ int main(int argc, const char** argv)
         NAV::Sleep::waitForSignal();
     else
         NAV::Sleep::countDownSeconds(pConfig->GetProgExecTime());
+
+    // Stop all callbacks and wait if any GnuPlot Window is open
+    for (auto& node : pConfig->nodes)
+        node.node->callbacksEnabled = false;
+
+    // Wait if any GnuPlot Window is open. GnuPlot becomes unresponsive when parent dies
+    while (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     NAV::Logger::writeFooter();
 

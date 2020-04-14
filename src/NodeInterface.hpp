@@ -24,6 +24,8 @@
     #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
     #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
     #include "Nodes/UsbSync/GNSS/UbloxSyncSignal.hpp"
+
+    #include "Nodes/GnuPlot/IMU/VectorNavGnuPlot.hpp"
 #endif
 
 #ifndef GUI
@@ -152,6 +154,13 @@ const std::map<std::string, NodeInterface> nodeInterfaces = {
                     { NodeInterface::CONFIG_LIST, "Class", "RXM" },
                     { NodeInterface::CONFIG_LIST, "Msg Id", "RAWX" } },
         .in = { { "UbloxObs", NGUI(UbloxSyncSignal::triggerSync) } },
+        .out = {} } },
+
+    { "VectorNavGnuPlot",
+      { .category = "Plot",
+        .constructor = NGUI([](std::string name, std::vector<std::string> options) { return std::make_shared<VectorNavGnuPlot>(name, options); }),
+        .config = { { NodeInterface::CONFIG_FLOAT, "Seconds to Show", "10" } },
+        .in = { { "VectorNavObs", NGUI(VectorNavGnuPlot::plotVectorNavObs) } },
         .out = {} } }
 };
 

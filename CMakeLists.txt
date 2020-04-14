@@ -63,6 +63,9 @@ include_directories(lib/vnproglib-1.1.5.0/include)
 add_subdirectory(lib/ubloxlib libubcxx)
 include_directories(lib/ubloxlib/include)
 
+# Include gnuplot iostream
+include_directories(lib/gnuplot-iostream)
+
 # Find installed packages
 find_package (Threads REQUIRED)
 
