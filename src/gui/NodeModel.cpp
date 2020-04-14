@@ -50,6 +50,7 @@ NodeModel::NodeModel(QString const& name)
         }
         else if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_FLOAT)
         {
+            widgets.push_back(new QDoubleSpinBox());
             QDoubleSpinBox* doubleSpinBox = static_cast<QDoubleSpinBox*>(widgets.at(widgets.size() - 1));
 
             doubleSpinBox->setRange(-1000, 1000);
