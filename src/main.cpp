@@ -75,7 +75,11 @@ int main(int argc, const char** argv)
 
     // Stop all callbacks and wait if any GnuPlot Window is open
     for (auto& node : pConfig->nodes)
+    {
         node.node->callbacksEnabled = false;
+        if (node.type.find("GnuPlot") == std::string::npos)
+            node.node = nullptr;
+    }
 
     // Wait if any GnuPlot Window is open. GnuPlot becomes unresponsive when parent dies
     while (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))

@@ -8,13 +8,18 @@
 #pragma once
 
 #include <optional>
+#include <string>
+#include "NodeData.hpp"
 
 namespace NAV
 {
 /// Parent storage Class for all Observations
-class InsObs
+class InsObs : public NodeData
 {
   public:
+    static constexpr const char* gpsTimeOfWeekDescription = "Seconds since week start";
+    static constexpr const char* gpsWeekDescription = "Weeks since 6-Jan-1980";
+
     /**
      * @brief Seconds since week start in GPS time (without leap seconds)
      * @deprecated This Timestamp should be replaced by an own InsTime implementation

@@ -1,137 +1,219 @@
 #include "VectorNavGnuPlot.hpp"
 
 #include "util/Logger.hpp"
-#include "util/Config.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 
 #include <tuple>
 #include <cmath>
-#include <deque>
 
-NAV::VectorNavGnuPlot::VectorNavGnuPlot(std::string name, std::vector<std::string> options)
-    : GnuPlot(name)
+NAV::VectorNavGnuPlot::VectorNavGnuPlot(std::string name, std::deque<std::string>& options)
+    : GnuPlot(name, options)
 {
     LOG_TRACE("called for {}", name);
-
-    if (options.size() >= 1)
-        timeFrame = std::stod(options.at(0));
 }
 
 NAV::VectorNavGnuPlot::~VectorNavGnuPlot()
 {
-    deinitialize();
-}
-
-NAV::NavStatus NAV::VectorNavGnuPlot::initialize()
-{
     LOG_TRACE("called for {}", name);
-
-    NAV::Config* pConfig = NAV::Config::Get();
-
-    if (!pConfig->GetSigterm())
-    {
-        gp << "set autoscale y\n";
-        gp << "set xrange [0:" << pConfig->GetProgExecTime() << "]\n";
-    }
-    else
-        gp << "set autoscale xy\n";
-
-    gp << "set grid ytics lc rgb \"#bbbbbb\" lw 1 lt 0\n";
-    gp << "set grid xtics lc rgb \"#bbbbbb\" lw 1 lt 0\n";
-
-    return NavStatus::NAV_OK;
 }
 
-NAV::NavStatus NAV::VectorNavGnuPlot::deinitialize()
+NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::NodeData> observation, std::shared_ptr<NAV::Node> userData)
 {
-    LOG_TRACE("called for {}", name);
+    auto obj = std::static_pointer_cast<VectorNavGnuPlot>(userData);
+    auto obs = std::static_pointer_cast<VectorNavObs>(observation);
 
-    return NavStatus::NAV_OK;
-}
+    if (!obj->timeStart)
+        obj->timeStart = obs->timeSinceStartup.value();
 
-NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<void> observation, std::shared_ptr<void> userData)
-{
-    VectorNavGnuPlot* plot = static_cast<VectorNavGnuPlot*>(userData.get());
-    VectorNavObs* obs = static_cast<VectorNavObs*>(observation.get());
+    double plotTime = static_cast<double>(obs->timeSinceStartup.value() - obj->timeStart) / std::pow(10, 9);
 
-    if (!plot->timeStart)
-        plot->timeStart = obs->timeSinceStartup.value();
-
-    static std::deque<std::pair<double, double>> gyroCompX;
-    static std::deque<std::pair<double, double>> gyroCompY;
-    static std::deque<std::pair<double, double>> gyroCompZ;
-
-    static std::deque<std::pair<double, double>> accelCompX;
-    static std::deque<std::pair<double, double>> accelCompY;
-    static std::deque<std::pair<double, double>> accelCompZ;
-
-    static std::deque<std::pair<double, double>> magCompX;
-    static std::deque<std::pair<double, double>> magCompY;
-    static std::deque<std::pair<double, double>> magCompZ;
-
-    double time = static_cast<double>(obs->timeSinceStartup.value() - plot->timeStart) / std::pow(10, 9);
-
-    gyroCompX.push_back(std::make_pair(time, obs->gyroCompXYZ.value().x()));
-    gyroCompY.push_back(std::make_pair(time, obs->gyroCompXYZ.value().y()));
-    gyroCompZ.push_back(std::make_pair(time, obs->gyroCompXYZ.value().z()));
-
-    accelCompX.push_back(std::make_pair(time, obs->accelCompXYZ.value().x()));
-    accelCompY.push_back(std::make_pair(time, obs->accelCompXYZ.value().y()));
-    accelCompZ.push_back(std::make_pair(time, obs->accelCompXYZ.value().z()));
-
-    magCompX.push_back(std::make_pair(time, obs->magCompXYZ.value().x()));
-    magCompY.push_back(std::make_pair(time, obs->magCompXYZ.value().y()));
-    magCompZ.push_back(std::make_pair(time, obs->magCompXYZ.value().z()));
-
-    if (plot->timeFrame && time - gyroCompX.front().first > plot->timeFrame)
+    for (auto& [name, wIndex] : obj->dataToPlot)
     {
-        gyroCompX.pop_front();
-        gyroCompY.pop_front();
-        gyroCompZ.pop_front();
+        auto plotWindow = GnuPlot::plotWindows.at(wIndex);
 
-        accelCompX.pop_front();
-        accelCompY.pop_front();
-        accelCompZ.pop_front();
+        if (name == "quaternion" && obs->quaternion.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Attitude Quaternion X");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Attitude Quaternion Y");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Attitude Quaternion Z");
+            static size_t dataIndex3 = plotWindow->addNewDataSet("Attitude Quaternion W");
 
-        magCompX.pop_front();
-        magCompY.pop_front();
-        magCompZ.pop_front();
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->quaternion.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->quaternion.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->quaternion.value().z()));
+            plotWindow->data.at(dataIndex3).xy.push_back(std::make_pair(plotTime, obs->quaternion.value().w()));
+        }
+        else if (name == "magUncompXYZ" && obs->magUncompXYZ.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Uncompensated Magnetic Field X [Gauss]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Uncompensated Magnetic Field Y [Gauss]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Uncompensated Magnetic Field Z [Gauss]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->magUncompXYZ.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->magUncompXYZ.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->magUncompXYZ.value().z()));
+        }
+        else if (name == "accelUncompXYZ" && obs->accelUncompXYZ.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Uncompensated Acceleration X [m/s^2]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Uncompensated Acceleration Y [m/s^2]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Uncompensated Acceleration Z [m/s^2]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->accelUncompXYZ.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->accelUncompXYZ.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->accelUncompXYZ.value().z()));
+        }
+        else if (name == "gyroUncompXYZ" && obs->gyroUncompXYZ.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Uncompensated Angular Rates X [rad/s]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Uncompensated Angular Rates Y [rad/s]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Uncompensated Angular Rates Z [rad/s]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->gyroUncompXYZ.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->gyroUncompXYZ.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->gyroUncompXYZ.value().z()));
+        }
+        else if (name == "magCompXYZ" && obs->magCompXYZ.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Compensated Magnetic Field X [Gauss]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Compensated Magnetic Field Y [Gauss]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Compensated Magnetic Field Z [Gauss]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->magCompXYZ.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->magCompXYZ.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->magCompXYZ.value().z()));
+        }
+        else if (name == "accelCompXYZ" && obs->accelCompXYZ.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Compensated Acceleration X [m/s^2]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Compensated Acceleration Y [m/s^2]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Compensated Acceleration Z [m/s^2]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->accelCompXYZ.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->accelCompXYZ.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->accelCompXYZ.value().z()));
+        }
+        else if (name == "gyroCompXYZ" && obs->gyroCompXYZ.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Compensated Angular Rates X [rad/s]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Compensated Angular Rates Y [rad/s]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Compensated Angular Rates Z [rad/s]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->gyroCompXYZ.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->gyroCompXYZ.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->gyroCompXYZ.value().z()));
+        }
+        else if (name == "syncInCnt" && obs->syncInCnt.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Sync In Count [-]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->syncInCnt.value()));
+        }
+        else if (name == "dtime" && obs->dtime.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Delta Time Integration Interval [s]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->dtime.value()));
+        }
+        else if (name == "dtheta" && obs->dtheta.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Delta rotation angles X [Degree]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Delta rotation angles Y [Degree]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Delta rotation angles Z [Degree]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->dtheta.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->dtheta.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->dtheta.value().z()));
+        }
+        else if (name == "dvel" && obs->dvel.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Delta velocity X [m/s]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Delta velocity Y [m/s]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Delta velocity Z [m/s]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->dvel.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->dvel.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->dvel.value().z()));
+        }
+        else if (name == "vpeStatus" && obs->vpeStatus.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("VPE Status Bitfield");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->vpeStatus.value()));
+        }
+        else if (name == "temperature" && obs->temperature.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Temperature [Celsius]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->temperature.value()));
+        }
+        else if (name == "pressure" && obs->pressure.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Absolute IMU pressure [kPa]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->pressure.value()));
+        }
+        else if (name == "magCompNED" && obs->magCompNED.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Compensated Magnetic Field N [Gauss]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Compensated Magnetic Field E [Gauss]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Compensated Magnetic Field D [Gauss]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->magCompNED.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->magCompNED.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->magCompNED.value().z()));
+        }
+        else if (name == "accelCompNED" && obs->accelCompNED.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Compensated Acceleration N [m/s^2]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Compensated Acceleration E [m/s^2]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Compensated Acceleration D [m/s^2]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->accelCompNED.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->accelCompNED.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->accelCompNED.value().z()));
+        }
+        else if (name == "gyroCompNED" && obs->gyroCompNED.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Compensated Angular Rates N [rad/s]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Compensated Angular Rates E [rad/s]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Compensated Angular Rates D [rad/s]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->gyroCompNED.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->gyroCompNED.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->gyroCompNED.value().z()));
+        }
+        else if (name == "linearAccelXYZ" && obs->linearAccelXYZ.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Linear Acceleration X (w/o g) [m/s^2]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Linear Acceleration Y (w/o g) [m/s^2]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Linear Acceleration Z (w/o g) [m/s^2]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->linearAccelXYZ.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->linearAccelXYZ.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->linearAccelXYZ.value().z()));
+        }
+        else if (name == "linearAccelNED" && obs->linearAccelNED.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Linear Acceleration N (w/o g) [m/s^2]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Linear Acceleration E (w/o g) [m/s^2]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Linear Acceleration D (w/o g) [m/s^2]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->linearAccelNED.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->linearAccelNED.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->linearAccelNED.value().z()));
+        }
+        else if (name == "yawPitchRollUncertainty" && obs->yawPitchRollUncertainty.has_value())
+        {
+            static size_t dataIndex0 = plotWindow->addNewDataSet("Yaw Uncertainty (1 Sigma) [Degree]");
+            static size_t dataIndex1 = plotWindow->addNewDataSet("Pitch Uncertainty (1 Sigma) [Degree]");
+            static size_t dataIndex2 = plotWindow->addNewDataSet("Roll Uncertainty (1 Sigma) [Degree]");
+
+            plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotTime, obs->yawPitchRollUncertainty.value().x()));
+            plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotTime, obs->yawPitchRollUncertainty.value().y()));
+            plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotTime, obs->yawPitchRollUncertainty.value().z()));
+        }
     }
 
-    static double lastDraw = gyroCompX.back().first;
-    if (time - lastDraw > 1.0 / 10)
-    {
-        plot->gp << "set multiplot layout 2, 2 title \"VectorNav Data\" font \",14\"\n";
-        plot->gp << "set tmargin 2\n";
-
-        plot->gp << "set title \"Compensated Angular Rates [rad/s]\"\n";
-        plot->gp << "plot "
-                 << plot->gp.binFile1d(gyroCompX, "record") << "with lines title 'X',"
-                 << plot->gp.binFile1d(gyroCompY, "record") << "with lines title 'Y',"
-                 << plot->gp.binFile1d(gyroCompZ, "record") << "with lines title 'Z'\n";
-
-        plot->gp << "set title \"Compensated Acceleration [m/s^2]\"\n";
-        plot->gp << "plot "
-                 << plot->gp.binFile1d(accelCompX, "record") << "with lines title 'X',"
-                 << plot->gp.binFile1d(accelCompY, "record") << "with lines title 'Y',"
-                 << plot->gp.binFile1d(accelCompZ, "record") << "with lines title 'Z'\n";
-
-        plot->gp << "set title \"Compensated Magnetic Field [Gauss]\"\n";
-        plot->gp << "plot "
-                 << plot->gp.binFile1d(magCompX, "record") << "with lines title 'X',"
-                 << plot->gp.binFile1d(magCompY, "record") << "with lines title 'Y',"
-                 << plot->gp.binFile1d(magCompZ, "record") << "with lines title 'Z'\n";
-
-        // plot->gp << "set title \"Compensated Acceleration [m/s^2]\"\n";
-        // plot->gp << "plot "
-        //          << plot->gp.binFile1d(accelCompX, "record") << "with lines title 'X',"
-        //          << plot->gp.binFile1d(accelCompY, "record") << "with lines title 'Y',"
-        //          << plot->gp.binFile1d(accelCompZ, "record") << "with lines title 'Z'\n";
-
-        plot->gp << "unset multiplot\n";
-        plot->gp.flush();
-        lastDraw = gyroCompX.back().first;
-    }
-
-    return NavStatus::NAV_OK;
+    return updateWindows(obj);
 }

@@ -3,6 +3,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QComboBox>
@@ -31,18 +32,38 @@ NodeModel::NodeModel(QString const& name)
     for (size_t i = 0; i < nodeInterface.config.size(); i++)
     {
         QString description = QString::fromStdString(std::get<1>(nodeInterface.config.at(i)));
-        if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_UINT || std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
+
+        if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_BOOL)
+        {
+            widgets.push_back(new QCheckBox());
+            QCheckBox* checkBox = static_cast<QCheckBox*>(widgets.at(widgets.size() - 1));
+
+            checkBox->setChecked(std::stoi(std::get<2>(nodeInterface.config.at(i))));
+            checkBox->setObjectName(description);
+            checkBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
+            checkBox->setStyleSheet("QCheckBox::indicator:unchecked { border: 1px solid rgb(220,220,220); }");
+            _layout->addRow(description, checkBox);
+        }
+        else if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
         {
             widgets.push_back(new QSpinBox());
             QSpinBox* spinBox = static_cast<QSpinBox*>(widgets.at(widgets.size() - 1));
 
-            if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_UINT)
-                spinBox->setMinimum(0);
-            spinBox->setMaximum(1000);
+            std::stringstream lineStream(std::get<2>(nodeInterface.config.at(i)));
+            std::string cell;
+            // Split line at separator
+            for (size_t i = 0; i < 3; i++)
+            {
+                std::getline(lineStream, cell, '|');
+                if (i == 0)
+                    spinBox->setMinimum(std::stoi(cell));
+                else if (i == 1)
+                    spinBox->setValue(std::stoi(cell));
+                else if (i == 2)
+                    spinBox->setMaximum(std::stoi(cell));
+            }
+
             spinBox->setSingleStep(1);
-            if (description == "Frequency")
-                spinBox->setSuffix(" Hz");
-            spinBox->setValue(std::stoi(std::get<2>(nodeInterface.config.at(i))));
             spinBox->setObjectName(description);
             spinBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
             spinBox->setStyleSheet("QSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
@@ -53,11 +74,21 @@ NodeModel::NodeModel(QString const& name)
             widgets.push_back(new QDoubleSpinBox());
             QDoubleSpinBox* doubleSpinBox = static_cast<QDoubleSpinBox*>(widgets.at(widgets.size() - 1));
 
-            doubleSpinBox->setRange(-1000, 1000);
+            std::stringstream lineStream(std::get<2>(nodeInterface.config.at(i)));
+            std::string cell;
+            // Split line at separator
+            for (size_t i = 0; i < 3; i++)
+            {
+                std::getline(lineStream, cell, '|');
+                if (i == 0)
+                    doubleSpinBox->setMinimum(std::stod(cell));
+                else if (i == 1)
+                    doubleSpinBox->setValue(std::stod(cell));
+                else if (i == 2)
+                    doubleSpinBox->setMaximum(std::stod(cell));
+            }
+
             doubleSpinBox->setSingleStep(1.0);
-            if (description == "Frequency")
-                doubleSpinBox->setSuffix(" Hz");
-            doubleSpinBox->setValue(std::stod(std::get<2>(nodeInterface.config.at(i))));
             doubleSpinBox->setObjectName(description);
             doubleSpinBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
             doubleSpinBox->setStyleSheet("QDoubleSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
@@ -97,6 +128,33 @@ NodeModel::NodeModel(QString const& name)
             comboBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
             comboBox->setStyleSheet("QComboBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
             _layout->addRow(description, comboBox);
+        }
+        else if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
+        {
+            widgets.push_back(new QSpinBox());
+            QSpinBox* spinBox = static_cast<QSpinBox*>(widgets.at(widgets.size() - 1));
+
+            std::stringstream lineStream(std::get<2>(nodeInterface.config.at(i)));
+            std::string cell;
+            // Split line at separator
+            for (size_t i = 0; i < 4; i++)
+            {
+                std::getline(lineStream, cell, '|');
+                if (i == 0)
+                    spinBox->setProperty("key", QString::fromStdString(cell));
+                if (i == 1)
+                    spinBox->setMinimum(std::stoi(cell));
+                else if (i == 2)
+                    spinBox->setValue(std::stoi(cell));
+                else if (i == 3)
+                    spinBox->setMaximum(std::stoi(cell));
+            }
+
+            spinBox->setSingleStep(1);
+            spinBox->setObjectName(description);
+            spinBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
+            spinBox->setStyleSheet("QSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
+            _layout->addRow(description, spinBox);
         }
     }
 }
@@ -145,8 +203,9 @@ QJsonObject NodeModel::save() const
 
     for (size_t i = 0; i < widgets.size(); i++)
     {
-        if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_UINT
-            || widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
+        if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_BOOL)
+            modelJson[widgets.at(i)->objectName()] = static_cast<QCheckBox*>(widgets.at(i))->isChecked();
+        else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
             modelJson[widgets.at(i)->objectName()] = static_cast<QSpinBox*>(widgets.at(i))->value();
         else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_FLOAT)
             modelJson[widgets.at(i)->objectName()] = static_cast<QDoubleSpinBox*>(widgets.at(i))->value();
@@ -154,6 +213,8 @@ QJsonObject NodeModel::save() const
             modelJson[widgets.at(i)->objectName()] = static_cast<QLineEdit*>(widgets.at(i))->text();
         else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
             modelJson[widgets.at(i)->objectName()] = static_cast<QComboBox*>(widgets.at(i))->currentText();
+        else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
+            modelJson[widgets.at(i)->objectName()] = static_cast<QSpinBox*>(widgets.at(i))->value();
     }
 
     return modelJson;
@@ -166,8 +227,9 @@ void NodeModel::restore(QJsonObject const& p)
         QJsonValue v = p[widgets.at(i)->objectName()];
         if (!v.isUndefined())
         {
-            if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_UINT
-                || widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
+            if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_BOOL)
+                static_cast<QCheckBox*>(widgets.at(i))->setChecked(v.toBool());
+            else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
                 static_cast<QSpinBox*>(widgets.at(i))->setValue(v.toInt());
             else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_FLOAT)
                 static_cast<QDoubleSpinBox*>(widgets.at(i))->setValue(v.toDouble());
@@ -175,6 +237,8 @@ void NodeModel::restore(QJsonObject const& p)
                 static_cast<QLineEdit*>(widgets.at(i))->setText(v.toString());
             else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
                 static_cast<QComboBox*>(widgets.at(i))->setCurrentText(v.toString());
+            else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
+                static_cast<QSpinBox*>(widgets.at(i))->setValue(v.toInt());
         }
     }
 }

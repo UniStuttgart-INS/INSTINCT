@@ -6,7 +6,7 @@ NAV::DataCallback::DataCallback() {}
 
 NAV::DataCallback::~DataCallback() {}
 
-NAV::NavStatus NAV::DataCallback::addCallback(size_t port, std::function<NAV::NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback, std::shared_ptr<void> userData)
+NAV::NavStatus NAV::DataCallback::addCallback(size_t port, std::function<NAV::NavStatus(std::shared_ptr<NAV::NodeData>, std::shared_ptr<NAV::Node>)> callback, std::shared_ptr<NAV::Node> userData)
 {
     LOG_TRACE("called");
 
@@ -18,7 +18,7 @@ NAV::NavStatus NAV::DataCallback::addCallback(size_t port, std::function<NAV::Na
     return NavStatus::NAV_OK;
 }
 
-NAV::NavStatus NAV::DataCallback::addCallback(size_t port, std::function<NAV::NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback, std::shared_ptr<void> userData, size_t index)
+NAV::NavStatus NAV::DataCallback::addCallback(size_t port, std::function<NAV::NavStatus(std::shared_ptr<NAV::NodeData>, std::shared_ptr<NAV::Node>)> callback, std::shared_ptr<NAV::Node> userData, size_t index)
 {
     LOG_TRACE("called");
 
@@ -111,7 +111,7 @@ NAV::NavStatus NAV::DataCallback::removeAllCallbacks()
     return NavStatus::NAV_OK;
 }
 
-NAV::NavStatus NAV::DataCallback::invokeCallbacks(size_t port, std::shared_ptr<void> data)
+NAV::NavStatus NAV::DataCallback::invokeCallbacks(size_t port, std::shared_ptr<NAV::NodeData> data)
 {
     LOG_TRACE("called and callbacks are enabled={}", callbacksEnabled);
 

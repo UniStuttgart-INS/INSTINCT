@@ -5,41 +5,15 @@
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
 
-#include <string>
-#include <vector>
-
-NAV::VectorNavSensor::VectorNavSensor(std::string name, std::vector<std::string> options)
-    : Imu(name)
+NAV::VectorNavSensor::VectorNavSensor(std::string name, std::deque<std::string>& options)
+    : UartSensor(options), Imu(name, options)
 {
     LOG_TRACE("called for {}", name);
 
     if (options.size() >= 1)
+    {
         config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at(0)));
-    if (options.size() >= 2)
-        sensorPort = options.at(1);
-    if (options.size() >= 3)
-    {
-        if (options.at(2) == "Fastest")
-            sensorBaudrate = UartSensor::Baudrate::BAUDRATE_FASTEST;
-        else
-            sensorBaudrate = static_cast<UartSensor::Baudrate>(std::stoul(options.at(2)));
-    }
-}
-
-NAV::VectorNavSensor::~VectorNavSensor()
-{
-    LOG_TRACE("called for {}", name);
-
-    deinitialize();
-}
-
-NAV::NavStatus NAV::VectorNavSensor::initialize()
-{
-    LOG_TRACE("called for {}", name);
-    if (initialized)
-    {
-        LOG_WARN("{} already initialized!!!", name);
-        return NavStatus::NAV_WARNING_ALREADY_INITIALIZED;
+        options.pop_front();
     }
 
     ASSERT(config.outputFrequency <= IMU_DEFAULT_FREQUENCY, "Configured Output Frequency has to be less than IMU_DEFAULT_FREQUENCY");
@@ -80,17 +54,11 @@ NAV::NavStatus NAV::VectorNavSensor::initialize()
         }
         // Sensor could not be identified
         if (sensorPort.empty())
-        {
             // This point is also reached if a sensor is connected with USB but external power is off
-            LOG_ERROR("{} could not connect", name);
-            return NavStatus::NAV_ERROR_COULD_NOT_CONNECT;
-        }
+            LOG_CRITICAL("{} could not connect", name);
     }
     else
-    {
-        LOG_ERROR("{} could not connect", name);
-        return NavStatus::NAV_ERROR_COULD_NOT_CONNECT;
-    }
+        LOG_CRITICAL("{} could not connect", name);
 
     // Connect to the sensor (vs.verifySensorConnectivity does not have to be called as sensor is already tested)
     vs.connect(sensorPort, connectedBaudrate);
@@ -109,10 +77,7 @@ NAV::NavStatus NAV::VectorNavSensor::initialize()
             LOG_DEBUG("{} baudrate changed to {}", name, sensorBaudrate);
         }
         else
-        {
-            LOG_ERROR("{} does not support baudrate {}", name, sensorBaudrate);
-            return NavStatus::NAV_ERROR_CONFIGURATION_FAULT;
-        }
+            LOG_CRITICAL("{} does not support baudrate {}", name, sensorBaudrate);
     }
     ASSERT(vs.readSerialBaudRate() == sensorBaudrate, "Baudrate was not changed");
 
@@ -149,38 +114,28 @@ NAV::NavStatus NAV::VectorNavSensor::initialize()
     }
     catch (const std::exception& e)
     {
-        LOG_ERROR("{} could not configure binary output register ({})", name, e.what());
-        return NavStatus::NAV_ERROR_CONFIGURATION_FAULT;
+        LOG_CRITICAL("{} could not configure binary output register ({})", name, e.what());
     }
 
     vs.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
     LOG_DEBUG("{} successfully initialized", name);
-
-    initialized = true;
-
-    return NavStatus::NAV_OK;
 }
 
-NAV::NavStatus NAV::VectorNavSensor::deinitialize()
+NAV::VectorNavSensor::~VectorNavSensor()
 {
     LOG_TRACE("called for {}", name);
-    if (initialized)
+
+    removeAllCallbacks();
+    callbacksEnabled = false;
+    vs.unregisterAsyncPacketReceivedHandler();
+    if (vs.isConnected())
     {
-        removeAllCallbacks();
-        callbacksEnabled = false;
-        vs.unregisterAsyncPacketReceivedHandler();
-        if (vs.isConnected())
-        {
-            vs.reset(true);
-            vs.disconnect();
-        }
-        initialized = false;
-        LOG_DEBUG("{} successfully deinitialized", name);
-        return NAV_OK;
+        vs.reset(true);
+        vs.disconnect();
     }
 
-    return NAV_WARNING_NOT_INITIALIZED;
+    LOG_DEBUG("{} successfully deinitialized", name);
 }
 
 std::shared_ptr<NAV::InsObs> NAV::VectorNavSensor::pollObservation()
@@ -223,9 +178,6 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 {
     VectorNavSensor* vnSensor = static_cast<VectorNavSensor*>(userData);
     LOG_TRACE("called for {}", vnSensor->name);
-
-    if (!vnSensor->initialized)
-        return;
 
     if (p.type() == vn::protocol::uart::Packet::TYPE_BINARY)
     {

@@ -6,35 +6,14 @@
 #include "util/Logger.hpp"
 #include <ios>
 
-NAV::VectorNavFile::VectorNavFile(std::string name, std::vector<std::string> options)
-    : Imu(name)
+NAV::VectorNavFile::VectorNavFile(std::string name, std::deque<std::string>& options)
+    : FileReader(options), Imu(name, options)
 {
     LOG_TRACE("called for {}", name);
-
-    if (options.size() >= 1)
-        path = options.at(0);
-}
-
-NAV::VectorNavFile::~VectorNavFile()
-{
-    LOG_TRACE("called for {}", name);
-
-    deinitialize();
-}
-
-NAV::NavStatus NAV::VectorNavFile::initialize()
-{
-    LOG_TRACE("called for {}", name);
-
-    if (initialized)
-    {
-        LOG_WARN("{} already initialized!!!", name);
-        return NavStatus::NAV_WARNING_ALREADY_INITIALIZED;
-    }
 
     if (NavStatus result = determineFileType();
         result != NavStatus::NAV_OK)
-        return result;
+        LOG_CRITICAL("{} could not determine file type", name);
 
     if (isBinary)
         filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
@@ -65,44 +44,27 @@ NAV::NavStatus NAV::VectorNavFile::initialize()
             }
 
             LOG_DEBUG("{}-ASCII-File successfully initialized", name);
-
-            initialized = true;
-
-            return NavStatus::NAV_OK;
         }
         else
         {
             LOG_DEBUG("{}-Binary-File successfully initialized", name);
-
-            initialized = true;
-
-            return NavStatus::NAV_OK;
         }
     }
     else
-    {
-        LOG_ERROR("{} could not open file {}", name, path);
-        return NAV_ERROR_COULD_NOT_OPEN_FILE;
-    }
+        LOG_CRITICAL("{} could not open file {}", name, path);
 }
 
-NAV::NavStatus NAV::VectorNavFile::deinitialize()
+NAV::VectorNavFile::~VectorNavFile()
 {
     LOG_TRACE("called for {}", name);
 
-    if (initialized)
-    {
-        removeAllCallbacks();
-        callbacksEnabled = false;
-        columns.clear();
-        if (filestream.is_open())
-            filestream.close();
+    removeAllCallbacks();
+    callbacksEnabled = false;
+    columns.clear();
+    if (filestream.is_open())
+        filestream.close();
 
-        LOG_DEBUG("{} successfully deinitialized", name);
-        initialized = false;
-        return NavStatus::NAV_OK;
-    }
-    return NavStatus::NAV_WARNING_NOT_INITIALIZED;
+    LOG_DEBUG("{} successfully deinitialized", name);
 }
 
 std::shared_ptr<NAV::InsObs> NAV::VectorNavFile::pollObservation()

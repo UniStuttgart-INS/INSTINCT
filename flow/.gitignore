@@ -4,3 +4,4 @@
 
 !VectorNavFile.flow
 !VectorNavSensor-UbloxSensor.flow
+!VectorNavSensor-GnuPlot.flow

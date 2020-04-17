@@ -5,37 +5,15 @@
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "util/Logger.hpp"
 
-NAV::UbloxSensor::UbloxSensor(std::string name, std::vector<std::string> options)
-    : Gnss(name)
+NAV::UbloxSensor::UbloxSensor(std::string name, std::deque<std::string>& options)
+    : UartSensor(options), Gnss(name, options)
 {
     LOG_TRACE("called for {}", name);
 
     if (options.size() >= 1)
+    {
         config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at(0)));
-    if (options.size() >= 2)
-        sensorPort = options.at(1);
-    if (options.size() >= 3)
-    {
-        if (options.at(2) == "Fastest")
-            sensorBaudrate = UartSensor::Baudrate::BAUDRATE_FASTEST;
-        else
-            sensorBaudrate = static_cast<UartSensor::Baudrate>(std::stoul(options.at(2)));
-    }
-}
-
-NAV::UbloxSensor::~UbloxSensor()
-{
-    LOG_TRACE("called for {}", name);
-    deinitialize();
-}
-
-NAV::NavStatus NAV::UbloxSensor::initialize()
-{
-    LOG_TRACE("called for {}", name);
-    if (initialized)
-    {
-        LOG_WARN("{} already initialized!!!", name);
-        return NavStatus::NAV_WARNING_ALREADY_INITIALIZED;
+        options.pop_front();
     }
 
     // connect to the sensor
@@ -50,37 +28,25 @@ NAV::NavStatus NAV::UbloxSensor::initialize()
     }
     catch (...)
     {
-        LOG_ERROR("{} could not connect", name);
-        return NavStatus::NAV_ERROR_COULD_NOT_CONNECT;
+        LOG_CRITICAL("{} could not connect", name);
     }
 
     ub.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
     LOG_DEBUG("{} successfully initialized", name);
-
-    initialized = true;
-
-    return NavStatus::NAV_OK;
 }
 
-NAV::NavStatus NAV::UbloxSensor::deinitialize()
+NAV::UbloxSensor::~UbloxSensor()
 {
     LOG_TRACE("called for {}", name);
-    if (initialized)
-    {
-        removeAllCallbacks();
-        callbacksEnabled = false;
-        ub.unregisterAsyncPacketReceivedHandler();
-        if (ub.isConnected())
-        {
-            ub.disconnect();
-        }
-        initialized = false;
-        LOG_DEBUG("{} successfully deinitialized", name);
-        return NAV_OK;
-    }
 
-    return NAV_WARNING_NOT_INITIALIZED;
+    removeAllCallbacks();
+    callbacksEnabled = false;
+    ub.unregisterAsyncPacketReceivedHandler();
+    if (ub.isConnected())
+        ub.disconnect();
+
+    LOG_DEBUG("{} successfully deinitialized", name);
 }
 
 std::shared_ptr<NAV::InsObs> NAV::UbloxSensor::pollObservation()
@@ -105,9 +71,6 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
 {
     UbloxSensor* ubSensor = static_cast<UbloxSensor*>(userData);
     LOG_TRACE("called for {}", ubSensor->name);
-
-    if (!ubSensor->initialized)
-        return;
 
     if (p.type() == ub::protocol::uart::Packet::TYPE_BINARY)
     {

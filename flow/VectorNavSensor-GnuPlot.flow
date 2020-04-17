@@ -1,0 +1,57 @@
+{
+    "connections": [
+        {
+            "in_id": "{111f31fa-511c-4915-9f4f-e20fe1ceefce}",
+            "in_index": 0,
+            "out_id": "{a8957682-de31-4a37-8315-110a1256b4d8}",
+            "out_index": 0
+        }
+    ],
+    "nodes": [
+        {
+            "id": "{a8957682-de31-4a37-8315-110a1256b4d8}",
+            "model": {
+                "Baudrate": "Fastest",
+                "Frequency": 50,
+                "Port": "/dev/ttyUSB_VN100_1",
+                "name": "VectorNavSensor"
+            },
+            "position": {
+                "x": 67,
+                "y": 100
+            }
+        },
+        {
+            "id": "{111f31fa-511c-4915-9f4f-e20fe1ceefce}",
+            "model": {
+                "Compensated\nAccelerometer NED": -1,
+                "Compensated\nAccelerometer XYZ": -1,
+                "Compensated\nAngular Rates NED": -1,
+                "Compensated\nAngular Rates XYZ": 0,
+                "Compensated\nMagnetometer NED": -1,
+                "Compensated\nMagnetometer XYZ": -1,
+                "Delta Velocity": -1,
+                "Delta rotation": -1,
+                "Delta time": -1,
+                "Linear (w/o Gravity)\nAccelerometer NED": 1,
+                "Linear (w/o Gravity)\nAccelerometer XYZ": -1,
+                "Pressure": -1,
+                "Quaternions": 0,
+                "Seconds to Show": 9,
+                "Status bitfield": -1,
+                "Sync In Events": -1,
+                "Temperature": -1,
+                "Uncompensated\nAccelerometer XYZ": -1,
+                "Uncompensated\nAngular Rates XYZ": -1,
+                "Uncompensated\nMagnetometer XYZ": -1,
+                "Update Frequency": 20,
+                "Yaw, Pitch, Roll\nUncertainty": -1,
+                "name": "VectorNavGnuPlot"
+            },
+            "position": {
+                "x": 497,
+                "y": -228
+            }
+        }
+    ]
+}

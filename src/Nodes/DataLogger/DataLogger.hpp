@@ -23,34 +23,12 @@ class DataLogger : public Node
      * @brief Construct a new Data Logger object
      * 
      * @param[in] name Name of the Logger
-     * @param[in] path Path to the log file
-     * @param[in] isBinary Flag if the logfile is a binary file
+     * @param[in, out] options Program options string list
      */
-    DataLogger(std::string name, std::string path, bool isBinary);
-
-    /**
-     * @brief Construct a new Data Logger object
-     * 
-     * @param[in] name Name of the Logger
-     */
-    DataLogger(std::string name);
+    DataLogger(std::string name, std::deque<std::string>& options);
 
     /// Default destructor
     ~DataLogger();
-
-    /**
-     * @brief Initialize the File
-     * 
-     * @retval NavStatus Indicates whether initialization was successfull
-     */
-    NavStatus initialize() override;
-
-    /**
-     * @brief Deinitialize the file
-     * 
-     * @retval NavStatus Indicates whether deinitialization was successfull
-     */
-    NavStatus deinitialize() override;
 
     /// Path to the log file
     std::string path;

@@ -12,6 +12,7 @@
 #include "Nodes/Node.hpp"
 
 #include <vector>
+#include <deque>
 #include <memory>
 
 #include <boost/program_options/options_description.hpp>
@@ -28,7 +29,7 @@ class Config
     {
         std::string type;
         std::string name;
-        std::vector<std::string> options;
+        std::deque<std::string> options;
 
         std::shared_ptr<Node> node;
     } NodeConfig;

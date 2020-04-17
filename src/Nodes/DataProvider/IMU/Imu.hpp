@@ -20,8 +20,9 @@ class Imu : public Node, public DataProvider
      * @brief Construct a new Imu object
      * 
      * @param[in] name Name of the Imu
+     * @param[in, out] options Program options string list
      */
-    Imu(std::string name);
+    Imu(std::string name, std::deque<std::string>& options);
 
     /// Destroy the Imu object
     ~Imu();

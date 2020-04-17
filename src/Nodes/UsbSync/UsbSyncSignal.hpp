@@ -23,33 +23,12 @@ class UsbSyncSignal : public Node
      * @brief Construct a new Usb Sync Signal object
      * 
      * @param[in] name Name of the Object
-     * @param[in] port COM port where to send the sync to
+     * @param[in, out] options Program options string list
      */
-    UsbSyncSignal(std::string name, std::string port);
-
-    /**
-     * @brief Construct a new Usb Sync Signal object
-     * 
-     * @param[in] name Name of the Object
-     */
-    UsbSyncSignal(std::string name);
+    UsbSyncSignal(std::string name, std::deque<std::string>& options);
 
     /// Default destructor
     ~UsbSyncSignal();
-
-    /**
-     * @brief Initialize the Usb Sync Signal
-     * 
-     * @retval NavStatus Indicates whether initialization was successfull
-     */
-    NavStatus initialize() override;
-
-    /**
-     * @brief Deinitialize the Usb Sync Signal
-     * 
-     * @retval NavStatus Indicates whether deinitialization was successfull
-     */
-    NavStatus deinitialize() override;
 
   protected:
     /// File descriptor of the sensor port

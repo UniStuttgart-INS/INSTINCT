@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <deque>
 
 namespace NAV
 {
@@ -34,24 +35,22 @@ class UartSensor
     /**
      * @brief Construct a new Uart Sensor object
      * 
-     * @param[in] sensorPort COM port where the sensor is attached to
-     *                          - "COM1" (Windows format for physical and virtual (USB) serial port)
-     *                          - "/dev/ttyS1" (Linux format for physical serial port)
-     *                          - "/dev/ttyUSB0" (Linux format for virtual (USB) serial port)
-     *                          - "/dev/tty.usbserial-FTXXXXXX" (Mac OS X format for virtual (USB) serial port)
-     *                          - "/dev/ttyS0" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)
-     * @param[in] sensorBaudrate Baudrate for the sensor
+     * @param[in, out] options Program options string list
      */
-    UartSensor(const std::string sensorPort, const Baudrate sensorBaudrate);
-
-    /// Default constructor
-    UartSensor();
+    UartSensor(std::deque<std::string>& options);
 
     /// Destroy the Uart Sensor object
     ~UartSensor();
 
     /// COM port where the sensor is attached to
+    ///
+    /// - "COM1" (Windows format for physical and virtual (USB) serial port)
+    /// - "/dev/ttyS1" (Linux format for physical serial port)
+    /// - "/dev/ttyUSB0" (Linux format for virtual (USB) serial port)
+    /// - "/dev/tty.usbserial-FTXXXXXX" (Mac OS X format for virtual (USB) serial port)
+    /// - "/dev/ttyS0" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)
     std::string sensorPort;
+
     /// Baudrate for the sensor
     Baudrate sensorBaudrate;
 };

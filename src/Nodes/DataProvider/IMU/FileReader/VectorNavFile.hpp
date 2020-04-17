@@ -14,7 +14,7 @@
 namespace NAV
 {
 /// File Reader for Vector Nav log files
-class VectorNavFile : public Imu, public FileReader
+class VectorNavFile : public FileReader, public Imu
 {
   public:
     /// Config Structure for the sensor
@@ -26,26 +26,12 @@ class VectorNavFile : public Imu, public FileReader
      * @brief Construct a new Vector Nav File object
      * 
      * @param[in] name Name of the Sensor which wrote the file
-     * @param[in] options Program options string list
+     * @param[in, out] options Program options string list
      */
-    VectorNavFile(std::string name, std::vector<std::string> options);
+    VectorNavFile(std::string name, std::deque<std::string>& options);
 
     /// Default destructor
     virtual ~VectorNavFile();
-
-    /**
-     * @brief Initialize the File
-     * 
-     * @retval NavStatus Indicates whether initialization was successfull
-     */
-    NavStatus initialize() final;
-
-    /**
-     * @brief Deinitialize the file
-     * 
-     * @retval NavStatus Indicates whether deinitialization was successfull
-     */
-    NavStatus deinitialize() final;
 
     /**
      * @brief Polls the next data package

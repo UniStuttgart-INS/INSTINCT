@@ -22,26 +22,12 @@ class VectorNavDataLogger : public DataLogger
      * @brief Construct a new Data Logger object
      * 
      * @param[in] name Name of the Logger
-     * @param[in] options Program options string list
+     * @param[in, out] options Program options string list
      */
-    VectorNavDataLogger(std::string name, std::vector<std::string> options);
+    VectorNavDataLogger(std::string name, std::deque<std::string>& options);
 
     /// Default destructor
     virtual ~VectorNavDataLogger();
-
-    /**
-     * @brief Initialize the File
-     * 
-     * @retval NavStatus Indicates whether initialization was successfull
-     */
-    NavStatus initialize();
-
-    /**
-     * @brief Deinitialize the file
-     * 
-     * @retval NavStatus Indicates whether deinitialization was successfull
-     */
-    NavStatus deinitialize();
 
     /**
      * @brief Write VectorNav Observation to the file
@@ -50,7 +36,7 @@ class VectorNavDataLogger : public DataLogger
      * @param[in] userData User data specified when registering the callback
      * @retval NavStatus Indicates whether the write was successfull.
      */
-    static NavStatus writeObservation(std::shared_ptr<void> observation, std::shared_ptr<void> userData);
+    static NavStatus writeObservation(std::shared_ptr<NodeData> observation, std::shared_ptr<Node> userData);
 };
 
 } // namespace NAV

@@ -14,7 +14,7 @@
 namespace NAV
 {
 /// Ublox Sensor Class
-class UbloxSensor : public Gnss, public UartSensor
+class UbloxSensor : public UartSensor, public Gnss
 {
   public:
     /// Config Structure for the sensor
@@ -28,26 +28,12 @@ class UbloxSensor : public Gnss, public UartSensor
      * @brief Construct a new ublox Sensor object
      * 
      * @param[in] name Name of the Sensor
-     * @param[in] options Program options string list
+     * @param[in, out] options Program options string list
      */
-    UbloxSensor(std::string name, std::vector<std::string> options);
+    UbloxSensor(std::string name, std::deque<std::string>& options);
 
     /// Default Destructor
     virtual ~UbloxSensor();
-
-    /**
-     * @brief Initialize the Sensor
-     * 
-     * @retval NavStatus Indicates whether initialization was successfull
-     */
-    NavStatus initialize() final;
-
-    /**
-     * @brief Deinitialize the Sensor
-     * 
-     * @retval NavStatus Indicates whether deinitialization was successfull
-     */
-    NavStatus deinitialize() final;
 
     /**
      * @brief Polls the current Gnss Data

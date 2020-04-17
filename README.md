@@ -17,12 +17,13 @@ The software consists of 2 parts
 ### Dependencies
 
 * Needed:
-    * [cmake](https://cmake.org/)  	A cross-platform open-source make system
+    * [cmake](https://cmake.org/) A cross-platform open-source make system
     * [make](https://www.gnu.org/software/make/) GNU make utility to maintain groups of programs
     * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) Code formatting Tool
     * C++ compiler (e.g. [gcc](https://gcc.gnu.org/), [clang](https://clang.llvm.org/)) for compiling the project
 * Optional:
     * [Conan](https://conan.io) A distributed, open source, C/C++ package manager
+    * [gnuplot](http://www.gnuplot.info/) Plotting package. Needed if any plotting is intended
     * [ccache](https://ccache.dev/) Compiler cache that speeds up recompilation by caching previous compilations
     * [valgrind](http://valgrind.org/) CPU profiling & leak detection
     * [kcachegrind](http://kcachegrind.sourceforge.net) Visualization of Performance Profiling Data
@@ -36,7 +37,7 @@ The software consists of 2 parts
 * GUI (optional):
     * [Qt](https://www.qt.io/) A cross-platform application and UI framework
 
-### Installing
+### Installing (Linux)
 
 Most library dependencies are managed by Conan.io, so you just need to install the basics.
 
@@ -47,7 +48,7 @@ sudo pacman -S base-devel cmake clang
 
 # Optional
 trizen -S conan # AUR package
-sudo pacman -S ccache valgrind kcachegrind doxygen
+sudo pacman -S ccache valgrind kcachegrind doxygen gnuplot
 
 # GUI (optional)
 sudo pacman -S qt5-base
@@ -60,32 +61,10 @@ sudo apt-get install build-essential cmake clang
 
 # Optional
 pip install conan
-sudo apt-get install ccache valgrind kcachegrind doxygen
+sudo apt-get install ccache valgrind kcachegrind doxygen gnuplot gnuplot-x11
 
 # GUI (optional)
 sudo apt-get install qt5-default 
-```
-
-Mac:
-```
-# Cmake
-brew install cmake # If you use Homebrew
-sudo port install cmake # If you use MacPorts
-
-# Conan
-brew install conan # If you use Homebrew
-pip install conan # Otherwise
-
-# Missing instructions for
-# clang
-# make
-# ccache
-# valgrind
-# kcachegrind
-# doxygen
-
-# Please install them yourself and add instructions here
-
 ```
 
 ### VSCode Configuration

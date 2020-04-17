@@ -14,8 +14,13 @@
 #include <vector>
 #include <unordered_map>
 
+#include "NodeData/NodeData.hpp"
+
 namespace NAV
 {
+// Forward declaration
+class Node;
+
 /// Abstract class for Callback Functionality
 class DataCallback
 {
@@ -31,7 +36,7 @@ class DataCallback
      * @param[in] userData Pointer to user data that are needed when executing the callback
      * @retval NavStatus Indicates if adding the callback was successfull
      */
-    NavStatus addCallback(size_t port, std::function<NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback, std::shared_ptr<void> userData);
+    NavStatus addCallback(size_t port, std::function<NavStatus(std::shared_ptr<NodeData>, std::shared_ptr<Node>)> callback, std::shared_ptr<Node> userData);
 
     /**
      * @brief Adds the supplied callback at the end of the callback list
@@ -42,7 +47,7 @@ class DataCallback
      * @param[in] index Index where to insert the callback
      * @retval NavStatus Indicates if inserting the callback was successfull
      */
-    NavStatus addCallback(size_t port, std::function<NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback, std::shared_ptr<void> userData, size_t index);
+    NavStatus addCallback(size_t port, std::function<NavStatus(std::shared_ptr<NodeData>, std::shared_ptr<Node>)> callback, std::shared_ptr<Node> userData, size_t index);
 
     /**
      * @brief Removes the last callback from the list
@@ -84,7 +89,7 @@ class DataCallback
      * @param[in] data The received data
      * @retval NavStatus Indicates if there was a problem with one of the callbacks
      */
-    NavStatus invokeCallbacks(size_t port, std::shared_ptr<void> data);
+    NavStatus invokeCallbacks(size_t port, std::shared_ptr<NodeData> data);
 
   protected:
     /// Construct a new Data Callback object
@@ -97,8 +102,8 @@ class DataCallback
     /// Data Structure for Callbacks
     struct Callback
     {
-        std::function<NavStatus(std::shared_ptr<void>, std::shared_ptr<void>)> callback = nullptr;
-        std::shared_ptr<void> data = nullptr;
+        std::function<NavStatus(std::shared_ptr<NodeData>, std::shared_ptr<Node>)> callback = nullptr;
+        std::shared_ptr<Node> data = nullptr;
     };
 
     /**

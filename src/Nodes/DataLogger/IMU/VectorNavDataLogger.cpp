@@ -5,40 +5,12 @@
 
 #include <iomanip> // std::setprecision
 
-NAV::VectorNavDataLogger::VectorNavDataLogger(std::string name, std::vector<std::string> options)
-    : DataLogger(name)
+NAV::VectorNavDataLogger::VectorNavDataLogger(std::string name, std::deque<std::string>& options)
+    : DataLogger(name, options)
 {
     LOG_TRACE("called for {}", name);
 
-    isBinary = false;
-    if (options.size() >= 1)
-        path = options.at(0);
-    if (options.size() >= 2)
-    {
-        if (options.at(1) == "ascii")
-            isBinary = false;
-        else if (options.at(1) == "binary")
-            isBinary = true;
-        else
-            LOG_WARN("Node {} has unknown file type {}. Using ascii instead", name, options.at(1));
-    }
-}
-
-NAV::VectorNavDataLogger::~VectorNavDataLogger()
-{
-    LOG_TRACE("called for {}", name);
-
-    deinitialize();
-}
-
-NAV::NavStatus NAV::VectorNavDataLogger::initialize()
-{
-    LOG_TRACE("called for {}", name);
-
-    // Initialize base class
-    if (NavStatus result = DataLogger::initialize();
-        result != NavStatus::NAV_OK)
-        return result;
+    LOG_DEBUG("isBinary: {} ", isBinary);
 
     if (!isBinary)
         filestream << "GpsToW,GpsWeek,TimeStartup,TimeSyncIn,SyncInCnt,"
@@ -47,27 +19,14 @@ NAV::NavStatus NAV::VectorNavDataLogger::initialize()
                    << "MagX,MagY,MagZ,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,AhrsStatus,Quat[0],Quat[1],Quat[2],Quat[3],"
                    << "MagN,MagE,MagD,AccN,AccE,AccD,LinAccX,LinAccY,LinAccZ,LinAccN,LinAccE,LinAccD,"
                    << "YawU,PitchU,RollU,YawRate,PitchRate,RollRate" << std::endl;
-
-    LOG_DEBUG("{} successfully initialized", name);
-
-    initialized = true;
-
-    return NavStatus::NAV_OK;
 }
 
-NAV::NavStatus NAV::VectorNavDataLogger::deinitialize()
+NAV::VectorNavDataLogger::~VectorNavDataLogger()
 {
     LOG_TRACE("called for {}", name);
-
-    // Deinitialize base class after
-    if (NavStatus result = DataLogger::deinitialize();
-        result != NavStatus::NAV_OK)
-        return result;
-
-    return NavStatus::NAV_OK;
 }
 
-NAV::NavStatus NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<void> observation, std::shared_ptr<void> userData)
+NAV::NavStatus NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<NAV::NodeData> observation, std::shared_ptr<NAV::Node> userData)
 {
     auto vnObs = std::static_pointer_cast<VectorNavObs>(observation);
     auto logger = std::static_pointer_cast<VectorNavDataLogger>(userData);

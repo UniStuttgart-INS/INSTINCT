@@ -20,8 +20,9 @@ class Gnss : public Node, public DataProvider
      * @brief Construct a new Gnss object
      * 
      * @param[in] name Name of the Gnss object
+     * @param[in, out] options Program options string list
      */
-    Gnss(std::string name);
+    Gnss(std::string name, std::deque<std::string>& options);
 
     /// Destroy the Gnss object
     ~Gnss();

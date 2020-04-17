@@ -13,17 +13,11 @@ NAV::NavStatus NAV::NodeCreator::createNodes(NAV::Config* pConfig)
         if (nodeInterfaces.count(node.type))
             node.node = nodeInterfaces.at(node.type).constructor(node.name, node.options);
         else
-        {
             LOG_CRITICAL("Node {} - {} has unknown type", node.type, node.name);
-            return NavStatus::NAV_ERROR;
-        }
 
         // Initialize the Node
-        if (node.node == nullptr || node.node->initialize() != NAV::NavStatus::NAV_OK)
-        {
+        if (!node.node)
             LOG_CRITICAL("Node {} - {} could not be created", node.type, node.name);
-            return NavStatus::NAV_ERROR;
-        }
         else
             LOG_INFO("{}═⇒ {} ({}) created", node.name == pConfig->nodes.back().name ? "╚" : "╠", node.name, node.type);
     }
@@ -46,20 +40,15 @@ NAV::NavStatus NAV::NodeCreator::createLinks(NAV::Config* pConfig)
                 targetNode = &pConfig->nodes[i];
         }
         if (!sourceNode || !targetNode)
-        {
             LOG_CRITICAL("Node Link {} ⇒ {} could not be created because {} could not be found",
                          nodeLink.source, nodeLink.target,
                          targetNode ? nodeLink.source : (sourceNode ? nodeLink.target : "source and target"));
-            return NavStatus::NAV_ERROR;
-        }
 
         // Search matching interfaces
         if (!nodeInterfaces.count(sourceNode->type) || !nodeInterfaces.count(targetNode->type))
-        {
             LOG_CRITICAL("Data Link {} ⇒ {} could not be created because type {} is not supported by any node interface.",
                          nodeLink.source, nodeLink.target, !nodeInterfaces.count(sourceNode->type) ? sourceNode->type : targetNode->type);
-            return NavStatus::NAV_ERROR;
-        }
+
         auto& sourceInterface = nodeInterfaces.at(sourceNode->type);
         auto& targetInterface = nodeInterfaces.at(targetNode->type);
 
@@ -86,16 +75,11 @@ NAV::NavStatus NAV::NodeCreator::createLinks(NAV::Config* pConfig)
         }
 
         if (linkEstablished)
-        {
             LOG_INFO("{}═⇒ {} ═({})⇒ {} created", (nodeLink.source == pConfig->nodeLinks.back().source && nodeLink.target == pConfig->nodeLinks.back().target) ? "╚" : "╠",
                      nodeLink.source, nodeLink.type, nodeLink.target);
-        }
         else
-        {
             LOG_CRITICAL("Data Link {} ⇒ {} could not be created because link generation for types {} ═({})⇒ {} is not supported.",
                          nodeLink.source, nodeLink.target, sourceNode->type, nodeLink.type, targetNode->type);
-            return NavStatus::NAV_ERROR;
-        }
     }
 
     return NavStatus::NAV_OK;

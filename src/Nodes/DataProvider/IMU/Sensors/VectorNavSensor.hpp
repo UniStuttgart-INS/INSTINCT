@@ -13,13 +13,12 @@
 #include "../../Protocol/UartSensor.hpp"
 #include "vn/sensors.h"
 
-#include <vector>
 #include <string>
 
 namespace NAV
 {
 /// Vector Nav Sensor Class
-class VectorNavSensor : public Imu, public UartSensor
+class VectorNavSensor : public UartSensor, public Imu
 {
   public:
     /// Config Structure for the sensor
@@ -61,26 +60,12 @@ class VectorNavSensor : public Imu, public UartSensor
      * @brief Construct a new Vector Nav Sensor object
      * 
      * @param[in] name Name of the Sensor
-     * @param[in] options Program options string list
+     * @param[in, out] options Program options string list
      */
-    VectorNavSensor(std::string name, std::vector<std::string> options);
+    VectorNavSensor(std::string name, std::deque<std::string>& options);
 
     /// Default Destructor
     virtual ~VectorNavSensor();
-
-    /**
-     * @brief Initialize the Sensor
-     * 
-     * @retval NavStatus Indicates whether initialization was successfull
-     */
-    NavStatus initialize() final;
-
-    /**
-     * @brief Deinitialize the Sensor
-     * 
-     * @retval NavStatus Indicates whether deinitialization was successfull
-     */
-    NavStatus deinitialize() final;
 
     /**
      * @brief Polls the current Imu Data

@@ -20,7 +20,7 @@ class VectorNavObs : public ImuObs
 
     /** The time since the last SyncIn event trigger expressed in [nano seconds] */
     std::optional<uint64_t> timeSinceSyncIn;
-    /** The number of SyncOut trigger events that have occurred. */
+    /** The number of SyncIn trigger events that have occurred. */
     std::optional<uint32_t> syncInCnt;
 
     /** The time interval that the delta angle and velocities are integrated over in [seconds]. */

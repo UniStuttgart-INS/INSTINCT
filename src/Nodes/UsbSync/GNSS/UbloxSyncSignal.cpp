@@ -5,23 +5,24 @@
 #include "util/Logger.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 
-NAV::UbloxSyncSignal::UbloxSyncSignal(std::string name, std::vector<std::string> options)
-    : UsbSyncSignal(name)
+NAV::UbloxSyncSignal::UbloxSyncSignal(std::string name, std::deque<std::string>& options)
+    : UsbSyncSignal(name, options)
 {
     LOG_TRACE("called for {}", name);
 
-    //SensorPort, type, msgClass, msgId
-    if (options.size() >= 1)
-        port = options.at(0);
-    if (options.size() >= 4)
+    // type, msgClass, msgId
+    if (options.size() >= 3)
     {
-        if (options.at(1) == "UBX")
+        if (options.at(0) == "UBX")
         {
-            triggerClass = ub::protocol::uart::getMsgClassFromString(options.at(2));
-            triggerId = ub::protocol::uart::getMsgIdFromString(triggerClass, options.at(3));
+            triggerClass = ub::protocol::uart::getMsgClassFromString(options.at(1));
+            triggerId = ub::protocol::uart::getMsgIdFromString(triggerClass, options.at(2));
+            options.pop_front();
+            options.pop_front();
+            options.pop_front();
         }
         else
-            LOG_CRITICAL("Node {} has unknown type {}", name, options.at(1));
+            LOG_CRITICAL("Node {} has unknown type {}", name, options.at(0));
     }
     else
         LOG_CRITICAL("Node {} has not enough options", name);
@@ -30,39 +31,9 @@ NAV::UbloxSyncSignal::UbloxSyncSignal(std::string name, std::vector<std::string>
 NAV::UbloxSyncSignal::~UbloxSyncSignal()
 {
     LOG_TRACE("called for {}", name);
-
-    deinitialize();
 }
 
-NAV::NavStatus NAV::UbloxSyncSignal::initialize()
-{
-    LOG_TRACE("called for {}", name);
-
-    // Initialize base class
-    if (NavStatus result = UsbSyncSignal::initialize();
-        result != NavStatus::NAV_OK)
-        return result;
-
-    LOG_DEBUG("{} successfully initialized", name);
-
-    initialized = true;
-
-    return NavStatus::NAV_OK;
-}
-
-NAV::NavStatus NAV::UbloxSyncSignal::deinitialize()
-{
-    LOG_TRACE("called for {}", name);
-
-    // Deinitialize base class after
-    if (NavStatus result = UsbSyncSignal::deinitialize();
-        result != NavStatus::NAV_OK)
-        return result;
-
-    return NavStatus::NAV_OK;
-}
-
-NAV::NavStatus NAV::UbloxSyncSignal::triggerSync(std::shared_ptr<void> observation, std::shared_ptr<void> userData)
+NAV::NavStatus NAV::UbloxSyncSignal::triggerSync(std::shared_ptr<NAV::NodeData> observation, std::shared_ptr<NAV::Node> userData)
 {
     auto obs = std::static_pointer_cast<UbloxObs>(observation);
     auto sync = std::static_pointer_cast<UbloxSyncSignal>(userData);

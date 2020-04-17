@@ -19,4 +19,5 @@ target_link_libraries(${PROJECT_NAME_LOWERCASE}
                         CONAN_PKG::fmt CONAN_PKG::spdlog
                         CONAN_PKG::boost CONAN_PKG::eigen
                         Threads::Threads
-                        libvncxx libubcxx)
+                        libvncxx libubcxx
+                        ${MathGL_LIBRARIES})

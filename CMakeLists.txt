@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(cmake/utils.cmake)
 extract_project_version()
 
@@ -65,6 +66,10 @@ include_directories(lib/ubloxlib/include)
 
 # Include gnuplot iostream
 include_directories(lib/gnuplot-iostream)
+
+# Find MathGL
+find_package(MathGL)
+include_directories(${MathGL_INCLUDE_DIRS})
 
 # Find installed packages
 find_package (Threads REQUIRED)

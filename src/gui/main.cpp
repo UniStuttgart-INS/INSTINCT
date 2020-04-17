@@ -2,6 +2,7 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QMenuBar>
 
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QDoubleSpinBox>
@@ -22,6 +23,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <algorithm>
+#include <string>
 
 using QtNodes::DataModelRegistry;
 using QtNodes::FlowScene;
@@ -105,8 +108,9 @@ void exportConfig()
         for (size_t i = 0; i < nodeModel->widgets.size(); i++)
         {
             std::string text;
-            if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_UINT
-                || nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
+            if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_BOOL)
+                text = std::to_string(static_cast<QCheckBox*>(nodeModel->widgets.at(i))->isChecked());
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
                 text = std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
             else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_FLOAT)
                 text = std::to_string(static_cast<QDoubleSpinBox*>(nodeModel->widgets.at(i))->value());
@@ -114,8 +118,12 @@ void exportConfig()
                 text = static_cast<QLineEdit*>(nodeModel->widgets.at(i))->text().toStdString();
             else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
                 text = static_cast<QComboBox*>(nodeModel->widgets.at(i))->currentText().toStdString();
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
+                text = nodeModel->widgets.at(i)->property("key").toString().toStdString() + ", " + std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
 
             std::string type = nodeModel->widgets.at(i)->objectName().toStdString();
+
+            std::replace(type.begin(), type.end(), '\n', ' ');
 
             comment += ", " + type;
             config += ", " + text;
@@ -125,6 +133,7 @@ void exportConfig()
             for (int i = 0; i < static_cast<int>(text.size()) - static_cast<int>(type.size()); i++)
                 comment += " ";
         }
+
         filestream << comment << std::endl;
         filestream << config << std::endl;
     }

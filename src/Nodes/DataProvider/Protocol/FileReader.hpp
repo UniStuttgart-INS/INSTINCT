@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <deque>
 #include <fstream>
 #include <optional>
 
@@ -28,12 +29,9 @@ class FileReader
     /**
      * @brief Construct a new File Reader object
      * 
-     * @param[in] path Path to the file to read
+     * @param[in, out] options Program options string list
      */
-    FileReader(std::string path);
-
-    /// Default constructor
-    FileReader();
+    FileReader(std::deque<std::string>& options);
 
     /// Default destructor
     ~FileReader();

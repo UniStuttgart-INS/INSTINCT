@@ -2,25 +2,26 @@
 
 #include "util/Logger.hpp"
 
-NAV::DataLogger::DataLogger(std::string name, std::string path, bool isBinary)
-    : Node(name), path(path), isBinary(isBinary) {}
-
-NAV::DataLogger::DataLogger(std::string name)
-    : Node(name) {}
-
-NAV::DataLogger::~DataLogger()
-{
-    deinitialize();
-}
-
-NAV::NavStatus NAV::DataLogger::initialize()
+NAV::DataLogger::DataLogger(std::string name, std::deque<std::string>& options)
+    : Node(name)
 {
     LOG_TRACE("called for {}", name);
 
-    if (initialized)
+    if (options.size() >= 1)
     {
-        LOG_WARN("{} already initialized!!!", name);
-        return NavStatus::NAV_WARNING_ALREADY_INITIALIZED;
+        path = options.at(0);
+        options.pop_front();
+    }
+    if (options.size() >= 1)
+    {
+        if (options.at(0) == "ascii")
+            isBinary = false;
+        else if (options.at(0) == "binary")
+            isBinary = true;
+        else
+            LOG_CRITICAL("Node {} has unknown file type {}", name, options.at(0));
+
+        options.pop_front();
     }
 
     if (isBinary)
@@ -29,29 +30,18 @@ NAV::NavStatus NAV::DataLogger::initialize()
         filestream.open(path, std::ios_base::trunc);
 
     if (!filestream.good())
-    {
-        LOG_ERROR("{} could not be opened", name);
-        return NavStatus::NAV_ERROR_COULD_NOT_OPEN_FILE;
-    }
-    else
-        return NavStatus::NAV_OK;
+        LOG_CRITICAL("{} could not be opened", name);
 }
 
-NAV::NavStatus NAV::DataLogger::deinitialize()
+NAV::DataLogger::~DataLogger()
 {
     LOG_TRACE("called for {}", name);
 
-    if (initialized)
+    if (filestream.is_open())
     {
-        if (filestream.is_open())
-        {
-            filestream.flush();
-            filestream.close();
-        }
-        initialized = false;
-        LOG_DEBUG("{} successfully deinitialized", name);
-        return NavStatus::NAV_OK;
+        filestream.flush();
+        filestream.close();
     }
 
-    return NAV_WARNING_NOT_INITIALIZED;
+    LOG_DEBUG("{} successfully deinitialized", name);
 }
