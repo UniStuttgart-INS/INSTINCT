@@ -1,6 +1,5 @@
 #include "GnuPlot.hpp"
 
-#include "util/Config.hpp"
 #include "util/Logger.hpp"
 
 std::vector<std::shared_ptr<NAV::GnuPlot::GnuPlotWindow>> NAV::GnuPlot::plotWindows;
@@ -58,17 +57,9 @@ NAV::GnuPlot::GnuPlot(std::string name, std::deque<std::string>& options)
         options.pop_front();
     }
 
-    NAV::Config* pConfig = NAV::Config::Get();
-
     for (auto& plotWindow : plotWindows)
     {
-        if (!pConfig->GetSigterm())
-        {
-            *plotWindow->gp << "set autoscale y\n";
-            *plotWindow->gp << "set xrange [0:" << pConfig->GetProgExecTime() << "]\n";
-        }
-        else
-            *plotWindow->gp << "set autoscale xy\n";
+        *plotWindow->gp << "set autoscale xy\n";
 
         *plotWindow->gp << "set grid ytics lc rgb \"#bbbbbb\" lw 1 lt 0\n";
         *plotWindow->gp << "set grid xtics lc rgb \"#bbbbbb\" lw 1 lt 0\n";
