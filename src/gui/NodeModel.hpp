@@ -1,6 +1,9 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QFormLayout>
 
 #include <nodes/NodeData>
 #include <nodes/NodeDataModel>
@@ -50,6 +53,8 @@ class NodeModel : public NodeDataModel
   private:
     QString const _name = "Template";
     QWidget* _mainWidget;
+
+    void addListListIntRow(std::vector<std::string> config, int row, QGridLayout* layout, QGroupBox* gridGroupBox, QFormLayout* formLayout);
 
   public:
     std::vector<QWidget*> widgets;

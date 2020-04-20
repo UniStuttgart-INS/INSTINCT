@@ -42,17 +42,18 @@ NAV::GnuPlot::GnuPlot(std::string name, std::deque<std::string>& options)
         options.pop_front();
     }
 
-    for (auto it = options.begin(); it != options.end() && it + 1 != options.end(); it = options.begin())
+    for (auto it = options.begin(); it != options.end() && it + 1 != options.end() && it + 2 != options.end(); it = options.begin())
     {
-        int wIndex = std::stoi(*(it + 1));
+        int wIndex = std::stoi(*(it + 2));
         if (wIndex >= 0)
         {
-            dataToPlot.push_back(std::make_pair(*it, wIndex));
+            dataToPlot.push_back(std::make_tuple(*it, *(it + 1), wIndex));
 
             while (static_cast<size_t>(wIndex) + 1 > plotWindows.size())
                 plotWindows.push_back(std::make_shared<GnuPlotWindow>());
         }
 
+        options.pop_front();
         options.pop_front();
         options.pop_front();
     }

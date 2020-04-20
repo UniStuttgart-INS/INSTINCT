@@ -118,6 +118,26 @@ void exportConfig()
                 text = static_cast<QLineEdit*>(nodeModel->widgets.at(i))->text().toStdString();
             else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
                 text = static_cast<QComboBox*>(nodeModel->widgets.at(i))->currentText().toStdString();
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST_LIST_INT)
+            {
+                auto gridGroupBox = static_cast<QGroupBox*>(nodeModel->widgets.at(i));
+                auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
+
+                for (int j = 1; j < layout->rowCount(); j++)
+                {
+                    QComboBox* xlist = static_cast<QComboBox*>(layout->itemAtPosition(j, 0)->widget());
+                    QComboBox* ylist = static_cast<QComboBox*>(layout->itemAtPosition(j, 1)->widget());
+                    QSpinBox* spinBox = static_cast<QSpinBox*>(layout->itemAtPosition(j, 2)->widget());
+
+                    if (spinBox->value() != -1)
+                    {
+                        std::string toAdd = xlist->currentText().toStdString() + ", " + ylist->currentText().toStdString() + ", " + std::to_string(spinBox->value());
+
+                        if (text.find(toAdd) == std::string::npos)
+                            text += (!text.empty() ? ", " : "") + toAdd;
+                    }
+                }
+            }
             else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
                 text = nodeModel->widgets.at(i)->property("key").toString().toStdString() + ", " + std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
 

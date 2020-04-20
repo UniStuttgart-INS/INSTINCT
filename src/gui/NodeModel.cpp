@@ -17,12 +17,66 @@
 
 NodeModel::NodeModel() {}
 
+void NodeModel::addListListIntRow(std::vector<std::string> config, int row, QGridLayout* layout, QGroupBox* gridGroupBox, QFormLayout* formLayout)
+{
+    for (size_t j = 0; j < config.size(); j++)
+    {
+        const std::string& line = config.at(j);
+        if (j <= 1)
+        {
+            QComboBox* comboBox = new QComboBox(gridGroupBox);
+            std::stringstream lineStream(line);
+            std::string cell;
+            while (std::getline(lineStream, cell, '|'))
+            {
+                if (cell.at(0) == '[')
+                {
+                    comboBox->addItem(QString::fromStdString(cell.substr(1, cell.size() - 2)));
+                    comboBox->setCurrentIndex(comboBox->count() - 1);
+                }
+                else
+                    comboBox->addItem(QString::fromStdString(cell));
+            }
+            comboBox->setStyleSheet("QComboBox { background-color: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
+            comboBox->setProperty("Row", row);
+
+            layout->addWidget(comboBox, row, static_cast<int>(j));
+        }
+        else if (j == 2)
+        {
+            QSpinBox* spinBox = new QSpinBox(gridGroupBox);
+            std::stringstream lineStream(line);
+            std::string cell;
+            for (size_t k = 0; k < 3; k++)
+            {
+                std::getline(lineStream, cell, '|');
+                if (k == 0)
+                    spinBox->setMinimum(std::stoi(cell));
+                else if (k == 1)
+                    spinBox->setValue(std::stoi(cell));
+                else if (k == 2)
+                    spinBox->setMaximum(std::stoi(cell));
+            }
+            spinBox->setStyleSheet("QSpinBox { background-color: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
+            spinBox->setProperty("Row", row);
+
+            connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+                    [this, config, spinBox, layout, gridGroupBox, formLayout](int i) {
+                        if (i != -1 && spinBox->property("Row") == layout->rowCount() - 1)
+                            this->addListListIntRow(config, layout->rowCount(), layout, gridGroupBox, formLayout);
+                    });
+
+            layout->addWidget(spinBox, row, static_cast<int>(j));
+        }
+    }
+}
+
 NodeModel::NodeModel(QString const& name)
     : _name(name)
 {
     std::cout << "Creating " << name.toStdString() << std::endl;
     _mainWidget = new QWidget();
-    _mainWidget->setStyleSheet("background-color: transparent; color: white");
+    _mainWidget->setStyleSheet("QWidget { background-color: transparent; color: white }");
     QFormLayout* _layout = new QFormLayout(_mainWidget);
     _layout->setContentsMargins(0, 5, 0, 0);
     _layout->setLabelAlignment(Qt::AlignRight);
@@ -38,7 +92,7 @@ NodeModel::NodeModel(QString const& name)
             widgets.push_back(new QCheckBox());
             QCheckBox* checkBox = static_cast<QCheckBox*>(widgets.at(widgets.size() - 1));
 
-            checkBox->setChecked(std::stoi(std::get<2>(nodeInterface.config.at(i))));
+            checkBox->setChecked(std::stoi(std::get<2>(nodeInterface.config.at(i)).front()));
             checkBox->setObjectName(description);
             checkBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
             checkBox->setStyleSheet("QCheckBox::indicator:unchecked { border: 1px solid rgb(220,220,220); }");
@@ -49,17 +103,14 @@ NodeModel::NodeModel(QString const& name)
             widgets.push_back(new QSpinBox());
             QSpinBox* spinBox = static_cast<QSpinBox*>(widgets.at(widgets.size() - 1));
 
-            std::stringstream lineStream(std::get<2>(nodeInterface.config.at(i)));
-            std::string cell;
-            // Split line at separator
-            for (size_t i = 0; i < 3; i++)
+            for (size_t j = 0; j < 3; j++)
             {
-                std::getline(lineStream, cell, '|');
-                if (i == 0)
+                std::string cell = std::get<2>(nodeInterface.config.at(i)).at(j);
+                if (j == 0)
                     spinBox->setMinimum(std::stoi(cell));
-                else if (i == 1)
+                else if (j == 1)
                     spinBox->setValue(std::stoi(cell));
-                else if (i == 2)
+                else if (j == 2)
                     spinBox->setMaximum(std::stoi(cell));
             }
 
@@ -74,17 +125,14 @@ NodeModel::NodeModel(QString const& name)
             widgets.push_back(new QDoubleSpinBox());
             QDoubleSpinBox* doubleSpinBox = static_cast<QDoubleSpinBox*>(widgets.at(widgets.size() - 1));
 
-            std::stringstream lineStream(std::get<2>(nodeInterface.config.at(i)));
-            std::string cell;
-            // Split line at separator
-            for (size_t i = 0; i < 3; i++)
+            for (size_t j = 0; j < 3; j++)
             {
-                std::getline(lineStream, cell, '|');
-                if (i == 0)
+                std::string cell = std::get<2>(nodeInterface.config.at(i)).at(j);
+                if (j == 0)
                     doubleSpinBox->setMinimum(std::stod(cell));
-                else if (i == 1)
+                else if (j == 1)
                     doubleSpinBox->setValue(std::stod(cell));
-                else if (i == 2)
+                else if (j == 2)
                     doubleSpinBox->setMaximum(std::stod(cell));
             }
 
@@ -102,7 +150,7 @@ NodeModel::NodeModel(QString const& name)
             lineEdit->setObjectName(description);
             lineEdit->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
             lineEdit->setStyleSheet("QLineEdit { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
-            lineEdit->setText(QString::fromStdString(std::get<2>(nodeInterface.config.at(i))));
+            lineEdit->setText(QString::fromStdString(std::get<2>(nodeInterface.config.at(i)).front()));
             _layout->addRow(description, lineEdit);
         }
         else if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
@@ -110,15 +158,11 @@ NodeModel::NodeModel(QString const& name)
             widgets.push_back(new QComboBox());
             QComboBox* comboBox = static_cast<QComboBox*>(widgets.at(widgets.size() - 1));
 
-            std::stringstream lineStream(std::get<2>(nodeInterface.config.at(i)));
-            std::string cell;
-            // Split line at separator
-            while (std::getline(lineStream, cell, '|'))
+            for (auto& cell : std::get<2>(nodeInterface.config.at(i)))
             {
                 if (cell.at(0) == '[')
                 {
-                    cell = cell.substr(1, cell.size() - 2);
-                    comboBox->addItem(QString::fromStdString(cell));
+                    comboBox->addItem(QString::fromStdString(cell.substr(1, cell.size() - 2)));
                     comboBox->setCurrentIndex(comboBox->count() - 1);
                 }
                 else
@@ -129,24 +173,40 @@ NodeModel::NodeModel(QString const& name)
             comboBox->setStyleSheet("QComboBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
             _layout->addRow(description, comboBox);
         }
+        else if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_LIST_LIST_INT)
+        {
+            widgets.push_back(new QGroupBox(description));
+            QGroupBox* gridGroupBox = static_cast<QGroupBox*>(widgets.at(widgets.size() - 1));
+            QGridLayout* layout = new QGridLayout;
+
+            gridGroupBox->setObjectName(description);
+            gridGroupBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
+            // gridGroupBox->setStyleSheet("QGroupBox { color: green; }");
+
+            layout->addWidget(new QLabel("X Data Source", gridGroupBox), 0, 0);
+            layout->addWidget(new QLabel("Y Data Source", gridGroupBox), 0, 1);
+            layout->addWidget(new QLabel("Window", gridGroupBox), 0, 2);
+
+            addListListIntRow(std::get<2>(nodeInterface.config.at(i)), 1, layout, gridGroupBox, _layout);
+
+            gridGroupBox->setLayout(layout);
+            _layout->addRow(gridGroupBox);
+        }
         else if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
         {
             widgets.push_back(new QSpinBox());
             QSpinBox* spinBox = static_cast<QSpinBox*>(widgets.at(widgets.size() - 1));
 
-            std::stringstream lineStream(std::get<2>(nodeInterface.config.at(i)));
-            std::string cell;
-            // Split line at separator
-            for (size_t i = 0; i < 4; i++)
+            for (size_t j = 0; j < 4; j++)
             {
-                std::getline(lineStream, cell, '|');
-                if (i == 0)
+                std::string cell = std::get<2>(nodeInterface.config.at(i)).at(j);
+                if (j == 0)
                     spinBox->setProperty("key", QString::fromStdString(cell));
-                if (i == 1)
+                if (j == 1)
                     spinBox->setMinimum(std::stoi(cell));
-                else if (i == 2)
+                else if (j == 2)
                     spinBox->setValue(std::stoi(cell));
-                else if (i == 3)
+                else if (j == 3)
                     spinBox->setMaximum(std::stoi(cell));
             }
 
@@ -213,6 +273,27 @@ QJsonObject NodeModel::save() const
             modelJson[widgets.at(i)->objectName()] = static_cast<QLineEdit*>(widgets.at(i))->text();
         else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
             modelJson[widgets.at(i)->objectName()] = static_cast<QComboBox*>(widgets.at(i))->currentText();
+        else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST_LIST_INT)
+        {
+            auto gridGroupBox = static_cast<QGroupBox*>(widgets.at(i));
+            auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
+            std::string json;
+            for (int j = 1; j < layout->rowCount(); j++)
+            {
+                QComboBox* xlist = static_cast<QComboBox*>(layout->itemAtPosition(j, 0)->widget());
+                QComboBox* ylist = static_cast<QComboBox*>(layout->itemAtPosition(j, 1)->widget());
+                QSpinBox* spinBox = static_cast<QSpinBox*>(layout->itemAtPosition(j, 2)->widget());
+
+                if (spinBox->value() != -1)
+                {
+                    if (!json.empty())
+                        json += ";";
+
+                    json += xlist->currentText().toStdString() + "|" + ylist->currentText().toStdString() + "|" + std::to_string(spinBox->value());
+                }
+            }
+            modelJson[widgets.at(i)->objectName()] = QString::fromStdString(json);
+        }
         else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
             modelJson[widgets.at(i)->objectName()] = static_cast<QSpinBox*>(widgets.at(i))->value();
     }
@@ -237,6 +318,28 @@ void NodeModel::restore(QJsonObject const& p)
                 static_cast<QLineEdit*>(widgets.at(i))->setText(v.toString());
             else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
                 static_cast<QComboBox*>(widgets.at(i))->setCurrentText(v.toString());
+            else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST_LIST_INT)
+            {
+                auto gridGroupBox = static_cast<QGroupBox*>(widgets.at(i));
+                auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
+
+                std::string json = v.toString().toStdString();
+
+                std::stringstream lineStream(json);
+                std::string line;
+                for (int j = 1; std::getline(lineStream, line, ';'); j++)
+                {
+                    std::stringstream cellStream(line);
+                    std::string cell;
+                    for (int k = 0; std::getline(cellStream, cell, '|'); k++)
+                    {
+                        if (k <= 1)
+                            static_cast<QComboBox*>(layout->itemAtPosition(j, k)->widget())->setCurrentText(QString::fromStdString(cell));
+                        else if (k == 2)
+                            static_cast<QSpinBox*>(layout->itemAtPosition(j, k)->widget())->setValue(std::stoi(cell));
+                    }
+                }
+            }
             else if (widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
                 static_cast<QSpinBox*>(widgets.at(i))->setValue(v.toInt());
         }

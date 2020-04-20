@@ -11,6 +11,7 @@
 
 #include "gnuplot-iostream.h"
 #include <memory>
+#include <tuple>
 
 namespace NAV
 {
@@ -54,14 +55,15 @@ class GnuPlot : public Node
     /// Default Destructor
     virtual ~GnuPlot();
 
-    double timeFrame = 10.0;
-    double updateFrequency = 10.0;
-
-    std::vector<std::pair<std::string, size_t>> dataToPlot;
+    std::vector<std::tuple<std::string, std::string, size_t>> dataToPlot;
 
     static std::vector<std::shared_ptr<GnuPlotWindow>> plotWindows;
 
     static NavStatus updateWindows(std::shared_ptr<NAV::GnuPlot> obj);
+
+  protected:
+    double timeFrame = 10.0;
+    double updateFrequency = 10.0;
 };
 
 } // namespace NAV
