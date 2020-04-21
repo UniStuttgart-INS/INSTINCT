@@ -92,9 +92,7 @@ NodeModel::NodeModel(QString const& name)
             widgets.push_back(new QCheckBox());
             QCheckBox* checkBox = static_cast<QCheckBox*>(widgets.at(widgets.size() - 1));
 
-            checkBox->setChecked(std::stoi(std::get<2>(nodeInterface.config.at(i)).front()));
-            checkBox->setObjectName(description);
-            checkBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
+            checkBox->setChecked(std::stoi(std::get<3>(nodeInterface.config.at(i)).front()));
             checkBox->setStyleSheet("QCheckBox::indicator:unchecked { border: 1px solid rgb(220,220,220); }");
             _layout->addRow(description, checkBox);
         }
@@ -105,7 +103,7 @@ NodeModel::NodeModel(QString const& name)
 
             for (size_t j = 0; j < 3; j++)
             {
-                std::string cell = std::get<2>(nodeInterface.config.at(i)).at(j);
+                std::string cell = std::get<3>(nodeInterface.config.at(i)).at(j);
                 if (j == 0)
                     spinBox->setMinimum(std::stoi(cell));
                 else if (j == 1)
@@ -115,8 +113,6 @@ NodeModel::NodeModel(QString const& name)
             }
 
             spinBox->setSingleStep(1);
-            spinBox->setObjectName(description);
-            spinBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
             spinBox->setStyleSheet("QSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
             _layout->addRow(description, spinBox);
         }
@@ -127,7 +123,7 @@ NodeModel::NodeModel(QString const& name)
 
             for (size_t j = 0; j < 3; j++)
             {
-                std::string cell = std::get<2>(nodeInterface.config.at(i)).at(j);
+                std::string cell = std::get<3>(nodeInterface.config.at(i)).at(j);
                 if (j == 0)
                     doubleSpinBox->setMinimum(std::stod(cell));
                 else if (j == 1)
@@ -137,8 +133,6 @@ NodeModel::NodeModel(QString const& name)
             }
 
             doubleSpinBox->setSingleStep(1.0);
-            doubleSpinBox->setObjectName(description);
-            doubleSpinBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
             doubleSpinBox->setStyleSheet("QDoubleSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
             _layout->addRow(description, doubleSpinBox);
         }
@@ -147,10 +141,8 @@ NodeModel::NodeModel(QString const& name)
             widgets.push_back(new QLineEdit());
             QLineEdit* lineEdit = static_cast<QLineEdit*>(widgets.at(widgets.size() - 1));
 
-            lineEdit->setObjectName(description);
-            lineEdit->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
             lineEdit->setStyleSheet("QLineEdit { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
-            lineEdit->setText(QString::fromStdString(std::get<2>(nodeInterface.config.at(i)).front()));
+            lineEdit->setText(QString::fromStdString(std::get<3>(nodeInterface.config.at(i)).front()));
             _layout->addRow(description, lineEdit);
         }
         else if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
@@ -158,7 +150,7 @@ NodeModel::NodeModel(QString const& name)
             widgets.push_back(new QComboBox());
             QComboBox* comboBox = static_cast<QComboBox*>(widgets.at(widgets.size() - 1));
 
-            for (auto& cell : std::get<2>(nodeInterface.config.at(i)))
+            for (auto& cell : std::get<3>(nodeInterface.config.at(i)))
             {
                 if (cell.at(0) == '[')
                 {
@@ -168,8 +160,7 @@ NodeModel::NodeModel(QString const& name)
                 else
                     comboBox->addItem(QString::fromStdString(cell));
             }
-            comboBox->setObjectName(description);
-            comboBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
+
             comboBox->setStyleSheet("QComboBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
             _layout->addRow(description, comboBox);
         }
@@ -179,17 +170,14 @@ NodeModel::NodeModel(QString const& name)
             QGroupBox* gridGroupBox = static_cast<QGroupBox*>(widgets.at(widgets.size() - 1));
             QGridLayout* layout = new QGridLayout;
 
-            gridGroupBox->setObjectName(description);
-            gridGroupBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
-            // gridGroupBox->setStyleSheet("QGroupBox { color: green; }");
-
             layout->addWidget(new QLabel("X Data Source", gridGroupBox), 0, 0);
             layout->addWidget(new QLabel("Y Data Source", gridGroupBox), 0, 1);
             layout->addWidget(new QLabel("Window", gridGroupBox), 0, 2);
 
-            addListListIntRow(std::get<2>(nodeInterface.config.at(i)), 1, layout, gridGroupBox, _layout);
+            addListListIntRow(std::get<3>(nodeInterface.config.at(i)), 1, layout, gridGroupBox, _layout);
 
             gridGroupBox->setLayout(layout);
+            // gridGroupBox->setStyleSheet("QGroupBox { color: green; }");
             _layout->addRow(gridGroupBox);
         }
         else if (std::get<0>(nodeInterface.config.at(i)) == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
@@ -199,7 +187,7 @@ NodeModel::NodeModel(QString const& name)
 
             for (size_t j = 0; j < 4; j++)
             {
-                std::string cell = std::get<2>(nodeInterface.config.at(i)).at(j);
+                std::string cell = std::get<3>(nodeInterface.config.at(i)).at(j);
                 if (j == 0)
                     spinBox->setProperty("key", QString::fromStdString(cell));
                 if (j == 1)
@@ -211,11 +199,14 @@ NodeModel::NodeModel(QString const& name)
             }
 
             spinBox->setSingleStep(1);
-            spinBox->setObjectName(description);
-            spinBox->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
             spinBox->setStyleSheet("QSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
             _layout->addRow(description, spinBox);
         }
+
+        QWidget* widget = widgets.at(widgets.size() - 1);
+        widget->setObjectName(description);
+        widget->setProperty("type", std::get<0>(nodeInterface.config.at(i)));
+        widget->setToolTip(QString::fromStdString(std::get<2>(nodeInterface.config.at(i))));
     }
 }
 

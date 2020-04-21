@@ -26,6 +26,28 @@ class Node : public DataCallback
      */
     std::string getName();
 
+    /**
+     * @brief Checks if the Node is a File Reader Type and can provide data packages
+     * 
+     * @retval bool Indicates whether the class is a File Reader
+     */
+    virtual bool isFileReader();
+
+    /**
+     * @brief Poll the node to send out its data. Only implemented by file readers. Otherwise returns nullptr
+     * 
+     * @attention Overrides of this function have to invoke the Callback handlers
+     * @retval std::shared_ptr<NodeData> The polled observation
+     */
+    virtual std::shared_ptr<NodeData> pollData();
+
+    /**
+     * @brief Peeks the next event time. Only implemented by file readers. Otherwise returns std::nullopt
+     * 
+     * @retval std::optional<uint64_t> Next event timestamp
+     */
+    virtual std::optional<uint64_t> peekNextUpdateTime();
+
   protected:
     /**
      * @brief Construct a new Node object

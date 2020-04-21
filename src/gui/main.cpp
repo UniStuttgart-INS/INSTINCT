@@ -1,5 +1,5 @@
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QMenuBar>
 
 #include <QtWidgets/QCheckBox>
@@ -58,13 +58,13 @@ void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string c
     }
 }
 
-static std::shared_ptr<DataModelRegistry>
-    registerDataModels()
+static std::shared_ptr<DataModelRegistry> registerDataModels(NAV::NodeInterface::NodeContext compat)
 {
     auto registry = std::make_shared<DataModelRegistry>();
 
     for (auto it = NAV::nodeInterfaces.cbegin(); it != NAV::nodeInterfaces.cend(); it++)
-        registry->registerModelTemplate<NodeModel>(QString::fromStdString(it->first), QString::fromStdString(it->second.category));
+        if (it->second.nodeCompat == compat || it->second.nodeCompat == NAV::NodeInterface::NodeContext::ALL || compat == NAV::NodeInterface::NodeContext::ALL)
+            registry->registerModelTemplate<NodeModel>(QString::fromStdString(it->first), QString::fromStdString(it->second.category));
 
     for (auto child = NAV::inheritance.cbegin(); child != NAV::inheritance.cend(); child++)
         addTypeConverter(registry, child->first, child->first);
@@ -72,8 +72,7 @@ static std::shared_ptr<DataModelRegistry>
     return registry;
 }
 
-static void
-    setStyle()
+static void setStyle()
 {
     ConnectionStyle::setConnectionStyle(
         R"(
@@ -88,6 +87,11 @@ static void
 //------------------------------------------------------------------------------
 FlowScene* scene;
 QString fileName;
+int registrySelected = 0;
+std::shared_ptr<QtNodes::DataModelRegistry> registryAll;
+std::shared_ptr<QtNodes::DataModelRegistry> registryRealTime;
+std::shared_ptr<QtNodes::DataModelRegistry> registryPostProcessing;
+QAction* rtpAction;
 
 void exportConfig()
 {
@@ -207,6 +211,10 @@ bool saveAs()
 
 void load()
 {
+    rtpAction->setText("All Nodes");
+    scene->setRegistry(registryAll);
+    registrySelected = 0;
+
     auto tmp = scene->load();
     if (!tmp.isEmpty())
         fileName = tmp;
@@ -227,6 +235,84 @@ void clearScene()
     fileName = "";
 }
 
+void changeRegistry()
+{
+    if (registrySelected == 0)
+    {
+        size_t incompNodes = 0;
+        for (auto node : scene->allNodes())
+        {
+            auto nodeModel = static_cast<NodeModel*>(node->nodeDataModel());
+            for (auto it = NAV::nodeInterfaces.cbegin(); it != NAV::nodeInterfaces.cend(); it++)
+            {
+                if (nodeModel->name().toStdString() == it->first)
+                {
+                    if (it->second.nodeCompat != NAV::NodeInterface::NodeContext::REAL_TIME
+                        && it->second.nodeCompat != NAV::NodeInterface::NodeContext::ALL)
+                    {
+                        incompNodes++;
+                        break;
+                    }
+                }
+            }
+        }
+        if (incompNodes == 0)
+        {
+            rtpAction->setText("Real-Time");
+            scene->setRegistry(registryRealTime);
+            registrySelected++;
+            return;
+        }
+        else
+        {
+            std::cout << "Can't switch to Real-Time Context, because there are " << incompNodes << " incompatible Nodes." << std::endl;
+            registrySelected++;
+        }
+    }
+
+    if (registrySelected == 1)
+    {
+        size_t incompNodes = 0;
+        for (auto node : scene->allNodes())
+        {
+            auto nodeModel = static_cast<NodeModel*>(node->nodeDataModel());
+            for (auto it = NAV::nodeInterfaces.cbegin(); it != NAV::nodeInterfaces.cend(); it++)
+            {
+                if (nodeModel->name().toStdString() == it->first)
+                {
+                    if (it->second.nodeCompat != NAV::NodeInterface::NodeContext::POST_PROCESSING
+                        && it->second.nodeCompat != NAV::NodeInterface::NodeContext::ALL)
+                    {
+                        incompNodes++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (incompNodes == 0)
+        {
+            rtpAction->setText("Post Processing");
+            scene->setRegistry(registryPostProcessing);
+            registrySelected++;
+            return;
+        }
+        else
+        {
+            std::cout << "Can't switch to Post Processing Context, because there are " << incompNodes << " incompatible Nodes." << std::endl;
+            registrySelected++;
+        }
+    }
+
+    if (registrySelected == 2)
+    {
+        rtpAction->setText("All Nodes");
+        scene->setRegistry(registryAll);
+        registrySelected = 0;
+        return;
+    }
+}
+
 int main(int argc, char* argv[])
 {
     QApplication app(argc, argv);
@@ -235,19 +321,29 @@ int main(int argc, char* argv[])
 
     QWidget mainWidget;
 
-    auto menuBar = new QMenuBar();
+    QMenuBar* menuBarLeft = new QMenuBar();
+    QAction* runAction = menuBarLeft->addAction("Run NavSoS");
+    QAction* loadAction = menuBarLeft->addAction("Load");
+    QAction* saveAction = menuBarLeft->addAction("Save As");
+    QAction* clearAction = menuBarLeft->addAction("Clear");
+    QAction* clearExit = menuBarLeft->addAction("Exit");
 
-    auto runAction = menuBar->addAction("Run NavSoS");
-    auto loadAction = menuBar->addAction("Load");
-    auto saveAction = menuBar->addAction("Save As");
-    auto clearAction = menuBar->addAction("Clear");
-    auto clearExit = menuBar->addAction("Exit");
+    QMenuBar* menuBarRight = new QMenuBar();
+    rtpAction = menuBarRight->addAction("All Nodes");
 
-    QVBoxLayout* l = new QVBoxLayout(&mainWidget);
+    QGridLayout* l = new QGridLayout(&mainWidget);
 
-    l->addWidget(menuBar);
-    scene = new FlowScene(registerDataModels(), &mainWidget);
-    l->addWidget(new FlowView(scene));
+    registryAll = registerDataModels(NAV::NodeInterface::NodeContext::ALL);
+    registryRealTime = registerDataModels(NAV::NodeInterface::NodeContext::REAL_TIME);
+    registryPostProcessing = registerDataModels(NAV::NodeInterface::NodeContext::POST_PROCESSING);
+
+    l->addWidget(menuBarLeft, 0, 0);
+    l->addWidget(menuBarRight, 0, 1);
+    l->setAlignment(menuBarLeft, Qt::AlignLeft);
+    l->setAlignment(menuBarRight, Qt::AlignRight);
+
+    scene = new FlowScene(registryAll, &mainWidget);
+    l->addWidget(new FlowView(scene), 1, 0, 1, 2);
     l->setContentsMargins(0, 0, 0, 0);
     l->setSpacing(0);
 
@@ -265,6 +361,9 @@ int main(int argc, char* argv[])
 
     QObject::connect(clearExit, &QAction::triggered,
                      scene, &app.exit);
+
+    QObject::connect(rtpAction, &QAction::triggered,
+                     scene, &changeRegistry);
 
     mainWidget.setWindowTitle("NavSoS - Navigation Software Stuttgart (Institut of Navigation)");
     mainWidget.resize(800, 600);

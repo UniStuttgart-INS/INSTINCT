@@ -1,5 +1,7 @@
 #include "NodeInterface.hpp"
 
+NAV::NodeInterface::NodeContext NAV::appContext = NAV::NodeInterface::NodeContext::ALL;
+
 size_t NAV::NodeInterface::getCallbackPort(std::string interfaceType, std::string messageType, bool inPort)
 {
     if (inPort)

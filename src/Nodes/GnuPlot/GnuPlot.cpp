@@ -1,6 +1,7 @@
 #include "GnuPlot.hpp"
 
 #include "util/Logger.hpp"
+#include "NodeInterface.hpp"
 
 std::vector<std::shared_ptr<NAV::GnuPlot::GnuPlotWindow>> NAV::GnuPlot::plotWindows;
 
@@ -71,55 +72,60 @@ NAV::GnuPlot::GnuPlot(std::string name, std::deque<std::string>& options)
 
 NAV::GnuPlot::~GnuPlot() {}
 
-NAV::NavStatus NAV::GnuPlot::updateWindows(std::shared_ptr<NAV::GnuPlot> obj)
+NAV::NavStatus NAV::GnuPlot::requestUpdate(std::shared_ptr<NAV::GnuPlot> obj)
 {
-    // Check if update Interval is reached
-    bool plot = false;
-    static double lastPlotTime = 0;
-    for (auto& plotWindow : obj->plotWindows)
+    if (appContext == NAV::NodeInterface::NodeContext::REAL_TIME)
     {
-        for (auto& plotData : plotWindow->data)
+        // Check if update Interval is reached
+        bool plot = false;
+        static double lastPlotTime = 0;
+        for (auto& plotWindow : plotWindows)
         {
-            if (plotData.xy.back().first - lastPlotTime >= 1.0 / obj->updateFrequency)
+            for (auto& plotData : plotWindow->data)
             {
-                plot = true;
-                break;
+                if (plotData.xy.back().first - lastPlotTime >= 1.0 / obj->updateFrequency)
+                {
+                    plot = true;
+                    lastPlotTime = plotData.xy.back().first;
+                    break;
+                }
             }
+            if (plot)
+                break;
         }
+
+        // Update the GnuPlot Windows
         if (plot)
-            break;
+            return update();
     }
 
-    if (plot)
+    return NavStatus::NAV_OK;
+}
+
+NAV::NavStatus NAV::GnuPlot::update()
+{
+    for (auto& plotWindow : plotWindows)
     {
-        for (auto& plotWindow : obj->plotWindows)
+        if (!plotWindow->data.empty())
         {
-            if (!plotWindow->data.empty())
+            *plotWindow->gp << "plot";
+
+            // for (auto &plotData : plotWindow->data)
+            for (size_t i = 0; i < plotWindow->data.size(); i++)
             {
-                *plotWindow->gp << "plot";
-
-                // for (auto &plotData : plotWindow->data)
-                for (size_t i = 0; i < plotWindow->data.size(); i++)
+                if (plotWindow->data.at(i).xy.size() >= 2)
                 {
-                    // Remove data which is too old
-                    while (obj->timeFrame && plotWindow->data.at(i).xy.back().first - plotWindow->data.at(i).xy.front().first > obj->timeFrame)
-                        plotWindow->data.at(i).xy.pop_front();
-
                     std::string lineStyle = "lines";
                     if (i >= 8)
                         lineStyle = "points";
 
                     *plotWindow->gp << plotWindow->gp->binFile1d(plotWindow->data.at(i).xy, "record") << "with " << lineStyle << " title '" << plotWindow->data.at(i).legend << "',";
-
-                    if (plotWindow->data.at(i).xy.back().first > lastPlotTime)
-                        lastPlotTime = plotWindow->data.at(i).xy.back().first;
                 }
-
-                *plotWindow->gp << "\n";
-                plotWindow->gp->flush();
             }
+
+            *plotWindow->gp << "\n";
+            plotWindow->gp->flush();
         }
     }
-
     return NavStatus::NAV_OK;
 }

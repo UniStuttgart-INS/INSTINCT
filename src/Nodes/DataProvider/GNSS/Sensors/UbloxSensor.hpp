@@ -35,13 +35,6 @@ class UbloxSensor : public UartSensor, public Gnss
     /// Default Destructor
     virtual ~UbloxSensor();
 
-    /**
-     * @brief Polls the current Gnss Data
-     * 
-     * @retval std::shared_ptr<InsObs> Pointer to an UbloxObs object with the current data
-     */
-    std::shared_ptr<InsObs> pollObservation() final;
-
   private:
     /**
      * @brief Callback handler for notifications of new asynchronous data packets received

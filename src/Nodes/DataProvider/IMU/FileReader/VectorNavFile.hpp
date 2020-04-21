@@ -34,11 +34,18 @@ class VectorNavFile : public FileReader, public Imu
     virtual ~VectorNavFile();
 
     /**
+     * @brief Checks if the Node is a File Reader Type and can provide data packages
+     * 
+     * @retval bool Indicates whether the class is a File Reader
+     */
+    bool isFileReader() final;
+
+    /**
      * @brief Polls the next data package
      * 
-     * @retval std::shared_ptr<InsObs> Pointer to an ImuObs object with the next data
+     * @retval std::shared_ptr<NodeData> Pointer to an ImuObs object with the next data
      */
-    std::shared_ptr<InsObs> pollObservation() final;
+    std::shared_ptr<NodeData> pollData() final;
 
     /**
      * @brief Peeks the next line in the file for the time without moving the read cursor

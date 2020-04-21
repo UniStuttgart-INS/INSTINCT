@@ -26,9 +26,8 @@
 #include "util/Sleep.hpp"
 #include "util/Config.hpp"
 
+#include "NodeInterface.hpp"
 #include "Nodes/NodeCreator.hpp"
-
-#include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp" // TODO: Remove when not needed anymore
 
 int main(int argc, const char** argv)
 {
@@ -57,29 +56,60 @@ int main(int argc, const char** argv)
     if (NAV::NodeCreator::createLinks(pConfig) != NAV::NavStatus::NAV_OK)
         LOG_CRITICAL("Critical problem during node link creation");
 
-    // Play all the data files
+    // Read data files
+    if (NAV::appContext == NAV::NodeInterface::NodeContext::POST_PROCESSING)
+    {
+        std::map<uint64_t, size_t> events;
+        // Get first event of all the file readers
+        for (size_t i = 0; i < pConfig->nodes.size(); i++)
+        {
+            if (pConfig->nodes.at(i).node->isFileReader())
+            {
+                auto nextUpdateTime = pConfig->nodes.at(i).node->peekNextUpdateTime();
+                if (nextUpdateTime.has_value())
+                    events.insert(std::make_pair(nextUpdateTime.value(), i));
+            }
+        }
+
+        std::map<uint64_t, size_t>::iterator it;
+        while (it = events.begin(), it != events.end())
+        {
+            if (pConfig->nodes.at(it->second).node->pollData() == nullptr)
+                LOG_ERROR("{} - {} could not poll its observation despite being able to peek it.", pConfig->nodes.at(it->second).type, pConfig->nodes.at(it->second).name);
+
+            auto nextUpdateTime = pConfig->nodes.at(it->second).node->peekNextUpdateTime();
+            if (nextUpdateTime.has_value())
+                events.insert(std::make_pair(nextUpdateTime.value(), it->second));
+
+            events.erase(it);
+        }
+    }
+    // Wait and receive data packages in other threads
+    else
+    {
+        if (pConfig->GetSigterm())
+            NAV::Sleep::waitForSignal();
+        else
+            NAV::Sleep::countDownSeconds(pConfig->GetProgExecTime());
+    }
+
+    // Stop all callbacks
+    for (auto& node : pConfig->nodes)
+        node.node->callbacksEnabled = false;
+
+    // Update all GnuPlot Windows and wait for them to open
     for (auto& node : pConfig->nodes)
     {
-        // TODO: Add DataManager, which polls all data files in correct order instead of just reading the files here
-        if (node.type == "VectorNavFile")
+        if (node.type.find("GnuPlot") == std::string::npos)
         {
-            while (std::static_pointer_cast<NAV::VectorNavFile>(node.node)->pollObservation() != nullptr)
-                ;
+            std::static_pointer_cast<NAV::GnuPlot>(node.node)->update();
+            while (system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
 
-    if (pConfig->GetSigterm())
-        NAV::Sleep::waitForSignal();
-    else
-        NAV::Sleep::countDownSeconds(pConfig->GetProgExecTime());
-
-    // Stop all callbacks and wait if any GnuPlot Window is open
-    for (auto& node : pConfig->nodes)
-    {
-        node.node->callbacksEnabled = false;
-        if (node.type.find("GnuPlot") == std::string::npos)
-            node.node = nullptr;
-    }
+    if (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))
+        LOG_INFO("Waiting for all Gnuplot windows to close");
 
     // Wait if any GnuPlot Window is open. GnuPlot becomes unresponsive when parent dies
     while (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))

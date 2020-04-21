@@ -67,13 +67,6 @@ class VectorNavSensor : public UartSensor, public Imu
     /// Default Destructor
     virtual ~VectorNavSensor();
 
-    /**
-     * @brief Polls the current Imu Data
-     * 
-     * @retval std::shared_ptr<InsObs> Pointer to an VectorNavObs object with the current data
-     */
-    std::shared_ptr<InsObs> pollObservation() final;
-
   private:
     /**
      * @brief Callback handler for notifications of new asynchronous data packets received

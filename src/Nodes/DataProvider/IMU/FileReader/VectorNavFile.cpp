@@ -67,7 +67,12 @@ NAV::VectorNavFile::~VectorNavFile()
     LOG_DEBUG("{} successfully deinitialized", name);
 }
 
-std::shared_ptr<NAV::InsObs> NAV::VectorNavFile::pollObservation()
+bool NAV::VectorNavFile::isFileReader()
+{
+    return true;
+}
+
+std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData()
 {
     LOG_TRACE("called for {}", name);
 
@@ -75,7 +80,7 @@ std::shared_ptr<NAV::InsObs> NAV::VectorNavFile::pollObservation()
 
     if (isBinary)
     {
-        std::runtime_error("Not implemented yet."); // TODO: implement
+        LOG_CRITICAL("Binary VectorNavFile pollData is not implemented yet."); // TODO: implement
 
         return nullptr;
     }
@@ -460,7 +465,7 @@ std::optional<uint64_t> NAV::VectorNavFile::peekNextUpdateTime()
 
     if (isBinary)
     {
-        std::runtime_error("Not implemented yet."); // TODO: implement
+        LOG_CRITICAL("Binary VectorNavFile Logging is not implemented yet."); // TODO: implement
 
         return NULL;
     }
@@ -493,11 +498,11 @@ std::optional<uint64_t> NAV::VectorNavFile::peekNextUpdateTime()
                     return std::stoull(cell);
                 else if (columns[i] == "TimeSyncIn")
                 {
-                    std::runtime_error("Not implemented yet."); // TODO: implement
+                    LOG_CRITICAL("Not implemented yet."); // TODO: implement
                 }
                 else if (columns[i] == "SyncInCnt")
                 {
-                    std::runtime_error("Not implemented yet."); // TODO: implement
+                    LOG_CRITICAL("Not implemented yet."); // TODO: implement
                 }
             }
             else

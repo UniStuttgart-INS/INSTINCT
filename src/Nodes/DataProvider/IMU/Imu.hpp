@@ -8,12 +8,11 @@
 #pragma once
 
 #include "Nodes/Node.hpp"
-#include "../DataProvider.hpp"
 
 namespace NAV
 {
 /// Abstract IMU Class
-class Imu : public Node, public DataProvider
+class Imu : public Node
 {
   protected:
     /**

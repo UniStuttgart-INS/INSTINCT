@@ -36,6 +36,9 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             static size_t dataIndex0 = plotWindow->addNewDataSet("Time Since Startup [ns]");
 
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->timeSinceStartup.value()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
         }
         else if (yData == "quaternion" && obs->quaternion.has_value())
         {
@@ -48,6 +51,15 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->quaternion.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->quaternion.value().z()));
             plotWindow->data.at(dataIndex3).xy.push_back(std::make_pair(plotX, obs->quaternion.value().w()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex3).xy.back().first - plotWindow->data.at(dataIndex3).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex3).xy.pop_front();
         }
         else if (yData == "magUncompXYZ" && obs->magUncompXYZ.has_value())
         {
@@ -58,6 +70,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->magUncompXYZ.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->magUncompXYZ.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->magUncompXYZ.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "accelUncompXYZ" && obs->accelUncompXYZ.has_value())
         {
@@ -68,6 +87,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->accelUncompXYZ.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->accelUncompXYZ.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->accelUncompXYZ.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "gyroUncompXYZ" && obs->gyroUncompXYZ.has_value())
         {
@@ -78,6 +104,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->gyroUncompXYZ.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->gyroUncompXYZ.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->gyroUncompXYZ.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "magCompXYZ" && obs->magCompXYZ.has_value())
         {
@@ -88,6 +121,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->magCompXYZ.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->magCompXYZ.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->magCompXYZ.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "accelCompXYZ" && obs->accelCompXYZ.has_value())
         {
@@ -98,6 +138,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->accelCompXYZ.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->accelCompXYZ.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->accelCompXYZ.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "gyroCompXYZ" && obs->gyroCompXYZ.has_value())
         {
@@ -108,16 +155,29 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->gyroCompXYZ.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->gyroCompXYZ.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->gyroCompXYZ.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "syncInCnt" && obs->syncInCnt.has_value())
         {
             static size_t dataIndex0 = plotWindow->addNewDataSet("Sync In Count [-]");
 
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->syncInCnt.value()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
         }
         else if (yData == "dtime" && obs->dtime.has_value())
         {
             static size_t dataIndex0 = plotWindow->addNewDataSet("Delta Time Integration Interval [s]");
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
 
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->dtime.value()));
         }
@@ -130,6 +190,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->dtheta.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->dtheta.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->dtheta.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "dvel" && obs->dvel.has_value())
         {
@@ -140,22 +207,38 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->dvel.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->dvel.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->dvel.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "vpeStatus" && obs->vpeStatus.has_value())
         {
             static size_t dataIndex0 = plotWindow->addNewDataSet("VPE Status Bitfield");
 
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->vpeStatus.value()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
         }
         else if (yData == "temperature" && obs->temperature.has_value())
         {
             static size_t dataIndex0 = plotWindow->addNewDataSet("Temperature [Celsius]");
 
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->temperature.value()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
         }
         else if (yData == "pressure" && obs->pressure.has_value())
         {
             static size_t dataIndex0 = plotWindow->addNewDataSet("Absolute IMU pressure [kPa]");
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
 
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->pressure.value()));
         }
@@ -168,6 +251,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->magCompNED.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->magCompNED.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->magCompNED.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "accelCompNED" && obs->accelCompNED.has_value())
         {
@@ -178,6 +268,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->accelCompNED.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->accelCompNED.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->accelCompNED.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "gyroCompNED" && obs->gyroCompNED.has_value())
         {
@@ -188,6 +285,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->gyroCompNED.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->gyroCompNED.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->gyroCompNED.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "linearAccelXYZ" && obs->linearAccelXYZ.has_value())
         {
@@ -198,6 +302,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->linearAccelXYZ.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->linearAccelXYZ.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->linearAccelXYZ.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "linearAccelNED" && obs->linearAccelNED.has_value())
         {
@@ -208,6 +319,13 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->linearAccelNED.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->linearAccelNED.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->linearAccelNED.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
         else if (yData == "yawPitchRollUncertainty" && obs->yawPitchRollUncertainty.has_value())
         {
@@ -218,8 +336,15 @@ NAV::NavStatus NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::Node
             plotWindow->data.at(dataIndex0).xy.push_back(std::make_pair(plotX, obs->yawPitchRollUncertainty.value().x()));
             plotWindow->data.at(dataIndex1).xy.push_back(std::make_pair(plotX, obs->yawPitchRollUncertainty.value().y()));
             plotWindow->data.at(dataIndex2).xy.push_back(std::make_pair(plotX, obs->yawPitchRollUncertainty.value().z()));
+
+            while (obj->timeFrame && plotWindow->data.at(dataIndex0).xy.back().first - plotWindow->data.at(dataIndex0).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex0).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex1).xy.back().first - plotWindow->data.at(dataIndex1).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex1).xy.pop_front();
+            while (obj->timeFrame && plotWindow->data.at(dataIndex2).xy.back().first - plotWindow->data.at(dataIndex2).xy.front().first > obj->timeFrame)
+                plotWindow->data.at(dataIndex2).xy.pop_front();
         }
     }
 
-    return updateWindows(obj);
+    return requestUpdate(obj);
 }

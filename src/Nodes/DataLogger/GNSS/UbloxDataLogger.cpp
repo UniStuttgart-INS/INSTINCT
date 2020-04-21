@@ -30,7 +30,7 @@ NAV::NavStatus NAV::UbloxDataLogger::writeObservation(std::shared_ptr<NAV::NodeD
     else
     {
         // TODO: Implement this
-        LOG_ERROR("ASCII Logging of UbloxObs is not implemented yet");
+        LOG_CRITICAL("ASCII Logging of UbloxObs is not implemented yet");
     }
 
     return NavStatus::NAV_OK;

@@ -11,7 +11,17 @@ NAV::NavStatus NAV::NodeCreator::createNodes(NAV::Config* pConfig)
     for (auto& node : pConfig->nodes)
     {
         if (nodeInterfaces.count(node.type))
+        {
+            if (appContext == NAV::NodeInterface::NodeContext::ALL && nodeInterfaces.at(node.type).nodeCompat != NAV::NodeInterface::NodeContext::ALL)
+                appContext = nodeInterfaces.at(node.type).nodeCompat;
+
+            if (nodeInterfaces.at(node.type).nodeCompat != appContext && nodeInterfaces.at(node.type).nodeCompat != NAV::NodeInterface::NodeContext::ALL)
+                LOG_CRITICAL("Node {} - {} is of type {} but previous nodes are of type {}.", node.type, node.name,
+                             nodeInterfaces.at(node.type).nodeCompat == NAV::NodeInterface::NodeContext::REAL_TIME ? "Real-Time" : "Post Processing",
+                             appContext == NAV::NodeInterface::NodeContext::REAL_TIME ? "Real-Time" : "Post Processing");
+
             node.node = nodeInterfaces.at(node.type).constructor(node.name, node.options);
+        }
         else
             LOG_CRITICAL("Node {} - {} has unknown type", node.type, node.name);
 

@@ -8,12 +8,11 @@
 #pragma once
 
 #include "Nodes/Node.hpp"
-#include "../DataProvider.hpp"
 
 namespace NAV
 {
 /// Abstract GNSS Data Provider Class
-class Gnss : public Node, public DataProvider
+class Gnss : public Node
 {
   protected:
     /**

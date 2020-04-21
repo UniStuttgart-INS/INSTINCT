@@ -49,24 +49,6 @@ NAV::UbloxSensor::~UbloxSensor()
     LOG_DEBUG("{} successfully deinitialized", name);
 }
 
-std::shared_ptr<NAV::InsObs> NAV::UbloxSensor::pollObservation()
-{
-    LOG_TRACE("called for {}", name);
-
-    // TODO: Implement this
-    throw std::logic_error("Not implemented");
-
-    auto obs = std::make_shared<UbloxObs>();
-
-    LOG_DATA("DATA({}): {}, {}, {}",
-             name, obs->msgClass, obs->msgId, obs->payloadLength);
-
-    // Calls all the callbacks
-    invokeCallbacks(NodeInterface::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
-
-    return obs;
-}
-
 void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::protocol::uart::Packet& p, size_t /*index*/)
 {
     UbloxSensor* ubSensor = static_cast<UbloxSensor*>(userData);

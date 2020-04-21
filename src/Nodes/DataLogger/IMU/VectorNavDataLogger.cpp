@@ -36,7 +36,7 @@ NAV::NavStatus NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<NAV::N
     if (logger->isBinary)
     {
         // TODO: Implement this
-        LOG_ERROR("Binary Logging of VectorNavObs is not implemented yet");
+        LOG_CRITICAL("Binary Logging of VectorNavObs is not implemented yet");
     }
     else
     {

@@ -138,42 +138,6 @@ NAV::VectorNavSensor::~VectorNavSensor()
     LOG_DEBUG("{} successfully deinitialized", name);
 }
 
-std::shared_ptr<NAV::InsObs> NAV::VectorNavSensor::pollObservation()
-{
-    LOG_TRACE("called for {}", name);
-    auto obs = std::make_shared<VectorNavObs>();
-
-    // Group 1 (Common)
-    auto deltaReg = vs.readDeltaThetaAndDeltaVelocity();
-    obs->dtime = deltaReg.deltaTime;
-    obs->dtheta = Eigen::Array3d(deltaReg.deltaTheta.x, deltaReg.deltaTheta.y, deltaReg.deltaTheta.z);
-    obs->dvel = Eigen::Vector3d(deltaReg.deltaVelocity.x, deltaReg.deltaVelocity.y, deltaReg.deltaVelocity.z);
-    // Group 2 (Time)
-    // Group 3 (IMU)
-    auto imuReg = vs.readImuMeasurements();
-    obs->magUncompXYZ = Eigen::Vector3d(imuReg.mag.x, imuReg.mag.y, imuReg.mag.z);
-    obs->accelUncompXYZ = Eigen::Vector3d(imuReg.accel.x, imuReg.accel.y, imuReg.accel.z);
-    obs->gyroUncompXYZ = Eigen::Vector3d(imuReg.gyro.x, imuReg.gyro.y, imuReg.gyro.z);
-    obs->temperature = imuReg.temp;
-    obs->pressure = imuReg.pressure;
-    auto qmag = vs.readQuaternionMagneticAccelerationAndAngularRates();
-    obs->magCompXYZ = Eigen::Vector3d(qmag.mag.x, qmag.mag.y, qmag.mag.z);
-    obs->accelCompXYZ = Eigen::Vector3d(qmag.accel.x, qmag.accel.y, qmag.accel.z);
-    obs->gyroCompXYZ = Eigen::Vector3d(qmag.gyro.x, qmag.gyro.y, qmag.gyro.z);
-    // Group 4 (GPS)
-    // Group 5 (Attitude)
-    obs->quaternion = Eigen::Quaterniond(qmag.quat.w, qmag.quat.x, qmag.quat.y, qmag.quat.z);
-
-    LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-             name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
-             obs->vpeStatus.value(), obs->temperature.value());
-
-    // Calls all the callbacks
-    invokeCallbacks(NodeInterface::getCallbackPort("VectorNavSensor", "VectorNavObs"), obs);
-
-    return obs;
-}
-
 void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t /*index*/)
 {
     VectorNavSensor* vnSensor = static_cast<VectorNavSensor*>(userData);
