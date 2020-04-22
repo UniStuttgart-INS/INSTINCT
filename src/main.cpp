@@ -59,7 +59,7 @@ int main(int argc, const char** argv)
     // Read data files
     if (NAV::appContext == NAV::NodeInterface::NodeContext::POST_PROCESSING)
     {
-        std::map<uint64_t, size_t> events;
+        std::map<NAV::InsTime, size_t> events;
         // Get first event of all the file readers
         for (size_t i = 0; i < pConfig->nodes.size(); i++)
         {
@@ -71,7 +71,7 @@ int main(int argc, const char** argv)
             }
         }
 
-        std::map<uint64_t, size_t>::iterator it;
+        std::map<NAV::InsTime, size_t>::iterator it;
         while (it = events.begin(), it != events.end())
         {
             if (pConfig->nodes.at(it->second).node->pollData() == nullptr)
@@ -95,17 +95,22 @@ int main(int argc, const char** argv)
 
     // Stop all callbacks
     for (auto& node : pConfig->nodes)
+    {
         node.node->callbacksEnabled = false;
+        node.node->removeAllCallbacks();
+    }
 
     // Update all GnuPlot Windows and wait for them to open
     for (auto& node : pConfig->nodes)
     {
-        if (node.type.find("GnuPlot") == std::string::npos)
+        if (node.type.find("GnuPlot") != std::string::npos)
         {
             std::static_pointer_cast<NAV::GnuPlot>(node.node)->update();
             while (system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
+        // Destruct all Nodes
+        node.node = nullptr;
     }
 
     if (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))

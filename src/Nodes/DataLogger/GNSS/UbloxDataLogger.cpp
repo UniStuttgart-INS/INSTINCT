@@ -3,6 +3,8 @@
 #include "util/Logger.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 
+#include "NodeInterface.hpp"
+
 #include <iomanip> // std::setprecision
 
 NAV::UbloxDataLogger::UbloxDataLogger(std::string name, std::deque<std::string>& options)
@@ -33,5 +35,5 @@ NAV::NavStatus NAV::UbloxDataLogger::writeObservation(std::shared_ptr<NAV::NodeD
         LOG_CRITICAL("ASCII Logging of UbloxObs is not implemented yet");
     }
 
-    return NavStatus::NAV_OK;
+    return logger->invokeCallbacks(NodeInterface::getCallbackPort("UbloxDataLogger", "UbloxObs"), obs);
 }

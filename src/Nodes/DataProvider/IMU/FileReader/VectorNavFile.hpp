@@ -52,7 +52,7 @@ class VectorNavFile : public FileReader, public Imu
      * 
      * @retval std::optional<uint64_t> Next timestamp in the log file
      */
-    std::optional<uint64_t> peekNextUpdateTime() final;
+    std::optional<InsTime> peekNextUpdateTime() final;
 
   private:
     /**

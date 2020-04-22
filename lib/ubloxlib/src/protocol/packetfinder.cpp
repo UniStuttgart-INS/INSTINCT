@@ -171,7 +171,7 @@ struct PacketFinder::Impl
                         binaryPayloadLength = Packet::U2(data + i);
                         // memcpy(&(binaryPayloadLength), (data + i), 2);
                         numOfBytesRemainingForCompletePacket = binaryPayloadLength + 3;
-                        if (binaryPayloadLength > 1000)
+                        if (binaryPayloadLength > 8192)
                         {
                             std::cout << "Invalid Package found (" << ++invalPkgCount << "): " << std::hex << (int)binaryMsgClass << ", " << (int)binaryMsgId << ", " << std::dec << binaryPayloadLength << std::endl;
                             resetTracking();

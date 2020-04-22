@@ -28,7 +28,7 @@ class UsbSyncSignal : public Node
     UsbSyncSignal(std::string name, std::deque<std::string>& options);
 
     /// Default destructor
-    ~UsbSyncSignal();
+    virtual ~UsbSyncSignal();
 
   protected:
     /// File descriptor of the sensor port

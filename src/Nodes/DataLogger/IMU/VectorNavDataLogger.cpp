@@ -3,6 +3,8 @@
 #include "util/Logger.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 
+#include "NodeInterface.hpp"
+
 #include <iomanip> // std::setprecision
 
 NAV::VectorNavDataLogger::VectorNavDataLogger(std::string name, std::deque<std::string>& options)
@@ -13,7 +15,7 @@ NAV::VectorNavDataLogger::VectorNavDataLogger(std::string name, std::deque<std::
     LOG_DEBUG("isBinary: {} ", isBinary);
 
     if (!isBinary)
-        filestream << "GpsToW,GpsWeek,TimeStartup,TimeSyncIn,SyncInCnt,"
+        filestream << "GpsCycle,GpsWeek,GpsToW,TimeStartup,TimeSyncIn,SyncInCnt,"
                    << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
                    << "Temperature,Pressure,DeltaTime,DeltaThetaX,DeltaThetaY,DeltaThetaZ,DeltaVelX,DeltaVelY,DeltaVelZ,"
                    << "MagX,MagY,MagZ,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,AhrsStatus,Quat[0],Quat[1],Quat[2],Quat[3],"
@@ -40,11 +42,14 @@ NAV::NavStatus NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<NAV::N
     }
     else
     {
-        if (vnObs->gpsTimeOfWeek.has_value())
-            logger->filestream << std::fixed << std::setprecision(3) << vnObs->gpsTimeOfWeek.value();
+        if (vnObs->insTime.has_value())
+            logger->filestream << std::fixed << std::setprecision(3) << vnObs->insTime.value().GetGPSTime().gpsCycle;
         logger->filestream << ",";
-        if (vnObs->gpsWeek.has_value())
-            logger->filestream << std::defaultfloat << std::setprecision(12) << vnObs->gpsWeek.value();
+        if (vnObs->insTime.has_value())
+            logger->filestream << std::defaultfloat << std::setprecision(12) << vnObs->insTime.value().GetGPSTime().gpsWeek;
+        logger->filestream << ",";
+        if (vnObs->insTime.has_value())
+            logger->filestream << std::defaultfloat << std::setprecision(12) << vnObs->insTime.value().GetGPSTime().tow;
         logger->filestream << ",";
         if (vnObs->timeSinceStartup.has_value())
             logger->filestream << vnObs->timeSinceStartup.value();
@@ -207,5 +212,5 @@ NAV::NavStatus NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<NAV::N
         logger->filestream << std::endl;
     }
 
-    return NavStatus::NAV_OK;
+    return logger->invokeCallbacks(NodeInterface::getCallbackPort("VectorNavDataLogger", "VectorNavObs"), observation);
 }

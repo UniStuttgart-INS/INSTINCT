@@ -60,7 +60,9 @@ class GnuPlot : public Node
     static NavStatus requestUpdate(std::shared_ptr<GnuPlot> obj);
 
   protected:
-    std::vector<std::tuple<std::string, std::string, size_t>> dataToPlot;
+    /// Vector of Instructions what to plot
+    /// xData, yData, windowIndex, dataSetIndices
+    std::vector<std::tuple<std::string, std::string, size_t, std::vector<size_t>>> dataToPlot;
 
     static std::vector<std::shared_ptr<GnuPlotWindow>> plotWindows;
 

@@ -8,7 +8,7 @@ std::vector<std::shared_ptr<NAV::GnuPlot::GnuPlotWindow>> NAV::GnuPlot::plotWind
 NAV::GnuPlot::GnuPlotWindow::GnuPlotWindow()
 {
     LOG_TRACE("called");
-    gp = new gnuplotio::Gnuplot();
+    gp = new gnuplotio::Gnuplot("gnuplot -persist > /dev/null 2>&1");
 }
 
 NAV::GnuPlot::GnuPlotWindow::~GnuPlotWindow()
@@ -48,7 +48,7 @@ NAV::GnuPlot::GnuPlot(std::string name, std::deque<std::string>& options)
         int wIndex = std::stoi(*(it + 2));
         if (wIndex >= 0)
         {
-            dataToPlot.push_back(std::make_tuple(*it, *(it + 1), wIndex));
+            dataToPlot.push_back(std::make_tuple(*it, *(it + 1), wIndex, std::vector<size_t>()));
 
             while (static_cast<size_t>(wIndex) + 1 > plotWindows.size())
                 plotWindows.push_back(std::make_shared<GnuPlotWindow>());
@@ -83,7 +83,7 @@ NAV::NavStatus NAV::GnuPlot::requestUpdate(std::shared_ptr<NAV::GnuPlot> obj)
         {
             for (auto& plotData : plotWindow->data)
             {
-                if (plotData.xy.back().first - lastPlotTime >= 1.0 / obj->updateFrequency)
+                if (!plotData.xy.empty() && plotData.xy.back().first - lastPlotTime >= 1.0 / obj->updateFrequency)
                 {
                     plot = true;
                     lastPlotTime = plotData.xy.back().first;

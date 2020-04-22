@@ -54,11 +54,11 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
     UbloxSensor* ubSensor = static_cast<UbloxSensor*>(userData);
     LOG_TRACE("called for {}", ubSensor->name);
 
+    auto obs = std::make_shared<UbloxObs>();
+    obs->p = &p;
+
     if (p.type() == ub::protocol::uart::Packet::TYPE_BINARY)
     {
-        auto obs = std::make_shared<UbloxObs>();
-        obs->p = &p;
-
         obs->msgClass = static_cast<ub::protocol::uart::UbxClass>(p.extractUint8());
         obs->msgId = p.extractUint8();
         obs->payloadLength = p.extractUint16();
@@ -92,8 +92,10 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
             }
             else if (msgId == ub::protocol::uart::UbxRxmMessages::UBX_RXM_RAWX)
             {
-                obs->gpsTimeOfWeek = p.extractDouble();
-                obs->gpsWeek = p.extractUint16();
+                double gpsTimeOfWeek = p.extractDouble();
+                uint16_t gpsWeek = p.extractUint16();
+
+                obs->insTime = std::make_optional(InsTime(gpsWeek, gpsTimeOfWeek, 0));
 
                 LOG_DATA("DATA({}): UBX:  RXM-RAWX, Size {}, rcvTow {}, week {}", ubSensor->name,
                          (obs->payloadLength + 8), obs->gpsTimeOfWeek.value(), obs->gpsWeek.value());
@@ -119,16 +121,11 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
         {
             LOG_DATA("DATA({}): UBX:  {:x}-{:x}, Size {}", ubSensor->name, obs->msgClass, obs->msgId, (obs->payloadLength + 8));
         }
-
-        ubSensor->invokeCallbacks(NodeInterface::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
     }
     else if (p.type() == ub::protocol::uart::Packet::TYPE_ASCII)
     {
         LOG_DATA("DATA({}): NMEA: {}", ubSensor->name, p.datastr());
-
-        auto obs = std::make_shared<UbloxObs>();
-        obs->p = &p;
-
-        ubSensor->invokeCallbacks(NodeInterface::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
     }
+
+    ubSensor->invokeCallbacks(NodeInterface::getCallbackPort("UbloxSensor", "UbloxObs"), obs);
 }

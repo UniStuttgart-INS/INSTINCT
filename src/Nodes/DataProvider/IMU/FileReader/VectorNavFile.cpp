@@ -100,6 +100,9 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData()
         Eigen::Array3d ypr = Eigen::Array3d::Zero();
         Eigen::Matrix3d dcm = Eigen::Matrix3d::Zero();
 
+        short unsigned int gpsCycle = USHRT_MAX, gpsWeek = USHRT_MAX;
+        double gpsToW = NAN;
+
         // Split line at comma
         for (size_t i = 0; i < columns.size(); i++)
         {
@@ -112,10 +115,12 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData()
                 if (cell.empty())
                     continue;
 
-                if (columns[i] == "GpsToW")
-                    obs->gpsTimeOfWeek = std::stod(cell);
+                if (columns[i] == "GpsCycle")
+                    gpsCycle = static_cast<short unsigned int>(std::stoul(cell));
                 else if (columns[i] == "GpsWeek")
-                    obs->gpsWeek = std::stoul(cell);
+                    gpsWeek = static_cast<short unsigned int>(std::stoul(cell));
+                else if (columns[i] == "GpsToW")
+                    gpsToW = std::stod(cell);
                 else if (columns[i] == "TimeStartup")
                     obs->timeSinceStartup = std::stoull(cell);
                 else if (columns[i] == "TimeSyncIn")
@@ -430,6 +435,9 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData()
                         obs->gyroCompNED = Eigen::Vector3d();
                     obs->gyroCompNED.value()(2) = std::stof(cell);
                 }
+
+                if (!obs->insTime.has_value() && gpsCycle != USHRT_MAX && gpsWeek != USHRT_MAX && !std::isnan(gpsToW))
+                    obs->insTime = std::make_optional(InsTime(gpsWeek, gpsToW, gpsCycle));
             }
             else
                 LOG_WARN("{}-ASCII-File more column entries than headers", name);
@@ -459,7 +467,7 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData()
     }
 }
 
-std::optional<uint64_t> NAV::VectorNavFile::peekNextUpdateTime()
+std::optional<NAV::InsTime> NAV::VectorNavFile::peekNextUpdateTime()
 {
     LOG_TRACE("called for {}", name);
 
@@ -467,7 +475,7 @@ std::optional<uint64_t> NAV::VectorNavFile::peekNextUpdateTime()
     {
         LOG_CRITICAL("Binary VectorNavFile Logging is not implemented yet."); // TODO: implement
 
-        return NULL;
+        return std::nullopt;
     }
     else
     {
@@ -489,21 +497,22 @@ std::optional<uint64_t> NAV::VectorNavFile::peekNextUpdateTime()
         std::stringstream lineStream(line);
         std::string cell;
 
+        short unsigned int gpsCycle = USHRT_MAX, gpsWeek = USHRT_MAX;
+        double gpsToW = NAN;
         // Split line at comma
         for (size_t i = 0; i < columns.size(); i++)
         {
             if (std::getline(lineStream, cell, ','))
             {
-                if (columns[i] == "TimeStartup")
-                    return std::stoull(cell);
-                else if (columns[i] == "TimeSyncIn")
-                {
-                    LOG_CRITICAL("Not implemented yet."); // TODO: implement
-                }
-                else if (columns[i] == "SyncInCnt")
-                {
-                    LOG_CRITICAL("Not implemented yet."); // TODO: implement
-                }
+                if (columns[i] == "GpsCycle")
+                    gpsCycle = static_cast<short unsigned int>(std::stoul(cell));
+                else if (columns[i] == "GpsWeek")
+                    gpsWeek = static_cast<short unsigned int>(std::stoul(cell));
+                else if (columns[i] == "GpsToW")
+                    gpsToW = std::stod(cell);
+
+                if (gpsCycle != USHRT_MAX && gpsWeek != USHRT_MAX && !std::isnan(gpsToW))
+                    return std::make_optional(InsTime(gpsWeek, gpsToW, gpsCycle));
             }
             else
                 LOG_WARN("{}-ASCII-File more column entries than headers", name);

@@ -22,7 +22,7 @@ std::shared_ptr<NAV::NodeData> NAV::Node::pollData()
     return nullptr;
 }
 
-std::optional<uint64_t> NAV::Node::peekNextUpdateTime()
+std::optional<NAV::InsTime> NAV::Node::peekNextUpdateTime()
 {
     return std::nullopt;
 }

@@ -11,6 +11,7 @@
 #include <deque>
 
 #include "util/Common.hpp"
+#include "util/InsTime.hpp"
 #include "DataCallback.hpp"
 
 namespace NAV
@@ -44,9 +45,9 @@ class Node : public DataCallback
     /**
      * @brief Peeks the next event time. Only implemented by file readers. Otherwise returns std::nullopt
      * 
-     * @retval std::optional<uint64_t> Next event timestamp
+     * @retval std::optional<InsTime> Next event timestamp
      */
-    virtual std::optional<uint64_t> peekNextUpdateTime();
+    virtual std::optional<InsTime> peekNextUpdateTime();
 
   protected:
     /**

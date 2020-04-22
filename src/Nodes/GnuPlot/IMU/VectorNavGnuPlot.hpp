@@ -9,6 +9,8 @@
 
 #include "../GnuPlot.hpp"
 
+#include <optional>
+
 namespace NAV
 {
 /// Plots VectorNav Imu Data
@@ -36,7 +38,8 @@ class VectorNavGnuPlot : public GnuPlot
     static NavStatus plotVectorNavObs(std::shared_ptr<NodeData> observation, std::shared_ptr<Node> userData);
 
   private:
-    uint64_t timeStart = 0;
+    uint64_t timeSinceStartup0 = 0;
+    std::optional<InsTime> insTime0;
 };
 
 } // namespace NAV

@@ -25,7 +25,8 @@
 
     #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
     #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
-    #include "Nodes/UsbSync/GNSS/UbloxSyncSignal.hpp"
+    #include "Nodes/Synchronizer/UsbSyncSignal/GNSS/UbloxSyncSignal.hpp"
+    #include "Nodes/Synchronizer/TimeSynchronizer/TimeSynchronizer.hpp"
 
     #include "Nodes/GnuPlot/IMU/VectorNavGnuPlot.hpp"
 #endif
@@ -156,7 +157,7 @@ const std::map<std::string, NodeInterface> nodeInterfaces = {
                     { NodeInterface::CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" } },
                     { NodeInterface::CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "4", "200" } } },
         .in = {},
-        .out = { { "UbloxObs" } } } },
+        .out = { "UbloxObs" } } },
 
     { "UbloxDataLogger",
       { .category = "DataLogger",
@@ -168,7 +169,7 @@ const std::map<std::string, NodeInterface> nodeInterfaces = {
         .out = {} } },
 
     { "UbloxSyncSignal",
-      { .category = "Utility",
+      { .category = "TimeSync",
         .nodeCompat = NodeInterface::NodeContext::REAL_TIME,
         .constructor = NGUI([](std::string name, std::deque<std::string>& options) { return std::make_shared<UbloxSyncSignal>(name, options); }),
         .config = { { NodeInterface::CONFIG_STRING, "Port", "COM port where the sensor, which should be synced, is attached to\n- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n- \"/dev/ttyS1\" (Linux format for physical serial port)\n- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)", { "/dev/ttyUSB0" } },
@@ -177,6 +178,15 @@ const std::map<std::string, NodeInterface> nodeInterfaces = {
                     { NodeInterface::CONFIG_LIST, "Msg Id", "Message Id", { "RAWX" } } },
         .in = { { "UbloxObs", NGUI(UbloxSyncSignal::triggerSync) } },
         .out = {} } },
+
+    { "TimeSynchronizer",
+      { .category = "TimeSync",
+        .nodeCompat = NodeInterface::NodeContext::REAL_TIME,
+        .constructor = NGUI([](std::string name, std::deque<std::string>& options) { return std::make_shared<TimeSynchronizer>(name, options); }),
+        .config = {},
+        .in = { { "UbloxObs", NGUI(TimeSynchronizer::syncUbloxSensor) },
+                { "VectorNavObs", NGUI(TimeSynchronizer::syncVectorNavSensor) } },
+        .out = { "VectorNavObs" } } },
 
     { "VectorNavGnuPlot",
       { .category = "Plot",
