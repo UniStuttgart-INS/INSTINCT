@@ -12,7 +12,7 @@ AllowAllConstructorInitializersOnNextLine: true         # [true/false] If a cons
 AllowAllParametersOfDeclarationOnNextLine: false        # [true/false] If the function declaration doesn’t fit on a line, allow putting all parameters of a function declaration onto the next line
 AllowShortBlocksOnASingleLine: true                     # [true/false] Dependent on the value, "while (true) { continue; }" can be put on a single line
 AllowShortCaseLabelsOnASingleLine: false                # [true/false] If true, short case labels will be contracted to a single line
-AllowShortFunctionsOnASingleLine: Empty                 # [None/InlineOnly/Empty/Inline/All] Dependent on the value, "int f() { return 0; }" can be put on a single line
+AllowShortFunctionsOnASingleLine: All                   # [None/InlineOnly/Empty/Inline/All] Dependent on the value, "int f() { return 0; }" can be put on a single line
 AllowShortIfStatementsOnASingleLine: Never              # [Never/WithoutElse/Always] If true, "if (a) return;" can be put on a single line
 AllowShortLambdasOnASingleLine: All                     # [None/Empty/Inline/All] Dependent on the value, "auto lambda []() { return 0; }" can be put on a single line
 AllowShortLoopsOnASingleLine: true                      # [true/false] If true, while (true) continue; can be put on a single line

@@ -1,6 +1,7 @@
 {
     "version": "2.0.0",
     "tasks": [
+        // -------------------------------------------- CLEAN Tasks --------------------------------------------
         {
             "label": "CLEAN: Remove Build Files",
             "type": "shell",
@@ -19,6 +20,120 @@
             },
             "problemMatcher": []
         },
+        // -------------------------------------------- CMAKE Tasks --------------------------------------------
+        {
+            "label": "CMAKE: Debug",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF -DENABLE_GUI=OFF || true"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE: Release",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF -DENABLE_GUI=OFF || true"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE: GUI",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "-Bbuild/Debug",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DENABLE_TESTING=OFF",
+                "-DENABLE_GUI=ON"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE: Testing",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "-Bbuild/Debug",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DENABLE_TESTING=ON"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE: Documentation",
+            "type": "shell",
+            "group": "build",
+            "command": "bash",
+            "args": [
+                "-c",
+                "cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_DOXYGEN=TRUE"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        // --------------------------------------- CMAKE Configure Tasks ---------------------------------------
+        {
+            "label": "CMAKE: Configure Debug",
+            "type": "shell",
+            "group": "build",
+            "command": "ccmake",
+            "args": [
+                "-Bbuild/Debug",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Debug"
+            ],
+            "presentation": {
+                "focus": true
+            },
+            "dependsOn": [
+                "CMAKE: Debug"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "CMAKE: Configure Release",
+            "type": "shell",
+            "group": "build",
+            "command": "ccmake",
+            "args": [
+                "-Bbuild/Release",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "presentation": {
+                "focus": true
+            },
+            "dependsOn": [
+                "CMAKE: Release"
+            ],
+            "problemMatcher": []
+        },
+        // -------------------------------------------- Build Tasks --------------------------------------------
         {
             "label": "DEBUG: Build project",
             "type": "shell",
@@ -26,42 +141,113 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "command": "bash",
+            "command": "cmake",
             "args": [
-                "-c",
-                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF -DENABLE_GUI=OFF; make -j -Cbuild/Debug"
+                "--build",
+                "build/Debug",
+                "--",
+                "-j"
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "CMAKE: Debug"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "GUI: Build project",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build/Debug",
+                "--",
+                "-j"
+            ],
+            "dependsOn": [
+                "CMAKE: GUI"
+            ],
             "problemMatcher": []
         },
         {
             "label": "RELEASE: Build project",
             "type": "shell",
             "group": "build",
-            "command": "bash",
+            "command": "cmake",
             "args": [
-                "-c",
-                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF -DENABLE_GUI=OFF; make -j -Cbuild/Release"
+                "--build",
+                "build/Release",
+                "--",
+                "-j"
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "CMAKE: Release"
+            ],
             "problemMatcher": []
         },
+        {
+            "label": "TEST: Build project",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build/Debug",
+                "--",
+                "-j"
+            ],
+            "dependsOn": [
+                "CMAKE: Testing"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "DOXYGEN: Build Documentation",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build/Release",
+                "--target",
+                "doxygen-docs",
+                "--",
+                "-j"
+            ],
+            "dependsOn": [
+                "CMAKE: Documentation"
+            ],
+            "problemMatcher": []
+        },
+        // --------------------------------------------- Run Tasks ---------------------------------------------
         {
             "label": "DEBUG: Build & run project",
             "type": "shell",
             "group": "test",
-            "command": "bash",
+            "command": "./bin/Debug/navsos",
             "args": [
-                "-c",
-                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF -DENABLE_GUI=OFF; make -j -Cbuild/Debug && ./bin/Debug/navsos -f config.ini config-dataflow.ini"
+                "-f",
+                "config.ini",
+                "config-dataflow.ini"
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "DEBUG: Build project"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "RELEASE: Build & run project",
+            "type": "shell",
+            "group": "test",
+            "command": "./bin/Release/navsos",
+            "args": [
+                "-f",
+                "config.ini",
+                "config-dataflow.ini"
+            ],
+            "dependsOn": [
+                "RELEASE: Build project"
+            ],
             "problemMatcher": []
         },
         {
@@ -71,42 +257,11 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "command": "bash",
-            "args": [
-                "-c",
-                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF -DENABLE_GUI=ON && make -j -Cbuild/Debug && ./bin/Debug/navsos-gui"
+            "command": "./bin/Debug/navsos-gui",
+            "args": [],
+            "dependsOn": [
+                "GUI: Build project"
             ],
-            "presentation": {
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "RELEASE: Build & run project",
-            "type": "shell",
-            "group": "test",
-            "command": "bash",
-            "args": [
-                "-c",
-                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF -DENABLE_GUI=OFF; make -j -Cbuild/Release && ./bin/Release/navsos -f config.ini config-dataflow.ini"
-            ],
-            "presentation": {
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "TEST: Build",
-            "type": "shell",
-            "group": "build",
-            "command": "bash",
-            "args": [
-                "-c",
-                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=ON -DENABLE_GUI=OFF && make -j -Cbuild/Debug tests"
-            ],
-            "presentation": {
-                "clear": true
-            },
             "problemMatcher": []
         },
         {
@@ -116,91 +271,29 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=ON -DENABLE_GUI=OFF && make -j -Cbuild/Debug tests && ./bin/Debug/tests"
+                "cd build/Debug && ctest -j2"
             ],
-            "presentation": {
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "CMAKE-DEBUG: Configure Cmake",
-            "type": "shell",
-            "group": "build",
-            "command": "ccmake",
-            "args": [
-                "-Bbuild/Debug",
-                "-S.",
-                "-DCMAKE_BUILD_TYPE=Debug"
+            "dependsOn": [
+                "TEST: Build project"
             ],
-            "presentation": {
-                "clear": true,
-                "focus": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "CMAKE-RELEASE: Configure Cmake",
-            "type": "shell",
-            "group": "build",
-            "command": "ccmake",
-            "args": [
-                "-Bbuild/Release",
-                "-S.",
-                "-DCMAKE_BUILD_TYPE=Release"
-            ],
-            "presentation": {
-                "clear": true,
-                "focus": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "CMAKE-DEBUG: Run Cmake",
-            "type": "shell",
-            "group": "build",
-            "command": "cmake",
-            "args": [
-                "-Bbuild/Debug",
-                "-S.",
-                "-DCMAKE_BUILD_TYPE=Debug"
-            ],
-            "presentation": {
-                "clear": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "CMAKE-RELEASE: Run Cmake",
-            "type": "shell",
-            "group": "build",
-            "command": "cmake",
-            "args": [
-                "-Bbuild/Release",
-                "-S.",
-                "-DCMAKE_BUILD_TYPE=Release"
-            ],
-            "presentation": {
-                "clear": true
-            },
             "problemMatcher": []
         },
         {
             "label": "DOXYGEN: Create & Show",
             "type": "shell",
             "group": "build",
-            "command": "bash",
+            "command": "xdg-open",
             "args": [
-                "-c",
-                "cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_DOXYGEN=TRUE && make -j -Cbuild/Release doxygen-docs && xdg-open doc/html/index.html"
+                "doc/html/index.html"
             ],
-            "presentation": {
-                "clear": true
-            },
+            "dependsOn": [
+                "DOXYGEN: Build Documentation"
+            ],
             "problemMatcher": []
         },
+        // ------------------------------------------ Debugging Tasks ------------------------------------------
         {
-            "label": "VALGRIND-DEBUG: Run profiler",
+            "label": "VALGRIND: Run profiler in Debug Mode",
             "type": "shell",
             "group": "build",
             "command": "bash",
@@ -214,7 +307,7 @@
             "problemMatcher": []
         },
         {
-            "label": "VALGRIND-RELEASE: Run profiler",
+            "label": "VALGRIND: Run profiler in Release Mode",
             "type": "shell",
             "group": "build",
             "command": "bash",
@@ -228,7 +321,7 @@
             "problemMatcher": []
         },
         {
-            "label": "VALGRIND-DEBUG: Memory Leak Check",
+            "label": "VALGRIND: Memory Leak Check",
             "type": "shell",
             "group": "build",
             "command": "bash",
@@ -240,20 +333,6 @@
                 "DEBUG: Build project"
             ],
             "problemMatcher": []
-        },
-        {
-            "label": "VALGRIND-RELEASE: Memory Leak Check",
-            "type": "shell",
-            "group": "build",
-            "command": "bash",
-            "args": [
-                "-c",
-                "valgrind --leak-check=yes bin/Release/navsos -f config.ini config-dataflow.ini"
-            ],
-            "dependsOn": [
-                "RELEASE: Build project"
-            ],
-            "problemMatcher": []
-        },
+        }
     ]
 }

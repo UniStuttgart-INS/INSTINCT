@@ -13,7 +13,8 @@
                 "NODE_EDITOR_EXPORTS"
             ],
             "cppStandard": "c++17",
-            "compilerPath": "/usr/bin/gcc"
+            "compilerPath": "/usr/bin/gcc",
+            "compileCommands": "${workspaceFolder}/compile_commands.json"
         }
     ],
     "version": 4

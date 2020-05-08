@@ -17,3 +17,6 @@ logs/*
 
 # Ignore Mac specific files
 .DS_Store
+
+# Ignore root level compile_commands
+compile_commands.json

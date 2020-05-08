@@ -78,5 +78,20 @@
             ],
             "format": "FileFormat.svg"
         }
+    ],
+    "clang-tidy.checks": [
+        "*",
+        "-fuchsia-*",
+        "-modernize-use-trailing-return-type",
+        "-llvm-header-guard",
+        "-llvm-include-order",
+        "-cppcoreguidelines-macro-usage",
+        "-cppcoreguidelines-pro-bounds-pointer-arithmetic",
+        "-hicpp-vararg",
+        "-google-readability-todo",
+        "-readability-implicit-bool-conversion"
+    ],
+    "clang-tidy.compilerArgs": [
+        "-Wno-unknown-warning-option"
     ]
 }

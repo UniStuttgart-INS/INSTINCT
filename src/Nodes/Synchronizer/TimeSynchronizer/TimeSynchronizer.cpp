@@ -8,10 +8,28 @@
 
 #include "NodeInterface.hpp"
 
-NAV::TimeSynchronizer::TimeSynchronizer(std::string name, std::deque<std::string>& /*options*/)
+NAV::TimeSynchronizer::TimeSynchronizer(std::string name, std::deque<std::string>& options)
     : Node(name)
 {
     LOG_TRACE("called for {}", name);
+
+    if (options.size() >= 1)
+    {
+        useFixedStartTime = static_cast<bool>(std::stoi(options.at(0)));
+        options.pop_front();
+    }
+    if (useFixedStartTime && options.size() >= 3)
+    {
+        unsigned short cycle = static_cast<unsigned short>(std::stoul(options.at(0)));
+        unsigned short week = static_cast<unsigned short>(std::stoul(options.at(1)));
+        long double tow = std::stold(options.at(2));
+
+        startupGpsTime = InsTime(week, tow, cycle);
+
+        options.pop_front();
+        options.pop_front();
+        options.pop_front();
+    }
 }
 
 NAV::TimeSynchronizer::~TimeSynchronizer() {}

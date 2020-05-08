@@ -1,0 +1,13 @@
+---
+Checks:          '*,-fuchsia-*,
+                  -modernize-use-trailing-return-type,
+                  -llvm-header-guard,
+                  -llvm-include-order,
+                  -cppcoreguidelines-macro-usage,
+                  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+                  -hicpp-vararg,
+                  -google-readability-todo,
+                  -readability-implicit-bool-conversion'
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle:     none

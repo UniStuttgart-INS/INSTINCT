@@ -47,6 +47,8 @@ class TimeSynchronizer : public Node
     static NavStatus syncVectorNavSensor(std::shared_ptr<NodeData> observation, std::shared_ptr<Node> userData);
 
   private:
+    bool useFixedStartTime = false;
+
     std::optional<InsTime> startupGpsTime;
     std::optional<uint64_t> startupImuTime;
 };

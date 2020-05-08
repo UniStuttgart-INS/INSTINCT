@@ -5,7 +5,10 @@ include(cmake/utils.cmake)
 extract_project_version()
 
 # Set the project name, version and language
-project("NavSoS" VERSION ${PROJECT_VERSION} LANGUAGES CXX)
+project(
+  "NavSoS"
+  VERSION ${PROJECT_VERSION}
+  LANGUAGES CXX)
 string(TOLOWER ${CMAKE_PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 message(STATUS "${CMAKE_PROJECT_NAME}: ${PROJECT_VERSION}")
 
@@ -31,6 +34,9 @@ enable_sanitizers(project_options)
 include(cmake/Doxygen.cmake)
 enable_doxygen()
 
+# allow for static analysis options
+include(cmake/StaticAnalyzers.cmake)
+
 # If true, the library target will be a shared library, otherwise it will be static.
 option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 option(ENABLE_TESTING "Enable Test Builds" OFF)
@@ -43,14 +49,17 @@ include_directories(src)
 set(CONAN_EXTRA_REQUIRES "")
 set(CONAN_EXTRA_OPTIONS "")
 
-list(APPEND CONAN_EXTRA_REQUIRES fmt/6.1.2
-                                 spdlog/1.5.0
-                                 boost/1.72.0
-                                 eigen/3.3.7
-                                 gtest/1.10.0)
+list(
+  APPEND
+  CONAN_EXTRA_REQUIRES
+  fmt/6.1.2
+  spdlog/1.5.0
+  boost/1.72.0
+  eigen/3.3.7
+  gtest/1.10.0)
 
-if (BUILD_SHARED_LIBS)
-    list(APPEND CONAN_EXTRA_OPTIONS "Pkg:shared=True")
+if(BUILD_SHARED_LIBS)
+  list(APPEND CONAN_EXTRA_OPTIONS "Pkg:shared=True")
 endif()
 
 include(cmake/Conan.cmake)
@@ -59,35 +68,47 @@ run_conan()
 # Include VectorNav library
 add_subdirectory(lib/vnproglib-1.1.5.0 libvncxx)
 include_directories(lib/vnproglib-1.1.5.0/include)
+set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
 
 # Include ublox library
 add_subdirectory(lib/ubloxlib libubcxx)
 include_directories(lib/ubloxlib/include)
+set_target_properties(libubcxx PROPERTIES CXX_CLANG_TIDY "")
 
 # Include gnuplot iostream
 include_directories(lib/gnuplot-iostream)
 
-# Find MathGL
-find_package(MathGL)
-include_directories(${MathGL_INCLUDE_DIRS})
-
 # Find installed packages
-find_package (Threads REQUIRED)
+find_package(Threads REQUIRED)
 
 # Specify output path for executable files
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
 
 if(ENABLE_TESTING)
-    # enable_testing()
-    add_subdirectory(tests)
+  # enable_testing()
+  add_subdirectory(tests)
 endif()
 
 add_subdirectory(src)
 
 if(ENABLE_GUI)
-    # Include nodeeditor library
-    add_subdirectory(lib/nodeeditor)
+  # Include nodeeditor library
+  add_subdirectory(lib/nodeeditor)
+  set_target_properties(nodes PROPERTIES CXX_CLANG_TIDY "")
 
-    add_subdirectory(src/gui)
+  add_subdirectory(src/gui)
 endif()
+
+option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
+if(ENABLE_UNITY)
+  # Add for any project you want to apply unity builds for
+  set_target_properties(${PROJECT_NAME_LOWERCASE} PROPERTIES UNITY_BUILD ON)
+  if(ENABLE_GUI)
+    set_target_properties("${PROJECT_NAME_LOWERCASE}-gui" PROPERTIES UNITY_BUILD ON)
+  endif()
+endif()
+
+# Copy compile_commands.json to root directory
+add_custom_target(copy-compile-commands ALL ${CMAKE_COMMAND} -E copy_if_different
+                                            ${CMAKE_BINARY_DIR}/compile_commands.json ${CMAKE_CURRENT_LIST_DIR})
