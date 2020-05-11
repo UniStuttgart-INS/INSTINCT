@@ -29,10 +29,16 @@
 #include "NodeInterface.hpp"
 #include "Nodes/NodeCreator.hpp"
 
-int main(int argc, const char** argv)
+int main(int argc, const char* argv[])
 {
-    if (NAV::Logger::initialize("logs/navsos.log") != NAV::NavStatus::NAV_OK)
-        return EXIT_FAILURE;
+    // User requested the version of the program
+    if (argc == 2 && !strcmp(argv[1], "--version"))
+    {
+        std::cout << PROJECT_VERSION_STRING << '\n';
+        return EXIT_SUCCESS;
+    }
+
+    Logger logger("logs/navsos.log");
 
     // Read Command Line Options
     NAV::Config* pConfig = NAV::Config::Get();
@@ -42,8 +48,6 @@ int main(int argc, const char** argv)
     else if (result != NAV::NavStatus::NAV_OK)
         LOG_CRITICAL("Critical problem during adding of program options");
 
-    // Write the Log Header
-    NAV::Logger::writeHeader();
     // Decode Options
     if (pConfig->DecodeOptions() != NAV::NavStatus::NAV_OK)
         LOG_CRITICAL("Critical problem during decoding of program options");
@@ -106,18 +110,18 @@ int main(int argc, const char** argv)
         if (node.type.find("GnuPlot") != std::string::npos)
         {
             std::static_pointer_cast<NAV::GnuPlot>(node.node)->update();
-            while (system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))
+            while (system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
         // Destruct all Nodes
         node.node = nullptr;
     }
 
-    if (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))
+    if (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
         LOG_INFO("Waiting for all Gnuplot windows to close");
 
     // Wait if any GnuPlot Window is open. GnuPlot becomes unresponsive when parent dies
-    while (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1"))
+    while (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     NAV::Logger::writeFooter();

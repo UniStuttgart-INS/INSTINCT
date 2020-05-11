@@ -24,7 +24,12 @@ class UbloxSyncSignal : public UsbSyncSignal
     UbloxSyncSignal(std::string name, std::deque<std::string>& options);
 
     /// Default destructor
-    virtual ~UbloxSyncSignal();
+    ~UbloxSyncSignal() override;
+    
+    UbloxSyncSignal(const UbloxSyncSignal&) = delete;            ///< Copy constructor
+    UbloxSyncSignal(UbloxSyncSignal&&) = delete;                 ///< Move constructor
+    UbloxSyncSignal& operator=(const UbloxSyncSignal&) = delete; ///< Copy assignment operator
+    UbloxSyncSignal& operator=(UbloxSyncSignal&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Triggers a Sync Signal to the USB port

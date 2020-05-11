@@ -25,7 +25,7 @@ class Node : public DataCallback
      * 
      * @retval std::string The Name of the Node
      */
-    std::string getName();
+    const std::string& getName();
 
     /**
      * @brief Checks if the Node is a File Reader Type and can provide data packages
@@ -49,19 +49,24 @@ class Node : public DataCallback
      */
     virtual std::optional<InsTime> peekNextUpdateTime();
 
+    Node(const Node&) = delete;            ///< Copy constructor
+    Node(Node&&) = delete;                 ///< Move constructor
+    Node& operator=(const Node&) = delete; ///< Copy assignment operator
+    Node& operator=(Node&&) = delete;      ///< Move assignment operator
+
   protected:
     /**
      * @brief Construct a new Node object
      * 
      * @param[in] name Name of the Node
      */
-    Node(const std::string name);
+    explicit Node(const std::string& name);
 
     /// Destroy the Node object
-    ~Node();
+    ~Node() override = default;
 
     /// Name of the Node
-    const std::string name;
+    const std::string& name;
 };
 
 } // namespace NAV

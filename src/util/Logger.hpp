@@ -1,31 +1,33 @@
 /**
  * @file Logger.hpp
- * @brief Utility class for logging with spdlog
+ * @brief Utility class for logging to console and file
  * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-10
+ * @date 2020-05-08
  */
 
 #pragma once
 
-/// Turn off irrelevant log levels during compilation
+/// Enables the LOG_DATA() Macro (needs SPDLOG_LEVEL_TRACE)
 #define DATA_LOGGING_ENABLED 0
+/// Compile-time logging level
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+/// External usage of FMT, as the internal one is missing some files
 #define SPDLOG_FMT_EXTERNAL 1
 
 #include "spdlog/spdlog.h"
 #include "spdlog/fmt/ostr.h"
-#include "Common.hpp"
 
 #include <string>
 
 // Macros are redefined in case SPDLOG is not available anymore and it needs to be switched to another Logger
+
 #if DATA_LOGGING_ENABLED >= 1
+    /// Data Logging Macro
     #define LOG_DATA SPDLOG_TRACE
 #else
+    /// Data Logging Macro
     #define LOG_DATA(...) (void)0
 #endif
-
-void exitFailure();
 
 /// Detailled info to trace the execution of the program
 #define LOG_TRACE SPDLOG_TRACE
@@ -37,13 +39,11 @@ void exitFailure();
 #define LOG_WARN SPDLOG_WARN
 /// Error occurred, which stops part of the program to work, but not everything
 #define LOG_ERROR SPDLOG_ERROR
-/// Critical Event occurred, write Footer and Exit program
-#define LOG_CRITICAL(...) SPDLOG_CRITICAL(__VA_ARGS__), exitFailure()
+/// Critical Event, which causes the program to work entirely and causes a shutdown
+#define LOG_CRITICAL SPDLOG_CRITICAL
 
-namespace NAV
-{
 /**
- * @brief Static utility class for logging
+ * @brief Utility class for logging
  * 
  * Use the Macros to do logging, as they can be turned off during compilation
  * - LOG_DATA("Message {} {}", variable1, variable 2);
@@ -58,25 +58,27 @@ class Logger
 {
   public:
     /**
-     * @brief Initialize the global console and file logger
+     * @brief Construct a new Logger object
      * 
      * @param[in] logpath Relative filepath to the logfile
-     * @retval NavStatus Indicates whether initialization was successful
      */
-    static NavStatus initialize(const std::string logpath);
+    explicit Logger(const std::string& logpath);
 
-    /// @brief Writes a separation line to the console only
-    static void writeSeparator();
+    /// @brief Destructor
+    ~Logger();
 
-    /// @brief Writes the logging header
-    static void writeHeader();
-
-    /// @brief Writes the logging footer
-    static void writeFooter();
+    Logger(const Logger&) = delete;            ///< Copy constructor
+    Logger(Logger&&) = delete;                 ///< Move constructor
+    Logger& operator=(const Logger&) = delete; ///< Copy assignment operator
+    Logger& operator=(Logger&&) = delete;      ///< Move assignment operator
 
   private:
-    /// @brief Constructor is defined private, so creating an instance of this object is imposible
-    Logger(){};
-};
+    /// @brief Writes a separation line to the console only
+    static void writeSeparator() noexcept;
 
-} // namespace NAV
+    /// @brief Writes the logging header
+    static void writeHeader() noexcept;
+
+    /// @brief Writes the logging footer
+    static void writeFooter() noexcept;
+};

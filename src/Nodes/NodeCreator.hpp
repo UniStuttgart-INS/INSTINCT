@@ -34,8 +34,8 @@ class NodeCreator
      */
     static NavStatus createLinks(NAV::Config* pConfig);
 
-  private:
-    NodeCreator() {}
+    /// Constructor is deleted
+    NodeCreator() = delete;
 };
 
 } // namespace NAV

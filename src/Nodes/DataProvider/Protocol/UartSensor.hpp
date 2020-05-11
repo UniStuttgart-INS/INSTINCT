@@ -31,16 +31,21 @@ class UartSensor
         BAUDRATE_921600 = 921600  ///< Baudrate with 921600 symbols per second [Baud]
     };
 
+    UartSensor(const UartSensor&) = delete;            ///< Copy constructor
+    UartSensor(UartSensor&&) = delete;                 ///< Move constructor
+    UartSensor& operator=(const UartSensor&) = delete; ///< Copy assignment operator
+    UartSensor& operator=(UartSensor&&) = delete;      ///< Move assignment operator
+
   protected:
     /**
      * @brief Construct a new Uart Sensor object
      * 
      * @param[in, out] options Program options string list
      */
-    UartSensor(std::deque<std::string>& options);
+    explicit UartSensor(std::deque<std::string>& options);
 
     /// Destroy the Uart Sensor object
-    ~UartSensor();
+    virtual ~UartSensor();
 
     /// COM port where the sensor is attached to
     ///

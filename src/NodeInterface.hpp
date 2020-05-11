@@ -25,10 +25,13 @@
 
     #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
     #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
+
     #include "Nodes/Synchronizer/UsbSyncSignal/GNSS/UbloxSyncSignal.hpp"
     #include "Nodes/Synchronizer/TimeSynchronizer/TimeSynchronizer.hpp"
 
     #include "Nodes/GnuPlot/IMU/VectorNavGnuPlot.hpp"
+
+    #include "Nodes/Integrator/IMU/ImuIntegrator.hpp"
 #endif
 
 #ifndef GUI
@@ -114,6 +117,7 @@ extern NodeInterface::NodeContext appContext;
 
 /// This struct represents the inheritance structure for output data, as parent data can always be extracted from child data
 const std::map<std::string, std::vector<std::string>> inheritance = {
+    { "IntegratedImuObs", { "InsObs" } },
     { "ImuObs", { "InsObs" } },
     { "VectorNavObs", { "ImuObs" } },
     { "GnssObs", { "InsObs" } },
@@ -183,10 +187,21 @@ const std::map<std::string, NodeInterface> nodeInterfaces = {
       { .category = "TimeSync",
         .nodeCompat = NodeInterface::NodeContext::REAL_TIME,
         .constructor = NGUI([](std::string name, std::deque<std::string>& options) { return std::make_shared<TimeSynchronizer>(name, options); }),
-        .config = {},
+        .config = { { NodeInterface::CONFIG_BOOL, "Use Fixed\nStart Time", "Use the Time configured here as start time", { "0" } },
+                    { NodeInterface::CONFIG_INT, "Gps Cycle", "GPS Cycle at the beginning of the data recording", { "0", "0", "10" } },
+                    { NodeInterface::CONFIG_INT, "Gps Week", "GPS Week at the beginning of the data recording", { "0", "0", "245760" } },
+                    { NodeInterface::CONFIG_FLOAT, "Gps Time\nof Week", "GPS Time of Week at the beginning of the data recording", { "0", "0", "604800" } } },
         .in = { { "UbloxObs", NGUI(TimeSynchronizer::syncUbloxSensor) },
                 { "VectorNavObs", NGUI(TimeSynchronizer::syncVectorNavSensor) } },
         .out = { "VectorNavObs" } } },
+
+    { "ImuIntegrator",
+      { .category = "Integrator",
+        .nodeCompat = NodeInterface::NodeContext::ALL,
+        .constructor = NGUI([](std::string name, std::deque<std::string>& options) { return std::make_shared<ImuIntegrator>(name, options); }),
+        .config = {},
+        .in = { { "ImuObs", NGUI(ImuIntegrator::integrateImuObs) } },
+        .out = { "IntegratedImuObs" } } },
 
     { "VectorNavGnuPlot",
       { .category = "Plot",

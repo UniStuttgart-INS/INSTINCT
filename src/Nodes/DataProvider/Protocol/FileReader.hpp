@@ -17,16 +17,22 @@ namespace NAV
 /// Abstract File Reader class
 class FileReader
 {
+  public:
+    FileReader(const FileReader&) = delete;            ///< Copy constructor
+    FileReader(FileReader&&) = delete;                 ///< Move constructor
+    FileReader& operator=(const FileReader&) = delete; ///< Copy assignment operator
+    FileReader& operator=(FileReader&&) = delete;      ///< Move assignment operator
+
   protected:
     /**
      * @brief Construct a new File Reader object
      * 
      * @param[in, out] options Program options string list
      */
-    FileReader(std::deque<std::string>& options);
+    explicit FileReader(std::deque<std::string>& options);
 
     /// Default destructor
-    ~FileReader();
+    virtual ~FileReader();
 
     /// Path to log file
     std::string path;

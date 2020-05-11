@@ -14,13 +14,13 @@
 namespace NAV
 {
 /// File Reader for Vector Nav log files
-class VectorNavFile : public FileReader, public Imu
+class VectorNavFile final : public FileReader, public Imu
 {
   public:
     /// Config Structure for the sensor
-    typedef struct Config
+    using Config = struct
     {
-    } Config;
+    };
 
     /**
      * @brief Construct a new Vector Nav File object
@@ -28,10 +28,15 @@ class VectorNavFile : public FileReader, public Imu
      * @param[in] name Name of the Sensor which wrote the file
      * @param[in, out] options Program options string list
      */
-    VectorNavFile(std::string name, std::deque<std::string>& options);
+    VectorNavFile(const std::string& name, std::deque<std::string>& options);
 
     /// Default destructor
-    virtual ~VectorNavFile();
+    ~VectorNavFile() final;
+
+    VectorNavFile(const VectorNavFile&) = delete;            ///< Copy constructor
+    VectorNavFile(VectorNavFile&&) = delete;                 ///< Move constructor
+    VectorNavFile& operator=(const VectorNavFile&) = delete; ///< Copy assignment operator
+    VectorNavFile& operator=(VectorNavFile&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Checks if the Node is a File Reader Type and can provide data packages

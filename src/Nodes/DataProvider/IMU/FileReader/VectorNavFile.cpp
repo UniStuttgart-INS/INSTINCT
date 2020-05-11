@@ -6,7 +6,7 @@
 #include "util/Logger.hpp"
 #include <ios>
 
-NAV::VectorNavFile::VectorNavFile(std::string name, std::deque<std::string>& options)
+NAV::VectorNavFile::VectorNavFile(const std::string& name, std::deque<std::string>& options)
     : FileReader(options), Imu(name, options)
 {
     LOG_TRACE("called for {}", name);

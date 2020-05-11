@@ -2,10 +2,6 @@
 
 #include "util/Logger.hpp"
 
-NAV::DataCallback::DataCallback() {}
-
-NAV::DataCallback::~DataCallback() {}
-
 NAV::NavStatus NAV::DataCallback::addCallback(size_t port, std::function<NAV::NavStatus(std::shared_ptr<NAV::NodeData>, std::shared_ptr<NAV::Node>)> callback, std::shared_ptr<NAV::Node> userData)
 {
     LOG_TRACE("called");

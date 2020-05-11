@@ -18,6 +18,12 @@ namespace NAV
 /// Class to send Sync Signals over the USB RTS Pin
 class UsbSyncSignal : public Node
 {
+  public:
+    UsbSyncSignal(const UsbSyncSignal&) = delete;            ///< Copy constructor
+    UsbSyncSignal(UsbSyncSignal&&) = delete;                 ///< Move constructor
+    UsbSyncSignal& operator=(const UsbSyncSignal&) = delete; ///< Copy assignment operator
+    UsbSyncSignal& operator=(UsbSyncSignal&&) = delete;      ///< Move assignment operator
+
   protected:
     /**
      * @brief Construct a new Usb Sync Signal object
@@ -28,9 +34,8 @@ class UsbSyncSignal : public Node
     UsbSyncSignal(std::string name, std::deque<std::string>& options);
 
     /// Default destructor
-    virtual ~UsbSyncSignal();
+    ~UsbSyncSignal() override;
 
-  protected:
     /// File descriptor of the sensor port
     int fd;
 

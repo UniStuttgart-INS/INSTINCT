@@ -11,10 +11,6 @@
 
 namespace bpo = boost::program_options;
 
-NAV::Config::Config() {}
-
-NAV::Config::~Config() {}
-
 NAV::Config* NAV::Config::Get()
 {
     LOG_TRACE("called");
@@ -184,13 +180,13 @@ NAV::NavStatus NAV::Config::DecodeOptions()
     }
 }
 
-bool NAV::Config::GetSigterm()
+const bool NAV::Config::GetSigterm()
 {
     LOG_TRACE("called with sigterm={}", sigterm);
     return sigterm;
 }
 
-size_t NAV::Config::GetProgExecTime()
+const size_t NAV::Config::GetProgExecTime()
 {
     LOG_TRACE("called with progExecTime={}", progExecTime);
     return progExecTime;

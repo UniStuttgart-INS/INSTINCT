@@ -91,12 +91,17 @@ class DataCallback
      */
     NavStatus invokeCallbacks(size_t port, std::shared_ptr<NodeData> data);
 
+    DataCallback(const DataCallback&) = delete;            ///< Copy constructor
+    DataCallback(DataCallback&&) = delete;                 ///< Move constructor
+    DataCallback& operator=(const DataCallback&) = delete; ///< Copy assignment operator
+    DataCallback& operator=(DataCallback&&) = delete;      ///< Move assignment operator
+
   protected:
     /// Construct a new Data Callback object
-    DataCallback();
+    DataCallback() = default;
 
     /// Deletes the object
-    ~DataCallback();
+    virtual ~DataCallback() = default;
 
   private:
     /// Data Structure for Callbacks

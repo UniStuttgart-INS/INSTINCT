@@ -26,7 +26,12 @@ class VectorNavGnuPlot : public GnuPlot
     VectorNavGnuPlot(std::string name, std::deque<std::string>& options);
 
     /// Default Destructor
-    ~VectorNavGnuPlot();
+    ~VectorNavGnuPlot() override;
+
+    VectorNavGnuPlot(const VectorNavGnuPlot&) = delete;            ///< Copy constructor
+    VectorNavGnuPlot(VectorNavGnuPlot&&) = delete;                 ///< Move constructor
+    VectorNavGnuPlot& operator=(const VectorNavGnuPlot&) = delete; ///< Copy assignment operator
+    VectorNavGnuPlot& operator=(VectorNavGnuPlot&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Plots an VectorNav Observation

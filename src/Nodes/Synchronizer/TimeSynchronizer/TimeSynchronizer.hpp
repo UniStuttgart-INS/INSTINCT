@@ -26,7 +26,12 @@ class TimeSynchronizer : public Node
     TimeSynchronizer(std::string name, std::deque<std::string>& options);
 
     /// Default Destructor
-    virtual ~TimeSynchronizer();
+    ~TimeSynchronizer() override;
+
+    TimeSynchronizer(const TimeSynchronizer&) = delete;            ///< Copy constructor
+    TimeSynchronizer(TimeSynchronizer&&) = delete;                 ///< Move constructor
+    TimeSynchronizer& operator=(const TimeSynchronizer&) = delete; ///< Copy assignment operator
+    TimeSynchronizer& operator=(TimeSynchronizer&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Gets the gps time from an UbloxSensor

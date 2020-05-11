@@ -25,27 +25,32 @@ class Config
 {
   public:
     /// Stores info to construct a node
-    typedef struct NodeConfig
+    using NodeConfig = struct
     {
         std::string type;
         std::string name;
         std::deque<std::string> options;
 
         std::shared_ptr<Node> node;
-    } NodeConfig;
+    };
 
     /// Stores info to set up a data link
-    typedef struct NodeLink
+    using NodeLink = struct
     {
         std::string source;
         std::string target;
         std::string type;
-    } NodeLink;
+    };
 
     /// Construct a new Config object
-    Config();
+    Config() = default;
     /// Destroy the Config object
-    ~Config();
+    ~Config() = default;
+
+    Config(const Config&) = delete;            ///< Copy constructor
+    Config(Config&&) = delete;                 ///< Move constructor
+    Config& operator=(const Config&) = delete; ///< Copy assignment operator
+    Config& operator=(Config&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Returns a pointer to a static Config object
@@ -61,7 +66,7 @@ class Config
      * @param[in] argv Command Line Arguments Vector
      * @retval NavStatus Indicates whether there was a problem with the config
      */
-    NavStatus AddOptions(const int argc, const char* argv[]);
+    NavStatus AddOptions(int argc, const char* argv[]); // NOLINT
 
     /**
      * @brief Reads the variable map and saves the values
@@ -71,9 +76,9 @@ class Config
     NavStatus DecodeOptions();
 
     /// Specifies if the program waits for a signal
-    bool GetSigterm();
+    const bool GetSigterm();
     /// Program execution duration (disabled if Config::sigterm is true)
-    size_t GetProgExecTime();
+    const size_t GetProgExecTime();
 
     /// Nodes
     std::vector<NodeConfig> nodes;

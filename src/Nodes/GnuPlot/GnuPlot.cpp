@@ -26,7 +26,7 @@ size_t NAV::GnuPlot::GnuPlotWindow::addNewDataSet(std::string legend)
     return data.size() - 1;
 }
 
-NAV::GnuPlot::GnuPlot(std::string name, std::deque<std::string>& options)
+NAV::GnuPlot::GnuPlot(const std::string& name, std::deque<std::string>& options)
     : Node(name)
 {
     LOG_TRACE("called for {}", name);

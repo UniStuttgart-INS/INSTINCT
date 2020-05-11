@@ -1,5 +1,5 @@
 ---
-Checks:          '*'
+Checks:          '-*'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 FormatStyle:     none

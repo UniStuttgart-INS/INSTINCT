@@ -18,11 +18,11 @@
 namespace NAV
 {
 /// Vector Nav Sensor Class
-class VectorNavSensor : public UartSensor, public Imu
+class VectorNavSensor final : public UartSensor, public Imu
 {
   public:
     /// Config Structure for the sensor
-    typedef struct Config
+    using Config = struct
     {
         /// OutputFrequency to calculate rateDivisor field.
         uint16_t outputFrequency = 1;
@@ -54,7 +54,7 @@ class VectorNavSensor : public UartSensor, public Imu
         // vn::protocol::uart::InsGroup insField = vn::protocol::uart::InsGroup::INSGROUP_NONE;
         // Group 7 (GPS2)
         // vn::protocol::uart::GpsGroup gps2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
-    } Config;
+    };
 
     /**
      * @brief Construct a new Vector Nav Sensor object
@@ -65,7 +65,12 @@ class VectorNavSensor : public UartSensor, public Imu
     VectorNavSensor(std::string name, std::deque<std::string>& options);
 
     /// Default Destructor
-    virtual ~VectorNavSensor();
+    ~VectorNavSensor() final;
+
+    VectorNavSensor(const VectorNavSensor&) = delete;            ///< Copy constructor
+    VectorNavSensor(VectorNavSensor&&) = delete;                 ///< Move constructor
+    VectorNavSensor& operator=(const VectorNavSensor&) = delete; ///< Copy assignment operator
+    VectorNavSensor& operator=(VectorNavSensor&&) = delete;      ///< Move assignment operator
 
   private:
     /**
@@ -84,7 +89,7 @@ class VectorNavSensor : public UartSensor, public Imu
     VectorNavSensor::Config config;
 
     /// Internal Frequency of the Sensor
-    const double IMU_DEFAULT_FREQUENCY = 800;
+    constexpr static double IMU_DEFAULT_FREQUENCY = 800;
 };
 
 } // namespace NAV

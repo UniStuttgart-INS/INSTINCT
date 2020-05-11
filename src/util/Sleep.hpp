@@ -15,6 +15,9 @@ namespace NAV
 class Sleep
 {
   public:
+    /// @brief Constructor is deleted
+    Sleep() = delete;
+
     /// @brief Wait the thread till sigusr signal is send
     static void waitForSignal();
 
@@ -26,9 +29,6 @@ class Sleep
     static void countDownSeconds(size_t seconds);
 
   private:
-    /// @brief Constructor is defined private, so creating an instance of this object is imposible
-    Sleep(){};
-
     /// @brief Handler for Signal interrupts
     static void handler(int /* */);
 };
