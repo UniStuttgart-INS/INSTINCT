@@ -32,8 +32,6 @@ NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, std::deque<std:
 
 void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
 {
-    LOG_TRACE("called for {}", name);
-
     if (obs->insTime.has_value() && !startupGpsTime.has_value())
     {
         startupGpsTime = obs->insTime;

@@ -107,6 +107,8 @@ class NodeManager
     static Node::NodeContext appContext;
 
   private:
+    bool dataTypesMatch(std::string_view child, std::string_view root);
+
     /// Stores info to construct a node
     using NodeConfig = struct
     {

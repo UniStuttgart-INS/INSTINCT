@@ -132,6 +132,29 @@ void NAV::NodeManager::initializeNodes()
     }
 }
 
+bool NAV::NodeManager::dataTypesMatch(std::string_view child, std::string_view root)
+{
+    if (child == root)
+    {
+        return true;
+    }
+
+    if (_registeredNodeDataTypes.contains(child))
+    {
+        const auto& parents = _registeredNodeDataTypes.find(child)->second.parents;
+
+        for (const auto& parent : parents)
+        {
+            if (root == parent || dataTypesMatch(parent, root))
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void NAV::NodeManager::linkNodes()
 {
     LOG_TRACE("called");
@@ -161,31 +184,41 @@ void NAV::NodeManager::linkNodes()
                             {
                                 sourceNodeHasOutputType = true;
 
-                                bool targetNodeHasInputType = false;
+                                int targetNodeInputTypePortIndex = -1;
                                 for (uint8_t j = 0; j < targetNode->nPorts(Node::PortType::In); j++)
                                 {
                                     if (targetNode->dataType(Node::PortType::In, j) == link.type)
                                     {
-                                        targetNodeHasInputType = true;
-
-                                        // At this point both nodes were found and they have the link data type
-
-                                        // Check if the NodeData type is registered and add the callback
-                                        auto iter = _registeredNodeDataTypes.find(link.type);
-                                        if (iter == _registeredNodeDataTypes.end())
-                                        {
-                                            LOG_CRITICAL("Requested NodeLink with type '{}' is not registered with the application", link.type);
-                                        }
-                                        iter->second.addCallback(sourceNode, targetNode, j);
-
+                                        targetNodeInputTypePortIndex = j;
                                         break;
                                     }
                                 }
-                                if (!targetNodeHasInputType)
+                                if (targetNodeInputTypePortIndex == -1)
+                                {
+                                    for (uint8_t j = 0; j < targetNode->nPorts(Node::PortType::In); j++)
+                                    {
+                                        if (dataTypesMatch(link.type, targetNode->dataType(Node::PortType::In, j)))
+                                        {
+                                            targetNodeInputTypePortIndex = j;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (targetNodeInputTypePortIndex == -1)
                                 {
                                     LOG_CRITICAL("Data Link {} ⇒ {} could not be created because the data type {} is not supported by the target node",
                                                  link.source, link.target, link.type);
                                 }
+
+                                // At this point both nodes were found and they have the link data type
+
+                                // Check if the NodeData type is registered and add the callback
+                                auto iter = _registeredNodeDataTypes.find(link.type);
+                                if (iter == _registeredNodeDataTypes.end())
+                                {
+                                    LOG_CRITICAL("Requested NodeLink with type '{}' is not registered with the application", link.type);
+                                }
+                                iter->second.addCallback(sourceNode, targetNode, static_cast<uint8_t>(targetNodeInputTypePortIndex));
 
                                 break;
                             }

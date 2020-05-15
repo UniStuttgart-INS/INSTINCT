@@ -51,7 +51,6 @@ NAV::UbloxSensor::~UbloxSensor()
 void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::protocol::uart::Packet& p, size_t /*index*/)
 {
     auto* ubSensor = static_cast<UbloxSensor*>(userData);
-    LOG_TRACE("called for {}", ubSensor->name);
 
     auto obs = std::make_shared<UbloxObs>();
     obs->p = &p;

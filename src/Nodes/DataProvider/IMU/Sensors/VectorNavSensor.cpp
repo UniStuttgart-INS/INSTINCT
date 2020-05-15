@@ -25,7 +25,6 @@ NAV::VectorNavSensor::VectorNavSensor(const std::string& name, std::deque<std::s
 
     Baudrate connectedBaudrate{};
 
-    std::cout << sensorPort << std::endl;
     // Search for the VectorNav Sensor
     if (int32_t foundBaudrate = 0;
         vn::sensors::Searcher::search(sensorPort, &foundBaudrate))
@@ -151,7 +150,6 @@ NAV::VectorNavSensor::~VectorNavSensor()
 void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t /*index*/)
 {
     auto* vnSensor = static_cast<VectorNavSensor*>(userData);
-    LOG_TRACE("called for {}", vnSensor->name);
 
     if (p.type() == vn::protocol::uart::Packet::TYPE_BINARY)
     {
