@@ -1,5 +1,5 @@
 ---
-Checks:          '-*'
+Checks:          '-*,hicpp-no-assembler'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 FormatStyle:     file

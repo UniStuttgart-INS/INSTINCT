@@ -12,12 +12,14 @@ project(
 string(TOLOWER ${CMAKE_PROJECT_NAME} PROJECT_NAME_LOWERCASE)
 message(STATUS "${CMAKE_PROJECT_NAME}: ${PROJECT_VERSION}")
 
+# ######################################################################################################################
+
 # Basic settings
 include(cmake/StandardProjectSettings.cmake)
 
 # Link this 'library' to set the c++ standard / compile-time options requested
 add_library(project_options INTERFACE)
-target_compile_features(project_options INTERFACE cxx_std_17)
+target_compile_features(project_options INTERFACE cxx_std_20)
 
 # Link this 'library' to use the warnings specified in CompilerWarnings.cmake
 add_library(project_warnings INTERFACE)
@@ -45,7 +47,10 @@ option(ENABLE_GUI "Build GUI" OFF)
 # Include all project headers
 include_directories(src)
 
+# ######################################################################################################################
 # Conan Packages
+# ######################################################################################################################
+
 set(CONAN_EXTRA_REQUIRES "")
 set(CONAN_EXTRA_OPTIONS "")
 
@@ -65,21 +70,29 @@ endif()
 include(cmake/Conan.cmake)
 run_conan()
 
+# ######################################################################################################################
+# Libraries (inlcude as SYSTEM, to prevent Static Analazers to scan them)
+# ######################################################################################################################
+
 # Include VectorNav library
 add_subdirectory(lib/vnproglib-1.1.5.0 libvncxx)
-include_directories(lib/vnproglib-1.1.5.0/include)
+include_directories(SYSTEM lib/vnproglib-1.1.5.0/include)
 set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
 
 # Include ublox library
 add_subdirectory(lib/ubloxlib libubcxx)
-include_directories(lib/ubloxlib/include)
+include_directories(SYSTEM lib/ubloxlib/include)
 set_target_properties(libubcxx PROPERTIES CXX_CLANG_TIDY "")
 
 # Include gnuplot iostream
-include_directories(lib/gnuplot-iostream)
+include_directories(SYSTEM lib/gnuplot-iostream)
+
+# ######################################################################################################################
 
 # Find installed packages
 find_package(Threads REQUIRED)
+
+# ######################################################################################################################
 
 # Specify output path for executable files
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
@@ -90,15 +103,13 @@ if(ENABLE_TESTING)
   add_subdirectory(tests)
 endif()
 
-add_subdirectory(src)
-
 if(ENABLE_GUI)
   # Include nodeeditor library
   add_subdirectory(lib/nodeeditor)
   set_target_properties(nodes PROPERTIES CXX_CLANG_TIDY "")
-
-  add_subdirectory(src/gui)
 endif()
+
+add_subdirectory(src)
 
 option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
 if(ENABLE_UNITY)

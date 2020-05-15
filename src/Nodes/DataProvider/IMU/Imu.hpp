@@ -14,6 +14,12 @@ namespace NAV
 /// Abstract IMU Class
 class Imu : public Node
 {
+  public:
+    Imu(const Imu&) = delete;            ///< Copy constructor
+    Imu(Imu&&) = delete;                 ///< Move constructor
+    Imu& operator=(const Imu&) = delete; ///< Copy assignment operator
+    Imu& operator=(Imu&&) = delete;      ///< Move assignment operator
+
   protected:
     /**
      * @brief Construct a new Imu object
@@ -21,10 +27,13 @@ class Imu : public Node
      * @param[in] name Name of the Imu
      * @param[in, out] options Program options string list
      */
-    Imu(std::string name, std::deque<std::string>& options);
+    Imu(const std::string& name, std::deque<std::string>& options);
 
-    /// Destroy the Imu object
-    ~Imu();
+    /// Default constructor
+    Imu() = default;
+
+    /// Destructor
+    ~Imu() override = default;
 };
 
 } // namespace NAV

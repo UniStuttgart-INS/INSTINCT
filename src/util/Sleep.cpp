@@ -3,7 +3,7 @@
 
 // #include <chrono>
 // #include <thread>
-#include <signal.h>
+#include <csignal>
 #include <unistd.h>
 
 /// Flag for interrupt check
@@ -20,7 +20,8 @@ void NAV::Sleep::waitForSignal()
     LOG_TRACE("called");
 
     usr_interrupt = 0;
-    sigset_t mask, oldmask;
+    sigset_t mask;
+    sigset_t oldmask;
     /* Set up the mask of signals to temporarily block. */
     sigemptyset(&mask);
     sigaddset(&mask, SIGUSR1);
@@ -35,8 +36,10 @@ void NAV::Sleep::waitForSignal()
     /* Wait for a signal to arrive. */
     sigprocmask(SIG_BLOCK, &mask, &oldmask);
     while (!usr_interrupt)
+    {
         sigsuspend(&oldmask);
-    sigprocmask(SIG_UNBLOCK, &mask, NULL);
+    }
+    sigprocmask(SIG_UNBLOCK, &mask, nullptr);
 
     signal(SIGUSR1, SIG_DFL);
     signal(SIGINT, SIG_DFL);

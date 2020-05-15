@@ -8,11 +8,12 @@
 #pragma once
 
 #include <string>
+#include <string_view>
+#include <memory>
 #include <deque>
 
-#include "util/Common.hpp"
-#include "util/InsTime.hpp"
 #include "DataCallback.hpp"
+#include "NodeData/NodeData.hpp"
 
 namespace NAV
 {
@@ -20,46 +21,123 @@ namespace NAV
 class Node : public DataCallback
 {
   public:
-    /**
-     * @brief Get the name string of the Node
-     * 
-     * @retval std::string The Name of the Node
-     */
-    std::string getName();
+    /// Port Type
+    enum PortType
+    {
+        In, ///< Input Port
+        Out ///< Output Port
+    };
 
-    /**
-     * @brief Checks if the Node is a File Reader Type and can provide data packages
-     * 
-     * @retval bool Indicates whether the class is a File Reader
-     */
-    virtual bool isFileReader();
+    /// Node Context
+    enum NodeContext
+    {
+        REAL_TIME,
+        POST_PROCESSING,
+        ALL
+    };
 
-    /**
-     * @brief Poll the node to send out its data. Only implemented by file readers. Otherwise returns nullptr
-     * 
-     * @attention Overrides of this function have to invoke the Callback handlers
-     * @retval std::shared_ptr<NodeData> The polled observation
-     */
-    virtual std::shared_ptr<NodeData> pollData();
-
-    /**
-     * @brief Peeks the next event time. Only implemented by file readers. Otherwise returns std::nullopt
-     * 
-     * @retval std::optional<InsTime> Next event timestamp
-     */
-    virtual std::optional<InsTime> peekNextUpdateTime();
-
-  protected:
     /**
      * @brief Construct a new Node object
      * 
      * @param[in] name Name of the Node
      */
-    Node(const std::string name);
+    explicit Node(std::string name);
 
-    /// Destroy the Node object
-    ~Node();
+    Node() = default;                      ///< Default constructor
+    ~Node() override = default;            ///< Destructor
+    Node(const Node&) = delete;            ///< Copy constructor
+    Node(Node&&) = delete;                 ///< Move constructor
+    Node& operator=(const Node&) = delete; ///< Copy assignment operator
+    Node& operator=(Node&&) = delete;      ///< Move assignment operator
 
+    /**
+     * @brief Returns the String representation of the Class Type
+     * 
+     * @retval constexpr std::string_view The class type
+     */
+    [[nodiscard]] virtual constexpr std::string_view type() const = 0;
+
+    /**
+     * @brief Returns the String representation of the Class Category
+     * 
+     * @retval constexpr std::string_view The class category
+     */
+    [[nodiscard]] virtual constexpr std::string_view category() const = 0;
+
+    enum ConfigOptions
+    {
+        CONFIG_BOOL,          ///< Boolean: Default
+        CONFIG_INT,           ///< Integer: Min, Default, Max
+        CONFIG_FLOAT,         ///< Float: Min, Default, Max
+        CONFIG_STRING,        ///< String
+        CONFIG_LIST,          ///< List: "option1|[default]|option3"
+        CONFIG_LIST_LIST_INT, ///< 2 Lists and Integer: "[List1default]|List1option2||List2option1|[List2default]||min|default|max"
+        CONFIG_MAP_INT,       ///< String Key and Integer Value: "key", "min", "default", "max"
+    };
+
+    /**
+     * @brief Returns Gui Configuration options for the class
+     * 
+     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     */
+    [[nodiscard]] virtual std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const = 0;
+
+    /**
+     * @brief Returns the context of the class
+     * 
+     * @retval constexpr std::string_view The class context
+     */
+    [[nodiscard]] virtual constexpr NodeContext context() const = 0;
+
+    /**
+     * @brief Returns the number of Ports
+     * 
+     * @param[in] portType Specifies the port type
+     * @retval constexpr uint8_t The number of ports
+     */
+    [[nodiscard]] virtual constexpr uint8_t nPorts(PortType portType) const = 0;
+
+    /**
+     * @brief Returns the data types provided by this class
+     * 
+     * @param[in] portType Specifies the port type
+     * @param[in] portIndex Port index on which the data is sent
+     * @retval constexpr std::string_view The data type
+     */
+    [[nodiscard]] virtual constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const = 0;
+
+    /**
+     * @brief Handles the data sent on the input port
+     * 
+     * @param[in] portIndex The input port index
+     * @param[in, out] data The data send on the input port
+     */
+    virtual void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) = 0;
+
+    /**
+     * @brief Requests the node to send out its data
+     * 
+     * @param[in] portIndex The output port index
+     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
+     */
+    [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) = 0;
+
+    /**
+     * @brief Requests the node to peek its output data
+     * 
+     * @param[in] portIndex The output port index
+     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
+     */
+    [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex) = 0;
+
+    /**
+     * @brief Get the name string of the Node
+     * 
+     * @retval const std::string_view& The Name of the Node
+     */
+    [[nodiscard]] const std::string& getName() const;
+
+  protected:
     /// Name of the Node
     const std::string name;
 };

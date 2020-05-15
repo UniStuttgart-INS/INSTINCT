@@ -1,3 +1,5 @@
+#include "main.hpp"
+
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QMenuBar>
@@ -18,13 +20,16 @@
 #include <nodes/TypeConverter>
 
 #include "NodeModel.hpp"
-#define GUI
-#include <../NodeInterface.hpp>
 
 #include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <string>
+#include <map>
+
+#include "Nodes/Node.hpp"
+#include "Nodes/NodeManager.hpp"
+#include "NodeRegistry.hpp"
 
 using QtNodes::DataModelRegistry;
 using QtNodes::FlowScene;
@@ -43,35 +48,6 @@ class Converter
     }
 };
 
-void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string child, std::string root)
-{
-    if (NAV::inheritance.count(root))
-    {
-        for (auto parent = NAV::inheritance.at(root).cbegin(); parent != NAV::inheritance.at(root).cend(); parent++)
-        {
-            std::cout << "TypeConvert: " << child << " --> " << *parent << std::endl;
-            registry->registerTypeConverter(std::make_pair(NodeDataType{ QString::fromStdString(child), QString::fromStdString(child) },
-                                                           NodeDataType{ QString::fromStdString(*parent), QString::fromStdString(*parent) }),
-                                            TypeConverter{ Converter() });
-            addTypeConverter(registry, child, *parent);
-        }
-    }
-}
-
-static std::shared_ptr<DataModelRegistry> registerDataModels(NAV::NodeInterface::NodeContext compat)
-{
-    auto registry = std::make_shared<DataModelRegistry>();
-
-    for (auto it = NAV::nodeInterfaces.cbegin(); it != NAV::nodeInterfaces.cend(); it++)
-        if (it->second.nodeCompat == compat || it->second.nodeCompat == NAV::NodeInterface::NodeContext::ALL || compat == NAV::NodeInterface::NodeContext::ALL)
-            registry->registerModelTemplate<NodeModel>(QString::fromStdString(it->first), QString::fromStdString(it->second.category));
-
-    for (auto child = NAV::inheritance.cbegin(); child != NAV::inheritance.cend(); child++)
-        addTypeConverter(registry, child->first, child->first);
-
-    return registry;
-}
-
 static void setStyle()
 {
     ConnectionStyle::setConnectionStyle(
@@ -88,10 +64,51 @@ static void setStyle()
 FlowScene* scene;
 QString fileName;
 int registrySelected = 0;
+
+NAV::NodeManager nodeManager;
 std::shared_ptr<QtNodes::DataModelRegistry> registryAll;
 std::shared_ptr<QtNodes::DataModelRegistry> registryRealTime;
 std::shared_ptr<QtNodes::DataModelRegistry> registryPostProcessing;
 QAction* rtpAction;
+
+void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_view child, std::string_view root)
+{
+    if (nodeManager.registeredNodeDataTypes().contains(child))
+    {
+        const auto& parents = nodeManager.registeredNodeDataTypes().find(child)->second.parents;
+
+        for (const auto& parent : parents)
+        {
+            std::cout << "TypeConvert: " << root << " --> " << parent << std::endl;
+            registry->registerTypeConverter(std::make_pair(NodeDataType{ QString::fromStdString(std::string(root)), QString::fromStdString(std::string(root)) },
+                                                           NodeDataType{ QString::fromStdString(std::string(parent)), QString::fromStdString(std::string(parent)) }),
+                                            TypeConverter{ Converter() });
+            addTypeConverter(registry, parent, root);
+        }
+    }
+}
+
+static std::shared_ptr<DataModelRegistry> registerDataModels(NAV::Node::NodeContext compat)
+{
+    auto registry = std::make_shared<DataModelRegistry>();
+
+    for (const auto& [type, nodeInfo] : nodeManager.registeredNodeTypes())
+    {
+        if (nodeInfo.constructorEmpty()->context() == compat || nodeInfo.constructorEmpty()->context() == NAV::Node::NodeContext::ALL || compat == NAV::Node::NodeContext::ALL)
+        {
+            auto node = nodeInfo.constructorEmpty();
+            registry->registerModelTemplate<NodeModel>(QString::fromStdString(std::string(type)),
+                                                       QString::fromStdString(std::string(node->category())));
+        }
+    }
+
+    for (const auto& [type, nodeDataInfo] : nodeManager.registeredNodeDataTypes())
+    {
+        addTypeConverter(registry, type, type);
+    }
+
+    return registry;
+}
 
 void exportConfig()
 {
@@ -112,17 +129,17 @@ void exportConfig()
         for (size_t i = 0; i < nodeModel->widgets.size(); i++)
         {
             std::string text;
-            if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_BOOL)
+            if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_BOOL)
                 text = std::to_string(static_cast<QCheckBox*>(nodeModel->widgets.at(i))->isChecked());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_INT)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_INT)
                 text = std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_FLOAT)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_FLOAT)
                 text = std::to_string(static_cast<QDoubleSpinBox*>(nodeModel->widgets.at(i))->value());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_STRING)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_STRING)
                 text = static_cast<QLineEdit*>(nodeModel->widgets.at(i))->text().toStdString();
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST)
                 text = static_cast<QComboBox*>(nodeModel->widgets.at(i))->currentText().toStdString();
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_LIST_LIST_INT)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST_LIST_INT)
             {
                 auto gridGroupBox = static_cast<QGroupBox*>(nodeModel->widgets.at(i));
                 auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
@@ -142,7 +159,7 @@ void exportConfig()
                     }
                 }
             }
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::NodeInterface::ConfigOptions::CONFIG_MAP_INT)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_MAP_INT)
                 text = nodeModel->widgets.at(i)->property("key").toString().toStdString() + ", " + std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
 
             std::string type = nodeModel->widgets.at(i)->objectName().toStdString();
@@ -168,12 +185,13 @@ void exportConfig()
     {
         auto source = connection.second->getNode(QtNodes::PortType::Out);
         auto sourcePort = connection.second->getPortIndex(QtNodes::PortType::Out);
-        auto& sourceNodeInterface = NAV::nodeInterfaces.at(source->nodeDataModel()->name().toStdString());
+        // auto& sourceNodeInterface = NAV::nodeInterfaces.at();
+        const auto& sourceNodeInfo = nodeManager.registeredNodeTypes().find(source->nodeDataModel()->name().toStdString())->second;
         auto target = connection.second->getNode(QtNodes::PortType::In);
 
         filestream << "link = "
                    << source->id().toString().toStdString() << ", "
-                   << sourceNodeInterface.out.at(static_cast<size_t>(sourcePort)) << ", "
+                   << sourceNodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::Out, static_cast<uint8_t>(sourcePort)) << ", "
                    << target->id().toString().toStdString() << std::endl;
     }
 
@@ -183,17 +201,21 @@ void exportConfig()
 bool save()
 {
     if (fileName.isEmpty())
+    {
         fileName = scene->save();
+    }
     else
+    {
         scene->saveAs(fileName);
+    }
 
     if (!fileName.isEmpty())
     {
         exportConfig();
         return true;
     }
-    else
-        return false;
+
+    return false;
 }
 
 bool saveAs()
@@ -205,8 +227,8 @@ bool saveAs()
         exportConfig();
         return true;
     }
-    else
-        return false;
+
+    return false;
 }
 
 void load()
@@ -243,17 +265,14 @@ void changeRegistry()
         for (auto node : scene->allNodes())
         {
             auto nodeModel = static_cast<NodeModel*>(node->nodeDataModel());
-            for (auto it = NAV::nodeInterfaces.cbegin(); it != NAV::nodeInterfaces.cend(); it++)
+
+            const auto& nodeInfo = nodeManager.registeredNodeTypes().find(nodeModel->name().toStdString())->second;
+
+            if (nodeInfo.constructorEmpty()->context() != NAV::Node::NodeContext::REAL_TIME
+                && nodeInfo.constructorEmpty()->context() != NAV::Node::NodeContext::ALL)
             {
-                if (nodeModel->name().toStdString() == it->first)
-                {
-                    if (it->second.nodeCompat != NAV::NodeInterface::NodeContext::REAL_TIME
-                        && it->second.nodeCompat != NAV::NodeInterface::NodeContext::ALL)
-                    {
-                        incompNodes++;
-                        break;
-                    }
-                }
+                incompNodes++;
+                break;
             }
         }
         if (incompNodes == 0)
@@ -276,17 +295,14 @@ void changeRegistry()
         for (auto node : scene->allNodes())
         {
             auto nodeModel = static_cast<NodeModel*>(node->nodeDataModel());
-            for (auto it = NAV::nodeInterfaces.cbegin(); it != NAV::nodeInterfaces.cend(); it++)
+
+            const auto& nodeInfo = nodeManager.registeredNodeTypes().find(nodeModel->name().toStdString())->second;
+
+            if (nodeInfo.constructorEmpty()->context() != NAV::Node::NodeContext::POST_PROCESSING
+                && nodeInfo.constructorEmpty()->context() != NAV::Node::NodeContext::ALL)
             {
-                if (nodeModel->name().toStdString() == it->first)
-                {
-                    if (it->second.nodeCompat != NAV::NodeInterface::NodeContext::POST_PROCESSING
-                        && it->second.nodeCompat != NAV::NodeInterface::NodeContext::ALL)
-                    {
-                        incompNodes++;
-                        break;
-                    }
-                }
+                incompNodes++;
+                break;
             }
         }
 
@@ -333,9 +349,15 @@ int main(int argc, char* argv[])
 
     QGridLayout* l = new QGridLayout(&mainWidget);
 
-    registryAll = registerDataModels(NAV::NodeInterface::NodeContext::ALL);
-    registryRealTime = registerDataModels(NAV::NodeInterface::NodeContext::REAL_TIME);
-    registryPostProcessing = registerDataModels(NAV::NodeInterface::NodeContext::POST_PROCESSING);
+    // Register all Node Types which are available to the program
+    NAV::NodeRegistry::registerNodeTypes(nodeManager);
+
+    // Register all Node Data Types which are available to the program
+    NAV::NodeRegistry::registerNodeDataTypes(nodeManager);
+
+    registryAll = registerDataModels(NAV::Node::NodeContext::ALL);
+    registryRealTime = registerDataModels(NAV::Node::NodeContext::REAL_TIME);
+    registryPostProcessing = registerDataModels(NAV::Node::NodeContext::POST_PROCESSING);
 
     l->addWidget(menuBarLeft, 0, 0);
     l->addWidget(menuBarRight, 0, 1);

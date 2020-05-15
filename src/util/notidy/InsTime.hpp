@@ -25,44 +25,49 @@ class InsTime
 {
   public:
     // --------------------------------------- Structs -------------------------------------------
-    typedef struct
+    // [UTC]
+    using InsTime_MJD = struct
     {
         unsigned int mjd_day; //!< Full days of the Modified Julien Date [UTC]
         long double mjd_frac; //!< Decimal fractions of a day of the Modified Julien Date [UTC]
-    } InsTime_MJD;            //!< [UTC]
+    };
 
-    typedef struct
+    // [UTC]
+    using InsTime_JD = struct
     {
         unsigned int jd_day; //!< Full days of the Julien Date [UTC]
         long double jd_frac; //!< Decimal fractions of a day of the Julien Date [UTC]
-    } InsTime_JD;            // [UTC]
+    };
 
-    typedef struct
+    // [GPST]
+    using InsTime_GPSweekTow = struct
     {
-        unsigned short int gpsWeek;  //!< Contains GPS week in GPS standard time [GPST]
-        long double tow;             //!< Contains GPS time of week in GPS standard time [GPST]
-        unsigned short int gpsCycle; //!< Contains GPS cycle in GPS standard time [GPST]
-    } InsTime_GPSweekTow;            // [GPST]
+        uint16_t gpsWeek;  //!< Contains GPS week in GPS standard time [GPST]
+        long double tow;   //!< Contains GPS time of week in GPS standard time [GPST]
+        uint16_t gpsCycle; //!< Contains GPS cycle in GPS standard time [GPST]
+    };
 
-    typedef struct
+    // [GPST]
+    using InsTime_YDoySod = struct
     {
-        unsigned short int year; //!< Contains year in GPS standard time [GPST]
-        unsigned short int doy;  //!< Contains day of year in GPS standard time [GPST]
-        long double sod;         //!< Contains second of day in GPS standard time [GPST]
-    } InsTime_YDoySod;           // [GPST]
+        uint16_t year;   //!< Contains year in GPS standard time [GPST]
+        uint16_t doy;    //!< Contains day of year in GPS standard time [GPST]
+        long double sod; //!< Contains second of day in GPS standard time [GPST]
+    };
 
-    typedef struct
+    // [UTC]
+    using InsTime_YMDHMS = struct
     {
-        unsigned short int year;  //!< Contains year in Universal Time Coordinated [UTC]
-        unsigned short int month; //!< Contains month in Universal Time Coordinated [UTC]
-        unsigned short int day;   //!< Contains day in Universal Time Coordinated [UTC]
-        unsigned short int hour;  //!< Contains hour in Universal Time Coordinated [UTC]
-        unsigned short int min;   //!< Contains minute in Universal Time Coordinated [UTC]
-        long double sec;          //!< Contains second in Universal Time Coordinated [UTC]
-    } InsTime_YMDHMS;             // [UTC]
+        uint16_t year;   //!< Contains year in Universal Time Coordinated [UTC]
+        uint16_t month;  //!< Contains month in Universal Time Coordinated [UTC]
+        uint16_t day;    //!< Contains day in Universal Time Coordinated [UTC]
+        uint16_t hour;   //!< Contains hour in Universal Time Coordinated [UTC]
+        uint16_t min;    //!< Contains minute in Universal Time Coordinated [UTC]
+        long double sec; //!< Contains second in Universal Time Coordinated [UTC]
+    };
 
     // --------------------------- Public types and attributes  ----------------------------------
-    typedef boost::icl::continuous_interval<InsTime> INTVAL; //!< Used as map key for interval maps (time valid from to)
+    using INTVAL = boost::icl::continuous_interval<InsTime>; //!< Used as map key for interval maps (time valid from to)
 
     enum TIME
     {
@@ -75,29 +80,34 @@ class InsTime
         IRNSST
     }; /*!< List of all time systems (options for InsTime::TIME) */
 
-    static const std::map<unsigned int, unsigned short int> GpsLeapSec; //!< Maps GPS leap seconds to a time: map<key time, leap seconds> ({44786,1 }: 1 Jul 1981 with a difference UTC-TAI of 20 etc.)
+    static const std::map<unsigned int, uint16_t> GpsLeapSec; //!< Maps GPS leap seconds to a time: map<key time, leap seconds> ({44786,1 }: 1 Jul 1981 with a difference UTC-TAI of 20 etc.)
 
     // --------------------------- Constructors and destructor -----------------------------------
-    InsTime();                                                                                                                                                  /*! Constructor for InsTime object */
-    InsTime(InsTime_GPSweekTow gpsWeekTow);                                                                                                                     /*! Constructor for InsTime_GPSweekTow struct */
-    InsTime(InsTime_MJD mjd);                                                                                                                                   /*! Constructor for InsTime_MJD struct */
-    InsTime(InsTime_JD jd);                                                                                                                                     /*! Constructor for InsTime_JDstruct */
-    InsTime(InsTime_YDoySod yearDoySod);                                                                                                                        /*! Constructor for InsTime_YDoySod struct */
-    InsTime(InsTime_YMDHMS yearMonthDayHMS);                                                                                                                    /*! Constructor for InsTime_YMDHMS struct */
-    InsTime(unsigned short int gpsWeek, long double tow, unsigned short int gpsCycle);                                                                          /*! Constructor for InsTime object with GPS */
-    InsTime(unsigned short int year, unsigned short int month, unsigned short int day, unsigned short int hour, unsigned short int min, long double sec, TIME); /*! Constructor for InsTime object with year, month, day, hour, minute, second and time system */
+    InsTime();                                                                                                /*! Constructor for InsTime object */
+    explicit InsTime(InsTime_GPSweekTow gpsWeekTow);                                                          /*! Constructor for InsTime_GPSweekTow struct */
+    explicit InsTime(InsTime_MJD mjd);                                                                        /*! Constructor for InsTime_MJD struct */
+    explicit InsTime(InsTime_JD jd);                                                                          /*! Constructor for InsTime_JDstruct */
+    explicit InsTime(InsTime_YDoySod yearDoySod);                                                             /*! Constructor for InsTime_YDoySod struct */
+    explicit InsTime(InsTime_YMDHMS yearMonthDayHMS);                                                         /*! Constructor for InsTime_YMDHMS struct */
+    InsTime(uint16_t gpsWeek, long double tow, uint16_t gpsCycle);                                            /*! Constructor for InsTime object with GPS */
+    InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TIME); /*! Constructor for InsTime object with year, month, day, hour, minute, second and time system */
 
-    ~InsTime(); /*! Default destructor */
+    ~InsTime() = default; /*! Default destructor */
+
+    InsTime(const InsTime&) = default;            ///< Copy constructor
+    InsTime(InsTime&&) = default;                 ///< Move constructor
+    InsTime& operator=(const InsTime&) = default; ///< Copy assignment operator
+    InsTime& operator=(InsTime&&) = default;      ///< Move assignment operator
 
     // ------------------------------- Update, change time ---------------------------------------
-    void SetInsTime(InsTime);                                                                                                                                           /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime object */
-    void SetInsTime(InsTime_GPSweekTow gpsWeekTow);                                                                                                                     /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_GPSweekTow time */
-    void SetInsTime(InsTime_MJD mjd);                                                                                                                                   /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_MJD time */
-    void SetInsTime(InsTime_JD jd);                                                                                                                                     /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_JD time */
-    void SetInsTime(InsTime_YDoySod yearDoySod);                                                                                                                        /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_YDoySod time */
-    void SetInsTime(InsTime_YMDHMS yearMonthDayHMS);                                                                                                                    /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_YMDHMS time */
-    void SetInsTime(unsigned short int gpsWeek, long double tow, unsigned short int gpsCycle);                                                                          /*!< Initializes the private InsTime_MJD struct (mjd) with the provided gpsWeek, time of week and gpsCycle parameters */
-    void SetInsTime(unsigned short int year, unsigned short int month, unsigned short int day, unsigned short int hour, unsigned short int min, long double sec, TIME); /*!< Initializes the private InsTime_MJD struct (mjd) with the provided year, month, day, hour, minute, second and time system paremeters */
+    void SetInsTime(InsTime);                                                                                         /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime object */
+    void SetInsTime(InsTime_GPSweekTow gpsWeekTow);                                                                   /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_GPSweekTow time */
+    void SetInsTime(InsTime_MJD mjd);                                                                                 /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_MJD time */
+    void SetInsTime(InsTime_JD jd);                                                                                   /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_JD time */
+    void SetInsTime(InsTime_YDoySod yearDoySod);                                                                      /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_YDoySod time */
+    void SetInsTime(InsTime_YMDHMS yearMonthDayHMS);                                                                  /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime_YMDHMS time */
+    void SetInsTime(uint16_t gpsWeek, long double tow, uint16_t gpsCycle);                                            /*!< Initializes the private InsTime_MJD struct (mjd) with the provided gpsWeek, time of week and gpsCycle parameters */
+    void SetInsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TIME); /*!< Initializes the private InsTime_MJD struct (mjd) with the provided year, month, day, hour, minute, second and time system paremeters */
 
     // ------------------------------- Accessors, get time ---------------------------------------
     InsTime_GPSweekTow GetGPSTime(); /*!< Returns the current InsTime_MJD struct in InsTime_GPSweekTow format */
@@ -123,14 +133,14 @@ class InsTime
     long double hms2sec(int hour, int min, long double sec); /*!< Transforms given hour, minute, second to seconds */
 
     // -------------------------------- Leap functions -------------------------------------------
-    unsigned short int leapGps2UTC();                   /*!< Returns the current number of leap seconds (offset GPST to UTC) */
-    unsigned short int leapGps2UTC(InsTime);            /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime object */
-    unsigned short int leapGps2UTC(InsTime_YDoySod);    /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YDoySod time */
-    unsigned short int leapGps2UTC(InsTime_GPSweekTow); /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_GPSweekTow time */
-    unsigned short int leapGps2UTC(InsTime_YMDHMS);     /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YMDHMS time */
-    unsigned short int leapGps2UTC(InsTime_MJD);        /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD time */
-    bool isLeapYear(unsigned short int);                /*!< Returns true if the provided year is a leap year, false otherwise */
-    bool isLeapYear();                                  /*!< Returns true if the current time (InsTime_MJD mjd) is a leap year, false otherwise */
+    uint16_t leapGps2UTC();                   /*!< Returns the current number of leap seconds (offset GPST to UTC) */
+    uint16_t leapGps2UTC(InsTime);            /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime object */
+    uint16_t leapGps2UTC(InsTime_YDoySod);    /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YDoySod time */
+    uint16_t leapGps2UTC(InsTime_GPSweekTow); /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_GPSweekTow time */
+    uint16_t leapGps2UTC(InsTime_YMDHMS);     /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YMDHMS time */
+    uint16_t leapGps2UTC(InsTime_MJD);        /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD time */
+    bool isLeapYear(uint16_t);                /*!< Returns true if the provided year is a leap year, false otherwise */
+    bool isLeapYear();                        /*!< Returns true if the current time (InsTime_MJD mjd) is a leap year, false otherwise */
 
     // ------------------------ Comparison bigger/smaller/equal ----------------------------------
     // (können evt später gelöscht werden, werden nicht gebraucht)

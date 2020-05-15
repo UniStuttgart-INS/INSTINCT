@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <cmath>
+
 namespace NAV::InsConst
 {
 const double C = 299792458.0; ///< speed of light (m/s)

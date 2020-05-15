@@ -14,6 +14,12 @@ namespace NAV
 /// Abstract GNSS Data Provider Class
 class Gnss : public Node
 {
+  public:
+    Gnss(const Gnss&) = delete;            ///< Copy constructor
+    Gnss(Gnss&&) = delete;                 ///< Move constructor
+    Gnss& operator=(const Gnss&) = delete; ///< Copy assignment operator
+    Gnss& operator=(Gnss&&) = delete;      ///< Move assignment operator
+
   protected:
     /**
      * @brief Construct a new Gnss object
@@ -21,10 +27,13 @@ class Gnss : public Node
      * @param[in] name Name of the Gnss object
      * @param[in, out] options Program options string list
      */
-    Gnss(std::string name, std::deque<std::string>& options);
+    Gnss(const std::string& name, std::deque<std::string>& options);
 
-    /// Destroy the Gnss object
-    ~Gnss();
+    /// Default constructor
+    Gnss() = default;
+
+    /// Destructor
+    ~Gnss() override = default;
 };
 
 } // namespace NAV

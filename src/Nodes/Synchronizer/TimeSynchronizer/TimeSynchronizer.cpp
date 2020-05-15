@@ -6,25 +6,23 @@
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "ub/protocol/types.hpp"
 
-#include "NodeInterface.hpp"
-
-NAV::TimeSynchronizer::TimeSynchronizer(std::string name, std::deque<std::string>& options)
+NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, std::deque<std::string>& options)
     : Node(name)
 {
     LOG_TRACE("called for {}", name);
 
-    if (options.size() >= 1)
+    if (!options.empty())
     {
         useFixedStartTime = static_cast<bool>(std::stoi(options.at(0)));
         options.pop_front();
     }
     if (useFixedStartTime && options.size() >= 3)
     {
-        unsigned short cycle = static_cast<unsigned short>(std::stoul(options.at(0)));
-        unsigned short week = static_cast<unsigned short>(std::stoul(options.at(1)));
+        auto cycle = static_cast<uint16_t>(std::stoul(options.at(0)));
+        auto week = static_cast<uint16_t>(std::stoul(options.at(1)));
         long double tow = std::stold(options.at(2));
 
-        startupGpsTime = InsTime(week, tow, cycle);
+        startupGpsTime.emplace(week, tow, cycle);
 
         options.pop_front();
         options.pop_front();
@@ -32,42 +30,30 @@ NAV::TimeSynchronizer::TimeSynchronizer(std::string name, std::deque<std::string
     }
 }
 
-NAV::TimeSynchronizer::~TimeSynchronizer() {}
-
-NAV::NavStatus NAV::TimeSynchronizer::syncUbloxSensor(std::shared_ptr<NAV::NodeData> observation, std::shared_ptr<NAV::Node> userData)
+void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
 {
-    auto obs = std::static_pointer_cast<UbloxObs>(observation);
-    auto obj = std::static_pointer_cast<TimeSynchronizer>(userData);
-
-    LOG_TRACE("called for {}", obj->name);
-
-    if (obs->msgClass == ub::protocol::uart::UbxClass::UBX_CLASS_RXM && obs->msgId == ub::protocol::uart::UbxRxmMessages::UBX_RXM_RAWX
-        && obs->insTime.has_value())
+    if (obs->insTime.has_value() && !startupGpsTime.has_value())
     {
-        if (!obj->startupGpsTime.has_value())
-            obj->startupGpsTime = obs->insTime;
+        startupGpsTime = obs->insTime;
     }
-
-    return obj->invokeCallbacks(NodeInterface::getCallbackPort("TimeSynchronizer", "UbloxObs"), obs);
 }
 
-NAV::NavStatus NAV::TimeSynchronizer::syncVectorNavSensor(std::shared_ptr<NAV::NodeData> observation, std::shared_ptr<NAV::Node> userData)
+void NAV::TimeSynchronizer::syncVectorNavSensor(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
-    auto obs = std::static_pointer_cast<VectorNavObs>(observation);
-    auto obj = std::static_pointer_cast<TimeSynchronizer>(userData);
+    LOG_TRACE("called for {}", name);
 
-    LOG_TRACE("called for {}", obj->name);
-
-    if (obj->startupGpsTime.has_value())
+    if (startupGpsTime.has_value())
     {
-        if (!obj->startupImuTime.has_value())
-            obj->startupImuTime = obs->timeSinceStartup;
+        if (!startupImuTime.has_value())
+        {
+            startupImuTime = obs->timeSinceStartup;
+        }
         else
         {
-            obs->insTime = obj->startupGpsTime;
-            obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - obj->startupImuTime.value()) / 1000000000.0L);
+            obs->insTime = startupGpsTime;
+            obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - startupImuTime.value()) / 1000000000.0L);
         }
     }
 
-    return obj->invokeCallbacks(NodeInterface::getCallbackPort("TimeSynchronizer", "VectorNavObs"), obs);
+    return invokeCallbacks(obs);
 }

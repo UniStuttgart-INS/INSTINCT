@@ -1,16 +1,15 @@
 #include "VectorNavSensor.hpp"
 
-#include "NodeInterface.hpp"
-
+#include "util/Debug.hpp"
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
 
-NAV::VectorNavSensor::VectorNavSensor(std::string name, std::deque<std::string>& options)
+NAV::VectorNavSensor::VectorNavSensor(const std::string& name, std::deque<std::string>& options)
     : UartSensor(options), Imu(name, options)
 {
     LOG_TRACE("called for {}", name);
 
-    if (options.size() >= 1)
+    if (!options.empty())
     {
         config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at(0)));
         options.pop_front();
@@ -20,9 +19,11 @@ NAV::VectorNavSensor::VectorNavSensor(std::string name, std::deque<std::string>&
 
     // connect to the sensor
     if (sensorBaudrate == BAUDRATE_FASTEST)
-        sensorBaudrate = static_cast<Baudrate>(vs.supportedBaudrates()[vs.supportedBaudrates().size() - 1]);
+    {
+        sensorBaudrate = static_cast<Baudrate>(vn::sensors::VnSensor::supportedBaudrates()[vn::sensors::VnSensor::supportedBaudrates().size() - 1]);
+    }
 
-    Baudrate connectedBaudrate;
+    Baudrate connectedBaudrate{};
 
     // Search for the VectorNav Sensor
     if (int32_t foundBaudrate = 0;
@@ -54,30 +55,38 @@ NAV::VectorNavSensor::VectorNavSensor(std::string name, std::deque<std::string>&
         }
         // Sensor could not be identified
         if (sensorPort.empty())
+        {
             // This point is also reached if a sensor is connected with USB but external power is off
             LOG_CRITICAL("{} could not connect", name);
+            throw std::runtime_error(name + " could not connect");
+        }
     }
     else
+    {
         LOG_CRITICAL("{} could not connect", name);
+        throw std::runtime_error(name + " could not connect");
+    }
 
     // Connect to the sensor (vs.verifySensorConnectivity does not have to be called as sensor is already tested)
     vs.connect(sensorPort, connectedBaudrate);
 
     // Query the sensor's model number
-    name = vs.readModelNumber();
-    LOG_DEBUG("{} connected on port {} with baudrate {}", name, sensorPort, connectedBaudrate);
+    LOG_DEBUG("{} connected on port {} with baudrate {}", vs.readModelNumber(), sensorPort, connectedBaudrate);
 
     // Change Connection Baudrate
     if (sensorBaudrate != connectedBaudrate)
     {
-        auto suppBaud = vs.supportedBaudrates();
+        auto suppBaud = vn::sensors::VnSensor::supportedBaudrates();
         if (std::find(suppBaud.begin(), suppBaud.end(), sensorBaudrate) != suppBaud.end())
         {
             vs.changeBaudRate(sensorBaudrate);
             LOG_DEBUG("{} baudrate changed to {}", name, sensorBaudrate);
         }
         else
+        {
             LOG_CRITICAL("{} does not support baudrate {}", name, sensorBaudrate);
+            throw std::runtime_error(fmt::format("{} does not support baudrate {}", name, sensorBaudrate));
+        }
     }
     ASSERT(vs.readSerialBaudRate() == sensorBaudrate, "Baudrate was not changed");
 
@@ -126,11 +135,11 @@ NAV::VectorNavSensor::~VectorNavSensor()
 {
     LOG_TRACE("called for {}", name);
 
-    removeAllCallbacks();
+    removeAllCallbacks<VectorNavObs>();
     callbacksEnabled = false;
-    vs.unregisterAsyncPacketReceivedHandler();
     if (vs.isConnected())
     {
+        vs.unregisterAsyncPacketReceivedHandler();
         vs.reset(true);
         vs.disconnect();
     }
@@ -140,8 +149,7 @@ NAV::VectorNavSensor::~VectorNavSensor()
 
 void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t /*index*/)
 {
-    VectorNavSensor* vnSensor = static_cast<VectorNavSensor*>(userData);
-    LOG_TRACE("called for {}", vnSensor->name);
+    auto* vnSensor = static_cast<VectorNavSensor*>(userData);
 
     if (p.type() == vn::protocol::uart::Packet::TYPE_BINARY)
     {
@@ -157,52 +165,52 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
             auto obs = std::make_shared<VectorNavObs>();
 
             // Group 1 (Common)
-            obs->timeSinceStartup = p.extractUint64();
-            obs->timeSinceSyncIn = p.extractUint64();
-            obs->dtime = p.extractFloat();
+            obs->timeSinceStartup.emplace(p.extractUint64());
+            obs->timeSinceSyncIn.emplace(p.extractUint64());
+            obs->dtime.emplace(p.extractFloat());
             auto dtheta = p.extractVec3f();
-            obs->dtheta = Eigen::Array3d(dtheta.x, dtheta.y, dtheta.z);
+            obs->dtheta.emplace(dtheta.x, dtheta.y, dtheta.z);
             auto dvel = p.extractVec3f();
-            obs->dvel = Eigen::Vector3d(dvel.x, dvel.y, dvel.z);
-            obs->syncInCnt = p.extractUint32();
+            obs->dvel.emplace(dvel.x, dvel.y, dvel.z);
+            obs->syncInCnt.emplace(p.extractUint32());
             // Group 2 (Time)
             // Group 3 (IMU)
             auto magUncompXYZ = p.extractVec3f();
-            obs->magUncompXYZ = Eigen::Vector3d(magUncompXYZ.x, magUncompXYZ.y, magUncompXYZ.z);
+            obs->magUncompXYZ.emplace(magUncompXYZ.x, magUncompXYZ.y, magUncompXYZ.z);
             auto accelUncompXYZ = p.extractVec3f();
-            obs->accelUncompXYZ = Eigen::Vector3d(accelUncompXYZ.x, accelUncompXYZ.y, accelUncompXYZ.z);
+            obs->accelUncompXYZ.emplace(accelUncompXYZ.x, accelUncompXYZ.y, accelUncompXYZ.z);
             auto gyroUncompXYZ = p.extractVec3f();
-            obs->gyroUncompXYZ = Eigen::Vector3d(gyroUncompXYZ.x, gyroUncompXYZ.y, gyroUncompXYZ.z);
-            obs->temperature = p.extractFloat();
-            obs->pressure = p.extractFloat();
+            obs->gyroUncompXYZ.emplace(gyroUncompXYZ.x, gyroUncompXYZ.y, gyroUncompXYZ.z);
+            obs->temperature.emplace(p.extractFloat());
+            obs->pressure.emplace(p.extractFloat());
             auto magCompXYZ = p.extractVec3f();
-            obs->magCompXYZ = Eigen::Vector3d(magCompXYZ.x, magCompXYZ.y, magCompXYZ.z);
+            obs->magCompXYZ.emplace(magCompXYZ.x, magCompXYZ.y, magCompXYZ.z);
             auto accelCompXYZ = p.extractVec3f();
-            obs->accelCompXYZ = Eigen::Vector3d(accelCompXYZ.x, accelCompXYZ.y, accelCompXYZ.z);
+            obs->accelCompXYZ.emplace(accelCompXYZ.x, accelCompXYZ.y, accelCompXYZ.z);
             auto gyroCompXYZ = p.extractVec3f();
-            obs->gyroCompXYZ = Eigen::Vector3d(gyroCompXYZ.x, gyroCompXYZ.y, gyroCompXYZ.z);
+            obs->gyroCompXYZ.emplace(gyroCompXYZ.x, gyroCompXYZ.y, gyroCompXYZ.z);
             // Group 4 (GPS)
             // Group 5 (Attitude)
-            obs->vpeStatus = p.extractUint16();
+            obs->vpeStatus.emplace(p.extractUint16());
             auto quaternion = p.extractVec4f();
-            obs->quaternion = Eigen::Quaterniond(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+            obs->quaternion.emplace(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
             auto magCompNED = p.extractVec3f();
-            obs->magCompNED = Eigen::Vector3d(magCompNED.x, magCompNED.y, magCompNED.z);
+            obs->magCompNED.emplace(magCompNED.x, magCompNED.y, magCompNED.z);
             auto accelCompNED = p.extractVec3f();
-            obs->accelCompNED = Eigen::Vector3d(accelCompNED.x, accelCompNED.y, accelCompNED.z);
+            obs->accelCompNED.emplace(accelCompNED.x, accelCompNED.y, accelCompNED.z);
             auto linearAccelXYZ = p.extractVec3f();
-            obs->linearAccelXYZ = Eigen::Vector3d(linearAccelXYZ.x, linearAccelXYZ.y, linearAccelXYZ.z);
+            obs->linearAccelXYZ.emplace(linearAccelXYZ.x, linearAccelXYZ.y, linearAccelXYZ.z);
             auto linearAccelNED = p.extractVec3f();
-            obs->linearAccelNED = Eigen::Vector3d(linearAccelNED.x, linearAccelNED.y, linearAccelNED.z);
+            obs->linearAccelNED.emplace(linearAccelNED.x, linearAccelNED.y, linearAccelNED.z);
             auto yawPitchRollUncertainty = p.extractVec3f();
-            obs->yawPitchRollUncertainty = Eigen::Array3d(yawPitchRollUncertainty.x, yawPitchRollUncertainty.y, yawPitchRollUncertainty.z);
+            obs->yawPitchRollUncertainty.emplace(yawPitchRollUncertainty.x, yawPitchRollUncertainty.y, yawPitchRollUncertainty.z);
 
             LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
                      vnSensor->name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
                      obs->vpeStatus.value(), obs->temperature.value());
 
             // Calls all the callbacks
-            vnSensor->invokeCallbacks(NodeInterface::getCallbackPort("VectorNavSensor", "VectorNavObs"), obs);
+            vnSensor->invokeCallbacks(obs);
         }
         else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)
         {

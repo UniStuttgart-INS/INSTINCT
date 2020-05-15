@@ -38,10 +38,15 @@ class GnuPlot : public Node
         /// Default Constructor
         GnuPlotWindow();
 
-        /// Default Destructor
+        /// Destructor
         ~GnuPlotWindow();
 
-        size_t addNewDataSet(std::string legend);
+        GnuPlotWindow(const GnuPlotWindow&) = delete;            ///< Copy constructor
+        GnuPlotWindow(GnuPlotWindow&&) = delete;                 ///< Move constructor
+        GnuPlotWindow& operator=(const GnuPlotWindow&) = delete; ///< Copy assignment operator
+        GnuPlotWindow& operator=(GnuPlotWindow&&) = delete;      ///< Move assignment operator
+
+        size_t addNewDataSet(const std::string& legend);
     };
 
     /**
@@ -50,14 +55,18 @@ class GnuPlot : public Node
      * @param[in] name Name of the Node
      * @param[in, out] options Program options string list
      */
-    GnuPlot(std::string name, std::deque<std::string>& options);
+    GnuPlot(const std::string& name, std::deque<std::string>& options);
 
-    /// Default Destructor
-    virtual ~GnuPlot();
+    GnuPlot() = default;                         ///< Default Constructor
+    ~GnuPlot() override = default;               ///< Destructor
+    GnuPlot(const GnuPlot&) = delete;            ///< Copy constructor
+    GnuPlot(GnuPlot&&) = delete;                 ///< Move constructor
+    GnuPlot& operator=(const GnuPlot&) = delete; ///< Copy assignment operator
+    GnuPlot& operator=(GnuPlot&&) = delete;      ///< Move assignment operator
 
-    static NavStatus update();
+    static void update();
 
-    static NavStatus requestUpdate(std::shared_ptr<GnuPlot> obj);
+    void requestUpdate() const;
 
   protected:
     /// Vector of Instructions what to plot

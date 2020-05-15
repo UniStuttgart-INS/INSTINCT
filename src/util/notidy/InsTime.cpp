@@ -35,11 +35,11 @@ InsTime::InsTime_JD MJD2JD(InsTime::InsTime_MJD);                 // Transformat
 InsTime::InsTime_YMDHMS YDoySod2YMDHMS(InsTime::InsTime_YDoySod); // Transformation YDoySod to YMDHMS (Doy to Date)
 InsTime::InsTime_YDoySod YMDHMS2YDoySod(InsTime::InsTime_YMDHMS); // Transformation YMDHMS to YDoySod (Date to Doy)
 
-unsigned short int leapGps2UTC(InsTime);                     // get number of leap seconds, offset GPS to UTC
-unsigned short int leapGps2UTC(InsTime::InsTime_YDoySod);    // get number of leap seconds, offset GPS to UTC
-unsigned short int leapGps2UTC(InsTime::InsTime_GPSweekTow); // get number of leap seconds, offset GPS to UTC
-unsigned short int leapGps2UTC(InsTime::InsTime_YMDHMS);     // get number of leap seconds, offset GPS to UTC
-unsigned short int leapGps2UTC(InsTime::InsTime_MJD);        // get number of leap seconds, offset GPS to UTC
+uint16_t leapGps2UTC(InsTime);                     // get number of leap seconds, offset GPS to UTC
+uint16_t leapGps2UTC(InsTime::InsTime_YDoySod);    // get number of leap seconds, offset GPS to UTC
+uint16_t leapGps2UTC(InsTime::InsTime_GPSweekTow); // get number of leap seconds, offset GPS to UTC
+uint16_t leapGps2UTC(InsTime::InsTime_YMDHMS);     // get number of leap seconds, offset GPS to UTC
+uint16_t leapGps2UTC(InsTime::InsTime_MJD);        // get number of leap seconds, offset GPS to UTC
 
 // is 1 when InsTime_YDoySod is later than the own time
 bool isBigger(InsTime);
@@ -55,7 +55,7 @@ bool isEqual(InsTime::InsTime_YMDHMS);
 bool isEqual(InsTime::InsTime_MJD);
 
 long double hms2sec(int hour, int min, long double sec); // Transformation Hour-Min-Sec to Sec
-bool isLeapYear(unsigned short int year);                // check if year is a leap year
+bool isLeapYear(uint16_t year);                          // check if year is a leap year
 bool isLeapYear();                                       // check if own class time is a leap year
 
 void addDiffSec(long double);     // add seconds to time
@@ -65,7 +65,9 @@ long double getTimeDiff(InsTime); // returns the time difference in sec of two e
 
 InsTime::InsTime()
 {
-    mjd.mjd_day = 400000; // end of this century
+    constexpr unsigned int endOfTheCentury = 400000;
+
+    mjd.mjd_day = endOfTheCentury;
     mjd.mjd_frac = 0.0;
 }
 InsTime::InsTime(InsTime::InsTime_GPSweekTow gpsWeekTow)
@@ -91,12 +93,12 @@ InsTime::InsTime(InsTime::InsTime_YMDHMS yearMonthDayHMS)
 {
     mjd = YMDHMS2MJD(yearMonthDayHMS);
 }
-InsTime::InsTime(unsigned short int gpsWeek, long double tow, unsigned short int gpsCycle)
+InsTime::InsTime(uint16_t gpsWeek, long double tow, uint16_t gpsCycle)
 {
     InsTime::InsTime_GPSweekTow gpsWeekTow = { gpsWeek, tow, gpsCycle };
     mjd = GPSweekTow2MJD(gpsWeekTow);
 }
-InsTime::InsTime(unsigned short int year, unsigned short int month, unsigned short int day, unsigned short int hour, unsigned short int min, long double sec, InsTime::TIME timesys)
+InsTime::InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, InsTime::TIME timesys)
 {
     InsTime::InsTime_YMDHMS yearMonthDayHMS = { year, month, day, hour, min, sec };
     mjd = YMDHMS2MJD(yearMonthDayHMS);
@@ -108,7 +110,7 @@ InsTime::InsTime(unsigned short int year, unsigned short int month, unsigned sho
     }
     else if (timesys == 2) // = GLONASS Time (UTC+ 3h)
     {
-        int leapSec = 10800;
+        constexpr int leapSec = 10800;
         this->addDiffSec(-leapSec);
     }
     else if (timesys == 3) // = GALILEO Time (~ GPS TIME )
@@ -122,9 +124,6 @@ InsTime::InsTime(unsigned short int year, unsigned short int month, unsigned sho
         // is synchronised with UTC within 100 ns<
     }
 }
-
-// Destructor
-InsTime::~InsTime() {}
 
 // update, change time
 void InsTime::SetInsTime(InsTime t_in)
@@ -152,44 +151,45 @@ void InsTime::SetInsTime(InsTime::InsTime_YMDHMS yearMonthDayHMS)
 {
     mjd = YMDHMS2MJD(yearMonthDayHMS);
 }
-void InsTime::SetInsTime(unsigned short int gpsWeek, long double tow, unsigned short int gpsCycle)
+void InsTime::SetInsTime(uint16_t gpsWeek, long double tow, uint16_t gpsCycle)
 {
     InsTime_GPSweekTow gpsWeekTow = { gpsWeek, tow, gpsCycle };
     mjd = GPSweekTow2MJD(gpsWeekTow);
 }
-void InsTime::SetInsTime(unsigned short int year, unsigned short int month, unsigned short int day, unsigned short int hour, unsigned short int min, long double sec, InsTime::TIME timesys)
+void InsTime::SetInsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, InsTime::TIME timesys)
 {
     InsTime::InsTime_YMDHMS yearMonthDayHMS = { year, month, day, hour, min, sec };
     mjd = YMDHMS2MJD(yearMonthDayHMS);
 
-    if (timesys == 1) // = GPS Time (UTC - leap_seconds)
+    if (timesys == TIME::GPST) // = GPS Time (UTC - leap_seconds)
     {
         int leapSec = this->leapGps2UTC();
         this->addDiffSec(-leapSec);
     }
-    else if (timesys == 2) // = GLONASS Time GLNT (UTC+ 3h)
+    else if (timesys == TIME::GLNT) // = GLONASS Time GLNT (UTC+ 3h)
     {
-        int leapSec = 10800;
+        constexpr int leapSec = 10800;
         this->addDiffSec(-leapSec);
     }
-    else if (timesys == 3) // = GALILEO Time (TAI)
+    else if (timesys == TIME::GST) // = GALILEO Time (TAI)
     {
         //  is synchronised with TAI with a nominal offset below 50 ns
         int leapSec = this->leapGps2UTC();
         this->addDiffSec(-leapSec);
     }
-    else if (timesys == 4) // = BeiDou Time (UTC)
-    {
-        // is synchronised with UTC within 100 ns
-    }
-    else if (timesys == 5) // = QZSS Time (???)
-    {
-        // implementation missing
-    }
-    else if (timesys == 6) // = IRNSS Time (???)
-    {
-        // implementation missing
-    }
+    // TODO: Implement time systems
+    // else if (timesys == TIME::BDT) // = BeiDou Time (UTC)
+    // {
+    //     // is synchronised with UTC within 100 ns
+    // }
+    // else if (timesys == TIME::QZSST) // = QZSS Time (???)
+    // {
+    //     // implementation missing
+    // }
+    // else if (timesys == TIME::IRNSST) // = IRNSS Time (???)
+    // {
+    //     // implementation missing
+    // }
 }
 
 // accessors, get time
@@ -217,9 +217,15 @@ InsTime::InsTime_YMDHMS InsTime::GetYMDHMS()
 // Transformation Functions
 InsTime::InsTime_MJD InsTime::GPSweekTow2MJD(InsTime::InsTime_GPSweekTow gpsWeeekTow) // Transformation GPSweekTow to MJD (GPST to UTC)
 {
-    mjd.mjd_day = (gpsWeeekTow.gpsCycle * 1024 + gpsWeeekTow.gpsWeek) * 7 + floor(gpsWeeekTow.tow / SEC_IN_DAY) + 44244; // 442244 =  diff to 6.1.1980
-    mjd.mjd_frac = (long double)fmod(gpsWeeekTow.tow, SEC_IN_DAY) / SEC_IN_DAY;
-    mjd.mjd_frac -= (long double)leapGps2UTC(mjd) / SEC_IN_DAY; // from GPST to UTC
+    constexpr int DAYS_PER_GPS_CYCLE = 1024;
+    constexpr int DAYS_PER_WEEK = 7;
+
+    constexpr int DIFF_TO_6_1_1980 = 44244;
+
+    mjd.mjd_day = static_cast<unsigned int>((gpsWeeekTow.gpsCycle * DAYS_PER_GPS_CYCLE + gpsWeeekTow.gpsWeek) * DAYS_PER_WEEK
+                                            + floorl(gpsWeeekTow.tow / SEC_IN_DAY) + DIFF_TO_6_1_1980);
+    mjd.mjd_frac = fmodl(gpsWeeekTow.tow, SEC_IN_DAY) / SEC_IN_DAY;
+    mjd.mjd_frac -= static_cast<long double>(leapGps2UTC(mjd)) / SEC_IN_DAY; // from GPST to UTC
     if (mjd.mjd_frac < 0.0)
     {
         mjd.mjd_day -= 1;
@@ -302,12 +308,12 @@ InsTime::InsTime_YMDHMS InsTime::MJD2YMDHMS(InsTime::InsTime_MJD mjd) // Transfo
     double e = c - floor((1461.0 * d) / 4.0);
     double m = floor((5.0 * e + 2.0) / 153.0);
 
-    unsigned short int day = e - floor((153.0 * m + 2.0) / 5.0) + 1;
-    unsigned short int month = m + 3 - 12 * floor(m / 10.0);
-    unsigned short int year = b * 100 + d - 4800.0 + floor(m / 10.0);
+    uint16_t day = e - floor((153.0 * m + 2.0) / 5.0) + 1;
+    uint16_t month = m + 3 - 12 * floor(m / 10.0);
+    uint16_t year = b * 100 + d - 4800.0 + floor(m / 10.0);
 
-    unsigned short int hour = floor(jd.jd_frac * 24.0);
-    unsigned short int min = floor(jd.jd_frac * 24.0 * 60.0) - hour * 60;
+    uint16_t hour = floor(jd.jd_frac * 24.0);
+    uint16_t min = floor(jd.jd_frac * 24.0 * 60.0) - hour * 60;
     long double sec = (long double)jd.jd_frac * 24.0 * 3600.0 - ((double)hour * 3600.0 + (double)min * 60.0);
 
     InsTime_YMDHMS yearMonthDayHMS;
@@ -464,7 +470,7 @@ std::string InsTime::MakeStringFromTimeSys(InsTime::TIME sys)
 
 // leap seconds
 
-const std::map<unsigned int, unsigned short int> InsTime::GpsLeapSec = {
+const std::map<unsigned int, uint16_t> InsTime::GpsLeapSec = {
     { 44786, 1 },  // 1 Jul 1981  //diff UTC-TAI: 20
     { 45151, 2 },  // 1 Jul 1982  //diff UTC-TAI: 21
     { 45516, 3 },  // 1 Jul 1983  //diff UTC-TAI: 22
@@ -486,29 +492,29 @@ const std::map<unsigned int, unsigned short int> InsTime::GpsLeapSec = {
     { 99999, 19 }  // future
 };
 
-unsigned short int InsTime::leapGps2UTC()
+uint16_t InsTime::leapGps2UTC()
 {
     return leapGps2UTC(mjd);
 }
-unsigned short int InsTime::leapGps2UTC(InsTime insTime)
+uint16_t InsTime::leapGps2UTC(InsTime insTime)
 {
     return leapGps2UTC(insTime.mjd);
 }
-unsigned short int InsTime::leapGps2UTC(InsTime::InsTime_YDoySod yearDoySod)
+uint16_t InsTime::leapGps2UTC(InsTime::InsTime_YDoySod yearDoySod)
 {
     return leapGps2UTC(YDoySod2MJD(yearDoySod));
 }
-unsigned short int InsTime::leapGps2UTC(InsTime::InsTime_GPSweekTow gpsWeekTow)
+uint16_t InsTime::leapGps2UTC(InsTime::InsTime_GPSweekTow gpsWeekTow)
 {
     return leapGps2UTC(GPSweekTow2MJD(gpsWeekTow));
 }
-unsigned short int InsTime::leapGps2UTC(InsTime::InsTime_YMDHMS yearMonthDayHMS)
+uint16_t InsTime::leapGps2UTC(InsTime::InsTime_YMDHMS yearMonthDayHMS)
 {
     return leapGps2UTC(YMDHMS2MJD(yearMonthDayHMS));
 }
-unsigned short int InsTime::leapGps2UTC(InsTime::InsTime_MJD mjd_in)
+uint16_t InsTime::leapGps2UTC(InsTime::InsTime_MJD mjd_in)
 {
-    //std::map<unsigned int,unsigned short int>::iterator pLeapSec;
+    //std::map<unsigned int,uint16_t>::iterator pLeapSec;
     auto pLeapSec = InsTime::GpsLeapSec.upper_bound(mjd_in.mjd_day);
     //std::cout << "leap sec " <<pLeapSec->first << " is " <<pLeapSec->second -1 << "sec for mjd: "<< mjd.mjd_day << "\n";
     return pLeapSec->second - 1;
@@ -577,14 +583,14 @@ long double InsTime::hms2sec(int hour, int min, long double sec) // Transformati
     return (double)hour * 3600.0 + (double)min * 60.0 + (long double)sec;
 }
 
-bool InsTime::isLeapYear(unsigned short int year)
+bool InsTime::isLeapYear(uint16_t year)
 {
     bool leap = (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
     return leap;
 }
 bool InsTime::isLeapYear()
 {
-    unsigned short int year = this->GetYDoySod().year;
+    uint16_t year = this->GetYDoySod().year;
     bool leap = (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
     return leap;
 }

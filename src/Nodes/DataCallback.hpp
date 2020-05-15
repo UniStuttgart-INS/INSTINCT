@@ -7,19 +7,16 @@
 
 #pragma once
 
-#include "util/Common.hpp"
-
-#include <functional>
 #include <memory>
 #include <vector>
-#include <unordered_map>
-
-#include "NodeData/NodeData.hpp"
+#include <map>
+#include <typeindex>
 
 namespace NAV
 {
 // Forward declaration
 class Node;
+class NodeData;
 
 /// Abstract class for Callback Functionality
 class DataCallback
@@ -29,89 +26,96 @@ class DataCallback
     bool callbacksEnabled = false;
 
     /**
-     * @brief Adds the supplied callback at the end of the callback list
+     * @brief Adds the supplied node at the end of the callback list
      * 
-     * @param[in] port Port of the data callbacks
-     * @param[in] callback Function pointer which should be called
-     * @param[in] userData Pointer to user data that are needed when executing the callback
-     * @retval NavStatus Indicates if adding the callback was successfull
+     * @tparam T Output Message Class
+     * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
+     * @param[in] node Pointer to the node which should receive the callback
+     * @param[in] portIndex Port of the data callbacks
      */
-    NavStatus addCallback(size_t port, std::function<NavStatus(std::shared_ptr<NodeData>, std::shared_ptr<Node>)> callback, std::shared_ptr<Node> userData);
-
-    /**
-     * @brief Adds the supplied callback at the end of the callback list
-     * 
-     * @param[in] port Port of the data callbacks
-     * @param[in] callback Function pointer which should be called
-     * @param[in] userData Pointer to user data that are needed when executing the callback
-     * @param[in] index Index where to insert the callback
-     * @retval NavStatus Indicates if inserting the callback was successfull
-     */
-    NavStatus addCallback(size_t port, std::function<NavStatus(std::shared_ptr<NodeData>, std::shared_ptr<Node>)> callback, std::shared_ptr<Node> userData, size_t index);
-
-    /**
-     * @brief Removes the last callback from the list
-     * 
-     * @param[in] port Port of the data callbacks
-     * @retval NavStatus Indicates if the removal was successfull
-     */
-    NavStatus removeCallback(size_t port);
-
-    /**
-     * @brief Removes the callback at the specified position from the list
-     * 
-     * @param[in] port Port of the data callbacks
-     * @param[in] index Index where to remove the callback
-     * @retval NavStatus Indicates if the removal was successfull
-     */
-    NavStatus removeCallback(size_t port, size_t index);
-
-    /**
-     * @brief Removes all callbacks from the list for the specified port
-     * 
-     * @param[in] port Port of the data callbacks
-     * @retval NavStatus Indicates if the removal was successfull
-     */
-    NavStatus removeAllCallbacks(size_t port);
+    template<class T,
+             typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+    void addCallback(std::shared_ptr<Node>& node, uint8_t portIndex)
+    {
+        callbackList<T>().emplace_back(std::make_pair(node, portIndex));
+    }
 
     /**
      * @brief Removes all callbacks from the list
      * 
-     * @retval NavStatus Indicates if the removal was successfull
+     * @tparam T Output Message Class
+     * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
      */
-    NavStatus removeAllCallbacks();
+    template<class T,
+             typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+    void removeAllCallbacks()
+    {
+        // Clear does not erase the memory the pointers point at
+        // This is not a problem however, as we use shared_ptr
+        for (auto& [node, portIndex] : callbackList<T>())
+        {
+            node = nullptr;
+        }
+
+        callbackList<T>().clear();
+
+        callbacksEnabled = false;
+    }
 
     /**
      * @brief Calls all registered callbacks
      * 
      * @attention Needs to be called by all synchronous and asynchronous message receivers
-     * @param[in] port Port of the data callbacks
-     * @param[in] data The received data
-     * @retval NavStatus Indicates if there was a problem with one of the callbacks
+     * 
+     * @tparam T Output Message Class
+     * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
+     * @param[in] data The data to pass to the callback targets
      */
-    NavStatus invokeCallbacks(size_t port, std::shared_ptr<NodeData> data);
+    template<class T,
+             typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+    void invokeCallbacks(const std::shared_ptr<T>& data)
+    {
+        if (callbacksEnabled)
+        {
+            for (const auto& [node, portIndex] : callbackList<T>())
+            {
+                node->handleInputData(portIndex, data);
+            }
+        }
+    }
+
+    DataCallback(const DataCallback&) = delete;            ///< Copy constructor
+    DataCallback(DataCallback&&) = delete;                 ///< Move constructor
+    DataCallback& operator=(const DataCallback&) = delete; ///< Copy assignment operator
+    DataCallback& operator=(DataCallback&&) = delete;      ///< Move assignment operator
 
   protected:
     /// Construct a new Data Callback object
-    DataCallback();
+    DataCallback() = default;
 
     /// Deletes the object
-    ~DataCallback();
+    virtual ~DataCallback() = default;
 
   private:
-    /// Data Structure for Callbacks
-    struct Callback
-    {
-        std::function<NavStatus(std::shared_ptr<NodeData>, std::shared_ptr<Node>)> callback = nullptr;
-        std::shared_ptr<Node> data = nullptr;
-    };
-
     /**
-     * @brief Callback lists for each port which are called if a message is ready to be sent
+     * @brief Returns the callback list for the specified Message type
+     * 
+     * @tparam T Output Message class
+     * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
+     * @retval std::vector<std::pair<std::shared_ptr<Node>, uint8_t>>& Nodes and ports to call upon when invoking a callback
+     * 
      * @note std::vector is used here, as it has the faster iteration performance.
      *       Inserting and removing is only done once at the start of the program.
      */
-    std::unordered_map<size_t, std::vector<Callback>> _callbacks;
+    template<class T,
+             typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+    std::vector<std::pair<std::shared_ptr<Node>, uint8_t>>& callbackList()
+    {
+        return _callbackList[typeid(T)];
+    }
+
+    /// Internal callback list representation
+    std::map<std::type_index, std::vector<std::pair<std::shared_ptr<Node>, uint8_t>>> _callbackList;
 };
 
 } // namespace NAV

@@ -18,11 +18,39 @@ namespace NAV
 class UbloxObs : public GnssObs
 {
   public:
-    ub::protocol::uart::UbxClass msgClass;
-    uint8_t msgId;
-    uint16_t payloadLength;
+    UbloxObs() = default;                          ///< Constructor
+    ~UbloxObs() override = default;                ///< Destructor
+    UbloxObs(const UbloxObs&) = delete;            ///< Copy constructor
+    UbloxObs(UbloxObs&&) = delete;                 ///< Move constructor
+    UbloxObs& operator=(const UbloxObs&) = delete; ///< Copy assignment operator
+    UbloxObs& operator=(UbloxObs&&) = delete;      ///< Move assignment operator
 
-    ub::protocol::uart::Packet* p;
+    /**
+     * @brief Returns the type of the data class
+     * 
+     * @retval constexpr std::string_view The data type
+     */
+    [[nodiscard]] constexpr std::string_view type() const override
+    {
+        return std::string_view("UbloxObs");
+    }
+
+    /**
+     * @brief Returns the parent types of the data class
+     * 
+     * @retval std::vector<std::string_view> The parent data types
+     */
+    [[nodiscard]] std::vector<std::string_view> parentTypes() const override
+    {
+        std::vector<std::string_view> parents{ "GnssObs" };
+        return parents;
+    }
+
+    ub::protocol::uart::UbxClass msgClass = ub::protocol::uart::UbxClass::UBX_CLASS_NONE;
+    uint8_t msgId = 0;
+    uint16_t payloadLength = 0;
+
+    ub::protocol::uart::Packet* p = nullptr;
 };
 
 } // namespace NAV
