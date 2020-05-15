@@ -31,13 +31,16 @@ class UsbSyncSignal : public Node
      * @param[in] name Name of the Object
      * @param[in, out] options Program options string list
      */
-    UsbSyncSignal(std::string name, std::deque<std::string>& options);
+    UsbSyncSignal(const std::string& name, std::deque<std::string>& options);
 
-    /// Default destructor
+    /// Default constructor
+    UsbSyncSignal() = default;
+
+    /// Destructor
     ~UsbSyncSignal() override;
 
     /// File descriptor of the sensor port
-    int fd;
+    int fd = 0;
 
     /// COM port where to send the sync to
     std::string port;

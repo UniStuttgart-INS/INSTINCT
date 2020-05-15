@@ -12,7 +12,7 @@
                 "NODE_EDITOR_SHARED",
                 "NODE_EDITOR_EXPORTS"
             ],
-            "cppStandard": "c++17",
+            "cppStandard": "c++20",
             "compilerPath": "/usr/bin/gcc",
             "compileCommands": "${workspaceFolder}/compile_commands.json"
         }

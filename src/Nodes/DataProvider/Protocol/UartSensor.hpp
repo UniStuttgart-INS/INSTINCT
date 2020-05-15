@@ -44,8 +44,8 @@ class UartSensor
      */
     explicit UartSensor(std::deque<std::string>& options);
 
-    /// Destroy the Uart Sensor object
-    virtual ~UartSensor();
+    UartSensor() = default;          ///< Default constructor
+    virtual ~UartSensor() = default; ///< Destructor
 
     /// COM port where the sensor is attached to
     ///
@@ -57,7 +57,7 @@ class UartSensor
     std::string sensorPort;
 
     /// Baudrate for the sensor
-    Baudrate sensorBaudrate;
+    Baudrate sensorBaudrate = BAUDRATE_FASTEST;
 };
 
 } // namespace NAV

@@ -38,7 +38,7 @@ class GnuPlot : public Node
         /// Default Constructor
         GnuPlotWindow();
 
-        /// Default Destructor
+        /// Destructor
         ~GnuPlotWindow();
 
         GnuPlotWindow(const GnuPlotWindow&) = delete;            ///< Copy constructor
@@ -46,7 +46,7 @@ class GnuPlot : public Node
         GnuPlotWindow& operator=(const GnuPlotWindow&) = delete; ///< Copy assignment operator
         GnuPlotWindow& operator=(GnuPlotWindow&&) = delete;      ///< Move assignment operator
 
-        size_t addNewDataSet(std::string legend);
+        size_t addNewDataSet(const std::string& legend);
     };
 
     /**
@@ -57,17 +57,16 @@ class GnuPlot : public Node
      */
     GnuPlot(const std::string& name, std::deque<std::string>& options);
 
-    /// Default Destructor
-    ~GnuPlot() override;
-
+    GnuPlot() = default;                         ///< Default Constructor
+    ~GnuPlot() override = default;               ///< Destructor
     GnuPlot(const GnuPlot&) = delete;            ///< Copy constructor
     GnuPlot(GnuPlot&&) = delete;                 ///< Move constructor
     GnuPlot& operator=(const GnuPlot&) = delete; ///< Copy assignment operator
     GnuPlot& operator=(GnuPlot&&) = delete;      ///< Move assignment operator
 
-    static NavStatus update();
+    static void update();
 
-    static NavStatus requestUpdate(std::shared_ptr<GnuPlot> obj);
+    void requestUpdate() const;
 
   protected:
     /// Vector of Instructions what to plot
@@ -76,8 +75,8 @@ class GnuPlot : public Node
 
     static std::vector<std::shared_ptr<GnuPlotWindow>> plotWindows;
 
-    double timeFrame = 10.0;       // NOLINT
-    double updateFrequency = 10.0; // NOLINT
+    double timeFrame = 10.0;
+    double updateFrequency = 10.0;
 };
 
 } // namespace NAV

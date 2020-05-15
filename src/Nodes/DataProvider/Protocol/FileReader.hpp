@@ -18,6 +18,14 @@ namespace NAV
 class FileReader
 {
   public:
+    // File Type
+    enum FileType
+    {
+        NONE,   ///< Not specified
+        BINARY, ///< Binary data
+        ASCII   ///< Ascii text data
+    };
+
     FileReader(const FileReader&) = delete;            ///< Copy constructor
     FileReader(FileReader&&) = delete;                 ///< Move constructor
     FileReader& operator=(const FileReader&) = delete; ///< Copy assignment operator
@@ -31,13 +39,17 @@ class FileReader
      */
     explicit FileReader(std::deque<std::string>& options);
 
-    /// Default destructor
-    virtual ~FileReader();
+    FileReader() = default;          ///< Default constructor
+    virtual ~FileReader() = default; ///< Destructor
+
+    [[nodiscard]] virtual FileType determineFileType() = 0;
 
     /// Path to log file
     std::string path;
     /// File stream to read the file
     std::ifstream filestream;
+    /// File Type
+    FileType fileType = FileType::NONE;
 };
 
 } // namespace NAV

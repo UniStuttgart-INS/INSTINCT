@@ -66,20 +66,21 @@ enum NmeaPubxMessages
 /// \brief The available UBX Class IDs
 enum UbxClass
 {
-    UBX_CLASS_NAV = 0x01, ///< Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
-    UBX_CLASS_RXM = 0x02, ///< Receiver Manager Messages: Satellite Status, RTC Status
-    UBX_CLASS_INF = 0x04, ///< Information Messages: Printf-Style Messages, with IDs such as Error, Warning, Notice
-    UBX_CLASS_ACK = 0x05, ///< Ack/Nak Messages: Acknowledge or Reject messages to UBX-CFG input messages
-    UBX_CLASS_CFG = 0x06, ///< Configuration Input Messages: Configure the receiver
-    UBX_CLASS_UPD = 0x09, ///< Firmware Update Messages: Memory/Flash erase/write, Reboot, Flash identification, etc.
-    UBX_CLASS_MON = 0x0A, ///< Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
-    UBX_CLASS_AID = 0x0B, ///< AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
-    UBX_CLASS_TIM = 0x0D, ///< Timing Messages: Time Pulse Output, Time Mark Results
-    UBX_CLASS_ESF = 0x10, ///< External Sensor Fusion Messages: External Sensor Measurements and Status Information
-    UBX_CLASS_MGA = 0x13, ///< Multiple GNSS Assistance Messages: Assistance data for various GNSS
-    UBX_CLASS_LOG = 0x21, ///< Logging Messages: Log creation, deletion, info and retrieval
-    UBX_CLASS_SEC = 0x27, ///< Security Feature Messages
-    UBX_CLASS_HNR = 0x28  ///< High Rate Navigation Results Messages: High rate time, position, speed, heading
+    UBX_CLASS_NONE = 0x00, ///< No Message Class specified
+    UBX_CLASS_NAV = 0x01,  ///< Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
+    UBX_CLASS_RXM = 0x02,  ///< Receiver Manager Messages: Satellite Status, RTC Status
+    UBX_CLASS_INF = 0x04,  ///< Information Messages: Printf-Style Messages, with IDs such as Error, Warning, Notice
+    UBX_CLASS_ACK = 0x05,  ///< Ack/Nak Messages: Acknowledge or Reject messages to UBX-CFG input messages
+    UBX_CLASS_CFG = 0x06,  ///< Configuration Input Messages: Configure the receiver
+    UBX_CLASS_UPD = 0x09,  ///< Firmware Update Messages: Memory/Flash erase/write, Reboot, Flash identification, etc.
+    UBX_CLASS_MON = 0x0A,  ///< Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
+    UBX_CLASS_AID = 0x0B,  ///< AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
+    UBX_CLASS_TIM = 0x0D,  ///< Timing Messages: Time Pulse Output, Time Mark Results
+    UBX_CLASS_ESF = 0x10,  ///< External Sensor Fusion Messages: External Sensor Measurements and Status Information
+    UBX_CLASS_MGA = 0x13,  ///< Multiple GNSS Assistance Messages: Assistance data for various GNSS
+    UBX_CLASS_LOG = 0x21,  ///< Logging Messages: Log creation, deletion, info and retrieval
+    UBX_CLASS_SEC = 0x27,  ///< Security Feature Messages
+    UBX_CLASS_HNR = 0x28   ///< High Rate Navigation Results Messages: High rate time, position, speed, heading
 };
 
 /// \brief The available ACK Messages

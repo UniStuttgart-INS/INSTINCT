@@ -12,8 +12,3 @@ NAV::FileReader::FileReader(std::deque<std::string>& options)
         options.pop_front();
     }
 }
-
-NAV::FileReader::~FileReader()
-{
-    LOG_TRACE("called");
-}

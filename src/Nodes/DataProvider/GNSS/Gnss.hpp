@@ -29,7 +29,10 @@ class Gnss : public Node
      */
     Gnss(const std::string& name, std::deque<std::string>& options);
 
-    /// Destroy the Gnss object
+    /// Default constructor
+    Gnss() = default;
+
+    /// Destructor
     ~Gnss() override = default;
 };
 

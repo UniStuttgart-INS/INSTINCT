@@ -23,19 +23,12 @@ class NodeModel : public NodeDataModel
     Q_OBJECT
 
   public:
-    NodeModel();
+    explicit NodeModel(QString const& name);
 
-    NodeModel(QString const& name);
-
-    // Do not delete objects here, as qt handles it himself
-    virtual ~NodeModel();
-
-  public:
     QString caption() const override;
 
     QString name() const override;
 
-  public:
     unsigned int nPorts(PortType portType) const override;
 
     NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
@@ -50,12 +43,11 @@ class NodeModel : public NodeDataModel
 
     void setInData(std::shared_ptr<NodeData>, int) override;
 
+    std::vector<QWidget*> widgets;
+
   private:
     QString const _name = "Template";
     QWidget* _mainWidget;
 
     void addListListIntRow(std::vector<std::string> config, int row, QGridLayout* layout, QGroupBox* gridGroupBox, QFormLayout* formLayout);
-
-  public:
-    std::vector<QWidget*> widgets;
 };

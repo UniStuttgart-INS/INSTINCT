@@ -145,8 +145,8 @@
             "args": [
                 "--build",
                 "build/Debug",
-                // "--",
-                // "-j"
+                "--",
+                "-j"
             ],
             "dependsOn": [
                 "CMAKE: Debug"

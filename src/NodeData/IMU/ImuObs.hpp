@@ -18,9 +18,33 @@ namespace NAV
 class ImuObs : public InsObs
 {
   public:
-    /** The estimated attitude quaternion. The first term is the scalar value.
-     *  The attitude is given as the body frame with respect to the local North East Down (NED) frame. */
-    std::optional<Eigen::Quaterniond> quaternion;
+    ImuObs() = default;                        ///< Constructor
+    ~ImuObs() override = default;              ///< Destructor
+    ImuObs(const ImuObs&) = delete;            ///< Copy constructor
+    ImuObs(ImuObs&&) = delete;                 ///< Move constructor
+    ImuObs& operator=(const ImuObs&) = delete; ///< Copy assignment operator
+    ImuObs& operator=(ImuObs&&) = delete;      ///< Move assignment operator
+
+    /**
+     * @brief Returns the type of the data class
+     * 
+     * @retval constexpr std::string_view The data type
+     */
+    [[nodiscard]] constexpr std::string_view type() const override
+    {
+        return std::string_view("ImuObs");
+    }
+
+    /**
+     * @brief Returns the parent types of the data class
+     * 
+     * @retval std::vector<std::string_view> The parent data types
+     */
+    [[nodiscard]] std::vector<std::string_view> parentTypes() const override
+    {
+        std::vector<std::string_view> parents{ "InsObs" };
+        return parents;
+    }
 
     /// The IMU magnetic field measured in units of [Gauss], given in the body frame.
     std::optional<Eigen::Vector3d> magUncompXYZ;

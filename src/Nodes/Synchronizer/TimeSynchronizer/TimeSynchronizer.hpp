@@ -9,12 +9,13 @@
 
 #include "Nodes/Node.hpp"
 
-#include <optional>
+#include "NodeData/IMU/VectorNavObs.hpp"
+#include "NodeData/InsObs.hpp"
 
 namespace NAV
 {
 /// Class to Synchronize Different Data Providers to the same Time base
-class TimeSynchronizer : public Node
+class TimeSynchronizer final : public Node
 {
   public:
     /**
@@ -23,35 +24,158 @@ class TimeSynchronizer : public Node
      * @param[in] name Name of the Object
      * @param[in, out] options Program options string list
      */
-    TimeSynchronizer(std::string name, std::deque<std::string>& options);
+    TimeSynchronizer(const std::string& name, std::deque<std::string>& options);
 
-    /// Default Destructor
-    ~TimeSynchronizer() override;
-
+    TimeSynchronizer() = default;                                  ///< Default Constructor
+    ~TimeSynchronizer() final = default;                           ///< Destructor
     TimeSynchronizer(const TimeSynchronizer&) = delete;            ///< Copy constructor
     TimeSynchronizer(TimeSynchronizer&&) = delete;                 ///< Move constructor
     TimeSynchronizer& operator=(const TimeSynchronizer&) = delete; ///< Copy assignment operator
     TimeSynchronizer& operator=(TimeSynchronizer&&) = delete;      ///< Move assignment operator
 
     /**
+     * @brief Returns the String representation of the Class Type
+     * 
+     * @retval constexpr std::string_view The class type
+     */
+    [[nodiscard]] constexpr std::string_view type() const final
+    {
+        return std::string_view("TimeSynchronizer");
+    }
+
+    /**
+     * @brief Returns the String representation of the Class Category
+     * 
+     * @retval constexpr std::string_view The class category
+     */
+    [[nodiscard]] constexpr std::string_view category() const final
+    {
+        return std::string_view("TimeSync");
+    }
+
+    /**
+     * @brief Returns Gui Configuration options for the class
+     * 
+     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     */
+    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
+    {
+        return { { Node::CONFIG_BOOL, "Use Fixed\nStart Time", "Use the Time configured here as start time", { "0" } },
+                 { Node::CONFIG_INT, "Gps Cycle", "GPS Cycle at the beginning of the data recording", { "0", "0", "10" } },
+                 { Node::CONFIG_INT, "Gps Week", "GPS Week at the beginning of the data recording", { "0", "0", "245760" } },
+                 { Node::CONFIG_FLOAT, "Gps Time\nof Week", "GPS Time of Week at the beginning of the data recording", { "0", "0", "604800" } } };
+    }
+
+    /**
+     * @brief Returns the context of the class
+     * 
+     * @retval constexpr std::string_view The class context
+     */
+    [[nodiscard]] constexpr NodeContext context() const final
+    {
+        return NodeContext::ALL;
+    }
+
+    /**
+     * @brief Returns the number of Ports
+     * 
+     * @param[in] portType Specifies the port type
+     * @retval constexpr uint8_t The number of ports
+     */
+    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
+    {
+        switch (portType)
+        {
+        case PortType::In:
+            return 2U;
+        case PortType::Out:
+            return 1U;
+        }
+
+        return 0U;
+    }
+
+    /**
+     * @brief Returns the data types provided by this class
+     * 
+     * @param[in] portType Specifies the port type
+     * @param[in] portIndex Port index on which the data is sent
+     * @retval constexpr std::string_view The data type
+     */
+    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    {
+        switch (portType)
+        {
+        case PortType::In:
+            if (portIndex == 0)
+            {
+                return InsObs().type();
+            }
+            if (portIndex == 1)
+            {
+                return VectorNavObs().type();
+            }
+            break;
+        case PortType::Out:
+            if (portIndex == 0)
+            {
+                return VectorNavObs().type();
+            }
+        }
+
+        return std::string_view("");
+    }
+
+    /**
+     * @brief Handles the data sent on the input port
+     * 
+     * @param[in] portIndex The input port index
+     * @param[in, out] data The data send on the input port
+     */
+    void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) final
+    {
+        if (portIndex == 0)
+        {
+            auto obs = std::static_pointer_cast<InsObs>(data);
+            syncTime(obs);
+        }
+        else if (portIndex == 1)
+        {
+            auto obs = std::static_pointer_cast<VectorNavObs>(data);
+            syncVectorNavSensor(obs);
+        }
+    }
+    /**
+     * @brief Requests the node to send out its data
+     * 
+     * @param[in] portIndex The output port index
+     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
+     */
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t /* portIndex */) final { return nullptr; }
+
+    /**
+     * @brief Requests the node to peek its output data
+     * 
+     * @param[in] portIndex The output port index
+     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
+     */
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t /* portIndex */) final { return nullptr; }
+
+  private:
+    /**
      * @brief Gets the gps time from an UbloxSensor
      * 
-     * @param[in] observation UbloxObs to process
-     * @param[in] userData Pointer to the Node object
-     * @retval NavStatus Indicates whether the sync was successfull
+     * @param[in] obs InsObs to process
      */
-    static NavStatus syncUbloxSensor(std::shared_ptr<NodeData> observation, std::shared_ptr<Node> userData);
+    void syncTime(std::shared_ptr<InsObs>& obs);
 
     /**
      * @brief Updates VectorNav Observations with gps time
      * 
-     * @param[in] observation VectorNavObs to process
-     * @param[in] userData Pointer to the Node object
-     * @retval NavStatus Indicates whether the sync was successfull
+     * @param[in] obs VectorNavObs to process
      */
-    static NavStatus syncVectorNavSensor(std::shared_ptr<NodeData> observation, std::shared_ptr<Node> userData);
+    void syncVectorNavSensor(std::shared_ptr<VectorNavObs>& obs);
 
-  private:
     bool useFixedStartTime = false;
 
     std::optional<InsTime> startupGpsTime;

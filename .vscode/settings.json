@@ -79,22 +79,6 @@
             "format": "FileFormat.svg"
         }
     ],
-    "clang-tidy.checks": [
-        "*",
-        "-fuchsia-*",
-        "-modernize-use-trailing-return-type",
-        "-llvm-header-guard",
-        "-llvm-include-order",
-        "-bugprone-macro-parentheses",
-        "-cppcoreguidelines-macro-usage",
-        "-cppcoreguidelines-pro-bounds-pointer-arithmetic",
-        "-cppcoreguidelines-non-private-member-variables-in-classes",
-        "-hicpp-vararg",
-        "-misc-non-private-member-variables-in-classes",
-        "-google-readability-todo",
-        "-google-runtime-references",
-        "-readability-implicit-bool-conversion"
-    ],
     "clang-tidy.compilerArgs": [
         "-Wno-unknown-warning-option"
     ]

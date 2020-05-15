@@ -19,112 +19,165 @@
 
 #include <chrono>
 #include <thread>
+#include <iostream>
 
-#include "util/Common.hpp"
 #include "util/Logger.hpp"
 #include "util/Version.hpp"
 #include "util/Sleep.hpp"
-#include "util/Config.hpp"
+#include "util/ConfigManager.hpp"
 
-#include "NodeInterface.hpp"
-#include "Nodes/NodeCreator.hpp"
+#include "Nodes/NodeManager.hpp"
+#include "NodeRegistry.hpp"
+
+#include "NodeData/InsObs.hpp"
 
 int main(int argc, const char* argv[])
 {
-    // User requested the version of the program
-    if (argc == 2 && !strcmp(argv[1], "--version"))
+    // Config Manager object
+    NAV::ConfigManager configManager;
+
+    if (argc == 2)
     {
-        std::cout << PROJECT_VERSION_STRING << '\n';
-        return EXIT_SUCCESS;
+        // User requested the version of the program
+        if (!strcmp(argv[1], "--version") || !strcmp(argv[1], "-v"))
+        {
+            std::cout << PROJECT_VERSION_STRING << '\n';
+            return EXIT_SUCCESS;
+        }
+
+        // User requested the help text of the program
+        if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))
+        {
+            std::cout << "NavSoS " << PROJECT_VERSION_STRING << " - Navigation Software Stuttgart\n\n"
+                      << NAV::ConfigManager::GetProgramOptions() << '\n';
+            return EXIT_SUCCESS;
+        }
     }
 
-    Logger logger("logs/navsos.log");
-
-    // Read Command Line Options
-    NAV::Config* pConfig = NAV::Config::Get();
-    if (NAV::NavStatus result = pConfig->AddOptions(argc, argv);
-        result == NAV::NavStatus::NAV_REQUEST_EXIT)
-        return EXIT_SUCCESS;
-    else if (result != NAV::NavStatus::NAV_OK)
-        LOG_CRITICAL("Critical problem during adding of program options");
-
-    // Decode Options
-    if (pConfig->DecodeOptions() != NAV::NavStatus::NAV_OK)
-        LOG_CRITICAL("Critical problem during decoding of program options");
-
-    // Create Nodes
-    if (NAV::NodeCreator::createNodes(pConfig) != NAV::NavStatus::NAV_OK)
-        LOG_CRITICAL("Critical problem during node creation");
-
-    // Set up Node Links
-    if (NAV::NodeCreator::createLinks(pConfig) != NAV::NavStatus::NAV_OK)
-        LOG_CRITICAL("Critical problem during node link creation");
-
-    // Read data files
-    if (NAV::appContext == NAV::NodeInterface::NodeContext::POST_PROCESSING)
+    try
     {
-        std::map<NAV::InsTime, size_t> events;
-        // Get first event of all the file readers
-        for (size_t i = 0; i < pConfig->nodes.size(); i++)
+        Logger logger("logs/navsos.log");
+
+        // Program configuration
+        NAV::ConfigManager::FetchConfigs(argc, argv);
+
+        // Create a Node Manager
+        NAV::NodeManager nodeManager;
+
+        // Register all Node Types which are available to the program
+        NAV::NodeRegistry::registerNodeTypes(nodeManager);
+
+        // Register all Node Data Types which are available to the program
+        NAV::NodeRegistry::registerNodeDataTypes(nodeManager);
+
+        // Processes all nodes which are specified in the config file
+        nodeManager.processConfigFile();
+
+        // Call constructors of all nodes from the config file
+        nodeManager.initializeNodes();
+
+        // Establish data links between the nodes
+        nodeManager.linkNodes();
+
+        // Enable the callbacks for all nodes
+        nodeManager.enableAllCallbacks();
+
+        // Read data files
+        if (NAV::NodeManager::appContext == NAV::Node::NodeContext::POST_PROCESSING)
         {
-            if (pConfig->nodes.at(i).node->isFileReader())
+            std::map<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>> events;
+            // Get first event of all nodes
+            for (const auto& node : nodeManager.nodes())
             {
-                auto nextUpdateTime = pConfig->nodes.at(i).node->peekNextUpdateTime();
-                if (nextUpdateTime.has_value())
-                    events.insert(std::make_pair(nextUpdateTime.value(), i));
+                for (uint8_t portIndex = 0; portIndex < node->nPorts(NAV::Node::PortType::Out); portIndex++)
+                {
+                    auto nextUpdateTime = std::static_pointer_cast<NAV::InsObs>(node->requestOutputDataPeek(portIndex));
+
+                    if (nextUpdateTime)
+                    {
+                        if (nextUpdateTime->insTime.has_value())
+                        {
+                            events.insert(std::make_pair(nextUpdateTime->insTime.value(), std::make_pair(node, portIndex)));
+                        }
+                        else
+                        {
+                            LOG_ERROR("Node {} does provide data but without InsTime value.", node->getName());
+                        }
+                    }
+                }
+            }
+
+            std::map<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>>::iterator it;
+            while (it = events.begin(), it != events.end())
+            {
+                auto& node = it->second.first;
+                auto& portIndex = it->second.second;
+                if (node->requestOutputData(portIndex) == nullptr)
+                {
+                    LOG_ERROR("{} - {} could not poll its observation despite being able to peek it.", node->type(), node->getName());
+                }
+
+                auto nextUpdateTime = std::static_pointer_cast<NAV::InsObs>(node->requestOutputDataPeek(portIndex));
+                if (nextUpdateTime)
+                {
+                    if (nextUpdateTime->insTime.has_value())
+                    {
+                        events.insert(std::make_pair(nextUpdateTime->insTime.value(), it->second));
+                    }
+                    else
+                    {
+                        LOG_WARN("Node {} does provide data but without InsTime value.", node->getName());
+                    }
+                }
+
+                events.erase(it);
+            }
+        }
+        // Wait and receive data packages in other threads
+        else
+        {
+            if (NAV::ConfigManager::Get<bool>("sigterm", false))
+            {
+                NAV::Sleep::waitForSignal();
+            }
+            else
+            {
+                NAV::Sleep::countDownSeconds(NAV::ConfigManager::Get<size_t>("duration", 5));
             }
         }
 
-        std::map<NAV::InsTime, size_t>::iterator it;
-        while (it = events.begin(), it != events.end())
+        // Stop all callbacks
+        nodeManager.disableAllCallbacks();
+
+        // Update all GnuPlot Windows and wait for them to open
+        for (const auto& node : nodeManager.nodes())
         {
-            if (pConfig->nodes.at(it->second).node->pollData() == nullptr)
-                LOG_ERROR("{} - {} could not poll its observation despite being able to peek it.", pConfig->nodes.at(it->second).type, pConfig->nodes.at(it->second).name);
-
-            auto nextUpdateTime = pConfig->nodes.at(it->second).node->peekNextUpdateTime();
-            if (nextUpdateTime.has_value())
-                events.insert(std::make_pair(nextUpdateTime.value(), it->second));
-
-            events.erase(it);
+            if (node->type().find("GnuPlot") != std::string_view::npos)
+            {
+                // std::static_pointer_cast<NAV::GnuPlot>(node)->update();
+                while (system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+            }
         }
-    }
-    // Wait and receive data packages in other threads
-    else
-    {
-        if (pConfig->GetSigterm())
-            NAV::Sleep::waitForSignal();
-        else
-            NAV::Sleep::countDownSeconds(pConfig->GetProgExecTime());
-    }
 
-    // Stop all callbacks
-    for (auto& node : pConfig->nodes)
-    {
-        node.node->callbacksEnabled = false;
-        node.node->removeAllCallbacks();
-    }
-
-    // Update all GnuPlot Windows and wait for them to open
-    for (auto& node : pConfig->nodes)
-    {
-        if (node.type.find("GnuPlot") != std::string::npos)
+        if (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
         {
-            std::static_pointer_cast<NAV::GnuPlot>(node.node)->update();
-            while (system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            LOG_INFO("Waiting for all Gnuplot windows to close");
         }
-        // Destruct all Nodes
-        node.node = nullptr;
+
+        // Wait if any GnuPlot Window is open. GnuPlot becomes unresponsive when parent dies
+        while (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+
+        return EXIT_SUCCESS;
     }
-
-    if (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
-        LOG_INFO("Waiting for all Gnuplot windows to close");
-
-    // Wait if any GnuPlot Window is open. GnuPlot becomes unresponsive when parent dies
-    while (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-    NAV::Logger::writeFooter();
-
-    return EXIT_SUCCESS;
+    catch (const std::exception& e)
+    {
+        std::cerr << "Critical Event occurred: " << e.what() << '\n';
+        return EXIT_FAILURE;
+    }
 }

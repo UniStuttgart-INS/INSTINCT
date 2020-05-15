@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <deque>
 #include <fstream>
 #include <memory>
 
@@ -18,6 +19,20 @@ namespace NAV
 {
 class DataLogger : public Node
 {
+  public:
+    // File Type
+    enum FileType
+    {
+        NONE,   ///< Not specified
+        BINARY, ///< Binary data
+        ASCII   ///< Ascii text data
+    };
+
+    DataLogger(const DataLogger&) = delete;            ///< Copy constructor
+    DataLogger(DataLogger&&) = delete;                 ///< Move constructor
+    DataLogger& operator=(const DataLogger&) = delete; ///< Copy assignment operator
+    DataLogger& operator=(DataLogger&&) = delete;      ///< Move assignment operator
+
   protected:
     /**
      * @brief Construct a new Data Logger object
@@ -25,19 +40,22 @@ class DataLogger : public Node
      * @param[in] name Name of the Logger
      * @param[in, out] options Program options string list
      */
-    DataLogger(std::string name, std::deque<std::string>& options);
+    DataLogger(const std::string& name, std::deque<std::string>& options);
 
-    /// Default destructor
-    ~DataLogger();
+    /// Default constructor
+    DataLogger() = default;
+
+    /// Destructor
+    ~DataLogger() override;
 
     /// Path to the log file
     std::string path;
 
-    /// Flag if the logfile is a binary file
-    bool isBinary;
-
     /// File stream to write the file
     std::ofstream filestream;
+
+    /// File Type
+    FileType fileType = FileType::NONE;
 };
 
 } // namespace NAV

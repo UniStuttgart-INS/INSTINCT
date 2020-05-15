@@ -7,13 +7,10 @@
 
 #pragma once
 
-#include "Nodes/DataCallback.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 #include "../Imu.hpp"
 #include "../../Protocol/UartSensor.hpp"
 #include "vn/sensors.h"
-
-#include <string>
 
 namespace NAV
 {
@@ -62,15 +59,128 @@ class VectorNavSensor final : public UartSensor, public Imu
      * @param[in] name Name of the Sensor
      * @param[in, out] options Program options string list
      */
-    VectorNavSensor(std::string name, std::deque<std::string>& options);
+    VectorNavSensor(const std::string& name, std::deque<std::string>& options);
 
-    /// Default Destructor
-    ~VectorNavSensor() final;
-
+    VectorNavSensor() = default;                                 ///< Default Constructor
+    ~VectorNavSensor() final;                                    ///< Destructor
     VectorNavSensor(const VectorNavSensor&) = delete;            ///< Copy constructor
     VectorNavSensor(VectorNavSensor&&) = delete;                 ///< Move constructor
     VectorNavSensor& operator=(const VectorNavSensor&) = delete; ///< Copy assignment operator
     VectorNavSensor& operator=(VectorNavSensor&&) = delete;      ///< Move assignment operator
+
+    /**
+     * @brief Returns the String representation of the Class Type
+     * 
+     * @retval constexpr std::string_view The class type
+     */
+    [[nodiscard]] constexpr std::string_view type() const final
+    {
+        return std::string_view("VectorNavSensor");
+    }
+
+    /**
+     * @brief Returns the String representation of the Class Category
+     * 
+     * @retval constexpr std::string_view The class category
+     */
+    [[nodiscard]] constexpr std::string_view category() const final
+    {
+        return std::string_view("DataProvider");
+    }
+
+    /**
+     * @brief Returns Gui Configuration options for the class
+     * 
+     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     */
+    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
+    {
+        return { { Node::CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
+                                                "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
+                                                "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
+                                                "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
+                                                "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
+                                                "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
+                   { "/dev/ttyUSB0" } },
+                 { Node::CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" } },
+                 { Node::CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "100", "200" } } };
+    }
+
+    /**
+     * @brief Returns the context of the class
+     * 
+     * @retval constexpr std::string_view The class context
+     */
+    [[nodiscard]] constexpr NodeContext context() const final
+    {
+        return NodeContext::REAL_TIME;
+    }
+
+    /**
+     * @brief Returns the number of Ports
+     * 
+     * @param[in] portType Specifies the port type
+     * @retval constexpr uint8_t The number of ports
+     */
+    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
+    {
+        switch (portType)
+        {
+        case PortType::In:
+            break;
+        case PortType::Out:
+            return 1U;
+        }
+
+        return 0U;
+    }
+
+    /**
+     * @brief Returns the data types provided by this class
+     * 
+     * @param[in] portType Specifies the port type
+     * @param[in] portIndex Port index on which the data is sent
+     * @retval constexpr std::string_view The data type
+     */
+    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    {
+        switch (portType)
+        {
+        case PortType::In:
+            break;
+        case PortType::Out:
+            if (portIndex == 0)
+            {
+                return VectorNavObs().type();
+            }
+        }
+
+        return std::string_view("");
+    }
+
+    /**
+     * @brief Handles the data sent on the input port
+     * 
+     * @param[in] portIndex The input port index
+     * @param[in, out] data The data send on the input port
+     */
+    void handleInputData(uint8_t /* portIndex */, std::shared_ptr<NodeData> /* data */) final {}
+
+    /**
+     * @brief Requests the node to send out its data
+     * 
+     * @param[in] portIndex The output port index
+     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
+     */
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t /* portIndex */) final { return nullptr; }
+
+    /**
+     * @brief Requests the node to peek its output data
+     * 
+     * @param[in] portIndex The output port index
+     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
+     */
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t /* portIndex */) final { return nullptr; }
 
   private:
     /**

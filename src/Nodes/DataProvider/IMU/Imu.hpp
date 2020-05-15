@@ -29,7 +29,10 @@ class Imu : public Node
      */
     Imu(const std::string& name, std::deque<std::string>& options);
 
-    /// Destroy the Imu object
+    /// Default constructor
+    Imu() = default;
+
+    /// Destructor
     ~Imu() override = default;
 };
 

@@ -1,13 +1,14 @@
 #include "GnuPlot.hpp"
 
 #include "util/Logger.hpp"
-#include "NodeInterface.hpp"
+#include "Nodes/NodeManager.hpp"
 
 std::vector<std::shared_ptr<NAV::GnuPlot::GnuPlotWindow>> NAV::GnuPlot::plotWindows;
 
 NAV::GnuPlot::GnuPlotWindow::GnuPlotWindow()
 {
     LOG_TRACE("called");
+    // NOLINTNEXTLINE
     gp = new gnuplotio::Gnuplot("gnuplot -persist > /dev/null 2>&1");
 }
 
@@ -20,7 +21,7 @@ NAV::GnuPlot::GnuPlotWindow::~GnuPlotWindow()
     gp = nullptr;
 }
 
-size_t NAV::GnuPlot::GnuPlotWindow::addNewDataSet(std::string legend)
+size_t NAV::GnuPlot::GnuPlotWindow::addNewDataSet(const std::string& legend)
 {
     data.push_back({ legend, {} });
     return data.size() - 1;
@@ -31,13 +32,13 @@ NAV::GnuPlot::GnuPlot(const std::string& name, std::deque<std::string>& options)
 {
     LOG_TRACE("called for {}", name);
 
-    if (options.size() >= 1)
+    if (!options.empty())
     {
         timeFrame = std::stod(options.at(0));
         options.pop_front();
     }
 
-    if (options.size() >= 1)
+    if (!options.empty())
     {
         updateFrequency = std::stod(options.at(0));
         options.pop_front();
@@ -48,10 +49,12 @@ NAV::GnuPlot::GnuPlot(const std::string& name, std::deque<std::string>& options)
         int wIndex = std::stoi(*(it + 2));
         if (wIndex >= 0)
         {
-            dataToPlot.push_back(std::make_tuple(*it, *(it + 1), wIndex, std::vector<size_t>()));
+            dataToPlot.emplace_back(std::make_tuple(*it, *(it + 1), wIndex, std::vector<size_t>()));
 
             while (static_cast<size_t>(wIndex) + 1 > plotWindows.size())
+            {
                 plotWindows.push_back(std::make_shared<GnuPlotWindow>());
+            }
         }
 
         options.pop_front();
@@ -70,11 +73,9 @@ NAV::GnuPlot::GnuPlot(const std::string& name, std::deque<std::string>& options)
     }
 }
 
-NAV::GnuPlot::~GnuPlot() {}
-
-NAV::NavStatus NAV::GnuPlot::requestUpdate(std::shared_ptr<NAV::GnuPlot> obj)
+void NAV::GnuPlot::requestUpdate() const
 {
-    if (appContext == NAV::NodeInterface::NodeContext::REAL_TIME)
+    if (NodeManager::appContext == NAV::Node::NodeContext::REAL_TIME)
     {
         // Check if update Interval is reached
         bool plot = false;
@@ -83,7 +84,7 @@ NAV::NavStatus NAV::GnuPlot::requestUpdate(std::shared_ptr<NAV::GnuPlot> obj)
         {
             for (auto& plotData : plotWindow->data)
             {
-                if (!plotData.xy.empty() && plotData.xy.back().first - lastPlotTime >= 1.0 / obj->updateFrequency)
+                if (!plotData.xy.empty() && plotData.xy.back().first - lastPlotTime >= 1.0 / updateFrequency)
                 {
                     plot = true;
                     lastPlotTime = plotData.xy.back().first;
@@ -91,18 +92,20 @@ NAV::NavStatus NAV::GnuPlot::requestUpdate(std::shared_ptr<NAV::GnuPlot> obj)
                 }
             }
             if (plot)
+            {
                 break;
+            }
         }
 
         // Update the GnuPlot Windows
         if (plot)
-            return update();
+        {
+            update();
+        }
     }
-
-    return NavStatus::NAV_OK;
 }
 
-NAV::NavStatus NAV::GnuPlot::update()
+void NAV::GnuPlot::update()
 {
     for (auto& plotWindow : plotWindows)
     {
@@ -117,7 +120,9 @@ NAV::NavStatus NAV::GnuPlot::update()
                 {
                     std::string lineStyle = "lines";
                     if (i >= 8)
+                    {
                         lineStyle = "points";
+                    }
 
                     *plotWindow->gp << plotWindow->gp->binFile1d(plotWindow->data.at(i).xy, "record") << "with " << lineStyle << " title '" << plotWindow->data.at(i).legend << "',";
                 }
@@ -127,5 +132,4 @@ NAV::NavStatus NAV::GnuPlot::update()
             plotWindow->gp->flush();
         }
     }
-    return NavStatus::NAV_OK;
 }

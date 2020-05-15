@@ -12,9 +12,41 @@
 namespace NAV
 {
 /// VectorNav Observation storage Class
-class VectorNavObs : public ImuObs
+class VectorNavObs final : public ImuObs
 {
   public:
+    VectorNavObs() = default;                              ///< Constructor
+    ~VectorNavObs() final = default;                       ///< Destructor
+    VectorNavObs(const VectorNavObs&) = delete;            ///< Copy constructor
+    VectorNavObs(VectorNavObs&&) = delete;                 ///< Move constructor
+    VectorNavObs& operator=(const VectorNavObs&) = delete; ///< Copy assignment operator
+    VectorNavObs& operator=(VectorNavObs&&) = delete;      ///< Move assignment operator
+
+    /**
+     * @brief Returns the type of the data class
+     * 
+     * @retval constexpr std::string_view The data type
+     */
+    [[nodiscard]] constexpr std::string_view type() const override
+    {
+        return std::string_view("VectorNavObs");
+    }
+
+    /**
+     * @brief Returns the parent types of the data class
+     * 
+     * @retval std::vector<std::string_view> The parent data types
+     */
+    [[nodiscard]] std::vector<std::string_view> parentTypes() const override
+    {
+        std::vector<std::string_view> parents{ "ImuObs" };
+        return parents;
+    }
+
+    /** The estimated attitude quaternion. The first term is the scalar value.
+     *  The attitude is given as the body frame with respect to the local North East Down (NED) frame. */
+    std::optional<Eigen::Quaterniond> quaternion;
+
     /** The system time since startup measured in [nano seconds]. */
     std::optional<uint64_t> timeSinceStartup;
 
@@ -24,13 +56,13 @@ class VectorNavObs : public ImuObs
     std::optional<uint32_t> syncInCnt;
 
     /** The time interval that the delta angle and velocities are integrated over in [seconds]. */
-    std::optional<float> dtime;
+    std::optional<double> dtime;
     /** The delta rotation angles in [degree] incurred due to rotation, by the local body reference frame, since the last time the values were outputted by the device. */
     std::optional<Eigen::Array3d> dtheta;
     /** The delta velocity in [m/s] incurred due to motion, by the local body reference frame, since the last time the values were outputted by the device. */
     std::optional<Eigen::Vector3d> dvel;
 
-    /** @brief The VPE status bitfield.
+    /** @brief The VPE status bitfield
      * 
      *  Bit | Name                    | Description
      *  0+1 | AttitudeQuality         | Provides an indication of the quality of the attitude solution. 0 - Excellent, 1 - Good, 2 - Bad, 3 - Not tracking
@@ -43,7 +75,78 @@ class VectorNavObs : public ImuObs
      *  11  | KnownMagDisturbance     | A known magnetic disturbance has been reported by the user and the magnetometer is currently tuned out.
      *  12  | KnownAccelDisturbance   | A known acceleration disturbance has been reported by the user and the accelerometer is currently tuned out.
      */
-    std::optional<uint16_t> vpeStatus;
+    class VpeStatus
+    {
+      public:
+        /// Constructor
+        explicit VpeStatus(uint16_t status) : status(status) {}
+
+        /// Assignment operator
+        VpeStatus& operator=(const uint16_t& status)
+        {
+            this->status = status;
+            return *this;
+        }
+
+        VpeStatus() = default;                           ///< Default Constructor
+        ~VpeStatus() = default;                          ///< Destructor
+        VpeStatus(const VpeStatus&) = delete;            ///< Copy constructor
+        VpeStatus(VpeStatus&&) = delete;                 ///< Move constructor
+        VpeStatus& operator=(const VpeStatus&) = delete; ///< Copy assignment operator
+        VpeStatus& operator=(VpeStatus&&) = delete;      ///< Move assignment operator
+
+        /// The storage field
+        uint16_t status;
+
+        /// Extract the attitude quality from the vpe status
+        [[nodiscard]] constexpr uint8_t attitudeQuality() const
+        {
+            return ((status & (1U << 0U | 1U << 1U)) >> 0U);
+        }
+        /// Extract the gyro saturation from the vpe status
+        [[nodiscard]] constexpr uint8_t gyroSaturation() const
+        {
+            return ((status & (1U << 2U)) >> 2U); // NOLINT
+        }
+        /// Extract the gyro saturation recovery from the vpe status
+        [[nodiscard]] constexpr uint8_t gyroSaturationRecovery() const
+        {
+            return ((status & (1U << 3U)) >> 3U); // NOLINT
+        }
+        /// Extract the magnetic disturbance from the vpe status
+        [[nodiscard]] constexpr uint8_t magDisturbance() const
+        {
+            return ((status & (1U << 4U | 1U << 5U)) >> 4U); // NOLINT
+        }
+        /// Extract the magnetic saturation from the vpe status
+        [[nodiscard]] constexpr uint8_t magSaturation() const
+        {
+            return ((status & (1U << 6U)) >> 6U); // NOLINT
+        }
+        /// Extract the acceleration disturbance from the vpe status
+        [[nodiscard]] constexpr uint8_t accDisturbance() const
+        {
+            return ((status & (1U << 7U | 1U << 8U)) >> 7U); // NOLINT
+        }
+        /// Extract the acceleration saturation from the vpe status
+        [[nodiscard]] constexpr uint8_t accSaturation() const
+        {
+            return ((status & (1U << 9U)) >> 9U); // NOLINT
+        }
+        /// Extract the known magnetic disturbance from the vpe status
+        [[nodiscard]] constexpr uint8_t knownMagDisturbance() const
+        {
+            return ((status & (1U << 11U)) >> 11U); // NOLINT
+        }
+        /// Extract the known acceleration disturbance from the vpe status
+        [[nodiscard]] constexpr uint8_t knownAccelDisturbance() const
+        {
+            return ((status & (1U << 12U)) >> 12U); // NOLINT
+        }
+    };
+
+    /** @brief The VPE status bitfield */
+    std::optional<VpeStatus> vpeStatus;
 
     /** The IMU temperature measured in units of [Celsius]. */
     std::optional<double> temperature;
@@ -64,53 +167,6 @@ class VectorNavObs : public ImuObs
 
     /** The estimated attitude (Yaw, Pitch, Roll) uncertainty (1 Sigma), reported in degrees. */
     std::optional<Eigen::Array3d> yawPitchRollUncertainty;
-
-  public: // Inline functions
-    /// Extract the attitude quality from the vpe status
-    inline constexpr uint8_t attitudeQuality()
-    {
-        return ((vpeStatus.value() & (1 << 0 | 1 << 1)) >> 0);
-    }
-    /// Extract the gyro saturation from the vpe status
-    inline constexpr uint8_t gyroSaturation()
-    {
-        return ((vpeStatus.value() & (1 << 2)) >> 2);
-    }
-    /// Extract the gyro saturation recovery from the vpe status
-    inline constexpr uint8_t gyroSaturationRecovery()
-    {
-        return ((vpeStatus.value() & (1 << 3)) >> 3);
-    }
-    /// Extract the magnetic disturbance from the vpe status
-    inline constexpr uint8_t magDisturbance()
-    {
-        return ((vpeStatus.value() & (1 << 4 | 1 << 5)) >> 4);
-    }
-    /// Extract the magnetic saturation from the vpe status
-    inline constexpr uint8_t magSaturation()
-    {
-        return ((vpeStatus.value() & (1 << 6)) >> 6);
-    }
-    /// Extract the acceleration disturbance from the vpe status
-    inline constexpr uint8_t accDisturbance()
-    {
-        return ((vpeStatus.value() & (1 << 7 | 1 << 8)) >> 7);
-    }
-    /// Extract the acceleration saturation from the vpe status
-    inline constexpr uint8_t accSaturation()
-    {
-        return ((vpeStatus.value() & (1 << 9)) >> 9);
-    }
-    /// Extract the known magnetic disturbance from the vpe status
-    inline constexpr uint8_t knownMagDisturbance()
-    {
-        return ((vpeStatus.value() & (1 << 11)) >> 11);
-    }
-    /// Extract the known acceleration disturbance from the vpe status
-    inline constexpr uint8_t knownAccelDisturbance()
-    {
-        return ((vpeStatus.value() & (1 << 12)) >> 12);
-    }
 };
 
 } // namespace NAV

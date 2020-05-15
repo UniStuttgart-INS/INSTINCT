@@ -94,10 +94,10 @@ class InsTime
 
     ~InsTime() = default; /*! Default destructor */
 
-    InsTime(const InsTime&) = delete;            ///< Copy constructor
-    InsTime(InsTime&&) = delete;                 ///< Move constructor
-    InsTime& operator=(const InsTime&) = delete; ///< Copy assignment operator
-    InsTime& operator=(InsTime&&) = delete;      ///< Move assignment operator
+    InsTime(const InsTime&) = default;            ///< Copy constructor
+    InsTime(InsTime&&) = default;                 ///< Move constructor
+    InsTime& operator=(const InsTime&) = default; ///< Copy assignment operator
+    InsTime& operator=(InsTime&&) = default;      ///< Move assignment operator
 
     // ------------------------------- Update, change time ---------------------------------------
     void SetInsTime(InsTime);                                                                                         /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime object */

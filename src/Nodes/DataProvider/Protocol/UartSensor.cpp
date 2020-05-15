@@ -25,8 +25,3 @@ NAV::UartSensor::UartSensor(std::deque<std::string>& options)
         }
     }
 }
-
-NAV::UartSensor::~UartSensor()
-{
-    LOG_TRACE("called");
-}
