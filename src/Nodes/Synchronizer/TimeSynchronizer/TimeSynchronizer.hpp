@@ -151,7 +151,19 @@ class TimeSynchronizer final : public Node
      * @param[in] portIndex The output port index
      * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
      */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t /* portIndex */) final { return nullptr; }
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) final
+    {
+        if (useFixedStartTime && portIndex == 0)
+        {
+            // portIndex is the output Port
+            // but the data we want to pull come from input port 1
+            auto& sourceNode = incomingLinks[1].first;
+            auto& sourcePortIndex = incomingLinks[1].second;
+
+            return sourceNode->requestOutputData(sourcePortIndex);
+        }
+        return nullptr;
+    }
 
     /**
      * @brief Requests the node to peek its output data
@@ -159,9 +171,30 @@ class TimeSynchronizer final : public Node
      * @param[in] portIndex The output port index
      * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
      */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t /* portIndex */) final { return nullptr; }
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex) final
+    {
+        if (useFixedStartTime && portIndex == 0)
+        {
+            // portIndex is the output Port
+            // but the data we want to pull come from input port 1
+            auto& sourceNode = incomingLinks[1].first;
+            auto& sourcePortIndex = incomingLinks[1].second;
+
+            auto peekData = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));
+            updateInsTime(peekData);
+            return peekData;
+        }
+        return nullptr;
+    }
 
   private:
+    /**
+     * @brief Updates VectorNav Observations with gps time
+     * 
+     * @param[in, out] obs VectorNavObs to process
+     */
+    void updateInsTime(std::shared_ptr<VectorNavObs>& obs);
+
     /**
      * @brief Gets the gps time from an UbloxSensor
      * 
@@ -170,7 +203,7 @@ class TimeSynchronizer final : public Node
     void syncTime(std::shared_ptr<InsObs>& obs);
 
     /**
-     * @brief Updates VectorNav Observations with gps time
+     * @brief Updates VectorNav Observations with gps time and calls callbacks
      * 
      * @param[in] obs VectorNavObs to process
      */

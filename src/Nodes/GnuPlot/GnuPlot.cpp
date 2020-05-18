@@ -14,8 +14,6 @@ NAV::GnuPlot::GnuPlotWindow::GnuPlotWindow()
 
 NAV::GnuPlot::GnuPlotWindow::~GnuPlotWindow()
 {
-    LOG_TRACE("called");
-
     gp->clearTmpfiles();
     delete gp;
     gp = nullptr;
@@ -105,8 +103,9 @@ void NAV::GnuPlot::requestUpdate() const
     }
 }
 
-void NAV::GnuPlot::update()
+bool NAV::GnuPlot::update()
 {
+    bool somethingWasPlotted = false;
     for (auto& plotWindow : plotWindows)
     {
         if (!plotWindow->data.empty())
@@ -130,6 +129,8 @@ void NAV::GnuPlot::update()
 
             *plotWindow->gp << "\n";
             plotWindow->gp->flush();
+            somethingWasPlotted = true;
         }
     }
+    return somethingWasPlotted;
 }

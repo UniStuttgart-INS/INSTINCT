@@ -84,6 +84,11 @@ class DataCallback
         }
     }
 
+    /// List of links which are connected to this node
+    /// Map key: portIndex of this node where the data are coming in
+    /// Map val: Source Node which sends the data and its portIndex
+    std::map<uint8_t, std::pair<std::shared_ptr<Node>, uint8_t>> incomingLinks;
+
     DataCallback(const DataCallback&) = delete;            ///< Copy constructor
     DataCallback(DataCallback&&) = delete;                 ///< Move constructor
     DataCallback& operator=(const DataCallback&) = delete; ///< Copy assignment operator

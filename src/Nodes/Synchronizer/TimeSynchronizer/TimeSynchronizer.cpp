@@ -30,6 +30,23 @@ NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, std::deque<std:
     }
 }
 
+void NAV::TimeSynchronizer::updateInsTime(std::shared_ptr<NAV::VectorNavObs>& obs)
+{
+    if (startupGpsTime.has_value() && obs != nullptr)
+    {
+        obs->insTime = startupGpsTime;
+
+        if (!startupImuTime.has_value())
+        {
+            startupImuTime = obs->timeSinceStartup;
+        }
+        else
+        {
+            obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - startupImuTime.value()) / 1000000000.0L);
+        }
+    }
+}
+
 void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
 {
     if (obs->insTime.has_value() && !startupGpsTime.has_value())
@@ -40,18 +57,7 @@ void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
 
 void NAV::TimeSynchronizer::syncVectorNavSensor(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
-    if (startupGpsTime.has_value())
-    {
-        if (!startupImuTime.has_value())
-        {
-            startupImuTime = obs->timeSinceStartup;
-        }
-        else
-        {
-            obs->insTime = startupGpsTime;
-            obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - startupImuTime.value()) / 1000000000.0L);
-        }
-    }
+    updateInsTime(obs);
 
-    return invokeCallbacks(obs);
+    invokeCallbacks(obs);
 }

@@ -29,6 +29,8 @@
 #include "Nodes/NodeManager.hpp"
 #include "NodeRegistry.hpp"
 
+#include "Nodes/GnuPlot/GnuPlot.hpp"
+
 #include "NodeData/InsObs.hpp"
 
 int main(int argc, const char* argv[])
@@ -101,7 +103,7 @@ int main(int argc, const char* argv[])
                         }
                         else
                         {
-                            LOG_ERROR("Node {} does provide data but without InsTime value.", node->getName());
+                            LOG_DEBUG("Node {} does provide data but without InsTime value.", node->getName());
                         }
                     }
                 }
@@ -150,27 +152,11 @@ int main(int argc, const char* argv[])
         nodeManager.disableAllCallbacks();
 
         // Update all GnuPlot Windows and wait for them to open
-        for (const auto& node : nodeManager.nodes())
+        if (NAV::GnuPlot::update())
         {
-            if (node->type().find("GnuPlot") != std::string_view::npos)
-            {
-                // std::static_pointer_cast<NAV::GnuPlot>(node)->update();
-                while (system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
-                {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                }
-            }
-        }
-
-        if (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
-        {
-            LOG_INFO("Waiting for all Gnuplot windows to close");
-        }
-
-        // Wait if any GnuPlot Window is open. GnuPlot becomes unresponsive when parent dies
-        while (!system("xwininfo -name \"Gnuplot window 0\" > /dev/null 2>&1")) // NOLINT
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            LOG_INFO("Please close all Gnuplot windows and press 'Enter' to exit...");
+            std::cin.get();
+            system("pkill gnuplot_qt > /dev/null 2>&1"); // NOLINT
         }
 
         return EXIT_SUCCESS;

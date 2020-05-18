@@ -64,7 +64,7 @@ class GnuPlot : public Node
     GnuPlot& operator=(const GnuPlot&) = delete; ///< Copy assignment operator
     GnuPlot& operator=(GnuPlot&&) = delete;      ///< Move assignment operator
 
-    static void update();
+    static bool update();
 
     void requestUpdate() const;
 

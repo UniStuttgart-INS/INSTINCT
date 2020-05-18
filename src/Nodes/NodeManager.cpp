@@ -179,6 +179,7 @@ void NAV::NodeManager::linkNodes()
                             LOG_CRITICAL("Requested NodeLink with type '{}' is not registered with the application", sourceNode->dataType(Node::PortType::Out, link.sourcePortIndex));
                         }
                         iter->second.addCallback(sourceNode, targetNode, link.targetPortIndex);
+                        targetNode->incomingLinks.emplace(link.targetPortIndex, std::make_pair(sourceNode, link.sourcePortIndex));
 
                         break;
                     }
