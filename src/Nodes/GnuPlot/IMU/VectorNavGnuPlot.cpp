@@ -2,6 +2,7 @@
 
 #include "util/Logger.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
+#include "Nodes/NodeManager.hpp"
 
 #include <tuple>
 #include <cmath>
@@ -286,11 +287,14 @@ void NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::VectorNavObs>&
         }
 
         // Delete old data
-        for (auto& dataIndex : dataIndices)
+        if (NodeManager::appContext != NodeContext::POST_PROCESSING)
         {
-            while (timeFrame != 0.0 && plotWindow->data.at(dataIndex).xy.back().first - plotWindow->data.at(dataIndex).xy.front().first > timeFrame)
+            for (auto& dataIndex : dataIndices)
             {
-                plotWindow->data.at(dataIndex).xy.pop_front();
+                while (timeFrame != 0.0 && plotWindow->data.at(dataIndex).xy.back().first - plotWindow->data.at(dataIndex).xy.front().first > timeFrame)
+                {
+                    plotWindow->data.at(dataIndex).xy.pop_front();
+                }
             }
         }
     }

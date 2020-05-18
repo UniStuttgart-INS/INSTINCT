@@ -19,7 +19,7 @@ class Sleep
     Sleep() = delete;
 
     /// @brief Wait the thread till sigusr signal is send
-    static void waitForSignal();
+    static void waitForSignal(bool showText = false);
 
     /**
      * @brief Wait the thread till time passes

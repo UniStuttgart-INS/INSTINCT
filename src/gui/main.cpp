@@ -26,6 +26,8 @@
 #include <algorithm>
 #include <string>
 #include <map>
+#include <chrono>
+#include <thread>
 
 #include "Nodes/Node.hpp"
 #include "Nodes/NodeManager.hpp"
@@ -249,7 +251,9 @@ void run()
     if (scene->nodes().size() > 0)
     {
         exportConfig();
-        system("./bin/Debug/navsos -f config.ini config-dataflow.ini");
+        system("pkill -SIGUSR1 -x navsos");
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        system("./bin/Debug/navsos -f config.ini config-dataflow.ini &");
     }
 }
 

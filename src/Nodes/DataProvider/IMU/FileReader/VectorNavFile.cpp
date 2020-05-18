@@ -597,10 +597,6 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
                 obs->gyroCompNED.value()(2) = std::stod(cell);
             }
         }
-        else
-        {
-            LOG_WARN("{}-ASCII-File more column entries than headers", name);
-        }
     }
 
     if (!obs->quaternion.has_value())

@@ -15,7 +15,7 @@ void NAV::Sleep::handler(int /* */)
     usr_interrupt = 1;
 }
 
-void NAV::Sleep::waitForSignal()
+void NAV::Sleep::waitForSignal(bool showText)
 {
     LOG_TRACE("called");
 
@@ -31,7 +31,10 @@ void NAV::Sleep::waitForSignal()
     signal(SIGINT, handler);
     signal(SIGTERM, handler);
 
-    LOG_INFO("Programm waits for one of the signals: -SIGUSR1 / -SIGINT (Ctrl + c) / -SIGTERM");
+    if (showText)
+    {
+        LOG_INFO("Programm waits for one of the signals: -SIGUSR1 / -SIGINT (Ctrl + c) / -SIGTERM");
+    }
 
     /* Wait for a signal to arrive. */
     sigprocmask(SIG_BLOCK, &mask, &oldmask);

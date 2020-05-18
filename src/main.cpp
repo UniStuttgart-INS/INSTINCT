@@ -17,8 +17,6 @@
  * @date 2020-03-12
  */
 
-#include <chrono>
-#include <thread>
 #include <iostream>
 
 #include "util/Logger.hpp"
@@ -87,7 +85,7 @@ int main(int argc, const char* argv[])
         // Read data files
         if (NAV::NodeManager::appContext == NAV::Node::NodeContext::POST_PROCESSING)
         {
-            std::map<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>> events;
+            std::multimap<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>> events;
             // Get first event of all nodes
             for (const auto& node : nodeManager.nodes())
             {
@@ -109,7 +107,7 @@ int main(int argc, const char* argv[])
                 }
             }
 
-            std::map<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>>::iterator it;
+            std::multimap<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>>::iterator it;
             while (it = events.begin(), it != events.end())
             {
                 auto& node = it->second.first;
@@ -154,8 +152,8 @@ int main(int argc, const char* argv[])
         // Update all GnuPlot Windows and wait for them to open
         if (NAV::GnuPlot::update())
         {
-            LOG_INFO("Please close all Gnuplot windows and press 'Enter' to exit...");
-            std::cin.get();
+            LOG_INFO("Programm finished and waits for Gnuplot windows to close...");
+            NAV::Sleep::waitForSignal();
             system("pkill gnuplot_qt > /dev/null 2>&1"); // NOLINT
         }
 
