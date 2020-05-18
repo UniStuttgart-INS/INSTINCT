@@ -30,6 +30,12 @@
                 "-c",
                 "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF -DENABLE_GUI=OFF || true"
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
+                }
+            },
             "presentation": {
                 "clear": true
             },
@@ -44,6 +50,12 @@
                 "-c",
                 "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF -DENABLE_GUI=OFF || true"
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
+                }
+            },
             "presentation": {
                 "clear": true
             },
@@ -61,6 +73,12 @@
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_GUI=ON"
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
+                }
+            },
             "presentation": {
                 "clear": true
             },
@@ -77,7 +95,14 @@
                 "-DCMAKE_BUILD_TYPE=Debug",
                 "-DENABLE_TESTING=ON"
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
+                }
+            },
             "presentation": {
+                "panel": ,
                 "clear": true
             },
             "problemMatcher": []
@@ -86,11 +111,19 @@
             "label": "CMAKE: Documentation",
             "type": "shell",
             "group": "build",
-            "command": "bash",
+            "command": "cmake",
             "args": [
-                "-c",
-                "cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_DOXYGEN=TRUE"
+                "-Bbuild/Release",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DENABLE_DOXYGEN=TRUE"
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
+                }
+            },
             "presentation": {
                 "clear": true
             },
@@ -107,6 +140,12 @@
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug"
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
+                }
+            },
             "presentation": {
                 "focus": true
             },
@@ -125,6 +164,12 @@
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release"
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
+                }
+            },
             "presentation": {
                 "focus": true
             },

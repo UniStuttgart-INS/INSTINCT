@@ -14,6 +14,7 @@
 #include <memory>
 #include <map>
 #include <deque>
+#include <cstdint>
 
 #include "Node.hpp"
 
@@ -107,8 +108,6 @@ class NodeManager
     static Node::NodeContext appContext;
 
   private:
-    bool dataTypesMatch(std::string_view child, std::string_view root);
-
     /// Stores info to construct a node
     using NodeConfig = struct
     {
@@ -120,9 +119,10 @@ class NodeManager
     /// Stores info to set up a data link
     using NodeLink = struct
     {
-        std::string source; ///< Name of the Source Node
-        std::string target; ///< Name of the Target Node
-        std::string type;   ///< Data Type of the Link
+        std::string source;                  ///< Name of the Source Node
+        uint8_t sourcePortIndex = UINT8_MAX; ///< Port Index of the Source Node
+        std::string target;                  ///< Name of the Target Node
+        uint8_t targetPortIndex = UINT8_MAX; ///< Port Index of the Target Node
     };
 
     /// List of all registered nodes

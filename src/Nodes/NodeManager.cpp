@@ -83,9 +83,13 @@ void NAV::NodeManager::processConfigFile()
                 {
                     link.source = cell;
                 }
-                else if (link.type.empty())
+                else if (link.sourcePortIndex == UINT8_MAX)
                 {
-                    link.type = cell;
+                    link.sourcePortIndex = static_cast<uint8_t>(std::stoul(cell));
+                }
+                else if (link.targetPortIndex == UINT8_MAX)
+                {
+                    link.targetPortIndex = static_cast<uint8_t>(std::stoul(cell));
                 }
                 else if (link.target.empty())
                 {
@@ -95,7 +99,7 @@ void NAV::NodeManager::processConfigFile()
 
             nodeLinks.push_back(link);
 
-            LOG_DEBUG("Option-link: {} == {} ==> {}", link.source, link.type, link.target);
+            LOG_DEBUG("Option-link: {} [{}] ==> [{}] {}", link.source, link.sourcePortIndex, link.targetPortIndex, link.target);
         }
     }
     else
@@ -132,29 +136,6 @@ void NAV::NodeManager::initializeNodes()
     }
 }
 
-bool NAV::NodeManager::dataTypesMatch(std::string_view child, std::string_view root)
-{
-    if (child == root)
-    {
-        return true;
-    }
-
-    if (_registeredNodeDataTypes.contains(child))
-    {
-        const auto& parents = _registeredNodeDataTypes.find(child)->second.parents;
-
-        for (const auto& parent : parents)
-        {
-            if (root == parent || dataTypesMatch(parent, root))
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 void NAV::NodeManager::linkNodes()
 {
     LOG_TRACE("called");
@@ -177,57 +158,27 @@ void NAV::NodeManager::linkNodes()
                     {
                         targetNodeFound = true;
 
-                        bool sourceNodeHasOutputType = false;
-                        for (uint8_t i = 0; i < sourceNode->nPorts(Node::PortType::Out); i++)
+                        if (sourceNode->nPorts(Node::PortType::Out) <= link.sourcePortIndex)
                         {
-                            if (sourceNode->dataType(Node::PortType::Out, i) == link.type)
-                            {
-                                sourceNodeHasOutputType = true;
-
-                                int targetNodeInputTypePortIndex = -1;
-                                for (uint8_t j = 0; j < targetNode->nPorts(Node::PortType::In); j++)
-                                {
-                                    if (targetNode->dataType(Node::PortType::In, j) == link.type)
-                                    {
-                                        targetNodeInputTypePortIndex = j;
-                                        break;
-                                    }
-                                }
-                                if (targetNodeInputTypePortIndex == -1)
-                                {
-                                    for (uint8_t j = 0; j < targetNode->nPorts(Node::PortType::In); j++)
-                                    {
-                                        if (dataTypesMatch(link.type, targetNode->dataType(Node::PortType::In, j)))
-                                        {
-                                            targetNodeInputTypePortIndex = j;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (targetNodeInputTypePortIndex == -1)
-                                {
-                                    LOG_CRITICAL("Data Link {} ⇒ {} could not be created because the data type {} is not supported by the target node",
-                                                 link.source, link.target, link.type);
-                                }
-
-                                // At this point both nodes were found and they have the link data type
-
-                                // Check if the NodeData type is registered and add the callback
-                                auto iter = _registeredNodeDataTypes.find(link.type);
-                                if (iter == _registeredNodeDataTypes.end())
-                                {
-                                    LOG_CRITICAL("Requested NodeLink with type '{}' is not registered with the application", link.type);
-                                }
-                                iter->second.addCallback(sourceNode, targetNode, static_cast<uint8_t>(targetNodeInputTypePortIndex));
-
-                                break;
-                            }
+                            LOG_CRITICAL("Data Link {} [{}] ⇒ [{}] {} could not be created because the source node only has {} output ports",
+                                         link.source, link.sourcePortIndex, link.targetPortIndex, link.target, sourceNode->nPorts(Node::PortType::Out));
                         }
-                        if (!sourceNodeHasOutputType)
+
+                        if (targetNode->nPorts(Node::PortType::In) <= link.targetPortIndex)
                         {
-                            LOG_CRITICAL("Data Link {} ⇒ {} could not be created because the data type {} is not supported by the source node",
-                                         link.source, link.target, link.type);
+                            LOG_CRITICAL("Data Link {} [{}] ⇒ [{}] {} could not be created because the target node only has {} input ports",
+                                         link.source, link.sourcePortIndex, link.targetPortIndex, link.target, targetNode->nPorts(Node::PortType::In));
                         }
+
+                        // At this point both nodes were found and they have the link data type
+
+                        // Check if the NodeData type is registered and add the callback
+                        auto iter = _registeredNodeDataTypes.find(sourceNode->dataType(Node::PortType::Out, link.sourcePortIndex));
+                        if (iter == _registeredNodeDataTypes.end())
+                        {
+                            LOG_CRITICAL("Requested NodeLink with type '{}' is not registered with the application", sourceNode->dataType(Node::PortType::Out, link.sourcePortIndex));
+                        }
+                        iter->second.addCallback(sourceNode, targetNode, link.targetPortIndex);
 
                         break;
                     }

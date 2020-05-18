@@ -638,7 +638,7 @@ bool InsTime::operator>(const InsTime& mjd_compare) const
 }
 bool InsTime::operator==(const InsTime& mjd_compare) const
 {
-    if (mjd_compare.mjd.mjd_day == mjd.mjd_day && fabs(mjd_compare.mjd.mjd_frac - mjd.mjd_frac) < 0.000001)
+    if (mjd_compare.mjd.mjd_day == mjd.mjd_day && std::fabs(mjd_compare.mjd.mjd_frac - mjd.mjd_frac) < 0.000001)
         return true;
     return false;
     //	std::cout << " vergleich " << mjd_compare.mjd.mjd_day << " " << mjd_compare.mjd.mjd_frac << "\n";
@@ -646,7 +646,7 @@ bool InsTime::operator==(const InsTime& mjd_compare) const
 }
 bool InsTime::operator!=(const InsTime& mjd_compare) const
 {
-    if (mjd_compare.mjd.mjd_day != mjd.mjd_day || fabs(mjd_compare.mjd.mjd_frac - mjd.mjd_frac) > 0.000001)
+    if (mjd_compare.mjd.mjd_day != mjd.mjd_day || std::fabs(mjd_compare.mjd.mjd_frac - mjd.mjd_frac) > 0.000001)
         return true;
     return false;
 }

@@ -185,14 +185,16 @@ void exportConfig()
     {
         auto source = connection.second->getNode(QtNodes::PortType::Out);
         auto sourcePort = connection.second->getPortIndex(QtNodes::PortType::Out);
-        // auto& sourceNodeInterface = NAV::nodeInterfaces.at();
-        const auto& sourceNodeInfo = nodeManager.registeredNodeTypes().find(source->nodeDataModel()->name().toStdString())->second;
+        // const auto& sourceNodeInfo = nodeManager.registeredNodeTypes().find(source->nodeDataModel()->name().toStdString())->second;
         auto target = connection.second->getNode(QtNodes::PortType::In);
+        auto targetPort = connection.second->getPortIndex(QtNodes::PortType::In);
 
         filestream << "link = "
                    << source->id().toString().toStdString() << ", "
-                   << sourceNodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::Out, static_cast<uint8_t>(sourcePort)) << ", "
-                   << target->id().toString().toStdString() << std::endl;
+                   << sourcePort << ", "
+                   << targetPort << ", "
+                   //    << sourceNodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::Out, static_cast<uint8_t>(sourcePort)) << ", "
+                   << target->id().toString().toStdString() << '\n';
     }
 
     filestream.close();

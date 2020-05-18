@@ -40,8 +40,6 @@ void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
 
 void NAV::TimeSynchronizer::syncVectorNavSensor(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
-    LOG_TRACE("called for {}", name);
-
     if (startupGpsTime.has_value())
     {
         if (!startupImuTime.has_value())

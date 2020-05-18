@@ -32,8 +32,6 @@ NAV::UbloxSyncSignal::UbloxSyncSignal(const std::string& name, std::deque<std::s
 
 void NAV::UbloxSyncSignal::triggerSync(std::shared_ptr<NAV::UbloxObs>& obs)
 {
-    LOG_TRACE("called for {}", name);
-
     if (obs->msgClass == triggerClass && obs->msgId == triggerId)
     {
         // NOLINTNEXTLINE
