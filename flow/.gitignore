@@ -2,7 +2,4 @@
 *
 !.gitignore
 
-!VectorNavFile.flow
-!VectorNavSensor-UbloxSensor.flow
-!VectorNavFile-GnuPlot.flow
-!VectorNavSensor-GnuPlot.flow
+!VN-Ublox-Sensor-GnuPlot.flow
