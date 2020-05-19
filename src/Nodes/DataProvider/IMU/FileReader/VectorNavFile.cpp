@@ -66,8 +66,6 @@ NAV::VectorNavFile::~VectorNavFile()
     {
         filestream.close();
     }
-
-    LOG_DEBUG("{} successfully deinitialized", name);
 }
 
 std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)

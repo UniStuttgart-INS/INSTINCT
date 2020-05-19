@@ -20,7 +20,7 @@ The software consists of 2 parts
     * [cmake](https://cmake.org/) A cross-platform open-source make system
     * [make](https://www.gnu.org/software/make/) GNU make utility to maintain groups of programs
     * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) Code formatting Tool
-    * C++ compiler (e.g. [gcc](https://gcc.gnu.org/), [clang](https://clang.llvm.org/)) for compiling the project
+    * C++ compiler ([clang](https://clang.llvm.org/) is recommended, but others work as well) for compiling the project
 * Optional:
     * [Conan](https://conan.io) A distributed, open source, C/C++ package manager
     * [gnuplot](http://www.gnuplot.info/) Plotting package. Needed if any plotting is intended
@@ -28,6 +28,8 @@ The software consists of 2 parts
     * [valgrind](http://valgrind.org/) CPU profiling & leak detection
     * [kcachegrind](http://kcachegrind.sourceforge.net) Visualization of Performance Profiling Data
     * [doxygen](http://www.doxygen.nl/) Documentation system for C++, C, Java, IDL and PHP
+    * [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) Clang-based C++ "linter" tool
+    * [cppcheck](http://cppcheck.sourceforge.net/) A tool for static C/C++ code analysis
 * Libraries (Install yourself and change cmake link targets or let them automatically be installed by Conan):
     * [spdlog](https://github.com/gabime/spdlog) Fast C++ logging library
     * [fmt](https://github.com/fmtlib/fmt) A modern formatting library https://fmt.dev
@@ -48,7 +50,7 @@ sudo pacman -S base-devel cmake clang
 
 # Optional
 trizen -S conan # AUR package
-sudo pacman -S ccache valgrind kcachegrind doxygen gnuplot
+sudo pacman -S ccache valgrind kcachegrind doxygen gnuplot cppcheck
 
 # GUI (optional)
 sudo pacman -S qt5-base
@@ -61,7 +63,7 @@ sudo apt-get install build-essential cmake clang
 
 # Optional
 pip install conan
-sudo apt-get install ccache valgrind kcachegrind doxygen gnuplot gnuplot-x11
+sudo apt-get install ccache valgrind kcachegrind doxygen gnuplot gnuplot-x11 cppcheck
 
 # GUI (optional)
 sudo apt-get install qt5-default 
@@ -78,6 +80,8 @@ Recommended plugins for working with this project
 * [Todo Tree](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree): Show TODO, FIXME, etc. comment tags in a tree view
 * [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker): Spelling checker for source code
 * [Log File Highlighter](https://marketplace.visualstudio.com/items?itemName=emilast.LogFileHighlighter): Adds color highlighting to log files to make it easier to follow the flow of log events and identify problems.
+* [Clang-Tidy](https://marketplace.visualstudio.com/items?itemName=notskm.clang-tidy) Integrates clang-tidy into VS Code
+* [cmake-format](https://marketplace.visualstudio.com/items?itemName=cheshirekow.cmake-format) Format listfiles so they don't look like crap
 
 Recommended changes to the User's ```settings.json``` (not the project .vscode/settings.json)
 ```

@@ -1,8 +1,10 @@
 #include "Sleep.hpp"
 #include "Logger.hpp"
 
-// #include <chrono>
-// #include <thread>
+#if !_WIN32 && !__linux__ && !__APPLE__ && !__CYGWIN__ && !__QNXNTO__
+    #include <chrono>
+    #include <thread>
+#endif
 #include <csignal>
 #include <unistd.h>
 
@@ -61,13 +63,12 @@ void NAV::Sleep::countDownSeconds(size_t seconds)
         LOG_INFO("{} seconds till program finishes", seconds - i);
 
         // Use of system sleep better here, as it interrupts on signal
-        // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 #if _WIN32
         Sleep(1000);
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
         sleep(1);
 #else
-    #error "Unknown System"
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 #endif
     }
 

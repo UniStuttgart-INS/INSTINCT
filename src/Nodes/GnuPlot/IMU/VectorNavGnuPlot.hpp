@@ -26,7 +26,7 @@ class VectorNavGnuPlot final : public GnuPlot
     VectorNavGnuPlot(const std::string& name, std::deque<std::string>& options);
 
     VectorNavGnuPlot() = default;                                  ///< Default Constructor
-    ~VectorNavGnuPlot() final = default;                           ///< Destructor
+    ~VectorNavGnuPlot() final;                           ///< Destructor
     VectorNavGnuPlot(const VectorNavGnuPlot&) = delete;            ///< Copy constructor
     VectorNavGnuPlot(VectorNavGnuPlot&&) = delete;                 ///< Move constructor
     VectorNavGnuPlot& operator=(const VectorNavGnuPlot&) = delete; ///< Copy assignment operator

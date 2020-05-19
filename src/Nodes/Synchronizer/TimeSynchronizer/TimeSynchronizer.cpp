@@ -2,10 +2,6 @@
 
 #include "util/Logger.hpp"
 
-#include "NodeData/IMU/VectorNavObs.hpp"
-#include "NodeData/GNSS/UbloxObs.hpp"
-#include "ub/protocol/types.hpp"
-
 NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, std::deque<std::string>& options)
     : Node(name)
 {

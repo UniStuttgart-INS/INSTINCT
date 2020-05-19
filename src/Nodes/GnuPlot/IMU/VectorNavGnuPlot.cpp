@@ -134,6 +134,11 @@ NAV::VectorNavGnuPlot::VectorNavGnuPlot(const std::string& name, std::deque<std:
     }
 }
 
+NAV::VectorNavGnuPlot::~VectorNavGnuPlot()
+{
+    LOG_TRACE("called for {}", name);
+}
+
 void NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
     if (!insTime0.has_value())

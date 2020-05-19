@@ -102,7 +102,6 @@
                 }
             },
             "presentation": {
-                "panel": ,
                 "clear": true
             },
             "problemMatcher": []
