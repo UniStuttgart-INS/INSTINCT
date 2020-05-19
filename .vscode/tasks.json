@@ -93,7 +93,10 @@
                 "-Bbuild/Debug",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
-                "-DENABLE_TESTING=ON"
+                "-DENABLE_TESTING=ON",
+                "-DENABLE_GUI=OFF",
+                "-DENABLE_MAIN=OFF",
+                "-DENABLE_VN_UB_SENSORS=OFF"
             ],
             "options": {
                 "env": {

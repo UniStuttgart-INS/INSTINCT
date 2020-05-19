@@ -42,6 +42,7 @@ include(cmake/StaticAnalyzers.cmake)
 # If true, the library target will be a shared library, otherwise it will be static.
 option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 option(ENABLE_TESTING "Enable Test Builds" OFF)
+option(ENABLE_MAIN "Build Main file" ON)
 option(ENABLE_GUI "Build GUI" OFF)
 
 # Include all project headers
@@ -61,7 +62,7 @@ list(
   spdlog/1.5.0
   boost/1.72.0
   eigen/3.3.7
-  gtest/1.10.0)
+  catch2/2.12.1)
 
 if(BUILD_SHARED_LIBS)
   list(APPEND CONAN_EXTRA_OPTIONS "Pkg:shared=True")
@@ -104,18 +105,20 @@ find_package(Threads REQUIRED)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
 
-if(ENABLE_TESTING)
-  # enable_testing()
-  add_subdirectory(tests)
-endif()
-
 if(ENABLE_GUI)
   # Include nodeeditor library
   add_subdirectory(lib/nodeeditor)
   set_target_properties(nodes PROPERTIES CXX_CLANG_TIDY "")
 endif()
 
-add_subdirectory(src)
+if(ENABLE_MAIN)
+  add_subdirectory(src)
+endif()
+
+if(ENABLE_TESTING)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
 
 option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
 if(ENABLE_UNITY)

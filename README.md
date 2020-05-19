@@ -35,7 +35,7 @@ The software consists of 2 parts
     * [fmt](https://github.com/fmtlib/fmt) A modern formatting library https://fmt.dev
     * [Boost](https://www.boost.org/) Free peer-reviewed portable C++ source libraries
     * [Eigen](http://eigen.tuxfamily.org) C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms
-    * [googletest](https://github.com/google/googletest) Google Testing and Mocking Framework
+    * [Catch2](https://github.com/catchorg/Catch2) Modern, C++-native, header-only, test framework for unit-tests, TDD and BDD
 * GUI (optional):
     * [Qt](https://www.qt.io/) A cross-platform application and UI framework
 

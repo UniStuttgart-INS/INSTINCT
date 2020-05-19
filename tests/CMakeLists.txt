@@ -1,26 +1,35 @@
-message(STATUS "Building Tests")
+# automatically enable catch2 to generate ctest targets
+if(CONAN_CATCH2_ROOT_DEBUG)
+  include(${CONAN_CATCH2_ROOT_DEBUG}/lib/cmake/Catch2/Catch.cmake)
+else()
+  include(${CONAN_CATCH2_ROOT}/lib/cmake/Catch2/Catch.cmake)
+endif()
 
-file(GLOB_RECURSE SRCFILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
+add_library(catch_main STATIC catch_main.cpp)
+target_link_libraries(catch_main PUBLIC CONAN_PKG::catch2)
+target_link_libraries(catch_main PRIVATE project_options)
 
-# this is the file I want to exclude / remove from the list
-get_filename_component(full_path_test_cpp ${CMAKE_SOURCE_DIR}/src/main.cpp ABSOLUTE)
-message("${full_path_test_cpp}")
-
-list(REMOVE_ITEM SRCFILES "${full_path_test_cpp}")
-message("${SRCFILES}")
-
-include(GoogleTest)
-add_executable(tests main.cpp ${SRCFILES})
-
+# Link all files in the Source directory
+include_directories(${CMAKE_SOURCE_DIR}/src)
+add_executable(tests util/LoggerTests.cpp "${CMAKE_SOURCE_DIR}/src/util/Logger.cpp")
 target_link_libraries(
   tests
-  PRIVATE project_options
-          project_warnings
+  PRIVATE project_warnings
+          project_options
+          catch_main
           CONAN_PKG::fmt
           CONAN_PKG::spdlog
-          CONAN_PKG::gtest
           CONAN_PKG::boost
           CONAN_PKG::eigen
-          Threads::Threads
-          libvncxx
-          libubcxx)
+          Threads::Threads)
+
+# automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
+# whatever you want, or use different for different binaries
+catch_discover_tests(
+  tests
+  TEST_PREFIX
+  "unittests."
+  EXTRA_ARGS
+  -s
+  --reporter=xml
+  --out=tests.xml)
