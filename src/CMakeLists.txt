@@ -21,9 +21,13 @@ target_link_libraries(
           CONAN_PKG::spdlog
           CONAN_PKG::boost
           CONAN_PKG::eigen
-          Threads::Threads
-          libvncxx
-          libubcxx)
+          Threads::Threads)
+
+if(ENABLE_VN_UB_SENSORS)
+  target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libvncxx libubcxx)
+else()
+  target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC DISABLE_VN_SENSORS DISABLE_UB_SENSORS)
+endif()
 
 if(ENABLE_GUI)
   message(STATUS "Building ${CMAKE_PROJECT_NAME}-GUI")
@@ -53,9 +57,13 @@ if(ENABLE_GUI)
             NodeEditor::nodes
             CONAN_PKG::boost
             CONAN_PKG::eigen
-            Threads::Threads
-            libvncxx
-            libubcxx)
+            Threads::Threads)
+
+  if(ENABLE_VN_UB_SENSORS)
+    target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui" PRIVATE libvncxx libubcxx)
+  else()
+    target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC DISABLE_VN_SENSORS DISABLE_UB_SENSORS)
+  endif()
 
   set_target_properties("${PROJECT_NAME_LOWERCASE}-gui" PROPERTIES CXX_CLANG_TIDY "")
 endif()

@@ -1,7 +1,9 @@
-#include "UbloxSyncSignal.hpp"
+#ifndef DISABLE_UB_SENSORS
 
-#include "util/Logger.hpp"
-#include "NodeData/GNSS/UbloxObs.hpp"
+    #include "UbloxSyncSignal.hpp"
+
+    #include "util/Logger.hpp"
+    #include "NodeData/GNSS/UbloxObs.hpp"
 
 NAV::UbloxSyncSignal::UbloxSyncSignal(const std::string& name, std::deque<std::string>& options)
     : UsbSyncSignal(name, options)
@@ -13,8 +15,8 @@ NAV::UbloxSyncSignal::UbloxSyncSignal(const std::string& name, std::deque<std::s
     {
         if (options.at(0) == "UBX")
         {
-            triggerClass = ub::protocol::uart::getMsgClassFromString(options.at(1));
-            triggerId = ub::protocol::uart::getMsgIdFromString(triggerClass, options.at(2));
+            triggerClass = ublox::getMsgClassFromString(options.at(1));
+            triggerId = ublox::getMsgIdFromString(triggerClass, options.at(2));
             options.pop_front();
             options.pop_front();
             options.pop_front();
@@ -30,7 +32,7 @@ NAV::UbloxSyncSignal::UbloxSyncSignal(const std::string& name, std::deque<std::s
     }
 }
 
-void NAV::UbloxSyncSignal::triggerSync(std::shared_ptr<NAV::UbloxObs>& obs)
+void NAV::UbloxSyncSignal::triggerSync(const std::shared_ptr<NAV::UbloxObs>& obs)
 {
     if (obs->msgClass == triggerClass && obs->msgId == triggerId)
     {
@@ -50,3 +52,5 @@ void NAV::UbloxSyncSignal::triggerSync(std::shared_ptr<NAV::UbloxObs>& obs)
 
     return invokeCallbacks(obs);
 }
+
+#endif

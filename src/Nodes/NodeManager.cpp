@@ -217,6 +217,16 @@ void NAV::NodeManager::disableAllCallbacks()
     }
 }
 
+void NAV::NodeManager::deleteAllNodes()
+{
+    for (auto& node : _nodes)
+    {
+        node->incomingLinks.clear();
+        node->removeAllCallbacks();
+        node = nullptr;
+    }
+}
+
 const std::vector<std::shared_ptr<NAV::Node>>& NAV::NodeManager::nodes() const
 {
     return _nodes;

@@ -1,6 +1,8 @@
-#include "UbloxSensor.hpp"
+#ifndef DISABLE_UB_SENSORS
 
-#include "util/Logger.hpp"
+    #include "UbloxSensor.hpp"
+
+    #include "util/Logger.hpp"
 
 NAV::UbloxSensor::UbloxSensor(const std::string& name, std::deque<std::string>& options)
     : UartSensor(options), Gnss(name, options)
@@ -37,15 +39,13 @@ NAV::UbloxSensor::~UbloxSensor()
 {
     LOG_TRACE("called for {}", name);
 
-    removeAllCallbacks<UbloxObs>();
+    removeAllCallbacksOfType<UbloxObs>();
     callbacksEnabled = false;
     if (ub.isConnected())
     {
         ub.unregisterAsyncPacketReceivedHandler();
         ub.disconnect();
     }
-
-    LOG_DEBUG("{} successfully deinitialized", name);
 }
 
 void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::protocol::uart::Packet& p, size_t /*index*/)
@@ -53,26 +53,26 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
     auto* ubSensor = static_cast<UbloxSensor*>(userData);
 
     auto obs = std::make_shared<UbloxObs>();
-    obs->p = &p;
+    obs->raw.setData(p.getRawData(), p.getRawDataLength());
 
     if (p.type() == ub::protocol::uart::Packet::TYPE_BINARY)
     {
-        obs->msgClass = static_cast<ub::protocol::uart::UbxClass>(p.extractUint8());
-        obs->msgId = p.extractUint8();
-        obs->payloadLength = p.extractUint16();
+        obs->msgClass = static_cast<ublox::UbxClass>(obs->raw.extractUint8());
+        obs->msgId = obs->raw.extractUint8();
+        obs->payloadLength = obs->raw.extractUint16();
 
-        if (obs->msgClass == ub::protocol::uart::UbxClass::UBX_CLASS_NAV)
+        if (obs->msgClass == ublox::UbxClass::UBX_CLASS_NAV)
         {
-            auto msgId = static_cast<ub::protocol::uart::UbxNavMessages>(obs->msgId);
-            if (msgId == ub::protocol::uart::UbxNavMessages::UBX_NAV_ATT)
+            auto msgId = static_cast<ublox::UbxNavMessages>(obs->msgId);
+            if (msgId == ublox::UbxNavMessages::UBX_NAV_ATT)
             {
                 LOG_DATA("DATA({}): UBX:  NAV-ATT, Size {}", ubSensor->name, (obs->payloadLength + 8));
             }
-            else if (msgId == ub::protocol::uart::UbxNavMessages::UBX_NAV_POSLLH)
+            else if (msgId == ublox::UbxNavMessages::UBX_NAV_POSLLH)
             {
                 LOG_DATA("DATA({}): UBX:  NAV-POSLLH, Size {}", ubSensor->name, (obs->payloadLength + 8));
             }
-            else if (msgId == ub::protocol::uart::UbxNavMessages::UBX_NAV_VELNED)
+            else if (msgId == ublox::UbxNavMessages::UBX_NAV_VELNED)
             {
                 LOG_DATA("DATA({}): UBX:  NAV-VELNED, Size {}", ubSensor->name, (obs->payloadLength + 8));
             }
@@ -81,17 +81,17 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
                 LOG_DATA("DATA({}): UBX:  NAV-{:x}, Size {}", ubSensor->name, msgId, (obs->payloadLength + 8));
             }
         }
-        else if (obs->msgClass == ub::protocol::uart::UbxClass::UBX_CLASS_RXM)
+        else if (obs->msgClass == ublox::UbxClass::UBX_CLASS_RXM)
         {
-            auto msgId = static_cast<ub::protocol::uart::UbxRxmMessages>(obs->msgId);
-            if (msgId == ub::protocol::uart::UbxRxmMessages::UBX_RXM_SFRBX)
+            auto msgId = static_cast<ublox::UbxRxmMessages>(obs->msgId);
+            if (msgId == ublox::UbxRxmMessages::UBX_RXM_SFRBX)
             {
                 LOG_DATA("DATA({}): UBX:  RXM-SFRBX, Size {}", ubSensor->name, (obs->payloadLength + 8));
             }
-            else if (msgId == ub::protocol::uart::UbxRxmMessages::UBX_RXM_RAWX)
+            else if (msgId == ublox::UbxRxmMessages::UBX_RXM_RAWX)
             {
-                double gpsTimeOfWeek = p.extractDouble();
-                uint16_t gpsWeek = p.extractUint16();
+                double gpsTimeOfWeek = obs->raw.extractDouble();
+                uint16_t gpsWeek = obs->raw.extractUint16();
 
                 obs->insTime.emplace(gpsWeek, static_cast<long double>(gpsTimeOfWeek), 0);
 
@@ -103,10 +103,10 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
                 LOG_DATA("DATA({}): UBX:  RXM-{:x}, Size {}", ubSensor->name, msgId, (obs->payloadLength + 8));
             }
         }
-        else if (obs->msgClass == ub::protocol::uart::UbxClass::UBX_CLASS_ESF)
+        else if (obs->msgClass == ublox::UbxClass::UBX_CLASS_ESF)
         {
-            auto msgId = static_cast<ub::protocol::uart::UbxEsfMessages>(obs->msgId);
-            if (msgId == ub::protocol::uart::UbxEsfMessages::UBX_ESF_RAW)
+            auto msgId = static_cast<ublox::UbxEsfMessages>(obs->msgId);
+            if (msgId == ublox::UbxEsfMessages::UBX_ESF_RAW)
             {
                 LOG_DATA("DATA({}): UBX:  ESF-RAW, Size {}", ubSensor->name, (obs->payloadLength + 8));
             }
@@ -127,3 +127,5 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::pro
 
     ubSensor->invokeCallbacks(obs);
 }
+
+#endif

@@ -83,6 +83,9 @@ class NodeManager
     /// @brief Disables callbacks for all Nodes from the config file
     void disableAllCallbacks();
 
+    /// @brief Deletes all nodes and frees memory
+    void deleteAllNodes();
+
     /**
      * @brief Returns a list of all configured nodes
      * 

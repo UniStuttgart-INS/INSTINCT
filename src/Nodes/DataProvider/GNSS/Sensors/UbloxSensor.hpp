@@ -7,10 +7,12 @@
 
 #pragma once
 
-#include "NodeData/GNSS/UbloxObs.hpp"
-#include "../Gnss.hpp"
-#include "../../Protocol/UartSensor.hpp"
-#include "ub/sensors/sensors.hpp"
+#ifndef DISABLE_UB_SENSORS
+
+    #include "NodeData/GNSS/UbloxObs.hpp"
+    #include "../Gnss.hpp"
+    #include "../../Protocol/UartSensor.hpp"
+    #include "ub/sensors/sensors.hpp"
 
 namespace NAV
 {
@@ -172,3 +174,5 @@ class UbloxSensor final : public UartSensor, public Gnss
 };
 
 } // namespace NAV
+
+#endif

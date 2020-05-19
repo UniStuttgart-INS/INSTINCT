@@ -10,11 +10,16 @@ NAV::UbloxDataLogger::UbloxDataLogger(const std::string& name, std::deque<std::s
     LOG_TRACE("called for {}", name);
 }
 
+NAV::UbloxDataLogger::~UbloxDataLogger()
+{
+    LOG_TRACE("called for {}", name);
+}
+
 void NAV::UbloxDataLogger::writeObservation(std::shared_ptr<NAV::UbloxObs>& obs)
 {
     if (fileType == FileType::BINARY)
     {
-        filestream.write(static_cast<char*>(static_cast<void*>(obs->p->getRawData())), static_cast<std::streamsize>(obs->p->getRawDataLength()));
+        filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
     }
     else
     {

@@ -1,8 +1,10 @@
-#include "VectorNavSensor.hpp"
+#ifndef DISABLE_VN_SENSORS
 
-#include "util/Debug.hpp"
-#include "util/Logger.hpp"
-#include "vn/searcher.h"
+    #include "VectorNavSensor.hpp"
+
+    #include "util/Debug.hpp"
+    #include "util/Logger.hpp"
+    #include "vn/searcher.h"
 
 NAV::VectorNavSensor::VectorNavSensor(const std::string& name, std::deque<std::string>& options)
     : UartSensor(options), Imu(name, options)
@@ -135,7 +137,7 @@ NAV::VectorNavSensor::~VectorNavSensor()
 {
     LOG_TRACE("called for {}", name);
 
-    removeAllCallbacks<VectorNavObs>();
+    removeAllCallbacksOfType<VectorNavObs>();
     callbacksEnabled = false;
     if (vs.isConnected())
     {
@@ -143,8 +145,6 @@ NAV::VectorNavSensor::~VectorNavSensor()
         vs.reset(true);
         vs.disconnect();
     }
-
-    LOG_DEBUG("{} successfully deinitialized", name);
 }
 
 void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t /*index*/)
@@ -218,3 +218,5 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
         }
     }
 }
+
+#endif

@@ -20,6 +20,11 @@ NAV::VectorNavDataLogger::VectorNavDataLogger(const std::string& name, std::dequ
     }
 }
 
+NAV::VectorNavDataLogger::~VectorNavDataLogger()
+{
+    LOG_TRACE("called for {}", name);
+}
+
 void NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
     constexpr int gpsCyclePrecision = 3;

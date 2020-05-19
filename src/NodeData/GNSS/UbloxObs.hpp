@@ -9,8 +9,8 @@
 
 #include "GnssObs.hpp"
 
-#include "ub/protocol/types.hpp"
-#include "ub/protocol/packet.hpp"
+#include "util/Ublox/UbloxTypes.hpp"
+#include "util/Ublox/UbloxPacket.hpp"
 
 namespace NAV
 {
@@ -46,11 +46,11 @@ class UbloxObs : public GnssObs
         return parents;
     }
 
-    ub::protocol::uart::UbxClass msgClass = ub::protocol::uart::UbxClass::UBX_CLASS_NONE;
+    ublox::UbxClass msgClass = ublox::UbxClass::UBX_CLASS_NONE;
     uint8_t msgId = 0;
     uint16_t payloadLength = 0;
 
-    ub::protocol::uart::Packet* p = nullptr;
+    ublox::UbloxPacket raw;
 };
 
 } // namespace NAV

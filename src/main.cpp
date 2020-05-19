@@ -149,6 +149,9 @@ int main(int argc, const char* argv[])
         // Stop all callbacks
         nodeManager.disableAllCallbacks();
 
+        // Delete all Nodes to call the destructors
+        nodeManager.deleteAllNodes();
+
         // Update all GnuPlot Windows and wait for them to open
         if (NAV::GnuPlot::update())
         {

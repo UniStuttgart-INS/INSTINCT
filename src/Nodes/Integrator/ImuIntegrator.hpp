@@ -1,45 +1,44 @@
 /**
- * @file UbloxDataLogger.hpp
- * @brief Data Logger for Ublox observations
+ * @file ImuIntegrator.hpp
+ * @brief Integrates ImuObs Data
  * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-17
+ * @date 2020-05-18
  */
 
 #pragma once
 
-#include "../DataLogger.hpp"
+#include "Nodes/Node.hpp"
 
-#include "NodeData/GNSS/UbloxObs.hpp"
+#include "NodeData/IMU/ImuObs.hpp"
 
 namespace NAV
 {
-/// Data Logger for Ublox observations
-class UbloxDataLogger final : public DataLogger
+class ImuIntegrator : public Node
 {
   public:
     /**
-     * @brief Construct a new Data Logger object
+     * @brief Construct a new object
      * 
-     * @param[in] name Name of the Logger
+     * @param[in] name Name of the object
      * @param[in, out] options Program options string list
      */
-    UbloxDataLogger(const std::string& name, std::deque<std::string>& options);
+    ImuIntegrator(const std::string& name, std::deque<std::string>& options);
 
-    UbloxDataLogger() = default;                                 ///< Default Constructor
-    ~UbloxDataLogger() final;                                    ///< Destructor
-    UbloxDataLogger(const UbloxDataLogger&) = delete;            ///< Copy constructor
-    UbloxDataLogger(UbloxDataLogger&&) = delete;                 ///< Move constructor
-    UbloxDataLogger& operator=(const UbloxDataLogger&) = delete; ///< Copy assignment operator
-    UbloxDataLogger& operator=(UbloxDataLogger&&) = delete;      ///< Move assignment operator
+    ImuIntegrator() = default;                               ///< Default Constructor
+    ~ImuIntegrator() override = default;                     ///< Destructor
+    ImuIntegrator(const ImuIntegrator&) = delete;            ///< Copy constructor
+    ImuIntegrator(ImuIntegrator&&) = delete;                 ///< Move constructor
+    ImuIntegrator& operator=(const ImuIntegrator&) = delete; ///< Copy assignment operator
+    ImuIntegrator& operator=(ImuIntegrator&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Returns the String representation of the Class Type
      * 
      * @retval constexpr std::string_view The class type
      */
-    [[nodiscard]] constexpr std::string_view type() const final
+    [[nodiscard]] constexpr std::string_view type() const override
     {
-        return std::string_view("UbloxDataLogger");
+        return std::string_view("ImuIntegrator");
     }
 
     /**
@@ -47,9 +46,9 @@ class UbloxDataLogger final : public DataLogger
      * 
      * @retval constexpr std::string_view The class category
      */
-    [[nodiscard]] constexpr std::string_view category() const final
+    [[nodiscard]] constexpr std::string_view category() const override
     {
-        return std::string_view("DataLogger");
+        return std::string_view("Integrator");
     }
 
     /**
@@ -57,10 +56,9 @@ class UbloxDataLogger final : public DataLogger
      * 
      * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
      */
-    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
+    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const override
     {
-        return { { ConfigOptions::CONFIG_STRING, "Path", "Path where to save the data to", { "logs/ub-log.ubx" } },
-                 { ConfigOptions::CONFIG_LIST, "Type", "Type of the output file", { "ascii", "[binary]" } } };
+        return {};
     }
 
     /**
@@ -68,7 +66,7 @@ class UbloxDataLogger final : public DataLogger
      * 
      * @retval constexpr std::string_view The class context
      */
-    [[nodiscard]] constexpr NodeContext context() const final
+    [[nodiscard]] constexpr NodeContext context() const override
     {
         return NodeContext::ALL;
     }
@@ -79,14 +77,14 @@ class UbloxDataLogger final : public DataLogger
      * @param[in] portType Specifies the port type
      * @retval constexpr uint8_t The number of ports
      */
-    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
+    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const override
     {
         switch (portType)
         {
         case PortType::In:
             return 1U;
         case PortType::Out:
-            break;
+            return 1U;
         }
 
         return 0U;
@@ -99,16 +97,21 @@ class UbloxDataLogger final : public DataLogger
      * @param[in] portIndex Port index on which the data is sent
      * @retval constexpr std::string_view The data type
      */
-    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const override
     {
         switch (portType)
         {
         case PortType::In:
             if (portIndex == 0)
             {
-                return UbloxObs().type();
+                return ImuObs().type();
             }
+            break;
         case PortType::Out:
+            // if (portIndex == 0)
+            // {
+            //     return UbloxObs().type();
+            // }
             break;
         }
 
@@ -121,12 +124,12 @@ class UbloxDataLogger final : public DataLogger
      * @param[in] portIndex The input port index
      * @param[in, out] data The data send on the input port
      */
-    void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) final
+    void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) override
     {
         if (portIndex == 0)
         {
-            auto obs = std::static_pointer_cast<UbloxObs>(data);
-            writeObservation(obs);
+            auto obs = std::static_pointer_cast<ImuObs>(data);
+            integrateObservation(obs);
         }
     }
 
@@ -136,7 +139,7 @@ class UbloxDataLogger final : public DataLogger
      * @param[in] portIndex The output port index
      * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
      */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t /* portIndex */) final { return nullptr; }
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t /* portIndex */) override { return nullptr; }
 
     /**
      * @brief Requests the node to peek its output data
@@ -144,15 +147,15 @@ class UbloxDataLogger final : public DataLogger
      * @param[in] portIndex The output port index
      * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
      */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t /* portIndex */) final { return nullptr; }
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t /* portIndex */) override { return nullptr; }
 
   private:
     /**
-     * @brief Write Observation to the file
+     * @brief Integrates the Imu Observation data
      * 
-     * @param[in] obs The received observation
+     * @param[in] obs ImuObs to process
      */
-    void writeObservation(std::shared_ptr<UbloxObs>& obs);
+    void integrateObservation(std::shared_ptr<ImuObs>& obs);
 };
 
 } // namespace NAV

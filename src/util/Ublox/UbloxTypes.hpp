@@ -1,8 +1,15 @@
+/**
+ * @file UbloxTypes.hpp
+ * @brief Type Definitions for Ublox messages
+ * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+ * @date 2020-05-19
+ */
+
 #pragma once
 
-#include <string>
+#include <string_view>
 
-namespace ub::protocol::uart
+namespace NAV::ublox
 {
 enum ErrorDetectionMode
 {
@@ -516,7 +523,7 @@ enum UbxUpdMessages
  * @param[in] className String of the UBX Class
  * @retval UbxClass The UBX class
  */
-UbxClass getMsgClassFromString(std::string className);
+[[nodiscard]] UbxClass getMsgClassFromString(const std::string_view& className);
 
 /**
  * @brief Get the UBX Msg Id From String object
@@ -525,7 +532,7 @@ UbxClass getMsgClassFromString(std::string className);
  * @param[in] idName String of the Msg Id
  * @retval uint8_t The Msg Id integer
  */
-uint8_t getMsgIdFromString(UbxClass msgClass, std::string idName);
+[[nodiscard]] uint8_t getMsgIdFromString(UbxClass msgClass, const std::string_view& idName);
 
 /**
  * @brief Get the UBX Msg Id From String objects
@@ -534,6 +541,6 @@ uint8_t getMsgIdFromString(UbxClass msgClass, std::string idName);
  * @param[in] idName String of the Msg Id
  * @retval uint8_t The Msg Id integer
  */
-uint8_t getMsgIdFromString(std::string className, std::string idName);
+[[nodiscard]] uint8_t getMsgIdFromString(const std::string_view& className, const std::string_view& idName);
 
-} // namespace ub::protocol::uart
+} // namespace NAV::ublox

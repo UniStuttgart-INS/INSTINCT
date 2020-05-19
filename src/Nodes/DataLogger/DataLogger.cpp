@@ -2,9 +2,6 @@
 
 #include "util/Logger.hpp"
 
-#include "vn/sensors.h"
-// #include "ub/sensors/sensors.hpp"
-
 NAV::DataLogger::DataLogger(const std::string& name, std::deque<std::string>& options)
     : Node(name)
 {
@@ -57,6 +54,4 @@ NAV::DataLogger::~DataLogger()
         filestream.flush();
         filestream.close();
     }
-
-    LOG_DEBUG("{} successfully deinitialized", name);
 }

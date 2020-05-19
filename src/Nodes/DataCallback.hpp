@@ -41,15 +41,17 @@ class DataCallback
     }
 
     /**
-     * @brief Removes all callbacks from the list
+     * @brief Removes all callbacks from the list which have the template type
      * 
      * @tparam T Output Message Class
      * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
      */
     template<class T,
              typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
-    void removeAllCallbacks()
+    void removeAllCallbacksOfType()
     {
+        callbacksEnabled = false;
+
         // Clear does not erase the memory the pointers point at
         // This is not a problem however, as we use shared_ptr
         for (auto& [node, portIndex] : callbackList<T>())
@@ -58,8 +60,25 @@ class DataCallback
         }
 
         callbackList<T>().clear();
+    }
 
+    /// @brief Remove all callbacks from the list
+    void removeAllCallbacks()
+    {
         callbacksEnabled = false;
+
+        // Clear does not erase the memory the pointers point at
+        // This is not a problem however, as we use shared_ptr
+        for (auto& typeList : _callbackList)
+        {
+            for (auto& callbackList : typeList.second)
+            {
+                callbackList.first = nullptr;
+            }
+            typeList.second.clear();
+        }
+
+        _callbackList.clear();
     }
 
     /**

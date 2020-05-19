@@ -7,10 +7,12 @@
 
 #pragma once
 
-#include "NodeData/IMU/VectorNavObs.hpp"
-#include "../Imu.hpp"
-#include "../../Protocol/UartSensor.hpp"
-#include "vn/sensors.h"
+#ifndef DISABLE_VN_SENSORS
+
+    #include "NodeData/IMU/VectorNavObs.hpp"
+    #include "../Imu.hpp"
+    #include "../../Protocol/UartSensor.hpp"
+    #include "vn/sensors.h"
 
 namespace NAV
 {
@@ -203,3 +205,5 @@ class VectorNavSensor final : public UartSensor, public Imu
 };
 
 } // namespace NAV
+
+#endif

@@ -7,9 +7,11 @@
 
 #pragma once
 
-#include "../UsbSyncSignal.hpp"
-#include "ub/protocol/types.hpp"
-#include "NodeData/GNSS/UbloxObs.hpp"
+#ifndef DISABLE_UB_SENSORS
+
+    #include "../UsbSyncSignal.hpp"
+    #include "util/Ublox/UbloxTypes.hpp"
+    #include "NodeData/GNSS/UbloxObs.hpp"
 
 namespace NAV
 {
@@ -158,13 +160,15 @@ class UbloxSyncSignal final : public UsbSyncSignal
      * 
      * @param[in] obs The received observation
      */
-    void triggerSync(std::shared_ptr<UbloxObs>& obs);
+    void triggerSync(const std::shared_ptr<UbloxObs>& obs);
 
     /// Message Class to send the sync on
-    ub::protocol::uart::UbxClass triggerClass = ub::protocol::uart::UbxClass::UBX_CLASS_NONE;
+    ublox::UbxClass triggerClass = ublox::UbxClass::UBX_CLASS_NONE;
 
     /// Message Id to send the sync on
     uint8_t triggerId = 0;
 };
 
 } // namespace NAV
+
+#endif

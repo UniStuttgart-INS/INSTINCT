@@ -26,7 +26,7 @@ class VectorNavDataLogger final : public DataLogger
     VectorNavDataLogger(const std::string& name, std::deque<std::string>& options);
 
     VectorNavDataLogger() = default;                                     ///< Default Constructor
-    ~VectorNavDataLogger() final = default;                              ///< Destructor
+    ~VectorNavDataLogger() final;                                        ///< Destructor
     VectorNavDataLogger(const VectorNavDataLogger&) = delete;            ///< Copy constructor
     VectorNavDataLogger(VectorNavDataLogger&&) = delete;                 ///< Move constructor
     VectorNavDataLogger& operator=(const VectorNavDataLogger&) = delete; ///< Copy assignment operator
