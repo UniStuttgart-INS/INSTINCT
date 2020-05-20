@@ -16,6 +16,7 @@ if(ENABLE_CPPCHECK)
         --enable=portability
         --enable=information
         --enable=missingInclude
+        --inline-suppr
         --inconclusive
         # --project=${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
         -i${CMAKE_SOURCE_DIR}/lib

@@ -10,7 +10,9 @@
 /// Enables the LOG_DATA() Macro (needs SPDLOG_LEVEL_TRACE)
 #define DATA_LOGGING_ENABLED 0
 /// Compile-time logging level
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#ifndef SPDLOG_ACTIVE_LEVEL
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#endif
 /// External usage of FMT, as the internal one is missing some files
 #define SPDLOG_FMT_EXTERNAL 1
 
@@ -65,9 +67,8 @@ class Logger
      */
     explicit Logger(const std::string& logpath);
 
-    /// @brief Destructor
-    ~Logger();
-
+    Logger();                                  ///< Default constructor
+    ~Logger();                                 ///< Destructor
     Logger(const Logger&) = delete;            ///< Copy constructor
     Logger(Logger&&) = delete;                 ///< Move constructor
     Logger& operator=(const Logger&) = delete; ///< Copy assignment operator

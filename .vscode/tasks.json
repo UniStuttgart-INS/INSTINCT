@@ -25,10 +25,16 @@
             "label": "CMAKE: Debug",
             "type": "shell",
             "group": "build",
-            "command": "bash",
+            "command": "cmake",
             "args": [
-                "-c",
-                "[[ ! -d build/Debug || ! -d bin/Debug ]] && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_TESTING=OFF -DENABLE_GUI=OFF || true"
+                "-Bbuild/Debug",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DENABLE_MAIN=ON",
+                "-DENABLE_GUI=OFF",
+                "-DENABLE_TESTING=OFF",
+                "-DENABLE_DOXYGEN=OFF",
+                "-DLOG_LEVEL=DEBUG"
             ],
             "options": {
                 "env": {
@@ -45,10 +51,16 @@
             "label": "CMAKE: Release",
             "type": "shell",
             "group": "build",
-            "command": "bash",
+            "command": "cmake",
             "args": [
-                "-c",
-                "[[ ! -d build/Release || ! -d bin/Release ]] && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTING=OFF -DENABLE_GUI=OFF || true"
+                "-Bbuild/Release",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DENABLE_MAIN=ON",
+                "-DENABLE_GUI=OFF",
+                "-DENABLE_TESTING=OFF",
+                "-DENABLE_DOXYGEN=OFF",
+                "-DLOG_LEVEL=INFO"
             ],
             "options": {
                 "env": {
@@ -70,8 +82,11 @@
                 "-Bbuild/Debug",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
+                "-DENABLE_MAIN=ON",
+                "-DENABLE_GUI=ON",
                 "-DENABLE_TESTING=OFF",
-                "-DENABLE_GUI=ON"
+                "-DENABLE_DOXYGEN=OFF",
+                "-DLOG_LEVEL=DEBUG"
             ],
             "options": {
                 "env": {
@@ -93,10 +108,12 @@
                 "-Bbuild/Debug",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
-                "-DENABLE_TESTING=ON",
-                "-DENABLE_GUI=OFF",
                 "-DENABLE_MAIN=OFF",
-                "-DENABLE_VN_UB_SENSORS=OFF"
+                "-DENABLE_GUI=OFF",
+                "-DENABLE_TESTING=ON",
+                "-DENABLE_DOXYGEN=OFF",
+                "-DENABLE_VN_UB_SENSORS=OFF",
+                "-DLOG_LEVEL=TRACE"
             ],
             "options": {
                 "env": {
@@ -118,7 +135,12 @@
                 "-Bbuild/Release",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
-                "-DENABLE_DOXYGEN=TRUE"
+                "-DENABLE_MAIN=OFF",
+                "-DENABLE_GUI=OFF",
+                "-DENABLE_TESTING=OFF",
+                "-DENABLE_DOXYGEN=ON",
+                "-DENABLE_VN_UB_SENSORS=OFF",
+                "-DLOG_LEVEL=OFF"
             ],
             "options": {
                 "env": {
@@ -315,11 +337,15 @@
             "label": "TEST: Build & run",
             "type": "shell",
             "group": "test",
-            "command": "bash",
+            "command": "ctest",
             "args": [
-                "-c",
-                "cd build/Debug && ctest -j2"
+                // "-j2",
+                "--output-on-failure",
+                // "--verbose"
             ],
+            "options": {
+                "cwd": "build/Debug"
+            },
             "dependsOn": [
                 "TEST: Build project"
             ],
@@ -342,7 +368,7 @@
         {
             "label": "VALGRIND: Run profiler in Debug Mode",
             "type": "shell",
-            "group": "build",
+            "group": "test",
             "command": "bash",
             "args": [
                 "-c",
@@ -356,7 +382,7 @@
         {
             "label": "VALGRIND: Run profiler in Release Mode",
             "type": "shell",
-            "group": "build",
+            "group": "test",
             "command": "bash",
             "args": [
                 "-c",
@@ -370,11 +396,14 @@
         {
             "label": "VALGRIND: Memory Leak Check",
             "type": "shell",
-            "group": "build",
-            "command": "bash",
+            "group": "test",
+            "command": "valgrind",
             "args": [
-                "-c",
-                "valgrind --leak-check=yes bin/Debug/navsos -f config.ini config-dataflow.ini"
+                "--leak-check=yes",
+                "bin/Debug/navsos",
+                "-f",
+                "config.ini",
+                "config-dataflow.ini"
             ],
             "dependsOn": [
                 "DEBUG: Build project"

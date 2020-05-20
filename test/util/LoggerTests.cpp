@@ -4,7 +4,9 @@
 
 TEST_CASE("Logger initialization", "[Logger]")
 {
-    Logger logger("/tmp/LoggerTest.log");
+    Logger consoleSink;
+
+    Logger consoleAndFileSink("/tmp/LoggerTest.log");
 }
 
 TEST_CASE("Logger initialization should throw exception on write protected path", "[Logger]")

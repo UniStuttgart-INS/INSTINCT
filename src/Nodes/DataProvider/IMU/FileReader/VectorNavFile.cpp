@@ -91,7 +91,7 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
     }
     // Remove any starting non text characters
     line.erase(line.begin(), std::find_if(line.begin(), line.end(),
-                                          std::ptr_fun<int, int>(std::isalnum)));
+                                          std::ptr_fun<int, int>(std::isgraph)));
 
     if (line.empty())
     {
@@ -614,8 +614,8 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
     }
 
     LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-             name, obs->timeSinceStartup, obs->syncInCnt, obs->timeSinceSyncIn,
-             obs->vpeStatus, obs->temperature);
+             name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
+             obs->vpeStatus.value().status, obs->temperature.value());
 
     // Calls all the callbacks
     if (!peek)

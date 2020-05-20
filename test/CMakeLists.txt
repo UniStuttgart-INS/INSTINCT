@@ -11,7 +11,19 @@ target_link_libraries(catch_main PRIVATE project_options)
 
 # Link all files in the Source directory
 include_directories(${CMAKE_SOURCE_DIR}/src)
-add_executable(tests util/LoggerTests.cpp "${CMAKE_SOURCE_DIR}/src/util/Logger.cpp")
+add_executable(
+  tests
+  util/LoggerTests.cpp
+  Nodes/DataLogger/IMU/VectorNavDataLoggerTest.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/Logger.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/notidy/InsTime.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/Node.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/Imu.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/FileReader/VectorNavFile.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/Protocol/FileReader.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/DataLogger/DataLogger.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/DataLogger/IMU/VectorNavDataLogger.cpp)
+
 target_link_libraries(
   tests
   PRIVATE project_warnings
@@ -22,6 +34,8 @@ target_link_libraries(
           CONAN_PKG::boost
           CONAN_PKG::eigen
           Threads::Threads)
+
+target_compile_definitions(tests PUBLIC SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_${LOG_LEVEL})
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries

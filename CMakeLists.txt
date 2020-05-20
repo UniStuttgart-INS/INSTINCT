@@ -45,6 +45,11 @@ option(ENABLE_TESTING "Enable Test Builds" OFF)
 option(ENABLE_MAIN "Build Main file" ON)
 option(ENABLE_GUI "Build GUI" OFF)
 
+# Logging Level
+set(LOG_LEVEL
+    "INFO"
+    CACHE STRING "TRACE|DEBUG|INFO|WARN|ERROR|CRITICAL|OFF")
+
 # Include all project headers
 include_directories(src)
 
@@ -95,8 +100,9 @@ endif()
 include_directories(SYSTEM lib/gnuplot-iostream)
 
 # ######################################################################################################################
+# Installed Packages
+# ######################################################################################################################
 
-# Find installed packages
 find_package(Threads REQUIRED)
 
 # ######################################################################################################################
@@ -117,7 +123,7 @@ endif()
 
 if(ENABLE_TESTING)
   enable_testing()
-  add_subdirectory(tests)
+  add_subdirectory(test)
 endif()
 
 option(ENABLE_UNITY "Enable Unity builds of projects" OFF)

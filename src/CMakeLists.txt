@@ -23,6 +23,8 @@ target_link_libraries(
           CONAN_PKG::eigen
           Threads::Threads)
 
+target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_${LOG_LEVEL})
+
 if(ENABLE_VN_UB_SENSORS)
   target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libvncxx libubcxx)
 else()

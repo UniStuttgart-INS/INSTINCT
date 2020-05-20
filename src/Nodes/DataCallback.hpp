@@ -52,13 +52,6 @@ class DataCallback
     {
         callbacksEnabled = false;
 
-        // Clear does not erase the memory the pointers point at
-        // This is not a problem however, as we use shared_ptr
-        for (auto& [node, portIndex] : callbackList<T>())
-        {
-            node = nullptr;
-        }
-
         callbackList<T>().clear();
     }
 
@@ -68,13 +61,9 @@ class DataCallback
         callbacksEnabled = false;
 
         // Clear does not erase the memory the pointers point at
-        // This is not a problem however, as we use shared_ptr
+        // This is not a problem however, as we use weak_ptr
         for (auto& typeList : _callbackList)
         {
-            for (auto& callbackList : typeList.second)
-            {
-                callbackList.first = nullptr;
-            }
             typeList.second.clear();
         }
 
@@ -98,7 +87,7 @@ class DataCallback
         {
             for (const auto& [node, portIndex] : callbackList<T>())
             {
-                node->handleInputData(portIndex, data);
+                node.lock()->handleInputData(portIndex, data);
             }
         }
     }
@@ -106,7 +95,7 @@ class DataCallback
     /// List of links which are connected to this node
     /// Map key: portIndex of this node where the data are coming in
     /// Map val: Source Node which sends the data and its portIndex
-    std::map<uint8_t, std::pair<std::shared_ptr<Node>, uint8_t>> incomingLinks;
+    std::map<uint8_t, std::pair<std::weak_ptr<Node>, uint8_t>> incomingLinks;
 
     DataCallback(const DataCallback&) = delete;            ///< Copy constructor
     DataCallback(DataCallback&&) = delete;                 ///< Move constructor
@@ -126,20 +115,20 @@ class DataCallback
      * 
      * @tparam T Output Message class
      * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
-     * @retval std::vector<std::pair<std::shared_ptr<Node>, uint8_t>>& Nodes and ports to call upon when invoking a callback
+     * @retval std::vector<std::pair<std::weak_ptr<Node>, uint8_t>>& Nodes and ports to call upon when invoking a callback
      * 
      * @note std::vector is used here, as it has the faster iteration performance.
      *       Inserting and removing is only done once at the start of the program.
      */
     template<class T,
              typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
-    std::vector<std::pair<std::shared_ptr<Node>, uint8_t>>& callbackList()
+    std::vector<std::pair<std::weak_ptr<Node>, uint8_t>>& callbackList()
     {
         return _callbackList[typeid(T)];
     }
 
     /// Internal callback list representation
-    std::map<std::type_index, std::vector<std::pair<std::shared_ptr<Node>, uint8_t>>> _callbackList;
+    std::map<std::type_index, std::vector<std::pair<std::weak_ptr<Node>, uint8_t>>> _callbackList;
 };
 
 } // namespace NAV
