@@ -7,6 +7,7 @@
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
 
 #include "Nodes/GnuPlot/IMU/VectorNavGnuPlot.hpp"
 
@@ -24,6 +25,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #ifndef DISABLE_VN_SENSORS
     nodeManager.registerNodeType<NAV::VectorNavSensor>();
 #endif
+    nodeManager.registerNodeType<NAV::UbloxFile>();
 #ifndef DISABLE_UB_SENSORS
     nodeManager.registerNodeType<NAV::UbloxSensor>();
 #endif

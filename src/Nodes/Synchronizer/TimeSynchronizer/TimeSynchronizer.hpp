@@ -157,11 +157,12 @@ class TimeSynchronizer final : public Node
         {
             // portIndex is the output Port
             // but the data we want to pull come from input port 1
-            auto& sourceNode = incomingLinks[1].first;
+            const auto& sourceNode = incomingLinks[1].first.lock();
             auto& sourcePortIndex = incomingLinks[1].second;
 
             return sourceNode->requestOutputData(sourcePortIndex);
         }
+
         return nullptr;
     }
 
@@ -177,13 +178,14 @@ class TimeSynchronizer final : public Node
         {
             // portIndex is the output Port
             // but the data we want to pull come from input port 1
-            auto& sourceNode = incomingLinks[1].first;
+            const auto& sourceNode = incomingLinks[1].first.lock();
             auto& sourcePortIndex = incomingLinks[1].second;
 
             auto peekData = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));
             updateInsTime(peekData);
             return peekData;
         }
+
         return nullptr;
     }
 
