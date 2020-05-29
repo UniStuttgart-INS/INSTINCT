@@ -8,6 +8,10 @@
 #pragma once
 
 #include <string_view>
+#include <array>
+#include <optional>
+#include <bitset>
+#include <vector>
 
 namespace NAV::ublox
 {
@@ -17,7 +21,7 @@ enum ErrorDetectionMode
     ERRORDETECTIONMODE_CHECKSUM, ///< 16-bit checksum is used
 };
 
-/// \brief Enumeration of the available asynchronous ASCII talker IDs.
+/// @brief Enumeration of the available asynchronous ASCII talker IDs.
 enum NmeaTalkerID
 {
     NMEA_TALKER_ID_OFF = 0, ///< Asynchronous output is turned off.
@@ -28,14 +32,14 @@ enum NmeaTalkerID
     NMEA_TALKER_ID_GN = 5   ///< Any combination of GNSS
 };
 
-/// \brief NMEA Message Type.
+/// @brief NMEA Message Type.
 enum NmeaMessageClass
 {
     NMEA_MSG_CLASS_STANDARD = 0xF0, ///< Standard Messages
     NMEA_MSG_CLASS_PUBX = 0xF1      ///< PUBX Messages
 };
 
-/// \brief NMEA Standard Messages.
+/// @brief NMEA Standard Messages.
 /// Class ID = 0xF0
 enum NmeaStandardMessages
 {
@@ -59,7 +63,7 @@ enum NmeaStandardMessages
     NMEA_STANDARD_MSG_ZDA = 0x08  ///< Time and Date
 };
 
-/// \brief NMEA PUBX Messages.
+/// @brief NMEA PUBX Messages.
 /// Class ID = 0xF1
 enum NmeaPubxMessages
 {
@@ -70,7 +74,7 @@ enum NmeaPubxMessages
     NMEA_PUBX_MSG_TIME = 0x04      ///< Time of Day and Clock Information
 };
 
-/// \brief The available UBX Class IDs
+/// @brief The available UBX Class IDs
 enum UbxClass
 {
     UBX_CLASS_NONE = 0x00, ///< No Message Class specified
@@ -90,7 +94,7 @@ enum UbxClass
     UBX_CLASS_HNR = 0x28   ///< High Rate Navigation Results Messages: High rate time, position, speed, heading
 };
 
-/// \brief The available ACK Messages
+/// @brief The available ACK Messages
 enum UbxAckMessages
 {
     /// Message Acknowledged (Length = 2; Type = Output)
@@ -99,7 +103,29 @@ enum UbxAckMessages
     UBX_ACK_NAK = 0x00
 };
 
-/// \brief The available AID Messages
+/**
+ * @brief Message Acknowledged
+ * 
+ * Output upon processing of an input message. ACK Message is sent as soon as possible but at least within one second.
+ */
+struct UbxAckAck
+{
+    uint8_t clsID = 0; ///< Class ID of the Acknowledged Message
+    uint8_t msgID = 0; ///< Message ID of the Acknowledged Message
+};
+
+/**
+ * @brief Message Not-Acknowledged
+ * 
+ * Output upon processing of an input message. NAK Message is sent as soon as possible but at least within one second.
+ */
+struct UbxAckNak
+{
+    uint8_t clsID = 0; ///< Class ID of the Not-Acknowledged Message
+    uint8_t msgID = 0; ///< Message ID of the Not-Acknowledged Message
+};
+
+/// @brief The available AID Messages
 enum UbxAidMessages
 {
     /// - Poll GPS Aiding Almanac Data (Length = 0; Type = Poll Request)
@@ -122,7 +148,244 @@ enum UbxAidMessages
     UBX_AID_INI = 0x01
 };
 
-/// \brief The available CFG Messages
+/**
+ * @brief Poll GPS Aiding Almanac Data
+ * 
+ * Poll GPS Aiding Data (Almanac) for all 32 SVs by sending this message to the receiver without any payload.
+ * The receiver will return 32 messages of type AID-ALM as defined below.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidAlm
+{
+};
+
+/**
+ * @brief Poll GPS Aiding Almanac Data for a SV
+ * 
+ * Poll GPS Aiding Data (Almanac) for an SV by sending this message to the receiver.
+ * The receiver will return one message of type AID-ALM as defined below.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidAlmSV
+{
+    uint8_t svid = 0; ///< SV ID for which the receiver shall return its Almanac Data (Valid Range: 1 .. 32 or 51, 56, 63).
+};
+
+/**
+ * @brief GPS Aiding Almanac Input/Output Message
+ * 
+ * • If the WEEK Value is 0, DWRD0 to DWRD7 are not sent as the Almanac is not
+ *   available for the given SV. This may happen even if NAV-SVINFO and RXM-
+ *   SVSI are indicating almanac availability as the internal data may not represent
+ *   the content of an original broadcast almanac (or only parts thereof).
+ * • DWORD0 to DWORD7 contain the 8 words following the Hand-Over Word (
+ *   HOW ) from the GPS navigation message, either pages 1 to 24 of sub-frame 5
+ *   or pages 2 to 10 of subframe 4. See IS-GPS-200 for a full description of the
+ *   contents of the Almanac pages.
+ * • In DWORD0 to DWORD7, the parity bits have been removed, and the 24 bits of
+ *   data are located in Bits 0 to 23. Bits 24 to 31 shall be ignored.
+ * • Example: Parameter e (Eccentricity) from Almanac Subframe 4/5, Word 3, Bits
+ *   69-84 within the subframe can be found in DWRD0, Bits 15-0 whereas Bit 0 is
+ *   the LSB.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidAlmIO
+{
+    uint32_t svid = 0;                           ///< SV ID for which this Almanac Data is (Valid Range: 1 .. 32 or 51, 56, 63).
+    uint32_t week = 0;                           ///< Issue Date of Almanac (GPS week number)
+    std::optional<std::array<uint32_t, 8>> dwrd; ///< Almanac Words
+};
+
+/**
+ * @brief Poll AssistNow Autonomous data, all satellites
+ * 
+ * Poll AssistNow Autonomous aiding data for all GPS satellites by sending this empty message.
+ * The receiver will return an AID-AOP message (see definition below) for each GPS satellite for which data is available.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidAop
+{
+};
+
+/**
+ * @brief Poll AssistNow Autonomous data, one GPS satellite
+ * 
+ * Poll the AssistNow Autonomous data for the specified GPS satellite.
+ * The receiver will return a AID-AOP message (see definition below) if data is available for the requested satellite.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidAopSV
+{
+    uint8_t svid = 0; ///< GPS SV ID for which the data is requested (valid range: 1..32).
+};
+
+/**
+ * @brief Poll AssistNow Autonomous data, one GPS satellite
+ * 
+ * If enabled, this message is output at irregular intervals. It is output whenever
+ * AssistNow Autonomous has produced new data for a satellite. Depending on the
+ * availability of the optional data the receiver will output either version of the
+ * message. If this message is polled using one of the two poll requests described
+ * above the receiver will send this message if AssistNow Autonomous data is
+ * available or the corresponding poll request message if no AssistNow
+ * Autonomous data is available for each satellite (i.e. svid 1..32). At the user's
+ * choice the optional data may be chopped from the payload of a previously polled
+ * message when sending the message back to the receiver. Sending a valid AID-
+ * AOP message to the receiver will automatically enable the AssistNow
+ * Autonomous feature on the receiver. See the section AssistNow Autonomous in
+ * the receiver description for details on this feature.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidAopIO
+{
+    uint8_t gnssId = 0;                 ///< GNSS identifier (see Satellite Numbering)
+    uint8_t svid = 0;                   ///< Satellite identifier (see Satellite Numbering)
+    std::array<uint8_t, 2> reserved1{}; ///< Reserved
+    std::array<uint8_t, 64> data{};     ///< assistance data
+};
+
+/**
+ * @brief Poll GPS Aiding Ephemeris Data
+ * 
+ * Poll GPS Aiding Data (Ephemeris) for all 32 SVs by sending this message to the receiver without any payload.
+ * The receiver will return 32 messages of type AID-EPH as defined below.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidEph
+{
+};
+
+/**
+ * @brief Poll GPS Aiding Ephemeris Data for a SV
+ * 
+ * Poll GPS Constellation Data (Ephemeris) for an SV by sending this message to the receiver.
+ * The receiver will return one message of type AID-EPH as defined below.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidEphSV
+{
+    uint8_t svid = 0; ///< SV ID for which the receiver shall return its Ephemeris Data (Valid Range: 1 .. 32).
+};
+
+/**
+ * @brief GPS Aiding Ephemeris Input/Output Message
+ * 
+ * • SF1D0 to SF3D7 is only sent if ephemeris is available for this SV. If not, the
+ *   payload may be reduced to 8 Bytes, or all bytes are set to zero, indicating that
+ *   this SV Number does not have valid ephemeris for the moment. This may
+ *   happen even if NAV-SVINFO and RXM-SVSI are indicating ephemeris
+ *   availability as the internal data may not represent the content of an original
+ *   broadcast ephemeris (or only parts thereof).
+ * • SF1D0 to SF3D7 contain the 24 words following the Hand-Over Word ( HOW )
+ *   from the GPS navigation message, subframes 1 to 3. The Truncated TOW
+ *   Count is not valid and cannot be used. See IS-GPS-200 for a full description of
+ *   the contents of the Subframes.
+ * • In SF1D0 to SF3D7, the parity bits have been removed, and the 24 bits of data
+ *   are located in Bits 0 to 23. Bits 24 to 31 shall be ignored.
+ * • When polled, the data contained in this message does not represent the full
+ *   original ephemeris broadcast. Some fields that are irrelevant to u-blox
+ *   receivers may be missing. The week number in Subframe 1 has already been
+ *   modified to match the Time Of Ephemeris (TOE).
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidEphIO
+{
+    uint32_t svid = 0;                           ///< SV ID for which this ephemeris data is (Valid Range: 1 .. 32).
+    uint32_t how = 0;                            ///< Hand-Over Word of first Subframe. This is required if data is sent to the receiver. 0 indicates that no Ephemeris Data is following.
+    std::optional<std::array<uint32_t, 8>> sf1d; ///< Subframe 1 Words 3..10 (SF1D0..SF1D7)
+    std::optional<std::array<uint32_t, 8>> sf2d; ///< Subframe 2 Words 3..10 (SF2D0..SF2D7)
+    std::optional<std::array<uint32_t, 8>> sf3d; ///< Subframe 3 Words 3..10 (SF3D0..SF3D7)
+};
+
+/**
+ * @brief Poll GPS Health, UTC, ionosphere parameters
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidHui
+{
+};
+
+/**
+ * @brief GPS Health, UTC and ionosphere parameters
+ * 
+ * This message contains a health bit mask, UTC time and Klobuchar parameters.
+ * For more information on these parameters, see the ICD-GPS-200 documentation.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidHuiIO
+{
+    std::bitset<4 * 8> health; ///< Bitmask, every bit represenst a GPS SV (1-32). If the bit is set the SV is healthy.
+    double utcA0 = 0.0;        ///< UTC - parameter A0
+    double utcA1 = 0.0;        ///< UTC - parameter A1
+    int32_t utcTOW = 0;        ///< UTC - reference time of week
+    int16_t utcWNT = 0;        ///< UTC - reference week number
+    int16_t utcLS = 0;         ///< UTC - time difference due to leap seconds before event
+    int16_t utcWNF = 0;        ///< UTC - week number when next leap second event occurs
+    int16_t utcDN = 0;         ///< UTC - day of week when next leap second event occurs
+    int16_t utcLSF = 0;        ///< UTC - time difference due to leap seconds after event
+    int16_t utcSpare = 0;      ///< UTC - Spare to ensure structure is a multiple of 4 bytes
+    float klobA0 = 0.0F;       ///< Klobuchar - alpha 0 [s]
+    float klobA1 = 0.0F;       ///< Klobuchar - alpha 1 [s/semicircle]
+    float klobA2 = 0.0F;       ///< Klobuchar - alpha 2 [s/semicircle^2]
+    float klobA3 = 0.0F;       ///< Klobuchar - alpha 3 [s/semicircle^3]
+    float klobB0 = 0.0F;       ///< Klobuchar - beta 0 [s]
+    float klobB1 = 0.0F;       ///< Klobuchar - beta 1 [s/semicircle]
+    float klobB2 = 0.0F;       ///< Klobuchar - beta 2 [s/semicircle^2]
+    float klobB3 = 0.0F;       ///< Klobuchar - beta 3 [s/semicircle^3]
+    std::bitset<4 * 8> flags;  ///< Flags: healthValid, utcValid, klobValid
+};
+
+/**
+ * @brief Poll GPS Initial Aiding Data
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidIni
+{
+};
+
+/**
+ * @brief Aiding position, time, frequency, clock drift
+ * 
+ * This message contains position, time and clock drift information. The position
+ * can be input in either the ECEF X/Y/Z coordinate system or as lat/lon/height. The
+ * time can either be input as inexact value via the standard communication
+ * interface, suffering from latency depending on the baud rate, or using hardware
+ * time synchronization where an accurate time pulse is input on the external
+ * interrupts. It is also possible to supply hardware frequency aiding by connecting
+ * a continuous signal to an external interrupt.
+ * 
+ * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
+ */
+struct UbxAidIniIO
+{
+    int32_t ecefXOrLat = 0;        ///< WGS84 ECEF X coordinate or latitude, depending on flags below [cm or deg*1e-7]
+    int32_t ecefYOrLon = 0;        ///< WGS84 ECEF X coordinate or longitude, depending on flags below [cm or deg*1e-7]
+    int32_t ecefZOrAlt = 0;        ///< WGS84 ECEF Z coordinate or altitude, depending on flags below [cm]
+    uint32_t posAcc = 0;           ///< Position accuracy (stddev) [cm]
+    std::bitset<2 * 8> tmCfg;      ///< Time mark configuration (fEdge, tm1, f1)
+    uint16_t wnoOrDate = 0;        ///< Actual week number or yearSince2000/Month (YYMM), depending on flags below [week or yearMonth]
+    uint32_t towOrTime = 0;        ///< Actual time of week or DayOfMonth/Hour/Minute/Second (DDHHMMSS), depending on flags below [ms or dayHourMinuteSec]
+    int32_t towNs = 0;             ///< Fractional part of time of week [ns]
+    uint32_t tAccMs = 0;           ///< Milliseconds part of time accuracy [ms]
+    uint32_t tAccNs = 0;           ///< Nanoseconds part of time accuracy [ns]
+    int32_t clkDOrFreq = 0;        ///< Clock drift or frequency, depending on flags below [ns/s or Hz*1e-2]
+    uint32_t clkDAccOrFreqAcc = 0; ///< Accuracy of clock drift or frequency, depending on flags below [ns/s or ppb]
+    std::bitset<4 * 8> flags;      ///< Bitmask with the following flags (pos, time, clockD, tp, clockF, lla, altInv, prevTm, utc)
+};
+
+/// @brief The available CFG Messages
 enum UbxCfgMessages
 {
     /// Antenna Control Settings (Length = 4; Type = Get/Set)
@@ -213,7 +476,7 @@ enum UbxCfgMessages
     UBX_CFG_USB = 0x1B,
 };
 
-/// \brief The available ESF Messages
+/// @brief The available ESF Messages
 enum UbxEsfMessages
 {
     /// Vehicle dynamics information (Length = 36; Type = Periodic/Polled)
@@ -226,7 +489,101 @@ enum UbxEsfMessages
     UBX_ESF_STATUS = 0x10,
 };
 
-/// \brief The available HNR Messages
+/**
+ * @brief Vehicle dynamics information
+ * 
+ * This message outputs information about the vehicle dynamics.
+ * For ADR products (in protocol versions less than 19.2), the output dynamics
+ * information (angular rates and accelerations) is expressed with respect to the
+ * vehicle-frame. More information can be found in the ADR Navigation Output
+ * section.
+ * For ADR products, the output dynamics information (angular rates and
+ * accelerations) is expressed with respect to the vehicle-frame. More information
+ * can be found in the ADR Navigation Output section.
+ * For UDR products, the output dynamics information (angular rates and
+ * accelerations) are expressed with respect to the body-frame. More information
+ * can be found in the UDR Navigation Output section.
+ */
+struct UbxEsfIns
+{
+    std::bitset<4 * 8> bitfield0;       ///< Bitfield (zAccelValid, yAccelValid, xAccelValid, zAngRateValid, yAngRateValid, xAngRateValid, version)
+    std::array<uint8_t, 4> reserved1{}; ///< Reserved
+    uint32_t iTOW = 0;                  ///< GPS time of week of the navigation epoch. See the description of iTOW for details. [ms]
+    int32_t xAngRate = 0;               ///< Compensated x-axis angular rate. [deg/s * 1e-3]
+    int32_t yAngRate = 0;               ///< Compensated y-axis angular rate. [deg/s * 1e-3]
+    int32_t zAngRate = 0;               ///< Compensated z-axis angular rate. [deg/s * 1e-3]
+    int32_t xAccel = 0;                 ///< Compensated x-axis acceleration (gravity-free). [m/s^2 * 1e-2]
+    int32_t yAccel = 0;                 ///< Compensated y-axis acceleration (gravity-free). [m/s^2 * 1e-2]
+    int32_t zAccel = 0;                 ///< Compensated z-axis acceleration (gravity-free). [m/s^2 * 1e-2]
+};
+
+/**
+ * @brief External Sensor Fusion Measurements
+ * 
+ * Possible data types for the data field are described in the ESF Measurement Data section.
+ * 
+ */
+struct UbxEsfMeas
+{
+    uint32_t timeTag = 0;                           ///< Time tag of measurement generated by external sensor
+    std::bitset<2 * 8> flags;                       ///< Flags. Set all unused bits to zero (timeMarkSent, timeMarkEdge, calibTtagValid, numMeas)
+    uint16_t id = 0;                                ///< Identification number of data provider
+    std::vector<uint32_t> data;                     ///< data (see graphic below)
+    std::optional<std::vector<uint32_t>> calibTtag; ///< Receiver local time calibrated. This field must not be supplied when calibTtagValid is set to 0. [ms]
+};
+
+/**
+ * @brief Raw sensor measurements
+ * 
+ * The message contains measurements from the active inertial sensors
+ * connected to the GNSS chip. Possible data types for the data field are
+ * accelerometer, gyroscope and temperature readings as described in the ESF
+ * Measurement Data section.
+ * Note that the rate selected in UBX-CFG-MSG is not respected. If a positive rate is
+ * selected then all raw measurements will be output.
+ * See also Raw Sensor Measurement Data.
+ * 
+ */
+struct UbxEsfRaw
+{
+    struct UbxEsfRawData
+    {
+        UbxEsfRawData(uint32_t data, uint32_t sTtag) : data(data), sTtag(sTtag) {}
+        uint32_t data = 0;  ///< data. Same as in UBX-ESF-MEAS (see graphic below)
+        uint32_t sTtag = 0; ///< sensor time tag
+    };
+
+    std::array<uint8_t, 4> reserved1{}; ///< Reserved
+    std::vector<UbxEsfRawData> data;    ///< Repeated block
+};
+
+/**
+ * @brief  External Sensor Fusion (ESF) status information
+ */
+struct UbxEsfStatus
+{
+    struct UbxEsfStatusSensor
+    {
+        std::bitset<1 * 8> sensStatus1; ///< Sensor status, part 1 (seegraphic below)
+        std::bitset<1 * 8> sensStatus2; ///< Sensor status, part 2 (seegraphic below)
+        uint8_t freq = 0;               ///< Observation frequency [Hz]
+        std::bitset<1 * 8> faults;      ///< Sensor faults (see graphic below)
+    };
+
+    uint32_t iTOW = 0;                  ///< GPS time of week of the navigation epoch. See the description of iTOW for details. [ms]
+    uint8_t version = 0;                ///< Message version (2 for this version)
+    std::array<uint8_t, 7> reserved1{}; ///< Reserved
+    /// Fusion mode:0: Initialization mode: receiver is initializing some unknown values required for doing sensor fusion
+    /// 1: Fusion mode: GNSS and sensor data are used for navigation solution computation
+    /// 2: Suspended fusion mode: sensor fusion is temporarily disabled due to e.g. invalid sensor data or detected ferry
+    /// 3: Disabled fusion mode: sensor fusion is permanently disabled until receiver reset due e.g. to sensor error More details can be found in the Fusion Modes section.
+    uint8_t fusionMode = 0;
+    std::array<uint8_t, 2> reserved2{};      ///< Reserved
+    uint8_t numSens = 0;                     ///< Number of sensors
+    std::vector<UbxEsfStatusSensor> sensors; ///< Repeated block
+};
+
+/// @brief The available HNR Messages
 enum UbxHnrMessages
 {
     /// Vehicle dynamics information (Length = 36; Type = Periodic/Polled)
@@ -235,7 +592,7 @@ enum UbxHnrMessages
     UBX_HNR_PVT = 0x00,
 };
 
-/// \brief The available INF Messages
+/// @brief The available INF Messages
 enum UbxInfMessages
 {
     /// ASCII output with debug contents (Length = 0 + 1*N; Type = Output)
@@ -250,7 +607,7 @@ enum UbxInfMessages
     UBX_INF_WARNING = 0x01,
 };
 
-/// \brief The available LOG Messages
+/// @brief The available LOG Messages
 enum UbxLogMessages
 {
     /// Batched data (Length = 100; Type = Polled)
@@ -279,7 +636,7 @@ enum UbxLogMessages
     UBX_LOG_STRING = 0x04,
 };
 
-/// \brief The available MGA Messages
+/// @brief The available MGA Messages
 enum UbxMgaMessages
 {
     /// Multiple GNSS Acknowledge message (Length = 8; Type = Output)
@@ -351,7 +708,7 @@ enum UbxMgaMessages
     UBX_MGA_QZSS_HEALTH = 0x05,
 };
 
-/// \brief The available MON Messages
+/// @brief The available MON Messages
 enum UbxMonMessages
 {
     /// Data batching buffer status (Length = 12; Type = Polled)
@@ -382,7 +739,7 @@ enum UbxMonMessages
     UBX_MON_VER = 0x04,
 };
 
-/// \brief The available NAV Messages
+/// @brief The available NAV Messages
 enum UbxNavMessages
 {
     /// AssistNow Autonomous Status (Length = 16; Type = Periodic/Polled)
@@ -449,7 +806,66 @@ enum UbxNavMessages
     UBX_NAV_VELNED = 0x12,
 };
 
-/// \brief The available RXM Messages
+/**
+ * @brief Attitude Solution
+ * 
+ * This message outputs the attitude solution as roll, pitch and heading angles.
+ * More details about vehicle attitude can be found in the Vehicle Attitude Output
+ * (ADR) section for ADR products.
+ * More details about vehicle attitude can be found in the Vehicle Attitude Output
+ * (UDR) section for UDR products.
+ */
+struct UbxNavAtt
+{
+    uint32_t iTOW = 0;                  ///< GPS time of week of the navigation epoch [ms]. See the description of iTOW for details.
+    uint8_t version = 0;                ///< Message version (0 for this version)
+    std::array<uint8_t, 3> reserved1{}; ///< Reserved
+    int32_t roll = 0;                   ///< Vehicle roll [deg * 1e-5]
+    int32_t pitch = 0;                  ///< Vehicle pitch [deg * 1e-5]
+    int32_t heading = 0;                ///< Vehicle heading [deg * 1e-5]
+    uint32_t accRoll = 0;               ///< Vehicle roll accuracy [deg * 1e-5] (if null, roll angle is not available).
+    uint32_t accPitch = 0;              ///< Vehicle pitch accuracy [deg * 1e-5] (if null, pitch angle is not available).
+    uint32_t accHeading = 0;            ///< Vehicle heading accuracy [deg * 1e-5] (if null, heading angle is not available).
+};
+
+/**
+ * @brief Geodetic Position Solution
+ * 
+ * See important comments concerning validity of position given in section
+ * Navigation Output Filters.
+ * This message outputs the Geodetic position in the currently selected ellipsoid.
+ * The default is the WGS84 Ellipsoid, but can be changed with the message UBX-CFG-DAT.
+ */
+struct UbxNavPosllh
+{
+    uint32_t iTOW = 0;  ///< GPS time of week of the navigation epoch [ms]. See the description of iTOW for details.
+    int32_t lon = 0;    ///< Longitude [deg * 1e-7]
+    int32_t lat = 0;    ///< Latitude [deg * 1e-7]
+    int32_t height = 0; ///< Height above ellipsoid [mm]
+    int32_t hMSL = 0;   ///< Height above mean sea level [mm]
+    uint32_t hAcc = 0;  ///< Horizontal accuracy estimate [mm]
+    uint32_t vAcc = 0;  ///< Vertical accuracy estimate [mm]
+};
+
+/**
+ * @brief Velocity Solution in NED
+ * 
+ * See important comments concerning validity of position given in section Navigation Output Filters.
+ */
+struct UbxNavVelned
+{
+    uint32_t iTOW = 0;   ///< GPS time of week of the navigation epoch [ms]. See the description of iTOW for details.
+    int32_t velN = 0;    ///< North velocity component [cm/s]
+    int32_t velE = 0;    ///< East velocity component [cm/s]
+    int32_t velD = 0;    ///< Down velocity component [cm/s]
+    uint32_t speed = 0;  ///< Speed (3-D)
+    uint32_t gSpeed = 0; ///< Ground speed (2-D)
+    int32_t heading = 0; ///< Heading of motion 2-D [deg * 1e-5]
+    uint32_t sAcc = 0;   ///< Speed accuracy Estimation [cm/s]
+    uint32_t cAcc = 0;   ///< Course / Heading accuracy estimation [deg * 1e-5]
+};
+
+/// @brief The available RXM Messages
 enum UbxRxmMessages
 {
     /// Indoor Messaging System Information (Length = 4 + 44*numTx; Type = Periodic/Polled)
@@ -474,14 +890,83 @@ enum UbxRxmMessages
     UBX_RXM_SVSI = 0x20,
 };
 
-/// \brief The available SEC Messages
+/**
+ * @brief 
+ * 
+ */
+struct UbxRxmRawx
+{
+    struct UbxRxmRawxData
+    {
+        UbxRxmRawxData(double prMes, double cpMes, float doMes, uint8_t gnssId, uint8_t svId, uint8_t reserved2, uint8_t freqId, uint16_t locktime, uint8_t cno, uint8_t prStdev, uint8_t cpStdev, uint8_t doStdev, uint8_t trkStat, uint8_t reserved3)
+            : prMes(prMes), cpMes(cpMes), doMes(doMes), gnssId(gnssId), svId(svId), reserved2(reserved2), freqId(freqId), locktime(locktime), cno(cno), prStdev(prStdev), cpStdev(cpStdev), doStdev(doStdev), trkStat(trkStat), reserved3(reserved3) {}
+        /// Pseudorange measurement [m].
+        /// GLONASS inter frequency channel delays are compensated with an internal calibration table.
+        double prMes;
+        /// Carrier phase measurement [cycles].
+        /// The carrier phase initial ambiguity is initialized using an approximate
+        /// value to make the magnitude of the phase close to the pseudorange measurement.
+        /// Clock resets are applied to both phase and code measurements in accordance with the RINEX specification.
+        double cpMes;
+        float doMes;                ///< Doppler measurement (positive sign for approaching satellites) [Hz]
+        uint8_t gnssId;             ///< GNSS identifier (see Satellite Numbering for a list of identifiers)
+        uint8_t svId;               ///< Satellite identifier (see Satellite Numbering)
+        uint8_t reserved2;          ///< Reserved
+        uint8_t freqId;             ///< Only used for GLONASS: This is the frequency slot + 7 (range from 0 to 13)
+        uint16_t locktime;          ///< Carrier phase locktime counter [ms] (maximum 64500ms)
+        uint8_t cno;                ///< Carrier-to-noise density ratio (signal strength) [dB-Hz]
+        std::bitset<1 * 8> prStdev; ///< Estimated pseudorange measurement standard deviation [m * 0.01*2^n] (see graphic below)
+        std::bitset<1 * 8> cpStdev; ///< Estimated carrier phase measurement standard deviation [cycles * 0.004] (note a raw value of 0x0F indicates the value is invalid) (see graphic below)
+        std::bitset<1 * 8> doStdev; ///< Estimated Doppler measurement standard deviation. [Hz * 0.002*2^n] (see graphic below)
+        std::bitset<1 * 8> trkStat; ///< Tracking status bitfield (see graphic below)
+        uint8_t reserved3;          ///< Reserved
+    };
+
+    /// Measurement time of week in receiverblocal time approximately aligned to the GPS time system.
+    /// The receiver local time of week, week number and leap second information can be used to translate the
+    /// time to other time systems. More information about the difference in time systems can be found in RINEX 3
+    /// documentation. For a receiver operating in GLONASS only mode, UTC time can be determined by subtracting the leapS field
+    /// from GPS time regardless of whether the GPS leap seconds are valid. [s]
+    double rcvTow = 0.0;
+    uint16_t week = 0; ///< GPS week number in receiver local time [weeks]
+    /// GPS leap seconds (GPS-UTC). This field represents the receiver's best knowledge of the leap seconds offset.
+    /// A flag is given in the recStat bitfield to indicate if the leap seconds are known.
+    int8_t leapS = 0;
+    uint8_t numMeas = 0;                ///< Number of measurements to follow
+    std::bitset<1 * 8> recStat;         ///< Receiver tracking status bitfield (see graphic below)
+    std::array<uint8_t, 3> reserved1{}; ///< Reserved
+    std::vector<UbxRxmRawxData> data;   ///< Repeated block
+};
+
+/**
+ * @brief Broadcast Navigation Data Subframe
+ * 
+ * This message reports a complete subframe of broadcast navigation data
+ * decoded from a single signal. The number of data words reported in each
+ * message depends on the nature of the signal.
+ * See the section on Broadcast Navigation Data for further details.
+ */
+struct UbxRxmSfrbx
+{
+    uint8_t gnssId = 0;         ///< GNSS identifier (see Satellite Numbering)
+    uint8_t svId = 0;           ///< Satellite identifier (see Satellite Numbering)
+    uint8_t reserved1 = 0;      ///< Reserved
+    uint8_t freqId = 0;         ///< Only used for GLONASS: This is the frequency slot + 7 (range from 0 to 13)
+    uint8_t numWords = 0;       ///< The number of data words contained in this message (0..16)
+    uint8_t chn = 0;            ///< The tracking channel number the message was received on
+    uint8_t version = 0;        ///< Message version (0x01 for this version)
+    uint8_t reserved2 = 0;      ///< Reserved
+    std::vector<uint32_t> dwrd; ///< The data words
+};
+
+/// @brief The available SEC Messages
 enum UbxSecMessages
 {
     /// Unique Chip ID (Length = 9; Type = Output)
     UBX_SEC_UNIQID = 0x03,
 };
 
-/// \brief The available TIM Messages
+/// @brief The available TIM Messages
 enum UbxTimMessages
 {
     /// Oscillator frequency changed notification (Length = 32; Type = Periodic/Polled)
@@ -506,7 +991,7 @@ enum UbxTimMessages
     UBX_TIM_VRFY = 0x06,
 };
 
-/// \brief The available UPD Messages
+/// @brief The available UPD Messages
 enum UbxUpdMessages
 {
     /// - Poll Backup File Restore Status (Length = 0; Type = Poll Request)

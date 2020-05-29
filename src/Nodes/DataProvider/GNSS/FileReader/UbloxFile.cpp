@@ -3,6 +3,9 @@
 #include "util/Logger.hpp"
 #include <ios>
 #include <cmath>
+#include <array>
+
+#include "util/Ublox/UbloxDecryptor.hpp"
 
 NAV::UbloxFile::UbloxFile(const std::string& name, std::deque<std::string>& options)
     : FileReader(options), Gnss(name, options)
@@ -22,27 +25,8 @@ NAV::UbloxFile::UbloxFile(const std::string& name, std::deque<std::string>& opti
 
     if (filestream.good())
     {
-        if (fileType != FileType::BINARY)
+        if (fileType == FileType::ASCII)
         {
-            // Read header line
-            std::string line;
-            std::getline(filestream, line);
-            // Remove any starting non text characters
-            line.erase(line.begin(), std::find_if(line.begin(), line.end(),
-                                                  std::ptr_fun<int, int>(std::isalnum)));
-            // Convert line into stream
-            std::stringstream lineStream(line);
-            std::string cell;
-            // Split line at comma
-            while (std::getline(lineStream, cell, ','))
-            {
-                // Remove any trailing non text characters
-                cell.erase(std::find_if(cell.begin(), cell.end(),
-                                        std::ptr_fun<int, int>(std::iscntrl)),
-                           cell.end());
-                columns.push_back(cell);
-            }
-
             LOG_DEBUG("{}-ASCII-File successfully initialized", name);
         }
         else
@@ -61,7 +45,6 @@ NAV::UbloxFile::~UbloxFile()
     LOG_TRACE("called for {}", name);
 
     // removeAllCallbacks();
-    columns.clear();
     if (filestream.is_open())
     {
         filestream.close();
@@ -76,14 +59,82 @@ std::shared_ptr<NAV::UbloxObs> NAV::UbloxFile::pollData(bool peek)
     {
         // TODO: Implement UbloxFile Ascii reading
         LOG_CRITICAL("Ascii UbloxFile pollData is not implemented yet.");
+        return obs;
     }
-    // Ascii
 
-    // TODO: Implement!!!!!!!!!!!!!!!!!!
+    constexpr uint8_t AsciiStartChar = '$';
+    constexpr uint8_t BinaryStartChar1 = 0xB5;
+    constexpr uint8_t BinaryStartChar2 = 0x62;
+    // constexpr uint8_t AsciiEndChar1 = '\r'; // 0x0D
+    constexpr uint8_t AsciiEndChar2 = '\n'; // 0x0A
 
-    // Calls all the callbacks
-    if (!peek)
+    // Get current position
+    auto pos = filestream.tellg();
+    uint8_t i = 0;
+    while (filestream >> i)
     {
+        if (i == BinaryStartChar1)
+        {
+            // 0 = Sync Char 1
+            // 1 = Sync Char 2
+            // 2 = Class
+            // 3 = ID
+            // 4+5 = Payload Length
+            // Payload
+            // CK_A
+            // CK_B
+
+            constexpr size_t HEAD_BUFFER_SIZE = 5;
+            // Buffer for reading binary data
+            std::array<uint8_t, HEAD_BUFFER_SIZE> headBuffer{};
+
+            filestream.read(reinterpret_cast<char*>(headBuffer.data()), HEAD_BUFFER_SIZE);
+
+            if (headBuffer.at(0) != BinaryStartChar2)
+            {
+                continue;
+            }
+
+            uint16_t payloadLength = ublox::UbloxPacket::U2(headBuffer.data() + 3);
+
+            std::vector<uint8_t> buffer{ BinaryStartChar1 };
+            buffer.insert(buffer.end(), headBuffer.data(), headBuffer.data() + HEAD_BUFFER_SIZE);
+
+            buffer.resize(HEAD_BUFFER_SIZE + 1 + payloadLength + 2);
+            filestream.read(reinterpret_cast<char*>(buffer.data()) + HEAD_BUFFER_SIZE + 1, payloadLength + 2);
+
+            obs->raw.setData(buffer.data(), buffer.size());
+
+            break;
+        }
+
+        if (i == AsciiStartChar)
+        {
+            std::string line;
+            std::getline(filestream, line);
+            line.insert(0, 1, AsciiStartChar);
+            line.push_back(AsciiEndChar2);
+
+            obs->raw.setData(reinterpret_cast<unsigned char*>(line.data()), line.size());
+
+            break;
+        }
+    }
+    if (obs->raw.getRawDataLength() == 0)
+    {
+        return nullptr;
+    }
+
+    ublox::decryptUbloxObs(obs, currentInsTime, peek);
+
+    if (peek)
+    {
+        // Return to position before "Read line".
+        filestream.seekg(pos, std::ios_base::beg);
+    }
+    else
+    {
+        // Calls all the callbacks
         invokeCallbacks(obs);
     }
 
@@ -94,35 +145,31 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
 {
     LOG_TRACE("called for {}", name);
 
-    return FileType::BINARY;
-    // constexpr uint8_t BinaryStartChar = 0xFA;
+    constexpr uint8_t BinaryUbxStartChar1 = 0xB5;
+    constexpr uint8_t BinaryUbxStartChar2 = 0x62;
+    constexpr char BinaryNmeaStartChar = '$';
 
-    // filestream = std::ifstream(path);
+    filestream = std::ifstream(path);
 
-    // constexpr uint16_t BUFFER_SIZE = 256;
+    constexpr uint16_t BUFFER_SIZE = 10;
 
-    // std::array<char, BUFFER_SIZE> buffer{};
-    // if (filestream.good())
-    // {
-    //     filestream.read(buffer.data(), BUFFER_SIZE);
+    std::array<char, BUFFER_SIZE> buffer{};
+    if (filestream.good())
+    {
+        filestream.read(buffer.data(), BUFFER_SIZE);
 
-    //     if (std::strstr(buffer.data(), "TimeStartup"))
-    //     {
-    //         filestream.close();
-    //         LOG_DEBUG("{} has the file type: ASCII", name);
-    //         return FileType::ASCII;
-    //     }
-    //     if (memmem(buffer.data(), BUFFER_SIZE, "Control Center", sizeof("Control Center")) != nullptr
-    //         || static_cast<unsigned char>(buffer.at(0)) == BinaryStartChar)
-    //     {
-    //         filestream.close();
-    //         LOG_DEBUG("{} has the file type: Binary", name);
-    //         return FileType::BINARY;
-    //     }
-    //     filestream.close();
-    //     LOG_CRITICAL("{} could not determine file type", name);
-    // }
+        if ((static_cast<uint8_t>(buffer.at(0)) == BinaryUbxStartChar1 && static_cast<uint8_t>(buffer.at(1)) == BinaryUbxStartChar2)
+            || buffer.at(0) == BinaryNmeaStartChar)
+        {
+            filestream.close();
+            LOG_DEBUG("{} has the file type: Binary", name);
+            return FileType::BINARY;
+        }
+        filestream.close();
 
-    // LOG_CRITICAL("{} could not open file {}", name, path);
-    // return FileType::NONE;
+        LOG_CRITICAL("{} could not determine file type", name);
+    }
+
+    LOG_CRITICAL("{} could not open file {}", name, path);
+    return FileType::NONE;
 }

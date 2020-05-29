@@ -7,12 +7,37 @@
 
 #pragma once
 
-/// Enables the LOG_DATA() Macro (needs SPDLOG_LEVEL_TRACE)
-#define DATA_LOGGING_ENABLED 0
-/// Compile-time logging level
-#ifndef SPDLOG_ACTIVE_LEVEL
+// Available log levels
+#define LOG_LEVEL_DATA 0
+#define LOG_LEVEL_TRACE 1
+#define LOG_LEVEL_DEBUG 2
+#define LOG_LEVEL_INFO 3
+#define LOG_LEVEL_WARN 4
+#define LOG_LEVEL_ERROR 5
+#define LOG_LEVEL_CRITICAL 6
+#define LOG_LEVEL_OFF 7
+
+// Active log level (passed as definition to cmake)
+#if LOG_LEVEL == LOG_LEVEL_DATA
+    /// Data Logging Macro
+    #define LOG_DATA SPDLOG_TRACE
     #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#elif LOG_LEVEL == LOG_LEVEL_TRACE
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#elif LOG_LEVEL == LOG_LEVEL_DEBUG
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
+#elif LOG_LEVEL == LOG_LEVEL_INFO
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+#elif LOG_LEVEL == LOG_LEVEL_WARN
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_WARN
+#elif LOG_LEVEL == LOG_LEVEL_ERROR
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_ERROR
+#elif LOG_LEVEL == LOG_LEVEL_CRITICAL
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_CRITICAL
+#elif LOG_LEVEL == LOG_LEVEL_OFF
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
 #endif
+
 /// External usage of FMT, as the internal one is missing some files
 #define SPDLOG_FMT_EXTERNAL 1
 
@@ -24,14 +49,10 @@
 
 // Macros are redefined in case SPDLOG is not available anymore and it needs to be switched to another Logger
 
-#if DATA_LOGGING_ENABLED >= 1
-    /// Data Logging Macro
-    #define LOG_DATA SPDLOG_TRACE
-#else
+#ifndef LOG_DATA
     /// Data Logging Macro
     #define LOG_DATA(...) (void)0
 #endif
-
 /// Detailled info to trace the execution of the program
 #define LOG_TRACE SPDLOG_TRACE
 /// Debug information

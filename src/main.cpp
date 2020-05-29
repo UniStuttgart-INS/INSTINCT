@@ -85,23 +85,36 @@ int main(int argc, const char* argv[])
         // Read data files
         if (NAV::NodeManager::appContext == NAV::Node::NodeContext::POST_PROCESSING)
         {
+            LOG_INFO("Post Processing Mode");
             std::multimap<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>> events;
             // Get first event of all nodes
             for (const auto& node : nodeManager.nodes())
             {
                 for (uint8_t portIndex = 0; portIndex < node->nPorts(NAV::Node::PortType::Out); portIndex++)
                 {
-                    auto nextUpdateTime = std::static_pointer_cast<NAV::InsObs>(node->requestOutputDataPeek(portIndex));
-
-                    if (nextUpdateTime)
+                    // Add next data event from the node
+                    while (true)
                     {
-                        if (nextUpdateTime->insTime.has_value())
+                        // Check if data available
+                        if (auto nextUpdateTime = std::static_pointer_cast<NAV::InsObs>(node->requestOutputDataPeek(portIndex)))
                         {
-                            events.insert(std::make_pair(nextUpdateTime->insTime.value(), std::make_pair(node, portIndex)));
+                            // Check if data has a time
+                            if (nextUpdateTime->insTime.has_value())
+                            {
+                                events.insert(std::make_pair(nextUpdateTime->insTime.value(), std::make_pair(node, portIndex)));
+                                LOG_INFO("Reading Data from {}", node->getName());
+                                break;
+                            }
+
+                            // Remove data without calling the callback if no time stamp
+                            // For post processing all data needs a time stamp
+                            node->callbacksEnabled = false;
+                            static_cast<void>(node->requestOutputData(portIndex));
+                            node->callbacksEnabled = true;
                         }
                         else
                         {
-                            LOG_DEBUG("Node {} does provide data but without InsTime value.", node->getName());
+                            break;
                         }
                     }
                 }
@@ -117,16 +130,28 @@ int main(int argc, const char* argv[])
                     LOG_ERROR("{} - {} could not poll its observation despite being able to peek it.", node->type(), node->getName());
                 }
 
-                auto nextUpdateTime = std::static_pointer_cast<NAV::InsObs>(node->requestOutputDataPeek(portIndex));
-                if (nextUpdateTime)
+                // Add next data event from the node
+                while (true)
                 {
-                    if (nextUpdateTime->insTime.has_value())
+                    // Check if data available
+                    if (auto nextUpdateTime = std::static_pointer_cast<NAV::InsObs>(node->requestOutputDataPeek(portIndex)))
                     {
-                        events.insert(std::make_pair(nextUpdateTime->insTime.value(), it->second));
+                        // Check if data has a time
+                        if (nextUpdateTime->insTime.has_value())
+                        {
+                            events.insert(std::make_pair(nextUpdateTime->insTime.value(), it->second));
+                            break;
+                        }
+
+                        // Remove data without calling the callback if no time stamp
+                        // For post processing all data needs a time stamp
+                        node->callbacksEnabled = false;
+                        static_cast<void>(node->requestOutputData(portIndex));
+                        node->callbacksEnabled = true;
                     }
                     else
                     {
-                        LOG_WARN("Node {} does provide data but without InsTime value.", node->getName());
+                        break;
                     }
                 }
 

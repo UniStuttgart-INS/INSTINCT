@@ -48,7 +48,7 @@ option(ENABLE_GUI "Build GUI" OFF)
 # Logging Level
 set(LOG_LEVEL
     "INFO"
-    CACHE STRING "TRACE|DEBUG|INFO|WARN|ERROR|CRITICAL|OFF")
+    CACHE STRING "DATA|TRACE|DEBUG|INFO|WARN|ERROR|CRITICAL|OFF")
 
 # Include all project headers
 include_directories(src)

@@ -114,6 +114,19 @@ uint32_t NAV::ublox::UbloxPacket::extractUint32()
     return d;
 }
 
+int32_t NAV::ublox::UbloxPacket::extractInt32()
+{
+    ensureCanExtract(sizeof(int32_t));
+
+    int32_t d = 0;
+
+    memcpy(&d, _data.data() + _curExtractLoc, sizeof(int32_t));
+
+    _curExtractLoc += sizeof(int32_t);
+
+    return d;
+}
+
 uint64_t NAV::ublox::UbloxPacket::extractUint64()
 {
     ensureCanExtract(sizeof(uint64_t));

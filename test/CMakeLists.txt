@@ -35,7 +35,7 @@ target_link_libraries(
           CONAN_PKG::eigen
           Threads::Threads)
 
-target_compile_definitions(tests PUBLIC SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_${LOG_LEVEL})
+target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries

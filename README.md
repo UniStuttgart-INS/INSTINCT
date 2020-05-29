@@ -43,7 +43,7 @@ The software consists of 2 parts
 
 Most library dependencies are managed by Conan.io, so you just need to install the basics.
 
-ArchLinux:
+#### ArchLinux:
 ```
 # Needed
 sudo pacman -S base-devel cmake clang
@@ -56,17 +56,54 @@ sudo pacman -S ccache valgrind kcachegrind doxygen gnuplot cppcheck
 sudo pacman -S qt5-base
 ```
 
-Ubuntu:
+#### Ubuntu:
 ```
 # Needed
-sudo apt-get install build-essential cmake clang
+sudo apt-get install build-essential cmake clang clang-tidy
 
 # Optional
-pip install conan
-sudo apt-get install ccache valgrind kcachegrind doxygen gnuplot gnuplot-x11 cppcheck
+sudo apt-get install ccache valgrind kcachegrind doxygen gnuplot gnuplot-x11 cppcheck python3-pip
+pip3 install conan --user
 
 # GUI (optional)
 sudo apt-get install qt5-default 
+```
+
+#### Windows 10 (WSL):
+[Windows Subsystem for Linux Installation Guide for Windows 10](https://docs.microsoft.com/de-de/windows/wsl/install-win10):
+
+PowerShell (Administrator):
+```
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+```
+* If you want to use WSL 2, you join the Windows Insider program and select (Release Preview)
+* Next open the Microsoft Store and install [Ubuntu](https://www.microsoft.com/de-de/p/ubuntu/9nblggh4msv6)
+* Launch Ubuntu and create a user account and password
+* Follow the instructions for Ubuntu here in the Readme
+
+[VSCode Developing in WSL](https://code.visualstudio.com/docs/remote/wsl):
+* Install [Visual Studio Code](https://code.visualstudio.com/download) on the Windows side (not in WSL)
+* Install the [Remote Development extension pack](https://aka.ms/vscode-remote/download/extension)
+* Navigate with Linux terminal to your source code folder and type ```code .```
+
+[Get the GUI to work](https://github.com/microsoft/WSL/issues/4793#issuecomment-577232999):
+* Install [VcXsrv](https://sourceforge.net/projects/vcxsrv/)
+* Run with these settings:
+    * Multiple windows, Display number: -1
+    * Start no client
+    * Disable access control
+* Hover with your mouse over the system tray icon and verify that it says ```hostname:0.0```
+* Find your host IP address (run in windows console: ```ipconfig```), e.g. 192.168.1.3
+* In the ```tasks.json``` add the following inside the ```GUI: Build & run project``` task:
+```
+    "options": {
+        "env": {
+            "DISPLAY": "192.168.1.3:0.0",
+            "LIBGL_ALWAYS_INDIRECT": "1"
+        }
+    },
 ```
 
 ### VSCode Configuration

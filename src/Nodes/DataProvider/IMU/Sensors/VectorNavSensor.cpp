@@ -207,7 +207,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
             LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
                      vnSensor->name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
-                     obs->vpeStatus.value(), obs->temperature.value());
+                     obs->vpeStatus.value().status, obs->temperature.value());
 
             // Calls all the callbacks
             vnSensor->invokeCallbacks(obs);

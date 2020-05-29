@@ -9,6 +9,8 @@
 
 #include "Nodes/Node.hpp"
 
+#include "util/notidy/InsTime.hpp"
+
 namespace NAV
 {
 /// Abstract GNSS Data Provider Class
@@ -34,6 +36,9 @@ class Gnss : public Node
 
     /// Destructor
     ~Gnss() override = default;
+
+    /// Current Ins Time
+    InsTime currentInsTime{};
 };
 
 } // namespace NAV

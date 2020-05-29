@@ -89,6 +89,12 @@ class UbloxPacket
     /// @return The extracted value.
     uint32_t extractUint32();
 
+    /// @brief Extracts a int32_t data type from a binary packet and advances
+    /// the next extraction point appropriately.
+    ///
+    /// @return The extracted value.
+    int32_t extractInt32();
+
     /// @brief Extracts a uint64_t data type from a binary packet and advances
     /// the next extraction point appropriately.
     ///

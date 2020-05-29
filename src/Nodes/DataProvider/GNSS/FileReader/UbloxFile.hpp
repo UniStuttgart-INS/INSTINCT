@@ -169,9 +169,6 @@ class UbloxFile final : public FileReader, public Gnss
      * @retval FileType The File Type
      */
     [[nodiscard]] FileType determineFileType() final;
-
-    /// Header Columns of an ASCII file
-    std::vector<std::string> columns;
 };
 
 } // namespace NAV
