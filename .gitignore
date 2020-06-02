@@ -20,3 +20,7 @@ logs/*
 
 # Ignore root level compile_commands
 compile_commands.json
+
+# Ignore config files
+config.ini
+config-dataflow.ini

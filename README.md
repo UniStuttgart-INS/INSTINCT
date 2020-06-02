@@ -78,7 +78,11 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux 
 
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 ```
-* If you want to use WSL 2, you join the Windows Insider program and select (Release Preview)
+* If you want to use WSL 2, you need to do the following:
+    * Join the Windows Insider program and select (Release Preview)
+    * Update your windows version
+    * Restart your machine to complete the WSL install and update to WSL 2
+    * Set WSL 2 as your default version: ```wsl --set-default-version 2```
 * Next open the Microsoft Store and install [Ubuntu](https://www.microsoft.com/de-de/p/ubuntu/9nblggh4msv6)
 * Launch Ubuntu and create a user account and password
 * Follow the instructions for Ubuntu here in the Readme
