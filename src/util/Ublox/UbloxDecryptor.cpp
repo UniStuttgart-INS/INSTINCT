@@ -2,7 +2,7 @@
 
 #include "util/Logger.hpp"
 
-void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTime& /*currentInsTime*/, bool peek)
+void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, std::optional<NAV::InsTime>& currentInsTime, bool peek)
 {
     if (obs->raw.type() == ublox::UbloxPacket::Type::TYPE_BINARY)
     {
@@ -20,7 +20,11 @@ void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTi
                 std::get<ublox::UbxAckAck>(obs->data).clsID = obs->raw.extractUint8();
                 std::get<ublox::UbxAckAck>(obs->data).msgID = obs->raw.extractUint8();
 
-                // TODO: Calculate the insTime somehow
+                // Set the observation time to the last known gps time
+                if (currentInsTime.has_value())
+                {
+                    obs->insTime = currentInsTime;
+                }
 
                 LOG_DATA("UBX:  ACK-ACK, clsID {}, msgID {}", std::get<ublox::UbxAckAck>(obs->data).clsID, std::get<ublox::UbxAckAck>(obs->data).msgID);
             }
@@ -30,7 +34,11 @@ void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTi
                 std::get<ublox::UbxAckNak>(obs->data).clsID = obs->raw.extractUint8();
                 std::get<ublox::UbxAckNak>(obs->data).msgID = obs->raw.extractUint8();
 
-                // TODO: Calculate the insTime somehow
+                // Set the observation time to the last known gps time
+                if (currentInsTime.has_value())
+                {
+                    obs->insTime = currentInsTime;
+                }
 
                 if (!peek)
                 {
@@ -93,7 +101,7 @@ void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTi
                     std::get<ublox::UbxEsfRaw>(obs->data).data.emplace_back(obs->raw.extractUint32(), obs->raw.extractUint32());
                 }
 
-                // TODO: Calculate the insTime somehow from the sensor time tag (sTtag)
+                // TODO: - UBX_ESF_RAW: Calculate the insTime somehow from the sensor time tag (sTtag)
 
                 if (!peek)
                 {
@@ -181,7 +189,14 @@ void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTi
                 std::get<ublox::UbxNavAtt>(obs->data).accPitch = obs->raw.extractUint32();
                 std::get<ublox::UbxNavAtt>(obs->data).accHeading = obs->raw.extractUint32();
 
-                // TODO: Calculate the insTime with the iTOW and get the week from somewhere
+                // Calculate the insTime with the iTOW
+                if (currentInsTime.has_value())
+                {
+                    currentInsTime.emplace(currentInsTime.value().GetGPSTime().gpsWeek,
+                                           static_cast<long double>(std::get<ublox::UbxNavAtt>(obs->data).iTOW) / 1000.0L,
+                                           currentInsTime.value().GetGPSTime().gpsCycle);
+                    obs->insTime = currentInsTime;
+                }
 
                 if (!peek)
                 {
@@ -200,7 +215,14 @@ void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTi
                 std::get<ublox::UbxNavPosllh>(obs->data).hAcc = obs->raw.extractUint32();
                 std::get<ublox::UbxNavPosllh>(obs->data).vAcc = obs->raw.extractUint32();
 
-                // TODO: Calculate the insTime with the iTOW and get the week from somewhere
+                // Calculate the insTime with the iTOW
+                if (currentInsTime.has_value())
+                {
+                    currentInsTime.emplace(currentInsTime.value().GetGPSTime().gpsWeek,
+                                           static_cast<long double>(std::get<ublox::UbxNavPosllh>(obs->data).iTOW) / 1000.0L,
+                                           currentInsTime.value().GetGPSTime().gpsCycle);
+                    obs->insTime = currentInsTime;
+                }
 
                 if (!peek)
                 {
@@ -221,7 +243,14 @@ void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTi
                 std::get<ublox::UbxNavVelned>(obs->data).sAcc = obs->raw.extractUint32();
                 std::get<ublox::UbxNavVelned>(obs->data).cAcc = obs->raw.extractUint32();
 
-                // TODO: Calculate the insTime with the iTOW and get the week from somewhere
+                // Calculate the insTime with the iTOW
+                if (currentInsTime.has_value())
+                {
+                    currentInsTime.emplace(currentInsTime.value().GetGPSTime().gpsWeek,
+                                           static_cast<long double>(std::get<ublox::UbxNavVelned>(obs->data).iTOW) / 1000.0L,
+                                           currentInsTime.value().GetGPSTime().gpsCycle);
+                    obs->insTime = currentInsTime;
+                }
 
                 if (!peek)
                 {
@@ -272,7 +301,10 @@ void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTi
                     );
                 }
 
-                obs->insTime.emplace(std::get<ublox::UbxRxmRawx>(obs->data).week, static_cast<long double>(std::get<ublox::UbxRxmRawx>(obs->data).rcvTow), 0);
+                currentInsTime.emplace(std::get<ublox::UbxRxmRawx>(obs->data).week,
+                                       static_cast<long double>(std::get<ublox::UbxRxmRawx>(obs->data).rcvTow),
+                                       0);
+                obs->insTime = currentInsTime;
 
                 if (!peek)
                 {
@@ -298,7 +330,11 @@ void NAV::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTi
                     std::get<ublox::UbxRxmSfrbx>(obs->data).dwrd.emplace_back(obs->raw.extractUint32());
                 }
 
-                // TODO: Calculate the insTime somehow
+                // Set the observation time to the last known gps time
+                if (currentInsTime.has_value())
+                {
+                    obs->insTime = currentInsTime;
+                }
 
                 if (!peek)
                 {

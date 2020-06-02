@@ -19,6 +19,6 @@ namespace NAV::ublox
  * @param[in, out] currentInsTime Current Ins Time
  * @param[in] peek Specifies if the data should be peeked  or read
  */
-void decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, NAV::InsTime& currentInsTime, bool peek = false);
+void decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, std::optional<NAV::InsTime>& currentInsTime, bool peek = false);
 
 } // namespace NAV::ublox

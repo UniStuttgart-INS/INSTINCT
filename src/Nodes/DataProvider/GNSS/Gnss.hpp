@@ -38,7 +38,7 @@ class Gnss : public Node
     ~Gnss() override = default;
 
     /// Current Ins Time
-    InsTime currentInsTime{};
+    std::optional<InsTime> currentInsTime;
 };
 
 } // namespace NAV
