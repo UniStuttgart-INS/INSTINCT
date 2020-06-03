@@ -131,6 +131,11 @@ class Node : public DataCallback
     [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex) = 0;
 
     /**
+     * @brief Resets the node. In case of file readers, that moves the read cursor to the start
+     */
+    virtual void resetNode() {}
+
+    /**
      * @brief Get the name string of the Node
      * 
      * @retval const std::string_view& The Name of the Node

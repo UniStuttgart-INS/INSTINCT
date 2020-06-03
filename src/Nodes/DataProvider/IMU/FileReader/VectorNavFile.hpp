@@ -154,6 +154,11 @@ class VectorNavFile final : public FileReader, public Imu
         return nullptr;
     }
 
+    /**
+     * @brief Resets the node. In case of file readers, that moves the read cursor to the start
+     */
+    void resetNode() final;
+
   private:
     /**
      * @brief Polls the data from the file

@@ -50,6 +50,8 @@ class FileReader
     std::ifstream filestream;
     /// File Type
     FileType fileType = FileType::NONE;
+    /// Start of the data in the file
+    std::streampos dataStart = 0;
 };
 
 } // namespace NAV

@@ -47,6 +47,8 @@ class GnuPlot : public Node
         GnuPlotWindow& operator=(GnuPlotWindow&&) = delete;      ///< Move assignment operator
 
         size_t addNewDataSet(const std::string& legend);
+
+        std::string xLabel;
     };
 
     /**

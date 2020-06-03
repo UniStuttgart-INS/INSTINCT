@@ -25,6 +25,8 @@ NAV::UbloxFile::UbloxFile(const std::string& name, std::deque<std::string>& opti
 
     if (filestream.good())
     {
+        dataStart = filestream.tellg();
+
         if (fileType == FileType::ASCII)
         {
             LOG_DEBUG("{}-ASCII-File successfully initialized", name);
@@ -49,6 +51,13 @@ NAV::UbloxFile::~UbloxFile()
     {
         filestream.close();
     }
+}
+
+void NAV::UbloxFile::resetNode()
+{
+    // Return to position
+    filestream.clear();
+    filestream.seekg(dataStart, std::ios_base::beg);
 }
 
 std::shared_ptr<NAV::UbloxObs> NAV::UbloxFile::pollData(bool peek)

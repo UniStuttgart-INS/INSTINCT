@@ -1,6 +1,6 @@
 /**
  * @file UbloxFile.hpp
- * @brief File Reader for Vector Nav log files
+ * @brief File Reader for Ublox log files
  * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
  * @date 2020-03-16
  */
@@ -153,6 +153,11 @@ class UbloxFile final : public FileReader, public Gnss
 
         return nullptr;
     }
+
+    /**
+     * @brief Resets the node. In case of file readers, that moves the read cursor to the start
+     */
+    void resetNode() final;
 
   private:
     /**

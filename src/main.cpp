@@ -117,6 +117,7 @@ int main(int argc, const char* argv[])
                             break;
                         }
                     }
+                    node->resetNode();
                 }
             }
 

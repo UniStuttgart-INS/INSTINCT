@@ -128,6 +128,7 @@ bool NAV::GnuPlot::update()
             }
 
             *plotWindow->gp << "\n";
+            *plotWindow->gp << "set xlabel \"" << plotWindow->xLabel << "\"\n";
             plotWindow->gp->flush();
             somethingWasPlotted = true;
         }

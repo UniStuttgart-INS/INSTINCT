@@ -43,6 +43,8 @@ NAV::VectorNavFile::VectorNavFile(const std::string& name, std::deque<std::strin
                 columns.push_back(cell);
             }
 
+            dataStart = filestream.tellg();
+
             LOG_DEBUG("{}-ASCII-File successfully initialized", name);
         }
         else
@@ -66,6 +68,13 @@ NAV::VectorNavFile::~VectorNavFile()
     {
         filestream.close();
     }
+}
+
+void NAV::VectorNavFile::resetNode()
+{
+    // Return to position
+    filestream.clear();
+    filestream.seekg(dataStart, std::ios_base::beg);
 }
 
 std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)

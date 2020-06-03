@@ -1,36 +1,36 @@
 /**
- * @file VectorNavGnuPlot.hpp
- * @brief Plots VectorNav Imu Data
+ * @file RtklibPosFile.hpp
+ * @brief File Reader for Pos files
  * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-04-14
+ * @date 2020-06-02
  */
 
 #pragma once
 
-#include "../GnuPlot.hpp"
-
-#include "NodeData/IMU/VectorNavObs.hpp"
+#include "../Gnss.hpp"
+#include "../../Protocol/FileReader.hpp"
+#include "NodeData/GNSS/RtklibPosObs.hpp"
 
 namespace NAV
 {
-/// Plots VectorNav Imu Data
-class VectorNavGnuPlot final : public GnuPlot
+/// File Reader for Vector Nav log files
+class RtklibPosFile final : public FileReader, public Gnss
 {
   public:
     /**
-     * @brief Construct a new VectorNav Gnu Plot object
+     * @brief Construct a new Vector Nav File object
      * 
-     * @param[in] name Name of the Node
+     * @param[in] name Name of the Sensor which wrote the file
      * @param[in, out] options Program options string list
      */
-    VectorNavGnuPlot(const std::string& name, std::deque<std::string>& options);
+    RtklibPosFile(const std::string& name, std::deque<std::string>& options);
 
-    VectorNavGnuPlot() = default;                                  ///< Default Constructor
-    ~VectorNavGnuPlot() final;                                     ///< Destructor
-    VectorNavGnuPlot(const VectorNavGnuPlot&) = delete;            ///< Copy constructor
-    VectorNavGnuPlot(VectorNavGnuPlot&&) = delete;                 ///< Move constructor
-    VectorNavGnuPlot& operator=(const VectorNavGnuPlot&) = delete; ///< Copy assignment operator
-    VectorNavGnuPlot& operator=(VectorNavGnuPlot&&) = delete;      ///< Move assignment operator
+    RtklibPosFile() = default;                               ///< Default Constructor
+    ~RtklibPosFile() final;                                  ///< Destructor
+    RtklibPosFile(const RtklibPosFile&) = delete;            ///< Copy constructor
+    RtklibPosFile(RtklibPosFile&&) = delete;                 ///< Move constructor
+    RtklibPosFile& operator=(const RtklibPosFile&) = delete; ///< Copy assignment operator
+    RtklibPosFile& operator=(RtklibPosFile&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Returns the String representation of the Class Type
@@ -39,7 +39,7 @@ class VectorNavGnuPlot final : public GnuPlot
      */
     [[nodiscard]] constexpr std::string_view type() const final
     {
-        return std::string_view("VectorNavGnuPlot");
+        return std::string_view("RtklibPosFile");
     }
 
     /**
@@ -49,7 +49,7 @@ class VectorNavGnuPlot final : public GnuPlot
      */
     [[nodiscard]] constexpr std::string_view category() const final
     {
-        return std::string_view("Plot");
+        return std::string_view("DataProvider");
     }
 
     /**
@@ -59,9 +59,7 @@ class VectorNavGnuPlot final : public GnuPlot
      */
     [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
     {
-        return { { Node::CONFIG_FLOAT, "X Display Scope", "Data older/smaller than the specified scope gets discarded.\ne.g. Shows only the last x seconds.\n\nOnly for Real-Time data", { "0", "10", "100" } },
-                 { Node::CONFIG_FLOAT, "Update Frequency", "Frequency to update the Plot Windows\n\nOnly for Real-Time data", { "0", "50", "200" } },
-                 { Node::CONFIG_LIST_LIST_INT, "Data to plot", "Specify what data should be plotted.\n\nData with the same Window Id gets plotted into the same GnuPlot window.\nWindow Id '-1' disables the plot.", { "[gpsToW]", "timeSinceStartup|[quaternion]|magUncompXYZ|accelUncompXYZ|gyroUncompXYZ|magCompXYZ|accelCompXYZ|gyroCompXYZ|syncInCnt|dtime|dtheta|dvel|vpeStatus|temperature|pressure|magCompNED|accelCompNED|gyroCompNED|linearAccelXYZ|linearAccelNED|yawPitchRollUncertainty", "-1|-1|100" } } };
+        return { { ConfigOptions::CONFIG_STRING, "Path", "Path to the File to read", { "" } } };
     }
 
     /**
@@ -71,7 +69,7 @@ class VectorNavGnuPlot final : public GnuPlot
      */
     [[nodiscard]] constexpr NodeContext context() const final
     {
-        return NodeContext::ALL;
+        return NodeContext::POST_PROCESSING;
     }
 
     /**
@@ -85,9 +83,9 @@ class VectorNavGnuPlot final : public GnuPlot
         switch (portType)
         {
         case PortType::In:
-            return 1U;
-        case PortType::Out:
             break;
+        case PortType::Out:
+            return 1U;
         }
 
         return 0U;
@@ -105,13 +103,12 @@ class VectorNavGnuPlot final : public GnuPlot
         switch (portType)
         {
         case PortType::In:
-            if (portIndex == 0)
-            {
-                return VectorNavObs().type();
-            }
             break;
         case PortType::Out:
-            break;
+            if (portIndex == 0)
+            {
+                return RtklibPosObs().type();
+            }
         }
 
         return std::string_view("");
@@ -123,21 +120,23 @@ class VectorNavGnuPlot final : public GnuPlot
      * @param[in] portIndex The input port index
      * @param[in, out] data The data send on the input port
      */
-    void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) final
-    {
-        if (portIndex == 0)
-        {
-            auto obs = std::static_pointer_cast<VectorNavObs>(data);
-            plotVectorNavObs(obs);
-        }
-    }
+    void handleInputData(uint8_t /* portIndex */, std::shared_ptr<NodeData> /* data */) final {}
+
     /**
      * @brief Requests the node to send out its data
      * 
      * @param[in] portIndex The output port index
      * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
      */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t /* portIndex */) final { return nullptr; }
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) final
+    {
+        if (portIndex == 0)
+        {
+            return pollData();
+        }
+
+        return nullptr;
+    }
 
     /**
      * @brief Requests the node to peek its output data
@@ -145,15 +144,39 @@ class VectorNavGnuPlot final : public GnuPlot
      * @param[in] portIndex The output port index
      * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
      */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t /* portIndex */) final { return nullptr; }
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex) final
+    {
+        if (portIndex == 0)
+        {
+            return pollData(true);
+        }
+
+        return nullptr;
+    }
+
+    /**
+     * @brief Resets the node. In case of file readers, that moves the read cursor to the start
+     */
+    void resetNode() final;
 
   private:
     /**
-     * @brief Plots an VectorNav Observation
+     * @brief Polls the data from the file
      * 
-     * @param[in] obs The received observation
+     * @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
+     * @retval std::shared_ptr<VectorNavObs> The read observation
      */
-    void plotVectorNavObs(std::shared_ptr<VectorNavObs>& obs);
+    [[nodiscard]] std::shared_ptr<RtklibPosObs> pollData(bool peek = false);
+
+    /// Header Columns
+    std::vector<std::string> columns;
+
+    /**
+     * @brief Determines the type of the file (ASCII or binary)
+     * 
+     * @retval FileType The File Type
+     */
+    [[nodiscard]] FileType determineFileType() final;
 };
 
 } // namespace NAV

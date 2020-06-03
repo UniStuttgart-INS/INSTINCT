@@ -16,6 +16,14 @@ NAV::VectorNavGnuPlot::VectorNavGnuPlot(const std::string& name, std::deque<std:
     {
         auto plotWindow = plotWindows.at(wIndex);
 
+        if (plotWindow->xLabel.empty())
+        {
+            if (xData == "gpsToW")
+            {
+                plotWindow->xLabel = "GPS Time of Week [s]";
+            }
+        }
+
         if (yData == "timeSinceStartup")
         {
             dataIndices.push_back(plotWindow->addNewDataSet("Time Since Startup [ns]"));
@@ -141,39 +149,20 @@ NAV::VectorNavGnuPlot::~VectorNavGnuPlot()
 
 void NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
-    if (!insTime0.has_value())
-    {
-        if (obs->insTime.has_value())
-        {
-            insTime0 = obs->insTime;
-            // Clear previous data, as time base changed
-            for (auto& [xData, yData, wIndex, dataIndices] : dataToPlot)
-            {
-                for (auto& dataIndex : dataIndices)
-                {
-                    plotWindows.at(wIndex)->data.at(dataIndex).xy.clear();
-                }
-            }
-        }
-        else if (!timeSinceStartup0)
-        {
-            timeSinceStartup0 = obs->timeSinceStartup.value();
-        }
-    }
-
-    double plotX = 0.0;
-    if (insTime0.has_value())
-    {
-        plotX = static_cast<double>(obs->insTime.value().getTimeDiff(insTime0.value()));
-    }
-    else
-    {
-        plotX = static_cast<double>(obs->timeSinceStartup.value() - timeSinceStartup0) / std::pow(10, 9);
-    }
-
     for (auto& [xData, yData, wIndex, dataIndices] : dataToPlot)
     {
         auto plotWindow = plotWindows.at(wIndex);
+
+        double plotX = 0.0;
+
+        if (xData == "gpsToW" && obs->insTime.has_value())
+        {
+            plotX = static_cast<double>(obs->insTime.value().GetGPSTime().tow);
+        }
+        else
+        {
+            continue;
+        }
 
         if (yData == "timeSinceStartup" && obs->timeSinceStartup.has_value())
         {
