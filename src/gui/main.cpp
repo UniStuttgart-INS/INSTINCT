@@ -154,10 +154,10 @@ void exportConfig()
 
                     if (spinBox->value() != -1)
                     {
-                        std::string toAdd = xlist->currentText().toStdString() + ", " + ylist->currentText().toStdString() + ", " + std::to_string(spinBox->value());
+                        std::string toAdd = xlist->currentText().toStdString() + ";" + ylist->currentText().toStdString() + ";" + std::to_string(spinBox->value());
 
                         if (text.find(toAdd) == std::string::npos)
-                            text += (!text.empty() ? ", " : "") + toAdd;
+                            text += (!text.empty() ? ";" : "") + toAdd;
                     }
                 }
             }
@@ -168,13 +168,13 @@ void exportConfig()
 
             std::replace(type.begin(), type.end(), '\n', ' ');
 
-            comment += ", " + type;
-            config += ", " + text;
+            config += ", \"" + type + "\" = \"" + text + "\"";
 
-            for (int i = 0; i < static_cast<int>(type.size()) - static_cast<int>(text.size()); i++)
-                config += " ";
-            for (int i = 0; i < static_cast<int>(text.size()) - static_cast<int>(type.size()); i++)
-                comment += " ";
+            // comment += ", " + type;
+            // for (int i = 0; i < static_cast<int>(type.size()) - static_cast<int>(text.size()); i++)
+            //     config += " ";
+            // for (int i = 0; i < static_cast<int>(text.size()) - static_cast<int>(type.size()); i++)
+            //     comment += " ";
         }
 
         filestream << comment << std::endl;

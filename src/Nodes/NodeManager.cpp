@@ -39,14 +39,26 @@ void NAV::NodeManager::processConfigFile()
                 }
                 else
                 {
-                    config.options.push_back(cell);
+                    size_t splitPos = cell.find("\" = \"");
+                    std::string key = cell.substr(1, splitPos - 1);
+                    std::string value = cell.substr(splitPos + 5, cell.length() - splitPos - 6);
+
+                    config.options[key] = value;
                 }
             }
 
             nodeConfigs.push_back(config);
             names.push_back(config.name);
 
-            LOG_DEBUG("Option-node: {}, {}, {}", config.type, config.name, fmt::join(config.options, ", "));
+            std::vector<std::string> v;
+            for (const auto& [key, value] : config.options)
+            {
+                std::string concat = key;
+                concat.append(" = ");
+                concat.append(value);
+                v.push_back(concat);
+            }
+            LOG_DEBUG("Option-node: {}, {}, {}", config.type, config.name, fmt::join(v, ", "));
         }
         // Check if duplicate names
         auto it = std::unique(names.begin(), names.end());

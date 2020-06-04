@@ -21,9 +21,9 @@ class VectorNavDataLogger final : public DataLogger
      * @brief Construct a new Data Logger object
      * 
      * @param[in] name Name of the Logger
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    VectorNavDataLogger(const std::string& name, std::deque<std::string>& options);
+    VectorNavDataLogger(const std::string& name, const std::map<std::string, std::string>& options);
 
     VectorNavDataLogger() = default;                                     ///< Default Constructor
     ~VectorNavDataLogger() final;                                        ///< Destructor

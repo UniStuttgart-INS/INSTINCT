@@ -2,13 +2,12 @@
 
 #include "util/Logger.hpp"
 
-NAV::FileReader::FileReader(std::deque<std::string>& options)
+NAV::FileReader::FileReader(const std::map<std::string, std::string>& options)
 {
     LOG_TRACE("called");
 
-    if (!options.empty())
+    if (options.contains("Path"))
     {
-        path = options.at(0);
-        options.pop_front();
+        path = options.at("Path");
     }
 }

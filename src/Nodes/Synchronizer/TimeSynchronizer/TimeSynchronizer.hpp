@@ -22,9 +22,9 @@ class TimeSynchronizer final : public Node
      * @brief Construct a new Time Synchronizer object
      * 
      * @param[in] name Name of the Object
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    TimeSynchronizer(const std::string& name, std::deque<std::string>& options);
+    TimeSynchronizer(const std::string& name, const std::map<std::string, std::string>& options);
 
     TimeSynchronizer() = default;                                  ///< Default Constructor
     ~TimeSynchronizer() final = default;                           ///< Destructor

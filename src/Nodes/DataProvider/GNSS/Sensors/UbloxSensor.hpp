@@ -33,7 +33,7 @@ class UbloxSensor final : public UartSensor, public Gnss
      * @param[in] name Name of the Sensor
      * @param[in, out] options Program options string list
      */
-    UbloxSensor(const std::string& name, std::deque<std::string>& options);
+    UbloxSensor(const std::string& name, const std::map<std::string, std::string>& options);
 
     UbloxSensor() = default;                             ///< Default Constructor
     ~UbloxSensor() final;                                ///< Destructor

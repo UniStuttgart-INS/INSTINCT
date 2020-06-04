@@ -12,6 +12,7 @@
 #include "gnuplot-iostream.h"
 #include <memory>
 #include <tuple>
+#include <deque>
 
 namespace NAV
 {
@@ -55,9 +56,9 @@ class GnuPlot : public Node
      * @brief Construct a new Gnu Plot object
      * 
      * @param[in] name Name of the Node
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    GnuPlot(const std::string& name, std::deque<std::string>& options);
+    GnuPlot(const std::string& name, const std::map<std::string, std::string>& options);
 
     GnuPlot() = default;                         ///< Default Constructor
     ~GnuPlot() override = default;               ///< Destructor

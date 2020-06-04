@@ -4,7 +4,7 @@
 
 #include <iomanip> // std::setprecision
 
-NAV::VectorNavDataLogger::VectorNavDataLogger(const std::string& name, std::deque<std::string>& options)
+NAV::VectorNavDataLogger::VectorNavDataLogger(const std::string& name, const std::map<std::string, std::string>& options)
     : DataLogger(name, options)
 {
     LOG_TRACE("called for {}", name);

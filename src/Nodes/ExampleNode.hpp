@@ -20,9 +20,9 @@ class ExampleNode : public Node
      * @brief Construct a new object
      * 
      * @param[in] name Name of the object
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    ExampleNode(const std::string& name, std::deque<std::string>& options);
+    ExampleNode(const std::string& name, const std::map<std::string, std::string>& options);
 
     ExampleNode() = default;                             ///< Default Constructor
     ~ExampleNode() override = default;                   ///< Destructor

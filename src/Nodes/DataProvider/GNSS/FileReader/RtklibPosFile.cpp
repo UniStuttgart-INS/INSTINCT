@@ -5,7 +5,7 @@
 #include <cmath>
 #include <array>
 
-NAV::RtklibPosFile::RtklibPosFile(const std::string& name, std::deque<std::string>& options)
+NAV::RtklibPosFile::RtklibPosFile(const std::string& name, const std::map<std::string, std::string>& options)
     : FileReader(options), Gnss(name, options)
 {
     LOG_TRACE("called for {}", name);

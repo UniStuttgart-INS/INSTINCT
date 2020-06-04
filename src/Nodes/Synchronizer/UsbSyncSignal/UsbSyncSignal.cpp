@@ -5,15 +5,14 @@
 #include <fcntl.h>  // open
 #include <unistd.h> // close
 
-NAV::UsbSyncSignal::UsbSyncSignal(const std::string& name, std::deque<std::string>& options)
+NAV::UsbSyncSignal::UsbSyncSignal(const std::string& name, const std::map<std::string, std::string>& options)
     : Node(name)
 {
     LOG_TRACE("called for {}", name);
 
-    if (!options.empty())
+    if (options.contains("Port"))
     {
-        port = options.at(0);
-        options.pop_front();
+        port = options.at("Port");
     }
     else
     {

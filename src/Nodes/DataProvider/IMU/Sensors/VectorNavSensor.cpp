@@ -6,15 +6,14 @@
     #include "util/Logger.hpp"
     #include "vn/searcher.h"
 
-NAV::VectorNavSensor::VectorNavSensor(const std::string& name, std::deque<std::string>& options)
+NAV::VectorNavSensor::VectorNavSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Imu(name, options)
 {
     LOG_TRACE("called for {}", name);
 
-    if (!options.empty())
+    if (options.contains("Frequency"))
     {
-        config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at(0)));
-        options.pop_front();
+        config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at("Frequency")));
     }
 
     ASSERT(config.outputFrequency <= IMU_DEFAULT_FREQUENCY, "Configured Output Frequency has to be less than IMU_DEFAULT_FREQUENCY");

@@ -25,39 +25,40 @@ size_t NAV::GnuPlot::GnuPlotWindow::addNewDataSet(const std::string& legend)
     return data.size() - 1;
 }
 
-NAV::GnuPlot::GnuPlot(const std::string& name, std::deque<std::string>& options)
+NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::string>& options)
     : Node(name)
 {
     LOG_TRACE("called for {}", name);
 
-    if (!options.empty())
+    if (options.contains("X Display Scope"))
     {
-        timeFrame = std::stod(options.at(0));
-        options.pop_front();
+        timeFrame = std::stod(options.at("X Display Scope"));
     }
 
-    if (!options.empty())
+    if (options.contains("Update Frequency"))
     {
-        updateFrequency = std::stod(options.at(0));
-        options.pop_front();
+        updateFrequency = std::stod(options.at("Update Frequency"));
     }
 
-    for (auto it = options.begin(); it != options.end() && it + 1 != options.end() && it + 2 != options.end(); it = options.begin())
+    if (options.contains("Data to plot"))
     {
-        int wIndex = std::stoi(*(it + 2));
-        if (wIndex >= 0)
+        std::string dataX;
+        std::string dataY;
+        std::string wIndexStr;
+        std::stringstream lineStream(options.at("Data to plot"));
+        while (std::getline(lineStream, dataX, ';') && std::getline(lineStream, dataY, ';') && std::getline(lineStream, wIndexStr, ';'))
         {
-            dataToPlot.emplace_back(std::make_tuple(*it, *(it + 1), wIndex, std::vector<size_t>()));
-
-            while (static_cast<size_t>(wIndex) + 1 > plotWindows.size())
+            int wIndex = std::stoi(wIndexStr);
+            if (wIndex >= 0)
             {
-                plotWindows.push_back(std::make_shared<GnuPlotWindow>());
+                dataToPlot.emplace_back(std::make_tuple(dataX, dataY, wIndex, std::vector<size_t>()));
+
+                while (static_cast<size_t>(wIndex) + 1 > plotWindows.size())
+                {
+                    plotWindows.push_back(std::make_shared<GnuPlotWindow>());
+                }
             }
         }
-
-        options.pop_front();
-        options.pop_front();
-        options.pop_front();
     }
 
     for (auto& plotWindow : plotWindows)

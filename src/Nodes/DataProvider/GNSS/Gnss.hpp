@@ -27,9 +27,9 @@ class Gnss : public Node
      * @brief Construct a new Gnss object
      * 
      * @param[in] name Name of the Gnss object
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    Gnss(const std::string& name, std::deque<std::string>& options);
+    Gnss(const std::string& name, const std::map<std::string, std::string>& options);
 
     /// Default constructor
     Gnss() = default;

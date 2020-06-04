@@ -4,7 +4,7 @@
 #include <ios>
 #include <cmath>
 
-NAV::VectorNavFile::VectorNavFile(const std::string& name, std::deque<std::string>& options)
+NAV::VectorNavFile::VectorNavFile(const std::string& name, const std::map<std::string, std::string>& options)
     : FileReader(options), Imu(name, options)
 {
     LOG_TRACE("called for {}", name);

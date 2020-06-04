@@ -59,9 +59,9 @@ class VectorNavSensor final : public UartSensor, public Imu
      * @brief Construct a new Vector Nav Sensor object
      * 
      * @param[in] name Name of the Sensor
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    VectorNavSensor(const std::string& name, std::deque<std::string>& options);
+    VectorNavSensor(const std::string& name, const std::map<std::string, std::string>& options);
 
     VectorNavSensor() = default;                                 ///< Default Constructor
     ~VectorNavSensor() final;                                    ///< Destructor

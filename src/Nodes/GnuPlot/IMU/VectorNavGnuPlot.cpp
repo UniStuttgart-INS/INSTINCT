@@ -7,7 +7,7 @@
 #include <tuple>
 #include <cmath>
 
-NAV::VectorNavGnuPlot::VectorNavGnuPlot(const std::string& name, std::deque<std::string>& options)
+NAV::VectorNavGnuPlot::VectorNavGnuPlot(const std::string& name, const std::map<std::string, std::string>& options)
     : GnuPlot(name, options)
 {
     LOG_TRACE("called for {}", name);

@@ -21,9 +21,9 @@ class RtklibPosGnuPlot final : public GnuPlot
      * @brief Construct a new RTKLIB Pos Gnu Plot object
      * 
      * @param[in] name Name of the Node
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    RtklibPosGnuPlot(const std::string& name, std::deque<std::string>& options);
+    RtklibPosGnuPlot(const std::string& name, const std::map<std::string, std::string>& options);
 
     RtklibPosGnuPlot() = default;                                  ///< Default Constructor
     ~RtklibPosGnuPlot() final;                                     ///< Destructor
@@ -59,9 +59,7 @@ class RtklibPosGnuPlot final : public GnuPlot
      */
     [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
     {
-        return { { Node::CONFIG_FLOAT, "X Display Scope", "Data older/smaller than the specified scope gets discarded.\ne.g. Shows only the last x seconds.\n\nOnly for Real-Time data", { "0", "10", "100" } },
-                 { Node::CONFIG_FLOAT, "Update Frequency", "Frequency to update the Plot Windows\n\nOnly for Real-Time data", { "0", "50", "200" } },
-                 { Node::CONFIG_LIST_LIST_INT, "Data to plot", "Specify what data should be plotted.\n\nData with the same Window Id gets plotted into the same GnuPlot window.\nWindow Id '-1' disables the plot.", { "gpsToW|latitude|[longitude]|height|x-ecef|y-ecef|z-ecef", "gpsToW|[latitude]|longitude|height|x-ecef|y-ecef|z-ecef|Q|ns|sdn|sde|sdu|sdx|sdy|sdz|sdne|sdeu|sdun|sdxy|sdyz|sdzx|age|ratio", "-1|-1|100" } } };
+        return { { Node::CONFIG_LIST_LIST_INT, "Data to plot", "Specify what data should be plotted.\n\nData with the same Window Id gets plotted into the same GnuPlot window.\nWindow Id '-1' disables the plot.", { "gpsToW|latitude|[longitude]|height|x-ecef|y-ecef|z-ecef", "gpsToW|[latitude]|longitude|height|x-ecef|y-ecef|z-ecef|Q|ns|sdn|sde|sdu|sdx|sdy|sdz|sdne|sdeu|sdun|sdxy|sdyz|sdzx|age|ratio", "-1|-1|100" } } };
     }
 
     /**

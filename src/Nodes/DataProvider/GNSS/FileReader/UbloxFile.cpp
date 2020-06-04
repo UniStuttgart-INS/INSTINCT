@@ -7,7 +7,7 @@
 
 #include "util/Ublox/UbloxDecryptor.hpp"
 
-NAV::UbloxFile::UbloxFile(const std::string& name, std::deque<std::string>& options)
+NAV::UbloxFile::UbloxFile(const std::string& name, const std::map<std::string, std::string>& options)
     : FileReader(options), Gnss(name, options)
 {
     LOG_TRACE("called for {}", name);

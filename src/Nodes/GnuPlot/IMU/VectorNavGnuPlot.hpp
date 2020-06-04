@@ -21,9 +21,9 @@ class VectorNavGnuPlot final : public GnuPlot
      * @brief Construct a new VectorNav Gnu Plot object
      * 
      * @param[in] name Name of the Node
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    VectorNavGnuPlot(const std::string& name, std::deque<std::string>& options);
+    VectorNavGnuPlot(const std::string& name, const std::map<std::string, std::string>& options);
 
     VectorNavGnuPlot() = default;                                  ///< Default Constructor
     ~VectorNavGnuPlot() final;                                     ///< Destructor

@@ -12,7 +12,8 @@
                 "NODE_EDITOR_SHARED",
                 "NODE_EDITOR_EXPORTS",
                 "-DDISABLE_VN_SENSORS",
-                "-DDISABLE_UB_SENSORS"
+                "-DDISABLE_UB_SENSORS",
+                "LOG_LEVEL=LOG_LEVEL_DATA"
             ],
             "cppStandard": "c++20",
             "compilerPath": "/usr/bin/gcc",

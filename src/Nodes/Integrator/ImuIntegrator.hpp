@@ -20,9 +20,9 @@ class ImuIntegrator : public Node
      * @brief Construct a new object
      * 
      * @param[in] name Name of the object
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    ImuIntegrator(const std::string& name, std::deque<std::string>& options);
+    ImuIntegrator(const std::string& name, const std::map<std::string, std::string>& options);
 
     ImuIntegrator() = default;                               ///< Default Constructor
     ~ImuIntegrator() override = default;                     ///< Destructor

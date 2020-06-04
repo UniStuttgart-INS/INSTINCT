@@ -2,27 +2,22 @@
 
 #include "util/Logger.hpp"
 
-NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, std::deque<std::string>& options)
+NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, const std::map<std::string, std::string>& options)
     : Node(name)
 {
     LOG_TRACE("called for {}", name);
 
-    if (!options.empty())
+    if (options.contains("Use Fixed Start Time"))
     {
-        useFixedStartTime = static_cast<bool>(std::stoi(options.at(0)));
-        options.pop_front();
+        useFixedStartTime = static_cast<bool>(std::stoi(options.at("Use Fixed Start Time")));
     }
-    if (useFixedStartTime && options.size() >= 3)
+    if (useFixedStartTime && options.contains("Gps Cycle") && options.contains("Gps Week") && options.contains("Gps Time of Week"))
     {
-        auto cycle = static_cast<uint16_t>(std::stoul(options.at(0)));
-        auto week = static_cast<uint16_t>(std::stoul(options.at(1)));
-        long double tow = std::stold(options.at(2));
+        auto cycle = static_cast<uint16_t>(std::stoul(options.at("Gps Cycle")));
+        auto week = static_cast<uint16_t>(std::stoul(options.at("Gps Week")));
+        long double tow = std::stold(options.at("Gps Time of Week"));
 
         startupGpsTime.emplace(week, tow, cycle);
-
-        options.pop_front();
-        options.pop_front();
-        options.pop_front();
     }
 }
 

@@ -32,6 +32,7 @@
         "**/boost/**": "cpp", // <-- boost libraries
         "*.tpp": "cpp", // <-- Template files
         "*.log.*": "log", // <-- log files
+        "*.flow": "json" // <-- nodeeditor save files
     },
     "logFileHighlighter.customPatterns": [
         {

@@ -21,9 +21,9 @@ class VectorNavFile final : public FileReader, public Imu
      * @brief Construct a new Vector Nav File object
      * 
      * @param[in] name Name of the Sensor which wrote the file
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    VectorNavFile(const std::string& name, std::deque<std::string>& options);
+    VectorNavFile(const std::string& name, const std::map<std::string, std::string>& options);
 
     VectorNavFile() = default;                               ///< Default Constructor
     ~VectorNavFile() final;                                  ///< Destructor

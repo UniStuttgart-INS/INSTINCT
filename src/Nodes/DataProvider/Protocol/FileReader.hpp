@@ -8,7 +8,7 @@
 #pragma once
 
 #include <string>
-#include <deque>
+#include <map>
 #include <fstream>
 #include <optional>
 
@@ -35,9 +35,9 @@ class FileReader
     /**
      * @brief Construct a new File Reader object
      * 
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    explicit FileReader(std::deque<std::string>& options);
+    explicit FileReader(const std::map<std::string, std::string>& options);
 
     FileReader() = default;          ///< Default constructor
     virtual ~FileReader() = default; ///< Destructor

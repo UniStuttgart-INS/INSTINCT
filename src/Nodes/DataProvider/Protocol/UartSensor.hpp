@@ -8,7 +8,7 @@
 #pragma once
 
 #include <string>
-#include <deque>
+#include <map>
 
 namespace NAV
 {
@@ -40,9 +40,9 @@ class UartSensor
     /**
      * @brief Construct a new Uart Sensor object
      * 
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    explicit UartSensor(std::deque<std::string>& options);
+    explicit UartSensor(const std::map<std::string, std::string>& options);
 
     UartSensor() = default;          ///< Default constructor
     virtual ~UartSensor() = default; ///< Destructor

@@ -13,7 +13,6 @@
 #include <functional>
 #include <memory>
 #include <map>
-#include <deque>
 #include <cstdint>
 
 #include "Node.hpp"
@@ -27,7 +26,7 @@ class NodeManager
     using NodeInfo = struct
     {
         /// Constructor to call for new Node generation. Parameters are (name, options)
-        std::function<std::shared_ptr<Node>(const std::string&, std::deque<std::string>&)> constructor;
+        std::function<std::shared_ptr<Node>(const std::string&, const std::map<std::string, std::string>&)> constructor;
         /// Constructor to call to get Node Info
         std::function<std::shared_ptr<Node>()> constructorEmpty;
     };
@@ -53,7 +52,7 @@ class NodeManager
     void registerNodeType()
     {
         NodeInfo info;
-        info.constructor = [](const std::string& name, std::deque<std::string>& options) { return std::make_shared<T>(name, options); };
+        info.constructor = [](const std::string& name, const std::map<std::string, std::string>& options) { return std::make_shared<T>(name, options); };
         info.constructorEmpty = []() { return std::make_shared<T>(); };
         _registeredNodes[T().type()] = info;
     }
@@ -114,9 +113,9 @@ class NodeManager
     /// Stores info to construct a node
     using NodeConfig = struct
     {
-        std::string name;                ///< Name of the Node
-        std::string type;                ///< Type of the Node
-        std::deque<std::string> options; ///< Constructor options
+        std::string name;                           ///< Name of the Node
+        std::string type;                           ///< Type of the Node
+        std::map<std::string, std::string> options; ///< Constructor options
     };
 
     /// Stores info to set up a data link

@@ -6,15 +6,14 @@
 
     #include "util/Ublox/UbloxDecryptor.hpp"
 
-NAV::UbloxSensor::UbloxSensor(const std::string& name, std::deque<std::string>& options)
+NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Gnss(name, options)
 {
     LOG_TRACE("called for {}", name);
 
-    if (!options.empty())
+    if (options.contains("Frequency"))
     {
-        config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at(0)));
-        options.pop_front();
+        config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at("Frequency")));
     }
 
     // connect to the sensor

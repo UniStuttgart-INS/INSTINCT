@@ -25,9 +25,9 @@ class Imu : public Node
      * @brief Construct a new Imu object
      * 
      * @param[in] name Name of the Imu
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    Imu(const std::string& name, std::deque<std::string>& options);
+    Imu(const std::string& name, const std::map<std::string, std::string>& options);
 
     /// Default constructor
     Imu() = default;

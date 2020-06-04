@@ -5,25 +5,22 @@
     #include "util/Logger.hpp"
     #include "NodeData/GNSS/UbloxObs.hpp"
 
-NAV::UbloxSyncSignal::UbloxSyncSignal(const std::string& name, std::deque<std::string>& options)
+NAV::UbloxSyncSignal::UbloxSyncSignal(const std::string& name, const std::map<std::string, std::string>& options)
     : UsbSyncSignal(name, options)
 {
     LOG_TRACE("called for {}", name);
 
     // type, msgClass, msgId
-    if (options.size() >= 3)
+    if (options.contains("Protocol") && options.contains("Class") && options.contains("Msg Id"))
     {
-        if (options.at(0) == "UBX")
+        if (options.at("Protocol") == "UBX")
         {
-            triggerClass = ublox::getMsgClassFromString(options.at(1));
-            triggerId = ublox::getMsgIdFromString(triggerClass, options.at(2));
-            options.pop_front();
-            options.pop_front();
-            options.pop_front();
+            triggerClass = ublox::getMsgClassFromString(options.at("Class"));
+            triggerId = ublox::getMsgIdFromString(triggerClass, options.at("Msg Id"));
         }
         else
         {
-            LOG_CRITICAL("Node {} has unknown type {}", name, options.at(0));
+            LOG_CRITICAL("Node {} has unknown type {}", name, options.at("Protocol"));
         }
     }
     else

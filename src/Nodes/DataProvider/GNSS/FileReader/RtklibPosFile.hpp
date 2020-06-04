@@ -21,9 +21,9 @@ class RtklibPosFile final : public FileReader, public Gnss
      * @brief Construct a new Vector Nav File object
      * 
      * @param[in] name Name of the Sensor which wrote the file
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    RtklibPosFile(const std::string& name, std::deque<std::string>& options);
+    RtklibPosFile(const std::string& name, const std::map<std::string, std::string>& options);
 
     RtklibPosFile() = default;                               ///< Default Constructor
     ~RtklibPosFile() final;                                  ///< Destructor

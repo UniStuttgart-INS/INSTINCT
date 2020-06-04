@@ -1,13 +1,12 @@
 #include "ExampleNode.hpp"
 
-NAV::ExampleNode::ExampleNode(const std::string& name, std::deque<std::string>& /* options */)
+NAV::ExampleNode::ExampleNode(const std::string& name, const std::map<std::string, std::string>& /* options */)
     : Node(name)
 {
     // Process the provided options from the config file
-    // if (!options.empty())
+    // if (options.contains(""))
     // {
-    //     std::stoi(options.at(0));
-    //     options.pop_front();
+    //     std::stoi(options.at(""));
     // }
 }
 

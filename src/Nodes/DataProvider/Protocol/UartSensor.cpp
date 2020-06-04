@@ -2,26 +2,24 @@
 
 #include "util/Logger.hpp"
 
-NAV::UartSensor::UartSensor(std::deque<std::string>& options)
+NAV::UartSensor::UartSensor(const std::map<std::string, std::string>& options)
 {
     LOG_TRACE("called");
 
-    if (!options.empty())
+    if (options.contains("Port"))
     {
-        sensorPort = options.at(0);
-        options.pop_front();
+        sensorPort = options.at("Port");
 
-        if (!options.empty())
+        if (options.contains("Baudrate"))
         {
-            if (options.at(0) == "Fastest")
+            if (options.at("Baudrate") == "Fastest")
             {
                 sensorBaudrate = UartSensor::Baudrate::BAUDRATE_FASTEST;
             }
             else
             {
-                sensorBaudrate = static_cast<UartSensor::Baudrate>(std::stoul(options.at(0)));
+                sensorBaudrate = static_cast<UartSensor::Baudrate>(std::stoul(options.at("Baudrate")));
             }
-            options.pop_front();
         }
     }
 }

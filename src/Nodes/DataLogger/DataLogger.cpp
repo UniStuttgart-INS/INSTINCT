@@ -2,32 +2,29 @@
 
 #include "util/Logger.hpp"
 
-NAV::DataLogger::DataLogger(const std::string& name, std::deque<std::string>& options)
+NAV::DataLogger::DataLogger(const std::string& name, const std::map<std::string, std::string>& options)
     : Node(name)
 {
     LOG_TRACE("called for {}", name);
 
-    if (!options.empty())
+    if (options.contains("Path"))
     {
-        path = options.at(0);
-        options.pop_front();
+        path = options.at("Path");
     }
-    if (!options.empty())
+    if (options.contains("Type"))
     {
-        if (options.at(0) == "ascii")
+        if (options.at("Type") == "ascii")
         {
             fileType = FileType::ASCII;
         }
-        else if (options.at(0) == "binary")
+        else if (options.at("Type") == "binary")
         {
             fileType = FileType::BINARY;
         }
         else
         {
-            LOG_CRITICAL("Node {} has unknown file type {}", name, options.at(0));
+            LOG_CRITICAL("Node {} has unknown file type {}", name, options.at("Type"));
         }
-
-        options.pop_front();
     }
 
     if (fileType == FileType::BINARY)
