@@ -4,12 +4,15 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QFormLayout>
+#include <QtWidgets/QSpinBox>
 
 #include <nodes/NodeData>
 #include <nodes/NodeDataModel>
 
 #include <memory>
 #include <vector>
+
+#include "main.hpp"
 
 using QtNodes::NodeData;
 using QtNodes::NodeDataType;
@@ -39,15 +42,34 @@ class NodeModel : public NodeDataModel
 
     QWidget* embeddedWidget() override;
 
-    std::shared_ptr<NodeData> outData(PortIndex) override;
-
-    void setInData(std::shared_ptr<NodeData>, int) override;
-
     std::vector<QWidget*> widgets;
 
   private:
     QString const _name = "Template";
     QWidget* _mainWidget;
+    QFormLayout* _mainLayout;
+
+    void addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions,
+                                                 std::string,
+                                                 std::string,
+                                                 std::vector<std::string>>& config,
+                                QFormLayout* _layout,
+                                QString prefix = "");
+
+    void addRepeatedConfigGroupBox(const std::vector<std::tuple<NAV::Node::ConfigOptions,
+                                                                std::string,
+                                                                std::string,
+                                                                std::vector<std::string>>>& guiConfigs,
+                                   QFormLayout* _layout,
+                                   size_t portNumber,
+                                   size_t configRepeatedStart,
+                                   size_t configRepeatedNumber);
+
+    void removeRepeatedConfigGroupBox(QSpinBox* inputSpinBox);
 
     void addListListIntRow(std::vector<std::string> config, int row, QGridLayout* layout, QGroupBox* gridGroupBox, QFormLayout* formLayout);
+
+    void updateView(QSpinBox* inputSpinBox);
+
+    void clearLayout(QFormLayout* layout);
 };

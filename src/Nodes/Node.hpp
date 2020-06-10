@@ -66,6 +66,7 @@ class Node : public DataCallback
 
     enum ConfigOptions
     {
+        CONFIG_N_INPUT_PORTS, ///< Integer: Min, Default, Max, Amount of Config Options to repeat
         CONFIG_BOOL,          ///< Boolean: Default
         CONFIG_INT,           ///< Integer: Min, Default, Max
         CONFIG_FLOAT,         ///< Float: Min, Default, Max

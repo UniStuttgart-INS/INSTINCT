@@ -130,10 +130,16 @@ void exportConfig()
         std::string config = "node = " + nodeModel->name().toStdString() + ", " + node->id().toString().toStdString();
         for (size_t i = 0; i < nodeModel->widgets.size(); i++)
         {
+            if (nodeModel->widgets.at(i)->objectName().startsWith("Port "))
+                continue;
+
+            // std::cout << "Exporting " << nodeModel->name().toStdString() << ": " << nodeModel->widgets.at(i)->objectName().toStdString() << '\n';
             std::string text;
             if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_BOOL)
                 text = std::to_string(static_cast<QCheckBox*>(nodeModel->widgets.at(i))->isChecked());
             else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_INT)
+                text = std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
                 text = std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
             else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_FLOAT)
                 text = std::to_string(static_cast<QDoubleSpinBox*>(nodeModel->widgets.at(i))->value());
