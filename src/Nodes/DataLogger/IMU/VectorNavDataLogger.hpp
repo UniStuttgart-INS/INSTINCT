@@ -55,12 +55,12 @@ class VectorNavDataLogger final : public DataLogger
     /**
      * @brief Returns Gui Configuration options for the class
      * 
-     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     * @retval std::vector<ConfigOptions> The gui configuration
      */
-    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
+    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
-        return { { ConfigOptions::CONFIG_STRING, "Path", "Path where to save the data to", { "logs/vn-log.csv" } },
-                 { ConfigOptions::CONFIG_LIST, "Type", "Type of the output file", { "[ascii]", "binary" } } };
+        return { { CONFIG_STRING, "Path", "Path where to save the data to", { "logs/vn-log.csv" } },
+                 { CONFIG_LIST, "Type", "Type of the output file", { "[ascii]", "binary" } } };
     }
 
     /**

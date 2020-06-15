@@ -38,9 +38,9 @@ void NodeModel::updateView(QSpinBox* inputSpinBox)
             {
                 const auto& config = guiConfigs.at(i);
 
-                if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
+                if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
                 {
-                    size_t configRepeatedNumber = std::stoul(std::get<3>(config).at(4));
+                    size_t configRepeatedNumber = std::stoul(std::get<3>(config).at(3));
                     addRepeatedConfigGroupBox(guiConfigs, _mainLayout, nPorts(PortType::In), i, configRepeatedNumber);
                 }
             }
@@ -110,13 +110,13 @@ void NodeModel::addListListIntRow(std::vector<std::string> config, int row, QGri
     }
 }
 
-void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions, std::string, std::string, std::vector<std::string>>& config, QFormLayout* _layout, QString prefix)
+void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, QFormLayout* _layout, QString prefix)
 {
     LOG_TRACE("called");
 
     QString description = QString::fromStdString(std::get<1>(config));
 
-    if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_BOOL)
+    if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_BOOL)
     {
         widgets.push_back(new QCheckBox());
         QCheckBox* checkBox = static_cast<QCheckBox*>(widgets.at(widgets.size() - 1));
@@ -125,8 +125,8 @@ void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions
         checkBox->setStyleSheet("QCheckBox::indicator:unchecked { border: 1px solid rgb(220,220,220); }");
         _layout->addRow(description, checkBox);
     }
-    else if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_INT
-             || std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_INT
+             || std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
     {
         widgets.push_back(new QSpinBox());
         QSpinBox* spinBox = static_cast<QSpinBox*>(widgets.at(widgets.size() - 1));
@@ -146,7 +146,7 @@ void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions
             }
         }
 
-        if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
+        if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
         {
             connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged),
                     [this, spinBox]() {
@@ -158,7 +158,7 @@ void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions
         spinBox->setStyleSheet("QSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
         _layout->addRow(description, spinBox);
     }
-    else if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_FLOAT)
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
     {
         widgets.push_back(new QDoubleSpinBox());
         QDoubleSpinBox* doubleSpinBox = static_cast<QDoubleSpinBox*>(widgets.at(widgets.size() - 1));
@@ -182,7 +182,7 @@ void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions
         doubleSpinBox->setStyleSheet("QDoubleSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
         _layout->addRow(description, doubleSpinBox);
     }
-    else if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_STRING)
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_STRING)
     {
         widgets.push_back(new QLineEdit());
         QLineEdit* lineEdit = static_cast<QLineEdit*>(widgets.at(widgets.size() - 1));
@@ -191,7 +191,7 @@ void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions
         lineEdit->setText(QString::fromStdString(std::get<3>(config).front()));
         _layout->addRow(description, lineEdit);
     }
-    else if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_LIST)
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_LIST)
     {
         widgets.push_back(new QComboBox());
         QComboBox* comboBox = static_cast<QComboBox*>(widgets.at(widgets.size() - 1));
@@ -210,7 +210,7 @@ void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions
         comboBox->setStyleSheet("QComboBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
         _layout->addRow(description, comboBox);
     }
-    else if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_LIST_LIST_INT)
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT)
     {
         widgets.push_back(new QGroupBox(description));
         QGroupBox* gridGroupBox = static_cast<QGroupBox*>(widgets.at(widgets.size() - 1));
@@ -226,7 +226,7 @@ void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions
         // gridGroupBox->setStyleSheet("QGroupBox { color: green; }");
         _layout->addRow(gridGroupBox);
     }
-    else if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_MAP_INT)
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_MAP_INT)
     {
         widgets.push_back(new QSpinBox());
         QSpinBox* spinBox = static_cast<QSpinBox*>(widgets.at(widgets.size() - 1));
@@ -259,10 +259,7 @@ void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions
     widget->setToolTip(QString::fromStdString(std::get<2>(config)));
 }
 
-void NodeModel::addRepeatedConfigGroupBox(const std::vector<std::tuple<NAV::Node::ConfigOptions,
-                                                                       std::string,
-                                                                       std::string,
-                                                                       std::vector<std::string>>>& guiConfigs,
+void NodeModel::addRepeatedConfigGroupBox(const std::vector<NAV::Node::ConfigOptions>& guiConfigs,
                                           QFormLayout* _layout,
                                           size_t portNumber,
                                           size_t configRepeatedStart,
@@ -275,18 +272,6 @@ void NodeModel::addRepeatedConfigGroupBox(const std::vector<std::tuple<NAV::Node
     QGroupBox* gridGroupBox = static_cast<QGroupBox*>(widgets.at(widgets.size() - 1));
     QFormLayout* layout = new QFormLayout;
     gridGroupBox->setObjectName(description);
-
-    std::vector<std::string> portTypes;
-    std::cerr << std::get<3>(guiConfigs.at(configRepeatedStart)).at(3) << '\n';
-    std::stringstream lineStream(std::get<3>(guiConfigs.at(configRepeatedStart)).at(3));
-    std::string cell;
-    while (std::getline(lineStream, cell, '|'))
-    {
-        portTypes.push_back(cell);
-    }
-    std::tuple<NAV::Node::ConfigOptions, std::string, std::string, std::vector<std::string>>
-        portTypeSelect = { NAV::Node::ConfigOptions::CONFIG_LIST, "Port Type", "Select the type of the message to receive on this port", portTypes };
-    addGuiElementForConfig(portTypeSelect, layout, QString::fromStdString(std::to_string(portNumber) + "-"));
 
     for (size_t k = 0; k < configRepeatedNumber; k++)
     {
@@ -373,9 +358,9 @@ NodeModel::NodeModel(QString const& name)
 
         addGuiElementForConfig(config, _layout);
 
-        if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
+        if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
         {
-            size_t configRepeatedNumber = std::stoul(std::get<3>(config).at(4));
+            size_t configRepeatedNumber = std::stoul(std::get<3>(config).at(3));
 
             auto minPort = std::stoul(std::get<3>(config).at(0));
             auto nPort = std::stoul(std::get<3>(config).at(1));
@@ -408,7 +393,7 @@ unsigned int NodeModel::nPorts(PortType portType) const
     {
         for (auto& widget : widgets)
         {
-            if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
+            if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
             {
                 return static_cast<unsigned int>(static_cast<QSpinBox*>(widget)->value());
             }
@@ -434,7 +419,7 @@ NodeDataType NodeModel::dataType(PortType portType, PortIndex portIndex) const
     {
         for (auto& widget : widgets)
         {
-            if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST
+            if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST
                 && widget->objectName() == QString::fromStdString(std::to_string(portIndex + 1) + "-Port Type"))
             {
                 return { static_cast<QComboBox*>(widget)->currentText(),
@@ -459,17 +444,17 @@ QJsonObject NodeModel::save() const
 
     for (auto& widget : widgets)
     {
-        if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_BOOL)
+        if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_BOOL)
             modelJson[widget->objectName()] = static_cast<QCheckBox*>(widget)->isChecked();
-        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_INT)
+        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_INT)
             modelJson[widget->objectName()] = static_cast<QSpinBox*>(widget)->value();
-        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_FLOAT)
+        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
             modelJson[widget->objectName()] = static_cast<QDoubleSpinBox*>(widget)->value();
-        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_STRING)
+        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
             modelJson[widget->objectName()] = static_cast<QLineEdit*>(widget)->text();
-        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST)
+        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
             modelJson[widget->objectName()] = static_cast<QComboBox*>(widget)->currentText();
-        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST_LIST_INT)
+        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT)
         {
             auto gridGroupBox = static_cast<QGroupBox*>(widget);
             auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
@@ -490,7 +475,7 @@ QJsonObject NodeModel::save() const
             }
             modelJson[widget->objectName()] = QString::fromStdString(json);
         }
-        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_MAP_INT)
+        else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_MAP_INT)
             modelJson[widget->objectName()] = static_cast<QSpinBox*>(widget)->value();
     }
 
@@ -501,7 +486,7 @@ void NodeModel::restore(QJsonObject const& p)
 {
     for (auto& widget : widgets)
     {
-        if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
+        if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
         {
             static_cast<QSpinBox*>(widget)->setValue(p["nInputPorts"].toInt());
             getParentNode()->nodeState().getEntries(PortType::In).resize(static_cast<size_t>(p["nInputPorts"].toInt()));
@@ -516,17 +501,17 @@ void NodeModel::restore(QJsonObject const& p)
         QJsonValue v = p[widget->objectName()];
         if (!v.isUndefined())
         {
-            if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_BOOL)
+            if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_BOOL)
                 static_cast<QCheckBox*>(widget)->setChecked(v.toBool());
-            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_INT)
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_INT)
                 static_cast<QSpinBox*>(widget)->setValue(v.toInt());
-            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_FLOAT)
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
                 static_cast<QDoubleSpinBox*>(widget)->setValue(v.toDouble());
-            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_STRING)
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 static_cast<QLineEdit*>(widget)->setText(v.toString());
-            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST)
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                 static_cast<QComboBox*>(widget)->setCurrentText(v.toString());
-            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST_LIST_INT)
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT)
             {
                 auto gridGroupBox = static_cast<QGroupBox*>(widget);
                 auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
@@ -548,7 +533,7 @@ void NodeModel::restore(QJsonObject const& p)
                     }
                 }
             }
-            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_MAP_INT)
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_MAP_INT)
                 static_cast<QSpinBox*>(widget)->setValue(v.toInt());
         }
     }

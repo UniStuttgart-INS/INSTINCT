@@ -56,14 +56,18 @@ class StateEstimator : public Node
     /**
      * @brief Returns Gui Configuration options for the class
      * 
-     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     * @retval std::vector<ConfigOptions> The gui configuration
      */
-    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const override
+    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
-        return { { Node::CONFIG_BOOL, "Bool1", "Use the Time configured here as start time", { "0" } },
-                 { Node::CONFIG_N_INPUT_PORTS, "Input Ports", "Amount of Input Ports", { "2", "2", "30", "[VectorNavObs]|UbloxObs", "1" } },
-                 { Node::CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200" } },
-                 { Node::CONFIG_BOOL, "Bool2", "Use the Time configured here as start time", { "1" } } };
+        return { { CONFIG_BOOL, "Bool1", "Use the Time configured here as start time", { "0" } },
+                 { CONFIG_N_INPUT_PORTS, "Input Ports", "Amount of Input Ports", { "2", "2", "30", "2" } },
+                 { CONFIG_LIST, "Port Type", "Select the type of the message to receive on this port", { "[VectorNavObs]", "UbloxObs" } },
+
+                 { CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200" } },
+                 { CONFIG_STRING, "Path", "Path to the File to read", { "" } },
+
+                 { CONFIG_BOOL, "Bool2", "Use the Time configured here as start time", { "1" } } };
     }
 
     /**

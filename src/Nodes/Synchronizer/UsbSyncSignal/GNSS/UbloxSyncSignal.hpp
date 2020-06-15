@@ -56,20 +56,20 @@ class UbloxSyncSignal final : public UsbSyncSignal
     /**
      * @brief Returns Gui Configuration options for the class
      * 
-     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     * @retval std::vector<ConfigOptions> The gui configuration
      */
-    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
+    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
-        return { { Node::CONFIG_STRING, "Port", "COM port where the sensor, which should be synced, is attached to\n"
-                                                "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
-                                                "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
-                                                "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
-                                                "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
-                                                "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
+        return { { CONFIG_STRING, "Port", "COM port where the sensor, which should be synced, is attached to\n"
+                                          "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
+                                          "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
+                                          "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
+                                          "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
+                                          "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
                    { "/dev/ttyUSB0" } },
-                 { Node::CONFIG_LIST, "Protocol", "Protocol type", { "[UBX]", "NMEA" } },
-                 { Node::CONFIG_LIST, "Class", "Message Class", { "RXM" } },
-                 { Node::CONFIG_LIST, "Msg Id", "Message Id", { "RAWX" } } };
+                 { CONFIG_LIST, "Protocol", "Protocol type", { "[UBX]", "NMEA" } },
+                 { CONFIG_LIST, "Class", "Message Class", { "RXM" } },
+                 { CONFIG_LIST, "Msg Id", "Message Id", { "RAWX" } } };
     }
 
     /**

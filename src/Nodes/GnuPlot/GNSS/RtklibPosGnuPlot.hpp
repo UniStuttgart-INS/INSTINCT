@@ -55,11 +55,11 @@ class RtklibPosGnuPlot final : public GnuPlot
     /**
      * @brief Returns Gui Configuration options for the class
      * 
-     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     * @retval std::vector<ConfigOptions> The gui configuration
      */
-    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
+    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
-        return { { Node::CONFIG_LIST_LIST_INT, "Data to plot", "Specify what data should be plotted.\n\nData with the same Window Id gets plotted into the same GnuPlot window.\nWindow Id '-1' disables the plot.", { "gpsToW|latitude|[longitude]|height|x-ecef|y-ecef|z-ecef", "gpsToW|[latitude]|longitude|height|x-ecef|y-ecef|z-ecef|Q|ns|sdn|sde|sdu|sdx|sdy|sdz|sdne|sdeu|sdun|sdxy|sdyz|sdzx|age|ratio", "-1|-1|100" } } };
+        return { { CONFIG_LIST_LIST_INT, "Data to plot", "Specify what data should be plotted.\n\nData with the same Window Id gets plotted into the same GnuPlot window.\nWindow Id '-1' disables the plot.", { "gpsToW|latitude|[longitude]|height|x-ecef|y-ecef|z-ecef", "gpsToW|[latitude]|longitude|height|x-ecef|y-ecef|z-ecef|Q|ns|sdn|sde|sdu|sdx|sdy|sdz|sdne|sdeu|sdun|sdxy|sdyz|sdzx|age|ratio", "-1|-1|100" } } };
     }
 
     /**

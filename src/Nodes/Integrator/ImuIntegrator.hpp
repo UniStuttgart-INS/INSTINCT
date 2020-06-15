@@ -54,9 +54,9 @@ class ImuIntegrator : public Node
     /**
      * @brief Returns Gui Configuration options for the class
      * 
-     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     * @retval std::vector<ConfigOptions> The gui configuration
      */
-    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const override
+    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
         return {};
     }

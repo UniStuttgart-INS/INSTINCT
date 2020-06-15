@@ -145,19 +145,19 @@ void exportConfig()
 
             // std::cout << "Exporting " << nodeModel->name().toStdString() << ": " << nodeModel->widgets.at(i)->objectName().toStdString() << '\n';
             std::string text;
-            if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_BOOL)
+            if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_BOOL)
                 text = std::to_string(static_cast<QCheckBox*>(nodeModel->widgets.at(i))->isChecked());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_INT)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_INT)
                 text = std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
                 text = std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_FLOAT)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
                 text = std::to_string(static_cast<QDoubleSpinBox*>(nodeModel->widgets.at(i))->value());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_STRING)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 text = static_cast<QLineEdit*>(nodeModel->widgets.at(i))->text().toStdString();
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                 text = static_cast<QComboBox*>(nodeModel->widgets.at(i))->currentText().toStdString();
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST_LIST_INT)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT)
             {
                 auto gridGroupBox = static_cast<QGroupBox*>(nodeModel->widgets.at(i));
                 auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
@@ -177,7 +177,7 @@ void exportConfig()
                     }
                 }
             }
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_MAP_INT)
+            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_MAP_INT)
                 text = nodeModel->widgets.at(i)->property("key").toString().toStdString() + ", " + std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
 
             std::string type = nodeModel->widgets.at(i)->objectName().toStdString();

@@ -64,24 +64,26 @@ class Node : public DataCallback
      */
     [[nodiscard]] virtual constexpr std::string_view category() const = 0;
 
-    enum ConfigOptions
+    enum ConfigOptionType
     {
-        CONFIG_N_INPUT_PORTS, ///< Integer: Min, Default, Max, "[InputPortDataTypeDefault]|InputPortDataType2", Amount of Config Options to repeat
+        CONFIG_N_INPUT_PORTS, ///< Integer: Min, Default, Max, Amount of Config Options to repeat
         CONFIG_BOOL,          ///< Boolean: Default
         CONFIG_INT,           ///< Integer: Min, Default, Max
         CONFIG_FLOAT,         ///< Float: Min, Default, Max
         CONFIG_STRING,        ///< String
-        CONFIG_LIST,          ///< List: "option1|[default]|option3"
-        CONFIG_LIST_LIST_INT, ///< 2 Lists and Integer: "[List1default]|List1option2||List2option1|[List2default]||min|default|max"
+        CONFIG_LIST,          ///< List: "option1", "[default]", "option3"
+        CONFIG_LIST_LIST_INT, ///< 2 Lists and Integer: "[List1default]|List1option2", "List2option1|[List2default]", "min|default|max"
         CONFIG_MAP_INT,       ///< String Key and Integer Value: "key", "min", "default", "max"
     };
+
+    using ConfigOptions = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::string>>;
 
     /**
      * @brief Returns Gui Configuration options for the class
      * 
-     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     * @retval std::vector<ConfigOptions> The gui configuration
      */
-    [[nodiscard]] virtual std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const = 0;
+    [[nodiscard]] virtual std::vector<ConfigOptions> guiConfig() const = 0;
 
     /**
      * @brief Returns the context of the class

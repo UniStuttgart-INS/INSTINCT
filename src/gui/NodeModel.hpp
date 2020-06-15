@@ -49,17 +49,9 @@ class NodeModel : public NodeDataModel
     QWidget* _mainWidget;
     QFormLayout* _mainLayout;
 
-    void addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions,
-                                                 std::string,
-                                                 std::string,
-                                                 std::vector<std::string>>& config,
-                                QFormLayout* _layout,
-                                QString prefix = "");
+    void addGuiElementForConfig(const NAV::Node::ConfigOptions& config, QFormLayout* _layout, QString prefix = "");
 
-    void addRepeatedConfigGroupBox(const std::vector<std::tuple<NAV::Node::ConfigOptions,
-                                                                std::string,
-                                                                std::string,
-                                                                std::vector<std::string>>>& guiConfigs,
+    void addRepeatedConfigGroupBox(const std::vector<NAV::Node::ConfigOptions>& guiConfigs,
                                    QFormLayout* _layout,
                                    size_t portNumber,
                                    size_t configRepeatedStart,
