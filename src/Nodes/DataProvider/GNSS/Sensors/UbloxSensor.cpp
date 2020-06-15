@@ -1,4 +1,4 @@
-#ifndef DISABLE_UB_SENSORS
+#ifndef DISABLE_SENSORS
 
     #include "UbloxSensor.hpp"
 

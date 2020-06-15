@@ -7,7 +7,7 @@
 
 #pragma once
 
-#ifndef DISABLE_UB_SENSORS
+#ifndef DISABLE_SENSORS
 
     #include "NodeData/GNSS/UbloxObs.hpp"
     #include "../Gnss.hpp"

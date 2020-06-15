@@ -112,7 +112,7 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=ON",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DENABLE_VN_UB_SENSORS=OFF",
+                "-DENABLE_SENSORS=OFF",
                 "-DLOG_LEVEL=TRACE"
             ],
             "options": {
@@ -139,7 +139,7 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
-                "-DENABLE_VN_UB_SENSORS=OFF",
+                "-DENABLE_SENSORS=OFF",
                 "-DLOG_LEVEL=OFF"
             ],
             "options": {

@@ -1,4 +1,4 @@
-#ifndef DISABLE_VN_SENSORS
+#ifndef DISABLE_SENSORS
 
     #include "VectorNavSensor.hpp"
 

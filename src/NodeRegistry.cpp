@@ -24,12 +24,12 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeType<NAV::UbloxDataLogger>();
 
     nodeManager.registerNodeType<NAV::VectorNavFile>();
-#ifndef DISABLE_VN_SENSORS
+#ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::VectorNavSensor>();
 #endif
     nodeManager.registerNodeType<NAV::RtklibPosFile>();
     nodeManager.registerNodeType<NAV::UbloxFile>();
-#ifndef DISABLE_UB_SENSORS
+#ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::UbloxSensor>();
 #endif
 
@@ -39,7 +39,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeType<NAV::ImuIntegrator>();
 
     nodeManager.registerNodeType<NAV::TimeSynchronizer>();
-#ifndef DISABLE_UB_SENSORS
+#ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::UbloxSyncSignal>();
 #endif
 }

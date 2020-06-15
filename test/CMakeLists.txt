@@ -37,6 +37,10 @@ target_link_libraries(
 
 target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
+if(NOT ENABLE_SENSORS)
+  target_compile_definitions(tests PUBLIC DISABLE_SENSORS)
+endif()
+
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries
 catch_discover_tests(
