@@ -11,9 +11,12 @@
 #include <iostream>
 #include <sstream>
 
+#include "util/Logger.hpp"
+
 void NodeModel::updateView(QSpinBox* inputSpinBox)
 {
-    std::cout << "updateView()" << std::endl;
+    LOG_TRACE("called");
+
     if (getParentNode() && getParentNode()->getNodeGraphicsObject())
     {
         // Add/Remove Connection Ports
@@ -37,7 +40,7 @@ void NodeModel::updateView(QSpinBox* inputSpinBox)
 
                 if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
                 {
-                    size_t configRepeatedNumber = std::stoul(std::get<3>(config).at(3));
+                    size_t configRepeatedNumber = std::stoul(std::get<3>(config).at(4));
                     addRepeatedConfigGroupBox(guiConfigs, _mainLayout, nPorts(PortType::In), i, configRepeatedNumber);
                 }
             }
@@ -53,6 +56,8 @@ void NodeModel::updateView(QSpinBox* inputSpinBox)
 
 void NodeModel::addListListIntRow(std::vector<std::string> config, int row, QGridLayout* layout, QGroupBox* gridGroupBox, QFormLayout* formLayout)
 {
+    LOG_TRACE("called");
+
     for (size_t j = 0; j < config.size(); j++)
     {
         const std::string& line = config.at(j);
@@ -107,7 +112,9 @@ void NodeModel::addListListIntRow(std::vector<std::string> config, int row, QGri
 
 void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions, std::string, std::string, std::vector<std::string>>& config, QFormLayout* _layout, QString prefix)
 {
-    QString description = prefix + QString::fromStdString(std::get<1>(config));
+    LOG_TRACE("called");
+
+    QString description = QString::fromStdString(std::get<1>(config));
 
     if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_BOOL)
     {
@@ -247,7 +254,7 @@ void NodeModel::addGuiElementForConfig(const std::tuple<NAV::Node::ConfigOptions
     }
 
     QWidget* widget = widgets.at(widgets.size() - 1);
-    widget->setObjectName(description);
+    widget->setObjectName(prefix + description);
     widget->setProperty("type", std::get<0>(config));
     widget->setToolTip(QString::fromStdString(std::get<2>(config)));
 }
@@ -261,11 +268,25 @@ void NodeModel::addRepeatedConfigGroupBox(const std::vector<std::tuple<NAV::Node
                                           size_t configRepeatedStart,
                                           size_t configRepeatedNumber)
 {
+    LOG_TRACE("called");
+
     QString description = QString::fromStdString("Port " + std::to_string(portNumber));
     widgets.push_back(new QGroupBox(description));
     QGroupBox* gridGroupBox = static_cast<QGroupBox*>(widgets.at(widgets.size() - 1));
     QFormLayout* layout = new QFormLayout;
     gridGroupBox->setObjectName(description);
+
+    std::vector<std::string> portTypes;
+    std::cerr << std::get<3>(guiConfigs.at(configRepeatedStart)).at(3) << '\n';
+    std::stringstream lineStream(std::get<3>(guiConfigs.at(configRepeatedStart)).at(3));
+    std::string cell;
+    while (std::getline(lineStream, cell, '|'))
+    {
+        portTypes.push_back(cell);
+    }
+    std::tuple<NAV::Node::ConfigOptions, std::string, std::string, std::vector<std::string>>
+        portTypeSelect = { NAV::Node::ConfigOptions::CONFIG_LIST, "Port Type", "Select the type of the message to receive on this port", portTypes };
+    addGuiElementForConfig(portTypeSelect, layout, QString::fromStdString(std::to_string(portNumber) + "-"));
 
     for (size_t k = 0; k < configRepeatedNumber; k++)
     {
@@ -281,6 +302,8 @@ void NodeModel::addRepeatedConfigGroupBox(const std::vector<std::tuple<NAV::Node
 
 void NodeModel::clearLayout(QFormLayout* layout)
 {
+    LOG_TRACE("called");
+
     while (layout->rowCount())
     {
         QLayoutItem* item = layout->itemAt(0, QFormLayout::ItemRole::FieldRole);
@@ -303,6 +326,8 @@ void NodeModel::clearLayout(QFormLayout* layout)
 
 void NodeModel::removeRepeatedConfigGroupBox(QSpinBox* inputSpinBox)
 {
+    LOG_TRACE("called");
+
     auto portNumber = inputSpinBox->value() + 1;
 
     for (auto iter = widgets.begin(); iter != widgets.end(); iter++)
@@ -331,6 +356,8 @@ void NodeModel::removeRepeatedConfigGroupBox(QSpinBox* inputSpinBox)
 NodeModel::NodeModel(QString const& name)
     : _name(name), _mainWidget(new QWidget())
 {
+    LOG_TRACE("called for {}", name.toStdString());
+
     _mainWidget->setStyleSheet("QWidget { background-color: transparent; color: white }");
     QFormLayout* _layout = new QFormLayout(_mainWidget);
     _mainLayout = _layout;
@@ -348,7 +375,7 @@ NodeModel::NodeModel(QString const& name)
 
         if (std::get<0>(config) == NAV::Node::ConfigOptions::CONFIG_N_INPUT_PORTS)
         {
-            size_t configRepeatedNumber = std::stoul(std::get<3>(config).at(3));
+            size_t configRepeatedNumber = std::stoul(std::get<3>(config).at(4));
 
             auto minPort = std::stoul(std::get<3>(config).at(0));
             auto nPort = std::stoul(std::get<3>(config).at(1));
@@ -405,6 +432,15 @@ NodeDataType NodeModel::dataType(PortType portType, PortIndex portIndex) const
 
     if (portType == PortType::In)
     {
+        for (auto& widget : widgets)
+        {
+            if (widget->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST
+                && widget->objectName() == QString::fromStdString(std::to_string(portIndex + 1) + "-Port Type"))
+            {
+                return { static_cast<QComboBox*>(widget)->currentText(),
+                         static_cast<QComboBox*>(widget)->currentText() };
+            }
+        }
         return { QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::In, port))),
                  QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::In, port))) };
     }

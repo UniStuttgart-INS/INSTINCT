@@ -61,7 +61,7 @@ class StateEstimator : public Node
     [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const override
     {
         return { { Node::CONFIG_BOOL, "Bool1", "Use the Time configured here as start time", { "0" } },
-                 { Node::CONFIG_N_INPUT_PORTS, "Input Ports", "Amount of Input Ports", { "1", "2", "30", "1" } },
+                 { Node::CONFIG_N_INPUT_PORTS, "Input Ports", "Amount of Input Ports", { "2", "2", "30", "[VectorNavObs]|UbloxObs", "1" } },
                  { Node::CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200" } },
                  { Node::CONFIG_BOOL, "Bool2", "Use the Time configured here as start time", { "1" } } };
     }
@@ -107,7 +107,10 @@ class StateEstimator : public Node
         switch (portType)
         {
         case PortType::In:
-            return InsObs().type();
+            if (portIndex == 0)
+            {
+                return InsObs().type();
+            }
             break;
 
         case PortType::Out:

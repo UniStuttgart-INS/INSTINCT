@@ -32,6 +32,7 @@
 #include "Nodes/Node.hpp"
 #include "Nodes/NodeManager.hpp"
 #include "NodeRegistry.hpp"
+#include "util/Logger.hpp"
 
 using QtNodes::DataModelRegistry;
 using QtNodes::FlowScene;
@@ -75,6 +76,7 @@ QAction* rtpAction;
 
 void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_view child, std::string_view root)
 {
+    LOG_TRACE("called");
     if (nodeManager.registeredNodeDataTypes().contains(child))
     {
         const auto& parents = nodeManager.registeredNodeDataTypes().find(child)->second.parents;
@@ -92,6 +94,12 @@ void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_v
 
 static std::shared_ptr<DataModelRegistry> registerDataModels(NAV::Node::NodeContext compat)
 {
+    LOG_TRACE("called for context: {}", compat == NAV::Node::NodeContext::REAL_TIME
+                                            ? "Real Time"
+                                            : (compat == NAV::Node::NodeContext::POST_PROCESSING
+                                                   ? "Post Processing"
+                                                   : "All"));
+
     auto registry = std::make_shared<DataModelRegistry>();
 
     for (const auto& [type, nodeInfo] : nodeManager.registeredNodeTypes())
@@ -114,6 +122,8 @@ static std::shared_ptr<DataModelRegistry> registerDataModels(NAV::Node::NodeCont
 
 void exportConfig()
 {
+    LOG_TRACE("called");
+
     std::ofstream filestream;
     filestream.open("config-dataflow.ini", std::ios_base::trunc);
 
@@ -210,6 +220,7 @@ void exportConfig()
 
 bool save()
 {
+    LOG_TRACE("called");
     if (fileName.isEmpty())
     {
         fileName = scene->save();
@@ -230,6 +241,7 @@ bool save()
 
 bool saveAs()
 {
+    LOG_TRACE("called");
     fileName = scene->save();
 
     if (!fileName.isEmpty())
@@ -243,6 +255,7 @@ bool saveAs()
 
 void load()
 {
+    LOG_TRACE("called");
     rtpAction->setText("All Nodes");
     scene->setRegistry(registryAll);
     registrySelected = 0;
@@ -254,6 +267,7 @@ void load()
 
 void run()
 {
+    LOG_TRACE("called");
     if (scene->nodes().size() > 0)
     {
         exportConfig();
@@ -265,12 +279,14 @@ void run()
 
 void clearScene()
 {
+    LOG_TRACE("called");
     scene->clearScene();
     fileName = "";
 }
 
 void changeRegistry()
 {
+    LOG_TRACE("called");
     if (registrySelected == 0)
     {
         size_t incompNodes = 0;
@@ -343,6 +359,8 @@ void changeRegistry()
 
 int main(int argc, char* argv[])
 {
+    Logger logger("logs/navsos-gui.log");
+
     QApplication app(argc, argv);
 
     setStyle();
