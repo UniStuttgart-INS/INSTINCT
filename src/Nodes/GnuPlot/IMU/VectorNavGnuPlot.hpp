@@ -61,7 +61,7 @@ class VectorNavGnuPlot final : public GnuPlot
     {
         return { { Node::CONFIG_FLOAT, "X Display Scope", "Data older/smaller than the specified scope gets discarded.\ne.g. Shows only the last x seconds.\n\nOnly for Real-Time data", { "0", "10", "100" } },
                  { Node::CONFIG_FLOAT, "Update Frequency", "Frequency to update the Plot Windows\n\nOnly for Real-Time data", { "0", "50", "200" } },
-                 { Node::CONFIG_LIST_LIST_INT, "Data to plot", "Specify what data should be plotted.\n\nData with the same Window Id gets plotted into the same GnuPlot window.\nWindow Id '-1' disables the plot.", { "[gpsToW]", "timeSinceStartup|[quaternion]|magUncompXYZ|accelUncompXYZ|gyroUncompXYZ|magCompXYZ|accelCompXYZ|gyroCompXYZ|syncInCnt|dtime|dtheta|dvel|vpeStatus|temperature|pressure|magCompNED|accelCompNED|gyroCompNED|linearAccelXYZ|linearAccelNED|yawPitchRollUncertainty", "-1|-1|100" } } };
+                 { Node::CONFIG_LIST_LIST_INT, "Data to plot", "Specify what data should be plotted.\n\nData with the same Window Id gets plotted into the same GnuPlot window.\nWindow Id '-1' disables the plot.", { "[gpsToW]", "timeSinceStartup|quaternion|[yawPitchRoll]|magUncompXYZ|accelUncompXYZ|gyroUncompXYZ|magCompXYZ|accelCompXYZ|gyroCompXYZ|syncInCnt|dtime|dtheta|dvel|vpeStatus|temperature|pressure|magCompNED|accelCompNED|gyroCompNED|linearAccelXYZ|linearAccelNED|yawPitchRollUncertainty", "-1|-1|100" } } };
     }
 
     /**

@@ -40,13 +40,30 @@ class VectorNavSensor final : public UartSensor, public Imu
         vn::protocol::uart::CompensationMode delThetaDelVeloAccelCompensation = vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE;
 
         /// Group 1 (Common)
-        vn::protocol::uart::CommonGroup commonField = vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP | vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN | vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA | vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT;
+        vn::protocol::uart::CommonGroup commonField = vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP
+                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN
+                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA
+                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT;
         /// Group 2 (Time)
         vn::protocol::uart::TimeGroup timeField = vn::protocol::uart::TimeGroup::TIMEGROUP_NONE;
         /// Group 3 (IMU)
-        vn::protocol::uart::ImuGroup imuField = vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO | vn::protocol::uart::ImuGroup::IMUGROUP_TEMP | vn::protocol::uart::ImuGroup::IMUGROUP_PRES | vn::protocol::uart::ImuGroup::IMUGROUP_MAG | vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL | vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
+        vn::protocol::uart::ImuGroup imuField = vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_TEMP
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_PRES
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_MAG
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
         /// Group 5 (Attitude)
-        vn::protocol::uart::AttitudeGroup attitudeField = vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU;
+        vn::protocol::uart::AttitudeGroup attitudeField = vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU;
         // Group 4 (GPS)
         // vn::protocol::uart::GpsGroup gpsField = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
         // Group 6 (INS)

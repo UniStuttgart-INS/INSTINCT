@@ -14,7 +14,7 @@ NAV::VectorNavDataLogger::VectorNavDataLogger(const std::string& name, const std
         filestream << "GpsCycle,GpsWeek,GpsToW,TimeStartup,TimeSyncIn,SyncInCnt,"
                    << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
                    << "Temperature,Pressure,DeltaTime,DeltaThetaX,DeltaThetaY,DeltaThetaZ,DeltaVelX,DeltaVelY,DeltaVelZ,"
-                   << "MagX,MagY,MagZ,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,AhrsStatus,Quat[0],Quat[1],Quat[2],Quat[3],"
+                   << "MagX,MagY,MagZ,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,AhrsStatus,Yaw,Pitch,Roll,Quat[0],Quat[1],Quat[2],Quat[3],"
                    << "MagN,MagE,MagD,AccN,AccE,AccD,LinAccX,LinAccY,LinAccZ,LinAccN,LinAccE,LinAccD,"
                    << "YawU,PitchU,RollU,YawRate,PitchRate,RollRate" << std::endl;
     }
@@ -206,6 +206,21 @@ void NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<NAV::VectorNavOb
         if (obs->vpeStatus.has_value())
         {
             filestream << obs->vpeStatus.value().status;
+        }
+        filestream << ",";
+        if (obs->yawPitchRoll.has_value())
+        {
+            filestream << obs->yawPitchRoll.value().x();
+        }
+        filestream << ",";
+        if (obs->yawPitchRoll.has_value())
+        {
+            filestream << obs->yawPitchRoll.value().y();
+        }
+        filestream << ",";
+        if (obs->yawPitchRoll.has_value())
+        {
+            filestream << obs->yawPitchRoll.value().z();
         }
         filestream << ",";
         if (obs->quaternion.has_value())

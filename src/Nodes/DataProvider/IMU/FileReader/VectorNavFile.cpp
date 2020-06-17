@@ -111,7 +111,6 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
     std::stringstream lineStream(line);
     std::string cell;
 
-    Eigen::Array3d ypr = Eigen::Array3d::Zero();
     Eigen::Matrix3d dcm = Eigen::Matrix3d::Zero();
 
     std::optional<uint16_t> gpsCycle;
@@ -381,15 +380,15 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             }
             else if (column == "Yaw")
             {
-                ypr(0) = std::stod(cell);
+                obs->yawPitchRoll.value()(0) = std::stod(cell);
             }
             else if (column == "Pitch")
             {
-                ypr(1) = std::stod(cell);
+                obs->yawPitchRoll.value()(1) = std::stod(cell);
             }
             else if (column == "Roll")
             {
-                ypr(2) = std::stod(cell);
+                obs->yawPitchRoll.value()(2) = std::stod(cell);
             }
             else if (column == "Quat[0]")
             {
@@ -612,12 +611,12 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
         {
             obs->quaternion = dcm;
         }
-        else if (!ypr.isZero())
+        else if (!obs->yawPitchRoll.value().isZero())
         {
             constexpr double deg2rad = M_PI / 180.0;
-            dcm = Eigen::AngleAxisd(ypr(0) * deg2rad, Eigen::Vector3d::UnitX())
-                  * Eigen::AngleAxisd(ypr(1) * deg2rad, Eigen::Vector3d::UnitY())
-                  * Eigen::AngleAxisd(ypr(2) * deg2rad, Eigen::Vector3d::UnitZ());
+            dcm = Eigen::AngleAxisd(obs->yawPitchRoll.value()(0) * deg2rad, Eigen::Vector3d::UnitX())
+                  * Eigen::AngleAxisd(obs->yawPitchRoll.value()(1) * deg2rad, Eigen::Vector3d::UnitY())
+                  * Eigen::AngleAxisd(obs->yawPitchRoll.value()(2) * deg2rad, Eigen::Vector3d::UnitZ());
             obs->quaternion = dcm;
         }
     }
