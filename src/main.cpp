@@ -164,7 +164,7 @@ int main(int argc, const char* argv[])
         {
             if (NAV::ConfigManager::Get<bool>("sigterm", false))
             {
-                NAV::Sleep::waitForSignal();
+                NAV::Sleep::waitForSignal(true);
             }
             else
             {
