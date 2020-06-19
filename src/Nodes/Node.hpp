@@ -11,6 +11,7 @@
 #include <string_view>
 #include <memory>
 #include <map>
+#include <variant>
 
 #include "DataCallback.hpp"
 #include "NodeData/NodeData.hpp"
@@ -74,9 +75,11 @@ class Node : public DataCallback
         CONFIG_LIST,          ///< List: "option1", "[default]", "option3"
         CONFIG_LIST_LIST_INT, ///< 2 Lists and Integer: "[List1default]|List1option2", "List2option1|[List2default]", "min|default|max"
         CONFIG_MAP_INT,       ///< String Key and Integer Value: "key", "min", "default", "max"
+        CONFIG_VARIANT,       ///< Variant: ConfigOptionsBase(option1), ConfigOptionsBase(option2)
     };
 
-    using ConfigOptions = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::string>>;
+    using ConfigOptionsBase = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::string>>;
+    using ConfigOptions = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::variant<std::string, ConfigOptionsBase>>>;
 
     /**
      * @brief Returns Gui Configuration options for the class

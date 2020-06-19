@@ -42,14 +42,16 @@ class NodeModel : public NodeDataModel
 
     QWidget* embeddedWidget() override;
 
-    std::vector<QWidget*> widgets;
-
   private:
     QString const _name = "Template";
     QWidget* _mainWidget;
     QFormLayout* _mainLayout;
 
-    void addGuiElementForConfig(const NAV::Node::ConfigOptions& config, QFormLayout* _layout, QString prefix = "");
+    void addGuiElementForConfig(const NAV::Node::ConfigOptions& config,
+                                const std::vector<NAV::Node::ConfigOptions>& guiConfigs,
+                                const size_t configPosition,
+                                QFormLayout* _layout,
+                                QString prefix = "");
 
     void addRepeatedConfigGroupBox(const std::vector<NAV::Node::ConfigOptions>& guiConfigs,
                                    QFormLayout* _layout,
@@ -59,9 +61,11 @@ class NodeModel : public NodeDataModel
 
     void removeRepeatedConfigGroupBox(QSpinBox* inputSpinBox);
 
-    void addListListIntRow(std::vector<std::string> config, int row, QGridLayout* layout, QGroupBox* gridGroupBox, QFormLayout* formLayout);
+    void addListListIntRow(std::vector<std::variant<std::string, NAV::Node::ConfigOptionsBase>> config, int row, QGridLayout* layout, QGroupBox* gridGroupBox, QFormLayout* formLayout);
 
     void updateView(QSpinBox* inputSpinBox);
+
+    void updateVariants(const std::vector<NAV::Node::ConfigOptions>& guiConfigs, const size_t configPosition);
 
     void clearLayout(QFormLayout* layout);
 };
