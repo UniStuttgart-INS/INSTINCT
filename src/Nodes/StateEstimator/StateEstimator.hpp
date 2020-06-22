@@ -62,11 +62,12 @@ class StateEstimator : public Node
     {
         return {
             { CONFIG_BOOL, "Bool1", "Use the Time configured here as start time", { "0" } },
-            { CONFIG_N_INPUT_PORTS, "Input Ports", "Amount of Input Ports", { "2", "2", "30", "3" } },
+            { CONFIG_N_INPUT_PORTS, "Input Ports", "Amount of Input Ports", { "2", "2", "30", "4" } },
             { CONFIG_LIST, "Port Type", "Select the type of the message to receive on this port", { "VectorNavObs", "[UbloxObs]" } },
             { CONFIG_VARIANT, "Variant1", "Test Variant1", { ConfigOptionsBase(CONFIG_STRING, "VectorNavOption1", "VectorNavOption1 ToolTip", { "" }), ConfigOptionsBase(CONFIG_BOOL, "UbloxOption1", "UbloxOption1 Tooltip1", { "1" }) } },
             { CONFIG_VARIANT, "Variant2", "Test Variant2", { ConfigOptionsBase(CONFIG_BOOL, "VectorNavOption2", "VectorNavOption2 ToolTip", { "0" }), ConfigOptionsBase(CONFIG_LIST, "UbloxOption2", "UbloxOption1 Tooltip2", { "1", "[2]" }) } },
             { CONFIG_BOOL, "Bool2", "Use the Time configured here as start time", { "1" } },
+            { CONFIG_BOOL, "Bool3", "Use the Time configured here as start time", { "1" } },
         };
     }
 

@@ -36,11 +36,17 @@ class NodeModel : public NodeDataModel
 
     NodeDataType dataType(PortType portType, PortIndex portIndex) const override;
 
+    void saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) const;
+
     QJsonObject save() const override;
+
+    void restoreLayoutItems(QFormLayout* layout, QJsonObject const& p);
 
     void restore(QJsonObject const& p) override;
 
     QWidget* embeddedWidget() override;
+
+    QFormLayout* getMainLayout() { return _mainLayout; }
 
   private:
     QString const _name = "Template";
@@ -51,6 +57,7 @@ class NodeModel : public NodeDataModel
                                 const std::vector<NAV::Node::ConfigOptions>& guiConfigs,
                                 const size_t configPosition,
                                 QFormLayout* _layout,
+                                int layoutInsertPosition,
                                 QString prefix = "");
 
     void addRepeatedConfigGroupBox(const std::vector<NAV::Node::ConfigOptions>& guiConfigs,
@@ -65,7 +72,7 @@ class NodeModel : public NodeDataModel
 
     void updateView(QSpinBox* inputSpinBox);
 
-    void updateVariants(const std::vector<NAV::Node::ConfigOptions>& guiConfigs, const size_t configPosition);
+    void updateVariants(const std::vector<NAV::Node::ConfigOptions>& guiConfigs, const size_t configPosition, QFormLayout* layout, int layoutPosition);
 
     void clearLayout(QFormLayout* layout);
 };
