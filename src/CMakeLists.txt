@@ -67,5 +67,7 @@ if(ENABLE_GUI)
     target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC DISABLE_VN_SENSORS DISABLE_UB_SENSORS)
   endif()
 
+  target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
+
   set_target_properties("${PROJECT_NAME_LOWERCASE}-gui" PROPERTIES CXX_CLANG_TIDY "")
 endif()

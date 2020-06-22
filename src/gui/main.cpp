@@ -32,6 +32,7 @@
 #include "Nodes/Node.hpp"
 #include "Nodes/NodeManager.hpp"
 #include "NodeRegistry.hpp"
+#include "util/Logger.hpp"
 
 using QtNodes::DataModelRegistry;
 using QtNodes::FlowScene;
@@ -75,6 +76,7 @@ QAction* rtpAction;
 
 void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_view child, std::string_view root)
 {
+    LOG_TRACE("called");
     if (nodeManager.registeredNodeDataTypes().contains(child))
     {
         const auto& parents = nodeManager.registeredNodeDataTypes().find(child)->second.parents;
@@ -92,6 +94,12 @@ void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_v
 
 static std::shared_ptr<DataModelRegistry> registerDataModels(NAV::Node::NodeContext compat)
 {
+    LOG_TRACE("called for context: {}", compat == NAV::Node::NodeContext::REAL_TIME
+                                            ? "Real Time"
+                                            : (compat == NAV::Node::NodeContext::POST_PROCESSING
+                                                   ? "Post Processing"
+                                                   : "All"));
+
     auto registry = std::make_shared<DataModelRegistry>();
 
     for (const auto& [type, nodeInfo] : nodeManager.registeredNodeTypes())
@@ -112,38 +120,40 @@ static std::shared_ptr<DataModelRegistry> registerDataModels(NAV::Node::NodeCont
     return registry;
 }
 
-void exportConfig()
+void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::string& config)
 {
-    std::ofstream filestream;
-    filestream.open("config-dataflow.ini", std::ios_base::trunc);
+    LOG_DEBUG("Items in QFormLayout: {}", layout->rowCount());
 
-    for (auto node : scene->allNodes())
+    for (int i = 0; i < layout->rowCount(); i++)
     {
-        auto nodeModel = static_cast<NodeModel*>(node->nodeDataModel());
-        std::string comment = "#      Type";
-        for (int i = 0; i < nodeModel->name().length() - 4; i++)
-            comment += " ";
-        comment += ", Name";
-        for (int i = 0; i < node->id().toString().length() - 4; i++)
-            comment += " ";
+        QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
-        std::string config = "node = " + nodeModel->name().toStdString() + ", " + node->id().toString().toStdString();
-        for (size_t i = 0; i < nodeModel->widgets.size(); i++)
+        if (widget->layout() && (widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT))
         {
+            exportConfigForLayout(static_cast<QFormLayout*>(widget->layout()), comment, config);
+        }
+        else
+        {
+            if (widget->objectName().startsWith("Port "))
+                continue;
+
+            LOG_DEBUG("Exporting {}", widget->objectName().toStdString());
             std::string text;
-            if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_BOOL)
-                text = std::to_string(static_cast<QCheckBox*>(nodeModel->widgets.at(i))->isChecked());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_INT)
-                text = std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_FLOAT)
-                text = std::to_string(static_cast<QDoubleSpinBox*>(nodeModel->widgets.at(i))->value());
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_STRING)
-                text = static_cast<QLineEdit*>(nodeModel->widgets.at(i))->text().toStdString();
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST)
-                text = static_cast<QComboBox*>(nodeModel->widgets.at(i))->currentText().toStdString();
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_LIST_LIST_INT)
+            if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_BOOL)
+                text = std::to_string(static_cast<QCheckBox*>(widget)->isChecked());
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_INT)
+                text = std::to_string(static_cast<QSpinBox*>(widget)->value());
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
+                text = std::to_string(static_cast<QSpinBox*>(widget)->value());
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
+                text = std::to_string(static_cast<QDoubleSpinBox*>(widget)->value());
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
+                text = static_cast<QLineEdit*>(widget)->text().toStdString();
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
+                text = static_cast<QComboBox*>(widget)->currentText().toStdString();
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT)
             {
-                auto gridGroupBox = static_cast<QGroupBox*>(nodeModel->widgets.at(i));
+                auto gridGroupBox = static_cast<QGroupBox*>(widget);
                 auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
 
                 for (int j = 1; j < layout->rowCount(); j++)
@@ -161,10 +171,10 @@ void exportConfig()
                     }
                 }
             }
-            else if (nodeModel->widgets.at(i)->property("type").toUInt() == NAV::Node::ConfigOptions::CONFIG_MAP_INT)
-                text = nodeModel->widgets.at(i)->property("key").toString().toStdString() + ", " + std::to_string(static_cast<QSpinBox*>(nodeModel->widgets.at(i))->value());
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_MAP_INT)
+                text = widget->property("key").toString().toStdString() + ", " + std::to_string(static_cast<QSpinBox*>(widget)->value());
 
-            std::string type = nodeModel->widgets.at(i)->objectName().toStdString();
+            std::string type = widget->objectName().toStdString();
 
             std::replace(type.begin(), type.end(), '\n', ' ');
 
@@ -176,6 +186,29 @@ void exportConfig()
             // for (int i = 0; i < static_cast<int>(text.size()) - static_cast<int>(type.size()); i++)
             //     comment += " ";
         }
+    }
+}
+
+void exportConfig()
+{
+    LOG_TRACE("called");
+
+    std::ofstream filestream;
+    filestream.open("config-dataflow.ini", std::ios_base::trunc);
+
+    for (auto node : scene->allNodes())
+    {
+        auto nodeModel = static_cast<NodeModel*>(node->nodeDataModel());
+        std::string comment = "#      Type";
+        for (int i = 0; i < nodeModel->name().length() - 4; i++)
+            comment += " ";
+        comment += ", Name";
+        for (int i = 0; i < node->id().toString().length() - 4; i++)
+            comment += " ";
+
+        std::string config = "node = " + nodeModel->name().toStdString() + ", " + node->id().toString().toStdString();
+
+        exportConfigForLayout(nodeModel->getMainLayout(), comment, config);
 
         filestream << comment << std::endl;
         filestream << config << std::endl;
@@ -204,6 +237,7 @@ void exportConfig()
 
 bool save()
 {
+    LOG_TRACE("called");
     if (fileName.isEmpty())
     {
         fileName = scene->save();
@@ -224,6 +258,7 @@ bool save()
 
 bool saveAs()
 {
+    LOG_TRACE("called");
     fileName = scene->save();
 
     if (!fileName.isEmpty())
@@ -237,6 +272,7 @@ bool saveAs()
 
 void load()
 {
+    LOG_TRACE("called");
     rtpAction->setText("All Nodes");
     scene->setRegistry(registryAll);
     registrySelected = 0;
@@ -248,6 +284,7 @@ void load()
 
 void run()
 {
+    LOG_TRACE("called");
     if (scene->nodes().size() > 0)
     {
         exportConfig();
@@ -259,12 +296,14 @@ void run()
 
 void clearScene()
 {
+    LOG_TRACE("called");
     scene->clearScene();
     fileName = "";
 }
 
 void changeRegistry()
 {
+    LOG_TRACE("called");
     if (registrySelected == 0)
     {
         size_t incompNodes = 0;
@@ -337,6 +376,8 @@ void changeRegistry()
 
 int main(int argc, char* argv[])
 {
+    Logger logger("logs/navsos-gui.log");
+
     QApplication app(argc, argv);
 
     setStyle();

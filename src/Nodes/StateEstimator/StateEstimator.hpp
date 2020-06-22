@@ -1,6 +1,6 @@
 /**
- * @file ImuIntegrator.hpp
- * @brief Integrates ImuObs Data
+ * @file StateEstimator.hpp
+ * @brief State Estimator Class
  * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
  * @date 2020-05-18
  */
@@ -9,11 +9,13 @@
 
 #include "Nodes/Node.hpp"
 
-#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/InsObs.hpp"
+
+#include "util/Logger.hpp"
 
 namespace NAV
 {
-class ImuIntegrator : public Node
+class StateEstimator : public Node
 {
   public:
     /**
@@ -22,14 +24,14 @@ class ImuIntegrator : public Node
      * @param[in] name Name of the object
      * @param[in] options Program options string map
      */
-    ImuIntegrator(const std::string& name, const std::map<std::string, std::string>& options);
+    StateEstimator(const std::string& name, const std::map<std::string, std::string>& options);
 
-    ImuIntegrator() = default;                               ///< Default Constructor
-    ~ImuIntegrator() override = default;                     ///< Destructor
-    ImuIntegrator(const ImuIntegrator&) = delete;            ///< Copy constructor
-    ImuIntegrator(ImuIntegrator&&) = delete;                 ///< Move constructor
-    ImuIntegrator& operator=(const ImuIntegrator&) = delete; ///< Copy assignment operator
-    ImuIntegrator& operator=(ImuIntegrator&&) = delete;      ///< Move assignment operator
+    StateEstimator() = default;                                ///< Default Constructor
+    ~StateEstimator() override = default;                      ///< Destructor
+    StateEstimator(const StateEstimator&) = delete;            ///< Copy constructor
+    StateEstimator(StateEstimator&&) = delete;                 ///< Move constructor
+    StateEstimator& operator=(const StateEstimator&) = delete; ///< Copy assignment operator
+    StateEstimator& operator=(StateEstimator&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Returns the String representation of the Class Type
@@ -38,7 +40,7 @@ class ImuIntegrator : public Node
      */
     [[nodiscard]] constexpr std::string_view type() const override
     {
-        return std::string_view("ImuIntegrator");
+        return std::string_view("StateEstimator");
     }
 
     /**
@@ -48,7 +50,7 @@ class ImuIntegrator : public Node
      */
     [[nodiscard]] constexpr std::string_view category() const override
     {
-        return std::string_view("Integrator");
+        return std::string_view("State");
     }
 
     /**
@@ -58,7 +60,15 @@ class ImuIntegrator : public Node
      */
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
-        return {};
+        return {
+            { CONFIG_BOOL, "Bool1", "Use the Time configured here as start time", { "0" } },
+            { CONFIG_N_INPUT_PORTS, "Input Ports", "Amount of Input Ports", { "2", "2", "30", "4" } },
+            { CONFIG_LIST, "Port Type", "Select the type of the message to receive on this port", { "VectorNavObs", "[UbloxObs]" } },
+            { CONFIG_VARIANT, "Variant1", "Test Variant1", { ConfigOptionsBase(CONFIG_STRING, "VectorNavOption1", "VectorNavOption1 ToolTip", { "" }), ConfigOptionsBase(CONFIG_BOOL, "UbloxOption1", "UbloxOption1 Tooltip1", { "1" }) } },
+            { CONFIG_VARIANT, "Variant2", "Test Variant2", { ConfigOptionsBase(CONFIG_BOOL, "VectorNavOption2", "VectorNavOption2 ToolTip", { "0" }), ConfigOptionsBase(CONFIG_LIST, "UbloxOption2", "UbloxOption1 Tooltip2", { "1", "[2]" }) } },
+            { CONFIG_BOOL, "Bool2", "Use the Time configured here as start time", { "1" } },
+            { CONFIG_BOOL, "Bool3", "Use the Time configured here as start time", { "1" } },
+        };
     }
 
     /**
@@ -82,7 +92,7 @@ class ImuIntegrator : public Node
         switch (portType)
         {
         case PortType::In:
-            return 1U;
+            return nInputPorts;
         case PortType::Out:
             return 1U;
         }
@@ -104,14 +114,15 @@ class ImuIntegrator : public Node
         case PortType::In:
             if (portIndex == 0)
             {
-                return ImuObs().type();
+                return InsObs().type();
             }
             break;
+
         case PortType::Out:
-            // if (portIndex == 0)
-            // {
-            //     return UbloxObs().type();
-            // }
+            if (portIndex == 0)
+            {
+                return InsObs().type();
+            }
             break;
         }
 
@@ -126,10 +137,16 @@ class ImuIntegrator : public Node
      */
     void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) override
     {
+        static bool once = true;
+        if (once)
+        {
+            LOG_INFO("Data on Port {}", portIndex);
+            once = false;
+        }
         if (portIndex == 0)
         {
-            auto obs = std::static_pointer_cast<ImuObs>(data);
-            integrateObservation(obs);
+            auto obs = std::static_pointer_cast<InsObs>(data);
+            processObservation(obs);
         }
     }
 
@@ -151,11 +168,14 @@ class ImuIntegrator : public Node
 
   private:
     /**
-     * @brief Integrates the Imu Observation data
+     * @brief Process the Observation data and invoke callbacks
      * 
-     * @param[in] obs ImuObs to process
+     * @param[in] obs Observation to process
      */
-    void integrateObservation(std::shared_ptr<ImuObs>& obs);
+    void processObservation(std::shared_ptr<InsObs>& obs);
+
+    /// Number of input ports
+    uint8_t nInputPorts = 1;
 };
 
 } // namespace NAV

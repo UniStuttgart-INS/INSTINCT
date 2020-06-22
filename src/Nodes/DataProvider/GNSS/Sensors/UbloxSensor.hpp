@@ -65,19 +65,19 @@ class UbloxSensor final : public UartSensor, public Gnss
     /**
      * @brief Returns Gui Configuration options for the class
      * 
-     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     * @retval std::vector<ConfigOptions> The gui configuration
      */
-    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
+    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
-        return { { Node::CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
-                                                "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
-                                                "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
-                                                "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
-                                                "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
-                                                "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
+        return { { CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
+                                          "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
+                                          "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
+                                          "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
+                                          "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
+                                          "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
                    { "/dev/ttyUSB0" } },
-                 { Node::CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" } },
-                 { Node::CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "4", "200" } } };
+                 { CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" } },
+                 { CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "4", "200" } } };
     }
 
     /**
