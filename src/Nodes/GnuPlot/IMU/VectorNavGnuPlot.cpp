@@ -35,6 +35,12 @@ NAV::VectorNavGnuPlot::VectorNavGnuPlot(const std::string& name, const std::map<
             dataIndices.push_back(plotWindow->addNewDataSet("Attitude Quaternion Z"));
             dataIndices.push_back(plotWindow->addNewDataSet("Attitude Quaternion W"));
         }
+        else if (yData == "yawPitchRoll")
+        {
+            dataIndices.push_back(plotWindow->addNewDataSet("Yaw Angle [Degree]"));
+            dataIndices.push_back(plotWindow->addNewDataSet("Pitch Angle [Degree]"));
+            dataIndices.push_back(plotWindow->addNewDataSet("Roll Angle [Degree]"));
+        }
         else if (yData == "magUncompXYZ")
         {
             dataIndices.push_back(plotWindow->addNewDataSet("Uncompensated Magnetic Field X [Gauss]"));
@@ -174,6 +180,12 @@ void NAV::VectorNavGnuPlot::plotVectorNavObs(std::shared_ptr<NAV::VectorNavObs>&
             plotWindow->data.at(dataIndices.at(1)).xy.emplace_back(std::make_pair(plotX, obs->quaternion.value().y()));
             plotWindow->data.at(dataIndices.at(2)).xy.emplace_back(std::make_pair(plotX, obs->quaternion.value().z()));
             plotWindow->data.at(dataIndices.at(3)).xy.emplace_back(std::make_pair(plotX, obs->quaternion.value().w()));
+        }
+        else if (yData == "yawPitchRoll" && obs->yawPitchRoll.has_value())
+        {
+            plotWindow->data.at(dataIndices.at(0)).xy.emplace_back(std::make_pair(plotX, obs->yawPitchRoll.value().x()));
+            plotWindow->data.at(dataIndices.at(1)).xy.emplace_back(std::make_pair(plotX, obs->yawPitchRoll.value().y()));
+            plotWindow->data.at(dataIndices.at(2)).xy.emplace_back(std::make_pair(plotX, obs->yawPitchRoll.value().z()));
         }
         else if (yData == "magUncompXYZ" && obs->magUncompXYZ.has_value())
         {

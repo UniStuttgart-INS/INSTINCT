@@ -191,6 +191,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
             // Group 4 (GPS)
             // Group 5 (Attitude)
             obs->vpeStatus.emplace(p.extractUint16());
+            auto yawPitchRoll = p.extractVec3f();
+            obs->yawPitchRoll.emplace(yawPitchRoll.x, yawPitchRoll.y, yawPitchRoll.z);
             auto quaternion = p.extractVec4f();
             obs->quaternion.emplace(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
             auto magCompNED = p.extractVec3f();

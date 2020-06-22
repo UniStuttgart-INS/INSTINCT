@@ -1,7 +1,25 @@
 {
     "connections": [
         {
-            "in_id": "{09113478-ea52-4ba1-a9d1-33ff35895a11}",
+            "in_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
+            "in_index": 1,
+            "out_id": "{a8957682-de31-4a37-8315-110a1256b4d8}",
+            "out_index": 0
+        },
+        {
+            "in_id": "{0bb27750-4dbb-4d17-939b-7a032d777988}",
+            "in_index": 0,
+            "out_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
+            "out_index": 0
+        },
+        {
+            "in_id": "{7260e9b2-c953-428e-a302-5f73580210ea}",
+            "in_index": 0,
+            "out_id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
+            "out_index": 0
+        },
+        {
+            "in_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
             "in_index": 0,
             "out_id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
             "out_index": 0
@@ -13,113 +31,29 @@
             "out_index": 0
         },
         {
-            "in_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
-            "in_index": 0,
-            "out_id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
-            "out_index": 0
-        },
-        {
-            "in_id": "{7260e9b2-c953-428e-a302-5f73580210ea}",
-            "in_index": 0,
-            "out_id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
-            "out_index": 0
-        },
-        {
-            "in_id": "{0bb27750-4dbb-4d17-939b-7a032d777988}",
-            "in_index": 0,
-            "out_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
-            "out_index": 0
-        },
-        {
-            "in_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
-            "in_index": 1,
-            "out_id": "{a8957682-de31-4a37-8315-110a1256b4d8}",
-            "out_index": 0
-        },
-        {
             "in_id": "{111f31fa-511c-4915-9f4f-e20fe1ceefce}",
             "in_index": 0,
             "out_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
+            "out_index": 0
+        },
+        {
+            "in_id": "{09113478-ea52-4ba1-a9d1-33ff35895a11}",
+            "in_index": 0,
+            "out_id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
             "out_index": 0
         }
     ],
     "nodes": [
         {
-            "id": "{0bb27750-4dbb-4d17-939b-7a032d777988}",
+            "id": "{f1e2ed42-b703-442a-9b0f-e88f11c3465d}",
             "model": {
-                "Data to plot": "timeSinceStartup|gyroUncompXYZ|0",
-                "Update Frequency": 30,
-                "X Display Scope": 3,
-                "name": "VectorNavGnuPlot"
+                "Path": "logs/vn-log.csv",
+                "Type": "ascii",
+                "name": "VectorNavDataLogger"
             },
             "position": {
                 "x": 796,
-                "y": 491
-            }
-        },
-        {
-            "id": "{a8957682-de31-4a37-8315-110a1256b4d8}",
-            "model": {
-                "Baudrate": "Fastest",
-                "Frequency": 100,
-                "Port": "/dev/ttyUSB_VN100_1",
-                "name": "VectorNavSensor"
-            },
-            "position": {
-                "x": -130,
-                "y": 147
-            }
-        },
-        {
-            "id": "{111f31fa-511c-4915-9f4f-e20fe1ceefce}",
-            "model": {
-                "Data to plot": "timeSinceStartup|quaternion|0;timeSinceStartup|accelCompXYZ|1;timeSinceStartup|syncInCnt|1",
-                "Update Frequency": 30,
-                "X Display Scope": 9,
-                "name": "VectorNavGnuPlot"
-            },
-            "position": {
-                "x": 796,
-                "y": 211
-            }
-        },
-        {
-            "id": "{7260e9b2-c953-428e-a302-5f73580210ea}",
-            "model": {
-                "Class": "RXM",
-                "Msg Id": "RAWX",
-                "Port": "/dev/ttyUSB_VN100_1",
-                "Protocol": "UBX",
-                "name": "UbloxSyncSignal"
-            },
-            "position": {
-                "x": 299,
-                "y": -141
-            }
-        },
-        {
-            "id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
-            "model": {
-                "Baudrate": "Fastest",
-                "Frequency": 4,
-                "Port": "/dev/ttyACM0",
-                "name": "UbloxSensor"
-            },
-            "position": {
-                "x": -103,
-                "y": 5
-            }
-        },
-        {
-            "id": "{09113478-ea52-4ba1-a9d1-33ff35895a11}",
-            "model": {
-                "Path": "logs/ub-log.ubx",
-                "Type": "binary",
-                "name": "UbloxDataLogger"
-            },
-            "position": {
-                "x": 295,
-                "y": 16
+                "y": 110
             }
         },
         {
@@ -137,15 +71,81 @@
             }
         },
         {
-            "id": "{f1e2ed42-b703-442a-9b0f-e88f11c3465d}",
+            "id": "{09113478-ea52-4ba1-a9d1-33ff35895a11}",
             "model": {
-                "Path": "logs/vn-log.csv",
-                "Type": "ascii",
-                "name": "VectorNavDataLogger"
+                "Path": "logs/ub-log.ubx",
+                "Type": "binary",
+                "name": "UbloxDataLogger"
+            },
+            "position": {
+                "x": 295,
+                "y": 16
+            }
+        },
+        {
+            "id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
+            "model": {
+                "Baudrate": "Fastest",
+                "Frequency": 4,
+                "Port": "/dev/ttyACM0",
+                "name": "UbloxSensor"
+            },
+            "position": {
+                "x": -103,
+                "y": 5
+            }
+        },
+        {
+            "id": "{7260e9b2-c953-428e-a302-5f73580210ea}",
+            "model": {
+                "Class": "RXM",
+                "Msg Id": "RAWX",
+                "Port": "/dev/ttyUSB_VN100_1",
+                "Protocol": "UBX",
+                "name": "UbloxSyncSignal"
+            },
+            "position": {
+                "x": 299,
+                "y": -141
+            }
+        },
+        {
+            "id": "{111f31fa-511c-4915-9f4f-e20fe1ceefce}",
+            "model": {
+                "Data to plot": "gpsToW|yawPitchRoll|0;gpsToW|accelCompXYZ|1;gpsToW|syncInCnt|1",
+                "Update Frequency": 30,
+                "X Display Scope": 9,
+                "name": "VectorNavGnuPlot"
             },
             "position": {
                 "x": 796,
-                "y": 110
+                "y": 211
+            }
+        },
+        {
+            "id": "{a8957682-de31-4a37-8315-110a1256b4d8}",
+            "model": {
+                "Baudrate": "Fastest",
+                "Frequency": 100,
+                "Port": "/dev/ttyUSB_VN100_1",
+                "name": "VectorNavSensor"
+            },
+            "position": {
+                "x": -130,
+                "y": 147
+            }
+        },
+        {
+            "id": "{0bb27750-4dbb-4d17-939b-7a032d777988}",
+            "model": {
+                "Data to plot": "gpsToW|gyroUncompXYZ|1",
+                "Update Frequency": 30,
+                "X Display Scope": 3,
+                "name": "VectorNavGnuPlot"
+            },
+            "position": {
+                "x": 796,
+                "y": 491
             }
         }
     ]

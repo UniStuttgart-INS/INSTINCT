@@ -47,6 +47,14 @@ class VectorNavObs final : public ImuObs
      *  The attitude is given as the body frame with respect to the local North East Down (NED) frame. */
     std::optional<Eigen::Quaterniond> quaternion;
 
+    /** The estimated attitude Yaw, Pitch, and Roll angles measured in [degrees].
+     *  The attitude is given as a 3,2,1 Euler angle sequence describing the body frame
+     *  with respect to the local North East Down (NED) frame.
+     *  Yaw   +/- 180°
+     *  Pitch +/- 90°
+     *  Roll  +/- 180°*/
+    std::optional<Eigen::Array3d> yawPitchRoll;
+
     /** The system time since startup measured in [nano seconds]. */
     std::optional<uint64_t> timeSinceStartup;
 
