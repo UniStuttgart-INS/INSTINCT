@@ -11,7 +11,7 @@ NAV::VectorNavSensor::VectorNavSensor(const std::string& name, const std::map<st
 {
     LOG_TRACE("called for {}", name);
 
-    if (options.contains("Frequency"))
+    if (options.count("Frequency"))
     {
         config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at("Frequency")));
     }

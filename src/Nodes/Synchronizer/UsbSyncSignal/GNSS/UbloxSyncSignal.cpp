@@ -11,7 +11,7 @@ NAV::UbloxSyncSignal::UbloxSyncSignal(const std::string& name, const std::map<st
     LOG_TRACE("called for {}", name);
 
     // type, msgClass, msgId
-    if (options.contains("Protocol") && options.contains("Class") && options.contains("Msg Id"))
+    if (options.count("Protocol") && options.count("Class") && options.count("Msg Id"))
     {
         if (options.at("Protocol") == "UBX")
         {

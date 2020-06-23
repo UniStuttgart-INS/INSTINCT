@@ -35,7 +35,7 @@ class ConfigManager
     template<typename T>
     static const T& Get(const std::string& key, const T& defaultValue)
     {
-        if (vm.contains(key))
+        if (vm.count(key))
         {
             return vm[key].as<T>();
         }

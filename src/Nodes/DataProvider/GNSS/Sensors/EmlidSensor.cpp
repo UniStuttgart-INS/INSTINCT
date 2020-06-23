@@ -1,12 +1,12 @@
 #ifndef DISABLE_SENSORS
 
-    #include "UbloxSensor.hpp"
+    #include "EmlidSensor.hpp"
 
     #include "util/Logger.hpp"
 
-    #include "util/Ublox/UbloxDecryptor.hpp"
+    #include "util/Emlid/EmlidDecryptor.hpp"
 
-NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::string, std::string>& options)
+NAV::EmlidSensor::EmlidSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Gnss(name, options)
 {
     LOG_TRACE("called for {}", name);
@@ -22,7 +22,7 @@ NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::strin
         // TODO: Update the library to handle different baudrates
         sensorBaudrate = Baudrate::BAUDRATE_9600;
 
-        ub.connect(sensorPort, sensorBaudrate);
+        er.connect(sensorPort, sensorBaudrate);
 
         LOG_DEBUG("{} connected on port {} with baudrate {}", name, sensorPort, sensorBaudrate);
     }
@@ -31,34 +31,34 @@ NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::strin
         LOG_CRITICAL("{} could not connect", name);
     }
 
-    ub.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
+    er.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
     LOG_DEBUG("{} successfully initialized", name);
 }
 
-NAV::UbloxSensor::~UbloxSensor()
+NAV::EmlidSensor::~EmlidSensor()
 {
     LOG_TRACE("called for {}", name);
 
-    removeAllCallbacksOfType<UbloxObs>();
+    removeAllCallbacksOfType<EmlidObs>();
     callbacksEnabled = false;
-    if (ub.isConnected())
+    if (er.isConnected())
     {
-        ub.unregisterAsyncPacketReceivedHandler();
-        ub.disconnect();
+        er.unregisterAsyncPacketReceivedHandler();
+        er.disconnect();
     }
 }
 
-void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::protocol::uart::Packet& p, size_t /*index*/)
+void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, er::protocol::uart::Packet& p, size_t /*index*/)
 {
-    auto* ubSensor = static_cast<UbloxSensor*>(userData);
+    auto* erSensor = static_cast<EmlidSensor*>(userData);
 
-    auto obs = std::make_shared<UbloxObs>();
+    auto obs = std::make_shared<EmlidObs>();
     obs->raw.setData(p.getRawData(), p.getRawDataLength());
 
-    ublox::decryptUbloxObs(obs, ubSensor->currentInsTime);
+    Emlid::decryptEmlidObs(obs, erSensor->currentInsTime);
 
-    ubSensor->invokeCallbacks(obs);
+    erSensor->invokeCallbacks(obs);
 }
 
 #endif

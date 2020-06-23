@@ -3,12 +3,15 @@
 
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
+#include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
+#include "Nodes/DataProvider/GNSS/Sensors/EmlidSensor.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 
 #include "Nodes/GnuPlot/GNSS/RtklibPosGnuPlot.hpp"
 #include "Nodes/GnuPlot/IMU/VectorNavGnuPlot.hpp"
@@ -22,6 +25,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 {
     nodeManager.registerNodeType<NAV::VectorNavDataLogger>();
     nodeManager.registerNodeType<NAV::UbloxDataLogger>();
+    nodeManager.registerNodeType<NAV::EmlidDataLogger>();
 
     nodeManager.registerNodeType<NAV::VectorNavFile>();
 #ifndef DISABLE_SENSORS
@@ -29,8 +33,10 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #endif
     nodeManager.registerNodeType<NAV::RtklibPosFile>();
     nodeManager.registerNodeType<NAV::UbloxFile>();
+    nodeManager.registerNodeType<NAV::EmlidFile>();
 #ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::UbloxSensor>();
+    nodeManager.registerNodeType<NAV::EmlidSensor>();
 #endif
 
     nodeManager.registerNodeType<NAV::RtklibPosGnuPlot>();
@@ -42,6 +48,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::UbloxSyncSignal>();
 #endif
+
 }
 
 #include "NodeData/InsObs.hpp"
@@ -52,6 +59,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
+#include "NodeData/GNSS/EmlidObs.hpp"
 
 void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
 {
@@ -63,4 +71,5 @@ void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeDataType<NAV::GnssObs>();
     nodeManager.registerNodeDataType<NAV::RtklibPosObs>();
     nodeManager.registerNodeDataType<NAV::UbloxObs>();
+    nodeManager.registerNodeDataType<NAV::EmlidObs>();
 }

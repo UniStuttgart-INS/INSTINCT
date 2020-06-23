@@ -75,7 +75,7 @@ QAction* rtpAction;
 
 void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_view child, std::string_view root)
 {
-    if (nodeManager.registeredNodeDataTypes().contains(child))
+    if (nodeManager.registeredNodeDataTypes().count(child))
     {
         const auto& parents = nodeManager.registeredNodeDataTypes().find(child)->second.parents;
 

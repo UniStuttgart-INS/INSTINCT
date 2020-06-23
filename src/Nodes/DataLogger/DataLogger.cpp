@@ -7,11 +7,11 @@ NAV::DataLogger::DataLogger(const std::string& name, const std::map<std::string,
 {
     LOG_TRACE("called for {}", name);
 
-    if (options.contains("Path"))
+    if (options.count("Path"))
     {
         path = options.at("Path");
     }
-    if (options.contains("Type"))
+    if (options.count("Type"))
     {
         if (options.at("Type") == "ascii")
         {

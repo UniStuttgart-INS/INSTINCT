@@ -7,11 +7,11 @@ NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, const std::map<
 {
     LOG_TRACE("called for {}", name);
 
-    if (options.contains("Use Fixed Start Time"))
+    if (options.count("Use Fixed Start Time"))
     {
         useFixedStartTime = static_cast<bool>(std::stoi(options.at("Use Fixed Start Time")));
     }
-    if (useFixedStartTime && options.contains("Gps Cycle") && options.contains("Gps Week") && options.contains("Gps Time of Week"))
+    if (useFixedStartTime && options.count("Gps Cycle") && options.count("Gps Week") && options.count("Gps Time of Week"))
     {
         auto cycle = static_cast<uint16_t>(std::stoul(options.at("Gps Cycle")));
         auto week = static_cast<uint16_t>(std::stoul(options.at("Gps Week")));
