@@ -229,14 +229,31 @@ void NAV::NodeManager::disableAllCallbacks()
     }
 }
 
+void NAV::NodeManager::deleteAllNodesExcept(const std::string_view& type)
+{
+    for (auto& node : _nodes)
+    {
+        if (node && node->type() != type)
+        {
+            node->incomingLinks.clear();
+            node->removeAllCallbacks();
+            node = nullptr;
+        }
+    }
+}
+
 void NAV::NodeManager::deleteAllNodes()
 {
     for (auto& node : _nodes)
     {
-        node->incomingLinks.clear();
-        node->removeAllCallbacks();
-        node = nullptr;
+        if (node)
+        {
+            node->incomingLinks.clear();
+            node->removeAllCallbacks();
+            node = nullptr;
+        }
     }
+    _nodes.clear();
 }
 
 const std::vector<std::shared_ptr<NAV::Node>>& NAV::NodeManager::nodes() const

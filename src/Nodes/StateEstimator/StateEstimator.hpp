@@ -150,22 +150,6 @@ class StateEstimator : public Node
         }
     }
 
-    /**
-     * @brief Requests the node to send out its data
-     * 
-     * @param[in] portIndex The output port index
-     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
-     */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t /* portIndex */) override { return nullptr; }
-
-    /**
-     * @brief Requests the node to peek its output data
-     * 
-     * @param[in] portIndex The output port index
-     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
-     */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t /* portIndex */) override { return nullptr; }
-
   private:
     /**
      * @brief Process the Observation data and invoke callbacks

@@ -63,6 +63,8 @@ Logger::Logger()
 Logger::~Logger()
 {
     writeFooter();
+
+    spdlog::default_logger()->flush();
 }
 
 void Logger::writeSeparator() noexcept

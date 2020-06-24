@@ -82,6 +82,13 @@ class NodeManager
     /// @brief Disables callbacks for all Nodes from the config file
     void disableAllCallbacks();
 
+    /**
+     * @brief Deletes all nodes and frees memory except for the specified type
+     * 
+     * @param[in] type The type which should not be deleted
+     */
+    void deleteAllNodesExcept(const std::string_view& type);
+
     /// @brief Deletes all nodes and frees memory
     void deleteAllNodes();
 

@@ -128,7 +128,7 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
     {
         QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
-        if (widget->layout() && (widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT))
+        if (widget->layout() && (widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI))
         {
             exportConfigForLayout(static_cast<QFormLayout*>(widget->layout()), comment, config);
         }
@@ -151,24 +151,20 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
                 text = static_cast<QLineEdit*>(widget)->text().toStdString();
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                 text = static_cast<QComboBox*>(widget)->currentText().toStdString();
-            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT)
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)
             {
                 auto gridGroupBox = static_cast<QGroupBox*>(widget);
                 auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
 
-                for (int j = 1; j < layout->rowCount(); j++)
+                for (int j = 2; j < layout->count() / 2; j++)
                 {
                     QComboBox* xlist = static_cast<QComboBox*>(layout->itemAtPosition(j, 0)->widget());
                     QComboBox* ylist = static_cast<QComboBox*>(layout->itemAtPosition(j, 1)->widget());
-                    QSpinBox* spinBox = static_cast<QSpinBox*>(layout->itemAtPosition(j, 2)->widget());
 
-                    if (spinBox->value() != -1)
-                    {
-                        std::string toAdd = xlist->currentText().toStdString() + ";" + ylist->currentText().toStdString() + ";" + std::to_string(spinBox->value());
+                    std::string toAdd = xlist->currentText().toStdString() + "|" + ylist->currentText().toStdString();
 
-                        if (text.find(toAdd) == std::string::npos)
-                            text += (!text.empty() ? ";" : "") + toAdd;
-                    }
+                    if (text.find(toAdd) == std::string::npos)
+                        text += (!text.empty() ? ";" : "") + toAdd;
                 }
             }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_MAP_INT)
