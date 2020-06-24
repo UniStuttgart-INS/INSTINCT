@@ -43,6 +43,31 @@ void NAV::NodeManager::processConfigFile()
                     std::string key = cell.substr(1, splitPos - 1);
                     std::string value = cell.substr(splitPos + 5, cell.length() - splitPos - 6);
 
+                    // Replace Hash sign
+                    while (true)
+                    {
+                        std::string searchString = "[hash]";
+                        std::string replaceString = "#";
+                        size_t start_pos = value.find(searchString);
+                        if (start_pos == std::string::npos)
+                        {
+                            break;
+                        }
+                        value.replace(start_pos, searchString.length(), replaceString);
+                    }
+                    // Replace newline
+                    while (true)
+                    {
+                        std::string searchString = "\\n";
+                        std::string replaceString = "\n";
+                        size_t start_pos = value.find(searchString);
+                        if (start_pos == std::string::npos)
+                        {
+                            break;
+                        }
+                        value.replace(start_pos, searchString.length(), replaceString);
+                    }
+
                     config.options[key] = value;
                 }
             }

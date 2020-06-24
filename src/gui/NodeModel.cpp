@@ -2,7 +2,9 @@
 
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QFormLayout>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QComboBox>
@@ -220,6 +222,20 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
         lineEdit->setStyleSheet("QLineEdit { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
         lineEdit->setText(QString::fromStdString(std::get<std::string>(std::get<3>(config).front())));
         _layout->insertRow(layoutInsertPosition, description, lineEdit);
+    }
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
+    {
+        QGroupBox* groupBox = new QGroupBox(description);
+        QVBoxLayout* layout = new QVBoxLayout();
+
+        QTextEdit* textEdit = new QTextEdit(groupBox);
+        textEdit->setStyleSheet("QTextEdit { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
+        textEdit->setText(QString::fromStdString(std::get<std::string>(std::get<3>(config).front())));
+
+        layout->addWidget(textEdit);
+        groupBox->setLayout(layout);
+
+        _layout->insertRow(layoutInsertPosition, groupBox);
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_LIST)
     {
@@ -507,7 +523,9 @@ NodeDataType determinePortTypeForLayout(QFormLayout* layout, PortIndex portIndex
             return { static_cast<QComboBox*>(widget)->currentText(),
                      static_cast<QComboBox*>(widget)->currentText() };
         }
-        if (widget->layout() && (widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI))
+        if (widget->layout()
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
             auto portTypeFromLayout = determinePortTypeForLayout(static_cast<QFormLayout*>(widget->layout()), portIndex);
             if (portTypeFromLayout.name != "")
@@ -554,7 +572,9 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
     {
         QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
-        if (widget->layout() && (widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI))
+        if (widget->layout()
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
             saveLayoutItems(static_cast<QFormLayout*>(widget->layout()), modelJson);
         }
@@ -569,6 +589,15 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
                 modelJson[widget->objectName()] = static_cast<QDoubleSpinBox*>(widget)->value();
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 modelJson[widget->objectName()] = static_cast<QLineEdit*>(widget)->text();
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
+            {
+                auto groupBox = static_cast<QGroupBox*>(widget);
+                auto layout = static_cast<QVBoxLayout*>(groupBox->layout());
+
+                QTextEdit* textEdit = static_cast<QTextEdit*>(layout->itemAt(0)->widget());
+
+                modelJson[widget->objectName()] = textEdit->toPlainText();
+            }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                 modelJson[widget->objectName()] = static_cast<QComboBox*>(widget)->currentText();
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)
@@ -622,7 +651,9 @@ void NodeModel::restoreLayoutItems(QFormLayout* layout, QJsonObject const& p)
     {
         QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
-        if (widget->layout() && (widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI))
+        if (widget->layout()
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
             restoreLayoutItems(static_cast<QFormLayout*>(widget->layout()), p);
         }
@@ -641,6 +672,14 @@ void NodeModel::restoreLayoutItems(QFormLayout* layout, QJsonObject const& p)
                     static_cast<QDoubleSpinBox*>(widget)->setValue(v.toDouble());
                 else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                     static_cast<QLineEdit*>(widget)->setText(v.toString());
+                else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
+                {
+                    auto groupBox = static_cast<QGroupBox*>(widget);
+                    auto layout = static_cast<QVBoxLayout*>(groupBox->layout());
+
+                    QTextEdit* textEdit = static_cast<QTextEdit*>(layout->itemAt(0)->widget());
+                    textEdit->setText(v.toString());
+                }
                 else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                     static_cast<QComboBox*>(widget)->setCurrentText(v.toString());
                 else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)

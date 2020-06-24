@@ -33,6 +33,11 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
 
     for (size_t i = 1; options.contains(std::to_string(i) + "-Data to plot"); i++)
     {
+        if (options.at(std::to_string(i) + "-Data to plot").empty())
+        {
+            continue;
+        }
+
         LOG_DEBUG("Plot Instructions for port {}: {}", i, options.at(std::to_string(i) + "-Data to plot"));
 
         std::string dataXY;
@@ -49,17 +54,10 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
         }
     }
 
-    // if (options.contains("Start"))
-    // {
-    //     *gp << options.at("Start");
-    // }
-
-    *gp << "set autoscale xy\n";
-
-    *gp << "set grid ytics lc rgb \"#bbbbbb\" lw 1 lt 0\n";
-    *gp << "set grid xtics lc rgb \"#bbbbbb\" lw 1 lt 0\n";
-
-    *gp << "set pointsize 0\n";
+    if (options.contains("Start"))
+    {
+        *gp << options.at("Start");
+    }
 }
 
 NAV::GnuPlot::~GnuPlot()

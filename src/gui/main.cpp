@@ -7,6 +7,7 @@
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QComboBox>
 
@@ -128,7 +129,9 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
     {
         QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
-        if (widget->layout() && (widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI))
+        if (widget->layout()
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
             exportConfigForLayout(static_cast<QFormLayout*>(widget->layout()), comment, config);
         }
@@ -148,7 +151,16 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
                 text = std::to_string(static_cast<QDoubleSpinBox*>(widget)->value());
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
-                text = static_cast<QLineEdit*>(widget)->text().toStdString();
+                text = static_cast<QLineEdit*>(widget)->text().replace("\n", "\\n").replace("#", "[hash]").toStdString();
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
+            {
+                auto groupBox = static_cast<QGroupBox*>(widget);
+                auto layout = static_cast<QVBoxLayout*>(groupBox->layout());
+
+                QTextEdit* textEdit = static_cast<QTextEdit*>(layout->itemAt(0)->widget());
+
+                text = textEdit->toPlainText().replace("\n", "\\n").replace("#", "[hash]").toStdString();
+            }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                 text = static_cast<QComboBox*>(widget)->currentText().toStdString();
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)
