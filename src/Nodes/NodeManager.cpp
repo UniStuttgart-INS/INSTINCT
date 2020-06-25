@@ -12,15 +12,31 @@ void NAV::NodeManager::processConfigFile()
     if (ConfigManager::HasKey("node"))
     {
         std::vector<std::string> names;
-        for (const std::string& line : ConfigManager::Get<std::vector<std::string>>("node", {}))
+        for (std::string line : ConfigManager::Get<std::vector<std::string>>("node", {}))
         {
             NodeConfig config;
 
-            std::stringstream lineStream(line);
-            std::string cell;
+            std::string delimiter = " _,_ ";
             // Split line at comma
-            while (std::getline(lineStream, cell, ','))
+            while (true)
             {
+                std::string cell;
+                size_t pos = line.find(delimiter);
+                if (pos != std::string::npos)
+                {
+                    cell = line.substr(0, pos);
+                    line = line.substr(pos + delimiter.length());
+                }
+                else if (!line.empty())
+                {
+                    cell = line;
+                    line.clear();
+                }
+                else
+                {
+                    break;
+                }
+
                 // Remove any trailing non text characters
                 cell.erase(std::find_if(cell.begin(), cell.end(),
                                         std::ptr_fun<int, int>(std::iscntrl)),
@@ -42,6 +58,31 @@ void NAV::NodeManager::processConfigFile()
                     size_t splitPos = cell.find("\" = \"");
                     std::string key = cell.substr(1, splitPos - 1);
                     std::string value = cell.substr(splitPos + 5, cell.length() - splitPos - 6);
+
+                    // Replace Hash sign
+                    while (true)
+                    {
+                        std::string searchString = "[hash]";
+                        std::string replaceString = "#";
+                        size_t start_pos = value.find(searchString);
+                        if (start_pos == std::string::npos)
+                        {
+                            break;
+                        }
+                        value.replace(start_pos, searchString.length(), replaceString);
+                    }
+                    // Replace newline
+                    while (true)
+                    {
+                        std::string searchString = "\\n";
+                        std::string replaceString = "\n";
+                        size_t start_pos = value.find(searchString);
+                        if (start_pos == std::string::npos)
+                        {
+                            break;
+                        }
+                        value.replace(start_pos, searchString.length(), replaceString);
+                    }
 
                     config.options[key] = value;
                 }
@@ -229,14 +270,31 @@ void NAV::NodeManager::disableAllCallbacks()
     }
 }
 
+void NAV::NodeManager::deleteAllNodesExcept(const std::string_view& type)
+{
+    for (auto& node : _nodes)
+    {
+        if (node && node->type() != type)
+        {
+            node->incomingLinks.clear();
+            node->removeAllCallbacks();
+            node = nullptr;
+        }
+    }
+}
+
 void NAV::NodeManager::deleteAllNodes()
 {
     for (auto& node : _nodes)
     {
-        node->incomingLinks.clear();
-        node->removeAllCallbacks();
-        node = nullptr;
+        if (node)
+        {
+            node->incomingLinks.clear();
+            node->removeAllCallbacks();
+            node = nullptr;
+        }
     }
+    _nodes.clear();
 }
 
 const std::vector<std::shared_ptr<NAV::Node>>& NAV::NodeManager::nodes() const

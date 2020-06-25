@@ -7,6 +7,7 @@
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QComboBox>
 
@@ -74,6 +75,8 @@ std::shared_ptr<QtNodes::DataModelRegistry> registryRealTime;
 std::shared_ptr<QtNodes::DataModelRegistry> registryPostProcessing;
 QAction* rtpAction;
 
+std::string delimiter = " _,_ ";
+
 void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_view child, std::string_view root)
 {
     LOG_TRACE("called");
@@ -128,7 +131,10 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
     {
         QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
-        if (widget->layout() && (widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT))
+        if (widget->layout()
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
             exportConfigForLayout(static_cast<QFormLayout*>(widget->layout()), comment, config);
         }
@@ -148,27 +154,47 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
                 text = std::to_string(static_cast<QDoubleSpinBox*>(widget)->value());
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
-                text = static_cast<QLineEdit*>(widget)->text().toStdString();
+                text = static_cast<QLineEdit*>(widget)->text().replace("\n", "\\n").replace("#", "[hash]").toStdString();
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
+            {
+                auto groupBox = static_cast<QGroupBox*>(widget);
+                auto layout = static_cast<QVBoxLayout*>(groupBox->layout());
+
+                QTextEdit* textEdit = static_cast<QTextEdit*>(layout->itemAt(0)->widget());
+
+                text = textEdit->toPlainText().replace("\n", "\\n").replace("#", "[hash]").toStdString();
+            }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                 text = static_cast<QComboBox*>(widget)->currentText().toStdString();
-            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_INT)
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI)
+            {
+                auto groupBox = static_cast<QGroupBox*>(widget);
+                auto layout = static_cast<QFormLayout*>(groupBox->layout());
+
+                for (int j = 1; j < layout->rowCount(); j++)
+                {
+                    QComboBox* list = static_cast<QComboBox*>(layout->itemAt(j, QFormLayout::ItemRole::FieldRole)->widget());
+
+                    std::string toAdd = list->currentText().toStdString();
+
+                    if (text.find(toAdd) == std::string::npos)
+                        text += (!text.empty() ? ";" : "") + toAdd;
+                }
+            }
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)
             {
                 auto gridGroupBox = static_cast<QGroupBox*>(widget);
                 auto layout = static_cast<QGridLayout*>(gridGroupBox->layout());
 
-                for (int j = 1; j < layout->rowCount(); j++)
+                for (int j = 2; j < layout->count() / 2; j++)
                 {
                     QComboBox* xlist = static_cast<QComboBox*>(layout->itemAtPosition(j, 0)->widget());
                     QComboBox* ylist = static_cast<QComboBox*>(layout->itemAtPosition(j, 1)->widget());
-                    QSpinBox* spinBox = static_cast<QSpinBox*>(layout->itemAtPosition(j, 2)->widget());
 
-                    if (spinBox->value() != -1)
-                    {
-                        std::string toAdd = xlist->currentText().toStdString() + ";" + ylist->currentText().toStdString() + ";" + std::to_string(spinBox->value());
+                    std::string toAdd = xlist->currentText().toStdString() + "|" + ylist->currentText().toStdString();
 
-                        if (text.find(toAdd) == std::string::npos)
-                            text += (!text.empty() ? ";" : "") + toAdd;
-                    }
+                    if (text.find(toAdd) == std::string::npos)
+                        text += (!text.empty() ? ";" : "") + toAdd;
                 }
             }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_MAP_INT)
@@ -178,7 +204,7 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
 
             std::replace(type.begin(), type.end(), '\n', ' ');
 
-            config += ", \"" + type + "\" = \"" + text + "\"";
+            config += delimiter + "\"" + type + "\" = \"" + text + "\"";
 
             // comment += ", " + type;
             // for (int i = 0; i < static_cast<int>(type.size()) - static_cast<int>(text.size()); i++)
@@ -202,11 +228,11 @@ void exportConfig()
         std::string comment = "#      Type";
         for (int i = 0; i < nodeModel->name().length() - 4; i++)
             comment += " ";
-        comment += ", Name";
+        comment += delimiter + "Name";
         for (int i = 0; i < node->id().toString().length() - 4; i++)
             comment += " ";
 
-        std::string config = "node = " + nodeModel->name().toStdString() + ", " + node->id().toString().toStdString();
+        std::string config = "node = " + nodeModel->name().toStdString() + delimiter + node->id().toString().toStdString();
 
         exportConfigForLayout(nodeModel->getMainLayout(), comment, config);
 

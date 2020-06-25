@@ -102,7 +102,7 @@ int main(int argc, const char* argv[])
                             if (nextUpdateTime->insTime.has_value())
                             {
                                 events.insert(std::make_pair(nextUpdateTime->insTime.value(), std::make_pair(node, portIndex)));
-                                LOG_INFO("Reading Data from {}", node->getName());
+                                LOG_INFO("Taking Data from {} into account.", node->getName());
                                 break;
                             }
 
@@ -121,6 +121,7 @@ int main(int argc, const char* argv[])
                 }
             }
 
+            LOG_INFO("Processing Data from files");
             std::multimap<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>>::iterator it;
             while (it = events.begin(), it != events.end())
             {
@@ -175,16 +176,31 @@ int main(int argc, const char* argv[])
         // Stop all callbacks
         nodeManager.disableAllCallbacks();
 
-        // Delete all Nodes to call the destructors
-        nodeManager.deleteAllNodes();
-
         // Update all GnuPlot Windows and wait for them to open
-        if (NAV::GnuPlot::update())
+        bool waitForGnuplot = false;
+        for (const auto& node : nodeManager.nodes())
+        {
+            if (node && node->type() == NAV::GnuPlot().type())
+            {
+                if (std::static_pointer_cast<NAV::GnuPlot>(node)->update())
+                {
+                    waitForGnuplot = true;
+                }
+            }
+        }
+
+        // Delete all Nodes except the Gnuplot
+        nodeManager.deleteAllNodesExcept(NAV::GnuPlot().type());
+
+        if (waitForGnuplot)
         {
             LOG_INFO("Programm finished and waits for Gnuplot windows to close...");
             NAV::Sleep::waitForSignal();
             system("pkill gnuplot_qt > /dev/null 2>&1"); // NOLINT
         }
+
+        // Delete all Nodes to call the destructors
+        nodeManager.deleteAllNodes();
 
         return EXIT_SUCCESS;
     }

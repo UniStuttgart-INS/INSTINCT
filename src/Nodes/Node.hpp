@@ -67,15 +67,17 @@ class Node : public DataCallback
 
     enum ConfigOptionType
     {
-        CONFIG_N_INPUT_PORTS, ///< Integer: Min, Default, Max, Amount of Config Options to repeat
-        CONFIG_BOOL,          ///< Boolean: Default
-        CONFIG_INT,           ///< Integer: Min, Default, Max
-        CONFIG_FLOAT,         ///< Float: Min, Default, Max
-        CONFIG_STRING,        ///< String
-        CONFIG_LIST,          ///< List: "option1", "[default]", "option3"
-        CONFIG_LIST_LIST_INT, ///< 2 Lists and Integer: "[List1default]|List1option2", "List2option1|[List2default]", "min|default|max"
-        CONFIG_MAP_INT,       ///< String Key and Integer Value: "key", "min", "default", "max"
-        CONFIG_VARIANT,       ///< Variant: ConfigOptionsBase(option1), ConfigOptionsBase(option2)
+        CONFIG_N_INPUT_PORTS,   ///< Integer: Min, Default, Max, Amount of Config Options to repeat
+        CONFIG_BOOL,            ///< Boolean: Default
+        CONFIG_INT,             ///< Integer: Min, Default, Max
+        CONFIG_FLOAT,           ///< Float: Min, Default, Max
+        CONFIG_STRING,          ///< String
+        CONFIG_STRING_BOX,      ///< String Box
+        CONFIG_LIST,            ///< List: "option1", "[default]", "option3"
+        CONFIG_LIST_MULTI,      ///< List which repeats: "option1", "[default]", "option3"
+        CONFIG_LIST_LIST_MULTI, ///< 2 Lists which repeat: "[List1default]", "List1option2", "|", "List2option1|[List2default]"
+        CONFIG_MAP_INT,         ///< String Key and Integer Value: "key", "min", "default", "max"
+        CONFIG_VARIANT,         ///< Variant: ConfigOptionsBase(option1), ConfigOptionsBase(option2)
     };
 
     using ConfigOptionsBase = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::string>>;
@@ -126,7 +128,7 @@ class Node : public DataCallback
      * @param[in] portIndex The output port index
      * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
      */
-    [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) = 0;
+    [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex);
 
     /**
      * @brief Requests the node to peek its output data
@@ -134,12 +136,12 @@ class Node : public DataCallback
      * @param[in] portIndex The output port index
      * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
      */
-    [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex) = 0;
+    [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex);
 
     /**
      * @brief Resets the node. In case of file readers, that moves the read cursor to the start
      */
-    virtual void resetNode() {}
+    virtual void resetNode();
 
     /**
      * @brief Get the name string of the Node

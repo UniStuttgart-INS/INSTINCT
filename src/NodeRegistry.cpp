@@ -1,4 +1,7 @@
 #include "NodeRegistry.hpp"
+
+#include "util/Logger.hpp"
+
 #include "Nodes/NodeManager.hpp"
 
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
@@ -10,8 +13,7 @@
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
 
-#include "Nodes/GnuPlot/GNSS/RtklibPosGnuPlot.hpp"
-#include "Nodes/GnuPlot/IMU/VectorNavGnuPlot.hpp"
+#include "Nodes/GnuPlot/GnuPlot.hpp"
 
 #include "Nodes/Integrator/ImuIntegrator.hpp"
 
@@ -22,6 +24,8 @@
 
 void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 {
+    LOG_TRACE("called");
+
     nodeManager.registerNodeType<NAV::VectorNavDataLogger>();
     nodeManager.registerNodeType<NAV::UbloxDataLogger>();
 
@@ -35,8 +39,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeType<NAV::UbloxSensor>();
 #endif
 
-    nodeManager.registerNodeType<NAV::RtklibPosGnuPlot>();
-    nodeManager.registerNodeType<NAV::VectorNavGnuPlot>();
+    nodeManager.registerNodeType<NAV::GnuPlot>();
 
     //nodeManager.registerNodeType<NAV::ImuIntegrator>();
 
@@ -59,6 +62,8 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 
 void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
 {
+    LOG_TRACE("called");
+
     nodeManager.registerNodeDataType<NAV::InsObs>();
 
     nodeManager.registerNodeDataType<NAV::ImuObs>();

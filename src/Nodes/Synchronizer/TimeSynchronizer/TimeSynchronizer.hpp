@@ -160,7 +160,11 @@ class TimeSynchronizer final : public Node
             const auto& sourceNode = incomingLinks[1].first.lock();
             auto& sourcePortIndex = incomingLinks[1].second;
 
-            return sourceNode->requestOutputData(sourcePortIndex);
+            auto data = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputData(sourcePortIndex));
+            if (updateInsTime(data))
+            {
+                return data;
+            }
         }
 
         return nullptr;
@@ -182,8 +186,10 @@ class TimeSynchronizer final : public Node
             auto& sourcePortIndex = incomingLinks[1].second;
 
             auto peekData = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));
-            updateInsTime(peekData);
-            return peekData;
+            if (updateInsTime(peekData))
+            {
+                return peekData;
+            }
         }
 
         return nullptr;
@@ -194,8 +200,9 @@ class TimeSynchronizer final : public Node
      * @brief Updates VectorNav Observations with gps time
      * 
      * @param[in, out] obs VectorNavObs to process
+     * @retval bool Returns true if time was updated
      */
-    void updateInsTime(std::shared_ptr<VectorNavObs>& obs);
+    bool updateInsTime(std::shared_ptr<VectorNavObs>& obs);
 
     /**
      * @brief Gets the gps time from an UbloxSensor
