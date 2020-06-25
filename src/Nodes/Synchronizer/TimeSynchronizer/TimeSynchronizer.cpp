@@ -21,9 +21,14 @@ NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, const std::map<
     }
 }
 
-void NAV::TimeSynchronizer::updateInsTime(std::shared_ptr<NAV::VectorNavObs>& obs)
+bool NAV::TimeSynchronizer::updateInsTime(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
-    if (startupGpsTime.has_value() && obs != nullptr)
+    if (obs == nullptr)
+    {
+        return false;
+    }
+
+    if (startupGpsTime.has_value())
     {
         obs->insTime = startupGpsTime;
 
@@ -35,7 +40,10 @@ void NAV::TimeSynchronizer::updateInsTime(std::shared_ptr<NAV::VectorNavObs>& ob
         {
             obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - startupImuTime.value()) / 1000000000.0L);
         }
+        return true;
     }
+
+    return obs->insTime.has_value();
 }
 
 void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
@@ -48,7 +56,8 @@ void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
 
 void NAV::TimeSynchronizer::syncVectorNavSensor(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
-    updateInsTime(obs);
-
-    invokeCallbacks(obs);
+    if (updateInsTime(obs))
+    {
+        invokeCallbacks(obs);
+    }
 }

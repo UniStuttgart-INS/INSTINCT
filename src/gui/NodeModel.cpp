@@ -96,6 +96,44 @@ void NodeModel::updateVariants(const std::vector<NAV::Node::ConfigOptions>& guiC
     }
 }
 
+void NodeModel::addListRow(std::vector<std::string> configOptions, QFormLayout* layout, QGroupBox* gridGroupBox)
+{
+    LOG_TRACE("called");
+
+    QSpinBox* spinBox = static_cast<QSpinBox*>(layout->itemAt(0, QFormLayout::ItemRole::FieldRole)->widget());
+    int currentRows = layout->rowCount() - 1;
+
+    LOG_DEBUG("CurrentRows={}, spinBox={}", currentRows, spinBox->value());
+    while (spinBox->value() > currentRows)
+    {
+        QComboBox* comboBox = new QComboBox(gridGroupBox);
+        comboBox->setStyleSheet("background-color: rgb(220,220,220); color: black; selection-background-color: rgb(169,169,169);");
+
+        for (auto& cell : configOptions)
+        {
+            if (cell.at(0) == '[')
+            {
+                comboBox->addItem(QString::fromStdString(cell.substr(1, cell.size() - 2)));
+                comboBox->setCurrentIndex(comboBox->count() - 1);
+            }
+            else
+                comboBox->addItem(QString::fromStdString(cell));
+        }
+
+        LOG_DEBUG("Inserting widget at row={}", currentRows + 1);
+        layout->addRow(QString::fromStdString("[" + std::to_string(currentRows + 1) + "]"), comboBox);
+
+        currentRows = layout->rowCount() - 1;
+    }
+    while (spinBox->value() < currentRows)
+    {
+        LOG_DEBUG("Removing widgets at row={}", currentRows);
+        layout->removeRow(currentRows);
+
+        currentRows = layout->rowCount() - 1;
+    }
+}
+
 void NodeModel::addListListRow(std::vector<std::string> configOptions, QGridLayout* layout, QGroupBox* gridGroupBox)
 {
     LOG_TRACE("called");
@@ -112,8 +150,6 @@ void NodeModel::addListListRow(std::vector<std::string> configOptions, QGridLayo
         {
             comboBoxes.at(i) = new QComboBox(gridGroupBox);
             comboBoxes.at(i)->setStyleSheet("background-color: rgb(220,220,220); color: black; selection-background-color: rgb(169,169,169);");
-
-            // comboBoxes.at(i)->view()->viewport()->setAutoFillBackground(false);
 
             while (configOptions.size() > c && configOptions.at(c) != "|")
             {
@@ -230,6 +266,22 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
 
         QTextEdit* textEdit = new QTextEdit(groupBox);
         textEdit->setStyleSheet("QTextEdit { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
+
+        connect(textEdit, &QTextEdit::textChanged,
+                [textEdit]() {
+                    LOG_TRACE("called");
+
+                    auto font = textEdit->document()->defaultFont();
+                    auto fontMetrics = QFontMetrics(font);
+                    auto textSize = fontMetrics.size(0, textEdit->toPlainText());
+
+                    auto textWidth = textSize.width() + 20;
+                    auto textHeight = textSize.height() + 20;
+
+                    LOG_DEBUG("Setting QTextEdit size to w: {}; h: {}", textWidth, textHeight);
+                    textEdit->setMinimumSize(textWidth, textHeight);
+                });
+
         textEdit->setText(QString::fromStdString(std::get<std::string>(std::get<3>(config).front())));
 
         layout->addWidget(textEdit);
@@ -261,6 +313,33 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
                     this->updateVariants(guiConfigs, configPosition, _layout, layoutInsertPosition);
                 });
     }
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI)
+    {
+        QGroupBox* gridGroupBox = new QGroupBox(description);
+        QFormLayout* layout = new QFormLayout();
+
+        QSpinBox* spinBox = new QSpinBox(gridGroupBox);
+        spinBox->setRange(0, 20);
+        spinBox->setValue(0);
+        spinBox->setSingleStep(1);
+        spinBox->setStyleSheet("QSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
+        spinBox->setObjectName(prefix + description + "-Count");
+        layout->addRow("Data lines", spinBox);
+
+        std::vector<std::string> stringOptions;
+        for (const auto& conf : std::get<3>(config))
+        {
+            stringOptions.push_back(std::get<std::string>(conf));
+        }
+
+        connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged),
+                [this, stringOptions, layout, gridGroupBox]() {
+                    this->addListRow(stringOptions, layout, gridGroupBox);
+                });
+
+        gridGroupBox->setLayout(layout);
+        _layout->insertRow(layoutInsertPosition, gridGroupBox);
+    }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)
     {
         QGroupBox* gridGroupBox = new QGroupBox(description);
@@ -290,7 +369,6 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
                 });
 
         gridGroupBox->setLayout(layout);
-        // gridGroupBox->setStyleSheet("QGroupBox { color: green; }");
         _layout->insertRow(layoutInsertPosition, gridGroupBox);
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_MAP_INT)
@@ -399,7 +477,6 @@ void NodeModel::addRepeatedConfigGroupBox(const std::vector<NAV::Node::ConfigOpt
     }
 
     gridGroupBox->setLayout(layout);
-    // gridGroupBox->setStyleSheet("QGroupBox { color: green; }");
     _layout->addRow(gridGroupBox);
 }
 
@@ -524,6 +601,7 @@ NodeDataType determinePortTypeForLayout(QFormLayout* layout, PortIndex portIndex
                      static_cast<QComboBox*>(widget)->currentText() };
         }
         if (widget->layout()
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
@@ -573,6 +651,7 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
         QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
         if (widget->layout()
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
@@ -600,6 +679,22 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
             }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                 modelJson[widget->objectName()] = static_cast<QComboBox*>(widget)->currentText();
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI)
+            {
+                auto groupBox = static_cast<QGroupBox*>(widget);
+                auto layout = static_cast<QFormLayout*>(groupBox->layout());
+
+                QSpinBox* spinBox = static_cast<QSpinBox*>(layout->itemAt(0, QFormLayout::ItemRole::FieldRole)->widget());
+                std::string json = std::to_string(spinBox->value());
+
+                for (int j = 1; j < layout->rowCount(); j++)
+                {
+                    QComboBox* list = static_cast<QComboBox*>(layout->itemAt(j, QFormLayout::ItemRole::FieldRole)->widget());
+
+                    json += ";" + list->currentText().toStdString();
+                }
+                modelJson[widget->objectName()] = QString::fromStdString(json);
+            }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)
             {
                 auto gridGroupBox = static_cast<QGroupBox*>(widget);
@@ -652,6 +747,7 @@ void NodeModel::restoreLayoutItems(QFormLayout* layout, QJsonObject const& p)
         QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
         if (widget->layout()
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
@@ -682,6 +778,28 @@ void NodeModel::restoreLayoutItems(QFormLayout* layout, QJsonObject const& p)
                 }
                 else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                     static_cast<QComboBox*>(widget)->setCurrentText(v.toString());
+                else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI)
+                {
+                    auto groupBox = static_cast<QGroupBox*>(widget);
+                    auto layout = static_cast<QFormLayout*>(groupBox->layout());
+
+                    QSpinBox* spinBox = static_cast<QSpinBox*>(layout->itemAt(0, QFormLayout::ItemRole::FieldRole)->widget());
+
+                    std::string json = v.toString().toStdString();
+                    std::stringstream lineStream(json);
+                    std::string line;
+                    for (int j = 0; std::getline(lineStream, line, ';'); j++)
+                    {
+                        if (j == 0)
+                        {
+                            LOG_DEBUG("Setting Spinbox Value to {}", std::stoi(line));
+                            spinBox->setValue(std::stoi(line));
+                            continue;
+                        }
+                        LOG_DEBUG("Setting List(row={}) value to {}", j, line);
+                        static_cast<QComboBox*>(layout->itemAt(j, QFormLayout::ItemRole::FieldRole)->widget())->setCurrentText(QString::fromStdString(line));
+                    }
+                }
                 else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)
                 {
                     auto gridGroupBox = static_cast<QGroupBox*>(widget);

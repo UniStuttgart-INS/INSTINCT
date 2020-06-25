@@ -1,5 +1,7 @@
 #include "GnuPlot.hpp"
 
+#include <chrono>
+
 #include "util/Logger.hpp"
 #include "Nodes/NodeManager.hpp"
 
@@ -7,6 +9,8 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
     : Node(name)
 {
     LOG_TRACE("called for {}", name);
+
+    gp.flush();
 
     if (options.contains("Input Ports"))
     {
@@ -18,14 +22,14 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
         inputPortDataTypes[i - 1] = options.at(std::to_string(i) + "-Port Type");
     }
 
-    if (options.contains("X Display Scope"))
+    if (options.contains("Clear after x data"))
     {
-        xDisplayScope = std::stod(options.at("X Display Scope"));
+        xDisplayScope = static_cast<uint32_t>(std::stoul(options.at("Clear after x data")));
     }
 
     if (options.contains("Update Frequency"))
     {
-        updateFrequency = std::stod(options.at("Update Frequency"));
+        updateFrequency = static_cast<uint32_t>(std::stoul(options.at("Update Frequency")));
     }
 
     for (size_t i = 1; options.contains(std::to_string(i) + "-Data to plot"); i++)
@@ -35,25 +39,31 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
             continue;
         }
 
-        LOG_DEBUG("Plot Instructions for port {}: {}", i, options.at(std::to_string(i) + "-Data to plot"));
+        LOG_DEBUG("Plot Data for port {}: {}", i, options.at(std::to_string(i) + "-Data to plot"));
 
-        std::string dataXY;
+        std::string dataIdentifier;
         std::stringstream lineStream(options.at(std::to_string(i) + "-Data to plot"));
-        while (std::getline(lineStream, dataXY, ';'))
+        while (std::getline(lineStream, dataIdentifier, ';'))
         {
-            std::stringstream cellStream(dataXY);
-            std::string dataX;
-            std::string dataY;
-            std::getline(cellStream, dataX, '|');
-            std::getline(cellStream, dataY, '|');
-            LOG_DEBUG("Inserting Plot {} -> {}", dataX, dataY);
-            plotData[i - 1].emplace_back(dataX, dataY);
+            LOG_DEBUG("Inserting Plot {}", dataIdentifier);
+            plotData[i - 1].emplace_back(dataIdentifier);
         }
     }
 
     if (options.contains("Start"))
     {
-        gp << options.at("Start");
+        gp << options.at("Start") << '\n';
+    }
+
+    for (size_t i = 1; options.contains(std::to_string(i) + "-Update"); i++)
+    {
+        if (options.at(std::to_string(i) + "-Update").empty())
+        {
+            continue;
+        }
+
+        LOG_DEBUG("Plot Instructions for port {}: {}", i, options.at(std::to_string(i) + "-Update"));
+        portUpdateStrings.push_back(options.at(std::to_string(i) + "-Update"));
     }
 }
 
@@ -67,26 +77,18 @@ void NAV::GnuPlot::requestUpdate()
     if (NodeManager::appContext == NAV::Node::NodeContext::REAL_TIME)
     {
         // Check if update Interval is reached
-        bool plot = false;
-        static double lastPlotTime = 0;
-        for (auto iter = plotData.begin(); iter != plotData.end(); iter++)
-        {
-            for (const auto& data : iter->second)
-            {
-                if (!data.xy.empty() && data.xy.back().first - lastPlotTime >= 1.0 / updateFrequency)
-                {
-                    plot = true;
-                    lastPlotTime = data.xy.back().first;
-                    break;
-                }
-            }
-        }
+        static auto start = std::chrono::high_resolution_clock::now();
 
+        auto finish = std::chrono::high_resolution_clock::now();
+
+        std::chrono::duration<double> elapsed = finish - start;
         // Update the GnuPlot Windows
-        if (plot)
+        if (1.0 / elapsed.count() <= updateFrequency)
         {
             // Discard the nodiscard value
             static_cast<void>(update());
+
+            start = finish;
         }
     }
 }
@@ -94,38 +96,98 @@ void NAV::GnuPlot::requestUpdate()
 bool NAV::GnuPlot::update()
 {
     bool somethingWasPlotted = false;
-    std::string plotInstructions = "plot";
-    std::string xLabel;
+    std::string plotInstructions;
+    // std::string xLabel;
 
     for (auto iter = plotData.begin(); iter != plotData.end(); iter++)
     {
-        for (size_t i = 0; i < iter->second.size(); i++)
+        if (iter->second.empty())
         {
-            if (!iter->second.at(i).xy.empty())
+            continue;
+        }
+
+        std::string portUpdateString = portUpdateStrings.at(iter->first);
+        while (true)
+        {
+            size_t startPos = portUpdateString.find("[~");
+            if (startPos == std::string::npos)
             {
-                if (iter->second.at(i).xy.size() >= 2)
+                break;
+            }
+            size_t endPos = portUpdateString.find("~]");
+
+            std::string dataSelection = portUpdateString.substr(startPos + 2, endPos - startPos - 2);
+            std::stringstream lineStream(dataSelection);
+            std::string cell;
+
+            std::vector<std::vector<double>> joinedData;
+            bool errorOccured = false;
+            int64_t dataLength = -1;
+            // Split line at comma
+            while (std::getline(lineStream, cell, ','))
+            {
+                for (size_t i = 0; i < iter->second.size(); i++)
                 {
-                    std::string lineStyle = "lines";
-                    if (i >= 8)
+                    if (std::stoul(cell) == i + 1)
                     {
-                        lineStyle = "points";
+                        if (dataLength < 0)
+                        {
+                            dataLength = static_cast<int64_t>(iter->second.at(i).data.size());
+                        }
+                        if (iter->second.at(i).data.empty())
+                        {
+                            LOG_ERROR("{} wants to plot {}, but has no data.", name, iter->second.at(i).dataIdentifier);
+                            errorOccured = true;
+                            break;
+                        }
+                        if (static_cast<int64_t>(iter->second.at(i).data.size()) != dataLength)
+                        {
+                            LOG_ERROR("{} wants to plot {} with length {}, but previous data had length {}", name, iter->second.at(i).dataIdentifier, iter->second.at(i).data.size(), dataLength);
+                            errorOccured = true;
+                            break;
+                        }
+
+                        joinedData.emplace_back(iter->second.at(i).data.begin(), iter->second.at(i).data.end());
+                        break;
                     }
-
-                    plotInstructions += gp.binFile1d(iter->second.at(i).xy, "record") + "with " + lineStyle + " title '" + iter->second.at(i).yData + "',";
                 }
+                if (errorOccured)
+                {
+                    break;
+                }
+            }
+            if (errorOccured)
+            {
+                portUpdateString.clear();
+                break;
+            }
 
-                xLabel = "set xlabel \"" + iter->second.at(i).xData + "\"\n";
-                somethingWasPlotted = true;
+            somethingWasPlotted = true;
+
+            std::string dataGnuplot;
+            if (!joinedData.empty())
+            {
+                dataGnuplot = gp.binFile1d_colmajor(joinedData, "record");
+            }
+
+            while (true)
+            {
+                std::string replaceString = "[~" + dataSelection + "~]";
+                size_t replaceStart = portUpdateString.find(replaceString);
+                if (replaceStart == std::string::npos)
+                {
+                    break;
+                }
+                portUpdateString.replace(replaceStart, replaceString.length(), dataGnuplot);
             }
         }
+        plotInstructions += portUpdateString + '\n';
     }
+
     if (somethingWasPlotted)
     {
-        plotInstructions = plotInstructions.substr(0, plotInstructions.size() - 1);
-        plotInstructions += '\n';
-        LOG_DEBUG("Plot Instructions: {}", plotInstructions + xLabel);
+        LOG_DEBUG("{} Plot Instructions: \n{}", name, plotInstructions);
         gp << plotInstructions;
-        gp << xLabel;
         gp.flush();
     }
     return somethingWasPlotted;
@@ -133,246 +195,239 @@ bool NAV::GnuPlot::update()
 
 void NAV::GnuPlot::handleVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs, size_t portIndex)
 {
-    for (auto& data : plotData[portIndex])
+    for (auto& gnuplotData : plotData[portIndex])
     {
-        double plotX = 0.0;
-
-        if (data.xData == "GPS time of week" && obs->insTime.has_value())
+        if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
-            plotX = static_cast<double>(obs->insTime.value().GetGPSTime().tow);
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().GetGPSTime().tow));
         }
-        else
+        else if (gnuplotData.dataIdentifier == "Time since startup" && obs->timeSinceStartup.has_value())
         {
-            continue;
+            gnuplotData.data.emplace_back(obs->timeSinceStartup.value());
         }
-
-        if (data.yData == "Time since startup" && obs->timeSinceStartup.has_value())
+        else if (gnuplotData.dataIdentifier == "Quaternion W" && obs->quaternion.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->timeSinceStartup.value()));
+            gnuplotData.data.emplace_back(obs->quaternion.value().w());
         }
-        else if (data.yData == "Quaternion W" && obs->quaternion.has_value())
+        else if (gnuplotData.dataIdentifier == "Quaternion X" && obs->quaternion.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->quaternion.value().w()));
+            gnuplotData.data.emplace_back(obs->quaternion.value().x());
         }
-        else if (data.yData == "Quaternion X" && obs->quaternion.has_value())
+        else if (gnuplotData.dataIdentifier == "Quaternion Y" && obs->quaternion.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->quaternion.value().x()));
+            gnuplotData.data.emplace_back(obs->quaternion.value().y());
         }
-        else if (data.yData == "Quaternion Y" && obs->quaternion.has_value())
+        else if (gnuplotData.dataIdentifier == "Quaternion Z" && obs->quaternion.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->quaternion.value().y()));
+            gnuplotData.data.emplace_back(obs->quaternion.value().z());
         }
-        else if (data.yData == "Quaternion Z" && obs->quaternion.has_value())
+        else if (gnuplotData.dataIdentifier == "Yaw" && obs->yawPitchRoll.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->quaternion.value().z()));
+            gnuplotData.data.emplace_back(obs->yawPitchRoll.value().x());
         }
-        else if (data.yData == "Yaw" && obs->yawPitchRoll.has_value())
+        else if (gnuplotData.dataIdentifier == "Pitch" && obs->yawPitchRoll.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->yawPitchRoll.value().x()));
+            gnuplotData.data.emplace_back(obs->yawPitchRoll.value().y());
         }
-        else if (data.yData == "Pitch" && obs->yawPitchRoll.has_value())
+        else if (gnuplotData.dataIdentifier == "Roll" && obs->yawPitchRoll.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->yawPitchRoll.value().y()));
+            gnuplotData.data.emplace_back(obs->yawPitchRoll.value().z());
         }
-        else if (data.yData == "Roll" && obs->yawPitchRoll.has_value())
+        else if (gnuplotData.dataIdentifier == "Mag uncomp X" && obs->magUncompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->yawPitchRoll.value().z()));
+            gnuplotData.data.emplace_back(obs->magUncompXYZ.value().x());
         }
-        else if (data.yData == "Mag uncomp X" && obs->magUncompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Mag uncomp Y" && obs->magUncompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->magUncompXYZ.value().x()));
+            gnuplotData.data.emplace_back(obs->magUncompXYZ.value().y());
         }
-        else if (data.yData == "Mag uncomp Y" && obs->magUncompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Mag uncomp Z" && obs->magUncompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->magUncompXYZ.value().y()));
+            gnuplotData.data.emplace_back(obs->magUncompXYZ.value().z());
         }
-        else if (data.yData == "Mag uncomp Z" && obs->magUncompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Accel uncomp X" && obs->accelUncompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->magUncompXYZ.value().z()));
+            gnuplotData.data.emplace_back(obs->accelUncompXYZ.value().x());
         }
-        else if (data.yData == "Accel uncomp X" && obs->accelUncompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Accel uncomp Y" && obs->accelUncompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->accelUncompXYZ.value().x()));
+            gnuplotData.data.emplace_back(obs->accelUncompXYZ.value().y());
         }
-        else if (data.yData == "Accel uncomp Y" && obs->accelUncompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Accel uncomp Z" && obs->accelUncompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->accelUncompXYZ.value().y()));
+            gnuplotData.data.emplace_back(obs->accelUncompXYZ.value().z());
         }
-        else if (data.yData == "Accel uncomp Z" && obs->accelUncompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Gyro uncomp X" && obs->gyroUncompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->accelUncompXYZ.value().z()));
+            gnuplotData.data.emplace_back(obs->gyroUncompXYZ.value().x());
         }
-        else if (data.yData == "Gyro uncomp X" && obs->gyroUncompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Gyro uncomp Y" && obs->gyroUncompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->gyroUncompXYZ.value().x()));
+            gnuplotData.data.emplace_back(obs->gyroUncompXYZ.value().y());
         }
-        else if (data.yData == "Gyro uncomp Y" && obs->gyroUncompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Gyro uncomp Z" && obs->gyroUncompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->gyroUncompXYZ.value().y()));
+            gnuplotData.data.emplace_back(obs->gyroUncompXYZ.value().z());
         }
-        else if (data.yData == "Gyro uncomp Z" && obs->gyroUncompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Mag comp X" && obs->magCompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->gyroUncompXYZ.value().z()));
+            gnuplotData.data.emplace_back(obs->magCompXYZ.value().x());
         }
-        else if (data.yData == "Mag comp X" && obs->magCompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Mag comp Y" && obs->magCompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->magCompXYZ.value().x()));
+            gnuplotData.data.emplace_back(obs->magCompXYZ.value().y());
         }
-        else if (data.yData == "Mag comp Y" && obs->magCompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Mag comp Z" && obs->magCompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->magCompXYZ.value().y()));
+            gnuplotData.data.emplace_back(obs->magCompXYZ.value().z());
         }
-        else if (data.yData == "Mag comp Z" && obs->magCompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Accel comp X" && obs->accelCompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->magCompXYZ.value().z()));
+            gnuplotData.data.emplace_back(obs->accelCompXYZ.value().x());
         }
-        else if (data.yData == "Accel comp X" && obs->accelCompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Accel comp Y" && obs->accelCompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->accelCompXYZ.value().x()));
+            gnuplotData.data.emplace_back(obs->accelCompXYZ.value().y());
         }
-        else if (data.yData == "Accel comp Y" && obs->accelCompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Accel comp Z" && obs->accelCompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->accelCompXYZ.value().y()));
+            gnuplotData.data.emplace_back(obs->accelCompXYZ.value().z());
         }
-        else if (data.yData == "Accel comp Z" && obs->accelCompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Gyro comp X" && obs->gyroCompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->accelCompXYZ.value().z()));
+            gnuplotData.data.emplace_back(obs->gyroCompXYZ.value().x());
         }
-        else if (data.yData == "Gyro comp X" && obs->gyroCompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Gyro comp Y" && obs->gyroCompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->gyroCompXYZ.value().x()));
+            gnuplotData.data.emplace_back(obs->gyroCompXYZ.value().y());
         }
-        else if (data.yData == "Gyro comp Y" && obs->gyroCompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Gyro comp Z" && obs->gyroCompXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->gyroCompXYZ.value().y()));
+            gnuplotData.data.emplace_back(obs->gyroCompXYZ.value().z());
         }
-        else if (data.yData == "Gyro comp Z" && obs->gyroCompXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Sync In Count" && obs->syncInCnt.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->gyroCompXYZ.value().z()));
+            gnuplotData.data.emplace_back(obs->syncInCnt.value());
         }
-        else if (data.yData == "Sync In Count" && obs->syncInCnt.has_value())
+        else if (gnuplotData.dataIdentifier == "dtime" && obs->dtime.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->syncInCnt.value()));
+            gnuplotData.data.emplace_back(obs->dtime.value());
         }
-        else if (data.yData == "dtime" && obs->dtime.has_value())
+        else if (gnuplotData.dataIdentifier == "dtheta X" && obs->dtheta.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->dtime.value()));
+            gnuplotData.data.emplace_back(obs->dtheta.value().x());
         }
-        else if (data.yData == "dtheta X" && obs->dtheta.has_value())
+        else if (gnuplotData.dataIdentifier == "dtheta Y" && obs->dtheta.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->dtheta.value().x()));
+            gnuplotData.data.emplace_back(obs->dtheta.value().y());
         }
-        else if (data.yData == "dtheta Y" && obs->dtheta.has_value())
+        else if (gnuplotData.dataIdentifier == "dtheta Z" && obs->dtheta.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->dtheta.value().y()));
+            gnuplotData.data.emplace_back(obs->dtheta.value().z());
         }
-        else if (data.yData == "dtheta Z" && obs->dtheta.has_value())
+        else if (gnuplotData.dataIdentifier == "dvel X" && obs->dvel.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->dtheta.value().z()));
+            gnuplotData.data.emplace_back(obs->dvel.value().x());
         }
-        else if (data.yData == "dvel X" && obs->dvel.has_value())
+        else if (gnuplotData.dataIdentifier == "dvel Y" && obs->dvel.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->dvel.value().x()));
+            gnuplotData.data.emplace_back(obs->dvel.value().y());
         }
-        else if (data.yData == "dvel Y" && obs->dvel.has_value())
+        else if (gnuplotData.dataIdentifier == "dvel Z" && obs->dvel.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->dvel.value().y()));
+            gnuplotData.data.emplace_back(obs->dvel.value().z());
         }
-        else if (data.yData == "dvel Z" && obs->dvel.has_value())
+        else if (gnuplotData.dataIdentifier == "Vpe Status" && obs->vpeStatus.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->dvel.value().z()));
+            gnuplotData.data.emplace_back(obs->vpeStatus.value().status);
         }
-        else if (data.yData == "Vpe Status" && obs->vpeStatus.has_value())
+        else if (gnuplotData.dataIdentifier == "Temperature" && obs->temperature.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->vpeStatus.value().status));
+            gnuplotData.data.emplace_back(obs->temperature.value());
         }
-        else if (data.yData == "Temperature" && obs->temperature.has_value())
+        else if (gnuplotData.dataIdentifier == "Pressure" && obs->pressure.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->temperature.value()));
+            gnuplotData.data.emplace_back(obs->pressure.value());
         }
-        else if (data.yData == "Pressure" && obs->pressure.has_value())
+        else if (gnuplotData.dataIdentifier == "Mag comp N" && obs->magCompNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->pressure.value()));
+            gnuplotData.data.emplace_back(obs->magCompNED.value().x());
         }
-        else if (data.yData == "Mag comp N" && obs->magCompNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Mag comp E" && obs->magCompNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->magCompNED.value().x()));
+            gnuplotData.data.emplace_back(obs->magCompNED.value().y());
         }
-        else if (data.yData == "Mag comp E" && obs->magCompNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Mag comp D" && obs->magCompNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->magCompNED.value().y()));
+            gnuplotData.data.emplace_back(obs->magCompNED.value().z());
         }
-        else if (data.yData == "Mag comp D" && obs->magCompNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Accel comp N" && obs->accelCompNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->magCompNED.value().z()));
+            gnuplotData.data.emplace_back(obs->accelCompNED.value().x());
         }
-        else if (data.yData == "Accel comp N" && obs->accelCompNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Accel comp E" && obs->accelCompNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->accelCompNED.value().x()));
+            gnuplotData.data.emplace_back(obs->accelCompNED.value().y());
         }
-        else if (data.yData == "Accel comp E" && obs->accelCompNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Accel comp D" && obs->accelCompNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->accelCompNED.value().y()));
+            gnuplotData.data.emplace_back(obs->accelCompNED.value().z());
         }
-        else if (data.yData == "Accel comp D" && obs->accelCompNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Gyro comp N" && obs->gyroCompNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->accelCompNED.value().z()));
+            gnuplotData.data.emplace_back(obs->gyroCompNED.value().x());
         }
-        else if (data.yData == "Gyro comp N" && obs->gyroCompNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Gyro comp E" && obs->gyroCompNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->gyroCompNED.value().x()));
+            gnuplotData.data.emplace_back(obs->gyroCompNED.value().y());
         }
-        else if (data.yData == "Gyro comp E" && obs->gyroCompNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Gyro comp D" && obs->gyroCompNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->gyroCompNED.value().y()));
+            gnuplotData.data.emplace_back(obs->gyroCompNED.value().z());
         }
-        else if (data.yData == "Gyro comp D" && obs->gyroCompNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Linear Accel X" && obs->linearAccelXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->gyroCompNED.value().z()));
+            gnuplotData.data.emplace_back(obs->linearAccelXYZ.value().x());
         }
-        else if (data.yData == "Linear Accel X" && obs->linearAccelXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Linear Accel Y" && obs->linearAccelXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->linearAccelXYZ.value().x()));
+            gnuplotData.data.emplace_back(obs->linearAccelXYZ.value().y());
         }
-        else if (data.yData == "Linear Accel Y" && obs->linearAccelXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Linear Accel Z" && obs->linearAccelXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->linearAccelXYZ.value().y()));
+            gnuplotData.data.emplace_back(obs->linearAccelXYZ.value().z());
         }
-        else if (data.yData == "Linear Accel Z" && obs->linearAccelXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Linear Accel N" && obs->linearAccelNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->linearAccelXYZ.value().z()));
+            gnuplotData.data.emplace_back(obs->linearAccelNED.value().x());
         }
-        else if (data.yData == "Linear Accel N" && obs->linearAccelNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Linear Accel E" && obs->linearAccelNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->linearAccelNED.value().x()));
+            gnuplotData.data.emplace_back(obs->linearAccelNED.value().y());
         }
-        else if (data.yData == "Linear Accel E" && obs->linearAccelNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Linear Accel D" && obs->linearAccelNED.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->linearAccelNED.value().y()));
+            gnuplotData.data.emplace_back(obs->linearAccelNED.value().z());
         }
-        else if (data.yData == "Linear Accel D" && obs->linearAccelNED.has_value())
+        else if (gnuplotData.dataIdentifier == "Yaw Uncertainty" && obs->yawPitchRollUncertainty.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->linearAccelNED.value().z()));
+            gnuplotData.data.emplace_back(obs->yawPitchRollUncertainty.value().x());
         }
-        else if (data.yData == "Yaw Uncertainty" && obs->yawPitchRollUncertainty.has_value())
+        else if (gnuplotData.dataIdentifier == "Pitch Uncertainty" && obs->yawPitchRollUncertainty.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->yawPitchRollUncertainty.value().x()));
+            gnuplotData.data.emplace_back(obs->yawPitchRollUncertainty.value().y());
         }
-        else if (data.yData == "Pitch Uncertainty" && obs->yawPitchRollUncertainty.has_value())
+        else if (gnuplotData.dataIdentifier == "Roll Uncertainty" && obs->yawPitchRollUncertainty.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->yawPitchRollUncertainty.value().y()));
-        }
-        else if (data.yData == "Roll Uncertainty" && obs->yawPitchRollUncertainty.has_value())
-        {
-            data.xy.emplace_back(std::make_pair(plotX, obs->yawPitchRollUncertainty.value().z()));
+            gnuplotData.data.emplace_back(obs->yawPitchRollUncertainty.value().z());
         }
 
         // Delete old data
         if (NodeManager::appContext != NodeContext::POST_PROCESSING)
         {
-            while (xDisplayScope != 0.0 && data.xy.back().first - data.xy.front().first > xDisplayScope)
+            while (xDisplayScope != 0 && gnuplotData.data.size() > xDisplayScope)
             {
-                data.xy.pop_front();
+                gnuplotData.data.pop_front();
             }
         }
     }
@@ -384,142 +439,107 @@ void NAV::GnuPlot::handleVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs, s
 
 void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, size_t portIndex)
 {
-    for (auto& data : plotData[portIndex])
+    for (auto& gnuplotData : plotData[portIndex])
     {
-        double plotX = 0.0;
-
-        if (data.xData == "GPS time of week" && obs->insTime.has_value())
+        if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
-            plotX = static_cast<double>(obs->insTime.value().GetGPSTime().tow);
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().GetGPSTime().tow));
         }
-        else if (data.xData == "Latitude" && obs->positionLLH.has_value())
+        else if (gnuplotData.dataIdentifier == "Latitude" && obs->positionLLH.has_value())
         {
-            plotX = obs->positionLLH.value()(1);
+            gnuplotData.data.emplace_back(obs->positionLLH.value()(1));
         }
-        else if (data.xData == "Longitude" && obs->positionLLH.has_value())
+        else if (gnuplotData.dataIdentifier == "Longitude" && obs->positionLLH.has_value())
         {
-            plotX = obs->positionLLH.value()(0);
+            gnuplotData.data.emplace_back(obs->positionLLH.value()(0));
         }
-        else if (data.xData == "Height" && obs->positionLLH.has_value())
+        else if (gnuplotData.dataIdentifier == "Height" && obs->positionLLH.has_value())
         {
-            plotX = obs->positionLLH.value()(2);
+            gnuplotData.data.emplace_back(obs->positionLLH.value()(2));
         }
-        else if (data.xData == "X-ECEF" && obs->positionXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "X-ECEF" && obs->positionXYZ.has_value())
         {
-            plotX = obs->positionXYZ.value().x();
+            gnuplotData.data.emplace_back(obs->positionXYZ.value().x());
         }
-        else if (data.xData == "Y-ECEF" && obs->positionXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Y-ECEF" && obs->positionXYZ.has_value())
         {
-            plotX = obs->positionXYZ.value().y();
+            gnuplotData.data.emplace_back(obs->positionXYZ.value().y());
         }
-        else if (data.xData == "Z-ECEF" && obs->positionXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Z-ECEF" && obs->positionXYZ.has_value())
         {
-            plotX = obs->positionXYZ.value().z();
+            gnuplotData.data.emplace_back(obs->positionXYZ.value().z());
         }
-        else
+        else if (gnuplotData.dataIdentifier == "Q" && obs->Q.has_value())
         {
-            continue;
+            gnuplotData.data.emplace_back(obs->Q.value());
         }
-
-        if (data.yData == "GPS time of week" && obs->insTime.has_value())
+        else if (gnuplotData.dataIdentifier == "ns" && obs->ns.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, static_cast<double>(obs->insTime.value().GetGPSTime().tow)));
+            gnuplotData.data.emplace_back(obs->ns.value());
         }
-        else if (data.yData == "Latitude" && obs->positionLLH.has_value())
+        else if (gnuplotData.dataIdentifier == "sdn" && obs->sdNEU.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->positionLLH.value()(1)));
+            gnuplotData.data.emplace_back(obs->sdNEU.value()(0));
         }
-        else if (data.yData == "Longitude" && obs->positionLLH.has_value())
+        else if (gnuplotData.dataIdentifier == "sde" && obs->sdNEU.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->positionLLH.value()(0)));
+            gnuplotData.data.emplace_back(obs->sdNEU.value()(1));
         }
-        else if (data.yData == "Height" && obs->positionLLH.has_value())
+        else if (gnuplotData.dataIdentifier == "sdu" && obs->sdNEU.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->positionLLH.value()(2)));
+            gnuplotData.data.emplace_back(obs->sdNEU.value()(2));
         }
-        else if (data.yData == "X-ECEF" && obs->positionXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "sdx" && obs->sdXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->positionXYZ.value().x()));
+            gnuplotData.data.emplace_back(obs->sdXYZ.value().x());
         }
-        else if (data.yData == "Y-ECEF" && obs->positionXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "sdy" && obs->sdXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->positionXYZ.value().y()));
+            gnuplotData.data.emplace_back(obs->sdXYZ.value().y());
         }
-        else if (data.yData == "Z-ECEF" && obs->positionXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "sdz" && obs->sdXYZ.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->positionXYZ.value().z()));
+            gnuplotData.data.emplace_back(obs->sdXYZ.value().z());
         }
-        else if (data.yData == "Q" && obs->Q.has_value())
+        else if (gnuplotData.dataIdentifier == "sdne" && obs->sdne.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->Q.value()));
+            gnuplotData.data.emplace_back(obs->sdne.value());
         }
-        else if (data.yData == "ns" && obs->ns.has_value())
+        else if (gnuplotData.dataIdentifier == "sdeu" && obs->sdeu.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->ns.value()));
+            gnuplotData.data.emplace_back(obs->sdeu.value());
         }
-        else if (data.yData == "sdn" && obs->sdNEU.has_value())
+        else if (gnuplotData.dataIdentifier == "sdun" && obs->sdun.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdNEU.value()(0)));
+            gnuplotData.data.emplace_back(obs->sdun.value());
         }
-        else if (data.yData == "sde" && obs->sdNEU.has_value())
+        else if (gnuplotData.dataIdentifier == "sdxy" && obs->sdxy.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdNEU.value()(1)));
+            gnuplotData.data.emplace_back(obs->sdxy.value());
         }
-        else if (data.yData == "sdu" && obs->sdNEU.has_value())
+        else if (gnuplotData.dataIdentifier == "sdyz" && obs->sdyz.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdNEU.value()(2)));
+            gnuplotData.data.emplace_back(obs->sdyz.value());
         }
-        else if (data.yData == "sdx" && obs->sdXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "sdzx" && obs->sdzx.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdXYZ.value().x()));
+            gnuplotData.data.emplace_back(obs->sdzx.value());
         }
-        else if (data.yData == "sdy" && obs->sdXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Age" && obs->age.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdXYZ.value().y()));
+            gnuplotData.data.emplace_back(obs->age.value());
         }
-        else if (data.yData == "sdz" && obs->sdXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Ratio" && obs->ratio.has_value())
         {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdXYZ.value().z()));
-        }
-        else if (data.yData == "sdne" && obs->sdne.has_value())
-        {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdne.value()));
-        }
-        else if (data.yData == "sdeu" && obs->sdeu.has_value())
-        {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdeu.value()));
-        }
-        else if (data.yData == "sdun" && obs->sdun.has_value())
-        {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdun.value()));
-        }
-        else if (data.yData == "sdxy" && obs->sdxy.has_value())
-        {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdxy.value()));
-        }
-        else if (data.yData == "sdyz" && obs->sdyz.has_value())
-        {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdyz.value()));
-        }
-        else if (data.yData == "sdzx" && obs->sdzx.has_value())
-        {
-            data.xy.emplace_back(std::make_pair(plotX, obs->sdzx.value()));
-        }
-        else if (data.yData == "Age" && obs->age.has_value())
-        {
-            data.xy.emplace_back(std::make_pair(plotX, obs->age.value()));
-        }
-        else if (data.yData == "Ratio" && obs->ratio.has_value())
-        {
-            data.xy.emplace_back(std::make_pair(plotX, obs->ratio.value()));
+            gnuplotData.data.emplace_back(obs->ratio.value());
         }
 
         // Delete old data
         if (NodeManager::appContext != NodeContext::POST_PROCESSING)
         {
-            while (xDisplayScope != 0.0 && data.xy.back().first - data.xy.front().first > xDisplayScope)
+            while (xDisplayScope != 0 && gnuplotData.data.size() > xDisplayScope)
             {
-                data.xy.pop_front();
+                gnuplotData.data.pop_front();
             }
         }
     }

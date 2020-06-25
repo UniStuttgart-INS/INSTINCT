@@ -74,6 +74,7 @@ class Node : public DataCallback
         CONFIG_STRING,          ///< String
         CONFIG_STRING_BOX,      ///< String Box
         CONFIG_LIST,            ///< List: "option1", "[default]", "option3"
+        CONFIG_LIST_MULTI,      ///< List which repeats: "option1", "[default]", "option3"
         CONFIG_LIST_LIST_MULTI, ///< 2 Lists which repeat: "[List1default]", "List1option2", "|", "List2option1|[List2default]"
         CONFIG_MAP_INT,         ///< String Key and Integer Value: "key", "min", "default", "max"
         CONFIG_VARIANT,         ///< Variant: ConfigOptionsBase(option1), ConfigOptionsBase(option2)

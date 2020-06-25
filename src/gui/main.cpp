@@ -75,6 +75,8 @@ std::shared_ptr<QtNodes::DataModelRegistry> registryRealTime;
 std::shared_ptr<QtNodes::DataModelRegistry> registryPostProcessing;
 QAction* rtpAction;
 
+std::string delimiter = " _,_ ";
+
 void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_view child, std::string_view root)
 {
     LOG_TRACE("called");
@@ -130,6 +132,7 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
         QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
         if (widget->layout()
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
@@ -163,6 +166,21 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
             }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
                 text = static_cast<QComboBox*>(widget)->currentText().toStdString();
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI)
+            {
+                auto groupBox = static_cast<QGroupBox*>(widget);
+                auto layout = static_cast<QFormLayout*>(groupBox->layout());
+
+                for (int j = 1; j < layout->rowCount(); j++)
+                {
+                    QComboBox* list = static_cast<QComboBox*>(layout->itemAt(j, QFormLayout::ItemRole::FieldRole)->widget());
+
+                    std::string toAdd = list->currentText().toStdString();
+
+                    if (text.find(toAdd) == std::string::npos)
+                        text += (!text.empty() ? ";" : "") + toAdd;
+                }
+            }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)
             {
                 auto gridGroupBox = static_cast<QGroupBox*>(widget);
@@ -186,7 +204,7 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
 
             std::replace(type.begin(), type.end(), '\n', ' ');
 
-            config += ", \"" + type + "\" = \"" + text + "\"";
+            config += delimiter + "\"" + type + "\" = \"" + text + "\"";
 
             // comment += ", " + type;
             // for (int i = 0; i < static_cast<int>(type.size()) - static_cast<int>(text.size()); i++)
@@ -210,11 +228,11 @@ void exportConfig()
         std::string comment = "#      Type";
         for (int i = 0; i < nodeModel->name().length() - 4; i++)
             comment += " ";
-        comment += ", Name";
+        comment += delimiter + "Name";
         for (int i = 0; i < node->id().toString().length() - 4; i++)
             comment += " ";
 
-        std::string config = "node = " + nodeModel->name().toStdString() + ", " + node->id().toString().toStdString();
+        std::string config = "node = " + nodeModel->name().toStdString() + delimiter + node->id().toString().toStdString();
 
         exportConfigForLayout(nodeModel->getMainLayout(), comment, config);
 

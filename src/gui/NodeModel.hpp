@@ -68,6 +68,8 @@ class NodeModel : public NodeDataModel
 
     void removeRepeatedConfigGroupBox(QSpinBox* inputSpinBox);
 
+    void addListRow(std::vector<std::string> configOptions, QFormLayout* layout, QGroupBox* gridGroupBox);
+
     void addListListRow(std::vector<std::string> configOptions, QGridLayout* layout, QGroupBox* gridGroupBox);
 
     void updateView(QSpinBox* inputSpinBox);

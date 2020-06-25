@@ -67,29 +67,27 @@ class GnuPlot final : public Node
     {
         // clang-format off
         return {
-            { CONFIG_FLOAT, "X Display Scope",
-                            "Data older/smaller than the specified scope gets discarded.\ne.g. Shows only the last x seconds.\n\nIgnored in post processing mode",
-                            { "0", "10", "100" } },
-            { CONFIG_FLOAT, "Update Frequency",
+            { CONFIG_INT, "Clear after x data",
+                            "If more than x data are collected, the oldest one is discarded.\n\nIgnored in post processing mode",
+                            { "0", "1000", "10000" } },
+            { CONFIG_INT, "Update Frequency",
                             "Frequency to update the Plot Windows\n\nIgnored in post processing mode",
-                            { "0", "50", "200" } },
+                            { "1", "50", "2000" } },
             { CONFIG_STRING_BOX, "Start", "Gnuplot Commands to execute when starting the application.", { "set autoscale xy\nset grid ytics lc rgb \"#bbbbbb\" lw 1 lt 0\nset grid xtics lc rgb \"#bbbbbb\" lw 1 lt 0\n" } },
-            { CONFIG_STRING_BOX, "Update", "Gnuplot Commands called every time to update the view.", { "" } },
             { CONFIG_N_INPUT_PORTS, "Input Ports",
                                     "Amount of Input Ports",
-                                    { "1", "1", "30", "2" } },
+                                    { "1", "1", "30", "3" } },
             { CONFIG_LIST, "Port Type",
                            "Select the type of the message to receive on this port",
                            { std::string(VectorNavObs().type()),
                              "[" + std::string(RtklibPosObs().type()) + "]" } },
             { CONFIG_VARIANT, "", "",
-                { ConfigOptionsBase(CONFIG_LIST_LIST_MULTI, "Data to plot",
+                { ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
                                                             { "[GPS time of week]",
-                                                              "|",
                                                               "Time since startup",
                                                               "Quaternion W", "Quaternion X", "Quaternion Y", "Quaternion Z",
-                                                              "[Yaw]", "Pitch", "Roll",
+                                                              "Yaw", "Pitch", "Roll",
                                                               "Mag uncomp X", "Mag uncomp Y", "Mag uncomp Z",
                                                               "Accel uncomp X", "Accel uncomp Y", "Accel uncomp Z",
                                                               "Gyro uncomp X", "Gyro uncomp Y", "Gyro uncomp Z",
@@ -109,14 +107,10 @@ class GnuPlot final : public Node
                                                               "Linear Accel X", "Linear Accel Y", "Linear Accel Z",
                                                               "Linear Accel N", "Linear Accel E", "Linear Accel D",
                                                               "Yaw Uncertainty", "Pitch Uncertainty", "Roll Uncertainty" }),
-                  ConfigOptionsBase(CONFIG_LIST_LIST_MULTI, "Data to plot",
+                  ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
-                                                            { "GPS time of week",
-                                                              "Latitude", "[Longitude]", "Height",
-                                                              "X-ECEF", "Y-ECEF", "Z-ECEF",
-                                                              "|",
-                                                              "GPS time of week",
-                                                              "[Latitude]", "Longitude", "Height",
+                                                            { "[GPS time of week]",
+                                                              "Latitude", "Longitude", "Height",
                                                               "X-ECEF", "Y-ECEF", "Z-ECEF",
                                                               "Q",
                                                               "ns",
@@ -127,6 +121,8 @@ class GnuPlot final : public Node
                                                               "Age",
                                                               "Ratio" })
                 } },
+            { CONFIG_STRING_BOX, "Update", "Gnuplot Commands called every time to update the view.\nUse [~x], where x is a number, to plot data selected below", { "plot [~1,2,3~] using 1:2 with lines title 'MyTitle'" } },
+
         };
         // clang-format on
     }
@@ -228,17 +224,14 @@ class GnuPlot final : public Node
         /**
          * @brief Construct a new Gnu Plot Data object
          * 
-         * @param[in] xData Identifier for x Data
-         * @param[in] yData Identifier for y Data
+         * @param[in] dataIdentifier Identifier for the Data
          */
-        GnuPlotData(std::string xData, std::string yData)
-            : xData(std::move(xData)), yData(std::move(yData)) {}
-        /// xData specifier
-        std::string xData;
-        /// yData specifier
-        std::string yData;
+        explicit GnuPlotData(std::string dataIdentifier)
+            : dataIdentifier(std::move(dataIdentifier)) {}
+        /// data identifier
+        std::string dataIdentifier;
         /// x and y data which can be passed to the plot stream
-        std::deque<std::pair<double, double>> xy;
+        std::deque<double> data;
     };
 
     /// Data to plot
@@ -247,8 +240,10 @@ class GnuPlot final : public Node
     /// gnuplot object
     gnuplotio::Gnuplot gp{ "gnuplot -persist > /dev/null 2>&1" };
 
-    double xDisplayScope = 10.0;
-    double updateFrequency = 10.0;
+    uint32_t xDisplayScope = 10.0;
+    uint32_t updateFrequency = 10;
+
+    std::vector<std::string> portUpdateStrings;
 };
 
 } // namespace NAV

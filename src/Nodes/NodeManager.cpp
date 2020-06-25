@@ -12,15 +12,31 @@ void NAV::NodeManager::processConfigFile()
     if (ConfigManager::HasKey("node"))
     {
         std::vector<std::string> names;
-        for (const std::string& line : ConfigManager::Get<std::vector<std::string>>("node", {}))
+        for (std::string line : ConfigManager::Get<std::vector<std::string>>("node", {}))
         {
             NodeConfig config;
 
-            std::stringstream lineStream(line);
-            std::string cell;
+            std::string delimiter = " _,_ ";
             // Split line at comma
-            while (std::getline(lineStream, cell, ','))
+            while (true)
             {
+                std::string cell;
+                size_t pos = line.find(delimiter);
+                if (pos != std::string::npos)
+                {
+                    cell = line.substr(0, pos);
+                    line = line.substr(pos + delimiter.length());
+                }
+                else if (!line.empty())
+                {
+                    cell = line;
+                    line.clear();
+                }
+                else
+                {
+                    break;
+                }
+
                 // Remove any trailing non text characters
                 cell.erase(std::find_if(cell.begin(), cell.end(),
                                         std::ptr_fun<int, int>(std::iscntrl)),

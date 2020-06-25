@@ -1,151 +1,159 @@
 {
     "connections": [
         {
-            "in_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
+            "in_id": "{c985654e-9051-4f7b-9e93-45036a2b4a02}",
+            "in_index": 0,
+            "out_id": "{aa6b10b3-7da9-4a24-ac98-1fd61aba2a77}",
+            "out_index": 0
+        },
+        {
+            "in_id": "{2bf1c6c9-7cbb-4a7b-8e84-951e398706f8}",
             "in_index": 1,
-            "out_id": "{a8957682-de31-4a37-8315-110a1256b4d8}",
+            "out_id": "{aa6b10b3-7da9-4a24-ac98-1fd61aba2a77}",
             "out_index": 0
         },
         {
-            "in_id": "{0bb27750-4dbb-4d17-939b-7a032d777988}",
+            "converter": {
+                "in": {
+                    "id": "InsObs",
+                    "name": "InsObs"
+                },
+                "out": {
+                    "id": "UbloxObs",
+                    "name": "UbloxObs"
+                }
+            },
+            "in_id": "{2bf1c6c9-7cbb-4a7b-8e84-951e398706f8}",
             "in_index": 0,
-            "out_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
+            "out_id": "{44d9bce1-9d46-4fb5-b5c5-7a010a6459a1}",
             "out_index": 0
         },
         {
-            "in_id": "{7260e9b2-c953-428e-a302-5f73580210ea}",
+            "in_id": "{b2049caa-d1a9-4078-aed2-8c180a9cf6fd}",
             "in_index": 0,
-            "out_id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
+            "out_id": "{44d9bce1-9d46-4fb5-b5c5-7a010a6459a1}",
             "out_index": 0
         },
         {
-            "in_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
+            "in_id": "{ddd3798e-58cc-4452-b922-8d9d19653974}",
             "in_index": 0,
-            "out_id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
+            "out_id": "{44d9bce1-9d46-4fb5-b5c5-7a010a6459a1}",
             "out_index": 0
         },
         {
-            "in_id": "{f1e2ed42-b703-442a-9b0f-e88f11c3465d}",
+            "in_id": "{82437550-1707-454a-be48-c921bbf96d55}",
             "in_index": 0,
-            "out_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
-            "out_index": 0
-        },
-        {
-            "in_id": "{111f31fa-511c-4915-9f4f-e20fe1ceefce}",
-            "in_index": 0,
-            "out_id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
-            "out_index": 0
-        },
-        {
-            "in_id": "{09113478-ea52-4ba1-a9d1-33ff35895a11}",
-            "in_index": 0,
-            "out_id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
+            "out_id": "{2bf1c6c9-7cbb-4a7b-8e84-951e398706f8}",
             "out_index": 0
         }
     ],
     "nodes": [
         {
-            "id": "{f1e2ed42-b703-442a-9b0f-e88f11c3465d}",
+            "id": "{82437550-1707-454a-be48-c921bbf96d55}",
             "model": {
-                "Path": "logs/vn-log.csv",
-                "Type": "ascii",
-                "name": "VectorNavDataLogger"
+                "1-Data to plot": "5;GPS time of week;Yaw;Pitch;Roll;Sync In Count",
+                "1-Port Type": "VectorNavObs",
+                "1-Update": "plot [~1,2,3,4,5~] using 1:2 with lines title 'Yaw', \\\n       [~1,2,3,4,5~] using 1:3 with lines title 'Pitch', \\\n       [~1,2,3,4,5~] using 1:4 with lines title 'Roll', \\\n       [~1,2,3,4,5~] using 1:5 with lines title 'Sync In Cnt'",
+                "Clear after x data": 1000,
+                "Start": "set autoscale xy\nset grid ytics lc rgb \"#bbbbbb\" lw 1 lt 0\nset grid xtics lc rgb \"#bbbbbb\" lw 1 lt 0\nset xlabel 'Time'\n",
+                "Update Frequency": 50,
+                "nInputPorts": 1,
+                "nOutputPorts": 0,
+                "name": "GnuPlot"
             },
             "position": {
-                "x": 796,
-                "y": 110
+                "x": 528,
+                "y": -96
             }
         },
         {
-            "id": "{c4c11a25-00a4-4a42-acdb-ff1a17990308}",
+            "id": "{ddd3798e-58cc-4452-b922-8d9d19653974}",
+            "model": {
+                "Class": "RXM",
+                "Msg Id": "RAWX",
+                "Port": "/dev/ttyUSB0",
+                "Protocol": "UBX",
+                "nInputPorts": 1,
+                "nOutputPorts": 0,
+                "name": "UbloxSyncSignal"
+            },
+            "position": {
+                "x": 59,
+                "y": -68
+            }
+        },
+        {
+            "id": "{2bf1c6c9-7cbb-4a7b-8e84-951e398706f8}",
             "model": {
                 "Gps Cycle": 0,
                 "Gps Time\nof Week": 0,
                 "Gps Week": 0,
                 "Use Fixed\nStart Time": false,
+                "nInputPorts": 2,
+                "nOutputPorts": 1,
                 "name": "TimeSynchronizer"
             },
             "position": {
-                "x": 295,
-                "y": 118
+                "x": 66,
+                "y": 221
             }
         },
         {
-            "id": "{09113478-ea52-4ba1-a9d1-33ff35895a11}",
+            "id": "{b2049caa-d1a9-4078-aed2-8c180a9cf6fd}",
             "model": {
                 "Path": "logs/ub-log.ubx",
                 "Type": "binary",
+                "nInputPorts": 1,
+                "nOutputPorts": 0,
                 "name": "UbloxDataLogger"
             },
             "position": {
-                "x": 295,
-                "y": 16
+                "x": 63,
+                "y": 99
             }
         },
         {
-            "id": "{57fe67de-4586-4737-a0f7-d04283007c2e}",
+            "id": "{c985654e-9051-4f7b-9e93-45036a2b4a02}",
+            "model": {
+                "Path": "logs/vn-log.csv",
+                "Type": "ascii",
+                "nInputPorts": 1,
+                "nOutputPorts": 0,
+                "name": "VectorNavDataLogger"
+            },
+            "position": {
+                "x": 64,
+                "y": 415
+            }
+        },
+        {
+            "id": "{44d9bce1-9d46-4fb5-b5c5-7a010a6459a1}",
             "model": {
                 "Baudrate": "Fastest",
                 "Frequency": 4,
                 "Port": "/dev/ttyACM0",
+                "nInputPorts": 0,
+                "nOutputPorts": 1,
                 "name": "UbloxSensor"
             },
             "position": {
-                "x": -103,
-                "y": 5
+                "x": -358,
+                "y": 109
             }
         },
         {
-            "id": "{7260e9b2-c953-428e-a302-5f73580210ea}",
-            "model": {
-                "Class": "RXM",
-                "Msg Id": "RAWX",
-                "Port": "/dev/ttyUSB_VN100_1",
-                "Protocol": "UBX",
-                "name": "UbloxSyncSignal"
-            },
-            "position": {
-                "x": 299,
-                "y": -141
-            }
-        },
-        {
-            "id": "{111f31fa-511c-4915-9f4f-e20fe1ceefce}",
-            "model": {
-                "Data to plot": "gpsToW|yawPitchRoll|0;gpsToW|accelCompXYZ|1;gpsToW|syncInCnt|1",
-                "Update Frequency": 30,
-                "X Display Scope": 9,
-                "name": "VectorNavGnuPlot"
-            },
-            "position": {
-                "x": 796,
-                "y": 211
-            }
-        },
-        {
-            "id": "{a8957682-de31-4a37-8315-110a1256b4d8}",
+            "id": "{aa6b10b3-7da9-4a24-ac98-1fd61aba2a77}",
             "model": {
                 "Baudrate": "Fastest",
                 "Frequency": 100,
                 "Port": "/dev/ttyUSB_VN100_1",
+                "nInputPorts": 0,
+                "nOutputPorts": 1,
                 "name": "VectorNavSensor"
             },
             "position": {
-                "x": -130,
-                "y": 147
-            }
-        },
-        {
-            "id": "{0bb27750-4dbb-4d17-939b-7a032d777988}",
-            "model": {
-                "Data to plot": "gpsToW|gyroUncompXYZ|1",
-                "Update Frequency": 30,
-                "X Display Scope": 3,
-                "name": "VectorNavGnuPlot"
-            },
-            "position": {
-                "x": 796,
-                "y": 491
+                "x": -386,
+                "y": 272
             }
         }
     ]

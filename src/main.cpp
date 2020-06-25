@@ -102,7 +102,7 @@ int main(int argc, const char* argv[])
                             if (nextUpdateTime->insTime.has_value())
                             {
                                 events.insert(std::make_pair(nextUpdateTime->insTime.value(), std::make_pair(node, portIndex)));
-                                LOG_INFO("Reading Data from {}", node->getName());
+                                LOG_INFO("Taking Data from {} into account.", node->getName());
                                 break;
                             }
 
@@ -121,6 +121,7 @@ int main(int argc, const char* argv[])
                 }
             }
 
+            LOG_INFO("Processing Data from files");
             std::multimap<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>>::iterator it;
             while (it = events.begin(), it != events.end())
             {
