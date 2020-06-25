@@ -207,9 +207,9 @@ class GnuPlot final : public Node
         }
     }
 
-    [[nodiscard]] bool update() const;
+    [[nodiscard]] bool update();
 
-    void requestUpdate() const;
+    void requestUpdate();
 
   private:
     /// Handle a VectorNav Observation
@@ -244,8 +244,8 @@ class GnuPlot final : public Node
     /// Data to plot
     std::map<size_t, std::vector<GnuPlotData>> plotData;
 
-    /// gnuplot object pointer
-    gnuplotio::Gnuplot* gp = nullptr;
+    /// gnuplot object
+    gnuplotio::Gnuplot gp{ "gnuplot -persist > /dev/null 2>&1" };
 
     double xDisplayScope = 10.0;
     double updateFrequency = 10.0;

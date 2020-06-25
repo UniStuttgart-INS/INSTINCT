@@ -8,9 +8,6 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
 {
     LOG_TRACE("called for {}", name);
 
-    // NOLINTNEXTLINE
-    gp = new gnuplotio::Gnuplot("gnuplot -persist > /dev/null 2>&1");
-
     if (options.contains("Input Ports"))
     {
         nInputPorts = static_cast<uint8_t>(std::stoul(options.at("Input Ports")));
@@ -56,23 +53,16 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
 
     if (options.contains("Start"))
     {
-        *gp << options.at("Start");
+        gp << options.at("Start");
     }
 }
 
 NAV::GnuPlot::~GnuPlot()
 {
     LOG_TRACE("called for {}", name);
-
-    if (gp)
-    {
-        gp->clearTmpfiles();
-        delete gp;
-        gp = nullptr;
-    }
 }
 
-void NAV::GnuPlot::requestUpdate() const
+void NAV::GnuPlot::requestUpdate()
 {
     if (NodeManager::appContext == NAV::Node::NodeContext::REAL_TIME)
     {
@@ -101,7 +91,7 @@ void NAV::GnuPlot::requestUpdate() const
     }
 }
 
-bool NAV::GnuPlot::update() const
+bool NAV::GnuPlot::update()
 {
     bool somethingWasPlotted = false;
     std::string plotInstructions = "plot";
@@ -121,7 +111,7 @@ bool NAV::GnuPlot::update() const
                         lineStyle = "points";
                     }
 
-                    plotInstructions += gp->binFile1d(iter->second.at(i).xy, "record") + "with " + lineStyle + " title '" + iter->second.at(i).yData + "',";
+                    plotInstructions += gp.binFile1d(iter->second.at(i).xy, "record") + "with " + lineStyle + " title '" + iter->second.at(i).yData + "',";
                 }
 
                 xLabel = "set xlabel \"" + iter->second.at(i).xData + "\"\n";
@@ -134,9 +124,9 @@ bool NAV::GnuPlot::update() const
         plotInstructions = plotInstructions.substr(0, plotInstructions.size() - 1);
         plotInstructions += '\n';
         LOG_DEBUG("Plot Instructions: {}", plotInstructions + xLabel);
-        *gp << plotInstructions;
-        *gp << xLabel;
-        gp->flush();
+        gp << plotInstructions;
+        gp << xLabel;
+        gp.flush();
     }
     return somethingWasPlotted;
 }
