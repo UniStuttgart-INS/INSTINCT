@@ -30,17 +30,17 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
 {
     LOG_TRACE("called for {}", name);
 
-    if (options.count("X Display Scope"))
+    if (options.contains("X Display Scope"))
     {
         timeFrame = std::stod(options.at("X Display Scope"));
     }
 
-    if (options.count("Update Frequency"))
+    if (options.contains("Update Frequency"))
     {
         updateFrequency = std::stod(options.at("Update Frequency"));
     }
 
-    if (options.count("Data to plot"))
+    if (options.contains("Data to plot"))
     {
         std::string dataX;
         std::string dataY;

@@ -28,13 +28,11 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeType<NAV::EmlidDataLogger>();
 
     nodeManager.registerNodeType<NAV::VectorNavFile>();
-#ifndef DISABLE_SENSORS
-    nodeManager.registerNodeType<NAV::VectorNavSensor>();
-#endif
     nodeManager.registerNodeType<NAV::RtklibPosFile>();
     nodeManager.registerNodeType<NAV::UbloxFile>();
     nodeManager.registerNodeType<NAV::EmlidFile>();
 #ifndef DISABLE_SENSORS
+    nodeManager.registerNodeType<NAV::VectorNavSensor>();
     nodeManager.registerNodeType<NAV::UbloxSensor>();
     nodeManager.registerNodeType<NAV::EmlidSensor>();
 #endif
@@ -48,7 +46,6 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::UbloxSyncSignal>();
 #endif
-
 }
 
 #include "NodeData/InsObs.hpp"

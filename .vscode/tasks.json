@@ -38,8 +38,8 @@
             ],
             "options": {
                 "env": {
-                    "CC": "/usr/bin/clang-10",
-                    "CXX": "/usr/bin/clang++-10"
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
                 }
             },
             "presentation": {
@@ -64,8 +64,8 @@
             ],
             "options": {
                 "env": {
-                    "CC": "/usr/bin/clang-10",
-                    "CXX": "/usr/bin/clang++-10"
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
                 }
             },
             "presentation": {
@@ -90,8 +90,8 @@
             ],
             "options": {
                 "env": {
-                    "CC": "/usr/bin/clang-10",
-                    "CXX": "/usr/bin/clang++-10"
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
                 }
             },
             "presentation": {
@@ -117,8 +117,8 @@
             ],
             "options": {
                 "env": {
-                    "CC": "/usr/bin/clang-10",
-                    "CXX": "/usr/bin/clang++-10"
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
                 }
             },
             "presentation": {
@@ -144,8 +144,8 @@
             ],
             "options": {
                 "env": {
-                    "CC": "/usr/bin/clang-10",
-                    "CXX": "/usr/bin/clang++-10"
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
                 }
             },
             "presentation": {
@@ -166,8 +166,8 @@
             ],
             "options": {
                 "env": {
-                    "CC": "/usr/bin/clang-10",
-                    "CXX": "/usr/bin/clang++-10"
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
                 }
             },
             "presentation": {
@@ -190,8 +190,8 @@
             ],
             "options": {
                 "env": {
-                    "CC": "/usr/bin/clang-10",
-                    "CXX": "/usr/bin/clang++-10"
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++"
                 }
             },
             "presentation": {
@@ -328,12 +328,6 @@
             },
             "command": "./bin/Debug/navsos-gui",
             "args": [],
-            "options": {
-                "env": {
-                    "DISPLAY": "100.64.213.102:0.0",
-                    "LIBGL_ALWAYS_INDIRECT": "1"
-                }
-            },
             "dependsOn": [
                 "GUI: Build project"
             ],

@@ -27,7 +27,7 @@ if(ENABLE_CPPCHECK)
 endif()
 
 if(ENABLE_CLANG_TIDY)
-  find_program(CLANGTIDY clang-tidy-10)
+  find_program(CLANGTIDY clang-tidy)
   if(CLANGTIDY)
     set(CMAKE_CXX_CLANG_TIDY ${CLANGTIDY} -extra-arg=-Wno-unknown-warning-option)
   else()
