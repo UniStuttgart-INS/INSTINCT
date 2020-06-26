@@ -8,6 +8,7 @@
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QComboBox>
+#include <QAbstractItemView>
 
 #include <tuple>
 #include <iostream>
@@ -107,7 +108,7 @@ void NodeModel::addListRow(std::vector<std::string> configOptions, QFormLayout* 
     while (spinBox->value() > currentRows)
     {
         QComboBox* comboBox = new QComboBox(gridGroupBox);
-        comboBox->setStyleSheet("background-color: rgb(220,220,220); color: black; selection-background-color: rgb(169,169,169);");
+        comboBox->setStyleSheet("background-color: rgb(220,220,220); color: black; selection-background-color: rgb(169,169,169); combobox-popup: 0");
 
         for (auto& cell : configOptions)
         {
@@ -149,7 +150,7 @@ void NodeModel::addListListRow(std::vector<std::string> configOptions, QGridLayo
         for (size_t i = 0; i < comboBoxes.size(); i++)
         {
             comboBoxes.at(i) = new QComboBox(gridGroupBox);
-            comboBoxes.at(i)->setStyleSheet("background-color: rgb(220,220,220); color: black; selection-background-color: rgb(169,169,169);");
+            comboBoxes.at(i)->setStyleSheet("background-color: rgb(220,220,220); color: black; selection-background-color: rgb(169,169,169); combobox-popup: 0");
 
             while (configOptions.size() > c && configOptions.at(c) != "|")
             {
@@ -305,7 +306,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
                 comboBox->addItem(QString::fromStdString(cell));
         }
 
-        comboBox->setStyleSheet("background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black");
+        comboBox->setStyleSheet("background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black; combobox-popup: 0");
         _layout->insertRow(layoutInsertPosition, description, comboBox);
 
         connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),

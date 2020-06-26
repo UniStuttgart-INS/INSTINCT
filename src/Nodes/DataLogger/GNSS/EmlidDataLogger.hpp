@@ -55,12 +55,12 @@ class EmlidDataLogger final : public DataLogger
     /**
      * @brief Returns Gui Configuration options for the class
      * 
-     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
+     * @retval std::vector<ConfigOptions> The gui configuration
      */
-    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
+    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
-        return { { ConfigOptions::CONFIG_STRING, "Path", "Path where to save the data to", { "logs/Er-log.ubx" } },
-                 { ConfigOptions::CONFIG_LIST, "Type", "Type of the output file", { "[binary]" } } };
+        return { { CONFIG_STRING, "Path", "Path where to save the data to", { "logs/Er-log.ubx" } },
+                 { CONFIG_LIST, "Type", "Type of the output file", { "[binary]" } } };
     }
 
     /**
@@ -129,22 +129,6 @@ class EmlidDataLogger final : public DataLogger
             writeObservation(obs);
         }
     }
-
-    /**
-     * @brief Requests the node to send out its data
-     * 
-     * @param[in] portIndex The output port index
-     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
-     */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t /* portIndex */) final { return nullptr; }
-
-    /**
-     * @brief Requests the node to peek its output data
-     * 
-     * @param[in] portIndex The output port index
-     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
-     */
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t /* portIndex */) final { return nullptr; }
 
   private:
     /**

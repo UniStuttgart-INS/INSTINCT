@@ -57,11 +57,8 @@ std::shared_ptr<NAV::EmlidObs> NAV::EmlidFile::pollData(bool peek)
         return obs;
     }
 
-    constexpr uint8_t AsciiStartChar = '$';
     constexpr uint8_t BinaryStartChar1 = 0x45;
     constexpr uint8_t BinaryStartChar2 = 0x52;
-    // constexpr uint8_t AsciiEndChar1 = '\r'; // 0x0D
-    constexpr uint8_t AsciiEndChar2 = '\n'; // 0x0A
 
     // Get current position
     auto pos = filestream.tellg();
