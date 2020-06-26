@@ -7,7 +7,7 @@
 
 #pragma once
 
-#ifndef DISABLE_VN_SENSORS
+#ifndef DISABLE_SENSORS
 
     #include "NodeData/IMU/VectorNavObs.hpp"
     #include "../Imu.hpp"

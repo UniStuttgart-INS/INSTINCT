@@ -25,10 +25,10 @@ target_link_libraries(
 
 target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
-if(ENABLE_VN_UB_SENSORS)
-  target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libvncxx libubcxx)
+if(ENABLE_SENSORS)
+  target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libvncxx libubcxx libercxx)
 else()
-  target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC DISABLE_VN_SENSORS DISABLE_UB_SENSORS)
+  target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC DISABLE_SENSORS)
 endif()
 
 if(ENABLE_GUI)
@@ -61,10 +61,10 @@ if(ENABLE_GUI)
             CONAN_PKG::eigen
             Threads::Threads)
 
-  if(ENABLE_VN_UB_SENSORS)
-    target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui" PRIVATE libvncxx libubcxx)
+  if(ENABLE_SENSORS)
+    target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui" PRIVATE libvncxx libubcxx libercxx)
   else()
-    target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC DISABLE_VN_SENSORS DISABLE_UB_SENSORS)
+    target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC DISABLE_SENSORS)
   endif()
 
   target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})

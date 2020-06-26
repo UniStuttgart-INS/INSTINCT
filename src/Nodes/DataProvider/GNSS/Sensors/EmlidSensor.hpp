@@ -1,23 +1,23 @@
 /**
- * @file UbloxSensor.hpp
- * @brief Ublox Sensor Class
+ * @file EmlidSensor.hpp
+ * @brief Emlid Sensor Class
  * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-19
+ * @date 2020-06-23
  */
 
 #pragma once
 
 #ifndef DISABLE_SENSORS
 
-    #include "NodeData/GNSS/UbloxObs.hpp"
+    #include "NodeData/GNSS/EmlidObs.hpp"
     #include "../Gnss.hpp"
     #include "../../Protocol/UartSensor.hpp"
-    #include "ub/sensors/sensors.hpp"
+    #include "er/sensors/sensors.hpp"
 
 namespace NAV
 {
-/// Ublox Sensor Class
-class UbloxSensor final : public UartSensor, public Gnss
+/// Emlid Sensor Class
+class EmlidSensor final : public UartSensor, public Gnss
 {
   public:
     /// Config Structure for the sensor
@@ -28,19 +28,19 @@ class UbloxSensor final : public UartSensor, public Gnss
     } Config;
 
     /**
-     * @brief Construct a new ublox Sensor object
+     * @brief Construct a new Emlid Sensor object
      * 
      * @param[in] name Name of the Sensor
      * @param[in, out] options Program options string list
      */
-    UbloxSensor(const std::string& name, const std::map<std::string, std::string>& options);
+    EmlidSensor(const std::string& name, const std::map<std::string, std::string>& options);
 
-    UbloxSensor() = default;                             ///< Default Constructor
-    ~UbloxSensor() final;                                ///< Destructor
-    UbloxSensor(const UbloxSensor&) = delete;            ///< Copy constructor
-    UbloxSensor(UbloxSensor&&) = delete;                 ///< Move constructor
-    UbloxSensor& operator=(const UbloxSensor&) = delete; ///< Copy assignment operator
-    UbloxSensor& operator=(UbloxSensor&&) = delete;      ///< Move assignment operator
+    EmlidSensor() = default;                             ///< Default Constructor
+    ~EmlidSensor() final;                                ///< Destructor
+    EmlidSensor(const EmlidSensor&) = delete;            ///< Copy constructor
+    EmlidSensor(EmlidSensor&&) = delete;                 ///< Move constructor
+    EmlidSensor& operator=(const EmlidSensor&) = delete; ///< Copy assignment operator
+    EmlidSensor& operator=(EmlidSensor&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Returns the String representation of the Class Type
@@ -49,7 +49,7 @@ class UbloxSensor final : public UartSensor, public Gnss
      */
     [[nodiscard]] constexpr std::string_view type() const final
     {
-        return std::string_view("UbloxSensor");
+        return std::string_view("EmlidSensor");
     }
 
     /**
@@ -65,19 +65,19 @@ class UbloxSensor final : public UartSensor, public Gnss
     /**
      * @brief Returns Gui Configuration options for the class
      * 
-     * @retval std::vector<ConfigOptions> The gui configuration
+     * @retval std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> The gui configuration
      */
-    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
+    [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
     {
-        return { { CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
-                                          "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
-                                          "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
-                                          "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
-                                          "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
-                                          "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
+        return { { Node::CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
+                                                "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
+                                                "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
+                                                "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
+                                                "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
+                                                "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
                    { "/dev/ttyUSB0" } },
-                 { CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" } },
-                 { CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "4", "200" } } };
+                 { Node::CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" } },
+                 { Node::CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "4", "200" } } };
     }
 
     /**
@@ -125,7 +125,7 @@ class UbloxSensor final : public UartSensor, public Gnss
         case PortType::Out:
             if (portIndex == 0)
             {
-                return UbloxObs().type();
+                return EmlidObs().type();
             }
         }
 
@@ -164,13 +164,13 @@ class UbloxSensor final : public UartSensor, public Gnss
      * @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
      * @param[in] index Advanced usage item and can be safely ignored for now
      */
-    static void asciiOrBinaryAsyncMessageReceived(void* userData, ub::protocol::uart::Packet& p, size_t index);
+    static void asciiOrBinaryAsyncMessageReceived(void* userData, er::protocol::uart::Packet& p, size_t index);
 
-    /// UbSensor Object
-    ub::sensors::UbSensor ub;
+    /// erSensor Object
+    er::sensors::ErSensor er;
 
     /// Config Object
-    UbloxSensor::Config config;
+    EmlidSensor::Config config;
 };
 
 } // namespace NAV
