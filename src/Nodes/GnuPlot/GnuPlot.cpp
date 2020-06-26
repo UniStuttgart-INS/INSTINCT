@@ -1,6 +1,7 @@
 #include "GnuPlot.hpp"
 
 #include <chrono>
+#include <regex>
 
 #include "util/Logger.hpp"
 #include "Nodes/NodeManager.hpp"
@@ -45,25 +46,27 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
         std::stringstream lineStream(options.at(std::to_string(i) + "-Data to plot"));
         while (std::getline(lineStream, dataIdentifier, ';'))
         {
-            LOG_DEBUG("Inserting Plot {}", dataIdentifier);
             plotData[i - 1].emplace_back(dataIdentifier);
         }
     }
 
     if (options.contains("Start"))
     {
+        LOG_DEBUG("Plot Start Instructions:\n{}", options.at("Start"));
         gp << options.at("Start") << '\n';
     }
 
     for (size_t i = 1; options.contains(std::to_string(i) + "-Update"); i++)
     {
-        if (options.at(std::to_string(i) + "-Update").empty())
+        portUpdateStrings.push_back(options.at(std::to_string(i) + "-Update"));
+
+        if (options.at(std::to_string(i) + "-Update").empty()
+            || plotData[i - 1].empty())
         {
             continue;
         }
 
-        LOG_DEBUG("Plot Instructions for port {}: {}", i, options.at(std::to_string(i) + "-Update"));
-        portUpdateStrings.push_back(options.at(std::to_string(i) + "-Update"));
+        LOG_DEBUG("Plot Update Instructions for port {}:\n{}", i, options.at(std::to_string(i) + "-Update"));
     }
 }
 
@@ -182,6 +185,37 @@ bool NAV::GnuPlot::update()
             }
         }
         plotInstructions += portUpdateString + '\n';
+    }
+
+    // gnuplot only supports one 'plot' command. So merge them if more than one is found
+    size_t firstPlotCmdPos = plotInstructions.find("plot");
+    if (firstPlotCmdPos != std::string::npos)
+    {
+        std::regex plot_regex(R"((plot )(.*\\\n)*.*)");
+        auto words_begin = std::sregex_iterator(plotInstructions.begin(), plotInstructions.end(), plot_regex);
+        auto words_end = std::sregex_iterator();
+        std::vector<std::string> plotCommands;
+
+        for (std::sregex_iterator i = words_begin; i != words_end; ++i)
+        {
+            std::smatch match = *i;
+            plotCommands.push_back(match.str());
+        }
+        if (plotCommands.size() > 1)
+        {
+            plotCommands.at(0) += ", \\\n";
+            for (size_t i = 1; i < plotCommands.size() - 1; i++)
+            {
+                plotCommands.at(i) = plotCommands.at(i).substr(5) + ", \\\n";
+            }
+            plotCommands.at(plotCommands.size() - 1) = plotCommands.at(plotCommands.size() - 1).substr(5);
+
+            plotInstructions = std::regex_replace(plotInstructions, plot_regex, "");
+            for (int i = static_cast<int>(plotCommands.size()) - 1; i >= 0; i--)
+            {
+                plotInstructions.insert(firstPlotCmdPos, plotCommands.at(static_cast<size_t>(i)));
+            }
+        }
     }
 
     if (somethingWasPlotted)

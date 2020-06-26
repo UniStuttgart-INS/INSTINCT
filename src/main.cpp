@@ -92,6 +92,7 @@ int main(int argc, const char* argv[])
             {
                 for (uint8_t portIndex = 0; portIndex < node->nPorts(NAV::Node::PortType::Out); portIndex++)
                 {
+                    LOG_DEBUG("Searching node {} on output port {} for data", node->getName(), portIndex);
                     // Add next data event from the node
                     while (true)
                     {
@@ -102,7 +103,7 @@ int main(int argc, const char* argv[])
                             if (nextUpdateTime->insTime.has_value())
                             {
                                 events.insert(std::make_pair(nextUpdateTime->insTime.value(), std::make_pair(node, portIndex)));
-                                LOG_INFO("Taking Data from {} into account.", node->getName());
+                                LOG_INFO("Taking Data from {} on output port {} into account.", node->getName(), portIndex);
                                 break;
                             }
 
