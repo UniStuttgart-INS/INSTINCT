@@ -14,27 +14,13 @@ NAV::EmlidFile::EmlidFile(const std::string& name, const std::map<std::string, s
 
     fileType = determineFileType();
 
-    if (fileType == FileType::BINARY)
-    {
-        filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
-    }
-    else
-    {
-        filestream = std::ifstream(path);
-    }
+    filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
 
     if (filestream.good())
     {
         dataStart = filestream.tellg();
 
-        if (fileType == FileType::ASCII)
-        {
-            LOG_DEBUG("{}-ASCII-File successfully initialized", name);
-        }
-        else
-        {
-            LOG_DEBUG("{}-Binary-File successfully initialized", name);
-        }
+        LOG_DEBUG("{}-Binary-File successfully initialized", name);
     }
     else
     {
@@ -113,18 +99,6 @@ std::shared_ptr<NAV::EmlidObs> NAV::EmlidFile::pollData(bool peek)
             filestream.read(reinterpret_cast<char*>(buffer.data()) + HEAD_BUFFER_SIZE + 1, payloadLength + 2);
 
             obs->raw.setData(buffer.data(), buffer.size());
-
-            break;
-        }
-
-        if (i == AsciiStartChar)
-        {
-            std::string line;
-            std::getline(filestream, line);
-            line.insert(0, 1, AsciiStartChar);
-            line.push_back(AsciiEndChar2);
-
-            obs->raw.setData(reinterpret_cast<unsigned char*>(line.data()), line.size());
 
             break;
         }

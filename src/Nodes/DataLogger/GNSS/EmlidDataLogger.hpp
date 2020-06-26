@@ -60,7 +60,7 @@ class EmlidDataLogger final : public DataLogger
     [[nodiscard]] std::vector<std::tuple<ConfigOptions, std::string, std::string, std::vector<std::string>>> guiConfig() const final
     {
         return { { ConfigOptions::CONFIG_STRING, "Path", "Path where to save the data to", { "logs/Er-log.ubx" } },
-                 { ConfigOptions::CONFIG_LIST, "Type", "Type of the output file", { "ascii", "[binary]" } } };
+                 { ConfigOptions::CONFIG_LIST, "Type", "Type of the output file", { "[binary]" } } };
     }
 
     /**

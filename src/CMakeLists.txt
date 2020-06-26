@@ -61,10 +61,10 @@ if(ENABLE_GUI)
             CONAN_PKG::eigen
             Threads::Threads)
 
-  if(ENABLE_VN_UB_SENSORS)
-    target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui" PRIVATE libvncxx libubcxx)
+  if(ENABLE_SENSORS)
+    target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui" PRIVATE libvncxx libubcxx libercxx)
   else()
-    target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC DISABLE_VN_SENSORS DISABLE_UB_SENSORS)
+    target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC DISABLE_SENSORS)
   endif()
 
   set_target_properties("${PROJECT_NAME_LOWERCASE}-gui" PROPERTIES CXX_CLANG_TIDY "")

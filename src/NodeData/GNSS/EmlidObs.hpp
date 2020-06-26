@@ -53,21 +53,18 @@ class EmlidObs : public GnssObs
     /// Payload length in bytes
     uint16_t payloadLength = 0;
 
-    /// Complete message raw binary data including header and checksum (ERB) 
+    /// Complete message raw binary data including header and checksum (ERB)
     Emlid::EmlidPacket raw;
 
     /// Decoded data
     std::variant<
-        
-        
-        Emlid::ErbVER,        // VER: Version
-        Emlid::ErbNavPosllh,  // POS: Position
-        Emlid::ErbSTAT,       // STAT: Status
-        Emlid::ErbDOPS,       // DOPS: Dilution of precision 
-        Emlid::ErbNavVelned,  // VEL: Velocities
-        Emlid::ErbSVI,        // SVI: Satellite vehicle info
-        Emlid::ErbRTK        // RTK: RTK Data
-        
+        Emlid::ErbVer,  // VER: Version of protocol
+        Emlid::ErbPos,  // POS: Geodetic position solution
+        Emlid::ErbStat, // STAT: Receiver navigation status
+        Emlid::ErbDops, // DOPS: Dilution of precision
+        Emlid::ErbVel,  // VEL: Velocity solution in NED
+        Emlid::ErbSvi,  // SVI: Space vehicle information
+        Emlid::ErbRtk   // RTK: RTK information
         >
         data{};
 };

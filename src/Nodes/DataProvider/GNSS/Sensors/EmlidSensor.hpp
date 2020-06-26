@@ -35,7 +35,7 @@ class EmlidSensor final : public UartSensor, public Gnss
      */
     EmlidSensor(const std::string& name, const std::map<std::string, std::string>& options);
 
-     EmlidSensor() = default;                             ///< Default Constructor
+    EmlidSensor() = default;                             ///< Default Constructor
     ~EmlidSensor() final;                                ///< Destructor
     EmlidSensor(const EmlidSensor&) = delete;            ///< Copy constructor
     EmlidSensor(EmlidSensor&&) = delete;                 ///< Move constructor

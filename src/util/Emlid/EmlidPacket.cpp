@@ -39,10 +39,6 @@ NAV::Emlid::EmlidPacket::Type NAV::Emlid::EmlidPacket::type() const
     // Since this is not a pointer use the functional cast for C++ rather than the C style cast
     const auto data_zero = static_cast<unsigned char>(_data[0]); //unsigned char(_data[0]);
 
-    if (_data[0] == '$')
-    {
-        return TYPE_ASCII;
-    }
     if (data_zero == binary_indicator)
     {
         return TYPE_BINARY;

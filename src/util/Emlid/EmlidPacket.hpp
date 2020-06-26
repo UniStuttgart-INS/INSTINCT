@@ -22,7 +22,6 @@ class EmlidPacket
     {
         TYPE_UNKNOWN, ///< Type is unknown.
         TYPE_BINARY,  ///< Binary packet.
-        TYPE_ASCII    ///< ASCII packet.
     };
 
     /// Default Constructor
