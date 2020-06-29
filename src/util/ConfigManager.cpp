@@ -50,7 +50,7 @@ void NAV::ConfigManager::FetchConfigs(const int argc, const char* argv[]) // NOL
     bpo::store(bpo::parse_command_line(argc, argv, program_options), vm);
 
     // if config file is available, the parameters from file will be added
-    if (vm.contains("config"))
+    if (vm.count("config"))
     {
         for (const std::string& configFile : vm["config"].as<std::vector<std::string>>())
         {
@@ -71,7 +71,7 @@ void NAV::ConfigManager::FetchConfigs(const int argc, const char* argv[]) // NOL
 
 bool NAV::ConfigManager::HasKey(const std::string& key)
 {
-    return vm.contains(key);
+    return vm.count(key);
 }
 
 std::vector<std::string> NAV::ConfigManager::GetKeys()

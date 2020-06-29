@@ -6,11 +6,11 @@ NAV::UartSensor::UartSensor(const std::map<std::string, std::string>& options)
 {
     LOG_TRACE("called");
 
-    if (options.contains("Port"))
+    if (options.count("Port"))
     {
         sensorPort = options.at("Port");
 
-        if (options.contains("Baudrate"))
+        if (options.count("Baudrate"))
         {
             if (options.at("Baudrate") == "Fastest")
             {

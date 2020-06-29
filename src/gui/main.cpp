@@ -80,7 +80,7 @@ std::string delimiter = " _,_ ";
 void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_view child, std::string_view root)
 {
     LOG_TRACE("called");
-    if (nodeManager.registeredNodeDataTypes().contains(child))
+    if (nodeManager.registeredNodeDataTypes().count(child))
     {
         const auto& parents = nodeManager.registeredNodeDataTypes().find(child)->second.parents;
 

@@ -4,7 +4,7 @@ NAV::ExampleNode::ExampleNode(const std::string& name, const std::map<std::strin
     : Node(name)
 {
     // Process the provided options from the config file
-    // if (options.contains(""))
+    // if (options.count(""))
     // {
     //     std::stoi(options.at(""));
     // }

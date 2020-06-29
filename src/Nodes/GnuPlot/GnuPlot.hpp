@@ -168,7 +168,7 @@ class GnuPlot final : public Node
         switch (portType)
         {
         case PortType::In:
-            if (inputPortDataTypes.contains(portIndex))
+            if (inputPortDataTypes.count(portIndex))
             {
                 return inputPortDataTypes.at(portIndex);
             }
@@ -188,7 +188,7 @@ class GnuPlot final : public Node
      */
     void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) final
     {
-        if (inputPortDataTypes.contains(portIndex))
+        if (inputPortDataTypes.count(portIndex))
         {
             if (inputPortDataTypes.at(portIndex) == VectorNavObs().type())
             {

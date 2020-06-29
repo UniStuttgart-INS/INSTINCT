@@ -10,7 +10,7 @@ NAV::UsbSyncSignal::UsbSyncSignal(const std::string& name, const std::map<std::s
 {
     LOG_TRACE("called for {}", name);
 
-    if (options.contains("Port"))
+    if (options.count("Port"))
     {
         port = options.at("Port");
     }

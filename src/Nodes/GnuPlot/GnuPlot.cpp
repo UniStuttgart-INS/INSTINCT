@@ -13,27 +13,27 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
 
     gp.flush();
 
-    if (options.contains("Input Ports"))
+    if (options.count("Input Ports"))
     {
         nInputPorts = static_cast<uint8_t>(std::stoul(options.at("Input Ports")));
     }
 
-    for (size_t i = 1; options.contains(std::to_string(i) + "-Port Type"); i++)
+    for (size_t i = 1; options.count(std::to_string(i) + "-Port Type"); i++)
     {
         inputPortDataTypes[i - 1] = options.at(std::to_string(i) + "-Port Type");
     }
 
-    if (options.contains("Clear after x data"))
+    if (options.count("Clear after x data"))
     {
         xDisplayScope = static_cast<uint32_t>(std::stoul(options.at("Clear after x data")));
     }
 
-    if (options.contains("Update Frequency"))
+    if (options.count("Update Frequency"))
     {
         updateFrequency = static_cast<uint32_t>(std::stoul(options.at("Update Frequency")));
     }
 
-    for (size_t i = 1; options.contains(std::to_string(i) + "-Data to plot"); i++)
+    for (size_t i = 1; options.count(std::to_string(i) + "-Data to plot"); i++)
     {
         if (options.at(std::to_string(i) + "-Data to plot").empty())
         {
@@ -50,13 +50,13 @@ NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::
         }
     }
 
-    if (options.contains("Start"))
+    if (options.count("Start"))
     {
         LOG_DEBUG("Plot Start Instructions:\n{}", options.at("Start"));
         gp << options.at("Start") << '\n';
     }
 
-    for (size_t i = 1; options.contains(std::to_string(i) + "-Update"); i++)
+    for (size_t i = 1; options.count(std::to_string(i) + "-Update"); i++)
     {
         portUpdateStrings.push_back(options.at(std::to_string(i) + "-Update"));
 
