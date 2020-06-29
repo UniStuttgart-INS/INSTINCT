@@ -67,7 +67,7 @@ class UbloxSyncSignal final : public UsbSyncSignal
                                           "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
                                           "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
                    { "/dev/ttyUSB0" } },
-                 { CONFIG_LIST, "Protocol", "Protocol type", { "[UBX]", "NMEA" } },
+                 { CONFIG_LIST, "Protocol", "Protocol type", { "[UBX]" } },
                  { CONFIG_LIST, "Class", "Message Class", { "RXM" } },
                  { CONFIG_LIST, "Msg Id", "Message Id", { "RAWX" } } };
     }

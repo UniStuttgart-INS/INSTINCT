@@ -60,7 +60,7 @@ class UbloxDataLogger final : public DataLogger
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
         return { { CONFIG_STRING, "Path", "Path where to save the data to", { "logs/ub-log.ubx" } },
-                 { CONFIG_LIST, "Type", "Type of the output file", { "ascii", "[binary]" } } };
+                 { CONFIG_LIST, "Type", "Type of the output file", { "[binary]" } } };
     }
 
     /**

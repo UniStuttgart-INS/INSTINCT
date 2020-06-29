@@ -75,9 +75,7 @@ class UbloxSensor final : public UartSensor, public Gnss
                                           "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
                                           "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
                                           "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
-                   { "/dev/ttyUSB0" } },
-                 { CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" } },
-                 { CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "4", "200" } } };
+                   { "/dev/ttyUSB0" } } };
     }
 
     /**

@@ -21,5 +21,9 @@ NAV::UartSensor::UartSensor(const std::map<std::string, std::string>& options)
                 sensorBaudrate = static_cast<UartSensor::Baudrate>(std::stoul(options.at("Baudrate")));
             }
         }
+        else
+        {
+            sensorBaudrate = UartSensor::Baudrate::BAUDRATE_FASTEST;
+        }
     }
 }

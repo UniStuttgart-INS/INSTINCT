@@ -60,7 +60,7 @@ class VectorNavDataLogger final : public DataLogger
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
         return { { CONFIG_STRING, "Path", "Path where to save the data to", { "logs/vn-log.csv" } },
-                 { CONFIG_LIST, "Type", "Type of the output file", { "[ascii]", "binary" } } };
+                 { CONFIG_LIST, "Type", "Type of the output file", { "[ascii]" } } };
     }
 
     /**

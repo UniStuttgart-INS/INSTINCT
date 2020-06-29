@@ -11,11 +11,6 @@ NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::strin
 {
     LOG_TRACE("called for {}", name);
 
-    if (options.contains("Frequency"))
-    {
-        config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at("Frequency")));
-    }
-
     // connect to the sensor
     try
     {
