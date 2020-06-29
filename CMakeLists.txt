@@ -121,7 +121,7 @@ if(ENABLE_GUI)
   if(APPLE)
     execute_process(COMMAND brew --prefix qt OUTPUT_VARIABLE qtlocation)
     set(Qt5_DIR
-        ${qtlocation}/lib/cmake/Qt5
+        "${qtlocation}/lib/cmake/Qt5"
         CACHE INTERNAL "")
     message(STATUS "Qt Location: ${Qt5_DIR}")
   endif()
