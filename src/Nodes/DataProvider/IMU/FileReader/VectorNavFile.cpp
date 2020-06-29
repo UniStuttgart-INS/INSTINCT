@@ -374,14 +374,26 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             }
             else if (column == "Yaw")
             {
+                if (!obs->yawPitchRoll.has_value())
+                {
+                    obs->yawPitchRoll = Eigen::Array3d();
+                }
                 obs->yawPitchRoll.value()(0) = std::stod(cell);
             }
             else if (column == "Pitch")
             {
+                if (!obs->yawPitchRoll.has_value())
+                {
+                    obs->yawPitchRoll = Eigen::Array3d();
+                }
                 obs->yawPitchRoll.value()(1) = std::stod(cell);
             }
             else if (column == "Roll")
             {
+                if (!obs->yawPitchRoll.has_value())
+                {
+                    obs->yawPitchRoll = Eigen::Array3d();
+                }
                 obs->yawPitchRoll.value()(2) = std::stod(cell);
             }
             else if (column == "Quat[0]")
