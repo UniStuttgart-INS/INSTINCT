@@ -2,12 +2,12 @@ macro(run_conan)
   # Download automatically, you can also just copy the conan.cmake file
   if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
     message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-    file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
+    file(DOWNLOAD "https://github.com/conan-io/cmake-conan/raw/v0.15/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake"
+         STATUS status)
 
-    list(GET status 0 status_code)
-    list(GET status 1 status_string)
+    list(GET status 0 error_code)
 
-    if(NOT status_code EQUAL 0)
+    if(error_code)
       message(STATUS "Could not download Conan Cmake file, using local backup")
       file(COPY "cmake/Conan-v0.15/conan.cmake" DESTINATION "${CMAKE_BINARY_DIR}")
     endif()
