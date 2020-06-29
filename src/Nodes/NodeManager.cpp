@@ -38,9 +38,7 @@ void NAV::NodeManager::processConfigFile()
                 }
 
                 // Remove any trailing non text characters
-                cell.erase(std::find_if(cell.begin(), cell.end(),
-                                        std::ptr_fun<int, int>(std::iscntrl)),
-                           cell.end());
+                cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
                 // Remove whitespaces
                 cell.erase(cell.begin(), std::find_if(cell.begin(), cell.end(), [](int ch) { return !std::isspace(ch); }));
                 cell.erase(std::find_if(cell.rbegin(), cell.rend(), [](int ch) { return !std::isspace(ch); }).base(), cell.end());
@@ -125,9 +123,7 @@ void NAV::NodeManager::processConfigFile()
             while (std::getline(lineStream, cell, ','))
             {
                 // Remove any trailing non text characters
-                cell.erase(std::find_if(cell.begin(), cell.end(),
-                                        std::ptr_fun<int, int>(std::iscntrl)),
-                           cell.end());
+                cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
                 // Remove whitespaces
                 cell.erase(cell.begin(), std::find_if(cell.begin(), cell.end(), [](int ch) { return !std::isspace(ch); }));
                 cell.erase(std::find_if(cell.rbegin(), cell.rend(), [](int ch) { return !std::isspace(ch); }).base(), cell.end());

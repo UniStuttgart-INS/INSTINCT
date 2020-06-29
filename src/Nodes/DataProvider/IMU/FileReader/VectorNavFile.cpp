@@ -28,8 +28,7 @@ NAV::VectorNavFile::VectorNavFile(const std::string& name, const std::map<std::s
             std::string line;
             std::getline(filestream, line);
             // Remove any starting non text characters
-            line.erase(line.begin(), std::find_if(line.begin(), line.end(),
-                                                  std::ptr_fun<int, int>(std::isalnum)));
+            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
             // Convert line into stream
             std::stringstream lineStream(line);
             std::string cell;
@@ -37,9 +36,7 @@ NAV::VectorNavFile::VectorNavFile(const std::string& name, const std::map<std::s
             while (std::getline(lineStream, cell, ','))
             {
                 // Remove any trailing non text characters
-                cell.erase(std::find_if(cell.begin(), cell.end(),
-                                        std::ptr_fun<int, int>(std::iscntrl)),
-                           cell.end());
+                cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
                 columns.push_back(cell);
             }
 
@@ -99,8 +96,7 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
         filestream.seekg(len, std::ios_base::beg);
     }
     // Remove any starting non text characters
-    line.erase(line.begin(), std::find_if(line.begin(), line.end(),
-                                          std::ptr_fun<int, int>(std::isgraph)));
+    line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
     if (line.empty())
     {
@@ -123,9 +119,7 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
         if (std::getline(lineStream, cell, ','))
         {
             // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(),
-                                    std::ptr_fun<int, int>(std::iscntrl)),
-                       cell.end());
+            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
             if (cell.empty())
             {
                 continue;

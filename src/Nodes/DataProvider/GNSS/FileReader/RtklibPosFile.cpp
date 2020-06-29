@@ -22,8 +22,7 @@ NAV::RtklibPosFile::RtklibPosFile(const std::string& name, const std::map<std::s
         {
             std::getline(filestream, line);
             // Remove any starting non text characters
-            line.erase(line.begin(), std::find_if(line.begin(), line.end(),
-                                                  std::ptr_fun<int, int>(std::isgraph)));
+            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
         } while (!line.empty() && line.find("%  ") == std::string::npos);
 
         // Convert line into stream
@@ -82,8 +81,7 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
     std::string line;
     std::getline(filestream, line);
     // Remove any starting non text characters
-    line.erase(line.begin(), std::find_if(line.begin(), line.end(),
-                                          std::ptr_fun<int, int>(std::isgraph)));
+    line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
     if (line.empty())
     {
@@ -101,9 +99,7 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
         if (lineStream >> cell)
         {
             // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(),
-                                    std::ptr_fun<int, int>(std::iscntrl)),
-                       cell.end());
+            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
             if (cell.empty())
             {
                 continue;
