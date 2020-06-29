@@ -118,6 +118,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
 
 if(ENABLE_GUI)
+  if(APPLE)
+    execute_process(COMMAND brew --prefix qt OUTPUT_VARIABLE qtlocation)
+    set(Qt5_DIR ${qtlocation}/lib/cmake/Qt5)
+    message(STATUS "Qt Location: ${Qt5_DIR}")
+  endif()
+
   # Include nodeeditor library
   add_subdirectory(lib/nodeeditor)
   set_target_properties(nodes PROPERTIES CXX_CLANG_TIDY "")
