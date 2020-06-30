@@ -62,16 +62,10 @@ function(set_project_warnings project_name)
       -Wuseless-cast # warn if you perform a cast to the same type
   )
 
-  # MacOS warning: unknown warning option '-Wmisleading-indentation'; did you mean '-Wbinding-in-condition'?
-  # [-Wunknown-warning-option] warning: unknown warning option '-Wduplicated-cond'; did you mean '-Wduplicate-enum'?
-  # [-Wunknown-warning-option] warning: unknown warning option '-Wduplicated-branches' [-Wunknown-warning-option]
-  # warning: unknown warning option '-Wlogical-op'; did you mean '-Wlong-long'? [-Wunknown-warning-option] warning:
-  # unknown warning option '-Wuseless-cast' [-Wunknown-warning-option]
-
   message(STATUS "CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
   if(MSVC)
     set(PROJECT_WARNINGS ${MSVC_WARNINGS})
-  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     set(PROJECT_WARNINGS ${CLANG_WARNINGS})
   else()
     set(PROJECT_WARNINGS ${GCC_WARNINGS})
