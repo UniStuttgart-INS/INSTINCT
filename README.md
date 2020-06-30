@@ -92,10 +92,6 @@ brew install ccache gnuplot doxygen cppcheck
 
 # GUI (optional)
 brew install qt
-
-# Profiling (optional)
-brew install valgrind
-brew install qcachegrind --with-graphviz
 ```
 
 #### Windows 10 (WSL):
