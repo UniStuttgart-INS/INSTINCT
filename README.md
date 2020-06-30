@@ -47,26 +47,55 @@ Most library dependencies are managed by Conan.io, so you just need to install t
 ```
 # Needed
 sudo pacman -S base-devel cmake clang
+trizen -S conan # AUR package
 
 # Optional
-trizen -S conan # AUR package
-sudo pacman -S ccache valgrind kcachegrind doxygen gnuplot cppcheck
+sudo pacman -S ccache doxygen gnuplot cppcheck
 
 # GUI (optional)
 sudo pacman -S qt5-base
+
+# Profiling (optional)
+sudo pacman -S valgrind kcachegrind
 ```
 
 #### Ubuntu:
 ```
 # Needed
-sudo apt-get install build-essential cmake clang clang-tidy
+sudo apt-get install build-essential cmake clang clang-tidy python3-pip
+pip3 install conan --user
 
 # Optional
-sudo apt-get install ccache valgrind kcachegrind doxygen gnuplot gnuplot-x11 cppcheck python3-pip
-pip3 install conan --user
+sudo apt-get install ccache doxygen gnuplot gnuplot-x11 cppcheck
 
 # GUI (optional)
 sudo apt-get install qt5-default 
+
+# Profiling (optional)
+sudo apt-get install valgrind kcachegrind
+```
+
+#### MacOS
+```
+# Basic
+xcode-select --install
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+brew update
+
+# Needed
+brew install cmake llvm conan
+ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
+ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
+
+# Optional
+brew install ccache gnuplot doxygen cppcheck
+
+# GUI (optional)
+brew install qt
+
+# Profiling (optional)
+brew install valgrind
+brew install qcachegrind --with-graphviz
 ```
 
 #### Windows 10 (WSL):
