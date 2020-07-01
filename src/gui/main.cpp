@@ -411,14 +411,14 @@ int main(int argc, char* argv[])
     QWidget mainWidget;
 
     QMenuBar* menuBarLeft = new QMenuBar(&mainWidget);
-    menuBarLeft->setNativeMenuBar(true);
+    menuBarLeft->setNativeMenuBar(false);
     QAction* runAction = menuBarLeft->addAction("Run NavSoS");
     QAction* loadAction = menuBarLeft->addAction("Load");
     QAction* saveAction = menuBarLeft->addAction("Save As");
     QAction* clearAction = menuBarLeft->addAction("Clear");
     QAction* clearExit = menuBarLeft->addAction("Exit");
 
-    QMenuBar* menuBarRight = new QMenuBar();
+    QMenuBar* menuBarRight = new QMenuBar(&mainWidget);
     menuBarRight->setNativeMenuBar(false);
     rtpAction = menuBarRight->addAction("All Nodes");
 
