@@ -14,6 +14,16 @@ message(STATUS "${CMAKE_PROJECT_NAME}: ${PROJECT_VERSION}")
 
 # ######################################################################################################################
 
+# Export the SDKROOT Environment Variable for MacOS
+if(APPLE)
+  if(NOT DEFINED ENV{SDKROOT})
+    execute_process(COMMAND xcrun --show-sdk-path OUTPUT_VARIABLE sdkpath)
+    string(REGEX REPLACE "\n$" "" sdkpath "${sdkpath}")
+    set(ENV{SDKROOT} ${sdkpath})
+    message(STATUS "SDK-Path: $ENV{SDKROOT}")
+  endif()
+endif()
+
 # Basic settings
 include(cmake/StandardProjectSettings.cmake)
 
