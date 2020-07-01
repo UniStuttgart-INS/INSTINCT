@@ -61,7 +61,7 @@ void NAV::ConfigManager::FetchConfigs(const int argc, const char* argv[]) // NOL
             }
             else
             {
-                LOG_CRITICAL("Could not open the config file: {}", configFile);
+                LOG_ERROR("Could not open the config file: {}", configFile);
             }
         }
     }
