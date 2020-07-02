@@ -4,12 +4,14 @@
 
 #include "Nodes/NodeManager.hpp"
 
+#include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
+#include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/EmlidSensor.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -29,6 +31,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 {
     LOG_TRACE("called");
 
+    nodeManager.registerNodeType<NAV::KvhDataLogger>();
     nodeManager.registerNodeType<NAV::VectorNavDataLogger>();
     nodeManager.registerNodeType<NAV::UbloxDataLogger>();
     nodeManager.registerNodeType<NAV::EmlidDataLogger>();
@@ -39,6 +42,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeType<NAV::EmlidFile>();
 #ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::VectorNavSensor>();
+    nodeManager.registerNodeType<NAV::KvhSensor>();
     nodeManager.registerNodeType<NAV::UbloxSensor>();
     nodeManager.registerNodeType<NAV::EmlidSensor>();
 #endif
@@ -58,6 +62,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #include "NodeData/InsObs.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 
 #include "NodeData/GNSS/GnssObs.hpp"
@@ -72,6 +77,7 @@ void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeDataType<NAV::InsObs>();
 
     nodeManager.registerNodeDataType<NAV::ImuObs>();
+    nodeManager.registerNodeDataType<NAV::KvhObs>();
     nodeManager.registerNodeDataType<NAV::VectorNavObs>();
 
     nodeManager.registerNodeDataType<NAV::GnssObs>();

@@ -52,12 +52,6 @@ class ImuObs : public InsObs
     std::optional<Eigen::Vector3d> accelUncompXYZ;
     /// The IMU angular rate measured in units of [rad/s], given in the body frame.
     std::optional<Eigen::Vector3d> gyroUncompXYZ;
-    /// The compensated magnetic field measured in units of [Gauss], and given in the body frame.
-    std::optional<Eigen::Vector3d> magCompXYZ;
-    /// The compensated acceleration measured in units of [m/s^2], and given in the body frame.
-    std::optional<Eigen::Vector3d> accelCompXYZ;
-    /// The compensated angular rate measured in units of [rad/s], and given in the body frame.
-    std::optional<Eigen::Vector3d> gyroCompXYZ;
 };
 
 } // namespace NAV
