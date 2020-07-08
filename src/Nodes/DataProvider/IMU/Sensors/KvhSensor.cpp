@@ -51,6 +51,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
     if (p.type() == kvh::protocol::uart::Packet::Type::TYPE_BINARY_FMT_A)
     {
         auto obs = std::make_shared<KvhObs>();
+        obs->raw.setData(p.getRawData(), p.getRawDataLength());
 
         obs->gyroUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
 
@@ -61,7 +62,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
         obs->sequenceNumber = p.extractUint8();
         obs->temperature = p.extractUint16();
 
-        LOG_DATA("DATA({}): {}, {}, {}",
+        LOG_DATA("DATA({}): A {}, {}, {}",
                  kvhSensor->name, obs->sequenceNumber, obs->temperature, obs->status);
 
         // Calls all the callbacks
@@ -70,6 +71,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
     else if (p.type() == kvh::protocol::uart::Packet::Type::TYPE_BINARY_FMT_B)
     {
         auto obs = std::make_shared<KvhObs>();
+        obs->raw.setData(p.getRawData(), p.getRawDataLength());
 
         obs->gyroUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
 
@@ -81,7 +83,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
         obs->sequenceNumber = p.extractUint8();
         obs->temperature = p.extractUint16();
 
-        LOG_DATA("DATA({}): {}, {}, {}, {}",
+        LOG_DATA("DATA({}): B {}, {}, {}, {}",
                  kvhSensor->name, obs->timeSinceStartup.value(), obs->sequenceNumber, obs->temperature, obs->status);
 
         // Calls all the callbacks
@@ -90,21 +92,26 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
     else if (p.type() == kvh::protocol::uart::Packet::Type::TYPE_BINARY_FMT_C)
     {
         auto obs = std::make_shared<KvhObs>();
+        obs->raw.setData(p.getRawData(), p.getRawDataLength());
 
         obs->gyroUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
 
         obs->accelUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
         obs->accelUncompXYZ.value() *= InsConst::G_NORM;
 
-        // TODO: Split the data
-        auto tempMagXYZ = p.extractUint32();
-        //  obs->temperature = ;
+        auto OneOfTempMagXYZ = p.extractFloat();
 
         obs->status = p.extractUint8();
         obs->sequenceNumber = p.extractUint8();
 
-        LOG_DATA("DATA({}): {}, {}, {}, {}",
-                 kvhSensor->name, obs->timeSinceStartup.value(), obs->sequenceNumber, obs->temperature, obs->status);
+        static std::array<double, 4> tempMagXYZ{ std::nan(""), std::nan(""), std::nan(""), std::nan("") };
+        tempMagXYZ.at(obs->sequenceNumber % 4) = static_cast<double>(OneOfTempMagXYZ);
+
+        obs->temperature = tempMagXYZ[0];
+        obs->magUncompXYZ = Eigen::Vector3d(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
+
+        LOG_DATA("DATA({}): C {}, {}, {}",
+                 kvhSensor->name, obs->sequenceNumber, obs->temperature, obs->status);
 
         // Calls all the callbacks
         kvhSensor->invokeCallbacks(obs);

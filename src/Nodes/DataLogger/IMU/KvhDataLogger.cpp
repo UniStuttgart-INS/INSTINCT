@@ -99,7 +99,10 @@ void NAV::KvhDataLogger::writeObservation(std::shared_ptr<NAV::KvhObs>& obs)
             filestream << obs->gyroUncompXYZ.value().z();
         }
         filestream << ",";
-        filestream << obs->temperature;
+        if (obs->temperature.has_value())
+        {
+            filestream << obs->temperature.value();
+        }
         filestream << ",";
         filestream << obs->status;
         filestream << ",";

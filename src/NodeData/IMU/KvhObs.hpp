@@ -52,7 +52,7 @@ class KvhObs final : public ImuObs
     std::optional<uint32_t> timeSinceStartup;
 
     /** The IMU temperature measured in units of [Celsius]. */
-    double temperature = 0.0;
+    std::optional<double> temperature = 0.0;
 
     /** Status Byte
      * 
