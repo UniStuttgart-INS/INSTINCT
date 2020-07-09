@@ -1,46 +1,46 @@
 /**
- * @file UbloxSensor.hpp
- * @brief Ublox Sensor Class
+ * @file KvhSensor.hpp
+ * @brief KVH Sensors
  * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-19
+ * @date 2020-06-30
  */
 
 #pragma once
 
 #ifndef DISABLE_SENSORS
 
-    #include "NodeData/GNSS/UbloxObs.hpp"
-    #include "../Gnss.hpp"
+    #include "NodeData/IMU/KvhObs.hpp"
+    #include "../Imu.hpp"
     #include "../../Protocol/UartSensor.hpp"
-    #include "ub/sensors/sensors.hpp"
+    #include "kvh/sensors/sensors.hpp"
 
 namespace NAV
 {
-/// Ublox Sensor Class
-class UbloxSensor final : public UartSensor, public Gnss
+/// KVH Sensor Class
+class KvhSensor final : public UartSensor, public Imu
 {
   public:
     /// Config Structure for the sensor
-    typedef struct Config
+    using Config = struct
     {
-        /// OutputFrequency of async packages
+        /// OutputFrequency to calculate rateDivisor field.
         uint16_t outputFrequency = 1;
-    } Config;
+    };
 
     /**
-     * @brief Construct a new ublox Sensor object
+     * @brief Construct a new KVH Sensor object
      * 
      * @param[in] name Name of the Sensor
-     * @param[in, out] options Program options string list
+     * @param[in] options Program options string map
      */
-    UbloxSensor(const std::string& name, const std::map<std::string, std::string>& options);
+    KvhSensor(const std::string& name, const std::map<std::string, std::string>& options);
 
-    UbloxSensor() = default;                             ///< Default Constructor
-    ~UbloxSensor() final;                                ///< Destructor
-    UbloxSensor(const UbloxSensor&) = delete;            ///< Copy constructor
-    UbloxSensor(UbloxSensor&&) = delete;                 ///< Move constructor
-    UbloxSensor& operator=(const UbloxSensor&) = delete; ///< Copy assignment operator
-    UbloxSensor& operator=(UbloxSensor&&) = delete;      ///< Move assignment operator
+    KvhSensor() = default;                           ///< Default Constructor
+    ~KvhSensor() final;                              ///< Destructor
+    KvhSensor(const KvhSensor&) = delete;            ///< Copy constructor
+    KvhSensor(KvhSensor&&) = delete;                 ///< Move constructor
+    KvhSensor& operator=(const KvhSensor&) = delete; ///< Copy assignment operator
+    KvhSensor& operator=(KvhSensor&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Returns the String representation of the Class Type
@@ -49,7 +49,7 @@ class UbloxSensor final : public UartSensor, public Gnss
      */
     [[nodiscard]] constexpr std::string_view type() const final
     {
-        return std::string_view("UbloxSensor");
+        return std::string_view("KvhSensor");
     }
 
     /**
@@ -123,7 +123,7 @@ class UbloxSensor final : public UartSensor, public Gnss
         case PortType::Out:
             if (portIndex == 0)
             {
-                return UbloxObs().type();
+                return KvhObs().type();
             }
         }
 
@@ -146,13 +146,13 @@ class UbloxSensor final : public UartSensor, public Gnss
      * @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
      * @param[in] index Advanced usage item and can be safely ignored for now
      */
-    static void asciiOrBinaryAsyncMessageReceived(void* userData, ub::protocol::uart::Packet& p, size_t index);
+    static void asciiOrBinaryAsyncMessageReceived(void* userData, ::kvh::protocol::uart::Packet& p, size_t index);
 
-    /// UbSensor Object
-    ub::sensors::UbSensor ub;
+    /// KvhSensor Object
+    kvh::sensors::KvhImuSensor sensor;
 
     /// Config Object
-    UbloxSensor::Config config;
+    KvhSensor::Config config;
 };
 
 } // namespace NAV

@@ -35,4 +35,6 @@ const double GLO_RE = 6378136.0;    ///< radius GLONASS
 const double GAL_OMG = 7.2921151467e-5; ///< earth angular velocity (rad/s) GALILEO
 const double GAL_MU = 3.986004418e+14;  ///< earth gravitational constant GALILEO
 
+const double G_NORM = 9.80665; ///< Gravity norm constant (meter/second^2)
+
 } // namespace NAV::InsConst

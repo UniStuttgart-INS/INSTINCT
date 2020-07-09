@@ -19,31 +19,11 @@ NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, const std::map<
 
         startupGpsTime.emplace(week, tow, cycle);
     }
-}
 
-bool NAV::TimeSynchronizer::updateInsTime(std::shared_ptr<NAV::VectorNavObs>& obs)
-{
-    if (obs == nullptr)
+    if (options.count("1-Port Type"))
     {
-        return false;
+        portDataType = options.at("1-Port Type");
     }
-
-    if (startupGpsTime.has_value())
-    {
-        obs->insTime = startupGpsTime;
-
-        if (!startupImuTime.has_value())
-        {
-            startupImuTime = obs->timeSinceStartup;
-        }
-        else
-        {
-            obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - startupImuTime.value()) / 1000000000.0L);
-        }
-        return true;
-    }
-
-    return obs->insTime.has_value();
 }
 
 void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
@@ -54,10 +34,50 @@ void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
     }
 }
 
-void NAV::TimeSynchronizer::syncVectorNavSensor(std::shared_ptr<NAV::VectorNavObs>& obs)
+bool NAV::TimeSynchronizer::syncVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
-    if (updateInsTime(obs))
+    if (obs == nullptr)
     {
-        invokeCallbacks(obs);
+        return false;
     }
+
+    if (startupGpsTime.has_value())
+    {
+        static uint64_t startupImuTime = obs->timeSinceStartup.value();
+
+        obs->insTime = startupGpsTime;
+        obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - startupImuTime) / 1000000000.0L);
+
+        return true;
+    }
+
+    return obs->insTime.has_value();
+}
+
+bool NAV::TimeSynchronizer::syncKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
+{
+    if (obs == nullptr)
+    {
+        return false;
+    }
+
+    if (startupGpsTime.has_value())
+    {
+        constexpr long double dataRate = 1000.0L;
+        static uint8_t prevSequenceNumber = obs->sequenceNumber;
+
+        int sequenceNumberDiff = obs->sequenceNumber - prevSequenceNumber;
+        if (sequenceNumberDiff < -100)
+        {
+            sequenceNumberDiff = obs->sequenceNumber + 128 - prevSequenceNumber;
+        }
+        prevSequenceNumber = obs->sequenceNumber;
+
+        obs->insTime = startupGpsTime;
+        obs->insTime.value().addDiffSec(static_cast<long double>(sequenceNumberDiff) / dataRate);
+
+        startupGpsTime = obs->insTime;
+    }
+
+    return obs->insTime.has_value();
 }

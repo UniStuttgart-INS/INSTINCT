@@ -63,6 +63,13 @@ class VectorNavObs final : public ImuObs
     /** The number of SyncIn trigger events that have occurred. */
     std::optional<uint32_t> syncInCnt;
 
+    /// The compensated magnetic field measured in units of [Gauss], and given in the body frame.
+    std::optional<Eigen::Vector3d> magCompXYZ;
+    /// The compensated acceleration measured in units of [m/s^2], and given in the body frame.
+    std::optional<Eigen::Vector3d> accelCompXYZ;
+    /// The compensated angular rate measured in units of [rad/s], and given in the body frame.
+    std::optional<Eigen::Vector3d> gyroCompXYZ;
+
     /** The time interval that the delta angle and velocities are integrated over in [seconds]. */
     std::optional<double> dtime;
     /** The delta rotation angles in [degree] incurred due to rotation, by the local body reference frame, since the last time the values were outputted by the device. */

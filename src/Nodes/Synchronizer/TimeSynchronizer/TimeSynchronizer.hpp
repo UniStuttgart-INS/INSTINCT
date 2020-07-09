@@ -10,6 +10,7 @@
 #include "Nodes/Node.hpp"
 
 #include "NodeData/IMU/VectorNavObs.hpp"
+#include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/InsObs.hpp"
 
 namespace NAV
@@ -60,7 +61,8 @@ class TimeSynchronizer final : public Node
      */
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
-        return { { CONFIG_BOOL, "Use Fixed\nStart Time", "Use the Time configured here as start time", { "0" } },
+        return { { CONFIG_LIST, "1-Port Type", "Select the type of the message to receive on this port", { "[" + std::string(VectorNavObs().type()) + "]", std::string(KvhObs().type()) } },
+                 { CONFIG_BOOL, "Use Fixed\nStart Time", "Use the Time configured here as start time", { "0" } },
                  { CONFIG_INT, "Gps Cycle", "GPS Cycle at the beginning of the data recording", { "0", "0", "10" } },
                  { CONFIG_INT, "Gps Week", "GPS Week at the beginning of the data recording", { "0", "0", "245760" } },
                  { CONFIG_FLOAT, "Gps Time\nof Week", "GPS Time of Week at the beginning of the data recording", { "0", "0", "604800" } } };
@@ -109,18 +111,19 @@ class TimeSynchronizer final : public Node
         case PortType::In:
             if (portIndex == 0)
             {
-                return InsObs().type();
+                return portDataType;
             }
             if (portIndex == 1)
             {
-                return VectorNavObs().type();
+                return InsObs().type();
             }
             break;
         case PortType::Out:
             if (portIndex == 0)
             {
-                return VectorNavObs().type();
+                return portDataType;
             }
+            break;
         }
 
         return std::string_view("");
@@ -136,13 +139,27 @@ class TimeSynchronizer final : public Node
     {
         if (portIndex == 0)
         {
-            auto obs = std::static_pointer_cast<InsObs>(data);
-            syncTime(obs);
+            if (portDataType == VectorNavObs().type())
+            {
+                auto obs = std::static_pointer_cast<VectorNavObs>(data);
+                if (syncVectorNavObs(obs))
+                {
+                    invokeCallbacks(obs);
+                }
+            }
+            else if (portDataType == KvhObs().type())
+            {
+                auto obs = std::static_pointer_cast<KvhObs>(data);
+                if (syncKvhObs(obs))
+                {
+                    invokeCallbacks(obs);
+                }
+            }
         }
         else if (portIndex == 1)
         {
-            auto obs = std::static_pointer_cast<VectorNavObs>(data);
-            syncVectorNavSensor(obs);
+            auto obs = std::static_pointer_cast<InsObs>(data);
+            syncTime(obs);
         }
     }
     /**
@@ -160,10 +177,21 @@ class TimeSynchronizer final : public Node
             const auto& sourceNode = incomingLinks[1].first.lock();
             auto& sourcePortIndex = incomingLinks[1].second;
 
-            auto data = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputData(sourcePortIndex));
-            if (updateInsTime(data))
+            if (portDataType == VectorNavObs().type())
             {
-                return data;
+                auto data = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputData(sourcePortIndex));
+                if (syncVectorNavObs(data))
+                {
+                    return data;
+                }
+            }
+            else if (portDataType == KvhObs().type())
+            {
+                auto data = std::static_pointer_cast<KvhObs>(sourceNode->requestOutputData(sourcePortIndex));
+                if (syncKvhObs(data))
+                {
+                    return data;
+                }
             }
         }
 
@@ -184,11 +212,21 @@ class TimeSynchronizer final : public Node
             // but the data we want to pull come from input port 1
             const auto& sourceNode = incomingLinks[1].first.lock();
             auto& sourcePortIndex = incomingLinks[1].second;
-
-            auto peekData = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));
-            if (updateInsTime(peekData))
+            if (portDataType == VectorNavObs().type())
             {
-                return peekData;
+                auto peekData = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));
+                if (syncVectorNavObs(peekData))
+                {
+                    return peekData;
+                }
+            }
+            else if (portDataType == KvhObs().type())
+            {
+                auto peekData = std::static_pointer_cast<KvhObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));
+                if (syncKvhObs(peekData))
+                {
+                    return peekData;
+                }
             }
         }
 
@@ -197,15 +235,7 @@ class TimeSynchronizer final : public Node
 
   private:
     /**
-     * @brief Updates VectorNav Observations with gps time
-     * 
-     * @param[in, out] obs VectorNavObs to process
-     * @retval bool Returns true if time was updated
-     */
-    bool updateInsTime(std::shared_ptr<VectorNavObs>& obs);
-
-    /**
-     * @brief Gets the gps time from an UbloxSensor
+     * @brief Gets the gps time
      * 
      * @param[in] obs InsObs to process
      */
@@ -215,13 +245,24 @@ class TimeSynchronizer final : public Node
      * @brief Updates VectorNav Observations with gps time and calls callbacks
      * 
      * @param[in] obs VectorNavObs to process
+     * @retval bool True if the time was updated
      */
-    void syncVectorNavSensor(std::shared_ptr<VectorNavObs>& obs);
+    bool syncVectorNavObs(std::shared_ptr<VectorNavObs>& obs);
+
+    /**
+     * @brief Updates Kvh Observations with gps time and calls callbacks
+     * 
+     * @param[in] obs KvhObs to process
+     * @retval bool True if the time was updated
+     */
+    bool syncKvhObs(std::shared_ptr<KvhObs>& obs);
+
+    /// Input and output Data Types
+    std::string portDataType;
 
     bool useFixedStartTime = false;
 
     std::optional<InsTime> startupGpsTime;
-    std::optional<uint64_t> startupImuTime;
 };
 
 } // namespace NAV
