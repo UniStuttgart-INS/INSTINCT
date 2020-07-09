@@ -13,6 +13,7 @@
 #include <tuple>
 #include <iostream>
 #include <sstream>
+#include <regex>
 
 #include "util/Logger.hpp"
 
@@ -187,7 +188,8 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
 {
     LOG_TRACE("called");
 
-    QString description = QString::fromStdString(std::get<1>(config));
+    QString description = QString::fromStdString(std::regex_replace(std::get<1>(config), std::regex("^\\d-"), ""));
+    QString label = QString::fromStdString(std::get<1>(config));
 
     if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_BOOL)
     {
@@ -449,7 +451,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
         {
             if (QWidget* widget = layoutItem->widget())
             {
-                widget->setObjectName(prefix + description);
+                widget->setObjectName(prefix + label);
                 widget->setProperty("type", std::get<0>(config));
                 widget->setToolTip(QString::fromStdString(std::get<2>(config)));
                 LOG_DEBUG("Added GUI Element of type={} with Name={}", std::get<0>(config), (prefix + description).toStdString());
@@ -588,25 +590,29 @@ unsigned int NodeModel::nPorts(PortType portType) const
     return 0;
 }
 
-NodeDataType determinePortTypeForLayout(QFormLayout* layout, PortIndex portIndex)
+NodeDataType determinePortTypeForLayout(QFormLayout* layout, PortIndex portIndex, PortType portType)
 {
-    LOG_TRACE("called for portIndex={}", portIndex);
+    LOG_TRACE("called for portIndex={}, portType={}", portIndex, portType);
     for (int i = 0; i < layout->rowCount(); i++)
     {
         QWidget* widget = layout->itemAt(i, QFormLayout::ItemRole::FieldRole)->widget();
 
-        if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST
-            && widget->objectName() == QString::fromStdString(std::to_string(portIndex + 1) + "-Port Type"))
+        if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_LIST)
         {
-            return { static_cast<QComboBox*>(widget)->currentText(),
-                     static_cast<QComboBox*>(widget)->currentText() };
+            if ((portType == PortType::In && widget->objectName() == QString::fromStdString(std::to_string(portIndex + 1) + "-Input Port Type"))
+                || (portType == PortType::Out && widget->objectName() == QString::fromStdString(std::to_string(portIndex + 1) + "-Output Port Type"))
+                || (widget->objectName() == QString::fromStdString(std::to_string(portIndex + 1) + "-Port Type")))
+            {
+                return { static_cast<QComboBox*>(widget)->currentText(),
+                         static_cast<QComboBox*>(widget)->currentText() };
+            }
         }
         if (widget->layout()
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
         {
-            auto portTypeFromLayout = determinePortTypeForLayout(static_cast<QFormLayout*>(widget->layout()), portIndex);
+            auto portTypeFromLayout = determinePortTypeForLayout(static_cast<QFormLayout*>(widget->layout()), portIndex, portType);
             if (portTypeFromLayout.name != "")
             {
                 return portTypeFromLayout;
@@ -623,14 +629,14 @@ NodeDataType NodeModel::dataType(PortType portType, PortIndex portIndex) const
 
     uint8_t port = static_cast<uint8_t>(portIndex);
 
+    auto portTypeFromLayout = determinePortTypeForLayout(_mainLayout, portIndex, portType);
+    if (portTypeFromLayout.name != "")
+    {
+        return portTypeFromLayout;
+    }
+
     if (portType == PortType::In)
     {
-        auto portTypeFromLayout = determinePortTypeForLayout(_mainLayout, portIndex);
-        if (portTypeFromLayout.name != "")
-        {
-            return portTypeFromLayout;
-        }
-
         return { QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::In, port))),
                  QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::In, port))) };
     }

@@ -14,6 +14,7 @@
 #include <vector>
 #include <map>
 
+#include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 
@@ -80,7 +81,8 @@ class GnuPlot final : public Node
             { CONFIG_LIST, "Port Type",
                            "Select the type of the message to receive on this port",
                            { std::string(VectorNavObs().type()),
-                             "[" + std::string(RtklibPosObs().type()) + "]" } },
+                             "[" + std::string(RtklibPosObs().type()) + "]",
+                             std::string(KvhObs().type()) } },
             { CONFIG_VARIANT, "", "",
                 { ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
@@ -119,7 +121,16 @@ class GnuPlot final : public Node
                                                               "sdne", "sdeu", "sdun",
                                                               "sdxy", "sdyz", "sdzx",
                                                               "Age",
-                                                              "Ratio" })
+                                                              "Ratio" }),
+                  ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
+                                                            "Specify what data should be plotted.",
+                                                            { "[GPS time of week]",
+                                                              "Time since startup",
+                                                              "Temperature",
+                                                              "Sequence Number",
+                                                              "Mag uncomp X", "Mag uncomp Y", "Mag uncomp Z",
+                                                              "Accel uncomp X", "Accel uncomp Y", "Accel uncomp Z",
+                                                              "Gyro uncomp X", "Gyro uncomp Y", "Gyro uncomp Z" })
                 } },
             { CONFIG_STRING_BOX, "Update", "Gnuplot Commands called every time to update the view.\nUse [~x], where x is a number, to plot data selected below", { "plot [~1,2,3~] using 1:2 with lines title 'MyTitle'" } },
 
@@ -200,6 +211,11 @@ class GnuPlot final : public Node
                 auto obs = std::static_pointer_cast<RtklibPosObs>(data);
                 handleRtklibPosObs(obs, portIndex);
             }
+            else if (inputPortDataTypes.at(portIndex) == KvhObs().type())
+            {
+                auto obs = std::static_pointer_cast<KvhObs>(data);
+                handleKvhObs(obs, portIndex);
+            }
         }
     }
 
@@ -212,6 +228,8 @@ class GnuPlot final : public Node
     void handleVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs, size_t portIndex);
     /// Handle a RTKLIB Pos File Observation
     void handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, size_t portIndex);
+    /// Handle a KVH IMU Observation
+    void handleKvhObs(std::shared_ptr<NAV::KvhObs>& obs, size_t portIndex);
 
     /// Number of input ports
     uint8_t nInputPorts = 1;
