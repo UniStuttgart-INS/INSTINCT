@@ -53,7 +53,7 @@ uint16_t stoh(uint16_t sensorOrdered)
 #elif KVH_BIG_ENDIAN
     return sensorOrdered;
 #elif KVH_HAVE_ENDIAN_H
-    return le16toh(sensorOrdered);
+    return be16toh(sensorOrdered);
 #else
     #error("Unknown system")
 #endif
@@ -71,7 +71,7 @@ uint32_t stoh(uint32_t sensorOrdered)
 #elif KVH_BIG_ENDIAN
     return sensorOrdered;
 #elif KVH_HAVE_ENDIAN_H
-    return le32toh(sensorOrdered);
+    return be32toh(sensorOrdered);
 #else
     #error("Unknown system")
 #endif
@@ -93,7 +93,7 @@ uint64_t stoh(uint64_t sensorOrdered)
 #elif KVH_BIG_ENDIAN
     return sensorOrdered;
 #elif KVH_HAVE_ENDIAN_H
-    return le64toh(sensorOrdered);
+    return be64toh(sensorOrdered);
 #else
     #error("Unknown system")
 #endif
@@ -120,7 +120,7 @@ float stoh(float sensorOrdered)
 #elif KVH_BIG_ENDIAN
     return sensorOrdered;
 #elif KVH_HAVE_ENDIAN_H
-    return le64toh(sensorOrdered);
+    return be32toh(sensorOrdered);
 #else
     #error("Unknown system")
 #endif
@@ -151,7 +151,7 @@ double stoh(double sensorOrdered)
 #elif KVH_BIG_ENDIAN
     return sensorOrdered;
 #elif KVH_HAVE_ENDIAN_H
-    return le64toh(sensorOrdered);
+    return be64toh(sensorOrdered);
 #else
     #error("Unknown system")
 #endif
