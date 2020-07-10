@@ -263,6 +263,9 @@ class TimeSynchronizer final : public Node
     bool useFixedStartTime = false;
 
     std::optional<InsTime> startupGpsTime;
+
+    std::optional<uint8_t> prevSequenceNumber;
+    std::optional<uint64_t> startupImuTime;
 };
 
 } // namespace NAV

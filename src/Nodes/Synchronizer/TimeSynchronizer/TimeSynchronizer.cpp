@@ -43,10 +43,13 @@ bool NAV::TimeSynchronizer::syncVectorNavObs(std::shared_ptr<NAV::VectorNavObs>&
 
     if (startupGpsTime.has_value())
     {
-        static uint64_t startupImuTime = obs->timeSinceStartup.value();
+        if (!startupImuTime.has_value())
+        {
+            startupImuTime = obs->timeSinceStartup.value();
+        }
 
         obs->insTime = startupGpsTime;
-        obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - startupImuTime) / 1000000000.0L);
+        obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - startupImuTime.value()) / 1000000000.0L);
 
         return true;
     }
@@ -64,12 +67,16 @@ bool NAV::TimeSynchronizer::syncKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
     if (startupGpsTime.has_value())
     {
         constexpr long double dataRate = 1000.0L;
-        static uint8_t prevSequenceNumber = obs->sequenceNumber;
 
-        int sequenceNumberDiff = obs->sequenceNumber - prevSequenceNumber;
+        if (!prevSequenceNumber.has_value())
+        {
+            prevSequenceNumber = obs->sequenceNumber;
+        }
+
+        int sequenceNumberDiff = obs->sequenceNumber - prevSequenceNumber.value();
         if (sequenceNumberDiff < -100)
         {
-            sequenceNumberDiff = obs->sequenceNumber + 128 - prevSequenceNumber;
+            sequenceNumberDiff = obs->sequenceNumber + 128 - prevSequenceNumber.value();
         }
         prevSequenceNumber = obs->sequenceNumber;
 
