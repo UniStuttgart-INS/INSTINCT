@@ -101,7 +101,6 @@ uint64_t stoh(uint64_t sensorOrdered)
 
 float stoh(float sensorOrdered)
 {
-#if KVH_LITTLE_ENDIAN
     union
     {
         float rX;
@@ -110,6 +109,7 @@ float stoh(float sensorOrdered)
 
     uFloat.rX = sensorOrdered;
 
+#if KVH_LITTLE_ENDIAN
     uint32_t host;
     host = ((uFloat.ui32X >> 0) & 0xFF) * 0x01000000;
     host += ((uFloat.ui32X >> 8) & 0xFF) * 0x00010000;
@@ -120,7 +120,8 @@ float stoh(float sensorOrdered)
 #elif KVH_BIG_ENDIAN
     return sensorOrdered;
 #elif KVH_HAVE_ENDIAN_H
-    return be32toh(sensorOrdered);
+    uFloat.ui32X = be32toh(uFloat.ui32X);
+    return (uFloat.rX);
 #else
     #error("Unknown system")
 #endif
@@ -128,7 +129,6 @@ float stoh(float sensorOrdered)
 
 double stoh(double sensorOrdered)
 {
-#if KVH_LITTLE_ENDIAN
     union
     {
         double rX;
@@ -137,6 +137,7 @@ double stoh(double sensorOrdered)
 
     uDouble.rX = sensorOrdered;
 
+#if KVH_LITTLE_ENDIAN
     uint64_t host;
     host = ((uDouble.ui64X >> 0) & 0xFF) * 0x0100000000000000;
     host += ((uDouble.ui64X >> 8) & 0xFF) * 0x0001000000000000;
@@ -151,7 +152,8 @@ double stoh(double sensorOrdered)
 #elif KVH_BIG_ENDIAN
     return sensorOrdered;
 #elif KVH_HAVE_ENDIAN_H
-    return be64toh(sensorOrdered);
+    uDouble.ui64X = be64toh(uDouble.ui64X);
+    return (uDouble.rX);
 #else
     #error("Unknown system")
 #endif
