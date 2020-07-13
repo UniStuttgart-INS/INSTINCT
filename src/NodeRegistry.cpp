@@ -25,7 +25,6 @@
 #include "Nodes/StateEstimator/StateEstimator.hpp"
 
 #include "Nodes/Synchronizer/TimeSynchronizer/TimeSynchronizer.hpp"
-#include "Nodes/Synchronizer/UsbSyncSignal/GNSS/UbloxSyncSignal.hpp"
 
 void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 {
@@ -54,9 +53,6 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeType<NAV::StateEstimator>();
 
     nodeManager.registerNodeType<NAV::TimeSynchronizer>();
-#ifndef DISABLE_SENSORS
-    nodeManager.registerNodeType<NAV::UbloxSyncSignal>();
-#endif
 }
 
 #include "NodeData/InsObs.hpp"
