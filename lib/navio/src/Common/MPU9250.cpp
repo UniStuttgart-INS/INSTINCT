@@ -75,7 +75,7 @@ bool MPU9250::probe()
     usleep(10000);
     responseM = ReadReg(MPUREG_EXT_SENS_DATA_00);
 
-    if (responseXG == 0x71 && responseM == 0x48)
+    if (responseXG == 0x71) // && responseM == 0x48)
         return true;
     else
         return false;
