@@ -55,9 +55,6 @@ class VectorNavObs final : public ImuObs
      *  Roll  +/- 180°*/
     std::optional<Eigen::Array3d> yawPitchRoll;
 
-    /** The system time since startup measured in [nano seconds]. */
-    std::optional<uint64_t> timeSinceStartup;
-
     /** The time since the last SyncIn event trigger expressed in [nano seconds] */
     std::optional<uint64_t> timeSinceSyncIn;
     /** The number of SyncIn trigger events that have occurred. */
@@ -163,8 +160,6 @@ class VectorNavObs final : public ImuObs
     /** @brief The VPE status bitfield */
     std::optional<VpeStatus> vpeStatus;
 
-    /** The IMU temperature measured in units of [Celsius]. */
-    std::optional<double> temperature;
     /** The absolute IMU pressure measured in [kPa]. */
     std::optional<double> pressure;
 
