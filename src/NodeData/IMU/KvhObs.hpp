@@ -48,12 +48,6 @@ class KvhObs final : public ImuObs
     /// Complete message raw binary data including header and checksum
     KvhPacket raw;
 
-    /** Time since startup of the IMU [µs] */
-    std::optional<uint32_t> timeSinceStartup;
-
-    /** The IMU temperature measured in units of [Celsius]. */
-    std::optional<double> temperature = 0.0;
-
     /** Status Byte
      * 
      * Bit | Function               | Notes

@@ -4,14 +4,17 @@
 
 #include "Nodes/NodeManager.hpp"
 
+#include "Nodes/DataLogger/IMU/ImuDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 
+#include "Nodes/DataProvider/IMU/FileReader/ImuFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
+#include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/EmlidSensor.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -30,11 +33,13 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 {
     LOG_TRACE("called");
 
+    nodeManager.registerNodeType<NAV::ImuDataLogger>();
     nodeManager.registerNodeType<NAV::KvhDataLogger>();
     nodeManager.registerNodeType<NAV::VectorNavDataLogger>();
     nodeManager.registerNodeType<NAV::UbloxDataLogger>();
     nodeManager.registerNodeType<NAV::EmlidDataLogger>();
 
+    nodeManager.registerNodeType<NAV::ImuFile>();
     nodeManager.registerNodeType<NAV::VectorNavFile>();
     nodeManager.registerNodeType<NAV::RtklibPosFile>();
     nodeManager.registerNodeType<NAV::UbloxFile>();
@@ -42,6 +47,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::VectorNavSensor>();
     nodeManager.registerNodeType<NAV::KvhSensor>();
+    nodeManager.registerNodeType<NAV::Navio2Sensor>();
     nodeManager.registerNodeType<NAV::UbloxSensor>();
     nodeManager.registerNodeType<NAV::EmlidSensor>();
 #endif

@@ -78,7 +78,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
         obs->accelUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
         obs->accelUncompXYZ.value() *= InsConst::G_NORM;
 
-        obs->timeSinceStartup.emplace(p.extractUint32());
+        obs->timeSinceStartup.emplace(p.extractUint32() * 1000);
         obs->status = p.extractUint8();
         obs->sequenceNumber = p.extractUint8();
         obs->temperature = p.extractUint16();

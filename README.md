@@ -75,6 +75,31 @@ sudo apt-get install qt5-default
 sudo apt-get install valgrind kcachegrind
 ```
 
+#### Raspbian:
+Raspbian has old versions of clang and cmake in its repository, so we need to install them manually.
+```
+# Remove clang and cmake
+sudo apt-get remove clang cmake
+
+# Get Clang 10 (clang-tidy included) and update the path
+wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-armv7a-linux-gnueabihf.tar.xz
+tar -xvf clang+llvm-10.0.0-armv7a-linux-gnueabihf.tar.xz
+rm clang+llvm-10.0.0-armv7a-linux-gnueabihf.tar.xz
+mv clang+llvm-10.0.0-armv7a-linux-gnueabihf clang_10.0.0
+sudo mv clang_10.0.0 /usr/local
+echo 'export PATH=/usr/local/clang_10.0.0/bin:$PATH' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=/usr/local/clang_10.0.0/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
+source ~/.bashrc
+
+# Install cmake
+sudo apt-get install build-essential python3-pip
+pip3 install cmake
+
+# Install conan
+pip3 install conan --user
+```
+Optional dependencies and GUI, see Ubuntu
+
 #### MacOS
 ```
 # Basic

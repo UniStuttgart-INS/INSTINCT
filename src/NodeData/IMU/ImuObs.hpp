@@ -46,12 +46,18 @@ class ImuObs : public InsObs
         return parents;
     }
 
+    /** The system time since startup measured in [nano seconds]. */
+    std::optional<uint64_t> timeSinceStartup;
+
     /// The IMU magnetic field measured in units of [Gauss], given in the body frame.
     std::optional<Eigen::Vector3d> magUncompXYZ;
     /// The IMU acceleration measured in units of [m/s^2], given in the body frame.
     std::optional<Eigen::Vector3d> accelUncompXYZ;
     /// The IMU angular rate measured in units of [rad/s], given in the body frame.
     std::optional<Eigen::Vector3d> gyroUncompXYZ;
+
+    /// The IMU temperature measured in units of [Celsius].
+    std::optional<double> temperature = 0.0;
 };
 
 } // namespace NAV

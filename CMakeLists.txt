@@ -116,6 +116,12 @@ if(ENABLE_SENSORS)
   include_directories(SYSTEM lib/kvhlib/include)
   set_target_properties(libkvhcxx PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libkvhcxx PROPERTIES CXX_CPPCHECK "")
+
+  # Include navio library
+  add_subdirectory(lib/navio libnavio)
+  include_directories(SYSTEM lib/navio/include)
+  set_target_properties(libnavio PROPERTIES CXX_CLANG_TIDY "")
+  set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
 endif()
 
 # Include gnuplot iostream

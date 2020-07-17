@@ -36,6 +36,12 @@ void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
 
 bool NAV::TimeSynchronizer::syncVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs)
 {
+    auto imuObs = std::static_pointer_cast<ImuObs>(obs);
+    return syncImuObs(imuObs);
+}
+
+bool NAV::TimeSynchronizer::syncImuObs(std::shared_ptr<NAV::ImuObs>& obs)
+{
     if (obs == nullptr)
     {
         return false;
