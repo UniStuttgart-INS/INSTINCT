@@ -11,6 +11,7 @@
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 
 #include "Nodes/DataProvider/IMU/FileReader/ImuFile.hpp"
+#include "Nodes/DataProvider/IMU/FileReader/KvhFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
@@ -40,6 +41,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeType<NAV::EmlidDataLogger>();
 
     nodeManager.registerNodeType<NAV::ImuFile>();
+    nodeManager.registerNodeType<NAV::KvhFile>();
     nodeManager.registerNodeType<NAV::VectorNavFile>();
     nodeManager.registerNodeType<NAV::RtklibPosFile>();
     nodeManager.registerNodeType<NAV::UbloxFile>();
