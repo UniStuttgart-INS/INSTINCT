@@ -30,11 +30,11 @@ void NodeModel::updateView(QSpinBox* inputSpinBox)
             inputSpinBox->setValue(static_cast<int>(getParentNode()->nodeState().getEntries(PortType::In).size()));
             return;
         }
-        if (getParentNode()->nodeState().getEntries(PortType::In).size() > nPorts(PortType::In))
+        for (size_t i = 0; getParentNode()->nodeState().getEntries(PortType::In).size() - i > nPorts(PortType::In); i++)
         {
-            removeRepeatedConfigGroupBox(inputSpinBox);
+            removeRepeatedConfigGroupBox(getParentNode()->nodeState().getEntries(PortType::In).size() - i);
         }
-        else if (getParentNode()->nodeState().getEntries(PortType::In).size() < nPorts(PortType::In))
+        for (size_t j = 0; getParentNode()->nodeState().getEntries(PortType::In).size() + j < nPorts(PortType::In); j++)
         {
             const auto& nodeInfo = nodeManager.registeredNodeTypes().find(_name.toStdString())->second;
             const auto& guiConfigs = nodeInfo.constructorEmpty()->guiConfig();
@@ -45,7 +45,7 @@ void NodeModel::updateView(QSpinBox* inputSpinBox)
                 if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
                 {
                     size_t configRepeatedNumber = std::stoul(std::get<std::string>(std::get<3>(config).at(3)));
-                    addRepeatedConfigGroupBox(guiConfigs, _mainLayout, nPorts(PortType::In), i, configRepeatedNumber);
+                    addRepeatedConfigGroupBox(guiConfigs, _mainLayout, getParentNode()->nodeState().getEntries(PortType::In).size() + 1 + j, i, configRepeatedNumber);
                 }
             }
         }
@@ -498,11 +498,9 @@ void NodeModel::clearLayout(QFormLayout* layout)
     }
 }
 
-void NodeModel::removeRepeatedConfigGroupBox(QSpinBox* inputSpinBox)
+void NodeModel::removeRepeatedConfigGroupBox(size_t portNumber)
 {
     LOG_TRACE("called");
-
-    auto portNumber = inputSpinBox->value() + 1;
 
     for (int i = 0; i < _mainLayout->rowCount(); i++)
     {
