@@ -65,6 +65,12 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
         LOG_DATA("DATA({}): A {}, {}, {}",
                  kvhSensor->name, obs->sequenceNumber, obs->temperature, obs->status);
 
+        static uint8_t prevSequenceNumber = obs->sequenceNumber;
+        if (obs->sequenceNumber != 0 && obs->sequenceNumber < prevSequenceNumber)
+        {
+            LOG_WARN("{}: Sequence Number changed from {} to {}", kvhSensor->name, prevSequenceNumber, obs->sequenceNumber);
+        }
+
         // Calls all the callbacks
         kvhSensor->invokeCallbacks(obs);
     }

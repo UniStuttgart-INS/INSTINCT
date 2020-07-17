@@ -1,6 +1,6 @@
 /**
- * @file ImuFile.hpp
- * @brief File Reader for Imu log files
+ * @file KvhFile.hpp
+ * @brief File Reader for Kvh log files
  * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
  * @date 2020-03-16
  */
@@ -9,12 +9,12 @@
 
 #include "../Imu.hpp"
 #include "../../Protocol/FileReader.hpp"
-#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/KvhObs.hpp"
 
 namespace NAV
 {
-/// File Reader for Imu log files
-class ImuFile final : public FileReader, public Imu
+/// File Reader for Kvh log files
+class KvhFile final : public FileReader, public Imu
 {
   public:
     /**
@@ -23,14 +23,14 @@ class ImuFile final : public FileReader, public Imu
      * @param[in] name Name of the Sensor which wrote the file
      * @param[in] options Program options string map
      */
-    ImuFile(const std::string& name, const std::map<std::string, std::string>& options);
+    KvhFile(const std::string& name, const std::map<std::string, std::string>& options);
 
-    ImuFile() = default;                         ///< Default Constructor
-    ~ImuFile() final;                            ///< Destructor
-    ImuFile(const ImuFile&) = delete;            ///< Copy constructor
-    ImuFile(ImuFile&&) = delete;                 ///< Move constructor
-    ImuFile& operator=(const ImuFile&) = delete; ///< Copy assignment operator
-    ImuFile& operator=(ImuFile&&) = delete;      ///< Move assignment operator
+    KvhFile() = default;                         ///< Default Constructor
+    ~KvhFile() final;                            ///< Destructor
+    KvhFile(const KvhFile&) = delete;            ///< Copy constructor
+    KvhFile(KvhFile&&) = delete;                 ///< Move constructor
+    KvhFile& operator=(const KvhFile&) = delete; ///< Copy assignment operator
+    KvhFile& operator=(KvhFile&&) = delete;      ///< Move assignment operator
 
     /**
      * @brief Returns the String representation of the Class Type
@@ -39,7 +39,7 @@ class ImuFile final : public FileReader, public Imu
      */
     [[nodiscard]] constexpr std::string_view type() const final
     {
-        return std::string_view("ImuFile");
+        return std::string_view("KvhFile");
     }
 
     /**
@@ -107,7 +107,7 @@ class ImuFile final : public FileReader, public Imu
         case PortType::Out:
             if (portIndex == 0)
             {
-                return ImuObs().type();
+                return KvhObs().type();
             }
         }
 
@@ -164,9 +164,9 @@ class ImuFile final : public FileReader, public Imu
      * @brief Polls the data from the file
      * 
      * @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
-     * @retval std::shared_ptr<ImuObs> The read observation
+     * @retval std::shared_ptr<KvhObs> The read observation
      */
-    [[nodiscard]] std::shared_ptr<ImuObs> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<KvhObs> pollData(bool peek = false);
 
     /**
      * @brief Determines the type of the file (ASCII or binary)
