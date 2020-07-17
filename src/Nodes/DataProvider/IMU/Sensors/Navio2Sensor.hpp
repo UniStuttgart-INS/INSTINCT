@@ -14,6 +14,9 @@
 
     #include "navio/Common/InertialSensor.h"
 
+    #include "util/CallbackTimer.hpp"
+    #include <chrono>
+
 namespace NAV
 {
 /// Navio2Sensor Sensor Class
@@ -141,6 +144,21 @@ class Navio2Sensor final : public Imu
 
     /// OutputFrequency to calculate rateDivisor field.
     uint16_t outputFrequency = 1;
+
+    CallbackTimer timer;
+    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+
+    float ax{};
+    float ay{};
+    float az{};
+    float gx{};
+    float gy{};
+    float gz{};
+    float mx{};
+    float my{};
+    float mz{};
+
+    static void readImuThread(void* userData);
 };
 
 } // namespace NAV

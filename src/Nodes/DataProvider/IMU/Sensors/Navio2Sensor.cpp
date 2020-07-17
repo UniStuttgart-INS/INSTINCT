@@ -9,6 +9,8 @@
     #include "navio/Navio2/LSM9DS1.h"
     #include "navio/Common/Util.h"
 
+    #include <chrono>
+
 NAV::Navio2Sensor::Navio2Sensor(const std::string& name, const std::map<std::string, std::string>& options)
     : Imu(name, options)
 {
@@ -49,24 +51,11 @@ NAV::Navio2Sensor::Navio2Sensor(const std::string& name, const std::map<std::str
     }
     sensor->initialize();
 
-    float ax{};
-    float ay{};
-    float az{};
-    float gx{};
-    float gy{};
-    float gz{};
-    float mx{};
-    float my{};
-    float mz{};
-    sensor->update();
-    sensor->read_accelerometer(&ax, &ay, &az);
-    sensor->read_gyroscope(&gx, &gy, &gz);
-    sensor->read_magnetometer(&mx, &my, &mz);
-    LOG_INFO("Acc: %+7.3f %+7.3f %+7.3f  ", ax, ay, az);
-    LOG_INFO("Gyr: %+8.3f %+8.3f %+8.3f  ", gx, gy, gz);
-    LOG_INFO("Mag: %+7.3f %+7.3f %+7.3f\n", mx, my, mz);
+    int outputInterval = static_cast<int>(1.0 / static_cast<double>(outputFrequency) * 1000.0);
+    startTime = std::chrono::high_resolution_clock::now();
+    timer.start(outputInterval, readImuThread, this);
 
-    LOG_DEBUG("{} successfully initialized", name);
+    LOG_DEBUG("{} successfully initialized {}", name, outputInterval);
 }
 
 NAV::Navio2Sensor::~Navio2Sensor()
@@ -75,6 +64,36 @@ NAV::Navio2Sensor::~Navio2Sensor()
 
     removeAllCallbacksOfType<ImuObs>();
     callbacksEnabled = false;
+    if (timer.is_running())
+    {
+        timer.stop();
+    }
+}
+
+// void NAV::Navio2Sensor::readImuThread()
+void NAV::Navio2Sensor::readImuThread(void* userData)
+{
+    auto* navio = static_cast<Navio2Sensor*>(userData);
+    auto obs = std::make_shared<ImuObs>();
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    navio->sensor->update();
+
+    navio->sensor->read_accelerometer(&navio->ax, &navio->ay, &navio->az);
+    navio->sensor->read_gyroscope(&navio->gx, &navio->gy, &navio->gz);
+    navio->sensor->read_magnetometer(&navio->mx, &navio->my, &navio->mz);
+
+    obs->temperature = navio->sensor->read_temperature();
+    obs->accelUncompXYZ.emplace(navio->ax, navio->ay, navio->az);
+    obs->gyroUncompXYZ.emplace(navio->gx, navio->gy, navio->gz);
+    obs->magUncompXYZ.emplace(navio->mx, navio->my, navio->mz);
+
+    std::chrono::nanoseconds diff = currentTime - navio->startTime;
+    obs->timeSinceStartup = diff.count();
+
+    LOG_DATA("DATA({}): {}, {}, {}, {}, {}", navio->name, obs->timeSinceStartup.value(), obs->temperature.value(), navio->ax, navio->ay, navio->az);
+
+    navio->invokeCallbacks(obs);
 }
 
 #endif
