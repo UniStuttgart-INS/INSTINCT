@@ -66,7 +66,7 @@ class NodeModel : public NodeDataModel
                                    size_t configRepeatedStart,
                                    size_t configRepeatedNumber);
 
-    void removeRepeatedConfigGroupBox(QSpinBox* inputSpinBox);
+    void removeRepeatedConfigGroupBox(size_t portNumber);
 
     void addListRow(std::vector<std::string> configOptions, QFormLayout* layout, QGroupBox* gridGroupBox);
 
