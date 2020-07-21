@@ -33,38 +33,44 @@ class proglib_DLLEXPORT SerialPort : public IPort, util::NoCopy
 
     // Constructors ///////////////////////////////////////////////////////////
 
-  public:
-    /// \brief Creates a new \ref SerialPort with the provided connection
-    ///     parameters.
+    /// \brief Creates a new \ref SerialPort with the provided connection parameters.
     ///
     /// \param[in] portName The name of the serial port.
     /// \param[in] baudrate The baudrate to open the serial port at.
     SerialPort(const std::string& portName, uint32_t baudrate);
 
-    ~SerialPort();
+    /// Destructor
+    ~SerialPort() override;
+
+    /// Copy constructor
+    SerialPort(const SerialPort&) = delete;
+    /// Move constructor
+    SerialPort(SerialPort&&) = delete;
+    /// Copy assignment operator
+    SerialPort& operator=(const SerialPort&) = delete;
+    /// Move assignment operator
+    SerialPort& operator=(SerialPort&&) = delete;
 
     // Public Methods /////////////////////////////////////////////////////////
 
-  public:
-    /// \brief Returns a list of the names of all the available serial ports on
-    ///     the system.
+    /// \brief Returns a list of the names of all the available serial ports on the system.
     ///
     /// \return The list of available serial port names.
     static std::vector<std::string> getPortNames();
 
-    virtual void open();
+    void open() override;
 
-    virtual void close();
+    void close() override;
 
-    virtual bool isOpen();
+    bool isOpen() override;
 
-    virtual void write(const char data[], size_t length);
+    void write(const char* data, size_t length) override;
 
-    virtual void read(unsigned char dataBuffer[], size_t numOfBytesToRead, size_t& numOfBytesActuallyRead);
+    void read(std::vector<unsigned char> dataBuffer) override;
 
-    virtual void registerDataReceivedHandler(void* userData, DataReceivedHandler handler);
+    void registerDataReceivedHandler(void* userData, DataReceivedHandler handler) override;
 
-    virtual void unregisterDataReceivedHandler();
+    void unregisterDataReceivedHandler() override;
 
     /// \brief Returns the baudrate connected at.
     ///
@@ -78,8 +84,8 @@ class proglib_DLLEXPORT SerialPort : public IPort, util::NoCopy
 
     /// \brief Changes the connected baudrate of the port.
     ///
-    /// \param[in] br The baudrate to change the port to.
-    void changeBaudrate(uint32_t br);
+    /// \param[in] baudrate The baudrate to change the port to.
+    void changeBaudrate(uint32_t baudrate);
 
     /// \brief Returns the stop bit configuration.
     ///
@@ -90,8 +96,6 @@ class proglib_DLLEXPORT SerialPort : public IPort, util::NoCopy
     ///
     /// \param[in] stopBits The stop bit configuration.
     void setStopBits(StopBits stopBits);
-
-    /// \brief Indicates if the platforms supports event notifications.
 
     /// \brief Returns the number of dropped sections of received data.
     ///
@@ -104,7 +108,7 @@ class proglib_DLLEXPORT SerialPort : public IPort, util::NoCopy
     ///
     /// \param[in] portName The COM port name to check.
     /// \return <c>true</c> if the COM port is optimized; otherwise <c>false</c>.
-    static bool determineIfPortIsOptimized(std::string portName);
+    static bool determineIfPortIsOptimized(const std::string& portName);
 
     /// \brief This will perform optimization of FTDI USB serial ports.
     ///
@@ -112,13 +116,12 @@ class proglib_DLLEXPORT SerialPort : public IPort, util::NoCopy
     /// privileges to write settings to the registry. Otherwise an
     ///
     /// \param[in] portName The FTDI USB Serial Port to optimize.
-    static void optimizePort(std::string portName);
+    static void optimizePort(const std::string& portName);
 
     // Private Members ////////////////////////////////////////////////////////
 
   private:
-    // Contains internal data, mainly stuff that is required for cross-platform
-    // support.
+    // Contains internal data, mainly stuff that is required for cross-platform support.
     struct Impl;
     Impl* _pi;
 };

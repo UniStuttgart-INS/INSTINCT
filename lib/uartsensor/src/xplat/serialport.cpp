@@ -11,7 +11,7 @@
     #endif
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
     #include <fcntl.h>
-    #include <errno.h>
+    #include <cerrno>
     #include <termios.h>
     #include <cstring>
     #include <sys/ioctl.h>
@@ -35,8 +35,6 @@
 #include "uart/xplat/thread.hpp"
 #include "uart/xplat/criticalsection.hpp"
 #include "uart/xplat/event.hpp"
-
-using namespace std;
 
 namespace uart::xplat
 {
@@ -64,7 +62,7 @@ struct SerialPort::Impl
     Thread* pThreadForHandlingReceivedDataInternally;
 
     // The name of the serial port.
-    string PortName;
+    std::string PortName;
 
     // The serial port's baudrate.
     uint32_t Baudrate;
@@ -99,18 +97,18 @@ struct SerialPort::Impl
         :
 #if _WIN32
           NumberOfReceiveDataDroppedSections(0),
-          SerialPortHandle(NULL),
+          SerialPortHandle(nullptr),
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
           SerialPortHandle(0),
 #else
     #error "Unknown System"
 #endif
-          pThreadForHandlingReceivedDataInternally(NULL),
+          pThreadForHandlingReceivedDataInternally(nullptr),
           Baudrate(0),
           IsOpen(false),
-          _dataReceivedHandler(NULL),
-          _dataReceivedUserData(NULL),
-          pSerialPortEventsThread(NULL),
+          _dataReceivedHandler(nullptr),
+          _dataReceivedUserData(nullptr),
+          pSerialPortEventsThread(nullptr),
           ContinueHandlingSerialPortEvents(false),
           ChangingBaudrate(false),
           PurgeFirstDataBytesWhenSerialPortIsFirstOpened(true),
@@ -120,9 +118,16 @@ struct SerialPort::Impl
     {
     }
 
-    ~Impl()
-    {
-    }
+    ~Impl() = default;
+
+    /// Copy constructor
+    Impl(const Impl&) = delete;
+    /// Move constructor
+    Impl(Impl&&) = delete;
+    /// Copy assignment operator
+    Impl& operator=(const Impl&) = delete;
+    /// Move assignment operator
+    Impl& operator=(Impl&&) = delete;
 
     static void HandleSerialPortNotifications(void* data)
     {
@@ -132,26 +137,34 @@ struct SerialPort::Impl
     void close(bool checkAndToggleIsOpenFlag = true)
     {
         if (checkAndToggleIsOpenFlag)
+        {
             ensureOpened();
+        }
 
         StopSerialPortNotificationsThread();
 
 #if _WIN32
 
         if (!CloseHandle(SerialPortHandle))
+        {
             throw std::runtime_error("Serial Port could not be closed.");
+        }
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
         if (::close(SerialPortHandle) == -1)
+        {
             throw std::runtime_error("Serial Port could not be closed.");
+        }
 
 #else
     #error "Unknown System"
 #endif
 
         if (checkAndToggleIsOpenFlag)
+        {
             IsOpen = false;
+        }
     }
 
     void closeAfterUsbCableUnplugged()
@@ -159,12 +172,16 @@ struct SerialPort::Impl
 #if _WIN32
 
         if (!CloseHandle(SerialPortHandle))
+        {
             throw std::runtime_error("Serial Port could not be closed.");
+        }
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
         if (::close(SerialPortHandle) == -1)
+        {
             throw std::runtime_error("Serial Port could not be closed.");
+        }
 
 #else
     #error "Unknown System"
@@ -184,10 +201,10 @@ struct SerialPort::Impl
         memset(&overlapped, 0, sizeof(OVERLAPPED));
 
         overlapped.hEvent = CreateEvent(
-            NULL,
+            nullptr,
             false,
             false,
-            NULL);
+            nullptr);
 
         SetCommMask(
             SerialPortHandle,
@@ -196,8 +213,8 @@ struct SerialPort::Impl
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
         fd_set readfs;
-        int error;
-        timeval readWaitTime;
+        int error{};
+        timeval readWaitTime{};
 
 #else
 
@@ -205,13 +222,11 @@ struct SerialPort::Impl
 
 #endif
 
-    IgnoreError:
+        ThreadIsRunning = true;
 
-        try
+        while (ContinueHandlingSerialPortEvents)
         {
-            ThreadIsRunning = true;
-
-            while (ContinueHandlingSerialPortEvents)
+            try
             {
 #if _WIN32
 
@@ -245,8 +260,10 @@ struct SerialPort::Impl
                 }
 
                 if (GetLastError() != ERROR_IO_PENDING)
+                {
                     // Something unexpected happened.
                     break;
+                }
 
             KeepWaiting:
 
@@ -256,14 +273,20 @@ struct SerialPort::Impl
                     WaitTimeForSerialPortReadsInMs);
 
                 if (!ContinueHandlingSerialPortEvents)
+                {
                     break;
+                }
 
                 if (waitResult == WAIT_TIMEOUT)
+                {
                     goto KeepWaiting;
+                }
 
                 if (waitResult != WAIT_OBJECT_0)
+                {
                     // Something unexpected happened.
                     break;
+                }
 
                 if (!GetOverlappedResult(
                         SerialPortHandle,
@@ -322,8 +345,8 @@ struct SerialPort::Impl
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
-                FD_ZERO(&readfs);
-                FD_SET(SerialPortHandle, &readfs);
+                FD_ZERO(&readfs);                  // NOLINT
+                FD_SET(SerialPortHandle, &readfs); // NOLINT
 
                 // Select sets the values in readWaitTime.
                 readWaitTime.tv_sec = 0;
@@ -332,8 +355,8 @@ struct SerialPort::Impl
                 error = select(
                     SerialPortHandle + 1,
                     &readfs,
-                    NULL,
-                    NULL,
+                    nullptr,
+                    nullptr,
                     &readWaitTime);
 
                 if (error == -1)
@@ -347,7 +370,7 @@ struct SerialPort::Impl
                         // condition with the operating system (actually this
                         // problem was noticed running CYGWIN) but appears to
                         // work when we try it again later.
-                        goto IgnoreError;
+                        continue;
                     }
 
     #endif
@@ -356,8 +379,10 @@ struct SerialPort::Impl
                     break;
                 }
 
-                if (!FD_ISSET(SerialPortHandle, &readfs))
+                if (!FD_ISSET(SerialPortHandle, &readfs)) // NOLINT
+                {
                     continue;
+                }
 
                 OnDataReceived();
 
@@ -365,18 +390,19 @@ struct SerialPort::Impl
     #error "Unknown System"
 #endif
             }
-        }
-        catch (...)
-        {
-            // Don't want user-code exceptions stopping the thread.
-            goto IgnoreError;
+            catch (...)
+            {
+                // Don't want user-code exceptions stopping the thread.
+            }
         }
 
         ThreadIsRunning = false;
 
         if (ContinueHandlingSerialPortEvents)
+        {
             // An error must have occurred.
             throw std::runtime_error("ContinueHandlingSerialPortEvents");
+        }
 
 #if _WIN32
 
@@ -390,7 +416,9 @@ struct SerialPort::Impl
 #endif
 
         if (userUnpluggedUsbCable)
+        {
             closeAfterUsbCableUnplugged();
+        }
     }
 
     void StartSerialPortNotificationsThread()
@@ -402,16 +430,11 @@ struct SerialPort::Impl
             this);
     }
 
-    void PurgeFirstDataBytesFromSerialPort()
-
+    void PurgeFirstDataBytesFromSerialPort() const
     {
-        unsigned char buffer[NumberOfBytesToPurgeOnOpeningSerialPort];
-        size_t numOfBytesRead;
+        auto buffer = std::vector<unsigned char>(NumberOfBytesToPurgeOnOpeningSerialPort);
 
-        BackReference->read(
-            buffer,
-            NumberOfBytesToPurgeOnOpeningSerialPort,
-            numOfBytesRead);
+        BackReference->read(buffer);
     }
 
     void StopSerialPortNotificationsThread()
@@ -425,9 +448,6 @@ struct SerialPort::Impl
 
     void OnDataReceived()
     {
-        bool exception_happened = false;
-        exception rethrow;
-
         ObserversCriticalSection.enter();
 
         // This is a critical section block
@@ -437,44 +457,41 @@ struct SerialPort::Impl
         {
             // Moved this NULL check down here due to the nature of critical sections.
             // The handler could easily be changed to NULL while waiting for the lock
-            if (_dataReceivedHandler != NULL)
+            if (_dataReceivedHandler != nullptr)
             {
                 _dataReceivedHandler(_dataReceivedUserData);
             }
+            ObserversCriticalSection.leave();
         }
-        catch (exception& e)
+        catch (std::exception& e)
         {
-            // We still want to throw an exception if it happens
-            // Set a flag to indicate we need to throw an exception
-            exception_happened = true;
-            rethrow = e;
-        }
-
-        ObserversCriticalSection.leave();
-
-        // Rethrow the exception
-        if (exception_happened)
-        {
-            throw rethrow;
+            ObserversCriticalSection.leave();
+            throw;
         }
     }
 
-    void ensureOpened()
+    void ensureOpened() const
     {
         if (!IsOpen)
+        {
             throw std::logic_error("Port is not opened.");
+        }
     }
 
-    void ensureClosed()
+    void ensureClosed() const
     {
         if (IsOpen)
+        {
             throw std::logic_error("Port is not closed.");
+        }
     }
 
     void open(bool checkAndToggleIsOpenFlag = true)
     {
         if (checkAndToggleIsOpenFlag)
+        {
             ensureClosed();
+        }
 
 #if _WIN32
 
@@ -487,18 +504,20 @@ struct SerialPort::Impl
             fullPortName.c_str(),
             GENERIC_READ | GENERIC_WRITE,
             0,
-            NULL,
+            nullptr,
             OPEN_EXISTING,
             FILE_FLAG_OVERLAPPED,
-            NULL);
+            nullptr);
 
         if (SerialPortHandle == INVALID_HANDLE_VALUE)
         {
             DWORD error = GetLastError();
 
             if (error == ERROR_ACCESS_DENIED)
+            {
                 // Port already open, probably.
                 throw invalid_operation("Port '" + PortName + "' already open.");
+            }
 
             if (error == ERROR_FILE_NOT_FOUND)
             {
@@ -530,16 +549,22 @@ struct SerialPort::Impl
             DWORD error = GetLastError();
 
             if (error != ERROR_OPERATION_ABORTED)
+            {
                 throw unknown_error();
+            }
 
             // Try clearing this error.
             DWORD errors;
-            if (!ClearCommError(SerialPortHandle, &errors, NULL))
+            if (!ClearCommError(SerialPortHandle, &errors, nullptr))
+            {
                 throw unknown_error();
+            }
 
             // Retry the operation.
             if (!GetCommState(SerialPortHandle, &config))
+            {
                 throw unknown_error();
+            }
         }
 
         switch (stopBits)
@@ -568,22 +593,30 @@ struct SerialPort::Impl
             if (error == ERROR_INVALID_PARAMETER)
             {
                 if (!CloseHandle(SerialPortHandle))
+                {
                     throw unknown_error();
+                }
 
                 throw invalid_argument("Unsupported baudrate.");
             }
 
             if (error != ERROR_OPERATION_ABORTED)
+            {
                 throw unknown_error();
+            }
 
             // Try clearing this error.
             DWORD errors;
-            if (!ClearCommError(SerialPortHandle, &errors, NULL))
+            if (!ClearCommError(SerialPortHandle, &errors, nullptr))
+            {
                 throw unknown_error();
+            }
 
             // Retry the operation.
             if (!SetCommState(SerialPortHandle, &config))
+            {
                 throw unknown_error();
+            }
         }
 
         comTimeOut.ReadIntervalTimeout = 0;
@@ -597,26 +630,33 @@ struct SerialPort::Impl
             DWORD error = GetLastError();
 
             if (error != ERROR_OPERATION_ABORTED)
+            {
                 throw unknown_error();
+            }
 
             // Try clearing this error.
             DWORD errors;
-            if (!ClearCommError(SerialPortHandle, &errors, NULL))
+            if (!ClearCommError(SerialPortHandle, &errors, nullptr))
+            {
                 throw unknown_error();
+            }
 
             // Retry the operation.
             if (!SetCommTimeouts(SerialPortHandle, &comTimeOut))
+            {
                 throw unknown_error();
+            }
         }
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
         int portFd = -1;
 
+        // NOLINTNEXTLINE
         portFd = ::open(
             PortName.c_str(),
     #if __linux__ || __CYGWIN__ || __QNXNTO__
-            O_RDWR | O_NOCTTY);
+            O_RDWR | O_NOCTTY); // NOLINT
     #elif __APPLE__
             O_RDWR | O_NOCTTY | O_NONBLOCK);
     #else
@@ -638,14 +678,14 @@ struct SerialPort::Impl
             }
         }
 
-        termios portSettings;
+        termios portSettings{};
 
         memset(
             &portSettings,
             0,
             sizeof(termios));
 
-        tcflag_t baudrateFlag;
+        tcflag_t baudrateFlag{};
 
         switch (Baudrate)
         {
@@ -696,7 +736,7 @@ struct SerialPort::Impl
     #elif __APPLE__
         cfsetspeed(&portSettings, baudrateFlag);
     #endif
-        portSettings.c_cflag |= CS8 | CLOCAL | CREAD;
+        portSettings.c_cflag |= CS8 | CLOCAL | CREAD; // NOLINT
 
         portSettings.c_iflag = IGNPAR; // Ignore bytes with parity errors.
         portSettings.c_oflag = 0;      // Enable raw data output.
@@ -705,10 +745,14 @@ struct SerialPort::Impl
 
         // Clear the serial port buffers.
         if (tcflush(portFd, TCIFLUSH) != 0)
+        {
             throw std::runtime_error("Serial Port buffer could not be cleared!");
+        }
 
         if (tcsetattr(portFd, TCSANOW, &portSettings) != 0)
+        {
             throw std::runtime_error("Serial Port buffer attributes could not be set!");
+        }
 
         SerialPortHandle = portFd;
 
@@ -717,10 +761,14 @@ struct SerialPort::Impl
 #endif
 
         if (checkAndToggleIsOpenFlag)
+        {
             IsOpen = true;
+        }
 
         if (PurgeFirstDataBytesWhenSerialPortIsFirstOpened)
+        {
             PurgeFirstDataBytesFromSerialPort();
+        }
 
         StartSerialPortNotificationsThread();
     }
@@ -731,9 +779,7 @@ struct SerialPort::Impl
     #pragma warning(disable : 4355)
 #endif
 
-SerialPort::SerialPort(
-    const string& portName,
-    uint32_t baudrate)
+SerialPort::SerialPort(const std::string& portName, uint32_t baudrate)
     : _pi(new Impl(this))
 {
     _pi->PortName = portName;
@@ -750,7 +796,7 @@ SerialPort::~SerialPort()
     {
         try
         {
-            close();
+            close(); // NOLINT
         }
         catch (...)
         {
@@ -772,8 +818,8 @@ bool SerialPort_isFtdiUsbSerialPort(string portName)
 {
     HDEVINFO deviceInfoSet = SetupDiGetClassDevs(
         &GUID_DEVCLASS_PORTS,
-        NULL,
-        NULL,
+        nullptr,
+        nullptr,
         DIGCF_PRESENT);
 
     if (deviceInfoSet == INVALID_HANDLE_VALUE)
@@ -810,10 +856,10 @@ bool SerialPort_isFtdiUsbSerialPort(string portName)
                 deviceInfoSet,
                 &deviceData,
                 SPDRP_FRIENDLYNAME,
-                NULL,
+                nullptr,
                 (PBYTE)friendlyName,
                 sizeof(friendlyName),
-                NULL))
+                nullptr))
         {
             SetupDiDestroyDeviceInfoList(deviceInfoSet);
 
@@ -822,7 +868,7 @@ bool SerialPort_isFtdiUsbSerialPort(string portName)
 
         // See if this device is our COM port.
         // TODO: There must be a better way to check the associated COM port number.
-        if (_tcsstr(friendlyName, portStrToFind) == NULL)
+        if (_tcsstr(friendlyName, portStrToFind) == nullptr)
             // Not the port we are looking for.
             continue;
 
@@ -832,10 +878,10 @@ bool SerialPort_isFtdiUsbSerialPort(string portName)
                 deviceInfoSet,
                 &deviceData,
                 SPDRP_MFG,
-                NULL,
+                nullptr,
                 (PBYTE)mfgName,
                 sizeof(mfgName),
-                NULL))
+                nullptr))
         {
             SetupDiDestroyDeviceInfoList(deviceInfoSet);
 
@@ -857,8 +903,8 @@ HKEY SerialPort_getRegistryKeyForActiveFtdiPort(string portName, bool isReadOnly
 {
     HDEVINFO deviceInfoSet = SetupDiGetClassDevs(
         &GUID_DEVCLASS_PORTS,
-        NULL,
-        NULL,
+        nullptr,
+        nullptr,
         DIGCF_PRESENT);
 
     if (deviceInfoSet == INVALID_HANDLE_VALUE)
@@ -895,10 +941,10 @@ HKEY SerialPort_getRegistryKeyForActiveFtdiPort(string portName, bool isReadOnly
                 deviceInfoSet,
                 &deviceData,
                 SPDRP_FRIENDLYNAME,
-                NULL,
+                nullptr,
                 (PBYTE)friendlyName,
                 sizeof(friendlyName),
-                NULL))
+                nullptr))
         {
             SetupDiDestroyDeviceInfoList(deviceInfoSet);
 
@@ -907,7 +953,7 @@ HKEY SerialPort_getRegistryKeyForActiveFtdiPort(string portName, bool isReadOnly
 
         // See if this device is our COM port.
         // TODO: There must be a better way to check the associated COM port number.
-        if (_tcsstr(friendlyName, portStrToFind) == NULL)
+        if (_tcsstr(friendlyName, portStrToFind) == nullptr)
             // Not the port we are looking for.
             continue;
 
@@ -917,10 +963,10 @@ HKEY SerialPort_getRegistryKeyForActiveFtdiPort(string portName, bool isReadOnly
                 deviceInfoSet,
                 &deviceData,
                 SPDRP_MFG,
-                NULL,
+                nullptr,
                 (PBYTE)mfgName,
                 sizeof(mfgName),
-                NULL))
+                nullptr))
         {
             SetupDiDestroyDeviceInfoList(deviceInfoSet);
 
@@ -942,7 +988,7 @@ HKEY SerialPort_getRegistryKeyForActiveFtdiPort(string portName, bool isReadOnly
                 &deviceData,
                 deviceInstanceId,
                 sizeof(deviceInstanceId),
-                NULL))
+                nullptr))
         {
             SetupDiDestroyDeviceInfoList(deviceInfoSet);
 
@@ -984,7 +1030,7 @@ HKEY SerialPort_getRegistryKeyForActiveFtdiPort(string portName, bool isReadOnly
 
 #endif
 
-bool SerialPort::determineIfPortIsOptimized(string portName)
+bool SerialPort::determineIfPortIsOptimized([[maybe_unused]] const std::string& portName)
 {
 #if !_WIN32
 
@@ -1013,8 +1059,8 @@ bool SerialPort::determineIfPortIsOptimized(string portName)
     if (RegQueryValueEx(
             ftdiKey,
             TEXT("LatencyTimer"),
-            NULL,
-            NULL,
+            nullptr,
+            nullptr,
             (LPBYTE)&latencyTimerValue,
             &latencyTimerValueSize)
         != ERROR_SUCCESS)
@@ -1027,7 +1073,7 @@ bool SerialPort::determineIfPortIsOptimized(string portName)
 #endif
 }
 
-void SerialPort::optimizePort(string portName)
+void SerialPort::optimizePort([[maybe_unused]] const std::string& portName)
 {
 #if !_WIN32
 
@@ -1076,17 +1122,17 @@ std::vector<std::string> SerialPort::getPortNames()
     {
         error = RegQueryInfoKey(
             serialCommKey,
-            NULL,
-            NULL,
-            NULL,
+            nullptr,
+            nullptr,
+            nullptr,
             &numOfSubkeys,
-            NULL,
-            NULL,
+            nullptr,
+            nullptr,
             &numOfValues,
-            NULL,
-            NULL,
-            NULL,
-            NULL);
+            nullptr,
+            nullptr,
+            nullptr,
+            nullptr);
     }
 
     if (ERROR_SUCCESS == error)
@@ -1103,8 +1149,8 @@ std::vector<std::string> SerialPort::getPortNames()
                 i,
                 value,
                 &capacity,
-                NULL,
-                NULL,
+                nullptr,
+                nullptr,
                 (LPBYTE)data,
                 &dataSize);
 
@@ -1121,8 +1167,8 @@ std::vector<std::string> SerialPort::getPortNames()
                 dataSize,
                 converted,
                 sizeof(converted),
-                NULL,
-                NULL);
+                nullptr,
+                nullptr);
 
             if (convertResult == 0)
                 throw unknown_error();
@@ -1155,9 +1201,9 @@ std::vector<std::string> SerialPort::getPortNames()
     {
         stream << "/dev/ttyUSB" << index;
         portName = stream.str();
-        portFd = ::open(portName.c_str(),
+        portFd = ::open(portName.c_str(),   // NOLINT
     #if __linux__ || __CYGWIN__ || __QNXNTO__
-                        O_RDWR | O_NOCTTY);
+                        O_RDWR | O_NOCTTY); // NOLINT
     #else
         #error "Unknown System"
     #endif
@@ -1174,13 +1220,13 @@ std::vector<std::string> SerialPort::getPortNames()
 
 #elif __APPLE__
 
-    DIR* dp = NULL;
+    DIR* dp = nullptr;
     struct dirent* dirp;
 
-    if ((dp = opendir("/dev")) == NULL)
+    if ((dp = opendir("/dev")) == nullptr)
         throw unknown_error();
 
-    while ((dirp = readdir(dp)) != NULL)
+    while ((dirp = readdir(dp)) != nullptr)
     {
         if (strstr(dirp->d_name, "tty.usbserial") != NULL)
             comPorts.push_back(string(dirp->d_name));
@@ -1222,7 +1268,7 @@ void SerialPort::setStopBits(SerialPort::StopBits stopBits)
     _pi->stopBits = stopBits;
 }
 
-void SerialPort::write(const char data[], size_t length)
+void SerialPort::write(const char* data, size_t length)
 {
     _pi->ensureOpened();
 
@@ -1240,7 +1286,7 @@ void SerialPort::write(const char data[], size_t length)
         _pi->SerialPortHandle,
         data,
         length,
-        NULL,
+        nullptr,
         &overlapped);
 
     if (!result && GetLastError() != ERROR_IO_PENDING)
@@ -1276,14 +1322,16 @@ void SerialPort::write(const char data[], size_t length)
         length);
 
     if (numOfBytesWritten == -1)
+    {
         throw std::runtime_error("Could not write to serial port");
+    }
 
 #else
     #error "Unknown System"
 #endif
 }
 
-void SerialPort::read(unsigned char dataBuffer[], size_t numOfBytesToRead, size_t& numOfBytesActuallyRead)
+void SerialPort::read(std::vector<unsigned char> dataBuffer)
 {
     _pi->ensureOpened();
 
@@ -1296,17 +1344,17 @@ void SerialPort::read(unsigned char dataBuffer[], size_t numOfBytesToRead, size_
 
     BOOL result = ReadFile(
         _pi->SerialPortHandle,
-        dataBuffer,
-        numOfBytesToRead,
-        NULL,
+        dataBuffer.data(),
+        dataBuffer.capacity(),
+        nullptr,
         &overlapped);
 
     if (!result && GetLastError() != ERROR_IO_PENDING)
     {
         _pi->ReadWriteCS.leave();
-        throw unknown_error();
+        throw std::runtime_error("Could not read from serial port: IO Pending");
     }
-
+    size_t numOfBytesActuallyRead{};
     result = GetOverlappedResult(
         _pi->SerialPortHandle,
         &overlapped,
@@ -1316,20 +1364,25 @@ void SerialPort::read(unsigned char dataBuffer[], size_t numOfBytesToRead, size_
     _pi->ReadWriteCS.leave();
 
     if (!result)
-        throw unknown_error();
+    {
+        throw std::runtime_error("Could not read from serial port");
+    }
+
+    dataBuffer.resize(static_cast<size_t>(result));
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
-    int result = ::read(
+    auto result = ::read(
         _pi->SerialPortHandle,
-        dataBuffer,
-        numOfBytesToRead);
+        dataBuffer.data(),
+        dataBuffer.capacity());
 
     if (result == -1)
+    {
         throw std::runtime_error("Could not read from serial port");
+    }
 
-    numOfBytesActuallyRead = static_cast<size_t>(result);
-
+    dataBuffer.resize(static_cast<size_t>(result));
 #else
     #error "Unknown System"
 #endif
@@ -1337,8 +1390,10 @@ void SerialPort::read(unsigned char dataBuffer[], size_t numOfBytesToRead, size_
 
 void SerialPort::registerDataReceivedHandler(void* userData, DataReceivedHandler handler)
 {
-    if (_pi->_dataReceivedHandler != NULL)
+    if (_pi->_dataReceivedHandler != nullptr)
+    {
         throw std::logic_error("Need to unregister old handler first!");
+    }
 
     _pi->ObserversCriticalSection.enter();
 
@@ -1350,13 +1405,15 @@ void SerialPort::registerDataReceivedHandler(void* userData, DataReceivedHandler
 
 void SerialPort::unregisterDataReceivedHandler()
 {
-    if (_pi->_dataReceivedHandler == NULL)
+    if (_pi->_dataReceivedHandler == nullptr)
+    {
         throw std::logic_error("Need to register a handler first!");
+    }
 
     _pi->ObserversCriticalSection.enter();
 
-    _pi->_dataReceivedHandler = NULL;
-    _pi->_dataReceivedUserData = NULL;
+    _pi->_dataReceivedHandler = nullptr;
+    _pi->_dataReceivedUserData = nullptr;
 
     _pi->ObserversCriticalSection.leave();
 }
@@ -1390,14 +1447,15 @@ size_t SerialPort::NumberOfReceiveDataDroppedSections()
 
 #elif __linux__
 
-    serial_icounter_struct serialStatus;
+    serial_icounter_struct serialStatus{};
 
+    // NOLINTNEXTLINE
     ioctl(
         _pi->SerialPortHandle,
         TIOCGICOUNT,
         &serialStatus);
 
-    return serialStatus.overrun + serialStatus.buf_overrun;
+    return static_cast<size_t>(serialStatus.overrun) + static_cast<size_t>(serialStatus.buf_overrun);
 
 #elif __APPLE__ || __CYGWIN__ || __QNXNTO__
 

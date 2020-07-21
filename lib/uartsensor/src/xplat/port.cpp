@@ -2,6 +2,6 @@
 
 namespace uart::xplat
 {
-IPort::~IPort() {}
+IPort::~IPort() = default;
 
 } // namespace uart::xplat

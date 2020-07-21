@@ -43,6 +43,13 @@ class ApiVersion
     static std::string getVersion();
 };
 
+enum Endianness
+{
+    ENDIAN_LITTLE,
+    ENDIAN_BIG,
+    ENDIAN_UNKNOWN
+};
+
 /// \brief Converts two characters encoded in hex to a uint8_t.
 ///
 /// \param[in] str Two characters string with hexadecimal encoding.
@@ -52,32 +59,37 @@ uint8_t toUint8FromHexStr(const char* str);
 /// \brief Converts a 16-bit integer in sensor order to host order.
 ///
 /// \param[in] sensorOrdered The 16-bit integer in sensor order.
+/// \param[in] sensorEndianness The endianess of the sensor order
 /// \return The value converted to host ordered.
-uint16_t stoh(uint16_t sensorOrdered);
+uint16_t stoh(uint16_t sensorOrdered, Endianness sensorEndianness);
 
 /// \brief Converts a 32-bit integer in sensor order to host order.
 ///
 /// \param[in] sensorOrdered The 32-bit integer in sensor order.
+/// \param[in] sensorEndianness The endianess of the sensor order
 /// \return The value converted to host ordered.
-uint32_t stoh(uint32_t sensorOrdered);
+uint32_t stoh(uint32_t sensorOrdered, Endianness sensorEndianness);
 
 /// \brief Converts a 64-bit integer in sensor order to host order.
 ///
 /// \param[in] sensorOrdered The 64-bit integer in sensor order.
+/// \param[in] sensorEndianness The endianess of the sensor order
 /// \return The value converted to host ordered.
-uint64_t stoh(uint64_t sensorOrdered);
+uint64_t stoh(uint64_t sensorOrdered, Endianness sensorEndianness);
 
 /// \brief Converts a float in sensor order to host order.
 ///
 /// \param[in] sensorOrdered The float in sensor order.
+/// \param[in] sensorEndianness The endianess of the sensor order
 /// \return The value converted to host ordered.
-float stoh(float sensorOrdered);
+float stoh(float sensorOrdered, Endianness sensorEndianness);
 
 /// \brief Converts a double in sensor order to host order.
+/// \param[in] sensorEndianness The endianess of the sensor order
 ///
 /// \param[in] sensorOrdered The double in sensor order.
 /// \return The value converted to host ordered.
-double stoh(double sensorOrdered);
+double stoh(double sensorOrdered, Endianness sensorEndianness);
 
 /// \brief Counts the number of bits set in the provided value.
 ///

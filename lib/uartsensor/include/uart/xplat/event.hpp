@@ -19,15 +19,21 @@ class proglib_DLLEXPORT Event : private util::NoCopy
 
     // Constructors ///////////////////////////////////////////////////////////
 
-  public:
     /// \brief Creates a new event.
     Event();
-
+    /// Destructor
     ~Event();
+    /// Copy constructor
+    Event(const Event&) = delete;
+    /// Move constructor
+    Event(Event&&) = delete;
+    /// Copy assignment operator
+    Event& operator=(const Event&) = delete;
+    /// Move assignment operator
+    Event& operator=(Event&&) = delete;
 
     // Public Methods /////////////////////////////////////////////////////////
 
-  public:
     /// \brief Waits for a signal on this event.
     ///
     /// This method will wait indefinitely for the event.

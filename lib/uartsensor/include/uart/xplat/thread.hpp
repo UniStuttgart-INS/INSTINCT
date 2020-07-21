@@ -26,14 +26,19 @@ class proglib_DLLEXPORT Thread : private util::NoCopy
     // Types //////////////////////////////////////////////////////////////////
 
   public:
-    /// \brief Represents a start routine for a thread which will have data
-    ///     passed to it.
-    typedef void (*ThreadStartRoutine)(void*);
+    /// \brief Represents a start routine for a thread which will have data passed to it.
+    using ThreadStartRoutine = void (*)(void*);
 
-    // Constructors ///////////////////////////////////////////////////////////
-
-  public:
+    /// Destructor
     ~Thread();
+    /// Copy constructor
+    Thread(const Thread&) = delete;
+    /// Move constructor
+    Thread(Thread&&) = delete;
+    /// Copy assignment operator
+    Thread& operator=(const Thread&) = delete;
+    /// Move assignment operator
+    Thread& operator=(Thread&&) = delete;
 
   private:
     /// \brief Creates a new <c>Thread</c> object.

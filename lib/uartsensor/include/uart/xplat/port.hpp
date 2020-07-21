@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <vector>
 #include "uart/xplat/export.hpp"
 
 namespace uart::xplat
@@ -20,8 +21,18 @@ class proglib_DLLEXPORT IPort
 
     // Public Methods /////////////////////////////////////////////////////////
 
-  public:
+    /// Default constructor
+    IPort() = default;
+    /// Destructor
     virtual ~IPort() = 0;
+    /// Copy constructor
+    IPort(const IPort&) = delete;
+    /// Move constructor
+    IPort(IPort&&) = delete;
+    /// Copy assignment operator
+    IPort& operator=(const IPort&) = delete;
+    /// Move assignment operator
+    IPort& operator=(IPort&&) = delete;
 
     /// \brief Opens the simple port.
     virtual void open() = 0;
@@ -38,16 +49,13 @@ class proglib_DLLEXPORT IPort
     ///
     /// \param[in] data The data array to write out.
     /// \param[in] length The length of the data array to write out.
-    virtual void write(const char data[], size_t length) = 0;
+    virtual void write(const char* data, size_t length) = 0;
 
     /// \brief Allows reading data from the simple port.
     ///
     /// \param[out] dataBuffer The data buffer to write the read data bytes to.
-    /// \param[in] numOfBytesToRead The number of bytes to attempt reading from
-    ///     the simple port.
-    /// \param[out] numOfBytesActuallyRead The number of bytes actually read
     ///     from the simple port.
-    virtual void read(unsigned char dataBuffer[], size_t numOfBytesToRead, size_t& numOfBytesActuallyRead) = 0;
+    virtual void read(std::vector<unsigned char> dataBuffer) = 0;
 
     /// \brief Registers a callback method for notification when new data is
     ///     received on the port.

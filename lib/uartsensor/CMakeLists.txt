@@ -8,7 +8,6 @@ set(SOURCE
     src/protocol/packet.cpp
     src/protocol/packetfinder.cpp
     src/sensors/sensors.cpp
-    src/util/checksum.cpp
     src/util/utilities.cpp
     src/xplat/criticalsection.cpp
     src/xplat/event.cpp
@@ -19,7 +18,6 @@ set(SOURCE
     include/uart/protocol/packet.hpp
     include/uart/protocol/packetfinder.hpp
     include/uart/sensors/sensors.hpp
-    include/uart/util/checksum.hpp
     include/uart/util/nocopy.hpp
     include/uart/util/utilities.hpp
     include/uart/xplat/criticalsection.hpp

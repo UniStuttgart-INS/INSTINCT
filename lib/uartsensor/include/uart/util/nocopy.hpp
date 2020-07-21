@@ -9,17 +9,21 @@ class proglib_DLLEXPORT NoCopy
 {
   protected:
     /// \brief Allows construction of derived objects.
-    NoCopy() {}
+    NoCopy() = default;
 
     /// \brief Allows destruction of derived objects.
-    ~NoCopy() {}
+    ~NoCopy() = default;
 
-  private:
+  public:
     /// \brief Prevent copying of derived objects.
-    NoCopy(const NoCopy&);
-
+    NoCopy(const NoCopy&) = delete;
     /// \brief Prevent assignment copying of derived objects.
-    NoCopy& operator=(const NoCopy&);
+    NoCopy& operator=(const NoCopy&) = delete;
+
+    /// \brief Move constructor
+    NoCopy(NoCopy&&) = default;
+    /// \brief Move assignment operator
+    NoCopy& operator=(NoCopy&&) = default;
 };
 
 } // namespace uart::util

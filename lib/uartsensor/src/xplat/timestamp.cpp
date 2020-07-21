@@ -4,7 +4,7 @@
 #if _WIN32
     #include <Windows.h>
 #elif __linux__ || __CYGWIN__ || __QNXNTO__
-    #include <time.h>
+    #include <ctime>
     #include <sys/time.h>
 #elif __APPLE__
     #include <mach/clock.h>
@@ -15,13 +15,8 @@
 
 #include <stdexcept>
 
-using namespace std;
-
 namespace uart::xplat
 {
-TimeStamp::TimeStamp()
-    : _sec(0), _usec(0) {}
-
 TimeStamp::TimeStamp(int64_t sec, uint64_t usec)
     : _sec(sec), _usec(usec) {}
 
@@ -34,9 +29,10 @@ TimeStamp TimeStamp::get()
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
-    struct timeval tv;
+    struct timeval tv
+    {};
 
-    gettimeofday(&tv, NULL);
+    gettimeofday(&tv, nullptr);
 
     return TimeStamp(tv.tv_sec, static_cast<uint64_t>(tv.tv_usec));
 
@@ -48,24 +44,15 @@ TimeStamp TimeStamp::get()
 struct Stopwatch::Impl
 {
 #if _WIN32
-    double _pcFrequency;
-    __int64 _counterStart;
+    double _pcFrequency{ 0 };
+    __int64 _counterStart{ -1 };
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
-    double _clockStart;
+    double _clockStart{ -1 };
 #else
     #error "Unknown System"
 #endif
 
     Impl()
-        :
-#if _WIN32
-          _pcFrequency(0),
-          _counterStart(-1)
-#elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
-          _clockStart(-1)
-#else
-    #error "Unknown System"
-#endif
     {
         // Start the stopwatch.
         reset();
@@ -77,8 +64,10 @@ struct Stopwatch::Impl
 
         LARGE_INTEGER li;
         if (!QueryPerformanceFrequency(&li))
+        {
             // The hardware must not support a high-resolution performance counter.
             throw not_supported();
+        }
 
         _pcFrequency = static_cast<double>(li.QuadPart) / 1000.0;
 
@@ -88,13 +77,16 @@ struct Stopwatch::Impl
 
 #elif __linux__ || __CYGWIN__ || __QNXNTO__
 
-        struct timespec time;
-        int error;
+        struct timespec time
+        {};
+        int error{};
 
         error = clock_gettime(CLOCK_MONOTONIC, &time);
 
         if (error)
+        {
             throw std::runtime_error("Could not get time");
+        }
 
         _clockStart = (static_cast<double>(time.tv_sec) * 1000.0) + (static_cast<double>(time.tv_nsec) / 1000000.0);
 
@@ -114,14 +106,16 @@ struct Stopwatch::Impl
 #endif
     }
 
-    float elapsedMs()
+    [[nodiscard]] float elapsedMs() const
     {
 #if _WIN32
 
         LARGE_INTEGER li;
 
         if (_counterStart == -1)
+        {
             throw unknown_error();
+        }
 
         QueryPerformanceCounter(&li);
 
@@ -129,17 +123,21 @@ struct Stopwatch::Impl
 
 #elif __linux__ || __CYGWIN__ || __QNXNTO__
 
-        struct timespec time;
-        int error;
+        timespec time{};
+        int error{};
 
         if (_clockStart < 0)
+        {
             // Clock not started.
             throw std::logic_error("Clock not started");
+        }
 
         error = clock_gettime(CLOCK_MONOTONIC, &time);
 
         if (error)
+        {
             throw std::runtime_error("Could not get time");
+        }
 
         return static_cast<float>((static_cast<double>(time.tv_sec) * 1000.0) + (static_cast<double>(time.tv_nsec) / 1000000.0) - _clockStart);
 

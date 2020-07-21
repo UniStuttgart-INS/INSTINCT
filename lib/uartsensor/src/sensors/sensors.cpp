@@ -3,44 +3,39 @@
 #include "uart/xplat/criticalsection.hpp"
 #include "uart/xplat/timestamp.hpp"
 #include "uart/xplat/event.hpp"
-#include "uart/util/checksum.hpp"
 
 #include <string>
 #include <queue>
 #include <string>
 #include <cstdio>
 #include <stdexcept>
-
-using namespace std;
-using namespace uart::xplat;
-using namespace uart::protocol;
-using namespace uart::util;
-
-#define COMMAND_MAX_LENGTH 0x100
+#include <array>
+#include <vector>
 
 namespace uart::sensors
 {
+static constexpr unsigned int COMMAND_MAX_LENGTH = 0x100;
+
 struct UartSensor::Impl
 {
-    static const size_t DefaultReadBufferSize = 1024;
     static const uint16_t DefaultResponseTimeoutMs = 500;
     static const uint16_t DefaultRetransmitDelayMs = 200;
 
-    SerialPort* pSerialPort;
-    IPort* port;
+    xplat::SerialPort* pSerialPort;
+    xplat::IPort* port;
     bool SimplePortIsOurs;
     bool DidWeOpenSimplePort;
     RawDataReceivedHandler _rawDataReceivedHandler;
     void* _rawDataReceivedUserData;
     PossiblePacketFoundHandler _possiblePacketFoundHandler;
     void* _possiblePacketFoundUserData;
-    PacketFinder _packetFinder;
+    protocol::PacketFinder _packetFinder;
     size_t _dataRunningIndex;
     AsyncPacketReceivedHandler _asyncPacketReceivedHandler;
     void* _asyncPacketReceivedUserData;
     UartSensor* BackReference;
-    queue<Packet> _receivedResponses;
-    CriticalSection _transactionCS;
+    std::queue<protocol::Packet> _receivedResponses;
+    xplat::CriticalSection _transactionCS;
     bool _waitingForResponse;
     ErrorPacketReceivedHandler _errorPacketReceivedHandler;
     void* _errorPacketReceivedUserData;
@@ -48,24 +43,27 @@ struct UartSensor::Impl
     uint16_t _retransmitDelayMs;
     xplat::Event _newResponsesEvent;
 
+    std::vector<uint8_t> readBuffer;
+
     explicit Impl(UartSensor* backReference)
-        : pSerialPort(NULL),
-          port(NULL),
+        : pSerialPort(nullptr),
+          port(nullptr),
           SimplePortIsOurs(false),
           DidWeOpenSimplePort(false),
-          _rawDataReceivedHandler(NULL),
-          _rawDataReceivedUserData(NULL),
-          _possiblePacketFoundHandler(NULL),
-          _possiblePacketFoundUserData(NULL),
+          _rawDataReceivedHandler(nullptr),
+          _rawDataReceivedUserData(nullptr),
+          _possiblePacketFoundHandler(nullptr),
+          _possiblePacketFoundUserData(nullptr),
           _dataRunningIndex(0),
-          _asyncPacketReceivedHandler(NULL),
-          _asyncPacketReceivedUserData(NULL),
+          _asyncPacketReceivedHandler(nullptr),
+          _asyncPacketReceivedUserData(nullptr),
           BackReference(backReference),
           _waitingForResponse(false),
-          _errorPacketReceivedHandler(NULL),
-          _errorPacketReceivedUserData(NULL),
+          _errorPacketReceivedHandler(nullptr),
+          _errorPacketReceivedUserData(nullptr),
           _responseTimeoutMs(DefaultResponseTimeoutMs),
-          _retransmitDelayMs(DefaultRetransmitDelayMs)
+          _retransmitDelayMs(DefaultRetransmitDelayMs),
+          readBuffer(uart::protocol::PacketFinder::DefaultReadBufferSize)
     {
         _packetFinder.registerPossiblePacketFoundHandler(this, possiblePacketFoundHandler);
     }
@@ -75,32 +73,45 @@ struct UartSensor::Impl
         _packetFinder.unregisterPossiblePacketFoundHandler();
     }
 
-    void onPossiblePacketFound(Packet& possiblePacket, size_t packetStartRunningIndex)
+    Impl(const Impl&) = delete;            ///< Copy constructor
+    Impl(Impl&&) = delete;                 ///< Move constructor
+    Impl& operator=(const Impl&) = delete; ///< Copy assignment operator
+    Impl& operator=(Impl&&) = delete;      ///< Move assignment operator
+
+    void onPossiblePacketFound(protocol::Packet& possiblePacket, size_t packetStartRunningIndex) const
     {
-        if (_possiblePacketFoundHandler != NULL)
+        if (_possiblePacketFoundHandler != nullptr)
+        {
             _possiblePacketFoundHandler(_possiblePacketFoundUserData, possiblePacket, packetStartRunningIndex);
+        }
     }
 
-    void onAsyncPacketReceived(Packet& asciiPacket, size_t runningIndex, TimeStamp /*timestamp*/)
+    void onAsyncPacketReceived(protocol::Packet& asciiPacket, size_t runningIndex, const xplat::TimeStamp& /*timestamp*/) const
     {
-        if (_asyncPacketReceivedHandler != NULL)
+        if (_asyncPacketReceivedHandler != nullptr)
+        {
             _asyncPacketReceivedHandler(_asyncPacketReceivedUserData, asciiPacket, runningIndex);
+        }
     }
 
-    void onErrorPacketReceived(Packet& errorPacket, size_t runningIndex)
+    void onErrorPacketReceived(protocol::Packet& errorPacket, size_t runningIndex) const
     {
-        if (_errorPacketReceivedHandler != NULL)
+        if (_errorPacketReceivedHandler != nullptr)
+        {
             _errorPacketReceivedHandler(_errorPacketReceivedUserData, errorPacket, runningIndex);
+        }
     }
 
-    static void possiblePacketFoundHandler(void* userData, Packet& possiblePacket, size_t packetStartRunningIndex, TimeStamp timestamp)
+    static void possiblePacketFoundHandler(void* userData, protocol::Packet& possiblePacket, size_t packetStartRunningIndex, const xplat::TimeStamp& timestamp)
     {
         Impl* pThis = static_cast<Impl*>(userData);
 
         pThis->onPossiblePacketFound(possiblePacket, packetStartRunningIndex);
 
         if (!possiblePacket.isValid())
+        {
             return;
+        }
 
         if (possiblePacket.isError())
         {
@@ -133,42 +144,42 @@ struct UartSensor::Impl
 
     static void dataReceivedHandler(void* userData)
     {
-        static unsigned char readBuffer[DefaultReadBufferSize];
         Impl* pi = static_cast<Impl*>(userData);
 
-        size_t numOfBytesRead = 0;
+        pi->readBuffer.resize(0);
 
-        pi->port->read(
-            readBuffer,
-            DefaultReadBufferSize,
-            numOfBytesRead);
+        pi->port->read(pi->readBuffer);
 
-        if (numOfBytesRead == 0)
+        if (pi->readBuffer.empty())
+        {
             return;
+        }
 
-        TimeStamp t = TimeStamp::get();
+        xplat::TimeStamp t = xplat::TimeStamp::get();
 
-        if (pi->_rawDataReceivedHandler != NULL)
-            pi->_rawDataReceivedHandler(pi->_rawDataReceivedUserData, reinterpret_cast<char*>(readBuffer), numOfBytesRead, pi->_dataRunningIndex);
+        if (pi->_rawDataReceivedHandler != nullptr)
+        {
+            pi->_rawDataReceivedHandler(pi->_rawDataReceivedUserData, pi->readBuffer, pi->_dataRunningIndex);
+        }
 
-        pi->_packetFinder.processReceivedData(reinterpret_cast<char*>(readBuffer), numOfBytesRead, t);
+        pi->_packetFinder.processReceivedData(pi->readBuffer, t);
 
-        pi->_dataRunningIndex += numOfBytesRead;
+        pi->_dataRunningIndex += pi->readBuffer.size();
     }
 
-    bool isConnected()
+    [[nodiscard]] bool isConnected() const
     {
-        return port != NULL && port->isOpen();
+        return port != nullptr && port->isOpen();
     }
 
-    size_t finalizeCommandToSend(char* /*toSend*/, size_t length)
+    static size_t finalizeCommandToSend(char* /*toSend*/, size_t length)
     {
         // length += sprintf(toSend + length, "%02X\r\n", Checksum::checksumASCII(toSend, length - 2));
 
         return length;
     }
 
-    Packet transactionWithWait(char* toSend, size_t length, uint16_t responseTimeoutMs, uint16_t retransmitDelayMs)
+    protocol::Packet transactionWithWait(char* toSend, size_t length, uint16_t responseTimeoutMs, uint16_t retransmitDelayMs)
     {
         // Make sure we don't have any existing responses.
         _transactionCS.enter();
@@ -183,7 +194,7 @@ struct UartSensor::Impl
 
         // Send the command and continue sending if retransmits are enabled
         // until we receive the response or timeout.
-        Stopwatch timeoutSw;
+        xplat::Stopwatch timeoutSw;
 
         port->write(toSend, length);
         float curElapsedTime = timeoutSw.elapsedMs();
@@ -194,8 +205,8 @@ struct UartSensor::Impl
 
             // Compute how long we should wait for a response before taking
             // more action.
-            float responseWaitTime = responseTimeoutMs - curElapsedTime;
-            if (responseWaitTime > retransmitDelayMs)
+            float responseWaitTime = static_cast<float>(responseTimeoutMs) - curElapsedTime;
+            if (responseWaitTime > static_cast<float>(retransmitDelayMs))
             {
                 responseWaitTime = retransmitDelayMs;
                 shouldRetransmit = true;
@@ -212,7 +223,7 @@ struct UartSensor::Impl
             // send a new retransmit.
             xplat::Event::WaitResult waitResult = _newResponsesEvent.waitUs(static_cast<uint32_t>(responseWaitTime * 1000));
 
-            queue<Packet> responsesToProcess;
+            std::queue<protocol::Packet> responsesToProcess;
 
             if (waitResult == xplat::Event::WAIT_TIMEDOUT)
             {
@@ -240,7 +251,7 @@ struct UartSensor::Impl
             // Process the collection of responses we have.
             while (!responsesToProcess.empty())
             {
-                Packet p = responsesToProcess.front();
+                protocol::Packet p = responsesToProcess.front();
                 responsesToProcess.pop();
 
                 if (p.isError())
@@ -260,17 +271,21 @@ struct UartSensor::Impl
         }
     }
 
-    void transactionNoFinalize(char* toSend, size_t length, bool waitForReply, Packet* response, uint16_t responseTimeoutMs, uint16_t retransmitDelayMs)
+    void transactionNoFinalize(char* toSend, size_t length, bool waitForReply, protocol::Packet* response, uint16_t responseTimeoutMs, uint16_t retransmitDelayMs)
     {
         if (!isConnected())
+        {
             throw std::logic_error("Connect first");
+        }
 
         if (waitForReply)
         {
             *response = transactionWithWait(toSend, length, responseTimeoutMs, retransmitDelayMs);
 
             if (response->isError())
+            {
                 throw std::runtime_error("Sensor Error");
+            }
         }
         else
         {
@@ -278,12 +293,12 @@ struct UartSensor::Impl
         }
     }
 
-    void transactionNoFinalize(char* toSend, size_t length, bool waitForReply, Packet* response)
+    void transactionNoFinalize(char* toSend, size_t length, bool waitForReply, protocol::Packet* response)
     {
         transactionNoFinalize(toSend, length, waitForReply, response, _responseTimeoutMs, _retransmitDelayMs);
     }
 
-    void transaction(char* toSend, size_t length, bool waitForReply, Packet* response, uint16_t responseTimeoutMs, uint16_t retransmitDelayMs)
+    void transaction(char* toSend, size_t length, bool waitForReply, protocol::Packet* response, uint16_t responseTimeoutMs, uint16_t retransmitDelayMs)
     {
         length = finalizeCommandToSend(toSend, length);
 
@@ -293,15 +308,15 @@ struct UartSensor::Impl
     // Performs a communication transaction with the sensor. If waitForReply is
     // set to true, we will retransmit the message until we receive a response
     // or until we time out, depending on current settings.
-    void transaction(char* toSend, size_t length, bool waitForReply, Packet* response)
+    void transaction(char* toSend, size_t length, bool waitForReply, protocol::Packet* response)
     {
         transaction(toSend, length, waitForReply, response, _responseTimeoutMs, _retransmitDelayMs);
     }
 };
 
-vector<uint32_t> UartSensor::supportedBaudrates()
+std::vector<uint32_t> UartSensor::supportedBaudrates()
 {
-    uint32_t br[] = {
+    return {
         9600,
         19200,
         38400,
@@ -312,39 +327,41 @@ vector<uint32_t> UartSensor::supportedBaudrates()
         460800,
         921600
     };
-
-    return vector<uint32_t>(br, br + sizeof(br) / sizeof(uint32_t));
 }
 
 UartSensor::UartSensor()
-    : _pi(new Impl(this))
-{
-}
+    : _pi(new Impl(this)) {}
 
 UartSensor::~UartSensor()
 {
-    if (_pi != NULL)
+    if (_pi != nullptr)
     {
         if (_pi->SimplePortIsOurs && _pi->DidWeOpenSimplePort && isConnected())
+        {
             disconnect();
+        }
 
         delete _pi;
-        _pi = NULL;
+        _pi = nullptr;
     }
 }
 
 uint32_t UartSensor::baudrate()
 {
-    if (_pi->pSerialPort == NULL)
+    if (_pi->pSerialPort == nullptr)
+    {
         throw std::logic_error("We are not connected to a known serial port.");
+    }
 
     return _pi->pSerialPort->baudrate();
 }
 
 std::string UartSensor::port()
 {
-    if (_pi->pSerialPort == NULL)
+    if (_pi->pSerialPort == nullptr)
+    {
         throw std::logic_error("We are not connected to a known serial port.");
+    }
 
     return _pi->pSerialPort->port();
 }
@@ -391,14 +408,14 @@ bool UartSensor::verifySensorConnectivity()
     return false;
 }
 
-void UartSensor::connect(const string& portName, uint32_t baudrate)
+void UartSensor::connect(const std::string& portName, uint32_t baudrate)
 {
-    _pi->pSerialPort = new SerialPort(portName, baudrate);
+    _pi->pSerialPort = new xplat::SerialPort(portName, baudrate); // NOLINT
 
-    connect(dynamic_cast<IPort*>(_pi->pSerialPort));
+    connect(dynamic_cast<xplat::IPort*>(_pi->pSerialPort));
 }
 
-void UartSensor::connect(IPort* simplePort)
+void UartSensor::connect(xplat::IPort* simplePort)
 {
     _pi->port = simplePort;
     _pi->SimplePortIsOurs = false;
@@ -414,8 +431,10 @@ void UartSensor::connect(IPort* simplePort)
 
 void UartSensor::disconnect()
 {
-    if (_pi->port == NULL || !_pi->port->isOpen())
-        throw std::logic_error("We are not connected.");
+    if (_pi->port == nullptr || !_pi->port->isOpen())
+    {
+        return;
+    }
 
     _pi->port->unregisterDataReceivedHandler();
 
@@ -430,62 +449,72 @@ void UartSensor::disconnect()
     {
         delete _pi->port;
 
-        _pi->port = NULL;
+        _pi->port = nullptr;
     }
 
-    if (_pi->pSerialPort != NULL)
+    if (_pi->pSerialPort != nullptr)
     {
         // Assuming we created this serial port.
         delete _pi->pSerialPort;
-        _pi->pSerialPort = NULL;
+        _pi->pSerialPort = nullptr;
     }
 }
 
-string UartSensor::transaction(string toSend)
+std::string UartSensor::transaction(const std::string& toSend)
 {
-    char buffer[COMMAND_MAX_LENGTH];
+    std::array<char, COMMAND_MAX_LENGTH> buffer{};
     size_t finalLength = toSend.length();
-    Packet response;
+    protocol::Packet response;
 
     // Copy over what was provided.
-    copy(toSend.begin(), toSend.end(), buffer);
+    copy(toSend.begin(), toSend.end(), buffer.data());
 
     if (toSend[toSend.length() - 2] != '\r' && toSend[toSend.length() - 1] != '\n')
     {
-        buffer[toSend.length()] = '\r';
-        buffer[toSend.length() + 1] = '\n';
+        buffer.at(toSend.length()) = '\r';
+        buffer.at(toSend.length() + 1) = '\n';
         finalLength += 2;
     }
 
-    _pi->transactionNoFinalize(buffer, finalLength, true, &response);
+    _pi->transactionNoFinalize(buffer.data(), finalLength, true, &response);
 
     return response.datastr();
 }
 
-string UartSensor::send(string toSend, bool waitForReply)
+std::string UartSensor::send(const std::string& toSend, bool waitForReply)
 {
-    Packet p;
-    char* buffer = new char[toSend.size() + 8]; // Extra room for possible additions.
+    protocol::Packet p;
+    auto buffer = std::vector<char>(toSend.size() + 8); // Extra room for possible additions.
     size_t curToSendLength = toSend.size();
 
     // Do we need to add "\r\n"?
-    if (buffer[curToSendLength - 1] != '\n')
+    if (buffer.at(curToSendLength - 1) != '\n')
     {
-        buffer[curToSendLength++] = '\r';
-        buffer[curToSendLength++] = '\n';
+        buffer.at(curToSendLength++) = '\r';
+        buffer.at(curToSendLength++) = '\n';
     }
 
-    _pi->transactionNoFinalize(buffer, curToSendLength, waitForReply, &p, _pi->_responseTimeoutMs, _pi->_retransmitDelayMs);
-
-    delete[] buffer;
+    _pi->transactionNoFinalize(buffer.data(), curToSendLength, waitForReply, &p, _pi->_responseTimeoutMs, _pi->_retransmitDelayMs);
 
     return p.datastr();
 }
 
+void UartSensor::registerProcessReceivedDataHandler(void* userData, protocol::PacketFinder::ProcessReceivedDataHandler handler)
+{
+    _pi->_packetFinder.registerProcessReceivedDataHandler(userData, handler);
+}
+
+void UartSensor::unregisterProcessReceivedDataHandler()
+{
+    _pi->_packetFinder.unregisterProcessReceivedDataHandler();
+}
+
 void UartSensor::registerRawDataReceivedHandler(void* userData, RawDataReceivedHandler handler)
 {
-    if (_pi->_rawDataReceivedHandler != NULL)
+    if (_pi->_rawDataReceivedHandler != nullptr)
+    {
         throw std::logic_error("Already registered handler");
+    }
 
     _pi->_rawDataReceivedHandler = handler;
     _pi->_rawDataReceivedUserData = userData;
@@ -493,17 +522,21 @@ void UartSensor::registerRawDataReceivedHandler(void* userData, RawDataReceivedH
 
 void UartSensor::unregisterRawDataReceivedHandler()
 {
-    if (_pi->_rawDataReceivedHandler == NULL)
+    if (_pi->_rawDataReceivedHandler == nullptr)
+    {
         throw std::logic_error("Register handler first");
+    }
 
-    _pi->_rawDataReceivedHandler = NULL;
-    _pi->_rawDataReceivedUserData = NULL;
+    _pi->_rawDataReceivedHandler = nullptr;
+    _pi->_rawDataReceivedUserData = nullptr;
 }
 
 void UartSensor::registerPossiblePacketFoundHandler(void* userData, PossiblePacketFoundHandler handler)
 {
-    if (_pi->_possiblePacketFoundHandler != NULL)
+    if (_pi->_possiblePacketFoundHandler != nullptr)
+    {
         throw std::logic_error("Already registered handler");
+    }
 
     _pi->_possiblePacketFoundHandler = handler;
     _pi->_possiblePacketFoundUserData = userData;
@@ -511,17 +544,21 @@ void UartSensor::registerPossiblePacketFoundHandler(void* userData, PossiblePack
 
 void UartSensor::unregisterPossiblePacketFoundHandler()
 {
-    if (_pi->_possiblePacketFoundHandler == NULL)
+    if (_pi->_possiblePacketFoundHandler == nullptr)
+    {
         throw std::logic_error("Register handler first");
+    }
 
-    _pi->_possiblePacketFoundHandler = NULL;
-    _pi->_possiblePacketFoundUserData = NULL;
+    _pi->_possiblePacketFoundHandler = nullptr;
+    _pi->_possiblePacketFoundUserData = nullptr;
 }
 
 void UartSensor::registerAsyncPacketReceivedHandler(void* userData, AsyncPacketReceivedHandler handler)
 {
-    if (_pi->_asyncPacketReceivedHandler != NULL)
+    if (_pi->_asyncPacketReceivedHandler != nullptr)
+    {
         throw std::logic_error("Already registered handler");
+    }
 
     _pi->_asyncPacketReceivedHandler = handler;
     _pi->_asyncPacketReceivedUserData = userData;
@@ -529,17 +566,21 @@ void UartSensor::registerAsyncPacketReceivedHandler(void* userData, AsyncPacketR
 
 void UartSensor::unregisterAsyncPacketReceivedHandler()
 {
-    if (_pi->_asyncPacketReceivedHandler == NULL)
+    if (_pi->_asyncPacketReceivedHandler == nullptr)
+    {
         throw std::logic_error("Register handler first");
+    }
 
-    _pi->_asyncPacketReceivedHandler = NULL;
-    _pi->_asyncPacketReceivedUserData = NULL;
+    _pi->_asyncPacketReceivedHandler = nullptr;
+    _pi->_asyncPacketReceivedUserData = nullptr;
 }
 
 void UartSensor::registerErrorPacketReceivedHandler(void* userData, ErrorPacketReceivedHandler handler)
 {
-    if (_pi->_errorPacketReceivedHandler != NULL)
+    if (_pi->_errorPacketReceivedHandler != nullptr)
+    {
         throw std::logic_error("Already registered handler");
+    }
 
     _pi->_errorPacketReceivedHandler = handler;
     _pi->_errorPacketReceivedUserData = userData;
@@ -547,11 +588,13 @@ void UartSensor::registerErrorPacketReceivedHandler(void* userData, ErrorPacketR
 
 void UartSensor::unregisterErrorPacketReceivedHandler()
 {
-    if (_pi->_errorPacketReceivedHandler == NULL)
+    if (_pi->_errorPacketReceivedHandler == nullptr)
+    {
         throw std::logic_error("Register handler first");
+    }
 
-    _pi->_errorPacketReceivedHandler = NULL;
-    _pi->_errorPacketReceivedUserData = NULL;
+    _pi->_errorPacketReceivedHandler = nullptr;
+    _pi->_errorPacketReceivedUserData = nullptr;
 }
 
 void UartSensor::changeBaudRate(uint32_t baudrate)

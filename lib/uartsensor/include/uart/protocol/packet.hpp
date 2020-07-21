@@ -2,10 +2,12 @@
 
 #include <string>
 #include <cstring>
+#include <vector>
 
 #include "uart/util/nocopy.hpp"
 #include "uart/xplat/int.hpp"
 #include "uart/xplat/export.hpp"
+#include "uart/util/utilities.hpp"
 
 namespace uart::protocol
 {
@@ -20,15 +22,30 @@ struct proglib_DLLEXPORT Packet
         TYPE_ASCII    ///< ASCII packet.
     };
 
-    Packet() = default; ///< Default constructor
+    /// \brief Defines a callback handler that can be called to check a certain packet property
+    ///
+    /// \param[in] packet The packet to run the check for
+    /// \return Returns true if the check succeeded
+    using PacketCheckFunction = bool (*)(const protocol::Packet& packet);
+
+    /// \brief Defines a callback handler that can be called to determine the packet type
+    ///
+    /// \param[in] packet The packet to run the check for
+    /// \return Returns the packet type
+    using PacketTypeFunction = Type (*)(const protocol::Packet& packet);
+
+    /// Default constructor
+    Packet() = default;
 
     /// \brief Creates a new packet based on the provided packet data buffer. A full
     /// packet is expected which contains the deliminators
     ///
-    /// \param[in] packet Pointer to buffer containing the packet.
-    /// \param[in] length The number of bytes in the packet.
-    Packet(unsigned char const* packet, size_t length);
+    /// \param[in] data Pointer to buffer containing the packet.
+    explicit Packet(std::vector<uint8_t> data);
 
+    /// \brief Creates a new packet based on the provided string.
+    ///
+    /// \param[in] packet String containing the packet.
     explicit Packet(const std::string& packet);
 
     /// \brief Copy constructor.
@@ -36,15 +53,16 @@ struct proglib_DLLEXPORT Packet
     /// \param[in] toCopy The Packet to copy.
     Packet(const Packet& toCopy);
 
-    ~Packet();
+    /// \brief Destructor
+    ~Packet() = default;
 
-    // Packet(const Packet&) = delete; ///< Copy constructor
-    // Packet& operator=(const Packet&) = delete; ///< Copy assignment operator
-    Packet(Packet&&) = default;            ///< Move constructor
-    Packet& operator=(Packet&&) = default; ///< Move assignment operator
+    /// \brief Move constructor
+    Packet(Packet&&) = default;
+    /// \brief Move assignment operator
+    Packet& operator=(Packet&&) = default;
 
     /// \brief Return the raw data
-    unsigned char* getRawData();
+    const std::vector<uint8_t>& getRawData();
 
     /// \brief Returns the raw data length
     [[nodiscard]] size_t getRawDataLength() const;
@@ -140,10 +158,16 @@ struct proglib_DLLEXPORT Packet
   private:
     void ensureCanExtract(size_t numOfBytes);
 
-    bool _isPacketDataMine{ false };
-    size_t _length{ 0 };
-    unsigned char* _data{ nullptr };
+    std::vector<uint8_t> _data;
     size_t _curExtractLoc{ 0 };
+
+    Endianness _endianness{ Endianness::ENDIAN_LITTLE };
+    PacketTypeFunction _packetTypeFunction{ nullptr };
+    PacketCheckFunction _checksumFunction{ nullptr };
+    PacketCheckFunction _isErrorFunction{ nullptr };
+    PacketCheckFunction _isResponseFunction{ nullptr };
+    size_t _packageHeaderLength{};
+    size_t _packageEndLength{};
 };
 
 } // namespace uart::protocol

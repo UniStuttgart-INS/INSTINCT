@@ -4,9 +4,9 @@
 #if _WIN32
     #include <Windows.h>
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
-    #include <errno.h>
+    #include <cerrno>
     #include <pthread.h>
-    #include <time.h>
+    #include <ctime>
 #else
     #error "Unknown System"
 #endif
@@ -18,48 +18,39 @@
     #include <mach/mach.h>
 #endif
 
-using namespace std;
-
 namespace uart::xplat
 {
 struct Event::Impl
 {
 #if _WIN32
-    HANDLE EventHandle;
+    HANDLE EventHandle{ nullptr };
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
-    pthread_mutex_t Mutex;
-    pthread_cond_t Condition;
-    bool IsTriggered;
+    pthread_mutex_t Mutex{};
+    pthread_cond_t Condition{};
+    bool IsTriggered{ false };
 #else
     #error "Unknown System"
 #endif
 
     Impl()
-        :
-#if _WIN32
-          EventHandle(NULL)
-#elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
-          IsTriggered(false)
-#else
-    #error "Unknown System"
-#endif
     {
 #if _WIN32
-
         EventHandle = CreateEvent(
-            NULL,
+            nullptr,
             false,
             false,
-            NULL);
+            nullptr);
 
-        if (EventHandle == NULL)
+        if (EventHandle == nullptr)
+        {
             throw unknown_error();
+        }
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
-        pthread_mutex_init(&Mutex, NULL);
+        pthread_mutex_init(&Mutex, nullptr);
 
-        pthread_cond_init(&Condition, NULL);
+        pthread_cond_init(&Condition, nullptr);
 
 #else
 
@@ -70,9 +61,7 @@ struct Event::Impl
 };
 
 Event::Event()
-    : _pi(new Impl())
-{
-}
+    : _pi(new Impl()) {}
 
 Event::~Event()
 {
@@ -94,7 +83,9 @@ void Event::wait()
         INFINITE);
 
     if (result == WAIT_OBJECT_0)
+    {
         return;
+    }
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
@@ -107,7 +98,9 @@ void Event::wait()
     pthread_mutex_unlock(&_pi->Mutex);
 
     if (errorCode == 0)
+    {
         return;
+    }
 
 #else
 
@@ -118,7 +111,7 @@ void Event::wait()
     throw std::runtime_error("Wait error");
 }
 
-Event::WaitResult Event::waitUs(uint32_t timeoutInMicroSec)
+Event::WaitResult Event::waitUs(uint32_t timeoutUs)
 {
 #if _WIN32
 
@@ -126,23 +119,27 @@ Event::WaitResult Event::waitUs(uint32_t timeoutInMicroSec)
 
     result = WaitForSingleObject(
         _pi->EventHandle,
-        timeoutInMicroSec / 1000);
+        timeoutUs / 1000);
 
     if (result == WAIT_OBJECT_0)
+    {
         return WAIT_SIGNALED;
+    }
 
     if (result == WAIT_TIMEOUT)
+    {
         return WAIT_TIMEDOUT;
+    }
 
 #elif __linux__ || __CYGWIN__ || __QNXNTO__
 
     pthread_mutex_lock(&_pi->Mutex);
 
-    timespec now;
+    timespec now{};
     clock_gettime(CLOCK_REALTIME, &now);
 
-    uint32_t numOfSecs = timeoutInMicroSec / 1000000;
-    uint32_t numOfNanoseconds = (timeoutInMicroSec % 1000000) * 1000;
+    uint32_t numOfSecs = timeoutUs / 1000000;
+    uint32_t numOfNanoseconds = (timeoutUs % 1000000) * 1000;
 
     now.tv_sec += numOfSecs;
     now.tv_nsec += numOfNanoseconds;
@@ -161,10 +158,14 @@ Event::WaitResult Event::waitUs(uint32_t timeoutInMicroSec)
     pthread_mutex_unlock(&_pi->Mutex);
 
     if (errorCode == 0)
+    {
         return WAIT_SIGNALED;
+    }
 
     if (errorCode == ETIMEDOUT)
+    {
         return WAIT_TIMEDOUT;
+    }
 
 #elif __APPLE__
 
@@ -176,12 +177,12 @@ Event::WaitResult Event::waitUs(uint32_t timeoutInMicroSec)
     clock_get_time(cclock, &mts);
     mach_port_deallocate(mach_task_self(), cclock);
 
-    timespec now;
+    timespec now{};
     now.tv_sec = mts.tv_sec;
     now.tv_nsec = mts.tv_nsec;
 
-    uint32_t numOfSecs = timeoutInMicroSec / 1000000;
-    uint32_t numOfNanoseconds = (timeoutInMicroSec % 1000000) * 1000;
+    uint32_t numOfSecs = timeoutUs / 1000000;
+    uint32_t numOfNanoseconds = (timeoutUs % 1000000) * 1000;
 
     now.tv_sec += numOfSecs;
     now.tv_nsec += numOfNanoseconds;
@@ -200,10 +201,14 @@ Event::WaitResult Event::waitUs(uint32_t timeoutInMicroSec)
     pthread_mutex_unlock(&_pi->Mutex);
 
     if (errorCode == 0)
+    {
         return WAIT_SIGNALED;
+    }
 
     if (errorCode == ETIMEDOUT)
+    {
         return WAIT_TIMEDOUT;
+    }
 
 #else
 
@@ -214,7 +219,7 @@ Event::WaitResult Event::waitUs(uint32_t timeoutInMicroSec)
     throw std::runtime_error("Wait error");
 }
 
-Event::WaitResult Event::waitMs(uint32_t timeoutInMs)
+Event::WaitResult Event::waitMs(uint32_t timeoutMs)
 {
 #if _WIN32
 
@@ -222,17 +227,21 @@ Event::WaitResult Event::waitMs(uint32_t timeoutInMs)
 
     result = WaitForSingleObject(
         _pi->EventHandle,
-        timeoutInMs);
+        timeoutMs);
 
     if (result == WAIT_OBJECT_0)
+    {
         return WAIT_SIGNALED;
+    }
 
     if (result == WAIT_TIMEOUT)
+    {
         return WAIT_TIMEDOUT;
+    }
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
-    return waitUs(timeoutInMs * 1000);
+    return waitUs(timeoutMs * 1000);
 
 #else
 
@@ -248,7 +257,9 @@ void Event::signal()
 #if _WIN32
 
     if (!SetEvent(_pi->EventHandle))
+    {
         throw unknown_error();
+    }
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 

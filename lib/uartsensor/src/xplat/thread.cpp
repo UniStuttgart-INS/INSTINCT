@@ -11,36 +11,22 @@
     #error "Unknown System"
 #endif
 
-using namespace std;
-
 namespace uart::xplat
 {
 struct Thread::Impl
 {
 #if _WIN32
-    HANDLE ThreadHandle;
+    HANDLE ThreadHandle{ nullptr };
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
-    pthread_t ThreadHandle;
-    void* Data;
+    pthread_t ThreadHandle{ 0 };
+    void* Data{ nullptr };
 #else
     #error "Unknown System"
 #endif
 
-    Thread::ThreadStartRoutine StartRoutine;
+    Thread::ThreadStartRoutine StartRoutine{ nullptr };
 
-    Impl()
-        :
-#if _WIN32
-          ThreadHandle(NULL),
-#elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
-          ThreadHandle(0),
-          Data(NULL),
-#else
-    #error "Unknown System"
-#endif
-          StartRoutine(NULL)
-    {
-    }
+    Impl() = default;
 
 #if __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
@@ -50,7 +36,7 @@ struct Thread::Impl
 
         impl->StartRoutine(impl->Data);
 
-        return NULL;
+        return nullptr;
     }
 
 #endif
@@ -70,7 +56,7 @@ Thread::~Thread()
 
 Thread* Thread::startNew(ThreadStartRoutine startRoutine, void* routineData)
 {
-    Thread* newThread = new Thread(startRoutine);
+    auto* newThread = new Thread(startRoutine); // NOLINT
 
     newThread->start(routineData);
 
@@ -79,20 +65,22 @@ Thread* Thread::startNew(ThreadStartRoutine startRoutine, void* routineData)
 
 void Thread::start(void* routineData)
 {
-    if (_pimpl->StartRoutine != NULL)
+    if (_pimpl->StartRoutine != nullptr)
     {
 #if _WIN32
 
         _pimpl->ThreadHandle = CreateThread(
-            NULL,
+            nullptr,
             0,
             (LPTHREAD_START_ROUTINE)_pimpl->StartRoutine,
             routineData,
             0,
-            NULL);
+            nullptr);
 
-        if (_pimpl->ThreadHandle == NULL)
+        if (_pimpl->ThreadHandle == nullptr)
+        {
             throw unknown_error();
+        }
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
@@ -100,12 +88,14 @@ void Thread::start(void* routineData)
 
         int errorCode = pthread_create(
             &_pimpl->ThreadHandle,
-            NULL,
+            nullptr,
             Impl::StartRoutineWrapper,
             _pimpl);
 
         if (errorCode != 0)
+        {
             throw std::runtime_error("Could not start thread");
+        }
 
 #else
     #error "Unknown System"
@@ -127,10 +117,10 @@ void Thread::join()
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
 
-    if (pthread_join(
-            _pimpl->ThreadHandle,
-            NULL))
+    if (pthread_join(_pimpl->ThreadHandle, nullptr))
+    {
         throw std::runtime_error("Could not join");
+    }
 
 #else
     #error "Unknown System"

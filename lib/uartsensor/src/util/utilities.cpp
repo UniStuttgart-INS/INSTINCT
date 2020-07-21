@@ -1,18 +1,13 @@
 #include "uart/util/utilities.hpp"
 
 #include <sstream>
-
-#if defined _WINDOWS && PYTHON
-    // TODO : This needs to function in Linux as well
-    #include "dllvalidator.h"
-#else
-    #if defined __linux__
-    #endif
-#endif
+#include <array>
+#include <algorithm>
 
 #if _M_IX86 || __i386__ || __x86_64 || _WIN64
     // Compiling for x86 processor.
-    #define HOST_LITTLE_ENDIAN 1
+    // #define HOST_LITTLE_ENDIAN 1
+    #define HOST_BIG_ENDIAN 1
 #elif __linux__
     // Don't know what processor we are compiling for but we have endian.h.
     #define HAVE_ENDIAN_H 1
@@ -28,8 +23,6 @@
 #else
     #error "Unknown System"
 #endif
-
-using namespace std;
 
 namespace uart
 {
@@ -53,9 +46,9 @@ int ApiVersion::revision()
     return API_REVISION;
 }
 
-string ApiVersion::getVersion()
+std::string ApiVersion::getVersion()
 {
-    stringstream ss;
+    std::stringstream ss;
 
     ss << major() << "." << minor() << "." << patch() << "." << revision();
 
@@ -64,128 +57,127 @@ string ApiVersion::getVersion()
 
 uint8_t toUint8FromHexStr(char const* str)
 {
-    uint8_t result;
-
-    result = to_uint8_from_hexchar(str[0]) << 4;
+    auto result = static_cast<uint8_t>(to_uint8_from_hexchar(str[0]) << 4U);
     result += to_uint8_from_hexchar(str[1]);
 
     return result;
 }
 
-uint16_t stoh(uint16_t sensorOrdered)
+template<typename T>
+constexpr void SwapEndian(T& val)
+{
+    union U
+    {
+        T val;
+        std::array<std::uint8_t, sizeof(T)> raw;
+    } src{}, dst{};
+
+    src.val = val;
+    std::reverse_copy(src.raw.begin(), src.raw.end(), dst.raw.begin());
+    val = dst.val;
+}
+
+uint16_t stoh(uint16_t sensorOrdered, Endianness sensorEndianness)
 {
 #if HOST_LITTLE_ENDIAN
+    if (sensorEndianness == Endianness::ENDIAN_BIG)
+    {
+        SwapEndian<uint16_t>(sensorOrdered);
+    }
     return sensorOrdered;
 #elif HOST_BIG_ENDIAN
-    uint16_t host;
-    host = ((sensorOrdered >> 0) & 0xFF) * 0x0100;
-    host += ((sensorOrdered >> 8) & 0xFF) * 0x0001;
-    return host;
+    if (sensorEndianness == Endianness::ENDIAN_LITTLE)
+    {
+        SwapEndian<uint16_t>(sensorOrdered);
+    }
+    return sensorOrdered;
 #elif HAVE_ENDIAN_H
+    if (sensorEndianness == Endianness::ENDIAN_BIG)
+    {
+        return be16toh(sensorOrdered);
+    }
     return le16toh(sensorOrdered);
 #else
     #error("Unknown system")
 #endif
 }
 
-uint32_t stoh(uint32_t sensorOrdered)
+uint32_t stoh(uint32_t sensorOrdered, Endianness sensorEndianness)
 {
 #if HOST_LITTLE_ENDIAN
+    if (sensorEndianness == Endianness::ENDIAN_BIG)
+    {
+        SwapEndian<uint32_t>(sensorOrdered);
+    }
     return sensorOrdered;
 #elif HOST_BIG_ENDIAN
-    uint32_t host;
-    host = ((sensorOrdered >> 0) & 0xFF) * 0x01000000;
-    host += ((sensorOrdered >> 8) & 0xFF) * 0x00010000;
-    host += ((sensorOrdered >> 16) & 0xFF) * 0x00000100;
-    host += ((sensorOrdered >> 24) & 0xFF) * 0x00000001;
-    return host;
+    if (sensorEndianness == Endianness::ENDIAN_LITTLE)
+    {
+        SwapEndian<uint32_t>(sensorOrdered);
+    }
+    return sensorOrdered;
 #elif HAVE_ENDIAN_H
+    if (sensorEndianness == Endianness::ENDIAN_BIG)
+    {
+        return be32toh(sensorOrdered);
+    }
     return le32toh(sensorOrdered);
 #else
     #error("Unknown system")
 #endif
 }
 
-uint64_t stoh(uint64_t sensorOrdered)
+uint64_t stoh(uint64_t sensorOrdered, Endianness sensorEndianness)
 {
 #if HOST_LITTLE_ENDIAN
+    if (sensorEndianness == Endianness::ENDIAN_BIG)
+    {
+        SwapEndian<uint64_t>(sensorOrdered);
+    }
     return sensorOrdered;
 #elif HOST_BIG_ENDIAN
-    uint64_t host;
-    host = ((sensorOrdered >> 0) & 0xFF) * 0x0100000000000000;
-    host += ((sensorOrdered >> 8) & 0xFF) * 0x0001000000000000;
-    host += ((sensorOrdered >> 16) & 0xFF) * 0x0000010000000000;
-    host += ((sensorOrdered >> 24) & 0xFF) * 0x0000000100000000;
-    host += ((sensorOrdered >> 32) & 0xFF) * 0x0000000001000000;
-    host += ((sensorOrdered >> 40) & 0xFF) * 0x0000000000010000;
-    host += ((sensorOrdered >> 48) & 0xFF) * 0x0000000000000100;
-    host += ((sensorOrdered >> 56) & 0xFF) * 0x0000000000000001;
-    return host;
+    if (sensorEndianness == Endianness::ENDIAN_LITTLE)
+    {
+        SwapEndian<uint64_t>(sensorOrdered);
+    }
+    return sensorOrdered;
 #elif HAVE_ENDIAN_H
+    if (sensorEndianness == Endianness::ENDIAN_BIG)
+    {
+        return be64toh(sensorOrdered);
+    }
     return le64toh(sensorOrdered);
 #else
     #error("Unknown system")
 #endif
 }
 
-float stoh(float sensorOrdered)
+float stoh(float sensorOrdered, Endianness sensorEndianness)
 {
     union
     {
         float rX;
         uint32_t ui32X;
-    } uFloat;
+    } uFloat{};
 
     uFloat.rX = sensorOrdered;
+    uFloat.ui32X = stoh(uFloat.ui32X, sensorEndianness);
 
-#if HOST_LITTLE_ENDIAN
-    uint32_t host;
-    host = ((uFloat.ui32X >> 0) & 0xFF) * 0x01000000;
-    host += ((uFloat.ui32X >> 8) & 0xFF) * 0x00010000;
-    host += ((uFloat.ui32X >> 16) & 0xFF) * 0x00000100;
-    host += ((uFloat.ui32X >> 24) & 0xFF) * 0x00000001;
-    uFloat.ui32X = host;
     return (uFloat.rX);
-#elif HOST_BIG_ENDIAN
-    return sensorOrdered;
-#elif HAVE_ENDIAN_H
-    uFloat.ui32X = be32toh(uFloat.ui32X);
-    return (uFloat.rX);
-#else
-    #error("Unknown system")
-#endif
 }
 
-double stoh(double sensorOrdered)
+double stoh(double sensorOrdered, Endianness sensorEndianness)
 {
     union
     {
         double rX;
         uint64_t ui64X;
-    } uDouble;
+    } uDouble{};
 
     uDouble.rX = sensorOrdered;
+    uDouble.ui64X = stoh(uDouble.ui64X, sensorEndianness);
 
-#if HOST_LITTLE_ENDIAN
-    uint64_t host;
-    host = ((uDouble.ui64X >> 0) & 0xFF) * 0x0100000000000000;
-    host += ((uDouble.ui64X >> 8) & 0xFF) * 0x0001000000000000;
-    host += ((uDouble.ui64X >> 16) & 0xFF) * 0x0000010000000000;
-    host += ((uDouble.ui64X >> 24) & 0xFF) * 0x0000000100000000;
-    host += ((uDouble.ui64X >> 32) & 0xFF) * 0x0000000001000000;
-    host += ((uDouble.ui64X >> 40) & 0xFF) * 0x0000000000010000;
-    host += ((uDouble.ui64X >> 48) & 0xFF) * 0x0000000000000100;
-    host += ((uDouble.ui64X >> 56) & 0xFF) * 0x0000000000000001;
-    uDouble.ui64X = host;
     return (uDouble.rX);
-#elif HOST_BIG_ENDIAN
-    return sensorOrdered;
-#elif HAVE_ENDIAN_H
-    uDouble.ui64X = be64toh(uDouble.ui64X);
-    return (uDouble.rX);
-#else
-    #error("Unknown system")
-#endif
 }
 
 uint8_t countSetBits(uint8_t d)
@@ -194,7 +186,7 @@ uint8_t countSetBits(uint8_t d)
 
     while (d)
     {
-        d &= (d - 1);
+        d &= (d - 1U);
         count++;
     }
 
@@ -204,12 +196,16 @@ uint8_t countSetBits(uint8_t d)
 uint8_t to_uint8_from_hexchar(char c)
 {
     if (c < ':')
-        return c - '0';
+    {
+        return static_cast<uint8_t>(c - '0');
+    }
 
     if (c < 'G')
-        return c - '7';
+    {
+        return static_cast<uint8_t>(c - '7');
+    }
 
-    return c - 'W';
+    return static_cast<uint8_t>(c - 'W');
 }
 
 uint8_t to_uint8_from_hexstr(char const* str)
@@ -219,9 +215,7 @@ uint8_t to_uint8_from_hexstr(char const* str)
 
 uint16_t to_uint16_from_hexstr(char const* str)
 {
-    uint16_t result;
-
-    result = to_uint8_from_hexstr(str) << 8;
+    auto result = static_cast<uint16_t>(to_uint8_from_hexstr(str) << 8U);
     result += to_uint8_from_hexstr(str + 2);
 
     return result;

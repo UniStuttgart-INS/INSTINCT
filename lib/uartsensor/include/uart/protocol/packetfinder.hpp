@@ -5,6 +5,9 @@
 #include "uart/protocol/packet.hpp"
 #include "uart/xplat/export.hpp"
 
+#include <array>
+#include <vector>
+
 namespace uart::protocol
 {
 /// \brief Helps with management of communication with a sensor using the UART
@@ -19,44 +22,52 @@ namespace uart::protocol
 class proglib_DLLEXPORT PacketFinder : private util::NoCopy
 {
   public:
+    /// Size of the Serial Port read buffer
+    static constexpr size_t DefaultReadBufferSize = 1024;
+
     /// \brief Defines the signature for a method that can receive
     /// notifications of new valid packets found.
     ///
     /// \param[in] userData Pointer to user data that was initially supplied
     ///     when the callback was registered via registerPossiblePacketFoundHandler.
     /// \param[in] possiblePacket The possible packet that was found.
-    /// \param[in] packetStartRunningIndex The running index of the start of
-    ///     the packet.
+    /// \param[in] packetStartRunningIndex The running index of the start of the packet.
     /// \param[in] timestamp The timestamp the packet was found.
-    typedef void (*ValidPacketFoundHandler)(void* userData, Packet& packet, size_t runningIndexOfPacketStart, xplat::TimeStamp timestamp);
+    using ValidPacketFoundHandler = void (*)(void* userData, Packet& packet, size_t runningIndexOfPacketStart, const xplat::TimeStamp& timestamp);
 
-    /// \brief Creates a new /ref PacketFinder with internal buffers to store
-    /// incoming bytes and alert when valid packets are received.
-    PacketFinder();
-
-    /// \brief Creates a new /ref PacketFinder with an internal buffer the size
-    /// specified.
+    /// \brief Defines the signature for a method that can handle received data
     ///
-    /// \param[in] internalReceiveBufferSize The number of bytes to make the
-    ///     internal buffer.
-    explicit PacketFinder(size_t internalReceiveBufferSize);
+    /// \param[in] userData Pointer to user data that was initially supplied
+    ///     when the callback was registered via registerProcessReceivedDataHandler.
+    /// \param[in] data The data array
+    /// \param[in] timestamp The timestamp the packet was found.
+    /// \param[in] dispatchPacket Callback when possible package was found
+    /// \param[in] dispatchPacketUserData Pointer to user data that was initially supplied to the dispatch function
+    using ProcessReceivedDataHandler = void (*)(const std::vector<uint8_t>& data, const xplat::TimeStamp& timestamp, ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData);
 
-    ~PacketFinder();
+    PacketFinder() = default;                              ///< Default constructor
+    ~PacketFinder() = default;                             ///< Destructor
+    PacketFinder(const PacketFinder&) = delete;            ///< Copy constructor
+    PacketFinder(PacketFinder&&) = delete;                 ///< Move constructor
+    PacketFinder& operator=(const PacketFinder&) = delete; ///< Copy assignment operator
+    PacketFinder& operator=(PacketFinder&&) = delete;      ///< Move assignment operator
 
     /// \brief Adds new data to the internal buffers and processes the received
     /// data to determine if any new received packets are available.
     ///
     /// \param[in] data The data buffer containing the received data.
-    /// \param[in] length The number of bytes of data in the buffer.
-    void processReceivedData(char data[], size_t length);
-
-    /// \brief Adds new data to the internal buffers and processes the received
-    /// data to determine if any new received packets are available.
-    ///
-    /// \param[in] data The data buffer containing the received data.
-    /// \param[in] length The number of bytes of data in the buffer.
+    /// \param[in] length The length of the data array
     /// \param[in] timestamp The time when the data was received.
-    void processReceivedData(char data[], size_t length, xplat::TimeStamp timestamp);
+    void processReceivedData(const std::vector<uint8_t>& data, const xplat::TimeStamp& timestamp);
+
+    /// \brief Registers a callback method for dealing with new received data
+    ///
+    /// \param[in] userData Pointer to user data, which will be provided to the callback method.
+    /// \param[in] handler The callback method.
+    void registerProcessReceivedDataHandler(void* userData, ProcessReceivedDataHandler handler);
+
+    /// \brief Unregisters the registered callback method.
+    void unregisterProcessReceivedDataHandler();
 
     /// \brief Registers a callback method for notification when a new possible
     /// packet is found.
@@ -70,8 +81,11 @@ class proglib_DLLEXPORT PacketFinder : private util::NoCopy
     void unregisterPossiblePacketFoundHandler();
 
   private:
-    struct Impl;
-    Impl* _pi;
+    void* _possiblePacketFoundUserData{ nullptr };
+    ValidPacketFoundHandler _possiblePacketFoundHandler{ nullptr };
+
+    void* _processReceivedDataUserData{ nullptr };
+    ProcessReceivedDataHandler _processReceivedDataHandler{ nullptr };
 };
 
 } // namespace uart::protocol

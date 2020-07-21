@@ -126,8 +126,6 @@ if(ENABLE_SENSORS)
   # Include uart library
   add_subdirectory(lib/uartsensor UartSensor)
   include_directories(SYSTEM lib/uartsensor/include)
-  set_target_properties(UartSensor PROPERTIES CXX_CLANG_TIDY "")
-  set_target_properties(UartSensor PROPERTIES CXX_CPPCHECK "")
 endif()
 
 # Include gnuplot iostream

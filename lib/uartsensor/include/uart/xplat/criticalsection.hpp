@@ -11,10 +11,19 @@ class proglib_DLLEXPORT CriticalSection : private util::NoCopy
   public: // Constructors ///////////////////////////////////////////////////////////
     /// \brief Creates a new critical section.
     CriticalSection();
-
+    /// Destructor
     ~CriticalSection();
+    /// Copy constructor
+    CriticalSection(const CriticalSection&) = delete;
+    /// Move constructor
+    CriticalSection(CriticalSection&&) = delete;
+    /// Copy assignment operator
+    CriticalSection& operator=(const CriticalSection&) = delete;
+    /// Move assignment operator
+    CriticalSection& operator=(CriticalSection&&) = delete;
 
-  public: // Public Methods /////////////////////////////////////////////////////////
+    // Public Methods /////////////////////////////////////////////////////////
+
     /// \brief Requests and signals that a critical section is being entered.
     void enter();
 

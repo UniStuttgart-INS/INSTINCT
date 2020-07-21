@@ -20,9 +20,7 @@ struct CriticalSection::Impl
     #error "Unknown System"
 #endif
 
-    Impl()
-    {
-    }
+    Impl() = default;
 };
 
 CriticalSection::CriticalSection()
@@ -31,7 +29,7 @@ CriticalSection::CriticalSection()
 #if _WIN32
     InitializeCriticalSection(&_pi->CriticalSection);
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
-    pthread_mutex_init(&_pi->CriticalSection, NULL);
+    pthread_mutex_init(&_pi->CriticalSection, nullptr);
 #else
     #error "Unknown System"
 #endif

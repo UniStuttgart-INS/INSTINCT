@@ -11,7 +11,7 @@
 namespace uart::xplat
 {
 class IPort;
-}
+} // namespace uart::xplat
 
 namespace uart::sensors
 {
@@ -25,9 +25,8 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// \param[in] userData Pointer to user data that was initially supplied
     ///     when the callback was registered via registerRawDataReceivedHandler.
     /// \param[in] rawData Pointer to the raw data.
-    /// \param[in] length The number of bytes of raw data.
     /// \param[in] runningIndex The running index of the received data.
-    typedef void (*RawDataReceivedHandler)(void* userData, const char* rawData, size_t length, size_t runningIndex);
+    using RawDataReceivedHandler = void (*)(void* userData, const std::vector<uint8_t>& rawData, size_t runningIndex);
 
     /// \brief Defines the signature for a method that can receive
     /// notifications of new possible packets found.
@@ -37,7 +36,7 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// \param[in] possiblePacket The possible packet that was found.
     /// \param[in] packetStartRunningIndex The running index of the start of
     ///     the packet.
-    typedef void (*PossiblePacketFoundHandler)(void* userData, protocol::Packet& possiblePacket, size_t packetStartRunningIndex);
+    using PossiblePacketFoundHandler = void (*)(void* userData, protocol::Packet& possiblePacket, size_t packetStartRunningIndex);
 
     /// \brief Defines the signature for a method that can receive
     /// notifications of when a new asynchronous data packet (ASCII or BINARY)
@@ -51,7 +50,7 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// \param[in] asyncPacket The asynchronous packet received.
     /// \param[in] packetStartRunningIndex The running index of the start of
     ///     the packet.
-    typedef void (*AsyncPacketReceivedHandler)(void* userData, protocol::Packet& asyncPacket, size_t packetStartRunningIndex);
+    using AsyncPacketReceivedHandler = void (*)(void* userData, protocol::Packet& asyncPacket, size_t packetStartRunningIndex);
 
     /// \brief Defines the signature for a method that can receive
     /// notifications when an error message is received.
@@ -64,7 +63,7 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// \param[in] errorPacket The error packet received.
     /// \param[in] packetStartRunningIndex The running index of the start of
     ///     the packet.
-    typedef void (*ErrorPacketReceivedHandler)(void* userData, protocol::Packet& errorPacket, size_t packetStartRunningIndex);
+    using ErrorPacketReceivedHandler = void (*)(void* userData, protocol::Packet& errorPacket, size_t packetStartRunningIndex);
 
     /// \brief The list of baudrates supported by uart sensors.
     static std::vector<uint32_t> supportedBaudrates();
@@ -72,6 +71,11 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     UartSensor();
 
     ~UartSensor();
+
+    UartSensor(const UartSensor&) = delete;            ///< Copy constructor
+    UartSensor(UartSensor&&) = delete;                 ///< Move constructor
+    UartSensor& operator=(const UartSensor&) = delete; ///< Copy assignment operator
+    UartSensor& operator=(UartSensor&&) = delete;      ///< Move assignment operator
 
     /// \brief Returns the baudrate of the serial port connection. Note this
     /// is independent of the sensor's on-board serial baudrate setting.
@@ -115,7 +119,7 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// \brief Checks if we are able to send and receive communication with a sensor.
     ///
     /// \return <c>true</c> if we can communicate with the sensor; otherwise <c>false</c>.
-    bool verifySensorConnectivity();
+    static bool verifySensorConnectivity();
 
     /// \brief Connects to a uart sensor.
     ///
@@ -147,7 +151,7 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     ///
     /// \param[in] toSend The command to send to the sensor.
     /// \return The response received from the sensor.
-    std::string transaction(std::string toSend);
+    std::string transaction(const std::string& toSend);
 
     /// \brief Writes a raw data string to the sensor, normally appending an
     /// appropriate error detection checksum.
@@ -163,15 +167,22 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     ///     response and return the received response.
     /// \return The received response if waitForReply is <c>true</c>; otherwise
     ///     this will be an empty string.
-    std::string send(
-        std::string toSend,
-        bool waitForReply = true);
+    std::string send(const std::string& toSend, bool waitForReply = true);
 
     /// \brief Issues a change baudrate to the uart sensor and then
     /// reconnects the attached serial port at the new baudrate.
     ///
     /// \param[in] baudrate The new sensor baudrate.
     void changeBaudRate(uint32_t baudrate);
+
+    /// \brief Registers a callback method for notification when new data is received
+    ///
+    /// \param[in] userData Pointer to user data, which will be provided to the callback method.
+    /// \param[in] handler The callback method.
+    void registerProcessReceivedDataHandler(void* userData, protocol::PacketFinder::ProcessReceivedDataHandler handler);
+
+    /// \brief Unregisters the registered callback method.
+    void unregisterProcessReceivedDataHandler();
 
     /// \brief Registers a callback method for notification when raw data is
     /// received.
