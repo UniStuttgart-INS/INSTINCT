@@ -55,14 +55,6 @@ std::string ApiVersion::getVersion()
     return ss.str();
 }
 
-uint8_t toUint8FromHexStr(char const* str)
-{
-    auto result = static_cast<uint8_t>(to_uint8_from_hexchar(str[0]) << 4U);
-    result += to_uint8_from_hexchar(str[1]);
-
-    return result;
-}
-
 template<typename T>
 constexpr void SwapEndian(T& val)
 {
@@ -191,6 +183,14 @@ uint8_t countSetBits(uint8_t d)
     }
 
     return count;
+}
+
+uint8_t toUint8FromHexStr(char const* str)
+{
+    auto result = static_cast<uint8_t>(to_uint8_from_hexchar(str[0]) << 4U);
+    result += to_uint8_from_hexchar(str[1]);
+
+    return result;
 }
 
 uint8_t to_uint8_from_hexchar(char c)

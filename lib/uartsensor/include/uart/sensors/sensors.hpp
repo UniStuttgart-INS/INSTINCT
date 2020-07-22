@@ -4,9 +4,11 @@
 #include <vector>
 
 #include "uart/util/nocopy.hpp"
-#include "uart/protocol/packetfinder.hpp"
 #include "uart/xplat/export.hpp"
 #include "uart/xplat/int.hpp"
+#include "uart/protocol/packetfinder.hpp"
+#include "uart/protocol/packet.hpp"
+#include "uart/xplat/timestamp.hpp"
 
 namespace uart::xplat
 {
@@ -19,6 +21,32 @@ namespace uart::sensors
 class proglib_DLLEXPORT UartSensor : private util::NoCopy
 {
   public:
+    friend protocol::Packet;
+
+    /// Size of the Serial Port read buffer
+    static constexpr size_t DefaultReadBufferSize = 1024;
+
+    /// \brief Defines the signature for a method that can receive
+    /// notifications of new valid packets found.
+    ///
+    /// \param[in] userData Pointer to user data that was initially supplied
+    ///     when the callback was registered via registerPossiblePacketFoundHandler.
+    /// \param[in] possiblePacket The possible packet that was found.
+    /// \param[in] packetStartRunningIndex The running index of the start of the packet.
+    /// \param[in] timestamp The timestamp the packet was found.
+    using ValidPacketFoundHandler = void (*)(void* userData, protocol::Packet& packet, size_t runningIndexOfPacketStart, const xplat::TimeStamp& timestamp);
+
+    /// \brief Defines the signature for a method that can handle received data
+    ///
+    /// \param[in] userData Pointer to user data that was initially supplied
+    ///     when the callback was registered via registerProcessReceivedDataHandler.
+    /// \param[in] data The data array
+    /// \param[in] timestamp The timestamp the packet was found.
+    /// \param[in] dispatchPacket Callback when possible package was found
+    /// \param[in] dispatchPacketUserData Pointer to user data that was initially supplied to the dispatch function
+    /// \param[in] backReference Pointer to this sensor
+    using PackageFinderFunction = void (*)(const std::vector<uint8_t>& data, const xplat::TimeStamp& timestamp, ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, UartSensor* backReference);
+
     /// \brief Defines a callback handler that can received notification when
     /// the UartSensor receives raw data from its port.
     ///
@@ -65,10 +93,28 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     ///     the packet.
     using ErrorPacketReceivedHandler = void (*)(void* userData, protocol::Packet& errorPacket, size_t packetStartRunningIndex);
 
+    /// \brief Defines a callback handler that can be called to check a certain packet property
+    ///
+    /// \param[in] packet The packet to run the check for
+    /// \return Returns true if the check succeeded
+    using PacketCheckFunction = bool (*)(const protocol::Packet& packet);
+
+    /// \brief Defines a callback handler that can be called to determine the packet type
+    ///
+    /// \param[in] packet The packet to run the check for
+    /// \return Returns the packet type
+    using PacketTypeFunction = protocol::Packet::Type (*)(const protocol::Packet& packet);
+
     /// \brief The list of baudrates supported by uart sensors.
     static std::vector<uint32_t> supportedBaudrates();
 
-    UartSensor();
+    UartSensor(Endianness endianness,
+               PackageFinderFunction packageFinderFunction,
+               PacketTypeFunction packetTypeFunction,
+               PacketCheckFunction isValidFunction,
+               PacketCheckFunction isErrorFunction,
+               PacketCheckFunction isResponseFunction,
+               size_t packageHeaderLength);
 
     ~UartSensor();
 
@@ -175,15 +221,6 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// \param[in] baudrate The new sensor baudrate.
     void changeBaudRate(uint32_t baudrate);
 
-    /// \brief Registers a callback method for notification when new data is received
-    ///
-    /// \param[in] userData Pointer to user data, which will be provided to the callback method.
-    /// \param[in] handler The callback method.
-    void registerProcessReceivedDataHandler(void* userData, protocol::PacketFinder::ProcessReceivedDataHandler handler);
-
-    /// \brief Unregisters the registered callback method.
-    void unregisterProcessReceivedDataHandler();
-
     /// \brief Registers a callback method for notification when raw data is
     /// received.
     ///
@@ -231,6 +268,14 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
   private:
     struct Impl;
     Impl* _pi;
+
+    const Endianness _endianness;
+    const PackageFinderFunction _packageFinderFunction;
+    const PacketTypeFunction _packetTypeFunction;
+    const PacketCheckFunction _isValidFunction;
+    const PacketCheckFunction _isErrorFunction;
+    const PacketCheckFunction _isResponseFunction;
+    const size_t _packageHeaderLength;
 };
 
 } // namespace uart::sensors

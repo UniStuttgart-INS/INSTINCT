@@ -18,8 +18,8 @@ static constexpr unsigned int COMMAND_MAX_LENGTH = 0x100;
 
 struct UartSensor::Impl
 {
-    static const uint16_t DefaultResponseTimeoutMs = 500;
-    static const uint16_t DefaultRetransmitDelayMs = 200;
+    static constexpr uint16_t DefaultResponseTimeoutMs = 500;
+    static constexpr uint16_t DefaultRetransmitDelayMs = 200;
 
     xplat::SerialPort* pSerialPort;
     xplat::IPort* port;
@@ -29,7 +29,6 @@ struct UartSensor::Impl
     void* _rawDataReceivedUserData;
     PossiblePacketFoundHandler _possiblePacketFoundHandler;
     void* _possiblePacketFoundUserData;
-    protocol::PacketFinder _packetFinder;
     size_t _dataRunningIndex;
     AsyncPacketReceivedHandler _asyncPacketReceivedHandler;
     void* _asyncPacketReceivedUserData;
@@ -63,15 +62,10 @@ struct UartSensor::Impl
           _errorPacketReceivedUserData(nullptr),
           _responseTimeoutMs(DefaultResponseTimeoutMs),
           _retransmitDelayMs(DefaultRetransmitDelayMs),
-          readBuffer(uart::protocol::PacketFinder::DefaultReadBufferSize)
-    {
-        _packetFinder.registerPossiblePacketFoundHandler(this, possiblePacketFoundHandler);
-    }
+          readBuffer(DefaultReadBufferSize) {}
 
-    ~Impl()
-    {
-        _packetFinder.unregisterPossiblePacketFoundHandler();
-    }
+    /// Destructor
+    ~Impl() = default;
 
     Impl(const Impl&) = delete;            ///< Copy constructor
     Impl(Impl&&) = delete;                 ///< Move constructor
@@ -162,7 +156,8 @@ struct UartSensor::Impl
             pi->_rawDataReceivedHandler(pi->_rawDataReceivedUserData, pi->readBuffer, pi->_dataRunningIndex);
         }
 
-        pi->_packetFinder.processReceivedData(pi->readBuffer, t);
+        // pi->_packetFinder.processReceivedData(pi->readBuffer, t);
+        pi->BackReference->_packageFinderFunction(pi->readBuffer, t, possiblePacketFoundHandler, userData, pi->BackReference);
 
         pi->_dataRunningIndex += pi->readBuffer.size();
     }
@@ -329,8 +324,21 @@ std::vector<uint32_t> UartSensor::supportedBaudrates()
     };
 }
 
-UartSensor::UartSensor()
-    : _pi(new Impl(this)) {}
+UartSensor::UartSensor(Endianness endianness,
+                       PackageFinderFunction packageFinderFunction,
+                       PacketTypeFunction packetTypeFunction,
+                       PacketCheckFunction isValidFunction,
+                       PacketCheckFunction isErrorFunction,
+                       PacketCheckFunction isResponseFunction,
+                       size_t packageHeaderLength)
+    : _pi(new Impl(this)),
+      _endianness(endianness),
+      _packageFinderFunction(packageFinderFunction),
+      _packetTypeFunction(packetTypeFunction),
+      _isValidFunction(isValidFunction),
+      _isErrorFunction(isErrorFunction),
+      _isResponseFunction(isResponseFunction),
+      _packageHeaderLength(packageHeaderLength) {}
 
 UartSensor::~UartSensor()
 {
@@ -464,7 +472,7 @@ std::string UartSensor::transaction(const std::string& toSend)
 {
     std::array<char, COMMAND_MAX_LENGTH> buffer{};
     size_t finalLength = toSend.length();
-    protocol::Packet response;
+    protocol::Packet response(this);
 
     // Copy over what was provided.
     copy(toSend.begin(), toSend.end(), buffer.data());
@@ -483,7 +491,7 @@ std::string UartSensor::transaction(const std::string& toSend)
 
 std::string UartSensor::send(const std::string& toSend, bool waitForReply)
 {
-    protocol::Packet p;
+    protocol::Packet p(this);
     auto buffer = std::vector<char>(toSend.size() + 8); // Extra room for possible additions.
     size_t curToSendLength = toSend.size();
 
@@ -497,16 +505,6 @@ std::string UartSensor::send(const std::string& toSend, bool waitForReply)
     _pi->transactionNoFinalize(buffer.data(), curToSendLength, waitForReply, &p, _pi->_responseTimeoutMs, _pi->_retransmitDelayMs);
 
     return p.datastr();
-}
-
-void UartSensor::registerProcessReceivedDataHandler(void* userData, protocol::PacketFinder::ProcessReceivedDataHandler handler)
-{
-    _pi->_packetFinder.registerProcessReceivedDataHandler(userData, handler);
-}
-
-void UartSensor::unregisterProcessReceivedDataHandler()
-{
-    _pi->_packetFinder.unregisterProcessReceivedDataHandler();
 }
 
 void UartSensor::registerRawDataReceivedHandler(void* userData, RawDataReceivedHandler handler)

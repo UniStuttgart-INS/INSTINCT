@@ -50,12 +50,6 @@ enum Endianness
     ENDIAN_UNKNOWN
 };
 
-/// \brief Converts two characters encoded in hex to a uint8_t.
-///
-/// \param[in] str Two characters string with hexadecimal encoding.
-/// \return The converted value.
-uint8_t toUint8FromHexStr(const char* str);
-
 /// \brief Converts a 16-bit integer in sensor order to host order.
 ///
 /// \param[in] sensorOrdered The 16-bit integer in sensor order.
@@ -96,6 +90,12 @@ double stoh(double sensorOrdered, Endianness sensorEndianness);
 /// \param[in] d The value to count the bits of.
 /// \return The number of bits set.
 uint8_t countSetBits(uint8_t d);
+
+/// \brief Converts two characters encoded in hex to a uint8_t.
+///
+/// \param[in] str Two characters string with hexadecimal encoding.
+/// \return The converted value.
+uint8_t toUint8FromHexStr(const char* str);
 
 /// \brief Converts the character encoded as a hexadecimal to a uint8_t.
 ///

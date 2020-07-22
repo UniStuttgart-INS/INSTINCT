@@ -1,4 +1,5 @@
 #include "uart/protocol/packet.hpp"
+#include "uart/sensors/sensors.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -7,16 +8,16 @@
 
 namespace uart::protocol
 {
-Packet::Packet(std::vector<uint8_t> data)
-    : _data(std::move(data)) {}
+Packet::Packet(sensors::UartSensor* backReference)
+    : _backReference(backReference) {}
 
-Packet::Packet(const std::string& packet)
-    : _data(packet.begin(), packet.end()) {}
+Packet::Packet(std::vector<uint8_t> data, sensors::UartSensor* backReference)
+    : _data(std::move(data)), _backReference(backReference) {}
 
-Packet::Packet(Packet const& toCopy)
-    : _data(toCopy._data) {}
+Packet::Packet(const std::string& packet, sensors::UartSensor* backReference)
+    : _data(packet.begin(), packet.end()), _backReference(backReference) {}
 
-const std::vector<uint8_t>& Packet::getRawData()
+const std::vector<uint8_t>& Packet::getRawData() const
 {
     return _data;
 }
@@ -35,46 +36,39 @@ Packet& Packet::operator=(Packet const& from)
 
     _data = from._data;
     _curExtractLoc = from._curExtractLoc;
-    _endianness = from._endianness;
-
-    _packetTypeFunction = from._packetTypeFunction;
-    _checksumFunction = from._checksumFunction;
-    _isErrorFunction = from._isErrorFunction;
-    _isResponseFunction = from._isResponseFunction;
-    _packageHeaderLength = from._packageHeaderLength;
-    _packageEndLength = from._packageEndLength;
+    _backReference = from._backReference;
 
     return *this;
 }
 
-std::string Packet::datastr()
+std::string Packet::datastr() const
 {
-    return std::string(reinterpret_cast<char*>(_data.data()), _data.size());
+    return std::string(reinterpret_cast<const char*>(_data.data()), _data.size());
 }
 
-Packet::Type Packet::type()
+Packet::Type Packet::type() const
 {
     if (_data.empty())
     {
         throw std::runtime_error("Packet does not contain any data.");
     }
 
-    return _packetTypeFunction(*this);
+    return _backReference->_packetTypeFunction(*this);
 }
 
-bool Packet::isValid()
+bool Packet::isValid() const
 {
-    return _checksumFunction(*this);
+    return _backReference->_isValidFunction(*this);
 }
 
 bool Packet::isError() const
 {
-    return _isErrorFunction(*this);
+    return _backReference->_isErrorFunction(*this);
 }
 
 bool Packet::isResponse() const
 {
-    return _isResponseFunction(*this);
+    return _backReference->_isResponseFunction(*this);
 }
 
 void Packet::ensureCanExtract(size_t numOfBytes)
@@ -82,10 +76,10 @@ void Packet::ensureCanExtract(size_t numOfBytes)
     if (_curExtractLoc == 0)
     {
         // Determine the location to start extracting.
-        _curExtractLoc = _packageHeaderLength;
+        _curExtractLoc = _backReference->_packageHeaderLength;
     }
 
-    if (_curExtractLoc + numOfBytes > _data.size() - _packageEndLength)
+    if (_curExtractLoc + numOfBytes > _data.size())
     {
         // About to overrun data.
         throw std::out_of_range("Not enough data to extract");
@@ -124,7 +118,7 @@ uint16_t Packet::extractUint16()
 
     _curExtractLoc += sizeof(uint16_t);
 
-    return stoh(d, _endianness);
+    return stoh(d, _backReference->_endianness);
 }
 
 uint32_t Packet::extractUint32()
@@ -137,7 +131,7 @@ uint32_t Packet::extractUint32()
 
     _curExtractLoc += sizeof(uint32_t);
 
-    return stoh(d, _endianness);
+    return stoh(d, _backReference->_endianness);
 }
 
 uint64_t Packet::extractUint64()
@@ -150,7 +144,7 @@ uint64_t Packet::extractUint64()
 
     _curExtractLoc += sizeof(uint64_t);
 
-    return stoh(d, _endianness);
+    return stoh(d, _backReference->_endianness);
 }
 
 float Packet::extractFloat()
@@ -163,7 +157,7 @@ float Packet::extractFloat()
 
     _curExtractLoc += sizeof(float);
 
-    return stoh(f, _endianness);
+    return stoh(f, _backReference->_endianness);
 }
 
 double Packet::extractDouble()
@@ -176,7 +170,7 @@ double Packet::extractDouble()
 
     _curExtractLoc += sizeof(double);
 
-    return stoh(d, _endianness);
+    return stoh(d, _backReference->_endianness);
 }
 
 } // namespace uart::protocol
