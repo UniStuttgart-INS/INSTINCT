@@ -4,6 +4,7 @@
 
     #include "util/Debug.hpp"
     #include "util/Logger.hpp"
+    #include "util/Constants.hpp"
 
     #include "navio/Common/MPU9250.h"
     #include "navio/Navio2/LSM9DS1.h"
@@ -84,14 +85,22 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     navio->sensor->read_magnetometer(&navio->mx, &navio->my, &navio->mz);
 
     obs->temperature = navio->sensor->read_temperature();
+
     obs->accelUncompXYZ.emplace(navio->ax, navio->ay, navio->az);
-    obs->gyroUncompXYZ.emplace(navio->gx, navio->gy, navio->gz);
-    obs->magUncompXYZ.emplace(navio->mx, navio->my, navio->mz);
+    obs->gyroUncompXYZ.emplace(InsConst::deg2rad(navio->gx), InsConst::deg2rad(navio->gy), InsConst::deg2rad(navio->gz));
+
+    if (navio->imuType == ImuType::LSM)
+    {
+        obs->magUncompXYZ.emplace(navio->mx, navio->my, navio->mz);
+        constexpr double uT2Gauss = 1.0 / 100.0;
+        obs->magUncompXYZ.value() *= uT2Gauss;
+    }
 
     std::chrono::nanoseconds diff = currentTime - navio->startTime;
     obs->timeSinceStartup = diff.count();
 
-    LOG_DATA("DATA({}): {}, {}, {}, {}, {}", navio->name, obs->timeSinceStartup.value(), obs->temperature.value(), navio->ax, navio->ay, navio->az);
+    LOG_DATA("DATA({}): {}, {}°C, a=({}, {}, {})", navio->name, obs->timeSinceStartup.value(), obs->temperature.value(),
+             navio->ax, navio->ay, navio->az);
 
     navio->invokeCallbacks(obs);
 }

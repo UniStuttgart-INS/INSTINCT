@@ -79,14 +79,14 @@
             "group": "build",
             "command": "cmake",
             "args": [
-                "-Bbuild/Debug",
+                "-Bbuild/Release",
                 "-S.",
-                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_BUILD_TYPE=Release",
                 "-DENABLE_MAIN=ON",
                 "-DENABLE_GUI=ON",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DLOG_LEVEL=DEBUG"
+                "-DLOG_LEVEL=INFO"
             ],
             "options": {
                 "env": {
@@ -229,7 +229,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "build/Debug",
+                "build/Release",
                 "--",
                 "-j"
             ],
@@ -326,7 +326,7 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "command": "./bin/Debug/navsos-gui",
+            "command": "./bin/Release/navsos-gui",
             "args": [],
             "dependsOn": [
                 "GUI: Build project"
