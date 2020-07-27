@@ -44,6 +44,8 @@ struct proglib_DLLEXPORT Packet
     /// \param[in] backReference Reference to the parent UartSensor
     Packet(const std::string& packet, sensors::UartSensor* backReference);
 
+    /// \brief Default Constructor
+    Packet() = default;
     /// \brief Destructor
     ~Packet() = default;
 
@@ -124,6 +126,12 @@ struct proglib_DLLEXPORT Packet
     /// \return The extracted value.
     uint32_t extractUint32();
 
+    /// @brief Extracts a int32_t data type from a binary packet and advances
+    /// the next extraction point appropriately.
+    ///
+    /// @return The extracted value.
+    int32_t extractInt32();
+
     /// \brief Extracts a uint64_t data type from a binary packet and advances
     /// the next extraction point appropriately.
     ///
@@ -150,7 +158,7 @@ struct proglib_DLLEXPORT Packet
     std::vector<uint8_t> _data;
     size_t _curExtractLoc{ 0 };
 
-    sensors::UartSensor* _backReference;
+    sensors::UartSensor* _backReference{ nullptr };
 };
 
 } // namespace uart::protocol

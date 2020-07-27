@@ -3,18 +3,33 @@
 #include "UbloxUtilities.hpp"
 #include "util/Logger.hpp"
 
-constexpr uint8_t BinarySyncChar1 = 0xB5;
-constexpr uint8_t BinarySyncChar2 = 0x62;
+constexpr uint8_t BinarySyncChar1 = 0xB5; // µ
+constexpr uint8_t BinarySyncChar2 = 0x62; // b
 
-void NAV::sensors::UbloxUartSensor::packageFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, uart::sensors::UartSensor* uartSensor)
+std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::findPacket(uint8_t dataByte, uart::sensors::UartSensor* uartSensor)
 {
-    LOG_TRACE("called");
-
-    uart::protocol::Packet packet{ data, uartSensor };
-    dispatchPacket(dispatchPacketUserData, packet, 0, timestamp);
+    _buffer.at(_bufferAppendLocation++) = dataByte;
+    return std::make_unique<uart::protocol::Packet>(_buffer, uartSensor);
 }
 
-uart::protocol::Packet::Type NAV::sensors::UbloxUartSensor::packetTypeFunction(const uart::protocol::Packet& packet)
+void NAV::sensors::ublox::UbloxUartSensor::packetFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, uart::sensors::UartSensor* uartSensor, void* userData)
+{
+    auto* sensor = static_cast<UbloxUartSensor*>(userData);
+    LOG_TRACE("called");
+
+    for (size_t i = 0; i < data.size(); i++, uartSensor->runningDataIndex++)
+    {
+        auto packetPointer = sensor->findPacket(data.at(i), uartSensor);
+
+        if (packetPointer != nullptr)
+        {
+            uart::protocol::Packet packet = *packetPointer;
+            dispatchPacket(dispatchPacketUserData, packet, uartSensor->runningDataIndex, timestamp);
+        }
+    }
+}
+
+uart::protocol::Packet::Type NAV::sensors::ublox::UbloxUartSensor::packetTypeFunction(const uart::protocol::Packet& packet)
 {
     LOG_TRACE("called");
 
@@ -23,13 +38,11 @@ uart::protocol::Packet::Type NAV::sensors::UbloxUartSensor::packetTypeFunction(c
         LOG_CRITICAL("Packet does not contain any data.");
     }
 
-    const uint8_t data_zero = packet.getRawData().at(0);
-
-    if (data_zero == '$')
+    if (packet.getRawData().at(0) == '$')
     {
         return uart::protocol::Packet::Type::TYPE_ASCII;
     }
-    if (data_zero == BinarySyncChar1)
+    if (packet.getRawData().at(0) == BinarySyncChar1)
     {
         if (packet.getRawData().at(1) == BinarySyncChar2)
         {
@@ -40,7 +53,7 @@ uart::protocol::Packet::Type NAV::sensors::UbloxUartSensor::packetTypeFunction(c
     return uart::protocol::Packet::Type::TYPE_UNKNOWN;
 }
 
-bool NAV::sensors::UbloxUartSensor::checksumFunction(const uart::protocol::Packet& packet)
+bool NAV::sensors::ublox::UbloxUartSensor::checksumFunction(const uart::protocol::Packet& packet)
 {
     LOG_TRACE("called");
 
@@ -78,18 +91,18 @@ bool NAV::sensors::UbloxUartSensor::checksumFunction(const uart::protocol::Packe
                && packet.getRawData().at(packet.getRawDataLength() - 1) == checksum.second;
     }
 
-    LOG_CRITICAL("Can't calculate checksum of package with unknown type");
+    LOG_CRITICAL("Can't calculate checksum of packet with unknown type");
     return false;
 }
 
-bool NAV::sensors::UbloxUartSensor::isErrorFunction(const uart::protocol::Packet& /* packet */)
+bool NAV::sensors::ublox::UbloxUartSensor::isErrorFunction(const uart::protocol::Packet& /* packet */)
 {
     LOG_TRACE("called");
 
     return false;
 }
 
-bool NAV::sensors::UbloxUartSensor::isResponseFunction(const uart::protocol::Packet& /* packet */)
+bool NAV::sensors::ublox::UbloxUartSensor::isResponseFunction(const uart::protocol::Packet& /* packet */)
 {
     LOG_TRACE("called");
 

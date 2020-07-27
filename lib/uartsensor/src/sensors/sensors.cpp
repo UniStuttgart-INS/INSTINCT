@@ -157,7 +157,7 @@ struct UartSensor::Impl
         }
 
         // pi->_packetFinder.processReceivedData(pi->readBuffer, t);
-        pi->BackReference->_packageFinderFunction(pi->readBuffer, t, possiblePacketFoundHandler, userData, pi->BackReference);
+        pi->BackReference->_packetFinderFunction(pi->readBuffer, t, possiblePacketFoundHandler, userData, pi->BackReference, pi->BackReference->_packetFinderUserData);
 
         pi->_dataRunningIndex += pi->readBuffer.size();
     }
@@ -325,20 +325,22 @@ std::vector<uint32_t> UartSensor::supportedBaudrates()
 }
 
 UartSensor::UartSensor(Endianness endianness,
-                       PackageFinderFunction packageFinderFunction,
+                       PacketFinderFunction packetFinderFunction,
+                       void* packetFinderUserData,
                        PacketTypeFunction packetTypeFunction,
                        PacketCheckFunction isValidFunction,
                        PacketCheckFunction isErrorFunction,
                        PacketCheckFunction isResponseFunction,
-                       size_t packageHeaderLength)
+                       size_t packetHeaderLength)
     : _pi(new Impl(this)),
       _endianness(endianness),
-      _packageFinderFunction(packageFinderFunction),
+      _packetFinderFunction(packetFinderFunction),
+      _packetFinderUserData(packetFinderUserData),
       _packetTypeFunction(packetTypeFunction),
       _isValidFunction(isValidFunction),
       _isErrorFunction(isErrorFunction),
       _isResponseFunction(isResponseFunction),
-      _packageHeaderLength(packageHeaderLength) {}
+      _packetHeaderLength(packetHeaderLength) {}
 
 UartSensor::~UartSensor()
 {

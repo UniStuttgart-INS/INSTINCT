@@ -5,7 +5,7 @@
 #include <cmath>
 #include <array>
 
-#include "util/Ublox/UbloxDecryptor.hpp"
+#include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 
 NAV::UbloxFile::UbloxFile(const std::string& name, const std::map<std::string, std::string>& options)
     : FileReader(options), Gnss(name, options)
@@ -62,79 +62,36 @@ void NAV::UbloxFile::resetNode()
 
 std::shared_ptr<NAV::UbloxObs> NAV::UbloxFile::pollData(bool peek)
 {
-    auto obs = std::make_shared<UbloxObs>();
-
     if (fileType == FileType::ASCII)
     {
         // TODO: Implement UbloxFile Ascii reading
         LOG_CRITICAL("Ascii UbloxFile pollData is not implemented yet.");
-        return obs;
+        return nullptr;
     }
-
-    constexpr uint8_t AsciiStartChar = '$';
-    constexpr uint8_t BinaryStartChar1 = 0xB5;
-    constexpr uint8_t BinaryStartChar2 = 0x62;
-    // constexpr uint8_t AsciiEndChar1 = '\r'; // 0x0D
-    constexpr uint8_t AsciiEndChar2 = '\n'; // 0x0A
 
     // Get current position
     auto pos = filestream.tellg();
     uint8_t i = 0;
+    std::unique_ptr<uart::protocol::Packet> packet = nullptr;
     while (filestream >> i)
     {
-        if (i == BinaryStartChar1)
+        packet = sensor.findPacket(i, sensor.operator->());
+
+        if (packet != nullptr)
         {
-            // 0 = Sync Char 1
-            // 1 = Sync Char 2
-            // 2 = Class
-            // 3 = ID
-            // 4+5 = Payload Length
-            // Payload
-            // CK_A
-            // CK_B
-
-            constexpr size_t HEAD_BUFFER_SIZE = 5;
-            // Buffer for reading binary data
-            std::array<uint8_t, HEAD_BUFFER_SIZE> headBuffer{};
-
-            filestream.read(reinterpret_cast<char*>(headBuffer.data()), HEAD_BUFFER_SIZE);
-
-            if (headBuffer.at(0) != BinaryStartChar2)
-            {
-                continue;
-            }
-
-            uint16_t payloadLength = ublox::UbloxPacket::U2(headBuffer.data() + 3);
-
-            std::vector<uint8_t> buffer{ BinaryStartChar1 };
-            buffer.insert(buffer.end(), headBuffer.data(), headBuffer.data() + HEAD_BUFFER_SIZE);
-
-            buffer.resize(HEAD_BUFFER_SIZE + 1 + payloadLength + 2);
-            filestream.read(reinterpret_cast<char*>(buffer.data()) + HEAD_BUFFER_SIZE + 1, payloadLength + 2);
-
-            obs->raw.setData(buffer.data(), buffer.size());
-
-            break;
-        }
-
-        if (i == AsciiStartChar)
-        {
-            std::string line;
-            std::getline(filestream, line);
-            line.insert(0, 1, AsciiStartChar);
-            line.push_back(AsciiEndChar2);
-
-            obs->raw.setData(reinterpret_cast<unsigned char*>(line.data()), line.size());
-
             break;
         }
     }
+
+    auto obs = std::make_shared<UbloxObs>(*packet);
+
+    // Check if package is empty
     if (obs->raw.getRawDataLength() == 0)
     {
         return nullptr;
     }
 
-    ublox::decryptUbloxObs(obs, currentInsTime, peek);
+    sensors::ublox::decryptUbloxObs(obs, currentInsTime, peek);
 
     if (peek)
     {

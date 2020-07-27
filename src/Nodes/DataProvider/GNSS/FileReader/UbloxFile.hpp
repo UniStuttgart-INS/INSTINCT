@@ -11,6 +11,8 @@
 #include "../../Protocol/FileReader.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 
+#include "util/UartSensors/Ublox/UbloxUartSensor.hpp"
+
 namespace NAV
 {
 /// File Reader for Vector Nav log files
@@ -174,6 +176,9 @@ class UbloxFile final : public FileReader, public Gnss
      * @retval FileType The File Type
      */
     [[nodiscard]] FileType determineFileType() final;
+
+    /// Sensor Object
+    sensors::ublox::UbloxUartSensor sensor;
 };
 
 } // namespace NAV

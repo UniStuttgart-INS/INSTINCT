@@ -141,8 +141,8 @@ class UbloxSensor final : public UartSensor, public Gnss
      */
     static void asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
 
-    /// UbSensor Object
-    sensors::UbloxUartSensor sensor;
+    /// Sensor Object
+    sensors::ublox::UbloxUartSensor sensor;
 };
 
 } // namespace NAV

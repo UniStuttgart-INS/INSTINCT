@@ -13,7 +13,7 @@
 #include <bitset>
 #include <vector>
 
-namespace NAV::ublox
+namespace NAV::sensors::ublox
 {
 enum ErrorDetectionMode
 {
@@ -1028,4 +1028,4 @@ enum UbxUpdMessages
  */
 [[nodiscard]] uint8_t getMsgIdFromString(const std::string_view& className, const std::string_view& idName);
 
-} // namespace NAV::ublox
+} // namespace NAV::sensors::ublox

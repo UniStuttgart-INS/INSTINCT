@@ -4,7 +4,7 @@
 
     #include "util/Logger.hpp"
 
-    #include "util/Ublox/UbloxDecryptor.hpp"
+    #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 
 NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Gnss(name, options)
@@ -26,7 +26,7 @@ NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::strin
         LOG_CRITICAL("{} could not connect", name);
     }
 
-    ub.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
+    sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
     LOG_DEBUG("{} successfully initialized", name);
 }
@@ -37,10 +37,10 @@ NAV::UbloxSensor::~UbloxSensor()
 
     removeAllCallbacksOfType<UbloxObs>();
     callbacksEnabled = false;
-    if (ub.isConnected())
+    if (sensor->isConnected())
     {
-        ub.unregisterAsyncPacketReceivedHandler();
-        ub.disconnect();
+        sensor->unregisterAsyncPacketReceivedHandler();
+        sensor->disconnect();
     }
 }
 
@@ -48,10 +48,9 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 {
     auto* ubSensor = static_cast<UbloxSensor*>(userData);
 
-    auto obs = std::make_shared<UbloxObs>();
-    obs->raw.setData(p.getRawData(), p.getRawDataLength());
+    auto obs = std::make_shared<UbloxObs>(p);
 
-    ublox::decryptUbloxObs(obs, ubSensor->currentInsTime);
+    sensors::ublox::decryptUbloxObs(obs, ubSensor->currentInsTime);
 
     ubSensor->invokeCallbacks(obs);
 }

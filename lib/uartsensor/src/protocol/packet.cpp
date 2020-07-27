@@ -76,7 +76,7 @@ void Packet::ensureCanExtract(size_t numOfBytes)
     if (_curExtractLoc == 0)
     {
         // Determine the location to start extracting.
-        _curExtractLoc = _backReference->_packageHeaderLength;
+        _curExtractLoc = _backReference->_packetHeaderLength;
     }
 
     if (_curExtractLoc + numOfBytes > _data.size())
@@ -132,6 +132,19 @@ uint32_t Packet::extractUint32()
     _curExtractLoc += sizeof(uint32_t);
 
     return stoh(d, _backReference->_endianness);
+}
+
+int32_t Packet::extractInt32()
+{
+    ensureCanExtract(sizeof(int32_t));
+
+    int32_t d = 0;
+
+    memcpy(&d, _data.data() + _curExtractLoc, sizeof(int32_t));
+
+    _curExtractLoc += sizeof(int32_t);
+
+    return static_cast<int32_t>(stoh(static_cast<uint32_t>(d), _backReference->_endianness));
 }
 
 uint64_t Packet::extractUint64()
