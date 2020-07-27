@@ -17,7 +17,7 @@ NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::strin
         // TODO: Update the library to handle different baudrates
         sensorBaudrate = Baudrate::BAUDRATE_9600;
 
-        ub.connect(sensorPort, sensorBaudrate);
+        sensor->connect(sensorPort, sensorBaudrate);
 
         LOG_DEBUG("{} connected on port {} with baudrate {}", name, sensorPort, sensorBaudrate);
     }
@@ -44,7 +44,7 @@ NAV::UbloxSensor::~UbloxSensor()
     }
 }
 
-void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, ub::protocol::uart::Packet& p, size_t /*index*/)
+void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t /*index*/)
 {
     auto* ubSensor = static_cast<UbloxSensor*>(userData);
 

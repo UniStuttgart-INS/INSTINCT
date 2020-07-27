@@ -12,7 +12,7 @@
     #include "NodeData/GNSS/UbloxObs.hpp"
     #include "../Gnss.hpp"
     #include "../../Protocol/UartSensor.hpp"
-    #include "ub/sensors/sensors.hpp"
+    #include "util/UartSensors/Ublox/UbloxUartSensor.hpp"
 
 namespace NAV
 {
@@ -20,13 +20,6 @@ namespace NAV
 class UbloxSensor final : public UartSensor, public Gnss
 {
   public:
-    /// Config Structure for the sensor
-    typedef struct Config
-    {
-        /// OutputFrequency of async packages
-        uint16_t outputFrequency = 1;
-    } Config;
-
     /**
      * @brief Construct a new ublox Sensor object
      * 
@@ -146,13 +139,10 @@ class UbloxSensor final : public UartSensor, public Gnss
      * @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
      * @param[in] index Advanced usage item and can be safely ignored for now
      */
-    static void asciiOrBinaryAsyncMessageReceived(void* userData, ub::protocol::uart::Packet& p, size_t index);
+    static void asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
 
     /// UbSensor Object
-    ub::sensors::UbSensor ub;
-
-    /// Config Object
-    UbloxSensor::Config config;
+    sensors::UbloxUartSensor sensor;
 };
 
 } // namespace NAV
