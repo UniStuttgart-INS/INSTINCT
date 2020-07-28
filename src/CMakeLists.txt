@@ -26,7 +26,7 @@ target_link_libraries(
 target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
 if(ENABLE_SENSORS)
-  target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libvncxx libubcxx libercxx libkvhcxx libnavio UartSensor)
+  target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libvncxx libercxx libkvhcxx libnavio UartSensor)
 else()
   target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC DISABLE_SENSORS)
 endif()
@@ -62,8 +62,7 @@ if(ENABLE_GUI)
             Threads::Threads)
 
   if(ENABLE_SENSORS)
-    target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui" PRIVATE libvncxx libubcxx libercxx libkvhcxx libnavio
-                                                                  UartSensor)
+    target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui" PRIVATE libvncxx libercxx libkvhcxx libnavio UartSensor)
   else()
     target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC DISABLE_SENSORS)
   endif()

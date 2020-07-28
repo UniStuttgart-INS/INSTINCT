@@ -99,12 +99,6 @@ if(ENABLE_SENSORS)
   set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
-  # Include ublox library
-  add_subdirectory(lib/ubloxlib libubcxx)
-  include_directories(SYSTEM lib/ubloxlib/include)
-  set_target_properties(libubcxx PROPERTIES CXX_CLANG_TIDY "")
-  set_target_properties(libubcxx PROPERTIES CXX_CPPCHECK "")
-
   # Include emlid reach library
   add_subdirectory(lib/emlidlib libercxx)
   include_directories(SYSTEM lib/emlidlib/include)
