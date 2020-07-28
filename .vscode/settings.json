@@ -17,7 +17,6 @@
     ],
     "editor.formatOnSave": true,
     "doxdocgen.generic.paramTemplate": "@param[in, out] {param} ",
-    "doxdocgen.generic.returnTemplate": "@retval {type} ",
     "doxdocgen.file.fileOrder": [
         "file",
         "brief",
@@ -25,7 +24,21 @@
         "date",
         "custom"
     ],
+    "doxdocgen.generic.order": [
+        "brief",
+        "tparam",
+        "param",
+        "return"
+    ],
+    "doxdocgen.c.commentPrefix": "/// ",
+    "doxdocgen.c.firstLine": "",
+    "doxdocgen.c.lastLine": "",
+    "doxdocgen.c.triggerSequence": "///",
     "doxdocgen.generic.boolReturnsTrueFalse": false,
+    "doxdocgen.generic.returnTemplate": "@return ",
+    "doxdocgen.generic.includeTypeAtReturn": false,
+    "doxdocgen.cpp.ctorText": "Constructor",
+    "doxdocgen.cpp.dtorText": "Destructor",
     "files.associations": {
         "**/C++/**": "cpp", // <-- stl libraries
         "**/tbb/**": "cpp", // <-- intel libraries
