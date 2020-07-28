@@ -6,8 +6,7 @@
 
 #if _M_IX86 || __i386__ || __x86_64 || _WIN64
     // Compiling for x86 processor.
-    // #define HOST_LITTLE_ENDIAN 1
-    #define HOST_BIG_ENDIAN 1
+    #define HOST_LITTLE_ENDIAN 1
 #elif __linux__
     // Don't know what processor we are compiling for but we have endian.h.
     #define HAVE_ENDIAN_H 1

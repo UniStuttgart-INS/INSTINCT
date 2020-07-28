@@ -157,7 +157,7 @@ struct UartSensor::Impl
         }
 
         // pi->_packetFinder.processReceivedData(pi->readBuffer, t);
-        pi->BackReference->_packetFinderFunction(pi->readBuffer, t, possiblePacketFoundHandler, userData, pi->BackReference, pi->BackReference->_packetFinderUserData);
+        pi->BackReference->_packetFinderFunction(pi->readBuffer, t, possiblePacketFoundHandler, userData, pi->BackReference->_packetFinderUserData);
 
         pi->_dataRunningIndex += pi->readBuffer.size();
     }

@@ -73,14 +73,19 @@ std::shared_ptr<NAV::UbloxObs> NAV::UbloxFile::pollData(bool peek)
     auto pos = filestream.tellg();
     uint8_t i = 0;
     std::unique_ptr<uart::protocol::Packet> packet = nullptr;
-    while (filestream >> i)
+    while (filestream.readsome(reinterpret_cast<char*>(&i), 1))
     {
-        packet = sensor.findPacket(i, sensor.operator->());
+        packet = sensor.findPacket(i);
 
         if (packet != nullptr)
         {
             break;
         }
+    }
+
+    if (!packet)
+    {
+        return nullptr;
     }
 
     auto obs = std::make_shared<UbloxObs>(*packet);

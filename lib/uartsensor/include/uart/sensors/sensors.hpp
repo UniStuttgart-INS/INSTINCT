@@ -26,9 +26,6 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// Size of the Serial Port read buffer
     static constexpr size_t DefaultReadBufferSize = 1024;
 
-    /// Used for correlating raw data with where the packet was found for the end user.
-    size_t runningDataIndex = 0;
-
     /// \brief Defines the signature for a method that can receive
     /// notifications of new valid packets found.
     ///
@@ -47,9 +44,8 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// \param[in] timestamp The timestamp the packet was found.
     /// \param[in] dispatchPacket Callback when possible packet was found
     /// \param[in] dispatchPacketUserData Pointer to user data that was initially supplied to the dispatch function
-    /// \param[in] backReference Pointer to this sensor
     /// \param[in] User Data Provided when registering the function
-    using PacketFinderFunction = void (*)(const std::vector<uint8_t>& data, const xplat::TimeStamp& timestamp, ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, UartSensor* backReference, void* userData);
+    using PacketFinderFunction = void (*)(const std::vector<uint8_t>& data, const xplat::TimeStamp& timestamp, ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData);
 
     /// \brief Defines a callback handler that can received notification when
     /// the UartSensor receives raw data from its port.

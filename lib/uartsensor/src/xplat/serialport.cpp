@@ -1331,7 +1331,7 @@ void SerialPort::write(const char* data, size_t length)
 #endif
 }
 
-void SerialPort::read(std::vector<unsigned char> dataBuffer)
+void SerialPort::read(std::vector<unsigned char>& dataBuffer)
 {
     _pi->ensureOpened();
 
@@ -1341,6 +1341,8 @@ void SerialPort::read(std::vector<unsigned char> dataBuffer)
     memset(&overlapped, 0, sizeof(OVERLAPPED));
 
     _pi->ReadWriteCS.enter();
+
+    dataBuffer.resize(dataBuffer.capacity());
 
     BOOL result = ReadFile(
         _pi->SerialPortHandle,
@@ -1371,6 +1373,8 @@ void SerialPort::read(std::vector<unsigned char> dataBuffer)
     dataBuffer.resize(static_cast<size_t>(result));
 
 #elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
+
+    dataBuffer.resize(dataBuffer.capacity());
 
     auto result = ::read(
         _pi->SerialPortHandle,

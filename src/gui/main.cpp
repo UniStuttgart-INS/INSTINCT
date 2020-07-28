@@ -316,7 +316,7 @@ void run()
         exportConfig();
         system("pkill -SIGUSR1 -x navsos");
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        system("./bin/Debug/navsos -f config.ini config-dataflow.ini &");
+        system("./bin/Release/navsos -f config.ini config-dataflow.ini &");
     }
 }
 

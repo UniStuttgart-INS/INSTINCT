@@ -55,7 +55,7 @@ class proglib_DLLEXPORT IPort
     ///
     /// \param[out] dataBuffer The data buffer to write the read data bytes to.
     ///     from the simple port.
-    virtual void read(std::vector<unsigned char> dataBuffer) = 0;
+    virtual void read(std::vector<unsigned char>& dataBuffer) = 0;
 
     /// \brief Registers a callback method for notification when new data is
     ///     received on the port.

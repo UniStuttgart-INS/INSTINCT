@@ -66,7 +66,7 @@ class proglib_DLLEXPORT SerialPort : public IPort, util::NoCopy
 
     void write(const char* data, size_t length) override;
 
-    void read(std::vector<unsigned char> dataBuffer) override;
+    void read(std::vector<unsigned char>& dataBuffer) override;
 
     void registerDataReceivedHandler(void* userData, DataReceivedHandler handler) override;
 
