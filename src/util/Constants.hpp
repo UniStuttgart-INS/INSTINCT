@@ -37,4 +37,16 @@ const double GAL_MU = 3.986004418e+14;  ///< earth gravitational constant GALILE
 
 const double G_NORM = 9.80665; ///< Gravity norm constant (meter/second^2)
 
+template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+constexpr double deg2rad(T deg)
+{
+    return static_cast<double>(deg) * M_PI / 180.0;
+}
+
+template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+constexpr double rad2deg(T rad)
+{
+    return static_cast<double>(rad) * 180.0 / M_PI;
+}
+
 } // namespace NAV::InsConst

@@ -225,6 +225,11 @@ class GnuPlot final : public Node
                 auto obs = std::static_pointer_cast<KvhObs>(data);
                 handleKvhObs(obs, portIndex);
             }
+            else if (inputPortDataTypes.at(portIndex) == ImuObs().type())
+            {
+                auto obs = std::static_pointer_cast<ImuObs>(data);
+                handleImuObs(obs, portIndex);
+            }
         }
     }
 
@@ -239,6 +244,8 @@ class GnuPlot final : public Node
     void handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, size_t portIndex);
     /// Handle a KVH IMU Observation
     void handleKvhObs(std::shared_ptr<NAV::KvhObs>& obs, size_t portIndex);
+    /// Handle a IMU Observation
+    void handleImuObs(std::shared_ptr<NAV::ImuObs>& obs, size_t portIndex);
 
     /// Number of input ports
     uint8_t nInputPorts = 1;

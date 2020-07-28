@@ -53,7 +53,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
         auto obs = std::make_shared<KvhObs>();
         obs->raw.setData(p.getRawData(), p.getRawDataLength());
 
-        obs->gyroUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
+        obs->gyroUncompXYZ.emplace(InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()));
 
         obs->accelUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
         obs->accelUncompXYZ.value() *= InsConst::G_NORM;
@@ -79,7 +79,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
         auto obs = std::make_shared<KvhObs>();
         obs->raw.setData(p.getRawData(), p.getRawDataLength());
 
-        obs->gyroUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
+        obs->gyroUncompXYZ.emplace(InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()));
 
         obs->accelUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
         obs->accelUncompXYZ.value() *= InsConst::G_NORM;
@@ -100,7 +100,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, kvh::prot
         auto obs = std::make_shared<KvhObs>();
         obs->raw.setData(p.getRawData(), p.getRawDataLength());
 
-        obs->gyroUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
+        obs->gyroUncompXYZ.emplace(InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()));
 
         obs->accelUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
         obs->accelUncompXYZ.value() *= InsConst::G_NORM;

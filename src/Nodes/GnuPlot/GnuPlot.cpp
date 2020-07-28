@@ -654,3 +654,71 @@ void NAV::GnuPlot::handleKvhObs(std::shared_ptr<NAV::KvhObs>& obs, size_t portIn
 
     invokeCallbacks(obs);
 }
+
+void NAV::GnuPlot::handleImuObs(std::shared_ptr<NAV::ImuObs>& obs, size_t portIndex)
+{
+    for (auto& gnuplotData : plotData[portIndex])
+    {
+        if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
+        {
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().GetGPSTime().tow));
+        }
+        else if (gnuplotData.dataIdentifier == "Time since startup" && obs->timeSinceStartup.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->timeSinceStartup.value());
+        }
+        else if (gnuplotData.dataIdentifier == "Temperature" && obs->temperature.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->temperature.value());
+        }
+        else if (gnuplotData.dataIdentifier == "Mag uncomp X" && obs->magUncompXYZ.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->magUncompXYZ.value().x());
+        }
+        else if (gnuplotData.dataIdentifier == "Mag uncomp Y" && obs->magUncompXYZ.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->magUncompXYZ.value().y());
+        }
+        else if (gnuplotData.dataIdentifier == "Mag uncomp Z" && obs->magUncompXYZ.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->magUncompXYZ.value().z());
+        }
+        else if (gnuplotData.dataIdentifier == "Accel uncomp X" && obs->accelUncompXYZ.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->accelUncompXYZ.value().x());
+        }
+        else if (gnuplotData.dataIdentifier == "Accel uncomp Y" && obs->accelUncompXYZ.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->accelUncompXYZ.value().y());
+        }
+        else if (gnuplotData.dataIdentifier == "Accel uncomp Z" && obs->accelUncompXYZ.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->accelUncompXYZ.value().z());
+        }
+        else if (gnuplotData.dataIdentifier == "Gyro uncomp X" && obs->gyroUncompXYZ.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->gyroUncompXYZ.value().x());
+        }
+        else if (gnuplotData.dataIdentifier == "Gyro uncomp Y" && obs->gyroUncompXYZ.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->gyroUncompXYZ.value().y());
+        }
+        else if (gnuplotData.dataIdentifier == "Gyro uncomp Z" && obs->gyroUncompXYZ.has_value())
+        {
+            gnuplotData.data.emplace_back(obs->gyroUncompXYZ.value().z());
+        }
+
+        // Delete old data
+        if (NodeManager::appContext != NodeContext::POST_PROCESSING)
+        {
+            while (xDisplayScope != 0 && gnuplotData.data.size() > xDisplayScope)
+            {
+                gnuplotData.data.pop_front();
+            }
+        }
+    }
+
+    requestUpdate();
+
+    invokeCallbacks(obs);
+}

@@ -30,6 +30,7 @@ void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::InsObs>& obs)
 {
     if (obs->insTime.has_value() && !startupGpsTime.has_value())
     {
+        LOG_INFO("Time Synchronizer ({}) found start time.", name);
         startupGpsTime = obs->insTime;
     }
 }
