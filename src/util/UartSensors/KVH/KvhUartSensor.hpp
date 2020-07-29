@@ -105,7 +105,6 @@ class KvhUartSensor
 
     /// Used for correlating raw data with where the packet was found for the end user.
     size_t runningDataIndex{ 0 };
-    size_t numOfBytesRemainingForCompletePacket{ 0 };
 
     void resetTracking();
 };

@@ -16,10 +16,8 @@ void NAV::sensors::kvh::KvhUartSensor::resetTracking()
 
     asciiEndChar1Found = false;
     packetType = HeaderType::FMT_UNKNOWN;
-    eState = SM_IDLE;
 
     _buffer.resize(0);
-    numOfBytesRemainingForCompletePacket = 0;
 }
 
 NAV::sensors::kvh::KvhUartSensor::HeaderType NAV::sensors::kvh::KvhUartSensor::bFindImuHeader(uint8_t ui8Data)
@@ -150,6 +148,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
     {
         resetTracking();
         currentlyBuildingAsciiPacket = true;
+        _buffer.push_back(dataByte);
     }
     else if (currentlyBuildingBinaryPacket)
     {
@@ -167,7 +166,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
             if (p->isValid())
             {
                 // We have a valid binary packet!!!.
-                LOG_DEBUG("Valid binary packet: Type={}, Length={}", packetType, _buffer.size());
+                LOG_TRACE("Valid binary packet: Type={}, Length={}", packetType, _buffer.size());
                 resetTracking();
                 return p;
             }
@@ -202,7 +201,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
                 if (p->isValid())
                 {
                     // We have a valid ascii packet!!!.
-                    LOG_DEBUG("Valid ascii packet: {}", p->datastr().substr(0, p->getRawDataLength() - 2));
+                    LOG_TRACE("Valid ascii packet: {}", p->datastr().substr(0, p->getRawDataLength() - 2));
                     return p;
                 }
                 // Invalid packet!
@@ -288,7 +287,7 @@ bool NAV::sensors::kvh::KvhUartSensor::checksumFunction(const uart::protocol::Pa
         uint32_t checksumCalc = kvh::ui32CalcImuCRC(packet.getRawData());
 
         uint32_t checksumPacket = 0;
-        memcpy(&checksumPacket, packet.getRawData().data() + packet.getRawDataLength() - 4, 4);
+        memcpy(&checksumPacket, packet.getRawData().data() + packet.getRawDataLength() - sizeof(uint32_t), sizeof(uint32_t));
         checksumPacket = uart::stoh(checksumPacket, endianness);
 
         return checksumPacket == checksumCalc;
