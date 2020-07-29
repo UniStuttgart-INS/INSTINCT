@@ -5,6 +5,8 @@
     #include "util/Logger.hpp"
     #include "util/Constants.hpp"
 
+    #include "util/UartSensors/KVH/KvhUtilities.hpp"
+
 NAV::KvhSensor::KvhSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Imu(name, options)
 {
@@ -47,85 +49,28 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
 {
     auto* kvhSensor = static_cast<KvhSensor*>(userData);
 
-    auto headerType = p.extractUint32();
-
     if (p.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
-        if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_A)
+        auto obs = std::make_shared<KvhObs>(p);
+
+        sensors::kvh::decryptKvhObs(obs);
+
+        LOG_DATA("DATA({}): {}, {}, {}",
+                 kvhSensor->name, obs->sequenceNumber, obs->temperature, obs->status);
+
+        // Check if a packet was skipped
+        if (kvhSensor->prevSequenceNumber == UINT8_MAX)
         {
-            auto obs = std::make_shared<KvhObs>(p);
-
-            obs->gyroUncompXYZ.emplace(InsConst::deg2rad(p.extractFloat()),
-                                       InsConst::deg2rad(p.extractFloat()),
-                                       InsConst::deg2rad(p.extractFloat()));
-
-            obs->accelUncompXYZ.emplace(p.extractFloat(),
-                                        p.extractFloat(),
-                                        p.extractFloat());
-            obs->accelUncompXYZ.value() *= InsConst::G_NORM;
-
-            obs->status = p.extractUint8();
-            obs->sequenceNumber = p.extractUint8();
-            obs->temperature = p.extractUint16();
-
-            LOG_DATA("DATA({}): A {}, {}, {}",
-                     kvhSensor->name, obs->sequenceNumber, obs->temperature, obs->status);
-
-            static uint8_t prevSequenceNumber = obs->sequenceNumber;
-            if (obs->sequenceNumber != 0 && obs->sequenceNumber < prevSequenceNumber)
-            {
-                LOG_WARN("{}: Sequence Number changed from {} to {}", kvhSensor->name, prevSequenceNumber, obs->sequenceNumber);
-            }
-
-            // Calls all the callbacks
-            kvhSensor->invokeCallbacks(obs);
+            kvhSensor->prevSequenceNumber = obs->sequenceNumber;
         }
-        else if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_B)
+        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < kvhSensor->prevSequenceNumber || obs->sequenceNumber > kvhSensor->prevSequenceNumber + 1))
         {
-            auto obs = std::make_shared<KvhObs>(p);
-
-            obs->gyroUncompXYZ.emplace(InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()));
-
-            obs->accelUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
-            obs->accelUncompXYZ.value() *= InsConst::G_NORM;
-
-            obs->timeSinceStartup.emplace(p.extractUint32() * 1000);
-            obs->status = p.extractUint8();
-            obs->sequenceNumber = p.extractUint8();
-            obs->temperature = p.extractUint16();
-
-            LOG_DATA("DATA({}): B {}, {}, {}, {}",
-                     kvhSensor->name, obs->timeSinceStartup.value(), obs->sequenceNumber, obs->temperature, obs->status);
-
-            // Calls all the callbacks
-            kvhSensor->invokeCallbacks(obs);
+            LOG_WARN("{}: Sequence Number changed from {} to {}", kvhSensor->name, kvhSensor->prevSequenceNumber, obs->sequenceNumber);
         }
-        else if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_C)
-        {
-            auto obs = std::make_shared<KvhObs>(p);
+        kvhSensor->prevSequenceNumber = obs->sequenceNumber;
 
-            obs->gyroUncompXYZ.emplace(InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()), InsConst::deg2rad(p.extractFloat()));
-
-            obs->accelUncompXYZ.emplace(p.extractFloat(), p.extractFloat(), p.extractFloat());
-            obs->accelUncompXYZ.value() *= InsConst::G_NORM;
-
-            auto OneOfTempMagXYZ = p.extractFloat();
-
-            obs->status = p.extractUint8();
-            obs->sequenceNumber = p.extractUint8();
-
-            static std::array<double, 4> tempMagXYZ{ std::nan(""), std::nan(""), std::nan(""), std::nan("") };
-            tempMagXYZ.at(obs->sequenceNumber % 4) = static_cast<double>(OneOfTempMagXYZ);
-
-            obs->temperature = tempMagXYZ[0];
-            obs->magUncompXYZ = Eigen::Vector3d(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
-
-            LOG_DATA("DATA({}): C {}, {}, {}",
-                     kvhSensor->name, obs->sequenceNumber, obs->temperature, obs->status);
-
-            // Calls all the callbacks
-            kvhSensor->invokeCallbacks(obs);
-        }
+        // Calls all the callbacks
+        kvhSensor->invokeCallbacks(obs);
     }
     else if (p.type() == uart::protocol::Packet::Type::TYPE_ASCII)
     {

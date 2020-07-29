@@ -30,7 +30,14 @@ void NAV::KvhDataLogger::writeObservation(std::shared_ptr<NAV::KvhObs>& obs)
 
     if (fileType == FileType::BINARY)
     {
-        filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
+        if (obs->raw.getRawDataLength() > 0)
+        {
+            filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
+        }
+        else
+        {
+            LOG_ERROR("{}: Tried to write binary, but observation had no binary data.", name);
+        }
     }
     else if (fileType == FileType::ASCII)
     {

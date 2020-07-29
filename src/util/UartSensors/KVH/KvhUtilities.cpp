@@ -1,5 +1,8 @@
 #include "KvhUtilities.hpp"
 
+#include "util/Logger.hpp"
+#include "util/Constants.hpp"
+#include "util/UartSensors/KVH/KvhUartSensor.hpp"
 #include <array>
 
 // Static table used for the table driven implementation of the 32-bit CRC algorithm.
@@ -82,4 +85,62 @@ uint32_t NAV::sensors::kvh::ui32CalcImuCRC(const std::vector<uint8_t>& rawData)
     }
 
     return ui32CRCVal;
+}
+
+void NAV::sensors::kvh::decryptKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
+{
+    auto headerType = obs->raw.extractUint32();
+
+    if (obs->raw.type() == uart::protocol::Packet::Type::TYPE_BINARY)
+    {
+        if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_A)
+        {
+            obs->gyroUncompXYZ.emplace(InsConst::deg2rad(obs->raw.extractFloat()),
+                                       InsConst::deg2rad(obs->raw.extractFloat()),
+                                       InsConst::deg2rad(obs->raw.extractFloat()));
+
+            obs->accelUncompXYZ.emplace(obs->raw.extractFloat(),
+                                        obs->raw.extractFloat(),
+                                        obs->raw.extractFloat());
+            obs->accelUncompXYZ.value() *= InsConst::G_NORM;
+
+            obs->status = obs->raw.extractUint8();
+            obs->sequenceNumber = obs->raw.extractUint8();
+            obs->temperature = obs->raw.extractUint16();
+        }
+        else if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_B)
+        {
+            obs->gyroUncompXYZ.emplace(InsConst::deg2rad(obs->raw.extractFloat()),
+                                       InsConst::deg2rad(obs->raw.extractFloat()),
+                                       InsConst::deg2rad(obs->raw.extractFloat()));
+
+            obs->accelUncompXYZ.emplace(obs->raw.extractFloat(),
+                                        obs->raw.extractFloat(),
+                                        obs->raw.extractFloat());
+            obs->accelUncompXYZ.value() *= InsConst::G_NORM;
+
+            obs->timeSinceStartup.emplace(obs->raw.extractUint32() * 1000);
+            obs->status = obs->raw.extractUint8();
+            obs->sequenceNumber = obs->raw.extractUint8();
+            obs->temperature = obs->raw.extractUint16();
+        }
+        else if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_C)
+        {
+            obs->gyroUncompXYZ.emplace(InsConst::deg2rad(obs->raw.extractFloat()), InsConst::deg2rad(obs->raw.extractFloat()), InsConst::deg2rad(obs->raw.extractFloat()));
+
+            obs->accelUncompXYZ.emplace(obs->raw.extractFloat(), obs->raw.extractFloat(), obs->raw.extractFloat());
+            obs->accelUncompXYZ.value() *= InsConst::G_NORM;
+
+            auto OneOfTempMagXYZ = obs->raw.extractFloat();
+
+            obs->status = obs->raw.extractUint8();
+            obs->sequenceNumber = obs->raw.extractUint8();
+
+            static std::array<double, 4> tempMagXYZ{ std::nan(""), std::nan(""), std::nan(""), std::nan("") };
+            tempMagXYZ.at(obs->sequenceNumber % 4) = static_cast<double>(OneOfTempMagXYZ);
+
+            obs->temperature = tempMagXYZ[0];
+            obs->magUncompXYZ = Eigen::Vector3d(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
+        }
+    }
 }

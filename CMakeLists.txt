@@ -105,12 +105,6 @@ if(ENABLE_SENSORS)
   set_target_properties(libercxx PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libercxx PROPERTIES CXX_CPPCHECK "")
 
-  # Include kvh library
-  add_subdirectory(lib/kvhlib libkvhcxx)
-  include_directories(SYSTEM lib/kvhlib/include)
-  set_target_properties(libkvhcxx PROPERTIES CXX_CLANG_TIDY "")
-  set_target_properties(libkvhcxx PROPERTIES CXX_CPPCHECK "")
-
   # Include navio library
   add_subdirectory(lib/navio libnavio)
   include_directories(SYSTEM lib/navio/include)

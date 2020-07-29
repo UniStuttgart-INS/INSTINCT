@@ -40,6 +40,8 @@ class KvhUartSensor
     static constexpr uint32_t HEADER_FMT_XBIT = 0xFE8100AA;
     static constexpr uint32_t HEADER_FMT_XBIT2 = 0xFE8100AB;
 
+    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_BIG;
+
   private:
     uart::sensors::UartSensor sensor{ endianness,
                                       packetFinderFunction,
@@ -50,7 +52,6 @@ class KvhUartSensor
                                       isResponseFunction,
                                       packetHeaderLength };
 
-    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_BIG;
     static constexpr size_t packetHeaderLength = 0;
 
     static void packetFinderFunction(const std::vector<uint8_t>& data,

@@ -181,9 +181,9 @@ class TimeSynchronizer final : public Node
         if (useFixedStartTime && portIndex == 0)
         {
             // portIndex is the output Port
-            // but the data we want to pull come from input port 1
-            const auto& sourceNode = incomingLinks[1].first.lock();
-            auto& sourcePortIndex = incomingLinks[1].second;
+            // but the data we want to pull come from input port 0
+            const auto& sourceNode = incomingLinks[0].first.lock();
+            auto& sourcePortIndex = incomingLinks[0].second;
 
             if (portDataType == VectorNavObs().type())
             {
@@ -225,9 +225,9 @@ class TimeSynchronizer final : public Node
         if (useFixedStartTime && portIndex == 0)
         {
             // portIndex is the output Port
-            // but the data we want to pull come from input port 1
-            const auto& sourceNode = incomingLinks[1].first.lock();
-            auto& sourcePortIndex = incomingLinks[1].second;
+            // but the data we want to pull come from input port 0
+            const auto& sourceNode = incomingLinks[0].first.lock();
+            auto& sourcePortIndex = incomingLinks[0].second;
             if (portDataType == VectorNavObs().type())
             {
                 auto peekData = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));

@@ -19,7 +19,7 @@ namespace NAV::sensors::ublox
 ///
 /// @param[in, out] obs Ublox Observation to decrypt
 /// @param[in, out] currentInsTime Current Ins Time
-/// @param[in] peek Specifies if the data should be peeked  or read
+/// @param[in] peek Specifies if the data should be peeked or read
 void decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, std::optional<NAV::InsTime>& currentInsTime, bool peek = false);
 
 /// @brief Calculates the two UBX checksums for the provided data vector

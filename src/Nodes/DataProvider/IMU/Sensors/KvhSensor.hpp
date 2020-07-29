@@ -143,6 +143,9 @@ class KvhSensor final : public UartSensor, public Imu
 
     /// Sensor Object
     sensors::kvh::KvhUartSensor sensor;
+
+    /// Previous Sequence number to check for order errors
+    uint8_t prevSequenceNumber = UINT8_MAX;
 };
 
 } // namespace NAV

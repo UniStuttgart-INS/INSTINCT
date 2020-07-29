@@ -11,6 +11,8 @@
 #include "../../Protocol/FileReader.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 
+#include "util/UartSensors/KVH/KvhUartSensor.hpp"
+
 namespace NAV
 {
 /// File Reader for Kvh log files
@@ -177,6 +179,12 @@ class KvhFile final : public FileReader, public Imu
 
     /// Header Columns of an ASCII file
     std::vector<std::string> columns;
+
+    /// Sensor Object
+    sensors::kvh::KvhUartSensor sensor;
+
+    /// Previous Sequence number to check for order errors
+    uint8_t prevSequenceNumber = UINT8_MAX;
 };
 
 } // namespace NAV
