@@ -12,7 +12,7 @@
     #include "NodeData/IMU/KvhObs.hpp"
     #include "../Imu.hpp"
     #include "../../Protocol/UartSensor.hpp"
-    #include "kvh/sensors/sensors.hpp"
+    #include "util/UartSensors/KVH/KvhUartSensor.hpp"
 
 namespace NAV
 {
@@ -20,13 +20,6 @@ namespace NAV
 class KvhSensor final : public UartSensor, public Imu
 {
   public:
-    /// Config Structure for the sensor
-    using Config = struct
-    {
-        /// OutputFrequency to calculate rateDivisor field.
-        uint16_t outputFrequency = 1;
-    };
-
     /**
      * @brief Construct a new KVH Sensor object
      * 
@@ -146,13 +139,10 @@ class KvhSensor final : public UartSensor, public Imu
      * @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
      * @param[in] index Advanced usage item and can be safely ignored for now
      */
-    static void asciiOrBinaryAsyncMessageReceived(void* userData, ::kvh::protocol::uart::Packet& p, size_t index);
+    static void asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
 
-    /// KvhSensor Object
-    kvh::sensors::KvhImuSensor sensor;
-
-    /// Config Object
-    KvhSensor::Config config;
+    /// Sensor Object
+    sensors::kvh::KvhUartSensor sensor;
 };
 
 } // namespace NAV

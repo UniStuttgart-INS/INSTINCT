@@ -43,6 +43,11 @@ class ApiVersion
     static std::string getVersion();
 };
 
+/// Carriage Return \r
+static constexpr unsigned int CARRIAGE_RETURN = 0x0D;
+/// Line Feed \n
+static constexpr unsigned int LINE_FEED = 0x0A;
+
 enum Endianness
 {
     ENDIAN_LITTLE,

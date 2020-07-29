@@ -8,7 +8,7 @@
 #pragma once
 
 #include "ImuObs.hpp"
-#include "util/KVH/KvhPacket.hpp"
+#include "uart/protocol/packet.hpp"
 #include <bitset>
 
 namespace NAV
@@ -17,7 +17,13 @@ namespace NAV
 class KvhObs final : public ImuObs
 {
   public:
-    KvhObs() = default;                        ///< Constructor
+    KvhObs() = default; ///< Constructor
+
+    /// @brief Constructor
+    ///
+    /// @param[in] packet The packet to copy into the raw data
+    explicit KvhObs(uart::protocol::Packet& packet)
+        : raw(packet) {}
     ~KvhObs() final = default;                 ///< Destructor
     KvhObs(const KvhObs&) = delete;            ///< Copy constructor
     KvhObs(KvhObs&&) = delete;                 ///< Move constructor
@@ -46,7 +52,7 @@ class KvhObs final : public ImuObs
     }
 
     /// Complete message raw binary data including header and checksum
-    KvhPacket raw;
+    uart::protocol::Packet raw;
 
     /** Status Byte
      * 
