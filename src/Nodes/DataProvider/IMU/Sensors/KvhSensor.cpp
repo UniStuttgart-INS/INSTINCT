@@ -8,7 +8,7 @@
     #include "util/UartSensors/KVH/KvhUtilities.hpp"
 
 NAV::KvhSensor::KvhSensor(const std::string& name, const std::map<std::string, std::string>& options)
-    : UartSensor(options), Imu(name, options)
+    : UartSensor(options), Imu(name, options), sensor(name)
 {
     LOG_TRACE("called for {}", name);
 
@@ -74,7 +74,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
     }
     else if (p.type() == uart::protocol::Packet::Type::TYPE_ASCII)
     {
-        LOG_WARN("{} received an ASCII Async message: {}", kvhSensor->name, p.datastr());
+        LOG_WARN("{}: Received an ASCII Async message: {}", kvhSensor->name, p.datastr());
     }
 }
 

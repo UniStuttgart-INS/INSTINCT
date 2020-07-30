@@ -8,7 +8,7 @@
 #include "util/UartSensors/KVH/KvhUtilities.hpp"
 
 NAV::KvhFile::KvhFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(options), Imu(name, options)
+    : FileReader(options), Imu(name, options), sensor(name)
 {
     LOG_TRACE("called for {}", name);
 

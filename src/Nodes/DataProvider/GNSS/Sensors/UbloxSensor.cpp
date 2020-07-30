@@ -7,7 +7,7 @@
     #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 
 NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::string, std::string>& options)
-    : UartSensor(options), Gnss(name, options)
+    : UartSensor(options), Gnss(name, options), sensor(name)
 {
     LOG_TRACE("called for {}", name);
 

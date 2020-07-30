@@ -14,8 +14,12 @@ namespace NAV::sensors::ublox
 class UbloxUartSensor
 {
   public:
+    /// @brief Constructor
+    /// @param[in] name Name of the Parent Node
+    explicit UbloxUartSensor(std::string name);
+
     /// @brief Default constructor
-    UbloxUartSensor();
+    UbloxUartSensor() = default;
     /// @brief Destructor
     ~UbloxUartSensor() = default;
     /// @brief Copy constructor
@@ -39,6 +43,9 @@ class UbloxUartSensor
     static constexpr uint8_t AsciiStartChar = '$';
 
   private:
+    /// Name of the Parent Node
+    const std::string name;
+
     uart::sensors::UartSensor sensor{ endianness,
                                       packetFinderFunction,
                                       this,

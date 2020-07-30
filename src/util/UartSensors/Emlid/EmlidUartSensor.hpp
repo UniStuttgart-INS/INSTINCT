@@ -14,8 +14,12 @@ namespace NAV::sensors::emlid
 class EmlidUartSensor
 {
   public:
+    /// @brief Constructor
+    /// @param[in] name Name of the Parent Node
+    explicit EmlidUartSensor(std::string name);
+
     /// @brief Default constructor
-    EmlidUartSensor();
+    EmlidUartSensor() = default;
     /// @brief Destructor
     ~EmlidUartSensor() = default;
     /// @brief Copy constructor
@@ -39,6 +43,9 @@ class EmlidUartSensor
     static constexpr uint8_t AsciiStartChar = '$';
 
   private:
+    /// Name of the Parent Node
+    const std::string name;
+
     uart::sensors::UartSensor sensor{ endianness,
                                       packetFinderFunction,
                                       this,

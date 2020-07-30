@@ -3,8 +3,8 @@
 #include "KvhUtilities.hpp"
 #include "util/Logger.hpp"
 
-NAV::sensors::kvh::KvhUartSensor::KvhUartSensor()
-    : _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
+NAV::sensors::kvh::KvhUartSensor::KvhUartSensor(std::string name)
+    : name(std::move(name)), _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
 {
     resetTracking();
 }
@@ -108,7 +108,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
     {
         // Buffer is full
         resetTracking();
-        LOG_ERROR("Discarding current packet, because buffer is full.");
+        LOG_ERROR("{}: Discarding current packet, because buffer is full.", name);
     }
 
     auto binaryPacketType = bFindImuHeader(dataByte);
@@ -166,12 +166,12 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
             if (p->isValid())
             {
                 // We have a valid binary packet!!!.
-                LOG_TRACE("Valid binary packet: Type={}, Length={}", packetType, _buffer.size());
+                LOG_TRACE("{}: Valid binary packet: Type={}, Length={}", name, packetType, _buffer.size());
                 resetTracking();
                 return p;
             }
             // Invalid packet!
-            LOG_ERROR("Invalid binary packet: Type={}, Length={}", packetType, _buffer.size());
+            LOG_ERROR("{}: Invalid binary packet: Type={}, Length={}", name, packetType, _buffer.size());
             resetTracking();
         }
         if (_buffer.size() >= 40)
@@ -201,11 +201,11 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
                 if (p->isValid())
                 {
                     // We have a valid ascii packet!!!.
-                    LOG_TRACE("Valid ascii packet: {}", p->datastr().substr(0, p->getRawDataLength() - 2));
+                    LOG_TRACE("{}: Valid ascii packet: {}", name, p->datastr().substr(0, p->getRawDataLength() - 2));
                     return p;
                 }
                 // Invalid packet!
-                LOG_ERROR("Invalid ascii packet: {}", p->datastr());
+                LOG_ERROR("{}: Invalid ascii packet: {}", name, p->datastr());
             }
 
             resetTracking();
@@ -213,7 +213,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
 
         if (_buffer.size() >= MaximumSizeForAsciiPacket)
         {
-            LOG_ERROR("Buffer exceeded the Maximum Ascii Packet Size");
+            LOG_ERROR("{}: Buffer exceeded the Maximum Ascii Packet Size", name);
             resetTracking();
         }
     }
@@ -223,8 +223,8 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
 
 void NAV::sensors::kvh::KvhUartSensor::packetFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData)
 {
-    LOG_TRACE("called");
     auto* sensor = static_cast<KvhUartSensor*>(userData);
+    LOG_TRACE("{} called", sensor->name);
 
     for (size_t i = 0; i < data.size(); i++, sensor->runningDataIndex++)
     {

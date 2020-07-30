@@ -8,7 +8,7 @@
 #include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
 NAV::EmlidFile::EmlidFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(options), Gnss(name, options)
+    : FileReader(options), Gnss(name, options), sensor(name)
 {
     LOG_TRACE("called for {}", name);
 

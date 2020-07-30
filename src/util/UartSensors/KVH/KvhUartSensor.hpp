@@ -14,8 +14,12 @@ namespace NAV::sensors::kvh
 class KvhUartSensor
 {
   public:
+    /// @brief Constructor
+    /// @param[in] name Name of the Parent Node
+    explicit KvhUartSensor(std::string name);
+
     /// @brief Default constructor
-    KvhUartSensor();
+    KvhUartSensor() = default;
     /// @brief Destructor
     ~KvhUartSensor() = default;
     /// @brief Copy constructor
@@ -43,6 +47,9 @@ class KvhUartSensor
     static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_BIG;
 
   private:
+    /// Name of the Parent Node
+    const std::string name;
+
     uart::sensors::UartSensor sensor{ endianness,
                                       packetFinderFunction,
                                       this,

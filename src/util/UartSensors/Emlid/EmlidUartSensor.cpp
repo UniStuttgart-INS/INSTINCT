@@ -3,8 +3,8 @@
 #include "EmlidUtilities.hpp"
 #include "util/Logger.hpp"
 
-NAV::sensors::emlid::EmlidUartSensor::EmlidUartSensor()
-    : _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
+NAV::sensors::emlid::EmlidUartSensor::EmlidUartSensor(std::string name)
+    : name(std::move(name)), _buffer(uart::sensors::UartSensor::DefaultReadBufferSize)
 {
     resetTracking();
 }
@@ -33,7 +33,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::emlid::EmlidUartSensor::fi
     {
         // Buffer is full
         resetTracking();
-        LOG_ERROR("Discarding current packet, because buffer is full.");
+        LOG_ERROR("{}: Discarding current packet, because buffer is full.", name);
     }
 
     if (!currentlyBuildingAsciiPacket && !currentlyBuildingBinaryPacket)
@@ -85,7 +85,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::emlid::EmlidUartSensor::fi
             binaryPayloadLength |= static_cast<uint16_t>(static_cast<uint16_t>(dataByte) << 8U);
             binaryPayloadLength = uart::stoh(binaryPayloadLength, endianness);
             numOfBytesRemainingForCompletePacket = binaryPayloadLength + 2;
-            LOG_TRACE("Binary packet: Id={:0x}, payload length={}", binaryMsgId, binaryPayloadLength);
+            LOG_TRACE("{}: Binary packet: Id={:0x}, payload length={}", name, binaryMsgId, binaryPayloadLength);
         }
         else
         {
@@ -104,7 +104,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::emlid::EmlidUartSensor::fi
                     return p;
                 }
                 // Invalid packet!
-                LOG_ERROR("Invalid binary packet: Id={:0x}, payload length={}", binaryMsgId, binaryPayloadLength);
+                LOG_ERROR("{}: Invalid binary packet: Id={:0x}, payload length={}", name, binaryMsgId, binaryPayloadLength);
                 resetTracking();
             }
         }
@@ -131,7 +131,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::emlid::EmlidUartSensor::fi
                 if (p->isValid())
                 {
                     // We have a valid ascii packet!!!.
-                    LOG_TRACE("Valid ascii packet: {}", p->datastr().substr(0, p->getRawDataLength() - 2));
+                    LOG_TRACE("{}: Valid ascii packet: {}", name, p->datastr().substr(0, p->getRawDataLength() - 2));
                     return p;
                 }
                 // Invalid packet!
@@ -147,8 +147,8 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::emlid::EmlidUartSensor::fi
 
 void NAV::sensors::emlid::EmlidUartSensor::packetFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData)
 {
-    LOG_TRACE("called");
     auto* sensor = static_cast<EmlidUartSensor*>(userData);
+    LOG_TRACE("{} called", sensor->name);
 
     for (size_t i = 0; i < data.size(); i++, sensor->runningDataIndex++)
     {
