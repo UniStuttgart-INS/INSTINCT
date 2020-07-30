@@ -6,7 +6,6 @@
 #include "uart/util/nocopy.hpp"
 #include "uart/xplat/export.hpp"
 #include "uart/xplat/int.hpp"
-#include "uart/protocol/packetfinder.hpp"
 #include "uart/protocol/packet.hpp"
 #include "uart/xplat/timestamp.hpp"
 
@@ -44,7 +43,7 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// \param[in] timestamp The timestamp the packet was found.
     /// \param[in] dispatchPacket Callback when possible packet was found
     /// \param[in] dispatchPacketUserData Pointer to user data that was initially supplied to the dispatch function
-    /// \param[in] User Data Provided when registering the function
+    /// \param[in] userData User Data Provided when registering the function
     using PacketFinderFunction = void (*)(const std::vector<uint8_t>& data, const xplat::TimeStamp& timestamp, ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData);
 
     /// \brief Defines a callback handler that can received notification when
@@ -108,6 +107,15 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
     /// \brief The list of baudrates supported by uart sensors.
     static std::vector<uint32_t> supportedBaudrates();
 
+    /// @brief Constructor
+    /// @param[in, out] endianness Endianness of the Sensor
+    /// @param[in, out] packetFinderFunction Function to Call with the Raw data to find packets in it
+    /// @param[in, out] packetFinderUserData UserData needed while finding packets
+    /// @param[in, out] packetTypeFunction Function determining the packet type
+    /// @param[in, out] isValidFunction Function which checks the checksum
+    /// @param[in, out] isErrorFunction Function which checks if the packet is an error message
+    /// @param[in, out] isResponseFunction Function which checks if the packet is a response message
+    /// @param[in, out] packetHeaderLength Length of the Header in each packet
     UartSensor(Endianness endianness,
                PacketFinderFunction packetFinderFunction,
                void* packetFinderUserData,
@@ -117,17 +125,21 @@ class proglib_DLLEXPORT UartSensor : private util::NoCopy
                PacketCheckFunction isResponseFunction,
                size_t packetHeaderLength);
 
+    /// @brief Destructor
     ~UartSensor();
 
-    UartSensor(const UartSensor&) = delete;            ///< Copy constructor
-    UartSensor(UartSensor&&) = delete;                 ///< Move constructor
-    UartSensor& operator=(const UartSensor&) = delete; ///< Copy assignment operator
-    UartSensor& operator=(UartSensor&&) = delete;      ///< Move assignment operator
+    /// @brief Copy constructor
+    UartSensor(const UartSensor&) = delete;
+    /// @brief Move Constructor
+    UartSensor(UartSensor&&) = delete;
+    /// @brief Copy assignment operator
+    UartSensor& operator=(const UartSensor&) = delete;
+    /// @brief Move assignment operator
+    UartSensor& operator=(UartSensor&&) = delete;
 
     /// \brief Returns the baudrate of the serial port connection. Note this
     /// is independent of the sensor's on-board serial baudrate setting.
     ///
-    /// \return The connected baudrate.
     /// \return The connected baudrate.
     uint32_t baudrate();
 

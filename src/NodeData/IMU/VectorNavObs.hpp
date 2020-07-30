@@ -1,9 +1,7 @@
-/**
- * @file VectorNavObs.hpp
- * @brief Data storage class for one VectorNav observation
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-12
- */
+/// @file VectorNavObs.hpp
+/// @brief Data storage class for one VectorNav observation
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-12
 
 #pragma once
 
@@ -15,49 +13,49 @@ namespace NAV
 class VectorNavObs final : public ImuObs
 {
   public:
-    VectorNavObs() = default;                              ///< Constructor
-    ~VectorNavObs() final = default;                       ///< Destructor
-    VectorNavObs(const VectorNavObs&) = delete;            ///< Copy constructor
-    VectorNavObs(VectorNavObs&&) = delete;                 ///< Move constructor
-    VectorNavObs& operator=(const VectorNavObs&) = delete; ///< Copy assignment operator
-    VectorNavObs& operator=(VectorNavObs&&) = delete;      ///< Move assignment operator
+    /// @brief Default constructor
+    VectorNavObs() = default;
+    /// @brief Destructor
+    ~VectorNavObs() final = default;
+    /// @brief Copy constructor
+    VectorNavObs(const VectorNavObs&) = delete;
+    /// @brief Move constructor
+    VectorNavObs(VectorNavObs&&) = delete;
+    /// @brief Copy assignment operator
+    VectorNavObs& operator=(const VectorNavObs&) = delete;
+    /// @brief Move assignment operator
+    VectorNavObs& operator=(VectorNavObs&&) = delete;
 
-    /**
-     * @brief Returns the type of the data class
-     * 
-     * @retval constexpr std::string_view The data type
-     */
+    /// @brief Returns the type of the data class
+    /// @return The data type
     [[nodiscard]] constexpr std::string_view type() const override
     {
         return std::string_view("VectorNavObs");
     }
 
-    /**
-     * @brief Returns the parent types of the data class
-     * 
-     * @retval std::vector<std::string_view> The parent data types
-     */
+    /// @brief Returns the parent types of the data class
+    /// @return The parent data types
     [[nodiscard]] std::vector<std::string_view> parentTypes() const override
     {
         std::vector<std::string_view> parents{ "ImuObs" };
         return parents;
     }
 
-    /** The estimated attitude quaternion. The first term is the scalar value.
-     *  The attitude is given as the body frame with respect to the local North East Down (NED) frame. */
+    /// The estimated attitude quaternion. The first term is the scalar value.
+    /// The attitude is given as the body frame with respect to the local North East Down (NED) frame.
     std::optional<Eigen::Quaterniond> quaternion;
 
-    /** The estimated attitude Yaw, Pitch, and Roll angles measured in [degrees].
-     *  The attitude is given as a 3,2,1 Euler angle sequence describing the body frame
-     *  with respect to the local North East Down (NED) frame.
-     *  Yaw   +/- 180°
-     *  Pitch +/- 90°
-     *  Roll  +/- 180°*/
+    /// The estimated attitude Yaw, Pitch, and Roll angles measured in [degrees].
+    /// The attitude is given as a 3,2,1 Euler angle sequence describing the body frame
+    /// with respect to the local North East Down (NED) frame.
+    /// Yaw   +/- 180°
+    /// Pitch +/- 90°
+    /// Roll  +/- 180°
     std::optional<Eigen::Array3d> yawPitchRoll;
 
-    /** The time since the last SyncIn event trigger expressed in [nano seconds] */
+    /// The time since the last SyncIn event trigger expressed in [nano seconds]
     std::optional<uint64_t> timeSinceSyncIn;
-    /** The number of SyncIn trigger events that have occurred. */
+    /// The number of SyncIn trigger events that have occurred.
     std::optional<uint32_t> syncInCnt;
 
     /// The compensated magnetic field measured in units of [Gauss], and given in the body frame.
@@ -67,45 +65,53 @@ class VectorNavObs final : public ImuObs
     /// The compensated angular rate measured in units of [rad/s], and given in the body frame.
     std::optional<Eigen::Vector3d> gyroCompXYZ;
 
-    /** The time interval that the delta angle and velocities are integrated over in [seconds]. */
+    /// The time interval that the delta angle and velocities are integrated over in [seconds].
     std::optional<double> dtime;
-    /** The delta rotation angles in [degree] incurred due to rotation, by the local body reference frame, since the last time the values were outputted by the device. */
+    /// The delta rotation angles in [degree] incurred due to rotation, by the local body reference frame,
+    /// since the last time the values were outputted by the device.
     std::optional<Eigen::Array3d> dtheta;
-    /** The delta velocity in [m/s] incurred due to motion, by the local body reference frame, since the last time the values were outputted by the device. */
+    /// The delta velocity in [m/s] incurred due to motion, by the local body reference frame,
+    /// since the last time the values were outputted by the device.
     std::optional<Eigen::Vector3d> dvel;
 
-    /** @brief The VPE status bitfield
-     * 
-     *  Bit | Name                    | Description
-     *  0+1 | AttitudeQuality         | Provides an indication of the quality of the attitude solution. 0 - Excellent, 1 - Good, 2 - Bad, 3 - Not tracking
-     *   2  | GyroSaturation          | At least one gyro axis is currently saturated.
-     *   3  | GyroSaturationRecovery  | Filter is in the process of recovering from a gyro saturation event.
-     *  4+5 | MagDisturbance          | A magnetic DC disturbance has been detected. 0 – No magnetic disturbance. 1 to 3 – Magnetic disturbance is present.
-     *   6  | MagSaturation           | At least one magnetometer axis is currently saturated.
-     *  7+8 | AccDisturbance          | A strong acceleration disturbance has been detected. 0 – No acceleration disturbance. 1 to 3 – Acceleration disturbance has been detected.
-     *   9  | AccSaturation           | At least one accelerometer axis is currently saturated.
-     *  11  | KnownMagDisturbance     | A known magnetic disturbance has been reported by the user and the magnetometer is currently tuned out.
-     *  12  | KnownAccelDisturbance   | A known acceleration disturbance has been reported by the user and the accelerometer is currently tuned out.
-     */
+    /// @brief The VPE status bitfield
+    ///
+    /// Bit | Name                    | Description
+    /// 0+1 | AttitudeQuality         | Provides an indication of the quality of the attitude solution. 0 - Excellent, 1 - Good, 2 - Bad, 3 - Not tracking
+    ///  2  | GyroSaturation          | At least one gyro axis is currently saturated.
+    ///  3  | GyroSaturationRecovery  | Filter is in the process of recovering from a gyro saturation event.
+    /// 4+5 | MagDisturbance          | A magnetic DC disturbance has been detected. 0 – No magnetic disturbance. 1 to 3 – Magnetic disturbance is present.
+    ///  6  | MagSaturation           | At least one magnetometer axis is currently saturated.
+    /// 7+8 | AccDisturbance          | A strong acceleration disturbance has been detected. 0 – No acceleration disturbance. 1 to 3 – Acceleration disturbance has been detected.
+    ///  9  | AccSaturation           | At least one accelerometer axis is currently saturated.
+    /// 11  | KnownMagDisturbance     | A known magnetic disturbance has been reported by the user and the magnetometer is currently tuned out.
+    /// 12  | KnownAccelDisturbance   | A known acceleration disturbance has been reported by the user and the accelerometer is currently tuned out.
     class VpeStatus
     {
       public:
         /// Constructor
         explicit VpeStatus(uint16_t status) : status(status) {}
 
-        /// Assignment operator
+        /// @brief Assignment operator
+        /// @param[in] status Status to set
         VpeStatus& operator=(const uint16_t& status)
         {
             this->status = status;
             return *this;
         }
 
-        VpeStatus() = default;                           ///< Default Constructor
-        ~VpeStatus() = default;                          ///< Destructor
-        VpeStatus(const VpeStatus&) = delete;            ///< Copy constructor
-        VpeStatus(VpeStatus&&) = delete;                 ///< Move constructor
-        VpeStatus& operator=(const VpeStatus&) = delete; ///< Copy assignment operator
-        VpeStatus& operator=(VpeStatus&&) = delete;      ///< Move assignment operator
+        /// @brief Default constructor
+        VpeStatus() = default;
+        /// @brief Destructor
+        ~VpeStatus() = default;
+        /// @brief Copy constructor
+        VpeStatus(const VpeStatus&) = delete;
+        /// @brief Move constructor
+        VpeStatus(VpeStatus&&) = delete;
+        /// @brief Copy assignment operator
+        VpeStatus& operator=(const VpeStatus&) = delete;
+        /// @brief Move assignment operator
+        VpeStatus& operator=(VpeStatus&&) = delete;
 
         /// The storage field
         uint16_t status;
@@ -157,25 +163,25 @@ class VectorNavObs final : public ImuObs
         }
     };
 
-    /** @brief The VPE status bitfield */
+    /// @brief The VPE status bitfield
     std::optional<VpeStatus> vpeStatus;
 
-    /** The absolute IMU pressure measured in [kPa]. */
+    /// The absolute IMU pressure measured in [kPa].
     std::optional<double> pressure;
 
-    /** The compensated magnetic field measured in units of [Gauss], and given in the North East Down (NED) frame. */
+    /// The compensated magnetic field measured in units of [Gauss], and given in the North East Down (NED) frame.
     std::optional<Eigen::Vector3d> magCompNED;
-    /** The compensated acceleration (with gravity) measured in units of [m/s^2], and given in the North East Down (NED) frame. */
+    /// The compensated acceleration (with gravity) measured in units of [m/s^2], and given in the North East Down (NED) frame.
     std::optional<Eigen::Vector3d> accelCompNED;
-    /** The compensated angular rate measured in units of [rad/s], and given in the North East Down (NED) frame. */
+    /// The compensated angular rate measured in units of [rad/s], and given in the North East Down (NED) frame.
     std::optional<Eigen::Vector3d> gyroCompNED;
 
-    /** The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the body frame. */
+    /// The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the body frame.
     std::optional<Eigen::Vector3d> linearAccelXYZ;
-    /** The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the North East Down (NED) frame. */
+    /// The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the North East Down (NED) frame.
     std::optional<Eigen::Vector3d> linearAccelNED;
 
-    /** The estimated attitude (Yaw, Pitch, Roll) uncertainty (1 Sigma), reported in degrees. */
+    /// The estimated attitude (Yaw, Pitch, Roll) uncertainty (1 Sigma), reported in degrees.
     std::optional<Eigen::Array3d> yawPitchRollUncertainty;
 };
 

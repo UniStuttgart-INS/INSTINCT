@@ -1,9 +1,7 @@
-/**
- * @file TimeSynchronizer.hpp
- * @brief Class to Synchronize Different Data Providers to the same Time base
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-04-21
- */
+/// @file TimeSynchronizer.hpp
+/// @brief Class to Synchronize Different Data Providers to the same Time base
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-04-21
 
 #pragma once
 
@@ -19,46 +17,40 @@ namespace NAV
 class TimeSynchronizer final : public Node
 {
   public:
-    /**
-     * @brief Construct a new Time Synchronizer object
-     * 
-     * @param[in] name Name of the Object
-     * @param[in] options Program options string map
-     */
+    /// @brief Constructor
+    /// @param[in] name Name of the Object
+    /// @param[in] options Program options string map
     TimeSynchronizer(const std::string& name, const std::map<std::string, std::string>& options);
 
-    TimeSynchronizer() = default;                                  ///< Default Constructor
-    ~TimeSynchronizer() final = default;                           ///< Destructor
-    TimeSynchronizer(const TimeSynchronizer&) = delete;            ///< Copy constructor
-    TimeSynchronizer(TimeSynchronizer&&) = delete;                 ///< Move constructor
-    TimeSynchronizer& operator=(const TimeSynchronizer&) = delete; ///< Copy assignment operator
-    TimeSynchronizer& operator=(TimeSynchronizer&&) = delete;      ///< Move assignment operator
+    /// @brief Default constructor
+    TimeSynchronizer() = default;
+    /// @brief Destructor
+    ~TimeSynchronizer() final = default;
+    /// @brief Copy constructor
+    TimeSynchronizer(const TimeSynchronizer&) = delete;
+    /// @brief Move constructor
+    TimeSynchronizer(TimeSynchronizer&&) = delete;
+    /// @brief Copy assignment operator
+    TimeSynchronizer& operator=(const TimeSynchronizer&) = delete;
+    /// @brief Move assignment operator
+    TimeSynchronizer& operator=(TimeSynchronizer&&) = delete;
 
-    /**
-     * @brief Returns the String representation of the Class Type
-     * 
-     * @retval constexpr std::string_view The class type
-     */
+    /// @brief Returns the String representation of the Class Type
+    /// @return The class type
     [[nodiscard]] constexpr std::string_view type() const final
     {
         return std::string_view("TimeSynchronizer");
     }
 
-    /**
-     * @brief Returns the String representation of the Class Category
-     * 
-     * @retval constexpr std::string_view The class category
-     */
+    /// @brief Returns the String representation of the Class Category
+    /// @return The class category
     [[nodiscard]] constexpr std::string_view category() const final
     {
         return std::string_view("TimeSync");
     }
 
-    /**
-     * @brief Returns Gui Configuration options for the class
-     * 
-     * @retval std::vector<ConfigOptions> The gui configuration
-     */
+    /// @brief Returns Gui Configuration options for the class
+    /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
         return { { CONFIG_LIST, "1-Port Type", "Select the type of the message to receive on this port", { "[" + std::string(VectorNavObs().type()) + "]", std::string(ImuObs().type()), std::string(KvhObs().type()) } },
@@ -68,22 +60,16 @@ class TimeSynchronizer final : public Node
                  { CONFIG_FLOAT, "Gps Time\nof Week", "GPS Time of Week at the beginning of the data recording", { "0", "0", "604800" } } };
     }
 
-    /**
-     * @brief Returns the context of the class
-     * 
-     * @retval constexpr std::string_view The class context
-     */
+    /// @brief Returns the context of the class
+    /// @return The class context
     [[nodiscard]] constexpr NodeContext context() const final
     {
         return NodeContext::ALL;
     }
 
-    /**
-     * @brief Returns the number of Ports
-     * 
-     * @param[in] portType Specifies the port type
-     * @retval constexpr uint8_t The number of ports
-     */
+    /// @brief Returns the number of Ports
+    /// @param[in] portType Specifies the port type
+    /// @return The number of ports
     [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
     {
         switch (portType)
@@ -97,13 +83,10 @@ class TimeSynchronizer final : public Node
         return 0U;
     }
 
-    /**
-     * @brief Returns the data types provided by this class
-     * 
-     * @param[in] portType Specifies the port type
-     * @param[in] portIndex Port index on which the data is sent
-     * @retval constexpr std::string_view The data type
-     */
+    /// @brief Returns the data types provided by this class
+    /// @param[in] portType Specifies the port type
+    /// @param[in] portIndex Port index on which the data is sent
+    /// @return The data type
     [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
@@ -129,12 +112,9 @@ class TimeSynchronizer final : public Node
         return std::string_view("");
     }
 
-    /**
-     * @brief Handles the data sent on the input port
-     * 
-     * @param[in] portIndex The input port index
-     * @param[in, out] data The data send on the input port
-     */
+    /// @brief Handles the data sent on the input port
+    /// @param[in] portIndex The input port index
+    /// @param[in, out] data The data send on the input port
     void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) final
     {
         if (portIndex == 0)
@@ -170,12 +150,10 @@ class TimeSynchronizer final : public Node
             syncTime(obs);
         }
     }
-    /**
-     * @brief Requests the node to send out its data
-     * 
-     * @param[in] portIndex The output port index
-     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
-     */
+
+    /// @brief Requests the node to send out its data
+    /// @param[in] portIndex The output port index
+    /// @return The requested data or nullptr if no data available
     [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) final
     {
         if (useFixedStartTime && portIndex == 0)
@@ -214,12 +192,9 @@ class TimeSynchronizer final : public Node
         return nullptr;
     }
 
-    /**
-     * @brief Requests the node to peek its output data
-     * 
-     * @param[in] portIndex The output port index
-     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
-     */
+    /// @brief Requests the node to peek its output data
+    /// @param[in] portIndex The output port index
+    /// @return The requested data or nullptr if no data available
     [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex) final
     {
         if (useFixedStartTime && portIndex == 0)
@@ -258,42 +233,32 @@ class TimeSynchronizer final : public Node
     }
 
   private:
-    /**
-     * @brief Gets the gps time
-     * 
-     * @param[in] obs InsObs to process
-     */
+    /// @brief Gets the gps time
+    /// @param[in] obs InsObs to process
     void syncTime(std::shared_ptr<InsObs>& obs);
 
-    /**
-     * @brief Updates VectorNav Observations with gps time and calls callbacks
-     * 
-     * @param[in] obs VectorNavObs to process
-     * @retval bool True if the time was updated
-     */
+    /// @brief Updates VectorNav Observations with gps time and calls callbacks
+    /// @param[in] obs VectorNavObs to process
+    /// @return True if the time was updated
     bool syncVectorNavObs(std::shared_ptr<VectorNavObs>& obs);
 
-    /**
-     * @brief Updates ImuObs Observations with gps time and calls callbacks
-     * 
-     * @param[in] obs ImuObs to process
-     * @retval bool True if the time was updated
-     */
+    /// @brief Updates ImuObs Observations with gps time and calls callbacks
+    /// @param[in] obs ImuObs to process
+    /// @return True if the time was updated
     bool syncImuObs(std::shared_ptr<ImuObs>& obs);
 
-    /**
-     * @brief Updates Kvh Observations with gps time and calls callbacks
-     * 
-     * @param[in] obs KvhObs to process
-     * @retval bool True if the time was updated
-     */
+    /// @brief Updates Kvh Observations with gps time and calls callbacks
+    /// @param[in] obs KvhObs to process
+    /// @return True if the time was updated
     bool syncKvhObs(std::shared_ptr<KvhObs>& obs);
 
     /// Input and output Data Types
     std::string portDataType;
 
+    /// Flag whether to use the provided start time or wait for a signal on the input port
     bool useFixedStartTime = false;
 
+    /// GPS Time when the sync happened
     std::optional<InsTime> startupGpsTime;
 
     /// KVH specific variable

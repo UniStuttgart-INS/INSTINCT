@@ -45,8 +45,7 @@ using QtNodes::TypeConverterId;
 class Converter
 {
   public:
-    std::shared_ptr<NodeData>
-        operator()(std::shared_ptr<NodeData> /*data*/)
+    std::shared_ptr<NodeData> operator()([[maybe_unused]] std::shared_ptr<NodeData> data)
     {
         return nullptr;
     }

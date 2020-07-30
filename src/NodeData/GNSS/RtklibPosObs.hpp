@@ -1,9 +1,7 @@
-/**
- * @file RtklibPosObs.hpp
- * @brief RTKLIB Pos Observation Class
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-06-02
- */
+/// @file RtklibPosObs.hpp
+/// @brief RTKLIB Pos Observation Class
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-06-02
 
 #pragma once
 
@@ -18,28 +16,28 @@ namespace NAV
 class RtklibPosObs : public GnssObs
 {
   public:
-    RtklibPosObs() = default;                              ///< Constructor
-    ~RtklibPosObs() override = default;                    ///< Destructor
-    RtklibPosObs(const RtklibPosObs&) = delete;            ///< Copy constructor
-    RtklibPosObs(RtklibPosObs&&) = delete;                 ///< Move constructor
-    RtklibPosObs& operator=(const RtklibPosObs&) = delete; ///< Copy assignment operator
-    RtklibPosObs& operator=(RtklibPosObs&&) = delete;      ///< Move assignment operator
+    /// @brief Default constructor
+    RtklibPosObs() = default;
+    /// @brief Destructor
+    ~RtklibPosObs() override = default;
+    /// @brief Copy constructor
+    RtklibPosObs(const RtklibPosObs&) = delete;
+    /// @brief Move constructor
+    RtklibPosObs(RtklibPosObs&&) = delete;
+    /// @brief Copy assignment operator
+    RtklibPosObs& operator=(const RtklibPosObs&) = delete;
+    /// @brief Move assignment operator
+    RtklibPosObs& operator=(RtklibPosObs&&) = delete;
 
-    /**
-     * @brief Returns the type of the data class
-     * 
-     * @retval constexpr std::string_view The data type
-     */
+    /// @brief Returns the type of the data class
+    /// @return The data type
     [[nodiscard]] constexpr std::string_view type() const override
     {
         return std::string_view("RtklibPosObs");
     }
 
-    /**
-     * @brief Returns the parent types of the data class
-     * 
-     * @retval std::vector<std::string_view> The parent data types
-     */
+    /// @brief Returns the parent types of the data class
+    /// @return The parent data types
     [[nodiscard]] std::vector<std::string_view> parentTypes() const override
     {
         std::vector<std::string_view> parents{ "GnssObs" };
@@ -55,25 +53,25 @@ class RtklibPosObs : public GnssObs
     /// Number of satellites
     std::optional<uint8_t> ns;
 
-    /// [m]
+    /// Standard Deviation XYZ [m]
     std::optional<Eigen::Vector3d> sdXYZ;
-    /// [m]
+    /// Standard Deviation North East Down [m]
     std::optional<Eigen::Vector3d> sdNEU;
-    /// [m]
+    /// Standard Deviation xy [m]
     std::optional<double> sdxy;
-    /// [m]
+    /// Standard Deviation yz [m]
     std::optional<double> sdyz;
-    /// [m]
+    /// Standard Deviation zx [m]
     std::optional<double> sdzx;
-    /// [m]
+    /// Standard Deviation ne [m]
     std::optional<double> sdne;
-    /// [m]
+    /// Standard Deviation eu [m]
     std::optional<double> sdeu;
-    /// [m]
+    /// Standard Deviation un [m]
     std::optional<double> sdun;
-    /// [s]
+    /// Age [s]
     std::optional<double> age;
-    ///
+    /// Ratio
     std::optional<double> ratio;
 };
 

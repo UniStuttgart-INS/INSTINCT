@@ -212,14 +212,14 @@ bool NAV::sensors::emlid::EmlidUartSensor::checksumFunction(const uart::protocol
     return false;
 }
 
-bool NAV::sensors::emlid::EmlidUartSensor::isErrorFunction(const uart::protocol::Packet& /* packet */)
+bool NAV::sensors::emlid::EmlidUartSensor::isErrorFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     LOG_TRACE("called");
 
     return false;
 }
 
-bool NAV::sensors::emlid::EmlidUartSensor::isResponseFunction(const uart::protocol::Packet& /* packet */)
+bool NAV::sensors::emlid::EmlidUartSensor::isResponseFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     LOG_TRACE("called");
 

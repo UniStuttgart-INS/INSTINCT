@@ -24,7 +24,7 @@ void NAV::Sleep::waitForSignal(bool showText)
     usr_interrupt = 0;
     sigset_t mask;
     sigset_t oldmask;
-    /* Set up the mask of signals to temporarily block. */
+    // Set up the mask of signals to temporarily block.
     sigemptyset(&mask);
     sigaddset(&mask, SIGUSR1);
     sigaddset(&mask, SIGINT);
@@ -38,7 +38,7 @@ void NAV::Sleep::waitForSignal(bool showText)
         LOG_INFO("Programm waits for one of the signals: -SIGUSR1 / -SIGINT (Ctrl + c) / -SIGTERM");
     }
 
-    /* Wait for a signal to arrive. */
+    // Wait for a signal to arrive.
     sigprocmask(SIG_BLOCK, &mask, &oldmask);
     while (!usr_interrupt)
     {

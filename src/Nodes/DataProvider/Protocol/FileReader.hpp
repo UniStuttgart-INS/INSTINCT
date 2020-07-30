@@ -1,9 +1,7 @@
-/**
- * @file FileReader.hpp
- * @brief Abstract File Reader class
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-16
- */
+/// @file FileReader.hpp
+/// @brief Abstract File Reader class
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-16
 
 #pragma once
 
@@ -18,30 +16,38 @@ namespace NAV
 class FileReader
 {
   public:
-    // File Type
+    /// File Type Enumeration
     enum FileType
     {
-        NONE,   ///< Not specified
-        BINARY, ///< Binary data
-        ASCII   ///< Ascii text data
+        /// Not specified
+        NONE,
+        /// Binary data
+        BINARY,
+        /// Ascii text data
+        ASCII
     };
 
-    FileReader(const FileReader&) = delete;            ///< Copy constructor
-    FileReader(FileReader&&) = delete;                 ///< Move constructor
-    FileReader& operator=(const FileReader&) = delete; ///< Copy assignment operator
-    FileReader& operator=(FileReader&&) = delete;      ///< Move assignment operator
+    /// @brief Copy constructor
+    FileReader(const FileReader&) = delete;
+    /// @brief Move constructor
+    FileReader(FileReader&&) = delete;
+    /// @brief Copy assignment operator
+    FileReader& operator=(const FileReader&) = delete;
+    /// @brief Move assignment operator
+    FileReader& operator=(FileReader&&) = delete;
 
   protected:
-    /**
-     * @brief Construct a new File Reader object
-     * 
-     * @param[in] options Program options string map
-     */
+    /// @brief Constructor
+    /// @param[in] options Program options string map
     explicit FileReader(const std::map<std::string, std::string>& options);
 
-    FileReader() = default;          ///< Default constructor
-    virtual ~FileReader() = default; ///< Destructor
+    /// @brief Default constructor
+    FileReader() = default;
+    /// @brief Destructor
+    virtual ~FileReader() = default;
 
+    /// @brief Virtual Function to determine the File Type
+    /// @return The File path which was recognized
     [[nodiscard]] virtual FileType determineFileType() = 0;
 
     /// Path to log file

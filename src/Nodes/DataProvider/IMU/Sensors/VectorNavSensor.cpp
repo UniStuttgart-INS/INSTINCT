@@ -146,7 +146,7 @@ NAV::VectorNavSensor::~VectorNavSensor()
     }
 }
 
-void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t /*index*/)
+void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, [[maybe_unused]] size_t index)
 {
     auto* vnSensor = static_cast<VectorNavSensor*>(userData);
 

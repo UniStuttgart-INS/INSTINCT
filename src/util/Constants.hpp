@@ -1,9 +1,7 @@
-/**
- * @file Constants.hpp
- * @brief Holds all Constants
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-04-21
- */
+/// @file Constants.hpp
+/// @brief Holds all Constants
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-04-21
 
 #pragma once
 

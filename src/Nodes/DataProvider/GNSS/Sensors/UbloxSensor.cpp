@@ -44,7 +44,7 @@ NAV::UbloxSensor::~UbloxSensor()
     }
 }
 
-void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t /*index*/)
+void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, [[maybe_unused]] size_t index)
 {
     auto* ubSensor = static_cast<UbloxSensor*>(userData);
 

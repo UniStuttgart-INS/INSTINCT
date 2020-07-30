@@ -1,9 +1,7 @@
-/**
- * @file DataCallback.hpp
- * @brief Abstract class for Callback Functionality
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-18
- */
+/// @file DataCallback.hpp
+/// @brief Abstract class for Callback Functionality
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-18
 
 #pragma once
 
@@ -25,14 +23,11 @@ class DataCallback
     /// Enables the callbacks
     bool callbacksEnabled = false;
 
-    /**
-     * @brief Adds the supplied node at the end of the callback list
-     * 
-     * @tparam T Output Message Class
-     * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
-     * @param[in] node Pointer to the node which should receive the callback
-     * @param[in] portIndex Port of the data callbacks
-     */
+    /// @brief Adds the supplied node at the end of the callback list
+    /// @tparam T Output Message Class
+    /// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
+    /// @param[in] node Pointer to the node which should receive the callback
+    /// @param[in] portIndex Port of the data callbacks
     template<class T,
              typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
     void addCallback(std::shared_ptr<Node>& node, uint8_t portIndex)
@@ -40,12 +35,9 @@ class DataCallback
         callbackList<T>().emplace_back(std::make_pair(node, portIndex));
     }
 
-    /**
-     * @brief Removes all callbacks from the list which have the template type
-     * 
-     * @tparam T Output Message Class
-     * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
-     */
+    /// @brief Removes all callbacks from the list which have the template type
+    /// @tparam T Output Message Class
+    /// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
     template<class T,
              typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
     void removeAllCallbacksOfType()
@@ -70,15 +62,11 @@ class DataCallback
         _callbackList.clear();
     }
 
-    /**
-     * @brief Calls all registered callbacks
-     * 
-     * @attention Needs to be called by all synchronous and asynchronous message receivers
-     * 
-     * @tparam T Output Message Class
-     * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
-     * @param[in] data The data to pass to the callback targets
-     */
+    /// @brief Calls all registered callbacks
+    /// @attention Needs to be called by all synchronous and asynchronous message receivers
+    /// @tparam T Output Message Class
+    /// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
+    /// @param[in] data The data to pass to the callback targets
     template<class T,
              typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
     void invokeCallbacks(const std::shared_ptr<T>& data)
@@ -97,29 +85,29 @@ class DataCallback
     /// Map val: Source Node which sends the data and its portIndex
     std::map<uint8_t, std::pair<std::weak_ptr<Node>, uint8_t>> incomingLinks;
 
-    DataCallback(const DataCallback&) = delete;            ///< Copy constructor
-    DataCallback(DataCallback&&) = delete;                 ///< Move constructor
-    DataCallback& operator=(const DataCallback&) = delete; ///< Copy assignment operator
-    DataCallback& operator=(DataCallback&&) = delete;      ///< Move assignment operator
+    /// @brief Copy constructor
+    DataCallback(const DataCallback&) = delete;
+    /// @brief Move constructor
+    DataCallback(DataCallback&&) = delete;
+    /// @brief Copy assignment operator
+    DataCallback& operator=(const DataCallback&) = delete;
+    /// @brief Move assignment operator
+    DataCallback& operator=(DataCallback&&) = delete;
 
   protected:
-    /// Construct a new Data Callback object
+    /// @brief Default constructor
     DataCallback() = default;
 
-    /// Deletes the object
+    /// @brief Destructor
     virtual ~DataCallback() = default;
 
   private:
-    /**
-     * @brief Returns the callback list for the specified Message type
-     * 
-     * @tparam T Output Message class
-     * @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
-     * @retval std::vector<std::pair<std::weak_ptr<Node>, uint8_t>>& Nodes and ports to call upon when invoking a callback
-     * 
-     * @note std::vector is used here, as it has the faster iteration performance.
-     *       Inserting and removing is only done once at the start of the program.
-     */
+    /// @brief Returns the callback list for the specified Message type
+    /// @tparam T Output Message class
+    /// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
+    /// @return Nodes and ports to call upon when invoking a callback
+    /// @note std::vector is used here, as it has the faster iteration performance.
+    ///       Inserting and removing is only done once at the start of the program.
     template<class T,
              typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
     std::vector<std::pair<std::weak_ptr<Node>, uint8_t>>& callbackList()
@@ -128,6 +116,8 @@ class DataCallback
     }
 
     /// Internal callback list representation
+    /// Map key: type_index of type NodeData
+    /// Map value: Vector with Nodes and portIndices to call
     std::map<std::type_index, std::vector<std::pair<std::weak_ptr<Node>, uint8_t>>> _callbackList;
 };
 

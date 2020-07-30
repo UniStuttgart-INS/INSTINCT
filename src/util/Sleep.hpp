@@ -1,9 +1,7 @@
-/**
- * @file Sleep.hpp
- * @brief Class to catch system signals and sleep
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-10
- */
+/// @file Sleep.hpp
+/// @brief Class to catch system signals and sleep
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-10
 
 #pragma once
 
@@ -21,11 +19,8 @@ class Sleep
     /// @brief Wait the thread till sigusr signal is send
     static void waitForSignal(bool showText = false);
 
-    /**
-     * @brief Wait the thread till time passes
-     * 
-     * @param[in] seconds Time to sleep in seconds
-     */
+    /// @brief Wait the thread till time passes
+    /// @param[in] seconds Time to sleep in seconds
     static void countDownSeconds(size_t seconds);
 
   private:

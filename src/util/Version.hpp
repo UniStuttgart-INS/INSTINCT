@@ -1,9 +1,7 @@
-/**
- * @file Version.hpp
- * @brief Provides the version of the project
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-10
- */
+/// @file Version.hpp
+/// @brief Provides the version of the project
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-10
 
 #pragma once
 

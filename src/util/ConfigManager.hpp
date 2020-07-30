@@ -1,9 +1,7 @@
-/**
- * @file ConfigManager.hpp
- * @brief Config management for the Project
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-11
- */
+/// @file ConfigManager.hpp
+/// @brief Config management for the Project
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-11
 
 #pragma once
 
@@ -20,18 +18,33 @@ namespace NAV
 class ConfigManager
 {
   public:
-    ConfigManager();                                         /// Constructor
-    ~ConfigManager() = default;                              /// Destructor
-    ConfigManager(const ConfigManager&) = delete;            ///< Copy constructor
-    ConfigManager(ConfigManager&&) = delete;                 ///< Move constructor
-    ConfigManager& operator=(const ConfigManager&) = delete; ///< Copy assignment operator
-    ConfigManager& operator=(ConfigManager&&) = delete;      ///< Move assignment operator
+    /// @brief Constructor
+    ConfigManager();
+    /// @brief Destructor
+    ~ConfigManager() = default;
+    /// @brief Copy constructor
+    ConfigManager(const ConfigManager&) = delete;
+    /// @brief Move constructor
+    ConfigManager(ConfigManager&&) = delete;
+    /// @brief Copy assignment operator
+    ConfigManager& operator=(const ConfigManager&) = delete;
+    /// @brief Move assignment operator
+    ConfigManager& operator=(ConfigManager&&) = delete;
 
+    /// @brief Get the Program Options object
+    /// @return The object
     [[nodiscard]] static const boost::program_options::options_description& GetProgramOptions();
 
+    /// @brief Fetches the configs from the command line parameters
+    /// @param[in, out] argc Number of command line parameters
+    /// @param[in, out] argv Array of the command line parameters
     static void FetchConfigs(const int argc, const char* argv[]); // NOLINT
 
-    /// Retrieves the value of a corresponding key from the configuration, if one exists.
+    /// @brief Retrieves the value of a corresponding key from the configuration, if one exists.
+    /// @tparam T Return value type
+    /// @param[in] key Key to search for
+    /// @param[in] defaultValue If key is not found, the default value is returned
+    /// @return The value found with the key or the default value
     template<typename T>
     static const T& Get(const std::string& key, const T& defaultValue)
     {

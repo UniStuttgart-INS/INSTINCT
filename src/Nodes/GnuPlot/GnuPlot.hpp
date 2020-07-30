@@ -1,9 +1,7 @@
-/**
- * @file GnuPlot.hpp
- * @brief Abstract class for Gnuplotting
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-04-14
- */
+/// @file GnuPlot.hpp
+/// @brief Abstract class for Gnuplotting
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-04-14
 
 #pragma once
 
@@ -24,46 +22,40 @@ namespace NAV
 class GnuPlot final : public Node
 {
   public:
-    /**
-     * @brief Construct a new Gnu Plot object
-     * 
-     * @param[in] name Name of the Node
-     * @param[in] options Program options string map
-     */
+    /// @brief Constructor
+    /// @param[in] name Name of the Node
+    /// @param[in] options Program options string map
     GnuPlot(const std::string& name, const std::map<std::string, std::string>& options);
 
-    GnuPlot() = default;                         ///< Default Constructor
-    ~GnuPlot() final;                            ///< Destructor
-    GnuPlot(const GnuPlot&) = delete;            ///< Copy constructor
-    GnuPlot(GnuPlot&&) = delete;                 ///< Move constructor
-    GnuPlot& operator=(const GnuPlot&) = delete; ///< Copy assignment operator
-    GnuPlot& operator=(GnuPlot&&) = delete;      ///< Move assignment operator
+    /// @brief Default constructor
+    GnuPlot() = default;
+    /// @brief Destructor
+    ~GnuPlot() final;
+    /// @brief Copy constructor
+    GnuPlot(const GnuPlot&) = delete;
+    /// @brief Move constructor
+    GnuPlot(GnuPlot&&) = delete;
+    /// @brief Copy assignment operator
+    GnuPlot& operator=(const GnuPlot&) = delete;
+    /// @brief Move assignment operator
+    GnuPlot& operator=(GnuPlot&&) = delete;
 
-    /**
-     * @brief Returns the String representation of the Class Type
-     * 
-     * @retval constexpr std::string_view The class type
-     */
+    /// @brief Returns the String representation of the Class Type
+    /// @return The class type
     [[nodiscard]] constexpr std::string_view type() const final
     {
         return std::string_view("GnuPlot");
     }
 
-    /**
-     * @brief Returns the String representation of the Class Category
-     * 
-     * @retval constexpr std::string_view The class category
-     */
+    /// @brief Returns the String representation of the Class Category
+    /// @return The class category
     [[nodiscard]] constexpr std::string_view category() const final
     {
         return std::string_view("Plot");
     }
 
-    /**
-     * @brief Returns Gui Configuration options for the class
-     * 
-     * @retval std::vector<ConfigOptions> The gui configuration
-     */
+    /// @brief Returns Gui Configuration options for the class
+    /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
         // clang-format off
@@ -147,22 +139,16 @@ class GnuPlot final : public Node
         // clang-format on
     }
 
-    /**
-     * @brief Returns the context of the class
-     * 
-     * @retval constexpr std::string_view The class context
-     */
+    /// @brief Returns the context of the class
+    /// @return The class context
     [[nodiscard]] constexpr NodeContext context() const final
     {
         return NodeContext::ALL;
     }
 
-    /**
-     * @brief Returns the number of Ports
-     * 
-     * @param[in] portType Specifies the port type
-     * @retval constexpr uint8_t The number of ports
-     */
+    /// @brief Returns the number of Ports
+    /// @param[in] portType Specifies the port type
+    /// @return The number of ports
     [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
     {
         switch (portType)
@@ -176,13 +162,10 @@ class GnuPlot final : public Node
         return 0U;
     }
 
-    /**
-     * @brief Returns the data types provided by this class
-     * 
-     * @param[in] portType Specifies the port type
-     * @param[in] portIndex Port index on which the data is sent
-     * @retval constexpr std::string_view The data type
-     */
+    /// @brief Returns the data types provided by this class
+    /// @param[in] portType Specifies the port type
+    /// @param[in] portIndex Port index on which the data is sent
+    /// @return The data type
     [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
@@ -200,12 +183,9 @@ class GnuPlot final : public Node
         return std::string_view("");
     }
 
-    /**
-     * @brief Handles the data sent on the input port
-     * 
-     * @param[in] portIndex The input port index
-     * @param[in, out] data The data send on the input port
-     */
+    /// @brief Handles the data sent on the input port
+    /// @param[in] portIndex The input port index
+    /// @param[in, out] data The data send on the input port
     void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) final
     {
         if (inputPortDataTypes.count(portIndex))
@@ -233,8 +213,11 @@ class GnuPlot final : public Node
         }
     }
 
+    /// @brief Updates the gnuplot windows
+    /// @return
     [[nodiscard]] bool update();
 
+    /// @brief Checks if an update is necessary and then performs it
     void requestUpdate();
 
   private:
@@ -252,17 +235,16 @@ class GnuPlot final : public Node
     /// Input Data Types
     std::map<size_t, std::string> inputPortDataTypes;
 
+    /// Data handling class
     class GnuPlotData
     {
       public:
-        /**
-         * @brief Construct a new Gnu Plot Data object
-         * 
-         * @param[in] dataIdentifier Identifier for the Data
-         */
+        /// @brief Constructor
+        /// @param[in] dataIdentifier Identifier for the Data
         explicit GnuPlotData(std::string dataIdentifier)
             : dataIdentifier(std::move(dataIdentifier)) {}
-        /// data identifier
+
+        /// Data identifier
         std::string dataIdentifier;
         /// x and y data which can be passed to the plot stream
         std::deque<double> data;
@@ -274,7 +256,9 @@ class GnuPlot final : public Node
     /// gnuplot object
     gnuplotio::Gnuplot gp{ "gnuplot -persist > /dev/null 2>&1" };
 
+    /// The amount of x data to plot
     uint32_t xDisplayScope = 10.0;
+    /// Update Frequency
     uint32_t updateFrequency = 10;
 
     std::vector<std::string> portUpdateStrings;

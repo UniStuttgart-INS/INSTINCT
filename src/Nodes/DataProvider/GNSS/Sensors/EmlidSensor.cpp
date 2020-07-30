@@ -44,7 +44,7 @@ NAV::EmlidSensor::~EmlidSensor()
     }
 }
 
-void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t /*index*/)
+void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, [[maybe_unused]] size_t index)
 {
     auto* erSensor = static_cast<EmlidSensor*>(userData);
 

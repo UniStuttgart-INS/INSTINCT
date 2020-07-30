@@ -1,9 +1,7 @@
-/**
- * @file Gnss.hpp
- * @brief Abstract GNSS Data Provider Class
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-19
- */
+/// @file Gnss.hpp
+/// @brief Abstract GNSS Data Provider Class
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-19
 
 #pragma once
 
@@ -17,18 +15,19 @@ namespace NAV
 class Gnss : public Node
 {
   public:
-    Gnss(const Gnss&) = delete;            ///< Copy constructor
-    Gnss(Gnss&&) = delete;                 ///< Move constructor
-    Gnss& operator=(const Gnss&) = delete; ///< Copy assignment operator
-    Gnss& operator=(Gnss&&) = delete;      ///< Move assignment operator
+    /// @brief Copy constructor
+    Gnss(const Gnss&) = delete;
+    /// @brief Move constructor
+    Gnss(Gnss&&) = delete;
+    /// @brief Copy assignment operator
+    Gnss& operator=(const Gnss&) = delete;
+    /// @brief Move assignment operator
+    Gnss& operator=(Gnss&&) = delete;
 
   protected:
-    /**
-     * @brief Construct a new Gnss object
-     * 
-     * @param[in] name Name of the Gnss object
-     * @param[in] options Program options string map
-     */
+    /// @brief Constructor
+    /// @param[in] name Name of the Gnss object
+    /// @param[in] options Program options string map
     Gnss(const std::string& name, const std::map<std::string, std::string>& options);
 
     /// Default constructor
