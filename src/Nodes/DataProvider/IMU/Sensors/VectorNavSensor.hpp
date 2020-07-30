@@ -1,9 +1,7 @@
-/**
- * @file VectorNavSensor.hpp
- * @brief Vector Nav Sensors
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-12
- */
+/// @file VectorNavSensor.hpp
+/// @brief Vector Nav Sensors
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-12
 
 #pragma once
 
@@ -72,46 +70,40 @@ class VectorNavSensor final : public UartSensor, public Imu
         // vn::protocol::uart::GpsGroup gps2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
     };
 
-    /**
-     * @brief Construct a new Vector Nav Sensor object
-     * 
-     * @param[in] name Name of the Sensor
-     * @param[in] options Program options string map
-     */
+    /// @brief Constructor
+    /// @param[in] name Name of the Sensor
+    /// @param[in] options Program options string map
     VectorNavSensor(const std::string& name, const std::map<std::string, std::string>& options);
 
-    VectorNavSensor() = default;                                 ///< Default Constructor
-    ~VectorNavSensor() final;                                    ///< Destructor
-    VectorNavSensor(const VectorNavSensor&) = delete;            ///< Copy constructor
-    VectorNavSensor(VectorNavSensor&&) = delete;                 ///< Move constructor
-    VectorNavSensor& operator=(const VectorNavSensor&) = delete; ///< Copy assignment operator
-    VectorNavSensor& operator=(VectorNavSensor&&) = delete;      ///< Move assignment operator
+    /// @brief Default constructor
+    VectorNavSensor() = default;
+    /// @brief Destructor
+    ~VectorNavSensor() final;
+    /// @brief Copy constructor
+    VectorNavSensor(const VectorNavSensor&) = delete;
+    /// @brief Move constructor
+    VectorNavSensor(VectorNavSensor&&) = delete;
+    /// @brief Copy assignment operator
+    VectorNavSensor& operator=(const VectorNavSensor&) = delete;
+    /// @brief Move assignment operator
+    VectorNavSensor& operator=(VectorNavSensor&&) = delete;
 
-    /**
-     * @brief Returns the String representation of the Class Type
-     * 
-     * @retval constexpr std::string_view The class type
-     */
+    /// @brief Returns the String representation of the Class Type
+    /// @return The class type
     [[nodiscard]] constexpr std::string_view type() const final
     {
         return std::string_view("VectorNavSensor");
     }
 
-    /**
-     * @brief Returns the String representation of the Class Category
-     * 
-     * @retval constexpr std::string_view The class category
-     */
+    /// @brief Returns the String representation of the Class Category
+    /// @return The class category
     [[nodiscard]] constexpr std::string_view category() const final
     {
         return std::string_view("DataProvider");
     }
 
-    /**
-     * @brief Returns Gui Configuration options for the class
-     * 
-     * @retval std::vector<ConfigOptions> The gui configuration
-     */
+    /// @brief Returns Gui Configuration options for the class
+    /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
         return { { CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
@@ -125,22 +117,16 @@ class VectorNavSensor final : public UartSensor, public Imu
                  { CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "100", "200" } } };
     }
 
-    /**
-     * @brief Returns the context of the class
-     * 
-     * @retval constexpr std::string_view The class context
-     */
+    /// @brief Returns the context of the class
+    /// @return The class context
     [[nodiscard]] constexpr NodeContext context() const final
     {
         return NodeContext::REAL_TIME;
     }
 
-    /**
-     * @brief Returns the number of Ports
-     * 
-     * @param[in] portType Specifies the port type
-     * @retval constexpr uint8_t The number of ports
-     */
+    /// @brief Returns the number of Ports
+    /// @param[in] portType Specifies the port type
+    /// @return The number of ports
     [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
     {
         switch (portType)
@@ -154,13 +140,10 @@ class VectorNavSensor final : public UartSensor, public Imu
         return 0U;
     }
 
-    /**
-     * @brief Returns the data types provided by this class
-     * 
-     * @param[in] portType Specifies the port type
-     * @param[in] portIndex Port index on which the data is sent
-     * @retval constexpr std::string_view The data type
-     */
+    /// @brief Returns the data types provided by this class
+    /// @param[in] portType Specifies the port type
+    /// @param[in] portIndex Port index on which the data is sent
+    /// @return The data type
     [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
@@ -177,22 +160,16 @@ class VectorNavSensor final : public UartSensor, public Imu
         return std::string_view("");
     }
 
-    /**
-     * @brief Handles the data sent on the input port
-     * 
-     * @param[in] portIndex The input port index
-     * @param[in, out] data The data send on the input port
-     */
-    void handleInputData(uint8_t /* portIndex */, std::shared_ptr<NodeData> /* data */) final {}
+    /// @brief Handles the data sent on the input port
+    /// @param[in] portIndex The input port index
+    /// @param[in, out] data The data send on the input port
+    void handleInputData([[maybe_unused]] uint8_t portIndex, [[maybe_unused]] std::shared_ptr<NodeData> data) final {}
 
   private:
-    /**
-     * @brief Callback handler for notifications of new asynchronous data packets received
-     * 
-     * @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
-     * @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
-     * @param[in] index Advanced usage item and can be safely ignored for now
-     */
+    /// @brief Callback handler for notifications of new asynchronous data packets received
+    /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
+    /// @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
+    /// @param[in] index Advanced usage item and can be safely ignored for now
     static void asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t index);
 
     /// VnSensor Object

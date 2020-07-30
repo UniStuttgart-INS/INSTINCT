@@ -297,14 +297,14 @@ bool NAV::sensors::kvh::KvhUartSensor::checksumFunction(const uart::protocol::Pa
     return false;
 }
 
-bool NAV::sensors::kvh::KvhUartSensor::isErrorFunction(const uart::protocol::Packet& /* packet */)
+bool NAV::sensors::kvh::KvhUartSensor::isErrorFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     LOG_TRACE("called");
 
     return false;
 }
 
-bool NAV::sensors::kvh::KvhUartSensor::isResponseFunction(const uart::protocol::Packet& /* packet */)
+bool NAV::sensors::kvh::KvhUartSensor::isResponseFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     LOG_TRACE("called");
 

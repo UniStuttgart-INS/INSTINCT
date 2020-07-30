@@ -1,9 +1,7 @@
-/**
- * @file Node.hpp
- * @brief Abstract Node Class
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-18
- */
+/// @file Node.hpp
+/// @brief Abstract Node Class
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-18
 
 #pragma once
 
@@ -37,34 +35,32 @@ class Node : public DataCallback
         ALL
     };
 
-    /**
-     * @brief Construct a new Node object
-     * 
-     * @param[in] name Name of the Node
-     */
+    /// @brief Constructor
+    /// @param[in] name Name of the Node
     explicit Node(std::string name);
 
-    Node() = default;                      ///< Default constructor
-    ~Node() override = default;            ///< Destructor
-    Node(const Node&) = delete;            ///< Copy constructor
-    Node(Node&&) = delete;                 ///< Move constructor
-    Node& operator=(const Node&) = delete; ///< Copy assignment operator
-    Node& operator=(Node&&) = delete;      ///< Move assignment operator
+    /// @brief Default constructor
+    Node() = default;
+    /// @brief Destructor
+    ~Node() override = default;
+    /// @brief Copy constructor
+    Node(const Node&) = delete;
+    /// @brief Move constructor
+    Node(Node&&) = delete;
+    /// @brief Copy assignment operator
+    Node& operator=(const Node&) = delete;
+    /// @brief Move assignment operator
+    Node& operator=(Node&&) = delete;
 
-    /**
-     * @brief Returns the String representation of the Class Type
-     * 
-     * @retval constexpr std::string_view The class type
-     */
+    /// @brief Returns the String representation of the Class Type
+    /// @return The class type
     [[nodiscard]] virtual constexpr std::string_view type() const = 0;
 
-    /**
-     * @brief Returns the String representation of the Class Category
-     * 
-     * @retval constexpr std::string_view The class category
-     */
+    /// @brief Returns the String representation of the Class Category
+    /// @return The class category
     [[nodiscard]] virtual constexpr std::string_view category() const = 0;
 
+    /// @brief Config Option Types Enumeration
     enum ConfigOptionType
     {
         CONFIG_N_INPUT_PORTS,   ///< Integer: Min, Default, Max, Amount of Config Options to repeat
@@ -83,71 +79,45 @@ class Node : public DataCallback
     using ConfigOptionsBase = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::string>>;
     using ConfigOptions = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::variant<std::string, ConfigOptionsBase>>>;
 
-    /**
-     * @brief Returns Gui Configuration options for the class
-     * 
-     * @retval std::vector<ConfigOptions> The gui configuration
-     */
+    /// @brief Returns Gui Configuration options for the class
+    /// @return The gui configuration
     [[nodiscard]] virtual std::vector<ConfigOptions> guiConfig() const = 0;
 
-    /**
-     * @brief Returns the context of the class
-     * 
-     * @retval constexpr std::string_view The class context
-     */
+    /// @brief Returns the context of the class
+    /// @return The class context
     [[nodiscard]] virtual constexpr NodeContext context() const = 0;
 
-    /**
-     * @brief Returns the number of Ports
-     * 
-     * @param[in] portType Specifies the port type
-     * @retval constexpr uint8_t The number of ports
-     */
+    /// @brief Returns the number of Ports
+    /// @param[in] portType Specifies the port type
+    /// @return The number of ports
     [[nodiscard]] virtual constexpr uint8_t nPorts(PortType portType) const = 0;
 
-    /**
-     * @brief Returns the data types provided by this class
-     * 
-     * @param[in] portType Specifies the port type
-     * @param[in] portIndex Port index on which the data is sent
-     * @retval constexpr std::string_view The data type
-     */
+    /// @brief Returns the data types provided by this class
+    /// @param[in] portType Specifies the port type
+    /// @param[in] portIndex Port index on which the data is sent
+    /// @return The data type
     [[nodiscard]] virtual constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const = 0;
 
-    /**
-     * @brief Handles the data sent on the input port
-     * 
-     * @param[in] portIndex The input port index
-     * @param[in, out] data The data send on the input port
-     */
+    /// @brief Handles the data sent on the input port
+    /// @param[in] portIndex The input port index
+    /// @param[in, out] data The data send on the input port
     virtual void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) = 0;
 
-    /**
-     * @brief Requests the node to send out its data
-     * 
-     * @param[in] portIndex The output port index
-     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
-     */
+    /// @brief Requests the node to send out its data
+    /// @param[in] portIndex The output port index
+    /// @return The requested data or nullptr if no data available
     [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex);
 
-    /**
-     * @brief Requests the node to peek its output data
-     * 
-     * @param[in] portIndex The output port index
-     * @retval std::shared_ptr<NodeData> The requested data or nullptr if no data available
-     */
+    /// @brief Requests the node to peek its output data
+    /// @param[in] portIndex The output port index
+    /// @return The requested data or nullptr if no data available
     [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex);
 
-    /**
-     * @brief Resets the node. In case of file readers, that moves the read cursor to the start
-     */
+    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
     virtual void resetNode();
 
-    /**
-     * @brief Get the name string of the Node
-     * 
-     * @retval const std::string_view& The Name of the Node
-     */
+    /// @brief Get the name string of the Node
+    /// @return The Name of the Node
     [[nodiscard]] const std::string& getName() const;
 
   protected:

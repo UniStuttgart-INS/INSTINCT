@@ -1,9 +1,7 @@
-/**
- * @file EmlidObs.hpp
- * @brief Emlid Observation Class
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-06-23
- */
+/// @file EmlidObs.hpp
+/// @brief Emlid Observation Class
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-06-23
 
 #pragma once
 
@@ -21,34 +19,33 @@ namespace NAV
 class EmlidObs : public GnssObs
 {
   public:
-    EmlidObs() = default; ///< Constructor
-
     /// @brief Constructor
-    ///
     /// @param[in] packet The packet to copy into the raw data
     explicit EmlidObs(uart::protocol::Packet& packet)
         : raw(packet) {}
-    ~EmlidObs() override = default;                ///< Destructor
-    EmlidObs(const EmlidObs&) = delete;            ///< Copy constructor
-    EmlidObs(EmlidObs&&) = delete;                 ///< Move constructor
-    EmlidObs& operator=(const EmlidObs&) = delete; ///< Copy assignment operator
-    EmlidObs& operator=(EmlidObs&&) = delete;      ///< Move assignment operator
 
-    /**
-     * @brief Returns the type of the data class
-     * 
-     * @retval constexpr std::string_view The data type
-     */
+    /// @brief Default constructor
+    EmlidObs() = default;
+    /// @brief Destructor
+    ~EmlidObs() override = default;
+    /// @brief Copy constructor
+    EmlidObs(const EmlidObs&) = delete;
+    /// @brief Move constructor
+    EmlidObs(EmlidObs&&) = delete;
+    /// @brief Copy assignment operator
+    EmlidObs& operator=(const EmlidObs&) = delete;
+    /// @brief Move assignment operator
+    EmlidObs& operator=(EmlidObs&&) = delete;
+
+    /// @brief Returns the type of the data class
+    /// @return The data type
     [[nodiscard]] constexpr std::string_view type() const override
     {
         return std::string_view("EmlidObs");
     }
 
-    /**
-     * @brief Returns the parent types of the data class
-     * 
-     * @retval std::vector<std::string_view> The parent data types
-     */
+    /// @brief Returns the parent types of the data class
+    /// @return The parent data types
     [[nodiscard]] std::vector<std::string_view> parentTypes() const override
     {
         std::vector<std::string_view> parents{ "GnssObs" };

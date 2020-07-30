@@ -1,21 +1,18 @@
-/** @mainpage NavSoS Documentation
- *
- *  @section sec1 Introduction
- *  This software provides real-time and post processing functionality for navigational tasks. It can read from sensors and fuse together the data. It can fuse GNSS data with IMU data and do advanced functions like RTK, RAIM, ...
- *
- *  @section sec4 Code Elements
- *      - @link src/main.cpp Main File @endlink
- *      - @link src/DataProvider/DataProvider.hpp Data Provider Class @endlink
- *          - @link src/DataProvider/IMU/Imu.hpp IMU Data Provider Class @endlink
- *          - @link src/DataProvider/GNSS/Gnss.hpp GNSS Data Provider Class @endlink
- */
+/// @mainpage NavSoS Documentation
+///
+/// @section sec1 Introduction
+/// This software provides real-time and post processing functionality for navigational tasks. It can read from sensors and fuse together the data. It can fuse GNSS data with IMU data and do advanced functions like RTK, RAIM, ...
+///
+/// @section sec4 Code Elements
+///     - @link src/main.cpp Main File @endlink
+///     - @link src/DataProvider/DataProvider.hpp Data Provider Class @endlink
+///         - @link src/DataProvider/IMU/Imu.hpp IMU Data Provider Class @endlink
+///         - @link src/DataProvider/GNSS/Gnss.hpp GNSS Data Provider Class @endlink
 
-/**
- * @file main.cpp
- * @brief Main entry point for the program
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-12
- */
+/// @file main.cpp
+/// @brief Main entry point for the program
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-12
 
 #include <iostream>
 

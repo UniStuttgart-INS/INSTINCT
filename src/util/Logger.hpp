@@ -1,9 +1,7 @@
-/**
- * @file Logger.hpp
- * @brief Utility class for logging to console and file
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-05-08
- */
+/// @file Logger.hpp
+/// @brief Utility class for logging to console and file
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-05-08
 
 #pragma once
 
@@ -66,34 +64,35 @@
 /// Critical Event, which causes the program to work entirely and throws an exception
 #define LOG_CRITICAL(...) SPDLOG_CRITICAL(__VA_ARGS__), throw std::runtime_error(fmt::format(__VA_ARGS__))
 
-/**
- * @brief Utility class for logging
- * 
- * Use the Macros to do logging, as they can be turned off during compilation
- * - LOG_DATA("Message {} {}", variable1, variable 2);
- * - LOG_TRACE("Message {} {}", variable1, variable 2);
- * - LOG_DEBUG("Message {} {}", variable1, variable 2);
- * - LOG_INFO("Message {} {}", variable1, variable 2);
- * - LOG_WARN("Message {} {}", variable1, variable 2);
- * - LOG_ERROR("Message {} {}", variable1, variable 2);
- * - LOG_CRITICAL("Message {} {}", variable1, variable 2);
- */
+/// @brief Utility class for logging
+///
+/// Use the Macros to do logging, as they can be turned off during compilation
+/// - LOG_DATA("Message {} {}", variable1, variable 2);
+/// - LOG_TRACE("Message {} {}", variable1, variable 2);
+/// - LOG_DEBUG("Message {} {}", variable1, variable 2);
+/// - LOG_INFO("Message {} {}", variable1, variable 2);
+/// - LOG_WARN("Message {} {}", variable1, variable 2);
+/// - LOG_ERROR("Message {} {}", variable1, variable 2);
+/// - LOG_CRITICAL("Message {} {}", variable1, variable 2);
 class Logger
 {
   public:
-    /**
-     * @brief Construct a new Logger object
-     * 
-     * @param[in] logpath Relative filepath to the logfile
-     */
+    /// @brief Constructor
+    /// @param[in] logpath Relative filepath to the logfile
     explicit Logger(const std::string& logpath);
 
-    Logger();                                  ///< Default constructor
-    ~Logger();                                 ///< Destructor
-    Logger(const Logger&) = delete;            ///< Copy constructor
-    Logger(Logger&&) = delete;                 ///< Move constructor
-    Logger& operator=(const Logger&) = delete; ///< Copy assignment operator
-    Logger& operator=(Logger&&) = delete;      ///< Move assignment operator
+    /// @brief Default constructor
+    Logger();
+    /// @brief Destructor
+    ~Logger();
+    /// @brief Copy constructor
+    Logger(const Logger&) = delete;
+    /// @brief Move constructor
+    Logger(Logger&&) = delete;
+    /// @brief Copy assignment operator
+    Logger& operator=(const Logger&) = delete;
+    /// @brief Move assignment operator
+    Logger& operator=(Logger&&) = delete;
 
   private:
     /// @brief Writes a separation line to the console only

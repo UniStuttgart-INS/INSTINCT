@@ -48,11 +48,12 @@ static constexpr unsigned int CARRIAGE_RETURN = 0x0D;
 /// Line Feed \n
 static constexpr unsigned int LINE_FEED = 0x0A;
 
+/// @brief Stuct which contains the different types of Endianness
 enum Endianness
 {
-    ENDIAN_LITTLE,
-    ENDIAN_BIG,
-    ENDIAN_UNKNOWN
+    ENDIAN_LITTLE, ///< Little Endian
+    ENDIAN_BIG,    ///< Big Endian
+    ENDIAN_UNKNOWN ///< Endianness unknown
 };
 
 /// \brief Converts a 16-bit integer in sensor order to host order.

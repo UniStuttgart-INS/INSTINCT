@@ -1,9 +1,7 @@
-/**
- * @file StateEstimator.hpp
- * @brief State Estimator Class
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-05-18
- */
+/// @file StateEstimator.hpp
+/// @brief State Estimator Class
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-05-18
 
 #pragma once
 
@@ -18,46 +16,40 @@ namespace NAV
 class StateEstimator : public Node
 {
   public:
-    /**
-     * @brief Construct a new object
-     * 
-     * @param[in] name Name of the object
-     * @param[in] options Program options string map
-     */
+    /// @brief Constructor
+    /// @param[in] name Name of the object
+    /// @param[in] options Program options string map
     StateEstimator(const std::string& name, const std::map<std::string, std::string>& options);
 
-    StateEstimator() = default;                                ///< Default Constructor
-    ~StateEstimator() override = default;                      ///< Destructor
-    StateEstimator(const StateEstimator&) = delete;            ///< Copy constructor
-    StateEstimator(StateEstimator&&) = delete;                 ///< Move constructor
-    StateEstimator& operator=(const StateEstimator&) = delete; ///< Copy assignment operator
-    StateEstimator& operator=(StateEstimator&&) = delete;      ///< Move assignment operator
+    /// @brief Default constructor
+    StateEstimator() = default;
+    /// @brief Destructor
+    ~StateEstimator() override = default;
+    /// @brief Copy constructor
+    StateEstimator(const StateEstimator&) = delete;
+    /// @brief Move constructor
+    StateEstimator(StateEstimator&&) = delete;
+    /// @brief Copy assignment operator
+    StateEstimator& operator=(const StateEstimator&) = delete;
+    /// @brief Move assignment operator
+    StateEstimator& operator=(StateEstimator&&) = delete;
 
-    /**
-     * @brief Returns the String representation of the Class Type
-     * 
-     * @retval constexpr std::string_view The class type
-     */
+    /// @brief Returns the String representation of the Class Type
+    /// @return The class type
     [[nodiscard]] constexpr std::string_view type() const override
     {
         return std::string_view("StateEstimator");
     }
 
-    /**
-     * @brief Returns the String representation of the Class Category
-     * 
-     * @retval constexpr std::string_view The class category
-     */
+    /// @brief Returns the String representation of the Class Category
+    /// @return The class category
     [[nodiscard]] constexpr std::string_view category() const override
     {
         return std::string_view("State");
     }
 
-    /**
-     * @brief Returns Gui Configuration options for the class
-     * 
-     * @retval std::vector<ConfigOptions> The gui configuration
-     */
+    /// @brief Returns Gui Configuration options for the class
+    /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
         return {
@@ -71,22 +63,16 @@ class StateEstimator : public Node
         };
     }
 
-    /**
-     * @brief Returns the context of the class
-     * 
-     * @retval constexpr std::string_view The class context
-     */
+    /// @brief Returns the context of the class
+    /// @return The class context
     [[nodiscard]] constexpr NodeContext context() const override
     {
         return NodeContext::ALL;
     }
 
-    /**
-     * @brief Returns the number of Ports
-     * 
-     * @param[in] portType Specifies the port type
-     * @retval constexpr uint8_t The number of ports
-     */
+    /// @brief Returns the number of Ports
+    /// @param[in] portType Specifies the port type
+    /// @return The number of ports
     [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const override
     {
         switch (portType)
@@ -100,13 +86,10 @@ class StateEstimator : public Node
         return 0U;
     }
 
-    /**
-     * @brief Returns the data types provided by this class
-     * 
-     * @param[in] portType Specifies the port type
-     * @param[in] portIndex Port index on which the data is sent
-     * @retval constexpr std::string_view The data type
-     */
+    /// @brief Returns the data types provided by this class
+    /// @param[in] portType Specifies the port type
+    /// @param[in] portIndex Port index on which the data is sent
+    /// @return The data type
     [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const override
     {
         switch (portType)
@@ -129,12 +112,9 @@ class StateEstimator : public Node
         return std::string_view("");
     }
 
-    /**
-     * @brief Handles the data sent on the input port
-     * 
-     * @param[in] portIndex The input port index
-     * @param[in, out] data The data send on the input port
-     */
+    /// @brief Handles the data sent on the input port
+    /// @param[in] portIndex The input port index
+    /// @param[in, out] data The data send on the input port
     void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) override
     {
         static bool once = true;
@@ -151,11 +131,8 @@ class StateEstimator : public Node
     }
 
   private:
-    /**
-     * @brief Process the Observation data and invoke callbacks
-     * 
-     * @param[in] obs Observation to process
-     */
+    /// @brief Process the Observation data and invoke callbacks
+    /// @param[in] obs Observation to process
     void processObservation(std::shared_ptr<InsObs>& obs);
 
     /// Number of input ports

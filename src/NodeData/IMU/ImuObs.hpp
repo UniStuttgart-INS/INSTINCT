@@ -1,9 +1,7 @@
-/**
- * @file ImuObs.hpp
- * @brief Parent Class for all IMU Observations
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-12
- */
+/// @file ImuObs.hpp
+/// @brief Parent Class for all IMU Observations
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-12
 
 #pragma once
 
@@ -18,35 +16,35 @@ namespace NAV
 class ImuObs : public InsObs
 {
   public:
-    ImuObs() = default;                        ///< Constructor
-    ~ImuObs() override = default;              ///< Destructor
-    ImuObs(const ImuObs&) = delete;            ///< Copy constructor
-    ImuObs(ImuObs&&) = delete;                 ///< Move constructor
-    ImuObs& operator=(const ImuObs&) = delete; ///< Copy assignment operator
-    ImuObs& operator=(ImuObs&&) = delete;      ///< Move assignment operator
+    /// @brief Default constructor
+    ImuObs() = default;
+    /// @brief Destructor
+    ~ImuObs() override = default;
+    /// @brief Copy constructor
+    ImuObs(const ImuObs&) = delete;
+    /// @brief Move constructor
+    ImuObs(ImuObs&&) = delete;
+    /// @brief Copy assignment operator
+    ImuObs& operator=(const ImuObs&) = delete;
+    /// @brief Move assignment operator
+    ImuObs& operator=(ImuObs&&) = delete;
 
-    /**
-     * @brief Returns the type of the data class
-     * 
-     * @retval constexpr std::string_view The data type
-     */
+    /// @brief Returns the type of the data class
+    /// @return The data type
     [[nodiscard]] constexpr std::string_view type() const override
     {
         return std::string_view("ImuObs");
     }
 
-    /**
-     * @brief Returns the parent types of the data class
-     * 
-     * @retval std::vector<std::string_view> The parent data types
-     */
+    /// @brief Returns the parent types of the data class
+    /// @return The parent data types
     [[nodiscard]] std::vector<std::string_view> parentTypes() const override
     {
         std::vector<std::string_view> parents{ "InsObs" };
         return parents;
     }
 
-    /** The system time since startup measured in [nano seconds]. */
+    /// The system time since startup measured in [nano seconds].
     std::optional<uint64_t> timeSinceStartup;
 
     /// The IMU magnetic field measured in units of [Gauss], given in the body frame.

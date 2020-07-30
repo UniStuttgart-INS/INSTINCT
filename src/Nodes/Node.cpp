@@ -8,12 +8,12 @@ const std::string& NAV::Node::getName() const
     return name;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::Node::requestOutputData(uint8_t /* portIndex */)
+std::shared_ptr<NAV::NodeData> NAV::Node::requestOutputData([[maybe_unused]] uint8_t portIndex)
 {
     return nullptr;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::Node::requestOutputDataPeek(uint8_t /* portIndex */)
+std::shared_ptr<NAV::NodeData> NAV::Node::requestOutputDataPeek([[maybe_unused]] uint8_t portIndex)
 {
     return nullptr;
 }

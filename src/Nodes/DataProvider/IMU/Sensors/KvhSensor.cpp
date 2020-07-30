@@ -45,7 +45,7 @@ NAV::KvhSensor::~KvhSensor()
     }
 }
 
-void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t /* index */)
+void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, [[maybe_unused]] size_t index)
 {
     auto* kvhSensor = static_cast<KvhSensor*>(userData);
 

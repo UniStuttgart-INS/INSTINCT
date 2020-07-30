@@ -58,18 +58,38 @@ class proglib_DLLEXPORT SerialPort : public IPort, util::NoCopy
     /// \return The list of available serial port names.
     static std::vector<std::string> getPortNames();
 
+    /// \brief Opens the port.
     void open() override;
 
+    /// \brief Closes the port.
     void close() override;
 
+    /// \brief Indicates if the port is open.
+    ///
+    /// \return <c>true</c> if the serial port is open; otherwise <c>false</c>.
     bool isOpen() override;
 
+    /// \brief Writes out data to the port.
+    ///
+    /// \param[in] data The data array to write out.
+    /// \param[in] length The length of the data array to write out.
     void write(const char* data, size_t length) override;
 
+    /// \brief Allows reading data from the port.
+    ///
+    /// \param[out] dataBuffer The data buffer to write the read data bytes to.
+    ///     from the port.
     void read(std::vector<unsigned char>& dataBuffer) override;
 
+    /// \brief Registers a callback method for notification when new data is
+    ///     received on the port.
+    ///
+    /// \param[in] userData Pointer to user data, which will be provided to the
+    ///     callback method.
+    /// \param[in] handler The callback method.
     void registerDataReceivedHandler(void* userData, DataReceivedHandler handler) override;
 
+    /// \brief Unregisters the registered callback method.
     void unregisterDataReceivedHandler() override;
 
     /// \brief Returns the baudrate connected at.

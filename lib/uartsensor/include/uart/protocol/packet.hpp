@@ -153,11 +153,16 @@ struct proglib_DLLEXPORT Packet
     /// \}
 
   private:
+    /// @brief Checks if enough bytes are left in the data array and also moves the extract location if needed from the start
+    /// @param[in] numOfBytes Number of Bytes we want to extract
     void ensureCanExtract(size_t numOfBytes);
 
+    /// Raw data storage
     std::vector<uint8_t> _data;
+    /// Current Extract Location
     size_t _curExtractLoc{ 0 };
 
+    /// Back Reference to the parent UartSensor object
     sensors::UartSensor* _backReference{ nullptr };
 };
 

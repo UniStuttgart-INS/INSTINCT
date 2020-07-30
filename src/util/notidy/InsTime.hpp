@@ -1,12 +1,10 @@
-/**
- * @file InsTime.hpp
- * @brief The class is responsible for all time-related tasks
- * @author T. Lambertus (tomke-jantje.lambertus@nav.uni-stuttgart.de)
- * @date 2020-12-02
- * 
- * @details This class contains all time-transformations functions. One instance is created for each InsTime object (defined in the structs).
- *          Intern, only the MJD-time (Modified Julien Date) is stored (here MJD is a struct which has mjd_day and mjd_frac).
- */
+/// @file InsTime.hpp
+/// @brief The class is responsible for all time-related tasks
+/// @author T. Lambertus (tomke-jantje.lambertus@nav.uni-stuttgart.de)
+/// @date 2020-12-02
+///
+/// @details This class contains all time-transformations functions. One instance is created for each InsTime object (defined in the structs).
+///          Intern, only the MJD-time (Modified Julien Date) is stored (here MJD is a struct which has mjd_day and mjd_frac).
 
 #pragma once
 
@@ -92,12 +90,17 @@ class InsTime
     InsTime(uint16_t gpsWeek, long double tow, uint16_t gpsCycle);                                            /*! Constructor for InsTime object with GPS */
     InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TIME); /*! Constructor for InsTime object with year, month, day, hour, minute, second and time system */
 
-    ~InsTime() = default; /*! Default destructor */
+    /// @brief Destructor
+    ~InsTime() = default;
 
-    InsTime(const InsTime&) = default;            ///< Copy constructor
-    InsTime(InsTime&&) = default;                 ///< Move constructor
-    InsTime& operator=(const InsTime&) = default; ///< Copy assignment operator
-    InsTime& operator=(InsTime&&) = default;      ///< Move assignment operator
+    /// @brief Copy constructor
+    InsTime(const InsTime&) = default;
+    /// @brief Move constructor
+    InsTime(InsTime&&) = default;
+    /// @brief Copy assignment operator
+    InsTime& operator=(const InsTime&) = default;
+    /// @brief Move assignment operator
+    InsTime& operator=(InsTime&&) = default;
 
     // ------------------------------- Update, change time ---------------------------------------
     void SetInsTime(InsTime);                                                                                         /*!< Initializes the private InsTime_MJD struct (mjd) with the provided InsTime object */

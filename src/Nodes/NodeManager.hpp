@@ -1,9 +1,7 @@
-/**
- * @file NodeManager.hpp
- * @brief Manages all Nodes
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-05-12
- */
+/// @file NodeManager.hpp
+/// @brief Manages all Nodes
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-05-12
 
 #pragma once
 
@@ -40,13 +38,9 @@ class NodeManager
         std::vector<std::string_view> parents;
     };
 
-    /**
-     * @brief Registers a Class with the NodeManager
-     * 
-     * @tparam T Class to register
-     * @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Nodes'
-     * @param[in] type Type of the Class
-     */
+    /// @brief Registers a Node with the NodeManager
+    /// @tparam T Node Class to register
+    /// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Nodes'
     template<typename T,
              typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
     void registerNodeType()
@@ -57,6 +51,9 @@ class NodeManager
         _registeredNodes[T().type()] = info;
     }
 
+    /// @brief Register a NodeData with the NodeManager
+    /// @tparam T NodeData Class to register
+    /// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Makes sure template only exists for classes with base class 'NodeData'
     template<typename T,
              typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
     void registerNodeDataType()
@@ -82,35 +79,23 @@ class NodeManager
     /// @brief Disables callbacks for all Nodes from the config file
     void disableAllCallbacks();
 
-    /**
-     * @brief Deletes all nodes and frees memory except for the specified type
-     * 
-     * @param[in] type The type which should not be deleted
-     */
+    /// @brief Deletes all nodes and frees memory except for the specified type
+    /// @param[in] type The type which should not be deleted
     void deleteAllNodesExcept(const std::string_view& type);
 
     /// @brief Deletes all nodes and frees memory
     void deleteAllNodes();
 
-    /**
-     * @brief Returns a list of all configured nodes
-     * 
-     * @retval const std::vector<Node>& All configured nodes
-     */
+    /// @brief Returns a list of all configured nodes
+    /// @return All configured nodes
     [[nodiscard]] const std::vector<std::shared_ptr<Node>>& nodes() const;
 
-    /**
-     * @brief Returns a list of all registered node types
-     * 
-     * @retval const std::map<std::string_view, NodeInfo>& All registered node types
-     */
+    /// @brief Returns a list of all registered node types
+    /// @return All registered node types
     [[nodiscard]] const std::map<std::string_view, NodeInfo>& registeredNodeTypes() const;
 
-    /**
-     * @brief Returns a list of all registered node data types
-     * 
-     * @retval const std::map<std::string_view, NodeInfo>& All registered node data types
-     */
+    /// @brief Returns a list of all registered node data types
+    /// @return All registered node data types
     [[nodiscard]] const std::map<std::string_view, NodeDataInfo>& registeredNodeDataTypes() const;
 
     /// Specifies if the Application runs in real-time or post processing mode
@@ -120,18 +105,25 @@ class NodeManager
     /// Stores info to construct a node
     using NodeConfig = struct
     {
-        std::string name;                           ///< Name of the Node
-        std::string type;                           ///< Type of the Node
-        std::map<std::string, std::string> options; ///< Constructor options
+        /// Name of the Node
+        std::string name;
+        /// Type of the Node
+        std::string type;
+        /// Constructor options
+        std::map<std::string, std::string> options;
     };
 
     /// Stores info to set up a data link
     using NodeLink = struct
     {
-        std::string source;                  ///< Name of the Source Node
-        uint8_t sourcePortIndex = UINT8_MAX; ///< Port Index of the Source Node
-        std::string target;                  ///< Name of the Target Node
-        uint8_t targetPortIndex = UINT8_MAX; ///< Port Index of the Target Node
+        /// Name of the Source Node
+        std::string source;
+        /// Port Index of the Source Node
+        uint8_t sourcePortIndex = UINT8_MAX;
+        /// Name of the Target Node
+        std::string target;
+        /// Port Index of the Target Node
+        uint8_t targetPortIndex = UINT8_MAX;
     };
 
     /// List of all registered nodes

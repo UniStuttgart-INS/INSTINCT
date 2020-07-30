@@ -36,7 +36,6 @@
     "doxdocgen.c.triggerSequence": "///",
     "doxdocgen.generic.boolReturnsTrueFalse": false,
     "doxdocgen.generic.returnTemplate": "@return ",
-    "doxdocgen.generic.includeTypeAtReturn": false,
     "doxdocgen.cpp.ctorText": "Constructor",
     "doxdocgen.cpp.dtorText": "Destructor",
     "files.associations": {

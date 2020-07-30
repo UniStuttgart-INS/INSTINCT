@@ -236,14 +236,14 @@ bool NAV::sensors::ublox::UbloxUartSensor::checksumFunction(const uart::protocol
     return false;
 }
 
-bool NAV::sensors::ublox::UbloxUartSensor::isErrorFunction(const uart::protocol::Packet& /* packet */)
+bool NAV::sensors::ublox::UbloxUartSensor::isErrorFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     LOG_TRACE("called");
 
     return false;
 }
 
-bool NAV::sensors::ublox::UbloxUartSensor::isResponseFunction(const uart::protocol::Packet& /* packet */)
+bool NAV::sensors::ublox::UbloxUartSensor::isResponseFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
     LOG_TRACE("called");
 

@@ -1,9 +1,7 @@
-/**
- * @file UbloxTypes.hpp
- * @brief Type Definitions for Ublox messages
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-05-19
- */
+/// @file UbloxTypes.hpp
+/// @brief Type Definitions for Ublox messages
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-05-19
 
 #pragma once
 
@@ -103,22 +101,18 @@ enum UbxAckMessages
     UBX_ACK_NAK = 0x00
 };
 
-/**
- * @brief Message Acknowledged
- * 
- * Output upon processing of an input message. ACK Message is sent as soon as possible but at least within one second.
- */
+/// @brief Message Acknowledged
+///
+/// Output upon processing of an input message. ACK Message is sent as soon as possible but at least within one second.
 struct UbxAckAck
 {
     uint8_t clsID = 0; ///< Class ID of the Acknowledged Message
     uint8_t msgID = 0; ///< Message ID of the Acknowledged Message
 };
 
-/**
- * @brief Message Not-Acknowledged
- * 
- * Output upon processing of an input message. NAK Message is sent as soon as possible but at least within one second.
- */
+/// @brief Message Not-Acknowledged
+///
+/// Output upon processing of an input message. NAK Message is sent as soon as possible but at least within one second.
 struct UbxAckNak
 {
     uint8_t clsID = 0; ///< Class ID of the Not-Acknowledged Message
@@ -148,50 +142,44 @@ enum UbxAidMessages
     UBX_AID_INI = 0x01
 };
 
-/**
- * @brief Poll GPS Aiding Almanac Data
- * 
- * Poll GPS Aiding Data (Almanac) for all 32 SVs by sending this message to the receiver without any payload.
- * The receiver will return 32 messages of type AID-ALM as defined below.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Poll GPS Aiding Almanac Data
+///
+/// Poll GPS Aiding Data (Almanac) for all 32 SVs by sending this message to the receiver without any payload.
+/// The receiver will return 32 messages of type AID-ALM as defined below.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidAlm
 {
 };
 
-/**
- * @brief Poll GPS Aiding Almanac Data for a SV
- * 
- * Poll GPS Aiding Data (Almanac) for an SV by sending this message to the receiver.
- * The receiver will return one message of type AID-ALM as defined below.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Poll GPS Aiding Almanac Data for a SV
+///
+/// Poll GPS Aiding Data (Almanac) for an SV by sending this message to the receiver.
+/// The receiver will return one message of type AID-ALM as defined below.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidAlmSV
 {
     uint8_t svid = 0; ///< SV ID for which the receiver shall return its Almanac Data (Valid Range: 1 .. 32 or 51, 56, 63).
 };
 
-/**
- * @brief GPS Aiding Almanac Input/Output Message
- * 
- * • If the WEEK Value is 0, DWRD0 to DWRD7 are not sent as the Almanac is not
- *   available for the given SV. This may happen even if NAV-SVINFO and RXM-
- *   SVSI are indicating almanac availability as the internal data may not represent
- *   the content of an original broadcast almanac (or only parts thereof).
- * • DWORD0 to DWORD7 contain the 8 words following the Hand-Over Word (
- *   HOW ) from the GPS navigation message, either pages 1 to 24 of sub-frame 5
- *   or pages 2 to 10 of subframe 4. See IS-GPS-200 for a full description of the
- *   contents of the Almanac pages.
- * • In DWORD0 to DWORD7, the parity bits have been removed, and the 24 bits of
- *   data are located in Bits 0 to 23. Bits 24 to 31 shall be ignored.
- * • Example: Parameter e (Eccentricity) from Almanac Subframe 4/5, Word 3, Bits
- *   69-84 within the subframe can be found in DWRD0, Bits 15-0 whereas Bit 0 is
- *   the LSB.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief GPS Aiding Almanac Input/Output Message
+///
+/// • If the WEEK Value is 0, DWRD0 to DWRD7 are not sent as the Almanac is not
+///   available for the given SV. This may happen even if NAV-SVINFO and RXM-
+///   SVSI are indicating almanac availability as the internal data may not represent
+///   the content of an original broadcast almanac (or only parts thereof).
+/// • DWORD0 to DWORD7 contain the 8 words following the Hand-Over Word (
+///   HOW ) from the GPS navigation message, either pages 1 to 24 of sub-frame 5
+///   or pages 2 to 10 of subframe 4. See IS-GPS-200 for a full description of the
+///   contents of the Almanac pages.
+/// • In DWORD0 to DWORD7, the parity bits have been removed, and the 24 bits of
+///   data are located in Bits 0 to 23. Bits 24 to 31 shall be ignored.
+/// • Example: Parameter e (Eccentricity) from Almanac Subframe 4/5, Word 3, Bits
+///   69-84 within the subframe can be found in DWRD0, Bits 15-0 whereas Bit 0 is
+///   the LSB.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidAlmIO
 {
     uint32_t svid = 0;                           ///< SV ID for which this Almanac Data is (Valid Range: 1 .. 32 or 51, 56, 63).
@@ -199,49 +187,43 @@ struct UbxAidAlmIO
     std::optional<std::array<uint32_t, 8>> dwrd; ///< Almanac Words
 };
 
-/**
- * @brief Poll AssistNow Autonomous data, all satellites
- * 
- * Poll AssistNow Autonomous aiding data for all GPS satellites by sending this empty message.
- * The receiver will return an AID-AOP message (see definition below) for each GPS satellite for which data is available.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Poll AssistNow Autonomous data, all satellites
+///
+/// Poll AssistNow Autonomous aiding data for all GPS satellites by sending this empty message.
+/// The receiver will return an AID-AOP message (see definition below) for each GPS satellite for which data is available.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidAop
 {
 };
 
-/**
- * @brief Poll AssistNow Autonomous data, one GPS satellite
- * 
- * Poll the AssistNow Autonomous data for the specified GPS satellite.
- * The receiver will return a AID-AOP message (see definition below) if data is available for the requested satellite.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Poll AssistNow Autonomous data, one GPS satellite
+///
+/// Poll the AssistNow Autonomous data for the specified GPS satellite.
+/// The receiver will return a AID-AOP message (see definition below) if data is available for the requested satellite.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidAopSV
 {
     uint8_t svid = 0; ///< GPS SV ID for which the data is requested (valid range: 1..32).
 };
 
-/**
- * @brief Poll AssistNow Autonomous data, one GPS satellite
- * 
- * If enabled, this message is output at irregular intervals. It is output whenever
- * AssistNow Autonomous has produced new data for a satellite. Depending on the
- * availability of the optional data the receiver will output either version of the
- * message. If this message is polled using one of the two poll requests described
- * above the receiver will send this message if AssistNow Autonomous data is
- * available or the corresponding poll request message if no AssistNow
- * Autonomous data is available for each satellite (i.e. svid 1..32). At the user's
- * choice the optional data may be chopped from the payload of a previously polled
- * message when sending the message back to the receiver. Sending a valid AID-
- * AOP message to the receiver will automatically enable the AssistNow
- * Autonomous feature on the receiver. See the section AssistNow Autonomous in
- * the receiver description for details on this feature.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Poll AssistNow Autonomous data, one GPS satellite
+///
+/// If enabled, this message is output at irregular intervals. It is output whenever
+/// AssistNow Autonomous has produced new data for a satellite. Depending on the
+/// availability of the optional data the receiver will output either version of the
+/// message. If this message is polled using one of the two poll requests described
+/// above the receiver will send this message if AssistNow Autonomous data is
+/// available or the corresponding poll request message if no AssistNow
+/// Autonomous data is available for each satellite (i.e. svid 1..32). At the user's
+/// choice the optional data may be chopped from the payload of a previously polled
+/// message when sending the message back to the receiver. Sending a valid AID-
+/// AOP message to the receiver will automatically enable the AssistNow
+/// Autonomous feature on the receiver. See the section AssistNow Autonomous in
+/// the receiver description for details on this feature.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidAopIO
 {
     uint8_t gnssId = 0;                 ///< GNSS identifier (see Satellite Numbering)
@@ -250,53 +232,47 @@ struct UbxAidAopIO
     std::array<uint8_t, 64> data{};     ///< assistance data
 };
 
-/**
- * @brief Poll GPS Aiding Ephemeris Data
- * 
- * Poll GPS Aiding Data (Ephemeris) for all 32 SVs by sending this message to the receiver without any payload.
- * The receiver will return 32 messages of type AID-EPH as defined below.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Poll GPS Aiding Ephemeris Data
+///
+/// Poll GPS Aiding Data (Ephemeris) for all 32 SVs by sending this message to the receiver without any payload.
+/// The receiver will return 32 messages of type AID-EPH as defined below.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidEph
 {
 };
 
-/**
- * @brief Poll GPS Aiding Ephemeris Data for a SV
- * 
- * Poll GPS Constellation Data (Ephemeris) for an SV by sending this message to the receiver.
- * The receiver will return one message of type AID-EPH as defined below.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Poll GPS Aiding Ephemeris Data for a SV
+///
+/// Poll GPS Constellation Data (Ephemeris) for an SV by sending this message to the receiver.
+/// The receiver will return one message of type AID-EPH as defined below.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidEphSV
 {
     uint8_t svid = 0; ///< SV ID for which the receiver shall return its Ephemeris Data (Valid Range: 1 .. 32).
 };
 
-/**
- * @brief GPS Aiding Ephemeris Input/Output Message
- * 
- * • SF1D0 to SF3D7 is only sent if ephemeris is available for this SV. If not, the
- *   payload may be reduced to 8 Bytes, or all bytes are set to zero, indicating that
- *   this SV Number does not have valid ephemeris for the moment. This may
- *   happen even if NAV-SVINFO and RXM-SVSI are indicating ephemeris
- *   availability as the internal data may not represent the content of an original
- *   broadcast ephemeris (or only parts thereof).
- * • SF1D0 to SF3D7 contain the 24 words following the Hand-Over Word ( HOW )
- *   from the GPS navigation message, subframes 1 to 3. The Truncated TOW
- *   Count is not valid and cannot be used. See IS-GPS-200 for a full description of
- *   the contents of the Subframes.
- * • In SF1D0 to SF3D7, the parity bits have been removed, and the 24 bits of data
- *   are located in Bits 0 to 23. Bits 24 to 31 shall be ignored.
- * • When polled, the data contained in this message does not represent the full
- *   original ephemeris broadcast. Some fields that are irrelevant to u-blox
- *   receivers may be missing. The week number in Subframe 1 has already been
- *   modified to match the Time Of Ephemeris (TOE).
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief GPS Aiding Ephemeris Input/Output Message
+///
+/// • SF1D0 to SF3D7 is only sent if ephemeris is available for this SV. If not, the
+///   payload may be reduced to 8 Bytes, or all bytes are set to zero, indicating that
+///   this SV Number does not have valid ephemeris for the moment. This may
+///   happen even if NAV-SVINFO and RXM-SVSI are indicating ephemeris
+///   availability as the internal data may not represent the content of an original
+///   broadcast ephemeris (or only parts thereof).
+/// • SF1D0 to SF3D7 contain the 24 words following the Hand-Over Word ( HOW )
+///   from the GPS navigation message, subframes 1 to 3. The Truncated TOW
+///   Count is not valid and cannot be used. See IS-GPS-200 for a full description of
+///   the contents of the Subframes.
+/// • In SF1D0 to SF3D7, the parity bits have been removed, and the 24 bits of data
+///   are located in Bits 0 to 23. Bits 24 to 31 shall be ignored.
+/// • When polled, the data contained in this message does not represent the full
+///   original ephemeris broadcast. Some fields that are irrelevant to u-blox
+///   receivers may be missing. The week number in Subframe 1 has already been
+///   modified to match the Time Of Ephemeris (TOE).
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidEphIO
 {
     uint32_t svid = 0;                           ///< SV ID for which this ephemeris data is (Valid Range: 1 .. 32).
@@ -306,23 +282,19 @@ struct UbxAidEphIO
     std::optional<std::array<uint32_t, 8>> sf3d; ///< Subframe 3 Words 3..10 (SF3D0..SF3D7)
 };
 
-/**
- * @brief Poll GPS Health, UTC, ionosphere parameters
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Poll GPS Health, UTC, ionosphere parameters
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidHui
 {
 };
 
-/**
- * @brief GPS Health, UTC and ionosphere parameters
- * 
- * This message contains a health bit mask, UTC time and Klobuchar parameters.
- * For more information on these parameters, see the ICD-GPS-200 documentation.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief GPS Health, UTC and ionosphere parameters
+///
+/// This message contains a health bit mask, UTC time and Klobuchar parameters.
+/// For more information on these parameters, see the ICD-GPS-200 documentation.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidHuiIO
 {
     std::bitset<4 * 8> health; ///< Bitmask, every bit represenst a GPS SV (1-32). If the bit is set the SV is healthy.
@@ -346,28 +318,24 @@ struct UbxAidHuiIO
     std::bitset<4 * 8> flags;  ///< Flags: healthValid, utcValid, klobValid
 };
 
-/**
- * @brief Poll GPS Initial Aiding Data
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Poll GPS Initial Aiding Data
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidIni
 {
 };
 
-/**
- * @brief Aiding position, time, frequency, clock drift
- * 
- * This message contains position, time and clock drift information. The position
- * can be input in either the ECEF X/Y/Z coordinate system or as lat/lon/height. The
- * time can either be input as inexact value via the standard communication
- * interface, suffering from latency depending on the baud rate, or using hardware
- * time synchronization where an accurate time pulse is input on the external
- * interrupts. It is also possible to supply hardware frequency aiding by connecting
- * a continuous signal to an external interrupt.
- * 
- * @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
- */
+/// @brief Aiding position, time, frequency, clock drift
+///
+/// This message contains position, time and clock drift information. The position
+/// can be input in either the ECEF X/Y/Z coordinate system or as lat/lon/height. The
+/// time can either be input as inexact value via the standard communication
+/// interface, suffering from latency depending on the baud rate, or using hardware
+/// time synchronization where an accurate time pulse is input on the external
+/// interrupts. It is also possible to supply hardware frequency aiding by connecting
+/// a continuous signal to an external interrupt.
+///
+/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
 struct UbxAidIniIO
 {
     int32_t ecefXOrLat = 0;        ///< WGS84 ECEF X coordinate or latitude, depending on flags below [cm or deg*1e-7]
@@ -489,21 +457,19 @@ enum UbxEsfMessages
     UBX_ESF_STATUS = 0x10,
 };
 
-/**
- * @brief Vehicle dynamics information
- * 
- * This message outputs information about the vehicle dynamics.
- * For ADR products (in protocol versions less than 19.2), the output dynamics
- * information (angular rates and accelerations) is expressed with respect to the
- * vehicle-frame. More information can be found in the ADR Navigation Output
- * section.
- * For ADR products, the output dynamics information (angular rates and
- * accelerations) is expressed with respect to the vehicle-frame. More information
- * can be found in the ADR Navigation Output section.
- * For UDR products, the output dynamics information (angular rates and
- * accelerations) are expressed with respect to the body-frame. More information
- * can be found in the UDR Navigation Output section.
- */
+/// @brief Vehicle dynamics information
+///
+/// This message outputs information about the vehicle dynamics.
+/// For ADR products (in protocol versions less than 19.2), the output dynamics
+/// information (angular rates and accelerations) is expressed with respect to the
+/// vehicle-frame. More information can be found in the ADR Navigation Output
+/// section.
+/// For ADR products, the output dynamics information (angular rates and
+/// accelerations) is expressed with respect to the vehicle-frame. More information
+/// can be found in the ADR Navigation Output section.
+/// For UDR products, the output dynamics information (angular rates and
+/// accelerations) are expressed with respect to the body-frame. More information
+/// can be found in the UDR Navigation Output section.
 struct UbxEsfIns
 {
     std::bitset<4 * 8> bitfield0;       ///< Bitfield (zAccelValid, yAccelValid, xAccelValid, zAngRateValid, yAngRateValid, xAngRateValid, version)
@@ -517,12 +483,9 @@ struct UbxEsfIns
     int32_t zAccel = 0;                 ///< Compensated z-axis acceleration (gravity-free). [m/s^2 * 1e-2]
 };
 
-/**
- * @brief External Sensor Fusion Measurements
- * 
- * Possible data types for the data field are described in the ESF Measurement Data section.
- * 
- */
+/// @brief External Sensor Fusion Measurements
+///
+/// Possible data types for the data field are described in the ESF Measurement Data section.
 struct UbxEsfMeas
 {
     uint32_t timeTag = 0;                           ///< Time tag of measurement generated by external sensor
@@ -532,18 +495,15 @@ struct UbxEsfMeas
     std::optional<std::vector<uint32_t>> calibTtag; ///< Receiver local time calibrated. This field must not be supplied when calibTtagValid is set to 0. [ms]
 };
 
-/**
- * @brief Raw sensor measurements
- * 
- * The message contains measurements from the active inertial sensors
- * connected to the GNSS chip. Possible data types for the data field are
- * accelerometer, gyroscope and temperature readings as described in the ESF
- * Measurement Data section.
- * Note that the rate selected in UBX-CFG-MSG is not respected. If a positive rate is
- * selected then all raw measurements will be output.
- * See also Raw Sensor Measurement Data.
- * 
- */
+/// @brief Raw sensor measurements
+///
+/// The message contains measurements from the active inertial sensors
+/// connected to the GNSS chip. Possible data types for the data field are
+/// accelerometer, gyroscope and temperature readings as described in the ESF
+/// Measurement Data section.
+/// Note that the rate selected in UBX-CFG-MSG is not respected. If a positive rate is
+/// selected then all raw measurements will be output.
+/// See also Raw Sensor Measurement Data.
 struct UbxEsfRaw
 {
     struct UbxEsfRawData
@@ -557,9 +517,7 @@ struct UbxEsfRaw
     std::vector<UbxEsfRawData> data;    ///< Repeated block
 };
 
-/**
- * @brief  External Sensor Fusion (ESF) status information
- */
+/// @brief  External Sensor Fusion (ESF) status information
 struct UbxEsfStatus
 {
     struct UbxEsfStatusSensor
@@ -806,15 +764,13 @@ enum UbxNavMessages
     UBX_NAV_VELNED = 0x12,
 };
 
-/**
- * @brief Attitude Solution
- * 
- * This message outputs the attitude solution as roll, pitch and heading angles.
- * More details about vehicle attitude can be found in the Vehicle Attitude Output
- * (ADR) section for ADR products.
- * More details about vehicle attitude can be found in the Vehicle Attitude Output
- * (UDR) section for UDR products.
- */
+/// @brief Attitude Solution
+///
+/// This message outputs the attitude solution as roll, pitch and heading angles.
+/// More details about vehicle attitude can be found in the Vehicle Attitude Output
+/// (ADR) section for ADR products.
+/// More details about vehicle attitude can be found in the Vehicle Attitude Output
+/// (UDR) section for UDR products.
 struct UbxNavAtt
 {
     uint32_t iTOW = 0;                  ///< GPS time of week of the navigation epoch [ms]. See the description of iTOW for details.
@@ -828,14 +784,12 @@ struct UbxNavAtt
     uint32_t accHeading = 0;            ///< Vehicle heading accuracy [deg * 1e-5] (if null, heading angle is not available).
 };
 
-/**
- * @brief Geodetic Position Solution
- * 
- * See important comments concerning validity of position given in section
- * Navigation Output Filters.
- * This message outputs the Geodetic position in the currently selected ellipsoid.
- * The default is the WGS84 Ellipsoid, but can be changed with the message UBX-CFG-DAT.
- */
+/// @brief Geodetic Position Solution
+///
+/// See important comments concerning validity of position given in section
+/// Navigation Output Filters.
+/// This message outputs the Geodetic position in the currently selected ellipsoid.
+/// The default is the WGS84 Ellipsoid, but can be changed with the message UBX-CFG-DAT.
 struct UbxNavPosllh
 {
     uint32_t iTOW = 0;  ///< GPS time of week of the navigation epoch [ms]. See the description of iTOW for details.
@@ -847,11 +801,9 @@ struct UbxNavPosllh
     uint32_t vAcc = 0;  ///< Vertical accuracy estimate [mm]
 };
 
-/**
- * @brief Velocity Solution in NED
- * 
- * See important comments concerning validity of position given in section Navigation Output Filters.
- */
+/// @brief Velocity Solution in NED
+///
+/// See important comments concerning validity of position given in section Navigation Output Filters.
 struct UbxNavVelned
 {
     uint32_t iTOW = 0;   ///< GPS time of week of the navigation epoch [ms]. See the description of iTOW for details.
@@ -890,10 +842,12 @@ enum UbxRxmMessages
     UBX_RXM_SVSI = 0x20,
 };
 
-/**
- * @brief 
- * 
- */
+/// @brief Multi-GNSS Raw Measurement Data
+///
+/// This message contains the information needed to be able to generate a RINEX 3 multi-GNSS observation file.
+/// This message contains pseudorange, Doppler, carrier phase, phase lock and
+/// signal quality information for GNSS satellites once signals have been
+/// synchronized. This message supports all active GNSS.
 struct UbxRxmRawx
 {
     struct UbxRxmRawxData
@@ -938,14 +892,12 @@ struct UbxRxmRawx
     std::vector<UbxRxmRawxData> data;   ///< Repeated block
 };
 
-/**
- * @brief Broadcast Navigation Data Subframe
- * 
- * This message reports a complete subframe of broadcast navigation data
- * decoded from a single signal. The number of data words reported in each
- * message depends on the nature of the signal.
- * See the section on Broadcast Navigation Data for further details.
- */
+/// @brief Broadcast Navigation Data Subframe
+///
+/// This message reports a complete subframe of broadcast navigation data
+/// decoded from a single signal. The number of data words reported in each
+/// message depends on the nature of the signal.
+/// See the section on Broadcast Navigation Data for further details.
 struct UbxRxmSfrbx
 {
     uint8_t gnssId = 0;         ///< GNSS identifier (see Satellite Numbering)
@@ -1002,30 +954,24 @@ enum UbxUpdMessages
     UBX_UPD_SOS = 0x14,
 };
 
-/**
- * @brief Get the UBX Msg Class From String object
- * 
- * @param[in] className String of the UBX Class
- * @retval UbxClass The UBX class
- */
+/// @brief Get the UBX Msg Class From String object
+///
+/// @param[in] className String of the UBX Class
+/// @return The UBX class
 [[nodiscard]] UbxClass getMsgClassFromString(const std::string_view& className);
 
-/**
- * @brief Get the UBX Msg Id From String object
- * 
- * @param[in] msgClass The Ubx Msg Class to search in
- * @param[in] idName String of the Msg Id
- * @retval uint8_t The Msg Id integer
- */
+/// @brief Get the UBX Msg Id From String object
+///
+/// @param[in] msgClass The Ubx Msg Class to search in
+/// @param[in] idName String of the Msg Id
+/// @return The Msg Id integer
 [[nodiscard]] uint8_t getMsgIdFromString(UbxClass msgClass, const std::string_view& idName);
 
-/**
- * @brief Get the UBX Msg Id From String objects
- * 
- * @param[in] className String of the UBX class
- * @param[in] idName String of the Msg Id
- * @retval uint8_t The Msg Id integer
- */
+/// @brief Get the UBX Msg Id From String objects
+///
+/// @param[in] className String of the UBX class
+/// @param[in] idName String of the Msg Id
+/// @return The Msg Id integer
 [[nodiscard]] uint8_t getMsgIdFromString(const std::string_view& className, const std::string_view& idName);
 
 } // namespace NAV::sensors::ublox

@@ -1,9 +1,7 @@
-/**
- * @file UartSensor.hpp
- * @brief Abstract Uart Sensor Class
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-11
- */
+/// @file UartSensor.hpp
+/// @brief Abstract Uart Sensor Class
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-11
 
 #pragma once
 
@@ -31,21 +29,24 @@ class UartSensor
         BAUDRATE_921600 = 921600  ///< Baudrate with 921600 symbols per second [Baud]
     };
 
-    UartSensor(const UartSensor&) = delete;            ///< Copy constructor
-    UartSensor(UartSensor&&) = delete;                 ///< Move constructor
-    UartSensor& operator=(const UartSensor&) = delete; ///< Copy assignment operator
-    UartSensor& operator=(UartSensor&&) = delete;      ///< Move assignment operator
+    /// @brief Copy constructor
+    UartSensor(const UartSensor&) = delete;
+    /// @brief Move constructor
+    UartSensor(UartSensor&&) = delete;
+    /// @brief Copy assignment operator
+    UartSensor& operator=(const UartSensor&) = delete;
+    /// @brief Move assignment operator
+    UartSensor& operator=(UartSensor&&) = delete;
 
   protected:
-    /**
-     * @brief Construct a new Uart Sensor object
-     * 
-     * @param[in] options Program options string map
-     */
+    /// @brief Constructor
+    /// @param[in] options Program options string map
     explicit UartSensor(const std::map<std::string, std::string>& options);
 
-    UartSensor() = default;          ///< Default constructor
-    virtual ~UartSensor() = default; ///< Destructor
+    /// @brief Default constructor
+    UartSensor() = default;
+    /// @brief Destructor
+    virtual ~UartSensor() = default;
 
     /// COM port where the sensor is attached to
     ///

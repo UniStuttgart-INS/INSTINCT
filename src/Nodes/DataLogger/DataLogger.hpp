@@ -1,9 +1,7 @@
-/**
- * @file DataLogger.hpp
- * @brief Abstract Data Logger class
- * @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
- * @date 2020-03-16
- */
+/// @file DataLogger.hpp
+/// @brief Abstract Data Logger class
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @date 2020-03-16
 
 #pragma once
 
@@ -19,32 +17,36 @@ namespace NAV
 class DataLogger : public Node
 {
   public:
-    // File Type
+    /// File Type
     enum FileType
     {
-        NONE,   ///< Not specified
-        BINARY, ///< Binary data
-        ASCII   ///< Ascii text data
+        /// Not specified
+        NONE,
+        /// Binary data
+        BINARY,
+        /// Ascii text data
+        ASCII
     };
 
-    DataLogger(const DataLogger&) = delete;            ///< Copy constructor
-    DataLogger(DataLogger&&) = delete;                 ///< Move constructor
-    DataLogger& operator=(const DataLogger&) = delete; ///< Copy assignment operator
-    DataLogger& operator=(DataLogger&&) = delete;      ///< Move assignment operator
+    /// @brief Copy constructor
+    DataLogger(const DataLogger&) = delete;
+    /// @brief Move constructor
+    DataLogger(DataLogger&&) = delete;
+    /// @brief Copy assignment operator
+    DataLogger& operator=(const DataLogger&) = delete;
+    /// @brief Move assignment operator
+    DataLogger& operator=(DataLogger&&) = delete;
 
   protected:
-    /**
-     * @brief Construct a new Data Logger object
-     * 
-     * @param[in] name Name of the Logger
-     * @param[in] options Program options string map
-     */
+    /// @brief Constructor
+    /// @param[in] name Name of the Logger
+    /// @param[in] options Program options string map
     DataLogger(const std::string& name, const std::map<std::string, std::string>& options);
 
-    /// Default constructor
+    /// @brief Default constructor
     DataLogger() = default;
 
-    /// Destructor
+    /// @brief Destructor
     ~DataLogger() override;
 
     /// Path to the log file
