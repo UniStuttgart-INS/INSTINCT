@@ -4,7 +4,7 @@
 
     #include "util/Logger.hpp"
 
-    #include "util/Emlid/EmlidDecryptor.hpp"
+    #include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
 NAV::EmlidSensor::EmlidSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Gnss(name, options)
@@ -17,7 +17,7 @@ NAV::EmlidSensor::EmlidSensor(const std::string& name, const std::map<std::strin
         // TODO: Update the library to handle different baudrates
         sensorBaudrate = Baudrate::BAUDRATE_9600;
 
-        er.connect(sensorPort, sensorBaudrate);
+        sensor->connect(sensorPort, sensorBaudrate);
 
         LOG_DEBUG("{} connected on port {} with baudrate {}", name, sensorPort, sensorBaudrate);
     }
@@ -26,7 +26,7 @@ NAV::EmlidSensor::EmlidSensor(const std::string& name, const std::map<std::strin
         LOG_CRITICAL("{} could not connect", name);
     }
 
-    er.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
+    sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
     LOG_DEBUG("{} successfully initialized", name);
 }
@@ -37,21 +37,20 @@ NAV::EmlidSensor::~EmlidSensor()
 
     removeAllCallbacksOfType<EmlidObs>();
     callbacksEnabled = false;
-    if (er.isConnected())
+    if (sensor->isConnected())
     {
-        er.unregisterAsyncPacketReceivedHandler();
-        er.disconnect();
+        sensor->unregisterAsyncPacketReceivedHandler();
+        sensor->disconnect();
     }
 }
 
-void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, er::protocol::uart::Packet& p, size_t /*index*/)
+void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t /*index*/)
 {
     auto* erSensor = static_cast<EmlidSensor*>(userData);
 
-    auto obs = std::make_shared<EmlidObs>();
-    obs->raw.setData(p.getRawData(), p.getRawDataLength());
+    auto obs = std::make_shared<EmlidObs>(p);
 
-    Emlid::decryptEmlidObs(obs, erSensor->currentInsTime);
+    sensors::emlid::decryptEmlidObs(obs, erSensor->currentInsTime);
 
     erSensor->invokeCallbacks(obs);
 }

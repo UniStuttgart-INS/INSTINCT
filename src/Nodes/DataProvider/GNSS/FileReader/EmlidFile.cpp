@@ -5,7 +5,7 @@
 #include <cmath>
 #include <array>
 
-#include "util/Emlid/EmlidDecryptor.hpp"
+#include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
 NAV::EmlidFile::EmlidFile(const std::string& name, const std::map<std::string, std::string>& options)
     : FileReader(options), Gnss(name, options)
@@ -14,13 +14,27 @@ NAV::EmlidFile::EmlidFile(const std::string& name, const std::map<std::string, s
 
     fileType = determineFileType();
 
-    filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
+    if (fileType == FileType::BINARY)
+    {
+        filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
+    }
+    else
+    {
+        filestream = std::ifstream(path);
+    }
 
     if (filestream.good())
     {
         dataStart = filestream.tellg();
 
-        LOG_DEBUG("{}-Binary-File successfully initialized", name);
+        if (fileType == FileType::ASCII)
+        {
+            LOG_DEBUG("{}-ASCII-File successfully initialized", name);
+        }
+        else
+        {
+            LOG_DEBUG("{}-Binary-File successfully initialized", name);
+        }
     }
     else
     {
@@ -48,64 +62,41 @@ void NAV::EmlidFile::resetNode()
 
 std::shared_ptr<NAV::EmlidObs> NAV::EmlidFile::pollData(bool peek)
 {
-    auto obs = std::make_shared<EmlidObs>();
-
     if (fileType == FileType::ASCII)
     {
         // TODO: Implement EmlidFile Ascii reading
         LOG_CRITICAL("Ascii EmlidFile pollData is not implemented yet.");
-        return obs;
+        return nullptr;
     }
-
-    constexpr uint8_t BinaryStartChar1 = 0x45;
-    constexpr uint8_t BinaryStartChar2 = 0x52;
 
     // Get current position
     auto pos = filestream.tellg();
     uint8_t i = 0;
-    while (filestream >> i)
+    std::unique_ptr<uart::protocol::Packet> packet = nullptr;
+    while (filestream.readsome(reinterpret_cast<char*>(&i), 1))
     {
-        if (i == BinaryStartChar1)
+        packet = sensor.findPacket(i);
+
+        if (packet != nullptr)
         {
-            // 0 = Sync Char 1
-            // 1 = Sync Char 2
-            // 2 = Class
-            // 3 = ID
-            // 4+5 = Payload Length
-            // Payload
-            // CK_A
-            // CK_B
-
-            constexpr size_t HEAD_BUFFER_SIZE = 5;
-            // Buffer for reading binary data
-            std::array<uint8_t, HEAD_BUFFER_SIZE> headBuffer{};
-
-            filestream.read(reinterpret_cast<char*>(headBuffer.data()), HEAD_BUFFER_SIZE);
-
-            if (headBuffer.at(0) != BinaryStartChar2)
-            {
-                continue;
-            }
-
-            uint16_t payloadLength = Emlid::EmlidPacket::U2(headBuffer.data() + 3);
-
-            std::vector<uint8_t> buffer{ BinaryStartChar1 };
-            buffer.insert(buffer.end(), headBuffer.data(), headBuffer.data() + HEAD_BUFFER_SIZE);
-
-            buffer.resize(HEAD_BUFFER_SIZE + 1 + payloadLength + 2);
-            filestream.read(reinterpret_cast<char*>(buffer.data()) + HEAD_BUFFER_SIZE + 1, payloadLength + 2);
-
-            obs->raw.setData(buffer.data(), buffer.size());
-
             break;
         }
     }
+
+    if (!packet)
+    {
+        return nullptr;
+    }
+
+    auto obs = std::make_shared<EmlidObs>(*packet);
+
+    // Check if package is empty
     if (obs->raw.getRawDataLength() == 0)
     {
         return nullptr;
     }
 
-    Emlid::decryptEmlidObs(obs, currentInsTime, peek);
+    sensors::emlid::decryptEmlidObs(obs, currentInsTime, peek);
 
     if (peek)
     {
@@ -125,10 +116,6 @@ NAV::FileReader::FileType NAV::EmlidFile::determineFileType()
 {
     LOG_TRACE("called for {}", name);
 
-    constexpr uint8_t BinaryErbStartChar1 = 0x45;
-    constexpr uint8_t BinaryErbStartChar2 = 0x52;
-    constexpr char BinaryNmeaStartChar = '$';
-
     filestream = std::ifstream(path);
 
     constexpr uint16_t BUFFER_SIZE = 10;
@@ -138,8 +125,9 @@ NAV::FileReader::FileType NAV::EmlidFile::determineFileType()
     {
         filestream.read(buffer.data(), BUFFER_SIZE);
 
-        if ((static_cast<uint8_t>(buffer.at(0)) == BinaryErbStartChar1 && static_cast<uint8_t>(buffer.at(1)) == BinaryErbStartChar2)
-            || buffer.at(0) == BinaryNmeaStartChar)
+        if ((static_cast<uint8_t>(buffer.at(0)) == sensors::emlid::EmlidUartSensor::BinarySyncChar1
+             && static_cast<uint8_t>(buffer.at(1)) == sensors::emlid::EmlidUartSensor::BinarySyncChar2)
+            || buffer.at(0) == sensors::emlid::EmlidUartSensor::AsciiStartChar)
         {
             filestream.close();
             LOG_DEBUG("{} has the file type: Binary", name);

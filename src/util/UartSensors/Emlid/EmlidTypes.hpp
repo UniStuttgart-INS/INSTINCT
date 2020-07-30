@@ -13,7 +13,7 @@
 #include <bitset>
 #include <vector>
 
-namespace NAV::Emlid
+namespace NAV::sensors::emlid
 {
 enum ErrorDetectionMode
 {
@@ -154,4 +154,4 @@ struct ErbRtk
  */
 [[nodiscard]] ErbMessageID getMsgIdFromString(const std::string_view& idName);
 
-} // namespace NAV::Emlid
+} // namespace NAV::sensors::emlid

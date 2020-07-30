@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(UartSensor LANGUAGES CXX)
+project(libUartSensor LANGUAGES CXX)
 
 set(CMAKE_SUPPRESS_REGENERATION TRUE)
 
@@ -29,6 +29,6 @@ set(SOURCE
 
 include_directories(include)
 
-add_library(UartSensor ${SOURCE})
+add_library(libUartSensor ${SOURCE})
 
-target_link_libraries(UartSensor PRIVATE project_options project_warnings)
+target_link_libraries(libUartSensor PRIVATE project_options project_warnings)

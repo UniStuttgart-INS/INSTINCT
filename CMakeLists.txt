@@ -99,12 +99,6 @@ if(ENABLE_SENSORS)
   set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
-  # Include emlid reach library
-  add_subdirectory(lib/emlidlib libercxx)
-  include_directories(SYSTEM lib/emlidlib/include)
-  set_target_properties(libercxx PROPERTIES CXX_CLANG_TIDY "")
-  set_target_properties(libercxx PROPERTIES CXX_CPPCHECK "")
-
   # Include navio library
   add_subdirectory(lib/navio libnavio)
   include_directories(SYSTEM lib/navio/include)
@@ -112,7 +106,7 @@ if(ENABLE_SENSORS)
   set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
 
   # Include uart library
-  add_subdirectory(lib/uartsensor UartSensor)
+  add_subdirectory(lib/uartsensor libUartSensor)
   include_directories(SYSTEM lib/uartsensor/include)
 endif()
 
