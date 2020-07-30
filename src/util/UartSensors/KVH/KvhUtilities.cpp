@@ -126,9 +126,13 @@ void NAV::sensors::kvh::decryptKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
         }
         else if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_C)
         {
-            obs->gyroUncompXYZ.emplace(InsConst::deg2rad(obs->raw.extractFloat()), InsConst::deg2rad(obs->raw.extractFloat()), InsConst::deg2rad(obs->raw.extractFloat()));
+            obs->gyroUncompXYZ.emplace(obs->raw.extractFloat(),
+                                       obs->raw.extractFloat(),
+                                       obs->raw.extractFloat());
 
-            obs->accelUncompXYZ.emplace(obs->raw.extractFloat(), obs->raw.extractFloat(), obs->raw.extractFloat());
+            obs->accelUncompXYZ.emplace(obs->raw.extractFloat(),
+                                        obs->raw.extractFloat(),
+                                        obs->raw.extractFloat());
             obs->accelUncompXYZ.value() *= InsConst::G_NORM;
 
             auto OneOfTempMagXYZ = obs->raw.extractFloat();

@@ -87,7 +87,9 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     obs->temperature = navio->sensor->read_temperature();
 
     obs->accelUncompXYZ.emplace(navio->ax, navio->ay, navio->az);
-    obs->gyroUncompXYZ.emplace(InsConst::deg2rad(navio->gx), InsConst::deg2rad(navio->gy), InsConst::deg2rad(navio->gz));
+    obs->gyroUncompXYZ.emplace(navio->gx,
+                               navio->gy,
+                               navio->gz);
 
     if (navio->imuType == ImuType::LSM)
     {
