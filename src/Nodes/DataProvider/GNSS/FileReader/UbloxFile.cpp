@@ -116,10 +116,6 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
 {
     LOG_TRACE("called for {}", name);
 
-    constexpr uint8_t BinaryUbxStartChar1 = 0xB5;
-    constexpr uint8_t BinaryUbxStartChar2 = 0x62;
-    constexpr char BinaryNmeaStartChar = '$';
-
     filestream = std::ifstream(path);
 
     constexpr uint16_t BUFFER_SIZE = 10;
@@ -129,8 +125,9 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
     {
         filestream.read(buffer.data(), BUFFER_SIZE);
 
-        if ((static_cast<uint8_t>(buffer.at(0)) == BinaryUbxStartChar1 && static_cast<uint8_t>(buffer.at(1)) == BinaryUbxStartChar2)
-            || buffer.at(0) == BinaryNmeaStartChar)
+        if ((static_cast<uint8_t>(buffer.at(0)) == sensors::ublox::UbloxUartSensor::BinarySyncChar1
+             && static_cast<uint8_t>(buffer.at(1)) == sensors::ublox::UbloxUartSensor::BinarySyncChar2)
+            || buffer.at(0) == sensors::ublox::UbloxUartSensor::AsciiStartChar)
         {
             filestream.close();
             LOG_DEBUG("{} has the file type: Binary", name);

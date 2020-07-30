@@ -17,7 +17,21 @@ NAV::EmlidDataLogger::~EmlidDataLogger()
 
 void NAV::EmlidDataLogger::writeObservation(std::shared_ptr<NAV::EmlidObs>& obs)
 {
-    filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
+    if (fileType == FileType::BINARY)
+    {
+        if (obs->raw.getRawDataLength() > 0)
+        {
+            filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
+        }
+        else
+        {
+            LOG_ERROR("{}: Tried to write binary, but observation had no binary data.", name);
+        }
+    }
+    else
+    {
+        LOG_CRITICAL("ASCII Logging of EmlidObs is not supported");
+    }
 
     invokeCallbacks(obs);
 }

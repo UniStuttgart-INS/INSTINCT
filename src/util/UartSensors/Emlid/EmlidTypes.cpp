@@ -1,6 +1,6 @@
 #include "EmlidTypes.hpp"
 
-NAV::Emlid::ErbMessageID NAV::Emlid::getMsgIdFromString(const std::string_view& idName)
+NAV::sensors::emlid::ErbMessageID NAV::sensors::emlid::getMsgIdFromString(const std::string_view& idName)
 {
     if (idName == "VER")
     {

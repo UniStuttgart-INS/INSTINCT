@@ -11,6 +11,8 @@
 #include "../../Protocol/FileReader.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 
+#include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
+
 namespace NAV
 {
 /// File Reader for Vector Nav log files
@@ -174,6 +176,9 @@ class EmlidFile final : public FileReader, public Gnss
      * @retval FileType The File Type
      */
     [[nodiscard]] FileType determineFileType() final;
+
+    /// Sensor Object
+    sensors::emlid::EmlidUartSensor sensor;
 };
 
 } // namespace NAV

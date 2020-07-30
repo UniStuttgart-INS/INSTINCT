@@ -12,7 +12,7 @@
     #include "NodeData/GNSS/EmlidObs.hpp"
     #include "../Gnss.hpp"
     #include "../../Protocol/UartSensor.hpp"
-    #include "er/sensors/sensors.hpp"
+    #include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
 
 namespace NAV
 {
@@ -20,13 +20,6 @@ namespace NAV
 class EmlidSensor final : public UartSensor, public Gnss
 {
   public:
-    /// Config Structure for the sensor
-    typedef struct Config
-    {
-        /// OutputFrequency of async packages
-        uint16_t outputFrequency = 1;
-    } Config;
-
     /**
      * @brief Construct a new Emlid Sensor object
      * 
@@ -146,13 +139,10 @@ class EmlidSensor final : public UartSensor, public Gnss
      * @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
      * @param[in] index Advanced usage item and can be safely ignored for now
      */
-    static void asciiOrBinaryAsyncMessageReceived(void* userData, er::protocol::uart::Packet& p, size_t index);
+    static void asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
 
-    /// erSensor Object
-    er::sensors::ErSensor er;
-
-    /// Config Object
-    EmlidSensor::Config config;
+    /// Sensor Object
+    sensors::emlid::EmlidUartSensor sensor;
 };
 
 } // namespace NAV

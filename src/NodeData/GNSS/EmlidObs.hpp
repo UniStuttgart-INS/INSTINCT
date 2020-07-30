@@ -11,8 +11,9 @@
 
 #include <variant>
 
-#include "util/Emlid/EmlidTypes.hpp"
-#include "util/Emlid/EmlidPacket.hpp"
+#include "uart/protocol/packet.hpp"
+
+#include "util/UartSensors/Emlid/EmlidTypes.hpp"
 
 namespace NAV
 {
@@ -20,7 +21,13 @@ namespace NAV
 class EmlidObs : public GnssObs
 {
   public:
-    EmlidObs() = default;                          ///< Constructor
+    EmlidObs() = default; ///< Constructor
+
+    /// @brief Constructor
+    ///
+    /// @param[in] packet The packet to copy into the raw data
+    explicit EmlidObs(uart::protocol::Packet& packet)
+        : raw(packet) {}
     ~EmlidObs() override = default;                ///< Destructor
     EmlidObs(const EmlidObs&) = delete;            ///< Copy constructor
     EmlidObs(EmlidObs&&) = delete;                 ///< Move constructor
@@ -54,17 +61,17 @@ class EmlidObs : public GnssObs
     uint16_t payloadLength = 0;
 
     /// Complete message raw binary data including header and checksum (ERB)
-    Emlid::EmlidPacket raw;
+    uart::protocol::Packet raw;
 
     /// Decoded data
     std::variant<
-        Emlid::ErbVer,  // VER: Version of protocol
-        Emlid::ErbPos,  // POS: Geodetic position solution
-        Emlid::ErbStat, // STAT: Receiver navigation status
-        Emlid::ErbDops, // DOPS: Dilution of precision
-        Emlid::ErbVel,  // VEL: Velocity solution in NED
-        Emlid::ErbSvi,  // SVI: Space vehicle information
-        Emlid::ErbRtk   // RTK: RTK information
+        sensors::emlid::ErbVer,  // VER: Version of protocol
+        sensors::emlid::ErbPos,  // POS: Geodetic position solution
+        sensors::emlid::ErbStat, // STAT: Receiver navigation status
+        sensors::emlid::ErbDops, // DOPS: Dilution of precision
+        sensors::emlid::ErbVel,  // VEL: Velocity solution in NED
+        sensors::emlid::ErbSvi,  // SVI: Space vehicle information
+        sensors::emlid::ErbRtk   // RTK: RTK information
         >
         data{};
 };

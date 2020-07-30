@@ -34,6 +34,10 @@ class UbloxUartSensor
     /// @return nullptr if no packet found yet, otherwise a pointer to the packet
     std::unique_ptr<uart::protocol::Packet> findPacket(uint8_t dataByte);
 
+    static constexpr uint8_t BinarySyncChar1 = 0xB5; // µ
+    static constexpr uint8_t BinarySyncChar2 = 0x62; // b
+    static constexpr uint8_t AsciiStartChar = '$';
+
   private:
     uart::sensors::UartSensor sensor{ endianness,
                                       packetFinderFunction,
@@ -43,9 +47,6 @@ class UbloxUartSensor
                                       isErrorFunction,
                                       isResponseFunction,
                                       packetHeaderLength };
-
-    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_LITTLE;
-    static constexpr size_t packetHeaderLength = 2;
 
     static void packetFinderFunction(const std::vector<uint8_t>& data,
                                      const uart::xplat::TimeStamp& timestamp,
@@ -60,9 +61,8 @@ class UbloxUartSensor
 
     static bool isResponseFunction(const uart::protocol::Packet& packet);
 
-    static constexpr uint8_t BinarySyncChar1 = 0xB5; // µ
-    static constexpr uint8_t BinarySyncChar2 = 0x62; // b
-    static constexpr uint8_t AsciiStartChar = '$';
+    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_LITTLE;
+    static constexpr size_t packetHeaderLength = 2;
     static constexpr uint8_t AsciiEndChar1 = '\r';
     static constexpr uint8_t AsciiEndChar2 = '\n';
     static constexpr uint8_t AsciiEscapeChar = '\0';

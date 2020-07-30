@@ -1,7 +1,7 @@
-/// @file KvhUartSensor.hpp
-/// @brief Class to read out KVH Sensors
+/// @file EmlidUartSensor.hpp
+/// @brief Class to read out Emlid Sensors
 /// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
-/// @date 2020-07-28
+/// @date 2020-07-22
 
 #pragma once
 
@@ -9,23 +9,23 @@
 
 #include "uart/sensors/sensors.hpp"
 
-namespace NAV::sensors::kvh
+namespace NAV::sensors::emlid
 {
-class KvhUartSensor
+class EmlidUartSensor
 {
   public:
     /// @brief Default constructor
-    KvhUartSensor();
+    EmlidUartSensor();
     /// @brief Destructor
-    ~KvhUartSensor() = default;
+    ~EmlidUartSensor() = default;
     /// @brief Copy constructor
-    KvhUartSensor(const KvhUartSensor&) = delete;
+    EmlidUartSensor(const EmlidUartSensor&) = delete;
     /// @brief Move constructor
-    KvhUartSensor(KvhUartSensor&&) = delete;
+    EmlidUartSensor(EmlidUartSensor&&) = delete;
     /// @brief Copy assignment operator
-    KvhUartSensor& operator=(const KvhUartSensor&) = delete;
+    EmlidUartSensor& operator=(const EmlidUartSensor&) = delete;
     /// @brief Move assignment operator
-    KvhUartSensor& operator=(KvhUartSensor&&) = delete;
+    EmlidUartSensor& operator=(EmlidUartSensor&&) = delete;
     /// @brief Arrow operator overload
     uart::sensors::UartSensor* operator->() { return &sensor; };
 
@@ -34,13 +34,9 @@ class KvhUartSensor
     /// @return nullptr if no packet found yet, otherwise a pointer to the packet
     std::unique_ptr<uart::protocol::Packet> findPacket(uint8_t dataByte);
 
-    static constexpr uint32_t HEADER_FMT_A = 0xFE81FF55;
-    static constexpr uint32_t HEADER_FMT_B = 0xFE81FF56;
-    static constexpr uint32_t HEADER_FMT_C = 0xFE81FF57;
-    static constexpr uint32_t HEADER_FMT_XBIT = 0xFE8100AA;
-    static constexpr uint32_t HEADER_FMT_XBIT2 = 0xFE8100AB;
-
-    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_BIG;
+    static constexpr uint8_t BinarySyncChar1 = 0x82; // R
+    static constexpr uint8_t BinarySyncChar2 = 0x45; // E
+    static constexpr uint8_t AsciiStartChar = '$';
 
   private:
     uart::sensors::UartSensor sensor{ endianness,
@@ -65,49 +61,31 @@ class KvhUartSensor
 
     static bool isResponseFunction(const uart::protocol::Packet& packet);
 
-    static constexpr size_t packetHeaderLength = 0;
-
+    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_LITTLE;
+    static constexpr size_t packetHeaderLength = 2;
     static constexpr uint8_t AsciiEndChar1 = '\r';
     static constexpr uint8_t AsciiEndChar2 = '\n';
     static constexpr uint8_t AsciiEscapeChar = '\0';
-    static constexpr size_t MaximumSizeForAsciiPacket = 256;
 
     bool currentlyBuildingAsciiPacket{ false };
     bool currentlyBuildingBinaryPacket{ false };
 
     bool asciiEndChar1Found{ false };
+    bool binarySyncChar2Found{ false };
+    bool binaryMsgIdFound{ false };
+    bool binaryPayloadLength1Found{ false };
+    bool binaryPayloadLength2Found{ false };
 
-    enum TagState
-    {
-        SM_H1,
-        SM_H2,
-        SM_H3,
-        SM_X3,
-        SM_IDLE
-    };
-
-    TagState eState = SM_IDLE;
-
-    enum HeaderType
-    {
-        FMT_A,
-        FMT_B,
-        FMT_C,
-        FMT_XBIT,
-        FMT_XBIT2,
-        FMT_UNKNOWN
-    };
-
-    HeaderType packetType = HeaderType::FMT_UNKNOWN;
-
-    HeaderType bFindImuHeader(uint8_t ui8Data);
+    uint8_t binaryMsgId{ 0 };
+    uint16_t binaryPayloadLength{ 0 };
 
     std::vector<uint8_t> _buffer;
 
     /// Used for correlating raw data with where the packet was found for the end user.
     size_t runningDataIndex{ 0 };
+    size_t numOfBytesRemainingForCompletePacket{ 0 };
 
     void resetTracking();
 };
 
-} // namespace NAV::sensors::kvh
+} // namespace NAV::sensors::emlid
