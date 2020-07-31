@@ -23,7 +23,7 @@ class VectorNavFile final : public FileReader, public Imu
     /// @brief Default constructor
     VectorNavFile() = default;
     /// @brief Destructor
-    ~VectorNavFile() final;
+    ~VectorNavFile() final = default;
     /// @brief Copy constructor
     VectorNavFile(const VectorNavFile&) = delete;
     /// @brief Move constructor
@@ -141,8 +141,8 @@ class VectorNavFile final : public FileReader, public Imu
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() final;
 
-    /// Header Columns of an ASCII file
-    std::vector<std::string> columns;
+    /// @brief Read the Header of the file
+    void readHeader() final;
 };
 
 } // namespace NAV

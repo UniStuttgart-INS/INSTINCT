@@ -25,7 +25,7 @@ class UbloxFile final : public FileReader, public Gnss
     /// @brief Default constructor
     UbloxFile() = default;
     /// @brief Destructor
-    ~UbloxFile() final;
+    ~UbloxFile() final = default;
     /// @brief Copy constructor
     UbloxFile(const UbloxFile&) = delete;
     /// @brief Move constructor
@@ -142,6 +142,9 @@ class UbloxFile final : public FileReader, public Gnss
     /// @brief Determines the type of the file (ASCII or binary)
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() final;
+
+    /// @brief Read the Header of the file
+    void readHeader() final;
 
     /// Sensor Object
     sensors::ublox::UbloxUartSensor sensor;

@@ -25,7 +25,7 @@ class KvhFile final : public FileReader, public Imu
     /// @brief Default constructor
     KvhFile() = default;
     /// @brief Destructor
-    ~KvhFile() final;
+    ~KvhFile() final = default;
     /// @brief Copy constructor
     KvhFile(const KvhFile&) = delete;
     /// @brief Move constructor
@@ -143,8 +143,8 @@ class KvhFile final : public FileReader, public Imu
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() final;
 
-    /// Header Columns of an ASCII file
-    std::vector<std::string> columns;
+    /// @brief Read the Header of the file
+    void readHeader() final;
 
     /// Sensor Object
     sensors::kvh::KvhUartSensor sensor;

@@ -6,62 +6,17 @@
 #include <array>
 
 NAV::RtklibPosFile::RtklibPosFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(options), Gnss(name, options)
+    : FileReader(name, options), Gnss(name, options)
 {
     LOG_TRACE("called for {}", name);
 
     fileType = determineFileType();
 
-    filestream = std::ifstream(path);
+    readHeader();
 
-    if (filestream.good())
-    {
-        // Read header line
-        std::string line;
-        do
-        {
-            std::getline(filestream, line);
-            // Remove any starting non text characters
-            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
-        } while (!line.empty() && line.find("%  ") == std::string::npos);
+    dataStart = filestream.tellg();
 
-        // Convert line into stream
-        std::istringstream lineStream(line);
-
-        for (std::string cell; lineStream >> cell;)
-        {
-            if (cell != "%")
-            {
-                if (cell == "GPST")
-                {
-                    columns.emplace_back("GpsWeek");
-                    columns.emplace_back("GpsToW");
-                }
-                else
-                {
-                    columns.push_back(cell);
-                }
-            }
-        }
-
-        dataStart = filestream.tellg();
-
-        LOG_DEBUG("{} successfully initialized", name);
-    }
-    else
-    {
-        LOG_CRITICAL("{} could not open file {}", name, path);
-    }
-}
-
-NAV::RtklibPosFile::~RtklibPosFile()
-{
-    LOG_TRACE("called for {}", name);
-
-    if (filestream.is_open())
-    {
-        filestream.close();
-    }
+    LOG_DEBUG("{} successfully initialized", name);
 }
 
 void NAV::RtklibPosFile::resetNode()
@@ -279,4 +234,35 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
 NAV::FileReader::FileType NAV::RtklibPosFile::determineFileType()
 {
     return FileReader::FileType::ASCII;
+}
+
+void NAV::RtklibPosFile::readHeader()
+{
+    // Read header line
+    std::string line;
+    do
+    {
+        std::getline(filestream, line);
+        // Remove any starting non text characters
+        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
+    } while (!line.empty() && line.find("%  ") == std::string::npos);
+
+    // Convert line into stream
+    std::istringstream lineStream(line);
+
+    for (std::string cell; lineStream >> cell;)
+    {
+        if (cell != "%")
+        {
+            if (cell == "GPST")
+            {
+                columns.emplace_back("GpsWeek");
+                columns.emplace_back("GpsToW");
+            }
+            else
+            {
+                columns.push_back(cell);
+            }
+        }
+    }
 }

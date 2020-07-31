@@ -25,7 +25,7 @@ class EmlidFile final : public FileReader, public Gnss
     /// @brief Default constructor
     EmlidFile() = default;
     /// @brief Destructor
-    ~EmlidFile() final;
+    ~EmlidFile() final = default;
     /// @brief Copy constructor
     EmlidFile(const EmlidFile&) = delete;
     /// @brief Move constructor
@@ -102,7 +102,7 @@ class EmlidFile final : public FileReader, public Gnss
     /// @brief Handles the data sent on the input port
     /// @param[in] portIndex The input port index
     /// @param[in, out] data The data send on the input port
-    void handleInputData([[maybe_unused]] uint8_t portIndex , [[maybe_unused]] std::shared_ptr<NodeData> data) final {}
+    void handleInputData([[maybe_unused]] uint8_t portIndex, [[maybe_unused]] std::shared_ptr<NodeData> data) final {}
 
     /// @brief Requests the node to send out its data
     /// @param[in] portIndex The output port index
@@ -142,6 +142,9 @@ class EmlidFile final : public FileReader, public Gnss
     /// @brief Determines the type of the file (ASCII or binary)
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() final;
+
+    /// @brief Read the Header of the file
+    void readHeader() final;
 
     /// Sensor Object
     sensors::emlid::EmlidUartSensor sensor;

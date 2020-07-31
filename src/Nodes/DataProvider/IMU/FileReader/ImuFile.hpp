@@ -23,7 +23,7 @@ class ImuFile final : public FileReader, public Imu
     /// @brief Default constructor
     ImuFile() = default;
     /// @brief Destructor
-    ~ImuFile() final;
+    ~ImuFile() final = default;
     /// @brief Copy constructor
     ImuFile(const ImuFile&) = delete;
     /// @brief Move constructor
@@ -141,8 +141,8 @@ class ImuFile final : public FileReader, public Imu
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() final;
 
-    /// Header Columns of an ASCII file
-    std::vector<std::string> columns;
+    /// @brief Read the Header of the file
+    void readHeader() final;
 };
 
 } // namespace NAV

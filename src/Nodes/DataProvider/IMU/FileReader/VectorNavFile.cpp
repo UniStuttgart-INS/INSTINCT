@@ -5,65 +5,23 @@
 #include <cmath>
 
 NAV::VectorNavFile::VectorNavFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(options), Imu(name, options)
+    : FileReader(name, options), Imu(name, options)
 {
     LOG_TRACE("called for {}", name);
 
     fileType = determineFileType();
 
-    if (fileType == FileType::BINARY)
+    readHeader();
+
+    dataStart = filestream.tellg();
+
+    if (fileType == FileType::ASCII)
     {
-        filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
+        LOG_DEBUG("{}-ASCII-File successfully initialized", name);
     }
     else
     {
-        filestream = std::ifstream(path);
-    }
-
-    if (filestream.good())
-    {
-        if (fileType != FileType::BINARY)
-        {
-            // Read header line
-            std::string line;
-            std::getline(filestream, line);
-            // Remove any starting non text characters
-            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
-            // Convert line into stream
-            std::stringstream lineStream(line);
-            std::string cell;
-            // Split line at comma
-            while (std::getline(lineStream, cell, ','))
-            {
-                // Remove any trailing non text characters
-                cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-                columns.push_back(cell);
-            }
-
-            dataStart = filestream.tellg();
-
-            LOG_DEBUG("{}-ASCII-File successfully initialized", name);
-        }
-        else
-        {
-            LOG_DEBUG("{}-Binary-File successfully initialized", name);
-        }
-    }
-    else
-    {
-        LOG_CRITICAL("{} could not open file {}", name, path);
-    }
-}
-
-NAV::VectorNavFile::~VectorNavFile()
-{
-    LOG_TRACE("called for {}", name);
-
-    // removeAllCallbacks();
-    columns.clear();
-    if (filestream.is_open())
-    {
-        filestream.close();
+        LOG_DEBUG("{}-Binary-File successfully initialized", name);
     }
 }
 
@@ -646,7 +604,7 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
 
     constexpr uint8_t BinaryStartChar = 0xFA;
 
-    filestream = std::ifstream(path);
+    auto filestream = std::ifstream(path);
 
     constexpr uint16_t BUFFER_SIZE = 256;
 
@@ -674,4 +632,26 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
 
     LOG_CRITICAL("{} could not open file {}", name, path);
     return FileType::NONE;
+}
+
+void NAV::VectorNavFile::readHeader()
+{
+    if (fileType == FileType::ASCII)
+    {
+        // Read header line
+        std::string line;
+        std::getline(filestream, line);
+        // Remove any starting non text characters
+        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
+        // Convert line into stream
+        std::stringstream lineStream(line);
+        std::string cell;
+        // Split line at comma
+        while (std::getline(lineStream, cell, ','))
+        {
+            // Remove any trailing non text characters
+            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+            columns.push_back(cell);
+        }
+    }
 }

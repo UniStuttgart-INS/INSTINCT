@@ -8,48 +8,23 @@
 #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 
 NAV::UbloxFile::UbloxFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(options), Gnss(name, options), sensor(name)
+    : FileReader(name, options), Gnss(name, options), sensor(name)
 {
     LOG_TRACE("called for {}", name);
 
     fileType = determineFileType();
 
-    if (fileType == FileType::BINARY)
+    readHeader();
+
+    dataStart = filestream.tellg();
+
+    if (fileType == FileType::ASCII)
     {
-        filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
+        LOG_DEBUG("{}-ASCII-File successfully initialized", name);
     }
     else
     {
-        filestream = std::ifstream(path);
-    }
-
-    if (filestream.good())
-    {
-        dataStart = filestream.tellg();
-
-        if (fileType == FileType::ASCII)
-        {
-            LOG_DEBUG("{}-ASCII-File successfully initialized", name);
-        }
-        else
-        {
-            LOG_DEBUG("{}-Binary-File successfully initialized", name);
-        }
-    }
-    else
-    {
-        LOG_CRITICAL("{} could not open file {}", name, path);
-    }
-}
-
-NAV::UbloxFile::~UbloxFile()
-{
-    LOG_TRACE("called for {}", name);
-
-    // removeAllCallbacks();
-    if (filestream.is_open())
-    {
-        filestream.close();
+        LOG_DEBUG("{}-Binary-File successfully initialized", name);
     }
 }
 
@@ -116,7 +91,7 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
 {
     LOG_TRACE("called for {}", name);
 
-    filestream = std::ifstream(path);
+    auto filestream = std::ifstream(path);
 
     constexpr uint16_t BUFFER_SIZE = 10;
 
@@ -140,4 +115,26 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
 
     LOG_CRITICAL("{} could not open file {}", name, path);
     return FileType::NONE;
+}
+
+void NAV::UbloxFile::readHeader()
+{
+    if (fileType == FileType::ASCII)
+    {
+        // Read header line
+        std::string line;
+        std::getline(filestream, line);
+        // Remove any starting non text characters
+        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
+        // Convert line into stream
+        std::stringstream lineStream(line);
+        std::string cell;
+        // Split line at comma
+        while (std::getline(lineStream, cell, ','))
+        {
+            // Remove any trailing non text characters
+            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+            columns.push_back(cell);
+        }
+    }
 }
