@@ -6,32 +6,7 @@
 #include <algorithm>
 
 NAV::ImuFile::ImuFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(name, options), Imu(name, options)
-{
-    LOG_TRACE("called for {}", name);
-
-    fileType = determineFileType();
-
-    readHeader();
-
-    dataStart = filestream.tellg();
-
-    if (fileType == FileType::ASCII)
-    {
-        LOG_DEBUG("{}-ASCII-File successfully initialized", name);
-    }
-    else
-    {
-        LOG_DEBUG("{}-Binary-File successfully initialized", name);
-    }
-}
-
-void NAV::ImuFile::resetNode()
-{
-    // Return to position
-    filestream.clear();
-    filestream.seekg(dataStart, std::ios_base::beg);
-}
+    : ImuFileReader(name, options) {}
 
 std::shared_ptr<NAV::ImuObs> NAV::ImuFile::pollData(bool peek)
 {
@@ -203,51 +178,4 @@ std::shared_ptr<NAV::ImuObs> NAV::ImuFile::pollData(bool peek)
     }
 
     return obs;
-}
-
-NAV::FileReader::FileType NAV::ImuFile::determineFileType()
-{
-    LOG_TRACE("called for {}", name);
-
-    auto filestream = std::ifstream(path);
-    if (filestream.good())
-    {
-        std::string line;
-        std::getline(filestream, line);
-        filestream.close();
-
-        auto n = std::count(line.begin(), line.end(), ',');
-
-        if (n >= 3)
-        {
-            return FileType::ASCII;
-        }
-
-        LOG_CRITICAL("{} could not determine file type", name);
-    }
-
-    LOG_CRITICAL("{} could not open file {}", name, path);
-    return FileType::NONE;
-}
-
-void NAV::ImuFile::readHeader()
-{
-    if (fileType == FileType::ASCII)
-    {
-        // Read header line
-        std::string line;
-        std::getline(filestream, line);
-        // Remove any starting non text characters
-        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
-        // Convert line into stream
-        std::stringstream lineStream(line);
-        std::string cell;
-        // Split line at comma
-        while (std::getline(lineStream, cell, ','))
-        {
-            // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-            columns.push_back(cell);
-        }
-    }
 }

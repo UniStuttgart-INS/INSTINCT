@@ -113,6 +113,12 @@ class Node : public DataCallback
     /// @return The requested data or nullptr if no data available
     [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex);
 
+    /// @brief Initialize the Node. Here virtual functions of children can be called
+    virtual void initialize();
+
+    /// @brief Deinitialize the Node. Here virtual functions of children can be called
+    virtual void deinitialize();
+
     /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
     virtual void resetNode();
 

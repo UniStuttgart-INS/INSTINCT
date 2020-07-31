@@ -5,8 +5,7 @@
 
 #pragma once
 
-#include "../Gnss.hpp"
-#include "../../Protocol/FileReader.hpp"
+#include "../GnssFileReader.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 
 #include "util/UartSensors/Ublox/UbloxUartSensor.hpp"
@@ -14,7 +13,7 @@
 namespace NAV
 {
 /// File Reader for Ublox log files
-class UbloxFile final : public FileReader, public Gnss
+class UbloxFile final : public GnssFileReader
 {
   public:
     /// @brief Constructor
@@ -130,21 +129,15 @@ class UbloxFile final : public FileReader, public Gnss
         return nullptr;
     }
 
-    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
-    void resetNode() final;
-
   private:
     /// @brief Polls the data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<UbloxObs> pollData(bool peek = false);
 
-    /// @brief Determines the type of the file (ASCII or binary)
+    /// @brief Determines the type of the file
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() final;
-
-    /// @brief Read the Header of the file
-    void readHeader() final;
 
     /// Sensor Object
     sensors::ublox::UbloxUartSensor sensor;

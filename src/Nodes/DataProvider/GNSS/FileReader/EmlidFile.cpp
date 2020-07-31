@@ -8,32 +8,7 @@
 #include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
 NAV::EmlidFile::EmlidFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(name, options), Gnss(name, options), sensor(name)
-{
-    LOG_TRACE("called for {}", name);
-
-    fileType = determineFileType();
-
-    readHeader();
-
-    dataStart = filestream.tellg();
-
-    if (fileType == FileType::ASCII)
-    {
-        LOG_DEBUG("{}-ASCII-File successfully initialized", name);
-    }
-    else
-    {
-        LOG_DEBUG("{}-Binary-File successfully initialized", name);
-    }
-}
-
-void NAV::EmlidFile::resetNode()
-{
-    // Return to position
-    filestream.clear();
-    filestream.seekg(dataStart, std::ios_base::beg);
-}
+    : GnssFileReader(name, options), sensor(name) {}
 
 std::shared_ptr<NAV::EmlidObs> NAV::EmlidFile::pollData(bool peek)
 {
@@ -115,26 +90,4 @@ NAV::FileReader::FileType NAV::EmlidFile::determineFileType()
 
     LOG_CRITICAL("{} could not open file {}", name, path);
     return FileType::NONE;
-}
-
-void NAV::EmlidFile::readHeader()
-{
-    if (fileType == FileType::ASCII)
-    {
-        // Read header line
-        std::string line;
-        std::getline(filestream, line);
-        // Remove any starting non text characters
-        line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
-        // Convert line into stream
-        std::stringstream lineStream(line);
-        std::string cell;
-        // Split line at comma
-        while (std::getline(lineStream, cell, ','))
-        {
-            // Remove any trailing non text characters
-            cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-            columns.push_back(cell);
-        }
-    }
 }

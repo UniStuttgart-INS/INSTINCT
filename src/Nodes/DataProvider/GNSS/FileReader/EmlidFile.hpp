@@ -5,20 +5,19 @@
 
 #pragma once
 
-#include "../Gnss.hpp"
-#include "../../Protocol/FileReader.hpp"
+#include "../GnssFileReader.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 
 #include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
 
 namespace NAV
 {
-/// File Reader for Vector Nav log files
-class EmlidFile final : public FileReader, public Gnss
+/// File Reader for Emlid log files
+class EmlidFile final : public GnssFileReader
 {
   public:
     /// @brief Constructor
-    /// @param[in] name Name of the Sensor which wrote the file
+    /// @param[in] name Name of the Node
     /// @param[in] options Program options string map
     EmlidFile(const std::string& name, const std::map<std::string, std::string>& options);
 
@@ -130,9 +129,6 @@ class EmlidFile final : public FileReader, public Gnss
         return nullptr;
     }
 
-    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
-    void resetNode() final;
-
   private:
     /// @brief Polls the data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
@@ -142,9 +138,6 @@ class EmlidFile final : public FileReader, public Gnss
     /// @brief Determines the type of the file (ASCII or binary)
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() final;
-
-    /// @brief Read the Header of the file
-    void readHeader() final;
 
     /// Sensor Object
     sensors::emlid::EmlidUartSensor sensor;

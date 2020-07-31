@@ -18,6 +18,14 @@ std::shared_ptr<NAV::NodeData> NAV::Node::requestOutputDataPeek([[maybe_unused]]
     return nullptr;
 }
 
+void NAV::Node::initialize()
+{
+}
+
+void NAV::Node::deinitialize()
+{
+}
+
 void NAV::Node::resetNode()
 {
 }

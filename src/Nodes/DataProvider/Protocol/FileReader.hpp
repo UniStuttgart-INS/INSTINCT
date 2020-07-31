@@ -9,7 +9,6 @@
 #include <vector>
 #include <map>
 #include <fstream>
-#include <optional>
 
 namespace NAV
 {
@@ -48,12 +47,18 @@ class FileReader
     /// @brief Destructor
     virtual ~FileReader() = default;
 
+    /// @brief Initialize the file reader
+    void initialize();
+
+    /// @brief Moves the read cursor to the start
+    void resetReader();
+
     /// @brief Virtual Function to determine the File Type
     /// @return The File path which was recognized
-    [[nodiscard]] virtual FileType determineFileType() = 0;
+    [[nodiscard]] virtual FileType determineFileType();
 
     /// @brief Virtual Function to read the Header of a file
-    virtual void readHeader() = 0;
+    virtual void readHeader();
 
     /// Path to log file
     std::string path;

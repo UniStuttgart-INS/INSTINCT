@@ -5,14 +5,13 @@
 
 #pragma once
 
-#include "../Imu.hpp"
-#include "../../Protocol/FileReader.hpp"
+#include "../ImuFileReader.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 
 namespace NAV
 {
 /// File Reader for Imu log files
-class ImuFile final : public FileReader, public Imu
+class ImuFile final : public ImuFileReader
 {
   public:
     /// @brief Constructor
@@ -128,21 +127,11 @@ class ImuFile final : public FileReader, public Imu
         return nullptr;
     }
 
-    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
-    void resetNode() final;
-
   private:
     /// @brief Polls the data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<ImuObs> pollData(bool peek = false);
-
-    /// @brief Determines the type of the file (ASCII or binary)
-    /// @return The File Type
-    [[nodiscard]] FileType determineFileType() final;
-
-    /// @brief Read the Header of the file
-    void readHeader() final;
 };
 
 } // namespace NAV

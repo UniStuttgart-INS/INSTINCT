@@ -6,25 +6,7 @@
 #include <array>
 
 NAV::RtklibPosFile::RtklibPosFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(name, options), Gnss(name, options)
-{
-    LOG_TRACE("called for {}", name);
-
-    fileType = determineFileType();
-
-    readHeader();
-
-    dataStart = filestream.tellg();
-
-    LOG_DEBUG("{} successfully initialized", name);
-}
-
-void NAV::RtklibPosFile::resetNode()
-{
-    // Return to position
-    filestream.clear();
-    filestream.seekg(dataStart, std::ios_base::beg);
-}
+    : GnssFileReader(name, options) {}
 
 std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
 {
