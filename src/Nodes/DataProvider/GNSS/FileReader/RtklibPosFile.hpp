@@ -5,14 +5,13 @@
 
 #pragma once
 
-#include "../Gnss.hpp"
-#include "../../Protocol/FileReader.hpp"
+#include "../GnssFileReader.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 
 namespace NAV
 {
 /// File Reader for RTKLIB pos log files
-class RtklibPosFile final : public FileReader, public Gnss
+class RtklibPosFile final : public GnssFileReader
 {
   public:
     /// @brief Constructor
@@ -23,7 +22,7 @@ class RtklibPosFile final : public FileReader, public Gnss
     /// @brief Default constructor
     RtklibPosFile() = default;
     /// @brief Destructor
-    ~RtklibPosFile() final;
+    ~RtklibPosFile() final = default;
     /// @brief Copy constructor
     RtklibPosFile(const RtklibPosFile&) = delete;
     /// @brief Move constructor
@@ -128,21 +127,18 @@ class RtklibPosFile final : public FileReader, public Gnss
         return nullptr;
     }
 
-    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
-    void resetNode() final;
-
   private:
     /// @brief Polls the data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<RtklibPosObs> pollData(bool peek = false);
 
-    /// Header Columns
-    std::vector<std::string> columns;
-
     /// @brief Determines the type of the file (ASCII or binary)
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() final;
+
+    /// @brief Read the Header of the file
+    void readHeader() final;
 };
 
 } // namespace NAV

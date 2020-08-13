@@ -5,74 +5,7 @@
 #include <cmath>
 
 NAV::VectorNavFile::VectorNavFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(options), Imu(name, options)
-{
-    LOG_TRACE("called for {}", name);
-
-    fileType = determineFileType();
-
-    if (fileType == FileType::BINARY)
-    {
-        filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
-    }
-    else
-    {
-        filestream = std::ifstream(path);
-    }
-
-    if (filestream.good())
-    {
-        if (fileType != FileType::BINARY)
-        {
-            // Read header line
-            std::string line;
-            std::getline(filestream, line);
-            // Remove any starting non text characters
-            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
-            // Convert line into stream
-            std::stringstream lineStream(line);
-            std::string cell;
-            // Split line at comma
-            while (std::getline(lineStream, cell, ','))
-            {
-                // Remove any trailing non text characters
-                cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-                columns.push_back(cell);
-            }
-
-            dataStart = filestream.tellg();
-
-            LOG_DEBUG("{}-ASCII-File successfully initialized", name);
-        }
-        else
-        {
-            LOG_DEBUG("{}-Binary-File successfully initialized", name);
-        }
-    }
-    else
-    {
-        LOG_CRITICAL("{} could not open file {}", name, path);
-    }
-}
-
-NAV::VectorNavFile::~VectorNavFile()
-{
-    LOG_TRACE("called for {}", name);
-
-    // removeAllCallbacks();
-    columns.clear();
-    if (filestream.is_open())
-    {
-        filestream.close();
-    }
-}
-
-void NAV::VectorNavFile::resetNode()
-{
-    // Return to position
-    filestream.clear();
-    filestream.seekg(dataStart, std::ios_base::beg);
-}
+    : ImuFileReader(name, options) {}
 
 std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
 {
@@ -646,7 +579,7 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
 
     constexpr uint8_t BinaryStartChar = 0xFA;
 
-    filestream = std::ifstream(path);
+    auto filestream = std::ifstream(path);
 
     constexpr uint16_t BUFFER_SIZE = 256;
 
@@ -658,20 +591,20 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
         if (std::strstr(buffer.data(), "TimeStartup"))
         {
             filestream.close();
-            LOG_DEBUG("{} has the file type: ASCII", name);
+            LOG_DEBUG("{}: File type is ASCII", name);
             return FileType::ASCII;
         }
         if (memmem(buffer.data(), BUFFER_SIZE, "Control Center", sizeof("Control Center")) != nullptr
             || static_cast<unsigned char>(buffer.at(0)) == BinaryStartChar)
         {
             filestream.close();
-            LOG_DEBUG("{} has the file type: Binary", name);
+            LOG_DEBUG("{}: File type is binary", name);
             return FileType::BINARY;
         }
         filestream.close();
-        LOG_CRITICAL("{} could not determine file type", name);
+        LOG_CRITICAL("{}: Could not determine file type", name);
     }
 
-    LOG_CRITICAL("{} could not open file {}", name, path);
+    LOG_CRITICAL("{}: Could not open file {}", name, path);
     return FileType::NONE;
 }

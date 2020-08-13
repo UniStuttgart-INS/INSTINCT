@@ -181,7 +181,10 @@ void NAV::NodeManager::initializeNodes()
                          appContext == Node::NodeContext::REAL_TIME ? "Real-Time" : "Post Processing");
         }
 
+        // Construct the node
         _nodes.emplace_back(iter->second.constructor(config.name, config.options));
+        // Call the initialize function
+        _nodes.back()->initialize();
     }
 }
 
@@ -274,6 +277,9 @@ void NAV::NodeManager::deleteAllNodesExcept(const std::string_view& type)
         {
             node->incomingLinks.clear();
             node->removeAllCallbacks();
+            // Call the deinitialize function
+            node->deinitialize();
+            // Remove last reference and there call the destructor
             node = nullptr;
         }
     }

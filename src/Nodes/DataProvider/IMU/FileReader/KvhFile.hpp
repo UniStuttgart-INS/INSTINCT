@@ -5,8 +5,7 @@
 
 #pragma once
 
-#include "../Imu.hpp"
-#include "../../Protocol/FileReader.hpp"
+#include "../ImuFileReader.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 
 #include "util/UartSensors/KVH/KvhUartSensor.hpp"
@@ -14,7 +13,7 @@
 namespace NAV
 {
 /// File Reader for Kvh log files
-class KvhFile final : public FileReader, public Imu
+class KvhFile final : public ImuFileReader
 {
   public:
     /// @brief Constructor
@@ -25,7 +24,7 @@ class KvhFile final : public FileReader, public Imu
     /// @brief Default constructor
     KvhFile() = default;
     /// @brief Destructor
-    ~KvhFile() final;
+    ~KvhFile() final = default;
     /// @brief Copy constructor
     KvhFile(const KvhFile&) = delete;
     /// @brief Move constructor
@@ -130,21 +129,15 @@ class KvhFile final : public FileReader, public Imu
         return nullptr;
     }
 
-    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
-    void resetNode() final;
-
   private:
     /// @brief Polls the data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<KvhObs> pollData(bool peek = false);
 
-    /// @brief Determines the type of the file (ASCII or binary)
+    /// @brief Determines the type of the file
     /// @return The File Type
     [[nodiscard]] FileType determineFileType() final;
-
-    /// Header Columns of an ASCII file
-    std::vector<std::string> columns;
 
     /// Sensor Object
     sensors::kvh::KvhUartSensor sensor;

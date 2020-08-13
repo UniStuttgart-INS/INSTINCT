@@ -8,57 +8,7 @@
 #include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
 NAV::EmlidFile::EmlidFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : FileReader(options), Gnss(name, options), sensor(name)
-{
-    LOG_TRACE("called for {}", name);
-
-    fileType = determineFileType();
-
-    if (fileType == FileType::BINARY)
-    {
-        filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
-    }
-    else
-    {
-        filestream = std::ifstream(path);
-    }
-
-    if (filestream.good())
-    {
-        dataStart = filestream.tellg();
-
-        if (fileType == FileType::ASCII)
-        {
-            LOG_DEBUG("{}-ASCII-File successfully initialized", name);
-        }
-        else
-        {
-            LOG_DEBUG("{}-Binary-File successfully initialized", name);
-        }
-    }
-    else
-    {
-        LOG_CRITICAL("{} could not open file {}", name, path);
-    }
-}
-
-NAV::EmlidFile::~EmlidFile()
-{
-    LOG_TRACE("called for {}", name);
-
-    // removeAllCallbacks();
-    if (filestream.is_open())
-    {
-        filestream.close();
-    }
-}
-
-void NAV::EmlidFile::resetNode()
-{
-    // Return to position
-    filestream.clear();
-    filestream.seekg(dataStart, std::ios_base::beg);
-}
+    : GnssFileReader(name, options), sensor(name) {}
 
 std::shared_ptr<NAV::EmlidObs> NAV::EmlidFile::pollData(bool peek)
 {
@@ -116,7 +66,7 @@ NAV::FileReader::FileType NAV::EmlidFile::determineFileType()
 {
     LOG_TRACE("called for {}", name);
 
-    filestream = std::ifstream(path);
+    auto filestream = std::ifstream(path);
 
     constexpr uint16_t BUFFER_SIZE = 10;
 

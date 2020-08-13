@@ -6,9 +6,9 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <map>
 #include <fstream>
-#include <optional>
 
 namespace NAV
 {
@@ -38,17 +38,27 @@ class FileReader
 
   protected:
     /// @brief Constructor
+    /// @param[in] name Name of the Node
     /// @param[in] options Program options string map
-    explicit FileReader(const std::map<std::string, std::string>& options);
+    explicit FileReader(std::string name, const std::map<std::string, std::string>& options);
 
     /// @brief Default constructor
     FileReader() = default;
     /// @brief Destructor
     virtual ~FileReader() = default;
 
+    /// @brief Initialize the file reader
+    void initialize();
+
+    /// @brief Moves the read cursor to the start
+    void resetReader();
+
     /// @brief Virtual Function to determine the File Type
     /// @return The File path which was recognized
-    [[nodiscard]] virtual FileType determineFileType() = 0;
+    [[nodiscard]] virtual FileType determineFileType();
+
+    /// @brief Virtual Function to read the Header of a file
+    virtual void readHeader();
 
     /// Path to log file
     std::string path;
@@ -58,6 +68,13 @@ class FileReader
     FileType fileType = FileType::NONE;
     /// Start of the data in the file
     std::streampos dataStart = 0;
+
+    /// Header Columns of a CSV file
+    std::vector<std::string> columns;
+
+  private:
+    /// Name of the parent node
+    const std::string parentNodeName;
 };
 
 } // namespace NAV
