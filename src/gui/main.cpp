@@ -465,6 +465,7 @@ int main(int argc, char* argv[])
     mainWidget.resize(800, 600);
     mainWidget.showNormal();
 
+    LOG_DEBUG("Trying to load flow/Default.flow");
     scene->load("flow/Default.flow");
 
     return app.exec();

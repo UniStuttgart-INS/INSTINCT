@@ -193,15 +193,22 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
 
     if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_BOOL)
     {
+        LOG_TRACE("Type == BOOL");
         QCheckBox* checkBox = new QCheckBox();
 
         checkBox->setChecked(std::stoi(std::get<std::string>(std::get<3>(config).front())));
         checkBox->setStyleSheet("QCheckBox::indicator:unchecked { border: 1px solid rgb(220,220,220); }");
         _layout->insertRow(layoutInsertPosition, description, checkBox);
+
+        connect(checkBox, QOverload<int>::of(&QCheckBox::stateChanged),
+                [this, guiConfigs, configPosition, _layout, layoutInsertPosition]() {
+                    this->updateVariants(guiConfigs, configPosition, _layout, layoutInsertPosition);
+                });
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_INT
              || std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
     {
+        LOG_TRACE("Type == INT || N_INPUT_PORTS");
         QSpinBox* spinBox = new QSpinBox();
 
         int defaultValue = 0;
@@ -233,6 +240,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
     {
+        LOG_TRACE("Type == FLOAT");
         QDoubleSpinBox* doubleSpinBox = new QDoubleSpinBox();
 
         double defaultValue = 0.0;
@@ -256,6 +264,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_STRING)
     {
+        LOG_TRACE("Type == STRING");
         QLineEdit* lineEdit = new QLineEdit();
 
         lineEdit->setStyleSheet("QLineEdit { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
@@ -264,6 +273,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
     {
+        LOG_TRACE("Type == STRING_BOX");
         QGroupBox* groupBox = new QGroupBox(description);
         QVBoxLayout* layout = new QVBoxLayout();
 
@@ -294,6 +304,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_LIST)
     {
+        LOG_TRACE("Type == LIST");
         QComboBox* comboBox = new QComboBox();
 
         for (auto& cellVariant : std::get<3>(config))
@@ -318,6 +329,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI)
     {
+        LOG_TRACE("Type == LIST_MULTI");
         QGroupBox* gridGroupBox = new QGroupBox(description);
         QFormLayout* layout = new QFormLayout();
 
@@ -345,6 +357,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI)
     {
+        LOG_TRACE("Type == LIST_LIST_MULTI");
         QGroupBox* gridGroupBox = new QGroupBox(description);
         QGridLayout* layout = new QGridLayout();
 
@@ -376,6 +389,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_MAP_INT)
     {
+        LOG_TRACE("Type == MAP_INT");
         QSpinBox* spinBox = new QSpinBox();
 
         int defaultValue = 0;
@@ -401,6 +415,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
     }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_VARIANT)
     {
+        LOG_TRACE("Type == CONFIG_VARIANT");
         if (configPosition > 0)
         {
             int selection = -1;
@@ -411,6 +426,12 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
                 LOG_DEBUG("Variant Prev Item List={}", _layout->itemAt(layoutInsertPosition - 1, QFormLayout::ItemRole::FieldRole)->widget()->objectName().toStdString());
                 QComboBox* comboBox = static_cast<QComboBox*>(_layout->itemAt(layoutInsertPosition - 1, QFormLayout::ItemRole::FieldRole)->widget());
                 selection = comboBox->currentIndex();
+            }
+            else if (std::get<0>(prevConfig) == NAV::Node::ConfigOptionType::CONFIG_BOOL)
+            {
+                LOG_DEBUG("Variant Prev Item Bool={}", _layout->itemAt(layoutInsertPosition - 1, QFormLayout::ItemRole::FieldRole)->widget()->objectName().toStdString());
+                QCheckBox* checkBox = static_cast<QCheckBox*>(_layout->itemAt(layoutInsertPosition - 1, QFormLayout::ItemRole::FieldRole)->widget());
+                selection = static_cast<int>(checkBox->isChecked());
             }
             else if (std::get<0>(prevConfig) == NAV::Node::ConfigOptionType::CONFIG_VARIANT)
             {
@@ -435,6 +456,11 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
         {
             LOG_CRITICAL("Variants need a preceeding item which gives a choice");
         }
+    }
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_EMPTY)
+    {
+        LOG_TRACE("Type == EMPTY");
+        _layout->insertRow(layoutInsertPosition, "", new QLabel());
     }
 
     if (std::get<0>(config) != NAV::Node::ConfigOptionType::CONFIG_VARIANT)

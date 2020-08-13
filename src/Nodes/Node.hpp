@@ -74,6 +74,7 @@ class Node : public DataCallback
         CONFIG_LIST_LIST_MULTI, ///< 2 Lists which repeat: "[List1default]", "List1option2", "|", "List2option1|[List2default]"
         CONFIG_MAP_INT,         ///< String Key and Integer Value: "key", "min", "default", "max"
         CONFIG_VARIANT,         ///< Variant: ConfigOptionsBase(option1), ConfigOptionsBase(option2)
+        CONFIG_EMPTY            ///< Empty Config, not to be displayed. Only useful in combination with a variant
     };
 
     using ConfigOptionsBase = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::string>>;
