@@ -1,7 +1,9 @@
 #include "InsTime.hpp"
 
-#include <iostream>
+#include <limits>
 #include <cmath>
+
+#include <iostream>
 #include <vector>
 #include <map>
 #include <sstream>
@@ -12,114 +14,57 @@
 
 namespace NAV
 {
-// FIXME: Enable all the warnings again and fix them
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wfloat-conversion"
-#pragma GCC diagnostic ignored "-Wdouble-promotion"
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-// #pragma GCC diagnostic ignored "-Wuseless-cast"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#pragma GCC diagnostic ignored "-Wconversion"
+constexpr InsTime::InsTime()
+    : mjd(endOfTheCentury, 0.0L) {}
 
-//// Prototypes
-InsTime::InsTime_MJD GPSweekTow2MJD(InsTime::InsTime_GPSweekTow); // Transformation GPSweekTow to MJD
-InsTime::InsTime_MJD YDoySod2MJD(InsTime::InsTime_YDoySod);       // Transformation YDoySod to MJD
-InsTime::InsTime_MJD YMDHMS2MJD(InsTime::InsTime_YMDHMS);         // Transformation YMDHMS to MJD
-InsTime::InsTime_MJD JD2MJD(InsTime::InsTime_MJD);                // Transformation JD to MJD
-
-InsTime::InsTime_GPSweekTow MJD2GPSweekTow(InsTime::InsTime_MJD); // Transformation MJD to GPSweekTow
-InsTime::InsTime_YDoySod MJD2YDoySod(InsTime::InsTime_MJD);       // Transformation MJD to YDoySod
-InsTime::InsTime_YMDHMS MJD2YMDHMS(InsTime::InsTime_MJD);         // Transformation MJD to YMDHMS
-InsTime::InsTime_JD MJD2JD(InsTime::InsTime_MJD);                 // Transformation MJD to JD
-
-InsTime::InsTime_YMDHMS YDoySod2YMDHMS(InsTime::InsTime_YDoySod); // Transformation YDoySod to YMDHMS (Doy to Date)
-InsTime::InsTime_YDoySod YMDHMS2YDoySod(InsTime::InsTime_YMDHMS); // Transformation YMDHMS to YDoySod (Date to Doy)
-
-uint16_t leapGps2UTC(InsTime);                     // get number of leap seconds, offset GPS to UTC
-uint16_t leapGps2UTC(InsTime::InsTime_YDoySod);    // get number of leap seconds, offset GPS to UTC
-uint16_t leapGps2UTC(InsTime::InsTime_GPSweekTow); // get number of leap seconds, offset GPS to UTC
-uint16_t leapGps2UTC(InsTime::InsTime_YMDHMS);     // get number of leap seconds, offset GPS to UTC
-uint16_t leapGps2UTC(InsTime::InsTime_MJD);        // get number of leap seconds, offset GPS to UTC
-
-// is 1 when InsTime_YDoySod is later than the own time
-bool isBigger(InsTime);
-bool isBigger(InsTime::InsTime_YDoySod);
-bool isBigger(InsTime::InsTime_GPSweekTow);
-bool isBigger(InsTime::InsTime_YMDHMS);
-bool isBigger(InsTime::InsTime_MJD);
-// is 1 when InsTime_YDoySod and own time are euqal
-bool isEqual(InsTime);
-bool isEqual(InsTime::InsTime_YDoySod);
-bool isEqual(InsTime::InsTime_GPSweekTow);
-bool isEqual(InsTime::InsTime_YMDHMS);
-bool isEqual(InsTime::InsTime_MJD);
-
-long double hms2sec(int hour, int min, long double sec); // Transformation Hour-Min-Sec to Sec
-bool isLeapYear(uint16_t year);                          // check if year is a leap year
-bool isLeapYear();                                       // check if own class time is a leap year
-
-void addDiffSec(long double);     // add seconds to time
-long double getTimeDiff(InsTime); // returns the time difference in sec of two epochs
-
-// Constructors
-
-InsTime::InsTime()
+InsTime::InsTime(const InsTime::InsTime_GPSweekTow& gpsWeekTow)
+    : mjd(GPSweekTow2MJD(gpsWeekTow)) {}
+InsTime& InsTime::operator=(const InsTime::InsTime_GPSweekTow& gpsWeekTow)
 {
-    constexpr unsigned int endOfTheCentury = 400000;
-
-    mjd.mjd_day = endOfTheCentury;
-    mjd.mjd_frac = 0.0;
-}
-InsTime::InsTime(InsTime::InsTime_GPSweekTow gpsWeekTow)
-{
-    //std::cout << "in\n";
     mjd = GPSweekTow2MJD(gpsWeekTow);
+    return *this;
 }
 
-InsTime::InsTime(InsTime::InsTime_MJD mjd_in)
-{
-    mjd = mjd_in;
-}
-InsTime::InsTime(InsTime::InsTime_JD jd_in)
-{
-    mjd = JD2MJD(jd_in);
-}
-InsTime::InsTime(InsTime::InsTime_YDoySod yearDoySod)
-{
-    mjd = YDoySod2MJD(yearDoySod);
-}
+InsTime::InsTime(const InsTime::InsTime_MJD& mjd_in)
+    : mjd(mjd_in) {}
 
-InsTime::InsTime(InsTime::InsTime_YMDHMS yearMonthDayHMS)
+InsTime::InsTime(const InsTime::InsTime_JD& jd_in)
+    : mjd(JD2MJD(jd_in)) {}
+
+InsTime::InsTime(const InsTime::InsTime_YDoySod& yearDoySod)
+    : mjd(YDoySod2MJD(yearDoySod)) {}
+
+InsTime::InsTime(const InsTime::InsTime_YMDHMS& yearMonthDayHMS)
+    : mjd(YMDHMS2MJD(yearMonthDayHMS)) {}
+InsTime& InsTime::operator=(const InsTime::InsTime_YMDHMS& yearMonthDayHMS)
 {
     mjd = YMDHMS2MJD(yearMonthDayHMS);
+    return *this;
 }
+
 InsTime::InsTime(uint16_t gpsWeek, long double tow, uint16_t gpsCycle)
-{
-    InsTime::InsTime_GPSweekTow gpsWeekTow = { gpsWeek, tow, gpsCycle };
-    mjd = GPSweekTow2MJD(gpsWeekTow);
-}
-InsTime::InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, InsTime::TIME timesys)
-{
-    InsTime::InsTime_YMDHMS yearMonthDayHMS = { year, month, day, hour, min, sec };
-    mjd = YMDHMS2MJD(yearMonthDayHMS);
+    : InsTime(InsTime_GPSweekTow(gpsWeek, tow, gpsCycle)) {}
 
-    if (timesys == 1) // = GPS Time (UTC - leap_seconds)
+InsTime::InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, InsTime::TIME timesys)
+    : mjd(YMDHMS2MJD(InsTime_YMDHMS(year, month, day, hour, min, sec)))
+{
+    if (timesys == TIME::GPST) // = GPS Time (UTC - leap_seconds)
     {
         int leapSec = this->leapGps2UTC();
         this->addDiffSec(-leapSec);
     }
-    else if (timesys == 2) // = GLONASS Time (UTC+ 3h)
+    else if (timesys == TIME::GLNT) // = GLONASS Time (UTC+ 3h)
     {
         constexpr int leapSec = 10800;
         this->addDiffSec(-leapSec);
     }
-    else if (timesys == 3) // = GALILEO Time (~ GPS TIME )
+    else if (timesys == TIME::GST) // = GALILEO Time (~ GPS TIME )
     {
         //  is synchronised with TAI with a nominal offset below 50 ns
         int leapSec = this->leapGps2UTC(); // UTC = GST - 18
         this->addDiffSec(-leapSec);
     }
-    else if (timesys == 4) // = BeiDou Time (UTC)
+    else if (timesys == TIME::BDT) // = BeiDou Time (UTC)
     {
         // is synchronised with UTC within 100 ns<
     }
@@ -158,7 +103,7 @@ void InsTime::SetInsTime(uint16_t gpsWeek, long double tow, uint16_t gpsCycle)
 }
 void InsTime::SetInsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, InsTime::TIME timesys)
 {
-    InsTime::InsTime_YMDHMS yearMonthDayHMS = { year, month, day, hour, min, sec };
+    InsTime::InsTime_YMDHMS yearMonthDayHMS(year, month, day, hour, min, sec);
     mjd = YMDHMS2MJD(yearMonthDayHMS);
 
     if (timesys == TIME::GPST) // = GPS Time (UTC - leap_seconds)
@@ -193,23 +138,23 @@ void InsTime::SetInsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t h
 }
 
 // accessors, get time
-InsTime::InsTime_GPSweekTow InsTime::GetGPSTime()
+InsTime::InsTime_GPSweekTow InsTime::GetGPSTime() const
 {
     return MJD2GPSweekTow(mjd);
 }
-InsTime::InsTime_MJD InsTime::GetMJD()
+InsTime::InsTime_MJD InsTime::GetMJD() const
 {
     return mjd;
 }
-InsTime::InsTime_JD InsTime::GetJD()
+InsTime::InsTime_JD InsTime::GetJD() const
 {
     return MJD2JD(mjd);
 }
-InsTime::InsTime_YDoySod InsTime::GetYDoySod()
+InsTime::InsTime_YDoySod InsTime::GetYDoySod() const
 {
     return MJD2YDoySod(mjd);
 }
-InsTime::InsTime_YMDHMS InsTime::GetYMDHMS()
+InsTime::InsTime_YMDHMS InsTime::GetYMDHMS() const
 {
     return MJD2YMDHMS(mjd);
 }
@@ -222,14 +167,15 @@ InsTime::InsTime_MJD InsTime::GPSweekTow2MJD(InsTime::InsTime_GPSweekTow gpsWeee
 
     constexpr int DIFF_TO_6_1_1980 = 44244;
 
+    InsTime_MJD mjd{};
     mjd.mjd_day = static_cast<unsigned int>((gpsWeeekTow.gpsCycle * DAYS_PER_GPS_CYCLE + gpsWeeekTow.gpsWeek) * DAYS_PER_WEEK
-                                            + floorl(gpsWeeekTow.tow / SEC_IN_DAY) + DIFF_TO_6_1_1980);
+                                            + std::floor(gpsWeeekTow.tow / SEC_IN_DAY) + DIFF_TO_6_1_1980);
     mjd.mjd_frac = fmodl(gpsWeeekTow.tow, SEC_IN_DAY) / SEC_IN_DAY;
     mjd.mjd_frac -= static_cast<long double>(leapGps2UTC(mjd)) / SEC_IN_DAY; // from GPST to UTC
-    if (mjd.mjd_frac < 0.0)
+    if (mjd.mjd_frac < 0.0L)
     {
         mjd.mjd_day -= 1;
-        mjd.mjd_frac += 1.0;
+        mjd.mjd_frac += 1.0L;
     }
     return mjd;
 }
@@ -237,53 +183,62 @@ InsTime::InsTime_MJD InsTime::GPSweekTow2MJD(InsTime::InsTime_GPSweekTow gpsWeee
 InsTime::InsTime_MJD InsTime::YDoySod2MJD(InsTime::InsTime_YDoySod yearDoySod) // Transformation YDoySod to MJD (GPST to UTC)
 {
     InsTime_YMDHMS yearMonthDayHMS = YDoySod2YMDHMS(yearDoySod);
-    mjd = YMDHMS2MJD(yearMonthDayHMS);
+    InsTime_MJD mjd = YMDHMS2MJD(yearMonthDayHMS);
     return mjd;
 }
 
 InsTime::InsTime_MJD InsTime::YMDHMS2MJD(InsTime::InsTime_YMDHMS yearMonthDayHMS) // Transformation YMDHMS to MJD (UTC to UTC)
 {
-    InsTime_JD jd;
-    int a = floor((14.0 - (double)yearMonthDayHMS.month) / 12.0);
+    InsTime_JD jd{};
+    int a = static_cast<int>(std::floor((14 - yearMonthDayHMS.month) / 12.0));
     int y = yearMonthDayHMS.year + 4800 - a;
     int m = yearMonthDayHMS.month + 12 * a - 3;
 
-    jd.jd_day = yearMonthDayHMS.day + floor((153.0 * (double)m + 2.0) / 5.0) + y * 365 + floor((double)y / 4.0) - floor((double)y / 100.0) + floor((double)y / 400.0) - 32045;
-    jd.jd_frac = (yearMonthDayHMS.sec + (double)yearMonthDayHMS.min * 60.0 + (double)(yearMonthDayHMS.hour - 12.0) * 3600.0) / SEC_IN_DAY;
-    mjd = JD2MJD(jd);
-    return mjd;
+    jd.jd_day = static_cast<unsigned int>(yearMonthDayHMS.day
+                                          + std::floor((153.0 * static_cast<double>(m) + 2.0) / 5.0)
+                                          + y * 365
+                                          + std::floor(static_cast<double>(y) / 4.0)
+                                          - std::floor(static_cast<double>(y) / 100.0)
+                                          + std::floor(static_cast<double>(y) / 400.0)
+                                          - 32045);
+    jd.jd_frac = (yearMonthDayHMS.sec
+                  + static_cast<long double>(yearMonthDayHMS.min) * 60.0L
+                  + static_cast<long double>(static_cast<int>(yearMonthDayHMS.hour) - 12.0) * 3600.0L)
+                 / SEC_IN_DAY;
+    return JD2MJD(jd);
 }
 
 InsTime::InsTime_MJD InsTime::JD2MJD(InsTime::InsTime_JD jd) // Transformation JD to MJD (UTC to UTC)
 {
+    InsTime_MJD mjd{};
     mjd.mjd_day = jd.jd_day - 2400000;
-    mjd.mjd_frac = jd.jd_frac - 0.5;
-    if (mjd.mjd_frac < 0.0)
+    mjd.mjd_frac = jd.jd_frac - 0.5L;
+    if (mjd.mjd_frac < 0.0L)
     {
         mjd.mjd_day -= 1;
-        mjd.mjd_frac += 1.0;
+        mjd.mjd_frac += 1.0L;
     }
     return mjd;
 }
 
 InsTime::InsTime_GPSweekTow InsTime::MJD2GPSweekTow(InsTime::InsTime_MJD mjd) // Transformation MJD to GPSweekTow (UTC to GPST)
 {
-    mjd.mjd_frac += (long double)leapGps2UTC(mjd) / SEC_IN_DAY; // from UTC to GPST
-    if (mjd.mjd_frac < 0.0)
+    mjd.mjd_frac += static_cast<long double>(leapGps2UTC(mjd)) / SEC_IN_DAY; // from UTC to GPST
+    if (mjd.mjd_frac < 0.0L)
     {
         mjd.mjd_day -= 1;
-        mjd.mjd_frac += 1;
+        mjd.mjd_frac += 1.0L;
     }
-    InsTime_GPSweekTow gpsWeekTow;
-    gpsWeekTow.gpsCycle = floor((double)(mjd.mjd_day - 44244) / (1024.0 * 7.0));
-    gpsWeekTow.gpsWeek = floor((mjd.mjd_day - 44244 - gpsWeekTow.gpsCycle * 1024 * 7) / 7);             // number of full weeks
-    gpsWeekTow.tow = (long double)((mjd.mjd_day - 44244) % 7) * SEC_IN_DAY + mjd.mjd_frac * SEC_IN_DAY; // remaining seconds
+    InsTime_GPSweekTow gpsWeekTow{};
+    gpsWeekTow.gpsCycle = static_cast<uint16_t>(std::floor(static_cast<double>(mjd.mjd_day - 44244) / (1024.0 * 7.0)));
+    gpsWeekTow.gpsWeek = static_cast<uint16_t>(std::floor((mjd.mjd_day - 44244 - gpsWeekTow.gpsCycle * 1024 * 7) / 7.0)); // number of full weeks
+    gpsWeekTow.tow = static_cast<long double>((mjd.mjd_day - 44244) % 7) * SEC_IN_DAY + mjd.mjd_frac * SEC_IN_DAY;        // remaining seconds
     return gpsWeekTow;
 }
 
 InsTime::InsTime_YDoySod InsTime::MJD2YDoySod(InsTime::InsTime_MJD mjd) // Transformation MJD to YDoySod (UTC to GPST)
 {
-    InsTime_YDoySod yearDoySod;
+    InsTime_YDoySod yearDoySod{};
     InsTime_YMDHMS yearMonthDayHMS = MJD2YMDHMS(mjd);
     yearDoySod = YMDHMS2YDoySod(yearMonthDayHMS);
     return yearDoySod;
@@ -293,45 +248,38 @@ InsTime::InsTime_YMDHMS InsTime::MJD2YMDHMS(InsTime::InsTime_MJD mjd) // Transfo
 {
     // transform MJD to JD
     InsTime_JD jd = MJD2JD(mjd);
-    jd.jd_frac = jd.jd_frac + 0.5;
-    if (jd.jd_frac >= 1.0)
+    jd.jd_frac = jd.jd_frac + 0.5L;
+    if (jd.jd_frac >= 1.0L)
     {
         jd.jd_day += 1;
-        jd.jd_frac -= 1.0;
+        jd.jd_frac -= 1.0L;
     }
     // transform JD to YMDHMS
-    double a = floor((double)jd.jd_day + 0) + 32044.0;
-    double b = floor((4.0 * a + 3.0) / 146097.0);
-    double c = a - floor((b * 146097.0) / 4.0);
+    double a = std::floor(static_cast<double>(jd.jd_day) + 0.0) + 32044.0;
+    double b = std::floor((4.0 * a + 3.0) / 146097.0);
+    double c = a - std::floor((b * 146097.0) / 4.0);
 
-    double d = floor((4.0 * c + 3.0) / 1461.0);
-    double e = c - floor((1461.0 * d) / 4.0);
-    double m = floor((5.0 * e + 2.0) / 153.0);
+    double d = std::floor((4.0 * c + 3.0) / 1461.0);
+    double e = c - std::floor((1461.0 * d) / 4.0);
+    double m = std::floor((5.0 * e + 2.0) / 153.0);
 
-    uint16_t day = e - floor((153.0 * m + 2.0) / 5.0) + 1;
-    uint16_t month = m + 3 - 12 * floor(m / 10.0);
-    uint16_t year = b * 100 + d - 4800.0 + floor(m / 10.0);
+    auto day = static_cast<uint16_t>(e - std::floor((153.0 * m + 2.0) / 5.0) + 1);
+    auto month = static_cast<uint16_t>(m + 3 - 12 * std::floor(m / 10.0));
+    auto year = static_cast<uint16_t>(b * 100 + d - 4800.0 + std::floor(m / 10.0));
 
-    uint16_t hour = floor(jd.jd_frac * 24.0);
-    uint16_t min = floor(jd.jd_frac * 24.0 * 60.0) - hour * 60;
-    long double sec = (long double)jd.jd_frac * 24.0 * 3600.0 - ((double)hour * 3600.0 + (double)min * 60.0);
+    auto hour = static_cast<uint16_t>(std::floor(jd.jd_frac * 24.0L));
+    auto min = static_cast<uint16_t>(std::floor(jd.jd_frac * 24.0L * 60.0L) - hour * 60.0L);
+    long double sec = jd.jd_frac * 24.0L * 3600.0L - static_cast<long double>(hour * 3600.0 + min * 60.0);
 
-    InsTime_YMDHMS yearMonthDayHMS;
-    yearMonthDayHMS.year = year;
-    yearMonthDayHMS.month = month;
-    yearMonthDayHMS.day = day;
-    yearMonthDayHMS.hour = hour;
-    yearMonthDayHMS.min = min;
-    yearMonthDayHMS.sec = sec;
-    return yearMonthDayHMS;
+    return InsTime_YMDHMS(year, month, day, hour, min, sec);
 }
 
 InsTime::InsTime_JD InsTime::MJD2JD(InsTime::InsTime_MJD mjd) // Transformation MJD to JD (UTC to UTC)
 {
-    InsTime_JD jd;
+    InsTime_JD jd{};
     jd.jd_day = mjd.mjd_day + 2400000;
-    jd.jd_frac = mjd.mjd_frac + 0.5;
-    if (jd.jd_frac >= 1.0)
+    jd.jd_frac = mjd.mjd_frac + 0.5L;
+    if (jd.jd_frac >= 1.0L)
     {
         jd.jd_day++;
         jd.jd_frac--;
@@ -343,14 +291,15 @@ InsTime::InsTime_YMDHMS InsTime::YDoySod2YMDHMS(InsTime::InsTime_YDoySod yearDoy
 {
     int leapDay = 0;
     if (isLeapYear(yearDoySod.year) && yearDoySod.doy > 59)
+    {
         leapDay = 1;
+    }
 
-    std::vector<int> daysOfMonth = { 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
-    std::vector<int>::iterator low;
-    low = std::lower_bound(daysOfMonth.begin(), daysOfMonth.end(), (yearDoySod.doy - leapDay));
-    int month_number = low - daysOfMonth.begin() + 1;
-    yearDoySod.sod -= (long double)leapGps2UTC(yearDoySod);
-    if (yearDoySod.sod < 0.0)
+    constexpr std::array<int, 11> daysOfMonth = { 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+    const auto* low = std::lower_bound(daysOfMonth.begin(), daysOfMonth.end(), (yearDoySod.doy - leapDay));
+    auto month_number = static_cast<uint16_t>(low - daysOfMonth.begin() + 1); // Month number by substracting iterators to get position
+    yearDoySod.sod -= static_cast<long double>(leapGps2UTC(yearDoySod));
+    if (yearDoySod.sod < 0.0L)
     {
         yearDoySod.doy -= 1;
         yearDoySod.sod += SEC_IN_DAY;
@@ -359,42 +308,50 @@ InsTime::InsTime_YMDHMS InsTime::YDoySod2YMDHMS(InsTime::InsTime_YDoySod yearDoy
             yearDoySod.year -= 1;
             yearDoySod.doy += 365;
             if (isLeapYear(yearDoySod.year) && month_number > 2)
+            {
                 yearDoySod.doy += 1;
+            }
         }
     }
 
-    InsTime_YMDHMS yearMonthDayHMS;
+    InsTime_YMDHMS yearMonthDayHMS{};
     yearMonthDayHMS.year = yearDoySod.year;
     yearMonthDayHMS.month = month_number;
-    yearMonthDayHMS.day = yearDoySod.doy - leapDay - daysOfMonth[month_number - 2];
-    yearMonthDayHMS.hour = floor(yearDoySod.sod / 3600.0);
-    yearMonthDayHMS.min = floor(yearDoySod.sod / 60.0) - yearMonthDayHMS.hour * 60;
-    yearMonthDayHMS.sec = yearDoySod.sod - (long double)(yearMonthDayHMS.hour * 3600.0 + yearMonthDayHMS.min * 60.0);
+    yearMonthDayHMS.day = static_cast<uint16_t>(static_cast<int>(yearDoySod.doy) - leapDay - daysOfMonth.at(month_number - 2));
+    yearMonthDayHMS.hour = static_cast<uint16_t>(std::floor(yearDoySod.sod / 3600.0L));
+    yearMonthDayHMS.min = static_cast<uint16_t>(std::floor(yearDoySod.sod / 60.0L) - yearMonthDayHMS.hour * 60.0L);
+    yearMonthDayHMS.sec = yearDoySod.sod - (yearMonthDayHMS.hour * 3600.0L + yearMonthDayHMS.min * 60.0L);
 
     return yearMonthDayHMS;
 }
 
 InsTime::InsTime_YDoySod InsTime::YMDHMS2YDoySod(InsTime::InsTime_YMDHMS yearMonthDayHMS) // Transformation YMDHMS to YDoySod (UTC to GPST)
 {
-    int daysOfMonth[11] = { 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+    constexpr std::array<uint16_t, 11> daysOfMonth{ 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
 
-    InsTime_YDoySod yearDoySod;
+    InsTime_YDoySod yearDoySod{};
     yearDoySod.year = yearMonthDayHMS.year;
-    yearDoySod.sod = (double)(yearMonthDayHMS.hour * 3600.0 + yearMonthDayHMS.min * 60.0) + (long double)yearMonthDayHMS.sec + (double)leapGps2UTC(yearMonthDayHMS);
+    yearDoySod.sod = static_cast<long double>(yearMonthDayHMS.hour * 3600.0 + yearMonthDayHMS.min * 60.0)
+                     + yearMonthDayHMS.sec
+                     + static_cast<long double>(leapGps2UTC(yearMonthDayHMS));
 
     if (yearMonthDayHMS.month == 1)
+    {
         yearDoySod.doy = yearMonthDayHMS.day;
+    }
     else if (yearMonthDayHMS.month == 2)
-        yearDoySod.doy = daysOfMonth[0] + yearMonthDayHMS.day;
+    {
+        yearDoySod.doy = daysOfMonth.at(0) + yearMonthDayHMS.day;
+    }
     else // for march to december
     {
         if (isLeapYear(yearMonthDayHMS.year))
         {
-            yearDoySod.doy = 1 + daysOfMonth[yearMonthDayHMS.month - 2] + yearMonthDayHMS.day;
+            yearDoySod.doy = 1U + daysOfMonth.at(yearMonthDayHMS.month - 2) + yearMonthDayHMS.day;
         }
         else
         {
-            yearDoySod.doy = daysOfMonth[yearMonthDayHMS.month - 2] + yearMonthDayHMS.day;
+            yearDoySod.doy = daysOfMonth.at(yearMonthDayHMS.month - 2) + yearMonthDayHMS.day;
         }
     }
     if (yearDoySod.sod >= SEC_IN_DAY)
@@ -418,58 +375,98 @@ void InsTime::RoundToFullDay()
 }
 void InsTime::addDiffSec(long double diffSec)
 {
-    mjd.mjd_frac += (long double)diffSec / SEC_IN_DAY;
+    mjd.mjd_frac += diffSec / SEC_IN_DAY;
 
-    if (mjd.mjd_frac >= 1.0 || mjd.mjd_frac < 0.0)
+    if (mjd.mjd_frac >= 1.0L || mjd.mjd_frac < 0.0L)
     {
-        mjd.mjd_day += floor(mjd.mjd_frac);
-        mjd.mjd_frac -= floor(mjd.mjd_frac);
+        mjd.mjd_day += static_cast<unsigned int>(std::floor(mjd.mjd_frac));
+        mjd.mjd_frac -= std::floor(mjd.mjd_frac);
     }
 }
 void InsTime::MakeTimeFromGloOrbit(double UTC_sec)
 {
+    auto ymdhms = GetYMDHMS();
     // difference between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) in seconds
-    double diff = fmod(UTC_sec, SEC_IN_DAY) - (this->GetYMDHMS().hour * 3600.0 + this->GetYMDHMS().min * 60 + this->GetYMDHMS().sec); // std::cout << "orbit diff " << diff << "\n";
+    long double diff = std::fmod(static_cast<long double>(UTC_sec), SEC_IN_DAY)
+                       - (ymdhms.hour * 3600.0L
+                          + ymdhms.min * 60.0L
+                          + ymdhms.sec);
+    // std::cout << "orbit diff " << diff << "\n";
     this->addDiffSec(diff);
 }
-std::string InsTime::GetStringOfDate()
+std::string InsTime::GetStringOfDate() const
 {
-    std::string s = std::to_string(this->GetYMDHMS().year) + std::to_string(this->GetYMDHMS().month) + std::to_string(this->GetYMDHMS().day) + std::to_string(this->GetYMDHMS().hour) + std::to_string(this->GetYMDHMS().min) + std::to_string((int)this->GetYMDHMS().sec);
+    auto ymdhms = GetYMDHMS();
+    std::string s = std::to_string(ymdhms.year)
+                    + std::to_string(ymdhms.month)
+                    + std::to_string(ymdhms.day)
+                    + std::to_string(ymdhms.hour)
+                    + std::to_string(ymdhms.min)
+                    + std::to_string(static_cast<int>(ymdhms.sec));
     return s;
 }
 
-void InsTime::MakeTimeSysFromString(std::string sys, InsTime::TIME* timesys)
+void InsTime::MakeTimeSysFromString(const std::string& sys, InsTime::TIME* timesys)
 {
-    *timesys = InsTime::UTC;
     if (sys == "UTC")
+    {
         *timesys = InsTime::UTC;
+    }
     else if (sys == "GPST")
+    {
         *timesys = InsTime::GPST;
+    }
+    else if (sys == "GLNT")
+    {
+        *timesys = InsTime::GLNT;
+    }
+    else if (sys == "BDT")
+    {
+        *timesys = InsTime::BDT;
+    }
+    else if (sys == "QZSST")
+    {
+        *timesys = InsTime::QZSST;
+    }
+    else if (sys == "IRNSST")
+    {
+        *timesys = InsTime::IRNSST;
+    }
     else
+    {
+        *timesys = InsTime::UTC;
         std::cout << "Unknown Time system " << sys << ". Time sys is set to UTC\n";
+    }
 }
+
 std::string InsTime::MakeStringFromTimeSys(InsTime::TIME sys)
 {
-    if (sys == 0)
+    switch (sys)
+    {
+    case InsTime::TIME::UTC:
         return "UTC";
-    else if (sys == 1)
+    case InsTime::TIME::GPST:
         return "GPST";
-    else if (sys == 2)
+    case InsTime::TIME::GLNT:
         return "GLNT";
-    else if (sys == 3)
+    case InsTime::TIME::BDT:
         return "BDT";
-    else if (sys == 4)
+    case InsTime::TIME::QZSST:
         return "QZSST";
-    else if (sys == 5)
+    case InsTime::TIME::IRNSST:
         return "IRNSST";
-    else
-        std::cout << "Unknown Time system\n";
+
+    default:
+        LOG_ERROR("Unknown Time System with enum number: {}", sys);
+        break;
+    }
 
     return "unknown";
 }
 
 // leap seconds
 
+// NOLINTNEXTLINE(cert-err58-cpp)
 const std::map<unsigned int, uint16_t> InsTime::GpsLeapSec = {
     { 44786, 1 },  // 1 Jul 1981  //diff UTC-TAI: 20
     { 45151, 2 },  // 1 Jul 1982  //diff UTC-TAI: 21
@@ -492,7 +489,7 @@ const std::map<unsigned int, uint16_t> InsTime::GpsLeapSec = {
     { 99999, 19 }  // future
 };
 
-uint16_t InsTime::leapGps2UTC()
+uint16_t InsTime::leapGps2UTC() const
 {
     return leapGps2UTC(mjd);
 }
@@ -521,66 +518,74 @@ uint16_t InsTime::leapGps2UTC(InsTime::InsTime_MJD mjd_in)
 }
 
 // Function for time comparision: bigger/equal
-bool InsTime::isBigger(InsTime insTime)
+bool InsTime::isBigger(InsTime insTime) const
 {
     return isBigger(insTime.mjd);
 }
 
-bool InsTime::isBigger(InsTime::InsTime_YDoySod yearDoySod)
+bool InsTime::isBigger(InsTime::InsTime_YDoySod yearDoySod) const
 {
     return isBigger(YDoySod2MJD(yearDoySod));
 }
-bool InsTime::isBigger(InsTime::InsTime_GPSweekTow gpsWeekTow)
+bool InsTime::isBigger(InsTime::InsTime_GPSweekTow gpsWeekTow) const
 {
     return isBigger(GPSweekTow2MJD(gpsWeekTow));
 }
-bool InsTime::isBigger(InsTime::InsTime_YMDHMS yearMonthDayHMS)
+bool InsTime::isBigger(InsTime::InsTime_YMDHMS yearMonthDayHMS) const
 {
     return isBigger(YMDHMS2MJD(yearMonthDayHMS));
 }
-bool InsTime::isBigger(InsTime::InsTime_MJD mjd_compare) // is true if mjd_compare is bigger (later)
+bool InsTime::isBigger(InsTime::InsTime_MJD mjd_compare) const // is true if mjd_compare is bigger (later)
 {
     bool is_bigger = false;
     if (mjd_compare.mjd_day > mjd.mjd_day)
+    {
         is_bigger = true;
+    }
     else if (mjd_compare.mjd_day == mjd.mjd_day && mjd_compare.mjd_frac > mjd.mjd_frac)
+    {
         is_bigger = true;
+    }
     return is_bigger;
 }
-bool InsTime::isEqual(InsTime insTime)
+bool InsTime::isEqual(InsTime insTime) const
 {
     return isEqual(insTime.mjd);
 }
-bool InsTime::isEqual(InsTime::InsTime_YDoySod yearDoySod)
+bool InsTime::isEqual(InsTime::InsTime_YDoySod yearDoySod) const
 {
     return isEqual(YDoySod2MJD(yearDoySod));
 }
-bool InsTime::isEqual(InsTime::InsTime_GPSweekTow gpsWeekTow)
+bool InsTime::isEqual(InsTime::InsTime_GPSweekTow gpsWeekTow) const
 {
     return isEqual(GPSweekTow2MJD(gpsWeekTow));
 }
-bool InsTime::isEqual(InsTime::InsTime_YMDHMS yearMonthDayHMS)
+bool InsTime::isEqual(InsTime::InsTime_YMDHMS yearMonthDayHMS) const
 {
     return isEqual(YMDHMS2MJD(yearMonthDayHMS));
 }
-bool InsTime::isEqual(InsTime::InsTime_MJD mjd_compare)
+bool InsTime::isEqual(InsTime::InsTime_MJD mjd_compare) const
 {
     bool is_equal = false;
     if (mjd_compare.mjd_day == mjd.mjd_day && mjd_compare.mjd_frac == mjd.mjd_frac)
+    {
         is_equal = true; // frage auf wie viele nachkommastellen genau? ??
+    }
     return is_equal;
 }
 
-long double InsTime::getTimeDiff(InsTime insTime) // returns the time difference in sec of two epochs
+long double InsTime::getTimeDiff(InsTime insTime) const
 {
-    int diffDays = mjd.mjd_day - insTime.GetMJD().mjd_day;
-    long double diffSec = (mjd.mjd_frac - insTime.GetMJD().mjd_frac) * SEC_IN_DAY + (double)diffDays * SEC_IN_DAY;
+    int64_t diffDays = static_cast<int64_t>(mjd.mjd_day) - static_cast<int64_t>(insTime.GetMJD().mjd_day);
+    long double diffSec = (mjd.mjd_frac - insTime.GetMJD().mjd_frac) * SEC_IN_DAY + static_cast<long double>(diffDays) * SEC_IN_DAY;
     return diffSec;
 }
 
-long double InsTime::hms2sec(int hour, int min, long double sec) // Transformation Hour-Min-Sec to Sec
+long double InsTime::hms2sec(int hour, int min, long double sec)
 {
-    return (double)hour * 3600.0 + (double)min * 60.0 + (long double)sec;
+    return static_cast<long double>(hour) * 3600.0L
+           + static_cast<long double>(min) * 60.0L
+           + sec;
 }
 
 bool InsTime::isLeapYear(uint16_t year)
@@ -588,85 +593,78 @@ bool InsTime::isLeapYear(uint16_t year)
     bool leap = (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
     return leap;
 }
-bool InsTime::isLeapYear()
+bool InsTime::isLeapYear() const
 {
-    uint16_t year = this->GetYDoySod().year;
+    uint16_t year = GetYDoySod().year;
     bool leap = (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
     return leap;
 }
 
-std::string InsTime::outputTime()
+std::string InsTime::outputTime() const
 {
     InsTime_YMDHMS time = MJD2YMDHMS(mjd);
     std::stringstream ss;
-    ss << "YMDHMS " << time.year << " " << time.month << " " << time.day << " " << time.hour << " " << time.min << " " << roundf((float)time.sec * 1000) / 1000;
-    std::string output = ss.str();
-    return output;
+    ss << "YMDHMS "
+       << time.year << " "
+       << time.month << " "
+       << time.day << " "
+       << time.hour << " "
+       << time.min << " "
+       << std::setprecision(5) << std::round(time.sec * 1000.0L) / 1000.0L;
+    return ss.str();
 }
-std::string InsTime::outputTowTime()
+std::string InsTime::outputTowTime() const
 {
     //InsTime_GPSweekTow time = MJD2GPSweekTow(mjd);
     std::stringstream ss;
-    ss << "tow " << roundf(this->GetGPSTime().tow * 10.0) / 10.0;
-    std::string output = ss.str();
-    return output;
+    ss << "tow " << std::round(GetGPSTime().tow * 10.0L) / 10.0L;
+    return ss.str();
 }
-std::string InsTime::outputTime(InsTime time)
+std::string InsTime::outputTime(const InsTime& time)
 {
     std::stringstream ss;
-    ss << "YMDHMS time " << time.GetYMDHMS().year << " " << time.GetYMDHMS().month << " " << time.GetYMDHMS().day << " " << time.GetYMDHMS().hour << " " << time.GetYMDHMS().min << " " << std::setprecision(5) << time.GetYMDHMS().sec;
-    std::string output = ss.str();
-    return output;
+    ss << "YMDHMS time "
+       << time.GetYMDHMS().year << " "
+       << time.GetYMDHMS().month << " "
+       << time.GetYMDHMS().day << " "
+       << time.GetYMDHMS().hour << " "
+       << time.GetYMDHMS().min << " "
+       << std::setprecision(5) << time.GetYMDHMS().sec;
+    return ss.str();
 }
 
 // overload operator
 bool InsTime::operator<(const InsTime& mjd_compare) const
 {
-    if (mjd_compare.mjd.mjd_day > mjd.mjd_day)
-        return true;
-    if (mjd_compare.mjd.mjd_day == mjd.mjd_day && mjd_compare.mjd.mjd_frac > mjd.mjd_frac)
-        return true;
-    return false;
+    return (mjd_compare.mjd.mjd_day > mjd.mjd_day
+            || (mjd_compare.mjd.mjd_day == mjd.mjd_day && mjd_compare.mjd.mjd_frac > mjd.mjd_frac));
 }
 bool InsTime::operator>(const InsTime& mjd_compare) const
 {
-    if (mjd_compare.mjd.mjd_day < mjd.mjd_day)
-        return true;
-    if (mjd_compare.mjd.mjd_day == mjd.mjd_day && mjd_compare.mjd.mjd_frac < mjd.mjd_frac)
-        return true;
-    return false;
+    return (mjd_compare.mjd.mjd_day < mjd.mjd_day
+            || (mjd_compare.mjd.mjd_day == mjd.mjd_day && mjd_compare.mjd.mjd_frac < mjd.mjd_frac));
 }
 bool InsTime::operator==(const InsTime& mjd_compare) const
 {
-    if (mjd_compare.mjd.mjd_day == mjd.mjd_day && std::fabs(mjd_compare.mjd.mjd_frac - mjd.mjd_frac) < 0.000001)
-        return true;
-    return false;
+    return (mjd_compare.mjd.mjd_day == mjd.mjd_day
+            && std::abs(mjd_compare.mjd.mjd_frac - mjd.mjd_frac) < std::numeric_limits<long double>::epsilon());
     //	std::cout << " vergleich " << mjd_compare.mjd.mjd_day << " " << mjd_compare.mjd.mjd_frac << "\n";
     //	std::cout << " local " << mjd.mjd_day << " " << mjd.mjd_frac << "\n";
 }
 bool InsTime::operator!=(const InsTime& mjd_compare) const
 {
-    if (mjd_compare.mjd.mjd_day != mjd.mjd_day || std::fabs(mjd_compare.mjd.mjd_frac - mjd.mjd_frac) > 0.000001)
-        return true;
-    return false;
+    return (mjd_compare.mjd.mjd_day != mjd.mjd_day
+            || std::abs(mjd_compare.mjd.mjd_frac - mjd.mjd_frac) > std::numeric_limits<long double>::epsilon());
 }
 bool InsTime::operator<=(const InsTime& mjd_compare) const
 {
-    if (mjd_compare.mjd.mjd_day > mjd.mjd_day)
-        return true;
-    if (mjd_compare.mjd.mjd_day == mjd.mjd_day && mjd_compare.mjd.mjd_frac >= mjd.mjd_frac)
-        return true;
-    return false;
+    return (mjd_compare.mjd.mjd_day > mjd.mjd_day
+            || (mjd_compare.mjd.mjd_day == mjd.mjd_day && mjd_compare.mjd.mjd_frac >= mjd.mjd_frac));
 }
 bool InsTime::operator>=(const InsTime& mjd_compare) const
 {
-    if (mjd_compare.mjd.mjd_day < mjd.mjd_day)
-        return true;
-    if (mjd_compare.mjd.mjd_day == mjd.mjd_day && mjd_compare.mjd.mjd_frac <= mjd.mjd_frac)
-        return true;
-    return false;
+    return (mjd_compare.mjd.mjd_day < mjd.mjd_day
+            || (mjd_compare.mjd.mjd_day == mjd.mjd_day && mjd_compare.mjd.mjd_frac <= mjd.mjd_frac));
 }
-
-#pragma GCC diagnostic pop
 
 } // namespace NAV
