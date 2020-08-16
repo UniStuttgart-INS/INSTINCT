@@ -13,12 +13,14 @@ target_link_libraries(catch_main PRIVATE project_options)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 add_executable(
   tests
+  util/InsTimeTests.cpp
   util/LoggerTests.cpp
   Nodes/DataLogger/IMU/VectorNavDataLoggerTest.cpp
   ${CMAKE_SOURCE_DIR}/src/util/Logger.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/notidy/InsTime.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/InsTime.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/Node.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/Imu.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/ImuFileReader.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/FileReader/VectorNavFile.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/Protocol/FileReader.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataLogger/DataLogger.cpp
@@ -43,11 +45,5 @@ endif()
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries
-catch_discover_tests(
-  tests
-  TEST_PREFIX
-  "unittests."
-  EXTRA_ARGS
-  -s
-  --reporter=xml
-  --out=tests.xml)
+catch_discover_tests(tests)
+# TEST_PREFIX "unittests." EXTRA_ARGS -s --reporter=xml --out=tests.xml)

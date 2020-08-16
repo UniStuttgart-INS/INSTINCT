@@ -1,7 +1,8 @@
 #include <catch2/catch.hpp>
 
 #include <memory>
-#include <deque>
+#include <map>
+#include <string>
 
 #include "util/Logger.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
@@ -11,18 +12,19 @@
 
 namespace NAV
 {
-TEST_CASE("VectorNavDataLogger: Read file and pass data to logger. Then read the logged file and compare data", "[VectorNavDataLogger]")
+TEST_CASE("[VectorNavDataLogger] Read file and pass data to logger. Then read the logged file and compare data", "[VectorNavDataLogger]")
 {
     Logger logger;
 
     system("pwd"); // NOLINT
 
     // Create VectorNavFile Node
-    std::deque<std::string> optionsFile = { "../../../test/data/vectornav.csv" };
+    std::map<std::string, std::string> optionsFile = { { "Path", "../../../test/data/vectornav.csv" } };
     auto vnFile = std::make_shared<VectorNavFile>("VN-File", optionsFile);
 
     // Create Logger
-    std::deque<std::string> optionsLogger = { "../../../test/logs/vectornav.csv", "ascii" };
+    std::map<std::string, std::string> optionsLogger = { { "Path", "../../../test/logs/vectornav.csv" },
+                                                         { "Type", "ascii" } };
     auto vnLogger = std::make_shared<VectorNavDataLogger>("VN-DataLogger", optionsLogger);
     auto target = std::static_pointer_cast<Node>(vnLogger);
 
@@ -42,10 +44,10 @@ TEST_CASE("VectorNavDataLogger: Read file and pass data to logger. Then read the
     vnFile = nullptr;
 
     // Create VectorNavFile Node
-    std::deque<std::string> optionsFileOrig = { "../../../test/data/vectornav.csv" };
+    std::map<std::string, std::string> optionsFileOrig = { { "Path", "../../../test/data/vectornav.csv" } };
     auto vnFileOriginal = std::make_shared<VectorNavFile>("VN-File-Orig", optionsFileOrig);
     // Create VectorNavFile Node
-    std::deque<std::string> optionsFileNew = { "../../../test/logs/vectornav.csv" };
+    std::map<std::string, std::string> optionsFileNew = { { "Path", "../../../test/logs/vectornav.csv" } };
     auto vnFileNew = std::make_shared<VectorNavFile>("VN-File-New", optionsFileNew);
 
     while (true)
