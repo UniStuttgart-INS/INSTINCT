@@ -15,34 +15,6 @@ namespace NAV
 {
 // --------------------------- Constructors  ----------------------------------
 
-InsTime::InsTime(const InsTime::InsTime_MJD& mjd)
-    : mjd(mjd) {}
-
-InsTime::InsTime(const InsTime::InsTime_JD& jd)
-{
-    mjd.mjd_day = jd.jd_day - 2400000;
-    mjd.mjd_frac = jd.jd_frac - 0.5L;
-    if (mjd.mjd_frac < 0.0L)
-    {
-        mjd.mjd_day -= 1;
-        mjd.mjd_frac += 1.0L;
-    }
-}
-
-InsTime::InsTime(const InsTime::InsTime_GPSweekTow& gpsWeekTow)
-{
-    mjd.mjd_day = static_cast<unsigned int>((gpsWeekTow.gpsCycle * InsTime_GPSweekTow::DAYS_PER_GPS_CYCLE + gpsWeekTow.gpsWeek) * InsTime_GPSweekTow::DAYS_PER_WEEK
-                                            + std::floor(gpsWeekTow.tow / SEC_IN_DAY)
-                                            + InsTime_GPSweekTow::DIFF_TO_6_1_1980);
-    mjd.mjd_frac = std::fmod(gpsWeekTow.tow, SEC_IN_DAY) / SEC_IN_DAY;
-    mjd.mjd_frac -= static_cast<long double>(leapGps2UTC(mjd)) / SEC_IN_DAY; // from GPST to UTC
-    if (mjd.mjd_frac < 0.0L)
-    {
-        mjd.mjd_day -= 1;
-        mjd.mjd_frac += 1.0L;
-    }
-}
-
 InsTime::InsTime(const InsTime::InsTime_YDoySod& yearDoySod)
 {
     constexpr std::array<int, 11> daysOfMonth = { 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
@@ -134,76 +106,6 @@ InsTime::InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uin
     {
         // is synchronised with UTC within 100 ns<
     }
-}
-
-// ---------------------- Transformation function ------------------------------
-
-InsTime::InsTime_GPSweekTow InsTime::toGPSweekTow() const
-{
-    return InsTime_GPSweekTow(*this);
-}
-InsTime::InsTime_JD InsTime::toJD() const
-{
-    return InsTime_JD(*this);
-}
-InsTime::InsTime_MJD InsTime::toMJD() const
-{
-    return mjd;
-}
-InsTime::InsTime_YDoySod InsTime::toYDoySod() const
-{
-    return InsTime_YDoySod(*this);
-}
-InsTime::InsTime_YMDHMS InsTime::toYMDHMS() const
-{
-    return InsTime_YMDHMS(*this);
-}
-
-constexpr long double InsTime::hms2sec(int hour, int min, long double sec)
-{
-    return static_cast<long double>(hour) * 3600.0L
-           + static_cast<long double>(min) * 60.0L
-           + sec;
-}
-
-// -------------------------------- Leap functions -------------------------------------------
-
-uint16_t InsTime::leapGps2UTC() const
-{
-    return leapGps2UTC(mjd);
-}
-uint16_t InsTime::leapGps2UTC(InsTime insTime)
-{
-    return leapGps2UTC(insTime.mjd);
-}
-uint16_t InsTime::leapGps2UTC(InsTime::InsTime_YDoySod yearDoySod)
-{
-    return leapGps2UTC(InsTime(yearDoySod).toMJD());
-}
-uint16_t InsTime::leapGps2UTC(InsTime::InsTime_GPSweekTow gpsWeekTow)
-{
-    return leapGps2UTC(InsTime(gpsWeekTow).toMJD());
-}
-uint16_t InsTime::leapGps2UTC(InsTime::InsTime_YMDHMS yearMonthDayHMS)
-{
-    return leapGps2UTC(InsTime(yearMonthDayHMS).toMJD());
-}
-uint16_t InsTime::leapGps2UTC(InsTime::InsTime_MJD mjd_in)
-{
-    const auto* ub = std::upper_bound(GpsLeapSec.begin(), GpsLeapSec.end(), mjd_in.mjd_day);
-    return static_cast<uint16_t>(ub - GpsLeapSec.begin() - 1);
-}
-
-bool InsTime::isLeapYear(uint16_t year)
-{
-    bool leap = (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
-    return leap;
-}
-bool InsTime::isLeapYear() const
-{
-    uint16_t year = toYDoySod().year;
-    bool leap = (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
-    return leap;
 }
 
 // ------------------------------------------------------------------------------

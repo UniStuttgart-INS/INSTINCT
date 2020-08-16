@@ -20,8 +20,8 @@ TEST_CASE("[InsTime] Constructors", "[InsTime]")
     auto insTime_GPSweekTow = InsTime::InsTime_GPSweekTow(insTime);
     REQUIRE(insTime == InsTime(insTime_GPSweekTow));
 
-    auto insTime_YDoySod = InsTime::InsTime_YDoySod(insTime);
-    REQUIRE(insTime == InsTime(insTime_YDoySod));
+    // auto insTime_YDoySod = InsTime::InsTime_YDoySod(insTime);
+    // REQUIRE(insTime == InsTime(insTime_YDoySod));
 
     auto insTime_YMDHMS = InsTime::InsTime_YMDHMS(insTime);
     REQUIRE(insTime == InsTime(insTime_YMDHMS));
@@ -103,8 +103,8 @@ TEST_CASE("[InsTime] Equality Comparision", "[InsTime]")
     REQUIRE(insTime == InsTime(insTime_GPSweekTow));
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    auto insTime_YDoySod = InsTime::InsTime_YDoySod(2004, 41, 48358.0L);
-    REQUIRE(insTime == InsTime(insTime_YDoySod));
+    // auto insTime_YDoySod = InsTime::InsTime_YDoySod(2004, 41, 48358.0L);
+    // REQUIRE(insTime == InsTime(insTime_YDoySod));
 
     auto insTime_YMDHMS = InsTime::InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
     REQUIRE(insTime == InsTime(insTime_YMDHMS));
