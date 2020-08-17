@@ -87,15 +87,13 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     obs->temperature = navio->sensor->read_temperature();
 
     obs->accelUncompXYZ.emplace(navio->ax, navio->ay, navio->az);
-    obs->gyroUncompXYZ.emplace(navio->gx,
-                               navio->gy,
-                               navio->gz);
+    obs->gyroUncompXYZ.emplace(navio->gx, navio->gy, navio->gz);
 
     if (navio->imuType == ImuType::LSM)
     {
         obs->magUncompXYZ.emplace(navio->mx, navio->my, navio->mz);
-        constexpr double uT2Gauss = 1.0 / 100.0;
-        obs->magUncompXYZ.value() *= uT2Gauss;
+        // constexpr double uT2Gauss = 1.0 / 100.0;
+        // obs->magUncompXYZ.value() *= uT2Gauss;
     }
 
     std::chrono::nanoseconds diff = currentTime - navio->startTime;
