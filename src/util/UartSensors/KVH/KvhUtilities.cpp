@@ -95,14 +95,13 @@ void NAV::sensors::kvh::decryptKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
     {
         if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_A)
         {
-            obs->gyroUncompXYZ.emplace(InsConst::deg2rad(obs->raw.extractFloat()),
-                                       InsConst::deg2rad(obs->raw.extractFloat()),
-                                       InsConst::deg2rad(obs->raw.extractFloat()));
+            obs->gyroUncompXYZ.emplace(obs->raw.extractFloat(),
+                                       obs->raw.extractFloat(),
+                                       obs->raw.extractFloat());
 
             obs->accelUncompXYZ.emplace(obs->raw.extractFloat(),
                                         obs->raw.extractFloat(),
                                         obs->raw.extractFloat());
-            obs->accelUncompXYZ.value() *= InsConst::G_NORM;
 
             obs->status = obs->raw.extractUint8();
             obs->sequenceNumber = obs->raw.extractUint8();
@@ -110,14 +109,13 @@ void NAV::sensors::kvh::decryptKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
         }
         else if (headerType == sensors::kvh::KvhUartSensor::HEADER_FMT_B)
         {
-            obs->gyroUncompXYZ.emplace(InsConst::deg2rad(obs->raw.extractFloat()),
-                                       InsConst::deg2rad(obs->raw.extractFloat()),
-                                       InsConst::deg2rad(obs->raw.extractFloat()));
+            obs->gyroUncompXYZ.emplace(obs->raw.extractFloat(),
+                                       obs->raw.extractFloat(),
+                                       obs->raw.extractFloat());
 
             obs->accelUncompXYZ.emplace(obs->raw.extractFloat(),
                                         obs->raw.extractFloat(),
                                         obs->raw.extractFloat());
-            obs->accelUncompXYZ.value() *= InsConst::G_NORM;
 
             obs->timeSinceStartup.emplace(obs->raw.extractUint32() * 1000);
             obs->status = obs->raw.extractUint8();
@@ -133,18 +131,21 @@ void NAV::sensors::kvh::decryptKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
             obs->accelUncompXYZ.emplace(obs->raw.extractFloat(),
                                         obs->raw.extractFloat(),
                                         obs->raw.extractFloat());
-            obs->accelUncompXYZ.value() *= InsConst::G_NORM;
 
             auto OneOfTempMagXYZ = obs->raw.extractFloat();
 
             obs->status = obs->raw.extractUint8();
             obs->sequenceNumber = obs->raw.extractUint8();
 
+            // Static is wrong here!!! If Multtiple KVH units were used, it would be the same for all of them
+            // As only 1 KVH is used, this doesn't give any problems
             static std::array<double, 4> tempMagXYZ{ std::nan(""), std::nan(""), std::nan(""), std::nan("") };
             tempMagXYZ.at(obs->sequenceNumber % 4) = static_cast<double>(OneOfTempMagXYZ);
 
             obs->temperature = tempMagXYZ[0];
             obs->magUncompXYZ = Eigen::Vector3d(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
         }
+
+        obs->accelUncompXYZ.value() *= InsConst::G_NORM;
     }
 }
