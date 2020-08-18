@@ -43,8 +43,6 @@ constexpr int32_t SECONDS_PER_WEEK = SECONDS_PER_DAY * DAYS_PER_WEEK;
 
 constexpr long double EPSILON = 2.0L * std::numeric_limits<long double>::epsilon();
 
-constexpr std::array<uint16_t, 11> MONTHS_DOY{ 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
-
 /// Maps GPS leap seconds to a time: array<mjd_day>, index + 1 is amount of leap seconds
 constexpr std::array<uint32_t, 20> GPS_LEAP_SEC_MJD = {
     0,     // 1 Jan 1980 and before
@@ -624,33 +622,17 @@ class InsTime
         auto doy = yearDoySod.doy;
         auto sod = yearDoySod.sod;
 
-        int32_t leapDay = 0;
-        if (InsTimeUtil::isLeapYear(year) && doy > InsTimeUtil::MONTHS_DOY.at(1))
+        int32_t month = 1;
+        while (doy > InsTimeUtil::daysInMonth(month, year))
         {
-            leapDay = 1;
+            doy -= InsTimeUtil::daysInMonth(month, year);
+            month++;
         }
+        int32_t day = doy;
 
-        const auto* low = std::lower_bound(InsTimeUtil::MONTHS_DOY.begin(), InsTimeUtil::MONTHS_DOY.end(), (doy - leapDay));
-        auto month_number = static_cast<uint16_t>(low - InsTimeUtil::MONTHS_DOY.begin() + 1); // Month number by substracting iterators to get position
-        sod -= static_cast<long double>(leapGps2UTC(yearDoySod));
-        if (sod < 0.0L)
-        {
-            doy -= 1;
-            sod += InsTimeUtil::SECONDS_PER_DAY;
-            if (doy < 1)
-            {
-                year -= 1;
-                doy += 365;
-                if (InsTimeUtil::isLeapYear(year) && month_number > 2)
-                {
-                    doy += 1;
-                }
-            }
-        }
+        sod -= static_cast<long double>(leapGps2UTC(InsTime_YMDHMS(year, month, day, 0, 0, sod)));
 
-        auto day = static_cast<uint16_t>(static_cast<int32_t>(doy) - leapDay - InsTimeUtil::MONTHS_DOY.at(month_number - 2));
-
-        mjd = InsTime(InsTime_YMDHMS(year, month_number, day, 0, 0, sod)).toMJD();
+        mjd = InsTime(InsTime_YMDHMS(year, month, day, 0, 0, sod)).toMJD();
     }
 
     /// @brief Constructor
@@ -678,7 +660,7 @@ class InsTime
         }
         else if (timesys == TIME_SYSTEM::GLNT) // = GLONASS Time (UTC+ 3h)
         {
-            constexpr int32_t utcDiff = 3 * 60 * 60;
+            constexpr int32_t utcDiff = 3 * InsTimeUtil::SECONDS_PER_HOUR;
             this->addDiffSec(-utcDiff);
         }
         else if (timesys == TIME_SYSTEM::GST) // = GALILEO Time (~ GPS TIME_SYSTEM )
@@ -763,47 +745,27 @@ class InsTime
         InsTime_YMDHMS yearMonthDayHMS = toYMDHMS();
 
         auto year = yearMonthDayHMS.year;
-        long double sod = static_cast<long double>(yearMonthDayHMS.hour * 3600.0 + yearMonthDayHMS.min * 60.0)
+        long double sod = static_cast<long double>(yearMonthDayHMS.hour * InsTimeUtil::SECONDS_PER_HOUR
+                                                   + yearMonthDayHMS.min * InsTimeUtil::SECONDS_PER_MINUTE)
                           + yearMonthDayHMS.sec
                           + static_cast<long double>(leapGps2UTC());
 
         int32_t doy = 0;
-        if (yearMonthDayHMS.month == 1)
+        for (int32_t i = 1; i < yearMonthDayHMS.month; i++)
         {
-            doy = yearMonthDayHMS.day;
+            doy += InsTimeUtil::daysInMonth(i, year);
         }
-        else if (yearMonthDayHMS.month == 2)
-        {
-            doy = InsTimeUtil::MONTHS_DOY.at(0) + yearMonthDayHMS.day;
-        }
-        else // for march to december
-        {
-            doy = InsTimeUtil::MONTHS_DOY.at(static_cast<size_t>(yearMonthDayHMS.month - 2))
-                  + yearMonthDayHMS.day
-                  + static_cast<int32_t>(InsTimeUtil::isLeapYear(yearMonthDayHMS.year));
-        }
-        if (sod >= InsTimeUtil::SECONDS_PER_DAY)
-        {
-            doy++;
-            sod -= InsTimeUtil::SECONDS_PER_DAY;
-            if (doy == 366 && !InsTimeUtil::isLeapYear(yearMonthDayHMS.year))
-            {
-                year--;
-                doy = 365;
-            }
-        }
+        doy += yearMonthDayHMS.day;
+
         return InsTime_YDoySod(year, doy, sod);
     }
 
     // -------------------------------- Leap functions -------------------------------------------
 
-    [[nodiscard]] constexpr uint16_t leapGps2UTC() const { return leapGps2UTC(mjd); }                                                /*!< Returns the current number of leap seconds (offset GPST to UTC) */
-    static constexpr uint16_t leapGps2UTC(const InsTime& insTime) { return leapGps2UTC(insTime.mjd); }                               /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime object */
-    static constexpr uint16_t leapGps2UTC(const InsTime_GPSweekTow& gpsWeekTow) { return leapGps2UTC(InsTime(gpsWeekTow).toMJD()); } /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_GPSweekTow time */
-    static constexpr uint16_t leapGps2UTC(const InsTime_YDoySod& yearDoySod)
-    {
-        return static_cast<uint16_t>(std::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), yearDoySod.doy) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
-    }                                                                                                                                      /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YDoySod time */
+    [[nodiscard]] constexpr uint16_t leapGps2UTC() const { return leapGps2UTC(mjd); }                                                      /*!< Returns the current number of leap seconds (offset GPST to UTC) */
+    static constexpr uint16_t leapGps2UTC(const InsTime& insTime) { return leapGps2UTC(insTime.mjd); }                                     /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime object */
+    static constexpr uint16_t leapGps2UTC(const InsTime_GPSweekTow& gpsWeekTow) { return leapGps2UTC(InsTime(gpsWeekTow).toMJD()); }       /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_GPSweekTow time */
+    static constexpr uint16_t leapGps2UTC(const InsTime_YDoySod& yearDoySod) { return leapGps2UTC(InsTime(yearDoySod).toMJD()); }          /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YDoySod time */
     static constexpr uint16_t leapGps2UTC(const InsTime_YMDHMS& yearMonthDayHMS) { return leapGps2UTC(InsTime(yearMonthDayHMS).toMJD()); } /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YMDHMS time */
     static constexpr uint16_t leapGps2UTC(const InsTime_JD& jd) { return leapGps2UTC(InsTime(jd).toMJD()); }
     static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in) /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD time */
@@ -815,7 +777,7 @@ class InsTime
         return InsTimeUtil::isLeapYear(toYMDHMS().year);
     }
 
-    // ------------------------ Comparison bigger/smaller/equal ----------------------------------
+    // ------------------------ Comparison operator overloading ---------------------
 
     constexpr bool operator==(const InsTime& rhs) const { return mjd == rhs.mjd; }
     constexpr bool operator!=(const InsTime& rhs) const { return mjd != rhs.mjd; }

@@ -421,45 +421,56 @@ TEST_CASE("[InsTime_YDoySod] Comparisions constexpr", "[InsTime]")
 
 TEST_CASE("[InsTime] Constructors & Conversion", "[InsTime]")
 {
-    auto insTime = InsTime(2004, 2, 10, 13, 25, 58);
+    auto insTime = InsTime(2004, 3, 10, 13, 25, 58);
 
     auto insTime_MJD = insTime.toMJD();
-    REQUIRE(insTime == InsTime(insTime_MJD));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_MJD));
 
     auto insTime_JD = insTime.toJD();
-    REQUIRE(insTime == InsTime(insTime_JD));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_JD));
 
     auto insTime_GPSweekTow = insTime.toGPSweekTow();
-    REQUIRE(insTime == InsTime(insTime_GPSweekTow));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow));
 
-    // auto insTime_YDoySod = insTime.toYDoySod();
-    // REQUIRE(insTime == InsTime(insTime_YDoySod));
+    auto insTime_YDoySod = insTime.toYDoySod();
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YDoySod));
 
     auto insTime_YMDHMS = insTime.toYMDHMS();
-    REQUIRE(insTime == InsTime(insTime_YMDHMS));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS));
 
-    auto insTime_YMDHMS_GPSweekTow_JD_MJD = InsTime(InsTime(InsTime(insTime.toMJD()).toJD()).toGPSweekTow()).toYMDHMS();
-    REQUIRE(insTime == InsTime(insTime_YMDHMS_GPSweekTow_JD_MJD));
+    auto insTime_YMDHMS_YDoySod_GPSweekTow_JD_MJD = InsTime(InsTime(InsTime(InsTime(insTime.toMJD())
+                                                                                .toJD())
+                                                                        .toGPSweekTow())
+                                                                .toYDoySod())
+                                                        .toYMDHMS();
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS_YDoySod_GPSweekTow_JD_MJD));
 }
 
 TEST_CASE("[InsTime] Constructors & Conversion constexpr", "[InsTime]")
 {
-    constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58);
+    constexpr auto insTime = InsTime(2004, 3, 10, 13, 25, 58);
 
     constexpr auto insTime_MJD = insTime.toMJD();
-    STATIC_REQUIRE(insTime == InsTime(insTime_MJD));
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_MJD));
 
     constexpr auto insTime_JD = insTime.toJD();
-    STATIC_REQUIRE(insTime == InsTime(insTime_JD));
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_JD));
 
     constexpr auto insTime_GPSweekTow = insTime.toGPSweekTow();
-    STATIC_REQUIRE(insTime == InsTime(insTime_GPSweekTow));
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow));
 
-    // constexpr auto insTime_YDoySod = insTime.toYDoySod();
-    // STATIC_REQUIRE(insTime == InsTime(insTime_YDoySod));
+    constexpr auto insTime_YDoySod = insTime.toYDoySod();
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YDoySod));
 
     constexpr auto insTime_YMDHMS = insTime.toYMDHMS();
-    STATIC_REQUIRE(insTime == InsTime(insTime_YMDHMS));
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS));
+
+    constexpr auto insTime_YMDHMS_YDoySod_GPSweekTow_JD_MJD = InsTime(InsTime(InsTime(InsTime(insTime.toMJD())
+                                                                                          .toJD())
+                                                                                  .toGPSweekTow())
+                                                                          .toYDoySod())
+                                                                  .toYMDHMS();
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS_YDoySod_GPSweekTow_JD_MJD));
 }
 
 TEST_CASE("[InsTime] Leap Seconds constexpr", "[InsTime]")
@@ -521,6 +532,30 @@ TEST_CASE("[InsTime] Leap Seconds constexpr", "[InsTime]")
     STATIC_REQUIRE(InsTime::leapGps2UTC(InsTime_YMDHMS(2017, 1, 1, 0, 0, 0)) == 18);
 }
 
+TEST_CASE("[InsTime] Leap Functions", "[InsTime]")
+{
+    auto insTime = InsTime(2004, 2, 10, 13, 25, 58);
+
+    auto insTime_MJD = insTime.toMJD();
+    REQUIRE(InsTime::leapGps2UTC(insTime_MJD) == 13);
+
+    auto insTime_JD = insTime.toJD();
+    REQUIRE(InsTime::leapGps2UTC(insTime_JD) == 13);
+
+    auto insTime_GPSweekTow = insTime.toGPSweekTow();
+    REQUIRE(InsTime::leapGps2UTC(insTime_GPSweekTow) == 13);
+
+    auto insTime_YDoySod = insTime.toYDoySod();
+    REQUIRE(InsTime::leapGps2UTC(insTime_YDoySod) == 13);
+
+    auto insTime_YMDHMS = insTime.toYMDHMS();
+    REQUIRE(InsTime::leapGps2UTC(insTime_YMDHMS) == 13);
+
+    REQUIRE(InsTimeUtil::isLeapYear(2003) == false);
+    REQUIRE(InsTimeUtil::isLeapYear(2004) == true);
+    REQUIRE(insTime.isLeapYear() == true);
+}
+
 TEST_CASE("[InsTime] Leap Functions constexpr", "[InsTime]")
 {
     constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58);
@@ -534,8 +569,8 @@ TEST_CASE("[InsTime] Leap Functions constexpr", "[InsTime]")
     constexpr auto insTime_GPSweekTow = insTime.toGPSweekTow();
     STATIC_REQUIRE(InsTime::leapGps2UTC(insTime_GPSweekTow) == 13);
 
-    // constexpr auto insTime_YDoySod = insTime.toYDoySod();
-    // STATIC_REQUIRE(InsTime::leapGps2UTC(insTime_YDoySod) == 13);
+    constexpr auto insTime_YDoySod = insTime.toYDoySod();
+    STATIC_REQUIRE(InsTime::leapGps2UTC(insTime_YDoySod) == 13);
 
     constexpr auto insTime_YMDHMS = insTime.toYMDHMS();
     STATIC_REQUIRE(InsTime::leapGps2UTC(insTime_YMDHMS) == 13);
@@ -545,28 +580,228 @@ TEST_CASE("[InsTime] Leap Functions constexpr", "[InsTime]")
     STATIC_REQUIRE(insTime.isLeapYear() == true);
 }
 
-TEST_CASE("[InsTime] Equality Comparision", "[InsTime]")
+TEST_CASE("[InsTime] Comparisions lesser", "[InsTime]")
+{
+    auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    auto insTime_MJD_l_1 = InsTime_MJD(53044, 0.5596990740740740740L);
+    auto insTime_MJD_l_2 = InsTime_MJD(53045, 0.5596980740740740740L);
+    TEST_LESSER_OBJECT(InsTime(insTime_MJD_l_1), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_MJD_l_2), insTime);
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    auto insTime_JD_l_1 = InsTime_JD(2453045, 0.0596990740740740740L);
+    auto insTime_JD_l_2 = InsTime_JD(2453046, 0.0596990730740740740L);
+    TEST_LESSER_OBJECT(InsTime(insTime_JD_l_1), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_JD_l_2), insTime);
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    auto insTime_GPSweekTow_l_1 = InsTime_GPSweekTow(0, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
+    auto insTime_GPSweekTow_l_2 = InsTime_GPSweekTow(1, 232, 221158.0L + InsTime::leapGps2UTC(insTime));
+    auto insTime_GPSweekTow_l_3 = InsTime_GPSweekTow(1, 233, 221157.9L + InsTime::leapGps2UTC(insTime));
+    TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_1), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_2), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_3), insTime);
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    auto insTime_YDoySod_l_1 = InsTime_YDoySod(2003, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
+    auto insTime_YDoySod_l_2 = InsTime_YDoySod(2004, 40, 48358.0L + InsTime::leapGps2UTC(insTime));
+    auto insTime_YDoySod_l_3 = InsTime_YDoySod(2004, 41, 48357.8L + InsTime::leapGps2UTC(insTime));
+    TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_1), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_2), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_3), insTime);
+
+    auto insTime_YMDHMS_l_1 = InsTime_YMDHMS(2004, 1, 10, 13, 25, 58.0L);
+    auto insTime_YMDHMS_l_2 = InsTime_YMDHMS(2004, 2, 9, 13, 25, 58.0L);
+    auto insTime_YMDHMS_l_3 = InsTime_YMDHMS(2004, 2, 10, 12, 25, 58.0L);
+    auto insTime_YMDHMS_l_4 = InsTime_YMDHMS(2004, 2, 10, 13, 24, 58.0L);
+    auto insTime_YMDHMS_l_5 = InsTime_YMDHMS(2004, 2, 10, 13, 25, 57.5L);
+    TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_1), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_2), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_3), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_4), insTime);
+    TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_5), insTime);
+}
+
+TEST_CASE("[InsTime] Comparisions lesser constexpr", "[InsTime]")
+{
+    constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    constexpr auto insTime_MJD_l_1 = InsTime_MJD(53044, 0.5596990740740740740L);
+    constexpr auto insTime_MJD_l_2 = InsTime_MJD(53045, 0.5596980740740740740L);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_MJD_l_1), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_MJD_l_2), insTime);
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    constexpr auto insTime_JD_l_1 = InsTime_JD(2453045, 0.0596990740740740740L);
+    constexpr auto insTime_JD_l_2 = InsTime_JD(2453046, 0.0596990730740740740L);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_JD_l_1), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_JD_l_2), insTime);
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    constexpr auto insTime_GPSweekTow_l_1 = InsTime_GPSweekTow(0, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_GPSweekTow_l_2 = InsTime_GPSweekTow(1, 232, 221158.0L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_GPSweekTow_l_3 = InsTime_GPSweekTow(1, 233, 221157.9L + InsTime::leapGps2UTC(insTime));
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_1), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_2), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_GPSweekTow_l_3), insTime);
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    constexpr auto insTime_YDoySod_l_1 = InsTime_YDoySod(2003, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_YDoySod_l_2 = InsTime_YDoySod(2004, 40, 48358.0L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_YDoySod_l_3 = InsTime_YDoySod(2004, 41, 48357.8L + InsTime::leapGps2UTC(insTime));
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_1), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_2), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YDoySod_l_3), insTime);
+
+    constexpr auto insTime_YMDHMS_l_1 = InsTime_YMDHMS(2004, 1, 10, 13, 25, 58.0L);
+    constexpr auto insTime_YMDHMS_l_2 = InsTime_YMDHMS(2004, 2, 9, 13, 25, 58.0L);
+    constexpr auto insTime_YMDHMS_l_3 = InsTime_YMDHMS(2004, 2, 10, 12, 25, 58.0L);
+    constexpr auto insTime_YMDHMS_l_4 = InsTime_YMDHMS(2004, 2, 10, 13, 24, 58.0L);
+    constexpr auto insTime_YMDHMS_l_5 = InsTime_YMDHMS(2004, 2, 10, 13, 25, 57.5L);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_1), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_2), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_3), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_4), insTime);
+    STATIC_TEST_LESSER_OBJECT(InsTime(insTime_YMDHMS_l_5), insTime);
+}
+
+TEST_CASE("[InsTime] Comparisions equal", "[InsTime]")
 {
     auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     auto insTime_MJD = InsTime_MJD(53045, 0.5596990740740740740L);
-    REQUIRE(insTime == InsTime(insTime_MJD));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_MJD));
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     auto insTime_JD = InsTime_JD(2453046, 0.0596990740740740740L);
-    REQUIRE(insTime == InsTime(insTime_JD));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_JD));
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
     auto insTime_GPSweekTow = InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
-    REQUIRE(insTime == InsTime(insTime_GPSweekTow));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow));
 
     // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
-    // auto insTime_YDoySod = InsTime_YDoySod(2004, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
-    // REQUIRE(insTime == InsTime(insTime_YDoySod));
+    auto insTime_YDoySod = InsTime_YDoySod(2004, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YDoySod));
 
     auto insTime_YMDHMS = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
-    REQUIRE(insTime == InsTime(insTime_YMDHMS));
+    TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS));
+}
+
+TEST_CASE("[InsTime] Comparisions equal constexpr", "[InsTime]")
+{
+    constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    constexpr auto insTime_MJD = InsTime_MJD(53045, 0.5596990740740740740L);
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_MJD));
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    constexpr auto insTime_JD = InsTime_JD(2453046, 0.0596990740740740740L);
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_JD));
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    constexpr auto insTime_GPSweekTow = InsTime_GPSweekTow(1, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_GPSweekTow));
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    constexpr auto insTime_YDoySod = InsTime_YDoySod(2004, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YDoySod));
+
+    constexpr auto insTime_YMDHMS = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0L);
+    STATIC_TEST_EQUAL_OBJECT(insTime, InsTime(insTime_YMDHMS));
+}
+
+TEST_CASE("[InsTime] Comparisions greater", "[InsTime]")
+{
+    auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    auto insTime_MJD_g_1 = InsTime_MJD(53046, 0.5596990740740740740L);
+    auto insTime_MJD_g_2 = InsTime_MJD(53045, 0.5596991740740740740L);
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_MJD_g_1));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_MJD_g_2));
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    auto insTime_JD_g_1 = InsTime_JD(2453047, 0.0596990740740740740L);
+    auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740741740L);
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_1));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_2));
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    auto insTime_GPSweekTow_g_1 = InsTime_GPSweekTow(2, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
+    auto insTime_GPSweekTow_g_2 = InsTime_GPSweekTow(1, 234, 221158.0L + InsTime::leapGps2UTC(insTime));
+    auto insTime_GPSweekTow_g_3 = InsTime_GPSweekTow(1, 233, 221158.000000001L + InsTime::leapGps2UTC(insTime));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_GPSweekTow_g_1));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_GPSweekTow_g_2));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_GPSweekTow_g_3));
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    auto insTime_YDoySod_g_1 = InsTime_YDoySod(2005, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
+    auto insTime_YDoySod_g_2 = InsTime_YDoySod(2004, 42, 48358.0L + InsTime::leapGps2UTC(insTime));
+    auto insTime_YDoySod_g_3 = InsTime_YDoySod(2004, 41, 48358.01L + InsTime::leapGps2UTC(insTime));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YDoySod_g_1));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YDoySod_g_2));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YDoySod_g_3));
+
+    auto insTime_YMDHMS_g_1 = InsTime_YMDHMS(2004, 3, 10, 13, 25, 58.0L);
+    auto insTime_YMDHMS_g_2 = InsTime_YMDHMS(2004, 2, 11, 13, 25, 58.0L);
+    auto insTime_YMDHMS_g_3 = InsTime_YMDHMS(2004, 2, 10, 14, 25, 58.0L);
+    auto insTime_YMDHMS_g_4 = InsTime_YMDHMS(2004, 2, 10, 13, 26, 58.0L);
+    auto insTime_YMDHMS_g_5 = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0000000001L);
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_1));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_2));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_3));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_4));
+    TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_5));
+}
+
+TEST_CASE("[InsTime] Comparisions greater constexpr", "[InsTime]")
+{
+    constexpr auto insTime = InsTime(2004, 2, 10, 13, 25, 58.0L);
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    constexpr auto insTime_MJD_g_1 = InsTime_MJD(53046, 0.5596990740740740740L);
+    constexpr auto insTime_MJD_g_2 = InsTime_MJD(53045, 0.5596991740740740740L);
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_MJD_g_1));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_MJD_g_2));
+
+    // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
+    constexpr auto insTime_JD_g_1 = InsTime_JD(2453047, 0.0596990740740740740L);
+    constexpr auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740741740L);
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_1));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_2));
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    constexpr auto insTime_GPSweekTow_g_1 = InsTime_GPSweekTow(2, 233, 221158.0L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_GPSweekTow_g_2 = InsTime_GPSweekTow(1, 234, 221158.0L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_GPSweekTow_g_3 = InsTime_GPSweekTow(1, 233, 221158.000000001L + InsTime::leapGps2UTC(insTime));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_GPSweekTow_g_1));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_GPSweekTow_g_2));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_GPSweekTow_g_3));
+
+    // Conversion: https://www.labsat.co.uk/index.php/en/gps-time-calculator
+    constexpr auto insTime_YDoySod_g_1 = InsTime_YDoySod(2005, 41, 48358.0L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_YDoySod_g_2 = InsTime_YDoySod(2004, 42, 48358.0L + InsTime::leapGps2UTC(insTime));
+    constexpr auto insTime_YDoySod_g_3 = InsTime_YDoySod(2004, 41, 48358.01L + InsTime::leapGps2UTC(insTime));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YDoySod_g_1));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YDoySod_g_2));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YDoySod_g_3));
+
+    constexpr auto insTime_YMDHMS_g_1 = InsTime_YMDHMS(2004, 3, 10, 13, 25, 58.0L);
+    constexpr auto insTime_YMDHMS_g_2 = InsTime_YMDHMS(2004, 2, 11, 13, 25, 58.0L);
+    constexpr auto insTime_YMDHMS_g_3 = InsTime_YMDHMS(2004, 2, 10, 14, 25, 58.0L);
+    constexpr auto insTime_YMDHMS_g_4 = InsTime_YMDHMS(2004, 2, 10, 13, 26, 58.0L);
+    constexpr auto insTime_YMDHMS_g_5 = InsTime_YMDHMS(2004, 2, 10, 13, 25, 58.0000000001L);
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_1));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_2));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_3));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_4));
+    STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_5));
 }
 
 } // namespace NAV
