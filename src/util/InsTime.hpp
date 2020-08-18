@@ -15,15 +15,543 @@
 #include <iostream>
 
 #include <cmath>
+#include "gcem.hpp"
 
 namespace NAV
 {
+namespace InsTimeUtil
+{
+constexpr int32_t END_OF_THE_CENTURY_MJD = 400000;
+constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;
+constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;
+
+constexpr uint32_t DIFF_MJD_TO_JD_DAYS = 2400000;
+constexpr long double DIFF_MJD_TO_JD_FRAC = 0.5L;
+
+constexpr int32_t MONTHS_PER_YEAR = 12;
+constexpr int32_t DAYS_PER_YEAR = 365;
+constexpr int32_t DAYS_PER_WEEK = 7;
+constexpr int32_t HOURS_PER_DAY = 24;
+constexpr int32_t HOURS_PER_WEEK = HOURS_PER_DAY * DAYS_PER_WEEK;
+constexpr int32_t MINUTES_PER_HOUR = 60;
+constexpr int32_t MINUTES_PER_DAY = MINUTES_PER_HOUR * HOURS_PER_DAY;
+constexpr int32_t MINUTES_PER_WEEK = MINUTES_PER_DAY * DAYS_PER_WEEK;
+constexpr int32_t SECONDS_PER_MINUTE = 60;
+constexpr int32_t SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
+constexpr int32_t SECONDS_PER_DAY = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
+constexpr int32_t SECONDS_PER_WEEK = SECONDS_PER_DAY * DAYS_PER_WEEK;
+
+constexpr long double EPSILON = 2.0L * std::numeric_limits<long double>::epsilon();
+
+constexpr std::array<uint16_t, 11> MONTHS_DOY{ 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+
+/// Maps GPS leap seconds to a time: array<mjd_day>, index + 1 is amount of leap seconds
+constexpr std::array<uint32_t, 20> GPS_LEAP_SEC_MJD = {
+    0,     // 1 Jan 1980 and before
+    44786, // 1 Jul 1981  //diff UTC-TAI: 20
+    45151, // 1 Jul 1982  //diff UTC-TAI: 21
+    45516, // 1 Jul 1983  //diff UTC-TAI: 22
+    46247, // 1 Jul 1985  //diff UTC-TAI: 23
+    47161, // 1 Jan 1988  //diff UTC-TAI: 24
+    47892, // 1 Jan 1990  //diff UTC-TAI: 25
+    48257, // 1 Jan 1991  //diff UTC-TAI: 26
+    48804, // 1 Jul 1992  //diff UTC-TAI: 27
+    49169, // 1 Jul 1993  //diff UTC-TAI: 28
+    49534, // 1 Jul 1994  //diff UTC-TAI: 29
+    50083, // 1 Jan 1996  //diff UTC-TAI: 30
+    50630, // 1 Jul 1997  //diff UTC-TAI: 31
+    51179, // 1 Jan 1999  //diff UTC-TAI: 32
+    53736, // 1 Jan 2006  //diff UTC-TAI: 33
+    54832, // 1 Jan 2009  //diff UTC-TAI: 34
+    56109, // 1 Jul 2012  //diff UTC-TAI: 35
+    57204, // 1 Jul 2015  //diff UTC-TAI: 36
+    57754, // 1 Jan 2017  //diff UTC-TAI: 37
+    99999, // future
+};
+
+/// @brief Returns true if the provided year is a leap year, false otherwise
+/// @param[in] year The year to check
+/// @return
+constexpr bool isLeapYear(int32_t year)
+{
+    return (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
+}
+
+/// @brief Returns the number of days in the specified month of the year
+/// @param[in] month Month [1-12]
+/// @param[in] year Year to determine the leap year
+/// @return Number of days in the specified month
+constexpr int32_t daysInMonth(int32_t month, int32_t year)
+{
+    while (month > InsTimeUtil::MONTHS_PER_YEAR)
+    {
+        month -= InsTimeUtil::MONTHS_PER_YEAR;
+        year++;
+    }
+    while (month < 1)
+    {
+        month += MONTHS_PER_YEAR;
+        year--;
+    }
+
+    switch (month)
+    {
+    case 1:
+        return 31;
+    case 2:
+        if (isLeapYear(year))
+        {
+            return 29;
+        }
+        return 28;
+    case 3:
+        return 31;
+    case 4:
+        return 30;
+    case 5:
+        return 31;
+    case 6:
+        return 30;
+    case 7:
+        return 31;
+    case 8:
+        return 31;
+    case 9:
+        return 30;
+    case 10:
+        return 31;
+    case 11:
+        return 30;
+    case 12:
+        return 31;
+    default:
+        return 366;
+    }
+}
+} // namespace InsTimeUtil
+
+/// Modified Julien Date [UTC]
+struct InsTime_MJD
+{
+    uint32_t mjd_day = InsTimeUtil::END_OF_THE_CENTURY_MJD; //!< Full days of the Modified Julien Date [UTC]
+    long double mjd_frac = 0.0L;                            //!< Decimal fractions of a day of the Modified Julien Date [UTC]
+
+    /// @brief Default constructor
+    constexpr InsTime_MJD() = default;
+
+    /// @brief Constructor
+    /// @param[in] mjd_day Full days of the Modified Julien Date [UTC]
+    /// @param[in] mjd_frac Decimal fractions of a day of the Modified Julien Date [UTC]
+    constexpr InsTime_MJD(uint32_t mjd_day, long double mjd_frac)
+        : mjd_day(mjd_day), mjd_frac(mjd_frac)
+    {
+        while (this->mjd_frac >= 1.0L)
+        {
+            this->mjd_frac -= 1.0L;
+            this->mjd_day++;
+        }
+        while (this->mjd_frac < 0.0L)
+        {
+            this->mjd_frac += 1.0L;
+            this->mjd_day--;
+        }
+    }
+
+    constexpr bool operator==(const InsTime_MJD& rhs) const
+    {
+        return (mjd_day == rhs.mjd_day
+                && gcem::abs(mjd_frac - rhs.mjd_frac) <= InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator!=(const InsTime_MJD& rhs) const
+    {
+        return (mjd_day != rhs.mjd_day
+                || gcem::abs(mjd_frac - rhs.mjd_frac) > InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator<=(const InsTime_MJD& rhs) const
+    {
+        return *this < rhs || *this == rhs;
+    }
+    constexpr bool operator>=(const InsTime_MJD& rhs) const
+    {
+        return *this > rhs || *this == rhs;
+    }
+    constexpr bool operator<(const InsTime_MJD& rhs) const
+    {
+        return (mjd_day < rhs.mjd_day
+                || (mjd_day == rhs.mjd_day && (mjd_frac < rhs.mjd_frac && *this != rhs)));
+    }
+    constexpr bool operator>(const InsTime_MJD& rhs) const
+    {
+        return (mjd_day > rhs.mjd_day
+                || (mjd_day == rhs.mjd_day && mjd_frac > rhs.mjd_frac && *this != rhs));
+    }
+};
+
+/// Julien Date [UTC]
+struct InsTime_JD
+{
+    uint32_t jd_day{};     //!< Full days of the Julien Date [UTC]
+    long double jd_frac{}; //!< Decimal fractions of a day of the Julien Date [UTC]
+
+    /// @brief Constructor
+    /// @param[in] jd_day Full days of the Julien Date [UTC]
+    /// @param[in] jd_frac Decimal fractions of a day of the Julien Date [UTC]
+    constexpr InsTime_JD(uint32_t jd_day, long double jd_frac)
+        : jd_day(jd_day), jd_frac(jd_frac)
+    {
+        while (this->jd_frac >= 1.0L)
+        {
+            this->jd_frac -= 1.0L;
+            this->jd_day++;
+        }
+        while (this->jd_frac < 0.0L)
+        {
+            this->jd_frac += 1.0L;
+            this->jd_day--;
+        }
+    }
+
+    constexpr bool operator==(const InsTime_JD& rhs) const
+    {
+        return (jd_day == rhs.jd_day
+                && gcem::abs(jd_frac - rhs.jd_frac) <= InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator!=(const InsTime_JD& rhs) const
+    {
+        return (jd_day != rhs.jd_day
+                || gcem::abs(jd_frac - rhs.jd_frac) > InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator<=(const InsTime_JD& rhs) const
+    {
+        return *this < rhs || *this == rhs;
+    }
+    constexpr bool operator>=(const InsTime_JD& rhs) const
+    {
+        return *this > rhs || *this == rhs;
+    }
+    constexpr bool operator<(const InsTime_JD& rhs) const
+    {
+        return (jd_day < rhs.jd_day
+                || (jd_day == rhs.jd_day && jd_frac < rhs.jd_frac && *this != rhs));
+    }
+    constexpr bool operator>(const InsTime_JD& rhs) const
+    {
+        return (jd_day > rhs.jd_day
+                || (jd_day == rhs.jd_day && jd_frac > rhs.jd_frac && *this != rhs));
+    }
+};
+
+/// GPS week and time of week in GPS standard time [GPST]
+struct InsTime_GPSweekTow
+{
+    int32_t gpsCycle{}; //!< Contains GPS cycle in GPS standard time [GPST]
+    int32_t gpsWeek{};  //!< Contains GPS week in GPS standard time [GPST]
+    long double tow{};  //!< Contains GPS time of week in GPS standard time [GPST]
+
+    /// @brief Constructor
+    /// @param[in] gpsCycle GPS cycle in GPS standard time [GPST]
+    /// @param[in] gpsWeek GPS week in GPS standard time [GPST]
+    /// @param[in] tow GPS time of week in GPS standard time [GPST]
+    constexpr InsTime_GPSweekTow(int32_t gpsCycle, int32_t gpsWeek, long double tow)
+        : gpsCycle(gpsCycle), gpsWeek(gpsWeek), tow(tow)
+    {
+        while (this->tow >= InsTimeUtil::SECONDS_PER_WEEK)
+        {
+            this->tow -= InsTimeUtil::SECONDS_PER_WEEK;
+            this->gpsWeek++;
+        }
+        while (this->tow < 0.0L)
+        {
+            this->tow += InsTimeUtil::SECONDS_PER_WEEK;
+            this->gpsWeek--;
+        }
+        while (this->gpsWeek >= InsTimeUtil::WEEKS_PER_GPS_CYCLE)
+        {
+            this->gpsWeek -= InsTimeUtil::WEEKS_PER_GPS_CYCLE;
+            this->gpsCycle++;
+        }
+        while (this->gpsWeek < 0)
+        {
+            this->gpsWeek += InsTimeUtil::WEEKS_PER_GPS_CYCLE;
+            this->gpsCycle--;
+        }
+    };
+
+    constexpr bool operator==(const InsTime_GPSweekTow& rhs) const
+    {
+        return (gpsCycle == rhs.gpsCycle
+                && gpsWeek == rhs.gpsWeek
+                && gcem::abs(tow - rhs.tow) <= InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator!=(const InsTime_GPSweekTow& rhs) const
+    {
+        return (gpsCycle != rhs.gpsCycle
+                || gpsWeek != rhs.gpsWeek
+                || gcem::abs(tow - rhs.tow) > InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator<=(const InsTime_GPSweekTow& rhs) const
+    {
+        return *this < rhs || *this == rhs;
+    }
+    constexpr bool operator>=(const InsTime_GPSweekTow& rhs) const
+    {
+        return *this > rhs || *this == rhs;
+    }
+    constexpr bool operator<(const InsTime_GPSweekTow& rhs) const
+    {
+        return (gpsCycle < rhs.gpsCycle
+                || gpsWeek < rhs.gpsWeek
+                || (gpsCycle == rhs.gpsCycle
+                    && gpsWeek == rhs.gpsWeek
+                    && tow < rhs.tow
+                    && *this != rhs));
+    }
+    constexpr bool operator>(const InsTime_GPSweekTow& rhs) const
+    {
+        return (gpsCycle > rhs.gpsCycle
+                || gpsWeek > rhs.gpsWeek
+                || (gpsCycle == rhs.gpsCycle
+                    && gpsWeek == rhs.gpsWeek
+                    && tow > rhs.tow
+                    && *this != rhs));
+    }
+};
+
+/// Universal Time Coordinated [UTC]
+struct InsTime_YMDHMS
+{
+    int32_t year{};    //!< Contains year in Universal Time Coordinated [UTC]
+    int32_t month{};   //!< Contains month in Universal Time Coordinated [UTC]
+    int32_t day{};     //!< Contains day in Universal Time Coordinated [UTC]
+    int32_t hour{};    //!< Contains hour in Universal Time Coordinated [UTC]
+    int32_t min{};     //!< Contains minute in Universal Time Coordinated [UTC]
+    long double sec{}; //!< Contains second in Universal Time Coordinated [UTC]
+
+    /// @brief Constructor
+    /// @param[in] year Year in Universal Time Coordinated [UTC]
+    /// @param[in] month Month in Universal Time Coordinated [UTC]
+    /// @param[in] day Day in Universal Time Coordinated [UTC]
+    /// @param[in] hour Hour in Universal Time Coordinated [UTC]
+    /// @param[in] min Minute in Universal Time Coordinated [UTC]
+    /// @param[in] sec Second in Universal Time Coordinated [UTC]
+    constexpr InsTime_YMDHMS(int32_t year, int32_t month, int32_t day, int32_t hour, int32_t min, long double sec)
+        : year(year), month(month), day(day), hour(hour), min(min), sec(sec)
+    {
+        while (this->sec >= InsTimeUtil::SECONDS_PER_MINUTE)
+        {
+            this->sec -= InsTimeUtil::SECONDS_PER_MINUTE;
+            this->min++;
+        }
+        while (this->sec < 0.0L)
+        {
+            this->sec += InsTimeUtil::SECONDS_PER_MINUTE;
+            this->min--;
+        }
+
+        while (this->min >= InsTimeUtil::MINUTES_PER_HOUR)
+        {
+            this->min -= InsTimeUtil::MINUTES_PER_HOUR;
+            this->hour++;
+        }
+        while (this->min < 0)
+        {
+            this->min += InsTimeUtil::MINUTES_PER_HOUR;
+            this->hour--;
+        }
+
+        while (this->hour >= InsTimeUtil::HOURS_PER_DAY)
+        {
+            this->hour -= InsTimeUtil::HOURS_PER_DAY;
+            this->day++;
+        }
+        while (this->hour < 0)
+        {
+            this->hour += InsTimeUtil::HOURS_PER_DAY;
+            this->day--;
+        }
+
+        while (this->day > InsTimeUtil::daysInMonth(this->month, this->year))
+        {
+            this->day -= InsTimeUtil::daysInMonth(this->month, this->year);
+            this->month++;
+        }
+        while (this->day < 1)
+        {
+            this->day += InsTimeUtil::daysInMonth(this->month, this->year);
+            this->month--;
+        }
+
+        while (this->month > InsTimeUtil::MONTHS_PER_YEAR)
+        {
+            this->month -= InsTimeUtil::MONTHS_PER_YEAR;
+            this->year++;
+        }
+        while (this->month < 1)
+        {
+            this->month += InsTimeUtil::MONTHS_PER_YEAR;
+            this->year--;
+        }
+    }
+
+    constexpr bool operator==(const InsTime_YMDHMS& rhs) const
+    {
+        return (year == rhs.year
+                && month == rhs.month
+                && day == rhs.day
+                && hour == rhs.hour
+                && min == rhs.min
+                && gcem::abs(sec - rhs.sec) <= InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator!=(const InsTime_YMDHMS& rhs) const
+    {
+        return (year != rhs.year
+                || month != rhs.month
+                || day != rhs.day
+                || hour != rhs.hour
+                || min != rhs.min
+                || gcem::abs(sec - rhs.sec) > InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator<=(const InsTime_YMDHMS& rhs) const
+    {
+        return (year < rhs.year
+                || month < rhs.month
+                || day < rhs.day
+                || hour < rhs.hour
+                || min < rhs.min
+                || (year == rhs.year
+                    && month == rhs.month
+                    && day == rhs.day
+                    && hour == rhs.hour
+                    && min == rhs.min
+                    && sec <= rhs.sec));
+    }
+    constexpr bool operator>=(const InsTime_YMDHMS& rhs) const
+    {
+        return (year > rhs.year
+                || month > rhs.month
+                || day > rhs.day
+                || hour > rhs.hour
+                || min > rhs.min
+                || (year == rhs.year
+                    && month == rhs.month
+                    && day == rhs.day
+                    && hour == rhs.hour
+                    && min == rhs.min
+                    && sec >= rhs.sec));
+    }
+    constexpr bool operator<(const InsTime_YMDHMS& rhs) const
+    {
+        return (year < rhs.year
+                || month < rhs.month
+                || day < rhs.day
+                || hour < rhs.hour
+                || min < rhs.min
+                || (year == rhs.year
+                    && month == rhs.month
+                    && day == rhs.day
+                    && hour == rhs.hour
+                    && min == rhs.min
+                    && sec < rhs.sec
+                    && *this != rhs));
+    }
+    constexpr bool operator>(const InsTime_YMDHMS& rhs) const
+    {
+        return (year > rhs.year
+                || month > rhs.month
+                || day > rhs.day
+                || hour > rhs.hour
+                || min > rhs.min
+                || (year == rhs.year
+                    && month == rhs.month
+                    && day == rhs.day
+                    && hour == rhs.hour
+                    && min == rhs.min
+                    && sec > rhs.sec
+                    && *this != rhs));
+    }
+};
+
+/// GPS year and day of year in GPS standard time [GPST]
+struct InsTime_YDoySod
+{
+    int32_t year{};    //!< Contains year in GPS standard time [GPST]
+    int32_t doy{};     //!< Contains day of year in GPS standard time [GPST]
+    long double sod{}; //!< Contains second of day in GPS standard time [GPST]
+
+    /// @brief Constructor
+    /// @param[in] year Year in GPS standard time [GPST]
+    /// @param[in] doy Day of year in GPS standard time [1-365(/366)]
+    /// @param[in] sod Second of day in GPS standard time [GPST]
+    constexpr InsTime_YDoySod(int32_t year, int32_t doy, long double sod)
+        : year(year), doy(doy), sod(sod)
+    {
+        while (this->sod >= InsTimeUtil::SECONDS_PER_DAY)
+        {
+            this->sod -= InsTimeUtil::SECONDS_PER_DAY;
+            this->doy++;
+        }
+        while (this->sod < 0)
+        {
+            this->sod += InsTimeUtil::SECONDS_PER_DAY;
+            this->doy--;
+        }
+
+        while (this->doy > InsTimeUtil::DAYS_PER_YEAR + static_cast<int32_t>(InsTimeUtil::isLeapYear(this->year)))
+        {
+            this->doy -= InsTimeUtil::DAYS_PER_YEAR + static_cast<int32_t>(InsTimeUtil::isLeapYear(this->year));
+            this->year++;
+        }
+        while (this->doy < 1)
+        {
+            this->doy += InsTimeUtil::DAYS_PER_YEAR + static_cast<int32_t>(InsTimeUtil::isLeapYear(this->year - 1));
+            this->year--;
+        }
+    }
+
+    constexpr bool operator==(const InsTime_YDoySod& rhs) const
+    {
+        return (year == rhs.year
+                && doy == rhs.doy
+                && gcem::abs(sod - rhs.sod) <= InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator!=(const InsTime_YDoySod& rhs) const
+    {
+        return (year != rhs.year
+                || doy != rhs.doy
+                || gcem::abs(sod - rhs.sod) > InsTimeUtil::EPSILON);
+    }
+    constexpr bool operator<=(const InsTime_YDoySod& rhs) const
+    {
+        return *this < rhs || *this == rhs;
+    }
+    constexpr bool operator>=(const InsTime_YDoySod& rhs) const
+    {
+        return *this > rhs || *this == rhs;
+    }
+    constexpr bool operator<(const InsTime_YDoySod& rhs) const
+    {
+        return (year < rhs.year
+                || doy < rhs.doy
+                || (year == rhs.year
+                    && doy == rhs.doy
+                    && sod < rhs.sod
+                    && *this != rhs));
+    }
+    constexpr bool operator>(const InsTime_YDoySod& rhs) const
+    {
+        return (year > rhs.year
+                || doy > rhs.doy
+                || (year == rhs.year
+                    && doy == rhs.doy
+                    && sod > rhs.sod
+                    && *this != rhs));
+    }
+};
+
 /// The class is responsible for all time-related tasks
 class InsTime
 {
   public:
-    // --------------------------------------- Structs -------------------------------------------
-
     /// @brief List of all time systems
     enum TIME_SYSTEM
     {
@@ -34,263 +562,6 @@ class InsTime
         BDT,
         QZSST,
         IRNSST
-    };
-
-    /// Modified Julien Date [UTC]
-    struct InsTime_MJD
-    {
-        unsigned int mjd_day = endOfTheCentury; //!< Full days of the Modified Julien Date [UTC]
-        long double mjd_frac = 0.0L;            //!< Decimal fractions of a day of the Modified Julien Date [UTC]
-
-        /// @brief Default constructor
-        constexpr InsTime_MJD() = default;
-
-        /// @brief Constructor
-        /// @param[in] mjd_day Full days of the Modified Julien Date [UTC]
-        /// @param[in] mjd_frac Decimal fractions of a day of the Modified Julien Date [UTC]
-        constexpr InsTime_MJD(unsigned int mjd_day, long double mjd_frac)
-            : mjd_day(mjd_day), mjd_frac(mjd_frac) {}
-
-        /// @brief Constructor
-        /// @param[in] insTime InsTime object
-        constexpr explicit InsTime_MJD(const InsTime& insTime)
-            : mjd_day(insTime.mjd.mjd_day), mjd_frac(insTime.mjd.mjd_frac) {}
-
-        // FIXME: Replace with Spaceship operator after it becomes available in the C++20 standard
-        // constexpr std::strong_ordering operator<=>(const InsTime_MJD& rhs) const
-        // {
-        //     // perform a three-way comparison between the mjd_day's.
-        //     // If that result != 0 (that is, the mjd_day's differ),
-        //     // then that's the result of the overall comparison
-        //     if (auto cmp = mjd_day <=> rhs.mjd_day; cmp != nullptr)
-        //     {
-        //         return cmp;
-        //     }
-        //     if (std::abs(rhs.mjd_frac - mjd_frac) <= epsilon)
-        //     {
-        //         return std::strong_ordering::equivalent;
-        //     }
-        //     return mjd_frac > rhs.mjd_frac ? std::strong_ordering::greater : std::strong_ordering::less;
-        // }
-
-        constexpr bool operator==(const InsTime_MJD& rhs) const
-        {
-            return (rhs.mjd_day == mjd_day
-                    && std::abs(rhs.mjd_frac - mjd_frac) <= epsilon);
-        }
-        bool operator!=(const InsTime_MJD& rhs) const
-        {
-            return (rhs.mjd_day != mjd_day
-                    || std::abs(rhs.mjd_frac - mjd_frac) >= epsilon);
-        }
-        constexpr bool operator<=(const InsTime_MJD& rhs) const
-        {
-            return (mjd_day < rhs.mjd_day
-                    || (mjd_day == rhs.mjd_day && mjd_frac <= rhs.mjd_frac));
-        }
-        constexpr bool operator>=(const InsTime_MJD& rhs) const
-        {
-            return (mjd_day > rhs.mjd_day
-                    || (mjd_day == rhs.mjd_day && mjd_frac >= rhs.mjd_frac));
-        }
-        constexpr bool operator<(const InsTime_MJD& rhs) const
-        {
-            return (mjd_day < rhs.mjd_day
-                    || (mjd_day == rhs.mjd_day && mjd_frac < rhs.mjd_frac));
-        }
-        constexpr bool operator>(const InsTime_MJD& rhs) const
-        {
-            return (mjd_day > rhs.mjd_day
-                    || (mjd_day == rhs.mjd_day && mjd_frac > rhs.mjd_frac));
-        }
-    };
-
-    /// Julien Date [UTC]
-    struct InsTime_JD
-    {
-        unsigned int jd_day{}; //!< Full days of the Julien Date [UTC]
-        long double jd_frac{}; //!< Decimal fractions of a day of the Julien Date [UTC]
-
-        /// @brief Default constructor
-        constexpr InsTime_JD() = default;
-
-        /// @brief Constructor
-        /// @param[in] jd_day Full days of the Julien Date [UTC]
-        /// @param[in] jd_frac Decimal fractions of a day of the Julien Date [UTC]
-        constexpr InsTime_JD(unsigned int jd_day, long double jd_frac)
-            : jd_day(jd_day), jd_frac(jd_frac) {}
-
-        /// @brief Constructor
-        /// @param[in] insTime InsTime object
-        constexpr explicit InsTime_JD(const InsTime& insTime)
-        {
-            jd_day = insTime.mjd.mjd_day + 2400000;
-            jd_frac = insTime.mjd.mjd_frac + 0.5L;
-
-            if (jd_frac >= 1.0L)
-            {
-                jd_day++;
-                jd_frac--;
-            }
-        }
-    };
-
-    /// GPS week and time of week in GPS standard time [GPST]
-    struct InsTime_GPSweekTow
-    {
-        friend InsTime;
-
-        uint16_t gpsWeek{};  //!< Contains GPS week in GPS standard time [GPST]
-        long double tow{};   //!< Contains GPS time of week in GPS standard time [GPST]
-        uint16_t gpsCycle{}; //!< Contains GPS cycle in GPS standard time [GPST]
-
-        /// @brief Default constructor
-        constexpr InsTime_GPSweekTow() = default;
-
-        /// @brief Constructor
-        /// @param[in] gpsWeek GPS week in GPS standard time [GPST]
-        /// @param[in] tow GPS time of week in GPS standard time [GPST]
-        /// @param[in] gpsCycle GPS cycle in GPS standard time [GPST]
-        constexpr InsTime_GPSweekTow(uint16_t gpsWeek, long double tow, uint16_t gpsCycle)
-            : gpsWeek(gpsWeek), tow(tow), gpsCycle(gpsCycle) {}
-
-        /// @brief Constructor
-        /// @param[in] insTime InsTime object
-        constexpr explicit InsTime_GPSweekTow(const InsTime& insTime) // TODO: constexpr
-        {
-            InsTime_MJD mjd = insTime.mjd;
-            mjd.mjd_frac += static_cast<long double>(leapGps2UTC(mjd)) / SEC_IN_DAY; // from UTC to GPST
-            if (mjd.mjd_frac < 0.0L)
-            {
-                mjd.mjd_day -= 1;
-                mjd.mjd_frac += 1.0L;
-            }
-            gpsCycle = static_cast<uint16_t>(static_cast<double>(mjd.mjd_day - DIFF_TO_6_1_1980) / (1024.0 * 7.0));
-            gpsWeek = static_cast<uint16_t>((mjd.mjd_day - DIFF_TO_6_1_1980 - gpsCycle * DAYS_PER_GPS_CYCLE * DAYS_PER_WEEK)
-                                            / static_cast<double>(DAYS_PER_WEEK));
-            tow = static_cast<long double>((mjd.mjd_day - DIFF_TO_6_1_1980) % DAYS_PER_WEEK) * SEC_IN_DAY + mjd.mjd_frac * SEC_IN_DAY;
-        }
-
-      private:
-        static constexpr unsigned int DIFF_TO_6_1_1980 = 44244;
-        static constexpr unsigned int DAYS_PER_GPS_CYCLE = 1024;
-        static constexpr unsigned int DAYS_PER_WEEK = 7;
-    };
-
-    /// GPS year and day of year in GPS standard time [GPST]
-    struct InsTime_YDoySod
-    {
-        uint16_t year{};   //!< Contains year in GPS standard time [GPST]
-        uint16_t doy{};    //!< Contains day of year in GPS standard time [GPST]
-        long double sod{}; //!< Contains second of day in GPS standard time [GPST]
-
-        /// @brief Default constructor
-        constexpr InsTime_YDoySod() = default;
-
-        /// @brief Constructor
-        /// @param[in] year Year in GPS standard time [GPST]
-        /// @param[in] doy Day of year in GPS standard time [GPST]
-        /// @param[in] sod Second of day in GPS standard time [GPST]
-        constexpr InsTime_YDoySod(uint16_t year, uint16_t doy, long double sod)
-            : year(year), doy(doy), sod(sod) {}
-
-        /// @brief Constructor
-        /// @param[in] insTime InsTime object
-        constexpr explicit InsTime_YDoySod(const InsTime& insTime)
-        {
-            auto yearMonthDayHMS = InsTime_YMDHMS(insTime);
-
-            constexpr std::array<uint16_t, 11> daysOfMonth{ 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
-
-            year = yearMonthDayHMS.year;
-            sod = static_cast<long double>(yearMonthDayHMS.hour * 3600.0 + yearMonthDayHMS.min * 60.0)
-                  + yearMonthDayHMS.sec
-                  + static_cast<long double>(leapGps2UTC(insTime.mjd));
-
-            if (yearMonthDayHMS.month == 1)
-            {
-                doy = yearMonthDayHMS.day;
-            }
-            else if (yearMonthDayHMS.month == 2)
-            {
-                doy = daysOfMonth.at(0) + yearMonthDayHMS.day;
-            }
-            else // for march to december
-            {
-                if (isLeapYear(yearMonthDayHMS.year))
-                {
-                    doy = 1U + daysOfMonth.at(yearMonthDayHMS.month - 2) + yearMonthDayHMS.day;
-                }
-                else
-                {
-                    doy = daysOfMonth.at(yearMonthDayHMS.month - 2) + yearMonthDayHMS.day;
-                }
-            }
-            if (sod >= SEC_IN_DAY)
-            {
-                doy++;
-                sod -= SEC_IN_DAY;
-                if (doy == 366 && !isLeapYear(yearMonthDayHMS.year))
-                {
-                    year--;
-                    doy = 365;
-                }
-            }
-        }
-    };
-
-    /// Universal Time Coordinated [UTC]
-    struct InsTime_YMDHMS
-    {
-        uint16_t year{};   //!< Contains year in Universal Time Coordinated [UTC]
-        uint16_t month{};  //!< Contains month in Universal Time Coordinated [UTC]
-        uint16_t day{};    //!< Contains day in Universal Time Coordinated [UTC]
-        uint16_t hour{};   //!< Contains hour in Universal Time Coordinated [UTC]
-        uint16_t min{};    //!< Contains minute in Universal Time Coordinated [UTC]
-        long double sec{}; //!< Contains second in Universal Time Coordinated [UTC]
-
-        /// @brief Default constructor
-        constexpr InsTime_YMDHMS() = default;
-
-        /// @brief Constructor
-        /// @param[in] year Year in Universal Time Coordinated [UTC]
-        /// @param[in] month Month in Universal Time Coordinated [UTC]
-        /// @param[in] day Day in Universal Time Coordinated [UTC]
-        /// @param[in] hour Hour in Universal Time Coordinated [UTC]
-        /// @param[in] min Minute in Universal Time Coordinated [UTC]
-        /// @param[in] sec Second in Universal Time Coordinated [UTC]
-        constexpr InsTime_YMDHMS(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec)
-            : year(year), month(month), day(day), hour(hour), min(min), sec(sec) {}
-
-        /// @brief Constructor
-        /// @param[in] insTime InsTime object
-        constexpr explicit InsTime_YMDHMS(const InsTime& insTime)
-        {
-            // transform MJD to JD
-            auto jd = InsTime(insTime.mjd).toJD();
-            jd.jd_frac = jd.jd_frac + 0.5L;
-            if (jd.jd_frac >= 1.0L)
-            {
-                jd.jd_day += 1;
-                jd.jd_frac -= 1.0L;
-            }
-            // transform JD to YMDHMS
-            double a = std::floor(static_cast<double>(jd.jd_day) + 0.0) + 32044.0;
-            double b = std::floor((4.0 * a + 3.0) / 146097.0);
-            double c = a - std::floor((b * 146097.0) / 4.0);
-
-            double d = std::floor((4.0 * c + 3.0) / 1461.0);
-            double e = c - std::floor((1461.0 * d) / 4.0);
-            double m = std::floor((5.0 * e + 2.0) / 153.0);
-
-            day = static_cast<uint16_t>(e - std::floor((153.0 * m + 2.0) / 5.0) + 1);
-            month = static_cast<uint16_t>(m + 3 - 12 * std::floor(m / 10.0));
-            year = static_cast<uint16_t>(b * 100 + d - 4800.0 + std::floor(m / 10.0));
-
-            hour = static_cast<uint16_t>(std::floor(jd.jd_frac * 24.0L));
-            min = static_cast<uint16_t>(std::floor(jd.jd_frac * 24.0L * 60.0L) - hour * 60.0L);
-            sec = jd.jd_frac * 24.0L * 3600.0L - static_cast<long double>(hour * 3600.0 + min * 60.0);
-        }
     };
 
     // --------------------------- Constructors  ----------------------------------
@@ -306,45 +577,88 @@ class InsTime
     /// @brief Constructor
     /// @param[in] jd Time in Julien Date [UTC]
     constexpr explicit InsTime(const InsTime_JD& jd)
-    {
-        mjd.mjd_day = jd.jd_day - 2400000;
-        mjd.mjd_frac = jd.jd_frac - 0.5L;
-        if (mjd.mjd_frac < 0.0L)
-        {
-            mjd.mjd_day -= 1;
-            mjd.mjd_frac += 1.0L;
-        }
-    }
+        : mjd(jd.jd_day - InsTimeUtil::DIFF_MJD_TO_JD_DAYS, jd.jd_frac - InsTimeUtil::DIFF_MJD_TO_JD_FRAC) {}
 
     /// @brief Constructor
     /// @param[in] gpsWeekTow Time in GPS standard time [GPST]
     constexpr explicit InsTime(const InsTime_GPSweekTow& gpsWeekTow)
     {
-        mjd.mjd_day = static_cast<unsigned int>((gpsWeekTow.gpsCycle * InsTime_GPSweekTow::DAYS_PER_GPS_CYCLE + gpsWeekTow.gpsWeek) * InsTime_GPSweekTow::DAYS_PER_WEEK
-                                                + std::floor(gpsWeekTow.tow / SEC_IN_DAY)
-                                                + InsTime_GPSweekTow::DIFF_TO_6_1_1980);
-        mjd.mjd_frac = std::fmod(gpsWeekTow.tow, SEC_IN_DAY) / SEC_IN_DAY;
-        mjd.mjd_frac -= static_cast<long double>(leapGps2UTC(mjd)) / SEC_IN_DAY; // from GPST to UTC
-        if (mjd.mjd_frac < 0.0L)
-        {
-            mjd.mjd_day -= 1;
-            mjd.mjd_frac += 1.0L;
-        }
+        auto mjd_day = static_cast<uint32_t>((gpsWeekTow.gpsCycle * InsTimeUtil::WEEKS_PER_GPS_CYCLE + gpsWeekTow.gpsWeek) * InsTimeUtil::DAYS_PER_WEEK
+                                             + gcem::floor(gpsWeekTow.tow / InsTimeUtil::SECONDS_PER_DAY)
+                                             + InsTimeUtil::DIFF_TO_6_1_1980_MJD);
+        long double mjd_frac = gcem::fmod(gpsWeekTow.tow, InsTimeUtil::SECONDS_PER_DAY) / InsTimeUtil::SECONDS_PER_DAY;
+
+        mjd_frac -= static_cast<long double>(leapGps2UTC(InsTime_MJD(mjd_day, mjd_frac))) / InsTimeUtil::SECONDS_PER_DAY; // from GPST to UTC
+
+        mjd = InsTime_MJD(mjd_day, mjd_frac);
+    }
+
+    /// @brief Constructor
+    /// @param[in] yearMonthDayHMS Time in Universal Time Coordinated [UTC]
+    constexpr explicit InsTime(const InsTime_YMDHMS& yearMonthDayHMS)
+    {
+        auto a = static_cast<int32_t>((14 - yearMonthDayHMS.month) / static_cast<double>(InsTimeUtil::MONTHS_PER_YEAR));
+        int32_t y = yearMonthDayHMS.year + 4800 - a;
+        int32_t m = yearMonthDayHMS.month + InsTimeUtil::MONTHS_PER_YEAR * a - 3;
+
+        auto jd_day = static_cast<uint32_t>(yearMonthDayHMS.day
+                                            + gcem::floor((153.0 * static_cast<double>(m) + 2.0) / 5.0)
+                                            + y * InsTimeUtil::DAYS_PER_YEAR
+                                            + gcem::floor(static_cast<double>(y) / 4.0)
+                                            - gcem::floor(static_cast<double>(y) / 100.0)
+                                            + gcem::floor(static_cast<double>(y) / 400.0)
+                                            - 32045);
+        auto jd_frac = (yearMonthDayHMS.sec
+                        + static_cast<long double>(yearMonthDayHMS.min) * InsTimeUtil::SECONDS_PER_MINUTE
+                        + static_cast<long double>(yearMonthDayHMS.hour - 12.0) * InsTimeUtil::SECONDS_PER_HOUR)
+                       / InsTimeUtil::SECONDS_PER_DAY;
+
+        mjd = InsTime(InsTime_JD(jd_day, jd_frac)).toMJD();
     }
 
     /// @brief Constructor
     /// @param[in] yearDoySod Time in GPS standard time [GPST]
-    explicit InsTime(const InsTime_YDoySod& yearDoySod);
+    constexpr explicit InsTime(const InsTime_YDoySod& yearDoySod)
+    {
+        auto year = yearDoySod.year;
+        auto doy = yearDoySod.doy;
+        auto sod = yearDoySod.sod;
+
+        int32_t leapDay = 0;
+        if (InsTimeUtil::isLeapYear(year) && doy > InsTimeUtil::MONTHS_DOY.at(1))
+        {
+            leapDay = 1;
+        }
+
+        const auto* low = std::lower_bound(InsTimeUtil::MONTHS_DOY.begin(), InsTimeUtil::MONTHS_DOY.end(), (doy - leapDay));
+        auto month_number = static_cast<uint16_t>(low - InsTimeUtil::MONTHS_DOY.begin() + 1); // Month number by substracting iterators to get position
+        sod -= static_cast<long double>(leapGps2UTC(yearDoySod));
+        if (sod < 0.0L)
+        {
+            doy -= 1;
+            sod += InsTimeUtil::SECONDS_PER_DAY;
+            if (doy < 1)
+            {
+                year -= 1;
+                doy += 365;
+                if (InsTimeUtil::isLeapYear(year) && month_number > 2)
+                {
+                    doy += 1;
+                }
+            }
+        }
+
+        auto day = static_cast<uint16_t>(static_cast<int32_t>(doy) - leapDay - InsTimeUtil::MONTHS_DOY.at(month_number - 2));
+
+        mjd = InsTime(InsTime_YMDHMS(year, month_number, day, 0, 0, sod)).toMJD();
+    }
 
     /// @brief Constructor
-    /// @param[in] yearMonthDayHMS Time in Universal Time Coordinated [UTC]
-    explicit InsTime(const InsTime_YMDHMS& yearMonthDayHMS);
-
-    /// @brief Constructor
+    /// @param[in] gpsCycle GPS cycle in GPS standard time [GPST]
     /// @param[in] gpsWeek GPS week in GPS standard time [GPST]
     /// @param[in] tow GPS time of week in GPS standard time [GPST]
-    /// @param[in] gpsCycle GPS cycle in GPS standard time [GPST]
-    InsTime(uint16_t gpsWeek, long double tow, uint16_t gpsCycle);
+    constexpr InsTime(int32_t gpsCycle, int32_t gpsWeek, long double tow)
+        : InsTime(InsTime_GPSweekTow(gpsCycle, gpsWeek, tow)) {}
 
     /// @brief Constructor
     /// @param[in] year Year
@@ -354,39 +668,131 @@ class InsTime
     /// @param[in] min Minute
     /// @param[in] sec Second
     /// @param[in] timesys Time System in which the previous values are given in
-    InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TIME_SYSTEM timesys = TIME_SYSTEM::UTC);
+    constexpr InsTime(uint16_t year, uint16_t month, uint16_t day, uint16_t hour, uint16_t min, long double sec, TIME_SYSTEM timesys = TIME_SYSTEM::UTC)
+        : InsTime(InsTime_YMDHMS(year, month, day, hour, min, sec))
+    {
+        if (timesys == TIME_SYSTEM::GPST) // = GPS Time (UTC - leap_seconds)
+        {
+            int32_t leapSec = this->leapGps2UTC();
+            this->addDiffSec(-leapSec);
+        }
+        else if (timesys == TIME_SYSTEM::GLNT) // = GLONASS Time (UTC+ 3h)
+        {
+            constexpr int32_t utcDiff = 3 * 60 * 60;
+            this->addDiffSec(-utcDiff);
+        }
+        else if (timesys == TIME_SYSTEM::GST) // = GALILEO Time (~ GPS TIME_SYSTEM )
+        {
+            //  is synchronised with TAI with a nominal offset below 50 ns
+            int32_t leapSec = this->leapGps2UTC(); // UTC = GST - 18
+            this->addDiffSec(-leapSec);
+        }
+        else if (timesys == TIME_SYSTEM::BDT) // = BeiDou Time (UTC)
+        {
+            // is synchronised with UTC within 100 ns<
+        }
+    }
 
     /// @brief Destructor
     ~InsTime() = default;
     /// @brief Copy constructor
-    InsTime(const InsTime&) = default;
+    constexpr InsTime(const InsTime&) = default;
     /// @brief Move constructor
-    InsTime(InsTime&&) = default;
+    constexpr InsTime(InsTime&&) = default;
     /// @brief Copy assignment operator
-    InsTime& operator=(const InsTime&) = default;
+    constexpr InsTime& operator=(const InsTime&) = default;
     /// @brief Move assignment operator
-    InsTime& operator=(InsTime&&) = default;
+    constexpr InsTime& operator=(InsTime&&) = default;
 
     // ---------------------------- Transformation function --------------------------------------
 
     /// @brief Returns the current InsTime_MJD struct in InsTime_GPSweekTow format
-    /// @return InsTime_GPSweekTow structure of the this object
-    [[nodiscard]] constexpr InsTime_MJD toMJD() const { return mjd; }
-    [[nodiscard]] constexpr InsTime_JD toJD() const { return InsTime_JD(*this); }
-    [[nodiscard]] constexpr InsTime_GPSweekTow toGPSweekTow() const { return InsTime_GPSweekTow(*this); }
-    [[nodiscard]] InsTime_YDoySod toYDoySod() const { return InsTime_YDoySod(*this); }
-    [[nodiscard]] InsTime_YMDHMS toYMDHMS() const { return InsTime_YMDHMS(*this); }
-
-    /// @brief Transforms given hour, minute, second to seconds
-    /// @param[in] hour Hours
-    /// @param[in] min Minutes
-    /// @param[in] sec Seconds
-    /// @return Time representation in seconds
-    static constexpr long double hms2sec(int hour, int min, long double sec)
+    /// @return InsTime_MJD structure of the this object
+    [[nodiscard]] constexpr InsTime_MJD toMJD() const
     {
-        return static_cast<long double>(hour) * 3600.0L
-               + static_cast<long double>(min) * 60.0L
-               + sec;
+        return mjd;
+    }
+    [[nodiscard]] constexpr InsTime_JD toJD() const
+    {
+        auto jd_day = mjd.mjd_day + InsTimeUtil::DIFF_MJD_TO_JD_DAYS;
+        auto jd_frac = mjd.mjd_frac + InsTimeUtil::DIFF_MJD_TO_JD_FRAC;
+
+        return InsTime_JD(jd_day, jd_frac);
+    }
+    [[nodiscard]] constexpr InsTime_GPSweekTow toGPSweekTow() const
+    {
+        InsTime_MJD mjd = toMJD();
+        // Convert from UTC to GPST
+        mjd.mjd_frac += static_cast<long double>(leapGps2UTC(mjd)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
+
+        // Put everything in the time of week, as it gets splitted in InsTime_GPSweekTow constructor
+        auto tow = static_cast<long double>((mjd.mjd_day - InsTimeUtil::DIFF_TO_6_1_1980_MJD)) * InsTimeUtil::SECONDS_PER_DAY
+                   + mjd.mjd_frac * InsTimeUtil::SECONDS_PER_DAY;
+
+        return InsTime_GPSweekTow(0, 0, tow);
+    }
+    [[nodiscard]] constexpr InsTime_YMDHMS toYMDHMS() const
+    {
+        // transform MJD to JD
+        InsTime_JD jd = toJD();
+        jd.jd_frac = jd.jd_frac + 0.5L;
+        if (jd.jd_frac >= 1.0L)
+        {
+            jd.jd_day += 1;
+            jd.jd_frac -= 1.0L;
+        }
+        // transform JD to YMDHMS
+        double a = 32044.0 + jd.jd_day;
+        double b = gcem::floor((4.0 * a + 3.0) / 146097.0);
+        double c = a - gcem::floor((b * 146097.0) / 4.0);
+
+        double d = gcem::floor((4.0 * c + 3.0) / 1461.0);
+        double e = c - gcem::floor((1461.0 * d) / 4.0);
+        double m = gcem::floor((5.0 * e + 2.0) / 153.0);
+
+        auto day = static_cast<uint16_t>(e - gcem::floor((153.0 * m + 2.0) / 5.0) + 1);
+        auto month = static_cast<uint16_t>(m + 3 - 12 * gcem::floor(m / 10.0));
+        auto year = static_cast<uint16_t>(b * 100 + d - 4800.0 + gcem::floor(m / 10.0));
+
+        long double sec = jd.jd_frac * InsTimeUtil::SECONDS_PER_DAY;
+
+        return InsTime_YMDHMS(year, month, day, 0, 0, sec);
+    }
+    [[nodiscard]] constexpr InsTime_YDoySod toYDoySod() const
+    {
+        InsTime_YMDHMS yearMonthDayHMS = toYMDHMS();
+
+        auto year = yearMonthDayHMS.year;
+        long double sod = static_cast<long double>(yearMonthDayHMS.hour * 3600.0 + yearMonthDayHMS.min * 60.0)
+                          + yearMonthDayHMS.sec
+                          + static_cast<long double>(leapGps2UTC());
+
+        int32_t doy = 0;
+        if (yearMonthDayHMS.month == 1)
+        {
+            doy = yearMonthDayHMS.day;
+        }
+        else if (yearMonthDayHMS.month == 2)
+        {
+            doy = InsTimeUtil::MONTHS_DOY.at(0) + yearMonthDayHMS.day;
+        }
+        else // for march to december
+        {
+            doy = InsTimeUtil::MONTHS_DOY.at(static_cast<size_t>(yearMonthDayHMS.month - 2))
+                  + yearMonthDayHMS.day
+                  + static_cast<int32_t>(InsTimeUtil::isLeapYear(yearMonthDayHMS.year));
+        }
+        if (sod >= InsTimeUtil::SECONDS_PER_DAY)
+        {
+            doy++;
+            sod -= InsTimeUtil::SECONDS_PER_DAY;
+            if (doy == 366 && !InsTimeUtil::isLeapYear(yearMonthDayHMS.year))
+            {
+                year--;
+                doy = 365;
+            }
+        }
+        return InsTime_YDoySod(year, doy, sod);
     }
 
     // -------------------------------- Leap functions -------------------------------------------
@@ -394,34 +800,22 @@ class InsTime
     [[nodiscard]] constexpr uint16_t leapGps2UTC() const { return leapGps2UTC(mjd); }                                                /*!< Returns the current number of leap seconds (offset GPST to UTC) */
     static constexpr uint16_t leapGps2UTC(const InsTime& insTime) { return leapGps2UTC(insTime.mjd); }                               /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime object */
     static constexpr uint16_t leapGps2UTC(const InsTime_GPSweekTow& gpsWeekTow) { return leapGps2UTC(InsTime(gpsWeekTow).toMJD()); } /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_GPSweekTow time */
-    static uint16_t leapGps2UTC(const InsTime_YDoySod& yearDoySod) { return leapGps2UTC(InsTime(yearDoySod).toMJD()); }              /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YDoySod time */
-    static uint16_t leapGps2UTC(const InsTime_YMDHMS& yearMonthDayHMS) { return leapGps2UTC(InsTime(yearMonthDayHMS).toMJD()); }     /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YMDHMS time */
-    static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in)                                                                 /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD time */
+    static constexpr uint16_t leapGps2UTC(const InsTime_YDoySod& yearDoySod)
     {
-        const auto* ub = std::upper_bound(GpsLeapSec.begin(), GpsLeapSec.end(), mjd_in.mjd_day);
-        return static_cast<uint16_t>(ub - GpsLeapSec.begin() - 1);
+        return static_cast<uint16_t>(std::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), yearDoySod.doy) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
+    }                                                                                                                                      /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YDoySod time */
+    static constexpr uint16_t leapGps2UTC(const InsTime_YMDHMS& yearMonthDayHMS) { return leapGps2UTC(InsTime(yearMonthDayHMS).toMJD()); } /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YMDHMS time */
+    static constexpr uint16_t leapGps2UTC(const InsTime_JD& jd) { return leapGps2UTC(InsTime(jd).toMJD()); }
+    static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in) /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD time */
+    {
+        return static_cast<uint16_t>(std::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
     }
-
-    static constexpr bool isLeapYear(uint16_t year) /*!< Returns true if the provided year is a leap year, false otherwise */
+    [[nodiscard]] constexpr bool isLeapYear() const /*!< Returns true if the current time (InsTime_MJD mjd) is a leap year, false otherwise */
     {
-        bool leap = (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
-        return leap;
-    }
-    [[nodiscard]] bool isLeapYear() const /*!< Returns true if the current time (InsTime_MJD mjd) is a leap year, false otherwise */
-    {
-        uint16_t year = toYDoySod().year;
-        bool leap = (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
-        return leap;
+        return InsTimeUtil::isLeapYear(toYMDHMS().year);
     }
 
     // ------------------------ Comparison bigger/smaller/equal ----------------------------------
-
-    // FIXME: Replace with Spaceship operator after it becomes available in the C++20 standard
-    // constexpr auto operator<=>(const InsTime& rhs) const = default;
-    // constexpr auto operator<=>(const InsTime& rhs) const
-    // {
-    //     return mjd <=> rhs.mjd;
-    // }
 
     constexpr bool operator==(const InsTime& rhs) const { return mjd == rhs.mjd; }
     constexpr bool operator!=(const InsTime& rhs) const { return mjd != rhs.mjd; }
@@ -432,11 +826,43 @@ class InsTime
 
     // ------------------------------------------------------------------------------
 
-    void addDiffSec(long double diffSec);                         /*!< Adds or subtracts the provided time difference [seconds] to/from the current time */
-    [[nodiscard]] long double getTimeDiff(InsTime insTime) const; /*!< Returns the time difference [seconds] between the given InsTime object and the current time (current - given) */
-    void RoundToFullDay();                                        /*!< Rounds the current time to a full day (changes time to 0:0:0h UTC of current day) */
-    void MakeTimeFromGloOrbit(double UTC_sec);                    /*!< Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time (changes time, so that it corresponds to the time of GLONASS ORBIT last element) */
-    [[nodiscard]] std::string GetStringOfDate() const;            /*!< Returns the current time as a string with format YYYYMMDDHHMMSS */
+    constexpr void addDiffSec(long double diffSec) /*!< Adds or subtracts the provided time difference [seconds] to/from the current time */
+    {
+        mjd.mjd_frac += diffSec / InsTimeUtil::SECONDS_PER_DAY;
+
+        if (mjd.mjd_frac >= 1.0L || mjd.mjd_frac < 0.0L)
+        {
+            mjd.mjd_day += static_cast<uint32_t>(gcem::floor(mjd.mjd_frac));
+            mjd.mjd_frac -= gcem::floor(mjd.mjd_frac);
+        }
+    }
+    [[nodiscard]] constexpr long double getTimeDiff(InsTime insTime) const /*!< Returns the time difference [seconds] between the given InsTime object and the current time (current - given) */
+    {
+        int64_t diffDays = static_cast<int64_t>(mjd.mjd_day) - static_cast<int64_t>(insTime.toMJD().mjd_day);
+        long double diffSec = (mjd.mjd_frac - insTime.toMJD().mjd_frac) * InsTimeUtil::SECONDS_PER_DAY + static_cast<long double>(diffDays) * InsTimeUtil::SECONDS_PER_DAY;
+        return diffSec;
+    }
+
+    void RoundToFullDay() /*!< Rounds the current time to a full day (changes time to 0:0:0h UTC of current day) */
+    {
+        // change time to 0:0:0h UTC of respective day
+        // eg from 01.02.2019 3:14:55 UTC to 01.02.2019 00:00:00 UTC
+        this->addDiffSec(-this->toMJD().mjd_frac * InsTimeUtil::SECONDS_PER_DAY);
+    }
+
+    void MakeTimeFromGloOrbit(double UTC_sec) /*!< Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time (changes time, so that it corresponds to the time of GLONASS ORBIT last element) */
+    {
+        auto ymdhms = toYMDHMS();
+        // difference between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) in seconds
+        long double diff = gcem::fmod(static_cast<long double>(UTC_sec), InsTimeUtil::SECONDS_PER_DAY)
+                           - (ymdhms.hour * 3600.0L
+                              + ymdhms.min * 60.0L
+                              + ymdhms.sec);
+        // std::cout << "orbit diff " << diff << "\n";
+        this->addDiffSec(diff);
+    }
+
+    [[nodiscard]] std::string GetStringOfDate() const; /*!< Returns the current time as a string with format YYYYMMDDHHMMSS */
 
     /// @brief Converts string into a time system (InsTime::TIME_SYSTEM)
     /// @param[in] sys String which defines the name of the time system
@@ -450,62 +876,13 @@ class InsTime
 
   private:
     InsTime_MJD mjd{};
-
-    static constexpr long double epsilon = 2.0L * std::numeric_limits<long double>::epsilon();
-    static constexpr long double SEC_IN_WEEK = 604800.0L;
-    static constexpr long double SEC_IN_DAY = 86400.0L;
-    static constexpr unsigned int endOfTheCentury = 400000U;
-
-    /// Maps GPS leap seconds to a time: array<leap seconds>, index + 1 is amount of leap seconds
-    static constexpr std::array<uint32_t, 20> GpsLeapSec = {
-        0,     // 1 Jan 1980
-        44786, // 1 Jul 1981  //diff UTC-TAI: 20
-        45151, // 1 Jul 1982  //diff UTC-TAI: 21
-        45516, // 1 Jul 1983  //diff UTC-TAI: 22
-        46247, // 1 Jul 1985  //diff UTC-TAI: 23
-        47161, // 1 Jan 1988  //diff UTC-TAI: 24
-        47892, // 1 Jan 1990  //diff UTC-TAI: 25
-        48257, // 1 Jan 1991  //diff UTC-TAI: 26
-        48804, // 1 Jul 1992  //diff UTC-TAI: 27
-        49169, // 1 Jul 1993  //diff UTC-TAI: 28
-        49534, // 1 Jul 1994  //diff UTC-TAI: 29
-        50083, // 1 Jan 1996  //diff UTC-TAI: 30
-        50630, // 1 Jul 1997  //diff UTC-TAI: 31
-        51179, // 1 Jan 1999  //diff UTC-TAI: 32
-        53736, // 1 Jan 2006  //diff UTC-TAI: 33
-        54832, // 1 Jan 2009  //diff UTC-TAI: 34
-        56109, // 1 Jul 2012  //diff UTC-TAI: 35
-        57204, // 1 Jul 2015  //diff UTC-TAI: 36
-        57754, // 1 Jan 2017  //diff UTC-TAI: 37
-        99999, // future
-    };
-
-    // static std::array<InsTime_YDoySod, GpsLeapSec.size()> test = {
-    //     InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(0), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(1), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(2), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(3), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(4), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(5), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(6), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(7), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(8), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(9), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(10), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(11), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(12), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(13), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(14), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(15), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(16), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(17), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(18), 0.0L))),
-    // InsTime_YDoySod(InsTime(InsTime_MJD(GpsLeapSec.at(19), 0.0L))),
-    // };
 };
 
+std::ostream& operator<<(std::ostream& os, const InsTime_MJD& mjd);
+std::ostream& operator<<(std::ostream& os, const InsTime_JD& jd);
+std::ostream& operator<<(std::ostream& os, const InsTime_GPSweekTow& gpsWeekTow);
+std::ostream& operator<<(std::ostream& os, const InsTime_YMDHMS& ymdhms);
+std::ostream& operator<<(std::ostream& os, const InsTime_YDoySod& yDoySod);
 std::ostream& operator<<(std::ostream& os, const InsTime& insTime);
-std::ostream& operator<<(std::ostream& os, const InsTime::InsTime_YMDHMS& ymdhms);
-std::ostream& operator<<(std::ostream& os, const InsTime::InsTime_MJD& mjd);
 
 } // namespace NAV

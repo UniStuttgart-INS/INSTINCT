@@ -12,7 +12,7 @@
 
 namespace NAV
 {
-TEST_CASE("[VectorNavDataLogger] Read file and pass data to logger. Then read the logged file and compare data", "[VectorNavDataLogger]")
+TEST_CASE("[VectorNavDataLogger] Read, write, read consistency", "[VectorNavDataLogger]")
 {
     Logger logger;
 
