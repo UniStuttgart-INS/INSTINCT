@@ -4,3 +4,6 @@
 [submodule "lib/gnuplot-iostream"]
 	path = lib/gnuplot-iostream
 	url = https://github.com/dstahlke/gnuplot-iostream
+[submodule "lib/vnproglib"]
+	path = lib/vnproglib
+	url = https://git.nav.uni-stuttgart.de/ins/ins_staff/vnproglib.git
