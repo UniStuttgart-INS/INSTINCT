@@ -1,10 +1,11 @@
 /// @file InsTime.hpp
 /// @brief The class is responsible for all time-related tasks
+/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
 /// @author T. Lambertus (tomke-jantje.lambertus@nav.uni-stuttgart.de)
 /// @date 2020-12-02
 ///
 /// @details This class contains all time-transformations functions. One instance is created for each InsTime object (defined in the structs).
-///          Intern, only the MJD-time (Modified Julien Date) is stored (here MJD is a struct which has mjd_day and mjd_frac).
+///          Internally, only the MJD-time (Modified Julien Date) is stored (here MJD is a struct which has mjd_day and mjd_frac).
 
 #pragma once
 
@@ -42,6 +43,7 @@ constexpr int32_t SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
 constexpr int32_t SECONDS_PER_DAY = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
 constexpr int32_t SECONDS_PER_WEEK = SECONDS_PER_DAY * DAYS_PER_WEEK;
 
+/// Numerical precision for <long double> variables
 constexpr long double EPSILON = 2.0L * std::numeric_limits<long double>::epsilon();
 
 /// Maps GPS leap seconds to a time: array<mjd_day>, index + 1 is amount of leap seconds
@@ -70,7 +72,7 @@ constexpr std::array<uint32_t, 20> GPS_LEAP_SEC_MJD = {
 
 /// @brief Returns true if the provided year is a leap year, false otherwise
 /// @param[in] year The year to check
-/// @return
+/// @return True if the year is a leap year, otherwise false
 constexpr bool isLeapYear(int32_t year)
 {
     return (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0));
@@ -132,8 +134,8 @@ constexpr int32_t daysInMonth(int32_t month, int32_t year)
 /// Modified Julien Date [UTC]
 struct InsTime_MJD
 {
-    uint32_t mjd_day = InsTimeUtil::END_OF_THE_CENTURY_MJD; //!< Full days of the Modified Julien Date [UTC]
-    long double mjd_frac = 0.0L;                            //!< Decimal fractions of a day of the Modified Julien Date [UTC]
+    uint32_t mjd_day = InsTimeUtil::END_OF_THE_CENTURY_MJD; ///< Full days of the Modified Julien Date [UTC]
+    long double mjd_frac = 0.0L;                            ///< Decimal fractions of a day of the Modified Julien Date [UTC]
 
     /// @brief Default constructor
     constexpr InsTime_MJD() = default;
@@ -189,8 +191,8 @@ struct InsTime_MJD
 /// Julien Date [UTC]
 struct InsTime_JD
 {
-    uint32_t jd_day{};     //!< Full days of the Julien Date [UTC]
-    long double jd_frac{}; //!< Decimal fractions of a day of the Julien Date [UTC]
+    uint32_t jd_day{};     ///< Full days of the Julien Date [UTC]
+    long double jd_frac{}; ///< Decimal fractions of a day of the Julien Date [UTC]
 
     /// @brief Constructor
     /// @param[in] jd_day Full days of the Julien Date [UTC]
@@ -243,9 +245,9 @@ struct InsTime_JD
 /// GPS week and time of week in GPS standard time [GPST]
 struct InsTime_GPSweekTow
 {
-    int32_t gpsCycle{}; //!< Contains GPS cycle in GPS standard time [GPST]
-    int32_t gpsWeek{};  //!< Contains GPS week in GPS standard time [GPST]
-    long double tow{};  //!< Contains GPS time of week in GPS standard time [GPST]
+    int32_t gpsCycle{}; ///< Contains GPS cycle in GPS standard time [GPST]
+    int32_t gpsWeek{};  ///< Contains GPS week in GPS standard time [GPST]
+    long double tow{};  ///< Contains GPS time of week in GPS standard time [GPST]
 
     /// @brief Constructor
     /// @param[in] gpsCycle GPS cycle in GPS standard time [GPST]
@@ -319,12 +321,12 @@ struct InsTime_GPSweekTow
 /// Universal Time Coordinated [UTC]
 struct InsTime_YMDHMS
 {
-    int32_t year{};    //!< Contains year in Universal Time Coordinated [UTC]
-    int32_t month{};   //!< Contains month in Universal Time Coordinated [UTC]
-    int32_t day{};     //!< Contains day in Universal Time Coordinated [UTC]
-    int32_t hour{};    //!< Contains hour in Universal Time Coordinated [UTC]
-    int32_t min{};     //!< Contains minute in Universal Time Coordinated [UTC]
-    long double sec{}; //!< Contains second in Universal Time Coordinated [UTC]
+    int32_t year{};    ///< Contains year in Universal Time Coordinated [UTC]
+    int32_t month{};   ///< Contains month in Universal Time Coordinated [UTC]
+    int32_t day{};     ///< Contains day in Universal Time Coordinated [UTC]
+    int32_t hour{};    ///< Contains hour in Universal Time Coordinated [UTC]
+    int32_t min{};     ///< Contains minute in Universal Time Coordinated [UTC]
+    long double sec{}; ///< Contains second in Universal Time Coordinated [UTC]
 
     /// @brief Constructor
     /// @param[in] year Year in Universal Time Coordinated [UTC]
@@ -473,9 +475,9 @@ struct InsTime_YMDHMS
 /// GPS year and day of year in GPS standard time [GPST]
 struct InsTime_YDoySod
 {
-    int32_t year{};    //!< Contains year in GPS standard time [GPST]
-    int32_t doy{};     //!< Contains day of year in GPS standard time [GPST]
-    long double sod{}; //!< Contains second of day in GPS standard time [GPST]
+    int32_t year{};    ///< Contains year in GPS standard time [GPST]
+    int32_t doy{};     ///< Contains day of year in GPS standard time [GPST]
+    long double sod{}; ///< Contains second of day in GPS standard time [GPST]
 
     /// @brief Constructor
     /// @param[in] year Year in GPS standard time [GPST]
@@ -556,13 +558,13 @@ class InsTime
     /// @brief List of all time systems
     enum TIME_SYSTEM
     {
-        UTC,
-        GPST,
-        GLNT,
-        GST,
-        BDT,
-        QZSST,
-        IRNSST
+        UTC,    ///< Coordinated Universal Time
+        GPST,   ///< GPS Time
+        GLNT,   ///< GLONASS Time (GLONASST)
+        GST,    ///< Galileo System Time
+        BDT,    ///< BeiDou Time
+        QZSST,  ///< Quasi-Zenith Satellite System Time
+        IRNSST, ///< Indian Regional Navigation Satellite System Time
     };
 
     /* ------------------------------ Constructors ------------------------------ */
@@ -691,12 +693,15 @@ class InsTime
 
     /* ------------------------ Transformation functions ------------------------ */
 
-    /// @brief Returns the current InsTime_MJD struct in InsTime_GPSweekTow format
+    /// @brief Converts this time object into a different format
     /// @return InsTime_MJD structure of the this object
     [[nodiscard]] constexpr InsTime_MJD toMJD() const
     {
         return mjd;
     }
+
+    /// @brief Converts this time object into a different format
+    /// @return InsTime_JD structure of the this object
     [[nodiscard]] constexpr InsTime_JD toJD() const
     {
         auto jd_day = mjd.mjd_day + InsTimeUtil::DIFF_MJD_TO_JD_DAYS;
@@ -704,6 +709,9 @@ class InsTime
 
         return InsTime_JD(jd_day, jd_frac);
     }
+
+    /// @brief Converts this time object into a different format
+    /// @return InsTime_GPSweekTow structure of the this object
     [[nodiscard]] constexpr InsTime_GPSweekTow toGPSweekTow() const
     {
         InsTime_MJD mjd = toMJD();
@@ -716,6 +724,9 @@ class InsTime
 
         return InsTime_GPSweekTow(0, 0, tow);
     }
+
+    /// @brief Converts this time object into a different format
+    /// @return InsTime_YMDHMS structure of the this object
     [[nodiscard]] constexpr InsTime_YMDHMS toYMDHMS() const
     {
         // transform MJD to JD
@@ -743,6 +754,9 @@ class InsTime
 
         return InsTime_YMDHMS(year, month, day, 0, 0, sec);
     }
+
+    /// @brief Converts this time object into a different format
+    /// @return InsTime_YDoySod structure of the this object
     [[nodiscard]] constexpr InsTime_YDoySod toYDoySod() const
     {
         InsTime_YMDHMS yearMonthDayHMS = toYMDHMS();
@@ -762,29 +776,74 @@ class InsTime
 
         return InsTime_YDoySod(year, doy, sod);
     }
-    [[nodiscard]] constexpr long double toSeconds() const
-    {
-        return (mjd.mjd_day + mjd.mjd_frac) * InsTimeUtil::SECONDS_PER_DAY;
-    }
-    /// @brief Rounds the current time to a full day (changes time to 0:0:0h UTC of current day)
-    /// @return The rounded Time Object
+
+    /// @brief Returns the current time rounded to a full day (changes time to 0:0:0h UTC of current day)
+    /// @return The rounded time object
     [[nodiscard]] constexpr InsTime toFullDay() const
     {
         return InsTime(InsTime_MJD(mjd.mjd_day, 0.0L));
     }
+
     /* ----------------------------- Leap functions ----------------------------- */
 
-    [[nodiscard]] constexpr uint16_t leapGps2UTC() const { return leapGps2UTC(mjd); }                                                      /*!< Returns the current number of leap seconds (offset GPST to UTC) */
-    static constexpr uint16_t leapGps2UTC(const InsTime& insTime) { return leapGps2UTC(insTime.mjd); }                                     /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime object */
-    static constexpr uint16_t leapGps2UTC(const InsTime_GPSweekTow& gpsWeekTow) { return leapGps2UTC(InsTime(gpsWeekTow).toMJD()); }       /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_GPSweekTow time */
-    static constexpr uint16_t leapGps2UTC(const InsTime_YDoySod& yearDoySod) { return leapGps2UTC(InsTime(yearDoySod).toMJD()); }          /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YDoySod time */
-    static constexpr uint16_t leapGps2UTC(const InsTime_YMDHMS& yearMonthDayHMS) { return leapGps2UTC(InsTime(yearMonthDayHMS).toMJD()); } /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YMDHMS time */
-    static constexpr uint16_t leapGps2UTC(const InsTime_JD& jd) { return leapGps2UTC(InsTime(jd).toMJD()); }
-    static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in) /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD time */
+    /// @brief Returns the current number of leap seconds (offset GPST to UTC)
+    /// @return Number of leap seconds
+    [[nodiscard]] constexpr uint16_t leapGps2UTC() const
+    {
+        return leapGps2UTC(mjd);
+    }
+
+    /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime object
+    /// @param[in] insTime Time point
+    /// @return Number of leap seconds
+    static constexpr uint16_t leapGps2UTC(const InsTime& insTime)
+    {
+        return leapGps2UTC(insTime.mjd);
+    }
+
+    /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_GPSweekTow object
+    /// @param[in] gpsWeekTow Time point
+    /// @return Number of leap seconds
+    static constexpr uint16_t leapGps2UTC(const InsTime_GPSweekTow& gpsWeekTow)
+    {
+        return leapGps2UTC(InsTime(gpsWeekTow).toMJD());
+    }
+
+    /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YDoySod object
+    /// @param[in] yearDoySod Time point
+    /// @return Number of leap seconds
+    static constexpr uint16_t leapGps2UTC(const InsTime_YDoySod& yearDoySod)
+    {
+        return leapGps2UTC(InsTime(yearDoySod).toMJD());
+    }
+
+    /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_YMDHMS object
+    /// @param[in] yearMonthDayHMS Time point
+    /// @return Number of leap seconds
+    static constexpr uint16_t leapGps2UTC(const InsTime_YMDHMS& yearMonthDayHMS)
+    {
+        return leapGps2UTC(InsTime(yearMonthDayHMS).toMJD());
+    }
+
+    /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_JD object
+    /// @param[in] jd Time point
+    /// @return Number of leap seconds
+    static constexpr uint16_t leapGps2UTC(const InsTime_JD& jd)
+    {
+        return leapGps2UTC(InsTime(jd).toMJD());
+    }
+
+    /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD object
+    /// @param[in] mjd_in Time point
+    /// @return Number of leap seconds
+    static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in)
     {
         return static_cast<uint16_t>(std::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
     }
-    [[nodiscard]] constexpr bool isLeapYear() const /*!< Returns true if the current time (InsTime_MJD mjd) is a leap year, false otherwise */
+
+    /// @brief Checks if the current time is a leap year
+    /// @return True if the current time is a leap year, false otherwise
+    [[nodiscard]] constexpr bool isLeapYear() const
     {
         return InsTimeUtil::isLeapYear(toYMDHMS().year);
     }
@@ -812,6 +871,9 @@ class InsTime
         return std::chrono::duration<long double>(diffSec);
     }
 
+    /// @brief Adds a duration to this time point
+    /// @param[in] duration The duration to add
+    /// @return Reference to this object
     constexpr InsTime& operator+=(const std::chrono::duration<long double>& duration)
     {
         auto duration_mjd_frac = std::chrono::duration<long double, std::ratio<InsTimeUtil::SECONDS_PER_DAY>>(duration).count();
@@ -819,6 +881,10 @@ class InsTime
                                 this->mjd.mjd_frac + duration_mjd_frac);
         return *this;
     }
+
+    /// @brief Substracts a duration to this time point
+    /// @param[in] duration The duration to substract
+    /// @return Reference to this object
     constexpr InsTime& operator-=(const std::chrono::duration<long double>& duration)
     {
         auto duration_mjd_frac = std::chrono::duration<long double, std::ratio<InsTimeUtil::SECONDS_PER_DAY>>(duration).count();
@@ -826,10 +892,20 @@ class InsTime
                                 this->mjd.mjd_frac - duration_mjd_frac);
         return *this;
     }
+
+    /// @brief Adds a duration to a time point
+    /// @param[in] time The left hand side time point
+    /// @param[in] duration The right hand side duration
+    /// @return Time point with the added duration
     constexpr friend InsTime operator+(const InsTime& time, const std::chrono::duration<long double>& duration)
     {
         return InsTime(time) += duration;
     }
+
+    /// @brief Substracts a duration from a time point
+    /// @param[in] time The left hand side time point
+    /// @param[in] duration The right hand side duration
+    /// @return Time point with the substracted duration
     constexpr friend InsTime operator-(const InsTime& time, const std::chrono::duration<long double>& duration)
     {
         return InsTime(time) -= duration;
@@ -837,7 +913,10 @@ class InsTime
 
     /* ---------------------------- Utility Functions --------------------------- */
 
-    void MakeTimeFromGloOrbit(double UTC_sec) /*!< Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time (changes time, so that it corresponds to the time of GLONASS ORBIT last element) */
+    /// @brief Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time
+    /// (Changes time, so that it corresponds to the time of GLONASS ORBIT last element)
+    /// @param[in] UTC_sec
+    void MakeTimeFromGloOrbit(double UTC_sec)
     {
         auto ymdhms = toYMDHMS();
         // difference between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) in seconds
@@ -849,7 +928,9 @@ class InsTime
         *this += std::chrono::duration<long double>(diff);
     }
 
-    [[nodiscard]] std::string GetStringOfDate() const; /*!< Returns the current time as a string with format YYYYMMDDHHMMSS */
+    /// @brief Returns the current time as a string
+    /// @return Time String with format YYYYMMDDHHMMSS
+    [[nodiscard]] std::string GetStringOfDate() const;
 
     /// @brief Converts string into a time system (InsTime::TIME_SYSTEM)
     /// @param[in] sys String which defines the name of the time system

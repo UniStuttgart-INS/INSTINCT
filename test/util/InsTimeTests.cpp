@@ -844,7 +844,7 @@ TEST_CASE("[InsTime] Arithmetic operators", "[InsTime]")
     TEST_EQUAL_OBJECT(insTime_target, insTime);
 }
 
-TEST_CASE("[InsTime] Arithmetic operators nanoseconds constexpr", "[InsTime]")
+TEST_CASE("[InsTime] Arithmetic operators constexpr", "[InsTime]")
 {
     using namespace std::chrono_literals;
 
