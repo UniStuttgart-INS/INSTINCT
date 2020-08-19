@@ -193,9 +193,10 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 // Calculate the insTime with the iTOW
                 if (currentInsTime.has_value())
                 {
-                    currentInsTime.emplace(currentInsTime.value().GetGPSTime().gpsWeek,
+                    auto gpst = currentInsTime.value().toGPSweekTow();
+                    currentInsTime.emplace(gpst.gpsWeek,
                                            static_cast<long double>(std::get<UbxNavAtt>(obs->data).iTOW) / 1000.0L,
-                                           currentInsTime.value().GetGPSTime().gpsCycle);
+                                           gpst.gpsCycle);
                     obs->insTime = currentInsTime;
                 }
 
@@ -219,9 +220,10 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 // Calculate the insTime with the iTOW
                 if (currentInsTime.has_value())
                 {
-                    currentInsTime.emplace(currentInsTime.value().GetGPSTime().gpsWeek,
+                    auto gpst = currentInsTime.value().toGPSweekTow();
+                    currentInsTime.emplace(gpst.gpsWeek,
                                            static_cast<long double>(std::get<UbxNavPosllh>(obs->data).iTOW) / 1000.0L,
-                                           currentInsTime.value().GetGPSTime().gpsCycle);
+                                           gpst.gpsCycle);
                     obs->insTime = currentInsTime;
                 }
 
@@ -247,9 +249,10 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 // Calculate the insTime with the iTOW
                 if (currentInsTime.has_value())
                 {
-                    currentInsTime.emplace(currentInsTime.value().GetGPSTime().gpsWeek,
+                    auto gpst = currentInsTime.value().toGPSweekTow();
+                    currentInsTime.emplace(gpst.gpsWeek,
                                            static_cast<long double>(std::get<UbxNavVelned>(obs->data).iTOW) / 1000.0L,
-                                           currentInsTime.value().GetGPSTime().gpsCycle);
+                                           gpst.gpsCycle);
                     obs->insTime = currentInsTime;
                 }
 

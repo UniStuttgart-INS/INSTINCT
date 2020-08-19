@@ -233,7 +233,7 @@ void NAV::GnuPlot::handleVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs, s
     {
         if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
-            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().GetGPSTime().tow));
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow));
         }
         else if (gnuplotData.dataIdentifier == "Time since startup" && obs->timeSinceStartup.has_value())
         {
@@ -477,7 +477,7 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
     {
         if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
-            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().GetGPSTime().tow));
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow));
         }
         else if (gnuplotData.dataIdentifier == "Latitude" && obs->positionLLH.has_value())
         {
@@ -589,7 +589,7 @@ void NAV::GnuPlot::handleKvhObs(std::shared_ptr<NAV::KvhObs>& obs, size_t portIn
     {
         if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
-            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().GetGPSTime().tow));
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow));
         }
         else if (gnuplotData.dataIdentifier == "Time since startup" && obs->timeSinceStartup.has_value())
         {
@@ -661,7 +661,7 @@ void NAV::GnuPlot::handleImuObs(std::shared_ptr<NAV::ImuObs>& obs, size_t portIn
     {
         if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
-            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().GetGPSTime().tow));
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow));
         }
         else if (gnuplotData.dataIdentifier == "Time since startup" && obs->timeSinceStartup.has_value())
         {

@@ -34,6 +34,7 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
+                "-DENABLE_SENSORS=ON",
                 "-DLOG_LEVEL=DEBUG"
             ],
             "options": {
@@ -60,6 +61,7 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
+                "-DENABLE_SENSORS=ON",
                 "-DLOG_LEVEL=INFO"
             ],
             "options": {
@@ -86,6 +88,7 @@
                 "-DENABLE_GUI=ON",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
+                "-DENABLE_SENSORS=ON",
                 "-DLOG_LEVEL=INFO"
             ],
             "options": {
