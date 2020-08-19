@@ -13,12 +13,13 @@
 #include <compare>
 #include <limits>
 #include <iostream>
+#include <chrono>
 
-#include <cmath>
 #include "gcem.hpp"
 
 namespace NAV
 {
+/// @brief Utility Namespace for Time related tasks
 namespace InsTimeUtil
 {
 constexpr int32_t END_OF_THE_CENTURY_MJD = 400000;
@@ -550,6 +551,8 @@ struct InsTime_YDoySod
 class InsTime
 {
   public:
+    /* ----------------------------- Public Members ----------------------------- */
+
     /// @brief List of all time systems
     enum TIME_SYSTEM
     {
@@ -562,7 +565,7 @@ class InsTime
         IRNSST
     };
 
-    // --------------------------- Constructors  ----------------------------------
+    /* ------------------------------ Constructors ------------------------------ */
 
     /// @brief Default Constructor
     constexpr InsTime() = default;
@@ -655,19 +658,19 @@ class InsTime
     {
         if (timesys == TIME_SYSTEM::GPST) // = GPS Time (UTC - leap_seconds)
         {
-            int32_t leapSec = this->leapGps2UTC();
-            this->addDiffSec(-leapSec);
+            auto leapSec = this->leapGps2UTC();
+            *this -= std::chrono::duration<long double>(leapSec);
         }
         else if (timesys == TIME_SYSTEM::GLNT) // = GLONASS Time (UTC+ 3h)
         {
-            constexpr int32_t utcDiff = 3 * InsTimeUtil::SECONDS_PER_HOUR;
-            this->addDiffSec(-utcDiff);
+            constexpr auto utcDiff = 3 * InsTimeUtil::SECONDS_PER_HOUR;
+            *this -= std::chrono::duration<long double>(utcDiff);
         }
         else if (timesys == TIME_SYSTEM::GST) // = GALILEO Time (~ GPS TIME_SYSTEM )
         {
             //  is synchronised with TAI with a nominal offset below 50 ns
-            int32_t leapSec = this->leapGps2UTC(); // UTC = GST - 18
-            this->addDiffSec(-leapSec);
+            auto leapSec = this->leapGps2UTC(); // UTC = GST - 18
+            *this -= std::chrono::duration<long double>(leapSec);
         }
         else if (timesys == TIME_SYSTEM::BDT) // = BeiDou Time (UTC)
         {
@@ -686,7 +689,7 @@ class InsTime
     /// @brief Move assignment operator
     constexpr InsTime& operator=(InsTime&&) = default;
 
-    // ---------------------------- Transformation function --------------------------------------
+    /* ------------------------ Transformation functions ------------------------ */
 
     /// @brief Returns the current InsTime_MJD struct in InsTime_GPSweekTow format
     /// @return InsTime_MJD structure of the this object
@@ -759,8 +762,17 @@ class InsTime
 
         return InsTime_YDoySod(year, doy, sod);
     }
-
-    // -------------------------------- Leap functions -------------------------------------------
+    [[nodiscard]] constexpr long double toSeconds() const
+    {
+        return (mjd.mjd_day + mjd.mjd_frac) * InsTimeUtil::SECONDS_PER_DAY;
+    }
+    /// @brief Rounds the current time to a full day (changes time to 0:0:0h UTC of current day)
+    /// @return The rounded Time Object
+    [[nodiscard]] constexpr InsTime toFullDay() const
+    {
+        return InsTime(InsTime_MJD(mjd.mjd_day, 0.0L));
+    }
+    /* ----------------------------- Leap functions ----------------------------- */
 
     [[nodiscard]] constexpr uint16_t leapGps2UTC() const { return leapGps2UTC(mjd); }                                                      /*!< Returns the current number of leap seconds (offset GPST to UTC) */
     static constexpr uint16_t leapGps2UTC(const InsTime& insTime) { return leapGps2UTC(insTime.mjd); }                                     /*!< Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime object */
@@ -777,7 +789,7 @@ class InsTime
         return InsTimeUtil::isLeapYear(toYMDHMS().year);
     }
 
-    // ------------------------ Comparison operator overloading ---------------------
+    /* --------------------- Comparison operator overloading -------------------- */
 
     constexpr bool operator==(const InsTime& rhs) const { return mjd == rhs.mjd; }
     constexpr bool operator!=(const InsTime& rhs) const { return mjd != rhs.mjd; }
@@ -786,42 +798,55 @@ class InsTime
     constexpr bool operator<(const InsTime& rhs) const { return mjd < rhs.mjd; }
     constexpr bool operator>(const InsTime& rhs) const { return mjd > rhs.mjd; }
 
-    // ------------------------------------------------------------------------------
+    /* --------------------- Arithmetic operator overloading -------------------- */
 
-    constexpr void addDiffSec(long double diffSec) /*!< Adds or subtracts the provided time difference [seconds] to/from the current time */
+    /// @brief Substracts 2 points in time
+    /// @param[in] lhs The left hand side time point
+    /// @param[in] rhs The right hand side time point
+    /// @return Time difference in [seconds]
+    constexpr friend std::chrono::duration<long double> operator-(const InsTime& lhs, const InsTime& rhs)
     {
-        mjd.mjd_frac += diffSec / InsTimeUtil::SECONDS_PER_DAY;
-
-        if (mjd.mjd_frac >= 1.0L || mjd.mjd_frac < 0.0L)
-        {
-            mjd.mjd_day += static_cast<uint32_t>(gcem::floor(mjd.mjd_frac));
-            mjd.mjd_frac -= gcem::floor(mjd.mjd_frac);
-        }
-    }
-    [[nodiscard]] constexpr long double getTimeDiff(InsTime insTime) const /*!< Returns the time difference [seconds] between the given InsTime object and the current time (current - given) */
-    {
-        int64_t diffDays = static_cast<int64_t>(mjd.mjd_day) - static_cast<int64_t>(insTime.toMJD().mjd_day);
-        long double diffSec = (mjd.mjd_frac - insTime.toMJD().mjd_frac) * InsTimeUtil::SECONDS_PER_DAY + static_cast<long double>(diffDays) * InsTimeUtil::SECONDS_PER_DAY;
-        return diffSec;
+        auto diffDays = lhs.mjd.mjd_day - rhs.mjd.mjd_day;
+        auto diffFrac = lhs.mjd.mjd_frac - rhs.mjd.mjd_frac;
+        long double diffSec = (diffFrac + static_cast<long double>(diffDays)) * InsTimeUtil::SECONDS_PER_DAY;
+        return std::chrono::duration<long double>(diffSec);
     }
 
-    void RoundToFullDay() /*!< Rounds the current time to a full day (changes time to 0:0:0h UTC of current day) */
+    constexpr InsTime& operator+=(const std::chrono::duration<long double>& duration)
     {
-        // change time to 0:0:0h UTC of respective day
-        // eg from 01.02.2019 3:14:55 UTC to 01.02.2019 00:00:00 UTC
-        this->addDiffSec(-this->toMJD().mjd_frac * InsTimeUtil::SECONDS_PER_DAY);
+        auto duration_mjd_frac = std::chrono::duration<long double, std::ratio<InsTimeUtil::SECONDS_PER_DAY>>(duration).count();
+        this->mjd = InsTime_MJD(this->mjd.mjd_day,
+                                this->mjd.mjd_frac + duration_mjd_frac);
+        return *this;
     }
+    constexpr InsTime& operator-=(const std::chrono::duration<long double>& duration)
+    {
+        auto duration_mjd_frac = std::chrono::duration<long double, std::ratio<InsTimeUtil::SECONDS_PER_DAY>>(duration).count();
+        this->mjd = InsTime_MJD(this->mjd.mjd_day,
+                                this->mjd.mjd_frac - duration_mjd_frac);
+        return *this;
+    }
+    constexpr friend InsTime operator+(const InsTime& time, const std::chrono::duration<long double>& duration)
+    {
+        return InsTime(time) += duration;
+    }
+    constexpr friend InsTime operator-(const InsTime& time, const std::chrono::duration<long double>& duration)
+    {
+        return InsTime(time) -= duration;
+    }
+
+    /* ---------------------------- Utility Functions --------------------------- */
 
     void MakeTimeFromGloOrbit(double UTC_sec) /*!< Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time (changes time, so that it corresponds to the time of GLONASS ORBIT last element) */
     {
         auto ymdhms = toYMDHMS();
         // difference between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) in seconds
         long double diff = gcem::fmod(static_cast<long double>(UTC_sec), InsTimeUtil::SECONDS_PER_DAY)
-                           - (ymdhms.hour * 3600.0L
-                              + ymdhms.min * 60.0L
+                           - (ymdhms.hour * InsTimeUtil::SECONDS_PER_HOUR
+                              + ymdhms.min * InsTimeUtil::SECONDS_PER_MINUTE
                               + ymdhms.sec);
         // std::cout << "orbit diff " << diff << "\n";
-        this->addDiffSec(diff);
+        *this += std::chrono::duration<long double>(diff);
     }
 
     [[nodiscard]] std::string GetStringOfDate() const; /*!< Returns the current time as a string with format YYYYMMDDHHMMSS */

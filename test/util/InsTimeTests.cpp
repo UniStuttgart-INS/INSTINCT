@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <limits>
+#include <chrono>
 
 #include "util/InsTime.hpp"
 
@@ -802,6 +803,77 @@ TEST_CASE("[InsTime] Comparisions greater constexpr", "[InsTime]")
     STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_3));
     STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_4));
     STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_YMDHMS_g_5));
+}
+
+TEST_CASE("[InsTime] Arithmetic operators", "[InsTime]")
+{
+    using namespace std::chrono_literals;
+
+    auto insTime = InsTime(2004, 2, 28, 13, 25, 58.0L);
+    auto insTime_target = InsTime(2004, 2,
+                                  28 + 7 - 2,
+                                  13 + 1,
+                                  25 - 2,
+                                  58.0L + 3.004005006L);
+
+    auto insTime_eq_1 = insTime
+                        + std::chrono::weeks(1)
+                        - std::chrono::days(2)
+                        + 1h
+                        - 2min
+                        + 3s + 4ms + 5us + 6ns;
+    TEST_EQUAL_OBJECT(insTime_target, insTime_eq_1);
+
+    auto diff = insTime_target - insTime;
+    TEST_EQUAL_OBJECT(diff, std::chrono::weeks(1)
+                                - std::chrono::days(2)
+                                + 1h
+                                - 2min
+                                + 3s + 4ms + 5us + 6ns);
+    TEST_EQUAL_OBJECT(diff.count(), 1.0L * InsTimeUtil::SECONDS_PER_WEEK
+                                        - 2.0L * InsTimeUtil::SECONDS_PER_DAY
+                                        + 1.0L * InsTimeUtil::SECONDS_PER_HOUR
+                                        - 2.0L * InsTimeUtil::SECONDS_PER_MINUTE
+                                        + 3.004005006L);
+
+    insTime += std::chrono::weeks(1);
+    insTime -= std::chrono::days(2);
+    insTime += 1h;
+    insTime -= 2min;
+    insTime += 3s + 4ms + 5us + 6ns;
+    TEST_EQUAL_OBJECT(insTime_target, insTime);
+}
+
+TEST_CASE("[InsTime] Arithmetic operators nanoseconds constexpr", "[InsTime]")
+{
+    using namespace std::chrono_literals;
+
+    constexpr auto insTime = InsTime(2004, 2, 28, 13, 25, 58.0L);
+    constexpr auto insTime_target = InsTime(2004, 2,
+                                            28 + 7 - 2,
+                                            13 + 1,
+                                            25 - 2,
+                                            58.0L + 3.004005006L);
+
+    constexpr auto insTime_eq_1 = insTime
+                                  + std::chrono::weeks(1)
+                                  - std::chrono::days(2)
+                                  + 1h
+                                  - 2min
+                                  + 3s + 4ms + 5us + 6ns;
+    STATIC_TEST_EQUAL_OBJECT(insTime_target, insTime_eq_1);
+
+    constexpr auto diff = insTime_target - insTime;
+    STATIC_TEST_EQUAL_OBJECT(diff, std::chrono::weeks(1)
+                                       - std::chrono::days(2)
+                                       + 1h
+                                       - 2min
+                                       + 3s + 4ms + 5us + 6ns);
+    STATIC_TEST_EQUAL_OBJECT(diff.count(), 1.0L * InsTimeUtil::SECONDS_PER_WEEK
+                                               - 2.0L * InsTimeUtil::SECONDS_PER_DAY
+                                               + 1.0L * InsTimeUtil::SECONDS_PER_HOUR
+                                               - 2.0L * InsTimeUtil::SECONDS_PER_MINUTE
+                                               + 3.004005006L);
 }
 
 } // namespace NAV
