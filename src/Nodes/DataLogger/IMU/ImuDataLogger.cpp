@@ -32,17 +32,17 @@ void NAV::ImuDataLogger::writeObservation(std::shared_ptr<NAV::ImuObs>& obs)
     {
         if (obs->insTime.has_value())
         {
-            filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().GetGPSTime().gpsCycle;
+            filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().toGPSweekTow().gpsCycle;
         }
         filestream << ",";
         if (obs->insTime.has_value())
         {
-            filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().GetGPSTime().gpsWeek;
+            filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().gpsWeek;
         }
         filestream << ",";
         if (obs->insTime.has_value())
         {
-            filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().GetGPSTime().tow;
+            filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().tow;
         }
         filestream << ",";
         if (obs->timeSinceStartup.has_value())

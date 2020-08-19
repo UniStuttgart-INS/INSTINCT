@@ -87,7 +87,7 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
 
                     if (!obs->insTime.has_value() && gpsCycle.has_value() && gpsWeek.has_value() && gpsToW.has_value())
                     {
-                        obs->insTime.emplace(gpsWeek.value(), gpsToW.value(), gpsCycle.value());
+                        obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
                     }
                 }
                 else if (column == "GpsWeek")
@@ -96,7 +96,7 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
 
                     if (!obs->insTime.has_value() && gpsCycle.has_value() && gpsWeek.has_value() && gpsToW.has_value())
                     {
-                        obs->insTime.emplace(gpsWeek.value(), gpsToW.value(), gpsCycle.value());
+                        obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
                     }
                 }
                 else if (column == "GpsToW")
@@ -105,7 +105,7 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
 
                     if (!obs->insTime.has_value() && gpsCycle.has_value() && gpsWeek.has_value() && gpsToW.has_value())
                     {
-                        obs->insTime.emplace(gpsWeek.value(), gpsToW.value(), gpsCycle.value());
+                        obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
                     }
                 }
                 else if (column == "TimeStartup")

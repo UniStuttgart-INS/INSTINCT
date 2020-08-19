@@ -5,12 +5,14 @@
             "name": "C++ Debug (gdb)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/Debug/navsos",
             "preLaunchTask": "DEBUG: Build project",
+            "program": "${workspaceFolder}/bin/Debug/navsos",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "-fconfig.ini",
                 "config-dataflow.ini" // This expands to: navsos -fconfig.ini config-dataflow.ini
             ],
+            // "preLaunchTask": "TEST: Build project",
+            // "program": "${workspaceFolder}/bin/Debug/tests",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

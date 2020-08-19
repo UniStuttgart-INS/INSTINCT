@@ -113,6 +113,9 @@ endif()
 # Include gnuplot iostream
 include_directories(SYSTEM lib/gnuplot-iostream)
 
+# Include gcem
+include_directories(SYSTEM lib/gcem/include)
+
 # ######################################################################################################################
 # Installed Packages
 # ######################################################################################################################

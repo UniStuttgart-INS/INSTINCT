@@ -55,8 +55,8 @@ bool NAV::TimeSynchronizer::syncImuObs(std::shared_ptr<NAV::ImuObs>& obs)
             startupImuTime = obs->timeSinceStartup.value();
         }
 
-        obs->insTime = startupGpsTime;
-        obs->insTime.value().addDiffSec(static_cast<long double>(obs->timeSinceStartup.value() - startupImuTime.value()) / 1000000000.0L);
+        obs->insTime = startupGpsTime.value()
+                       + std::chrono::nanoseconds(obs->timeSinceStartup.value() - startupImuTime.value());
 
         return true;
     }
@@ -88,7 +88,8 @@ bool NAV::TimeSynchronizer::syncKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
         prevSequenceNumber = obs->sequenceNumber;
 
         obs->insTime = startupGpsTime;
-        obs->insTime.value().addDiffSec(static_cast<long double>(sequenceNumberDiff) / dataRate);
+        obs->insTime = startupGpsTime.value()
+                       + std::chrono::duration<long double>(static_cast<long double>(sequenceNumberDiff) / dataRate);
 
         startupGpsTime = obs->insTime;
     }
