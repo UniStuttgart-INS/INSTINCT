@@ -7,3 +7,6 @@
 [submodule "lib/vnproglib"]
 	path = lib/vnproglib
 	url = https://git.nav.uni-stuttgart.de/ins/ins_staff/vnproglib.git
+[submodule "lib/navio2"]
+	path = lib/navio2
+	url = https://git.nav.uni-stuttgart.de/ins/ins_staff/navio2.git

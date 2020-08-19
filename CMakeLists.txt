@@ -99,9 +99,9 @@ if(ENABLE_SENSORS)
   set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
-  # Include navio library
-  add_subdirectory(lib/navio libnavio)
-  include_directories(SYSTEM lib/navio/include)
+  # Include navio2 library
+  add_subdirectory(lib/navio2 libnavio)
+  include_directories(SYSTEM lib/navio2/include)
   set_target_properties(libnavio PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
 
