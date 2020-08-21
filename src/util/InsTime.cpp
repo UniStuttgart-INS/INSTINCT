@@ -80,7 +80,7 @@ std::string InsTime::MakeStringFromTimeSys(InsTime::TIME_SYSTEM sys)
 
 std::ostream& operator<<(std::ostream& os, const InsTime& insTime)
 {
-    return os << insTime.toYMDHMS() << "(" << insTime.toMJD() << ")";
+    return os << insTime.toYMDHMS() << " (" << insTime.toMJD() << ")";
 }
 
 std::ostream& operator<<(std::ostream& os, const InsTime_MJD& mjd)
