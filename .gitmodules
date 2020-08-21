@@ -13,3 +13,6 @@
 [submodule "lib/nodeeditor"]
 	path = lib/nodeeditor
 	url = https://git.nav.uni-stuttgart.de/thomas.topp/nodeeditor.git
+[submodule "lib/uartsensor"]
+	path = lib/uartsensor
+	url = https://git.nav.uni-stuttgart.de/thomas.topp/uart-sensor.git
