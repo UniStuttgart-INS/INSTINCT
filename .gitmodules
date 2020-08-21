@@ -1,3 +1,18 @@
 [submodule "lib/gcem"]
 	path = lib/gcem
 	url = https://github.com/kthohr/gcem.git
+[submodule "lib/gnuplot-iostream"]
+	path = lib/gnuplot-iostream
+	url = https://github.com/dstahlke/gnuplot-iostream
+[submodule "lib/vnproglib"]
+	path = lib/vnproglib
+	url = https://git.nav.uni-stuttgart.de/ins/ins_staff/vnproglib.git
+[submodule "lib/navio2"]
+	path = lib/navio2
+	url = https://git.nav.uni-stuttgart.de/ins/ins_staff/navio2.git
+[submodule "lib/nodeeditor"]
+	path = lib/nodeeditor
+	url = https://git.nav.uni-stuttgart.de/thomas.topp/nodeeditor.git
+[submodule "lib/uartsensor"]
+	path = lib/uartsensor
+	url = https://git.nav.uni-stuttgart.de/thomas.topp/uart-sensor.git

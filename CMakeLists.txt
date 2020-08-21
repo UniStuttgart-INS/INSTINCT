@@ -94,14 +94,14 @@ option(ENABLE_SENSORS "Enable Compilation of Sensors" ON)
 
 if(ENABLE_SENSORS)
   # Include VectorNav library
-  add_subdirectory(lib/vnproglib-1.1.5.0 libvncxx)
-  include_directories(SYSTEM lib/vnproglib-1.1.5.0/include)
+  add_subdirectory(lib/vnproglib libvncxx)
+  include_directories(SYSTEM lib/vnproglib/include)
   set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
-  # Include navio library
-  add_subdirectory(lib/navio libnavio)
-  include_directories(SYSTEM lib/navio/include)
+  # Include navio2 library
+  add_subdirectory(lib/navio2 libnavio)
+  include_directories(SYSTEM lib/navio2/include)
   set_target_properties(libnavio PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
 
