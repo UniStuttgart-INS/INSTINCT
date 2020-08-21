@@ -1,52 +1,49 @@
-/// @file ImuIntegrator.hpp
-/// @brief Integrates ImuObs Data
+/// @file State.hpp
+/// @brief State Information Node
 /// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
-/// @date 2020-05-18
+/// @date 2020-08-21
 
 #pragma once
 
 #include "Nodes/Node.hpp"
 
-#include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/StateData.hpp"
-
-#include <deque>
 
 namespace NAV
 {
-class ImuIntegrator : public Node
+class State : public Node
 {
   public:
     /// @brief Constructor
     /// @param[in] name Name of the object
     /// @param[in] options Program options string map
-    ImuIntegrator(const std::string& name, const std::map<std::string, std::string>& options);
+    State(const std::string& name, const std::map<std::string, std::string>& options);
 
     /// @brief Default constructor
-    ImuIntegrator() = default;
+    State() = default;
     /// @brief Destructor
-    ~ImuIntegrator() override = default;
+    ~State() override = default;
     /// @brief Copy constructor
-    ImuIntegrator(const ImuIntegrator&) = delete;
+    State(const State&) = delete;
     /// @brief Move constructor
-    ImuIntegrator(ImuIntegrator&&) = delete;
+    State(State&&) = delete;
     /// @brief Copy assignment operator
-    ImuIntegrator& operator=(const ImuIntegrator&) = delete;
+    State& operator=(const State&) = delete;
     /// @brief Move assignment operator
-    ImuIntegrator& operator=(ImuIntegrator&&) = delete;
+    State& operator=(State&&) = delete;
 
     /// @brief Returns the String representation of the Class Type
     /// @return The class type
     [[nodiscard]] constexpr std::string_view type() const override
     {
-        return std::string_view("ImuIntegrator");
+        return std::string_view("State");
     }
 
     /// @brief Returns the String representation of the Class Category
     /// @return The class category
     [[nodiscard]] constexpr std::string_view category() const override
     {
-        return std::string_view("Integrator");
+        return std::string_view("State");
     }
 
     /// @brief Returns Gui Configuration options for the class
@@ -71,7 +68,7 @@ class ImuIntegrator : public Node
         switch (portType)
         {
         case PortType::In:
-            return 2U;
+            return 1U;
         case PortType::Out:
             return 1U;
         }
@@ -90,18 +87,14 @@ class ImuIntegrator : public Node
         case PortType::In:
             if (portIndex == 0)
             {
-                return ImuObs().type();
-            }
-            if (portIndex == 1)
-            {
                 return StateData().type();
             }
             break;
         case PortType::Out:
-            // if (portIndex == 0)
-            // {
-            //     return UbloxObs().type();
-            // }
+            if (portIndex == 0)
+            {
+                return StateData().type();
+            }
             break;
         }
 
@@ -115,27 +108,31 @@ class ImuIntegrator : public Node
     {
         if (portIndex == 0)
         {
-            auto obs = std::static_pointer_cast<ImuObs>(data);
-            integrateObservation(obs);
+            auto obs = std::static_pointer_cast<StateData>(data);
+            updateState(obs);
         }
     }
 
+    /// @brief Requests the node to send out its data
+    /// @param[in] portIndex The output port index
+    /// @return The requested data or nullptr if no data available
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) override
+    {
+        if (portIndex == 0)
+        {
+            return currentState;
+        }
+
+        return nullptr;
+    }
+
   private:
-    /// @brief Integrates the Imu Observation data
-    /// @param[in] obs ImuObs to process
-    void integrateObservation(std::shared_ptr<ImuObs>& obs);
+    /// @brief Update the current State
+    /// @param[in] New State
+    void updateState(std::shared_ptr<StateData>& state);
 
-    /// @brief Storage class for previous observations.
-    ///
-    /// [0]: t_{k-1}
-    /// [1]: t_{k-2}
-    std::deque<std::shared_ptr<ImuObs>> prevObs;
-
-    /// @brief Storage class for previous states.
-    ///
-    /// [0]: t_{k-1}
-    /// [1]: t_{k-2}
-    std::deque<std::shared_ptr<StateData>> prevStates;
+    /// The current vehicle state
+    std::shared_ptr<StateData> currentState;
 };
 
 } // namespace NAV

@@ -185,7 +185,7 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->dtheta.has_value())
                 {
-                    obs->dtheta = Eigen::Array3d();
+                    obs->dtheta = Eigen::Vector3d();
                 }
                 obs->dtheta.value().x() = std::stod(cell);
             }
@@ -193,7 +193,7 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->dtheta.has_value())
                 {
-                    obs->dtheta = Eigen::Array3d();
+                    obs->dtheta = Eigen::Vector3d();
                 }
                 obs->dtheta.value().y() = std::stod(cell);
             }
@@ -201,7 +201,7 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             {
                 if (!obs->dtheta.has_value())
                 {
-                    obs->dtheta = Eigen::Array3d();
+                    obs->dtheta = Eigen::Vector3d();
                 }
                 obs->dtheta.value().z() = std::stod(cell);
             }

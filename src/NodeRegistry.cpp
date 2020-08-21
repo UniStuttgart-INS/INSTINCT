@@ -26,6 +26,8 @@
 
 #include "Nodes/Integrator/ImuIntegrator.hpp"
 
+#include "Nodes/State/State.hpp"
+
 #include "Nodes/StateEstimator/StateEstimator.hpp"
 
 #include "Nodes/Synchronizer/TimeSynchronizer/TimeSynchronizer.hpp"
@@ -56,7 +58,9 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 
     nodeManager.registerNodeType<NAV::GnuPlot>();
 
-    //nodeManager.registerNodeType<NAV::ImuIntegrator>();
+    nodeManager.registerNodeType<NAV::ImuIntegrator>();
+
+    nodeManager.registerNodeType<NAV::State>();
 
     nodeManager.registerNodeType<NAV::StateEstimator>();
 
@@ -74,6 +78,8 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 
+#include "NodeData/State/StateData.hpp"
+
 void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
 {
     LOG_TRACE("called");
@@ -88,4 +94,6 @@ void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeDataType<NAV::RtklibPosObs>();
     nodeManager.registerNodeDataType<NAV::UbloxObs>();
     nodeManager.registerNodeDataType<NAV::EmlidObs>();
+
+    nodeManager.registerNodeDataType<NAV::StateData>();
 }

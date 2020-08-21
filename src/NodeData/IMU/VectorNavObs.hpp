@@ -69,7 +69,7 @@ class VectorNavObs final : public ImuObs
     std::optional<double> dtime;
     /// The delta rotation angles in [degree] incurred due to rotation, by the local body reference frame,
     /// since the last time the values were outputted by the device.
-    std::optional<Eigen::Array3d> dtheta;
+    std::optional<Eigen::Vector3d> dtheta;
     /// The delta velocity in [m/s] incurred due to motion, by the local body reference frame,
     /// since the last time the values were outputted by the device.
     std::optional<Eigen::Vector3d> dvel;

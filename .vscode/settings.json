@@ -16,6 +16,9 @@
         "ublox"
     ],
     "editor.formatOnSave": true,
+    "editor.rulers": [
+        120
+    ],
     "doxdocgen.generic.paramTemplate": "@param[in, out] {param} ",
     "doxdocgen.file.fileOrder": [
         "file",
