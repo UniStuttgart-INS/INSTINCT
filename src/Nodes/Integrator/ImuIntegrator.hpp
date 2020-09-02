@@ -127,14 +127,14 @@ class ImuIntegrator : public Node
 
     /// @brief Storage class for previous observations.
     ///
-    /// [0]: t_{k-1}
-    /// [1]: t_{k-2}
+    /// [0]: Observation at time tₖ₋₁
+    /// [1]: Observation at time tₖ₋₂
     std::deque<std::shared_ptr<ImuObs>> prevObs;
 
     /// @brief Storage class for previous states.
     ///
-    /// [0]: t_{k-1}
-    /// [1]: t_{k-2}
+    /// [0]: StateData at time tₖ₋₁
+    /// [1]: StateData at time tₖ₋₂
     std::deque<std::shared_ptr<StateData>> prevStates;
 };
 

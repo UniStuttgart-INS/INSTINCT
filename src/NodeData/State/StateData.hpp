@@ -7,7 +7,7 @@
 
 #include "NodeData/InsObs.hpp"
 
-#include "Eigen/Dense"
+#include <Eigen/Dense>
 #include <Eigen/Geometry>
 
 namespace NAV
@@ -61,14 +61,36 @@ class StateData : public InsObs
     // [[nodiscard]] Eigen::Ref<Eigen::Vector4d const> q() const { return X.segment<4>(9); }
     // clang-format on
 
-    /// @brief Calcualtes the Direction Cosine Matrix from earth to platform coordinates
+    /// @brief Returns
+
+    /// @brief Returns the Quaternion from platform to earth coordinates
+    /// @return The Quaternion for the rotation platform to earth coordinates
+    [[nodiscard]] Eigen::Quaterniond quaternion_p2e() const
+    {
+        return q_p2e;
+    }
+    /// @brief Returns the Quaternion from earth to platform coordinates
+    /// @return The Quaternion for the rotation earth to platform coordinates
+    [[nodiscard]] Eigen::Quaterniond quaternion_e2p() const
+    {
+        return quaternion_p2e().conjugate();
+    }
+
+    /// @brief Calculates the Direction Cosine Matrix from earth to platform coordinates
     /// @return The DCM from earth to platform coordinates
     [[nodiscard]] Eigen::Matrix3d DCM_e2p() const
     {
-        return DCMBodyToNED;
+        return quaternion_e2p().toRotationMatrix();
     }
 
-    Eigen::Matrix3d DCMBodyToNED;
+    /// @brief Calculates the Direction Cosine Matrix from platform to earth coordinates
+    /// @return The DCM from platform to earth coordinates
+    [[nodiscard]] Eigen::Matrix3d DCM_p2e() const
+    {
+        return quaternion_p2e().toRotationMatrix();
+    }
+
+    Eigen::Quaterniond q_p2e = Eigen::Quaterniond::Identity();
 
     // Eigen::Vector3d VelocityNED;
     // Eigen::Vector3d BodyRate;

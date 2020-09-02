@@ -11,8 +11,13 @@
         "Doxygen",
         "GNSS",
         "cmake",
+        "coeffs",
         "docopt",
         "gtest",
+        "hobiger",
+        "kutta",
+        "quaterniond",
+        "runge",
         "ublox"
     ],
     "editor.formatOnSave": true,
