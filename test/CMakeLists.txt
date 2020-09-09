@@ -15,13 +15,13 @@ add_executable(
   tests
   util/InsMechanizationTests.cpp
   util/InsTimeTests.cpp
-  util/InsUtilTests.cpp
+  util/InsTransformationsTests.cpp
   util/LoggerTests.cpp
   Nodes/DataLogger/IMU/VectorNavDataLoggerTest.cpp
   ${CMAKE_SOURCE_DIR}/src/util/Logger.cpp
   ${CMAKE_SOURCE_DIR}/src/util/InsMechanization.cpp
   ${CMAKE_SOURCE_DIR}/src/util/InsTime.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/InsUtil.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/InsTransformations.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/Node.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/Imu.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/ImuFileReader.cpp
