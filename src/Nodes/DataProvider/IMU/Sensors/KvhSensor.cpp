@@ -3,7 +3,6 @@
     #include "KvhSensor.hpp"
 
     #include "util/Logger.hpp"
-    #include "util/Constants.hpp"
 
     #include "util/UartSensors/KVH/KvhUtilities.hpp"
 

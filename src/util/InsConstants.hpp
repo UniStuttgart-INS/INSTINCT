@@ -6,14 +6,21 @@
 #pragma once
 
 #include <cmath>
+#include <Eigen/Dense>
 
 namespace NAV::InsConst
 {
+/// @brief Nominal mean angular velocity of the Earth in [rad/s]
+/// @note D. D. McCarthy, G. Petit (Hrsg.): IERS Conventions (2003) (IERS Technical Note No. 32), Kap. 1: General Definitions and Numerical Standards.
+///         ftp://tai.bipm.org/iers/conv2003/chapter1/tn32_c1.pdf
+const double angularVelocity_ie = 7.2921151467e-05;
+
+/// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
+const Eigen::Vector3d angularVelocity_ie_e{ 0.0, 0.0, angularVelocity_ie };
+
 const double C = 299792458.0; ///< speed of light (m/s)
 const double C2 = C * C;      ///< speed of light, squared (m^2/s^2)
 const double C3 = C2 * C;     ///< speed of light, third order (m^3/s^3)
-
-const double RHO = 180.0 / M_PI;
 
 const double WGS84_a = 6378137.0;
 const double WGS84_f = 1.0 / 298.257223563;
@@ -30,21 +37,9 @@ const double GLO_MU = 3.986005e+14; ///< gravitational constant GLONASS
 const double GLO_J2 = 1.0826257e-3; ///< 2nd zonal harmonic of geopot GLONASS
 const double GLO_RE = 6378136.0;    ///< radius GLONASS
 
-const double GAL_OMG = 7.2921151467e-5; ///< earth angular velocity (rad/s) GALILEO
-const double GAL_MU = 3.986004418e+14;  ///< earth gravitational constant GALILEO
+const double GAL_OMG = angularVelocity_ie; ///< earth angular velocity (rad/s) GALILEO
+const double GAL_MU = 3.986004418e+14;     ///< earth gravitational constant GALILEO
 
 const double G_NORM = 9.80665; ///< Gravity norm constant (meter/second^2)
-
-template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
-constexpr double deg2rad(T deg)
-{
-    return static_cast<double>(deg) * M_PI / 180.0;
-}
-
-template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
-constexpr double rad2deg(T rad)
-{
-    return static_cast<double>(rad) * 180.0 / M_PI;
-}
 
 } // namespace NAV::InsConst

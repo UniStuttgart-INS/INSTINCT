@@ -4,7 +4,6 @@
 
     #include "util/Debug.hpp"
     #include "util/Logger.hpp"
-    #include "util/Constants.hpp"
 
     #include "navio/Common/MPU9250.h"
     #include "navio/Navio2/LSM9DS1.h"

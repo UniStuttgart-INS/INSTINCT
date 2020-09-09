@@ -3,6 +3,7 @@
 #include "util/Logger.hpp"
 
 #include "util/InsMechanization.hpp"
+#include "util/InsConstants.hpp"
 
 NAV::ImuIntegrator::ImuIntegrator(const std::string& name, [[maybe_unused]] const std::map<std::string, std::string>& options)
     : Node(name)
@@ -32,12 +33,12 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
     /// tₖ Current Time
     const auto& time__t0 = obs->insTime.value();
 
-    /// ω_ip_p (tₖ₋₁) Rotation rate in [rad/s],
+    /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
-    const auto& rotationRate_ip__t1 = prevObs.at(0)->gyroUncompXYZ.value();
-    /// ω_ip_p (tₖ) Rotation rate in [rad/s],
+    const auto& angularVelocity_ip__t1 = prevObs.at(0)->gyroUncompXYZ.value();
+    /// ω_ip_p (tₖ) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ
-    const auto& rotationRate_ip__t0 = obs->gyroUncompXYZ.value();
+    const auto& angularVelocity_ip__t0 = obs->gyroUncompXYZ.value();
 
     // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
     auto timeDifferenceSec__t1 = (time__t1 - time__t2).count();
@@ -49,14 +50,13 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
     /// q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
     Eigen::Quaterniond quaternion_p2e__t1 = prevStates.at(0)->quaternion_p2e();
 
-    // TODO: Determine Earth Rotation
-    /// ω_ie_e (tₖ) Rotation rate in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
-    Eigen::Vector3d rotationRate_ie__t0 = Eigen::Vector3d::Zero();
+    /// ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
+    const Eigen::Vector3d& angularVelocity_ie__t0 = InsConst::angularVelocity_ie_e;
 
     // q (tₖ) Quaternion, from platform to earth coordinates, at the current time tₖ
     Eigen::Quaterniond quaternion_p2e__t0 = updateQuaternionsRungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                                         rotationRate_ip__t0, rotationRate_ip__t1,
-                                                                         rotationRate_ie__t0,
+                                                                         angularVelocity_ip__t0, angularVelocity_ip__t1,
+                                                                         angularVelocity_ie__t0,
                                                                          quaternion_p2e__t1, quaternion_p2e__t2);
 
     LOG_INFO("quaternion_p2e__t0: {}", quaternion_p2e__t0.coeffs());
