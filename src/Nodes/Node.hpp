@@ -102,6 +102,8 @@ class Node : public DataCallback
     /// @brief Handles the data sent on the input port
     /// @param[in] portIndex The input port index
     /// @param[in, out] data The data send on the input port
+    ///
+    /// @note The shared_ptr is copied on purpose to guarantee the data stays alive during function execution
     virtual void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) = 0;
 
     /// @brief Requests the node to send out its data

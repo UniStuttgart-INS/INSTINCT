@@ -68,7 +68,7 @@ class State : public Node
         switch (portType)
         {
         case PortType::In:
-            return 1U;
+            return 0U;
         case PortType::Out:
             return 1U;
         }
@@ -85,10 +85,6 @@ class State : public Node
         switch (portType)
         {
         case PortType::In:
-            if (portIndex == 0)
-            {
-                return StateData().type();
-            }
             break;
         case PortType::Out:
             if (portIndex == 0)
@@ -104,14 +100,7 @@ class State : public Node
     /// @brief Handles the data sent on the input port
     /// @param[in] portIndex The input port index
     /// @param[in, out] data The data send on the input port
-    void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) override
-    {
-        if (portIndex == 0)
-        {
-            auto obs = std::static_pointer_cast<StateData>(data);
-            updateState(obs);
-        }
-    }
+    void handleInputData(uint8_t /* portIndex */, std::shared_ptr<NodeData> /* data */) override {}
 
     /// @brief Requests the node to send out its data
     /// @param[in] portIndex The output port index
@@ -127,10 +116,6 @@ class State : public Node
     }
 
   private:
-    /// @brief Update the current State
-    /// @param[in] New State
-    void updateState(std::shared_ptr<StateData>& state);
-
     /// The current vehicle state
     std::shared_ptr<StateData> currentState;
 };
