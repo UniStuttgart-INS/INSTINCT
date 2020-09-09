@@ -11,8 +11,26 @@
                 "-fconfig.ini",
                 "config-dataflow.ini" // This expands to: navsos -fconfig.ini config-dataflow.ini
             ],
-            // "preLaunchTask": "TEST: Build project",
-            // "program": "${workspaceFolder}/bin/Debug/tests",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "C++ Debug Tests (gdb)",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask": "TEST: Build project",
+            "program": "${workspaceFolder}/bin/Debug/tests",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
