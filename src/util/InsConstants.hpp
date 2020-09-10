@@ -18,10 +18,22 @@ constexpr double angularVelocity_ie = 7.2921151467e-05;
 /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
 const Eigen::Vector3d angularVelocity_ie_e{ 0.0, 0.0, angularVelocity_ie };
 
+/// Semi-major axis (World Geodetic System 1984)
 constexpr double WGS84_a = 6378137.0;
+/// Flattening f = (a-b)/a (World Geodetic System 1984)
 constexpr double WGS84_f = 1.0 / 298.257223563;
+/// Semi-minor axis (World Geodetic System 1984)
+constexpr double WGS84_b = WGS84_a - WGS84_f * WGS84_a;
+/// Square of the first eccentricity of the ellipsoid (World Geodetic System 1984)
+constexpr double WGS84_e_squared = 2 * WGS84_f - WGS84_f * WGS84_f;
+
+/// Semi-major axis (Geodetic Reference System 1980)
 constexpr double GRS80_a = 6378137;
+/// Flattening f = (a-b)/a (Geodetic Reference System 1980)
 constexpr double GRS80_f = 1.0 / 298.257222101;
+/// Semi-minor axis (Geodetic Reference System 1980)
+constexpr double GRS80_b = GRS80_a - GRS80_f * GRS80_a;
+/// Square of the first eccentricity of the ellipsoid (Geodetic Reference System 1980)
 constexpr double GRS80_e_squared = 2 * GRS80_f - GRS80_f * GRS80_f;
 
 constexpr double C = 299792458.0; ///< speed of light (m/s)
@@ -41,6 +53,7 @@ constexpr double GLO_RE = 6378136.0;    ///< radius GLONASS
 constexpr double GAL_OMG = angularVelocity_ie; ///< earth angular velocity (rad/s) GALILEO
 constexpr double GAL_MU = 3.986004418e+14;     ///< earth gravitational constant GALILEO
 
-constexpr double G_NORM = 9.80665; ///< Gravity norm constant (meter/second^2)
+/// Gravity norm constant [m/s^2]
+constexpr double G_NORM = 9.80665;
 
 } // namespace NAV::InsConst

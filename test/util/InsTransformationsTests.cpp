@@ -165,20 +165,86 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     REQUIRE(std::abs(x_b2.z() - 1.0) <= EPSILON);
 }
 
-TEST_CASE("[InsTransformations] LLH to ECEF", "[InsTransformations]")
+TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]")
 {
     // Conversion with https://www.oc.nps.edu/oc2902w/coord/llhxyz.htm
 
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
-    double latitude = 48.78081;
-    double longitude = 9.172012;
+    double latitude = trafo::deg2rad(48.78081);
+    double longitude = trafo::deg2rad(9.172012);
     double height = 254;
     Eigen::Vector3d ecef_ref = Eigen::Vector3d(4157.128, 671.224, 4774.723) * 1000;
+    Eigen::Vector3d ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    Eigen::Vector3d llh = trafo::ecef2llh_WGS84(ecef_ref);
+    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.5);
+    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.5);
+    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.5);
+    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
+    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
+    REQUIRE(std::abs(llh.z() - height) <= 0.5);
 
-    Eigen::Vector3d ecef = trafo::llh2ecef_wgs84(latitude, longitude, height);
+    /* -------------------------------------------------------------------------- */
 
-    REQUIRE(ecef == ecef_ref);
+    // New York
+    // https://www.koordinaten-umrechner.de/decimal/40.712728,-74.006015?karte=OpenStreetMap&zoom=4
+    latitude = trafo::deg2rad(40.712728);
+    longitude = trafo::deg2rad(-74.006015);
+    height = 13;
+    ecef_ref = Eigen::Vector3d(1334.001, -4654.06, 4138.303) * 1000;
+    ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    llh = trafo::ecef2llh_WGS84(ecef_ref);
+    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.5);
+    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.5);
+    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.5);
+    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
+    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
+    REQUIRE(std::abs(llh.z() - height) <= 0.5);
+
+    /* -------------------------------------------------------------------------- */
+
+    latitude = 0;
+    longitude = 0;
+    height = -3492;
+    ecef_ref = Eigen::Vector3d(6374.645, 0, 0) * 1000;
+    ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    llh = trafo::ecef2llh_WGS84(ecef_ref);
+    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.000001);
+    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.000001);
+    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.000001);
+    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
+    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
+    REQUIRE(std::abs(llh.z() - height) <= 0.000001);
+
+    /* -------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(-89.9999);
+    longitude = trafo::deg2rad(0);
+    height = 2801;
+    ecef_ref = Eigen::Vector3d(0.011, 0, -6359.553) * 1000;
+    ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    llh = trafo::ecef2llh_WGS84(ecef_ref);
+    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.5);
+    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.5);
+    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.5);
+    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
+    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
+    REQUIRE(std::abs(llh.z() - height) <= 0.5);
+
+    /* -------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(40);
+    longitude = trafo::deg2rad(180);
+    height = -5097;
+    ecef_ref = Eigen::Vector3d(-4888.803, 0, 4074.709) * 1000;
+    ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    llh = trafo::ecef2llh_WGS84(ecef_ref);
+    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.5);
+    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.5);
+    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.5);
+    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
+    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
+    REQUIRE(std::abs(llh.z() - height) <= 0.5);
 }
 
 } // namespace NAV
