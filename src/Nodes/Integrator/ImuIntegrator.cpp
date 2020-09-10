@@ -45,10 +45,14 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     auto timeDifferenceSec__t0 = (time__t0 - time__t1).count();
 
+    /// q Quaternion, from platform to body coordinates. Depends on mounting of strap down IMU
+    /// TODO: Populate with settings values of mounting
+    Eigen::Quaterniond quaternion_p2b = Eigen::Quaterniond::Identity();
+
     /// q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
-    Eigen::Quaterniond quaternion_p2e__t2 = prevStates.at(1)->quaternion_p2e();
+    Eigen::Quaterniond quaternion_p2e__t2 = prevStates.at(1)->quaternion_b2e() * quaternion_p2b;
     /// q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
-    Eigen::Quaterniond quaternion_p2e__t1 = prevStates.at(0)->quaternion_p2e();
+    Eigen::Quaterniond quaternion_p2e__t1 = prevStates.at(0)->quaternion_b2e() * quaternion_p2b;
 
     /// ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
     const Eigen::Vector3d& angularVelocity_ie__t0 = InsConst::angularVelocity_ie_e;

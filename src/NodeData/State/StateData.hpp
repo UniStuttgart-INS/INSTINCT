@@ -7,6 +7,8 @@
 
 #include "NodeData/InsObs.hpp"
 
+#include "util/InsTransformations.hpp"
+
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
@@ -46,51 +48,66 @@ class StateData : public InsObs
 
     /// @brief State Vector
     /// Entries are:
-    /// [0-2] asdaasd
-    /// [3-5] asasas
-    // Eigen::Matrix<double, 13, 1> X;
+    /// [0-3] Quaternions
+    /// [4-6] Latitude, Longitude, Height
+    Eigen::Matrix<double, 7, 1> X;
 
-    // clang-format off
-    //               Eigen::Ref<Eigen::Vector3d>       p()       { return X.segment<3>(0); }
-    // [[nodiscard]] Eigen::Ref<Eigen::Vector3d const> p() const { return X.segment<3>(0); }
-    //               Eigen::Ref<Eigen::Vector3d      > v()       { return X.segment<3>(3); }
-    // [[nodiscard]] Eigen::Ref<Eigen::Vector3d const> v() const { return X.segment<3>(3); }
-    //               Eigen::Ref<Eigen::Vector3d      > w()       { return X.segment<3>(6); }
-    // [[nodiscard]] Eigen::Ref<Eigen::Vector3d const> w() const { return X.segment<3>(6); }
-    //               Eigen::Ref<Eigen::Vector4d      > q()       { return X.segment<4>(9); }
-    // [[nodiscard]] Eigen::Ref<Eigen::Vector4d const> q() const { return X.segment<4>(9); }
-    // clang-format on
+    /// Returns the Quaternion body to navigation frame (NED)
+    Eigen::Ref<Eigen::Vector4d> quat_b2n_coeff() { return X.segment<4>(0); }
+    /// Returns the Quaternion body to navigation frame (NED)
+    [[nodiscard]] Eigen::Ref<Eigen::Vector4d const> quat_b2n_coeff() const { return X.segment<4>(0); }
 
-    /// @brief Returns
+    /// Returns the latitude, longitude and height in [rad, rad, m]
+    Eigen::Ref<Eigen::Vector3d> latLonHeight() { return X.segment<3>(4); }
+    /// Returns the latitude, longitude and height above ground in [rad, rad, m]
+    [[nodiscard]] Eigen::Ref<Eigen::Vector3d const> latLonHeight() const { return X.segment<3>(4); }
+    /// Returns the latitude in [rad]
+    double& latitude() { return X(4); }
+    /// Returns the latitude in [rad]
+    [[nodiscard]] const double& latitude() const { return X(4); }
+    /// Returns the longitude in [rad]
+    double& longitude() { return X(5); }
+    /// Returns the longitude in [rad]
+    [[nodiscard]] const double& longitude() const { return X(5); }
+    /// Returns the height above ground in [m]
+    double& height() { return X(6); }
+    /// Returns the height above ground in [m]
+    [[nodiscard]] const double& height() const { return X(6); }
 
-    /// @brief Returns the Quaternion from platform to earth coordinates
-    /// @return The Quaternion for the rotation platform to earth coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_p2e() const
+    /// @brief Returns the Quaternion from body to navigation frame (NED)
+    /// @return The Quaternion for the rotation from body to navigation coordinates
+    [[nodiscard]] Eigen::Quaterniond quaternion_b2n() const
     {
-        return q_p2e;
-    }
-    /// @brief Returns the Quaternion from earth to platform coordinates
-    /// @return The Quaternion for the rotation earth to platform coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_e2p() const
-    {
-        return quaternion_p2e().conjugate();
-    }
-
-    /// @brief Calculates the Direction Cosine Matrix from earth to platform coordinates
-    /// @return The DCM from earth to platform coordinates
-    [[nodiscard]] Eigen::Matrix3d DCM_e2p() const
-    {
-        return quaternion_e2p().toRotationMatrix();
+        return Eigen::Quaterniond(quat_b2n_coeff());
     }
 
-    /// @brief Calculates the Direction Cosine Matrix from platform to earth coordinates
-    /// @return The DCM from platform to earth coordinates
-    [[nodiscard]] Eigen::Matrix3d DCM_p2e() const
+    /// @brief Returns the Quaternion from body to navigation frame (NED)
+    /// @return The Quaternion for the rotation from body to navigation coordinates
+    [[nodiscard]] Eigen::Quaterniond quaternion_n2b() const
     {
-        return quaternion_p2e().toRotationMatrix();
+        return quaternion_b2n().conjugate();
     }
 
-    Eigen::Quaterniond q_p2e = Eigen::Quaterniond::Identity();
+    /// @brief Returns the Quaternion from platform to Earth-fixed frame
+    /// @return The Quaternion for the rotation from platform to earth coordinates
+    [[nodiscard]] Eigen::Quaterniond quaternion_n2e() const
+    {
+        return trafo::quat_n2e(latitude(), longitude());
+    }
+
+    /// @brief Returns the Quaternion from body to Earth-fixed frame
+    /// @return The Quaternion for the rotation from body to earth coordinates
+    [[nodiscard]] Eigen::Quaterniond quaternion_b2e() const
+    {
+        return quaternion_n2e() * quaternion_b2n();
+    }
+
+    /// @brief Returns the Quaternion from Earth-fixed to body frame
+    /// @return The Quaternion for the rotation from earth to body coordinates
+    [[nodiscard]] Eigen::Quaterniond quaternion_e2b() const
+    {
+        return quaternion_b2e().conjugate();
+    }
 
     // Eigen::Vector3d VelocityNED;
     // Eigen::Vector3d BodyRate;
