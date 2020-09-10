@@ -68,7 +68,7 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
     REQUIRE(std::abs(ZYX.x() - trafo::deg2rad(1.0)) <= 0.000001);
 }
 
-TEST_CASE("[InsTransformations] Inertial <=> Earth-centered-Earth-fixed frame conversion", "[InsTransformations]")
+TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
     // Sidereal day: 23h 56min 4.099s
     auto siderialHalfDay = 86164.099 / 2.0;
@@ -91,7 +91,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-centered-Earth-fixed frame co
     REQUIRE(std::abs(x_i2.z() - 22.0) <= 0.000001);
 }
 
-TEST_CASE("[InsTransformations] Navigation <=> Earth-centered-Earth-fixed frame conversion", "[InsTransformations]")
+TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
     double latitude = trafo::deg2rad(90);
     double longitude = 0.0;

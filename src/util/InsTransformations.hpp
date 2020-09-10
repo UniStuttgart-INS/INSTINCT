@@ -61,9 +61,19 @@ template<Numerical T>
     return static_cast<double>(rad) * 180.0 / M_PI;
 }
 
+/// @brief Convert Degree to Radians
+/// @param[in] deg Vector to convert in [deg]
+/// @return The converted Vector in [rad]
+[[nodiscard]] Eigen::Vector3d deg2rad3(const Eigen::Vector3d& deg);
+
+/// @brief Convert Radians to Degree
+/// @param[in] rad Vector to convert in [rad]
+/// @return The converted Vector in [deg]
+[[nodiscard]] Eigen::Vector3d rad2deg3(const Eigen::Vector3d& rad);
+
 /// @brief Converts the quaternion to Euler rotation angles with rotation sequence ZYX
 /// @param[in] q Quaternion to convert
-/// @return [angleZ, angleY, angleX]^T vector in [rad]
+/// @return [angleZ, angleY, angleX]^T vector in [rad]. The returned angles are in the ranges [0:pi]x[-pi:pi]x[-pi:pi]
 [[nodiscard]] Eigen::Vector3d quat2eulerZYX(const Eigen::Quaterniond& q);
 
 /// @brief Quaternion for rotations from inertial to Earth-centered-Earth-fixed frame
@@ -72,19 +82,19 @@ template<Numerical T>
 /// @return The rotation Quaternion representation
 [[nodiscard]] Eigen::Quaterniond quat_i2e(double time, double angularRate_ie = InsConst::angularVelocity_ie);
 
-/// @brief Direction cosine matrix for rotations from inertial to Earth-centered-Earth-fixed frame
+/// @brief Direction cosine matrix for rotations from inertial to Earth-fixed frame
 /// @param[in] time Time (t - t0)
-/// @param[in] angularRate_ie Angular velocity in [rad/s] of earth frame with regard to the inertial frame
+/// @param[in] angularRate_ie Angular velocity in [rad/s] of Earth frame with regard to the inertial frame
 /// @return The DCM matrix
 [[nodiscard]] Eigen::Matrix3d DCM_i2e(double time, double angularRate_ie = InsConst::angularVelocity_ie);
 
-/// @brief Quaternion for rotations from navigation to Earth-centered-Earth-fixed frame
+/// @brief Quaternion for rotations from navigation to Earth-fixed frame
 /// @param[in] latitude 𝜙 Geodetic latitude in [rad]
 /// @param[in] longitude λ Geodetic longitude in [rad]
 /// @return The rotation Quaternion representation
 [[nodiscard]] Eigen::Quaterniond quat_n2e(double latitude, double longitude);
 
-/// @brief Direction cosine matrix for rotations from navigation to Earth-centered-Earth-fixed frame
+/// @brief Direction cosine matrix for rotations from navigation to Earth-fixed frame
 /// @param[in] latitude 𝜙 Geodetic latitude in [rad]
 /// @param[in] longitude λ Geodetic longitude in [rad]
 /// @return The DCM matrix

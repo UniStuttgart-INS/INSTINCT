@@ -2,6 +2,16 @@
 
 namespace NAV::trafo
 {
+Eigen::Vector3d deg2rad3(const Eigen::Vector3d& deg)
+{
+    return deg * M_PI / 180.0;
+}
+
+Eigen::Vector3d rad2deg3(const Eigen::Vector3d& rad)
+{
+    return rad * 180.0 / M_PI;
+}
+
 Eigen::Vector3d quat2eulerZYX(const Eigen::Quaterniond& q)
 {
     return q.toRotationMatrix().eulerAngles(2, 1, 0);
