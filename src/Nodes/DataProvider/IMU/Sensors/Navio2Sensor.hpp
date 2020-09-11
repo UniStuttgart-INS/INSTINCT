@@ -57,8 +57,11 @@ class Navio2Sensor final : public Imu
     /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
-        return { { CONFIG_LIST, "Imu", "Select the IMU", { "[MPU9250]", "LSM9DS1" } },
-                 { CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "100", "200" } } };
+        std::vector<ConfigOptions> configs = { { CONFIG_LIST, "Imu", "Select the IMU", { "[MPU9250]", "LSM9DS1" } },
+                                               { CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "100", "200" } } };
+        auto imuConfigs = Imu::guiConfig();
+        configs.insert(configs.end(), imuConfigs.begin(), imuConfigs.end());
+        return configs;
     }
 
     /// @brief Returns the context of the class

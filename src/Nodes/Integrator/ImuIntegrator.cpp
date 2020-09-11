@@ -12,10 +12,15 @@ NAV::ImuIntegrator::ImuIntegrator(const std::string& name, [[maybe_unused]] cons
 
 void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
 {
+    // Get the IMU Position information
+    const auto& imuNode = incomingLinks[1].first.lock();
+    auto& imuPortIndex = incomingLinks[1].second;
+    auto imuPosition = std::static_pointer_cast<ImuPos>(imuNode->requestOutputData(imuPortIndex));
+
     // Get the current state data
-    const auto& sourceNode = incomingLinks[1].first.lock();
-    auto& sourcePortIndex = incomingLinks[1].second;
-    auto currentStateData = std::static_pointer_cast<StateData>(sourceNode->requestOutputData(sourcePortIndex));
+    const auto& stateNode = incomingLinks[2].first.lock();
+    auto& statePortIndex = incomingLinks[2].second;
+    auto currentStateData = std::static_pointer_cast<StateData>(stateNode->requestOutputData(statePortIndex));
 
     // Fill if empty
     if (prevObs.empty())
@@ -45,14 +50,10 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     auto timeDifferenceSec__t0 = (time__t0 - time__t1).count();
 
-    /// q Quaternion, from platform to body coordinates. Depends on mounting of strap down IMU
-    /// TODO: Populate with settings values of mounting
-    Eigen::Quaterniond quaternion_p2b = trafo::quat_p2b(0, 0, 0);
-
     /// q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
-    Eigen::Quaterniond quaternion_p2e__t2 = prevStates.at(1)->quaternion_b2e() * quaternion_p2b;
+    Eigen::Quaterniond quaternion_p2e__t2 = prevStates.at(1)->quaternion_b2e() * imuPosition->quatGyro_p2b;
     /// q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
-    Eigen::Quaterniond quaternion_p2e__t1 = prevStates.at(0)->quaternion_b2e() * quaternion_p2b;
+    Eigen::Quaterniond quaternion_p2e__t1 = prevStates.at(0)->quaternion_b2e() * imuPosition->quatGyro_p2b;
 
     /// ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
     const Eigen::Vector3d& angularVelocity_ie__t0 = InsConst::angularVelocity_ie_e;
@@ -63,7 +64,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
                                                                          angularVelocity_ie__t0,
                                                                          quaternion_p2e__t1, quaternion_p2e__t2);
 
-    LOG_INFO("quaternion_p2e__t0: {}", quaternion_p2e__t0.coeffs());
+    LOG_INFO("quaternion_p2e__t0: {}", quaternion_p2e__t0.coeffs().transpose());
 
     // Rotate Data
     prevObs.pop_back();

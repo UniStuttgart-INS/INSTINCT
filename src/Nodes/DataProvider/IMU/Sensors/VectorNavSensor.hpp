@@ -106,15 +106,18 @@ class VectorNavSensor final : public UartSensor, public Imu
     /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
-        return { { CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
-                                          "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
-                                          "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
-                                          "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
-                                          "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
-                                          "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
-                   { "/dev/ttyUSB0" } },
-                 { CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" } },
-                 { CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "100", "200" } } };
+        std::vector<ConfigOptions> configs = { { CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
+                                                                        "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
+                                                                        "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
+                                                                        "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
+                                                                        "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
+                                                                        "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
+                                                 { "/dev/ttyUSB0" } },
+                                               { CONFIG_LIST, "Baudrate", "Target Baudrate for the sensor", { "[Fastest]", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" } },
+                                               { CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "100", "200" } } };
+        auto imuConfigs = Imu::guiConfig();
+        configs.insert(configs.end(), imuConfigs.begin(), imuConfigs.end());
+        return configs;
     }
 
     /// @brief Returns the context of the class

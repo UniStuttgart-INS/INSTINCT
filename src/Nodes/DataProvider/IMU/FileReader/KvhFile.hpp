@@ -48,13 +48,6 @@ class KvhFile final : public ImuFileReader
         return std::string_view("DataProvider");
     }
 
-    /// @brief Returns Gui Configuration options for the class
-    /// @return The gui configuration
-    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
-    {
-        return { { CONFIG_STRING, "Path", "Path to the File to read", { "" } } };
-    }
-
     /// @brief Returns the context of the class
     /// @return The class context
     [[nodiscard]] constexpr NodeContext context() const final

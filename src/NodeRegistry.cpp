@@ -69,6 +69,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 
 #include "NodeData/InsObs.hpp"
 
+#include "NodeData/IMU/ImuPos.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
@@ -86,6 +87,7 @@ void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
 
     nodeManager.registerNodeDataType<NAV::InsObs>();
 
+    nodeManager.registerNodeDataType<NAV::ImuPos>();
     nodeManager.registerNodeDataType<NAV::ImuObs>();
     nodeManager.registerNodeDataType<NAV::KvhObs>();
     nodeManager.registerNodeDataType<NAV::VectorNavObs>();

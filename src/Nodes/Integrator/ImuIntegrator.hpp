@@ -9,6 +9,7 @@
 
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/StateData.hpp"
+#include "NodeData/IMU/ImuPos.hpp"
 
 #include <deque>
 
@@ -71,7 +72,7 @@ class ImuIntegrator : public Node
         switch (portType)
         {
         case PortType::In:
-            return 2U;
+            return 3U;
         case PortType::Out:
             return 1U;
         }
@@ -93,6 +94,10 @@ class ImuIntegrator : public Node
                 return ImuObs().type();
             }
             if (portIndex == 1)
+            {
+                return ImuPos().type();
+            }
+            if (portIndex == 2)
             {
                 return StateData().type();
             }

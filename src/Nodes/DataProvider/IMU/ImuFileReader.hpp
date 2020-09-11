@@ -40,6 +40,16 @@ class ImuFileReader : public FileReader, public Imu
 
     /// @brief Initialize the node
     void initialize() override;
+
+    /// @brief Returns Gui Configuration options for the class
+    /// @return The gui configuration
+    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
+    {
+        std::vector<ConfigOptions> configs = { { CONFIG_STRING, "Path", "Path to the File to read", { "" } } };
+        auto imuConfigs = Imu::guiConfig();
+        configs.insert(configs.end(), imuConfigs.begin(), imuConfigs.end());
+        return configs;
+    }
 };
 
 } // namespace NAV
