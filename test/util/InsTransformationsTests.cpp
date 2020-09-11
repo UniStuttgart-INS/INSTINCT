@@ -9,7 +9,7 @@
 
 namespace NAV
 {
-constexpr double EPSILON = 2.0 * std::numeric_limits<double>::epsilon();
+constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
 TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformations]")
 {
@@ -245,6 +245,33 @@ TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]"
     REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
     REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
     REQUIRE(std::abs(llh.z() - height) <= 0.5);
+}
+
+TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
+{
+    Eigen::Quaterniond q_p2b(Eigen::AngleAxisd(trafo::deg2rad(-90), Eigen::Vector3d::UnitZ()));
+    Eigen::Quaterniond q_b2n = trafo::quat_b2n(trafo::deg2rad(20), trafo::deg2rad(50), trafo::deg2rad(190));
+    Eigen::Quaterniond q_n2e = trafo::quat_n2e(trafo::deg2rad(10), trafo::deg2rad(40));
+
+    Eigen::Vector3d v_p(1, 3, 5);
+
+    Eigen::Vector3d v_b = q_p2b * v_p;
+    Eigen::Vector3d v_n = q_b2n * v_b;
+    Eigen::Vector3d v_e = q_n2e * v_n;
+
+    Eigen::Quaterniond q_p2n = q_b2n * q_p2b;
+    Eigen::Vector3d v_n_direct = q_p2n * v_p;
+
+    Eigen::Quaterniond q_p2e = q_n2e * q_b2n * q_p2b;
+    Eigen::Vector3d v_e_direct = q_p2e * v_p;
+
+    REQUIRE(std::abs(v_n.x() - v_n_direct.x()) <= EPSILON);
+    REQUIRE(std::abs(v_n.y() - v_n_direct.y()) <= EPSILON);
+    REQUIRE(std::abs(v_n.z() - v_n_direct.z()) <= EPSILON);
+
+    REQUIRE(std::abs(v_e.x() - v_e_direct.x()) <= EPSILON);
+    REQUIRE(std::abs(v_e.y() - v_e_direct.y()) <= EPSILON);
+    REQUIRE(std::abs(v_e.z() - v_e_direct.z()) <= EPSILON);
 }
 
 } // namespace NAV
