@@ -67,6 +67,7 @@ class Node : public DataCallback
         CONFIG_BOOL,            ///< Boolean: Default
         CONFIG_INT,             ///< Integer: Min, Default, Max
         CONFIG_FLOAT,           ///< Float: Min, Default, Max
+        CONFIG_FLOAT3,          ///< Float Vector: Min1, Default1, Max1, Min2, Default2, Max2, Min3, Default3, Max3
         CONFIG_STRING,          ///< String
         CONFIG_STRING_BOX,      ///< String Box
         CONFIG_LIST,            ///< List: "option1", "[default]", "option3"

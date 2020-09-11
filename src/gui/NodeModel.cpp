@@ -262,6 +262,45 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
         doubleSpinBox->setStyleSheet("QDoubleSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
         _layout->insertRow(layoutInsertPosition, description, doubleSpinBox);
     }
+    else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_FLOAT3)
+    {
+        LOG_TRACE("Type == FLOAT3");
+
+        QGroupBox* groupBox = new QGroupBox();
+        QHBoxLayout* layout = new QHBoxLayout();
+
+        QDoubleSpinBox* doubleSpinBox[3];
+
+        for (size_t sb = 0; sb < 3; sb++)
+        {
+            doubleSpinBox[sb] = new QDoubleSpinBox();
+
+            double defaultValue = 0.0;
+            for (size_t j = 0; j < 3; j++)
+            {
+                std::string cell = std::get<std::string>(std::get<3>(config).at(j + 3 * sb));
+                if (j == 0)
+                    doubleSpinBox[sb]->setMinimum(std::stod(cell));
+                else if (j == 1)
+                    defaultValue = std::stod(cell);
+                else if (j == 2)
+                {
+                    doubleSpinBox[sb]->setMaximum(std::stod(cell));
+                    doubleSpinBox[sb]->setValue(defaultValue);
+                }
+            }
+            doubleSpinBox[sb]->setSingleStep(1.0);
+            doubleSpinBox[sb]->setStyleSheet("QDoubleSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
+
+            layout->addWidget(doubleSpinBox[sb]);
+        }
+
+        layout->setContentsMargins(0, 0, 0, 0);
+        groupBox->setLayout(layout);
+        groupBox->setStyleSheet("border:0;");
+        // groupBox->setFlat(true);
+        _layout->insertRow(layoutInsertPosition, description, groupBox);
+    }
     else if (std::get<0>(config) == NAV::Node::ConfigOptionType::CONFIG_STRING)
     {
         LOG_TRACE("Type == STRING");
@@ -634,7 +673,8 @@ NodeDataType determinePortTypeForLayout(QFormLayout* layout, PortIndex portIndex
         if (widget->layout()
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
-            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_FLOAT3)
         {
             auto portTypeFromLayout = determinePortTypeForLayout(static_cast<QFormLayout*>(widget->layout()), portIndex, portType);
             if (portTypeFromLayout.name != "")
@@ -684,7 +724,8 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
         if (widget->layout()
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
-            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_FLOAT3)
         {
             saveLayoutItems(static_cast<QFormLayout*>(widget->layout()), modelJson);
         }
@@ -697,6 +738,23 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
                 modelJson[widget->objectName()] = static_cast<QSpinBox*>(widget)->value();
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
                 modelJson[widget->objectName()] = static_cast<QDoubleSpinBox*>(widget)->value();
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT3)
+            {
+                auto* groupBox = static_cast<QGroupBox*>(widget);
+                auto* layout = static_cast<QHBoxLayout*>(groupBox->layout());
+
+                auto* spinBox0 = static_cast<QDoubleSpinBox*>(layout->itemAt(0)->widget());
+                auto* spinBox1 = static_cast<QDoubleSpinBox*>(layout->itemAt(1)->widget());
+                auto* spinBox2 = static_cast<QDoubleSpinBox*>(layout->itemAt(2)->widget());
+
+                modelJson[widget->objectName()] = QString::number(spinBox0->value())
+                                                  + "," + QString::number(spinBox1->value())
+                                                  + "," + QString::number(spinBox2->value());
+                LOG_INFO("{}", (QString::number(spinBox0->value())
+                                + "," + QString::number(spinBox1->value())
+                                + "," + QString::number(spinBox2->value()))
+                                   .toStdString());
+            }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 modelJson[widget->objectName()] = static_cast<QLineEdit*>(widget)->text();
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
@@ -780,7 +838,8 @@ void NodeModel::restoreLayoutItems(QFormLayout* layout, QJsonObject const& p)
         if (widget->layout()
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
-            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_FLOAT3)
         {
             restoreLayoutItems(static_cast<QFormLayout*>(widget->layout()), p);
         }
@@ -797,6 +856,21 @@ void NodeModel::restoreLayoutItems(QFormLayout* layout, QJsonObject const& p)
                     static_cast<QSpinBox*>(widget)->setValue(v.toInt());
                 else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
                     static_cast<QDoubleSpinBox*>(widget)->setValue(v.toDouble());
+                else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT3)
+                {
+                    auto* groupBox = static_cast<QGroupBox*>(widget);
+                    auto* layout = static_cast<QHBoxLayout*>(groupBox->layout());
+
+                    auto* spinBox0 = static_cast<QDoubleSpinBox*>(layout->itemAt(0)->widget());
+                    auto* spinBox1 = static_cast<QDoubleSpinBox*>(layout->itemAt(1)->widget());
+                    auto* spinBox2 = static_cast<QDoubleSpinBox*>(layout->itemAt(2)->widget());
+
+                    QStringList stringList = v.toString().split(",");
+
+                    spinBox0->setValue(stringList.at(0).toDouble());
+                    spinBox1->setValue(stringList.at(1).toDouble());
+                    spinBox2->setValue(stringList.at(2).toDouble());
+                }
                 else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                     static_cast<QLineEdit*>(widget)->setText(v.toString());
                 else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)

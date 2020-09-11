@@ -85,7 +85,7 @@ void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_v
 
         for (const auto& parent : parents)
         {
-            std::cout << "TypeConvert: " << root << " --> " << parent << std::endl;
+            // std::cout << "TypeConvert: " << root << " --> " << parent << std::endl;
             registry->registerTypeConverter(std::make_pair(NodeDataType{ QString::fromStdString(std::string(root)), QString::fromStdString(std::string(root)) },
                                                            NodeDataType{ QString::fromStdString(std::string(parent)), QString::fromStdString(std::string(parent)) }),
                                             TypeConverter{ Converter() });
@@ -133,7 +133,8 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
         if (widget->layout()
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_MULTI
             && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_LIST_LIST_MULTI
-            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_STRING_BOX
+            && widget->property("type").toUInt() != NAV::Node::ConfigOptionType::CONFIG_FLOAT3)
         {
             exportConfigForLayout(static_cast<QFormLayout*>(widget->layout()), comment, config);
         }
@@ -152,6 +153,16 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
                 text = std::to_string(static_cast<QSpinBox*>(widget)->value());
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
                 text = std::to_string(static_cast<QDoubleSpinBox*>(widget)->value());
+            else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT3)
+            {
+                auto* groupBox = static_cast<QGroupBox*>(widget);
+                auto* layout = static_cast<QHBoxLayout*>(groupBox->layout());
+
+                auto* spinBox0 = static_cast<QDoubleSpinBox*>(layout->itemAt(0)->widget());
+                auto* spinBox1 = static_cast<QDoubleSpinBox*>(layout->itemAt(1)->widget());
+                auto* spinBox2 = static_cast<QDoubleSpinBox*>(layout->itemAt(2)->widget());
+                text = std::to_string(spinBox0->value()) + ";" + std::to_string(spinBox1->value()) + ";" + std::to_string(spinBox2->value());
+            }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 text = static_cast<QLineEdit*>(widget)->text().replace("\n", "\\n").replace("#", "[hash]").toStdString();
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING_BOX)
