@@ -26,19 +26,6 @@ Eigen::Quaterniond NAV::trafo::quat_i2e(const double time, const double angularR
     return q;
 }
 
-Eigen::Matrix3d NAV::trafo::DCM_i2e(const double time, const double angularRate_ie)
-{
-    // Eigen::Matrix3d dcm;
-    // // clang-format off
-    // dcm <<  std::cos(angularRate_ie * time), std::sin(angularRate_ie * time), 0,
-    //        -std::sin(angularRate_ie * time), std::cos(angularRate_ie * time), 0,
-    //                       0                ,               0                , 1;
-    // // clang-format on
-    // return dcm;
-
-    return quat_i2e(time, angularRate_ie).toRotationMatrix();
-}
-
 Eigen::Quaterniond NAV::trafo::quat_n2e(const double latitude, const double longitude)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
@@ -47,19 +34,6 @@ Eigen::Quaterniond NAV::trafo::quat_n2e(const double latitude, const double long
 
     Eigen::Quaterniond q = longitudeAngle * latitudeAngle;
     return q;
-}
-
-Eigen::Matrix3d NAV::trafo::DCM_n2e(const double latitude, const double longitude)
-{
-    // Eigen::Matrix3d dcm;
-    // // clang-format off
-    // dcm << -std::sin(latitude) * std::cos(longitude), -std::sin(longitude), -std::cos(latitude) * std::cos(longitude),
-    //        -std::sin(latitude) * std::sin(longitude),  std::cos(longitude), -std::cos(latitude) * std::sin(longitude),
-    //                   std::cos(latitude)            ,           0         ,           -std::sin(latitude)            ;
-    // // clang-format on
-    // return dcm;
-
-    return quat_n2e(latitude, longitude).toRotationMatrix();
 }
 
 Eigen::Quaterniond NAV::trafo::quat_b2n(const double roll, const double pitch, const double yaw)
@@ -73,21 +47,15 @@ Eigen::Quaterniond NAV::trafo::quat_b2n(const double roll, const double pitch, c
     return q;
 }
 
-Eigen::Matrix3d NAV::trafo::DCM_b2n(const double roll, const double pitch, const double yaw)
+Eigen::Quaterniond NAV::trafo::quat_p2b(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
-    // const double& R = roll;
-    // const double& P = pitch;
-    // const double& Y = yaw;
+    // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
+    Eigen::AngleAxisd xAngle(-mountingAngleX, Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd yAngle(-mountingAngleY, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd zAngle(-mountingAngleZ, Eigen::Vector3d::UnitZ());
 
-    // Eigen::Matrix3d dcm;
-    // // clang-format off
-    // dcm << std::cos(Y)*std::cos(P), std::cos(Y)*std::sin(P)*std::sin(R) - std::sin(Y)*std::cos(R), std::cos(Y)*std::sin(P)*std::cos(R) + std::sin(Y)*std::sin(R),
-    //        std::sin(Y)*std::cos(P), std::sin(Y)*std::sin(P)*std::sin(R) + std::cos(Y)*std::cos(R), std::sin(Y)*std::sin(P)*std::cos(R) - std::cos(Y)*std::sin(R),
-    //             -std::sin(P)      ,                   std::cos(P)*std::sin(R)                    ,                   std::cos(P)*std::cos(R)                    ;
-    // // clang-format on
-    // return dcm;
-
-    return quat_b2n(roll, pitch, yaw).toRotationMatrix();
+    Eigen::Quaterniond q = zAngle * yAngle * xAngle;
+    return q;
 }
 
 Eigen::Vector3d NAV::trafo::llh2ecef(const double latitude, const double longitude, const double height, double a, double e_squared)

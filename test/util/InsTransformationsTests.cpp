@@ -73,22 +73,16 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     // Sidereal day: 23h 56min 4.099s
     auto siderialHalfDay = 86164.099 / 2.0;
     auto q_i2e = trafo::quat_i2e(siderialHalfDay);
-    auto dcm_i2e = trafo::DCM_i2e(siderialHalfDay);
     // Star day: 23h 56min 4.0905s
     // auto starHalfDay = 86164.0905 / 2.0;
     // auto q_i2e = trafo::quat_i2e(starHalfDay);
-    // auto dcm_i2e = trafo::DCM_i2e(starHalfDay);
 
     auto x_e = Eigen::Vector3d(1, -2.5, 22);
     auto x_i = q_i2e * x_e;
-    auto x_i2 = dcm_i2e * x_e;
 
     REQUIRE(std::abs(x_i.x() - -1.0) <= 0.000001);
     REQUIRE(std::abs(x_i.y() - 2.5) <= 0.000001);
     REQUIRE(std::abs(x_i.z() - 22.0) <= 0.000001);
-    REQUIRE(std::abs(x_i2.x() - -1.0) <= 0.000001);
-    REQUIRE(std::abs(x_i2.y() - 2.5) <= 0.000001);
-    REQUIRE(std::abs(x_i2.z() - 22.0) <= 0.000001);
 }
 
 TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[InsTransformations]")
@@ -97,18 +91,13 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     double longitude = 0.0;
 
     auto q_e2n = trafo::quat_n2e(latitude, longitude).conjugate();
-    auto dcm_e2n = trafo::DCM_n2e(latitude, longitude).transpose();
 
     auto x_e = Eigen::Vector3d(1, 2, 3);
     auto x_n = q_e2n * x_e;
-    auto x_n2 = dcm_e2n * x_e;
 
     REQUIRE(std::abs(x_n.x() - -1.0) <= EPSILON);
     REQUIRE(std::abs(x_n.y() - 2.0) <= EPSILON);
     REQUIRE(std::abs(x_n.z() - -3.0) <= EPSILON);
-    REQUIRE(std::abs(x_n2.x() - -1.0) <= EPSILON);
-    REQUIRE(std::abs(x_n2.y() - 2.0) <= EPSILON);
-    REQUIRE(std::abs(x_n2.z() - -3.0) <= EPSILON);
 }
 
 TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTransformations]")
@@ -117,52 +106,37 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     double pitch = 0.0;
     double yaw = trafo::deg2rad(45);
     auto q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
-    Eigen::Matrix3d dcm_n2b = trafo::DCM_b2n(roll, pitch, yaw).transpose();
 
     auto x_n = Eigen::Vector3d(1.0, 1.0, 0.0);
     Eigen::Vector3d x_b = q_n2b * x_n;
-    Eigen::Vector3d x_b2 = dcm_n2b * x_n;
 
     REQUIRE(std::abs(x_b.x() - 0.0) <= EPSILON);
     REQUIRE(std::abs(x_b.y() - std::sqrt(2)) <= EPSILON);
     REQUIRE(std::abs(x_b.z() - 0.0) <= EPSILON);
-    REQUIRE(std::abs(x_b2.x() - 0.0) <= EPSILON);
-    REQUIRE(std::abs(x_b2.y() - std::sqrt(2)) <= EPSILON);
-    REQUIRE(std::abs(x_b2.z() - 0.0) <= EPSILON);
 
     roll = trafo::deg2rad(45);
     pitch = 0.0;
     yaw = 0.0;
     q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
-    dcm_n2b = trafo::DCM_b2n(roll, pitch, yaw).transpose();
 
     x_n = Eigen::Vector3d(1.0, 1.0, 1.0);
     x_b = q_n2b * x_n;
-    x_b2 = dcm_n2b * x_n;
 
     REQUIRE(std::abs(x_b.x() - 1.0) <= EPSILON);
     REQUIRE(std::abs(x_b.y() - 0.0) <= EPSILON);
     REQUIRE(std::abs(x_b.z() - std::sqrt(2)) <= EPSILON);
-    REQUIRE(std::abs(x_b2.x() - 1.0) <= EPSILON);
-    REQUIRE(std::abs(x_b2.y() - 0.0) <= EPSILON);
-    REQUIRE(std::abs(x_b2.z() - std::sqrt(2)) <= EPSILON);
 
     roll = trafo::deg2rad(90);
     pitch = trafo::deg2rad(180);
     yaw = trafo::deg2rad(90);
     q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
-    dcm_n2b = trafo::DCM_b2n(roll, pitch, yaw).transpose();
 
     x_n = Eigen::Vector3d(1.0, 2.0, 3.0);
     x_b = q_n2b * x_n;
-    x_b2 = dcm_n2b * x_n;
 
     REQUIRE(std::abs(x_b.x() - 2.0) <= EPSILON);
     REQUIRE(std::abs(x_b.y() - 3.0) <= EPSILON);
     REQUIRE(std::abs(x_b.z() - 1.0) <= EPSILON);
-    REQUIRE(std::abs(x_b2.x() - 2.0) <= EPSILON);
-    REQUIRE(std::abs(x_b2.y() - 3.0) <= EPSILON);
-    REQUIRE(std::abs(x_b2.z() - 1.0) <= EPSILON);
 }
 
 TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]")

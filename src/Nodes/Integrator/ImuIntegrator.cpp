@@ -47,7 +47,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
 
     /// q Quaternion, from platform to body coordinates. Depends on mounting of strap down IMU
     /// TODO: Populate with settings values of mounting
-    Eigen::Quaterniond quaternion_p2b = Eigen::Quaterniond::Identity();
+    Eigen::Quaterniond quaternion_p2b = trafo::quat_p2b(0, 0, 0);
 
     /// q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
     Eigen::Quaterniond quaternion_p2e__t2 = prevStates.at(1)->quaternion_b2e() * quaternion_p2b;
