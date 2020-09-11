@@ -1,5 +1,7 @@
 #include "InsTransformations.hpp"
 
+#include "util/Logger.hpp"
+
 Eigen::Vector3d NAV::trafo::deg2rad3(const Eigen::Vector3d& deg)
 {
     return deg * M_PI / 180.0;
@@ -119,7 +121,8 @@ Eigen::Vector3d NAV::trafo::ecef2llh(const Eigen::Vector3d& ecef, double a, doub
     double latitude = std::atan2(ecef(2) / (1 - e_squared), sqrt_x1x1_x2x2);
 
     double N{};
-    while (true)
+    size_t maxIterationCount = 6;
+    for (size_t i = 0; i < maxIterationCount; i++) // Convergence should break the loop, but better limit the loop itself
     {
         // Radius of curvature of the ellipsoid in the prime vertical plane,
         // i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
@@ -134,6 +137,12 @@ Eigen::Vector3d NAV::trafo::ecef2llh(const Eigen::Vector3d& ecef, double a, doub
             latitude = newLatitude;
             break;
         }
+
+        if (i == maxIterationCount - 1)
+        {
+            LOG_WARN("ECEF2LLH conversion did not converge! Difference is still at {} [rad]", std::abs(newLatitude - latitude));
+        }
+
         latitude = newLatitude;
     }
 

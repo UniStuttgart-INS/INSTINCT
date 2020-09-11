@@ -48,7 +48,7 @@ class StateData : public InsObs
 
     /// @brief State Vector
     /// Entries are:
-    /// [0-3] Quaternions
+    /// [0-3] Quaternions body to navigation frame (roll, pitch, yaw)
     /// [4-6] Latitude, Longitude, Height
     Eigen::Matrix<double, 7, 1> X;
 
