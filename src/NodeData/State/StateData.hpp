@@ -46,33 +46,25 @@ class StateData : public InsObs
         return parents;
     }
 
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                             Member variables                                             */
+    /* -------------------------------------------------------------------------------------------------------- */
+
     /// @brief State Vector
     /// Entries are:
     /// [0-3] Quaternions body to navigation frame (roll, pitch, yaw)
     /// [4-6] Latitude, Longitude, Height
-    Eigen::Matrix<double, 7, 1> X;
+    /// [7-9] Velocity in earth coordinates
+    Eigen::Matrix<double, 10, 1> X;
+
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                           Rotation Quaternions                                           */
+    /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the Quaternion body to navigation frame (NED)
     Eigen::Ref<Eigen::Vector4d> quat_b2n_coeff() { return X.segment<4>(0); }
     /// Returns the Quaternion body to navigation frame (NED)
     [[nodiscard]] Eigen::Ref<Eigen::Vector4d const> quat_b2n_coeff() const { return X.segment<4>(0); }
-
-    /// Returns the latitude, longitude and height in [rad, rad, m]
-    Eigen::Ref<Eigen::Vector3d> latLonHeight() { return X.segment<3>(4); }
-    /// Returns the latitude, longitude and height above ground in [rad, rad, m]
-    [[nodiscard]] Eigen::Ref<Eigen::Vector3d const> latLonHeight() const { return X.segment<3>(4); }
-    /// Returns the latitude in [rad]
-    double& latitude() { return X(4); }
-    /// Returns the latitude in [rad]
-    [[nodiscard]] const double& latitude() const { return X(4); }
-    /// Returns the longitude in [rad]
-    double& longitude() { return X(5); }
-    /// Returns the longitude in [rad]
-    [[nodiscard]] const double& longitude() const { return X(5); }
-    /// Returns the height above ground in [m]
-    double& height() { return X(6); }
-    /// Returns the height above ground in [m]
-    [[nodiscard]] const double& height() const { return X(6); }
 
     /// @brief Returns the Quaternion from body to navigation frame (NED)
     /// @return The Quaternion for the rotation from body to navigation coordinates
@@ -81,15 +73,15 @@ class StateData : public InsObs
         return Eigen::Quaterniond(quat_b2n_coeff());
     }
 
-    /// @brief Returns the Quaternion from body to navigation frame (NED)
-    /// @return The Quaternion for the rotation from body to navigation coordinates
+    /// @brief Returns the Quaternion from navigation to body frame (NED)
+    /// @return The Quaternion for the rotation from navigation to body coordinates
     [[nodiscard]] Eigen::Quaterniond quaternion_n2b() const
     {
         return quaternion_b2n().conjugate();
     }
 
-    /// @brief Returns the Quaternion from platform to Earth-fixed frame
-    /// @return The Quaternion for the rotation from platform to earth coordinates
+    /// @brief Returns the Quaternion from navigation to Earth-fixed frame
+    /// @return The Quaternion for the rotation from navigation to earth coordinates
     [[nodiscard]] Eigen::Quaterniond quaternion_n2e() const
     {
         return trafo::quat_n2e(latitude(), longitude());
@@ -109,21 +101,40 @@ class StateData : public InsObs
         return quaternion_b2e().conjugate();
     }
 
-    // Eigen::Vector3d VelocityNED;
-    // Eigen::Vector3d BodyRate;
-    // Eigen::Vector3d BodyAccel;
-    // Eigen::Vector3d PositionLatLonAlt;
-    // Eigen::Vector3d PositionNED;
-    // /// Attitude of the vehicle (body frame (b) relative to local level coordinate system (n))
-    // /// R = Roll angle
-    // /// P = Pitch angle
-    // /// Y = Yaw angle
-    // /// C^n_b = C(3, -Y) \cdot C(2, -P) \cdot C(1, -R)
-    // Eigen::Vector3d EulerAngles;
-    // // Quaternions calculated by navsos
-    // Eigen::Quaterniond quat;
-    // // DCM calculated by navsos
-    // Eigen::Matrix3d DCMBodyToNED;
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                                 Position                                                 */
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    /// Returns the latitude, longitude and height in [rad, rad, m]
+    Eigen::Ref<Eigen::Vector3d> latLonHeight() { return X.segment<3>(4); }
+    /// Returns the latitude, longitude and height above ground in [rad, rad, m]
+    [[nodiscard]] Eigen::Ref<const Eigen::Vector3d> latLonHeight() const { return X.segment<3>(4); }
+    /// Returns the latitude in [rad]
+    double& latitude() { return X(4); }
+    /// Returns the latitude in [rad]
+    [[nodiscard]] const double& latitude() const { return X(4); }
+    /// Returns the longitude in [rad]
+    double& longitude() { return X(5); }
+    /// Returns the longitude in [rad]
+    [[nodiscard]] const double& longitude() const { return X(5); }
+    /// Returns the height above ground in [m]
+    double& height() { return X(6); }
+    /// Returns the height above ground in [m]
+    [[nodiscard]] const double& height() const { return X(6); }
+    /// Returns the ECEF coordinates in [m] using the WGS84 ellipsoid
+    [[nodiscard]] Eigen::Vector3d positionECEF_WGS84() const { return trafo::llh2ecef_WGS84(latitude(), longitude(), height()); }
+    /// Returns the ECEF coordinates in [m] using the GRS80 ellipsoid
+    [[nodiscard]] Eigen::Vector3d positionECEF_GRS80() const { return trafo::llh2ecef_GRS80(latitude(), longitude(), height()); }
+
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                                 Velocity                                                 */
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    /// Returns the velocity in [m/s], in earth coordinates
+    Eigen::Ref<Eigen::Vector3d> velocity_e() { return X.segment<3>(7); }
+    /// Returns the velocity in [m/s], in earth coordinates
+    [[nodiscard]] Eigen::Ref<const Eigen::Vector3d> velocity_e() const { return X.segment<3>(7); }
+
     // double_t NavTime = 0.0;
     // double_t MagneticHeading = 0.0;
 

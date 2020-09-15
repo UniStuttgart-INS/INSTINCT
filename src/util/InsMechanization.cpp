@@ -1,5 +1,7 @@
 #include "InsMechanization.hpp"
 
+#include "InsConstants.hpp"
+
 namespace NAV
 {
 Eigen::Quaterniond updateQuaternionsRungeKutta3(
@@ -31,7 +33,7 @@ Eigen::Quaterniond updateQuaternionsRungeKutta3(
     Eigen::Vector3d integratedAngularVelocity_ep__t0 = integratedAngularVelocity_ip__t0
                                                        - quaternion_e2p__t1 * angularVelocity_ie__t0 * timeDifferenceSec__t0;
 
-    /// Runge-Kutta integration step
+    /// Runge-Kutta integration step [s]
     long double integrationStep = 2.0L * timeDifferenceSec__t0;
 
     /// ῶ_ep_p (tₖ₋₂) Taylor-Approximation of angular velocities in [rad/s],
@@ -91,6 +93,42 @@ Eigen::Quaterniond updateQuaternionsRungeKutta3(
     q.normalize();
 
     return q;
+}
+
+Eigen::Vector3d updateVelocityRungeKutta3(const long double& timeDifferenceSec__t0,     /// Δtₖ Time difference in [seconds]. This epoch to previous epoch
+                                          const long double& timeDifferenceSec__t1,     /// Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
+                                          const Eigen::Vector3d& acceleration_p__t0,    /// a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
+                                          const Eigen::Vector3d& acceleration_p__t1,    /// a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
+                                          const Eigen::Vector3d& velocity_e__t2,        /// v_e (tₖ₋₂) Velocity in [m/s], in earth coordinates, at the time tₖ₋₂
+                                          const Eigen::Vector3d& position_e__t2,        /// x_e (tₖ₋₂) Position in [m/s], in earth coordinates, at the time tₖ₋₂
+                                          const Eigen::Vector3d& gravity_e,             /// g_e Gravity vector in [m/s^2], in earth coordinates
+                                          const Eigen::Quaterniond& quaternion_p2e__t0, /// q (tₖ) Quaternion, from platform to earth coordinates, at the time tₖ
+                                          const Eigen::Quaterniond& quaternion_p2e__t1, /// q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
+                                          const Eigen::Quaterniond& quaternion_p2e__t2) /// q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
+{
+    /// Δv_p (tₖ) Integrated velocity in [m/s], in platform coordinates, at the time tₖ (eq. 9.3)
+    Eigen::Vector3d deltaVelocity_p__t0 = acceleration_p__t0 * timeDifferenceSec__t0;
+
+    /// Δv_p (tₖ₋₁) Integrated velocity in [m/s], in platform coordinates, at the time tₖ₋₁ (eq. 9.3)
+    Eigen::Vector3d deltaVelocity_p__t1 = acceleration_p__t1 * timeDifferenceSec__t1;
+
+    /// Runge-Kutta integration step [s]
+    long double integrationStep = 2.0L * timeDifferenceSec__t0;
+
+    /// Runge Kutta Integration of delta velocities (eq. 9.12)
+    Eigen::Vector3d rungeKuttaIntegration = (quaternion_p2e__t2 * (3 * deltaVelocity_p__t1 - deltaVelocity_p__t0)
+                                             + 4 * (quaternion_p2e__t1 * (deltaVelocity_p__t1 + deltaVelocity_p__t0))
+                                             + quaternion_p2e__t0 * (3 * deltaVelocity_p__t0 - deltaVelocity_p__t1))
+                                            / 6.0;
+
+    /// v_e (tₖ) Velocity in [m/s], in earth coordinates, at the time tₖ (eq. 9.12)
+    Eigen::Vector3d velocity_e__t0 = velocity_e__t2 + rungeKuttaIntegration
+                                     - (2 * InsConst::angularVelocityCrossProduct_ie_e * velocity_e__t2
+                                        + InsConst::angularVelocityCrossProduct_ie_e * InsConst::angularVelocityCrossProduct_ie_e * position_e__t2
+                                        - gravity_e)
+                                           * integrationStep;
+
+    return velocity_e__t0;
 }
 
 } // namespace NAV

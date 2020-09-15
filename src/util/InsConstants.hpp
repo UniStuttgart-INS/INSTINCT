@@ -16,7 +16,13 @@ namespace NAV::InsConst
 constexpr double angularVelocity_ie = 7.2921151467e-05;
 
 /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
-const Eigen::Vector3d angularVelocity_ie_e{ 0.0, 0.0, angularVelocity_ie };
+const static Eigen::Vector3d angularVelocity_ie_e{ 0.0, 0.0, angularVelocity_ie };
+
+/// Ω_ie_e Cross product Matrix of nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
+const static Eigen::Matrix3d angularVelocityCrossProduct_ie_e = (Eigen::Matrix3d() << 0, -angularVelocity_ie_e(2), angularVelocity_ie_e(1),
+                                                                 angularVelocity_ie_e(2), 0, -angularVelocity_ie_e(0),
+                                                                 -angularVelocity_ie_e(1), angularVelocity_ie_e(0), 0)
+                                                                    .finished();
 
 /// Semi-major axis (World Geodetic System 1984)
 constexpr double WGS84_a = 6378137.0;

@@ -102,5 +102,6 @@
     ],
     "clang-tidy.compilerArgs": [
         "-Wno-unknown-warning-option"
-    ]
+    ],
+    "comment-divider.length": 110
 }
