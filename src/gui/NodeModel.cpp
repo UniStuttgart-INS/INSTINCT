@@ -748,9 +748,9 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
                 auto* spinBox1 = static_cast<QDoubleSpinBox*>(layout->itemAt(1)->widget());
                 auto* spinBox2 = static_cast<QDoubleSpinBox*>(layout->itemAt(2)->widget());
 
-                modelJson[widget->objectName()] = QString::number(spinBox0->value())
-                                                  + "," + QString::number(spinBox1->value())
-                                                  + "," + QString::number(spinBox2->value());
+                modelJson[widget->objectName()] = QString::number(spinBox0->value(), 'g', 13)
+                                                  + "," + QString::number(spinBox1->value(), 'g', 13)
+                                                  + "," + QString::number(spinBox2->value(), 'g', 13);
             }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 modelJson[widget->objectName()] = static_cast<QLineEdit*>(widget)->text();

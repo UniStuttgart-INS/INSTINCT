@@ -46,7 +46,7 @@ class TimeSynchronizer final : public Node
     /// @return The class category
     [[nodiscard]] constexpr std::string_view category() const final
     {
-        return std::string_view("TimeSync");
+        return std::string_view("Time");
     }
 
     /// @brief Returns Gui Configuration options for the class

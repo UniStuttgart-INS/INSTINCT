@@ -17,7 +17,7 @@ NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, const std::map<
         auto week = static_cast<uint16_t>(std::stoul(options.at("Gps Week")));
         long double tow = std::stold(options.at("Gps Time of Week"));
 
-        startupGpsTime.emplace(week, tow, cycle);
+        startupGpsTime.emplace(cycle, week, tow);
     }
 
     if (options.count("1-Port Type"))
