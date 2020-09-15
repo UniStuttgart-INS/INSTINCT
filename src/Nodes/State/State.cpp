@@ -44,3 +44,12 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
         currentState->quat_b2n_coeff() = trafo::quat_b2n(roll, pitch, yaw).coeffs();
     }
 }
+
+void NAV::State::updateState(std::shared_ptr<StateData>& state)
+{
+    // Process the data here
+    currentState = state;
+
+    // For now does not invoke callbacks, as the state is used on request basis
+    // invokeCallbacks(currentState);
+}

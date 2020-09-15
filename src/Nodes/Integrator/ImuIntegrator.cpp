@@ -10,7 +10,7 @@ NAV::ImuIntegrator::ImuIntegrator(const std::string& name, [[maybe_unused]] cons
 {
 }
 
-void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
+void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuObs__t0)
 {
     // Get the IMU Position information
     const auto& imuNode = incomingLinks[1].first.lock();
@@ -20,30 +20,34 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
     // Get the current state data
     const auto& stateNode = incomingLinks[2].first.lock();
     auto& statePortIndex = incomingLinks[2].second;
-    auto currentStateData = std::static_pointer_cast<StateData>(stateNode->requestOutputData(statePortIndex));
+    auto stateData__t1 = std::static_pointer_cast<StateData>(stateNode->requestOutputData(statePortIndex));
 
     // Fill if empty
     if (prevObs.empty())
     {
-        prevObs.push_back(obs);
-        prevObs.push_back(obs);
-        prevStates.push_back(currentStateData);
-        prevStates.push_back(currentStateData);
+        prevObs.push_back(imuObs__t0);
+        prevObs.push_back(imuObs__t0);
+        prevStates.push_back(stateData__t1);
+        prevStates.push_back(stateData__t1);
     }
+
+    // Rotate Data
+    prevStates.pop_back();
+    prevStates.push_front(stateData__t1);
 
     /// tₖ₋₂ Time at prior to previous epoch
     const auto& time__t2 = prevObs.at(1)->insTime.value();
     /// tₖ₋₁ Time at previous epoch
     const auto& time__t1 = prevObs.at(0)->insTime.value();
     /// tₖ Current Time
-    const auto& time__t0 = obs->insTime.value();
+    const auto& time__t0 = imuObs__t0->insTime.value();
 
     /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
     const auto& angularVelocity_ip__t1 = prevObs.at(0)->gyroUncompXYZ.value();
     /// ω_ip_p (tₖ) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ
-    const auto& angularVelocity_ip__t0 = obs->gyroUncompXYZ.value();
+    const auto& angularVelocity_ip__t0 = imuObs__t0->gyroUncompXYZ.value();
 
     // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
     auto timeDifferenceSec__t1 = (time__t1 - time__t2).count();
@@ -64,13 +68,16 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& obs)
                                                                          angularVelocity_ie__t0,
                                                                          quaternion_p2e__t1, quaternion_p2e__t2);
 
-    LOG_INFO("quaternion_p2e__t0: {}", quaternion_p2e__t0.coeffs().transpose());
+    auto stateData__t0 = std::make_shared<StateData>();
 
-    // Rotate Data
+    auto quaternion_b2p = imuPosition->quatGyro_p2b.conjugate();
+    // TODO: update position, and then use stateData__t0
+    auto quaternion_e2n = stateData__t1->quaternion_n2e().conjugate();
+    stateData__t0->quat_b2n_coeff() = (quaternion_e2n * quaternion_p2e__t0 * quaternion_b2p).coeffs();
+
+    // Rotate Observation
     prevObs.pop_back();
-    prevStates.pop_back();
-    prevObs.push_front(obs);
-    prevStates.push_front(currentStateData);
+    prevObs.push_front(imuObs__t0);
 
-    invokeCallbacks(obs);
+    invokeCallbacks(stateData__t0);
 }

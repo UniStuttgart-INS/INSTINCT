@@ -103,10 +103,10 @@ class ImuIntegrator : public Node
             }
             break;
         case PortType::Out:
-            // if (portIndex == 0)
-            // {
-            //     return UbloxObs().type();
-            // }
+            if (portIndex == 0)
+            {
+                return StateData().type();
+            }
             break;
         }
 
@@ -127,8 +127,8 @@ class ImuIntegrator : public Node
 
   private:
     /// @brief Integrates the Imu Observation data
-    /// @param[in] obs ImuObs to process
-    void integrateObservation(std::shared_ptr<ImuObs>& obs);
+    /// @param[in] imuObs__t0 ImuObs to process
+    void integrateObservation(std::shared_ptr<ImuObs>& imuObs__t0);
 
     /// @brief Storage class for previous observations.
     ///
