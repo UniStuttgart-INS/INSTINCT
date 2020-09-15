@@ -12,6 +12,7 @@
 #include <vector>
 #include <map>
 
+#include "NodeData/State/StateData.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
@@ -75,8 +76,10 @@ class GnuPlot final : public Node
                            { "[" + std::string(ImuObs().type()) + "]",
                              std::string(VectorNavObs().type()),
                              std::string(RtklibPosObs().type()),
-                             std::string(KvhObs().type()) } },
+                             std::string(KvhObs().type()),
+                             std::string(StateData().type()) } },
             { CONFIG_VARIANT, "", "",
+                  // ImuObs
                 { ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
                                                             { "[GPS time of week]",
@@ -85,6 +88,7 @@ class GnuPlot final : public Node
                                                               "Accel uncomp X", "Accel uncomp Y", "Accel uncomp Z",
                                                               "Gyro uncomp X", "Gyro uncomp Y", "Gyro uncomp Z",
                                                               "Temperature" }),
+                  // VectorNavObs
                   ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
                                                             { "[GPS time of week]",
@@ -110,6 +114,7 @@ class GnuPlot final : public Node
                                                               "Linear Accel X", "Linear Accel Y", "Linear Accel Z",
                                                               "Linear Accel N", "Linear Accel E", "Linear Accel D",
                                                               "Yaw Uncertainty", "Pitch Uncertainty", "Roll Uncertainty" }),
+                  // RtklibPosObs
                   ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
                                                             { "[GPS time of week]",
@@ -123,6 +128,7 @@ class GnuPlot final : public Node
                                                               "sdxy", "sdyz", "sdzx",
                                                               "Age",
                                                               "Ratio" }),
+                  // KvhObs
                   ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
                                                             { "[GPS time of week]",
@@ -131,7 +137,15 @@ class GnuPlot final : public Node
                                                               "Sequence Number",
                                                               "Mag uncomp X", "Mag uncomp Y", "Mag uncomp Z",
                                                               "Accel uncomp X", "Accel uncomp Y", "Accel uncomp Z",
-                                                              "Gyro uncomp X", "Gyro uncomp Y", "Gyro uncomp Z" })
+                                                              "Gyro uncomp X", "Gyro uncomp Y", "Gyro uncomp Z" }),
+                  // StateData
+                  ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
+                                                            "Specify what data should be plotted.",
+                                                            { "[GPS time of week]",
+                                                              "Latitude", "Longitude", "Height",
+                                                              "X-ECEF", "Y-ECEF", "Z-ECEF",
+                                                              "Roll", "Pitch", "Yaw",
+                                                              "Quaternion W", "Quaternion X", "Quaternion Y", "Quaternion Z" })
                 } },
             { CONFIG_STRING_BOX, "Update", "Gnuplot Commands called every time to update the view.\nUse [~x], where x is a number, to plot data selected below", { "plot [~1,2,3~] using 1:2 with lines title 'MyTitle'" } },
 
@@ -210,6 +224,11 @@ class GnuPlot final : public Node
                 auto obs = std::static_pointer_cast<ImuObs>(data);
                 handleImuObs(obs, portIndex);
             }
+            else if (inputPortDataTypes.at(portIndex) == StateData().type())
+            {
+                auto state = std::static_pointer_cast<StateData>(data);
+                handleStateData(state, portIndex);
+            }
         }
     }
 
@@ -229,6 +248,8 @@ class GnuPlot final : public Node
     void handleKvhObs(std::shared_ptr<NAV::KvhObs>& obs, size_t portIndex);
     /// Handle a IMU Observation
     void handleImuObs(std::shared_ptr<NAV::ImuObs>& obs, size_t portIndex);
+    /// Handle State data
+    void handleStateData(std::shared_ptr<NAV::StateData>& state, size_t portIndex);
 
     /// Number of input ports
     uint8_t nInputPorts = 1;

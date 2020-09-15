@@ -290,6 +290,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
                 }
             }
             doubleSpinBox[sb]->setSingleStep(1.0);
+            doubleSpinBox[sb]->setDecimals(10);
             doubleSpinBox[sb]->setStyleSheet("QDoubleSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
 
             layout->addWidget(doubleSpinBox[sb]);
@@ -750,10 +751,6 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
                 modelJson[widget->objectName()] = QString::number(spinBox0->value())
                                                   + "," + QString::number(spinBox1->value())
                                                   + "," + QString::number(spinBox2->value());
-                LOG_INFO("{}", (QString::number(spinBox0->value())
-                                + "," + QString::number(spinBox1->value())
-                                + "," + QString::number(spinBox2->value()))
-                                   .toStdString());
             }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 modelJson[widget->objectName()] = static_cast<QLineEdit*>(widget)->text();

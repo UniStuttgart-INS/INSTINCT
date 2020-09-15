@@ -24,15 +24,14 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     auto stateData__t1 = std::static_pointer_cast<StateData>(stateNode->requestOutputData(statePortIndex));
 
     // Fill if empty
-    if (prevObs.empty())
+    if (prevObs.size() < 2)
     {
-        prevObs.push_back(imuObs__t0);
-        prevObs.push_back(imuObs__t0);
-        prevStates.push_back(stateData__t1);
-        prevStates.push_back(stateData__t1);
+        prevObs.push_front(imuObs__t0);
+        prevStates.push_front(stateData__t1);
+        return;
     }
 
-    // Rotate Data
+    // Rotate State Data
     prevStates.pop_back();
     prevStates.push_front(stateData__t1);
 
@@ -99,6 +98,8 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
 
     /// New State Data object to store the results and to invoke callbacks with
     auto stateData__t0 = std::make_shared<StateData>();
+    // Use same timestamp as IMU message
+    stateData__t0->insTime = time__t0;
 
     // Store velocity in the state
     stateData__t0->velocity_e() = velocity_e__t0;

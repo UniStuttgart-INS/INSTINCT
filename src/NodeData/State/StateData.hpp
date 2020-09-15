@@ -63,6 +63,7 @@ class StateData : public InsObs
 
     /// Returns the Quaternion body to navigation frame (NED)
     Eigen::Ref<Eigen::Vector4d> quat_b2n_coeff() { return X.segment<4>(0); }
+
     /// Returns the Quaternion body to navigation frame (NED)
     [[nodiscard]] Eigen::Ref<Eigen::Vector4d const> quat_b2n_coeff() const { return X.segment<4>(0); }
 
@@ -101,28 +102,44 @@ class StateData : public InsObs
         return quaternion_b2e().conjugate();
     }
 
+    /// @brief Returns the Roll, Pitch and Yaw angles in [rad]
+    /// @return [roll, pitch, yaw]^T
+    [[nodiscard]] Eigen::Vector3d rollPitchYaw() const
+    {
+        return trafo::quat2eulerZYX(quaternion_n2b()).reverse();
+    }
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                                 Position                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the latitude, longitude and height in [rad, rad, m]
     Eigen::Ref<Eigen::Vector3d> latLonHeight() { return X.segment<3>(4); }
+
     /// Returns the latitude, longitude and height above ground in [rad, rad, m]
     [[nodiscard]] Eigen::Ref<const Eigen::Vector3d> latLonHeight() const { return X.segment<3>(4); }
+
     /// Returns the latitude in [rad]
     double& latitude() { return X(4); }
+
     /// Returns the latitude in [rad]
     [[nodiscard]] const double& latitude() const { return X(4); }
+
     /// Returns the longitude in [rad]
     double& longitude() { return X(5); }
+
     /// Returns the longitude in [rad]
     [[nodiscard]] const double& longitude() const { return X(5); }
+
     /// Returns the height above ground in [m]
     double& height() { return X(6); }
+
     /// Returns the height above ground in [m]
     [[nodiscard]] const double& height() const { return X(6); }
+
     /// Returns the ECEF coordinates in [m] using the WGS84 ellipsoid
     [[nodiscard]] Eigen::Vector3d positionECEF_WGS84() const { return trafo::llh2ecef_WGS84(latitude(), longitude(), height()); }
+
     /// Returns the ECEF coordinates in [m] using the GRS80 ellipsoid
     [[nodiscard]] Eigen::Vector3d positionECEF_GRS80() const { return trafo::llh2ecef_GRS80(latitude(), longitude(), height()); }
 
@@ -132,6 +149,7 @@ class StateData : public InsObs
 
     /// Returns the velocity in [m/s], in earth coordinates
     Eigen::Ref<Eigen::Vector3d> velocity_e() { return X.segment<3>(7); }
+
     /// Returns the velocity in [m/s], in earth coordinates
     [[nodiscard]] Eigen::Ref<const Eigen::Vector3d> velocity_e() const { return X.segment<3>(7); }
 

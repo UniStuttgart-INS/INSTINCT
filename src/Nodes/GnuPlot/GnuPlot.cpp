@@ -3,6 +3,7 @@
 #include <chrono>
 #include <regex>
 
+#include "util/InsTransformations.hpp"
 #include "util/Logger.hpp"
 #include "Nodes/NodeManager.hpp"
 
@@ -479,29 +480,80 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
         {
             gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow));
         }
-        else if (gnuplotData.dataIdentifier == "Latitude" && obs->positionLLH.has_value())
+        else if (gnuplotData.dataIdentifier == "Latitude")
         {
-            gnuplotData.data.emplace_back(obs->positionLLH.value()(1));
+            if (obs->positionLLH.has_value())
+            {
+                gnuplotData.data.emplace_back(obs->positionLLH.value().x());
+            }
+            else if (obs->positionXYZ.has_value())
+            {
+                gnuplotData.data.emplace_back(trafo::rad2deg(trafo::ecef2llh_WGS84(obs->positionXYZ.value()).x()));
+            }
         }
-        else if (gnuplotData.dataIdentifier == "Longitude" && obs->positionLLH.has_value())
+        else if (gnuplotData.dataIdentifier == "Longitude")
         {
-            gnuplotData.data.emplace_back(obs->positionLLH.value()(0));
+            if (obs->positionLLH.has_value())
+            {
+                gnuplotData.data.emplace_back(obs->positionLLH.value().y());
+            }
+            else if (obs->positionXYZ.has_value())
+            {
+                gnuplotData.data.emplace_back(trafo::rad2deg(trafo::ecef2llh_WGS84(obs->positionXYZ.value()).y()));
+            }
         }
-        else if (gnuplotData.dataIdentifier == "Height" && obs->positionLLH.has_value())
+        else if (gnuplotData.dataIdentifier == "Height")
         {
-            gnuplotData.data.emplace_back(obs->positionLLH.value()(2));
+            if (obs->positionLLH.has_value())
+            {
+                gnuplotData.data.emplace_back(obs->positionLLH.value().z());
+            }
+            else if (obs->positionXYZ.has_value())
+            {
+                gnuplotData.data.emplace_back(trafo::ecef2llh_WGS84(obs->positionXYZ.value()).z());
+            }
         }
-        else if (gnuplotData.dataIdentifier == "X-ECEF" && obs->positionXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "X-ECEF")
         {
-            gnuplotData.data.emplace_back(obs->positionXYZ.value().x());
+            if (obs->positionXYZ.has_value())
+            {
+                gnuplotData.data.emplace_back(obs->positionXYZ.value().x());
+            }
+            else if (obs->positionLLH.has_value())
+            {
+                gnuplotData.data.emplace_back(trafo::llh2ecef_WGS84(trafo::deg2rad(obs->positionLLH.value().x()),
+                                                                    trafo::deg2rad(obs->positionLLH.value().y()),
+                                                                    obs->positionLLH.value().z())
+                                                  .x());
+            }
         }
-        else if (gnuplotData.dataIdentifier == "Y-ECEF" && obs->positionXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Y-ECEF")
         {
-            gnuplotData.data.emplace_back(obs->positionXYZ.value().y());
+            if (obs->positionXYZ.has_value())
+            {
+                gnuplotData.data.emplace_back(obs->positionXYZ.value().y());
+            }
+            else if (obs->positionLLH.has_value())
+            {
+                gnuplotData.data.emplace_back(trafo::llh2ecef_WGS84(trafo::deg2rad(obs->positionLLH.value().x()),
+                                                                    trafo::deg2rad(obs->positionLLH.value().y()),
+                                                                    obs->positionLLH.value().z())
+                                                  .y());
+            }
         }
-        else if (gnuplotData.dataIdentifier == "Z-ECEF" && obs->positionXYZ.has_value())
+        else if (gnuplotData.dataIdentifier == "Z-ECEF")
         {
-            gnuplotData.data.emplace_back(obs->positionXYZ.value().z());
+            if (obs->positionXYZ.has_value())
+            {
+                gnuplotData.data.emplace_back(obs->positionXYZ.value().z());
+            }
+            else if (obs->positionLLH.has_value())
+            {
+                gnuplotData.data.emplace_back(trafo::llh2ecef_WGS84(trafo::deg2rad(obs->positionLLH.value().x()),
+                                                                    trafo::deg2rad(obs->positionLLH.value().y()),
+                                                                    obs->positionLLH.value().z())
+                                                  .z());
+            }
         }
         else if (gnuplotData.dataIdentifier == "Q" && obs->Q.has_value())
         {
@@ -721,4 +773,80 @@ void NAV::GnuPlot::handleImuObs(std::shared_ptr<NAV::ImuObs>& obs, size_t portIn
     requestUpdate();
 
     invokeCallbacks(obs);
+}
+
+void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_t portIndex)
+{
+    for (auto& gnuplotData : plotData[portIndex])
+    {
+        if (gnuplotData.dataIdentifier == "GPS time of week" && state->insTime.has_value())
+        {
+            gnuplotData.data.emplace_back(static_cast<double>(state->insTime.value().toGPSweekTow().tow));
+        }
+        else if (gnuplotData.dataIdentifier == "Latitude")
+        {
+            gnuplotData.data.emplace_back(trafo::rad2deg(state->latitude()));
+        }
+        else if (gnuplotData.dataIdentifier == "Longitude")
+        {
+            gnuplotData.data.emplace_back(trafo::rad2deg(state->longitude()));
+        }
+        else if (gnuplotData.dataIdentifier == "Height")
+        {
+            gnuplotData.data.emplace_back(state->height());
+        }
+        else if (gnuplotData.dataIdentifier == "X-ECEF")
+        {
+            gnuplotData.data.emplace_back(state->positionECEF_WGS84().x());
+        }
+        else if (gnuplotData.dataIdentifier == "Y-ECEF")
+        {
+            gnuplotData.data.emplace_back(state->positionECEF_WGS84().y());
+        }
+        else if (gnuplotData.dataIdentifier == "Z-ECEF")
+        {
+            gnuplotData.data.emplace_back(state->positionECEF_WGS84().z());
+        }
+        else if (gnuplotData.dataIdentifier == "Roll")
+        {
+            gnuplotData.data.emplace_back(trafo::rad2deg(state->rollPitchYaw().x()));
+        }
+        else if (gnuplotData.dataIdentifier == "Pitch")
+        {
+            gnuplotData.data.emplace_back(trafo::rad2deg(state->rollPitchYaw().y()));
+        }
+        else if (gnuplotData.dataIdentifier == "Yaw")
+        {
+            gnuplotData.data.emplace_back(trafo::rad2deg(state->rollPitchYaw().z()));
+        }
+        else if (gnuplotData.dataIdentifier == "Quaternion W")
+        {
+            gnuplotData.data.emplace_back(state->quaternion_n2b().w());
+        }
+        else if (gnuplotData.dataIdentifier == "Quaternion X")
+        {
+            gnuplotData.data.emplace_back(state->quaternion_n2b().x());
+        }
+        else if (gnuplotData.dataIdentifier == "Quaternion Y")
+        {
+            gnuplotData.data.emplace_back(state->quaternion_n2b().y());
+        }
+        else if (gnuplotData.dataIdentifier == "Quaternion Z")
+        {
+            gnuplotData.data.emplace_back(state->quaternion_n2b().z());
+        }
+
+        // Delete old data
+        if (NodeManager::appContext != NodeContext::POST_PROCESSING)
+        {
+            while (xDisplayScope != 0 && gnuplotData.data.size() > xDisplayScope)
+            {
+                gnuplotData.data.pop_front();
+            }
+        }
+    }
+
+    requestUpdate();
+
+    invokeCallbacks(state);
 }
