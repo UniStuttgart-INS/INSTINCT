@@ -144,6 +144,7 @@ class GnuPlot final : public Node
                                                             { "[GPS time of week]",
                                                               "Latitude", "Longitude", "Height",
                                                               "X-ECEF", "Y-ECEF", "Z-ECEF",
+                                                              "Velocity X-ECEF", "Velocity Y-ECEF", "Velocity Z-ECEF",
                                                               "Roll", "Pitch", "Yaw",
                                                               "Quaternion W", "Quaternion X", "Quaternion Y", "Quaternion Z" })
                 } },

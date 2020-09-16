@@ -43,6 +43,27 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
         }
         currentState->quat_b2n_coeff() = trafo::quat_b2n(roll, pitch, yaw).coeffs();
     }
+    if (options.count("Init Velocity"))
+    {
+        std::stringstream lineStream(options.at("Init Velocity"));
+        std::string value;
+        double v_n{};
+        double v_e{};
+        double v_d{};
+        if (std::getline(lineStream, value, ';'))
+        {
+            v_n = std::stod(value);
+            if (std::getline(lineStream, value, ';'))
+            {
+                v_e = std::stod(value);
+                if (std::getline(lineStream, value, ';'))
+                {
+                    v_d = std::stod(value);
+                }
+            }
+        }
+        currentState->velocity_e() = Eigen::Vector3d(v_n, v_e, v_d);
+    }
 }
 
 void NAV::State::updateState(std::shared_ptr<StateData>& state)

@@ -51,7 +51,8 @@ class State : public Node
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
         return { { CONFIG_FLOAT3, "Init LatLonAlt", "Initial values for Latitude [deg], Longitude [deg] and Height [m]", { "-89.99999999", "0", "89.99999999", "-179.99999999", "0", "179.99999999", "-1000", "0", "20000" } },
-                 { CONFIG_FLOAT3, "Init RollPitchYaw", "Initial values for Roll, Pitch and Yaw in [Degree]", { "-180", "0", "180", "-90", "0", "90", "-180", "0", "180" } } };
+                 { CONFIG_FLOAT3, "Init RollPitchYaw", "Initial values for Roll, Pitch and Yaw in [Degree]", { "-180", "0", "180", "-90", "0", "90", "-180", "0", "180" } },
+                 { CONFIG_FLOAT3, "Init Velocity", "Initial velocity in earth (NED) frame [m/s]", { "-100", "0", "100", "-100", "0", "100", "-100", "0", "100" } } };
     }
 
     /// @brief Returns the context of the class

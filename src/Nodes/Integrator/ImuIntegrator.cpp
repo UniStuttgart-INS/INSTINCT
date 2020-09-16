@@ -83,14 +83,14 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     const auto& position_e__t1 = prevStates.at(0)->positionECEF_WGS84();
 
     /// g_e Gravity vector in [m/s^2], in earth coordinates
-    const auto& gravity_e = Eigen::Vector3d(0, 0, gravity::gravityMagnitude_Gleason(prevStates.at(0)->latitude()));
+    const auto& gravity_e__t1 = Eigen::Vector3d(0, 0, gravity::gravityMagnitude_Gleason(prevStates.at(0)->latitude()));
 
     /// v (tₖ), Velocity in earth coordinates, at the current time tₖ
     const Eigen::Vector3d velocity_e__t0 = updateVelocityRungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
                                                                      acceleration_p__t0, acceleration_p__t1,
                                                                      velocity_e__t2,
                                                                      position_e__t2,
-                                                                     gravity_e,
+                                                                     gravity_e__t1,
                                                                      quaternion_p2e__t0, quaternion_p2e__t1, quaternion_p2e__t2);
 
     /// x_e (tₖ) Position in [m/s], in earth coordinates, at the time tₖ

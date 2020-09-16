@@ -807,6 +807,18 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         {
             gnuplotData.data.emplace_back(state->positionECEF_WGS84().z());
         }
+        else if (gnuplotData.dataIdentifier == "Velocity X-ECEF")
+        {
+            gnuplotData.data.emplace_back(state->velocity_e().x());
+        }
+        else if (gnuplotData.dataIdentifier == "Velocity Y-ECEF")
+        {
+            gnuplotData.data.emplace_back(state->velocity_e().y());
+        }
+        else if (gnuplotData.dataIdentifier == "Velocity Z-ECEF")
+        {
+            gnuplotData.data.emplace_back(state->velocity_e().z());
+        }
         else if (gnuplotData.dataIdentifier == "Roll")
         {
             gnuplotData.data.emplace_back(trafo::rad2deg(state->rollPitchYaw().x()));
