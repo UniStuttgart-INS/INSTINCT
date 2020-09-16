@@ -65,7 +65,7 @@ class KvhFile final : public ImuFileReader
         case PortType::In:
             break;
         case PortType::Out:
-            return 1U;
+            return 2U;
         }
 
         return 0U;
@@ -86,6 +86,10 @@ class KvhFile final : public ImuFileReader
             {
                 return KvhObs().type();
             }
+            if (portIndex == 1)
+            {
+                return ImuPos().type();
+            }
         }
 
         return std::string_view("");
@@ -104,6 +108,10 @@ class KvhFile final : public ImuFileReader
         if (portIndex == 0)
         {
             return pollData();
+        }
+        if (portIndex == 1)
+        {
+            return imuPos;
         }
 
         return nullptr;

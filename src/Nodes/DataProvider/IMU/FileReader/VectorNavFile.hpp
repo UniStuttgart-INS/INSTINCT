@@ -7,7 +7,6 @@
 
 #include "../ImuFileReader.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
-#include "NodeData/IMU/ImuPos.hpp"
 
 namespace NAV
 {

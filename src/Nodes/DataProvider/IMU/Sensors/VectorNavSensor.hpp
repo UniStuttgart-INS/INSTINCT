@@ -137,7 +137,7 @@ class VectorNavSensor final : public UartSensor, public Imu
         case PortType::In:
             break;
         case PortType::Out:
-            return 1U;
+            return 2U;
         }
 
         return 0U;
@@ -158,6 +158,10 @@ class VectorNavSensor final : public UartSensor, public Imu
             {
                 return VectorNavObs().type();
             }
+            if (portIndex == 1)
+            {
+                return ImuPos().type();
+            }
         }
 
         return std::string_view("");
@@ -167,6 +171,19 @@ class VectorNavSensor final : public UartSensor, public Imu
     /// @param[in] portIndex The input port index
     /// @param[in, out] data The data send on the input port
     void handleInputData([[maybe_unused]] uint8_t portIndex, [[maybe_unused]] std::shared_ptr<NodeData> data) final {}
+
+    /// @brief Requests the node to send out its data
+    /// @param[in] portIndex The output port index
+    /// @return The requested data or nullptr if no data available
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) final
+    {
+        if (portIndex == 1)
+        {
+            return imuPos;
+        }
+
+        return nullptr;
+    }
 
   private:
     /// @brief Callback handler for notifications of new asynchronous data packets received
