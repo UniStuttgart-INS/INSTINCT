@@ -244,7 +244,7 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
         QDoubleSpinBox* doubleSpinBox = new QDoubleSpinBox();
 
         double defaultValue = 0.0;
-        for (size_t j = 0; j < 3; j++)
+        for (size_t j = 0; j < 4; j++)
         {
             std::string cell = std::get<std::string>(std::get<3>(config).at(j));
             if (j == 0)
@@ -254,9 +254,11 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
             else if (j == 2)
             {
                 doubleSpinBox->setMaximum(std::stod(cell));
-                doubleSpinBox->setValue(defaultValue);
             }
+            else if (j == 3)
+                doubleSpinBox->setDecimals(static_cast<int>(std::stoul(cell)));
         }
+        doubleSpinBox->setValue(defaultValue);
 
         doubleSpinBox->setSingleStep(1.0);
         doubleSpinBox->setStyleSheet("QDoubleSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
@@ -276,9 +278,9 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
             doubleSpinBox[sb] = new QDoubleSpinBox();
 
             double defaultValue = 0.0;
-            for (size_t j = 0; j < 3; j++)
+            for (size_t j = 0; j < 4; j++)
             {
-                std::string cell = std::get<std::string>(std::get<3>(config).at(j + 3 * sb));
+                std::string cell = std::get<std::string>(std::get<3>(config).at(j + 4 * sb));
                 if (j == 0)
                     doubleSpinBox[sb]->setMinimum(std::stod(cell));
                 else if (j == 1)
@@ -286,11 +288,13 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
                 else if (j == 2)
                 {
                     doubleSpinBox[sb]->setMaximum(std::stod(cell));
-                    doubleSpinBox[sb]->setValue(defaultValue);
                 }
+                else if (j == 3)
+                    doubleSpinBox[sb]->setDecimals(static_cast<int>(std::stoul(cell)));
             }
+            doubleSpinBox[sb]->setValue(defaultValue);
+
             doubleSpinBox[sb]->setSingleStep(1.0);
-            doubleSpinBox[sb]->setDecimals(10);
             doubleSpinBox[sb]->setStyleSheet("QDoubleSpinBox { background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black }");
 
             layout->addWidget(doubleSpinBox[sb]);
@@ -748,9 +752,13 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
                 auto* spinBox1 = static_cast<QDoubleSpinBox*>(layout->itemAt(1)->widget());
                 auto* spinBox2 = static_cast<QDoubleSpinBox*>(layout->itemAt(2)->widget());
 
-                modelJson[widget->objectName()] = QString::number(spinBox0->value(), 'g', 13)
-                                                  + "," + QString::number(spinBox1->value(), 'g', 13)
-                                                  + "," + QString::number(spinBox2->value(), 'g', 13);
+                int maxTextLength = std::to_string(static_cast<int>(spinBox0->maximum())).size();
+                int minTextLength = std::to_string(static_cast<int>(spinBox0->minimum())).size();
+                int textLength = std::max(maxTextLength, minTextLength) + 1 + spinBox0->decimals();
+
+                modelJson[widget->objectName()] = QString::number(spinBox0->value(), 'g', textLength)
+                                                  + "," + QString::number(spinBox1->value(), 'g', textLength)
+                                                  + "," + QString::number(spinBox2->value(), 'g', textLength);
             }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 modelJson[widget->objectName()] = static_cast<QLineEdit*>(widget)->text();

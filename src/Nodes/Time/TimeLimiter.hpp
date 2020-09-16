@@ -60,10 +60,10 @@ class TimeLimiter final : public Node
             { CONFIG_LIST, "1-Port Type", "Select the type of the message to receive on this port", { "[" + std::string(VectorNavObs().type()) + "]", std::string(ImuObs().type()), std::string(KvhObs().type()), std::string(EmlidObs().type()), std::string(RtklibPosObs().type()), std::string(UbloxObs().type()) } },
             { CONFIG_INT, "Lower Limit\nGps Cycle", "GPS Cycle of lower limit", { "0", "0", "10" } },
             { CONFIG_INT, "Lower Limit\nGps Week", "GPS Week of lower limit", { "0", "0", "245760" } },
-            { CONFIG_FLOAT, "Lower Limit\nGps Time of Week", "GPS Time of Week of lower limit", { "0", "0", "604800" } },
+            { CONFIG_FLOAT, "Lower Limit\nGps Time of Week", "GPS Time of Week of lower limit", { "0", "0", "604800", "3" } },
             { CONFIG_INT, "Upper Limit\nGps Cycle", "GPS Cycle of upper limit", { "0", "0", "10" } },
             { CONFIG_INT, "Upper Limit\nGps Week", "GPS Week of upper limit", { "0", "0", "245760" } },
-            { CONFIG_FLOAT, "Upper Limit\nGps Time of Week", "GPS Time of Week of upper limit", { "0", "0", "604800" } },
+            { CONFIG_FLOAT, "Upper Limit\nGps Time of Week", "GPS Time of Week of upper limit", { "0", "0", "604800", "3" } },
         };
     }
 

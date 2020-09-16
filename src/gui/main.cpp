@@ -152,7 +152,14 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_N_INPUT_PORTS)
                 text = std::to_string(static_cast<QSpinBox*>(widget)->value());
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT)
-                text = std::to_string(static_cast<QDoubleSpinBox*>(widget)->value());
+            {
+                auto* spinBox = static_cast<QDoubleSpinBox*>(widget);
+
+                int textLength = std::max(std::to_string(static_cast<int>(spinBox->maximum())).size(),
+                                          std::to_string(static_cast<int>(spinBox->minimum())).size())
+                                 + 1 + spinBox->decimals();
+                text = QString::number(spinBox->value(), 'g', textLength).toStdString();
+            }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_FLOAT3)
             {
                 auto* groupBox = static_cast<QGroupBox*>(widget);
@@ -161,7 +168,20 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
                 auto* spinBox0 = static_cast<QDoubleSpinBox*>(layout->itemAt(0)->widget());
                 auto* spinBox1 = static_cast<QDoubleSpinBox*>(layout->itemAt(1)->widget());
                 auto* spinBox2 = static_cast<QDoubleSpinBox*>(layout->itemAt(2)->widget());
-                text = std::to_string(spinBox0->value()) + ";" + std::to_string(spinBox1->value()) + ";" + std::to_string(spinBox2->value());
+
+                int textLength0 = std::max(std::to_string(static_cast<int>(spinBox0->maximum())).size(),
+                                           std::to_string(static_cast<int>(spinBox0->minimum())).size())
+                                  + 1 + spinBox0->decimals();
+                int textLength1 = std::max(std::to_string(static_cast<int>(spinBox1->maximum())).size(),
+                                           std::to_string(static_cast<int>(spinBox1->minimum())).size())
+                                  + 1 + spinBox1->decimals();
+                int textLength2 = std::max(std::to_string(static_cast<int>(spinBox2->maximum())).size(),
+                                           std::to_string(static_cast<int>(spinBox2->minimum())).size())
+                                  + 1 + spinBox2->decimals();
+
+                text = QString::number(spinBox0->value(), 'g', textLength0).toStdString() + ";"
+                       + QString::number(spinBox1->value(), 'g', textLength1).toStdString() + ";"
+                       + QString::number(spinBox2->value(), 'g', textLength2).toStdString();
             }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 text = static_cast<QLineEdit*>(widget)->text().replace("\n", "\\n").replace("#", "[hash]").toStdString();
