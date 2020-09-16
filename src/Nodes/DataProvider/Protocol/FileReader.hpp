@@ -10,6 +10,8 @@
 #include <map>
 #include <fstream>
 
+#include "util/InsTime.hpp"
+
 namespace NAV
 {
 /// Abstract File Reader class
@@ -71,6 +73,11 @@ class FileReader
 
     /// Header Columns of a CSV file
     std::vector<std::string> columns;
+
+    /// Lower Time Limit of data to read
+    InsTime lowerLimit{ InsTime_MJD(0, 0) };
+    /// Upper Time Limit of data to read
+    InsTime upperLimit;
 
   private:
     /// Name of the parent node

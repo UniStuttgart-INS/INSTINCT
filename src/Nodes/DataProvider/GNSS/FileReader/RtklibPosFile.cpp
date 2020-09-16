@@ -204,9 +204,25 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
         // Return to position before "Read line".
         filestream.seekg(pos, std::ios_base::beg);
     }
-    else
+
+    if (obs->insTime.has_value())
     {
-        // Calls all the callbacks
+        // Has time value, but value should not be displayed
+        if (obs->insTime.value() < lowerLimit)
+        {
+            // Resetting the value will make the read loop skip the message
+            obs->insTime.reset();
+            return obs;
+        }
+        if (obs->insTime.value() > upperLimit)
+        {
+            return nullptr;
+        }
+    }
+
+    // Calls all the callbacks
+    if (!peek)
+    {
         invokeCallbacks(obs);
     }
 

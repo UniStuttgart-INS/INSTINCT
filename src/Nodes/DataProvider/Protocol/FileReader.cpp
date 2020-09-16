@@ -3,6 +3,7 @@
 #include "util/Logger.hpp"
 
 #include <sstream>
+#include "util/StringUtil.hpp"
 
 NAV::FileReader::FileReader(std::string name, const std::map<std::string, std::string>& options)
     : parentNodeName(std::move(name))
@@ -16,6 +17,61 @@ NAV::FileReader::FileReader(std::string name, const std::map<std::string, std::s
     else
     {
         LOG_CRITICAL("{}: There was no path provided to the node", parentNodeName);
+    }
+
+    if (options.count("Time Start"))
+    {
+        std::string value = options.at("Time Start"); // 2020/01/01 - 00:00:00
+
+        std::string year = str::trim_copy(value.substr(0,
+                                                       value.find_first_of('/')));
+        std::string month = str::trim_copy(value.substr(value.find_first_of('/') + 1,
+                                                        value.find_last_of('/') - value.find_first_of('/') - 1));
+        std::string day = str::trim_copy(value.substr(value.find_last_of('/') + 1,
+                                                      value.find_first_of('-') - value.find_last_of('/') - 1));
+
+        std::string hour = str::trim_copy(value.substr(value.find_first_of('-') + 1,
+                                                       value.find_first_of(':') - value.find_first_of('-') - 1));
+        std::string minute = str::trim_copy(value.substr(value.find_first_of(':') + 1,
+                                                         value.find_last_of(':') - value.find_first_of(':') - 1));
+        std::string seconds = str::trim_copy(value.substr(value.find_last_of(':') + 1));
+
+        LOG_DEBUG("{}: Time Start {}/{}/{} - {}:{}:{}", name, year, month, day, hour, minute, seconds);
+
+        lowerLimit = InsTime(static_cast<uint16_t>(std::stoul(year)),
+                             static_cast<uint16_t>(std::stoul(month)),
+                             static_cast<uint16_t>(std::stoul(day)),
+                             static_cast<uint16_t>(std::stoul(hour)),
+                             static_cast<uint16_t>(std::stoul(minute)),
+                             std::stold(seconds),
+                             InsTime::TIME_SYSTEM::GPST);
+    }
+    if (options.count("Time End"))
+    {
+        std::string value = options.at("Time End"); // 2020/01/01 - 00:00:00
+
+        std::string year = str::trim_copy(value.substr(0,
+                                                       value.find_first_of('/')));
+        std::string month = str::trim_copy(value.substr(value.find_first_of('/') + 1,
+                                                        value.find_last_of('/') - value.find_first_of('/') - 1));
+        std::string day = str::trim_copy(value.substr(value.find_last_of('/') + 1,
+                                                      value.find_first_of('-') - value.find_last_of('/') - 1));
+
+        std::string hour = str::trim_copy(value.substr(value.find_first_of('-') + 1,
+                                                       value.find_first_of(':') - value.find_first_of('-') - 1));
+        std::string minute = str::trim_copy(value.substr(value.find_first_of(':') + 1,
+                                                         value.find_last_of(':') - value.find_first_of(':') - 1));
+        std::string seconds = str::trim_copy(value.substr(value.find_last_of(':') + 1));
+
+        LOG_DEBUG("{}: Time End {}/{}/{} - {}:{}:{}", name, year, month, day, hour, minute, seconds);
+
+        upperLimit = InsTime(static_cast<uint16_t>(std::stoul(year)),
+                             static_cast<uint16_t>(std::stoul(month)),
+                             static_cast<uint16_t>(std::stoul(day)),
+                             static_cast<uint16_t>(std::stoul(hour)),
+                             static_cast<uint16_t>(std::stoul(minute)),
+                             std::stold(seconds),
+                             InsTime::TIME_SYSTEM::UTC);
     }
 }
 

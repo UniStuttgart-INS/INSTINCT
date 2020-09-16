@@ -45,7 +45,9 @@ class ImuFileReader : public FileReader, public Imu
     /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
-        std::vector<ConfigOptions> configs = { { CONFIG_STRING, "Path", "Path to the File to read", { "" } } };
+        std::vector<ConfigOptions> configs = { { CONFIG_STRING, "Path", "Path to the File to read", { "" } },
+                                               { CONFIG_STRING, "Time Start", "Lower time limit (GPST)\nFormat: 2020/01/01 - 00:00:00", { "0000/01/01 - 00:00:00" } },
+                                               { CONFIG_STRING, "Time End", "Upper time limit (GPST)\nFormat: 2020/01/01 - 00:00:00", { "3000/01/01 - 00:00:00" } } };
         auto imuConfigs = Imu::guiConfig();
         configs.insert(configs.end(), imuConfigs.begin(), imuConfigs.end());
         return configs;

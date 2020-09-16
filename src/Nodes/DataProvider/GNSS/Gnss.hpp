@@ -36,6 +36,13 @@ class Gnss : public Node
     /// Destructor
     ~Gnss() override = default;
 
+    /// @brief Returns Gui Configuration options for the class
+    /// @return The gui configuration
+    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
+    {
+        return {};
+    }
+
     /// Current Ins Time
     std::optional<InsTime> currentInsTime;
 };

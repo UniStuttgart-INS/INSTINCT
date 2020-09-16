@@ -30,7 +30,6 @@
 
 #include "Nodes/StateEstimator/StateEstimator.hpp"
 
-#include "Nodes/Time/TimeLimiter.hpp"
 #include "Nodes/Time/TimeSynchronizer.hpp"
 
 void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
@@ -65,7 +64,6 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 
     nodeManager.registerNodeType<NAV::StateEstimator>();
 
-    nodeManager.registerNodeType<NAV::TimeLimiter>();
     nodeManager.registerNodeType<NAV::TimeSynchronizer>();
 }
 
