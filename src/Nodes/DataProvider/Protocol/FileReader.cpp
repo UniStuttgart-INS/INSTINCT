@@ -71,7 +71,7 @@ NAV::FileReader::FileReader(std::string name, const std::map<std::string, std::s
                              static_cast<uint16_t>(std::stoul(hour)),
                              static_cast<uint16_t>(std::stoul(minute)),
                              std::stold(seconds),
-                             InsTime::TIME_SYSTEM::UTC);
+                             InsTime::TIME_SYSTEM::GPST);
     }
 }
 

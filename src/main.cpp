@@ -87,10 +87,10 @@ int main(int argc, const char* argv[])
             // Get first event of all nodes
             for (const auto& node : nodeManager.nodes())
             {
+                bool dataEventCreated = false;
                 for (uint8_t portIndex = 0; portIndex < node->nPorts(NAV::Node::PortType::Out); portIndex++)
                 {
                     LOG_DEBUG("Searching node {} on output port {} for data", node->getName(), portIndex);
-                    bool dataEventCreated = false;
                     // Add next data event from the node
                     while (true)
                     {
