@@ -100,7 +100,7 @@ Eigen::Vector3d NAV::trafo::ecef2llh(const Eigen::Vector3d& ecef, double a, doub
         double newLatitude = std::atan2(ecef(2) + e_squared * N * std::sin(latitude), sqrt_x1x1_x2x2);
 
         // Check convergence
-        if (std::abs(newLatitude - latitude) <= 0.001)
+        if (std::abs(newLatitude - latitude) <= 1e-13)
         {
             latitude = newLatitude;
             break;
@@ -108,7 +108,7 @@ Eigen::Vector3d NAV::trafo::ecef2llh(const Eigen::Vector3d& ecef, double a, doub
 
         if (i == maxIterationCount - 1)
         {
-            LOG_WARN("ECEF2LLH conversion did not converge! Difference is still at {} [rad]", std::abs(newLatitude - latitude));
+            LOG_ERROR("ECEF2LLH conversion did not converge! Difference is still at {} [rad]", std::abs(newLatitude - latitude));
         }
 
         latitude = newLatitude;

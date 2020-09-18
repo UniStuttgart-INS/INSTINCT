@@ -237,6 +237,16 @@ TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]"
     REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
     REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
     REQUIRE(std::abs(llh.z() - height) <= 0.5);
+
+    /* -------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(40);
+    longitude = trafo::deg2rad(180);
+    height = -5097;
+    llh = trafo::ecef2llh_WGS84(trafo::llh2ecef_WGS84(latitude, longitude, height));
+    REQUIRE(std::abs(llh.x() - latitude) <= EPSILON);
+    REQUIRE(std::abs(llh.y() - longitude) <= EPSILON);
+    REQUIRE(std::abs(llh.z() - height) <= EPSILON);
 }
 
 TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
