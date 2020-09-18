@@ -155,8 +155,8 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
             {
                 auto* spinBox = static_cast<QDoubleSpinBox*>(widget);
 
-                int textLength = std::max(std::to_string(static_cast<int>(spinBox->maximum())).size(),
-                                          std::to_string(static_cast<int>(spinBox->minimum())).size())
+                int textLength = static_cast<int>(std::max(std::to_string(static_cast<int>(spinBox->maximum())).size(),
+                                                           std::to_string(static_cast<int>(spinBox->minimum())).size()))
                                  + 1 + spinBox->decimals();
                 text = QString::number(spinBox->value(), 'g', textLength).toStdString();
             }
@@ -169,14 +169,14 @@ void exportConfigForLayout(QFormLayout* layout, std::string& comment, std::strin
                 auto* spinBox1 = static_cast<QDoubleSpinBox*>(layout->itemAt(1)->widget());
                 auto* spinBox2 = static_cast<QDoubleSpinBox*>(layout->itemAt(2)->widget());
 
-                int textLength0 = std::max(std::to_string(static_cast<int>(spinBox0->maximum())).size(),
-                                           std::to_string(static_cast<int>(spinBox0->minimum())).size())
+                int textLength0 = static_cast<int>(std::max(std::to_string(static_cast<int>(spinBox0->maximum())).size(),
+                                                            std::to_string(static_cast<int>(spinBox0->minimum())).size()))
                                   + 1 + spinBox0->decimals();
-                int textLength1 = std::max(std::to_string(static_cast<int>(spinBox1->maximum())).size(),
-                                           std::to_string(static_cast<int>(spinBox1->minimum())).size())
+                int textLength1 = static_cast<int>(std::max(std::to_string(static_cast<int>(spinBox1->maximum())).size(),
+                                                            std::to_string(static_cast<int>(spinBox1->minimum())).size()))
                                   + 1 + spinBox1->decimals();
-                int textLength2 = std::max(std::to_string(static_cast<int>(spinBox2->maximum())).size(),
-                                           std::to_string(static_cast<int>(spinBox2->minimum())).size())
+                int textLength2 = static_cast<int>(std::max(std::to_string(static_cast<int>(spinBox2->maximum())).size(),
+                                                            std::to_string(static_cast<int>(spinBox2->minimum())).size()))
                                   + 1 + spinBox2->decimals();
 
                 text = QString::number(spinBox0->value(), 'g', textLength0).toStdString() + ";"

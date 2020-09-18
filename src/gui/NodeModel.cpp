@@ -752,13 +752,19 @@ void NodeModel::saveLayoutItems(QFormLayout* layout, QJsonObject& modelJson) con
                 auto* spinBox1 = static_cast<QDoubleSpinBox*>(layout->itemAt(1)->widget());
                 auto* spinBox2 = static_cast<QDoubleSpinBox*>(layout->itemAt(2)->widget());
 
-                int maxTextLength = std::to_string(static_cast<int>(spinBox0->maximum())).size();
-                int minTextLength = std::to_string(static_cast<int>(spinBox0->minimum())).size();
-                int textLength = std::max(maxTextLength, minTextLength) + 1 + spinBox0->decimals();
+                int textLength0 = static_cast<int>(std::max(std::to_string(static_cast<int>(spinBox0->maximum())).size(),
+                                                            std::to_string(static_cast<int>(spinBox0->minimum())).size()))
+                                  + 1 + spinBox0->decimals();
+                int textLength1 = static_cast<int>(std::max(std::to_string(static_cast<int>(spinBox1->maximum())).size(),
+                                                            std::to_string(static_cast<int>(spinBox1->minimum())).size()))
+                                  + 1 + spinBox1->decimals();
+                int textLength2 = static_cast<int>(std::max(std::to_string(static_cast<int>(spinBox2->maximum())).size(),
+                                                            std::to_string(static_cast<int>(spinBox2->minimum())).size()))
+                                  + 1 + spinBox2->decimals();
 
-                modelJson[widget->objectName()] = QString::number(spinBox0->value(), 'g', textLength)
-                                                  + "," + QString::number(spinBox1->value(), 'g', textLength)
-                                                  + "," + QString::number(spinBox2->value(), 'g', textLength);
+                modelJson[widget->objectName()] = QString::number(spinBox0->value(), 'g', textLength0)
+                                                  + "," + QString::number(spinBox1->value(), 'g', textLength1)
+                                                  + "," + QString::number(spinBox2->value(), 'g', textLength2);
             }
             else if (widget->property("type").toUInt() == NAV::Node::ConfigOptionType::CONFIG_STRING)
                 modelJson[widget->objectName()] = static_cast<QLineEdit*>(widget)->text();

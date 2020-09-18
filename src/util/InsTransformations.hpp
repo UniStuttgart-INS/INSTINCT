@@ -113,8 +113,8 @@ class trafo
 
     /// @brief Quaternion for rotations from body to navigation frame
     /// @param[in] roll Roll angle in [rad]
-    /// @param[in] yaw Yaw angle in [rad]
     /// @param[in] pitch Pitch angle in [rad]
+    /// @param[in] yaw Yaw angle in [rad]
     /// @return The rotation Quaternion representation
     [[nodiscard]] static Eigen::Quaterniond quat_b2n(double roll, double pitch, double yaw);
 
