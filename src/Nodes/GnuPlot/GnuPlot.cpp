@@ -232,7 +232,16 @@ void NAV::GnuPlot::handleVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs, s
 {
     for (auto& gnuplotData : plotData[portIndex])
     {
-        if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
+        if (gnuplotData.dataIdentifier == "Time" && obs->insTime.has_value())
+        {
+            if (std::isnan(gnuplotData.startValue))
+            {
+                gnuplotData.startValue = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+            }
+
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+        }
+        else if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
             gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow));
         }
@@ -476,7 +485,16 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
 {
     for (auto& gnuplotData : plotData[portIndex])
     {
-        if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
+        if (gnuplotData.dataIdentifier == "Time" && obs->insTime.has_value())
+        {
+            if (std::isnan(gnuplotData.startValue))
+            {
+                gnuplotData.startValue = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+            }
+
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+        }
+        else if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
             gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow));
         }
@@ -639,7 +657,16 @@ void NAV::GnuPlot::handleKvhObs(std::shared_ptr<NAV::KvhObs>& obs, size_t portIn
 {
     for (auto& gnuplotData : plotData[portIndex])
     {
-        if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
+        if (gnuplotData.dataIdentifier == "Time" && obs->insTime.has_value())
+        {
+            if (std::isnan(gnuplotData.startValue))
+            {
+                gnuplotData.startValue = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+            }
+
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+        }
+        else if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
             gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow));
         }
@@ -711,7 +738,16 @@ void NAV::GnuPlot::handleImuObs(std::shared_ptr<NAV::ImuObs>& obs, size_t portIn
 {
     for (auto& gnuplotData : plotData[portIndex])
     {
-        if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
+        if (gnuplotData.dataIdentifier == "Time" && obs->insTime.has_value())
+        {
+            if (std::isnan(gnuplotData.startValue))
+            {
+                gnuplotData.startValue = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+            }
+
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+        }
+        else if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
             gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow));
         }
@@ -779,7 +815,16 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
 {
     for (auto& gnuplotData : plotData[portIndex])
     {
-        if (gnuplotData.dataIdentifier == "GPS time of week" && state->insTime.has_value())
+        if (gnuplotData.dataIdentifier == "Time" && state->insTime.has_value())
+        {
+            if (std::isnan(gnuplotData.startValue))
+            {
+                gnuplotData.startValue = static_cast<double>(state->insTime.value().toGPSweekTow().tow);
+            }
+
+            gnuplotData.data.emplace_back(static_cast<double>(state->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+        }
+        else if (gnuplotData.dataIdentifier == "GPS time of week" && state->insTime.has_value())
         {
             gnuplotData.data.emplace_back(static_cast<double>(state->insTime.value().toGPSweekTow().tow));
         }
@@ -807,17 +852,17 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         {
             gnuplotData.data.emplace_back(state->positionECEF_WGS84().z());
         }
-        else if (gnuplotData.dataIdentifier == "Velocity X-ECEF")
+        else if (gnuplotData.dataIdentifier == "Velocity North")
         {
-            gnuplotData.data.emplace_back(state->velocity_e().x());
+            gnuplotData.data.emplace_back(state->velocity_n().x());
         }
-        else if (gnuplotData.dataIdentifier == "Velocity Y-ECEF")
+        else if (gnuplotData.dataIdentifier == "Velocity East")
         {
-            gnuplotData.data.emplace_back(state->velocity_e().y());
+            gnuplotData.data.emplace_back(state->velocity_n().y());
         }
-        else if (gnuplotData.dataIdentifier == "Velocity Z-ECEF")
+        else if (gnuplotData.dataIdentifier == "Velocity Down")
         {
-            gnuplotData.data.emplace_back(state->velocity_e().z());
+            gnuplotData.data.emplace_back(state->velocity_n().z());
         }
         else if (gnuplotData.dataIdentifier == "Roll")
         {

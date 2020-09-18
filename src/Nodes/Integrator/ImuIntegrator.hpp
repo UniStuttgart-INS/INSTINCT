@@ -54,7 +54,7 @@ class ImuIntegrator : public Node
     /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
-        return {};
+        return { { CONFIG_LIST, "Integration Frame", "", { "[ECEF]", "NED" } } };
     }
 
     /// @brief Returns the context of the class
@@ -141,6 +141,13 @@ class ImuIntegrator : public Node
     /// [0]: StateData at time tₖ₋₁
     /// [1]: StateData at time tₖ₋₂
     std::deque<std::shared_ptr<StateData>> prevStates;
+
+    enum IntegrationFrame
+    {
+        ECEF,
+        NED
+    };
+    IntegrationFrame integrationFrame = IntegrationFrame::ECEF;
 };
 
 } // namespace NAV

@@ -54,7 +54,7 @@ class StateData : public InsObs
     /// Entries are:
     /// [0-3] Quaternions body to navigation frame (roll, pitch, yaw)
     /// [4-6] Latitude, Longitude, Height
-    /// [7-9] Velocity in earth coordinates
+    /// [7-9] Velocity in navigation coordinates
     Eigen::Matrix<double, 10, 1> X;
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -88,6 +88,13 @@ class StateData : public InsObs
         return trafo::quat_n2e(latitude(), longitude());
     }
 
+    /// @brief Returns the Quaternion from Earth-fixed frame to navigation
+    /// @return The Quaternion for the rotation from earth navigation coordinates
+    [[nodiscard]] Eigen::Quaterniond quaternion_e2n() const
+    {
+        return quaternion_n2e().conjugate();
+    }
+
     /// @brief Returns the Quaternion from body to Earth-fixed frame
     /// @return The Quaternion for the rotation from body to earth coordinates
     [[nodiscard]] Eigen::Quaterniond quaternion_b2e() const
@@ -106,7 +113,24 @@ class StateData : public InsObs
     /// @return [roll, pitch, yaw]^T
     [[nodiscard]] Eigen::Vector3d rollPitchYaw() const
     {
-        return trafo::quat2eulerZYX(quaternion_n2b()).reverse();
+        // Eigen::Matrix3d DCMBodyToNED = quaternion_b2n().toRotationMatrix();
+        // Eigen::Vector3d EulerAngles = Eigen::Vector3d::Zero();
+
+        // EulerAngles(1) = -asin(DCMBodyToNED(2, 0));
+        // if (fabs(trafo::rad2deg(EulerAngles(1))) < 89.0)
+        // {
+        //     EulerAngles(0) = atan2((DCMBodyToNED(2, 1) / cos(EulerAngles(1))), (DCMBodyToNED(2, 2) / cos(EulerAngles(1))));
+
+        //     EulerAngles(2) = atan2((DCMBodyToNED(1, 0) / cos(EulerAngles(1))), (DCMBodyToNED(0, 0) / cos(EulerAngles(1))));
+        // }
+        // else
+        // {
+        //     EulerAngles(0) = 0.0;
+        //     EulerAngles(2) = 0.0;
+        // }
+
+        // return EulerAngles;
+        return trafo::quat2eulerZYX(quaternion_b2n()).reverse();
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -147,11 +171,11 @@ class StateData : public InsObs
     /*                                                 Velocity                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    /// Returns the velocity in [m/s], in earth coordinates
-    Eigen::Ref<Eigen::Vector3d> velocity_e() { return X.segment<3>(7); }
+    /// Returns the velocity in [m/s], in navigation coordinates
+    Eigen::Ref<Eigen::Vector3d> velocity_n() { return X.segment<3>(7); }
 
-    /// Returns the velocity in [m/s], in earth coordinates
-    [[nodiscard]] Eigen::Ref<const Eigen::Vector3d> velocity_e() const { return X.segment<3>(7); }
+    /// Returns the velocity in [m/s], in navigation coordinates
+    [[nodiscard]] Eigen::Ref<const Eigen::Vector3d> velocity_n() const { return X.segment<3>(7); }
 
     // double_t NavTime = 0.0;
     // double_t MagneticHeading = 0.0;

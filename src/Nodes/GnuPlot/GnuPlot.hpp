@@ -82,7 +82,7 @@ class GnuPlot final : public Node
                   // ImuObs
                 { ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
-                                                            { "[GPS time of week]",
+                                                            { "[Time]", "GPS time of week",
                                                               "Time since startup",
                                                               "Mag uncomp X", "Mag uncomp Y", "Mag uncomp Z",
                                                               "Accel uncomp X", "Accel uncomp Y", "Accel uncomp Z",
@@ -91,7 +91,7 @@ class GnuPlot final : public Node
                   // VectorNavObs
                   ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
-                                                            { "[GPS time of week]",
+                                                            { "[Time]", "GPS time of week",
                                                               "Time since startup",
                                                               "Quaternion W", "Quaternion X", "Quaternion Y", "Quaternion Z",
                                                               "Yaw", "Pitch", "Roll",
@@ -117,7 +117,7 @@ class GnuPlot final : public Node
                   // RtklibPosObs
                   ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
-                                                            { "[GPS time of week]",
+                                                            { "[Time]", "GPS time of week",
                                                               "Latitude", "Longitude", "Height",
                                                               "X-ECEF", "Y-ECEF", "Z-ECEF",
                                                               "Q",
@@ -131,7 +131,7 @@ class GnuPlot final : public Node
                   // KvhObs
                   ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
-                                                            { "[GPS time of week]",
+                                                            { "[Time]", "GPS time of week",
                                                               "Time since startup",
                                                               "Temperature",
                                                               "Sequence Number",
@@ -141,10 +141,10 @@ class GnuPlot final : public Node
                   // StateData
                   ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
                                                             "Specify what data should be plotted.",
-                                                            { "[GPS time of week]",
+                                                            { "[Time]", "GPS time of week",
                                                               "Latitude", "Longitude", "Height",
                                                               "X-ECEF", "Y-ECEF", "Z-ECEF",
-                                                              "Velocity X-ECEF", "Velocity Y-ECEF", "Velocity Z-ECEF",
+                                                              "Velocity North", "Velocity East", "Velocity Down",
                                                               "Roll", "Pitch", "Yaw",
                                                               "Quaternion W", "Quaternion X", "Quaternion Y", "Quaternion Z" })
                 } },
@@ -266,6 +266,7 @@ class GnuPlot final : public Node
         explicit GnuPlotData(std::string dataIdentifier)
             : dataIdentifier(std::move(dataIdentifier)) {}
 
+        double startValue = std::nan("");
         /// Data identifier
         std::string dataIdentifier;
         /// x and y data which can be passed to the plot stream

@@ -104,7 +104,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 {
     double roll = 0.0;
     double pitch = 0.0;
-    double yaw = trafo::deg2rad(45);
+    double yaw = trafo::deg2rad(-45);
     auto q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
 
     auto x_n = Eigen::Vector3d(1.0, 1.0, 0.0);
@@ -113,6 +113,8 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     REQUIRE(std::abs(x_b.x() - 0.0) <= EPSILON);
     REQUIRE(std::abs(x_b.y() - std::sqrt(2)) <= EPSILON);
     REQUIRE(std::abs(x_b.z() - 0.0) <= EPSILON);
+
+    /* -------------------------------------------------------------------------------------------------------- */
 
     roll = trafo::deg2rad(45);
     pitch = 0.0;
@@ -123,8 +125,24 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     x_b = q_n2b * x_n;
 
     REQUIRE(std::abs(x_b.x() - 1.0) <= EPSILON);
-    REQUIRE(std::abs(x_b.y() - 0.0) <= EPSILON);
+    REQUIRE(std::abs(x_b.y() - std::sqrt(2)) <= EPSILON);
+    REQUIRE(std::abs(x_b.z() - 0.0) <= EPSILON);
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    roll = 0.0;
+    pitch = trafo::deg2rad(45);
+    yaw = 0.0;
+    q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
+
+    x_n = Eigen::Vector3d(1.0, 1.0, 1.0);
+    x_b = q_n2b * x_n;
+
+    REQUIRE(std::abs(x_b.x() - 0.0) <= EPSILON);
+    REQUIRE(std::abs(x_b.y() - 1.0) <= EPSILON);
     REQUIRE(std::abs(x_b.z() - std::sqrt(2)) <= EPSILON);
+
+    /* -------------------------------------------------------------------------------------------------------- */
 
     roll = trafo::deg2rad(90);
     pitch = trafo::deg2rad(180);
@@ -134,9 +152,9 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     x_n = Eigen::Vector3d(1.0, 2.0, 3.0);
     x_b = q_n2b * x_n;
 
-    REQUIRE(std::abs(x_b.x() - 2.0) <= EPSILON);
-    REQUIRE(std::abs(x_b.y() - 3.0) <= EPSILON);
-    REQUIRE(std::abs(x_b.z() - 1.0) <= EPSILON);
+    REQUIRE(std::abs(x_b.x() - -x_n(1)) <= EPSILON);
+    REQUIRE(std::abs(x_b.y() - -x_n(2)) <= EPSILON);
+    REQUIRE(std::abs(x_b.z() - x_n(0)) <= EPSILON);
 }
 
 TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]")

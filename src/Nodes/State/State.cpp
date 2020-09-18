@@ -62,7 +62,7 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
                 }
             }
         }
-        currentState->velocity_e() = Eigen::Vector3d(v_n, v_e, v_d);
+        currentState->velocity_n() = Eigen::Vector3d(v_n, v_e, v_d);
     }
 }
 
