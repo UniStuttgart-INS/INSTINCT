@@ -39,9 +39,9 @@ Eigen::Quaterniond NAV::trafo::quat_n2e(const double latitude, const double long
 Eigen::Quaterniond NAV::trafo::quat_b2n(const double roll, const double pitch, const double yaw)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
-    Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitX());
-    Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd rollAngle(-roll, Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd pitchAngle(-pitch, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd yawAngle(-yaw, Eigen::Vector3d::UnitZ());
 
     Eigen::Quaterniond q = yawAngle * pitchAngle * rollAngle;
     return q;

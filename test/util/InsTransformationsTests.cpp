@@ -104,7 +104,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 {
     double roll = 0.0;
     double pitch = 0.0;
-    double yaw = trafo::deg2rad(-45);
+    double yaw = trafo::deg2rad(45);
     auto q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
 
     auto x_n = Eigen::Vector3d(1.0, 1.0, 0.0);
@@ -116,7 +116,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    roll = trafo::deg2rad(45);
+    roll = trafo::deg2rad(-45);
     pitch = 0.0;
     yaw = 0.0;
     q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
@@ -131,7 +131,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     /* -------------------------------------------------------------------------------------------------------- */
 
     roll = 0.0;
-    pitch = trafo::deg2rad(45);
+    pitch = trafo::deg2rad(-45);
     yaw = 0.0;
     q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
 
@@ -144,9 +144,9 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    roll = trafo::deg2rad(90);
-    pitch = trafo::deg2rad(180);
-    yaw = trafo::deg2rad(90);
+    roll = trafo::deg2rad(-90);
+    pitch = trafo::deg2rad(-180);
+    yaw = trafo::deg2rad(-90);
     q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
 
     x_n = Eigen::Vector3d(1.0, 2.0, 3.0);
