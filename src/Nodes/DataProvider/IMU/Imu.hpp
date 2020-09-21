@@ -41,11 +41,11 @@ class Imu : public Node
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
         return { { CONFIG_FLOAT3, "Accel pos", "Accelerometer mounting position in body frame coordinates in [m]", { "-1000", "0", "1000", "3", "-1000", "0", "1000", "3", "-1000", "0", "1000", "3" } },
-                 { CONFIG_FLOAT3, "Accel rot", "Angles between accelerometer frame and body frame axis [Degree]", { "0", "0", "360", "2", "0", "0", "360", "2", "0", "0", "360", "2" } },
+                 { CONFIG_FLOAT3, "Accel rot", "Angles between accelerometer frame and body frame axis [Degree]", { "-360", "0", "360", "2", "0", "-360", "360", "2", "-360", "0", "360", "2" } },
                  { CONFIG_FLOAT3, "Gyro pos", "Gyroscope mounting position in body frame coordinates in [m]", { "-1000", "0", "1000", "3", "-1000", "0", "1000", "3", "-1000", "0", "1000", "3" } },
-                 { CONFIG_FLOAT3, "Gyro rot", "Angles between gyroscope frame and body frame axis [Degree]", { "0", "0", "360", "2", "0", "0", "360", "2", "0", "0", "360", "2" } },
+                 { CONFIG_FLOAT3, "Gyro rot", "Angles between gyroscope frame and body frame axis [Degree]", { "-360", "0", "360", "2", "0", "-360", "360", "2", "-360", "0", "360", "2" } },
                  { CONFIG_FLOAT3, "Mag pos", "Magnetometer mounting position in body frame coordinates in [m]", { "-1000", "0", "1000", "3", "-1000", "0", "1000", "3", "-1000", "0", "1000", "3" } },
-                 { CONFIG_FLOAT3, "Mag rot", "Angles between magnetometer frame and body frame axis [Degree]", { "0", "0", "360", "2", "0", "0", "360", "2", "0", "0", "360", "2" } } };
+                 { CONFIG_FLOAT3, "Mag rot", "Angles between magnetometer frame and body frame axis [Degree]", { "-360", "0", "360", "2", "-360", "0", "360", "2", "-360", "0", "360", "2" } } };
     }
 
     /// Position and rotation information for conversion from platform to body frame

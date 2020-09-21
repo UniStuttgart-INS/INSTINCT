@@ -211,7 +211,7 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
         {
             prevSequenceNumber = obs->sequenceNumber;
         }
-        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < prevSequenceNumber || obs->sequenceNumber > prevSequenceNumber + 1))
+        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < prevSequenceNumber || obs->sequenceNumber > prevSequenceNumber + 2))
         {
             LOG_WARN("{}: Sequence Number changed from {} to {}", name, prevSequenceNumber, obs->sequenceNumber);
         }
