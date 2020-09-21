@@ -11,6 +11,48 @@ namespace NAV
 {
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
+Eigen::Matrix3d DCM_b2n(double roll, double pitch, double yaw)
+{
+    double& R = roll;
+    double& P = pitch;
+    double& Y = yaw;
+
+    Eigen::Matrix3d DCM;
+    // clang-format off
+    DCM << cos(Y)*cos(P), cos(Y)*sin(P)*sin(R) - sin(Y)*cos(R), cos(Y)*sin(P)*cos(R) + sin(Y)*sin(R),
+           sin(Y)*cos(P), sin(Y)*sin(P)*sin(R) + cos(Y)*cos(R), sin(Y)*sin(P)*cos(R) - cos(Y)*sin(R),
+              -sin(P)   ,             cos(P)*sin(R)           ,             cos(P)*cos(R)           ;
+
+    // clang-format on
+    return DCM;
+}
+
+Eigen::Matrix3d DCM_n2e(double latitude, double longitude)
+{
+    Eigen::Matrix3d DCM;
+    // clang-format off
+    DCM << -sin(latitude)*cos(longitude), -sin(longitude), -cos(latitude)*cos(longitude),
+           -sin(latitude)*sin(longitude),  cos(longitude), -cos(latitude)*sin(longitude),
+                   cos(latitude)        ,        0       ,        -sin(latitude)        ;
+
+    // clang-format on
+    return DCM;
+}
+
+Eigen::Matrix3d DCM_i2e(const double time, const double angularRate_ie)
+{
+    double a = angularRate_ie * time;
+
+    Eigen::Matrix3d DCM;
+    // clang-format off
+    DCM <<  cos(a), sin(a), 0,
+           -sin(a), cos(a), 0,
+              0   ,   0   , 1;
+
+    // clang-format on
+    return DCM;
+}
+
 TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformations]")
 {
     double rad_90 = trafo::deg2rad(90);
@@ -70,9 +112,25 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
 
 TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
+    double time = 86164.099 / 3.0;
+    auto C_i2e = trafo::quat_i2e(time, InsConst::angularVelocity_ie).toRotationMatrix();
+    auto C_i2e_ref = DCM_i2e(time, InsConst::angularVelocity_ie);
+
+    REQUIRE(std::abs(C_i2e(0, 0) - C_i2e_ref(0, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_i2e(0, 1) - C_i2e_ref(0, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_i2e(0, 2) - C_i2e_ref(0, 2)) <= EPSILON);
+    REQUIRE(std::abs(C_i2e(1, 0) - C_i2e_ref(1, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_i2e(1, 1) - C_i2e_ref(1, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_i2e(1, 2) - C_i2e_ref(1, 2)) <= EPSILON);
+    REQUIRE(std::abs(C_i2e(2, 0) - C_i2e_ref(2, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_i2e(2, 1) - C_i2e_ref(2, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_i2e(2, 2) - C_i2e_ref(2, 2)) <= EPSILON);
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
     // Sidereal day: 23h 56min 4.099s
-    auto siderialHalfDay = 86164.099 / 2.0;
-    auto q_i2e = trafo::quat_i2e(siderialHalfDay);
+    auto siderialDay4 = 86164.099 / 4.0;
+    auto q_i2e = trafo::quat_i2e(siderialDay4, InsConst::angularVelocity_ie);
     // Star day: 23h 56min 4.0905s
     // auto starHalfDay = 86164.0905 / 2.0;
     // auto q_i2e = trafo::quat_i2e(starHalfDay);
@@ -80,15 +138,33 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     auto x_e = Eigen::Vector3d(1, -2.5, 22);
     auto x_i = q_i2e * x_e;
 
-    REQUIRE(std::abs(x_i.x() - -1.0) <= 0.000001);
-    REQUIRE(std::abs(x_i.y() - 2.5) <= 0.000001);
+    REQUIRE(std::abs(x_i.x() - -2.5) <= 0.000001);
+    REQUIRE(std::abs(x_i.y() - -1) <= 0.000001);
     REQUIRE(std::abs(x_i.z() - 22.0) <= 0.000001);
 }
 
 TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
-    double latitude = trafo::deg2rad(90);
-    double longitude = 0.0;
+    double latitude = trafo::deg2rad(88);
+    double longitude = trafo::deg2rad(-40);
+
+    auto C_n2e = trafo::quat_n2e(latitude, longitude).toRotationMatrix();
+    auto C_n2e_ref = DCM_n2e(latitude, longitude);
+
+    REQUIRE(std::abs(C_n2e(0, 0) - C_n2e_ref(0, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_n2e(0, 1) - C_n2e_ref(0, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_n2e(0, 2) - C_n2e_ref(0, 2)) <= EPSILON);
+    REQUIRE(std::abs(C_n2e(1, 0) - C_n2e_ref(1, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_n2e(1, 1) - C_n2e_ref(1, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_n2e(1, 2) - C_n2e_ref(1, 2)) <= EPSILON);
+    REQUIRE(std::abs(C_n2e(2, 0) - C_n2e_ref(2, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_n2e(2, 1) - C_n2e_ref(2, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_n2e(2, 2) - C_n2e_ref(2, 2)) <= EPSILON);
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(90);
+    longitude = 0.0;
 
     auto q_e2n = trafo::quat_n2e(latitude, longitude).conjugate();
 
@@ -105,6 +181,42 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     double roll = 0.0;
     double pitch = 0.0;
     double yaw = trafo::deg2rad(45);
+    auto C_b2n = trafo::quat_b2n(roll, pitch, yaw).toRotationMatrix();
+    auto C_b2n_ref = DCM_b2n(roll, pitch, yaw);
+
+    REQUIRE(std::abs(C_b2n(0, 0) - C_b2n_ref(0, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(0, 1) - C_b2n_ref(0, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(0, 2) - C_b2n_ref(0, 2)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(1, 0) - C_b2n_ref(1, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(1, 1) - C_b2n_ref(1, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(1, 2) - C_b2n_ref(1, 2)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(2, 0) - C_b2n_ref(2, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(2, 1) - C_b2n_ref(2, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(2, 2) - C_b2n_ref(2, 2)) <= EPSILON);
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    roll = trafo::deg2rad(10);
+    pitch = trafo::deg2rad(-39);
+    yaw = trafo::deg2rad(170);
+    C_b2n = trafo::quat_b2n(roll, pitch, yaw).toRotationMatrix();
+    C_b2n_ref = DCM_b2n(roll, pitch, yaw);
+
+    REQUIRE(std::abs(C_b2n(0, 0) - C_b2n_ref(0, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(0, 1) - C_b2n_ref(0, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(0, 2) - C_b2n_ref(0, 2)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(1, 0) - C_b2n_ref(1, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(1, 1) - C_b2n_ref(1, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(1, 2) - C_b2n_ref(1, 2)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(2, 0) - C_b2n_ref(2, 0)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(2, 1) - C_b2n_ref(2, 1)) <= EPSILON);
+    REQUIRE(std::abs(C_b2n(2, 2) - C_b2n_ref(2, 2)) <= EPSILON);
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    roll = 0.0;
+    pitch = 0.0;
+    yaw = trafo::deg2rad(-45);
     auto q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
 
     auto x_n = Eigen::Vector3d(1.0, 1.0, 0.0);
@@ -116,7 +228,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    roll = trafo::deg2rad(-45);
+    roll = trafo::deg2rad(45);
     pitch = 0.0;
     yaw = 0.0;
     q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
@@ -131,7 +243,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     /* -------------------------------------------------------------------------------------------------------- */
 
     roll = 0.0;
-    pitch = trafo::deg2rad(-45);
+    pitch = trafo::deg2rad(45);
     yaw = 0.0;
     q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
 
@@ -144,9 +256,9 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    roll = trafo::deg2rad(-90);
-    pitch = trafo::deg2rad(-180);
-    yaw = trafo::deg2rad(-90);
+    roll = trafo::deg2rad(90);
+    pitch = trafo::deg2rad(180);
+    yaw = trafo::deg2rad(90);
     q_n2b = trafo::quat_b2n(roll, pitch, yaw).conjugate();
 
     x_n = Eigen::Vector3d(1.0, 2.0, 3.0);

@@ -13,6 +13,11 @@ namespace NAV
 {
 TEST_CASE("[InsMechanization] Update Quaternions p2e Runge-Kutta 3. Order", "[InsMechanization]")
 {
+    // Stuttgart, Breitscheidstraße 2
+    // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
+    double latitude = trafo::deg2rad(48.78081);
+    double longitude = trafo::deg2rad(9.172012);
+
     /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec = 0.0001L;
     /// ω_ip_p (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in platform coordinates
@@ -24,11 +29,13 @@ TEST_CASE("[InsMechanization] Update Quaternions p2e Runge-Kutta 3. Order", "[In
     Eigen::Quaterniond q_p2b = Eigen::Quaterniond::Identity();
 
     /// q Quaternion, from earth to navigation coordinates. Depends on location
-    Eigen::Quaterniond q_e2n = Eigen::Quaterniond::Identity();
+    Eigen::Quaterniond q_e2n = trafo::quat_n2e(latitude, longitude).conjugate();
 
-    std::deque<Eigen::Quaterniond> quats;
-    quats.push_back(Eigen::Quaterniond::Identity());
-    quats.push_back(Eigen::Quaterniond::Identity());
+    Eigen::Quaterniond q_b2n__t0 = Eigen::Quaterniond::Identity();
+
+    std::deque<Eigen::Quaterniond> quats_p2e;
+    quats_p2e.push_back(trafo::quat_n2e(latitude, longitude) * q_b2n__t0 * q_p2b);
+    quats_p2e.push_back(trafo::quat_n2e(latitude, longitude) * q_b2n__t0 * q_p2b);
 
     size_t count = 10000;
     for (size_t i = 0; i < count; i++)
@@ -36,26 +43,26 @@ TEST_CASE("[InsMechanization] Update Quaternions p2e Runge-Kutta 3. Order", "[In
         Eigen::Quaterniond q_p2e = updateQuaternion_p2e_RungeKutta3(timeDifferenceSec, timeDifferenceSec,
                                                                     angularVelocity_ip_p, angularVelocity_ip_p,
                                                                     angularVelocity_ie_e,
-                                                                    quats.at(1), quats.at(0));
-        quats.push_back(q_p2e);
-        quats.pop_front();
+                                                                    quats_p2e.at(1), quats_p2e.at(0));
+        quats_p2e.push_back(q_p2e);
+        quats_p2e.pop_front();
     }
 
-    auto q_p2e = quats.at(quats.size() - 1);
+    auto q_p2e = quats_p2e.at(quats_p2e.size() - 1);
     auto q_b2n = q_e2n * q_p2e * q_p2b;
-    auto yawPitchRoll = -trafo::quat2eulerZYX(q_b2n);
+    auto yawPitchRoll = trafo::quat2eulerZYX(q_b2n);
 
-    Eigen::Vector3d expectedRollPitchYaw = -angularVelocity_ip_p * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
+    Eigen::Vector3d expectedRollPitchYaw = angularVelocity_ip_p * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
     Eigen::Quaterniond expectedQuat_b2n = trafo::quat_b2n(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
 
-    REQUIRE(std::abs(q_b2n.x() - expectedQuat_b2n.x()) < 0.00000000000001);
-    REQUIRE(std::abs(q_b2n.y() - expectedQuat_b2n.y()) < 0.00000000000001);
-    REQUIRE(std::abs(q_b2n.z() - expectedQuat_b2n.z()) < 0.00000000000001);
-    REQUIRE(std::abs(q_b2n.w() - expectedQuat_b2n.w()) < 0.00000000000001);
+    REQUIRE(std::abs(q_b2n.x() - expectedQuat_b2n.x()) < 1e-13);
+    REQUIRE(std::abs(q_b2n.y() - expectedQuat_b2n.y()) < 1e-13);
+    REQUIRE(std::abs(q_b2n.z() - expectedQuat_b2n.z()) < 1e-13);
+    REQUIRE(std::abs(q_b2n.w() - expectedQuat_b2n.w()) < 1e-13);
 
-    REQUIRE(std::abs(yawPitchRoll.x() - expectedRollPitchYaw.z()) < 0.00000000000001);
-    REQUIRE(std::abs(yawPitchRoll.y() - expectedRollPitchYaw.y()) < 0.00000000000001);
-    REQUIRE(std::abs(yawPitchRoll.z() - expectedRollPitchYaw.x()) < 0.00000000000001);
+    REQUIRE(std::abs(yawPitchRoll.x() - expectedRollPitchYaw.z()) < 1e-13);
+    REQUIRE(std::abs(yawPitchRoll.y() - expectedRollPitchYaw.y()) < 1e-13);
+    REQUIRE(std::abs(yawPitchRoll.z() - expectedRollPitchYaw.x()) < 1e-13);
 }
 
 TEST_CASE("[InsMechanization] Update Quaternions b2n Runge-Kutta 3. Order", "[InsMechanization]")
@@ -93,19 +100,19 @@ TEST_CASE("[InsMechanization] Update Quaternions b2n Runge-Kutta 3. Order", "[In
 
     auto q_p2e = quats.at(quats.size() - 1);
     auto q_b2n = q_e2n * q_p2e * q_p2b;
-    auto yawPitchRoll = -trafo::quat2eulerZYX(q_b2n);
+    auto yawPitchRoll = trafo::quat2eulerZYX(q_b2n);
 
-    Eigen::Vector3d expectedRollPitchYaw = -angularVelocity_ip_b * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
+    Eigen::Vector3d expectedRollPitchYaw = angularVelocity_ip_b * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
     Eigen::Quaterniond expectedQuat_b2n = trafo::quat_b2n(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
 
-    REQUIRE(std::abs(q_b2n.x() - expectedQuat_b2n.x()) < 0.00000000000001);
-    REQUIRE(std::abs(q_b2n.y() - expectedQuat_b2n.y()) < 0.00000000000001);
-    REQUIRE(std::abs(q_b2n.z() - expectedQuat_b2n.z()) < 0.00000000000001);
-    REQUIRE(std::abs(q_b2n.w() - expectedQuat_b2n.w()) < 0.00000000000001);
+    REQUIRE(std::abs(q_b2n.x() - expectedQuat_b2n.x()) < 1e-13);
+    REQUIRE(std::abs(q_b2n.y() - expectedQuat_b2n.y()) < 1e-13);
+    REQUIRE(std::abs(q_b2n.z() - expectedQuat_b2n.z()) < 1e-13);
+    REQUIRE(std::abs(q_b2n.w() - expectedQuat_b2n.w()) < 1e-13);
 
-    REQUIRE(std::abs(yawPitchRoll.x() - expectedRollPitchYaw.z()) < 0.00000000000001);
-    REQUIRE(std::abs(yawPitchRoll.y() - expectedRollPitchYaw.y()) < 0.00000000000001);
-    REQUIRE(std::abs(yawPitchRoll.z() - expectedRollPitchYaw.x()) < 0.00000000000001);
+    REQUIRE(std::abs(yawPitchRoll.x() - expectedRollPitchYaw.z()) < 1e-13);
+    REQUIRE(std::abs(yawPitchRoll.y() - expectedRollPitchYaw.y()) < 1e-13);
+    REQUIRE(std::abs(yawPitchRoll.z() - expectedRollPitchYaw.x()) < 1e-13);
 }
 
 TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[InsMechanization]")
@@ -241,44 +248,50 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
 
 TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
 {
-    // /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
-    // long double timeDifferenceSec = 0.0001L;
+    /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+    long double timeDifferenceSec = 0.0001L;
 
-    // // Stuttgart, Breitscheidstraße 2
-    // // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
-    // double latitude = trafo::deg2rad(48.78081);
-    // double longitude = trafo::deg2rad(9.172012);
-    // double height = 254;
+    // Stuttgart, Breitscheidstraße 2
+    // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
+    double latitude = trafo::deg2rad(48.78081);
+    double longitude = trafo::deg2rad(9.172012);
+    double height = 254;
 
-    // Eigen::Vector3d velocity_n = Eigen::Vector3d(2, 0, 0);
-    // Eigen::Vector3d velocity_e = trafo::quat_n2e(latitude, longitude) * velocity_n;
+    Eigen::Vector3d velocity_n = Eigen::Vector3d(2, 0, 0);
+    Eigen::Vector3d velocity_e = trafo::quat_n2e(latitude, longitude) * velocity_n;
 
-    // Eigen::Vector3d position_e = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    Eigen::Vector3d position_e = trafo::llh2ecef_WGS84(latitude, longitude, height);
 
-    // size_t count = 10000;
-    // for (size_t i = 0; i < count; i++)
-    // {
-    //     position_e = updatePosition_e(timeDifferenceSec, position_e, velocity_e);
-    // }
-    // auto llh = trafo::ecef2llh_WGS84(position_e);
+    size_t count = 10000;
+    for (size_t i = 0; i < count; i++)
+    {
+        position_e = updatePosition_e(timeDifferenceSec, position_e, velocity_e);
+    }
+    auto llh = trafo::ecef2llh_WGS84(position_e);
 
-    // // REQUIRE(llh == Eigen::Vector3d(latitude, longitude, height));
+    // REQUIRE(llh == Eigen::Vector3d(latitude, longitude, height));
 
-    // auto measure = [](double lat1, double lon1, double lat2, double lon2) { // generally used geo measurement function
-    //     double R = InsConst::WGS84_a / 1000.0;                              // Radius of earth in KM
-    //     double dLat = lat2 - lat1;
-    //     double dLon = lon2 - lon1;
-    //     double a = std::sin(dLat / 2.0) * std::sin(dLat / 2.0) + std::cos(lat1) * std::cos(lat2) * std::sin(dLon / 2.0) * std::sin(dLon / 2.0);
-    //     double c = 2.0 * std::atan2(std::sqrt(a), std::sqrt(1.0 - a));
-    //     double d = R * c;
-    //     return d * 1000.0; // meters
-    // };
+    auto measure = [](double lat1, double lon1, double lat2, double lon2) { // generally used geo measurement function
+        double R = InsConst::WGS84_a / 1000.0;                              // Radius of earth in KM
+        double dLat = lat2 - lat1;
+        double dLon = lon2 - lon1;
+        double a = std::sin(dLat / 2.0) * std::sin(dLat / 2.0) + std::cos(lat1) * std::cos(lat2) * std::sin(dLon / 2.0) * std::sin(dLon / 2.0);
+        double c = 2.0 * std::atan2(std::sqrt(a), std::sqrt(1.0 - a));
+        double d = R * c;
+        return d * 1000.0; // meters
+    };
 
-    // REQUIRE(measure(latitude, longitude, llh(0), llh(1)) == 0);
+    REQUIRE(std::abs(measure(latitude, longitude, llh(0), llh(1)) - 2.0) <= 0.002);
+
+    REQUIRE(std::abs(measure(latitude, longitude, llh(0), longitude) - 2.0) <= 0.002);
+    REQUIRE(std::abs(longitude - llh(1)) <= 1e-13);
+
+    REQUIRE(latitude < llh(0));
 }
 
 TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
-{ /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+{
+    /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec = 0.0001L;
 
     // Stuttgart, Breitscheidstraße 2
@@ -309,13 +322,11 @@ TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
     }
 
     auto measure = [](double lat1, double lon1, double lat2, double lon2) { // generally used geo measurement function
-        double R = InsConst::WGS84_a / 1000.0;                              // Radius of earth in KM
         double dLat = lat2 - lat1;
         double dLon = lon2 - lon1;
         double a = std::sin(dLat / 2.0) * std::sin(dLat / 2.0) + std::cos(lat1) * std::cos(lat2) * std::sin(dLon / 2.0) * std::sin(dLon / 2.0);
         double c = 2.0 * std::atan2(std::sqrt(a), std::sqrt(1.0 - a));
-        double d = R * c;
-        return d * 1000.0; // meters
+        return InsConst::WGS84_a * c; // meters
     };
 
     REQUIRE(std::abs(measure(latitude, longitude, latLonHeight(0), latLonHeight(1)) - 2) <= 0.01);
