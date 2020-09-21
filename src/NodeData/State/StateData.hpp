@@ -137,28 +137,28 @@ class StateData : public InsObs
     /*                                                 Position                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    /// Returns the latitude, longitude and height in [rad, rad, m]
+    /// Returns the latitude 𝜙, longitude λ and height above ground h in [rad, rad, m]
     Eigen::Ref<Eigen::Vector3d> latLonHeight() { return X.segment<3>(4); }
 
-    /// Returns the latitude, longitude and height above ground in [rad, rad, m]
+    /// Returns the latitude 𝜙, longitude λ and height above ground h in [rad, rad, m]
     [[nodiscard]] Eigen::Ref<const Eigen::Vector3d> latLonHeight() const { return X.segment<3>(4); }
 
-    /// Returns the latitude in [rad]
+    /// Returns the latitude 𝜙 in [rad]
     double& latitude() { return X(4); }
 
-    /// Returns the latitude in [rad]
+    /// Returns the latitude 𝜙 in [rad]
     [[nodiscard]] const double& latitude() const { return X(4); }
 
-    /// Returns the longitude in [rad]
+    /// Returns the longitude λ in [rad]
     double& longitude() { return X(5); }
 
-    /// Returns the longitude in [rad]
+    /// Returns the longitude λ in [rad]
     [[nodiscard]] const double& longitude() const { return X(5); }
 
-    /// Returns the height above ground in [m]
+    /// Returns the height above ground h in [m]
     double& height() { return X(6); }
 
-    /// Returns the height above ground in [m]
+    /// Returns the height above ground h in [m]
     [[nodiscard]] const double& height() const { return X(6); }
 
     /// Returns the ECEF coordinates in [m] using the WGS84 ellipsoid

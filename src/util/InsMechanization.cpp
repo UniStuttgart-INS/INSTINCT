@@ -260,4 +260,90 @@ Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSe
     return velocity_n__t0;
 }
 
+Eigen::Vector3d updatePosition_e(const long double& timeDifferenceSec__t0, // Δtₖ Time difference in [seconds]. This epoch to previous epoch
+                                 const Eigen::Vector3d& position_e__t1,    // x_e (tₖ₋₁) Position in [m/s], in earth coordinates, at the time tₖ₋₁
+                                 const Eigen::Vector3d& velocity_e__t1)    // v_e (tₖ₋₁) Velocity in [m/s], in earth coordinates, at the time tₖ₋₁
+{
+    /// x_e (tₖ) Position in [m/s], in earth coordinates, at the time tₖ
+    Eigen::Vector3d position_e__t0 = position_e__t1 + velocity_e__t1 * timeDifferenceSec__t0;
+
+    return position_e__t0;
+}
+
+Eigen::Vector3d updatePosition_n(const long double& timeDifferenceSec__t0, // Δtₖ Time difference in [seconds]. This epoch to previous epoch
+                                 const Eigen::Vector3d& latLonHeight__t1,  // [𝜙, λ, h] (tₖ₋₁) Latitude, Longitude and height in [rad, rad, m] at the time tₖ₋₁
+                                 const Eigen::Vector3d& velocity_n__t1,    // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
+                                 const double& R_N,                        // R_N North/South (meridian) earth radius [m]
+                                 const double& R_E)                        // R_E East/West (prime vertical) earth radius [m]
+{
+    /// 𝜙 Latitude in [rad]
+    const auto& latitude = latLonHeight__t1(0);
+    /// λ Longitude in [rad]
+    const auto& longitude = latLonHeight__t1(1);
+    /// h Height in [m]
+    const auto& height = latLonHeight__t1(2);
+
+    /// Δtₖ Time difference in [seconds]
+    const auto tau = static_cast<double>(timeDifferenceSec__t0);
+
+    /// Velocity North in [m/s]
+    const auto& v_N = velocity_n__t1(0);
+    /// Velocity East in [m/s]
+    const auto& v_E = velocity_n__t1(1);
+    /// Velocity Down in [m/s]
+    const auto& v_D = velocity_n__t1(2);
+
+    /// [𝜙, λ, h] (tₖ) Latitude, Longitude and Height in [rad, rad, m], at the current time tₖ (see Gleason eq. 6.18 - 6.20)
+    Eigen::Vector3d latLonHeight__t0 = {
+        latitude + tau * (v_N / (R_N + height)),
+        longitude + tau * (v_E / ((R_E + height) * std::cos(latitude))),
+        height - tau * v_D
+    };
+
+    return latLonHeight__t0;
+}
+
+double earthRadius_N(const double& a, const double& e_squared, const double& latitude)
+{
+    double k = std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
+
+    /// North/South (meridian) earth radius [m]
+    double R_N = a * (1 - e_squared) / std::pow(k, 3);
+
+    return R_N;
+}
+
+double earthRadius_E(const double& a, const double& e_squared, const double& latitude)
+{
+    /// East/West (prime vertical) earth radius [m]
+    double R_E = a / std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
+
+    return R_E;
+}
+
+Eigen::Vector3d transportRate(const Eigen::Vector3d& latLonHeight__t1, // [𝜙, λ, h] (tₖ₋₁) Latitude, Longitude and height in [rad, rad, m] at the time tₖ₋₁
+                              const Eigen::Vector3d& velocity_n__t1,   // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
+                              const double& R_N,                       // R_N North/South (meridian) earth radius [m]
+                              const double& R_E)                       // R_E East/West (prime vertical) earth radius [m]
+{
+    /// 𝜙 Latitude in [rad]
+    const auto& latitude = latLonHeight__t1(0);
+    /// h Height in [m]
+    const auto& height = latLonHeight__t1(2);
+
+    /// Velocity North in [m/s]
+    const auto& v_N = velocity_n__t1(0);
+    /// Velocity East in [m/s]
+    const auto& v_E = velocity_n__t1(1);
+
+    /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame,
+    /// in navigation coordinates (eq. 6.15)
+    Eigen::Vector3d angularVelocity_en_n__t1;
+    angularVelocity_en_n__t1(0) = v_E / (R_E + height);
+    angularVelocity_en_n__t1(1) = -v_N / (R_N + height);
+    angularVelocity_en_n__t1(2) = -angularVelocity_en_n__t1(0) * std::tan(latitude);
+
+    return angularVelocity_en_n__t1;
+}
+
 } // namespace NAV

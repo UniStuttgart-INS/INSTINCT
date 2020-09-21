@@ -125,7 +125,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
                                                                             quaternion_p2e__t0, quaternion_p2e__t1, quaternion_p2e__t2);
 
         /// x_e (tₖ) Position in [m/s], in earth coordinates, at the time tₖ
-        const Eigen::Vector3d& position_e__t0 = position_e__t1 + velocity_e__t1 * timeDifferenceSec__t0;
+        const Eigen::Vector3d& position_e__t0 = updatePosition_e(timeDifferenceSec__t0, position_e__t1, velocity_e__t1);
 
         // Use same timestamp as IMU message
         stateData__t0->insTime = time__t0;
@@ -165,42 +165,35 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         const Eigen::Vector3d angularVelocity_ie_n__t1 = stateData__t1->quaternion_e2n() * InsConst::angularVelocity_ie_e;
 
         /// North/South (meridian) earth radius [m]
-        double R_E = InsConst::WGS84_a / std::sqrt(1 - InsConst::WGS84_e_squared * std::pow(std::sin(stateData__t1->latitude()), 2));
+        double R_N = earthRadius_N(InsConst::WGS84_a, InsConst::WGS84_e_squared, stateData__t1->latitude());
         /// East/West (prime vertical) earth radius [m]
-        double R_N = ((1 - InsConst::WGS84_e_squared) / std::pow(InsConst::WGS84_a, 2)) * std::pow(R_E, 3);
+        double R_E = earthRadius_E(InsConst::WGS84_a, InsConst::WGS84_e_squared, stateData__t1->latitude());
 
         /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
-        Eigen::Vector3d angularVelocity_en_n__t1;
-        angularVelocity_en_n__t1(0) = velocity_n__t1(1) / (R_E + stateData__t1->height());
-        angularVelocity_en_n__t1(1) = -velocity_n__t1(0) / (R_N + stateData__t1->height());
-        angularVelocity_en_n__t1(2) = -angularVelocity_en_n__t1(0) * std::tan(stateData__t1->latitude());
+        Eigen::Vector3d angularVelocity_en_n__t1 = transportRate(stateData__t1->latLonHeight(), velocity_n__t1, R_N, R_E);
 
         /// q (tₖ) Quaternion, from body to navigation coordinates, at the current time tₖ
-        const Eigen::Quaterniond quaternion_b2n__t0 = updateQuaternion_b2n_RungeKutta3(timeDifferenceSec__t0,
-                                                                                       timeDifferenceSec__t1,
-                                                                                       angularVelocity_ip_b__t0,
-                                                                                       angularVelocity_ip_b__t1,
-                                                                                       angularVelocity_ie_n__t1,
-                                                                                       angularVelocity_en_n__t1,
-                                                                                       quaternion_b2n__t1,
-                                                                                       quaternion_b2n__t2);
+        Eigen::Quaterniond quaternion_b2n__t0 = updateQuaternion_b2n_RungeKutta3(timeDifferenceSec__t0,
+                                                                                 timeDifferenceSec__t1,
+                                                                                 angularVelocity_ip_b__t0,
+                                                                                 angularVelocity_ip_b__t1,
+                                                                                 angularVelocity_ie_n__t1,
+                                                                                 angularVelocity_en_n__t1,
+                                                                                 quaternion_b2n__t1,
+                                                                                 quaternion_b2n__t2);
 
         /// v (tₖ), Velocity in navigation coordinates, at the current time tₖ
-        const Eigen::Vector3d velocity_n__t0 = updateVelocity_n_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                                            acceleration_b__t0, acceleration_b__t1,
-                                                                            velocity_n__t1, velocity_n__t2,
-                                                                            gravity_n__t1,
-                                                                            angularVelocity_ie_n__t1,
-                                                                            angularVelocity_en_n__t1,
-                                                                            quaternion_b2n__t0, quaternion_b2n__t1, quaternion_b2n__t2);
+        Eigen::Vector3d velocity_n__t0 = updateVelocity_n_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
+                                                                      acceleration_b__t0, acceleration_b__t1,
+                                                                      velocity_n__t1, velocity_n__t2,
+                                                                      gravity_n__t1,
+                                                                      angularVelocity_ie_n__t1,
+                                                                      angularVelocity_en_n__t1,
+                                                                      quaternion_b2n__t0, quaternion_b2n__t1, quaternion_b2n__t2);
 
-        const auto tau = static_cast<double>(timeDifferenceSec__t0);
         /// Latitude, Longitude and Height in [rad, rad, m], at the current time tₖ (see Gleason eq. 6.18 - 6.20)
-        const Eigen::Vector3d latLonHeight__t0{
-            stateData__t1->latitude() + tau * (velocity_n__t1(0) / (R_N + stateData__t1->height())),
-            stateData__t1->longitude() + tau * (velocity_n__t1(1) / ((R_E + stateData__t1->height()) * std::cos(stateData__t1->latitude()))),
-            stateData__t1->height() - tau * velocity_n__t1(2)
-        };
+        Eigen::Vector3d latLonHeight__t0 = updatePosition_n(timeDifferenceSec__t0, stateData__t1->latLonHeight(),
+                                                            velocity_n__t1, R_N, R_E);
 
         // Use same timestamp as IMU message
         stateData__t0->insTime = time__t0;
