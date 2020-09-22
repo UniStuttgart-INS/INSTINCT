@@ -30,6 +30,18 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
 
     std::optional<uint16_t> gpsWeek;
     std::optional<long double> gpsToW;
+    std::optional<double> positionX;
+    std::optional<double> positionY;
+    std::optional<double> positionZ;
+    std::optional<double> positionLat;
+    std::optional<double> positionLon;
+    std::optional<double> positionHeight;
+    std::optional<double> sdX;
+    std::optional<double> sdY;
+    std::optional<double> sdZ;
+    std::optional<double> sdN;
+    std::optional<double> sdE;
+    std::optional<double> sdU;
 
     for (const auto& column : columns)
     {
@@ -45,68 +57,34 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
             if (column == "GpsWeek")
             {
                 gpsWeek = static_cast<uint16_t>(std::stoul(cell));
-
-                if (!obs->insTime.has_value() && gpsWeek.has_value() && gpsToW.has_value())
-                {
-                    obs->insTime.emplace(0, gpsWeek.value(), gpsToW.value());
-                }
             }
             else if (column == "GpsToW")
             {
                 gpsToW = std::stold(cell);
-
-                if (!obs->insTime.has_value() && gpsWeek.has_value() && gpsToW.has_value())
-                {
-                    obs->insTime.emplace(0, gpsWeek.value(), gpsToW.value());
-                }
             }
             else if (column == "x-ecef(m)")
             {
-                if (!obs->positionXYZ.has_value())
-                {
-                    obs->positionXYZ = Eigen::Vector3d();
-                }
-                obs->positionXYZ.value().x() = std::stod(cell);
+                positionX = std::stod(cell);
             }
             else if (column == "y-ecef(m)")
             {
-                if (!obs->positionXYZ.has_value())
-                {
-                    obs->positionXYZ = Eigen::Vector3d();
-                }
-                obs->positionXYZ.value().y() = std::stod(cell);
+                positionY = std::stod(cell);
             }
             else if (column == "z-ecef(m)")
             {
-                if (!obs->positionXYZ.has_value())
-                {
-                    obs->positionXYZ = Eigen::Vector3d();
-                }
-                obs->positionXYZ.value().z() = std::stod(cell);
+                positionZ = std::stod(cell);
             }
             else if (column == "latitude(deg)")
             {
-                if (!obs->positionLLH.has_value())
-                {
-                    obs->positionLLH = Eigen::Array3d();
-                }
-                obs->positionLLH.value()(0) = std::stod(cell);
+                positionLat = std::stod(cell);
             }
             else if (column == "longitude(deg)")
             {
-                if (!obs->positionLLH.has_value())
-                {
-                    obs->positionLLH = Eigen::Array3d();
-                }
-                obs->positionLLH.value()(1) = std::stod(cell);
+                positionLon = std::stod(cell);
             }
             else if (column == "height(m)")
             {
-                if (!obs->positionLLH.has_value())
-                {
-                    obs->positionLLH = Eigen::Array3d();
-                }
-                obs->positionLLH.value()(2) = std::stod(cell);
+                positionHeight = std::stod(cell);
             }
             else if (column == "Q")
             {
@@ -118,51 +96,27 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
             }
             else if (column == "sdx(m)")
             {
-                if (!obs->sdXYZ.has_value())
-                {
-                    obs->sdXYZ = Eigen::Vector3d();
-                }
-                obs->sdXYZ.value().x() = std::stod(cell);
+                sdX = std::stod(cell);
             }
             else if (column == "sdy(m)")
             {
-                if (!obs->sdXYZ.has_value())
-                {
-                    obs->sdXYZ = Eigen::Vector3d();
-                }
-                obs->sdXYZ.value().y() = std::stod(cell);
+                sdY = std::stod(cell);
             }
             else if (column == "sdz(m)")
             {
-                if (!obs->sdXYZ.has_value())
-                {
-                    obs->sdXYZ = Eigen::Vector3d();
-                }
-                obs->sdXYZ.value().z() = std::stod(cell);
+                sdZ = std::stod(cell);
             }
             else if (column == "sdn(m)")
             {
-                if (!obs->sdNEU.has_value())
-                {
-                    obs->sdNEU = Eigen::Vector3d();
-                }
-                obs->sdNEU.value()(0) = std::stod(cell);
+                sdN = std::stod(cell);
             }
             else if (column == "sde(m)")
             {
-                if (!obs->sdNEU.has_value())
-                {
-                    obs->sdNEU = Eigen::Vector3d();
-                }
-                obs->sdNEU.value()(1) = std::stod(cell);
+                sdE = std::stod(cell);
             }
             else if (column == "sdu(m)")
             {
-                if (!obs->sdNEU.has_value())
-                {
-                    obs->sdNEU = Eigen::Vector3d();
-                }
-                obs->sdNEU.value()(2) = std::stod(cell);
+                sdU = std::stod(cell);
             }
             else if (column == "sdxy(m)")
             {
@@ -197,6 +151,27 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
                 obs->ratio = std::stod(cell);
             }
         }
+    }
+
+    if (gpsWeek.has_value() && gpsToW.has_value())
+    {
+        obs->insTime.emplace(0, gpsWeek.value(), gpsToW.value());
+    }
+    if (positionX.has_value() && positionY.has_value() && positionZ.has_value())
+    {
+        obs->positionXYZ.emplace(positionX.value(), positionY.value(), positionZ.value());
+    }
+    if (positionLat.has_value() && positionLon.has_value() && positionHeight.has_value())
+    {
+        obs->positionLLH.emplace(positionLat.value(), positionLon.value(), positionHeight.value());
+    }
+    if (sdX.has_value() && sdY.has_value() && sdZ.has_value())
+    {
+        obs->sdXYZ.emplace(sdX.value(), sdY.value(), sdZ.value());
+    }
+    if (sdN.has_value() && sdE.has_value() && sdU.has_value())
+    {
+        obs->sdNEU.emplace(sdN.value(), sdE.value(), sdU.value());
     }
 
     if (peek)

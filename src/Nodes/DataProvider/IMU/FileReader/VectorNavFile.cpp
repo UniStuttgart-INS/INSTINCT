@@ -42,9 +42,58 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
 
     Eigen::Matrix3d dcm = Eigen::Matrix3d::Zero();
 
-    std::optional<uint16_t> gpsCycle;
+    std::optional<uint16_t> gpsCycle = 0;
     std::optional<uint16_t> gpsWeek;
     std::optional<long double> gpsToW;
+    std::optional<double> magUncompX;
+    std::optional<double> magUncompY;
+    std::optional<double> magUncompZ;
+    std::optional<double> accelUncompX;
+    std::optional<double> accelUncompY;
+    std::optional<double> accelUncompZ;
+    std::optional<double> gyroUncompX;
+    std::optional<double> gyroUncompY;
+    std::optional<double> gyroUncompZ;
+    std::optional<double> dthetaX;
+    std::optional<double> dthetaY;
+    std::optional<double> dthetaZ;
+    std::optional<double> dvelX;
+    std::optional<double> dvelY;
+    std::optional<double> dvelZ;
+    std::optional<double> magCompX;
+    std::optional<double> magCompY;
+    std::optional<double> magCompZ;
+    std::optional<double> accelCompX;
+    std::optional<double> accelCompY;
+    std::optional<double> accelCompZ;
+    std::optional<double> gyroCompX;
+    std::optional<double> gyroCompY;
+    std::optional<double> gyroCompZ;
+    std::optional<double> yaw;
+    std::optional<double> pitch;
+    std::optional<double> roll;
+    std::optional<double> quatX;
+    std::optional<double> quatY;
+    std::optional<double> quatZ;
+    std::optional<double> quatW;
+    std::optional<double> magCompN;
+    std::optional<double> magCompE;
+    std::optional<double> magCompD;
+    std::optional<double> accelCompN;
+    std::optional<double> accelCompE;
+    std::optional<double> accelCompD;
+    std::optional<double> linearAccelX;
+    std::optional<double> linearAccelY;
+    std::optional<double> linearAccelZ;
+    std::optional<double> linearAccelN;
+    std::optional<double> linearAccelE;
+    std::optional<double> linearAccelD;
+    std::optional<double> yawUncertainty;
+    std::optional<double> pitchUncertainty;
+    std::optional<double> rollUncertainty;
+    std::optional<double> gyroCompN;
+    std::optional<double> gyroCompE;
+    std::optional<double> gyroCompD;
 
     // Split line at comma
     for (const auto& column : columns)
@@ -61,29 +110,14 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             if (column == "GpsCycle")
             {
                 gpsCycle = static_cast<uint16_t>(std::stoul(cell));
-
-                if (!obs->insTime.has_value() && gpsCycle.has_value() && gpsWeek.has_value() && gpsToW.has_value())
-                {
-                    obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
-                }
             }
             else if (column == "GpsWeek")
             {
                 gpsWeek = static_cast<uint16_t>(std::stoul(cell));
-
-                if (!obs->insTime.has_value() && gpsCycle.has_value() && gpsWeek.has_value() && gpsToW.has_value())
-                {
-                    obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
-                }
             }
             else if (column == "GpsToW")
             {
                 gpsToW = std::stold(cell);
-
-                if (!obs->insTime.has_value() && gpsCycle.has_value() && gpsWeek.has_value() && gpsToW.has_value())
-                {
-                    obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
-                }
             }
             else if (column == "TimeStartup")
             {
@@ -99,75 +133,39 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             }
             else if (column == "UnCompMagX")
             {
-                if (!obs->magUncompXYZ.has_value())
-                {
-                    obs->magUncompXYZ = Eigen::Vector3d();
-                }
-                obs->magUncompXYZ.value().x() = std::stod(cell);
+                magUncompX = std::stod(cell);
             }
             else if (column == "UnCompMagY")
             {
-                if (!obs->magUncompXYZ.has_value())
-                {
-                    obs->magUncompXYZ = Eigen::Vector3d();
-                }
-                obs->magUncompXYZ.value().y() = std::stod(cell);
+                magUncompY = std::stod(cell);
             }
             else if (column == "UnCompMagZ")
             {
-                if (!obs->magUncompXYZ.has_value())
-                {
-                    obs->magUncompXYZ = Eigen::Vector3d();
-                }
-                obs->magUncompXYZ.value().z() = std::stod(cell);
+                magUncompZ = std::stod(cell);
             }
             else if (column == "UnCompAccX")
             {
-                if (!obs->accelUncompXYZ.has_value())
-                {
-                    obs->accelUncompXYZ = Eigen::Vector3d();
-                }
-                obs->accelUncompXYZ.value().x() = std::stod(cell);
+                accelUncompX = std::stod(cell);
             }
             else if (column == "UnCompAccY")
             {
-                if (!obs->accelUncompXYZ.has_value())
-                {
-                    obs->accelUncompXYZ = Eigen::Vector3d();
-                }
-                obs->accelUncompXYZ.value().y() = std::stod(cell);
+                accelUncompY = std::stod(cell);
             }
             else if (column == "UnCompAccZ")
             {
-                if (!obs->accelUncompXYZ.has_value())
-                {
-                    obs->accelUncompXYZ = Eigen::Vector3d();
-                }
-                obs->accelUncompXYZ.value().z() = std::stod(cell);
+                accelUncompZ = std::stod(cell);
             }
             else if (column == "UnCompGyroX")
             {
-                if (!obs->gyroUncompXYZ.has_value())
-                {
-                    obs->gyroUncompXYZ = Eigen::Vector3d();
-                }
-                obs->gyroUncompXYZ.value().x() = std::stod(cell);
+                gyroUncompX = std::stod(cell);
             }
             else if (column == "UnCompGyroY")
             {
-                if (!obs->gyroUncompXYZ.has_value())
-                {
-                    obs->gyroUncompXYZ = Eigen::Vector3d();
-                }
-                obs->gyroUncompXYZ.value().y() = std::stod(cell);
+                gyroUncompY = std::stod(cell);
             }
             else if (column == "UnCompGyroZ")
             {
-                if (!obs->gyroUncompXYZ.has_value())
-                {
-                    obs->gyroUncompXYZ = Eigen::Vector3d();
-                }
-                obs->gyroUncompXYZ.value().z() = std::stod(cell);
+                gyroUncompZ = std::stod(cell);
             }
             else if (column == "Temperature")
             {
@@ -183,123 +181,63 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             }
             else if (column == "DeltaThetaX")
             {
-                if (!obs->dtheta.has_value())
-                {
-                    obs->dtheta = Eigen::Vector3d();
-                }
-                obs->dtheta.value().x() = std::stod(cell);
+                dthetaX = std::stod(cell);
             }
             else if (column == "DeltaThetaY")
             {
-                if (!obs->dtheta.has_value())
-                {
-                    obs->dtheta = Eigen::Vector3d();
-                }
-                obs->dtheta.value().y() = std::stod(cell);
+                dthetaY = std::stod(cell);
             }
             else if (column == "DeltaThetaZ")
             {
-                if (!obs->dtheta.has_value())
-                {
-                    obs->dtheta = Eigen::Vector3d();
-                }
-                obs->dtheta.value().z() = std::stod(cell);
+                dthetaZ = std::stod(cell);
             }
             else if (column == "DeltaVelX")
             {
-                if (!obs->dvel.has_value())
-                {
-                    obs->dvel = Eigen::Vector3d();
-                }
-                obs->dvel.value().x() = std::stod(cell);
+                dvelX = std::stod(cell);
             }
             else if (column == "DeltaVelY")
             {
-                if (!obs->dvel.has_value())
-                {
-                    obs->dvel = Eigen::Vector3d();
-                }
-                obs->dvel.value().y() = std::stod(cell);
+                dvelY = std::stod(cell);
             }
             else if (column == "DeltaVelZ")
             {
-                if (!obs->dvel.has_value())
-                {
-                    obs->dvel = Eigen::Vector3d();
-                }
-                obs->dvel.value().z() = std::stod(cell);
+                dvelZ = std::stod(cell);
             }
             else if (column == "MagX")
             {
-                if (!obs->magCompXYZ.has_value())
-                {
-                    obs->magCompXYZ = Eigen::Vector3d();
-                }
-                obs->magCompXYZ.value().x() = std::stod(cell);
+                magCompX = std::stod(cell);
             }
             else if (column == "MagY")
             {
-                if (!obs->magCompXYZ.has_value())
-                {
-                    obs->magCompXYZ = Eigen::Vector3d();
-                }
-                obs->magCompXYZ.value().y() = std::stod(cell);
+                magCompY = std::stod(cell);
             }
             else if (column == "MagZ")
             {
-                if (!obs->magCompXYZ.has_value())
-                {
-                    obs->magCompXYZ = Eigen::Vector3d();
-                }
-                obs->magCompXYZ.value().z() = std::stod(cell);
+                magCompZ = std::stod(cell);
             }
             else if (column == "AccX")
             {
-                if (!obs->accelCompXYZ.has_value())
-                {
-                    obs->accelCompXYZ = Eigen::Vector3d();
-                }
-                obs->accelCompXYZ.value().x() = std::stod(cell);
+                accelCompX = std::stod(cell);
             }
             else if (column == "AccY")
             {
-                if (!obs->accelCompXYZ.has_value())
-                {
-                    obs->accelCompXYZ = Eigen::Vector3d();
-                }
-                obs->accelCompXYZ.value().y() = std::stod(cell);
+                accelCompY = std::stod(cell);
             }
             else if (column == "AccZ")
             {
-                if (!obs->accelCompXYZ.has_value())
-                {
-                    obs->accelCompXYZ = Eigen::Vector3d();
-                }
-                obs->accelCompXYZ.value().z() = std::stod(cell);
+                accelCompZ = std::stod(cell);
             }
             else if (column == "GyroX")
             {
-                if (!obs->gyroCompXYZ.has_value())
-                {
-                    obs->gyroCompXYZ = Eigen::Vector3d();
-                }
-                obs->gyroCompXYZ.value().x() = std::stod(cell);
+                gyroCompX = std::stod(cell);
             }
             else if (column == "GyroY")
             {
-                if (!obs->gyroCompXYZ.has_value())
-                {
-                    obs->gyroCompXYZ = Eigen::Vector3d();
-                }
-                obs->gyroCompXYZ.value().y() = std::stod(cell);
+                gyroCompY = std::stod(cell);
             }
             else if (column == "GyroZ")
             {
-                if (!obs->gyroCompXYZ.has_value())
-                {
-                    obs->gyroCompXYZ = Eigen::Vector3d();
-                }
-                obs->gyroCompXYZ.value().z() = std::stod(cell);
+                gyroCompZ = std::stod(cell);
             }
             else if (column == "AhrsStatus")
             {
@@ -307,59 +245,31 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             }
             else if (column == "Yaw")
             {
-                if (!obs->yawPitchRoll.has_value())
-                {
-                    obs->yawPitchRoll = Eigen::Array3d();
-                }
-                obs->yawPitchRoll.value()(0) = std::stod(cell);
+                yaw = std::stod(cell);
             }
             else if (column == "Pitch")
             {
-                if (!obs->yawPitchRoll.has_value())
-                {
-                    obs->yawPitchRoll = Eigen::Array3d();
-                }
-                obs->yawPitchRoll.value()(1) = std::stod(cell);
+                pitch = std::stod(cell);
             }
             else if (column == "Roll")
             {
-                if (!obs->yawPitchRoll.has_value())
-                {
-                    obs->yawPitchRoll = Eigen::Array3d();
-                }
-                obs->yawPitchRoll.value()(2) = std::stod(cell);
+                roll = std::stod(cell);
             }
             else if (column == "Quat[0]")
             {
-                if (!obs->quaternion.has_value())
-                {
-                    obs->quaternion = Eigen::Quaterniond();
-                }
-                obs->quaternion.value().w() = std::stod(cell);
+                quatW = std::stod(cell);
             }
             else if (column == "Quat[1]")
             {
-                if (!obs->quaternion.has_value())
-                {
-                    obs->quaternion = Eigen::Quaterniond();
-                }
-                obs->quaternion.value().x() = std::stod(cell);
+                quatX = std::stod(cell);
             }
             else if (column == "Quat[2]")
             {
-                if (!obs->quaternion.has_value())
-                {
-                    obs->quaternion = Eigen::Quaterniond();
-                }
-                obs->quaternion.value().y() = std::stod(cell);
+                quatY = std::stod(cell);
             }
             else if (column == "Quat[3]")
             {
-                if (!obs->quaternion.has_value())
-                {
-                    obs->quaternion = Eigen::Quaterniond();
-                }
-                obs->quaternion.value().z() = std::stod(cell);
+                quatZ = std::stod(cell);
             }
             else if (column == "C[0.0]")
             {
@@ -399,149 +309,146 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             }
             else if (column == "MagN")
             {
-                if (!obs->magCompNED.has_value())
-                {
-                    obs->magCompNED = Eigen::Vector3d();
-                }
-                obs->magCompNED.value()(0) = std::stod(cell);
+                magCompN = std::stod(cell);
             }
             else if (column == "MagE")
             {
-                if (!obs->magCompNED.has_value())
-                {
-                    obs->magCompNED = Eigen::Vector3d();
-                }
-                obs->magCompNED.value()(1) = std::stod(cell);
+                magCompE = std::stod(cell);
             }
             else if (column == "MagD")
             {
-                if (!obs->magCompNED.has_value())
-                {
-                    obs->magCompNED = Eigen::Vector3d();
-                }
-                obs->magCompNED.value()(2) = std::stod(cell);
+                magCompD = std::stod(cell);
             }
             else if (column == "AccN")
             {
-                if (!obs->accelCompNED.has_value())
-                {
-                    obs->accelCompNED = Eigen::Vector3d();
-                }
-                obs->accelCompNED.value()(0) = std::stod(cell);
+                accelCompN = std::stod(cell);
             }
             else if (column == "AccE")
             {
-                if (!obs->accelCompNED.has_value())
-                {
-                    obs->accelCompNED = Eigen::Vector3d();
-                }
-                obs->accelCompNED.value()(1) = std::stod(cell);
+                accelCompE = std::stod(cell);
             }
             else if (column == "AccD")
             {
-                if (!obs->accelCompNED.has_value())
-                {
-                    obs->accelCompNED = Eigen::Vector3d();
-                }
-                obs->accelCompNED.value()(2) = std::stod(cell);
+                accelCompD = std::stod(cell);
             }
             else if (column == "LinAccX")
             {
-                if (!obs->linearAccelXYZ.has_value())
-                {
-                    obs->linearAccelXYZ = Eigen::Vector3d();
-                }
-                obs->linearAccelXYZ.value().x() = std::stod(cell);
+                linearAccelX = std::stod(cell);
             }
             else if (column == "LinAccY")
             {
-                if (!obs->linearAccelXYZ.has_value())
-                {
-                    obs->linearAccelXYZ = Eigen::Vector3d();
-                }
-                obs->linearAccelXYZ.value().y() = std::stod(cell);
+                linearAccelY = std::stod(cell);
             }
             else if (column == "LinAccZ")
             {
-                if (!obs->linearAccelXYZ.has_value())
-                {
-                    obs->linearAccelXYZ = Eigen::Vector3d();
-                }
-                obs->linearAccelXYZ.value().z() = std::stod(cell);
+                linearAccelZ = std::stod(cell);
             }
             else if (column == "LinAccN")
             {
-                if (!obs->linearAccelNED.has_value())
-                {
-                    obs->linearAccelNED = Eigen::Vector3d();
-                }
-                obs->linearAccelNED.value()(0) = std::stod(cell);
+                linearAccelN = std::stod(cell);
             }
             else if (column == "LinAccE")
             {
-                if (!obs->linearAccelNED.has_value())
-                {
-                    obs->linearAccelNED = Eigen::Vector3d();
-                }
-                obs->linearAccelNED.value()(1) = std::stod(cell);
+                linearAccelE = std::stod(cell);
             }
             else if (column == "LinAccD")
             {
-                if (!obs->linearAccelNED.has_value())
-                {
-                    obs->linearAccelNED = Eigen::Vector3d();
-                }
-                obs->linearAccelNED.value()(2) = std::stod(cell);
+                linearAccelD = std::stod(cell);
             }
             else if (column == "YawU")
             {
-                if (!obs->yawPitchRollUncertainty.has_value())
-                {
-                    obs->yawPitchRollUncertainty = Eigen::Array3d();
-                }
-                obs->yawPitchRollUncertainty.value()(0) = std::stod(cell);
+                yawUncertainty = std::stod(cell);
             }
             else if (column == "PitchU")
             {
-                if (!obs->yawPitchRollUncertainty.has_value())
-                {
-                    obs->yawPitchRollUncertainty = Eigen::Array3d();
-                }
-                obs->yawPitchRollUncertainty.value()(1) = std::stod(cell);
+                pitchUncertainty = std::stod(cell);
             }
             else if (column == "RollU")
             {
-                if (!obs->yawPitchRollUncertainty.has_value())
-                {
-                    obs->yawPitchRollUncertainty = Eigen::Array3d();
-                }
-                obs->yawPitchRollUncertainty.value()(2) = std::stod(cell);
+                rollUncertainty = std::stod(cell);
             }
             else if (column == "YawRate")
             {
-                if (!obs->gyroCompNED.has_value())
-                {
-                    obs->gyroCompNED = Eigen::Vector3d();
-                }
-                obs->gyroCompNED.value()(0) = std::stod(cell);
+                gyroCompN = std::stod(cell);
             }
             else if (column == "PitchRate")
             {
-                if (!obs->gyroCompNED.has_value())
-                {
-                    obs->gyroCompNED = Eigen::Vector3d();
-                }
-                obs->gyroCompNED.value()(1) = std::stod(cell);
+                gyroCompE = std::stod(cell);
             }
             else if (column == "RollRate")
             {
-                if (!obs->gyroCompNED.has_value())
-                {
-                    obs->gyroCompNED = Eigen::Vector3d();
-                }
-                obs->gyroCompNED.value()(2) = std::stod(cell);
+                gyroCompD = std::stod(cell);
             }
         }
+    }
+
+    if (gpsWeek.has_value() && gpsToW.has_value())
+    {
+        obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
+    }
+    if (magUncompX.has_value() && magUncompY.has_value() && magUncompZ.has_value())
+    {
+        obs->magUncompXYZ.emplace(magUncompX.value(), magUncompY.value(), magUncompZ.value());
+    }
+    if (accelUncompX.has_value() && accelUncompY.has_value() && accelUncompZ.has_value())
+    {
+        obs->accelUncompXYZ.emplace(accelUncompX.value(), accelUncompY.value(), accelUncompZ.value());
+    }
+    if (gyroUncompX.has_value() && gyroUncompY.has_value() && gyroUncompZ.has_value())
+    {
+        obs->gyroUncompXYZ.emplace(gyroUncompX.value(), gyroUncompY.value(), gyroUncompZ.value());
+    }
+    if (dthetaX.has_value() && dthetaY.has_value() && dthetaZ.has_value())
+    {
+        obs->dtheta.emplace(dthetaX.value(), dthetaY.value(), dthetaZ.value());
+    }
+    if (dvelX.has_value() && dvelY.has_value() && dvelZ.has_value())
+    {
+        obs->dvel.emplace(dvelX.value(), dvelY.value(), dvelZ.value());
+    }
+    if (magCompX.has_value() && magCompY.has_value() && magCompZ.has_value())
+    {
+        obs->magCompXYZ.emplace(magCompX.value(), magCompY.value(), magCompZ.value());
+    }
+    if (accelCompX.has_value() && accelCompY.has_value() && accelCompZ.has_value())
+    {
+        obs->accelCompXYZ.emplace(accelCompX.value(), accelCompY.value(), accelCompZ.value());
+    }
+    if (gyroCompX.has_value() && gyroCompY.has_value() && gyroCompZ.has_value())
+    {
+        obs->gyroCompXYZ.emplace(gyroCompX.value(), gyroCompY.value(), gyroCompZ.value());
+    }
+    if (yaw.has_value() && pitch.has_value() && roll.has_value())
+    {
+        obs->yawPitchRoll.emplace(yaw.value(), pitch.value(), roll.value());
+    }
+    if (quatW.has_value() && quatX.has_value() && quatY.has_value() && quatZ.has_value())
+    {
+        obs->quaternion.emplace(quatW.value(), quatX.value(), quatY.value(), quatZ.value());
+    }
+    if (magCompN.has_value() && magCompE.has_value() && magCompD.has_value())
+    {
+        obs->magCompNED.emplace(magCompN.value(), magCompE.value(), magCompD.value());
+    }
+    if (accelCompN.has_value() && accelCompE.has_value() && accelCompD.has_value())
+    {
+        obs->accelCompNED.emplace(accelCompN.value(), accelCompE.value(), accelCompD.value());
+    }
+    if (linearAccelX.has_value() && linearAccelY.has_value() && linearAccelZ.has_value())
+    {
+        obs->linearAccelXYZ.emplace(linearAccelX.value(), linearAccelY.value(), linearAccelZ.value());
+    }
+    if (linearAccelN.has_value() && linearAccelE.has_value() && linearAccelD.has_value())
+    {
+        obs->linearAccelNED.emplace(linearAccelN.value(), linearAccelE.value(), linearAccelD.value());
+    }
+    if (yawUncertainty.has_value() && pitchUncertainty.has_value() && rollUncertainty.has_value())
+    {
+        obs->yawPitchRollUncertainty.emplace(yawUncertainty.value(), pitchUncertainty.value(), rollUncertainty.value());
+    }
+    if (gyroCompN.has_value() && gyroCompE.has_value() && gyroCompD.has_value())
+    {
+        obs->gyroCompNED.emplace(gyroCompN.value(), gyroCompE.value(), gyroCompD.value());
     }
 
     if (!obs->quaternion.has_value())
