@@ -32,7 +32,7 @@
             "preLaunchTask": "TEST: Build project",
             "program": "${workspaceFolder}/bin/Debug/tests",
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/Debug/test",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

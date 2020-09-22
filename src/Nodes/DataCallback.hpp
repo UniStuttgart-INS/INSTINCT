@@ -16,6 +16,16 @@ namespace NAV
 class Node;
 class NodeData;
 
+namespace Concepts
+{
+// Only allow children of NodeData
+template<typename T>
+concept NodeDataType = std::is_base_of<NodeData, T>::value;
+// Only allow children of Node
+template<typename T>
+concept NodeType = std::is_base_of<Node, T>::value;
+} // namespace Concepts
+
 /// Abstract class for Callback Functionality
 class DataCallback
 {
@@ -25,11 +35,9 @@ class DataCallback
 
     /// @brief Adds the supplied node at the end of the callback list
     /// @tparam T Output Message Class
-    /// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
     /// @param[in] node Pointer to the node which should receive the callback
     /// @param[in] portIndex Port of the data callbacks
-    template<class T,
-             typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+    template<Concepts::NodeDataType T>
     void addCallback(std::shared_ptr<Node>& node, uint8_t portIndex)
     {
         callbackList<T>().emplace_back(std::make_pair(node, portIndex));
@@ -37,9 +45,7 @@ class DataCallback
 
     /// @brief Removes all callbacks from the list which have the template type
     /// @tparam T Output Message Class
-    /// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
-    template<class T,
-             typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+    template<Concepts::NodeDataType T>
     void removeAllCallbacksOfType()
     {
         callbacksEnabled = false;
@@ -65,10 +71,8 @@ class DataCallback
     /// @brief Calls all registered callbacks
     /// @attention Needs to be called by all synchronous and asynchronous message receivers
     /// @tparam T Output Message Class
-    /// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
     /// @param[in] data The data to pass to the callback targets
-    template<class T,
-             typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+    template<Concepts::NodeDataType T>
     void invokeCallbacks(const std::shared_ptr<T>& data)
     {
         if (callbacksEnabled)
@@ -104,12 +108,10 @@ class DataCallback
   private:
     /// @brief Returns the callback list for the specified Message type
     /// @tparam T Output Message class
-    /// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Ensures template only exists for classes with base class 'NodeData'
     /// @return Nodes and ports to call upon when invoking a callback
     /// @note std::vector is used here, as it has the faster iteration performance.
     ///       Inserting and removing is only done once at the start of the program.
-    template<class T,
-             typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+    template<Concepts::NodeDataType T>
     std::vector<std::pair<std::weak_ptr<Node>, uint8_t>>& callbackList()
     {
         return _callbackList[typeid(T)];

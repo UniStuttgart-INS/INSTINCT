@@ -39,9 +39,12 @@
 
 namespace NAV
 {
-/// Only allow numerical Types
+namespace Concepts
+{
+// Only allow numerical Types
 template<typename T>
 concept Numerical = std::is_arithmetic<T>::value;
+} // namespace Concepts
 
 class trafo
 {
@@ -69,7 +72,7 @@ class trafo
     /// @brief Convert Degree to Radians
     /// @param[in] deg Value to convert in [deg]
     /// @return The converted value in [rad]
-    template<Numerical T>
+    template<Concepts::Numerical T>
     [[nodiscard]] static constexpr double deg2rad(T deg)
     {
         return static_cast<double>(deg) * M_PI / 180.0;
@@ -78,7 +81,7 @@ class trafo
     /// @brief Convert Radians to Degree
     /// @param[in] rad Value to convert in [rad]
     /// @return The converted value in [deg]
-    template<Numerical T>
+    template<Concepts::Numerical T>
     [[nodiscard]] static constexpr double rad2deg(T rad)
     {
         return static_cast<double>(rad) * 180.0 / M_PI;

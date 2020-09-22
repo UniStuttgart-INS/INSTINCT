@@ -115,7 +115,7 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=ON",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DENABLE_SENSORS=OFF",
+                "-DENABLE_SENSORS=ON",
                 "-DLOG_LEVEL=TRACE"
             ],
             "options": {
