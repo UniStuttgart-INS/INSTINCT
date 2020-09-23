@@ -38,8 +38,11 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     // Fill if empty
     if (prevObs.size() < 2)
     {
+        stateData__t1->insTime = imuObs__t0->insTime;
+
         prevObs.push_front(imuObs__t0);
         prevStates.push_front(stateData__t1);
+        invokeCallbacks(stateData__t1);
         return;
     }
 

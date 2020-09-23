@@ -105,9 +105,9 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
     auto q = Eigen::Quaterniond(0.6612731, 0.6451492, 0.2785897, -0.2624657);
     auto ZYX = trafo::quat2eulerZYX(q);
 
-    REQUIRE(std::abs(ZYX.z() - trafo::deg2rad(89)) <= 0.000001);
-    REQUIRE(std::abs(ZYX.y() - trafo::deg2rad(45.0)) <= 0.000001);
-    REQUIRE(std::abs(ZYX.x() - trafo::deg2rad(1.0)) <= 0.000001);
+    CHECK(ZYX.z() == Approx(trafo::deg2rad(89)).margin(0.000001));
+    CHECK(ZYX.y() == Approx(trafo::deg2rad(45.0)).margin(0.000001));
+    CHECK(ZYX.x() == Approx(trafo::deg2rad(1.0)).margin(0.000001));
 }
 
 TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[InsTransformations]")
@@ -116,15 +116,15 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     auto C_i2e = trafo::quat_i2e(time, InsConst::angularVelocity_ie).toRotationMatrix();
     auto C_i2e_ref = DCM_i2e(time, InsConst::angularVelocity_ie);
 
-    REQUIRE(std::abs(C_i2e(0, 0) - C_i2e_ref(0, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_i2e(0, 1) - C_i2e_ref(0, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_i2e(0, 2) - C_i2e_ref(0, 2)) <= EPSILON);
-    REQUIRE(std::abs(C_i2e(1, 0) - C_i2e_ref(1, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_i2e(1, 1) - C_i2e_ref(1, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_i2e(1, 2) - C_i2e_ref(1, 2)) <= EPSILON);
-    REQUIRE(std::abs(C_i2e(2, 0) - C_i2e_ref(2, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_i2e(2, 1) - C_i2e_ref(2, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_i2e(2, 2) - C_i2e_ref(2, 2)) <= EPSILON);
+    CHECK(C_i2e(0, 0) == Approx(C_i2e_ref(0, 0)));
+    CHECK(C_i2e(0, 1) == Approx(C_i2e_ref(0, 1)));
+    CHECK(C_i2e(0, 2) == Approx(C_i2e_ref(0, 2)));
+    CHECK(C_i2e(1, 0) == Approx(C_i2e_ref(1, 0)));
+    CHECK(C_i2e(1, 1) == Approx(C_i2e_ref(1, 1)));
+    CHECK(C_i2e(1, 2) == Approx(C_i2e_ref(1, 2)));
+    CHECK(C_i2e(2, 0) == Approx(C_i2e_ref(2, 0)));
+    CHECK(C_i2e(2, 1) == Approx(C_i2e_ref(2, 1)));
+    CHECK(C_i2e(2, 2) == Approx(C_i2e_ref(2, 2)));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -138,9 +138,9 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     auto x_e = Eigen::Vector3d(1, -2.5, 22);
     auto x_i = q_i2e * x_e;
 
-    REQUIRE(std::abs(x_i.x() - -2.5) <= 0.000001);
-    REQUIRE(std::abs(x_i.y() - -1) <= 0.000001);
-    REQUIRE(std::abs(x_i.z() - 22.0) <= 0.000001);
+    CHECK(x_i.x() == Approx(-2.5).margin(0.000001));
+    CHECK(x_i.y() == Approx(-1).margin(0.000001));
+    CHECK(x_i.z() == Approx(22.0).margin(0.000001));
 }
 
 TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[InsTransformations]")
@@ -151,15 +151,15 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     auto C_n2e = trafo::quat_n2e(latitude, longitude).toRotationMatrix();
     auto C_n2e_ref = DCM_n2e(latitude, longitude);
 
-    REQUIRE(std::abs(C_n2e(0, 0) - C_n2e_ref(0, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_n2e(0, 1) - C_n2e_ref(0, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_n2e(0, 2) - C_n2e_ref(0, 2)) <= EPSILON);
-    REQUIRE(std::abs(C_n2e(1, 0) - C_n2e_ref(1, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_n2e(1, 1) - C_n2e_ref(1, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_n2e(1, 2) - C_n2e_ref(1, 2)) <= EPSILON);
-    REQUIRE(std::abs(C_n2e(2, 0) - C_n2e_ref(2, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_n2e(2, 1) - C_n2e_ref(2, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_n2e(2, 2) - C_n2e_ref(2, 2)) <= EPSILON);
+    CHECK(C_n2e(0, 0) == Approx(C_n2e_ref(0, 0)).margin(EPSILON));
+    CHECK(C_n2e(0, 1) == Approx(C_n2e_ref(0, 1)).margin(EPSILON));
+    CHECK(C_n2e(0, 2) == Approx(C_n2e_ref(0, 2)).margin(EPSILON));
+    CHECK(C_n2e(1, 0) == Approx(C_n2e_ref(1, 0)).margin(EPSILON));
+    CHECK(C_n2e(1, 1) == Approx(C_n2e_ref(1, 1)).margin(EPSILON));
+    CHECK(C_n2e(1, 2) == Approx(C_n2e_ref(1, 2)).margin(EPSILON));
+    CHECK(C_n2e(2, 0) == Approx(C_n2e_ref(2, 0)).margin(EPSILON));
+    CHECK(C_n2e(2, 1) == Approx(C_n2e_ref(2, 1)).margin(EPSILON));
+    CHECK(C_n2e(2, 2) == Approx(C_n2e_ref(2, 2)).margin(EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -171,9 +171,9 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     auto x_e = Eigen::Vector3d(1, 2, 3);
     auto x_n = q_e2n * x_e;
 
-    REQUIRE(std::abs(x_n.x() - -1.0) <= EPSILON);
-    REQUIRE(std::abs(x_n.y() - 2.0) <= EPSILON);
-    REQUIRE(std::abs(x_n.z() - -3.0) <= EPSILON);
+    CHECK(x_n.x() == Approx(-1.0));
+    CHECK(x_n.y() == Approx(2.0));
+    CHECK(x_n.z() == Approx(-3.0));
 }
 
 TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTransformations]")
@@ -184,15 +184,15 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     auto C_b2n = trafo::quat_b2n(roll, pitch, yaw).toRotationMatrix();
     auto C_b2n_ref = DCM_b2n(roll, pitch, yaw);
 
-    REQUIRE(std::abs(C_b2n(0, 0) - C_b2n_ref(0, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(0, 1) - C_b2n_ref(0, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(0, 2) - C_b2n_ref(0, 2)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(1, 0) - C_b2n_ref(1, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(1, 1) - C_b2n_ref(1, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(1, 2) - C_b2n_ref(1, 2)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(2, 0) - C_b2n_ref(2, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(2, 1) - C_b2n_ref(2, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(2, 2) - C_b2n_ref(2, 2)) <= EPSILON);
+    CHECK(C_b2n(0, 0) == Approx(C_b2n_ref(0, 0)));
+    CHECK(C_b2n(0, 1) == Approx(C_b2n_ref(0, 1)));
+    CHECK(C_b2n(0, 2) == Approx(C_b2n_ref(0, 2)));
+    CHECK(C_b2n(1, 0) == Approx(C_b2n_ref(1, 0)));
+    CHECK(C_b2n(1, 1) == Approx(C_b2n_ref(1, 1)));
+    CHECK(C_b2n(1, 2) == Approx(C_b2n_ref(1, 2)));
+    CHECK(C_b2n(2, 0) == Approx(C_b2n_ref(2, 0)));
+    CHECK(C_b2n(2, 1) == Approx(C_b2n_ref(2, 1)));
+    CHECK(C_b2n(2, 2) == Approx(C_b2n_ref(2, 2)));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -202,15 +202,15 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     C_b2n = trafo::quat_b2n(roll, pitch, yaw).toRotationMatrix();
     C_b2n_ref = DCM_b2n(roll, pitch, yaw);
 
-    REQUIRE(std::abs(C_b2n(0, 0) - C_b2n_ref(0, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(0, 1) - C_b2n_ref(0, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(0, 2) - C_b2n_ref(0, 2)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(1, 0) - C_b2n_ref(1, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(1, 1) - C_b2n_ref(1, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(1, 2) - C_b2n_ref(1, 2)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(2, 0) - C_b2n_ref(2, 0)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(2, 1) - C_b2n_ref(2, 1)) <= EPSILON);
-    REQUIRE(std::abs(C_b2n(2, 2) - C_b2n_ref(2, 2)) <= EPSILON);
+    CHECK(C_b2n(0, 0) == Approx(C_b2n_ref(0, 0)));
+    CHECK(C_b2n(0, 1) == Approx(C_b2n_ref(0, 1)));
+    CHECK(C_b2n(0, 2) == Approx(C_b2n_ref(0, 2)));
+    CHECK(C_b2n(1, 0) == Approx(C_b2n_ref(1, 0)));
+    CHECK(C_b2n(1, 1) == Approx(C_b2n_ref(1, 1)));
+    CHECK(C_b2n(1, 2) == Approx(C_b2n_ref(1, 2)));
+    CHECK(C_b2n(2, 0) == Approx(C_b2n_ref(2, 0)));
+    CHECK(C_b2n(2, 1) == Approx(C_b2n_ref(2, 1)));
+    CHECK(C_b2n(2, 2) == Approx(C_b2n_ref(2, 2)));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -222,9 +222,9 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     auto x_n = Eigen::Vector3d(1.0, 1.0, 0.0);
     Eigen::Vector3d x_b = q_n2b * x_n;
 
-    REQUIRE(std::abs(x_b.x() - 0.0) <= EPSILON);
-    REQUIRE(std::abs(x_b.y() - std::sqrt(2)) <= EPSILON);
-    REQUIRE(std::abs(x_b.z() - 0.0) <= EPSILON);
+    CHECK(x_b.x() == Approx(0.0).margin(EPSILON));
+    CHECK(x_b.y() == Approx(std::sqrt(2)).margin(EPSILON));
+    CHECK(x_b.z() == Approx(0.0).margin(EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -236,9 +236,9 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     x_n = Eigen::Vector3d(1.0, 1.0, 1.0);
     x_b = q_n2b * x_n;
 
-    REQUIRE(std::abs(x_b.x() - 1.0) <= EPSILON);
-    REQUIRE(std::abs(x_b.y() - std::sqrt(2)) <= EPSILON);
-    REQUIRE(std::abs(x_b.z() - 0.0) <= EPSILON);
+    CHECK(x_b.x() == Approx(1.0).margin(EPSILON));
+    CHECK(x_b.y() == Approx(std::sqrt(2)).margin(EPSILON));
+    CHECK(x_b.z() == Approx(0.0).margin(EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -250,9 +250,9 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     x_n = Eigen::Vector3d(1.0, 1.0, 1.0);
     x_b = q_n2b * x_n;
 
-    REQUIRE(std::abs(x_b.x() - 0.0) <= EPSILON);
-    REQUIRE(std::abs(x_b.y() - 1.0) <= EPSILON);
-    REQUIRE(std::abs(x_b.z() - std::sqrt(2)) <= EPSILON);
+    CHECK(x_b.x() == Approx(0.0).margin(EPSILON));
+    CHECK(x_b.y() == Approx(1.0).margin(EPSILON));
+    CHECK(x_b.z() == Approx(std::sqrt(2)).margin(EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -264,9 +264,25 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     x_n = Eigen::Vector3d(1.0, 2.0, 3.0);
     x_b = q_n2b * x_n;
 
-    REQUIRE(std::abs(x_b.x() - -x_n(1)) <= EPSILON);
-    REQUIRE(std::abs(x_b.y() - -x_n(2)) <= EPSILON);
-    REQUIRE(std::abs(x_b.z() - x_n(0)) <= EPSILON);
+    CHECK(x_b.x() == Approx(-x_n(1)).margin(EPSILON));
+    CHECK(x_b.y() == Approx(-x_n(2)).margin(EPSILON));
+    CHECK(x_b.z() == Approx(x_n(0)).margin(EPSILON));
+}
+
+TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransformations]")
+{
+    double mountingAngleX = 0.0;
+    double mountingAngleY = trafo::deg2rad(180);
+    double mountingAngleZ = trafo::deg2rad(45);
+
+    auto q_p2b = trafo::quat_p2b(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
+
+    auto x_p = Eigen::Vector3d(2.0, 0.0, 9.81);
+    Eigen::Vector3d x_b = q_p2b * x_p;
+
+    CHECK(x_b.x() == Approx(-std::sqrt(2)));
+    CHECK(x_b.y() == Approx(-std::sqrt(2)));
+    CHECK(x_b.z() == Approx(-9.81));
 }
 
 TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]")
@@ -281,12 +297,12 @@ TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]"
     Eigen::Vector3d ecef_ref = Eigen::Vector3d(4157.128, 671.224, 4774.723) * 1000;
     Eigen::Vector3d ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
     Eigen::Vector3d llh = trafo::ecef2llh_WGS84(ecef_ref);
-    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.5);
-    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.5);
-    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.5);
-    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
-    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
-    REQUIRE(std::abs(llh.z() - height) <= 0.5);
+    CHECK(ecef.x() == Approx(ecef_ref.x()));
+    CHECK(ecef.y() == Approx(ecef_ref.y()));
+    CHECK(ecef.z() == Approx(ecef_ref.z()));
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height).margin(0.5));
 
     /* -------------------------------------------------------------------------- */
 
@@ -298,12 +314,12 @@ TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]"
     ecef_ref = Eigen::Vector3d(1334.001, -4654.06, 4138.303) * 1000;
     ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
     llh = trafo::ecef2llh_WGS84(ecef_ref);
-    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.5);
-    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.5);
-    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.5);
-    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
-    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
-    REQUIRE(std::abs(llh.z() - height) <= 0.5);
+    CHECK(ecef.x() == Approx(ecef_ref.x()));
+    CHECK(ecef.y() == Approx(ecef_ref.y()));
+    CHECK(ecef.z() == Approx(ecef_ref.z()));
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height).margin(0.5));
 
     /* -------------------------------------------------------------------------- */
 
@@ -313,12 +329,12 @@ TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]"
     ecef_ref = Eigen::Vector3d(6374.645, 0, 0) * 1000;
     ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
     llh = trafo::ecef2llh_WGS84(ecef_ref);
-    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.000001);
-    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.000001);
-    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.000001);
-    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
-    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
-    REQUIRE(std::abs(llh.z() - height) <= 0.000001);
+    CHECK(ecef.x() == Approx(ecef_ref.x()));
+    CHECK(ecef.y() == Approx(ecef_ref.y()));
+    CHECK(ecef.z() == Approx(ecef_ref.z()));
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height));
 
     /* -------------------------------------------------------------------------- */
 
@@ -328,12 +344,12 @@ TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]"
     ecef_ref = Eigen::Vector3d(0.011, 0, -6359.553) * 1000;
     ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
     llh = trafo::ecef2llh_WGS84(ecef_ref);
-    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.5);
-    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.5);
-    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.5);
-    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
-    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
-    REQUIRE(std::abs(llh.z() - height) <= 0.5);
+    CHECK(ecef.x() == Approx(ecef_ref.x()).margin(0.2));
+    CHECK(ecef.y() == Approx(ecef_ref.y()));
+    CHECK(ecef.z() == Approx(ecef_ref.z()));
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height).margin(0.5));
 
     /* -------------------------------------------------------------------------- */
 
@@ -343,12 +359,12 @@ TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]"
     ecef_ref = Eigen::Vector3d(-4888.803, 0, 4074.709) * 1000;
     ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
     llh = trafo::ecef2llh_WGS84(ecef_ref);
-    REQUIRE(std::abs(ecef.x() - ecef_ref.x()) <= 0.5);
-    REQUIRE(std::abs(ecef.y() - ecef_ref.y()) <= 0.5);
-    REQUIRE(std::abs(ecef.z() - ecef_ref.z()) <= 0.5);
-    REQUIRE(std::abs(llh.x() - latitude) <= 0.000001);
-    REQUIRE(std::abs(llh.y() - longitude) <= 0.000001);
-    REQUIRE(std::abs(llh.z() - height) <= 0.5);
+    CHECK(ecef.x() == Approx(ecef_ref.x()));
+    CHECK(ecef.y() == Approx(ecef_ref.y()).margin(1e-9));
+    CHECK(ecef.z() == Approx(ecef_ref.z()));
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height).margin(0.5));
 
     /* -------------------------------------------------------------------------- */
 
@@ -356,9 +372,9 @@ TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]"
     longitude = trafo::deg2rad(180);
     height = -5097;
     llh = trafo::ecef2llh_WGS84(trafo::llh2ecef_WGS84(latitude, longitude, height));
-    REQUIRE(std::abs(llh.x() - latitude) <= EPSILON);
-    REQUIRE(std::abs(llh.y() - longitude) <= EPSILON);
-    REQUIRE(std::abs(llh.z() - height) <= EPSILON);
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height));
 }
 
 TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
@@ -379,13 +395,13 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     Eigen::Quaterniond q_p2e = q_n2e * q_b2n * q_p2b;
     Eigen::Vector3d v_e_direct = q_p2e * v_p;
 
-    REQUIRE(std::abs(v_n.x() - v_n_direct.x()) <= EPSILON);
-    REQUIRE(std::abs(v_n.y() - v_n_direct.y()) <= EPSILON);
-    REQUIRE(std::abs(v_n.z() - v_n_direct.z()) <= EPSILON);
+    CHECK(v_n.x() == Approx(v_n_direct.x()));
+    CHECK(v_n.y() == Approx(v_n_direct.y()));
+    CHECK(v_n.z() == Approx(v_n_direct.z()));
 
-    REQUIRE(std::abs(v_e.x() - v_e_direct.x()) <= EPSILON);
-    REQUIRE(std::abs(v_e.y() - v_e_direct.y()) <= EPSILON);
-    REQUIRE(std::abs(v_e.z() - v_e_direct.z()) <= EPSILON);
+    CHECK(v_e.x() == Approx(v_e_direct.x()));
+    CHECK(v_e.y() == Approx(v_e_direct.y()));
+    CHECK(v_e.z() == Approx(v_e_direct.z()));
 }
 
 } // namespace NAV

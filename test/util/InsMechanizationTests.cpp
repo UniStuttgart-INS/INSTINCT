@@ -1,5 +1,6 @@
 #include <catch2/catch.hpp>
 
+#include "util/InsMath.hpp"
 #include "util/InsMechanization.hpp"
 #include "util/InsTransformations.hpp"
 #include "util/InsGravity.hpp"
@@ -55,14 +56,14 @@ TEST_CASE("[InsMechanization] Update Quaternions p2e Runge-Kutta 3. Order", "[In
     Eigen::Vector3d expectedRollPitchYaw = angularVelocity_ip_p * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
     Eigen::Quaterniond expectedQuat_b2n = trafo::quat_b2n(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
 
-    REQUIRE(std::abs(q_b2n.x() - expectedQuat_b2n.x()) < 1e-13);
-    REQUIRE(std::abs(q_b2n.y() - expectedQuat_b2n.y()) < 1e-13);
-    REQUIRE(std::abs(q_b2n.z() - expectedQuat_b2n.z()) < 1e-13);
-    REQUIRE(std::abs(q_b2n.w() - expectedQuat_b2n.w()) < 1e-13);
+    CHECK(q_b2n.x() == Approx(expectedQuat_b2n.x()).margin(1e-13));
+    CHECK(q_b2n.y() == Approx(expectedQuat_b2n.y()).margin(1e-13));
+    CHECK(q_b2n.z() == Approx(expectedQuat_b2n.z()).margin(1e-13));
+    CHECK(q_b2n.w() == Approx(expectedQuat_b2n.w()).margin(1e-13));
 
-    REQUIRE(std::abs(yawPitchRoll.x() - expectedRollPitchYaw.z()) < 1e-13);
-    REQUIRE(std::abs(yawPitchRoll.y() - expectedRollPitchYaw.y()) < 1e-13);
-    REQUIRE(std::abs(yawPitchRoll.z() - expectedRollPitchYaw.x()) < 1e-13);
+    CHECK(yawPitchRoll.x() == Approx(expectedRollPitchYaw.z()).margin(1e-13));
+    CHECK(yawPitchRoll.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
+    CHECK(yawPitchRoll.z() == Approx(expectedRollPitchYaw.x()).margin(1e-13));
 }
 
 TEST_CASE("[InsMechanization] Update Quaternions b2n Runge-Kutta 3. Order", "[InsMechanization]")
@@ -105,14 +106,14 @@ TEST_CASE("[InsMechanization] Update Quaternions b2n Runge-Kutta 3. Order", "[In
     Eigen::Vector3d expectedRollPitchYaw = angularVelocity_ip_b * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
     Eigen::Quaterniond expectedQuat_b2n = trafo::quat_b2n(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
 
-    REQUIRE(std::abs(q_b2n.x() - expectedQuat_b2n.x()) < 1e-13);
-    REQUIRE(std::abs(q_b2n.y() - expectedQuat_b2n.y()) < 1e-13);
-    REQUIRE(std::abs(q_b2n.z() - expectedQuat_b2n.z()) < 1e-13);
-    REQUIRE(std::abs(q_b2n.w() - expectedQuat_b2n.w()) < 1e-13);
+    CHECK(q_b2n.x() == Approx(expectedQuat_b2n.x()).margin(1e-13));
+    CHECK(q_b2n.y() == Approx(expectedQuat_b2n.y()).margin(1e-13));
+    CHECK(q_b2n.z() == Approx(expectedQuat_b2n.z()).margin(1e-13));
+    CHECK(q_b2n.w() == Approx(expectedQuat_b2n.w()).margin(1e-13));
 
-    REQUIRE(std::abs(yawPitchRoll.x() - expectedRollPitchYaw.z()) < 1e-13);
-    REQUIRE(std::abs(yawPitchRoll.y() - expectedRollPitchYaw.y()) < 1e-13);
-    REQUIRE(std::abs(yawPitchRoll.z() - expectedRollPitchYaw.x()) < 1e-13);
+    CHECK(yawPitchRoll.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
+    CHECK(yawPitchRoll.x() == Approx(expectedRollPitchYaw.z()).margin(1e-13));
+    CHECK(yawPitchRoll.z() == Approx(expectedRollPitchYaw.x()).margin(1e-13));
 }
 
 TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[InsMechanization]")
@@ -174,9 +175,9 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
     auto v_n = trafo::quat_n2e(latitude, longitude).conjugate() * v_e;
 
     // Exact values are not achieved
-    REQUIRE(std::abs(v_n.x() - 1) < 0.03);
-    REQUIRE(std::abs(v_n.y() - -1) < 0.01);
-    REQUIRE(std::abs(v_n.z() - 0) < 0.02);
+    CHECK(v_n.x() == Approx(1).margin(0.03));
+    CHECK(v_n.y() == Approx(-1).margin(0.01));
+    CHECK(v_n.z() == Approx(0).margin(0.02));
 }
 
 TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[InsMechanization]")
@@ -241,9 +242,9 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
     auto v_n = velocities.at(velocities.size() - 1);
 
     // Exact values are not achieved
-    REQUIRE(std::abs(v_n.x() - 1) < 0.001);
-    REQUIRE(std::abs(v_n.y() - 1) < 0.001);
-    REQUIRE(std::abs(v_n.z() - 0) < 1e-4);
+    CHECK(v_n.x() == Approx(1).margin(0.001));
+    CHECK(v_n.y() == Approx(1).margin(0.001));
+    CHECK(v_n.z() == Approx(0).margin(1e-4));
 }
 
 TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
@@ -269,24 +270,12 @@ TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
     }
     auto llh = trafo::ecef2llh_WGS84(position_e);
 
-    // REQUIRE(llh == Eigen::Vector3d(latitude, longitude, height));
+    CHECK(measureDistance(latitude, longitude, llh(0), llh(1)) == Approx(2.0).margin(0.002));
 
-    auto measure = [](double lat1, double lon1, double lat2, double lon2) { // generally used geo measurement function
-        double R = InsConst::WGS84_a / 1000.0;                              // Radius of earth in KM
-        double dLat = lat2 - lat1;
-        double dLon = lon2 - lon1;
-        double a = std::sin(dLat / 2.0) * std::sin(dLat / 2.0) + std::cos(lat1) * std::cos(lat2) * std::sin(dLon / 2.0) * std::sin(dLon / 2.0);
-        double c = 2.0 * std::atan2(std::sqrt(a), std::sqrt(1.0 - a));
-        double d = R * c;
-        return d * 1000.0; // meters
-    };
+    CHECK(measureDistance(latitude, longitude, llh(0), longitude) == Approx(2.0).margin(0.002));
+    CHECK(longitude == Approx(llh(1)).margin(1e-13));
 
-    REQUIRE(std::abs(measure(latitude, longitude, llh(0), llh(1)) - 2.0) <= 0.002);
-
-    REQUIRE(std::abs(measure(latitude, longitude, llh(0), longitude) - 2.0) <= 0.002);
-    REQUIRE(std::abs(longitude - llh(1)) <= 1e-13);
-
-    REQUIRE(latitude < llh(0));
+    CHECK(latitude < llh(0));
 }
 
 TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
@@ -321,20 +310,12 @@ TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
         latLonHeight = updatePosition_n(timeDifferenceSec, latLonHeight, velocity_n, R_N, R_E);
     }
 
-    auto measure = [](double lat1, double lon1, double lat2, double lon2) { // generally used geo measurement function
-        double dLat = lat2 - lat1;
-        double dLon = lon2 - lon1;
-        double a = std::sin(dLat / 2.0) * std::sin(dLat / 2.0) + std::cos(lat1) * std::cos(lat2) * std::sin(dLon / 2.0) * std::sin(dLon / 2.0);
-        double c = 2.0 * std::atan2(std::sqrt(a), std::sqrt(1.0 - a));
-        return InsConst::WGS84_a * c; // meters
-    };
+    CHECK(measureDistance(latitude, longitude, latLonHeight(0), latLonHeight(1)) == Approx(2).margin(0.01));
+    CHECK(measureDistance(latitude, longitude, latLonHeight(0), longitude) == Approx(std::sqrt(2)).margin(0.002));
+    CHECK(measureDistance(latitude, longitude, latitude, latLonHeight(1)) == Approx(std::sqrt(2)).margin(0.003));
 
-    REQUIRE(std::abs(measure(latitude, longitude, latLonHeight(0), latLonHeight(1)) - 2) <= 0.01);
-    REQUIRE(std::abs(measure(latitude, longitude, latLonHeight(0), longitude) - std::sqrt(2)) <= 0.002);
-    REQUIRE(std::abs(measure(latitude, longitude, latitude, latLonHeight(1)) - std::sqrt(2)) <= 0.003);
-
-    REQUIRE(latitude < latLonHeight(0));
-    REQUIRE(longitude < latLonHeight(1));
+    CHECK(latitude < latLonHeight(0));
+    CHECK(longitude < latLonHeight(1));
 }
 
 } // namespace NAV

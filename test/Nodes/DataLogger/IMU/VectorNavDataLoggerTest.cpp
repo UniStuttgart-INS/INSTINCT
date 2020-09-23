@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 
-#include "util/Logger.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
@@ -14,8 +13,6 @@ namespace NAV
 {
 TEST_CASE("[VectorNavDataLogger] Read, write, read consistency", "[VectorNavDataLogger]")
 {
-    Logger logger;
-
     // Create VectorNavFile Node
     std::map<std::string, std::string> optionsFile = { { "Path", "../../../test/data/vectornav.csv" } };
     auto vnFile = std::make_shared<VectorNavFile>("VN-File", optionsFile);
@@ -35,6 +32,7 @@ TEST_CASE("[VectorNavDataLogger] Read, write, read consistency", "[VectorNavData
     vnFile->addCallback<VectorNavObs>(target, targetPortIndex);
     vnLogger->incomingLinks.emplace(targetPortIndex, std::make_pair(vnFile, sourcePortIndex));
 
+    // Check if reading is possible
     REQUIRE(vnFile->requestOutputDataPeek(sourcePortIndex) != nullptr);
 
     vnFile->callbacksEnabled = true;
@@ -54,6 +52,7 @@ TEST_CASE("[VectorNavDataLogger] Read, write, read consistency", "[VectorNavData
     auto vnFileNew = std::make_shared<VectorNavFile>("VN-File-New", optionsFileNew);
     std::static_pointer_cast<Node>(vnFileNew)->initialize();
 
+    // Check if reading is possible
     REQUIRE(vnFileNew->requestOutputDataPeek(sourcePortIndex) != nullptr);
     REQUIRE(vnFileOriginal->requestOutputDataPeek(sourcePortIndex) != nullptr);
 
@@ -66,7 +65,9 @@ TEST_CASE("[VectorNavDataLogger] Read, write, read consistency", "[VectorNavData
         {
             break;
         }
-        REQUIRE((obsOrig != nullptr && obsNew != nullptr));
+        // Files have different lengths?
+        REQUIRE(obsOrig != nullptr);
+        REQUIRE(obsNew != nullptr);
 
         if (obsOrig->insTime.has_value())
         {

@@ -1,6 +1,7 @@
 #include "VectorNavFile.hpp"
 
 #include "util/Logger.hpp"
+#include "util/InsTransformations.hpp"
 #include <ios>
 #include <cmath>
 
@@ -459,11 +460,9 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
         }
         else if (!obs->yawPitchRoll.value().isZero())
         {
-            constexpr double deg2rad = M_PI / 180.0;
-            dcm = Eigen::AngleAxisd(obs->yawPitchRoll.value()(0) * deg2rad, Eigen::Vector3d::UnitX())
-                  * Eigen::AngleAxisd(obs->yawPitchRoll.value()(1) * deg2rad, Eigen::Vector3d::UnitY())
-                  * Eigen::AngleAxisd(obs->yawPitchRoll.value()(2) * deg2rad, Eigen::Vector3d::UnitZ());
-            obs->quaternion = dcm;
+            obs->quaternion = trafo::quat_b2n(trafo::deg2rad(obs->yawPitchRoll.value()(2)),
+                                              trafo::deg2rad(obs->yawPitchRoll.value()(1)),
+                                              trafo::deg2rad(obs->yawPitchRoll.value()(0)));
         }
     }
 
