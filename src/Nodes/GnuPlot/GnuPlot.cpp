@@ -6,6 +6,7 @@
 #include "util/InsTransformations.hpp"
 #include "util/Logger.hpp"
 #include "Nodes/NodeManager.hpp"
+#include "util/InsMath.hpp"
 
 NAV::GnuPlot::GnuPlot(const std::string& name, const std::map<std::string, std::string>& options)
     : Node(name)
@@ -573,6 +574,58 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
                                                   .z());
             }
         }
+        else if (gnuplotData.dataIdentifier == "North [m]")
+        {
+            if (std::isnan(gnuplotData.startValue))
+            {
+                if (obs->positionLLH.has_value())
+                {
+                    gnuplotData.startValue = trafo::deg2rad(obs->positionLLH.value().x());
+                }
+                else if (obs->positionXYZ.has_value())
+                {
+                    gnuplotData.startValue = trafo::ecef2llh_WGS84(obs->positionXYZ.value()).x();
+                }
+            }
+
+            if (obs->positionLLH.has_value())
+            {
+                gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->positionLLH.value().x()), trafo::deg2rad(obs->positionLLH.value().y()),
+                                                              gnuplotData.startValue, trafo::deg2rad(obs->positionLLH.value().y())));
+            }
+            else if (obs->positionXYZ.has_value())
+            {
+                auto llh = trafo::ecef2llh_WGS84(obs->positionXYZ.value());
+                gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
+                                                              gnuplotData.startValue, llh.y()));
+            }
+        }
+        else if (gnuplotData.dataIdentifier == "East [m]")
+        {
+            if (std::isnan(gnuplotData.startValue))
+            {
+                if (obs->positionLLH.has_value())
+                {
+                    gnuplotData.startValue = trafo::deg2rad(obs->positionLLH.value().y());
+                }
+                else if (obs->positionXYZ.has_value())
+                {
+                    gnuplotData.startValue = trafo::ecef2llh_WGS84(obs->positionXYZ.value()).y();
+                }
+            }
+
+            if (obs->positionLLH.has_value())
+            {
+                gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->positionLLH.value().x()), trafo::deg2rad(obs->positionLLH.value().y()),
+                                                              trafo::deg2rad(obs->positionLLH.value().x()), gnuplotData.startValue));
+            }
+            else if (obs->positionXYZ.has_value())
+            {
+                auto llh = trafo::ecef2llh_WGS84(obs->positionXYZ.value());
+                gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
+                                                              llh.x(), gnuplotData.startValue));
+            }
+        }
         else if (gnuplotData.dataIdentifier == "Q" && obs->Q.has_value())
         {
             gnuplotData.data.emplace_back(obs->Q.value());
@@ -851,6 +904,24 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         else if (gnuplotData.dataIdentifier == "Z-ECEF")
         {
             gnuplotData.data.emplace_back(state->positionECEF_WGS84().z());
+        }
+        else if (gnuplotData.dataIdentifier == "North [m]")
+        {
+            if (std::isnan(gnuplotData.startValue))
+            {
+                gnuplotData.startValue = static_cast<double>(state->latitude());
+            }
+
+            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), gnuplotData.startValue, state->longitude()));
+        }
+        else if (gnuplotData.dataIdentifier == "East [m]")
+        {
+            if (std::isnan(gnuplotData.startValue))
+            {
+                gnuplotData.startValue = static_cast<double>(state->longitude());
+            }
+
+            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), state->latitude(), gnuplotData.startValue));
         }
         else if (gnuplotData.dataIdentifier == "Velocity North")
         {

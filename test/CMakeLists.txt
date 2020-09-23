@@ -21,6 +21,7 @@ add_executable(
   Nodes/Integrator/ImuIntegratorTest.cpp
   ${CMAKE_SOURCE_DIR}/src/util/ConfigManager.cpp
   ${CMAKE_SOURCE_DIR}/src/util/Logger.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/Sleep.cpp
   ${CMAKE_SOURCE_DIR}/src/util/InsGravity.cpp
   ${CMAKE_SOURCE_DIR}/src/util/InsTime.cpp
   ${CMAKE_SOURCE_DIR}/src/util/InsMath.cpp
