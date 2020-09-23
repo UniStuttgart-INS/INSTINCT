@@ -44,7 +44,7 @@ Eigen::Quaterniond updateQuaternion_p2e_RungeKutta3(
     Eigen::Vector3d angularVelocity_ep_p__t1 = (integratedAngularVelocity_ep_p__t1 + integratedAngularVelocity_ep_p__t0) / integrationStep;
     /// ῶ_ep_p (tₖ) Taylor-Approximation of angular velocities in [rad/s],
     /// of the earth to platform system, in platform coordinates, at the time tₖ (eq. 8.15)
-    Eigen::Vector3d angularVelocity_ep_p__t0 = (3 * integratedAngularVelocity_ep_p__t0 - integratedAngularVelocity_ep_p__t0) / integrationStep;
+    Eigen::Vector3d angularVelocity_ep_p__t0 = (3 * integratedAngularVelocity_ep_p__t0 - integratedAngularVelocity_ep_p__t1) / integrationStep;
 
     // clang-format off
 
@@ -128,15 +128,15 @@ Eigen::Quaterniond updateQuaternion_b2n_RungeKutta3(
     /// Runge-Kutta integration step [s]
     long double integrationStep = 2.0L * timeDifferenceSec__t0;
 
-    /// ῶ_nb_p (tₖ₋₂) Taylor-Approximation of angular velocities in [rad/s],
+    /// ῶ_nb_b (tₖ₋₂) Taylor-Approximation of angular velocities in [rad/s],
     /// of the navigation to body system, in body coordinates, at the time tₖ₋₂ (eq. 8.15)
     Eigen::Vector3d angularVelocity_nb_b__t2 = (3 * integratedAngularVelocity_nb_b__t1 - integratedAngularVelocity_nb_b__t0) / integrationStep;
-    /// ῶ_nb_p (tₖ₋₁) Taylor-Approximation of angular velocities in [rad/s],
+    /// ῶ_nb_b (tₖ₋₁) Taylor-Approximation of angular velocities in [rad/s],
     /// of the navigation to body system, in body coordinates, at the time tₖ₋₁ (eq. 8.15)
     Eigen::Vector3d angularVelocity_nb_b__t1 = (integratedAngularVelocity_nb_b__t1 + integratedAngularVelocity_nb_b__t0) / integrationStep;
-    /// ῶ_nb_p (tₖ) Taylor-Approximation of angular velocities in [rad/s],
+    /// ῶ_nb_b (tₖ) Taylor-Approximation of angular velocities in [rad/s],
     /// of the navigation to body system, in body coordinates, at the time tₖ (eq. 8.15)
-    Eigen::Vector3d angularVelocity_nb_b__t0 = (3 * integratedAngularVelocity_nb_b__t0 - integratedAngularVelocity_nb_b__t0) / integrationStep;
+    Eigen::Vector3d angularVelocity_nb_b__t0 = (3 * integratedAngularVelocity_nb_b__t0 - integratedAngularVelocity_nb_b__t1) / integrationStep;
 
     // clang-format off
 
