@@ -590,14 +590,18 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
 
             if (obs->positionLLH.has_value())
             {
+                int sign = obs->positionLLH.value().x() > gnuplotData.startValue ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->positionLLH.value().x()), trafo::deg2rad(obs->positionLLH.value().y()),
-                                                              gnuplotData.startValue, trafo::deg2rad(obs->positionLLH.value().y())));
+                                                              gnuplotData.startValue, trafo::deg2rad(obs->positionLLH.value().y()))
+                                              * sign);
             }
             else if (obs->positionXYZ.has_value())
             {
                 auto llh = trafo::ecef2llh_WGS84(obs->positionXYZ.value());
+                int sign = llh.x() > gnuplotData.startValue ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
-                                                              gnuplotData.startValue, llh.y()));
+                                                              gnuplotData.startValue, llh.y())
+                                              * sign);
             }
         }
         else if (gnuplotData.dataIdentifier == "East [m]")
@@ -616,14 +620,18 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
 
             if (obs->positionLLH.has_value())
             {
+                int sign = obs->positionLLH.value().y() > gnuplotData.startValue ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->positionLLH.value().x()), trafo::deg2rad(obs->positionLLH.value().y()),
-                                                              trafo::deg2rad(obs->positionLLH.value().x()), gnuplotData.startValue));
+                                                              trafo::deg2rad(obs->positionLLH.value().x()), gnuplotData.startValue)
+                                              * sign);
             }
             else if (obs->positionXYZ.has_value())
             {
                 auto llh = trafo::ecef2llh_WGS84(obs->positionXYZ.value());
+                int sign = llh.x() > gnuplotData.startValue ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
-                                                              llh.x(), gnuplotData.startValue));
+                                                              llh.x(), gnuplotData.startValue)
+                                              * sign);
             }
         }
         else if (gnuplotData.dataIdentifier == "Q" && obs->Q.has_value())
@@ -912,7 +920,8 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
                 gnuplotData.startValue = static_cast<double>(state->latitude());
             }
 
-            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), gnuplotData.startValue, state->longitude()));
+            int sign = state->latitude() > gnuplotData.startValue ? 1 : -1;
+            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), gnuplotData.startValue, state->longitude()) * sign);
         }
         else if (gnuplotData.dataIdentifier == "East [m]")
         {
@@ -921,7 +930,8 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
                 gnuplotData.startValue = static_cast<double>(state->longitude());
             }
 
-            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), state->latitude(), gnuplotData.startValue));
+            int sign = state->longitude() > gnuplotData.startValue ? 1 : -1;
+            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), state->latitude(), gnuplotData.startValue) * sign);
         }
         else if (gnuplotData.dataIdentifier == "Velocity North")
         {

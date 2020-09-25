@@ -32,7 +32,7 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
 
     Eigen::Vector3d mountingAngles(0.0, 0.0, 0.0);
 
-    Eigen::Vector3d initLatLonHeight(48.05202354, 9.361408376, 604.2897);
+    Eigen::Vector3d initLatLonHeight(0, 0.0, 500);
     Eigen::Vector3d initRollPitchYaw(0.0, 0.0, 0.0);
     Eigen::Vector3d initVelocityNED(0.0, 0.0, 0.0);
 
@@ -170,18 +170,19 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     imuIntegrator->callbacksEnabled = true;
     state->callbacksEnabled = true;
 
-    long double dt = 0.01L;
     auto currentState = std::static_pointer_cast<StateData>(state->requestOutputData(0));
     auto quat_b2p = trafo::quat_p2b(mountingAngles.x(), mountingAngles.y(), mountingAngles.z()).conjugate();
 
-    for (size_t i = 0; i < 101; i++)
+    long double dt = 0.1L;
+    long double seconds = 7200.0L;
+    for (size_t i = 0; i < static_cast<size_t>(seconds / dt) + 1; i++)
     {
         double gravityNorm = gravity::gravityMagnitude_Gleason(currentState->latitude());
 
         auto gravity_n = Eigen::Vector3d(0, 0, -gravityNorm);
         auto gravity_p = quat_b2p * currentState->quaternion_n2b() * gravity_n;
 
-        auto accel_n = Eigen::Vector3d(0, 0, 1e-4);
+        auto accel_n = Eigen::Vector3d(0, 0, 0);
         auto accel_b = Eigen::Vector3d(0, 0, 0) + currentState->quaternion_n2b() * accel_n;
         auto accel_p = Eigen::Vector3d(0, 0, 0) + quat_b2p * accel_b;
 

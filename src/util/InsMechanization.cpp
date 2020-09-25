@@ -34,7 +34,7 @@ Eigen::Quaterniond updateQuaternion_p2e_RungeKutta3(
                                                          - quaternion_e2p__t1 * angularVelocity_ie_e__t0 * timeDifferenceSec__t0;
 
     /// Runge-Kutta integration step [s]
-    long double integrationStep = 2.0L * timeDifferenceSec__t0;
+    long double integrationStep = timeDifferenceSec__t0 + timeDifferenceSec__t1;
 
     /// ῶ_ep_p (tₖ₋₂) Taylor-Approximation of angular velocities in [rad/s],
     /// of the earth to platform system, in platform coordinates, at the time tₖ₋₂ (eq. 8.15)
@@ -126,7 +126,7 @@ Eigen::Quaterniond updateQuaternion_b2n_RungeKutta3(
                                                          - quaternion_n2b__t1 * (angularVelocity_ie_n__t1 + angularVelocity_en_n__t1) * timeDifferenceSec__t0;
 
     /// Runge-Kutta integration step [s]
-    long double integrationStep = 2.0L * timeDifferenceSec__t0;
+    long double integrationStep = timeDifferenceSec__t0 + timeDifferenceSec__t1;
 
     /// ῶ_nb_b (tₖ₋₂) Taylor-Approximation of angular velocities in [rad/s],
     /// of the navigation to body system, in body coordinates, at the time tₖ₋₂ (eq. 8.15)
@@ -205,7 +205,7 @@ Eigen::Vector3d updateVelocity_e_RungeKutta3(const long double& timeDifferenceSe
     const Eigen::Vector3d deltaVelocity_p__t1 = acceleration_p__t1 * timeDifferenceSec__t1;
 
     /// Runge-Kutta integration step [s]
-    const long double integrationStep = 2.0L * timeDifferenceSec__t0;
+    const long double integrationStep = timeDifferenceSec__t0 + timeDifferenceSec__t1;
 
     /// Runge Kutta Integration of delta velocities (eq. 9.12)
     const Eigen::Vector3d rungeKuttaIntegration_e = (quaternion_p2e__t2 * (3 * deltaVelocity_p__t1 - deltaVelocity_p__t0)
@@ -243,7 +243,7 @@ Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSe
     const Eigen::Vector3d deltaVelocity_b__t1 = acceleration_b__t1 * timeDifferenceSec__t1;
 
     /// Runge-Kutta integration step [s]
-    const long double integrationStep = 2.0L * timeDifferenceSec__t0;
+    const long double integrationStep = timeDifferenceSec__t0 + timeDifferenceSec__t1;
 
     /// Runge Kutta Integration of delta velocities
     const Eigen::Vector3d rungeKuttaIntegration_n = (quaternion_b2n__t2 * (3 * deltaVelocity_b__t1 - deltaVelocity_b__t0)
