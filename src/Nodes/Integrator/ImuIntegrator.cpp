@@ -36,7 +36,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     auto stateData__t1 = std::static_pointer_cast<StateData>(stateNode->requestOutputData(statePortIndex));
 
     // Fill if empty
-    if (prevObs.size() < 2)
+    if (prevObs.empty())
     {
         stateData__t1->insTime = imuObs__t0->insTime;
 
@@ -51,12 +51,22 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     prevStates.push_front(stateData__t1);
 
     /// IMU Observation at the time tₖ₋₂
-    auto& imuObs__t2 = prevObs.at(1);
+    std::shared_ptr<ImuObs> imuObs__t2;
+    /// State Data at the time tₖ₋₂
+    std::shared_ptr<StateData> stateData__t2;
+    if (prevObs.size() == 1)
+    {
+        imuObs__t2 = prevObs.at(0);
+        stateData__t2 = prevStates.at(0);
+    }
+    else
+    {
+        imuObs__t2 = prevObs.at(1);
+        stateData__t2 = prevStates.at(1);
+    }
+
     /// IMU Observation at the time tₖ₋₁
     auto& imuObs__t1 = prevObs.at(0);
-
-    /// State Data at the time tₖ₋₂
-    auto& stateData__t2 = prevStates.at(1);
 
     /// Result State Data at the time tₖ
     auto stateData__t0 = std::make_shared<StateData>();
@@ -106,9 +116,9 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     if (integrationFrame == IntegrationFrame::ECEF)
     {
         /// q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
-        const Eigen::Quaterniond quaternion_p2e__t2 = stateData__t2->quaternion_b2e() * imuPosition->quatGyro_p2b;
+        const Eigen::Quaterniond quaternion_p2e__t2 = stateData__t2->quaternion_b2e() * imuPosition->quatGyro_p2b();
         /// q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
-        const Eigen::Quaterniond quaternion_p2e__t1 = stateData__t1->quaternion_b2e() * imuPosition->quatGyro_p2b;
+        const Eigen::Quaterniond quaternion_p2e__t1 = stateData__t1->quaternion_b2e() * imuPosition->quatGyro_p2b();
 
         /// ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
         const Eigen::Vector3d& angularVelocity_ie_e__t0 = InsConst::angularVelocity_ie_e;
@@ -139,7 +149,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         stateData__t0->latLonHeight() = trafo::ecef2llh_WGS84(position_e__t0);
 
         /// IMU platform orientation
-        Eigen::Quaterniond quaternion_b2p = imuPosition->quatGyro_p2b.conjugate();
+        Eigen::Quaterniond quaternion_b2p = imuPosition->quatGyro_b2p();
         /// Quaternion for rotation from earth to navigation frame. Depends on position which was updated before
         Eigen::Quaterniond quaternion_e2n__t0 = stateData__t0->quaternion_e2n();
         // Store body to navigation frame quaternion in the state
@@ -149,15 +159,15 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     {
         /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
         /// of the inertial to platform system, in body coordinates, at the time tₖ₋₁
-        const Eigen::Vector3d& angularVelocity_ip_b__t1 = imuPosition->quatGyro_p2b * angularVelocity_ip_p__t1;
+        const Eigen::Vector3d& angularVelocity_ip_b__t1 = imuPosition->quatGyro_p2b() * angularVelocity_ip_p__t1;
         /// ω_ip_p (tₖ) Angular velocity in [rad/s],
         /// of the inertial to platform system, in body coordinates, at the time tₖ
-        const Eigen::Vector3d& angularVelocity_ip_b__t0 = imuPosition->quatGyro_p2b * angularVelocity_ip_p__t0;
+        const Eigen::Vector3d& angularVelocity_ip_b__t0 = imuPosition->quatGyro_p2b() * angularVelocity_ip_p__t0;
 
         /// a_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
-        const Eigen::Vector3d& acceleration_b__t1 = imuPosition->quatAccel_p2b * acceleration_p__t1;
+        const Eigen::Vector3d& acceleration_b__t1 = imuPosition->quatAccel_p2b() * acceleration_p__t1;
         /// a_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
-        const Eigen::Vector3d& acceleration_b__t0 = imuPosition->quatAccel_p2b * acceleration_p__t0;
+        const Eigen::Vector3d& acceleration_b__t0 = imuPosition->quatAccel_p2b() * acceleration_p__t0;
 
         /// q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
         const Eigen::Quaterniond quaternion_b2n__t1 = stateData__t1->quaternion_b2n();
@@ -166,7 +176,6 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
 
         /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
         Eigen::Vector3d angularVelocity_ie_n__t1 = stateData__t1->quaternion_e2n() * InsConst::angularVelocity_ie_e;
-        angularVelocity_ie_n__t1(1) = 0;
 
         /// North/South (meridian) earth radius [m]
         double R_N = earthRadius_N(InsConst::WGS84_a, InsConst::WGS84_e_squared, stateData__t1->latitude());

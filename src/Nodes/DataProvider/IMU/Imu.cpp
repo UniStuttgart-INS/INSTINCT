@@ -79,7 +79,7 @@ NAV::Imu::Imu(const std::string& name, [[maybe_unused]] const std::map<std::stri
                 }
             }
         }
-        imuPos->quatAccel_p2b = trafo::quat_p2b(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
+        imuPos->quaternionAccel_p2b = trafo::quat_p2b(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
     }
     if (options.count("Gyro rot"))
     {
@@ -100,7 +100,7 @@ NAV::Imu::Imu(const std::string& name, [[maybe_unused]] const std::map<std::stri
                 }
             }
         }
-        imuPos->quatGyro_p2b = trafo::quat_p2b(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
+        imuPos->quaternionGyro_p2b = trafo::quat_p2b(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
     }
     if (options.count("Mag rot"))
     {
@@ -121,6 +121,6 @@ NAV::Imu::Imu(const std::string& name, [[maybe_unused]] const std::map<std::stri
                 }
             }
         }
-        imuPos->quatMag_p2b = trafo::quat_p2b(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
+        imuPos->quaternionMag_p2b = trafo::quat_p2b(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
     }
 }

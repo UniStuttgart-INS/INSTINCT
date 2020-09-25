@@ -12,6 +12,9 @@
 
 namespace NAV
 {
+// Forward declaration
+class Imu;
+
 /// IMU Position
 class ImuPos : public NodeData
 {
@@ -51,11 +54,47 @@ class ImuPos : public NodeData
     Eigen::Vector3d posMag_b;
 
     /// Quaternion from accelerometer platform frame to body frame
-    Eigen::Quaterniond quatAccel_p2b;
+    [[nodiscard]] const Eigen::Quaterniond& quatAccel_p2b() const
+    {
+        return quaternionAccel_p2b;
+    }
+    /// Quaternion from body frame to accelerometer platform frame
+    [[nodiscard]] Eigen::Quaterniond quatAccel_b2p() const
+    {
+        return quaternionAccel_p2b.conjugate();
+    }
+
     /// Quaternion from gyroscope platform frame to body frame
-    Eigen::Quaterniond quatGyro_p2b;
+    [[nodiscard]] const Eigen::Quaterniond& quatGyro_p2b() const
+    {
+        return quaternionGyro_p2b;
+    }
+    /// Quaternion from body frame to gyroscope platform frame
+    [[nodiscard]] Eigen::Quaterniond quatGyro_b2p() const
+    {
+        return quaternionGyro_p2b.conjugate();
+    }
+
     /// Quaternion from magnetometer platform frame to body frame
-    Eigen::Quaterniond quatMag_p2b;
+    [[nodiscard]] const Eigen::Quaterniond& quatMag_p2b() const
+    {
+        return quaternionMag_p2b;
+    }
+    /// Quaternion from body frame to magnetometer platform frame
+    [[nodiscard]] Eigen::Quaterniond quatMag_b2p() const
+    {
+        return quaternionMag_p2b.conjugate();
+    }
+
+  private:
+    /// Quaternion from accelerometer platform frame to body frame
+    Eigen::Quaterniond quaternionAccel_p2b;
+    /// Quaternion from gyroscope platform frame to body frame
+    Eigen::Quaterniond quaternionGyro_p2b;
+    /// Quaternion from magnetometer platform frame to body frame
+    Eigen::Quaterniond quaternionMag_p2b;
+
+    friend class Imu;
 };
 
 } // namespace NAV
