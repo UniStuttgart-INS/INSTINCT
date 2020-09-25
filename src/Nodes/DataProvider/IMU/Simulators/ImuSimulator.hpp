@@ -101,8 +101,20 @@ class ImuSimulator final : public Imu
     /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
-        std::vector<ConfigOptions> configs = { { CONFIG_STRING, "Duration", "Duration of the data gerneation in [s]", { "1" } },
-                                               { CONFIG_STRING, "Frequency", "Frequency of the data generation in [Hz]", { "10" } } };
+        std::vector<ConfigOptions> configs = {
+            { CONFIG_STRING, "Duration", "Duration of the data gerneation in [s]", { "1" } },
+            { CONFIG_STRING, "Frequency", "Frequency of the data generation in [Hz]", { "10" } },
+            { CONFIG_FLOAT3, "Accel n", "Acceleration in navigation frame in [m/s^2]", { "-100", "0", "100", "3", "-100", "0", "100", "3", "-100", "0", "100", "3" } },
+            { CONFIG_FLOAT3, "Accel b", "Acceleration in body frame in [m/s^2]", { "-100", "0", "100", "3", "-100", "0", "100", "3", "-100", "0", "100", "3" } },
+            { CONFIG_FLOAT3, "Accel p", "Acceleration in platform frame in [m/s^2]", { "-100", "0", "100", "3", "-100", "0", "100", "3", "-100", "0", "100", "3" } },
+            { CONFIG_FLOAT3, "Gyro n", "Angular velocity in navigation frame in [rad/s]", { "-10", "0", "10", "3", "-10", "0", "10", "3", "-10", "0", "10", "3" } },
+            { CONFIG_FLOAT3, "Gyro b", "Angular velocity in body frame in [rad/s]", { "-10", "0", "10", "3", "-10", "0", "10", "3", "-10", "0", "10", "3" } },
+            { CONFIG_FLOAT3, "Gyro p", "Angular velocity in platform frame in [rad/s]", { "-10", "0", "10", "3", "-10", "0", "10", "3", "-10", "0", "10", "3" } },
+            { CONFIG_FLOAT3, "Mag n", "Magnetic field in navigation frame in [Gauss]", { "-10", "0", "10", "3", "-10", "0", "10", "3", "-10", "0", "10", "3" } },
+            { CONFIG_FLOAT3, "Mag b", "Magnetic field in body frame in [Gauss]", { "-10", "0", "10", "3", "-10", "0", "10", "3", "-10", "0", "10", "3" } },
+            { CONFIG_FLOAT3, "Mag p", "Magnetic field in platform frame in [Gauss]", { "-10", "0", "10", "3", "-10", "0", "10", "3", "-10", "0", "10", "3" } },
+            { CONFIG_FLOAT, "Temperature", "Temperature measured in units of [Celsius]", { "-273,15", "20", "1000", "2" } }
+        };
         auto imuConfigs = Imu::guiConfig();
         configs.insert(configs.end(), imuConfigs.begin(), imuConfigs.end());
         return configs;
@@ -155,6 +167,27 @@ class ImuSimulator final : public Imu
     double frequency = 10.0;
     /// Current Simulation Time in [s]
     double currentSimTime = 0.0;
+
+    /// Acceleration in navigation frame in [m/s^2]
+    Eigen::Vector3d accel_n;
+    /// Acceleration in body frame in [m/s^2]
+    Eigen::Vector3d accel_b;
+    /// Acceleration in platform frame in [m/s^2]
+    Eigen::Vector3d accel_p;
+    /// Angular velocity in navigation frame in [rad/s]
+    Eigen::Vector3d gyro_n;
+    /// Angular velocity in body frame in [rad/s]
+    Eigen::Vector3d gyro_b;
+    /// Angular velocity in platform frame in [rad/s]
+    Eigen::Vector3d gyro_p;
+    /// Magnetic field in navigation frame in [Gauss]
+    Eigen::Vector3d mag_n;
+    /// Magnetic field in body frame in [Gauss]
+    Eigen::Vector3d mag_b;
+    /// Magnetic field in platform frame in [Gauss]
+    Eigen::Vector3d mag_p;
+    /// Temperature measured in units of [Celsius]
+    double temperature = 0.0;
 };
 
 } // namespace NAV
