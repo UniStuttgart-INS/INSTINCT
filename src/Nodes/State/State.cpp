@@ -41,7 +41,7 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
                 }
             }
         }
-        currentState->quat_b2n_coeff() = trafo::quat_b2n(roll, pitch, yaw).coeffs();
+        currentState->quat_nb_coeff() = trafo::quat_nb(roll, pitch, yaw).coeffs();
     }
     if (options.count("Init Velocity"))
     {

@@ -460,9 +460,9 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
         }
         else if (!obs->yawPitchRoll.value().isZero())
         {
-            obs->quaternion = trafo::quat_b2n(trafo::deg2rad(obs->yawPitchRoll.value()(2)),
-                                              trafo::deg2rad(obs->yawPitchRoll.value()(1)),
-                                              trafo::deg2rad(obs->yawPitchRoll.value()(0)));
+            obs->quaternion = trafo::quat_nb(trafo::deg2rad(obs->yawPitchRoll.value()(2)),
+                                             trafo::deg2rad(obs->yawPitchRoll.value()(1)),
+                                             trafo::deg2rad(obs->yawPitchRoll.value()(0)));
         }
     }
 

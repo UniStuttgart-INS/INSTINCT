@@ -959,19 +959,19 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         }
         else if (gnuplotData.dataIdentifier == "Quaternion W")
         {
-            gnuplotData.data.emplace_back(state->quaternion_n2b().w());
+            gnuplotData.data.emplace_back(state->quaternion_bn().w());
         }
         else if (gnuplotData.dataIdentifier == "Quaternion X")
         {
-            gnuplotData.data.emplace_back(state->quaternion_n2b().x());
+            gnuplotData.data.emplace_back(state->quaternion_bn().x());
         }
         else if (gnuplotData.dataIdentifier == "Quaternion Y")
         {
-            gnuplotData.data.emplace_back(state->quaternion_n2b().y());
+            gnuplotData.data.emplace_back(state->quaternion_bn().y());
         }
         else if (gnuplotData.dataIdentifier == "Quaternion Z")
         {
-            gnuplotData.data.emplace_back(state->quaternion_n2b().z());
+            gnuplotData.data.emplace_back(state->quaternion_bn().z());
         }
 
         // Delete old data

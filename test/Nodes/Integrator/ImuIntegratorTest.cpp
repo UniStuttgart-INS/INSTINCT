@@ -171,7 +171,7 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     state->callbacksEnabled = true;
 
     auto currentState = std::static_pointer_cast<StateData>(state->requestOutputData(0));
-    auto quat_b2p = trafo::quat_p2b(mountingAngles.x(), mountingAngles.y(), mountingAngles.z()).conjugate();
+    auto quat_pb = trafo::quat_bp(mountingAngles.x(), mountingAngles.y(), mountingAngles.z()).conjugate();
 
     long double dt = 0.1L;
     long double seconds = 7200.0L;
@@ -180,11 +180,11 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
         double gravityNorm = gravity::gravityMagnitude_Gleason(currentState->latitude());
 
         auto gravity_n = Eigen::Vector3d(0, 0, -gravityNorm);
-        auto gravity_p = quat_b2p * currentState->quaternion_n2b() * gravity_n;
+        auto gravity_p = quat_pb * currentState->quaternion_bn() * gravity_n;
 
         auto accel_n = Eigen::Vector3d(0, 0, 0);
-        auto accel_b = Eigen::Vector3d(0, 0, 0) + currentState->quaternion_n2b() * accel_n;
-        auto accel_p = Eigen::Vector3d(0, 0, 0) + quat_b2p * accel_b;
+        auto accel_b = Eigen::Vector3d(0, 0, 0) + currentState->quaternion_bn() * accel_n;
+        auto accel_p = Eigen::Vector3d(0, 0, 0) + quat_pb * accel_b;
 
         auto obs = std::make_shared<ImuObs>();
         obs->timeSinceStartup = static_cast<uint64_t>(dt * i * 10e9L);

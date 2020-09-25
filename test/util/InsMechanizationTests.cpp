@@ -12,7 +12,7 @@
 
 namespace NAV
 {
-TEST_CASE("[InsMechanization] Update Quaternions p2e Runge-Kutta 3. Order", "[InsMechanization]")
+TEST_CASE("[InsMechanization] Update Quaternions ep Runge-Kutta 3. Order", "[InsMechanization]")
 {
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
@@ -27,46 +27,46 @@ TEST_CASE("[InsMechanization] Update Quaternions p2e Runge-Kutta 3. Order", "[In
     Eigen::Vector3d angularVelocity_ie_e(0, 0, 0);
 
     /// q Quaternion, from platform to body coordinates. Depends on mounting of strap down IMU
-    Eigen::Quaterniond q_p2b = Eigen::Quaterniond::Identity();
+    Eigen::Quaterniond q_bp = Eigen::Quaterniond::Identity();
 
     /// q Quaternion, from earth to navigation coordinates. Depends on location
-    Eigen::Quaterniond q_e2n = trafo::quat_n2e(latitude, longitude).conjugate();
+    Eigen::Quaterniond q_ne = trafo::quat_en(latitude, longitude).conjugate();
 
-    Eigen::Quaterniond q_b2n__t0 = Eigen::Quaterniond::Identity();
+    Eigen::Quaterniond q_nb__t0 = Eigen::Quaterniond::Identity();
 
-    std::deque<Eigen::Quaterniond> quats_p2e;
-    quats_p2e.push_back(trafo::quat_n2e(latitude, longitude) * q_b2n__t0 * q_p2b);
-    quats_p2e.push_back(trafo::quat_n2e(latitude, longitude) * q_b2n__t0 * q_p2b);
+    std::deque<Eigen::Quaterniond> quats_ep;
+    quats_ep.push_back(trafo::quat_en(latitude, longitude) * q_nb__t0 * q_bp);
+    quats_ep.push_back(trafo::quat_en(latitude, longitude) * q_nb__t0 * q_bp);
 
     size_t count = 10000;
     for (size_t i = 0; i < count; i++)
     {
-        Eigen::Quaterniond q_p2e = updateQuaternion_p2e_RungeKutta3(timeDifferenceSec, timeDifferenceSec,
-                                                                    angularVelocity_ip_p, angularVelocity_ip_p,
-                                                                    angularVelocity_ie_e,
-                                                                    quats_p2e.at(1), quats_p2e.at(0));
-        quats_p2e.push_back(q_p2e);
-        quats_p2e.pop_front();
+        Eigen::Quaterniond q_ep = updateQuaternion_ep_RungeKutta3(timeDifferenceSec, timeDifferenceSec,
+                                                                  angularVelocity_ip_p, angularVelocity_ip_p,
+                                                                  angularVelocity_ie_e,
+                                                                  quats_ep.at(1), quats_ep.at(0));
+        quats_ep.push_back(q_ep);
+        quats_ep.pop_front();
     }
 
-    auto q_p2e = quats_p2e.at(quats_p2e.size() - 1);
-    auto q_b2n = q_e2n * q_p2e * q_p2b;
-    auto yawPitchRoll = trafo::quat2eulerZYX(q_b2n);
+    auto q_ep = quats_ep.at(quats_ep.size() - 1);
+    auto q_nb = q_ne * q_ep * q_bp;
+    auto yawPitchRoll = trafo::quat2eulerZYX(q_nb);
 
     Eigen::Vector3d expectedRollPitchYaw = angularVelocity_ip_p * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
-    Eigen::Quaterniond expectedQuat_b2n = trafo::quat_b2n(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
+    Eigen::Quaterniond expectedQuat_nb = trafo::quat_nb(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
 
-    CHECK(q_b2n.x() == Approx(expectedQuat_b2n.x()).margin(1e-13));
-    CHECK(q_b2n.y() == Approx(expectedQuat_b2n.y()).margin(1e-13));
-    CHECK(q_b2n.z() == Approx(expectedQuat_b2n.z()).margin(1e-13));
-    CHECK(q_b2n.w() == Approx(expectedQuat_b2n.w()).margin(1e-13));
+    CHECK(q_nb.x() == Approx(expectedQuat_nb.x()).margin(1e-13));
+    CHECK(q_nb.y() == Approx(expectedQuat_nb.y()).margin(1e-13));
+    CHECK(q_nb.z() == Approx(expectedQuat_nb.z()).margin(1e-13));
+    CHECK(q_nb.w() == Approx(expectedQuat_nb.w()).margin(1e-13));
 
     CHECK(yawPitchRoll.x() == Approx(expectedRollPitchYaw.z()).margin(1e-13));
     CHECK(yawPitchRoll.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
     CHECK(yawPitchRoll.z() == Approx(expectedRollPitchYaw.x()).margin(1e-13));
 }
 
-TEST_CASE("[InsMechanization] Update Quaternions b2n Runge-Kutta 3. Order", "[InsMechanization]")
+TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 3. Order", "[InsMechanization]")
 {
     /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec = 0.0001L;
@@ -78,10 +78,10 @@ TEST_CASE("[InsMechanization] Update Quaternions b2n Runge-Kutta 3. Order", "[In
     Eigen::Vector3d angularVelocity_en_n(0, 0, 0);
 
     /// q Quaternion, from platform to body coordinates. Depends on mounting of strap down IMU
-    Eigen::Quaterniond q_p2b = Eigen::Quaterniond::Identity();
+    Eigen::Quaterniond q_bp = Eigen::Quaterniond::Identity();
 
     /// q Quaternion, from earth to navigation coordinates. Depends on location
-    Eigen::Quaterniond q_e2n = Eigen::Quaterniond::Identity();
+    Eigen::Quaterniond q_ne = Eigen::Quaterniond::Identity();
 
     std::deque<Eigen::Quaterniond> quats;
     quats.push_back(Eigen::Quaterniond::Identity());
@@ -90,26 +90,26 @@ TEST_CASE("[InsMechanization] Update Quaternions b2n Runge-Kutta 3. Order", "[In
     size_t count = 10000;
     for (size_t i = 0; i < count; i++)
     {
-        Eigen::Quaterniond q_b2n = updateQuaternion_b2n_RungeKutta3(timeDifferenceSec, timeDifferenceSec,
-                                                                    angularVelocity_ip_b, angularVelocity_ip_b,
-                                                                    angularVelocity_ie_n,
-                                                                    angularVelocity_en_n,
-                                                                    quats.at(1), quats.at(0));
-        quats.push_back(q_b2n);
+        Eigen::Quaterniond q_nb = updateQuaternion_nb_RungeKutta3(timeDifferenceSec, timeDifferenceSec,
+                                                                  angularVelocity_ip_b, angularVelocity_ip_b,
+                                                                  angularVelocity_ie_n,
+                                                                  angularVelocity_en_n,
+                                                                  quats.at(1), quats.at(0));
+        quats.push_back(q_nb);
         quats.pop_front();
     }
 
-    auto q_p2e = quats.at(quats.size() - 1);
-    auto q_b2n = q_e2n * q_p2e * q_p2b;
-    auto yawPitchRoll = trafo::quat2eulerZYX(q_b2n);
+    auto q_ep = quats.at(quats.size() - 1);
+    auto q_nb = q_ne * q_ep * q_bp;
+    auto yawPitchRoll = trafo::quat2eulerZYX(q_nb);
 
     Eigen::Vector3d expectedRollPitchYaw = angularVelocity_ip_b * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
-    Eigen::Quaterniond expectedQuat_b2n = trafo::quat_b2n(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
+    Eigen::Quaterniond expectedQuat_nb = trafo::quat_nb(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
 
-    CHECK(q_b2n.x() == Approx(expectedQuat_b2n.x()).margin(1e-13));
-    CHECK(q_b2n.y() == Approx(expectedQuat_b2n.y()).margin(1e-13));
-    CHECK(q_b2n.z() == Approx(expectedQuat_b2n.z()).margin(1e-13));
-    CHECK(q_b2n.w() == Approx(expectedQuat_b2n.w()).margin(1e-13));
+    CHECK(q_nb.x() == Approx(expectedQuat_nb.x()).margin(1e-13));
+    CHECK(q_nb.y() == Approx(expectedQuat_nb.y()).margin(1e-13));
+    CHECK(q_nb.z() == Approx(expectedQuat_nb.z()).margin(1e-13));
+    CHECK(q_nb.w() == Approx(expectedQuat_nb.w()).margin(1e-13));
 
     CHECK(yawPitchRoll.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
     CHECK(yawPitchRoll.x() == Approx(expectedRollPitchYaw.z()).margin(1e-13));
@@ -137,19 +137,19 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
 
     auto gravity = gravity::gravityMagnitude_Gleason(latitude);
     Eigen::Vector3d gravity_n = Eigen::Vector3d(0, 0, gravity);
-    Eigen::Vector3d gravity_e = trafo::quat_n2e(latitude, longitude) * gravity_n;
+    Eigen::Vector3d gravity_e = trafo::quat_en(latitude, longitude) * gravity_n;
 
     /// a_p Acceleration in [m/s^2], in navigation coordinates
     Eigen::Vector3d acceleration_n(1, -1, -gravity);
-    Eigen::Vector3d acceleration_p = trafo::quat_p2b(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate()
-                                     * trafo::quat_b2n(roll, pitch, yaw).conjugate()
+    Eigen::Vector3d acceleration_p = trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate()
+                                     * trafo::quat_nb(roll, pitch, yaw).conjugate()
                                      * acceleration_n;
 
     Eigen::Vector3d position = trafo::llh2ecef_WGS84(latitude, longitude, height);
 
-    Eigen::Quaterniond quaternion_p2e = trafo::quat_n2e(latitude, longitude)
-                                        * trafo::quat_b2n(roll, pitch, yaw)
-                                        * trafo::quat_p2b(mountingAngleX, mountingAngleY, mountingAngleZ);
+    Eigen::Quaterniond quaternion_ep = trafo::quat_en(latitude, longitude)
+                                       * trafo::quat_nb(roll, pitch, yaw)
+                                       * trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ);
 
     std::deque<Eigen::Vector3d> velocities;
     velocities.emplace_back(Eigen::Vector3d::Zero());
@@ -163,16 +163,16 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
                                                            velocities.at(0),
                                                            position,
                                                            gravity_e,
-                                                           quaternion_p2e,
-                                                           quaternion_p2e,
-                                                           quaternion_p2e);
+                                                           quaternion_ep,
+                                                           quaternion_ep,
+                                                           quaternion_ep);
         velocities.push_back(v_e);
         velocities.pop_front();
     }
 
     auto v_e = velocities.at(velocities.size() - 1);
 
-    auto v_n = trafo::quat_n2e(latitude, longitude).conjugate() * v_e;
+    auto v_n = trafo::quat_en(latitude, longitude).conjugate() * v_e;
 
     // Exact values are not achieved
     CHECK(v_n.x() == Approx(1).margin(0.03));
@@ -200,13 +200,13 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
 
     /// a_p Acceleration in [m/s^2], in navigation coordinates
     Eigen::Vector3d acceleration_n(1, 1, -gravity);
-    Eigen::Vector3d acceleration_b = trafo::quat_b2n(roll, pitch, yaw).conjugate()
+    Eigen::Vector3d acceleration_b = trafo::quat_nb(roll, pitch, yaw).conjugate()
                                      * acceleration_n;
 
-    Eigen::Quaterniond quaternion_b2n = trafo::quat_b2n(roll, pitch, yaw);
+    Eigen::Quaterniond quaternion_nb = trafo::quat_nb(roll, pitch, yaw);
 
     /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
-    Eigen::Vector3d angularVelocity_ie_n = trafo::quat_n2e(latitude, longitude).conjugate() * InsConst::angularVelocity_ie_e;
+    Eigen::Vector3d angularVelocity_ie_n = trafo::quat_en(latitude, longitude).conjugate() * InsConst::angularVelocity_ie_e;
 
     /// North/South (meridian) earth radius [m]
     double R_N = earthRadius_N(InsConst::WGS84_a, InsConst::WGS84_e_squared, latitude);
@@ -232,9 +232,9 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
                                                            gravity_n,
                                                            angularVelocity_ie_n,
                                                            angularVelocity_en_n,
-                                                           quaternion_b2n,
-                                                           quaternion_b2n,
-                                                           quaternion_b2n);
+                                                           quaternion_nb,
+                                                           quaternion_nb,
+                                                           quaternion_nb);
         velocities.push_back(v_n);
         velocities.pop_front();
     }
@@ -259,7 +259,7 @@ TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
     double height = 254;
 
     Eigen::Vector3d velocity_n = Eigen::Vector3d(2, 0, 0);
-    Eigen::Vector3d velocity_e = trafo::quat_n2e(latitude, longitude) * velocity_n;
+    Eigen::Vector3d velocity_e = trafo::quat_en(latitude, longitude) * velocity_n;
 
     Eigen::Vector3d position_e = trafo::llh2ecef_WGS84(latitude, longitude, height);
 
@@ -295,7 +295,7 @@ TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
 
     Eigen::Vector3d velocity_b = Eigen::Vector3d(2, 0, 0);
 
-    Eigen::Vector3d velocity_n = trafo::quat_b2n(roll, pitch, yaw) * velocity_b;
+    Eigen::Vector3d velocity_n = trafo::quat_nb(roll, pitch, yaw) * velocity_b;
 
     Eigen::Vector3d latLonHeight = Eigen::Vector3d(latitude, longitude, height);
 

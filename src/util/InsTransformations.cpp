@@ -17,7 +17,7 @@ Eigen::Vector3d NAV::trafo::quat2eulerZYX(const Eigen::Quaterniond& q)
     return q.toRotationMatrix().eulerAngles(2, 1, 0);
 }
 
-Eigen::Quaterniond NAV::trafo::quat_i2e(const double time, const double angularRate_ie)
+Eigen::Quaterniond NAV::trafo::quat_ei(const double time, const double angularRate_ie)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxisd zAngle(-angularRate_ie * time, Eigen::Vector3d::UnitZ());
@@ -26,7 +26,7 @@ Eigen::Quaterniond NAV::trafo::quat_i2e(const double time, const double angularR
     return q;
 }
 
-Eigen::Quaterniond NAV::trafo::quat_n2e(const double latitude, const double longitude)
+Eigen::Quaterniond NAV::trafo::quat_en(const double latitude, const double longitude)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
@@ -37,7 +37,7 @@ Eigen::Quaterniond NAV::trafo::quat_n2e(const double latitude, const double long
     return q;
 }
 
-Eigen::Quaterniond NAV::trafo::quat_b2n(const double roll, const double pitch, const double yaw)
+Eigen::Quaterniond NAV::trafo::quat_nb(const double roll, const double pitch, const double yaw)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
@@ -49,7 +49,7 @@ Eigen::Quaterniond NAV::trafo::quat_b2n(const double roll, const double pitch, c
     return q;
 }
 
-Eigen::Quaterniond NAV::trafo::quat_p2b(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
+Eigen::Quaterniond NAV::trafo::quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxisd xAngle(mountingAngleX, Eigen::Vector3d::UnitX());

@@ -62,58 +62,58 @@ class StateData : public InsObs
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the Quaternion body to navigation frame (NED)
-    Eigen::Ref<Eigen::Vector4d> quat_b2n_coeff() { return X.segment<4>(0); }
+    Eigen::Ref<Eigen::Vector4d> quat_nb_coeff() { return X.segment<4>(0); }
 
     /// Returns the Quaternion body to navigation frame (NED)
-    [[nodiscard]] Eigen::Ref<Eigen::Vector4d const> quat_b2n_coeff() const { return X.segment<4>(0); }
+    [[nodiscard]] Eigen::Ref<Eigen::Vector4d const> quat_nb_coeff() const { return X.segment<4>(0); }
 
     /// @brief Returns the Quaternion from body to navigation frame (NED)
     /// @return The Quaternion for the rotation from body to navigation coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_b2n() const
+    [[nodiscard]] Eigen::Quaterniond quaternion_nb() const
     {
-        return Eigen::Quaterniond(quat_b2n_coeff());
+        return Eigen::Quaterniond(quat_nb_coeff());
     }
 
     /// @brief Returns the Quaternion from navigation to body frame (NED)
     /// @return The Quaternion for the rotation from navigation to body coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_n2b() const
+    [[nodiscard]] Eigen::Quaterniond quaternion_bn() const
     {
-        return quaternion_b2n().conjugate();
+        return quaternion_nb().conjugate();
     }
 
     /// @brief Returns the Quaternion from navigation to Earth-fixed frame
     /// @return The Quaternion for the rotation from navigation to earth coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_n2e() const
+    [[nodiscard]] Eigen::Quaterniond quaternion_en() const
     {
-        return trafo::quat_n2e(latitude(), longitude());
+        return trafo::quat_en(latitude(), longitude());
     }
 
     /// @brief Returns the Quaternion from Earth-fixed frame to navigation
     /// @return The Quaternion for the rotation from earth navigation coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_e2n() const
+    [[nodiscard]] Eigen::Quaterniond quaternion_ne() const
     {
-        return quaternion_n2e().conjugate();
+        return quaternion_en().conjugate();
     }
 
     /// @brief Returns the Quaternion from body to Earth-fixed frame
     /// @return The Quaternion for the rotation from body to earth coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_b2e() const
+    [[nodiscard]] Eigen::Quaterniond quaternion_eb() const
     {
-        return quaternion_n2e() * quaternion_b2n();
+        return quaternion_en() * quaternion_nb();
     }
 
     /// @brief Returns the Quaternion from Earth-fixed to body frame
     /// @return The Quaternion for the rotation from earth to body coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_e2b() const
+    [[nodiscard]] Eigen::Quaterniond quaternion_be() const
     {
-        return quaternion_b2e().conjugate();
+        return quaternion_eb().conjugate();
     }
 
     /// @brief Returns the Roll, Pitch and Yaw angles in [rad]
     /// @return [roll, pitch, yaw]^T
     [[nodiscard]] Eigen::Vector3d rollPitchYaw() const
     {
-        // Eigen::Matrix3d DCMBodyToNED = quaternion_b2n().toRotationMatrix();
+        // Eigen::Matrix3d DCMBodyToNED = quaternion_nb().toRotationMatrix();
         // Eigen::Vector3d EulerAngles = Eigen::Vector3d::Zero();
 
         // EulerAngles(1) = -asin(DCMBodyToNED(2, 0));
@@ -130,7 +130,7 @@ class StateData : public InsObs
         // }
 
         // return EulerAngles;
-        return trafo::quat2eulerZYX(quaternion_b2n()).reverse();
+        return trafo::quat2eulerZYX(quaternion_nb()).reverse();
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
