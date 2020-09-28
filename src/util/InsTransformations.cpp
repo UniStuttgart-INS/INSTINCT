@@ -26,6 +26,11 @@ Eigen::Quaterniond NAV::trafo::quat_ei(const double time, const double angularRa
     return q;
 }
 
+Eigen::Quaterniond NAV::trafo::quat_ie(const double time, const double angularRate_ie)
+{
+    return quat_ei(time, angularRate_ie).conjugate();
+}
+
 Eigen::Quaterniond NAV::trafo::quat_en(const double latitude, const double longitude)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
@@ -35,6 +40,11 @@ Eigen::Quaterniond NAV::trafo::quat_en(const double latitude, const double longi
 
     Eigen::Quaterniond q = longitudeAngle * latitudeAngle;
     return q;
+}
+
+Eigen::Quaterniond NAV::trafo::quat_ne(const double latitude, const double longitude)
+{
+    return quat_en(latitude, longitude).conjugate();
 }
 
 Eigen::Quaterniond NAV::trafo::quat_nb(const double roll, const double pitch, const double yaw)
@@ -49,6 +59,11 @@ Eigen::Quaterniond NAV::trafo::quat_nb(const double roll, const double pitch, co
     return q;
 }
 
+Eigen::Quaterniond NAV::trafo::quat_bn(const double roll, const double pitch, const double yaw)
+{
+    return quat_nb(roll, pitch, yaw).conjugate();
+}
+
 Eigen::Quaterniond NAV::trafo::quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
@@ -58,6 +73,11 @@ Eigen::Quaterniond NAV::trafo::quat_bp(double mountingAngleX, double mountingAng
 
     Eigen::Quaterniond q = zAngle * yAngle * xAngle;
     return q;
+}
+
+Eigen::Quaterniond NAV::trafo::quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
+{
+    return quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
 }
 
 Eigen::Vector3d NAV::trafo::llh2ecef(const double latitude, const double longitude, const double height, double a, double e_squared)

@@ -2,6 +2,7 @@
 
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
+#include "util/InsGravity.hpp"
 
 NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::string, std::string>& options)
     : Imu(name, options)
@@ -209,6 +210,11 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
     }
 }
 
+void NAV::ImuSimulator::resetNode()
+{
+    currentSimTime = 0.0;
+}
+
 std::shared_ptr<NAV::ImuObs> NAV::ImuSimulator::pollData(bool peek)
 {
     if (currentSimTime > duration)
@@ -223,16 +229,20 @@ std::shared_ptr<NAV::ImuObs> NAV::ImuSimulator::pollData(bool peek)
     auto stateData = std::static_pointer_cast<StateData>(stateNode->requestOutputData(statePortIndex));
 
     Eigen::Quaterniond quat_bn = Eigen::Quaterniond::Identity();
+    double latitude = 0;
     if (stateData)
     {
         quat_bn = stateData->quaternion_bn();
+        latitude = stateData->latitude();
     }
 
     auto obs = std::make_shared<ImuObs>();
-    obs->timeSinceStartup = currentSimTime;
-    currentSimTime += 1.0 / frequency;
+    obs->timeSinceStartup = static_cast<uint64_t>(currentSimTime * 1e9);
 
-    obs->accelUncompXYZ = accel_p + imuPos->quatAccel_pb() * (accel_b + quat_bn * accel_n);
+    double gravityNorm = gravity::gravityMagnitude_Gleason(latitude);
+    auto gravity_n = Eigen::Vector3d(0, 0, -gravityNorm);
+
+    obs->accelUncompXYZ = accel_p + imuPos->quatAccel_pb() * (accel_b + quat_bn * (accel_n + gravity_n));
     obs->gyroUncompXYZ = gyro_p + imuPos->quatGyro_pb() * (gyro_b + quat_bn * gyro_n);
     obs->magUncompXYZ = mag_p + imuPos->quatMag_pb() * (mag_b + quat_bn * mag_n);
     obs->temperature = temperature;
@@ -240,6 +250,7 @@ std::shared_ptr<NAV::ImuObs> NAV::ImuSimulator::pollData(bool peek)
     // Calls all the callbacks
     if (!peek)
     {
+        currentSimTime += 1.0 / frequency;
         invokeCallbacks(obs);
     }
 

@@ -108,11 +108,23 @@ class trafo
     /// @return The rotation Quaternion representation
     [[nodiscard]] static Eigen::Quaterniond quat_ei(double time, double angularRate_ie = InsConst::angularVelocity_ie);
 
+    /// @brief Quaternion for rotations from Earth-centered-Earth-fixed to inertial frame
+    /// @param[in] time Time (t - t0)
+    /// @param[in] angularRate_ie Angular velocity in [rad/s] of earth frame with regard to the inertial frame
+    /// @return The rotation Quaternion representation
+    [[nodiscard]] static Eigen::Quaterniond quat_ie(double time, double angularRate_ie = InsConst::angularVelocity_ie);
+
     /// @brief Quaternion for rotations from navigation to Earth-fixed frame
     /// @param[in] latitude 𝜙 Geodetic latitude in [rad]
     /// @param[in] longitude λ Geodetic longitude in [rad]
     /// @return The rotation Quaternion representation
     [[nodiscard]] static Eigen::Quaterniond quat_en(double latitude, double longitude);
+
+    /// @brief Quaternion for rotations from Earth-fixed to navigation frame
+    /// @param[in] latitude 𝜙 Geodetic latitude in [rad]
+    /// @param[in] longitude λ Geodetic longitude in [rad]
+    /// @return The rotation Quaternion representation
+    [[nodiscard]] static Eigen::Quaterniond quat_ne(double latitude, double longitude);
 
     /// @brief Quaternion for rotations from body to navigation frame
     /// @param[in] roll Roll angle in [rad]
@@ -121,12 +133,26 @@ class trafo
     /// @return The rotation Quaternion representation
     [[nodiscard]] static Eigen::Quaterniond quat_nb(double roll, double pitch, double yaw);
 
+    /// @brief Quaternion for rotations from navigation to body frame
+    /// @param[in] roll Roll angle in [rad]
+    /// @param[in] pitch Pitch angle in [rad]
+    /// @param[in] yaw Yaw angle in [rad]
+    /// @return The rotation Quaternion representation
+    [[nodiscard]] static Eigen::Quaterniond quat_bn(double roll, double pitch, double yaw);
+
     /// @brief Quaternion for rotations from platform to body frame
     /// @param[in] mountingAngleX Mounting angle to x axis in [rad]
     /// @param[in] mountingAngleY Mounting angle to y axis in [rad]
     /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]
     /// @return The rotation Quaternion representation
     [[nodiscard]] static Eigen::Quaterniond quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ);
+
+    /// @brief Quaternion for rotations from body to platform frame
+    /// @param[in] mountingAngleX Mounting angle to x axis in [rad]
+    /// @param[in] mountingAngleY Mounting angle to y axis in [rad]
+    /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]
+    /// @return The rotation Quaternion representation
+    [[nodiscard]] static Eigen::Quaterniond quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ);
 
     /// @brief Converts latitude, longitude and height into Earth-centered-Earth-fixed coordinates using WGS84
     /// @param[in] latitude 𝜙 Geodetic latitude in [rad]

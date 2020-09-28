@@ -171,7 +171,7 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     state->callbacksEnabled = true;
 
     auto currentState = std::static_pointer_cast<StateData>(state->requestOutputData(0));
-    auto quat_pb = trafo::quat_bp(mountingAngles.x(), mountingAngles.y(), mountingAngles.z()).conjugate();
+    auto quat_pb = trafo::quat_pb(mountingAngles.x(), mountingAngles.y(), mountingAngles.z());
 
     long double dt = 0.1L;
     long double seconds = 7200.0L;
@@ -197,12 +197,12 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
         currentState = std::static_pointer_cast<StateData>(state->requestOutputData(0));
     }
 
-    REQUIRE(gnuPlotLatLon->update() == true);
-    REQUIRE(gnuPlotLat->update() == true);
-    REQUIRE(gnuPlotLon->update() == true);
-    REQUIRE(gnuPlotHeight->update() == true);
-    REQUIRE(gnuPlotVelocity->update() == true);
-    REQUIRE(gnuPlotAngles->update() == true);
+    // REQUIRE(gnuPlotLatLon->update() == true);
+    // REQUIRE(gnuPlotLat->update() == true);
+    // REQUIRE(gnuPlotLon->update() == true);
+    // REQUIRE(gnuPlotHeight->update() == true);
+    // REQUIRE(gnuPlotVelocity->update() == true);
+    // REQUIRE(gnuPlotAngles->update() == true);
 
     LOG_INFO("Distance Total : {} [m]", measureDistance(currentState->latitude(), currentState->longitude(),
                                                         trafo::deg2rad(initLatLonHeight(0)), trafo::deg2rad(initLatLonHeight(1))));
@@ -212,9 +212,9 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
                                                         currentState->latitude(), trafo::deg2rad(initLatLonHeight(1))));
     LOG_INFO("Distance Height: {} [m]", currentState->height() - initLatLonHeight(2));
 
-    CHECK(true == false);
+    // CHECK(true == false);
 
-    Sleep::waitForSignal();
+    // Sleep::waitForSignal();
 }
 
 } // namespace NAV

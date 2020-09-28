@@ -166,7 +166,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     latitude = trafo::deg2rad(90);
     longitude = 0.0;
 
-    auto q_ne = trafo::quat_en(latitude, longitude).conjugate();
+    auto q_ne = trafo::quat_ne(latitude, longitude);
 
     auto x_e = Eigen::Vector3d(1, 2, 3);
     auto x_n = q_ne * x_e;
@@ -174,6 +174,46 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     CHECK(x_n.x() == Approx(-1.0));
     CHECK(x_n.y() == Approx(2.0));
     CHECK(x_n.z() == Approx(-3.0));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(0);
+    longitude = trafo::deg2rad(0);
+
+    q_ne = trafo::quat_ne(latitude, longitude);
+
+    x_e = Eigen::Vector3d(1, 2, 3);
+    x_n = q_ne * x_e;
+
+    CHECK(x_n.x() == Approx(3.0));
+    CHECK(x_n.y() == Approx(2.0));
+    CHECK(x_n.z() == Approx(-1.0));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(0);
+    longitude = trafo::deg2rad(0);
+
+    q_ne = trafo::quat_ne(latitude, longitude);
+    //                    (0, 0, 7.2921151467e-05)
+    x_n = q_ne * InsConst::angularVelocity_ie_e;
+
+    CHECK(x_n.x() == Approx(InsConst::angularVelocity_ie));
+    CHECK(x_n.y() == Approx(0));
+    CHECK(x_n.z() == Approx(0).margin(EPSILON));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(45);
+    longitude = trafo::deg2rad(90);
+
+    q_ne = trafo::quat_ne(latitude, longitude);
+    //                    (0, 0, 7.2921151467e-05)
+    x_n = q_ne * InsConst::angularVelocity_ie_e;
+
+    CHECK(x_n.x() == Approx(InsConst::angularVelocity_ie / std::sqrt(2)));
+    CHECK(x_n.y() == Approx(0).margin(EPSILON));
+    CHECK(x_n.z() == Approx(-InsConst::angularVelocity_ie / std::sqrt(2)));
 }
 
 TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTransformations]")
@@ -217,7 +257,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     roll = 0.0;
     pitch = 0.0;
     yaw = trafo::deg2rad(-45);
-    auto q_bn = trafo::quat_nb(roll, pitch, yaw).conjugate();
+    auto q_bn = trafo::quat_bn(roll, pitch, yaw);
 
     auto x_n = Eigen::Vector3d(1.0, 1.0, 0.0);
     Eigen::Vector3d x_b = q_bn * x_n;
@@ -231,7 +271,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     roll = trafo::deg2rad(45);
     pitch = 0.0;
     yaw = 0.0;
-    q_bn = trafo::quat_nb(roll, pitch, yaw).conjugate();
+    q_bn = trafo::quat_bn(roll, pitch, yaw);
 
     x_n = Eigen::Vector3d(1.0, 1.0, 1.0);
     x_b = q_bn * x_n;
@@ -245,7 +285,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     roll = 0.0;
     pitch = trafo::deg2rad(45);
     yaw = 0.0;
-    q_bn = trafo::quat_nb(roll, pitch, yaw).conjugate();
+    q_bn = trafo::quat_bn(roll, pitch, yaw);
 
     x_n = Eigen::Vector3d(1.0, 1.0, 1.0);
     x_b = q_bn * x_n;
@@ -259,7 +299,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     roll = trafo::deg2rad(90);
     pitch = trafo::deg2rad(180);
     yaw = trafo::deg2rad(90);
-    q_bn = trafo::quat_nb(roll, pitch, yaw).conjugate();
+    q_bn = trafo::quat_bn(roll, pitch, yaw);
 
     x_n = Eigen::Vector3d(1.0, 2.0, 3.0);
     x_b = q_bn * x_n;
@@ -275,7 +315,7 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
     double mountingAngleY = trafo::deg2rad(180);
     double mountingAngleZ = trafo::deg2rad(45);
 
-    auto q_bp = trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
+    auto q_bp = trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ);
 
     auto x_p = Eigen::Vector3d(2.0, 0.0, 9.81);
     Eigen::Vector3d x_b = q_bp * x_p;

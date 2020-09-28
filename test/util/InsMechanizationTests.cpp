@@ -30,7 +30,7 @@ TEST_CASE("[InsMechanization] Update Quaternions ep Runge-Kutta 3. Order", "[Ins
     Eigen::Quaterniond q_bp = Eigen::Quaterniond::Identity();
 
     /// q Quaternion, from earth to navigation coordinates. Depends on location
-    Eigen::Quaterniond q_ne = trafo::quat_en(latitude, longitude).conjugate();
+    Eigen::Quaterniond q_ne = trafo::quat_ne(latitude, longitude);
 
     Eigen::Quaterniond q_nb__t0 = Eigen::Quaterniond::Identity();
 
@@ -141,8 +141,8 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
 
     /// a_p Acceleration in [m/s^2], in navigation coordinates
     Eigen::Vector3d acceleration_n(1, -1, -gravity);
-    Eigen::Vector3d acceleration_p = trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate()
-                                     * trafo::quat_nb(roll, pitch, yaw).conjugate()
+    Eigen::Vector3d acceleration_p = trafo::quat_pb(mountingAngleX, mountingAngleY, mountingAngleZ)
+                                     * trafo::quat_bn(roll, pitch, yaw)
                                      * acceleration_n;
 
     Eigen::Vector3d position = trafo::llh2ecef_WGS84(latitude, longitude, height);
@@ -172,7 +172,7 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
 
     auto v_e = velocities.at(velocities.size() - 1);
 
-    auto v_n = trafo::quat_en(latitude, longitude).conjugate() * v_e;
+    auto v_n = trafo::quat_ne(latitude, longitude) * v_e;
 
     // Exact values are not achieved
     CHECK(v_n.x() == Approx(1).margin(0.03));
@@ -200,13 +200,13 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
 
     /// a_p Acceleration in [m/s^2], in navigation coordinates
     Eigen::Vector3d acceleration_n(1, 1, -gravity);
-    Eigen::Vector3d acceleration_b = trafo::quat_nb(roll, pitch, yaw).conjugate()
+    Eigen::Vector3d acceleration_b = trafo::quat_bn(roll, pitch, yaw)
                                      * acceleration_n;
 
     Eigen::Quaterniond quaternion_nb = trafo::quat_nb(roll, pitch, yaw);
 
     /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
-    Eigen::Vector3d angularVelocity_ie_n = trafo::quat_en(latitude, longitude).conjugate() * InsConst::angularVelocity_ie_e;
+    Eigen::Vector3d angularVelocity_ie_n = trafo::quat_ne(latitude, longitude) * InsConst::angularVelocity_ie_e;
 
     /// North/South (meridian) earth radius [m]
     double R_N = earthRadius_N(InsConst::WGS84_a, InsConst::WGS84_e_squared, latitude);
