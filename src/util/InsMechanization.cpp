@@ -303,6 +303,18 @@ Eigen::Vector3d updatePosition_n(const long double& timeDifferenceSec__t0, // Δ
     return latLonHeight__t0;
 }
 
+Eigen::Vector3d updatePosition_n(const long double& timeDifferenceSec__t0, // Δtₖ Time difference in [seconds]. This epoch to previous epoch
+                                 const Eigen::Vector3d& position_n__t1,    // [x_n, x_e, x_d] (tₖ₋₁) Position NED in [m] at the time tₖ₋₁
+                                 const Eigen::Vector3d& velocity_n__t1)    // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
+{
+    Eigen::Vector3d position_n__t0;
+    position_n__t0(0) = position_n__t1(0) + velocity_n__t1(0) * static_cast<double>(timeDifferenceSec__t0);
+    position_n__t0(1) = position_n__t1(1) + velocity_n__t1(1) * static_cast<double>(timeDifferenceSec__t0);
+    position_n__t0(2) = position_n__t1(2) + velocity_n__t1(2) * static_cast<double>(timeDifferenceSec__t0);
+
+    return position_n__t0;
+}
+
 double earthRadius_N(const double& a, const double& e_squared, const double& latitude)
 {
     double k = std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));

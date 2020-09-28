@@ -14,7 +14,26 @@ Eigen::Vector3d NAV::trafo::rad2deg3(const Eigen::Vector3d& rad)
 
 Eigen::Vector3d NAV::trafo::quat2eulerZYX(const Eigen::Quaterniond& q)
 {
-    return q.toRotationMatrix().eulerAngles(2, 1, 0);
+    Eigen::Matrix3d dcm = q.toRotationMatrix();
+
+    Eigen::Vector3d EulerAngles = Eigen::Vector3d::Zero();
+
+    EulerAngles(1) = asin(dcm(2, 0));
+    if (rad2deg(std::abs(EulerAngles(1))) < 89.0)
+    {
+        EulerAngles(0) = -std::atan2((dcm(2, 1) / std::cos(EulerAngles(1))), (dcm(2, 2) / std::cos(EulerAngles(1))));
+
+        EulerAngles(2) = -std::atan2((dcm(1, 0) / std::cos(EulerAngles(1))), (dcm(0, 0) / std::cos(EulerAngles(1))));
+    }
+    else
+    {
+        EulerAngles(0) = 0.0;
+        EulerAngles(2) = 0.0;
+    }
+
+    return EulerAngles;
+
+    // return q.toRotationMatrix().eulerAngles(2, 1, 0);
 }
 
 Eigen::Quaterniond NAV::trafo::quat_ei(const double time, const double angularRate_ie)
@@ -80,6 +99,34 @@ Eigen::Quaterniond NAV::trafo::quat_pb(double mountingAngleX, double mountingAng
     return quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
 }
 
+Eigen::Vector3d NAV::trafo::ecef2ned(const Eigen::Vector3d& position_e, const double latitude_ref, const double longitude_ref, const double height_ref)
+{
+    Eigen::Vector3d position_e_ref = llh2ecef_WGS84(latitude_ref, longitude_ref, height_ref);
+
+    Eigen::Matrix3d R_ne;
+    R_ne << -std::sin(latitude_ref) * std::cos(longitude_ref), -std::sin(latitude_ref) * std::sin(longitude_ref), std::cos(latitude_ref),
+        -std::sin(longitude_ref), std::cos(longitude_ref), 0,
+        -std::cos(latitude_ref) * std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref), -std::sin(latitude_ref);
+
+    Eigen::Vector3d position_n = R_ne * (position_e - position_e_ref);
+
+    return position_n;
+}
+
+Eigen::Vector3d NAV::trafo::ned2ecef(const Eigen::Vector3d& position_n, const double latitude_ref, const double longitude_ref, const double height_ref)
+{
+    Eigen::Vector3d position_e_ref = llh2ecef_WGS84(latitude_ref, longitude_ref, height_ref);
+
+    Eigen::Matrix3d R_en;
+    R_en << -std::sin(latitude_ref) * std::cos(longitude_ref), -std::sin(longitude_ref), -std::cos(latitude_ref) * std::cos(longitude_ref),
+        -std::sin(latitude_ref) * std::sin(longitude_ref), std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref),
+        std::cos(latitude_ref), 0, -std::sin(latitude_ref);
+
+    Eigen::Vector3d position_e = position_e_ref + R_en * position_n;
+
+    return position_e;
+}
+
 Eigen::Vector3d NAV::trafo::llh2ecef(const double latitude, const double longitude, const double height, double a, double e_squared)
 {
     /// Radius of curvature of the ellipsoid in the prime vertical plane,
@@ -102,55 +149,53 @@ Eigen::Vector3d NAV::trafo::llh2ecef_GRS80(const double latitude, const double l
     return llh2ecef(latitude, longitude, height, InsConst::GRS80_a, InsConst::GRS80_e_squared);
 }
 
-Eigen::Vector3d NAV::trafo::ecef2llh(const Eigen::Vector3d& ecef, double a, double e_squared)
+Eigen::Vector3d NAV::trafo::ecef2llh(const Eigen::Vector3d& ecef, double a, double b, double e_squared)
 {
-    // Value is used every iteration and does not change
-    double sqrt_x1x1_x2x2 = std::sqrt(std::pow(ecef(0), 2) + std::pow(ecef(1), 2));
+    auto x = ecef(0);
+    auto y = ecef(1);
+    auto z = ecef(2);
 
-    // Latitude with initial assumption that h = 0 (eq. 1.85)
-    double latitude = std::atan2(ecef(2) / (1 - e_squared), sqrt_x1x1_x2x2);
+    // Calculate longitude
 
-    double N{};
-    size_t maxIterationCount = 6;
-    for (size_t i = 0; i < maxIterationCount; i++) // Convergence should break the loop, but better limit the loop itself
-    {
-        // Radius of curvature of the ellipsoid in the prime vertical plane,
-        // i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
-        N = a / std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
+    auto lon = std::atan2(y, x);
 
-        // Latitude (eq. 1.84)
-        double newLatitude = std::atan2(ecef(2) + e_squared * N * std::sin(latitude), sqrt_x1x1_x2x2);
+    // Start computing intermediate variables needed to compute altitude
 
-        // Check convergence
-        if (std::abs(newLatitude - latitude) <= 1e-13)
-        {
-            latitude = newLatitude;
-            break;
-        }
+    auto p = ecef.head(2).norm();
+    auto E = std::sqrt(a * a - b * b);
+    auto F = 54 * std::pow(b * z, 2);
+    auto G = p * p + (1 - e_squared) * z * z - e_squared * E * E;
+    auto c = e_squared * e_squared * F * p * p / std::pow(G, 3);
+    auto s = std::pow(1 + c + std::sqrt(c * c + 2 * c), 1.0 / 3.0);
+    auto P = (F / (3 * G * G)) / std::pow(s + (1.0 / s) + 1, 2);
+    auto Q = std::sqrt(1 + 2 * e_squared * e_squared * P);
+    auto k_1 = -P * e_squared * p / (1 + Q);
+    auto k_2 = 0.5 * a * a * (1 + 1 / Q);
+    auto k_3 = -P * (1 - e_squared) * z * z / (Q * (1 + Q));
+    auto k_4 = -0.5 * P * p * p;
+    auto r_0 = k_1 + std::sqrt(k_2 + k_3 + k_4);
+    auto k_5 = (p - e_squared * r_0);
+    auto U = std::sqrt(k_5 * k_5 + z * z);
+    auto V = std::sqrt(k_5 * k_5 + (1 - e_squared) * z * z);
 
-        if (i == maxIterationCount - 1)
-        {
-            LOG_ERROR("ECEF2LLH conversion did not converge! Difference is still at {} [rad]", std::abs(newLatitude - latitude));
-        }
+    auto alt = U * (1 - (b * b / (a * V)));
 
-        latitude = newLatitude;
-    }
+    // Compute additional values required for computing latitude
 
-    // Longitude (eq. 1.84)
-    double longitude = std::atan2(ecef(1), ecef(0));
-    // Height (eq. 1.84)
-    double height = sqrt_x1x1_x2x2 / std::cos(latitude);
-    height -= N;
+    auto z_0 = (b * b * z) / (a * V);
+    auto e_p = (a / b) * std::sqrt(e_squared);
 
-    return Eigen::Vector3d(latitude, longitude, height);
+    auto lat = std::atan((z + z_0 * (e_p * e_p)) / p);
+
+    return Eigen::Vector3d(lat, lon, alt);
 }
 
 Eigen::Vector3d NAV::trafo::ecef2llh_WGS84(const Eigen::Vector3d& ecef)
 {
-    return ecef2llh(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    return ecef2llh(ecef, InsConst::WGS84_a, InsConst::WGS84_b, InsConst::WGS84_e_squared);
 }
 
 Eigen::Vector3d NAV::trafo::ecef2llh_GRS80(const Eigen::Vector3d& ecef)
 {
-    return ecef2llh(ecef, InsConst::GRS80_a, InsConst::GRS80_e_squared);
+    return ecef2llh(ecef, InsConst::GRS80_a, InsConst::GRS80_b, InsConst::GRS80_e_squared);
 }

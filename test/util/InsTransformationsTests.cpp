@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include "util/InsTransformations.hpp"
+#include "util/Logger.hpp"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -51,6 +52,55 @@ Eigen::Matrix3d DCM_ei(const double time, const double angularRate_ie)
 
     // clang-format on
     return DCM;
+}
+
+/// @brief Converts Earth-centered-Earth-fixed coordinates into latitude, longitude and height
+/// @param[in] ecef Vector with coordinates in ECEF frame in [m]
+/// @param[in] a Semi-major axis of the reference ellipsoid
+/// @param[in] e_squared Square of the first eccentricity of the ellipsoid
+/// @return Vector containing [latitude 𝜙, longitude λ, height h]^T in [rad, rad, m]
+/// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications
+Eigen::Vector3d ecef2llh_iter(const Eigen::Vector3d& ecef, double a, double e_squared)
+{
+    // Value is used every iteration and does not change
+    double sqrt_x1x1_x2x2 = std::sqrt(std::pow(ecef(0), 2) + std::pow(ecef(1), 2));
+
+    // Latitude with initial assumption that h = 0 (eq. 1.85)
+    double latitude = std::atan2(ecef(2) / (1 - e_squared), sqrt_x1x1_x2x2);
+
+    double N{};
+    size_t maxIterationCount = 6;
+    for (size_t i = 0; i < maxIterationCount; i++) // Convergence should break the loop, but better limit the loop itself
+    {
+        // Radius of curvature of the ellipsoid in the prime vertical plane,
+        // i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
+        N = a / std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
+
+        // Latitude (eq. 1.84)
+        double newLatitude = std::atan2(ecef(2) + e_squared * N * std::sin(latitude), sqrt_x1x1_x2x2);
+
+        // Check convergence
+        if (std::abs(newLatitude - latitude) <= 1e-13)
+        {
+            latitude = newLatitude;
+            break;
+        }
+
+        if (i == maxIterationCount - 1)
+        {
+            LOG_ERROR("ECEF2LLH conversion did not converge! Difference is still at {} [rad]", std::abs(newLatitude - latitude));
+        }
+
+        latitude = newLatitude;
+    }
+
+    // Longitude (eq. 1.84)
+    double longitude = std::atan2(ecef(1), ecef(0));
+    // Height (eq. 1.84)
+    double height = sqrt_x1x1_x2x2 / std::cos(latitude);
+    height -= N;
+
+    return Eigen::Vector3d(latitude, longitude, height);
 }
 
 TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformations]")
@@ -214,6 +264,45 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     CHECK(x_n.x() == Approx(InsConst::angularVelocity_ie / std::sqrt(2)));
     CHECK(x_n.y() == Approx(0).margin(EPSILON));
     CHECK(x_n.z() == Approx(-InsConst::angularVelocity_ie / std::sqrt(2)));
+}
+
+TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame conversion", "[InsTransformations]")
+{
+    double latitude_ref = trafo::deg2rad(88);
+    double longitude_ref = trafo::deg2rad(-40);
+    double height_ref = 500;
+    auto position_e_ref = trafo::llh2ecef_WGS84(latitude_ref, longitude_ref, height_ref);
+
+    auto position_n_ref = trafo::ecef2ned(position_e_ref, latitude_ref, longitude_ref, height_ref);
+
+    CHECK(position_n_ref(0) == 0);
+    CHECK(position_n_ref(1) == 0);
+    CHECK(position_n_ref(2) == 0);
+
+    auto position_e = trafo::llh2ecef_WGS84(latitude_ref, longitude_ref, height_ref + 200);
+    auto position_n = trafo::ecef2ned(position_e, latitude_ref, longitude_ref, height_ref);
+
+    CHECK(position_n(0) == Approx(0).margin(1e-10));
+    CHECK(position_n(1) == Approx(0).margin(1e-10));
+    CHECK(position_n(2) == Approx(-200));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    position_e = trafo::ned2ecef(position_n_ref, latitude_ref, longitude_ref, height_ref);
+
+    CHECK(position_e(0) == position_e_ref(0));
+    CHECK(position_e(1) == position_e_ref(1));
+    CHECK(position_e(2) == position_e_ref(2));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    position_e_ref = trafo::llh2ecef_WGS84(-10, 70, 2001);
+    position_n = trafo::ecef2ned(position_e_ref, latitude_ref, longitude_ref, height_ref);
+    position_e = trafo::ned2ecef(position_n, latitude_ref, longitude_ref, height_ref);
+
+    CHECK(position_e(0) == Approx(position_e_ref(0)));
+    CHECK(position_e(1) == Approx(position_e_ref(1)));
+    CHECK(position_e(2) == Approx(position_e_ref(2)));
 }
 
 TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTransformations]")
@@ -415,6 +504,91 @@ TEST_CASE("[InsTransformations] LLH <=> ECEF conversion", "[InsTransformations]"
     CHECK(llh.x() == Approx(latitude));
     CHECK(llh.y() == Approx(longitude));
     CHECK(llh.z() == Approx(height));
+}
+
+TEST_CASE("[InsTransformations] ECEF <=> LLH iterative conversion", "[InsTransformations]")
+{
+    // Conversion with https://www.oc.nps.edu/oc2902w/coord/llhxyz.htm
+
+    // Stuttgart, Breitscheidstraße 2
+    // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
+    double latitude = trafo::deg2rad(48.78081);
+    double longitude = trafo::deg2rad(9.172012);
+    double height = 254;
+    Eigen::Vector3d ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    Eigen::Vector3d llh = trafo::ecef2llh_WGS84(ecef);
+    Eigen::Vector3d llh_iter = ecef2llh_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height));
+    CHECK(llh.x() == Approx(llh_iter.x()));
+    CHECK(llh.y() == Approx(llh_iter.y()));
+    CHECK(llh.z() == Approx(llh_iter.z()));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(48.78081);
+    longitude = trafo::deg2rad(9.172012);
+    height = 0;
+    ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    llh = trafo::ecef2llh_WGS84(ecef);
+    llh_iter = ecef2llh_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height));
+    CHECK(llh.x() == Approx(llh_iter.x()));
+    CHECK(llh.y() == Approx(llh_iter.y()));
+    CHECK(llh.z() == Approx(llh_iter.z()).margin(1e-9));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(0);
+    longitude = trafo::deg2rad(0);
+    height = 0;
+    ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    llh = trafo::ecef2llh_WGS84(ecef);
+    llh_iter = ecef2llh_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height));
+    CHECK(llh.x() == Approx(llh_iter.x()));
+    CHECK(llh.y() == Approx(llh_iter.y()));
+    CHECK(llh.z() == Approx(llh_iter.z()));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(90);
+    longitude = trafo::deg2rad(0);
+    height = 0;
+    ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    llh = trafo::ecef2llh_WGS84(ecef);
+    llh_iter = ecef2llh_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height));
+    CHECK(llh.x() == Approx(llh_iter.x()));
+    CHECK(llh.y() == Approx(llh_iter.y()));
+    CHECK(llh.z() == Approx(llh_iter.z()));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    latitude = trafo::deg2rad(90);
+    longitude = trafo::deg2rad(180);
+    height = 0;
+    ecef = trafo::llh2ecef_WGS84(latitude, longitude, height);
+    llh = trafo::ecef2llh_WGS84(ecef);
+    llh_iter = ecef2llh_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+
+    CHECK(llh.x() == Approx(latitude));
+    CHECK(llh.y() == Approx(longitude));
+    CHECK(llh.z() == Approx(height));
+    CHECK(llh.x() == Approx(llh_iter.x()));
+    CHECK(llh.y() == Approx(llh_iter.y()));
+    CHECK(llh.z() == Approx(llh_iter.z()));
 }
 
 TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")

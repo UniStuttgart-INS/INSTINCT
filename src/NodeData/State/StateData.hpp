@@ -130,7 +130,7 @@ class StateData : public InsObs
         // }
 
         // return EulerAngles;
-        return trafo::quat2eulerZYX(quaternion_nb()).reverse();
+        return trafo::quat2eulerZYX(quaternion_bn());
     }
 
     /* -------------------------------------------------------------------------------------------------------- */

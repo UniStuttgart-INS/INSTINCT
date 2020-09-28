@@ -56,17 +56,18 @@ class trafo
     /// @param[in] a Semi-major axis of the reference ellipsoid
     /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
     /// @return The ECEF coordinates in [m]
-    /// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications
+    /// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications. pp. 23
     [[nodiscard]] static Eigen::Vector3d llh2ecef(double latitude, double longitude, double height,
                                                   double a, double e_squared);
 
     /// @brief Converts Earth-centered-Earth-fixed coordinates into latitude, longitude and height
     /// @param[in] ecef Vector with coordinates in ECEF frame in [m]
     /// @param[in] a Semi-major axis of the reference ellipsoid
+    /// @param[in] b Semi-minor axis of the reference ellipsoid
     /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
     /// @return Vector containing [latitude 𝜙, longitude λ, height h]^T in [rad, rad, m]
-    /// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications
-    [[nodiscard]] static Eigen::Vector3d ecef2llh(const Eigen::Vector3d& ecef, double a, double e_squared);
+    /// @note See J.A. Farrel and M. Barth, 1999, GPS & Inertal Navigation. McGraw-Hill. pp. 29.
+    [[nodiscard]] static Eigen::Vector3d ecef2llh(const Eigen::Vector3d& ecef, double a, double b, double e_squared);
 
   public:
     /// @brief Convert Degree to Radians
@@ -153,6 +154,24 @@ class trafo
     /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]
     /// @return The rotation Quaternion representation
     [[nodiscard]] static Eigen::Quaterniond quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ);
+
+    /// @brief Converts ECEF coordinates into local NED coordinates
+    /// @param[in] position_e ECEF coordinates in [m] to convert
+    /// @param[in] latitude_ref Reference Latitude in [rad] which represents the origin of the local frame
+    /// @param[in] longitude_ref Reference Longitude in [rad] which represents the origin of the local frame
+    /// @param[in] height_ref Reference Height in [m] which represents the origin of the local frame
+    /// @return [x_N, x_E, x_D]^T Local NED coordinates in [m]
+    /// @note See G. Cai, B.M. Chen, Lee, T.H. Lee, 2011, Unmanned Rotorcraft Systems. Springer. pp. 32
+    [[nodiscard]] static Eigen::Vector3d ecef2ned(const Eigen::Vector3d& position_e, double latitude_ref, double longitude_ref, double height_ref);
+
+    /// @brief Converts local NED coordinates into ECEF coordinates
+    /// @param[in] position_n NED coordinates in [m] to convert
+    /// @param[in] latitude_ref Reference Latitude in [rad] which represents the origin of the local frame
+    /// @param[in] longitude_ref Reference Longitude in [rad] which represents the origin of the local frame
+    /// @param[in] height_ref Reference Height in [m] which represents the origin of the local frame
+    /// @return ECEF position in [m]
+    /// @note See G. Cai, B.M. Chen, Lee, T.H. Lee, 2011, Unmanned Rotorcraft Systems. Springer. pp. 32
+    [[nodiscard]] static Eigen::Vector3d ned2ecef(const Eigen::Vector3d& position_n, double latitude_ref, double longitude_ref, double height_ref);
 
     /// @brief Converts latitude, longitude and height into Earth-centered-Earth-fixed coordinates using WGS84
     /// @param[in] latitude 𝜙 Geodetic latitude in [rad]

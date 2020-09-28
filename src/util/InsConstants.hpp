@@ -24,20 +24,20 @@ const static Eigen::Matrix3d angularVelocityCrossProduct_ie_e = (Eigen::Matrix3d
                                                                  -angularVelocity_ie_e(1), angularVelocity_ie_e(0), 0)
                                                                     .finished();
 
-/// Semi-major axis (World Geodetic System 1984)
+/// Semi-major axis = equatorial radius (World Geodetic System 1984)
 constexpr double WGS84_a = 6378137.0;
 /// Flattening f = (a-b)/a (World Geodetic System 1984)
 constexpr double WGS84_f = 1.0 / 298.257223563;
-/// Semi-minor axis (World Geodetic System 1984)
+/// Semi-minor axis = polar radius (World Geodetic System 1984)
 constexpr double WGS84_b = WGS84_a - WGS84_f * WGS84_a;
 /// Square of the first eccentricity of the ellipsoid (World Geodetic System 1984)
 constexpr double WGS84_e_squared = 2 * WGS84_f - WGS84_f * WGS84_f;
 
-/// Semi-major axis (Geodetic Reference System 1980)
+/// Semi-major axis = equatorial radius (Geodetic Reference System 1980)
 constexpr double GRS80_a = 6378137;
 /// Flattening f = (a-b)/a (Geodetic Reference System 1980)
 constexpr double GRS80_f = 1.0 / 298.257222101;
-/// Semi-minor axis (Geodetic Reference System 1980)
+/// Semi-minor axis = polar radius (Geodetic Reference System 1980)
 constexpr double GRS80_b = GRS80_a - GRS80_f * GRS80_a;
 /// Square of the first eccentricity of the ellipsoid (Geodetic Reference System 1980)
 constexpr double GRS80_e_squared = 2 * GRS80_f - GRS80_f * GRS80_f;

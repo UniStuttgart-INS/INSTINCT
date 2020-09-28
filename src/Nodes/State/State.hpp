@@ -128,6 +128,9 @@ class State : public Node
         return nullptr;
     }
 
+    /// The initial vehicle state
+    std::shared_ptr<StateData> initialState;
+
   private:
     /// @brief Update the current State
     /// @param[in] state The new state

@@ -281,7 +281,7 @@ TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
 TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
 {
     /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
-    long double timeDifferenceSec = 0.0001L;
+    long double dt = 0.001L;
 
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
@@ -299,7 +299,9 @@ TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
 
     Eigen::Vector3d latLonHeight = Eigen::Vector3d(latitude, longitude, height);
 
-    size_t count = 10000;
+    Eigen::Vector3d pos_n = Eigen::Vector3d::Zero();
+
+    size_t count = 4000;
     for (size_t i = 0; i < count; i++)
     {
         /// North/South (meridian) earth radius [m]
@@ -307,12 +309,21 @@ TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
         /// East/West (prime vertical) earth radius [m]
         double R_E = earthRadius_E(InsConst::WGS84_a, InsConst::WGS84_e_squared, latLonHeight(0));
 
-        latLonHeight = updatePosition_n(timeDifferenceSec, latLonHeight, velocity_n, R_N, R_E);
-    }
+        latLonHeight = updatePosition_n(dt, latLonHeight, velocity_n, R_N, R_E);
 
-    CHECK(measureDistance(latitude, longitude, latLonHeight(0), latLonHeight(1)) == Approx(2).margin(0.01));
-    CHECK(measureDistance(latitude, longitude, latLonHeight(0), longitude) == Approx(std::sqrt(2)).margin(0.002));
-    CHECK(measureDistance(latitude, longitude, latitude, latLonHeight(1)) == Approx(std::sqrt(2)).margin(0.003));
+        pos_n = updatePosition_n(dt, pos_n, velocity_n);
+    }
+    double distance = static_cast<double>(count) * static_cast<double>(dt) * velocity_b.norm();
+
+    CHECK(pos_n.norm() == Approx(distance));
+    CHECK(pos_n(0) == Approx(distance * std::sin(yaw)));
+    CHECK(pos_n(1) == Approx(distance * std::cos(yaw)));
+    CHECK(pos_n(2) == 0);
+
+    // updatePosition_n with lat lon formula shows really bad accuracy
+    CHECK(measureDistance(latitude, longitude, latLonHeight(0), latLonHeight(1)) == Approx(distance).margin(0.004));
+    CHECK(measureDistance(latitude, longitude, latLonHeight(0), longitude) == Approx(distance * std::sin(yaw)).margin(0.02));
+    CHECK(measureDistance(latitude, longitude, latitude, latLonHeight(1)) == Approx(distance * std::cos(yaw)).margin(0.02));
 
     CHECK(latitude < latLonHeight(0));
     CHECK(longitude < latLonHeight(1));

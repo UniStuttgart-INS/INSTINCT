@@ -3,6 +3,7 @@
 NAV::State::State(const std::string& name, const std::map<std::string, std::string>& options)
     : Node(name)
 {
+    initialState = std::make_shared<StateData>();
     currentState = std::make_shared<StateData>();
 
     if (options.count("Init LatLonAlt"))
@@ -11,13 +12,13 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
         std::string value;
         if (std::getline(lineStream, value, ';'))
         {
-            currentState->latitude() = trafo::deg2rad(std::stod(value));
+            initialState->latitude() = trafo::deg2rad(std::stod(value));
             if (std::getline(lineStream, value, ';'))
             {
-                currentState->longitude() = trafo::deg2rad(std::stod(value));
+                initialState->longitude() = trafo::deg2rad(std::stod(value));
                 if (std::getline(lineStream, value, ';'))
                 {
-                    currentState->height() = std::stod(value);
+                    initialState->height() = std::stod(value);
                 }
             }
         }
@@ -41,7 +42,7 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
                 }
             }
         }
-        currentState->quat_nb_coeff() = trafo::quat_nb(roll, pitch, yaw).coeffs();
+        initialState->quat_nb_coeff() = trafo::quat_nb(roll, pitch, yaw).coeffs();
     }
     if (options.count("Init Velocity"))
     {
@@ -62,8 +63,10 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
                 }
             }
         }
-        currentState->velocity_n() = Eigen::Vector3d(v_n, v_e, v_d);
+        initialState->velocity_n() = Eigen::Vector3d(v_n, v_e, v_d);
     }
+
+    currentState->X = initialState->X;
 }
 
 void NAV::State::updateState(std::shared_ptr<StateData>& state)

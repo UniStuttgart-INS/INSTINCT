@@ -6,6 +6,8 @@
 #include "util/InsConstants.hpp"
 #include "util/InsGravity.hpp"
 
+#include "Nodes/State/State.hpp"
+
 NAV::ImuIntegrator::ImuIntegrator(const std::string& name, [[maybe_unused]] const std::map<std::string, std::string>& options)
     : Node(name)
 {
@@ -49,6 +51,9 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     // Rotate State Data
     prevStates.pop_back();
     prevStates.push_front(stateData__t1);
+
+    /// Initial State
+    auto stateData__init = std::static_pointer_cast<State>(stateNode)->initialState;
 
     /// IMU Observation at the time tₖ₋₂
     std::shared_ptr<ImuObs> imuObs__t2;
@@ -204,9 +209,27 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
                                                                       angularVelocity_en_n__t1,
                                                                       quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2);
 
+        /// [x_n, x_e, x_d] (tₖ₋₁) Position NED in [m] at the time tₖ₋₁
+        Eigen::Vector3d position_n__t1 = trafo::ecef2ned(position_e__t1,
+                                                         stateData__init->latitude(),
+                                                         stateData__init->longitude(),
+                                                         stateData__init->height());
+
+        /// [x_n, x_e, x_d] (tₖ) Position NED in [m] at the time tₖ
+        Eigen::Vector3d position_n__t0 = updatePosition_n(timeDifferenceSec__t0, position_n__t1, velocity_n__t1);
+
+        /// x_e (tₖ) Position in [m], in ECEF coordinates, at the time tₖ
+        Eigen::Vector3d position_e__t0 = trafo::ned2ecef(position_n__t0,
+                                                         stateData__init->latitude(),
+                                                         stateData__init->longitude(),
+                                                         stateData__init->height());
+
         /// Latitude, Longitude and Height in [rad, rad, m], at the current time tₖ (see Gleason eq. 6.18 - 6.20)
-        Eigen::Vector3d latLonHeight__t0 = updatePosition_n(timeDifferenceSec__t0, stateData__t1->latLonHeight(),
-                                                            velocity_n__t1, R_N, R_E);
+        Eigen::Vector3d latLonHeight__t0 = trafo::ecef2llh_WGS84(position_e__t0);
+
+        /// Latitude, Longitude and Height in [rad, rad, m], at the current time tₖ (see Gleason eq. 6.18 - 6.20)
+        // Eigen::Vector3d latLonHeight__t0 = updatePosition_n(timeDifferenceSec__t0, stateData__t1->latLonHeight(),
+        //                                                     velocity_n__t1, R_N, R_E);
 
         // Use same timestamp as IMU message
         stateData__t0->insTime = time__t0;
