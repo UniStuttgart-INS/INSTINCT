@@ -27,7 +27,7 @@ constexpr int32_t END_OF_THE_CENTURY_MJD = 400000;
 constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;
 constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;
 
-constexpr uint32_t DIFF_MJD_TO_JD_DAYS = 2400000;
+constexpr int32_t DIFF_MJD_TO_JD_DAYS = 2400000;
 constexpr long double DIFF_MJD_TO_JD_FRAC = 0.5L;
 
 constexpr int32_t MONTHS_PER_YEAR = 12;
@@ -134,8 +134,8 @@ constexpr int32_t daysInMonth(int32_t month, int32_t year)
 /// Modified Julien Date [UTC]
 struct InsTime_MJD
 {
-    uint32_t mjd_day = InsTimeUtil::END_OF_THE_CENTURY_MJD; ///< Full days of the Modified Julien Date [UTC]
-    long double mjd_frac = 0.0L;                            ///< Decimal fractions of a day of the Modified Julien Date [UTC]
+    int32_t mjd_day = InsTimeUtil::END_OF_THE_CENTURY_MJD; ///< Full days since 17. November 1858 [UTC]
+    long double mjd_frac = 0.0L;                           ///< Decimal fractions of a day of the Modified Julien Date [UTC]
 
     /// @brief Default constructor
     constexpr InsTime_MJD() = default;
@@ -143,7 +143,7 @@ struct InsTime_MJD
     /// @brief Constructor
     /// @param[in] mjd_day Full days of the Modified Julien Date [UTC]
     /// @param[in] mjd_frac Decimal fractions of a day of the Modified Julien Date [UTC]
-    constexpr InsTime_MJD(uint32_t mjd_day, long double mjd_frac)
+    constexpr InsTime_MJD(int32_t mjd_day, long double mjd_frac)
         : mjd_day(mjd_day), mjd_frac(mjd_frac)
     {
         while (this->mjd_frac >= 1.0L)
@@ -191,13 +191,13 @@ struct InsTime_MJD
 /// Julien Date [UTC]
 struct InsTime_JD
 {
-    uint32_t jd_day{};     ///< Full days of the Julien Date [UTC]
+    int32_t jd_day{};      ///< Full days since 1. January −4712 [UTC]
     long double jd_frac{}; ///< Decimal fractions of a day of the Julien Date [UTC]
 
     /// @brief Constructor
     /// @param[in] jd_day Full days of the Julien Date [UTC]
     /// @param[in] jd_frac Decimal fractions of a day of the Julien Date [UTC]
-    constexpr InsTime_JD(uint32_t jd_day, long double jd_frac)
+    constexpr InsTime_JD(int32_t jd_day, long double jd_frac)
         : jd_day(jd_day), jd_frac(jd_frac)
     {
         while (this->jd_frac >= 1.0L)
@@ -586,9 +586,9 @@ class InsTime
     /// @param[in] gpsWeekTow Time in GPS standard time [GPST]
     constexpr explicit InsTime(const InsTime_GPSweekTow& gpsWeekTow)
     {
-        auto mjd_day = static_cast<uint32_t>((gpsWeekTow.gpsCycle * InsTimeUtil::WEEKS_PER_GPS_CYCLE + gpsWeekTow.gpsWeek) * InsTimeUtil::DAYS_PER_WEEK
-                                             + gcem::floor(gpsWeekTow.tow / InsTimeUtil::SECONDS_PER_DAY)
-                                             + InsTimeUtil::DIFF_TO_6_1_1980_MJD);
+        auto mjd_day = static_cast<int32_t>((gpsWeekTow.gpsCycle * InsTimeUtil::WEEKS_PER_GPS_CYCLE + gpsWeekTow.gpsWeek) * InsTimeUtil::DAYS_PER_WEEK
+                                            + gcem::floor(gpsWeekTow.tow / InsTimeUtil::SECONDS_PER_DAY)
+                                            + InsTimeUtil::DIFF_TO_6_1_1980_MJD);
         long double mjd_frac = gcem::fmod(gpsWeekTow.tow, InsTimeUtil::SECONDS_PER_DAY) / InsTimeUtil::SECONDS_PER_DAY;
 
         mjd_frac -= static_cast<long double>(leapGps2UTC(InsTime_MJD(mjd_day, mjd_frac))) / InsTimeUtil::SECONDS_PER_DAY; // from GPST to UTC
@@ -604,13 +604,13 @@ class InsTime
         int32_t y = yearMonthDayHMS.year + 4800 - a;
         int32_t m = yearMonthDayHMS.month + InsTimeUtil::MONTHS_PER_YEAR * a - 3;
 
-        auto jd_day = static_cast<uint32_t>(yearMonthDayHMS.day
-                                            + gcem::floor((153.0 * static_cast<double>(m) + 2.0) / 5.0)
-                                            + y * InsTimeUtil::DAYS_PER_YEAR
-                                            + gcem::floor(static_cast<double>(y) / 4.0)
-                                            - gcem::floor(static_cast<double>(y) / 100.0)
-                                            + gcem::floor(static_cast<double>(y) / 400.0)
-                                            - 32045);
+        auto jd_day = static_cast<int32_t>(yearMonthDayHMS.day
+                                           + gcem::floor((153.0 * static_cast<double>(m) + 2.0) / 5.0)
+                                           + y * InsTimeUtil::DAYS_PER_YEAR
+                                           + gcem::floor(static_cast<double>(y) / 4.0)
+                                           - gcem::floor(static_cast<double>(y) / 100.0)
+                                           + gcem::floor(static_cast<double>(y) / 400.0)
+                                           - 32045);
         auto jd_frac = (yearMonthDayHMS.sec
                         + static_cast<long double>(yearMonthDayHMS.min) * InsTimeUtil::SECONDS_PER_MINUTE
                         + static_cast<long double>(yearMonthDayHMS.hour - 12.0) * InsTimeUtil::SECONDS_PER_HOUR)
