@@ -65,9 +65,18 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
         std::stringstream lineStream(line);
         std::string cell;
 
-        std::optional<uint16_t> gpsCycle;
+        std::optional<uint16_t> gpsCycle = 0;
         std::optional<uint16_t> gpsWeek;
         std::optional<long double> gpsToW;
+        std::optional<double> magUncompX;
+        std::optional<double> magUncompY;
+        std::optional<double> magUncompZ;
+        std::optional<double> accelUncompX;
+        std::optional<double> accelUncompY;
+        std::optional<double> accelUncompZ;
+        std::optional<double> gyroUncompX;
+        std::optional<double> gyroUncompY;
+        std::optional<double> gyroUncompZ;
 
         // Split line at comma
         for (const auto& column : columns)
@@ -84,29 +93,14 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
                 if (column == "GpsCycle")
                 {
                     gpsCycle = static_cast<uint16_t>(std::stoul(cell));
-
-                    if (!obs->insTime.has_value() && gpsCycle.has_value() && gpsWeek.has_value() && gpsToW.has_value())
-                    {
-                        obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
-                    }
                 }
                 else if (column == "GpsWeek")
                 {
                     gpsWeek = static_cast<uint16_t>(std::stoul(cell));
-
-                    if (!obs->insTime.has_value() && gpsCycle.has_value() && gpsWeek.has_value() && gpsToW.has_value())
-                    {
-                        obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
-                    }
                 }
                 else if (column == "GpsToW")
                 {
                     gpsToW = std::stold(cell);
-
-                    if (!obs->insTime.has_value() && gpsCycle.has_value() && gpsWeek.has_value() && gpsToW.has_value())
-                    {
-                        obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
-                    }
                 }
                 else if (column == "TimeStartup")
                 {
@@ -114,75 +108,39 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
                 }
                 else if (column == "UnCompMagX")
                 {
-                    if (!obs->magUncompXYZ.has_value())
-                    {
-                        obs->magUncompXYZ = Eigen::Vector3d();
-                    }
-                    obs->magUncompXYZ.value().x() = std::stod(cell);
+                    magUncompX = std::stod(cell);
                 }
                 else if (column == "UnCompMagY")
                 {
-                    if (!obs->magUncompXYZ.has_value())
-                    {
-                        obs->magUncompXYZ = Eigen::Vector3d();
-                    }
-                    obs->magUncompXYZ.value().y() = std::stod(cell);
+                    magUncompY = std::stod(cell);
                 }
                 else if (column == "UnCompMagZ")
                 {
-                    if (!obs->magUncompXYZ.has_value())
-                    {
-                        obs->magUncompXYZ = Eigen::Vector3d();
-                    }
-                    obs->magUncompXYZ.value().z() = std::stod(cell);
+                    magUncompZ = std::stod(cell);
                 }
                 else if (column == "UnCompAccX")
                 {
-                    if (!obs->accelUncompXYZ.has_value())
-                    {
-                        obs->accelUncompXYZ = Eigen::Vector3d();
-                    }
-                    obs->accelUncompXYZ.value().x() = std::stod(cell);
+                    accelUncompX = std::stod(cell);
                 }
                 else if (column == "UnCompAccY")
                 {
-                    if (!obs->accelUncompXYZ.has_value())
-                    {
-                        obs->accelUncompXYZ = Eigen::Vector3d();
-                    }
-                    obs->accelUncompXYZ.value().y() = std::stod(cell);
+                    accelUncompY = std::stod(cell);
                 }
                 else if (column == "UnCompAccZ")
                 {
-                    if (!obs->accelUncompXYZ.has_value())
-                    {
-                        obs->accelUncompXYZ = Eigen::Vector3d();
-                    }
-                    obs->accelUncompXYZ.value().z() = std::stod(cell);
+                    accelUncompZ = std::stod(cell);
                 }
                 else if (column == "UnCompGyroX")
                 {
-                    if (!obs->gyroUncompXYZ.has_value())
-                    {
-                        obs->gyroUncompXYZ = Eigen::Vector3d();
-                    }
-                    obs->gyroUncompXYZ.value().x() = std::stod(cell);
+                    gyroUncompX = std::stod(cell);
                 }
                 else if (column == "UnCompGyroY")
                 {
-                    if (!obs->gyroUncompXYZ.has_value())
-                    {
-                        obs->gyroUncompXYZ = Eigen::Vector3d();
-                    }
-                    obs->gyroUncompXYZ.value().y() = std::stod(cell);
+                    gyroUncompY = std::stod(cell);
                 }
                 else if (column == "UnCompGyroZ")
                 {
-                    if (!obs->gyroUncompXYZ.has_value())
-                    {
-                        obs->gyroUncompXYZ = Eigen::Vector3d();
-                    }
-                    obs->gyroUncompXYZ.value().z() = std::stod(cell);
+                    gyroUncompZ = std::stod(cell);
                 }
                 else if (column == "Temperature")
                 {
@@ -198,6 +156,23 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
                 }
             }
         }
+
+        if (gpsWeek.has_value() && gpsToW.has_value())
+        {
+            obs->insTime.emplace(gpsCycle.value(), gpsWeek.value(), gpsToW.value());
+        }
+        if (magUncompX.has_value() && magUncompY.has_value() && magUncompZ.has_value())
+        {
+            obs->magUncompXYZ.emplace(magUncompX.value(), magUncompY.value(), magUncompZ.value());
+        }
+        if (accelUncompX.has_value() && accelUncompY.has_value() && accelUncompZ.has_value())
+        {
+            obs->accelUncompXYZ.emplace(accelUncompX.value(), accelUncompY.value(), accelUncompZ.value());
+        }
+        if (gyroUncompX.has_value() && gyroUncompY.has_value() && gyroUncompZ.has_value())
+        {
+            obs->gyroUncompXYZ.emplace(gyroUncompX.value(), gyroUncompY.value(), gyroUncompZ.value());
+        }
     }
 
     LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
@@ -211,22 +186,37 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
         {
             prevSequenceNumber = obs->sequenceNumber;
         }
-        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < prevSequenceNumber || obs->sequenceNumber > prevSequenceNumber + 1))
+        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < prevSequenceNumber || obs->sequenceNumber > prevSequenceNumber + 2))
         {
             LOG_WARN("{}: Sequence Number changed from {} to {}", name, prevSequenceNumber, obs->sequenceNumber);
         }
         prevSequenceNumber = obs->sequenceNumber;
     }
 
-    // Calls all the callbacks
     if (peek)
     {
         // Return to position before "Read line".
         filestream.seekg(pos, std::ios_base::beg);
     }
-    else
+
+    if (obs->insTime.has_value())
     {
-        // Calls all the callbacks
+        // Has time value, but value should not be displayed
+        if (obs->insTime.value() < lowerLimit)
+        {
+            // Resetting the value will make the read loop skip the message
+            obs->insTime.reset();
+            return obs;
+        }
+        if (obs->insTime.value() > upperLimit)
+        {
+            return nullptr;
+        }
+    }
+
+    // Calls all the callbacks
+    if (!peek)
+    {
         invokeCallbacks(obs);
     }
 

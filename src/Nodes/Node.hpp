@@ -66,7 +66,8 @@ class Node : public DataCallback
         CONFIG_N_INPUT_PORTS,   ///< Integer: Min, Default, Max, Amount of Config Options to repeat
         CONFIG_BOOL,            ///< Boolean: Default
         CONFIG_INT,             ///< Integer: Min, Default, Max
-        CONFIG_FLOAT,           ///< Float: Min, Default, Max
+        CONFIG_FLOAT,           ///< Float: Min, Default, Max, Decimals
+        CONFIG_FLOAT3,          ///< Float Vector: Min1, Default1, Max1, Decimals1, Min2, Default2, Max2, Decimals2, Min3, Default3, Max3, Decimals3
         CONFIG_STRING,          ///< String
         CONFIG_STRING_BOX,      ///< String Box
         CONFIG_LIST,            ///< List: "option1", "[default]", "option3"
@@ -102,6 +103,8 @@ class Node : public DataCallback
     /// @brief Handles the data sent on the input port
     /// @param[in] portIndex The input port index
     /// @param[in, out] data The data send on the input port
+    ///
+    /// @note The shared_ptr is copied on purpose to guarantee the data stays alive during function execution
     virtual void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) = 0;
 
     /// @brief Requests the node to send out its data

@@ -3,7 +3,6 @@
     #include "KvhSensor.hpp"
 
     #include "util/Logger.hpp"
-    #include "util/Constants.hpp"
 
     #include "util/UartSensors/KVH/KvhUtilities.hpp"
 
@@ -63,7 +62,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
         {
             kvhSensor->prevSequenceNumber = obs->sequenceNumber;
         }
-        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < kvhSensor->prevSequenceNumber || obs->sequenceNumber > kvhSensor->prevSequenceNumber + 1))
+        if (obs->sequenceNumber != 0 && (obs->sequenceNumber < kvhSensor->prevSequenceNumber || obs->sequenceNumber > kvhSensor->prevSequenceNumber + 2))
         {
             LOG_WARN("{}: Sequence Number changed from {} to {}", kvhSensor->name, kvhSensor->prevSequenceNumber, obs->sequenceNumber);
         }

@@ -11,11 +11,19 @@
         "Doxygen",
         "GNSS",
         "cmake",
+        "coeffs",
         "docopt",
         "gtest",
+        "hobiger",
+        "kutta",
+        "quaterniond",
+        "runge",
         "ublox"
     ],
     "editor.formatOnSave": true,
+    "editor.rulers": [
+        120
+    ],
     "doxdocgen.generic.paramTemplate": "@param[in, out] {param} ",
     "doxdocgen.file.fileOrder": [
         "file",
@@ -94,5 +102,6 @@
     ],
     "clang-tidy.compilerArgs": [
         "-Wno-unknown-warning-option"
-    ]
+    ],
+    "comment-divider.length": 110
 }

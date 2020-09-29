@@ -14,17 +14,30 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 add_executable(
   tests
   util/InsTimeTests.cpp
+  util/InsMechanizationTests.cpp
+  util/InsTransformationsTests.cpp
   util/LoggerTests.cpp
   Nodes/DataLogger/IMU/VectorNavDataLoggerTest.cpp
+  Nodes/Integrator/ImuIntegratorTest.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/ConfigManager.cpp
   ${CMAKE_SOURCE_DIR}/src/util/Logger.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/Sleep.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/InsGravity.cpp
   ${CMAKE_SOURCE_DIR}/src/util/InsTime.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/InsMath.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/InsMechanization.cpp
+  ${CMAKE_SOURCE_DIR}/src/util/InsTransformations.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/Node.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/NodeManager.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/Imu.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/ImuFileReader.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/FileReader/VectorNavFile.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/Protocol/FileReader.cpp
   ${CMAKE_SOURCE_DIR}/src/Nodes/DataLogger/DataLogger.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/DataLogger/IMU/VectorNavDataLogger.cpp)
+  ${CMAKE_SOURCE_DIR}/src/Nodes/DataLogger/IMU/VectorNavDataLogger.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/State/State.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/Integrator/ImuIntegrator.cpp
+  ${CMAKE_SOURCE_DIR}/src/Nodes/GnuPlot/GnuPlot.cpp)
 
 target_link_libraries(
   tests
@@ -35,7 +48,8 @@ target_link_libraries(
           CONAN_PKG::spdlog
           CONAN_PKG::boost
           CONAN_PKG::eigen
-          Threads::Threads)
+          Threads::Threads
+          libUartSensor)
 
 target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 

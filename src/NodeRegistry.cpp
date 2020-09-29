@@ -16,6 +16,7 @@
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
+#include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/EmlidSensor.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -26,9 +27,11 @@
 
 #include "Nodes/Integrator/ImuIntegrator.hpp"
 
+#include "Nodes/State/State.hpp"
+
 #include "Nodes/StateEstimator/StateEstimator.hpp"
 
-#include "Nodes/Synchronizer/TimeSynchronizer/TimeSynchronizer.hpp"
+#include "Nodes/Time/TimeSynchronizer.hpp"
 
 void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 {
@@ -53,10 +56,13 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeType<NAV::UbloxSensor>();
     nodeManager.registerNodeType<NAV::EmlidSensor>();
 #endif
+    nodeManager.registerNodeType<NAV::ImuSimulator>();
 
     nodeManager.registerNodeType<NAV::GnuPlot>();
 
-    //nodeManager.registerNodeType<NAV::ImuIntegrator>();
+    nodeManager.registerNodeType<NAV::ImuIntegrator>();
+
+    nodeManager.registerNodeType<NAV::State>();
 
     nodeManager.registerNodeType<NAV::StateEstimator>();
 
@@ -65,6 +71,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 
 #include "NodeData/InsObs.hpp"
 
+#include "NodeData/IMU/ImuPos.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
@@ -74,12 +81,15 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 
+#include "NodeData/State/StateData.hpp"
+
 void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
 {
     LOG_TRACE("called");
 
     nodeManager.registerNodeDataType<NAV::InsObs>();
 
+    nodeManager.registerNodeDataType<NAV::ImuPos>();
     nodeManager.registerNodeDataType<NAV::ImuObs>();
     nodeManager.registerNodeDataType<NAV::KvhObs>();
     nodeManager.registerNodeDataType<NAV::VectorNavObs>();
@@ -88,4 +98,6 @@ void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeDataType<NAV::RtklibPosObs>();
     nodeManager.registerNodeDataType<NAV::UbloxObs>();
     nodeManager.registerNodeDataType<NAV::EmlidObs>();
+
+    nodeManager.registerNodeDataType<NAV::StateData>();
 }

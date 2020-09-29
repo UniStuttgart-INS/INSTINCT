@@ -42,11 +42,11 @@ class VectorNavObs final : public ImuObs
     }
 
     /// The estimated attitude quaternion. The first term is the scalar value.
-    /// The attitude is given as the body frame with respect to the local North East Down (NED) frame.
+    /// The attitude is given as the platform frame with respect to the local North East Down (NED) frame.
     std::optional<Eigen::Quaterniond> quaternion;
 
     /// The estimated attitude Yaw, Pitch, and Roll angles measured in [degrees].
-    /// The attitude is given as a 3,2,1 Euler angle sequence describing the body frame
+    /// The attitude is given as a 3,2,1 Euler angle sequence describing the platform frame
     /// with respect to the local North East Down (NED) frame.
     /// Yaw   +/- 180°
     /// Pitch +/- 90°
@@ -58,19 +58,19 @@ class VectorNavObs final : public ImuObs
     /// The number of SyncIn trigger events that have occurred.
     std::optional<uint32_t> syncInCnt;
 
-    /// The compensated magnetic field measured in units of [Gauss], and given in the body frame.
+    /// The compensated magnetic field measured in units of [Gauss], and given in the platform frame.
     std::optional<Eigen::Vector3d> magCompXYZ;
-    /// The compensated acceleration measured in units of [m/s^2], and given in the body frame.
+    /// The compensated acceleration measured in units of [m/s^2], and given in the platform frame.
     std::optional<Eigen::Vector3d> accelCompXYZ;
-    /// The compensated angular rate measured in units of [rad/s], and given in the body frame.
+    /// The compensated angular rate measured in units of [rad/s], and given in the platform frame.
     std::optional<Eigen::Vector3d> gyroCompXYZ;
 
     /// The time interval that the delta angle and velocities are integrated over in [seconds].
     std::optional<double> dtime;
-    /// The delta rotation angles in [degree] incurred due to rotation, by the local body reference frame,
+    /// The delta rotation angles in [degree] incurred due to rotation, by the local platform reference frame,
     /// since the last time the values were outputted by the device.
-    std::optional<Eigen::Array3d> dtheta;
-    /// The delta velocity in [m/s] incurred due to motion, by the local body reference frame,
+    std::optional<Eigen::Vector3d> dtheta;
+    /// The delta velocity in [m/s] incurred due to motion, by the local platform reference frame,
     /// since the last time the values were outputted by the device.
     std::optional<Eigen::Vector3d> dvel;
 
@@ -176,7 +176,7 @@ class VectorNavObs final : public ImuObs
     /// The compensated angular rate measured in units of [rad/s], and given in the North East Down (NED) frame.
     std::optional<Eigen::Vector3d> gyroCompNED;
 
-    /// The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the body frame.
+    /// The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the platform frame.
     std::optional<Eigen::Vector3d> linearAccelXYZ;
     /// The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the North East Down (NED) frame.
     std::optional<Eigen::Vector3d> linearAccelNED;

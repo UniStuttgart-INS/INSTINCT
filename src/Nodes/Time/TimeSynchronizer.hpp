@@ -46,7 +46,7 @@ class TimeSynchronizer final : public Node
     /// @return The class category
     [[nodiscard]] constexpr std::string_view category() const final
     {
-        return std::string_view("TimeSync");
+        return std::string_view("Time");
     }
 
     /// @brief Returns Gui Configuration options for the class
@@ -58,7 +58,7 @@ class TimeSynchronizer final : public Node
             { CONFIG_BOOL, "Use Fixed\nStart Time", "Use the Time configured here as start time", { "0" } },
             { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_EMPTY, "", "", {}), ConfigOptionsBase(CONFIG_INT, "Gps Cycle", "GPS Cycle at the beginning of the data recording", { "0", "0", "10" }) } },
             { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_EMPTY, "", "", {}), ConfigOptionsBase(CONFIG_INT, "Gps Week", "GPS Week at the beginning of the data recording", { "0", "0", "245760" }) } },
-            { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_EMPTY, "", "", {}), ConfigOptionsBase(CONFIG_FLOAT, "Gps Time\nof Week", "GPS Time of Week at the beginning of the data recording", { "0", "0", "604800" }) } },
+            { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_EMPTY, "", "", {}), ConfigOptionsBase(CONFIG_FLOAT, "Gps Time\nof Week", "GPS Time of Week at the beginning of the data recording", { "0", "0", "604800", "3" }) } },
         };
     }
 

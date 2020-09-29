@@ -87,6 +87,7 @@ int main(int argc, const char* argv[])
             // Get first event of all nodes
             for (const auto& node : nodeManager.nodes())
             {
+                bool dataEventCreated = false;
                 for (uint8_t portIndex = 0; portIndex < node->nPorts(NAV::Node::PortType::Out); portIndex++)
                 {
                     LOG_DEBUG("Searching node {} on output port {} for data", node->getName(), portIndex);
@@ -101,6 +102,7 @@ int main(int argc, const char* argv[])
                             {
                                 events.insert(std::make_pair(nextUpdateTime->insTime.value(), std::make_pair(node, portIndex)));
                                 LOG_INFO("Taking Data from {} on output port {} into account.", node->getName(), portIndex);
+                                dataEventCreated = true;
                                 break;
                             }
 
@@ -115,7 +117,10 @@ int main(int argc, const char* argv[])
                             break;
                         }
                     }
-                    node->resetNode();
+                    if (!dataEventCreated)
+                    {
+                        node->resetNode();
+                    }
                 }
             }
 

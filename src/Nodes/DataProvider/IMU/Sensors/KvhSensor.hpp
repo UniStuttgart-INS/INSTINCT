@@ -54,13 +54,16 @@ class KvhSensor final : public UartSensor, public Imu
     /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
-        return { { CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
-                                          "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
-                                          "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
-                                          "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
-                                          "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
-                                          "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
-                   { "/dev/ttyUSB0" } } };
+        std::vector<ConfigOptions> configs = { { CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
+                                                                        "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
+                                                                        "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
+                                                                        "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
+                                                                        "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
+                                                                        "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
+                                                 { "/dev/ttyUSB0" } } };
+        auto imuConfigs = Imu::guiConfig();
+        configs.insert(configs.end(), imuConfigs.begin(), imuConfigs.end());
+        return configs;
     }
 
     /// @brief Returns the context of the class
@@ -80,7 +83,7 @@ class KvhSensor final : public UartSensor, public Imu
         case PortType::In:
             break;
         case PortType::Out:
-            return 1U;
+            return 2U;
         }
 
         return 0U;
@@ -101,6 +104,10 @@ class KvhSensor final : public UartSensor, public Imu
             {
                 return KvhObs().type();
             }
+            if (portIndex == 1)
+            {
+                return ImuPos().type();
+            }
         }
 
         return std::string_view("");
@@ -110,6 +117,19 @@ class KvhSensor final : public UartSensor, public Imu
     /// @param[in] portIndex The input port index
     /// @param[in, out] data The data send on the input port
     void handleInputData([[maybe_unused]] uint8_t portIndex, [[maybe_unused]] std::shared_ptr<NodeData> data) final {}
+
+    /// @brief Requests the node to send out its data
+    /// @param[in] portIndex The output port index
+    /// @return The requested data or nullptr if no data available
+    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) final
+    {
+        if (portIndex == 1)
+        {
+            return imuPos;
+        }
+
+        return nullptr;
+    }
 
   private:
     /// @brief Callback handler for notifications of new asynchronous data packets received

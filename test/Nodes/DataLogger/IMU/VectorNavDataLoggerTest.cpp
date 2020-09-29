@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 
-#include "util/Logger.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
@@ -14,28 +13,29 @@ namespace NAV
 {
 TEST_CASE("[VectorNavDataLogger] Read, write, read consistency", "[VectorNavDataLogger]")
 {
-    Logger logger;
-
-    system("pwd"); // NOLINT
-
     // Create VectorNavFile Node
     std::map<std::string, std::string> optionsFile = { { "Path", "../../../test/data/vectornav.csv" } };
     auto vnFile = std::make_shared<VectorNavFile>("VN-File", optionsFile);
+    std::static_pointer_cast<Node>(vnFile)->initialize();
 
     // Create Logger
     std::map<std::string, std::string> optionsLogger = { { "Path", "../../../test/logs/vectornav.csv" },
                                                          { "Type", "ascii" } };
     auto vnLogger = std::make_shared<VectorNavDataLogger>("VN-DataLogger", optionsLogger);
-    auto target = std::static_pointer_cast<Node>(vnLogger);
+    std::static_pointer_cast<Node>(vnLogger)->initialize();
 
     constexpr int sourcePortIndex = 0;
     constexpr int targetPortIndex = 0;
 
     // Configure callbacks
+    auto target = std::static_pointer_cast<Node>(vnLogger);
     vnFile->addCallback<VectorNavObs>(target, targetPortIndex);
     vnLogger->incomingLinks.emplace(targetPortIndex, std::make_pair(vnFile, sourcePortIndex));
-    vnFile->callbacksEnabled = true;
 
+    // Check if reading is possible
+    REQUIRE(vnFile->requestOutputDataPeek(sourcePortIndex) != nullptr);
+
+    vnFile->callbacksEnabled = true;
     while (vnFile->requestOutputData(sourcePortIndex) != nullptr) {}
 
     // Delete the nodes which should cause a flush
@@ -46,20 +46,33 @@ TEST_CASE("[VectorNavDataLogger] Read, write, read consistency", "[VectorNavData
     // Create VectorNavFile Node
     std::map<std::string, std::string> optionsFileOrig = { { "Path", "../../../test/data/vectornav.csv" } };
     auto vnFileOriginal = std::make_shared<VectorNavFile>("VN-File-Orig", optionsFileOrig);
+    std::static_pointer_cast<Node>(vnFileOriginal)->initialize();
     // Create VectorNavFile Node
     std::map<std::string, std::string> optionsFileNew = { { "Path", "../../../test/logs/vectornav.csv" } };
     auto vnFileNew = std::make_shared<VectorNavFile>("VN-File-New", optionsFileNew);
+    std::static_pointer_cast<Node>(vnFileNew)->initialize();
+
+    // Check if reading is possible
+    REQUIRE(vnFileNew->requestOutputDataPeek(sourcePortIndex) != nullptr);
+    REQUIRE(vnFileOriginal->requestOutputDataPeek(sourcePortIndex) != nullptr);
 
     while (true)
     {
         auto obsNew = std::static_pointer_cast<VectorNavObs>(vnFileNew->requestOutputData(sourcePortIndex));
         auto obsOrig = std::static_pointer_cast<VectorNavObs>(vnFileOriginal->requestOutputData(sourcePortIndex));
 
-        if (obsOrig == nullptr || obsNew == nullptr)
+        if (obsOrig == nullptr && obsNew == nullptr)
         {
             break;
         }
+        // Files have different lengths?
+        REQUIRE(obsOrig != nullptr);
+        REQUIRE(obsNew != nullptr);
 
+        if (obsOrig->insTime.has_value())
+        {
+            REQUIRE(obsOrig->insTime.value() == obsNew->insTime.value());
+        }
         if (obsOrig->timeSinceStartup.has_value())
         {
             REQUIRE(obsOrig->timeSinceStartup.value() == obsNew->timeSinceStartup.value());

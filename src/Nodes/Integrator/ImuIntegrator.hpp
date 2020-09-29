@@ -8,6 +8,10 @@
 #include "Nodes/Node.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/State/StateData.hpp"
+#include "NodeData/IMU/ImuPos.hpp"
+
+#include <deque>
 
 namespace NAV
 {
@@ -50,7 +54,7 @@ class ImuIntegrator : public Node
     /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
-        return {};
+        return { { CONFIG_LIST, "Integration Frame", "", { "[ECEF]", "NED" } } };
     }
 
     /// @brief Returns the context of the class
@@ -68,7 +72,7 @@ class ImuIntegrator : public Node
         switch (portType)
         {
         case PortType::In:
-            return 1U;
+            return 3U;
         case PortType::Out:
             return 1U;
         }
@@ -89,12 +93,20 @@ class ImuIntegrator : public Node
             {
                 return ImuObs().type();
             }
+            if (portIndex == 1)
+            {
+                return ImuPos().type();
+            }
+            if (portIndex == 2)
+            {
+                return StateData().type();
+            }
             break;
         case PortType::Out:
-            // if (portIndex == 0)
-            // {
-            //     return UbloxObs().type();
-            // }
+            if (portIndex == 0)
+            {
+                return StateData().type();
+            }
             break;
         }
 
@@ -115,8 +127,27 @@ class ImuIntegrator : public Node
 
   private:
     /// @brief Integrates the Imu Observation data
-    /// @param[in] obs ImuObs to process
-    void integrateObservation(std::shared_ptr<ImuObs>& obs);
+    /// @param[in] imuObs__t0 ImuObs to process
+    void integrateObservation(std::shared_ptr<ImuObs>& imuObs__t0);
+
+    /// @brief Storage class for previous observations.
+    ///
+    /// [0]: Observation at time tₖ₋₁
+    /// [1]: Observation at time tₖ₋₂
+    std::deque<std::shared_ptr<ImuObs>> prevObs;
+
+    /// @brief Storage class for previous states.
+    ///
+    /// [0]: StateData at time tₖ₋₁
+    /// [1]: StateData at time tₖ₋₂
+    std::deque<std::shared_ptr<StateData>> prevStates;
+
+    enum IntegrationFrame
+    {
+        ECEF,
+        NED
+    };
+    IntegrationFrame integrationFrame = IntegrationFrame::ECEF;
 };
 
 } // namespace NAV
