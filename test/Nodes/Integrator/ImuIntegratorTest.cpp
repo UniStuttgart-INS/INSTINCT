@@ -24,8 +24,12 @@
 #include "util/Logger.hpp"
 #include "util/InsMath.hpp"
 
+#include <limits>
+
 namespace NAV
 {
+constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
+
 TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
 {
     NodeManager::appContext = Node::NodeContext::POST_PROCESSING;
@@ -56,91 +60,91 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     auto state = std::make_shared<State>("State", optionsState);
     std::static_pointer_cast<Node>(state)->initialize();
 
-    std::map<std::string, std::string> optionsGnuPlotLatLon = { { "Start", "set autoscale xy\n"
-                                                                           "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                           "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                           "set xlabel \"East [m]\"\n"
-                                                                           "set ylabel \"North [m]\"\n" },
-                                                                { "Input Ports", "1" },
-                                                                { "1-Port Type", "StateData" },
-                                                                { "1-Data to plot", "East [m];North [m]" },
-                                                                { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
-    auto gnuPlotLatLon = std::make_shared<GnuPlot>("GnuPlot LatLon", optionsGnuPlotLatLon);
-    std::static_pointer_cast<Node>(gnuPlotLatLon)->initialize();
+    // std::map<std::string, std::string> optionsGnuPlotLatLon = { { "Start", "set autoscale xy\n"
+    //                                                                        "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                        "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                        "set xlabel \"East [m]\"\n"
+    //                                                                        "set ylabel \"North [m]\"\n" },
+    //                                                             { "Input Ports", "1" },
+    //                                                             { "1-Port Type", "StateData" },
+    //                                                             { "1-Data to plot", "East [m];North [m]" },
+    //                                                             { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
+    // auto gnuPlotLatLon = std::make_shared<GnuPlot>("GnuPlot LatLon", optionsGnuPlotLatLon);
+    // std::static_pointer_cast<Node>(gnuPlotLatLon)->initialize();
 
-    std::map<std::string, std::string> optionsGnuPlotLat = { { "Start", "set autoscale xy\n"
-                                                                        "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                        "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                        "set xlabel \"Time [s]\"\n"
-                                                                        "set ylabel \"Latitude [deg]\"\n" },
-                                                             { "Input Ports", "1" },
-                                                             { "1-Port Type", "StateData" },
-                                                             { "1-Data to plot", "Time;Latitude" },
-                                                             { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
-    auto gnuPlotLat = std::make_shared<GnuPlot>("GnuPlot Lat", optionsGnuPlotLat);
-    std::static_pointer_cast<Node>(gnuPlotLat)->initialize();
+    // std::map<std::string, std::string> optionsGnuPlotLat = { { "Start", "set autoscale xy\n"
+    //                                                                     "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                     "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                     "set xlabel \"Time [s]\"\n"
+    //                                                                     "set ylabel \"Latitude [deg]\"\n" },
+    //                                                          { "Input Ports", "1" },
+    //                                                          { "1-Port Type", "StateData" },
+    //                                                          { "1-Data to plot", "Time;Latitude" },
+    //                                                          { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
+    // auto gnuPlotLat = std::make_shared<GnuPlot>("GnuPlot Lat", optionsGnuPlotLat);
+    // std::static_pointer_cast<Node>(gnuPlotLat)->initialize();
 
-    std::map<std::string, std::string> optionsGnuPlotLon = { { "Start", "set autoscale xy\n"
-                                                                        "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                        "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                        "set xlabel \"Time [s]\"\n"
-                                                                        "set ylabel \"Longitude [deg]\"\n" },
-                                                             { "Input Ports", "1" },
-                                                             { "1-Port Type", "StateData" },
-                                                             { "1-Data to plot", "Time;Longitude" },
-                                                             { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
-    auto gnuPlotLon = std::make_shared<GnuPlot>("GnuPlot Lon", optionsGnuPlotLon);
-    std::static_pointer_cast<Node>(gnuPlotLon)->initialize();
+    // std::map<std::string, std::string> optionsGnuPlotLon = { { "Start", "set autoscale xy\n"
+    //                                                                     "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                     "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                     "set xlabel \"Time [s]\"\n"
+    //                                                                     "set ylabel \"Longitude [deg]\"\n" },
+    //                                                          { "Input Ports", "1" },
+    //                                                          { "1-Port Type", "StateData" },
+    //                                                          { "1-Data to plot", "Time;Longitude" },
+    //                                                          { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
+    // auto gnuPlotLon = std::make_shared<GnuPlot>("GnuPlot Lon", optionsGnuPlotLon);
+    // std::static_pointer_cast<Node>(gnuPlotLon)->initialize();
 
-    std::map<std::string, std::string> optionsGnuPlotHeight = { { "Start", "set autoscale xy\n"
-                                                                           "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                           "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                           "set xlabel \"Time [s]\"\n"
-                                                                           "set ylabel \"Height [m]\"\n" },
-                                                                { "Input Ports", "1" },
-                                                                { "1-Port Type", "StateData" },
-                                                                { "1-Data to plot", "Time;Height" },
-                                                                { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
-    auto gnuPlotHeight = std::make_shared<GnuPlot>("GnuPlot Height", optionsGnuPlotHeight);
-    std::static_pointer_cast<Node>(gnuPlotHeight)->initialize();
+    // std::map<std::string, std::string> optionsGnuPlotHeight = { { "Start", "set autoscale xy\n"
+    //                                                                        "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                        "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                        "set xlabel \"Time [s]\"\n"
+    //                                                                        "set ylabel \"Height [m]\"\n" },
+    //                                                             { "Input Ports", "1" },
+    //                                                             { "1-Port Type", "StateData" },
+    //                                                             { "1-Data to plot", "Time;Height" },
+    //                                                             { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
+    // auto gnuPlotHeight = std::make_shared<GnuPlot>("GnuPlot Height", optionsGnuPlotHeight);
+    // std::static_pointer_cast<Node>(gnuPlotHeight)->initialize();
 
-    std::map<std::string, std::string> optionsGnuPlotVelocity = { { "Start", "set autoscale xy\n"
-                                                                             "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                             "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                             "set xlabel \"Time [s]\"\n"
-                                                                             "set ylabel \"Velocity NED [m/s]\"\n" },
-                                                                  { "Input Ports", "1" },
-                                                                  { "1-Port Type", "StateData" },
-                                                                  { "1-Data to plot", "Time;Velocity North;Velocity East;Velocity Down" },
-                                                                  { "1-Update", "plot [~1,2,3,4~] using 1:2 with lines title 'North'\n"
-                                                                                "plot [~1,2,3,4~] using 1:3 with lines title 'East'\n"
-                                                                                "plot [~1,2,3,4~] using 1:4 with lines title 'Down'" } };
-    auto gnuPlotVelocity = std::make_shared<GnuPlot>("GnuPlot Velocity", optionsGnuPlotVelocity);
-    std::static_pointer_cast<Node>(gnuPlotVelocity)->initialize();
+    // std::map<std::string, std::string> optionsGnuPlotVelocity = { { "Start", "set autoscale xy\n"
+    //                                                                          "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                          "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                          "set xlabel \"Time [s]\"\n"
+    //                                                                          "set ylabel \"Velocity NED [m/s]\"\n" },
+    //                                                               { "Input Ports", "1" },
+    //                                                               { "1-Port Type", "StateData" },
+    //                                                               { "1-Data to plot", "Time;Velocity North;Velocity East;Velocity Down" },
+    //                                                               { "1-Update", "plot [~1,2,3,4~] using 1:2 with lines title 'North'\n"
+    //                                                                             "plot [~1,2,3,4~] using 1:3 with lines title 'East'\n"
+    //                                                                             "plot [~1,2,3,4~] using 1:4 with lines title 'Down'" } };
+    // auto gnuPlotVelocity = std::make_shared<GnuPlot>("GnuPlot Velocity", optionsGnuPlotVelocity);
+    // std::static_pointer_cast<Node>(gnuPlotVelocity)->initialize();
 
-    std::map<std::string, std::string> optionsGnuPlotAngles = { { "Start", "set autoscale xy\n"
-                                                                           "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                           "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
-                                                                           "set xlabel \"Time [s]\"\n"
-                                                                           "set ylabel \"Flight Angles [deg]\"\n" },
-                                                                { "Input Ports", "1" },
-                                                                { "1-Port Type", "StateData" },
-                                                                { "1-Data to plot", "Time;Roll;Pitch;Yaw" },
-                                                                { "1-Update", "plot [~1,2,3,4~] using 1:2 with lines title 'Roll'\n"
-                                                                              "plot [~1,2,3,4~] using 1:3 with lines title 'Pitch'\n"
-                                                                              "plot [~1,2,3,4~] using 1:4 with lines title 'Yaw'" } };
-    auto gnuPlotAngles = std::make_shared<GnuPlot>("GnuPlot Angles", optionsGnuPlotAngles);
-    std::static_pointer_cast<Node>(gnuPlotAngles)->initialize();
+    // std::map<std::string, std::string> optionsGnuPlotAngles = { { "Start", "set autoscale xy\n"
+    //                                                                        "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                        "set grid xtics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
+    //                                                                        "set xlabel \"Time [s]\"\n"
+    //                                                                        "set ylabel \"Flight Angles [deg]\"\n" },
+    //                                                             { "Input Ports", "1" },
+    //                                                             { "1-Port Type", "StateData" },
+    //                                                             { "1-Data to plot", "Time;Roll;Pitch;Yaw" },
+    //                                                             { "1-Update", "plot [~1,2,3,4~] using 1:2 with lines title 'Roll'\n"
+    //                                                                           "plot [~1,2,3,4~] using 1:3 with lines title 'Pitch'\n"
+    //                                                                           "plot [~1,2,3,4~] using 1:4 with lines title 'Yaw'" } };
+    // auto gnuPlotAngles = std::make_shared<GnuPlot>("GnuPlot Angles", optionsGnuPlotAngles);
+    // std::static_pointer_cast<Node>(gnuPlotAngles)->initialize();
 
     // Configure callbacks
     auto imuIntegratorAsNode = std::static_pointer_cast<Node>(imuIntegrator);
     auto stateAsNode = std::static_pointer_cast<Node>(state);
-    auto gnuPlotLatAsNode = std::static_pointer_cast<Node>(gnuPlotLat);
-    auto gnuPlotLonAsNode = std::static_pointer_cast<Node>(gnuPlotLon);
-    auto gnuPlotLatLonAsNode = std::static_pointer_cast<Node>(gnuPlotLatLon);
-    auto gnuPlotHeightAsNode = std::static_pointer_cast<Node>(gnuPlotHeight);
-    auto gnuPlotVelocityAsNode = std::static_pointer_cast<Node>(gnuPlotVelocity);
-    auto gnuPlotAnglesAsNode = std::static_pointer_cast<Node>(gnuPlotAngles);
+    // auto gnuPlotLatAsNode = std::static_pointer_cast<Node>(gnuPlotLat);
+    // auto gnuPlotLonAsNode = std::static_pointer_cast<Node>(gnuPlotLon);
+    // auto gnuPlotLatLonAsNode = std::static_pointer_cast<Node>(gnuPlotLatLon);
+    // auto gnuPlotHeightAsNode = std::static_pointer_cast<Node>(gnuPlotHeight);
+    // auto gnuPlotVelocityAsNode = std::static_pointer_cast<Node>(gnuPlotVelocity);
+    // auto gnuPlotAnglesAsNode = std::static_pointer_cast<Node>(gnuPlotAngles);
 
     imuFile->addCallback<VectorNavObs>(imuIntegratorAsNode, 0);
     imuIntegrator->incomingLinks.emplace(0, std::make_pair(imuFile, 0));
@@ -154,18 +158,18 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     imuIntegrator->addCallback<StateData>(stateAsNode, 0);
     state->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
 
-    imuIntegrator->addCallback<StateData>(gnuPlotLatLonAsNode, 0);
-    gnuPlotLatLon->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
-    imuIntegrator->addCallback<StateData>(gnuPlotLatAsNode, 0);
-    gnuPlotLat->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
-    imuIntegrator->addCallback<StateData>(gnuPlotLonAsNode, 0);
-    gnuPlotLon->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
-    imuIntegrator->addCallback<StateData>(gnuPlotHeightAsNode, 0);
-    gnuPlotHeight->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
-    imuIntegrator->addCallback<StateData>(gnuPlotVelocityAsNode, 0);
-    gnuPlotVelocity->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
-    imuIntegrator->addCallback<StateData>(gnuPlotAnglesAsNode, 0);
-    gnuPlotAngles->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
+    // imuIntegrator->addCallback<StateData>(gnuPlotLatLonAsNode, 0);
+    // gnuPlotLatLon->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
+    // imuIntegrator->addCallback<StateData>(gnuPlotLatAsNode, 0);
+    // gnuPlotLat->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
+    // imuIntegrator->addCallback<StateData>(gnuPlotLonAsNode, 0);
+    // gnuPlotLon->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
+    // imuIntegrator->addCallback<StateData>(gnuPlotHeightAsNode, 0);
+    // gnuPlotHeight->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
+    // imuIntegrator->addCallback<StateData>(gnuPlotVelocityAsNode, 0);
+    // gnuPlotVelocity->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
+    // imuIntegrator->addCallback<StateData>(gnuPlotAnglesAsNode, 0);
+    // gnuPlotAngles->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
 
     imuIntegrator->callbacksEnabled = true;
     state->callbacksEnabled = true;
@@ -174,7 +178,7 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     auto quat_pb = trafo::quat_pb(mountingAngles.x(), mountingAngles.y(), mountingAngles.z());
 
     long double dt = 0.1L;
-    long double seconds = 7200.0L;
+    long double seconds = 10.0L;
     for (size_t i = 0; i < static_cast<size_t>(seconds / dt) + 1; i++)
     {
         double gravityNorm = gravity::gravityMagnitude_Gleason(currentState->latitude());
@@ -204,13 +208,23 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     // REQUIRE(gnuPlotVelocity->update() == true);
     // REQUIRE(gnuPlotAngles->update() == true);
 
-    LOG_INFO("Distance Total : {} [m]", measureDistance(currentState->latitude(), currentState->longitude(),
-                                                        trafo::deg2rad(initLatLonHeight(0)), trafo::deg2rad(initLatLonHeight(1))));
-    LOG_INFO("Distance North : {} [m]", measureDistance(currentState->latitude(), currentState->longitude(),
-                                                        trafo::deg2rad(initLatLonHeight(0)), currentState->longitude()));
-    LOG_INFO("Distance East  : {} [m]", measureDistance(currentState->latitude(), currentState->longitude(),
-                                                        currentState->latitude(), trafo::deg2rad(initLatLonHeight(1))));
-    LOG_INFO("Distance Height: {} [m]", currentState->height() - initLatLonHeight(2));
+    double distanceTotal = measureDistance(currentState->latitude(), currentState->longitude(),
+                                           trafo::deg2rad(initLatLonHeight(0)), trafo::deg2rad(initLatLonHeight(1)));
+    double distanceEast = measureDistance(currentState->latitude(), currentState->longitude(),
+                                          currentState->latitude(), trafo::deg2rad(initLatLonHeight(1)));
+    double distanceNorth = measureDistance(currentState->latitude(), currentState->longitude(),
+                                           trafo::deg2rad(initLatLonHeight(0)), currentState->longitude());
+    double distanceHeight = initLatLonHeight(2) - currentState->height();
+
+    CHECK(distanceTotal < 0.002);
+    CHECK(distanceNorth == Approx(0).margin(EPSILON));
+    CHECK(distanceEast == Approx(distanceTotal));
+    CHECK(distanceHeight == Approx(0).margin(1e-6));
+
+    // LOG_INFO("Distance Total : {} [m]", distanceTotal);
+    // LOG_INFO("Distance North : {} [m]", distanceNorth);
+    // LOG_INFO("Distance East  : {} [m]", distanceEast);
+    // LOG_INFO("Distance Height: {} [m]", distanceHeight);
 
     // CHECK(true == false);
 

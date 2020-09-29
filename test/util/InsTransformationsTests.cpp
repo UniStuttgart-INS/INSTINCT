@@ -155,9 +155,9 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
     auto q = Eigen::Quaterniond(0.6612731, 0.6451492, 0.2785897, -0.2624657);
     auto ZYX = trafo::quat2eulerZYX(q);
 
-    CHECK(ZYX.z() == Approx(trafo::deg2rad(89)).margin(0.000001));
-    CHECK(ZYX.y() == Approx(trafo::deg2rad(45.0)).margin(0.000001));
-    CHECK(ZYX.x() == Approx(trafo::deg2rad(1.0)).margin(0.000001));
+    CHECK(ZYX.z() == Approx(trafo::deg2rad(-1.0)).margin(0.000001));
+    CHECK(ZYX.y() == Approx(trafo::deg2rad(-45.0)).margin(0.000001));
+    CHECK(ZYX.x() == Approx(trafo::deg2rad(-89)).margin(0.000001));
 }
 
 TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[InsTransformations]")

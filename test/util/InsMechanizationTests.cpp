@@ -51,7 +51,7 @@ TEST_CASE("[InsMechanization] Update Quaternions ep Runge-Kutta 3. Order", "[Ins
 
     auto q_ep = quats_ep.at(quats_ep.size() - 1);
     auto q_nb = q_ne * q_ep * q_bp;
-    auto yawPitchRoll = trafo::quat2eulerZYX(q_nb);
+    auto rollPitchYaw = trafo::quat2eulerZYX(q_nb.conjugate());
 
     Eigen::Vector3d expectedRollPitchYaw = angularVelocity_ip_p * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
     Eigen::Quaterniond expectedQuat_nb = trafo::quat_nb(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
@@ -61,9 +61,9 @@ TEST_CASE("[InsMechanization] Update Quaternions ep Runge-Kutta 3. Order", "[Ins
     CHECK(q_nb.z() == Approx(expectedQuat_nb.z()).margin(1e-13));
     CHECK(q_nb.w() == Approx(expectedQuat_nb.w()).margin(1e-13));
 
-    CHECK(yawPitchRoll.x() == Approx(expectedRollPitchYaw.z()).margin(1e-13));
-    CHECK(yawPitchRoll.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
-    CHECK(yawPitchRoll.z() == Approx(expectedRollPitchYaw.x()).margin(1e-13));
+    CHECK(rollPitchYaw.x() == Approx(expectedRollPitchYaw.x()).margin(1e-13));
+    CHECK(rollPitchYaw.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
+    CHECK(rollPitchYaw.z() == Approx(expectedRollPitchYaw.z()).margin(1e-13));
 }
 
 TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 3. Order", "[InsMechanization]")
@@ -101,7 +101,7 @@ TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 3. Order", "[Ins
 
     auto q_ep = quats.at(quats.size() - 1);
     auto q_nb = q_ne * q_ep * q_bp;
-    auto yawPitchRoll = trafo::quat2eulerZYX(q_nb);
+    auto rollPitchYaw = trafo::quat2eulerZYX(q_nb.conjugate());
 
     Eigen::Vector3d expectedRollPitchYaw = angularVelocity_ip_b * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
     Eigen::Quaterniond expectedQuat_nb = trafo::quat_nb(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
@@ -111,9 +111,9 @@ TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 3. Order", "[Ins
     CHECK(q_nb.z() == Approx(expectedQuat_nb.z()).margin(1e-13));
     CHECK(q_nb.w() == Approx(expectedQuat_nb.w()).margin(1e-13));
 
-    CHECK(yawPitchRoll.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
-    CHECK(yawPitchRoll.x() == Approx(expectedRollPitchYaw.z()).margin(1e-13));
-    CHECK(yawPitchRoll.z() == Approx(expectedRollPitchYaw.x()).margin(1e-13));
+    CHECK(rollPitchYaw.x() == Approx(expectedRollPitchYaw.x()).margin(1e-13));
+    CHECK(rollPitchYaw.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
+    CHECK(rollPitchYaw.z() == Approx(expectedRollPitchYaw.z()).margin(1e-13));
 }
 
 TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[InsMechanization]")
