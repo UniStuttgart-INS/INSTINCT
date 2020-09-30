@@ -52,15 +52,28 @@ class KalmanFilter : public Node
     /// @return The gui configuration
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
     {
+        // clang-format off
         return {
             { CONFIG_LIST, "Filter Type", "Select the type of the filter which should be used", { "KF", "[EKF]", "EnKF", "UKF" } },
-            { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_STRING, "KF-Option1", "KF-Option1 ToolTip", { "" }), ConfigOptionsBase(CONFIG_BOOL, "EKF-Option1", "EKF-Option1 Tooltip1", { "1" }), ConfigOptionsBase(CONFIG_BOOL, "EnKF-Option1", "EnKF-Option1 Tooltip1", { "1" }), ConfigOptionsBase(CONFIG_BOOL, "UKF-Option1", "UKF-Option1 Tooltip1", { "1" }) } },
+            { CONFIG_VARIANT, "", "", 
+                            { ConfigOptionsBase(CONFIG_STRING, "KF-Option1", "KF-Option1 ToolTip", { "" }),
+                              ConfigOptionsBase(CONFIG_BOOL, "EKF-Option1", "EKF-Option1 Tooltip1", { "1" }),
+                              ConfigOptionsBase(CONFIG_BOOL, "EnKF-Option1", "EnKF-Option1 Tooltip1", { "1" }),
+                              ConfigOptionsBase(CONFIG_BOOL, "UKF-Option1", "UKF-Option1 Tooltip1", { "1" }), } },
             { CONFIG_N_INPUT_PORTS, "Input Ports", "Amount of Input Ports", { "2", "2", "30", "4" } },
-            { CONFIG_LIST, "Port Type", "Select the type of the message to receive on this port", { "VectorNavObs", "[UbloxObs]" } },
-            { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_STRING, "VectorNavOption1", "VectorNavOption1 ToolTip", { "" }), ConfigOptionsBase(CONFIG_BOOL, "UbloxOption1", "UbloxOption1 Tooltip1", { "1" }) } },
-            { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_BOOL, "VectorNavOption2", "VectorNavOption2 ToolTip", { "0" }), ConfigOptionsBase(CONFIG_LIST, "UbloxOption2", "UbloxOption1 Tooltip2", { "1", "[2]" }) } },
+            { CONFIG_LIST, "Port Type",
+                           "Select the type of the message to receive on this port",
+                           { "[" + std::string(InsObs().type()) + "]", "",
+                             std::string(InsObs().type()), "", } },
+            { CONFIG_VARIANT, "", "",
+                            { ConfigOptionsBase(CONFIG_STRING, "VectorNavOption1", "VectorNavOption1 ToolTip", { "" }),
+                              ConfigOptionsBase(CONFIG_BOOL, "UbloxOption1", "UbloxOption1 Tooltip1", { "1" }), } },
+            { CONFIG_VARIANT, "", "",
+                            { ConfigOptionsBase(CONFIG_BOOL, "VectorNavOption2", "VectorNavOption2 ToolTip", { "0" }),
+                              ConfigOptionsBase(CONFIG_LIST, "UbloxOption2", "UbloxOption1 Tooltip2", { "1", "[2]" }) } },
             { CONFIG_BOOL, "Bool2", "Use the Time configured here as start time", { "1" } },
         };
+        // clang-format on
     }
 
     /// @brief Returns the context of the class
@@ -89,27 +102,27 @@ class KalmanFilter : public Node
     /// @brief Returns the data types provided by this class
     /// @param[in] portType Specifies the port type
     /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type
-    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const override
+    /// @return The data type and subtitle
+    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const override
     {
         switch (portType)
         {
         case PortType::In:
             if (portIndex == 0)
             {
-                return InsObs().type();
+                return std::make_pair(InsObs().type(), std::string_view(""));
             }
             break;
 
         case PortType::Out:
             if (portIndex == 0)
             {
-                return InsObs().type();
+                return std::make_pair(InsObs().type(), std::string_view(""));
             }
             break;
         }
 
-        return std::string_view("");
+        return std::make_pair(std::string_view(""), std::string_view(""));
     }
 
     /// @brief Handles the data sent on the input port

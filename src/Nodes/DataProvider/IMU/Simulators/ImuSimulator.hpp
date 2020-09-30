@@ -73,28 +73,28 @@ class ImuSimulator final : public Imu
     /// @brief Returns the data types provided by this class
     /// @param[in] portType Specifies the port type
     /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type
-    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    /// @return The data type and subtitle
+    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
         {
         case PortType::In:
             if (portIndex == 0)
             {
-                return StateData().type();
+                return std::make_pair(StateData().type(), std::string_view(""));
             }
         case PortType::Out:
             if (portIndex == 0)
             {
-                return ImuObs().type();
+                return std::make_pair(ImuObs().type(), std::string_view(""));
             }
             if (portIndex == 1)
             {
-                return ImuPos().type();
+                return std::make_pair(ImuPos().type(), std::string_view(""));
             }
         }
 
-        return std::string_view("");
+        return std::make_pair(std::string_view(""), std::string_view(""));
     }
 
     /// @brief Returns Gui Configuration options for the class
