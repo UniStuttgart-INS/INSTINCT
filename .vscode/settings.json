@@ -10,6 +10,7 @@
     "cSpell.words": [
         "Doxygen",
         "GNSS",
+        "Kalman",
         "cmake",
         "coeffs",
         "docopt",

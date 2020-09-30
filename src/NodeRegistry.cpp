@@ -29,7 +29,7 @@
 
 #include "Nodes/State/State.hpp"
 
-#include "Nodes/StateEstimator/StateEstimator.hpp"
+#include "Nodes/Estimators/KalmanFilter.hpp"
 
 #include "Nodes/Time/TimeSynchronizer.hpp"
 
@@ -64,7 +64,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 
     nodeManager.registerNodeType<NAV::State>();
 
-    nodeManager.registerNodeType<NAV::StateEstimator>();
+    nodeManager.registerNodeType<NAV::KalmanFilter>();
 
     nodeManager.registerNodeType<NAV::TimeSynchronizer>();
 }

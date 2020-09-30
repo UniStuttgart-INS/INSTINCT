@@ -1,5 +1,5 @@
-/// @file StateEstimator.hpp
-/// @brief State Estimator Class
+/// @file KalmanFilter.hpp
+/// @brief Class providing different types of Kalman Filters
 /// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
 /// @date 2020-05-18
 
@@ -13,39 +13,39 @@
 
 namespace NAV
 {
-class StateEstimator : public Node
+class KalmanFilter : public Node
 {
   public:
     /// @brief Constructor
     /// @param[in] name Name of the object
     /// @param[in] options Program options string map
-    StateEstimator(const std::string& name, const std::map<std::string, std::string>& options);
+    KalmanFilter(const std::string& name, const std::map<std::string, std::string>& options);
 
     /// @brief Default constructor
-    StateEstimator() = default;
+    KalmanFilter() = default;
     /// @brief Destructor
-    ~StateEstimator() override = default;
+    ~KalmanFilter() override = default;
     /// @brief Copy constructor
-    StateEstimator(const StateEstimator&) = delete;
+    KalmanFilter(const KalmanFilter&) = delete;
     /// @brief Move constructor
-    StateEstimator(StateEstimator&&) = delete;
+    KalmanFilter(KalmanFilter&&) = delete;
     /// @brief Copy assignment operator
-    StateEstimator& operator=(const StateEstimator&) = delete;
+    KalmanFilter& operator=(const KalmanFilter&) = delete;
     /// @brief Move assignment operator
-    StateEstimator& operator=(StateEstimator&&) = delete;
+    KalmanFilter& operator=(KalmanFilter&&) = delete;
 
     /// @brief Returns the String representation of the Class Type
     /// @return The class type
     [[nodiscard]] constexpr std::string_view type() const override
     {
-        return std::string_view("StateEstimator");
+        return std::string_view("KalmanFilter");
     }
 
     /// @brief Returns the String representation of the Class Category
     /// @return The class category
     [[nodiscard]] constexpr std::string_view category() const override
     {
-        return std::string_view("State");
+        return std::string_view("Estimators");
     }
 
     /// @brief Returns Gui Configuration options for the class
@@ -117,12 +117,6 @@ class StateEstimator : public Node
     /// @param[in, out] data The data send on the input port
     void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) override
     {
-        static bool once = true;
-        if (once)
-        {
-            LOG_INFO("Data on Port {}", portIndex);
-            once = false;
-        }
         if (portIndex == 0)
         {
             auto obs = std::static_pointer_cast<InsObs>(data);

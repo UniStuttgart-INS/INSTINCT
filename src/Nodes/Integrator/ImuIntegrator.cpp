@@ -53,6 +53,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     prevStates.push_front(stateData__t1);
 
     /// Initial State
+    // TODO: Bad practice, as the connected node does not have to be a state node)
     auto stateData__init = std::static_pointer_cast<State>(stateNode)->initialState;
 
     /// IMU Observation at the time tₖ₋₂
