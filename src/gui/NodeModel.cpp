@@ -351,8 +351,9 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
         LOG_TRACE("Type == LIST");
         QComboBox* comboBox = new QComboBox();
 
-        for (auto& cellVariant : std::get<3>(config))
+        for (size_t i = 0; i < std::get<3>(config).size(); i++)
         {
+            auto& cellVariant = std::get<3>(config).at(i);
             auto& cell = std::get<std::string>(cellVariant);
             if (cell.at(0) == '[')
             {
@@ -361,6 +362,13 @@ void NodeModel::addGuiElementForConfig(const NAV::Node::ConfigOptions& config, c
             }
             else
                 comboBox->addItem(QString::fromStdString(cell));
+
+            if (label.endsWith("Port Type"))
+            {
+                comboBox->setProperty((std::to_string(i / 2) + "-Subtitle").c_str(),
+                                      QString::fromStdString(std::get<std::string>(std::get<3>(config).at(i + 1))));
+                i++;
+            }
         }
 
         comboBox->setStyleSheet("background: rgb(220,220,220); selection-background-color: rgb(169,169,169); color: black; combobox-popup: 0");
@@ -672,7 +680,8 @@ NodeDataType determinePortTypeForLayout(QFormLayout* layout, PortIndex portIndex
                 || (widget->objectName() == QString::fromStdString(std::to_string(portIndex + 1) + "-Port Type")))
             {
                 return { static_cast<QComboBox*>(widget)->currentText(),
-                         static_cast<QComboBox*>(widget)->currentText() };
+                         static_cast<QComboBox*>(widget)->currentText(),
+                         widget->property((std::to_string(static_cast<QComboBox*>(widget)->currentIndex()) + "-Subtitle").c_str()).toString() };
             }
         }
         if (widget->layout()
@@ -688,7 +697,7 @@ NodeDataType determinePortTypeForLayout(QFormLayout* layout, PortIndex portIndex
             }
         }
     }
-    return { "", "" };
+    return { "", "", "" };
 }
 
 NodeDataType NodeModel::dataType(PortType portType, PortIndex portIndex) const
@@ -706,13 +715,15 @@ NodeDataType NodeModel::dataType(PortType portType, PortIndex portIndex) const
 
     if (portType == PortType::In)
     {
-        return { QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::In, port))),
-                 QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::In, port))) };
+        return { QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::In, port).first)),
+                 QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::In, port).first)),
+                 QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::In, port).second)) };
     }
     else if (portType == PortType::Out)
     {
-        return { QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::Out, port))),
-                 QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::Out, port))) };
+        return { QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::Out, port).first)),
+                 QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::Out, port).first)),
+                 QString::fromStdString(std::string(nodeInfo.constructorEmpty()->dataType(NAV::Node::PortType::Out, port).second)) };
     }
 
     return NodeDataType();

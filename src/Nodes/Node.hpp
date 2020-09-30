@@ -97,8 +97,8 @@ class Node : public DataCallback
     /// @brief Returns the data types provided by this class
     /// @param[in] portType Specifies the port type
     /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type
-    [[nodiscard]] virtual constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const = 0;
+    /// @return The data type and subtitle
+    [[nodiscard]] virtual constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const = 0;
 
     /// @brief Handles the data sent on the input port
     /// @param[in] portIndex The input port index

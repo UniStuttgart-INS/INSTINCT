@@ -89,8 +89,8 @@ class EmlidSensor final : public UartSensor, public Gnss
     /// @brief Returns the data types provided by this class
     /// @param[in] portType Specifies the port type
     /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type
-    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    /// @return The data type and subtitle
+    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
         {
@@ -99,11 +99,11 @@ class EmlidSensor final : public UartSensor, public Gnss
         case PortType::Out:
             if (portIndex == 0)
             {
-                return EmlidObs().type();
+                return std::make_pair(EmlidObs().type(), std::string_view(""));
             }
         }
 
-        return std::string_view("");
+        return std::make_pair(std::string_view(""), std::string_view(""));
     }
 
     /// @brief Handles the data sent on the input port
