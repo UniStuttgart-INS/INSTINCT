@@ -21,15 +21,15 @@ target_link_libraries(
           CONAN_PKG::spdlog
           CONAN_PKG::boost
           CONAN_PKG::eigen
-          Threads::Threads)
+          Threads::Threads
+          libvncxx
+          libUartSensor)
+
+if(NOT APPLE)
+  target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libnavio)
+endif()
 
 target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
-
-if(ENABLE_SENSORS)
-  target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libvncxx libnavio libUartSensor)
-else()
-  target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC DISABLE_SENSORS)
-endif()
 
 if(ENABLE_GUI)
   message(STATUS "Building ${CMAKE_PROJECT_NAME}-GUI")
@@ -59,12 +59,12 @@ if(ENABLE_GUI)
             NodeEditor::nodes
             CONAN_PKG::boost
             CONAN_PKG::eigen
-            Threads::Threads)
+            Threads::Threads
+            libvncxx
+            libUartSensor)
 
-  if(ENABLE_SENSORS)
-    target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui" PRIVATE libvncxx libnavio libUartSensor)
-  else()
-    target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC DISABLE_SENSORS)
+  if(NOT APPLE)
+    target_link_libraries("${PROJECT_NAME_LOWERCASE}-gui" PRIVATE libnavio)
   endif()
 
   target_compile_definitions("${PROJECT_NAME_LOWERCASE}-gui" PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})

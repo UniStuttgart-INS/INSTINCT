@@ -5,12 +5,10 @@
 
 #pragma once
 
-#ifndef DISABLE_SENSORS
-
-    #include "NodeData/IMU/KvhObs.hpp"
-    #include "../Imu.hpp"
-    #include "../../Protocol/UartSensor.hpp"
-    #include "util/UartSensors/KVH/KvhUartSensor.hpp"
+#include "NodeData/IMU/KvhObs.hpp"
+#include "../Imu.hpp"
+#include "../../Protocol/UartSensor.hpp"
+#include "util/UartSensors/KVH/KvhUartSensor.hpp"
 
 namespace NAV
 {
@@ -146,5 +144,3 @@ class KvhSensor final : public UartSensor, public Imu
 };
 
 } // namespace NAV
-
-#endif

@@ -5,12 +5,10 @@
 
 #pragma once
 
-#ifndef DISABLE_SENSORS
-
-    #include "NodeData/GNSS/EmlidObs.hpp"
-    #include "../Gnss.hpp"
-    #include "../../Protocol/UartSensor.hpp"
-    #include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
+#include "NodeData/GNSS/EmlidObs.hpp"
+#include "../Gnss.hpp"
+#include "../../Protocol/UartSensor.hpp"
+#include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
 
 namespace NAV
 {
@@ -123,5 +121,3 @@ class EmlidSensor final : public UartSensor, public Gnss
 };
 
 } // namespace NAV
-
-#endif

@@ -30,11 +30,11 @@
                 "-Bbuild/Debug",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
+                "-DENABLE_CLANG_TIDY=OFF",
                 "-DENABLE_MAIN=ON",
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DENABLE_SENSORS=ON",
                 "-DLOG_LEVEL=DEBUG"
             ],
             "options": {
@@ -61,7 +61,6 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DENABLE_SENSORS=ON",
                 "-DLOG_LEVEL=INFO"
             ],
             "options": {
@@ -88,7 +87,6 @@
                 "-DENABLE_GUI=ON",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DENABLE_SENSORS=ON",
                 "-DLOG_LEVEL=INFO"
             ],
             "options": {
@@ -115,7 +113,6 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=ON",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DENABLE_SENSORS=ON",
                 "-DLOG_LEVEL=TRACE"
             ],
             "options": {
@@ -142,7 +139,6 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
-                "-DENABLE_SENSORS=OFF",
                 "-DLOG_LEVEL=OFF"
             ],
             "options": {
@@ -218,7 +214,7 @@
                 "--build",
                 "build/Debug",
                 "--",
-                "-j"
+                "-j",
             ],
             "dependsOn": [
                 "CMAKE: Debug"
@@ -234,7 +230,7 @@
                 "--build",
                 "build/Release",
                 "--",
-                "-j"
+                "-j",
             ],
             "dependsOn": [
                 "CMAKE: GUI"
@@ -250,7 +246,7 @@
                 "--build",
                 "build/Release",
                 "--",
-                "-j"
+                "-j",
             ],
             "dependsOn": [
                 "CMAKE: Release"
@@ -266,7 +262,7 @@
                 "--build",
                 "build/Debug",
                 "--",
-                "-j"
+                "-j",
             ],
             "dependsOn": [
                 "CMAKE: Testing"
@@ -284,7 +280,7 @@
                 "--target",
                 "doxygen-docs",
                 "--",
-                "-j"
+                "-j",
             ],
             "dependsOn": [
                 "CMAKE: Documentation"
