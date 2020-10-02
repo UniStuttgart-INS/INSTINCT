@@ -1,10 +1,8 @@
-#ifndef DISABLE_SENSORS
+#include "KvhSensor.hpp"
 
-    #include "KvhSensor.hpp"
+#include "util/Logger.hpp"
 
-    #include "util/Logger.hpp"
-
-    #include "util/UartSensors/KVH/KvhUtilities.hpp"
+#include "util/UartSensors/KVH/KvhUtilities.hpp"
 
 NAV::KvhSensor::KvhSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Imu(name, options), sensor(name)
@@ -76,5 +74,3 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
         LOG_WARN("{}: Received an ASCII Async message: {}", kvhSensor->name, p.datastr());
     }
 }
-
-#endif

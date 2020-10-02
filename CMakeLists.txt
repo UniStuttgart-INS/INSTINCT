@@ -90,27 +90,23 @@ run_conan()
 # Libraries (inlcude as SYSTEM, to prevent Static Analazers to scan them)
 # ######################################################################################################################
 
-option(ENABLE_SENSORS "Enable Compilation of Sensors" ON)
+# Include VectorNav library
+add_subdirectory(lib/vnproglib libvncxx)
+include_directories(SYSTEM lib/vnproglib/include)
+set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
-if(ENABLE_SENSORS)
-  # Include VectorNav library
-  add_subdirectory(lib/vnproglib libvncxx)
-  include_directories(SYSTEM lib/vnproglib/include)
-  set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
-  set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
-
-  if(NOT APPLE)
-    # Include navio2 library
-    add_subdirectory(lib/navio2 libnavio)
-    include_directories(SYSTEM lib/navio2/include)
-    set_target_properties(libnavio PROPERTIES CXX_CLANG_TIDY "")
-    set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
-  endif()
-
-  # Include uart library
-  add_subdirectory(lib/uartsensor libUartSensor)
-  include_directories(SYSTEM lib/uartsensor/include)
+if(NOT APPLE)
+  # Include navio2 library
+  add_subdirectory(lib/navio2 libnavio)
+  include_directories(SYSTEM lib/navio2/include)
+  set_target_properties(libnavio PROPERTIES CXX_CLANG_TIDY "")
+  set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
 endif()
+
+# Include uart library
+add_subdirectory(lib/uartsensor libUartSensor)
+include_directories(SYSTEM lib/uartsensor/include)
 
 # Include gnuplot iostream
 include_directories(SYSTEM lib/gnuplot-iostream)

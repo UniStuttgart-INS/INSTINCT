@@ -1,17 +1,15 @@
-#ifndef DISABLE_SENSORS
+#include "Navio2Sensor.hpp"
 
-    #if !__APPLE__
+#include "util/Debug.hpp"
+#include "util/Logger.hpp"
 
-        #include "Navio2Sensor.hpp"
+#if !__APPLE__
+    #include "navio/Common/MPU9250.h"
+    #include "navio/Navio2/LSM9DS1.h"
+    #include "navio/Common/Util.h"
+#endif
 
-        #include "util/Debug.hpp"
-        #include "util/Logger.hpp"
-
-        #include "navio/Common/MPU9250.h"
-        #include "navio/Navio2/LSM9DS1.h"
-        #include "navio/Common/Util.h"
-
-        #include <chrono>
+#include <chrono>
 
 NAV::Navio2Sensor::Navio2Sensor(const std::string& name, const std::map<std::string, std::string>& options)
     : Imu(name, options)
@@ -38,6 +36,7 @@ NAV::Navio2Sensor::Navio2Sensor(const std::string& name, const std::map<std::str
         }
     }
 
+#if !__APPLE__
     if (imuType == ImuType::MPU)
     {
         sensor = std::make_unique<MPU9250>();
@@ -52,6 +51,9 @@ NAV::Navio2Sensor::Navio2Sensor(const std::string& name, const std::map<std::str
         LOG_CRITICAL("{} ({}): Sensor not enabled", name, options.at("Imu"));
     }
     sensor->initialize();
+#else
+    LOG_CRITICAL("{} ({}): MacOS is not supported by the Navio2 Node", name, options.at("Imu"));
+#endif
 
     int outputInterval = static_cast<int>(1.0 / static_cast<double>(outputFrequency) * 1000.0);
     startTime = std::chrono::high_resolution_clock::now();
@@ -79,6 +81,7 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     auto obs = std::make_shared<ImuObs>();
 
     auto currentTime = std::chrono::high_resolution_clock::now();
+#if !__APPLE__
     navio->sensor->update();
 
     navio->sensor->read_accelerometer(&navio->ax, &navio->ay, &navio->az);
@@ -86,6 +89,7 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     navio->sensor->read_magnetometer(&navio->mx, &navio->my, &navio->mz);
 
     obs->temperature = navio->sensor->read_temperature();
+#endif
 
     obs->accelUncompXYZ.emplace(navio->ax, navio->ay, navio->az);
     obs->gyroUncompXYZ.emplace(navio->gx, navio->gy, navio->gz);
@@ -105,7 +109,3 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
 
     navio->invokeCallbacks(obs);
 }
-
-    #endif
-
-#endif

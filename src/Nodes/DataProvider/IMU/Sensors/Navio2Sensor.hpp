@@ -5,17 +5,15 @@
 
 #pragma once
 
-#ifndef DISABLE_SENSORS
+#include "NodeData/IMU/ImuObs.hpp"
+#include "../Imu.hpp"
 
-    #if !__APPLE__
+#if !__APPLE__
+    #include "navio/Common/InertialSensor.h"
+#endif
 
-        #include "NodeData/IMU/ImuObs.hpp"
-        #include "../Imu.hpp"
-
-        #include "navio/Common/InertialSensor.h"
-
-        #include "util/CallbackTimer.hpp"
-        #include <chrono>
+#include "util/CallbackTimer.hpp"
+#include <chrono>
 
 namespace NAV
 {
@@ -141,8 +139,10 @@ class Navio2Sensor final : public Imu
         LSM
     };
 
+#if !__APPLE__
     /// Sensor object
     std::unique_ptr<InertialSensor> sensor;
+#endif
 
     /// The Imu type
     ImuType imuType = ImuType::MPU;
@@ -180,7 +180,3 @@ class Navio2Sensor final : public Imu
 };
 
 } // namespace NAV
-
-    #endif
-
-#endif

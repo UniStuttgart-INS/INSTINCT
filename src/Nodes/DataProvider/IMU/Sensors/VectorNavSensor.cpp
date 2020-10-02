@@ -1,10 +1,8 @@
-#ifndef DISABLE_SENSORS
+#include "VectorNavSensor.hpp"
 
-    #include "VectorNavSensor.hpp"
-
-    #include "util/Debug.hpp"
-    #include "util/Logger.hpp"
-    #include "vn/searcher.h"
+#include "util/Debug.hpp"
+#include "util/Logger.hpp"
+#include "vn/searcher.h"
 
 NAV::VectorNavSensor::VectorNavSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Imu(name, options)
@@ -219,5 +217,3 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
         }
     }
 }
-
-#endif
