@@ -30,6 +30,7 @@
                 "-Bbuild/Debug",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
+                "-DENABLE_CLANG_TIDY=OFF",
                 "-DENABLE_MAIN=ON",
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
@@ -217,8 +218,8 @@
             "args": [
                 "--build",
                 "build/Debug",
-                "--",
-                "-j"
+                //"--",
+                //"-j"
             ],
             "dependsOn": [
                 "CMAKE: Debug"
@@ -233,8 +234,8 @@
             "args": [
                 "--build",
                 "build/Release",
-                "--",
-                "-j"
+                //"--",
+                //"-j"
             ],
             "dependsOn": [
                 "CMAKE: GUI"
@@ -249,8 +250,8 @@
             "args": [
                 "--build",
                 "build/Release",
-                "--",
-                "-j"
+                //"--",
+                //"-j"
             ],
             "dependsOn": [
                 "CMAKE: Release"
@@ -265,8 +266,8 @@
             "args": [
                 "--build",
                 "build/Debug",
-                "--",
-                "-j"
+                //"--",
+                //"-j"
             ],
             "dependsOn": [
                 "CMAKE: Testing"
@@ -283,8 +284,8 @@
                 "build/Release",
                 "--target",
                 "doxygen-docs",
-                "--",
-                "-j"
+                //"--",
+                //"-j"
             ],
             "dependsOn": [
                 "CMAKE: Documentation"

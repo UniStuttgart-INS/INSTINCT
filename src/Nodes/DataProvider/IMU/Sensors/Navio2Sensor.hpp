@@ -7,13 +7,15 @@
 
 #ifndef DISABLE_SENSORS
 
-    #include "NodeData/IMU/ImuObs.hpp"
-    #include "../Imu.hpp"
+    #if !__APPLE__
 
-    #include "navio/Common/InertialSensor.h"
+        #include "NodeData/IMU/ImuObs.hpp"
+        #include "../Imu.hpp"
 
-    #include "util/CallbackTimer.hpp"
-    #include <chrono>
+        #include "navio/Common/InertialSensor.h"
+
+        #include "util/CallbackTimer.hpp"
+        #include <chrono>
 
 namespace NAV
 {
@@ -178,5 +180,7 @@ class Navio2Sensor final : public Imu
 };
 
 } // namespace NAV
+
+    #endif
 
 #endif

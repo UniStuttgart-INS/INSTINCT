@@ -1,15 +1,17 @@
 #ifndef DISABLE_SENSORS
 
-    #include "Navio2Sensor.hpp"
+    #if !__APPLE__
 
-    #include "util/Debug.hpp"
-    #include "util/Logger.hpp"
+        #include "Navio2Sensor.hpp"
 
-    #include "navio/Common/MPU9250.h"
-    #include "navio/Navio2/LSM9DS1.h"
-    #include "navio/Common/Util.h"
+        #include "util/Debug.hpp"
+        #include "util/Logger.hpp"
 
-    #include <chrono>
+        #include "navio/Common/MPU9250.h"
+        #include "navio/Navio2/LSM9DS1.h"
+        #include "navio/Common/Util.h"
+
+        #include <chrono>
 
 NAV::Navio2Sensor::Navio2Sensor(const std::string& name, const std::map<std::string, std::string>& options)
     : Imu(name, options)
@@ -103,5 +105,7 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
 
     navio->invokeCallbacks(obs);
 }
+
+    #endif
 
 #endif

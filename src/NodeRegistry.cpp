@@ -52,7 +52,9 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 #ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::VectorNavSensor>();
     nodeManager.registerNodeType<NAV::KvhSensor>();
+    #if !__APPLE__
     nodeManager.registerNodeType<NAV::Navio2Sensor>();
+    #endif
     nodeManager.registerNodeType<NAV::UbloxSensor>();
     nodeManager.registerNodeType<NAV::EmlidSensor>();
 #endif
