@@ -225,10 +225,11 @@ void NAV::NodeManager::linkNodes()
                         // At this point both nodes were found and they have the link data type
 
                         // Check if the NodeData type is registered and add the callback
-                        auto iter = _registeredNodeDataTypes.find(sourceNode->dataType(Node::PortType::Out, link.sourcePortIndex).first);
+                        auto portType = sourceNode->dataType(Node::PortType::Out, link.sourcePortIndex).first;
+                        auto iter = _registeredNodeDataTypes.find(portType);
                         if (iter == _registeredNodeDataTypes.end())
                         {
-                            LOG_CRITICAL("Requested NodeLink with type '{}' is not registered with the application", sourceNode->dataType(Node::PortType::Out, link.sourcePortIndex).first);
+                            LOG_CRITICAL("Requested NodeLink with type '{}' is not registered with the application", portType);
                         }
                         iter->second.addCallback(sourceNode, targetNode, link.targetPortIndex);
                         targetNode->incomingLinks.emplace(link.targetPortIndex, std::make_pair(sourceNode, link.sourcePortIndex));

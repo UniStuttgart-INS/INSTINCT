@@ -194,9 +194,9 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 if (currentInsTime.has_value())
                 {
                     auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavAtt>(obs->data).iTOW) / 1000.0L,
-                                           gpst.gpsCycle);
+                    currentInsTime.emplace(gpst.gpsCycle,
+                                           gpst.gpsWeek,
+                                           static_cast<long double>(std::get<UbxNavAtt>(obs->data).iTOW) / 1000.0L);
                     obs->insTime = currentInsTime;
                 }
 
@@ -221,9 +221,9 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 if (currentInsTime.has_value())
                 {
                     auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavPosllh>(obs->data).iTOW) / 1000.0L,
-                                           gpst.gpsCycle);
+                    currentInsTime.emplace(gpst.gpsCycle,
+                                           gpst.gpsWeek,
+                                           static_cast<long double>(std::get<UbxNavPosllh>(obs->data).iTOW) / 1000.0L);
                     obs->insTime = currentInsTime;
                 }
 
@@ -250,9 +250,9 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 if (currentInsTime.has_value())
                 {
                     auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavVelned>(obs->data).iTOW) / 1000.0L,
-                                           gpst.gpsCycle);
+                    currentInsTime.emplace(gpst.gpsCycle,
+                                           gpst.gpsWeek,
+                                           static_cast<long double>(std::get<UbxNavVelned>(obs->data).iTOW) / 1000.0L);
                     obs->insTime = currentInsTime;
                 }
 
@@ -305,9 +305,9 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                     );
                 }
 
-                currentInsTime.emplace(std::get<UbxRxmRawx>(obs->data).week,
-                                       static_cast<long double>(std::get<UbxRxmRawx>(obs->data).rcvTow),
-                                       0);
+                currentInsTime.emplace(0,
+                                       std::get<UbxRxmRawx>(obs->data).week,
+                                       static_cast<long double>(std::get<UbxRxmRawx>(obs->data).rcvTow));
                 obs->insTime = currentInsTime;
 
                 if (!peek)
