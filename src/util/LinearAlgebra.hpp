@@ -67,9 +67,9 @@ class InsMatrix : public Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows
     explicit InsMatrix(const Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>& eigen)
         : Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>(eigen) {}
 
-    /// @brief Coordinate System of the values
-    /// @tparam rhs_System 
-    /// @tparam rhs_Scalar Numeric type, e.g. float, double, int or std::complex<float>. User defined scalar types are supported as well 
+    /// @brief
+    /// @tparam rhs_System Coordinate System of the data
+    /// @tparam rhs_Scalar Numeric type, e.g. float, double, int or std::complex<float>. User defined scalar types are supported as well
     /// @tparam rhs_Rows Number of rows, or Dynamic
     /// @tparam rhs_Cols Number of columns, or Dynamic
     /// @tparam rhs_Options A combination of either RowMajor or ColMajor, and of either AutoAlign or DontAlign.
@@ -79,7 +79,7 @@ class InsMatrix : public Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows
     /// @tparam rhs_MaxRows Maximum number of rows. Defaults to _Rows
     /// @tparam rhs_MaxCols Maximum number of columns. Defaults to _Cols
     /// @param[in] rhs The right-hand side objetc
-    /// @return 
+    /// @return Reference to this object
     template<CoordinateSystem rhs_System, typename rhs_Scalar, int rhs_Rows, int rhs_Cols,
              int rhs_Options = StorageOptionsDefault, int rhs_MaxRows = rhs_Rows, int rhs_MaxCols = rhs_Cols>
     InsMatrix<_System, _Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>&
@@ -110,6 +110,12 @@ class InsMatrix : public Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows
         return *this;
     }
 };
+
+// template<CoordinateSystem _System, typename _Scalar>
+// class InsMatrix<_System, _Scalar, 3, 1, StorageOptionsDefault, 3, 1> : public Eigen::Matrix<_Scalar, 3, 1, StorageOptionsDefault, 3, 1>
+// {
+//     InsMatrix(const _Scalar& x, )
+// };
 
 template<CoordinateSystem _System, typename _Scalar>
 using InsVector3 = InsMatrix<_System, _Scalar, 3, 1>;
