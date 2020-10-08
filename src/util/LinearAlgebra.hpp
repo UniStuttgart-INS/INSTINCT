@@ -71,8 +71,16 @@ class Matrix : public Eigen::Matrix<_Scalar, _Rows, _Cols>
     /// @param[in] x First component
     /// @param[in] y Second component
     /// @param[in] z Third component
-    Matrix(const _Scalar& x, const _Scalar& y, const _Scalar& z) requires(_System_To == _System_From && _Rows == 3 && _Cols == 1)
+    Matrix(const _Scalar& x, const _Scalar& y, const _Scalar& z)
         : Eigen::Matrix<_Scalar, _Rows, _Cols>(x, y, z) {}
+
+    /// @brief Constructs and initializes a 4D Vector from its three coefficients x, y, z and w
+    /// @param[in] x First component
+    /// @param[in] y Second component
+    /// @param[in] z Third component
+    /// @param[in] w Fourth component
+    Matrix(const _Scalar& x, const _Scalar& y, const _Scalar& z, const _Scalar& w)
+        : Eigen::Matrix<_Scalar, _Rows, _Cols>(x, y, z, w) {}
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                            Operator Overloads                                            */
