@@ -9,8 +9,7 @@
 
 #include "util/InsTransformations.hpp"
 
-#include <Eigen/Dense>
-#include <Eigen/Geometry>
+#include "util/LinearAlgebra.hpp"
 
 namespace NAV
 {
@@ -53,7 +52,7 @@ class StateData : public InsObs
     /// @brief State Vector
     /// Entries are:
     /// [0-3] Quaternions body to navigation frame (roll, pitch, yaw)
-    /// [4-6] Latitude, Longitude, Height
+    /// [4-6] Latitude, Longitude, Altitude
     /// [7-9] Velocity in navigation coordinates
     Eigen::Matrix<double, 10, 1> X;
 
@@ -69,42 +68,42 @@ class StateData : public InsObs
 
     /// @brief Returns the Quaternion from body to navigation frame (NED)
     /// @return The Quaternion for the rotation from body to navigation coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_nb() const
+    [[nodiscard]] Quaterniond<Navigation, Body> quaternion_nb() const
     {
-        return Eigen::Quaterniond(quat_nb_coeff());
+        return Quaterniond<Navigation, Body>(Eigen::Quaterniond(quat_nb_coeff()));
     }
 
     /// @brief Returns the Quaternion from navigation to body frame (NED)
     /// @return The Quaternion for the rotation from navigation to body coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_bn() const
+    [[nodiscard]] Quaterniond<Body, Navigation> quaternion_bn() const
     {
         return quaternion_nb().conjugate();
     }
 
     /// @brief Returns the Quaternion from navigation to Earth-fixed frame
     /// @return The Quaternion for the rotation from navigation to earth coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_en() const
+    [[nodiscard]] Quaterniond<Earth, Navigation> quaternion_en() const
     {
         return trafo::quat_en(latitude(), longitude());
     }
 
     /// @brief Returns the Quaternion from Earth-fixed frame to navigation
     /// @return The Quaternion for the rotation from earth navigation coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_ne() const
+    [[nodiscard]] Quaterniond<Navigation, Earth> quaternion_ne() const
     {
         return quaternion_en().conjugate();
     }
 
     /// @brief Returns the Quaternion from body to Earth-fixed frame
     /// @return The Quaternion for the rotation from body to earth coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_eb() const
+    [[nodiscard]] Quaterniond<Earth, Body> quaternion_eb() const
     {
         return quaternion_en() * quaternion_nb();
     }
 
     /// @brief Returns the Quaternion from Earth-fixed to body frame
     /// @return The Quaternion for the rotation from earth to body coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_be() const
+    [[nodiscard]] Quaterniond<Body, Earth> quaternion_be() const
     {
         return quaternion_eb().conjugate();
     }
@@ -137,11 +136,18 @@ class StateData : public InsObs
     /*                                                 Position                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    /// Returns the latitude 𝜙, longitude λ and height above ground h in [rad, rad, m]
-    Eigen::Ref<Eigen::Vector3d> latLonHeight() { return X.segment<3>(4); }
+    /// @brief Set the latitude 𝜙, longitude λ and altitude
+    /// @param[in] latLonAlt [latitude 𝜙, longitude λ and altitude]^T in [rad, rad, m]
+    void setLatLonAlt(const Vector3d<LLA>& latLonAlt)
+    {
+        X.segment<3>(4) = latLonAlt;
+    }
 
-    /// Returns the latitude 𝜙, longitude λ and height above ground h in [rad, rad, m]
-    [[nodiscard]] Eigen::Ref<const Eigen::Vector3d> latLonHeight() const { return X.segment<3>(4); }
+    /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
+    Vector3d<LLA> latLonAlt() { return Vector3d<LLA>(Eigen::Vector3d(X.segment<3>(4))); }
+
+    /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
+    [[nodiscard]] Vector3d<LLA> latLonAlt() const { return Vector3d<LLA>(Eigen::Vector3d(X.segment<3>(4))); }
 
     /// Returns the latitude 𝜙 in [rad]
     double& latitude() { return X(4); }
@@ -155,27 +161,36 @@ class StateData : public InsObs
     /// Returns the longitude λ in [rad]
     [[nodiscard]] const double& longitude() const { return X(5); }
 
-    /// Returns the height above ground h in [m]
-    double& height() { return X(6); }
+    /// Returns the altitude (height above ground) in [m]
+    double& altitude() { return X(6); }
 
-    /// Returns the height above ground h in [m]
-    [[nodiscard]] const double& height() const { return X(6); }
+    /// Returns the altitude (height above ground) in [m]
+    [[nodiscard]] const double& altitude() const { return X(6); }
 
     /// Returns the ECEF coordinates in [m] using the WGS84 ellipsoid
-    [[nodiscard]] Eigen::Vector3d positionECEF_WGS84() const { return trafo::llh2ecef_WGS84(latitude(), longitude(), height()); }
+    [[nodiscard]] Vector3d<Earth> positionECEF_WGS84() const { return trafo::lla2ecef_WGS84({ latitude(), longitude(), altitude() }); }
 
     /// Returns the ECEF coordinates in [m] using the GRS80 ellipsoid
-    [[nodiscard]] Eigen::Vector3d positionECEF_GRS80() const { return trafo::llh2ecef_GRS80(latitude(), longitude(), height()); }
+    [[nodiscard]] Vector3d<Earth> positionECEF_GRS80() const { return trafo::lla2ecef_GRS80({ latitude(), longitude(), altitude() }); }
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                                 Velocity                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the velocity in [m/s], in navigation coordinates
-    Eigen::Ref<Eigen::Vector3d> velocity_n() { return X.segment<3>(7); }
+
+    /// @brief Set the velocity
+    /// @param[in] velocity_n Velocity in [m/s], in navigation coordinates
+    void setVelocity_n(const Vector3d<Navigation>& velocity_n)
+    {
+        X.segment<3>(7) = velocity_n;
+    }
 
     /// Returns the velocity in [m/s], in navigation coordinates
-    [[nodiscard]] Eigen::Ref<const Eigen::Vector3d> velocity_n() const { return X.segment<3>(7); }
+    Vector3d<Navigation> velocity_n() { return Vector3d<Navigation>(Eigen::Vector3d(X.segment<3>(7))); }
+
+    /// Returns the velocity in [m/s], in navigation coordinates
+    [[nodiscard]] Vector3d<Navigation> velocity_n() const { return Vector3d<Navigation>(Eigen::Vector3d(X.segment<3>(7))); }
 
     // double_t NavTime = 0.0;
     // double_t MagneticHeading = 0.0;

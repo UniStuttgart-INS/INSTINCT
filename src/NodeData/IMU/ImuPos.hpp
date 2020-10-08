@@ -7,8 +7,7 @@
 
 #include "NodeData/NodeData.hpp"
 
-#include "Eigen/Dense"
-#include <Eigen/Geometry>
+#include "util/LinearAlgebra.hpp"
 
 namespace NAV
 {
@@ -47,52 +46,52 @@ class ImuPos : public NodeData
     }
 
     /// Accelerometer position in body frame coordinates in [m]
-    Eigen::Vector3d posAccel_b;
+    Vector3d<Body> posAccel_b;
     /// Gyroscope position in body frame coordinates in [m]
-    Eigen::Vector3d posGyro_b;
+    Vector3d<Body> posGyro_b;
     /// Magnetometer position in body frame coordinates in [m]
-    Eigen::Vector3d posMag_b;
+    Vector3d<Body> posMag_b;
 
     /// Quaternion from accelerometer platform frame to body frame
-    [[nodiscard]] const Eigen::Quaterniond& quatAccel_bp() const
+    [[nodiscard]] const Quaterniond<Body, Platform>& quatAccel_bp() const
     {
         return quaternionAccel_bp;
     }
     /// Quaternion from body frame to accelerometer platform frame
-    [[nodiscard]] Eigen::Quaterniond quatAccel_pb() const
+    [[nodiscard]] Quaterniond<Platform, Body> quatAccel_pb() const
     {
         return quaternionAccel_bp.conjugate();
     }
 
     /// Quaternion from gyroscope platform frame to body frame
-    [[nodiscard]] const Eigen::Quaterniond& quatGyro_bp() const
+    [[nodiscard]] const Quaterniond<Body, Platform>& quatGyro_bp() const
     {
         return quaternionGyro_bp;
     }
     /// Quaternion from body frame to gyroscope platform frame
-    [[nodiscard]] Eigen::Quaterniond quatGyro_pb() const
+    [[nodiscard]] Quaterniond<Platform, Body> quatGyro_pb() const
     {
         return quaternionGyro_bp.conjugate();
     }
 
     /// Quaternion from magnetometer platform frame to body frame
-    [[nodiscard]] const Eigen::Quaterniond& quatMag_bp() const
+    [[nodiscard]] const Quaterniond<Body, Platform>& quatMag_bp() const
     {
         return quaternionMag_bp;
     }
     /// Quaternion from body frame to magnetometer platform frame
-    [[nodiscard]] Eigen::Quaterniond quatMag_pb() const
+    [[nodiscard]] Quaterniond<Platform, Body> quatMag_pb() const
     {
         return quaternionMag_bp.conjugate();
     }
 
   private:
     /// Quaternion from accelerometer platform frame to body frame
-    Eigen::Quaterniond quaternionAccel_bp;
+    Quaterniond<Body, Platform> quaternionAccel_bp;
     /// Quaternion from gyroscope platform frame to body frame
-    Eigen::Quaterniond quaternionGyro_bp;
+    Quaterniond<Body, Platform> quaternionGyro_bp;
     /// Quaternion from magnetometer platform frame to body frame
-    Eigen::Quaterniond quaternionMag_bp;
+    Quaterniond<Body, Platform> quaternionMag_bp;
 
     friend class Imu;
 };

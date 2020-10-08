@@ -183,19 +183,19 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     {
         double gravityNorm = gravity::gravityMagnitude_Gleason(currentState->latitude());
 
-        auto gravity_n = Eigen::Vector3d(0, 0, -gravityNorm);
-        auto gravity_p = quat_pb * currentState->quaternion_bn() * gravity_n;
+        Vector3d<Navigation> gravity_n{ 0, 0, -gravityNorm };
+        Vector3d<Platform> gravity_p = quat_pb * currentState->quaternion_bn() * gravity_n;
 
-        auto accel_n = Eigen::Vector3d(0, 0, 0);
-        auto accel_b = Eigen::Vector3d(0, 0, 0) + currentState->quaternion_bn() * accel_n;
-        auto accel_p = Eigen::Vector3d(0, 0, 0) + quat_pb * accel_b;
+        Vector3d<Navigation> accel_n(0, 0, 0);
+        Vector3d<Body> accel_b = Vector3d<Body>(0, 0, 0) + currentState->quaternion_bn() * accel_n;
+        Vector3d<Platform> accel_p = Vector3d<Platform>(0, 0, 0) + quat_pb * accel_b;
 
         auto obs = std::make_shared<ImuObs>();
         obs->timeSinceStartup = static_cast<uint64_t>(dt * i * 10e9L);
         obs->insTime = InsTime(2, 72, 211996.0L + dt * i);
         obs->accelUncompXYZ = accel_p + gravity_p;
-        obs->gyroUncompXYZ = Eigen::Vector3d(0, 0, 0);
-        obs->magUncompXYZ = Eigen::Vector3d(0, 0, 0);
+        obs->gyroUncompXYZ = Vector3d<Platform>(0, 0, 0);
+        obs->magUncompXYZ = Vector3d<Platform>(0, 0, 0);
 
         imuIntegrator->handleInputData(0, obs);
         currentState = std::static_pointer_cast<StateData>(state->requestOutputData(0));
@@ -214,7 +214,7 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
                                           currentState->latitude(), trafo::deg2rad(initLatLonHeight(1)));
     double distanceNorth = measureDistance(currentState->latitude(), currentState->longitude(),
                                            trafo::deg2rad(initLatLonHeight(0)), currentState->longitude());
-    double distanceHeight = initLatLonHeight(2) - currentState->height();
+    double distanceHeight = initLatLonHeight(2) - currentState->altitude();
 
     CHECK(distanceTotal < 0.002);
     CHECK(distanceNorth == Approx(0).margin(EPSILON));

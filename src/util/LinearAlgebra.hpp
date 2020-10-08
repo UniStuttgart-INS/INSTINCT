@@ -33,13 +33,18 @@ namespace NAV
 /// @brief Available Coordinate Systems
 enum CoordinateSystem
 {
-    Inertial,   ///< Inertial frame (i-frame)
-    Earth,      ///< Earth-fixed frame (e-frame)
-    Navigation, ///< Local Navigation frame (n-frame)
-    Body,       ///< Body frame (b-frame)
-    Platform,   ///< Platform frame (p-frame)
-    ECEF,       ///< Earth-centered-Earth-fixed frame [m]
-    LLH,        ///< Latitude, Longitude, Height frame [rad, rad, m]
+    /// Inertial frame (i-frame)
+    Inertial,
+    /// Earth-centered-Earth-fixed frame (e-frame)
+    Earth,
+    /// Local Navigation frame (n-frame) = North, East, Down frame
+    Navigation,
+    /// Body frame (b-frame)
+    Body,
+    /// Platform frame (p-frame)
+    Platform,
+    /// 𝜙 Geodetic latitude, λ Geodetic longitude, Altitude (Height above ground)
+    LLA,
 };
 
 /// @brief Matrix class which rotates data from a coordinate system into another
@@ -81,6 +86,34 @@ class Matrix : public Eigen::Matrix<_Scalar, _Rows, _Cols>
     /// @param[in] w Fourth component
     Matrix(const _Scalar& x, const _Scalar& y, const _Scalar& z, const _Scalar& w)
         : Eigen::Matrix<_Scalar, _Rows, _Cols>(x, y, z, w) {}
+
+    template<CoordinateSystem rhs_System_To, CoordinateSystem rhs_System_From, typename rhs_Scalar>
+    [[nodiscard]] Matrix<_System_To, _System_From, _Scalar, 3, 1> cross(const Matrix<rhs_System_To, rhs_System_From, rhs_Scalar, 3, 1>& rhs) const
+    {
+        static_assert(_System_To == rhs_System_To && _System_From == rhs_System_From && "Can not summate different coordinate frames");
+
+        const Eigen::Matrix<_Scalar, _Rows, _Cols>& _eig = *this;
+        const Eigen::Matrix<rhs_Scalar, 3, 1>& rhs_eig = rhs;
+
+        const auto crossProduct = Eigen::Matrix<rhs_Scalar, 3, 1>(_eig.cross(rhs_eig));
+        return Matrix<_System_To, _System_From, _Scalar, 3, 1>(crossProduct);
+    }
+
+    /// @brief Returns the identity matrix or vector
+    /// @return An expression of the identity matrix (not necessarily square).
+    [[nodiscard]] static Matrix<_System_To, _System_From, _Scalar, _Rows, _Cols> Identity()
+    {
+        auto eig = Eigen::Matrix<_Scalar, _Rows, _Cols>(Eigen::Matrix<_Scalar, _Rows, _Cols>::Identity());
+        return Matrix<_System_To, _System_From, _Scalar, _Rows, _Cols>(eig);
+    }
+
+    /// @brief Returns a zero matrix or vector
+    /// @return An expression of a fixed-size zero matrix or vector
+    [[nodiscard]] static Matrix<_System_To, _System_From, _Scalar, _Rows, _Cols> Zero()
+    {
+        auto eig = Eigen::Matrix<_Scalar, _Rows, _Cols>(Eigen::Matrix<_Scalar, _Rows, _Cols>::Zero());
+        return Matrix<_System_To, _System_From, _Scalar, _Rows, _Cols>(eig);
+    }
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                            Operator Overloads                                            */
@@ -165,6 +198,32 @@ class Quaternion : public Eigen::Quaternion<_Scalar>
     /// @param[in] data 4 element array representing quaternion coefficients
     explicit Quaternion(const _Scalar* data)
         : Eigen::Quaternion<_Scalar>(data) {}
+
+    /// @brief The conjugated quaternion
+    /// @return The conjugate of the *this which is equal to the multiplicative inverse if the quaternion is normalized.
+    ///         The conjugate of a quaternion represents the opposite rotation.
+    [[nodiscard]] Quaternion<_System_From, _System_To, _Scalar> conjugate() const
+    {
+        const Eigen::Quaternion<_Scalar>& _eig = *this;
+        return Quaternion<_System_From, _System_To, _Scalar>(Eigen::Quaternion<_Scalar>(_eig.conjugate()));
+    }
+
+    /// @brief The quaternion describing the inverse rotation
+    /// @return The multiplicative inverse of *this. Note that in most cases, i.e., if you simply want the opposite rotation,
+    ///         and/or the quaternion is normalized, then it is enough to use the conjugate.
+    [[nodiscard]] Quaternion<_System_From, _System_To, _Scalar> inverse() const
+    {
+        const Eigen::Quaternion<_Scalar>& _eig = *this;
+        return Quaternion<_System_From, _System_To, _Scalar>(Eigen::Quaternion<_Scalar>(_eig.inverse()));
+    }
+
+    /// @brief Returns the identity quaternion
+    /// @return An expression of the identity quaternion
+    [[nodiscard]] static Quaternion<_System_To, _System_From, _Scalar> Identity()
+    {
+        auto eig = Eigen::Quaternion<_Scalar>(Eigen::Quaternion<_Scalar>::Identity());
+        return Quaternion<_System_To, _System_From, _Scalar>(eig);
+    }
 };
 
 /* -------------------------------------------------------------------------------------------------------- */
@@ -296,6 +355,46 @@ Vector3<lhs_System_To, lhs_Scalar> operator*(const Quaternion<lhs_System_To, lhs
     Eigen::Matrix<lhs_Scalar, 3, 1> concatenation = lhs_eig * rhs_eig;
 
     return Vector3<lhs_System_To, lhs_Scalar>(concatenation);
+}
+
+/* -------------------------------------------------------------------------------------------------------- */
+/*                                     Scalar Multiplication & Division                                     */
+/* -------------------------------------------------------------------------------------------------------- */
+
+template<CoordinateSystem lhs_System_To, CoordinateSystem lhs_System_From, typename lhs_Scalar, int lhs_Rows, int lhs_Cols,
+         class T>
+Matrix<lhs_System_To, lhs_System_From, lhs_Scalar, lhs_Rows, lhs_Cols> operator*(const Matrix<lhs_System_To, lhs_System_From, lhs_Scalar, lhs_Rows, lhs_Cols>& lhs,
+                                                                                 const T& rhs)
+{
+    const Eigen::Matrix<lhs_Scalar, lhs_Rows, lhs_Cols>& lhs_eig = lhs;
+
+    Eigen::Matrix<lhs_Scalar, lhs_Rows, lhs_Cols> product = lhs_eig * rhs;
+
+    return Matrix<lhs_System_To, lhs_System_From, lhs_Scalar, lhs_Rows, lhs_Cols>(product);
+}
+
+template<class T,
+         CoordinateSystem rhs_System_To, CoordinateSystem rhs_System_From, typename rhs_Scalar, int rhs_Rows, int rhs_Cols>
+Matrix<rhs_System_To, rhs_System_From, rhs_Scalar, rhs_Rows, rhs_Cols> operator*(const T& lhs,
+                                                                                 const Matrix<rhs_System_To, rhs_System_From, rhs_Scalar, rhs_Rows, rhs_Cols>& rhs)
+{
+    const Eigen::Matrix<rhs_Scalar, rhs_Rows, rhs_Cols>& rhs_eig = rhs;
+
+    Eigen::Matrix<rhs_Scalar, rhs_Rows, rhs_Cols> product = lhs * rhs_eig;
+
+    return Matrix<rhs_System_To, rhs_System_From, rhs_Scalar, rhs_Rows, rhs_Cols>(product);
+}
+
+template<CoordinateSystem lhs_System_To, CoordinateSystem lhs_System_From, typename lhs_Scalar, int lhs_Rows, int lhs_Cols,
+         class T>
+Matrix<lhs_System_To, lhs_System_From, lhs_Scalar, lhs_Rows, lhs_Cols> operator/(const Matrix<lhs_System_To, lhs_System_From, lhs_Scalar, lhs_Rows, lhs_Cols>& lhs,
+                                                                                 const T& rhs)
+{
+    const Eigen::Matrix<lhs_Scalar, lhs_Rows, lhs_Cols>& lhs_eig = lhs;
+
+    Eigen::Matrix<lhs_Scalar, lhs_Rows, lhs_Cols> division = lhs_eig / rhs;
+
+    return Matrix<lhs_System_To, lhs_System_From, lhs_Scalar, lhs_Rows, lhs_Cols>(division);
 }
 
 } // namespace NAV

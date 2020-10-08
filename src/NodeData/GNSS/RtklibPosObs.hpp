@@ -7,8 +7,7 @@
 
 #include "GnssObs.hpp"
 
-#include "Eigen/Dense"
-#include <Eigen/Geometry>
+#include "util/LinearAlgebra.hpp"
 
 namespace NAV
 {
@@ -45,9 +44,9 @@ class RtklibPosObs : public GnssObs
     }
 
     /// ECEF position [m]
-    std::optional<Eigen::Vector3d> positionXYZ;
-    /// Position in Latitude [deg], Longitude [deg], height [m]
-    std::optional<Eigen::Array3d> positionLLH;
+    std::optional<Vector3d<Earth>> position_ecef;
+    /// Position in Latitude [deg], Longitude [deg], altitude [m]
+    std::optional<Vector3d<LLA>> latLonAlt;
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
     std::optional<uint8_t> Q;
     /// Number of satellites

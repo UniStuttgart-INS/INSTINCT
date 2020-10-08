@@ -159,11 +159,11 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
     }
     if (positionX.has_value() && positionY.has_value() && positionZ.has_value())
     {
-        obs->positionXYZ.emplace(positionX.value(), positionY.value(), positionZ.value());
+        obs->position_ecef.emplace(positionX.value(), positionY.value(), positionZ.value());
     }
     if (positionLat.has_value() && positionLon.has_value() && positionHeight.has_value())
     {
-        obs->positionLLH.emplace(positionLat.value(), positionLon.value(), positionHeight.value());
+        obs->latLonAlt.emplace(positionLat.value(), positionLon.value(), positionHeight.value());
     }
     if (sdX.has_value() && sdY.has_value() && sdZ.has_value())
     {
