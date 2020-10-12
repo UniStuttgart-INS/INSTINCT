@@ -41,7 +41,7 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
     std::stringstream lineStream(line);
     std::string cell;
 
-    Eigen::Matrix3d dcm = Eigen::Matrix3d::Zero();
+    Matrix3d<Navigation, Body> dcm_np = Matrix3d<Navigation, Body>::Zero();
 
     std::optional<uint16_t> gpsCycle = 0;
     std::optional<uint16_t> gpsWeek;
@@ -274,39 +274,39 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             }
             else if (column == "C[0.0]")
             {
-                dcm(0, 0) = std::stod(cell);
+                dcm_np(0, 0) = std::stod(cell);
             }
             else if (column == "C[0.1]")
             {
-                dcm(0, 1) = std::stod(cell);
+                dcm_np(0, 1) = std::stod(cell);
             }
             else if (column == "C[0.2]")
             {
-                dcm(0, 2) = std::stod(cell);
+                dcm_np(0, 2) = std::stod(cell);
             }
             else if (column == "C[1.0]")
             {
-                dcm(1, 0) = std::stod(cell);
+                dcm_np(1, 0) = std::stod(cell);
             }
             else if (column == "C[1.1]")
             {
-                dcm(1, 1) = std::stod(cell);
+                dcm_np(1, 1) = std::stod(cell);
             }
             else if (column == "C[1.2]")
             {
-                dcm(1, 2) = std::stod(cell);
+                dcm_np(1, 2) = std::stod(cell);
             }
             else if (column == "C[2.0]")
             {
-                dcm(2, 0) = std::stod(cell);
+                dcm_np(2, 0) = std::stod(cell);
             }
             else if (column == "C[2.1]")
             {
-                dcm(2, 1) = std::stod(cell);
+                dcm_np(2, 1) = std::stod(cell);
             }
             else if (column == "C[2.2]")
             {
-                dcm(2, 2) = std::stod(cell);
+                dcm_np(2, 2) = std::stod(cell);
             }
             else if (column == "MagN")
             {
@@ -454,15 +454,16 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
 
     if (!obs->quaternion.has_value())
     {
-        if (!dcm.isZero())
+        if (!dcm_np.isZero())
         {
-            obs->quaternion = dcm;
+            obs->quaternion.emplace(dcm_np);
         }
         else if (!obs->yawPitchRoll.value().isZero())
         {
             obs->quaternion = trafo::quat_nb(trafo::deg2rad(obs->yawPitchRoll.value()(2)),
                                              trafo::deg2rad(obs->yawPitchRoll.value()(1)),
-                                             trafo::deg2rad(obs->yawPitchRoll.value()(0)));
+                                             trafo::deg2rad(obs->yawPitchRoll.value()(0)))
+                              * Quaterniond<Body, Platform>::Identity();
         }
     }
 

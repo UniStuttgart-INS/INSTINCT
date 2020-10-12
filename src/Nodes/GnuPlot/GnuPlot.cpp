@@ -501,76 +501,76 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
         }
         else if (gnuplotData.dataIdentifier == "Latitude")
         {
-            if (obs->positionLLH.has_value())
+            if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(obs->positionLLH.value().x());
+                gnuplotData.data.emplace_back(obs->latLonAlt.value().x());
             }
-            else if (obs->positionXYZ.has_value())
+            else if (obs->position_ecef.has_value())
             {
-                gnuplotData.data.emplace_back(trafo::rad2deg(trafo::ecef2llh_WGS84(obs->positionXYZ.value()).x()));
+                gnuplotData.data.emplace_back(trafo::rad2deg(trafo::ecef2lla_WGS84(obs->position_ecef.value()).x()));
             }
         }
         else if (gnuplotData.dataIdentifier == "Longitude")
         {
-            if (obs->positionLLH.has_value())
+            if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(obs->positionLLH.value().y());
+                gnuplotData.data.emplace_back(obs->latLonAlt.value().y());
             }
-            else if (obs->positionXYZ.has_value())
+            else if (obs->position_ecef.has_value())
             {
-                gnuplotData.data.emplace_back(trafo::rad2deg(trafo::ecef2llh_WGS84(obs->positionXYZ.value()).y()));
+                gnuplotData.data.emplace_back(trafo::rad2deg(trafo::ecef2lla_WGS84(obs->position_ecef.value()).y()));
             }
         }
         else if (gnuplotData.dataIdentifier == "Height")
         {
-            if (obs->positionLLH.has_value())
+            if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(obs->positionLLH.value().z());
+                gnuplotData.data.emplace_back(obs->latLonAlt.value().z());
             }
-            else if (obs->positionXYZ.has_value())
+            else if (obs->position_ecef.has_value())
             {
-                gnuplotData.data.emplace_back(trafo::ecef2llh_WGS84(obs->positionXYZ.value()).z());
+                gnuplotData.data.emplace_back(trafo::ecef2lla_WGS84(obs->position_ecef.value()).z());
             }
         }
         else if (gnuplotData.dataIdentifier == "X-ECEF")
         {
-            if (obs->positionXYZ.has_value())
+            if (obs->position_ecef.has_value())
             {
-                gnuplotData.data.emplace_back(obs->positionXYZ.value().x());
+                gnuplotData.data.emplace_back(obs->position_ecef.value().x());
             }
-            else if (obs->positionLLH.has_value())
+            else if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(trafo::llh2ecef_WGS84(trafo::deg2rad(obs->positionLLH.value().x()),
-                                                                    trafo::deg2rad(obs->positionLLH.value().y()),
-                                                                    obs->positionLLH.value().z())
+                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84({ trafo::deg2rad(obs->latLonAlt.value().x()),
+                                                                      trafo::deg2rad(obs->latLonAlt.value().y()),
+                                                                      obs->latLonAlt.value().z() })
                                                   .x());
             }
         }
         else if (gnuplotData.dataIdentifier == "Y-ECEF")
         {
-            if (obs->positionXYZ.has_value())
+            if (obs->position_ecef.has_value())
             {
-                gnuplotData.data.emplace_back(obs->positionXYZ.value().y());
+                gnuplotData.data.emplace_back(obs->position_ecef.value().y());
             }
-            else if (obs->positionLLH.has_value())
+            else if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(trafo::llh2ecef_WGS84(trafo::deg2rad(obs->positionLLH.value().x()),
-                                                                    trafo::deg2rad(obs->positionLLH.value().y()),
-                                                                    obs->positionLLH.value().z())
+                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84({ trafo::deg2rad(obs->latLonAlt.value().x()),
+                                                                      trafo::deg2rad(obs->latLonAlt.value().y()),
+                                                                      obs->latLonAlt.value().z() })
                                                   .y());
             }
         }
         else if (gnuplotData.dataIdentifier == "Z-ECEF")
         {
-            if (obs->positionXYZ.has_value())
+            if (obs->position_ecef.has_value())
             {
-                gnuplotData.data.emplace_back(obs->positionXYZ.value().z());
+                gnuplotData.data.emplace_back(obs->position_ecef.value().z());
             }
-            else if (obs->positionLLH.has_value())
+            else if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(trafo::llh2ecef_WGS84(trafo::deg2rad(obs->positionLLH.value().x()),
-                                                                    trafo::deg2rad(obs->positionLLH.value().y()),
-                                                                    obs->positionLLH.value().z())
+                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84({ trafo::deg2rad(obs->latLonAlt.value().x()),
+                                                                      trafo::deg2rad(obs->latLonAlt.value().y()),
+                                                                      obs->latLonAlt.value().z() })
                                                   .z());
             }
         }
@@ -578,26 +578,26 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
         {
             if (std::isnan(gnuplotData.startValue))
             {
-                if (obs->positionLLH.has_value())
+                if (obs->latLonAlt.has_value())
                 {
-                    gnuplotData.startValue = trafo::deg2rad(obs->positionLLH.value().x());
+                    gnuplotData.startValue = trafo::deg2rad(obs->latLonAlt.value().x());
                 }
-                else if (obs->positionXYZ.has_value())
+                else if (obs->position_ecef.has_value())
                 {
-                    gnuplotData.startValue = trafo::ecef2llh_WGS84(obs->positionXYZ.value()).x();
+                    gnuplotData.startValue = trafo::ecef2lla_WGS84(obs->position_ecef.value()).x();
                 }
             }
 
-            if (obs->positionLLH.has_value())
+            if (obs->latLonAlt.has_value())
             {
-                int sign = obs->positionLLH.value().x() > gnuplotData.startValue ? 1 : -1;
-                gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->positionLLH.value().x()), trafo::deg2rad(obs->positionLLH.value().y()),
-                                                              gnuplotData.startValue, trafo::deg2rad(obs->positionLLH.value().y()))
+                int sign = obs->latLonAlt.value().x() > gnuplotData.startValue ? 1 : -1;
+                gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->latLonAlt.value().x()), trafo::deg2rad(obs->latLonAlt.value().y()),
+                                                              gnuplotData.startValue, trafo::deg2rad(obs->latLonAlt.value().y()))
                                               * sign);
             }
-            else if (obs->positionXYZ.has_value())
+            else if (obs->position_ecef.has_value())
             {
-                auto llh = trafo::ecef2llh_WGS84(obs->positionXYZ.value());
+                auto llh = trafo::ecef2lla_WGS84(obs->position_ecef.value());
                 int sign = llh.x() > gnuplotData.startValue ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
                                                               gnuplotData.startValue, llh.y())
@@ -608,26 +608,26 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
         {
             if (std::isnan(gnuplotData.startValue))
             {
-                if (obs->positionLLH.has_value())
+                if (obs->latLonAlt.has_value())
                 {
-                    gnuplotData.startValue = trafo::deg2rad(obs->positionLLH.value().y());
+                    gnuplotData.startValue = trafo::deg2rad(obs->latLonAlt.value().y());
                 }
-                else if (obs->positionXYZ.has_value())
+                else if (obs->position_ecef.has_value())
                 {
-                    gnuplotData.startValue = trafo::ecef2llh_WGS84(obs->positionXYZ.value()).y();
+                    gnuplotData.startValue = trafo::ecef2lla_WGS84(obs->position_ecef.value()).y();
                 }
             }
 
-            if (obs->positionLLH.has_value())
+            if (obs->latLonAlt.has_value())
             {
-                int sign = obs->positionLLH.value().y() > gnuplotData.startValue ? 1 : -1;
-                gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->positionLLH.value().x()), trafo::deg2rad(obs->positionLLH.value().y()),
-                                                              trafo::deg2rad(obs->positionLLH.value().x()), gnuplotData.startValue)
+                int sign = obs->latLonAlt.value().y() > gnuplotData.startValue ? 1 : -1;
+                gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->latLonAlt.value().x()), trafo::deg2rad(obs->latLonAlt.value().y()),
+                                                              trafo::deg2rad(obs->latLonAlt.value().x()), gnuplotData.startValue)
                                               * sign);
             }
-            else if (obs->positionXYZ.has_value())
+            else if (obs->position_ecef.has_value())
             {
-                auto llh = trafo::ecef2llh_WGS84(obs->positionXYZ.value());
+                auto llh = trafo::ecef2lla_WGS84(obs->position_ecef.value());
                 int sign = llh.x() > gnuplotData.startValue ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
                                                               llh.x(), gnuplotData.startValue)
@@ -899,7 +899,7 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         }
         else if (gnuplotData.dataIdentifier == "Height")
         {
-            gnuplotData.data.emplace_back(state->height());
+            gnuplotData.data.emplace_back(state->altitude());
         }
         else if (gnuplotData.dataIdentifier == "X-ECEF")
         {

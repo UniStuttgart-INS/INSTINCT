@@ -18,7 +18,7 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
                 initialState->longitude() = trafo::deg2rad(std::stod(value));
                 if (std::getline(lineStream, value, ';'))
                 {
-                    initialState->height() = std::stod(value);
+                    initialState->altitude() = std::stod(value);
                 }
             }
         }
@@ -63,7 +63,7 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
                 }
             }
         }
-        initialState->velocity_n() = Eigen::Vector3d(v_n, v_e, v_d);
+        initialState->setVelocity_n({ v_n, v_e, v_d });
     }
 
     currentState->X = initialState->X;

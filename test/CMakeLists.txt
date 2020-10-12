@@ -16,6 +16,7 @@ add_executable(
   util/InsTimeTests.cpp
   util/InsMechanizationTests.cpp
   util/InsTransformationsTests.cpp
+  util/LinearAlgebraTests.cpp
   util/LoggerTests.cpp
   Nodes/DataLogger/IMU/VectorNavDataLoggerTest.cpp
   Nodes/Integrator/ImuIntegratorTest.cpp
