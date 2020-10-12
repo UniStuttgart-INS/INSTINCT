@@ -7,9 +7,9 @@ namespace NAV
 {
 TEST_CASE("[LinearAlgebra] Vector-Matrix arithmetic", "[LinearAlgebra]")
 {
-    auto dcm_bn = Matrix<Body, Navigation, double, 3, 3>(Eigen::Matrix3d::Identity());
-    auto dcm_ne = Matrix<Navigation, Earth, double, 3, 3>(Eigen::Matrix3d::Identity());
-    auto dcm_ei = Matrix<Earth, Inertial, double, 3, 3>(Eigen::Matrix3d::Identity());
+    auto dcm_bn = Matrix3d<Body, Navigation>::Identity();
+    auto dcm_ne = Matrix3<Navigation, Earth, double>::Identity();
+    auto dcm_ei = Matrix<Earth, Inertial, double, 3, 3>::Identity();
 
     auto dcm_be = dcm_bn * dcm_ne;
     CHECK(dcm_be == Eigen::Matrix3d::Identity());
@@ -38,8 +38,8 @@ TEST_CASE("[LinearAlgebra] Vector-Matrix arithmetic", "[LinearAlgebra]")
 
 TEST_CASE("[LinearAlgebra] Quaternion arithmetic", "[LinearAlgebra]")
 {
-    auto dcm_bn = Quaternion<Body, Navigation, double>(Eigen::Quaterniond::Identity());
-    auto dcm_ne = Quaterniond<Navigation, Earth>(Eigen::Quaterniond::Identity());
+    auto dcm_bn = Quaternion<Body, Navigation, double>::Identity();
+    auto dcm_ne = Quaterniond<Navigation, Earth>::Identity();
     auto dcm_ei = Quaterniond<Earth, Inertial>(1, 0, 0, 0);
 
     auto dcm_be = dcm_bn * dcm_ne;
