@@ -103,7 +103,7 @@ void NAV::State::initAttitude(std::shared_ptr<ImuObs>& obs)
     const auto magUncomp_b = imuPosition->quatMag_bp() * obs->magUncompXYZ.value();
     auto magneticHeading = std::atan2(magUncomp_b.y(), magUncomp_b.x());
 
-    const auto accelUncomp_b = imuPosition->quatAccel_bp() * obs->accelUncompXYZ.value();
+    const auto accelUncomp_b = imuPosition->quatAccel_bp() * obs->accelUncompXYZ.value() * -1;
     auto roll = std::atan2(accelUncomp_b.y(), accelUncomp_b.z());
     auto pitch = std::atan2((-accelUncomp_b.x()), sqrt(std::pow(accelUncomp_b.y(), 2) + std::pow(accelUncomp_b.z(), 2)));
 
@@ -205,6 +205,7 @@ void NAV::State::finalizeInit(const InsTime& currentTime)
                  trafo::rad2deg(initialState->rollPitchYaw().z()));
 
         currentState = std::make_shared<StateData>();
+        currentState->insTime = currentTime;
         currentState->quaternion_nb() = initialState->quaternion_nb();
         currentState->latLonAlt() = initialState->latLonAlt();
         currentState->velocity_n() = initialState->velocity_n();
