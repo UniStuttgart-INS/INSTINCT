@@ -7,8 +7,6 @@
 
 #include "GnssObs.hpp"
 
-#include "util/LinearAlgebra.hpp"
-
 namespace NAV
 {
 /// RTKLIB Observation Class
@@ -42,11 +40,6 @@ class RtklibPosObs : public GnssObs
         std::vector<std::string_view> parents{ "GnssObs" };
         return parents;
     }
-
-    /// ECEF position [m]
-    std::optional<Vector3d<Earth>> position_ecef;
-    /// Position in Latitude [deg], Longitude [deg], altitude [m]
-    std::optional<Vector3d<LLA>> latLonAlt;
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
     std::optional<uint8_t> Q;
     /// Number of satellites

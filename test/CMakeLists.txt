@@ -18,6 +18,7 @@ add_executable(
   util/InsTransformationsTests.cpp
   util/LinearAlgebraTests.cpp
   util/LoggerTests.cpp
+  NodeData/State/StateDataTests.cpp
   Nodes/DataLogger/IMU/VectorNavDataLoggerTest.cpp
   Nodes/Integrator/ImuIntegratorTest.cpp
   ${CMAKE_SOURCE_DIR}/src/util/ConfigManager.cpp

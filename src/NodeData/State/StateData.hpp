@@ -46,32 +46,16 @@ class StateData : public InsObs
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
-    /*                                             Member variables                                             */
-    /* -------------------------------------------------------------------------------------------------------- */
-
-    /// @brief State Vector
-    /// Entries are:
-    /// [0-3] Quaternions body to navigation frame (roll, pitch, yaw)
-    /// [4-6] Latitude, Longitude, Altitude
-    /// [7-9] Velocity in navigation coordinates
-    Eigen::Matrix<double, 10, 1> X;
-
-    /* -------------------------------------------------------------------------------------------------------- */
     /*                                           Rotation Quaternions                                           */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    /// Returns the Quaternion body to navigation frame (NED)
-    Eigen::Ref<Eigen::Vector4d> quat_nb_coeff() { return X.segment<4>(0); }
-
-    /// Returns the Quaternion body to navigation frame (NED)
-    [[nodiscard]] Eigen::Ref<Eigen::Vector4d const> quat_nb_coeff() const { return X.segment<4>(0); }
+    /// @brief Returns the Quaternion from body to navigation frame (NED)
+    /// @return The Quaternion for the rotation from body to navigation coordinates
+    Quaterniond<Navigation, Body>& quaternion_nb() { return q_nb; }
 
     /// @brief Returns the Quaternion from body to navigation frame (NED)
     /// @return The Quaternion for the rotation from body to navigation coordinates
-    [[nodiscard]] Quaterniond<Navigation, Body> quaternion_nb() const
-    {
-        return Quaterniond<Navigation, Body>(Eigen::Quaterniond(quat_nb_coeff()));
-    }
+    [[nodiscard]] const Quaterniond<Navigation, Body>& quaternion_nb() const { return q_nb; }
 
     /// @brief Returns the Quaternion from navigation to body frame (NED)
     /// @return The Quaternion for the rotation from navigation to body coordinates
@@ -136,36 +120,29 @@ class StateData : public InsObs
     /*                                                 Position                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    /// @brief Set the latitude 𝜙, longitude λ and altitude
-    /// @param[in] latLonAlt [latitude 𝜙, longitude λ and altitude]^T in [rad, rad, m]
-    void setLatLonAlt(const Vector3d<LLA>& latLonAlt)
-    {
-        X.segment<3>(4) = latLonAlt;
-    }
+    /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
+    Vector3d<LLA>& latLonAlt() { return latitudeLongitudeAltitude; }
 
     /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
-    Vector3d<LLA> latLonAlt() { return Vector3d<LLA>(Eigen::Vector3d(X.segment<3>(4))); }
-
-    /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
-    [[nodiscard]] Vector3d<LLA> latLonAlt() const { return Vector3d<LLA>(Eigen::Vector3d(X.segment<3>(4))); }
+    [[nodiscard]] const Vector3d<LLA>& latLonAlt() const { return latitudeLongitudeAltitude; }
 
     /// Returns the latitude 𝜙 in [rad]
-    double& latitude() { return X(4); }
+    double& latitude() { return latitudeLongitudeAltitude(0); }
 
     /// Returns the latitude 𝜙 in [rad]
-    [[nodiscard]] const double& latitude() const { return X(4); }
+    [[nodiscard]] const double& latitude() const { return latitudeLongitudeAltitude(0); }
 
     /// Returns the longitude λ in [rad]
-    double& longitude() { return X(5); }
+    double& longitude() { return latitudeLongitudeAltitude(1); }
 
     /// Returns the longitude λ in [rad]
-    [[nodiscard]] const double& longitude() const { return X(5); }
+    [[nodiscard]] const double& longitude() const { return latitudeLongitudeAltitude(1); }
 
     /// Returns the altitude (height above ground) in [m]
-    double& altitude() { return X(6); }
+    double& altitude() { return latitudeLongitudeAltitude(2); }
 
     /// Returns the altitude (height above ground) in [m]
-    [[nodiscard]] const double& altitude() const { return X(6); }
+    [[nodiscard]] const double& altitude() const { return latitudeLongitudeAltitude(2); }
 
     /// Returns the ECEF coordinates in [m] using the WGS84 ellipsoid
     [[nodiscard]] Vector3d<Earth> positionECEF_WGS84() const { return trafo::lla2ecef_WGS84({ latitude(), longitude(), altitude() }); }
@@ -178,19 +155,10 @@ class StateData : public InsObs
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the velocity in [m/s], in navigation coordinates
-
-    /// @brief Set the velocity
-    /// @param[in] velocity_n Velocity in [m/s], in navigation coordinates
-    void setVelocity_n(const Vector3d<Navigation>& velocity_n)
-    {
-        X.segment<3>(7) = velocity_n;
-    }
+    Vector3d<Navigation>& velocity_n() { return v_n; }
 
     /// Returns the velocity in [m/s], in navigation coordinates
-    Vector3d<Navigation> velocity_n() { return Vector3d<Navigation>(Eigen::Vector3d(X.segment<3>(7))); }
-
-    /// Returns the velocity in [m/s], in navigation coordinates
-    [[nodiscard]] Vector3d<Navigation> velocity_n() const { return Vector3d<Navigation>(Eigen::Vector3d(X.segment<3>(7))); }
+    [[nodiscard]] const Vector3d<Navigation>& velocity_n() const { return v_n; }
 
     // double_t NavTime = 0.0;
     // double_t MagneticHeading = 0.0;
@@ -207,6 +175,18 @@ class StateData : public InsObs
 
     // Eigen::Vector3d GyroNoise = { 0.0, 0.0, 0.0 };
     // Eigen::Vector3d AccelNoise = { 0.0, 0.0, 0.0 };
+
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                             Member variables                                             */
+    /* -------------------------------------------------------------------------------------------------------- */
+
+  private:
+    /// Quaternion body to navigation frame (roll, pitch, yaw)
+    Quaterniond<Navigation, Body> q_nb;
+    /// Latitude 𝜙, Longitude λ, Altitude
+    Vector3d<LLA> latitudeLongitudeAltitude;
+    /// Velocity in navigation coordinates
+    Vector3d<Navigation> v_n;
 };
 
 } // namespace NAV

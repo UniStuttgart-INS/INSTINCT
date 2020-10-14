@@ -72,6 +72,14 @@ class Matrix : public Eigen::Matrix<_Scalar, _Rows, _Cols>
     explicit Matrix(const Eigen::Matrix<_Scalar, _Rows, _Cols>& eigen)
         : Eigen::Matrix<_Scalar, _Rows, _Cols>(eigen) {}
 
+    /// @brief Construct an object from any single argument
+    /// @tparam T Type of the argument
+    /// @param[in] arg The argument which should be passed to Eigen::Matrix
+    template<class T>
+    explicit Matrix(const T& arg)
+        : Eigen::Matrix<_Scalar, _Rows, _Cols>(arg)
+    {}
+
     /// @brief Constructs and initializes a 3D Vector from its three coefficients x, y and z
     /// @param[in] x First component
     /// @param[in] y Second component

@@ -11,14 +11,14 @@
                 "-rf",
                 "build",
                 "bin",
-                "doc"
+                "doc",
             ],
             "presentation": {
                 "reveal": "never",
                 "echo": false,
                 "showReuseMessage": false
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         // -------------------------------------------- CMAKE Tasks --------------------------------------------
         {
@@ -34,18 +34,21 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DLOG_LEVEL=DEBUG"
+                "-DLOG_LEVEL=DEBUG",
+                // "-DENABLE_CLANG_TIDY=OFF",
+                // "-DENABLE_CPPCHECK=OFF",
+                // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++"
+                    "CXX": "/usr/bin/clang++",
                 }
             },
             "presentation": {
                 "clear": true
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "CMAKE: Release",
@@ -60,18 +63,21 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DLOG_LEVEL=INFO"
+                "-DLOG_LEVEL=INFO",
+                // "-DENABLE_CLANG_TIDY=OFF",
+                // "-DENABLE_CPPCHECK=OFF",
+                // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++"
+                    "CXX": "/usr/bin/clang++",
                 }
             },
             "presentation": {
                 "clear": true
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "CMAKE: GUI",
@@ -86,18 +92,21 @@
                 "-DENABLE_GUI=ON",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DLOG_LEVEL=INFO"
+                "-DLOG_LEVEL=INFO",
+                // "-DENABLE_CLANG_TIDY=OFF",
+                // "-DENABLE_CPPCHECK=OFF",
+                // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++"
+                    "CXX": "/usr/bin/clang++",
                 }
             },
             "presentation": {
                 "clear": true
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "CMAKE: Testing",
@@ -112,18 +121,21 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=ON",
                 "-DENABLE_DOXYGEN=OFF",
-                "-DLOG_LEVEL=TRACE"
+                "-DLOG_LEVEL=TRACE",
+                // "-DENABLE_CLANG_TIDY=OFF",
+                // "-DENABLE_CPPCHECK=OFF",
+                // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++"
+                    "CXX": "/usr/bin/clang++",
                 }
             },
             "presentation": {
                 "clear": true
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "CMAKE: Documentation",
@@ -138,18 +150,21 @@
                 "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
-                "-DLOG_LEVEL=OFF"
+                "-DLOG_LEVEL=OFF",
+                "-DENABLE_CLANG_TIDY=OFF",
+                "-DENABLE_CPPCHECK=OFF",
+                "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++"
+                    "CXX": "/usr/bin/clang++",
                 }
             },
             "presentation": {
                 "clear": true
             },
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         // --------------------------------------- CMAKE Configure Tasks ---------------------------------------
         {
@@ -160,21 +175,21 @@
             "args": [
                 "-Bbuild/Debug",
                 "-S.",
-                "-DCMAKE_BUILD_TYPE=Debug"
+                "-DCMAKE_BUILD_TYPE=Debug",
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++"
+                    "CXX": "/usr/bin/clang++",
                 }
             },
             "presentation": {
                 "focus": true
             },
             "dependsOn": [
-                "CMAKE: Debug"
+                "CMAKE: Debug",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "CMAKE: Configure Release",
@@ -184,21 +199,21 @@
             "args": [
                 "-Bbuild/Release",
                 "-S.",
-                "-DCMAKE_BUILD_TYPE=Release"
+                "-DCMAKE_BUILD_TYPE=Release",
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++"
+                    "CXX": "/usr/bin/clang++",
                 }
             },
             "presentation": {
                 "focus": true
             },
             "dependsOn": [
-                "CMAKE: Release"
+                "CMAKE: Release",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         // -------------------------------------------- Build Tasks --------------------------------------------
         {
@@ -216,9 +231,9 @@
                 "-j",
             ],
             "dependsOn": [
-                "CMAKE: Debug"
+                "CMAKE: Debug",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "GUI: Build project",
@@ -232,9 +247,9 @@
                 "-j",
             ],
             "dependsOn": [
-                "CMAKE: GUI"
+                "CMAKE: GUI",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "RELEASE: Build project",
@@ -248,9 +263,9 @@
                 "-j",
             ],
             "dependsOn": [
-                "CMAKE: Release"
+                "CMAKE: Release",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "TEST: Build project",
@@ -264,9 +279,9 @@
                 "-j",
             ],
             "dependsOn": [
-                "CMAKE: Testing"
+                "CMAKE: Testing",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "DOXYGEN: Build Documentation",
@@ -282,9 +297,9 @@
                 "-j",
             ],
             "dependsOn": [
-                "CMAKE: Documentation"
+                "CMAKE: Documentation",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         // --------------------------------------------- Run Tasks ---------------------------------------------
         {
@@ -295,12 +310,12 @@
             "args": [
                 "-f",
                 "config.ini",
-                "config-dataflow.ini"
+                "config-dataflow.ini",
             ],
             "dependsOn": [
-                "DEBUG: Build project"
+                "DEBUG: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "RELEASE: Build & run project",
@@ -310,12 +325,12 @@
             "args": [
                 "-f",
                 "config.ini",
-                "config-dataflow.ini"
+                "config-dataflow.ini",
             ],
             "dependsOn": [
-                "RELEASE: Build project"
+                "RELEASE: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "GUI: Build & run project",
@@ -327,9 +342,9 @@
             "command": "./bin/Release/navsos-gui",
             "args": [],
             "dependsOn": [
-                "GUI: Build project"
+                "GUI: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "TEST: Build & run",
@@ -339,15 +354,15 @@
             "args": [
                 // "-j2",
                 "--output-on-failure",
-                // "--verbose"
+                // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug"
+                "cwd": "build/Debug",
             },
             "dependsOn": [
-                "TEST: Build project"
+                "TEST: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "DOXYGEN: Create & Show",
@@ -355,12 +370,12 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "doc/html/index.html"
+                "doc/html/index.html",
             ],
             "dependsOn": [
-                "DOXYGEN: Build Documentation"
+                "DOXYGEN: Build Documentation",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         // ------------------------------------------ Debugging Tasks ------------------------------------------
         {
@@ -370,12 +385,12 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/Debug/callgrind.out --tool=callgrind bin/Debug/navsos -f config.ini config-dataflow.ini && kcachegrind bin/Debug/callgrind.out"
+                "valgrind --callgrind-out-file=bin/Debug/callgrind.out --tool=callgrind bin/Debug/navsos -f config.ini config-dataflow.ini && kcachegrind bin/Debug/callgrind.out",
             ],
             "dependsOn": [
-                "DEBUG: Build project"
+                "DEBUG: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "VALGRIND: Run profiler in Release Mode",
@@ -384,12 +399,12 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/Release/callgrind.out --tool=callgrind bin/Release/navsos -f config.ini config-dataflow.ini && kcachegrind bin/Release/callgrind.out"
+                "valgrind --callgrind-out-file=bin/Release/callgrind.out --tool=callgrind bin/Release/navsos -f config.ini config-dataflow.ini && kcachegrind bin/Release/callgrind.out",
             ],
             "dependsOn": [
-                "RELEASE: Build project"
+                "RELEASE: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         },
         {
             "label": "VALGRIND: Memory Leak Check",
@@ -401,12 +416,12 @@
                 "bin/Debug/navsos",
                 "-f",
                 "config.ini",
-                "config-dataflow.ini"
+                "config-dataflow.ini",
             ],
             "dependsOn": [
-                "DEBUG: Build project"
+                "DEBUG: Build project",
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
         }
     ]
 }

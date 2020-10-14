@@ -37,19 +37,40 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     /// State Data at the time tₖ₋₁
     auto stateData__t1 = std::static_pointer_cast<StateData>(stateNode->requestOutputData(statePortIndex));
 
+    // No inital state available yet
+    if (stateData__t1 == nullptr)
+    {
+        // Rotate Observation
+        prevObs.push_front(imuObs__t0);
+        if (prevObs.size() > 2)
+        {
+            prevObs.pop_back();
+        }
+        return;
+    }
+
     // Fill if empty
-    if (prevObs.empty())
+    if (prevStates.empty())
     {
         stateData__t1->insTime = imuObs__t0->insTime;
 
-        prevObs.push_front(imuObs__t0);
         prevStates.push_front(stateData__t1);
+
+        prevObs.push_front(imuObs__t0);
+        if (prevObs.size() > 2)
+        {
+            prevObs.pop_back();
+        }
+
         invokeCallbacks(stateData__t1);
         return;
     }
 
     // Rotate State Data
-    prevStates.pop_back();
+    if (prevStates.size() == 2)
+    {
+        prevStates.pop_back();
+    }
     prevStates.push_front(stateData__t1);
 
     /// Initial State
@@ -58,18 +79,16 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
 
     /// IMU Observation at the time tₖ₋₂
     std::shared_ptr<ImuObs> imuObs__t2;
-    /// State Data at the time tₖ₋₂
-    std::shared_ptr<StateData> stateData__t2;
     if (prevObs.size() == 1)
     {
         imuObs__t2 = prevObs.at(0);
-        stateData__t2 = prevStates.at(0);
     }
     else
     {
         imuObs__t2 = prevObs.at(1);
-        stateData__t2 = prevStates.at(1);
     }
+    /// State Data at the time tₖ₋₂
+    auto& stateData__t2 = prevStates.at(1);
 
     /// IMU Observation at the time tₖ₋₁
     auto& imuObs__t1 = prevObs.at(0);
@@ -161,12 +180,12 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         // Store velocity in the state
         stateData__t0->velocity_n() = stateData__t1->quaternion_ne() * velocity_e__t0;
         // Store position in the state. Important to do before using the quaternion_en.
-        stateData__t0->setLatLonAlt(trafo::ecef2lla_WGS84(position_e__t0));
+        stateData__t0->latLonAlt() = trafo::ecef2lla_WGS84(position_e__t0);
 
         /// Quaternion for rotation from earth to navigation frame. Depends on position which was updated before
         Quaterniond<Navigation, Earth> quaternion_ne__t0 = stateData__t0->quaternion_ne();
         // Store body to navigation frame quaternion in the state
-        stateData__t0->quat_nb_coeff() = (quaternion_ne__t0 * quaternion_gyro_ep__t0 * imuPosition->quatGyro_pb()).coeffs();
+        stateData__t0->quaternion_nb() = quaternion_ne__t0 * quaternion_gyro_ep__t0 * imuPosition->quatGyro_pb();
     }
     else if (integrationFrame == IntegrationFrame::NED)
     {
@@ -239,10 +258,10 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         // Store velocity in the state
         stateData__t0->velocity_n() = velocity_n__t0;
         // Store position in the state
-        stateData__t0->setLatLonAlt(latLonAlt__t0);
+        stateData__t0->latLonAlt() = latLonAlt__t0;
 
         // Store body to navigation frame quaternion in the state
-        stateData__t0->quat_nb_coeff() = quaternion_nb__t0.coeffs();
+        stateData__t0->quaternion_nb() = quaternion_nb__t0;
     }
 
     // Rotate Observation

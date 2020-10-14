@@ -235,12 +235,12 @@ void NAV::GnuPlot::handleVectorNavObs(std::shared_ptr<NAV::VectorNavObs>& obs, s
     {
         if (gnuplotData.dataIdentifier == "Time" && obs->insTime.has_value())
         {
-            if (std::isnan(gnuplotData.startValue))
+            if (std::isnan(startValue_Time))
             {
-                gnuplotData.startValue = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+                startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
             }
 
-            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - startValue_Time);
         }
         else if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
@@ -488,12 +488,12 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
     {
         if (gnuplotData.dataIdentifier == "Time" && obs->insTime.has_value())
         {
-            if (std::isnan(gnuplotData.startValue))
+            if (std::isnan(startValue_Time))
             {
-                gnuplotData.startValue = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+                startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
             }
 
-            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - startValue_Time);
         }
         else if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
@@ -503,7 +503,7 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
         {
             if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(obs->latLonAlt.value().x());
+                gnuplotData.data.emplace_back(trafo::rad2deg(obs->latLonAlt.value().x()));
             }
             else if (obs->position_ecef.has_value())
             {
@@ -514,7 +514,7 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
         {
             if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(obs->latLonAlt.value().y());
+                gnuplotData.data.emplace_back(trafo::rad2deg(obs->latLonAlt.value().y()));
             }
             else if (obs->position_ecef.has_value())
             {
@@ -540,10 +540,7 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
             }
             else if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84({ trafo::deg2rad(obs->latLonAlt.value().x()),
-                                                                      trafo::deg2rad(obs->latLonAlt.value().y()),
-                                                                      obs->latLonAlt.value().z() })
-                                                  .x());
+                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84(obs->latLonAlt.value()).x());
             }
         }
         else if (gnuplotData.dataIdentifier == "Y-ECEF")
@@ -554,10 +551,7 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
             }
             else if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84({ trafo::deg2rad(obs->latLonAlt.value().x()),
-                                                                      trafo::deg2rad(obs->latLonAlt.value().y()),
-                                                                      obs->latLonAlt.value().z() })
-                                                  .y());
+                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84(obs->latLonAlt.value()).y());
             }
         }
         else if (gnuplotData.dataIdentifier == "Z-ECEF")
@@ -568,69 +562,66 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
             }
             else if (obs->latLonAlt.has_value())
             {
-                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84({ trafo::deg2rad(obs->latLonAlt.value().x()),
-                                                                      trafo::deg2rad(obs->latLonAlt.value().y()),
-                                                                      obs->latLonAlt.value().z() })
-                                                  .z());
+                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84(obs->latLonAlt.value()).z());
             }
         }
         else if (gnuplotData.dataIdentifier == "North [m]")
         {
-            if (std::isnan(gnuplotData.startValue))
+            if (std::isnan(startValue_North))
             {
                 if (obs->latLonAlt.has_value())
                 {
-                    gnuplotData.startValue = trafo::deg2rad(obs->latLonAlt.value().x());
+                    startValue_North = obs->latLonAlt.value().x();
                 }
                 else if (obs->position_ecef.has_value())
                 {
-                    gnuplotData.startValue = trafo::ecef2lla_WGS84(obs->position_ecef.value()).x();
+                    startValue_North = trafo::ecef2lla_WGS84(obs->position_ecef.value()).x();
                 }
             }
 
             if (obs->latLonAlt.has_value())
             {
-                int sign = obs->latLonAlt.value().x() > gnuplotData.startValue ? 1 : -1;
-                gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->latLonAlt.value().x()), trafo::deg2rad(obs->latLonAlt.value().y()),
-                                                              gnuplotData.startValue, trafo::deg2rad(obs->latLonAlt.value().y()))
+                int sign = obs->latLonAlt.value().x() > startValue_North ? 1 : -1;
+                gnuplotData.data.emplace_back(measureDistance(obs->latLonAlt.value().x(), obs->latLonAlt.value().y(),
+                                                              startValue_North, obs->latLonAlt.value().y())
                                               * sign);
             }
             else if (obs->position_ecef.has_value())
             {
                 auto llh = trafo::ecef2lla_WGS84(obs->position_ecef.value());
-                int sign = llh.x() > gnuplotData.startValue ? 1 : -1;
+                int sign = llh.x() > startValue_North ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
-                                                              gnuplotData.startValue, llh.y())
+                                                              startValue_North, llh.y())
                                               * sign);
             }
         }
         else if (gnuplotData.dataIdentifier == "East [m]")
         {
-            if (std::isnan(gnuplotData.startValue))
+            if (std::isnan(startValue_East))
             {
                 if (obs->latLonAlt.has_value())
                 {
-                    gnuplotData.startValue = trafo::deg2rad(obs->latLonAlt.value().y());
+                    startValue_East = obs->latLonAlt.value().y();
                 }
                 else if (obs->position_ecef.has_value())
                 {
-                    gnuplotData.startValue = trafo::ecef2lla_WGS84(obs->position_ecef.value()).y();
+                    startValue_East = trafo::ecef2lla_WGS84(obs->position_ecef.value()).y();
                 }
             }
 
             if (obs->latLonAlt.has_value())
             {
-                int sign = obs->latLonAlt.value().y() > gnuplotData.startValue ? 1 : -1;
-                gnuplotData.data.emplace_back(measureDistance(trafo::deg2rad(obs->latLonAlt.value().x()), trafo::deg2rad(obs->latLonAlt.value().y()),
-                                                              trafo::deg2rad(obs->latLonAlt.value().x()), gnuplotData.startValue)
+                int sign = obs->latLonAlt.value().y() > startValue_East ? 1 : -1;
+                gnuplotData.data.emplace_back(measureDistance(obs->latLonAlt.value().x(), obs->latLonAlt.value().y(),
+                                                              obs->latLonAlt.value().x(), startValue_East)
                                               * sign);
             }
             else if (obs->position_ecef.has_value())
             {
                 auto llh = trafo::ecef2lla_WGS84(obs->position_ecef.value());
-                int sign = llh.x() > gnuplotData.startValue ? 1 : -1;
+                int sign = llh.x() > startValue_East ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
-                                                              llh.x(), gnuplotData.startValue)
+                                                              llh.x(), startValue_East)
                                               * sign);
             }
         }
@@ -720,12 +711,12 @@ void NAV::GnuPlot::handleKvhObs(std::shared_ptr<NAV::KvhObs>& obs, size_t portIn
     {
         if (gnuplotData.dataIdentifier == "Time" && obs->insTime.has_value())
         {
-            if (std::isnan(gnuplotData.startValue))
+            if (std::isnan(startValue_Time))
             {
-                gnuplotData.startValue = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+                startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
             }
 
-            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - startValue_Time);
         }
         else if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
@@ -801,12 +792,12 @@ void NAV::GnuPlot::handleImuObs(std::shared_ptr<NAV::ImuObs>& obs, size_t portIn
     {
         if (gnuplotData.dataIdentifier == "Time" && obs->insTime.has_value())
         {
-            if (std::isnan(gnuplotData.startValue))
+            if (std::isnan(startValue_Time))
             {
-                gnuplotData.startValue = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+                startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
             }
 
-            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+            gnuplotData.data.emplace_back(static_cast<double>(obs->insTime.value().toGPSweekTow().tow) - startValue_Time);
         }
         else if (gnuplotData.dataIdentifier == "GPS time of week" && obs->insTime.has_value())
         {
@@ -878,12 +869,12 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
     {
         if (gnuplotData.dataIdentifier == "Time" && state->insTime.has_value())
         {
-            if (std::isnan(gnuplotData.startValue))
+            if (std::isnan(startValue_Time))
             {
-                gnuplotData.startValue = static_cast<double>(state->insTime.value().toGPSweekTow().tow);
+                startValue_Time = static_cast<double>(state->insTime.value().toGPSweekTow().tow);
             }
 
-            gnuplotData.data.emplace_back(static_cast<double>(state->insTime.value().toGPSweekTow().tow) - gnuplotData.startValue);
+            gnuplotData.data.emplace_back(static_cast<double>(state->insTime.value().toGPSweekTow().tow) - startValue_Time);
         }
         else if (gnuplotData.dataIdentifier == "GPS time of week" && state->insTime.has_value())
         {
@@ -915,23 +906,23 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         }
         else if (gnuplotData.dataIdentifier == "North [m]")
         {
-            if (std::isnan(gnuplotData.startValue))
+            if (std::isnan(startValue_North))
             {
-                gnuplotData.startValue = static_cast<double>(state->latitude());
+                startValue_North = static_cast<double>(state->latitude());
             }
 
-            int sign = state->latitude() > gnuplotData.startValue ? 1 : -1;
-            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), gnuplotData.startValue, state->longitude()) * sign);
+            int sign = state->latitude() > startValue_North ? 1 : -1;
+            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), startValue_North, state->longitude()) * sign);
         }
         else if (gnuplotData.dataIdentifier == "East [m]")
         {
-            if (std::isnan(gnuplotData.startValue))
+            if (std::isnan(startValue_East))
             {
-                gnuplotData.startValue = static_cast<double>(state->longitude());
+                startValue_East = static_cast<double>(state->longitude());
             }
 
-            int sign = state->longitude() > gnuplotData.startValue ? 1 : -1;
-            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), state->latitude(), gnuplotData.startValue) * sign);
+            int sign = state->longitude() > startValue_East ? 1 : -1;
+            gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), state->latitude(), startValue_East) * sign);
         }
         else if (gnuplotData.dataIdentifier == "Velocity North")
         {
