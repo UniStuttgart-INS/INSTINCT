@@ -268,7 +268,6 @@ class GnuPlot final : public Node
         explicit GnuPlotData(std::string dataIdentifier)
             : dataIdentifier(std::move(dataIdentifier)) {}
 
-        double startValue = std::nan("");
         /// Data identifier
         std::string dataIdentifier;
         /// x and y data which can be passed to the plot stream
@@ -277,6 +276,10 @@ class GnuPlot final : public Node
 
     /// Data to plot
     std::map<size_t, std::vector<GnuPlotData>> plotData;
+
+    double startValue_Time = std::nan("");
+    double startValue_North = std::nan("");
+    double startValue_East = std::nan("");
 
     /// gnuplot object
     gnuplotio::Gnuplot gp{ "gnuplot -persist > /dev/null 2>&1" };

@@ -1,6 +1,7 @@
 #include "RtklibPosFile.hpp"
 
 #include "util/Logger.hpp"
+#include "util/InsTransformations.hpp"
 #include <ios>
 #include <cmath>
 #include <array>
@@ -76,11 +77,11 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
             }
             else if (column == "latitude(deg)")
             {
-                positionLat = std::stod(cell);
+                positionLat = trafo::deg2rad(std::stod(cell));
             }
             else if (column == "longitude(deg)")
             {
-                positionLon = std::stod(cell);
+                positionLon = trafo::deg2rad(std::stod(cell));
             }
             else if (column == "height(m)")
             {
