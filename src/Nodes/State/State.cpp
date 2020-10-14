@@ -101,7 +101,7 @@ void NAV::State::initAttitude(std::shared_ptr<ImuObs>& obs)
     auto imuPosition = std::static_pointer_cast<ImuPos>(imuNode->requestOutputData(imuPortIndex));
 
     const auto magUncomp_b = imuPosition->quatMag_bp() * obs->magUncompXYZ.value();
-    auto magneticHeading = std::atan2(magUncomp_b.y(), magUncomp_b.x());
+    auto magneticHeading = -std::atan2(magUncomp_b.y(), magUncomp_b.x());
 
     const auto accelUncomp_b = imuPosition->quatAccel_bp() * obs->accelUncompXYZ.value() * -1;
     auto roll = std::atan2(accelUncomp_b.y(), accelUncomp_b.z());
