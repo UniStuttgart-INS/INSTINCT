@@ -123,25 +123,13 @@ void NAV::State::initAttitude(std::shared_ptr<ImuObs>& obs)
 
 void NAV::State::initPositionVelocity(std::shared_ptr<GnssObs>& obs)
 {
-    if (obs->latLonAlt.has_value() || obs->position_ecef.has_value())
+    if (obs->position_ecef.has_value())
     {
-        double lat = 0.0;
-        double lon = 0.0;
-        double alt = 0.0;
-        if (obs->latLonAlt.has_value())
-        {
-            lat = obs->latLonAlt->x();
-            lon = obs->latLonAlt->y();
-            alt = obs->latLonAlt->z();
-        }
-        else
-        {
-            Vector3d<LLA> latLonAlt = trafo::ecef2lla_WGS84(obs->position_ecef.value());
+        Vector3d<LLA> latLonAlt = trafo::ecef2lla_WGS84(obs->position_ecef.value());
 
-            lat = latLonAlt.x();
-            lon = latLonAlt.y();
-            alt = latLonAlt.z();
-        }
+        double lat = latLonAlt.x();
+        double lon = latLonAlt.y();
+        double alt = latLonAlt.z();
 
         // Already received a position, so calculate velocity
         if (countAveragedPosition > 0)

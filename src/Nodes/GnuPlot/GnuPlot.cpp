@@ -501,33 +501,21 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
         }
         else if (gnuplotData.dataIdentifier == "Latitude")
         {
-            if (obs->latLonAlt.has_value())
-            {
-                gnuplotData.data.emplace_back(trafo::rad2deg(obs->latLonAlt.value().x()));
-            }
-            else if (obs->position_ecef.has_value())
+            if (obs->position_ecef.has_value())
             {
                 gnuplotData.data.emplace_back(trafo::rad2deg(trafo::ecef2lla_WGS84(obs->position_ecef.value()).x()));
             }
         }
         else if (gnuplotData.dataIdentifier == "Longitude")
         {
-            if (obs->latLonAlt.has_value())
-            {
-                gnuplotData.data.emplace_back(trafo::rad2deg(obs->latLonAlt.value().y()));
-            }
-            else if (obs->position_ecef.has_value())
+            if (obs->position_ecef.has_value())
             {
                 gnuplotData.data.emplace_back(trafo::rad2deg(trafo::ecef2lla_WGS84(obs->position_ecef.value()).y()));
             }
         }
         else if (gnuplotData.dataIdentifier == "Height")
         {
-            if (obs->latLonAlt.has_value())
-            {
-                gnuplotData.data.emplace_back(obs->latLonAlt.value().z());
-            }
-            else if (obs->position_ecef.has_value())
+            if (obs->position_ecef.has_value())
             {
                 gnuplotData.data.emplace_back(trafo::ecef2lla_WGS84(obs->position_ecef.value()).z());
             }
@@ -538,20 +526,12 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
             {
                 gnuplotData.data.emplace_back(obs->position_ecef.value().x());
             }
-            else if (obs->latLonAlt.has_value())
-            {
-                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84(obs->latLonAlt.value()).x());
-            }
         }
         else if (gnuplotData.dataIdentifier == "Y-ECEF")
         {
             if (obs->position_ecef.has_value())
             {
                 gnuplotData.data.emplace_back(obs->position_ecef.value().y());
-            }
-            else if (obs->latLonAlt.has_value())
-            {
-                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84(obs->latLonAlt.value()).y());
             }
         }
         else if (gnuplotData.dataIdentifier == "Z-ECEF")
@@ -560,34 +540,16 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
             {
                 gnuplotData.data.emplace_back(obs->position_ecef.value().z());
             }
-            else if (obs->latLonAlt.has_value())
-            {
-                gnuplotData.data.emplace_back(trafo::lla2ecef_WGS84(obs->latLonAlt.value()).z());
-            }
         }
-        else if (gnuplotData.dataIdentifier == "North [m]")
+        else if (gnuplotData.dataIdentifier == "North/South [m]")
         {
-            if (std::isnan(startValue_North))
+            if (obs->position_ecef.has_value())
             {
-                if (obs->latLonAlt.has_value())
-                {
-                    startValue_North = obs->latLonAlt.value().x();
-                }
-                else if (obs->position_ecef.has_value())
+                if (std::isnan(startValue_North))
                 {
                     startValue_North = trafo::ecef2lla_WGS84(obs->position_ecef.value()).x();
                 }
-            }
 
-            if (obs->latLonAlt.has_value())
-            {
-                int sign = obs->latLonAlt.value().x() > startValue_North ? 1 : -1;
-                gnuplotData.data.emplace_back(measureDistance(obs->latLonAlt.value().x(), obs->latLonAlt.value().y(),
-                                                              startValue_North, obs->latLonAlt.value().y())
-                                              * sign);
-            }
-            else if (obs->position_ecef.has_value())
-            {
                 auto llh = trafo::ecef2lla_WGS84(obs->position_ecef.value());
                 int sign = llh.x() > startValue_North ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
@@ -595,29 +557,15 @@ void NAV::GnuPlot::handleRtklibPosObs(std::shared_ptr<NAV::RtklibPosObs>& obs, s
                                               * sign);
             }
         }
-        else if (gnuplotData.dataIdentifier == "East [m]")
+        else if (gnuplotData.dataIdentifier == "East/West [m]")
         {
-            if (std::isnan(startValue_East))
+            if (obs->position_ecef.has_value())
             {
-                if (obs->latLonAlt.has_value())
-                {
-                    startValue_East = obs->latLonAlt.value().y();
-                }
-                else if (obs->position_ecef.has_value())
+                if (std::isnan(startValue_East))
                 {
                     startValue_East = trafo::ecef2lla_WGS84(obs->position_ecef.value()).y();
                 }
-            }
 
-            if (obs->latLonAlt.has_value())
-            {
-                int sign = obs->latLonAlt.value().y() > startValue_East ? 1 : -1;
-                gnuplotData.data.emplace_back(measureDistance(obs->latLonAlt.value().x(), obs->latLonAlt.value().y(),
-                                                              obs->latLonAlt.value().x(), startValue_East)
-                                              * sign);
-            }
-            else if (obs->position_ecef.has_value())
-            {
                 auto llh = trafo::ecef2lla_WGS84(obs->position_ecef.value());
                 int sign = llh.x() > startValue_East ? 1 : -1;
                 gnuplotData.data.emplace_back(measureDistance(llh.x(), llh.y(),
@@ -904,7 +852,7 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         {
             gnuplotData.data.emplace_back(state->positionECEF_WGS84().z());
         }
-        else if (gnuplotData.dataIdentifier == "North [m]")
+        else if (gnuplotData.dataIdentifier == "North/South [m]")
         {
             if (std::isnan(startValue_North))
             {
@@ -914,7 +862,7 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
             int sign = state->latitude() > startValue_North ? 1 : -1;
             gnuplotData.data.emplace_back(measureDistance(state->latitude(), state->longitude(), startValue_North, state->longitude()) * sign);
         }
-        else if (gnuplotData.dataIdentifier == "East [m]")
+        else if (gnuplotData.dataIdentifier == "East/West [m]")
         {
             if (std::isnan(startValue_East))
             {

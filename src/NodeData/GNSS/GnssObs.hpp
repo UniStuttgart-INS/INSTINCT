@@ -45,7 +45,5 @@ class GnssObs : public InsObs
 
     /// ECEF position [m]
     std::optional<Vector3d<Earth>> position_ecef;
-    /// Position in Latitude 𝜙 [rad], Longitude λ [rad], Altitude [m]
-    std::optional<Vector3d<LLA>> latLonAlt;
 };
 } // namespace NAV

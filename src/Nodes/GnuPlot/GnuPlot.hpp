@@ -120,7 +120,7 @@ class GnuPlot final : public Node
                                                             { "[Time]", "GPS time of week",
                                                               "Latitude", "Longitude", "Height",
                                                               "X-ECEF", "Y-ECEF", "Z-ECEF",
-                                                              "North [m]", "East [m]",
+                                                              "North/South [m]", "East/West [m]",
                                                               "Q",
                                                               "ns",
                                                               "sdn", "sde", "sdu",
@@ -145,7 +145,7 @@ class GnuPlot final : public Node
                                                             { "[Time]", "GPS time of week",
                                                               "Latitude", "Longitude", "Height",
                                                               "X-ECEF", "Y-ECEF", "Z-ECEF",
-                                                              "North [m]", "East [m]",
+                                                              "North/South [m]", "East/West [m]",
                                                               "Velocity North", "Velocity East", "Velocity Down",
                                                               "Roll", "Pitch", "Yaw",
                                                               "Quaternion W", "Quaternion X", "Quaternion Y", "Quaternion Z" })
