@@ -784,6 +784,19 @@ struct UbxNavAtt
     uint32_t accHeading = 0;            ///< Vehicle heading accuracy [deg * 1e-5] (if null, heading angle is not available).
 };
 
+/// @brief Position Solution in ECEF
+///
+/// See important comments concerning validity of position given in section
+/// Navigation Output Filters.
+struct UbxNavPosecef
+{
+    uint32_t iTOW = 0; ///< GPS time of week of the navigation epoch [ms]. See the description of iTOW for details.
+    int32_t ecefX = 0; ///< ECEF X coordinate [cm]
+    int32_t ecefY = 0; ///< ECEF Y coordinate [cm]
+    int32_t ecefZ = 0; ///< ECEF Z coordinate [cm]
+    uint32_t pAcc = 0; ///< Position Accuracy Estimate [cm]
+};
+
 /// @brief Geodetic Position Solution
 ///
 /// See important comments concerning validity of position given in section

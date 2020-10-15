@@ -86,6 +86,7 @@ class UbloxObs : public GnssObs
         // MON:Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
         // NAV: Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
         sensors::ublox::UbxNavAtt,
+        sensors::ublox::UbxNavPosecef,
         sensors::ublox::UbxNavPosllh,
         sensors::ublox::UbxNavVelned,
         // RXM: Receiver Manager Messages: Satellite Status, RTC Status
