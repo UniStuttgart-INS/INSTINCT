@@ -23,28 +23,23 @@ TEST_CASE("[StateData] Reference Functions", "[StateData]")
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    auto latLonAlt = Vector3d<LLA>(5, 6, 7);
+    Vector3d<LLA> latLonAlt = Vector3d<LLA>(5, 6, 7);
+    auto pos_e = trafo::lla2ecef_WGS84(latLonAlt);
+    state.position_ecef() = pos_e;
 
+    CHECK(state.position_ecef() == pos_e);
+    CHECK(state.latLonAlt() == trafo::ecef2lla_WGS84(pos_e));
+    CHECK(state.latitude() == trafo::ecef2lla_WGS84(pos_e)(0));
+    CHECK(state.longitude() == trafo::ecef2lla_WGS84(pos_e)(1));
+    CHECK(state.altitude() == trafo::ecef2lla_WGS84(pos_e)(2));
+
+    // Supposed to do nothing, as we overwrite temporary variable
     state.latLonAlt() = latLonAlt;
 
-    CHECK(state.latLonAlt() == latLonAlt);
-    CHECK(state.latitude() == latLonAlt(0));
-    CHECK(state.longitude() == latLonAlt(1));
-    CHECK(state.altitude() == latLonAlt(2));
-
-    /* -------------------------------------------------------------------------------------------------------- */
-
-    double lat = 8;
-    double lon = 9;
-    double alt = 10;
-
-    state.latitude() = lat;
-    state.longitude() = lon;
-    state.altitude() = alt;
-    CHECK(state.latLonAlt() == Eigen::Vector3d(lat, lon, alt));
-    CHECK(state.latitude() == lat);
-    CHECK(state.longitude() == lon);
-    CHECK(state.altitude() == alt);
+    CHECK(state.latLonAlt() == trafo::ecef2lla_WGS84(pos_e));
+    CHECK(state.latitude() == trafo::ecef2lla_WGS84(pos_e)(0));
+    CHECK(state.longitude() == trafo::ecef2lla_WGS84(pos_e)(1));
+    CHECK(state.altitude() == trafo::ecef2lla_WGS84(pos_e)(2));
 
     /* -------------------------------------------------------------------------------------------------------- */
 

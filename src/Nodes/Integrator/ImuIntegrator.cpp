@@ -129,9 +129,9 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     /// v_e (tₖ₋₁) Velocity in [m/s], in earth coordinates, at the time tₖ₋₁
     const Vector3d<Earth> velocity_e__t1 = stateData__t1->quaternion_en() * velocity_n__t1;
     /// x_e (tₖ₋₂) Position in [m], in ECEF coordinates, at the time tₖ₋₂
-    const Vector3d<Earth> position_e__t2 = stateData__t2->positionECEF_WGS84();
+    const Vector3d<Earth> position_e__t2 = stateData__t2->position_ecef();
     /// x_e (tₖ₋₁) Position in [m], in ECEF coordinates, at the time tₖ₋₁
-    const Vector3d<Earth> position_e__t1 = stateData__t1->positionECEF_WGS84();
+    const Vector3d<Earth> position_e__t1 = stateData__t1->position_ecef();
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
     const Vector3d<Navigation> gravity_n__t1(0, 0, gravity::gravityMagnitude_Gleason(stateData__t1->latitude()));
@@ -161,7 +161,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         /// q (tₖ) Quaternion, from accel platform to earth coordinates, at the time tₖ
         const Quaterniond<Earth, Platform> quaternion_accel_ep__t0 = quaternion_gyro_ep__t0 * imuPosition->quatGyro_pb() * imuPosition->quatAccel_bp();
 
-        /// v (tₖ), Velocity in earth coordinates, at the current time tₖ
+        /// v (tₖ), Velocity in [m/s], in earth coordinates, at the current time tₖ
         const Vector3d<Earth> velocity_e__t0 = updateVelocity_e_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
                                                                             acceleration_p__t0, acceleration_p__t1,
                                                                             velocity_e__t2,
@@ -171,7 +171,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
                                                                             quaternion_accel_ep__t1,
                                                                             quaternion_accel_ep__t2);
 
-        /// x_e (tₖ) Position in [m/s], in earth coordinates, at the time tₖ
+        /// x_e (tₖ) Position in [m], in earth coordinates, at the time tₖ
         const Vector3d<Earth>& position_e__t0 = updatePosition_e(timeDifferenceSec__t0, position_e__t1, velocity_e__t1);
 
         // Use same timestamp as IMU message
@@ -180,7 +180,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         // Store velocity in the state
         stateData__t0->velocity_n() = stateData__t1->quaternion_ne() * velocity_e__t0;
         // Store position in the state. Important to do before using the quaternion_en.
-        stateData__t0->latLonAlt() = trafo::ecef2lla_WGS84(position_e__t0);
+        stateData__t0->position_ecef() = position_e__t0;
 
         /// Quaternion for rotation from earth to navigation frame. Depends on position which was updated before
         Quaterniond<Navigation, Earth> quaternion_ne__t0 = stateData__t0->quaternion_ne();
@@ -246,9 +246,6 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         Vector3d<Earth> position_e__t0 = trafo::ned2ecef(position_n__t0, stateData__init->latLonAlt());
 
         /// Latitude, Longitude and Altitude in [rad, rad, m], at the current time tₖ (see Gleason eq. 6.18 - 6.20)
-        Vector3d<LLA> latLonAlt__t0 = trafo::ecef2lla_WGS84(position_e__t0);
-
-        /// Latitude, Longitude and Altitude in [rad, rad, m], at the current time tₖ (see Gleason eq. 6.18 - 6.20)
         // Vector3d<LLA> latLonAlt__t0 = updatePosition_n(timeDifferenceSec__t0, stateData__t1->latLonAlt(),
         //                                                     velocity_n__t1, R_N, R_E);
 
@@ -258,7 +255,7 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         // Store velocity in the state
         stateData__t0->velocity_n() = velocity_n__t0;
         // Store position in the state
-        stateData__t0->latLonAlt() = latLonAlt__t0;
+        stateData__t0->position_ecef() = position_e__t0;
 
         // Store body to navigation frame quaternion in the state
         stateData__t0->quaternion_nb() = quaternion_nb__t0;

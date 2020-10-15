@@ -21,18 +21,22 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
         {
             std::stringstream lineStream(options.at("Init LatLonAlt"));
             std::string value;
+            double lat{};
+            double lon{};
+            double alt{};
             if (std::getline(lineStream, value, ';'))
             {
-                initialState->latitude() = trafo::deg2rad(std::stod(value));
+                lat = trafo::deg2rad(std::stod(value));
                 if (std::getline(lineStream, value, ';'))
                 {
-                    initialState->longitude() = trafo::deg2rad(std::stod(value));
+                    lon = trafo::deg2rad(std::stod(value));
                     if (std::getline(lineStream, value, ';'))
                     {
-                        initialState->altitude() = std::stod(value);
+                        alt = std::stod(value);
                     }
                 }
             }
+            initialState->position_ecef() = trafo::lla2ecef_WGS84({ lat, lon, alt });
         }
         if (options.count("Init RollPitchYaw"))
         {
@@ -79,7 +83,7 @@ NAV::State::State(const std::string& name, const std::map<std::string, std::stri
 
         currentState = std::make_shared<StateData>();
         currentState->quaternion_nb() = initialState->quaternion_nb();
-        currentState->latLonAlt() = initialState->latLonAlt();
+        currentState->position_ecef() = initialState->position_ecef();
         currentState->velocity_n() = initialState->velocity_n();
     }
 }
@@ -125,21 +129,16 @@ void NAV::State::initPositionVelocity(std::shared_ptr<GnssObs>& obs)
 {
     if (obs->position_ecef.has_value())
     {
-        Vector3d<LLA> latLonAlt = trafo::ecef2lla_WGS84(obs->position_ecef.value());
-
-        double lat = latLonAlt.x();
-        double lon = latLonAlt.y();
-        double alt = latLonAlt.z();
+        double p_x = obs->position_ecef->x();
+        double p_y = obs->position_ecef->y();
+        double p_z = obs->position_ecef->z();
 
         // Already received a position, so calculate velocity
         if (countAveragedPosition > 0)
         {
-            Vector3d<Earth> pos_e__t0 = trafo::lla2ecef_WGS84({ lat, lon, alt });
-            Vector3d<Earth> pos_e__t1 = trafo::lla2ecef_WGS84(initialState->latLonAlt());
-
             auto dt = (obs->insTime.value() - initialState->insTime.value()).count();
 
-            Vector3d<Earth> velocity_e = (pos_e__t0 - pos_e__t1) / dt;
+            Vector3d<Earth> velocity_e = (obs->position_ecef.value() - initialState->position_ecef()) / dt;
             Vector3d<Navigation> velocity_n = initialState->quaternion_ne() * velocity_e;
 
             // Average with previous velocity
@@ -156,11 +155,11 @@ void NAV::State::initPositionVelocity(std::shared_ptr<GnssObs>& obs)
         countAveragedPosition++;
         if (countAveragedPosition > 1)
         {
-            lat = (initialState->latitude() * (countAveragedPosition - 1) + lat) / countAveragedPosition;
-            lon = (initialState->longitude() * (countAveragedPosition - 1) + lon) / countAveragedPosition;
-            alt = (initialState->altitude() * (countAveragedPosition - 1) + alt) / countAveragedPosition;
+            p_x = (initialState->position_ecef().x() * (countAveragedPosition - 1) + p_x) / countAveragedPosition;
+            p_y = (initialState->position_ecef().y() * (countAveragedPosition - 1) + p_y) / countAveragedPosition;
+            p_z = (initialState->position_ecef().z() * (countAveragedPosition - 1) + p_z) / countAveragedPosition;
         }
-        initialState->latLonAlt() = { lat, lon, alt };
+        initialState->position_ecef() = { p_x, p_y, p_z };
         initialState->insTime = obs->insTime;
 
         finalizeInit(obs->insTime.value());
@@ -195,7 +194,7 @@ void NAV::State::finalizeInit(const InsTime& currentTime)
         currentState = std::make_shared<StateData>();
         currentState->insTime = currentTime;
         currentState->quaternion_nb() = initialState->quaternion_nb();
-        currentState->latLonAlt() = initialState->latLonAlt();
+        currentState->position_ecef() = initialState->position_ecef();
         currentState->velocity_n() = initialState->velocity_n();
     }
 }

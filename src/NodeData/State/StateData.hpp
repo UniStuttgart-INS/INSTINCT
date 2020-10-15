@@ -121,34 +121,22 @@ class StateData : public InsObs
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
-    Vector3d<LLA>& latLonAlt() { return latitudeLongitudeAltitude; }
-
-    /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
-    [[nodiscard]] const Vector3d<LLA>& latLonAlt() const { return latitudeLongitudeAltitude; }
+    [[nodiscard]] Vector3d<LLA> latLonAlt() const { return trafo::ecef2lla_WGS84(position_ecef()); }
 
     /// Returns the latitude 𝜙 in [rad]
-    double& latitude() { return latitudeLongitudeAltitude(0); }
-
-    /// Returns the latitude 𝜙 in [rad]
-    [[nodiscard]] const double& latitude() const { return latitudeLongitudeAltitude(0); }
+    [[nodiscard]] double latitude() const { return latLonAlt()(0); }
 
     /// Returns the longitude λ in [rad]
-    double& longitude() { return latitudeLongitudeAltitude(1); }
-
-    /// Returns the longitude λ in [rad]
-    [[nodiscard]] const double& longitude() const { return latitudeLongitudeAltitude(1); }
+    [[nodiscard]] double longitude() const { return latLonAlt()(1); }
 
     /// Returns the altitude (height above ground) in [m]
-    double& altitude() { return latitudeLongitudeAltitude(2); }
+    [[nodiscard]] double altitude() const { return latLonAlt()(2); }
 
-    /// Returns the altitude (height above ground) in [m]
-    [[nodiscard]] const double& altitude() const { return latitudeLongitudeAltitude(2); }
+    /// Returns the ECEF coordinates in [m]
+    Vector3d<Earth>& position_ecef() { return p_ecef; }
 
-    /// Returns the ECEF coordinates in [m] using the WGS84 ellipsoid
-    [[nodiscard]] Vector3d<Earth> positionECEF_WGS84() const { return trafo::lla2ecef_WGS84({ latitude(), longitude(), altitude() }); }
-
-    /// Returns the ECEF coordinates in [m] using the GRS80 ellipsoid
-    [[nodiscard]] Vector3d<Earth> positionECEF_GRS80() const { return trafo::lla2ecef_GRS80({ latitude(), longitude(), altitude() }); }
+    /// Returns the ECEF coordinates in [m]
+    [[nodiscard]] const Vector3d<Earth>& position_ecef() const { return p_ecef; }
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                                 Velocity                                                 */
@@ -183,8 +171,8 @@ class StateData : public InsObs
   private:
     /// Quaternion body to navigation frame (roll, pitch, yaw)
     Quaterniond<Navigation, Body> q_nb;
-    /// Latitude 𝜙, Longitude λ, Altitude
-    Vector3d<LLA> latitudeLongitudeAltitude;
+    /// Position in ECEF coordinates
+    Vector3d<Earth> p_ecef;
     /// Velocity in navigation coordinates
     Vector3d<Navigation> v_n;
 };

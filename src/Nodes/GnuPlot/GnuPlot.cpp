@@ -842,15 +842,15 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         }
         else if (gnuplotData.dataIdentifier == "X-ECEF")
         {
-            gnuplotData.data.emplace_back(state->positionECEF_WGS84().x());
+            gnuplotData.data.emplace_back(state->position_ecef().x());
         }
         else if (gnuplotData.dataIdentifier == "Y-ECEF")
         {
-            gnuplotData.data.emplace_back(state->positionECEF_WGS84().y());
+            gnuplotData.data.emplace_back(state->position_ecef().y());
         }
         else if (gnuplotData.dataIdentifier == "Z-ECEF")
         {
-            gnuplotData.data.emplace_back(state->positionECEF_WGS84().z());
+            gnuplotData.data.emplace_back(state->position_ecef().z());
         }
         else if (gnuplotData.dataIdentifier == "North/South [m]")
         {
