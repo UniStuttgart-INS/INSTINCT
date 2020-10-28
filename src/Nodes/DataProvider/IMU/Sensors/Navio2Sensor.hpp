@@ -5,15 +5,15 @@
 
 #pragma once
 
-#ifndef DISABLE_SENSORS
+#include "NodeData/IMU/ImuObs.hpp"
+#include "../Imu.hpp"
 
-    #include "NodeData/IMU/ImuObs.hpp"
-    #include "../Imu.hpp"
-
+#if !__APPLE__
     #include "navio/Common/InertialSensor.h"
+#endif
 
-    #include "util/CallbackTimer.hpp"
-    #include <chrono>
+#include "util/CallbackTimer.hpp"
+#include <chrono>
 
 namespace NAV
 {
@@ -90,8 +90,8 @@ class Navio2Sensor final : public Imu
     /// @brief Returns the data types provided by this class
     /// @param[in] portType Specifies the port type
     /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type
-    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    /// @return The data type and subtitle
+    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
         {
@@ -100,15 +100,15 @@ class Navio2Sensor final : public Imu
         case PortType::Out:
             if (portIndex == 0)
             {
-                return ImuObs().type();
+                return std::make_pair(ImuObs().type(), std::string_view(""));
             }
             if (portIndex == 1)
             {
-                return ImuPos().type();
+                return std::make_pair(ImuPos().type(), std::string_view(""));
             }
         }
 
-        return std::string_view("");
+        return std::make_pair(std::string_view(""), std::string_view(""));
     }
 
     /// @brief Handles the data sent on the input port
@@ -139,8 +139,10 @@ class Navio2Sensor final : public Imu
         LSM
     };
 
+#if !__APPLE__
     /// Sensor object
     std::unique_ptr<InertialSensor> sensor;
+#endif
 
     /// The Imu type
     ImuType imuType = ImuType::MPU;
@@ -178,5 +180,3 @@ class Navio2Sensor final : public Imu
 };
 
 } // namespace NAV
-
-#endif

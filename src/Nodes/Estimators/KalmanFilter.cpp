@@ -1,6 +1,6 @@
-#include "StateEstimator.hpp"
+#include "KalmanFilter.hpp"
 
-NAV::StateEstimator::StateEstimator(const std::string& name, const std::map<std::string, std::string>& options)
+NAV::KalmanFilter::KalmanFilter(const std::string& name, const std::map<std::string, std::string>& options)
     : Node(name)
 {
     // Process the provided options from the config file
@@ -10,7 +10,7 @@ NAV::StateEstimator::StateEstimator(const std::string& name, const std::map<std:
     }
 }
 
-void NAV::StateEstimator::processObservation(std::shared_ptr<NAV::InsObs>& obs)
+void NAV::KalmanFilter::processObservation(std::shared_ptr<NAV::InsObs>& obs)
 {
     // Process the data here
 

@@ -15,6 +15,7 @@
 /// @date 2020-03-12
 
 #include <iostream>
+#include <chrono>
 
 #include "util/Logger.hpp"
 #include "util/Version.hpp"
@@ -83,6 +84,9 @@ int main(int argc, const char* argv[])
         if (NAV::NodeManager::appContext == NAV::Node::NodeContext::POST_PROCESSING)
         {
             LOG_INFO("Post Processing Mode");
+
+            auto start = std::chrono::high_resolution_clock::now();
+
             std::multimap<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>> events;
             // Get first event of all nodes
             for (const auto& node : nodeManager.nodes())
@@ -162,6 +166,12 @@ int main(int argc, const char* argv[])
 
                 events.erase(it);
             }
+
+            auto finish = std::chrono::high_resolution_clock::now();
+
+            std::chrono::duration<double> elapsed = finish - start;
+
+            LOG_INFO("Elapsed time: {} s", elapsed.count());
         }
         // Wait and receive data packages in other threads
         else

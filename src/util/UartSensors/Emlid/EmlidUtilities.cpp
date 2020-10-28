@@ -25,9 +25,9 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, s
             if (currentInsTime.has_value())
             {
                 auto gpst = currentInsTime.value().toGPSweekTow();
-                currentInsTime.emplace(gpst.gpsWeek,
-                                       static_cast<long double>(std::get<ErbVer>(obs->data).iTOW) / 1000.0L,
-                                       gpst.gpsCycle);
+                currentInsTime.emplace(gpst.gpsCycle,
+                                       gpst.gpsWeek,
+                                       static_cast<long double>(std::get<ErbVer>(obs->data).iTOW) / 1000.0L);
                 obs->insTime = currentInsTime;
             }
 
@@ -56,9 +56,9 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, s
             if (currentInsTime.has_value())
             {
                 auto gpst = currentInsTime.value().toGPSweekTow();
-                currentInsTime.emplace(gpst.gpsWeek,
-                                       static_cast<long double>(std::get<ErbPos>(obs->data).iTOW) / 1000.0L,
-                                       gpst.gpsCycle);
+                currentInsTime.emplace(gpst.gpsCycle,
+                                       gpst.gpsWeek,
+                                       static_cast<long double>(std::get<ErbPos>(obs->data).iTOW) / 1000.0L);
                 obs->insTime = currentInsTime;
             }
 
@@ -83,9 +83,9 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, s
             if (currentInsTime.has_value())
             {
                 auto gpst = currentInsTime.value().toGPSweekTow();
-                currentInsTime.emplace(gpst.gpsWeek,
-                                       static_cast<long double>(std::get<ErbStat>(obs->data).iTOW) / 1000.0L,
-                                       gpst.gpsCycle);
+                currentInsTime.emplace(gpst.gpsCycle,
+                                       gpst.gpsWeek,
+                                       static_cast<long double>(std::get<ErbStat>(obs->data).iTOW) / 1000.0L);
                 obs->insTime = currentInsTime;
             }
 
@@ -111,9 +111,9 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, s
             if (currentInsTime.has_value())
             {
                 auto gpst = currentInsTime.value().toGPSweekTow();
-                currentInsTime.emplace(gpst.gpsWeek,
-                                       static_cast<long double>(std::get<ErbDops>(obs->data).iTOW) / 1000.0L,
-                                       gpst.gpsCycle);
+                currentInsTime.emplace(gpst.gpsCycle,
+                                       gpst.gpsWeek,
+                                       static_cast<long double>(std::get<ErbDops>(obs->data).iTOW) / 1000.0L);
                 obs->insTime = currentInsTime;
             }
 
@@ -142,9 +142,9 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, s
             if (currentInsTime.has_value())
             {
                 auto gpst = currentInsTime.value().toGPSweekTow();
-                currentInsTime.emplace(gpst.gpsWeek,
-                                       static_cast<long double>(std::get<ErbVel>(obs->data).iTOW) / 1000.0L,
-                                       gpst.gpsCycle);
+                currentInsTime.emplace(gpst.gpsCycle,
+                                       gpst.gpsWeek,
+                                       static_cast<long double>(std::get<ErbVel>(obs->data).iTOW) / 1000.0L);
                 obs->insTime = currentInsTime;
             }
 
@@ -174,9 +174,9 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, s
             if (currentInsTime.has_value())
             {
                 auto gpst = currentInsTime.value().toGPSweekTow();
-                currentInsTime.emplace(gpst.gpsWeek,
-                                       static_cast<long double>(std::get<ErbSvi>(obs->data).iTOW) / 1000.0L,
-                                       gpst.gpsCycle);
+                currentInsTime.emplace(gpst.gpsCycle,
+                                       gpst.gpsWeek,
+                                       static_cast<long double>(std::get<ErbSvi>(obs->data).iTOW) / 1000.0L);
                 obs->insTime = currentInsTime;
             }
 

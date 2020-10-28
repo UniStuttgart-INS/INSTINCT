@@ -73,11 +73,11 @@ class GnuPlot final : public Node
                                     { "1", "1", "30", "3" } },
             { CONFIG_LIST, "Port Type",
                            "Select the type of the message to receive on this port",
-                           { "[" + std::string(ImuObs().type()) + "]",
-                             std::string(VectorNavObs().type()),
-                             std::string(RtklibPosObs().type()),
-                             std::string(KvhObs().type()),
-                             std::string(StateData().type()) } },
+                           { "[" + std::string(ImuObs().type()) + "]", "",
+                             std::string(VectorNavObs().type()), "",
+                             std::string(RtklibPosObs().type()), "",
+                             std::string(KvhObs().type()), "",
+                             std::string(StateData().type()), "", } },
             { CONFIG_VARIANT, "", "",
                   // ImuObs
                 { ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
@@ -120,7 +120,7 @@ class GnuPlot final : public Node
                                                             { "[Time]", "GPS time of week",
                                                               "Latitude", "Longitude", "Height",
                                                               "X-ECEF", "Y-ECEF", "Z-ECEF",
-                                                              "North [m]", "East [m]",
+                                                              "North/South [m]", "East/West [m]",
                                                               "Q",
                                                               "ns",
                                                               "sdn", "sde", "sdu",
@@ -145,7 +145,7 @@ class GnuPlot final : public Node
                                                             { "[Time]", "GPS time of week",
                                                               "Latitude", "Longitude", "Height",
                                                               "X-ECEF", "Y-ECEF", "Z-ECEF",
-                                                              "North [m]", "East [m]",
+                                                              "North/South [m]", "East/West [m]",
                                                               "Velocity North", "Velocity East", "Velocity Down",
                                                               "Roll", "Pitch", "Yaw",
                                                               "Quaternion W", "Quaternion X", "Quaternion Y", "Quaternion Z" })
@@ -182,22 +182,22 @@ class GnuPlot final : public Node
     /// @brief Returns the data types provided by this class
     /// @param[in] portType Specifies the port type
     /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type
-    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    /// @return The data type and subtitle
+    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
         {
         case PortType::In:
             if (inputPortDataTypes.count(portIndex))
             {
-                return inputPortDataTypes.at(portIndex);
+                return std::make_pair(inputPortDataTypes.at(portIndex), std::string_view(""));
             }
             break;
         case PortType::Out:
             break;
         }
 
-        return std::string_view("");
+        return std::make_pair(std::string_view(""), std::string_view(""));
     }
 
     /// @brief Handles the data sent on the input port
@@ -268,7 +268,6 @@ class GnuPlot final : public Node
         explicit GnuPlotData(std::string dataIdentifier)
             : dataIdentifier(std::move(dataIdentifier)) {}
 
-        double startValue = std::nan("");
         /// Data identifier
         std::string dataIdentifier;
         /// x and y data which can be passed to the plot stream
@@ -277,6 +276,10 @@ class GnuPlot final : public Node
 
     /// Data to plot
     std::map<size_t, std::vector<GnuPlotData>> plotData;
+
+    double startValue_Time = std::nan("");
+    double startValue_North = std::nan("");
+    double startValue_East = std::nan("");
 
     /// gnuplot object
     gnuplotio::Gnuplot gp{ "gnuplot -persist > /dev/null 2>&1" };

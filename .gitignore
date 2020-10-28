@@ -12,6 +12,9 @@ doc/*
 # Ignore logs
 logs/*
 
+# Ignore coverage folder
+coverage/*
+
 # Ignore all .orig files
 *.orig
 

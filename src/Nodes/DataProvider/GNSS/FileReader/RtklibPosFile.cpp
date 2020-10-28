@@ -1,6 +1,7 @@
 #include "RtklibPosFile.hpp"
 
 #include "util/Logger.hpp"
+#include "util/InsTransformations.hpp"
 #include <ios>
 #include <cmath>
 #include <array>
@@ -76,11 +77,11 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
             }
             else if (column == "latitude(deg)")
             {
-                positionLat = std::stod(cell);
+                positionLat = trafo::deg2rad(std::stod(cell));
             }
             else if (column == "longitude(deg)")
             {
-                positionLon = std::stod(cell);
+                positionLon = trafo::deg2rad(std::stod(cell));
             }
             else if (column == "height(m)")
             {
@@ -159,11 +160,14 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
     }
     if (positionX.has_value() && positionY.has_value() && positionZ.has_value())
     {
-        obs->positionXYZ.emplace(positionX.value(), positionY.value(), positionZ.value());
+        obs->position_ecef.emplace(positionX.value(), positionY.value(), positionZ.value());
     }
     if (positionLat.has_value() && positionLon.has_value() && positionHeight.has_value())
     {
-        obs->positionLLH.emplace(positionLat.value(), positionLon.value(), positionHeight.value());
+        if (!obs->position_ecef.has_value())
+        {
+            obs->position_ecef.emplace(trafo::lla2ecef_WGS84({ positionLat.value(), positionLon.value(), positionHeight.value() }));
+        }
     }
     if (sdX.has_value() && sdY.has_value() && sdZ.has_value())
     {

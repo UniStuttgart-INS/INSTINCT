@@ -7,9 +7,6 @@
 
 #include "GnssObs.hpp"
 
-#include "Eigen/Dense"
-#include <Eigen/Geometry>
-
 namespace NAV
 {
 /// RTKLIB Observation Class
@@ -43,11 +40,6 @@ class RtklibPosObs : public GnssObs
         std::vector<std::string_view> parents{ "GnssObs" };
         return parents;
     }
-
-    /// ECEF position [m]
-    std::optional<Eigen::Vector3d> positionXYZ;
-    /// Position in Latitude [deg], Longitude [deg], height [m]
-    std::optional<Eigen::Array3d> positionLLH;
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
     std::optional<uint8_t> Q;
     /// Number of satellites

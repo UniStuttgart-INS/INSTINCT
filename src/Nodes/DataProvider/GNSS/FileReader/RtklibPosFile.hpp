@@ -72,8 +72,8 @@ class RtklibPosFile final : public GnssFileReader
     /// @brief Returns the data types provided by this class
     /// @param[in] portType Specifies the port type
     /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type
-    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    /// @return The data type and subtitle
+    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
         {
@@ -82,11 +82,11 @@ class RtklibPosFile final : public GnssFileReader
         case PortType::Out:
             if (portIndex == 0)
             {
-                return RtklibPosObs().type();
+                return std::make_pair(RtklibPosObs().type(), std::string_view(""));
             }
         }
 
-        return std::string_view("");
+        return std::make_pair(std::string_view(""), std::string_view(""));
     }
 
     /// @brief Handles the data sent on the input port

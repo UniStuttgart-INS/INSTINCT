@@ -73,28 +73,30 @@ class ImuSimulator final : public Imu
     /// @brief Returns the data types provided by this class
     /// @param[in] portType Specifies the port type
     /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type
-    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    /// @return The data type and subtitle
+    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
         {
         case PortType::In:
             if (portIndex == 0)
             {
-                return StateData().type();
+                return std::make_pair(StateData().type(), std::string_view(""));
             }
+            break;
         case PortType::Out:
             if (portIndex == 0)
             {
-                return ImuObs().type();
+                return std::make_pair(ImuObs().type(), std::string_view(""));
             }
             if (portIndex == 1)
             {
-                return ImuPos().type();
+                return std::make_pair(ImuPos().type(), std::string_view(""));
             }
+            break;
         }
 
-        return std::string_view("");
+        return std::make_pair(std::string_view(""), std::string_view(""));
     }
 
     /// @brief Returns Gui Configuration options for the class
@@ -172,23 +174,23 @@ class ImuSimulator final : public Imu
     double currentSimTime = 0.0;
 
     /// Acceleration in navigation frame in [m/s^2]
-    Eigen::Vector3d accel_n;
+    Vector3d<Navigation> accel_n;
     /// Acceleration in body frame in [m/s^2]
-    Eigen::Vector3d accel_b;
+    Vector3d<Body> accel_b;
     /// Acceleration in platform frame in [m/s^2]
-    Eigen::Vector3d accel_p;
+    Vector3d<Platform> accel_p;
     /// Angular velocity in navigation frame in [rad/s]
-    Eigen::Vector3d gyro_n;
+    Vector3d<Navigation> gyro_n;
     /// Angular velocity in body frame in [rad/s]
-    Eigen::Vector3d gyro_b;
+    Vector3d<Body> gyro_b;
     /// Angular velocity in platform frame in [rad/s]
-    Eigen::Vector3d gyro_p;
+    Vector3d<Platform> gyro_p;
     /// Magnetic field in navigation frame in [Gauss]
-    Eigen::Vector3d mag_n;
+    Vector3d<Navigation> mag_n;
     /// Magnetic field in body frame in [Gauss]
-    Eigen::Vector3d mag_b;
+    Vector3d<Body> mag_b;
     /// Magnetic field in platform frame in [Gauss]
-    Eigen::Vector3d mag_p;
+    Vector3d<Platform> mag_p;
     /// Temperature measured in units of [Celsius]
     double temperature = 0.0;
 };

@@ -34,7 +34,7 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
                 }
             }
         }
-        accel_n = Eigen::Vector3d(X, Y, Z);
+        accel_n = { X, Y, Z };
     }
     if (options.count("Accel b"))
     {
@@ -55,7 +55,7 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
                 }
             }
         }
-        accel_b = Eigen::Vector3d(X, Y, Z);
+        accel_b = { X, Y, Z };
     }
     if (options.count("Accel p"))
     {
@@ -76,7 +76,7 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
                 }
             }
         }
-        accel_p = Eigen::Vector3d(X, Y, Z);
+        accel_p = { X, Y, Z };
     }
     if (options.count("Gyro n"))
     {
@@ -97,7 +97,7 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
                 }
             }
         }
-        gyro_n = Eigen::Vector3d(X, Y, Z);
+        gyro_n = { X, Y, Z };
     }
     if (options.count("Gyro b"))
     {
@@ -118,7 +118,7 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
                 }
             }
         }
-        gyro_b = Eigen::Vector3d(X, Y, Z);
+        gyro_b = { X, Y, Z };
     }
     if (options.count("Gyro p"))
     {
@@ -139,7 +139,7 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
                 }
             }
         }
-        gyro_p = Eigen::Vector3d(X, Y, Z);
+        gyro_p = { X, Y, Z };
     }
     if (options.count("Mag n"))
     {
@@ -160,7 +160,7 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
                 }
             }
         }
-        mag_n = Eigen::Vector3d(X, Y, Z);
+        mag_n = { X, Y, Z };
     }
     if (options.count("Mag b"))
     {
@@ -181,7 +181,7 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
                 }
             }
         }
-        mag_b = Eigen::Vector3d(X, Y, Z);
+        mag_b = { X, Y, Z };
     }
     if (options.count("Mag p"))
     {
@@ -202,7 +202,7 @@ NAV::ImuSimulator::ImuSimulator(const std::string& name, const std::map<std::str
                 }
             }
         }
-        mag_p = Eigen::Vector3d(X, Y, Z);
+        mag_p = { X, Y, Z };
     }
     if (options.count("Temperature"))
     {
@@ -228,22 +228,27 @@ std::shared_ptr<NAV::ImuObs> NAV::ImuSimulator::pollData(bool peek)
     /// State Data at the time tₖ₋₁
     auto stateData = std::static_pointer_cast<StateData>(stateNode->requestOutputData(statePortIndex));
 
-    Eigen::Quaterniond quat_bn = Eigen::Quaterniond::Identity();
+    auto quat_bn = Quaterniond<Body, Navigation>::Identity();
+    auto quat_ne = Quaterniond<Navigation, Earth>::Identity();
     double latitude = 0;
     if (stateData)
     {
         quat_bn = stateData->quaternion_bn();
+        quat_ne = stateData->quaternion_ne();
         latitude = stateData->latitude();
     }
 
     auto obs = std::make_shared<ImuObs>();
     obs->timeSinceStartup = static_cast<uint64_t>(currentSimTime * 1e9);
 
-    double gravityNorm = gravity::gravityMagnitude_Gleason(latitude);
-    auto gravity_n = Eigen::Vector3d(0, 0, -gravityNorm);
+    /// g_n Gravity vector in [m/s^2], in navigation coordinates
+    Vector3d<Navigation> gravity_n{ 0, 0, gravity::gravityMagnitude_Gleason(latitude) };
 
-    obs->accelUncompXYZ = accel_p + imuPos->quatAccel_pb() * (accel_b + quat_bn * (accel_n + gravity_n));
-    obs->gyroUncompXYZ = gyro_p + imuPos->quatGyro_pb() * (gyro_b + quat_bn * gyro_n);
+    /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
+    Vector3d<Navigation> angularVelocity_ie_n = quat_ne * InsConst::angularVelocity_ie_e;
+
+    obs->accelUncompXYZ = accel_p + imuPos->quatAccel_pb() * (accel_b + quat_bn * (accel_n - gravity_n));
+    obs->gyroUncompXYZ = gyro_p + imuPos->quatGyro_pb() * (gyro_b + quat_bn * (gyro_n + angularVelocity_ie_n));
     obs->magUncompXYZ = mag_p + imuPos->quatMag_pb() * (mag_b + quat_bn * mag_n);
     obs->temperature = temperature;
 

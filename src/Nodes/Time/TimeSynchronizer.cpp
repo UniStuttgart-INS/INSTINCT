@@ -22,7 +22,7 @@ NAV::TimeSynchronizer::TimeSynchronizer(const std::string& name, const std::map<
 
     if (options.count("1-Port Type"))
     {
-        portDataType = options.at("1-Port Type");
+        portDataType = std::string_view(options.at("1-Port Type"));
     }
 }
 

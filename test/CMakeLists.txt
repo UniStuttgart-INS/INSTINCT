@@ -9,6 +9,14 @@ add_library(catch_main STATIC catch_main.cpp)
 target_link_libraries(catch_main PUBLIC CONAN_PKG::catch2)
 target_link_libraries(catch_main PRIVATE project_options)
 
+# Remove main.cpp
+foreach(TMP_PATH ${SRC_FILES})
+  string(FIND ${TMP_PATH} "main.cpp" EXCLUDE_DIR_FOUND)
+  if(NOT ${EXCLUDE_DIR_FOUND} EQUAL -1)
+    list(REMOVE_ITEM SRC_FILES ${TMP_PATH})
+  endif()
+endforeach(TMP_PATH)
+
 # Link all files in the Source directory
 include_directories(${CMAKE_SOURCE_DIR}/src)
 add_executable(
@@ -16,28 +24,12 @@ add_executable(
   util/InsTimeTests.cpp
   util/InsMechanizationTests.cpp
   util/InsTransformationsTests.cpp
+  util/LinearAlgebraTests.cpp
   util/LoggerTests.cpp
+  NodeData/State/StateDataTests.cpp
   Nodes/DataLogger/IMU/VectorNavDataLoggerTest.cpp
   Nodes/Integrator/ImuIntegratorTest.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/ConfigManager.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/Logger.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/Sleep.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/InsGravity.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/InsTime.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/InsMath.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/InsMechanization.cpp
-  ${CMAKE_SOURCE_DIR}/src/util/InsTransformations.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/Node.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/NodeManager.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/Imu.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/ImuFileReader.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/IMU/FileReader/VectorNavFile.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/DataProvider/Protocol/FileReader.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/DataLogger/DataLogger.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/DataLogger/IMU/VectorNavDataLogger.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/State/State.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/Integrator/ImuIntegrator.cpp
-  ${CMAKE_SOURCE_DIR}/src/Nodes/GnuPlot/GnuPlot.cpp)
+  ${SRC_FILES})
 
 target_link_libraries(
   tests
@@ -49,13 +41,14 @@ target_link_libraries(
           CONAN_PKG::boost
           CONAN_PKG::eigen
           Threads::Threads
+          libvncxx
           libUartSensor)
 
-target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
-
-if(NOT ENABLE_SENSORS)
-  target_compile_definitions(tests PUBLIC DISABLE_SENSORS)
+if(NOT APPLE)
+  target_link_libraries(tests PRIVATE libnavio)
 endif()
+
+target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries
