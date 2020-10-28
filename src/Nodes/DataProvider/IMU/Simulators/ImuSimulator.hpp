@@ -83,6 +83,7 @@ class ImuSimulator final : public Imu
             {
                 return std::make_pair(StateData().type(), std::string_view(""));
             }
+            break;
         case PortType::Out:
             if (portIndex == 0)
             {
@@ -92,6 +93,7 @@ class ImuSimulator final : public Imu
             {
                 return std::make_pair(ImuPos().type(), std::string_view(""));
             }
+            break;
         }
 
         return std::make_pair(std::string_view(""), std::string_view(""));

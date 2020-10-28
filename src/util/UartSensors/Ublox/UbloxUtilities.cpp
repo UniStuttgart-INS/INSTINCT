@@ -98,7 +98,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 {
                     reserved1 = obs->raw.extractUint8();
                 }
-                for (size_t i = 0; i < (obs->payloadLength - 4) / 8; i++)
+                for (int i = 0; i < (obs->payloadLength - 4) / 8; i++)
                 {
                     std::get<UbxEsfRaw>(obs->data).data.emplace_back(obs->raw.extractUint32(), obs->raw.extractUint32());
                 }

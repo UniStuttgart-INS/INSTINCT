@@ -12,6 +12,7 @@
                 "build",
                 "bin",
                 "doc",
+                "coverage",
             ],
             "presentation": {
                 "reveal": "never",
@@ -130,6 +131,36 @@
                 "env": {
                     "CC": "/usr/bin/clang",
                     "CXX": "/usr/bin/clang++",
+                }
+            },
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": [],
+        },
+        {
+            "label": "CMAKE: Coverage",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "-Bbuild/Debug",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DENABLE_MAIN=OFF",
+                "-DENABLE_GUI=OFF",
+                "-DENABLE_TESTING=ON",
+                "-DENABLE_DOXYGEN=OFF",
+                "-DENABLE_COVERAGE=TRUE",
+                "-DLOG_LEVEL=TRACE",
+                "-DENABLE_CLANG_TIDY=OFF",
+                "-DENABLE_CPPCHECK=OFF",
+                "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
+            ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/gcc",
+                    "CXX": "/usr/bin/g++",
                 }
             },
             "presentation": {
@@ -284,6 +315,22 @@
             "problemMatcher": [],
         },
         {
+            "label": "COVERAGE: Build Coverage Report",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build/Debug",
+                "--",
+                "-j",
+            ],
+            "dependsOn": [
+                "CMAKE: Coverage",
+            ],
+            "problemMatcher": [],
+        },
+        {
             "label": "DOXYGEN: Build Documentation",
             "type": "shell",
             "group": "build",
@@ -352,7 +399,7 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                // "-j2",
+                "-j2",
                 "--output-on-failure",
                 // "--verbose",
             ],
@@ -361,6 +408,51 @@
             },
             "dependsOn": [
                 "TEST: Build project",
+            ],
+            "problemMatcher": [],
+        },
+        {
+            "label": "COVERAGE: Run Coverage Tests",
+            "type": "shell",
+            "group": "test",
+            "command": "ctest",
+            "args": [
+                "-j2",
+                "--output-on-failure",
+                // "--verbose",
+            ],
+            "options": {
+                "cwd": "build/Debug",
+            },
+            "dependsOn": [
+                "COVERAGE: Build Coverage Report",
+            ],
+            "problemMatcher": [],
+        },
+        {
+            "label": "COVERAGE: Create",
+            "type": "shell",
+            "group": "test",
+            "command": "bash",
+            "args": [
+                "-c",
+                "mkdir -p coverage && lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info && lcov --remove coverage/coverage_all.info \"${workspaceFolder}/lib/*\" \"${workspaceFolder}/test/*\" --output-file coverage/coverage.info && genhtml coverage/coverage.info --output-directory coverage && lcov --list coverage/coverage.info && python3 tools/lcov_cobertura.py coverage/coverage.info --output coverage/cobertura-coverage.xml",
+            ],
+            "dependsOn": [
+                "COVERAGE: Run Coverage Tests",
+            ],
+            "problemMatcher": [],
+        },
+        {
+            "label": "COVERAGE: Create & Show",
+            "type": "shell",
+            "group": "build",
+            "command": "xdg-open",
+            "args": [
+                "coverage/index.html",
+            ],
+            "dependsOn": [
+                "COVERAGE: Create",
             ],
             "problemMatcher": [],
         },
