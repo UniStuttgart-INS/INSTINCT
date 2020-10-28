@@ -29,7 +29,7 @@
 
 #include "Nodes/State/State.hpp"
 
-#include "Nodes/StateEstimator/StateEstimator.hpp"
+#include "Nodes/Estimators/KalmanFilter.hpp"
 
 #include "Nodes/Time/TimeSynchronizer.hpp"
 
@@ -49,13 +49,11 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
     nodeManager.registerNodeType<NAV::RtklibPosFile>();
     nodeManager.registerNodeType<NAV::UbloxFile>();
     nodeManager.registerNodeType<NAV::EmlidFile>();
-#ifndef DISABLE_SENSORS
     nodeManager.registerNodeType<NAV::VectorNavSensor>();
     nodeManager.registerNodeType<NAV::KvhSensor>();
     nodeManager.registerNodeType<NAV::Navio2Sensor>();
     nodeManager.registerNodeType<NAV::UbloxSensor>();
     nodeManager.registerNodeType<NAV::EmlidSensor>();
-#endif
     nodeManager.registerNodeType<NAV::ImuSimulator>();
 
     nodeManager.registerNodeType<NAV::GnuPlot>();
@@ -64,7 +62,7 @@ void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
 
     nodeManager.registerNodeType<NAV::State>();
 
-    nodeManager.registerNodeType<NAV::StateEstimator>();
+    nodeManager.registerNodeType<NAV::KalmanFilter>();
 
     nodeManager.registerNodeType<NAV::TimeSynchronizer>();
 }

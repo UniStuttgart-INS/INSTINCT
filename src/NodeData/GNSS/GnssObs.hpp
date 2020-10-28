@@ -7,6 +7,8 @@
 
 #include "NodeData/InsObs.hpp"
 
+#include "util/LinearAlgebra.hpp"
+
 namespace NAV
 {
 /// Abstract GNSS Observation Class
@@ -40,5 +42,8 @@ class GnssObs : public InsObs
         std::vector<std::string_view> parents{ "InsObs" };
         return parents;
     }
+
+    /// ECEF position [m]
+    std::optional<Vector3d<Earth>> position_ecef;
 };
 } // namespace NAV

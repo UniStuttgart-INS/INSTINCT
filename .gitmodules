@@ -6,13 +6,13 @@
 	url = https://github.com/dstahlke/gnuplot-iostream
 [submodule "lib/vnproglib"]
 	path = lib/vnproglib
-	url = https://git.nav.uni-stuttgart.de/ins/ins_staff/vnproglib.git
+	url = ../../ins/ins_staff/vnproglib.git
 [submodule "lib/navio2"]
 	path = lib/navio2
-	url = https://git.nav.uni-stuttgart.de/ins/ins_staff/navio2.git
+	url = ../../ins/ins_staff/navio2.git
 [submodule "lib/nodeeditor"]
 	path = lib/nodeeditor
-	url = https://git.nav.uni-stuttgart.de/thomas.topp/nodeeditor.git
+	url = ../nodeeditor.git
 [submodule "lib/uartsensor"]
 	path = lib/uartsensor
-	url = https://git.nav.uni-stuttgart.de/thomas.topp/uart-sensor.git
+	url = ../uart-sensor.git

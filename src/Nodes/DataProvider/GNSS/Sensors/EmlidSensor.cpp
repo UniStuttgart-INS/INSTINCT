@@ -1,10 +1,8 @@
-#ifndef DISABLE_SENSORS
+#include "EmlidSensor.hpp"
 
-    #include "EmlidSensor.hpp"
+#include "util/Logger.hpp"
 
-    #include "util/Logger.hpp"
-
-    #include "util/UartSensors/Emlid/EmlidUtilities.hpp"
+#include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
 NAV::EmlidSensor::EmlidSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Gnss(name, options), sensor(name)
@@ -54,5 +52,3 @@ void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 
     erSensor->invokeCallbacks(obs);
 }
-
-#endif

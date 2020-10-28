@@ -1,10 +1,8 @@
-#ifndef DISABLE_SENSORS
+#include "UbloxSensor.hpp"
 
-    #include "UbloxSensor.hpp"
+#include "util/Logger.hpp"
 
-    #include "util/Logger.hpp"
-
-    #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
+#include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 
 NAV::UbloxSensor::UbloxSensor(const std::string& name, const std::map<std::string, std::string>& options)
     : UartSensor(options), Gnss(name, options), sensor(name)
@@ -54,5 +52,3 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 
     ubSensor->invokeCallbacks(obs);
 }
-
-#endif

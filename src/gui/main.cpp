@@ -86,8 +86,8 @@ void addTypeConverter(std::shared_ptr<DataModelRegistry> registry, std::string_v
         for (const auto& parent : parents)
         {
             // std::cout << "TypeConvert: " << root << " --> " << parent << std::endl;
-            registry->registerTypeConverter(std::make_pair(NodeDataType{ QString::fromStdString(std::string(root)), QString::fromStdString(std::string(root)) },
-                                                           NodeDataType{ QString::fromStdString(std::string(parent)), QString::fromStdString(std::string(parent)) }),
+            registry->registerTypeConverter(std::make_pair(NodeDataType{ QString::fromStdString(std::string(root)), QString::fromStdString(std::string(root)), "" },
+                                                           NodeDataType{ QString::fromStdString(std::string(parent)), QString::fromStdString(std::string(parent)), "" }),
                                             TypeConverter{ Converter() });
             addTypeConverter(registry, parent, root);
         }

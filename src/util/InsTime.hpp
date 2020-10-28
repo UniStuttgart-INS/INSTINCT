@@ -11,7 +11,6 @@
 
 #include <string>
 #include <array>
-#include <compare>
 #include <limits>
 #include <iostream>
 #include <chrono>

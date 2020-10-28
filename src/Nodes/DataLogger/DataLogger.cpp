@@ -46,9 +46,15 @@ NAV::DataLogger::~DataLogger()
 {
     LOG_TRACE("called for {}", name);
 
-    if (filestream.is_open())
+    try
     {
-        filestream.flush();
-        filestream.close();
+        if (filestream.is_open())
+        {
+            filestream.flush();
+            filestream.close();
+        }
+    }
+    catch (...)
+    {
     }
 }

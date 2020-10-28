@@ -54,7 +54,13 @@ class TimeSynchronizer final : public Node
     [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
     {
         return {
-            { CONFIG_LIST, "1-Port Type", "Select the type of the message to receive on this port", { "[" + std::string(VectorNavObs().type()) + "]", std::string(ImuObs().type()), std::string(KvhObs().type()) } },
+            // clang-format off
+            { CONFIG_LIST, "1-Port Type",
+                           "Select the type of the message to receive on this port",
+                           { "[" + std::string(VectorNavObs().type()) + "]", "",
+                           std::string(ImuObs().type()), "",
+                           std::string(KvhObs().type()), "", } },
+            // clang-format on
             { CONFIG_BOOL, "Use Fixed\nStart Time", "Use the Time configured here as start time", { "0" } },
             { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_EMPTY, "", "", {}), ConfigOptionsBase(CONFIG_INT, "Gps Cycle", "GPS Cycle at the beginning of the data recording", { "0", "0", "10" }) } },
             { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_EMPTY, "", "", {}), ConfigOptionsBase(CONFIG_INT, "Gps Week", "GPS Week at the beginning of the data recording", { "0", "0", "245760" }) } },
@@ -88,30 +94,30 @@ class TimeSynchronizer final : public Node
     /// @brief Returns the data types provided by this class
     /// @param[in] portType Specifies the port type
     /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type
-    [[nodiscard]] constexpr std::string_view dataType(PortType portType, uint8_t portIndex) const final
+    /// @return The data type and subtitle
+    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
     {
         switch (portType)
         {
         case PortType::In:
             if (portIndex == 0)
             {
-                return portDataType;
+                return std::make_pair(portDataType, std::string_view(""));
             }
             if (portIndex == 1)
             {
-                return InsObs().type();
+                return std::make_pair(InsObs().type(), std::string_view(""));
             }
             break;
         case PortType::Out:
             if (portIndex == 0)
             {
-                return portDataType;
+                return std::make_pair(portDataType, std::string_view(""));
             }
             break;
         }
 
-        return std::string_view("");
+        return std::make_pair(std::string_view(""), std::string_view(""));
     }
 
     /// @brief Handles the data sent on the input port
@@ -255,7 +261,7 @@ class TimeSynchronizer final : public Node
     bool syncKvhObs(std::shared_ptr<KvhObs>& obs);
 
     /// Input and output Data Types
-    std::string portDataType;
+    std::string_view portDataType;
 
     /// Flag whether to use the provided start time or wait for a signal on the input port
     bool useFixedStartTime = false;

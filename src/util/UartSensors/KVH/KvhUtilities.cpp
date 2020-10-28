@@ -143,7 +143,7 @@ void NAV::sensors::kvh::decryptKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
             tempMagXYZ.at(obs->sequenceNumber % 4) = static_cast<double>(OneOfTempMagXYZ);
 
             obs->temperature = tempMagXYZ[0];
-            obs->magUncompXYZ = Eigen::Vector3d(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
+            obs->magUncompXYZ.emplace(tempMagXYZ[1], tempMagXYZ[2], tempMagXYZ[3]);
         }
 
         obs->accelUncompXYZ.value() *= InsConst::G_NORM;

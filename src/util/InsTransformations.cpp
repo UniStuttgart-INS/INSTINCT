@@ -2,17 +2,19 @@
 
 #include "util/Logger.hpp"
 
-Eigen::Vector3d NAV::trafo::deg2rad3(const Eigen::Vector3d& deg)
+namespace NAV
+{
+Eigen::Vector3d trafo::deg2rad3(const Eigen::Vector3d& deg)
 {
     return deg * M_PI / 180.0;
 }
 
-Eigen::Vector3d NAV::trafo::rad2deg3(const Eigen::Vector3d& rad)
+Eigen::Vector3d trafo::rad2deg3(const Eigen::Vector3d& rad)
 {
     return rad * 180.0 / M_PI;
 }
 
-Eigen::Vector3d NAV::trafo::quat2eulerZYX(const Eigen::Quaterniond& q)
+Eigen::Vector3d trafo::quat2eulerZYX(const Eigen::Quaterniond& q)
 {
     Eigen::Matrix3d dcm = q.toRotationMatrix();
 
@@ -36,37 +38,35 @@ Eigen::Vector3d NAV::trafo::quat2eulerZYX(const Eigen::Quaterniond& q)
     // return q.toRotationMatrix().eulerAngles(2, 1, 0);
 }
 
-Eigen::Quaterniond NAV::trafo::quat_ei(const double time, const double angularRate_ie)
+Quaterniond<Earth, Inertial> trafo::quat_ei(const double time, const double angularRate_ie)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxisd zAngle(-angularRate_ie * time, Eigen::Vector3d::UnitZ());
 
-    Eigen::Quaterniond q(zAngle);
-    return q;
+    return Quaterniond<Earth, Inertial>(zAngle);
 }
 
-Eigen::Quaterniond NAV::trafo::quat_ie(const double time, const double angularRate_ie)
+Quaterniond<Inertial, Earth> trafo::quat_ie(const double time, const double angularRate_ie)
 {
     return quat_ei(time, angularRate_ie).conjugate();
 }
 
-Eigen::Quaterniond NAV::trafo::quat_en(const double latitude, const double longitude)
+Quaterniond<Earth, Navigation> trafo::quat_en(const double latitude, const double longitude)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
     Eigen::AngleAxisd longitudeAngle(longitude, Eigen::Vector3d::UnitZ());
     Eigen::AngleAxisd latitudeAngle(-M_PI_2 - latitude, Eigen::Vector3d::UnitY());
 
-    Eigen::Quaterniond q = longitudeAngle * latitudeAngle;
-    return q;
+    return Quaterniond<Earth, Navigation>(longitudeAngle * latitudeAngle);
 }
 
-Eigen::Quaterniond NAV::trafo::quat_ne(const double latitude, const double longitude)
+Quaterniond<Navigation, Earth> trafo::quat_ne(const double latitude, const double longitude)
 {
     return quat_en(latitude, longitude).conjugate();
 }
 
-Eigen::Quaterniond NAV::trafo::quat_nb(const double roll, const double pitch, const double yaw)
+Quaterniond<Navigation, Body> trafo::quat_nb(const double roll, const double pitch, const double yaw)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
@@ -74,82 +74,90 @@ Eigen::Quaterniond NAV::trafo::quat_nb(const double roll, const double pitch, co
     Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
     Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitZ());
 
-    Eigen::Quaterniond q = yawAngle * pitchAngle * rollAngle;
-    return q;
+    return Quaterniond<Navigation, Body>(yawAngle * pitchAngle * rollAngle);
 }
 
-Eigen::Quaterniond NAV::trafo::quat_bn(const double roll, const double pitch, const double yaw)
+Quaterniond<Body, Navigation> trafo::quat_bn(const double roll, const double pitch, const double yaw)
 {
     return quat_nb(roll, pitch, yaw).conjugate();
 }
 
-Eigen::Quaterniond NAV::trafo::quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
+Quaterniond<Body, Platform> trafo::quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxisd xAngle(mountingAngleX, Eigen::Vector3d::UnitX());
     Eigen::AngleAxisd yAngle(mountingAngleY, Eigen::Vector3d::UnitY());
     Eigen::AngleAxisd zAngle(mountingAngleZ, Eigen::Vector3d::UnitZ());
 
-    Eigen::Quaterniond q = zAngle * yAngle * xAngle;
-    return q;
+    return Quaterniond<Body, Platform>(zAngle * yAngle * xAngle);
 }
 
-Eigen::Quaterniond NAV::trafo::quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
+Quaterniond<Platform, Body> trafo::quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
     return quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
 }
 
-Eigen::Vector3d NAV::trafo::ecef2ned(const Eigen::Vector3d& position_e, const double latitude_ref, const double longitude_ref, const double height_ref)
+Vector3d<Navigation> trafo::ecef2ned(const Vector3d<Earth>& position_e, Vector3d<LLA> latLonAlt_ref)
 {
-    Eigen::Vector3d position_e_ref = llh2ecef_WGS84(latitude_ref, longitude_ref, height_ref);
+    const auto& latitude_ref = latLonAlt_ref(0);  // 𝜙 Geodetic latitude
+    const auto& longitude_ref = latLonAlt_ref(1); // λ Geodetic longitude
 
-    Eigen::Matrix3d R_ne;
+    auto position_e_ref = lla2ecef_WGS84(latLonAlt_ref);
+
+    Matrix3d<Navigation, Earth> R_ne;
     R_ne << -std::sin(latitude_ref) * std::cos(longitude_ref), -std::sin(latitude_ref) * std::sin(longitude_ref), std::cos(latitude_ref),
         -std::sin(longitude_ref), std::cos(longitude_ref), 0,
         -std::cos(latitude_ref) * std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref), -std::sin(latitude_ref);
 
-    Eigen::Vector3d position_n = R_ne * (position_e - position_e_ref);
+    Vector3d<Navigation> position_n = R_ne * (position_e - position_e_ref);
 
     return position_n;
 }
 
-Eigen::Vector3d NAV::trafo::ned2ecef(const Eigen::Vector3d& position_n, const double latitude_ref, const double longitude_ref, const double height_ref)
+Vector3d<Earth> trafo::ned2ecef(const Vector3d<Navigation>& position_n, Vector3d<LLA> latLonAlt_ref)
 {
-    Eigen::Vector3d position_e_ref = llh2ecef_WGS84(latitude_ref, longitude_ref, height_ref);
+    const auto& latitude_ref = latLonAlt_ref(0);  // 𝜙 Geodetic latitude
+    const auto& longitude_ref = latLonAlt_ref(1); // λ Geodetic longitude
 
-    Eigen::Matrix3d R_en;
+    auto position_e_ref = lla2ecef_WGS84(latLonAlt_ref);
+
+    Matrix3d<Earth, Navigation> R_en;
     R_en << -std::sin(latitude_ref) * std::cos(longitude_ref), -std::sin(longitude_ref), -std::cos(latitude_ref) * std::cos(longitude_ref),
         -std::sin(latitude_ref) * std::sin(longitude_ref), std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref),
         std::cos(latitude_ref), 0, -std::sin(latitude_ref);
 
-    Eigen::Vector3d position_e = position_e_ref + R_en * position_n;
+    Vector3d<Earth> position_e = position_e_ref + R_en * position_n;
 
     return position_e;
 }
 
-Eigen::Vector3d NAV::trafo::llh2ecef(const double latitude, const double longitude, const double height, double a, double e_squared)
+Vector3d<Earth> trafo::lla2ecef(const Vector3d<LLA>& latLonAlt, double a, double e_squared)
 {
+    const auto& latitude = latLonAlt(0);  // 𝜙 Geodetic latitude
+    const auto& longitude = latLonAlt(1); // λ Geodetic longitude
+    const auto& altitude = latLonAlt(2);  // Altitude (Height above ground)
+
     /// Radius of curvature of the ellipsoid in the prime vertical plane,
     /// i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
     double N = a / std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
 
     // Jekeli, 2001 (eq. 1.80) (see  Torge, 1991, for further details)
-    return Eigen::Vector3d((N + height) * std::cos(latitude) * std::cos(longitude),
-                           (N + height) * std::cos(latitude) * std::sin(longitude),
-                           (N * (1 - e_squared) + height) * std::sin(latitude));
+    return Vector3d<Earth>((N + altitude) * std::cos(latitude) * std::cos(longitude),
+                           (N + altitude) * std::cos(latitude) * std::sin(longitude),
+                           (N * (1 - e_squared) + altitude) * std::sin(latitude));
 }
 
-Eigen::Vector3d NAV::trafo::llh2ecef_WGS84(const double latitude, const double longitude, const double height)
+Vector3d<Earth> trafo::lla2ecef_WGS84(const Vector3d<LLA>& latLonAlt)
 {
-    return llh2ecef(latitude, longitude, height, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    return lla2ecef(latLonAlt, InsConst::WGS84_a, InsConst::WGS84_e_squared);
 }
 
-Eigen::Vector3d NAV::trafo::llh2ecef_GRS80(const double latitude, const double longitude, const double height)
+Vector3d<Earth> trafo::lla2ecef_GRS80(const Vector3d<LLA>& latLonAlt)
 {
-    return llh2ecef(latitude, longitude, height, InsConst::GRS80_a, InsConst::GRS80_e_squared);
+    return lla2ecef(latLonAlt, InsConst::GRS80_a, InsConst::GRS80_e_squared);
 }
 
-Eigen::Vector3d NAV::trafo::ecef2llh(const Eigen::Vector3d& ecef, double a, double b, double e_squared)
+Vector3d<LLA> trafo::ecef2lla(const Vector3d<Earth>& ecef, double a, double b, double e_squared)
 {
     auto x = ecef(0);
     auto y = ecef(1);
@@ -187,15 +195,17 @@ Eigen::Vector3d NAV::trafo::ecef2llh(const Eigen::Vector3d& ecef, double a, doub
 
     auto lat = std::atan((z + z_0 * (e_p * e_p)) / p);
 
-    return Eigen::Vector3d(lat, lon, alt);
+    return Vector3d<LLA>(lat, lon, alt);
 }
 
-Eigen::Vector3d NAV::trafo::ecef2llh_WGS84(const Eigen::Vector3d& ecef)
+Vector3d<LLA> trafo::ecef2lla_WGS84(const Vector3d<Earth>& ecef)
 {
-    return ecef2llh(ecef, InsConst::WGS84_a, InsConst::WGS84_b, InsConst::WGS84_e_squared);
+    return ecef2lla(ecef, InsConst::WGS84_a, InsConst::WGS84_b, InsConst::WGS84_e_squared);
 }
 
-Eigen::Vector3d NAV::trafo::ecef2llh_GRS80(const Eigen::Vector3d& ecef)
+Vector3d<LLA> trafo::ecef2lla_GRS80(const Vector3d<Earth>& ecef)
 {
-    return ecef2llh(ecef, InsConst::GRS80_a, InsConst::GRS80_b, InsConst::GRS80_e_squared);
+    return ecef2lla(ecef, InsConst::GRS80_a, InsConst::GRS80_b, InsConst::GRS80_e_squared);
 }
+
+} // namespace NAV

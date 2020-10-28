@@ -1,6 +1,7 @@
 #include "UbloxUtilities.hpp"
 #include "UbloxTypes.hpp"
 
+#include "util/InsTransformations.hpp"
 #include "util/Logger.hpp"
 
 void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, std::optional<NAV::InsTime>& currentInsTime, bool peek)
@@ -97,7 +98,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 {
                     reserved1 = obs->raw.extractUint8();
                 }
-                for (size_t i = 0; i < (obs->payloadLength - 4) / 8; i++)
+                for (int i = 0; i < (obs->payloadLength - 4) / 8; i++)
                 {
                     std::get<UbxEsfRaw>(obs->data).data.emplace_back(obs->raw.extractUint32(), obs->raw.extractUint32());
                 }
@@ -194,15 +195,44 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 if (currentInsTime.has_value())
                 {
                     auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavAtt>(obs->data).iTOW) / 1000.0L,
-                                           gpst.gpsCycle);
+                    currentInsTime.emplace(gpst.gpsCycle,
+                                           gpst.gpsWeek,
+                                           static_cast<long double>(std::get<UbxNavAtt>(obs->data).iTOW) / 1000.0L);
                     obs->insTime = currentInsTime;
                 }
 
                 if (!peek)
                 {
                     LOG_DATA("UBX:  NAV-ATT, iTOW {}, roll {}, pitch {}, heading {}", std::get<UbxNavAtt>(obs->data).iTOW, std::get<UbxNavAtt>(obs->data).roll, std::get<UbxNavAtt>(obs->data).pitch, std::get<UbxNavAtt>(obs->data).heading);
+                }
+            }
+            else if (msgId == UbxNavMessages::UBX_NAV_POSECEF)
+            {
+                obs->data = UbxNavPosecef();
+
+                std::get<UbxNavPosecef>(obs->data).iTOW = obs->raw.extractUint32();
+                std::get<UbxNavPosecef>(obs->data).ecefX = obs->raw.extractInt32();
+                std::get<UbxNavPosecef>(obs->data).ecefY = obs->raw.extractInt32();
+                std::get<UbxNavPosecef>(obs->data).ecefZ = obs->raw.extractInt32();
+                std::get<UbxNavPosecef>(obs->data).pAcc = obs->raw.extractUint32();
+
+                // Calculate the insTime with the iTOW
+                if (currentInsTime.has_value())
+                {
+                    auto gpst = currentInsTime.value().toGPSweekTow();
+                    currentInsTime.emplace(gpst.gpsCycle,
+                                           gpst.gpsWeek,
+                                           static_cast<long double>(std::get<UbxNavPosecef>(obs->data).iTOW) / 1000.0L);
+                    obs->insTime = currentInsTime;
+                }
+
+                obs->position_ecef.emplace(std::get<UbxNavPosecef>(obs->data).ecefX * 1e-2,
+                                           std::get<UbxNavPosecef>(obs->data).ecefY * 1e-2,
+                                           std::get<UbxNavPosecef>(obs->data).ecefZ * 1e-2);
+
+                if (!peek)
+                {
+                    LOG_DATA("UBX: NAV-POSECEF, iTOW {}, x {}, y {}, z {}", std::get<UbxNavPosecef>(obs->data).iTOW, std::get<UbxNavPosecef>(obs->data).ecefX, std::get<UbxNavPosecef>(obs->data).ecefY, std::get<UbxNavPosecef>(obs->data).ecefZ);
                 }
             }
             else if (msgId == UbxNavMessages::UBX_NAV_POSLLH)
@@ -221,11 +251,17 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 if (currentInsTime.has_value())
                 {
                     auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavPosllh>(obs->data).iTOW) / 1000.0L,
-                                           gpst.gpsCycle);
+                    currentInsTime.emplace(gpst.gpsCycle,
+                                           gpst.gpsWeek,
+                                           static_cast<long double>(std::get<UbxNavPosllh>(obs->data).iTOW) / 1000.0L);
                     obs->insTime = currentInsTime;
                 }
+
+                Vector3d<LLA> latLonAlt(trafo::deg2rad(std::get<UbxNavPosllh>(obs->data).lat * 1e-7),
+                                        trafo::deg2rad(std::get<UbxNavPosllh>(obs->data).lon * 1e-7),
+                                        std::get<UbxNavPosllh>(obs->data).height * 1e-3);
+
+                obs->position_ecef.emplace(trafo::lla2ecef_WGS84(latLonAlt));
 
                 if (!peek)
                 {
@@ -250,9 +286,9 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 if (currentInsTime.has_value())
                 {
                     auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavVelned>(obs->data).iTOW) / 1000.0L,
-                                           gpst.gpsCycle);
+                    currentInsTime.emplace(gpst.gpsCycle,
+                                           gpst.gpsWeek,
+                                           static_cast<long double>(std::get<UbxNavVelned>(obs->data).iTOW) / 1000.0L);
                     obs->insTime = currentInsTime;
                 }
 
@@ -305,9 +341,9 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                     );
                 }
 
-                currentInsTime.emplace(std::get<UbxRxmRawx>(obs->data).week,
-                                       static_cast<long double>(std::get<UbxRxmRawx>(obs->data).rcvTow),
-                                       0);
+                currentInsTime.emplace(0,
+                                       std::get<UbxRxmRawx>(obs->data).week,
+                                       static_cast<long double>(std::get<UbxRxmRawx>(obs->data).rcvTow));
                 obs->insTime = currentInsTime;
 
                 if (!peek)
