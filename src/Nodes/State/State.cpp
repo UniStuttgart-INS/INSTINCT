@@ -1,6 +1,7 @@
 #include "State.hpp"
 
 #include "util/Logger.hpp"
+#include "util/InsMath.hpp"
 
 NAV::State::State(const std::string& name, const std::map<std::string, std::string>& options)
     : Node(name)
@@ -108,8 +109,10 @@ void NAV::State::initAttitude(std::shared_ptr<ImuObs>& obs)
     auto magneticHeading = -std::atan2(magUncomp_b.y(), magUncomp_b.x());
 
     const auto accelUncomp_b = imuPosition->quatAccel_bp() * obs->accelUncompXYZ.value() * -1;
-    auto roll = std::atan2(accelUncomp_b.y(), accelUncomp_b.z());
-    auto pitch = std::atan2((-accelUncomp_b.x()), sqrt(std::pow(accelUncomp_b.y(), 2) + std::pow(accelUncomp_b.z(), 2)));
+    auto roll = rollFromStaticAccelerationObs(accelUncomp_b);
+    auto pitch = pitchFromStaticAccelerationObs(accelUncomp_b);
+
+    // TODO: Determine Velocity first and if vehicle not static, initialize the attitude from velocity
 
     // Average with previous attitude
     countAveragedAttitude++;

@@ -856,7 +856,7 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         {
             if (std::isnan(startValue_North))
             {
-                startValue_North = static_cast<double>(state->latitude());
+                startValue_North = state->latitude();
             }
 
             int sign = state->latitude() > startValue_North ? 1 : -1;
@@ -866,7 +866,7 @@ void NAV::GnuPlot::handleStateData(std::shared_ptr<NAV::StateData>& state, size_
         {
             if (std::isnan(startValue_East))
             {
-                startValue_East = static_cast<double>(state->longitude());
+                startValue_East = state->longitude();
             }
 
             int sign = state->longitude() > startValue_East ? 1 : -1;

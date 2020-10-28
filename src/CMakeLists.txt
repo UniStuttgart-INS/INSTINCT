@@ -1,5 +1,3 @@
-message(STATUS "Building ${CMAKE_PROJECT_NAME}")
-
 # Search all .cpp files
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
 # Remove gui folder
@@ -11,25 +9,33 @@ foreach(TMP_PATH ${SOURCE_FILES})
   endif()
 endforeach(TMP_PATH)
 
-add_executable(${PROJECT_NAME_LOWERCASE} ${SOURCE_FILES})
+set(SRC_FILES
+    "${SOURCE_FILES}"
+    PARENT_SCOPE)
 
-target_link_libraries(
-  ${PROJECT_NAME_LOWERCASE}
-  PRIVATE project_options
-          project_warnings
-          CONAN_PKG::fmt
-          CONAN_PKG::spdlog
-          CONAN_PKG::boost
-          CONAN_PKG::eigen
-          Threads::Threads
-          libvncxx
-          libUartSensor)
+if(ENABLE_MAIN)
+  message(STATUS "Building ${CMAKE_PROJECT_NAME}")
 
-if(NOT APPLE)
-  target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libnavio)
+  add_executable(${PROJECT_NAME_LOWERCASE} ${SOURCE_FILES})
+
+  target_link_libraries(
+    ${PROJECT_NAME_LOWERCASE}
+    PRIVATE project_options
+            project_warnings
+            CONAN_PKG::fmt
+            CONAN_PKG::spdlog
+            CONAN_PKG::boost
+            CONAN_PKG::eigen
+            Threads::Threads
+            libvncxx
+            libUartSensor)
+
+  if(NOT APPLE)
+    target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libnavio)
+  endif()
+
+  target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 endif()
-
-target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
 if(ENABLE_GUI)
   message(STATUS "Building ${CMAKE_PROJECT_NAME}-GUI")

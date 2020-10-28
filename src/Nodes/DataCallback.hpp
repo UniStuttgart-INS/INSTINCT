@@ -86,7 +86,10 @@ class DataCallback
         {
             for (const auto& [node, portIndex] : callbackList<T>())
             {
-                node.lock()->handleInputData(portIndex, data);
+                if (auto p = node.lock())
+                {
+                    p->handleInputData(portIndex, data);
+                }
             }
         }
     }
