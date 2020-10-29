@@ -144,7 +144,7 @@
             "group": "build",
             "command": "cmake",
             "args": [
-                "-Bbuild/Debug",
+                "-Bbuild/Debug-cov",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
                 "-DENABLE_MAIN=OFF",
@@ -321,7 +321,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "build/Debug",
+                "build/Debug-cov",
                 "--",
                 "-j",
             ],
@@ -422,7 +422,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug",
+                "cwd": "build/Debug-cov",
             },
             "dependsOn": [
                 "COVERAGE: Build Coverage Report",

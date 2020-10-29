@@ -1,10 +1,8 @@
 # Ignore the build dir
-build/Debug/*
-build/Release/*
+build/*
 
 # Ignore any executables
-bin/Debug/*
-bin/Release/*
+bin/*
 
 # Ignore documentation
 doc/*
