@@ -134,7 +134,7 @@ doxygen:
   artifacts:
     paths:
       - doc/html/
-    expire_in: 20min
+    expire_in: 1 day
   only:
     - master
 
@@ -159,7 +159,7 @@ coverage:
   artifacts:
     paths:
       - coverage/
-    expire_in: 20min
+    expire_in: 1 day
     reports:
       cobertura: coverage/cobertura-coverage.xml
 
