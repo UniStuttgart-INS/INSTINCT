@@ -344,9 +344,9 @@ void run()
     if (scene->nodes().size() > 0)
     {
         exportConfig();
-        static_cast<void>(system("pkill -SIGUSR1 -x navsos"));
+        [[maybe_unused]] auto result = system("pkill -SIGUSR1 -x navsos");
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        static_cast<void>(system("./bin/Release/navsos -f config.ini config-dataflow.ini &"));
+        [[maybe_unused]] auto result2 = system("./bin/Release/navsos -f config.ini config-dataflow.ini &");
     }
 }
 

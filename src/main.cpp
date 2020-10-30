@@ -209,7 +209,7 @@ int main(int argc, const char* argv[])
         {
             LOG_INFO("Programm finished and waits for Gnuplot windows to close...");
             NAV::Sleep::waitForSignal();
-            static_cast<void>(system("pkill gnuplot_qt > /dev/null 2>&1")); // NOLINT
+            [[maybe_unused]] auto result = system("pkill gnuplot_qt > /dev/null 2>&1"); // NOLINT
         }
 
         // Delete all Nodes to call the destructors
