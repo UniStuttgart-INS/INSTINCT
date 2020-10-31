@@ -817,16 +817,16 @@ TEST_CASE("[InsTime] Arithmetic operators", "[InsTime]")
                                   58.0L + 3.004005006L);
 
     auto insTime_eq_1 = insTime
-                        + std::chrono::weeks(1)
-                        - std::chrono::days(2)
+                        + 1 * 7 * 24h
+                        - 2 * 24h
                         + 1h
                         - 2min
                         + 3s + 4ms + 5us + 6ns;
     TEST_EQUAL_OBJECT(insTime_target, insTime_eq_1);
 
     auto diff = insTime_target - insTime;
-    TEST_EQUAL_OBJECT(diff, std::chrono::weeks(1)
-                                - std::chrono::days(2)
+    TEST_EQUAL_OBJECT(diff, 1 * 7 * 24h
+                                - 2 * 24h
                                 + 1h
                                 - 2min
                                 + 3s + 4ms + 5us + 6ns);
@@ -836,8 +836,8 @@ TEST_CASE("[InsTime] Arithmetic operators", "[InsTime]")
                                         - 2.0L * InsTimeUtil::SECONDS_PER_MINUTE
                                         + 3.004005006L);
 
-    insTime += std::chrono::weeks(1);
-    insTime -= std::chrono::days(2);
+    insTime += 1 * 7 * 24h;
+    insTime -= 2 * 24h;
     insTime += 1h;
     insTime -= 2min;
     insTime += 3s + 4ms + 5us + 6ns;
@@ -856,16 +856,16 @@ TEST_CASE("[InsTime] Arithmetic operators constexpr", "[InsTime]")
                                             58.0L + 3.004005006L);
 
     constexpr auto insTime_eq_1 = insTime
-                                  + std::chrono::weeks(1)
-                                  - std::chrono::days(2)
+                                  + 1 * 7 * 24h
+                                  - 2 * 24h
                                   + 1h
                                   - 2min
                                   + 3s + 4ms + 5us + 6ns;
     STATIC_TEST_EQUAL_OBJECT(insTime_target, insTime_eq_1);
 
     constexpr auto diff = insTime_target - insTime;
-    STATIC_TEST_EQUAL_OBJECT(diff, std::chrono::weeks(1)
-                                       - std::chrono::days(2)
+    STATIC_TEST_EQUAL_OBJECT(diff, 1 * 7 * 24h
+                                       - 2 * 24h
                                        + 1h
                                        - 2min
                                        + 3s + 4ms + 5us + 6ns);

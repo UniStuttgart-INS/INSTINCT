@@ -7,147 +7,132 @@ stages:
   - deploy
 
 variables:
-  CC: gcc
-  CXX: g++
   GIT_SUBMODULE_STRATEGY: recursive
 
 image: ins-cpp:10
 
-libraries:
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                      Prepare                                                       ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+check-image:
   stage: prepare
-  before_script:
-    - apt update
-    - apt -y install build-essential cmake python3-pip
-    - pip3 install conan
-    - conan --version
-    - cmake --version
-    - clang++ --version
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - g++ --version
+    - clang++ --version
+    - clang-tidy --version
+    - cmake --version
+    - conan --version
+    - doxygen --version
+    - cppcheck --version
+    - lcov --version
+    - genhtml --version
+    - gcov --version
+
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                       Checks                                                       ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 clang-tidy:
   stage: checks
-  needs: ["libraries"]
-  before_script:
-    - apt update
-    - apt -y install build-essential cmake clang-tidy-10 python3-pip qtbase5-dev
-    - pip3 install conan
-    - conan --version
-    - cmake --version
-    - clang-tidy --version
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - clang-tidy --extra-arg=-Wno-unknown-warning-option $(find src -type f -name "*.cpp")
+  except:
+    - schedules
 
-clang-tidy-tests:
+clang-tidy:tests:
   stage: checks
-  needs: ["libraries"]
-  before_script:
-    - apt update
-    - apt -y install build-essential cmake clang-tidy-10 python3-pip qtbase5-dev
-    - pip3 install conan
-    - conan --version
-    - cmake --version
-    - clang-tidy --version
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
     - clang-tidy --extra-arg=-Wno-unknown-warning-option $(find test -type f -name "*.cpp")
+  except:
+    - schedules
 
-build-clang:
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                        Build                                                       ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+main-gui:clang:
   stage: build
-  needs: ["libraries"]
-  inherit:
-    variables: false
+  needs: ["check-image"]
   variables:
     CC: clang
     CXX: clang++
-  before_script:
-    - apt update
-    - apt -y install build-essential cmake clang-10 python3-pip ccache qtbase5-dev
-    - pip3 install conan
-    - conan --version
-    - clang++ --version
-    - cmake --version
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
+  except:
+    - schedules
 
-build-gcc:
+main-gui:gcc:
   stage: build
-  needs: ["libraries"]
-  before_script:
-    - apt update
-    - apt -y install build-essential cmake python3-pip ccache qtbase5-dev
-    - pip3 install conan
-    - conan --version
-    - g++ --version
-    - cmake --version
+  needs: ["check-image"]
+  variables:
+    CC: gcc
+    CXX: g++
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
+  except:
+    - schedules
 
-build-tests:
+tests:gcc:
   stage: build
-  needs: ["libraries"]
-  before_script:
-    - apt update
-    - apt -y install build-essential cmake python3-pip ccache qtbase5-dev
-    - pip3 install conan
-    - conan --version
-    - g++ --version
-    - cmake --version
+  needs: ["check-image"]
+  variables:
+    CC: gcc
+    CXX: g++
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=TRACE -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
     untracked: true
-    expire_in: 20min
+    expire_in: 2h
+  except:
+    - schedules
 
-run-tests:
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                        Test                                                        ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+tests:gcc:run:
   stage: test
-  needs:
-    - build-tests
+  needs: ["tests:gcc"]
   script:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
   artifacts:
     untracked: true
-    expire_in: 20min
+    expire_in: 2h
+  except:
+    - schedules
+
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                      Analyze                                                       ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
     
 doxygen:
   stage: analyze
-  needs: []
-  before_script:
-    - apt update
-    - apt -y install build-essential cmake clang-10 python3-pip ccache doxygen graphviz
-    - pip3 install conan
-    - conan --version
-    - clang++ --version
-    - cmake --version
-    - doxygen --version
+  needs: ["check-image"]
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target doxygen-docs -- -j2
   artifacts:
+    untracked: true
     paths:
-      - doc/html/
-    expire_in: 1 day
+      - doc/html
+    expire_in: 2h
   only:
     - master
+  except:
+    - schedules
 
 coverage:
   stage: analyze
-  needs:
-    - run-tests
-  before_script:
-    - apt update
-    - apt -y install lcov
-    - lcov --version
-    - genhtml --version
-    - gcov --version
+  needs: ["tests:gcc:run"]
   script:
     - mkdir -p coverage
     - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
@@ -157,23 +142,127 @@ coverage:
     - python3 tools/lcov_cobertura.py coverage/coverage.info --output coverage/cobertura-coverage.xml
   coverage: '/Total:\| ?(\d+\.?\d+\%)/'
   artifacts:
+    untracked: true
     paths:
-      - coverage/
-    expire_in: 1 day
-    reports:
-      cobertura: coverage/cobertura-coverage.xml
+      - coverage
+    expire_in: 2h
+  only:
+    - master
+  except:
+    - schedules
+
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                       Deploy                                                       ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 pages:
   stage: deploy
-  needs:
-    - doxygen
-    - coverage
+  needs: ["doxygen", "coverage"]
   script:
     - mv doc/html/ public/
     - mv coverage/ public/coverage/
   artifacts:
+    name: "Documentation & Coverage Report"
     paths:
       - public
-    expire_in: 30 days
+    expire_in: 7 days
+    reports:
+      cobertura:  public/coverage/cobertura-coverage.xml
   only:
     - master
+  except:
+    - schedules
+
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                     Schedules                                                      ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+ubuntu:20.04:clang:
+  stage: build
+  image: ubuntu:20.04
+  needs: []
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+    TZ: Europe/Berlin
+    CC: clang
+    CXX: clang++
+  before_script:
+    - apt update
+    - apt upgrade -y
+    - apt install -y build-essential clang clang-tidy cmake python3-pip ccache cppcheck qtbase5-dev
+    - pip3 install conan
+    - g++ --version
+    - clang++ --version
+    - clang-tidy --version
+    - cmake --version
+    - conan --version
+    - cppcheck --version
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -j2
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Debug -- -j2
+  artifacts:
+    untracked: true
+    expire_in: 2h
+  only:
+    - schedules
+
+archlinux:latest:clang:
+  stage: build
+  image: archlinux:latest
+  needs: []
+  variables:
+    CC: clang
+    CXX: clang++
+  before_script:
+    - pacman -Syyu --noconfirm --needed
+    - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck qt5-base python-pip
+    - pip install conan
+    - g++ --version
+    - clang++ --version
+    - clang-tidy --version
+    - cmake --version
+    - conan --version
+    - cppcheck --version
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -j2
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Debug -- -j2
+  artifacts:
+    untracked: true
+    expire_in: 2h
+  only:
+    - schedules
+
+ubuntu:20.04:test:
+  stage: test
+  image: ubuntu:20.04
+  needs: ["ubuntu:20.04:clang"]
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+    TZ: Europe/Berlin
+  before_script:
+    - apt update
+    - apt install -y cmake
+    - cmake --version
+  script:
+    - cd build/Debug/test
+    - ctest -j2 --output-on-failure
+  only:
+    - schedules
+
+archlinux:latest:test:
+  stage: test
+  image: archlinux:latest
+  needs: ["archlinux:latest:clang"]
+  before_script:
+    - pacman -Sy
+    - pacman -S --noconfirm --needed cmake
+    - cmake --version
+  script:
+    - cd build/Debug/test
+    - ctest -j2 --output-on-failure
+  only:
+    - schedules
