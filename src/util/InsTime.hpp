@@ -46,7 +46,7 @@ constexpr int32_t SECONDS_PER_WEEK = SECONDS_PER_DAY * DAYS_PER_WEEK;
 constexpr long double EPSILON = 2.0L * std::numeric_limits<long double>::epsilon();
 
 /// Maps GPS leap seconds to a time: array<mjd_day>, index + 1 is amount of leap seconds
-constexpr std::array<uint32_t, 20> GPS_LEAP_SEC_MJD = {
+constexpr std::array<int32_t, 20> GPS_LEAP_SEC_MJD = {
     0,     // 1 Jan 1980 and before
     44786, // 1 Jul 1981  //diff UTC-TAI: 20
     45151, // 1 Jul 1982  //diff UTC-TAI: 21
@@ -832,12 +832,40 @@ class InsTime
         return leapGps2UTC(InsTime(jd).toMJD());
     }
 
+    // TODO: Remove with std::upper_bound, as soon as C++20 gets releases
+    template<class ForwardIt, class T>
+    static constexpr ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T& value)
+    {
+        ForwardIt it;
+        typename std::iterator_traits<ForwardIt>::difference_type count;
+        typename std::iterator_traits<ForwardIt>::difference_type step;
+        count = std::distance(first, last);
+
+        while (count > 0)
+        {
+            it = first;
+            step = count / 2;
+            std::advance(it, step);
+            if (!(value < *it))
+            {
+                first = ++it;
+                count -= step + 1;
+            }
+            else
+            {
+                count = step;
+            }
+        }
+        return first;
+    }
+
     /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_MJD object
     /// @param[in] mjd_in Time point
     /// @return Number of leap seconds
     static constexpr uint16_t leapGps2UTC(const InsTime_MJD& mjd_in)
     {
-        return static_cast<uint16_t>(std::upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
+        // TODO: Remove with std::upper_bound, as soon as C++20 gets releases
+        return static_cast<uint16_t>(upper_bound(InsTimeUtil::GPS_LEAP_SEC_MJD.begin(), InsTimeUtil::GPS_LEAP_SEC_MJD.end(), mjd_in.mjd_day) - InsTimeUtil::GPS_LEAP_SEC_MJD.begin() - 1);
     }
 
     /// @brief Checks if the current time is a leap year
