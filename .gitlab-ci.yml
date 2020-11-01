@@ -39,8 +39,6 @@ clang-tidy:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - clang-tidy --extra-arg=-Wno-unknown-warning-option $(find src -type f -name "*.cpp")
-  except:
-    - schedules
 
 clang-tidy:tests:
   stage: checks
@@ -48,8 +46,6 @@ clang-tidy:tests:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
     - clang-tidy --extra-arg=-Wno-unknown-warning-option $(find test -type f -name "*.cpp")
-  except:
-    - schedules
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                        Build                                                       ║
@@ -64,8 +60,6 @@ main-gui:clang:
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
-  except:
-    - schedules
 
 main-gui:gcc:
   stage: build
@@ -76,8 +70,6 @@ main-gui:gcc:
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
-  except:
-    - schedules
 
 tests:gcc:
   stage: build
@@ -91,8 +83,6 @@ tests:gcc:
   artifacts:
     untracked: true
     expire_in: 2h
-  except:
-    - schedules
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                        Test                                                        ║
@@ -107,8 +97,6 @@ tests:gcc:run:
   artifacts:
     untracked: true
     expire_in: 2h
-  except:
-    - schedules
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                      Analyze                                                       ║
@@ -126,8 +114,6 @@ doxygen:
       - doc/html
     expire_in: 2h
   only:
-    - master
-  except:
     - schedules
 
 coverage:
@@ -148,8 +134,6 @@ coverage:
     expire_in: 2h
   only:
     - master
-  except:
-    - schedules
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                       Deploy                                                       ║
@@ -169,8 +153,6 @@ pages:
     reports:
       cobertura:  public/coverage/cobertura-coverage.xml
   only:
-    - master
-  except:
     - schedules
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
