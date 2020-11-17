@@ -190,6 +190,12 @@ ubuntu:20.04:clang:
   only:
     - schedules
 
+ubuntu:20.04:gcc:
+  extends: ubuntu:20.04:clang
+  variables:
+    CC: gcc
+    CXX: g++
+
 archlinux:latest:clang:
   stage: build
   image: archlinux:latest
@@ -217,6 +223,12 @@ archlinux:latest:clang:
     expire_in: 2h
   only:
     - schedules
+
+archlinux:latest:gcc:
+  extends: archlinux:latest:clang
+  variables:
+    CC: gcc
+    CXX: g++
 
 ubuntu:20.04:test:
   stage: test
