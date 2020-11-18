@@ -62,21 +62,17 @@ main-gui:clang:
     - cmake --build build/Release -- -j2
 
 main-gui:gcc:
-  stage: build
-  needs: ["check-image"]
+  extends: main-gui:clang
   variables:
     CC: gcc
     CXX: g++
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
 
-tests:gcc:
+tests:clang:
   stage: build
   needs: ["check-image"]
   variables:
-    CC: gcc
-    CXX: g++
+    CC: clang
+    CXX: clang++
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
@@ -84,16 +80,26 @@ tests:gcc:
     untracked: true
     expire_in: 2h
 
+tests:gcc:
+  extends: tests:clang
+  variables:
+    CC: gcc
+    CXX: g++
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                        Test                                                        ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-tests:gcc:run:
+tests:clang:run:
   stage: test
-  needs: ["tests:gcc"]
+  needs: ["tests:clang"]
   script:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
+
+tests:gcc:run:
+  extends: tests:clang:run
+  needs: ["tests:gcc"]
   artifacts:
     untracked: true
     expire_in: 2h
