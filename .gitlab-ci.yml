@@ -172,6 +172,9 @@ ubuntu:20.04:clang:
     - apt update
     - apt upgrade -y
     - apt install -y build-essential clang clang-tidy cmake python3-pip ccache cppcheck qtbase5-dev
+    - apt install -y gcc-10 g++-10
+    - ln -sf /usr/bin/gcc-10 /usr/bin/gcc
+    - ln -sf /usr/bin/g++-10 /usr/bin/g++
     - pip3 install conan
     - g++ --version
     - clang++ --version

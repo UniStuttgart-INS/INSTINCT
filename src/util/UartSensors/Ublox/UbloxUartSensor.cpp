@@ -92,7 +92,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::ublox::UbloxUartSensor::fi
             binaryPayloadLength2Found = true;
             binaryPayloadLength |= static_cast<uint16_t>(static_cast<uint16_t>(dataByte) << 8U);
             binaryPayloadLength = uart::stoh(binaryPayloadLength, endianness);
-            numOfBytesRemainingForCompletePacket = binaryPayloadLength + 2;
+            numOfBytesRemainingForCompletePacket = binaryPayloadLength + 2U;
             LOG_TRACE("{}: Binary packet: Class={:0x}, Id={:0x}, payload length={}", name, binaryMsgClass, binaryMsgId, binaryPayloadLength);
         }
         else
