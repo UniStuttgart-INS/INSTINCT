@@ -21,7 +21,7 @@ class NodeManager
 {
   public:
     /// Info about registered Node types
-    using NodeInfo = struct
+    struct NodeInfo
     {
         /// Constructor to call for new Node generation. Parameters are (name, options)
         std::function<std::shared_ptr<Node>(const std::string&, const std::map<std::string, std::string>&)> constructor;
@@ -30,7 +30,7 @@ class NodeManager
     };
 
     /// Info about registered Node data types
-    using NodeDataInfo = struct
+    struct NodeDataInfo
     {
         /// Function to call when adding a callback. Parameters are (sourceNode, targetNode, targetPortIndex)
         std::function<void(std::shared_ptr<Node>&, std::shared_ptr<Node>&, uint8_t)> addCallback;
@@ -103,7 +103,7 @@ class NodeManager
 
   private:
     /// Stores info to construct a node
-    using NodeConfig = struct
+    struct NodeConfig
     {
         /// Name of the Node
         std::string name;
@@ -114,7 +114,7 @@ class NodeManager
     };
 
     /// Stores info to set up a data link
-    using NodeLink = struct
+    struct NodeLink
     {
         /// Name of the Source Node
         std::string source;

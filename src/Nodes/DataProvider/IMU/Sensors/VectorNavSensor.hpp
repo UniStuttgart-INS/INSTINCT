@@ -17,7 +17,7 @@ class VectorNavSensor final : public UartSensor, public Imu
 {
   public:
     /// Config Structure for the sensor
-    using Config = struct
+    struct Config
     {
         /// OutputFrequency to calculate rateDivisor field.
         uint16_t outputFrequency = 1;

@@ -40,6 +40,12 @@
                 // "-DENABLE_CPPCHECK=OFF",
                 // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++",
+                }
+            },
             "presentation": {
                 "clear": true
             },
@@ -63,6 +69,12 @@
                 // "-DENABLE_CPPCHECK=OFF",
                 // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++",
+                }
+            },
             "presentation": {
                 "clear": true
             },
@@ -86,6 +98,12 @@
                 // "-DENABLE_CPPCHECK=OFF",
                 // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++",
+                }
+            },
             "presentation": {
                 "clear": true
             },
@@ -109,6 +127,12 @@
                 // "-DENABLE_CPPCHECK=OFF",
                 // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
             ],
+            "options": {
+                "env": {
+                    "CC": "/usr/bin/clang",
+                    "CXX": "/usr/bin/clang++",
+                }
+            },
             "presentation": {
                 "clear": true
             },
