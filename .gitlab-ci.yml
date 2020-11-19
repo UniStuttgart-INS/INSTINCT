@@ -11,6 +11,20 @@ variables:
 
 image: ins-cpp:10
 
+.clang:
+  variables:
+    CC: clang
+    CXX: clang++
+
+.gcc:
+  variables:
+    CC: gcc
+    CXX: g++
+
+.schedule:
+  only:
+    - schedules
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                      Prepare                                                       ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
@@ -48,31 +62,33 @@ clang-tidy:tests:
     - clang-tidy --extra-arg=-Wno-unknown-warning-option $(find test -type f -name "*.cpp")
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                        Build                                                       ║
+# ║                                                  Build Main & GUI                                                  ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-main-gui:clang:
+.build:main-gui:
   stage: build
   needs: ["check-image"]
-  variables:
-    CC: clang
-    CXX: clang++
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
 
-main-gui:gcc:
-  extends: main-gui:clang
-  variables:
-    CC: gcc
-    CXX: g++
+main-gui:clang:
+  extends:
+    - .build:main-gui
+    - .clang
 
-tests:clang:
+main-gui:gcc:
+  extends:
+    - .build:main-gui
+    - .gcc
+
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                     Build Tests                                                    ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+.build:tests:
   stage: build
   needs: ["check-image"]
-  variables:
-    CC: clang
-    CXX: clang++
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_GUI=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
@@ -80,25 +96,29 @@ tests:clang:
     untracked: true
     expire_in: 2h
 
+tests:clang:
+  extends:
+    - .build:tests
+    - .clang
+
 tests:gcc:
-  extends: tests:clang
-  variables:
-    CC: gcc
-    CXX: g++
+  extends:
+    - .build:tests
+    - .gcc
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                        Test                                                        ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-tests:clang:run:
+run-tests:clang:
   stage: test
   needs: ["tests:clang"]
   script:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
 
-tests:gcc:run:
-  extends: tests:clang:run
+run-tests:gcc:
+  extends: run-tests:clang
   needs: ["tests:gcc"]
   artifacts:
     untracked: true
@@ -109,6 +129,7 @@ tests:gcc:run:
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
     
 doxygen:
+  extends: .schedule
   stage: analyze
   needs: ["check-image"]
   script:
@@ -119,12 +140,10 @@ doxygen:
     paths:
       - doc/html
     expire_in: 2h
-  only:
-    - schedules
 
 coverage:
   stage: analyze
-  needs: ["tests:gcc:run"]
+  needs: ["run-tests:gcc"]
   script:
     - mkdir -p coverage
     - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
@@ -162,18 +181,17 @@ pages:
     - schedules
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                     Schedules                                                      ║
+# ║                                                    Ubuntu 20.04                                                    ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-ubuntu:20.04:clang:
+.build:ubuntu:20.04:
   stage: build
+  extends: .schedule
   image: ubuntu:20.04
   needs: []
   variables:
     DEBIAN_FRONTEND: noninteractive
     TZ: Europe/Berlin
-    CC: clang
-    CXX: clang++
   before_script:
     - apt update
     - apt upgrade -y
@@ -188,61 +206,48 @@ ubuntu:20.04:clang:
     - cmake --version
     - conan --version
     - cppcheck --version
+
+.build:ubuntu:20.04:debug:
+  extends:
+    - .build:ubuntu:20.04
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
     untracked: true
     expire_in: 2h
-  only:
-    - schedules
 
-ubuntu:20.04:gcc:
-  extends: ubuntu:20.04:clang
-  variables:
-    CC: gcc
-    CXX: g++
-
-archlinux:latest:clang:
-  stage: build
-  image: archlinux:latest
-  needs: []
-  variables:
-    CC: clang
-    CXX: clang++
-  before_script:
-    - pacman -Syyu --noconfirm --needed
-    - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck qt5-base python-pip
-    - pip install conan
-    - g++ --version
-    - clang++ --version
-    - clang-tidy --version
-    - cmake --version
-    - conan --version
-    - cppcheck --version
+.build:ubuntu:20.04:release:
+  extends:
+    - .build:ubuntu:20.04
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
-  artifacts:
-    untracked: true
-    expire_in: 2h
-  only:
-    - schedules
 
-archlinux:latest:gcc:
-  extends: archlinux:latest:clang
-  variables:
-    CC: gcc
-    CXX: g++
+ubuntu:20.04:clang:release:
+  extends:
+    - .build:ubuntu:20.04:release
+    - .clang
 
-ubuntu:20.04:test:
+ubuntu:20.04:clang:debug:
+  extends:
+    - .build:ubuntu:20.04:debug
+    - .clang
+
+ubuntu:20.04:gcc:release:
+  extends:
+    - .build:ubuntu:20.04:release
+    - .gcc
+
+ubuntu:20.04:gcc:debug:
+  extends:
+    - .build:ubuntu:20.04:debug
+    - .gcc
+
+.run-tests:ubuntu:20.04:
   stage: test
+  extends: .schedule
   image: ubuntu:20.04
-  needs: ["ubuntu:20.04:clang"]
   variables:
     DEBIAN_FRONTEND: noninteractive
     TZ: Europe/Berlin
@@ -253,13 +258,76 @@ ubuntu:20.04:test:
   script:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
-  only:
-    - schedules
 
-archlinux:latest:test:
-  stage: test
+run-tests:ubuntu:20.04:clang:
+  extends: .run-tests:ubuntu:20.04
+  needs: ["ubuntu:20.04:clang:debug"]
+
+run-tests:ubuntu:20.04:gcc:
+  extends: .run-tests:ubuntu:20.04
+  needs: ["ubuntu:20.04:gcc:debug"]
+
+# ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                                  Arch Linux Latest                                                 ║
+# ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+.build:archlinux:latest:
+  stage: build
+  extends: .schedule
   image: archlinux:latest
-  needs: ["archlinux:latest:clang"]
+  needs: []
+  before_script:
+    - pacman -Syyu --noconfirm --needed
+    - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck qt5-base python-pip
+    - pip install conan
+    - g++ --version
+    - clang++ --version
+    - clang-tidy --version
+    - cmake --version
+    - conan --version
+    - cppcheck --version
+
+.build:archlinux:latest:debug:
+  extends:
+    - .build:archlinux:latest
+  script:
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Debug -- -j2
+  artifacts:
+    untracked: true
+    expire_in: 2h
+
+.build:archlinux:latest:release:
+  extends:
+    - .build:archlinux:latest
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_GUI=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -j2
+
+archlinux:latest:clang:release:
+  extends:
+    - .build:archlinux:latest:release
+    - .clang
+
+archlinux:latest:clang:debug:
+  extends:
+    - .build:archlinux:latest:debug
+    - .clang
+
+archlinux:latest:gcc:release:
+  extends:
+    - .build:archlinux:latest:release
+    - .gcc
+
+archlinux:latest:gcc:debug:
+  extends:
+    - .build:archlinux:latest:debug
+    - .gcc
+
+.run-tests:archlinux:latest:
+  stage: test
+  extends: .schedule
+  image: archlinux:latest
   before_script:
     - pacman -Sy
     - pacman -S --noconfirm --needed cmake
@@ -267,5 +335,11 @@ archlinux:latest:test:
   script:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
-  only:
-    - schedules
+
+run-tests:archlinux:latest:clang:
+  extends: .run-tests:archlinux:latest
+  needs: ["archlinux:latest:clang:debug"]
+
+run-tests:archlinux:latest:gcc:
+  extends: .run-tests:archlinux:latest
+  needs: ["archlinux:latest:gcc:debug"]
