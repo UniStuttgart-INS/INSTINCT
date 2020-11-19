@@ -1,0 +1,6 @@
+[requires]
+spdlog/1.8.0
+fmt/7.0.3
+boost/1.74.0
+eigen/3.3.7
+catch2/2.13.3
