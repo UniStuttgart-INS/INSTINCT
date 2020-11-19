@@ -21,6 +21,8 @@ macro(run_conan)
   conan_cmake_run(
     REQUIRES
     ${CONAN_EXTRA_REQUIRES}
+    CONANFILE
+    conanfile.txt
     OPTIONS
     ${CONAN_EXTRA_OPTIONS}
     BASIC_SETUP

@@ -22,6 +22,8 @@ coverage/*
 # Ignore root level compile_commands
 compile_commands.json
 
+junit.xml
+
 # Ignore config files
 config.ini
 config-dataflow.ini

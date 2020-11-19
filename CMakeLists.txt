@@ -67,18 +67,6 @@ include_directories(src)
 # Conan Packages
 # ######################################################################################################################
 
-set(CONAN_EXTRA_REQUIRES "")
-set(CONAN_EXTRA_OPTIONS "")
-
-list(
-  APPEND
-  CONAN_EXTRA_REQUIRES
-  spdlog/1.8.0
-  fmt/7.0.3
-  boost/1.74.0
-  eigen/3.3.7
-  catch2/2.13.1)
-
 if(BUILD_SHARED_LIBS)
   list(APPEND CONAN_EXTRA_OPTIONS "Pkg:shared=True")
 endif()

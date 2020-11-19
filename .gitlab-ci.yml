@@ -42,6 +42,7 @@ check-image:
     - lcov --version
     - genhtml --version
     - gcov --version
+    - xml_grep --version
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                       Checks                                                       ║
@@ -116,6 +117,12 @@ run-tests:clang:
   script:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
+    - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
+    - sed -i ':begin;$!N;s/<\/testsuites>\n<testsuites>//;tbegin;P;D' ../../../junit.xml
+  artifacts:
+    when: always
+    reports:
+      junit: junit.xml
 
 run-tests:gcc:
   extends: run-tests:clang
@@ -164,7 +171,8 @@ coverage:
 # ║                                                       Deploy                                                       ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-pages:
+.pages:
+  extends: .schedule
   stage: deploy
   needs: ["doxygen", "coverage"]
   script:
@@ -176,9 +184,9 @@ pages:
       - public
     expire_in: 7 days
     reports:
-      cobertura:  public/coverage/cobertura-coverage.xml
-  only:
-    - schedules
+      cobertura: public/coverage/cobertura-coverage.xml
+  except:
+    - /^(?!master).+@/
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                    Ubuntu 20.04                                                    ║
