@@ -39,7 +39,7 @@ The software consists of 2 parts
 * GUI (optional):
     * [Qt](https://www.qt.io/) A cross-platform application and UI framework
 
-### Installing (Linux)
+### Development Environment Setup
 
 Most library dependencies are managed by Conan.io, so you just need to install the basics.
 
@@ -59,20 +59,25 @@ sudo pacman -S qt5-base
 sudo pacman -S valgrind kcachegrind
 ```
 
-#### Ubuntu:
+#### Ubuntu 20.04:
 ```
 # Needed
-sudo apt-get install build-essential cmake clang clang-tidy python3-pip
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y build-essential clang clang-tidy cmake python3-pip
+sudo apt install -y gcc-10 g++-10
+sudo ln -sf /usr/bin/gcc-10 /usr/bin/gcc
+sudo ln -sf /usr/bin/g++-10 /usr/bin/g++
 pip3 install conan --user
 
 # Optional
-sudo apt-get install ccache doxygen gnuplot gnuplot-x11 cppcheck
+sudo apt install ccache doxygen gnuplot gnuplot-x11 cppcheck
 
 # GUI (optional)
-sudo apt-get install qt5-default 
+sudo apt install qt5-default 
 
 # Profiling (optional)
-sudo apt-get install valgrind kcachegrind
+sudo apt install valgrind kcachegrind
 ```
 
 #### Raspbian:
@@ -128,11 +133,9 @@ dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux 
 
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 ```
-* If you want to use WSL 2, you need to do the following:
-    * Join the Windows Insider program and select (Release Preview)
-    * Update your windows version
-    * Restart your machine to complete the WSL install and update to WSL 2
-    * Set WSL 2 as your default version: ```wsl --set-default-version 2```
+* Restart your computer
+* Download & Install the Linux kernel update package [WSL2-Linux-Kernel for x64 computer](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
+* Set WSL 2 as your default version: ```wsl --set-default-version 2```
 * Next open the Microsoft Store and install [Ubuntu](https://www.microsoft.com/de-de/p/ubuntu/9nblggh4msv6)
 * Launch Ubuntu and create a user account and password
 * Follow the instructions for Ubuntu here in the Readme
@@ -150,14 +153,10 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
     * Disable access control
 * Hover with your mouse over the system tray icon and verify that it says ```hostname:0.0```
 * Find your host IP address (run in windows console: ```ipconfig```), e.g. 192.168.1.3
-* In the ```tasks.json``` add the following inside the ```GUI: Build & run project``` task:
+* In the ```.bash_profile``` add the following and replace the ip address there:
 ```
-    "options": {
-        "env": {
-            "DISPLAY": "192.168.1.3:0.0",
-            "LIBGL_ALWAYS_INDIRECT": "1"
-        }
-    },
+export DISPLAY=192.168.1.3:0.0
+export LIBGL_ALWAYS_INDIRECT=1
 ```
 
 ### VSCode Configuration
@@ -174,7 +173,7 @@ Recommended plugins for working with this project
 * [Clang-Tidy](https://marketplace.visualstudio.com/items?itemName=notskm.clang-tidy) Integrates clang-tidy into VS Code
 * [cmake-format](https://marketplace.visualstudio.com/items?itemName=cheshirekow.cmake-format) Format listfiles so they don't look like crap
 
-Recommended changes to the User's ```settings.json``` (not the project .vscode/settings.json)
+Recommended changes to the User's ```settings.json``` (**not** the project .vscode/settings.json)
 ```
 "editor.formatOnType": true,
 "doxdocgen.generic.authorEmail": "your.name@nav.uni-stuttgart.de",
@@ -183,7 +182,6 @@ Recommended changes to the User's ```settings.json``` (not the project .vscode/s
 
 Recommended changes to the User's ```keybindings.json```
 ```
-// Place your key bindings in this file to override the defaultsauto[]
 [
     {
         "key": "f6",
@@ -224,32 +222,13 @@ navsos --help
 
 ## Authors
 
-* [M.Sc. Thomas Topp](mailto:thomas.topp@nav.uni-stuttgart.de?subject=[GitLab/NavSoS]%20)
-* [M.Sc. Tomke Lambertus](mailto:tomke.lambertus@nav.uni-stuttgart.de?subject=[GitLab/NavSoS]%20)
-* [M.Sc. Rui Wang](mailto:rui.wang@nav.uni-stuttgart.de?subject=[GitLab/NavSoS]%20)
+* [M.Sc. Thomas Topp](mailto:topp@ins.uni-stuttgart.de?subject=[GitLab/NavSoS]%20)
+* [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[GitLab/NavSoS]%20)
 
 ## Version History
-
-```This is only a placeholder so far...```
-* 0.2
-    * Various bug fixes and optimizations
-    * See [commit change]() or See [release history]()
-* 0.1
-    * Initial Release
 
 ## License
 
 ```This is only a placeholder so far...```
 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
-
-## Acknowledgments
-
-```This is only a placeholder so far...```
-
-Inspiration, code snippets, etc.
-* [awesome-readme](https://github.com/matiassingers/awesome-readme)
-* [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [dbader](https://github.com/dbader/readme-template)
-* [zenorocha](https://gist.github.com/zenorocha/4526327)
-* [fvcproductions](https://gist.github.com/fvcproductions/1bfc2d4aecb01a834b46)
+This project is licensed under the [TBD] License - see the LICENSE.md file for details
