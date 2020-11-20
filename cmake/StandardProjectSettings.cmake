@@ -8,14 +8,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-find_program(CCACHE ccache)
-if(CCACHE)
-  message(STATUS "Using ccache")
-  set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
-else()
-  message(STATUS "Consider installing ccache to boost recompilation speed")
-endif()
-
 # Generate compile_commands.json to make it easier to work with clang based tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -23,11 +15,7 @@ option(ENABLE_IPO "Enable Iterprocedural Optimization, aka Link Time Optimizatio
 
 if(ENABLE_IPO)
   include(CheckIPOSupported)
-  check_ipo_supported(
-    RESULT
-    result
-    OUTPUT
-    output)
+  check_ipo_supported(RESULT result OUTPUT output)
   if(result)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
   else()
