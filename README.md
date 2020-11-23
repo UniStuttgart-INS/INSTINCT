@@ -159,6 +159,10 @@ export DISPLAY=192.168.1.3:0.0
 export LIBGL_ALWAYS_INDIRECT=1
 ```
 
+### Post installation
+
+- Create a file `config.ini` in the project root folder. The VSCode run tasks call the executable with this config file and if the file does not exist there will be an error. However if there is an empty file, it works.
+
 ### VSCode Configuration
 
 It is strongly recommended to use [Visual Studio Code](https://code.visualstudio.com/) as IDE, as the needed project files are provided in the ```.vscode``` folder.
