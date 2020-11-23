@@ -157,7 +157,7 @@ void NAV::NodeManager::processConfigFile()
     }
 }
 
-void NAV::NodeManager::initializeNodes()
+void NAV::NodeManager::constructNodes()
 {
     LOG_TRACE("called");
 
@@ -183,8 +183,17 @@ void NAV::NodeManager::initializeNodes()
 
         // Construct the node
         _nodes.emplace_back(iter->second.constructor(config.name, config.options));
+    }
+}
+
+void NAV::NodeManager::initializeNodes()
+{
+    LOG_TRACE("called");
+
+    for (auto& node : _nodes)
+    {
         // Call the initialize function
-        _nodes.back()->initialize();
+        node->initialize();
     }
 }
 

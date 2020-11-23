@@ -72,10 +72,13 @@ int main(int argc, const char* argv[])
         nodeManager.processConfigFile();
 
         // Call constructors of all nodes from the config file
-        nodeManager.initializeNodes();
+        nodeManager.constructNodes();
 
         // Establish data links between the nodes
         nodeManager.linkNodes();
+
+        // Call initialize function of all nodes from the config file
+        nodeManager.initializeNodes();
 
         // Enable the callbacks for all nodes
         nodeManager.enableAllCallbacks();

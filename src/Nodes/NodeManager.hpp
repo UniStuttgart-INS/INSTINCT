@@ -67,7 +67,10 @@ class NodeManager
     /// @brief Processes the Config file nodes
     void processConfigFile();
 
-    /// @brief Initialize all Nodes from the config file
+    /// @brief Construct all Nodes from the config file
+    void constructNodes();
+
+    /// @brief Initialize all Nodes
     void initializeNodes();
 
     /// @brief Link all Nodes from the config file
