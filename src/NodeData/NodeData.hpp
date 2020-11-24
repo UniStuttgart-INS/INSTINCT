@@ -28,7 +28,7 @@ class NodeData
 
     /// @brief Returns the type of the data class
     /// @return The data type
-    [[nodiscard]] static constexpr std::string_view type() { return ""; }
+    [[nodiscard]] static constexpr std::string_view type() { return std::string_view(""); }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
