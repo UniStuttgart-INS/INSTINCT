@@ -7,6 +7,7 @@
 
 #include "NodeData/InsObs.hpp"
 
+#include "ImuPos.hpp"
 #include "util/LinearAlgebra.hpp"
 
 namespace NAV
@@ -15,8 +16,13 @@ namespace NAV
 class ImuObs : public InsObs
 {
   public:
+    /// @brief Constructor
+    /// @param[in] imuPos Reference to the position and rotation info of the Imu
+    explicit ImuObs(const ImuPos& imuPos)
+        : imuPos(imuPos) {}
+
     /// @brief Default constructor
-    ImuObs() = default;
+    ImuObs() = delete;
     /// @brief Destructor
     ~ImuObs() override = default;
     /// @brief Copy constructor
@@ -30,18 +36,21 @@ class ImuObs : public InsObs
 
     /// @brief Returns the type of the data class
     /// @return The data type
-    [[nodiscard]] constexpr std::string_view type() const override
+    [[nodiscard]] static constexpr std::string_view type()
     {
         return std::string_view("ImuObs");
     }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
-    [[nodiscard]] std::vector<std::string_view> parentTypes() const override
+    [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
         std::vector<std::string_view> parents{ "InsObs" };
         return parents;
     }
+
+    /// Position and rotation information for conversion from platform to body frame
+    const ImuPos& imuPos;
 
     /// The system time since startup measured in [nano seconds].
     std::optional<uint64_t> timeSinceStartup;

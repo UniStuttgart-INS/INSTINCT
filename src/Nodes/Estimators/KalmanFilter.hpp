@@ -63,8 +63,8 @@ class KalmanFilter : public Node
             { CONFIG_N_INPUT_PORTS, "Input Ports", "Amount of Input Ports", { "2", "2", "30", "4" } },
             { CONFIG_LIST, "Port Type",
                            "Select the type of the message to receive on this port",
-                           { "[" + std::string(InsObs().type()) + "]", "",
-                             std::string(InsObs().type()), "", } },
+                           { "[" + std::string(InsObs::type()) + "]", "",
+                             std::string(InsObs::type()), "", } },
             { CONFIG_VARIANT, "", "",
                             { ConfigOptionsBase(CONFIG_STRING, "VectorNavOption1", "VectorNavOption1 ToolTip", { "" }),
                               ConfigOptionsBase(CONFIG_BOOL, "UbloxOption1", "UbloxOption1 Tooltip1", { "1" }), } },
@@ -110,14 +110,14 @@ class KalmanFilter : public Node
         case PortType::In:
             if (portIndex == 0)
             {
-                return std::make_pair(InsObs().type(), std::string_view(""));
+                return std::make_pair(InsObs::type(), std::string_view(""));
             }
             break;
 
         case PortType::Out:
             if (portIndex == 0)
             {
-                return std::make_pair(InsObs().type(), std::string_view(""));
+                return std::make_pair(InsObs::type(), std::string_view(""));
             }
             break;
         }

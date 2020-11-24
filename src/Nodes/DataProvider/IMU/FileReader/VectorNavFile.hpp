@@ -63,7 +63,7 @@ class VectorNavFile final : public ImuFileReader
         case PortType::In:
             break;
         case PortType::Out:
-            return 2U;
+            return 1U;
         }
 
         return 0U;
@@ -82,11 +82,7 @@ class VectorNavFile final : public ImuFileReader
         case PortType::Out:
             if (portIndex == 0)
             {
-                return std::make_pair(VectorNavObs().type(), std::string_view(""));
-            }
-            if (portIndex == 1)
-            {
-                return std::make_pair(ImuPos().type(), std::string_view(""));
+                return std::make_pair(VectorNavObs::type(), std::string_view(""));
             }
         }
 
@@ -106,10 +102,6 @@ class VectorNavFile final : public ImuFileReader
         if (portIndex == 0)
         {
             return pollData();
-        }
-        if (portIndex == 1)
-        {
-            return imuPos;
         }
 
         return nullptr;

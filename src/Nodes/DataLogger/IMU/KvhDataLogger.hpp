@@ -89,7 +89,7 @@ class KvhDataLogger final : public DataLogger
         case PortType::In:
             if (portIndex == 0)
             {
-                return std::make_pair(KvhObs().type(), std::string_view(""));
+                return std::make_pair(KvhObs::type(), std::string_view(""));
             }
         case PortType::Out:
             break;

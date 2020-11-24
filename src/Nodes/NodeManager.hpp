@@ -60,8 +60,8 @@ class NodeManager
     {
         NodeDataInfo info;
         info.addCallback = [](std::shared_ptr<Node>& sourceNode, std::shared_ptr<Node>& targetNode, uint8_t portIndex) { return sourceNode->addCallback<T>(targetNode, portIndex); };
-        info.parents = T().parentTypes();
-        _registeredNodeDataTypes[T().type()] = info;
+        info.parents = T::parentTypes();
+        _registeredNodeDataTypes[T::type()] = info;
     }
 
     /// @brief Processes the Config file nodes

@@ -36,7 +36,7 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
             return nullptr;
         }
 
-        obs = std::make_shared<KvhObs>(*packet);
+        obs = std::make_shared<KvhObs>(imuPos, *packet);
 
         // Check if package is empty
         if (obs->raw.getRawDataLength() == 0)
@@ -48,7 +48,7 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
     }
     else if (fileType == FileType::ASCII)
     {
-        obs = std::make_shared<KvhObs>();
+        obs = std::make_shared<KvhObs>(imuPos);
 
         // Read line
         std::string line;

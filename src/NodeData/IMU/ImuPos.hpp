@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "NodeData/NodeData.hpp"
-
 #include "util/LinearAlgebra.hpp"
 
 namespace NAV
@@ -15,13 +13,13 @@ namespace NAV
 class Imu;
 
 /// IMU Position
-class ImuPos : public NodeData
+class ImuPos
 {
   public:
     /// @brief Default constructor
     ImuPos() = default;
     /// @brief Destructor
-    ~ImuPos() override = default;
+    ~ImuPos() = default;
     /// @brief Copy constructor
     ImuPos(const ImuPos&) = delete;
     /// @brief Move constructor
@@ -31,26 +29,21 @@ class ImuPos : public NodeData
     /// @brief Move assignment operator
     ImuPos& operator=(ImuPos&&) = delete;
 
-    /// @brief Returns the type of the data class
-    /// @return The data type
-    [[nodiscard]] constexpr std::string_view type() const override
-    {
-        return std::string_view("ImuPos");
-    }
-
-    /// @brief Returns the parent types of the data class
-    /// @return The parent data types
-    [[nodiscard]] std::vector<std::string_view> parentTypes() const override
-    {
-        return {};
-    }
-
     /// Accelerometer position in body frame coordinates in [m]
-    Vector3d<Body> posAccel_b;
+    [[nodiscard]] const Vector3d<Body>& posAccel_b() const
+    {
+        return positionAccel_b;
+    }
     /// Gyroscope position in body frame coordinates in [m]
-    Vector3d<Body> posGyro_b;
+    [[nodiscard]] const Vector3d<Body>& posGyro_b() const
+    {
+        return positionGyro_b;
+    }
     /// Magnetometer position in body frame coordinates in [m]
-    Vector3d<Body> posMag_b;
+    [[nodiscard]] const Vector3d<Body>& posMag_b() const
+    {
+        return positionMag_b;
+    }
 
     /// Quaternion from accelerometer platform frame to body frame
     [[nodiscard]] const Quaterniond<Body, Platform>& quatAccel_bp() const
@@ -86,6 +79,13 @@ class ImuPos : public NodeData
     }
 
   private:
+    /// Accelerometer position in body frame coordinates in [m]
+    Vector3d<Body> positionAccel_b;
+    /// Gyroscope position in body frame coordinates in [m]
+    Vector3d<Body> positionGyro_b;
+    /// Magnetometer position in body frame coordinates in [m]
+    Vector3d<Body> positionMag_b;
+
     /// Quaternion from accelerometer platform frame to body frame
     Quaterniond<Body, Platform> quaternionAccel_bp;
     /// Quaternion from gyroscope platform frame to body frame

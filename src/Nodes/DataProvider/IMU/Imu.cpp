@@ -7,21 +7,19 @@
 NAV::Imu::Imu(const std::string& name, [[maybe_unused]] const std::map<std::string, std::string>& options)
     : Node(name)
 {
-    imuPos = std::make_shared<ImuPos>();
-
     if (options.count("Accel pos"))
     {
         std::stringstream lineStream(options.at("Accel pos"));
         std::string value;
         if (std::getline(lineStream, value, ';'))
         {
-            imuPos->posAccel_b.x() = std::stod(value);
+            imuPos.positionAccel_b.x() = std::stod(value);
             if (std::getline(lineStream, value, ';'))
             {
-                imuPos->posAccel_b.y() = std::stod(value);
+                imuPos.positionAccel_b.y() = std::stod(value);
                 if (std::getline(lineStream, value, ';'))
                 {
-                    imuPos->posAccel_b.z() = std::stod(value);
+                    imuPos.positionAccel_b.z() = std::stod(value);
                 }
             }
         }
@@ -32,13 +30,13 @@ NAV::Imu::Imu(const std::string& name, [[maybe_unused]] const std::map<std::stri
         std::string value;
         if (std::getline(lineStream, value, ';'))
         {
-            imuPos->posGyro_b.x() = std::stod(value);
+            imuPos.positionGyro_b.x() = std::stod(value);
             if (std::getline(lineStream, value, ';'))
             {
-                imuPos->posGyro_b.y() = std::stod(value);
+                imuPos.positionGyro_b.y() = std::stod(value);
                 if (std::getline(lineStream, value, ';'))
                 {
-                    imuPos->posGyro_b.z() = std::stod(value);
+                    imuPos.positionGyro_b.z() = std::stod(value);
                 }
             }
         }
@@ -49,13 +47,13 @@ NAV::Imu::Imu(const std::string& name, [[maybe_unused]] const std::map<std::stri
         std::string value;
         if (std::getline(lineStream, value, ';'))
         {
-            imuPos->posMag_b.x() = std::stod(value);
+            imuPos.positionMag_b.x() = std::stod(value);
             if (std::getline(lineStream, value, ';'))
             {
-                imuPos->posMag_b.y() = std::stod(value);
+                imuPos.positionMag_b.y() = std::stod(value);
                 if (std::getline(lineStream, value, ';'))
                 {
-                    imuPos->posMag_b.z() = std::stod(value);
+                    imuPos.positionMag_b.z() = std::stod(value);
                 }
             }
         }
@@ -79,7 +77,7 @@ NAV::Imu::Imu(const std::string& name, [[maybe_unused]] const std::map<std::stri
                 }
             }
         }
-        imuPos->quaternionAccel_bp = trafo::quat_bp(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
+        imuPos.quaternionAccel_bp = trafo::quat_bp(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
     }
     if (options.count("Gyro rot"))
     {
@@ -100,7 +98,7 @@ NAV::Imu::Imu(const std::string& name, [[maybe_unused]] const std::map<std::stri
                 }
             }
         }
-        imuPos->quaternionGyro_bp = trafo::quat_bp(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
+        imuPos.quaternionGyro_bp = trafo::quat_bp(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
     }
     if (options.count("Mag rot"))
     {
@@ -121,6 +119,6 @@ NAV::Imu::Imu(const std::string& name, [[maybe_unused]] const std::map<std::stri
                 }
             }
         }
-        imuPos->quaternionMag_bp = trafo::quat_bp(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
+        imuPos.quaternionMag_bp = trafo::quat_bp(trafo::deg2rad(rotX), trafo::deg2rad(rotY), trafo::deg2rad(rotZ));
     }
 }

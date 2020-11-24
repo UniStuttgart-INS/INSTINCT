@@ -6,8 +6,6 @@
 #include "util/InsConstants.hpp"
 #include "util/InsGravity.hpp"
 
-#include "Nodes/State/State.hpp"
-
 NAV::ImuIntegrator::ImuIntegrator(const std::string& name, [[maybe_unused]] const std::map<std::string, std::string>& options)
     : Node(name)
 {
@@ -24,77 +22,66 @@ NAV::ImuIntegrator::ImuIntegrator(const std::string& name, [[maybe_unused]] cons
     }
 }
 
+void NAV::ImuIntegrator::initialize()
+{
+    if (incomingLinks[1].first.lock()->type() != State().type())
+    {
+        LOG_CRITICAL("Please only connect State Nodes to port 1 of node {}", getName());
+    }
+    stateNode = std::static_pointer_cast<State>(incomingLinks[1].first.lock());
+    stateNodeOutputPortIndex = incomingLinks[1].second;
+}
+
+void NAV::ImuIntegrator::deinitialize()
+{
+    stateNode = nullptr;
+}
+
 void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuObs__t0)
 {
-    // Get the IMU Position information
-    const auto& imuNode = incomingLinks[1].first.lock();
-    auto& imuPortIndex = incomingLinks[1].second;
-    auto imuPosition = std::static_pointer_cast<ImuPos>(imuNode->requestOutputData(imuPortIndex));
+    // Position and rotation information for conversion of IMU data from platform to body frame
+    const auto& imuPosition = imuObs__t0->imuPos;
 
-    // Get the current state data
-    const auto& stateNode = incomingLinks[2].first.lock();
-    auto& statePortIndex = incomingLinks[2].second;
     /// State Data at the time tₖ₋₁
-    auto stateData__t1 = std::static_pointer_cast<StateData>(stateNode->requestOutputData(statePortIndex));
+    auto stateData__t1 = std::static_pointer_cast<StateData>(stateNode->requestOutputData(stateNodeOutputPortIndex));
 
     // No inital state available yet
-    if (stateData__t1 == nullptr)
+    if (stateData__t1 == nullptr || imuObs__t2 == nullptr)
     {
         // Rotate Observation
-        prevObs.push_front(imuObs__t0);
-        if (prevObs.size() > 2)
-        {
-            prevObs.pop_back();
-        }
+        imuObs__t2 = imuObs__t1;
+        imuObs__t1 = imuObs__t0;
         return;
     }
 
-    // Fill if empty
-    if (prevStates.empty())
+    // First state available
+    if (stateData__t2 == nullptr)
     {
-        stateData__t1->insTime = imuObs__t0->insTime;
+        // Rotate StateData
+        stateData__t2 = stateData__t1;
 
-        prevStates.push_front(stateData__t1);
+        // Rotate Observation
+        imuObs__t2 = imuObs__t1;
+        imuObs__t1 = imuObs__t0;
 
-        prevObs.push_front(imuObs__t0);
-        if (prevObs.size() > 2)
+        // It is an initial state, not a previous one
+        if (!stateData__t1->insTime.has_value())
         {
-            prevObs.pop_back();
+            stateData__t1->insTime = imuObs__t1->insTime.value();
         }
 
         invokeCallbacks(stateData__t1);
         return;
     }
 
-    // Rotate State Data
-    if (prevStates.size() == 2)
-    {
-        prevStates.pop_back();
-    }
-    prevStates.push_front(stateData__t1);
-
     /// Initial State
-    // TODO: Bad practice, as the connected node does not have to be a state node)
     auto stateData__init = std::static_pointer_cast<State>(stateNode)->initialState;
-
-    /// IMU Observation at the time tₖ₋₂
-    std::shared_ptr<ImuObs> imuObs__t2;
-    if (prevObs.size() == 1)
-    {
-        imuObs__t2 = prevObs.at(0);
-    }
-    else
-    {
-        imuObs__t2 = prevObs.at(1);
-    }
-    /// State Data at the time tₖ₋₂
-    auto& stateData__t2 = prevStates.at(1);
-
-    /// IMU Observation at the time tₖ₋₁
-    auto& imuObs__t1 = prevObs.at(0);
 
     /// Result State Data at the time tₖ
     auto stateData__t0 = std::make_shared<StateData>();
+
+    // Use same timestamp as IMU message
+    stateData__t0->insTime = imuObs__t0->insTime.value();
 
     /// tₖ₋₂ Time at prior to previous epoch
     const InsTime& time__t2 = imuObs__t2->insTime.value();
@@ -141,9 +128,9 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
     if (integrationFrame == IntegrationFrame::ECEF)
     {
         /// q (tₖ₋₂) Quaternion, from gyro platform to earth coordinates, at the time tₖ₋₂
-        const Quaterniond<Earth, Platform> quaternion_gyro_ep__t2 = stateData__t2->quaternion_eb() * imuPosition->quatGyro_bp();
+        const Quaterniond<Earth, Platform> quaternion_gyro_ep__t2 = stateData__t2->quaternion_eb() * imuPosition.quatGyro_bp();
         /// q (tₖ₋₁) Quaternion, from gyro platform to earth coordinates, at the time tₖ₋₁
-        const Quaterniond<Earth, Platform> quaternion_gyro_ep__t1 = stateData__t1->quaternion_eb() * imuPosition->quatGyro_bp();
+        const Quaterniond<Earth, Platform> quaternion_gyro_ep__t1 = stateData__t1->quaternion_eb() * imuPosition.quatGyro_bp();
 
         /// ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
         const Vector3d<Earth>& angularVelocity_ie_e__t0 = InsConst::angularVelocity_ie_e;
@@ -155,11 +142,11 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
                                                                                                     quaternion_gyro_ep__t1, quaternion_gyro_ep__t2);
 
         /// q (tₖ₋₂) Quaternion, from accel platform to earth coordinates, at the time tₖ₋₂
-        const Quaterniond<Earth, Platform> quaternion_accel_ep__t2 = stateData__t2->quaternion_eb() * imuPosition->quatAccel_bp();
+        const Quaterniond<Earth, Platform> quaternion_accel_ep__t2 = stateData__t2->quaternion_eb() * imuPosition.quatAccel_bp();
         /// q (tₖ₋₁) Quaternion, from accel platform to earth coordinates, at the time tₖ₋₁
-        const Quaterniond<Earth, Platform> quaternion_accel_ep__t1 = stateData__t1->quaternion_eb() * imuPosition->quatAccel_bp();
+        const Quaterniond<Earth, Platform> quaternion_accel_ep__t1 = stateData__t1->quaternion_eb() * imuPosition.quatAccel_bp();
         /// q (tₖ) Quaternion, from accel platform to earth coordinates, at the time tₖ
-        const Quaterniond<Earth, Platform> quaternion_accel_ep__t0 = quaternion_gyro_ep__t0 * imuPosition->quatGyro_pb() * imuPosition->quatAccel_bp();
+        const Quaterniond<Earth, Platform> quaternion_accel_ep__t0 = quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb() * imuPosition.quatAccel_bp();
 
         /// v (tₖ), Velocity in [m/s], in earth coordinates, at the current time tₖ
         const Vector3d<Earth> velocity_e__t0 = updateVelocity_e_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
@@ -174,9 +161,6 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         /// x_e (tₖ) Position in [m], in earth coordinates, at the time tₖ
         const Vector3d<Earth>& position_e__t0 = updatePosition_e(timeDifferenceSec__t0, position_e__t1, velocity_e__t1);
 
-        // Use same timestamp as IMU message
-        stateData__t0->insTime = time__t0;
-
         // Store velocity in the state
         stateData__t0->velocity_n() = stateData__t1->quaternion_ne() * velocity_e__t0;
         // Store position in the state. Important to do before using the quaternion_en.
@@ -185,21 +169,21 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         /// Quaternion for rotation from earth to navigation frame. Depends on position which was updated before
         Quaterniond<Navigation, Earth> quaternion_ne__t0 = stateData__t0->quaternion_ne();
         // Store body to navigation frame quaternion in the state
-        stateData__t0->quaternion_nb() = quaternion_ne__t0 * quaternion_gyro_ep__t0 * imuPosition->quatGyro_pb();
+        stateData__t0->quaternion_nb() = quaternion_ne__t0 * quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb();
     }
     else if (integrationFrame == IntegrationFrame::NED)
     {
         /// ω_ip_b (tₖ₋₁) Angular velocity in [rad/s],
         /// of the inertial to platform system, in body coordinates, at the time tₖ₋₁
-        const Vector3d<Body> angularVelocity_ip_b__t1 = imuPosition->quatGyro_bp() * angularVelocity_ip_p__t1;
+        const Vector3d<Body> angularVelocity_ip_b__t1 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t1;
         /// ω_ip_b (tₖ) Angular velocity in [rad/s],
         /// of the inertial to platform system, in body coordinates, at the time tₖ
-        const Vector3d<Body> angularVelocity_ip_b__t0 = imuPosition->quatGyro_bp() * angularVelocity_ip_p__t0;
+        const Vector3d<Body> angularVelocity_ip_b__t0 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t0;
 
         /// a_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
-        const Vector3d<Body> acceleration_b__t1 = imuPosition->quatAccel_bp() * acceleration_p__t1;
+        const Vector3d<Body> acceleration_b__t1 = imuPosition.quatAccel_bp() * acceleration_p__t1;
         /// a_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
-        const Vector3d<Body> acceleration_b__t0 = imuPosition->quatAccel_bp() * acceleration_p__t0;
+        const Vector3d<Body> acceleration_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
 
         /// q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
         const Quaterniond<Navigation, Body> quaternion_nb__t1 = stateData__t1->quaternion_nb();
@@ -249,9 +233,6 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         // Vector3d<LLA> latLonAlt__t0 = updatePosition_n(timeDifferenceSec__t0, stateData__t1->latLonAlt(),
         //                                                     velocity_n__t1, R_N, R_E);
 
-        // Use same timestamp as IMU message
-        stateData__t0->insTime = time__t0;
-
         // Store velocity in the state
         stateData__t0->velocity_n() = velocity_n__t0;
         // Store position in the state
@@ -261,9 +242,12 @@ void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::ImuObs>& imuO
         stateData__t0->quaternion_nb() = quaternion_nb__t0;
     }
 
+    // Rotate StateData
+    stateData__t2 = stateData__t1;
+
     // Rotate Observation
-    prevObs.pop_back();
-    prevObs.push_front(imuObs__t0);
+    imuObs__t2 = imuObs__t1;
+    imuObs__t1 = imuObs__t0;
 
     invokeCallbacks(stateData__t0);
 }

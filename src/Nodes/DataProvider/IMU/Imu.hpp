@@ -24,6 +24,9 @@ class Imu : public Node
     /// @brief Move assignment operator
     Imu& operator=(Imu&&) = delete;
 
+    /// Position and rotation information for conversion from platform to body frame
+    [[nodiscard]] const ImuPos& imuPosition() const { return imuPos; }
+
   protected:
     /// @brief Constructor
     /// @param[in] name Name of the Imu
@@ -49,7 +52,7 @@ class Imu : public Node
     }
 
     /// Position and rotation information for conversion from platform to body frame
-    std::shared_ptr<ImuPos> imuPos;
+    ImuPos imuPos;
 };
 
 } // namespace NAV

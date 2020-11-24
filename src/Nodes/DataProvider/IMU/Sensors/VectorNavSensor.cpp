@@ -159,7 +159,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                            vn::protocol::uart::InsGroup::INSGROUP_NONE,
                            vn::protocol::uart::GpsGroup::GPSGROUP_NONE))
         {
-            auto obs = std::make_shared<VectorNavObs>();
+            auto obs = std::make_shared<VectorNavObs>(vnSensor->imuPos);
 
             // Group 1 (Common)
             obs->timeSinceStartup.emplace(p.extractUint64());

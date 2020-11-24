@@ -97,7 +97,7 @@ class UbloxSensor final : public UartSensor, public Gnss
         case PortType::Out:
             if (portIndex == 0)
             {
-                return std::make_pair(UbloxObs().type(), std::string_view(""));
+                return std::make_pair(UbloxObs::type(), std::string_view(""));
             }
         }
 

@@ -82,7 +82,7 @@ class RtklibPosFile final : public GnssFileReader
         case PortType::Out:
             if (portIndex == 0)
             {
-                return std::make_pair(RtklibPosObs().type(), std::string_view(""));
+                return std::make_pair(RtklibPosObs::type(), std::string_view(""));
             }
         }
 

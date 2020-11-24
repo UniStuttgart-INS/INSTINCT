@@ -100,15 +100,13 @@ void NAV::State::updateState(std::shared_ptr<StateData>& state)
 
 void NAV::State::initAttitude(std::shared_ptr<ImuObs>& obs)
 {
-    // Get the IMU Position information
-    const auto& imuNode = incomingLinks[3].first.lock();
-    auto& imuPortIndex = incomingLinks[3].second;
-    auto imuPosition = std::static_pointer_cast<ImuPos>(imuNode->requestOutputData(imuPortIndex));
+    // Position and rotation information for conversion of IMU data from platform to body frame
+    const auto& imuPosition = obs->imuPos;
 
-    const auto magUncomp_b = imuPosition->quatMag_bp() * obs->magUncompXYZ.value();
+    const auto magUncomp_b = imuPosition.quatMag_bp() * obs->magUncompXYZ.value();
     auto magneticHeading = -std::atan2(magUncomp_b.y(), magUncomp_b.x());
 
-    const auto accelUncomp_b = imuPosition->quatAccel_bp() * obs->accelUncompXYZ.value() * -1;
+    const auto accelUncomp_b = imuPosition.quatAccel_bp() * obs->accelUncompXYZ.value() * -1;
     auto roll = rollFromStaticAccelerationObs(accelUncomp_b);
     auto pitch = pitchFromStaticAccelerationObs(accelUncomp_b);
 

@@ -84,7 +84,7 @@ class EmlidFile final : public GnssFileReader
         case PortType::Out:
             if (portIndex == 0)
             {
-                return std::make_pair(EmlidObs().type(), std::string_view(""));
+                return std::make_pair(EmlidObs::type(), std::string_view(""));
             }
         }
 

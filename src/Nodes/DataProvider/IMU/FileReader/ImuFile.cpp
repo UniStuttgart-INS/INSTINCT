@@ -10,7 +10,7 @@ NAV::ImuFile::ImuFile(const std::string& name, const std::map<std::string, std::
 
 std::shared_ptr<NAV::ImuObs> NAV::ImuFile::pollData(bool peek)
 {
-    auto obs = std::make_shared<ImuObs>();
+    auto obs = std::make_shared<ImuObs>(imuPos);
 
     if (fileType == FileType::BINARY)
     {
