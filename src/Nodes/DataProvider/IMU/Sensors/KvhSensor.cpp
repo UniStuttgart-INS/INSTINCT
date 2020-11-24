@@ -48,7 +48,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
 
     if (p.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
-        auto obs = std::make_shared<KvhObs>(p);
+        auto obs = std::make_shared<KvhObs>(kvhSensor->imuPos, p);
 
         sensors::kvh::decryptKvhObs(obs);
 

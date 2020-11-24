@@ -9,7 +9,6 @@
 
 #include "NodeData/State/StateData.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/IMU/ImuPos.hpp"
 #include "NodeData/GNSS/GnssObs.hpp"
 
 namespace NAV
@@ -76,7 +75,7 @@ class State : public Node
         switch (portType)
         {
         case PortType::In:
-            return 4U;
+            return 3U;
         case PortType::Out:
             return 1U;
         }
@@ -104,10 +103,6 @@ class State : public Node
             if (portIndex == 2)
             {
                 return std::make_pair(ImuObs::type(), std::string_view("Init"));
-            }
-            if (portIndex == 3)
-            {
-                return std::make_pair(ImuPos::type(), std::string_view("Init"));
             }
             break;
         case PortType::Out:

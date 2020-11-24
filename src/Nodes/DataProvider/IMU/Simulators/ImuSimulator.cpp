@@ -238,7 +238,7 @@ std::shared_ptr<NAV::ImuObs> NAV::ImuSimulator::pollData(bool peek)
         latitude = stateData->latitude();
     }
 
-    auto obs = std::make_shared<ImuObs>();
+    auto obs = std::make_shared<ImuObs>(imuPos);
     obs->timeSinceStartup = static_cast<uint64_t>(currentSimTime * 1e9);
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
@@ -247,9 +247,9 @@ std::shared_ptr<NAV::ImuObs> NAV::ImuSimulator::pollData(bool peek)
     /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
     Vector3d<Navigation> angularVelocity_ie_n = quat_ne * InsConst::angularVelocity_ie_e;
 
-    obs->accelUncompXYZ = accel_p + imuPos->quatAccel_pb() * (accel_b + quat_bn * (accel_n - gravity_n));
-    obs->gyroUncompXYZ = gyro_p + imuPos->quatGyro_pb() * (gyro_b + quat_bn * (gyro_n + angularVelocity_ie_n));
-    obs->magUncompXYZ = mag_p + imuPos->quatMag_pb() * (mag_b + quat_bn * mag_n);
+    obs->accelUncompXYZ = accel_p + imuPos.quatAccel_pb() * (accel_b + quat_bn * (accel_n - gravity_n));
+    obs->gyroUncompXYZ = gyro_p + imuPos.quatGyro_pb() * (gyro_b + quat_bn * (gyro_n + angularVelocity_ie_n));
+    obs->magUncompXYZ = mag_p + imuPos.quatMag_pb() * (mag_b + quat_bn * mag_n);
     obs->temperature = temperature;
 
     // Calls all the callbacks

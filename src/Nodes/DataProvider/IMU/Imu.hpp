@@ -49,7 +49,7 @@ class Imu : public Node
     }
 
     /// Position and rotation information for conversion from platform to body frame
-    std::shared_ptr<ImuPos> imuPos;
+    ImuPos imuPos;
 };
 
 } // namespace NAV

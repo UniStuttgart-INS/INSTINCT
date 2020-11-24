@@ -10,7 +10,7 @@ NAV::VectorNavFile::VectorNavFile(const std::string& name, const std::map<std::s
 
 std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
 {
-    auto obs = std::make_shared<VectorNavObs>();
+    auto obs = std::make_shared<VectorNavObs>(imuPos);
 
     if (fileType == FileType::BINARY)
     {

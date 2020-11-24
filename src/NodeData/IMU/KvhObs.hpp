@@ -16,12 +16,18 @@ class KvhObs final : public ImuObs
 {
   public:
     /// @brief Constructor
+    /// @param[in] imuPos Reference to the position and rotation info of the Imu
     /// @param[in] packet The packet to copy into the raw data
-    explicit KvhObs(uart::protocol::Packet& packet)
-        : raw(packet) {}
+    KvhObs(const ImuPos& imuPos, uart::protocol::Packet& packet)
+        : ImuObs(imuPos), raw(packet) {}
+
+    /// @brief Constructor
+    /// @param[in] imuPos Reference to the position and rotation info of the Imu
+    explicit KvhObs(const ImuPos& imuPos)
+        : ImuObs(imuPos) {}
 
     /// @brief Default constructor
-    KvhObs() = default;
+    KvhObs() = delete;
     /// @brief Destructor
     ~KvhObs() final = default;
     /// @brief Copy constructor

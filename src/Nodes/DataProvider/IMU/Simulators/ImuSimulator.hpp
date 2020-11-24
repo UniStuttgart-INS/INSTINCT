@@ -64,7 +64,7 @@ class ImuSimulator final : public Imu
         case PortType::In:
             return 1U;
         case PortType::Out:
-            return 2U;
+            return 1U;
         }
 
         return 0U;
@@ -88,10 +88,6 @@ class ImuSimulator final : public Imu
             if (portIndex == 0)
             {
                 return std::make_pair(ImuObs::type(), std::string_view(""));
-            }
-            if (portIndex == 1)
-            {
-                return std::make_pair(ImuPos::type(), std::string_view(""));
             }
             break;
         }
@@ -135,10 +131,6 @@ class ImuSimulator final : public Imu
         if (portIndex == 0)
         {
             return pollData();
-        }
-        if (portIndex == 1)
-        {
-            return imuPos;
         }
 
         return nullptr;

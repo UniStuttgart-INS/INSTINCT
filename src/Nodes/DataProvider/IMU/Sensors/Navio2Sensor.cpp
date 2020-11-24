@@ -78,7 +78,7 @@ NAV::Navio2Sensor::~Navio2Sensor()
 void NAV::Navio2Sensor::readImuThread(void* userData)
 {
     auto* navio = static_cast<Navio2Sensor*>(userData);
-    auto obs = std::make_shared<ImuObs>();
+    auto obs = std::make_shared<ImuObs>(navio->imuPos);
 
     auto currentTime = std::chrono::high_resolution_clock::now();
 #if !__APPLE__

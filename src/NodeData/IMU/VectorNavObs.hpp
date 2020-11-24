@@ -13,8 +13,13 @@ namespace NAV
 class VectorNavObs final : public ImuObs
 {
   public:
+    /// @brief Constructor
+    /// @param[in] imuPos Reference to the position and rotation info of the Imu
+    explicit VectorNavObs(const ImuPos& imuPos)
+        : ImuObs(imuPos) {}
+
     /// @brief Default constructor
-    VectorNavObs() = default;
+    VectorNavObs() = delete;
     /// @brief Destructor
     ~VectorNavObs() final = default;
     /// @brief Copy constructor

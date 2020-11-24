@@ -9,9 +9,8 @@
 
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/StateData.hpp"
-#include "NodeData/IMU/ImuPos.hpp"
 
-#include <deque>
+#include "Nodes/State/State.hpp"
 
 namespace NAV
 {
@@ -35,6 +34,12 @@ class ImuIntegrator : public Node
     ImuIntegrator& operator=(const ImuIntegrator&) = delete;
     /// @brief Move assignment operator
     ImuIntegrator& operator=(ImuIntegrator&&) = delete;
+
+    /// @brief Initialize the Node. Here virtual functions of children can be called
+    void initialize() final;
+
+    /// @brief Initialize the Node. Here virtual functions of children can be called
+    void deinitialize() final;
 
     /// @brief Returns the String representation of the Class Type
     /// @return The class type
@@ -72,7 +77,7 @@ class ImuIntegrator : public Node
         switch (portType)
         {
         case PortType::In:
-            return 3U;
+            return 2U;
         case PortType::Out:
             return 1U;
         }
@@ -94,10 +99,6 @@ class ImuIntegrator : public Node
                 return std::make_pair(ImuObs::type(), std::string_view(""));
             }
             if (portIndex == 1)
-            {
-                return std::make_pair(ImuPos::type(), std::string_view(""));
-            }
-            if (portIndex == 2)
             {
                 return std::make_pair(StateData::type(), std::string_view(""));
             }
@@ -130,17 +131,18 @@ class ImuIntegrator : public Node
     /// @param[in] imuObs__t0 ImuObs to process
     void integrateObservation(std::shared_ptr<ImuObs>& imuObs__t0);
 
-    /// @brief Storage class for previous observations.
-    ///
-    /// [0]: Observation at time tₖ₋₁
-    /// [1]: Observation at time tₖ₋₂
-    std::deque<std::shared_ptr<ImuObs>> prevObs;
+    /// IMU Observation at the time tₖ₋₁
+    std::shared_ptr<NAV::ImuObs> imuObs__t1 = nullptr;
+    /// IMU Observation at the time tₖ₋₂
+    std::shared_ptr<NAV::ImuObs> imuObs__t2 = nullptr;
 
-    /// @brief Storage class for previous states.
-    ///
-    /// [0]: StateData at time tₖ₋₁
-    /// [1]: StateData at time tₖ₋₂
-    std::deque<std::shared_ptr<StateData>> prevStates;
+    /// State Data at the time tₖ₋₂
+    std::shared_ptr<StateData> stateData__t2 = nullptr;
+
+    /// Pointer to the State Node connected on the StateData port
+    std::shared_ptr<State> stateNode = nullptr;
+    /// Output Port Index of the state node to request the StateData
+    uint8_t stateNodeOutputPortIndex = 200;
 
     enum IntegrationFrame
     {
