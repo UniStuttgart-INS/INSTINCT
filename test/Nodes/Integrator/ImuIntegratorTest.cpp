@@ -48,17 +48,14 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
                                                           { "Mag pos", "0;0;0" },
                                                           { "Mag rot", fmt::format("{:2.2f};{:2.2f};{:2.2f}", mountingAngles(0), mountingAngles(1), mountingAngles(2)) } };
     auto imuFile = std::make_shared<VectorNavFile>("ImuFile", optionsImuFile);
-    std::static_pointer_cast<Node>(imuFile)->initialize();
 
     std::map<std::string, std::string> optionsIntegrator = { { "Integration Frame", "NED" } };
     auto imuIntegrator = std::make_shared<ImuIntegrator>("ImuIntegrator", optionsIntegrator);
-    std::static_pointer_cast<Node>(imuIntegrator)->initialize();
 
     std::map<std::string, std::string> optionsState = { { "Init LatLonAlt", fmt::format("{:2.8f};{:1.9f};{:3.4f}", initLatLonHeight(0), initLatLonHeight(1), initLatLonHeight(2)) },
                                                         { "Init RollPitchYaw", fmt::format("{:2.2f};{:2.2f};{:2.2f}", initRollPitchYaw(0), initRollPitchYaw(1), initRollPitchYaw(2)) },
                                                         { "Init Velocity", fmt::format("{:2.2f};{:2.2f};{:2.2f}", initVelocityNED(0), initVelocityNED(1), initVelocityNED(2)) } };
     auto state = std::make_shared<State>("State", optionsState);
-    std::static_pointer_cast<Node>(state)->initialize();
 
     // std::map<std::string, std::string> optionsGnuPlotLatLon = { { "Start", "set autoscale xy\n"
     //                                                                        "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
@@ -70,7 +67,6 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     //                                                             { "1-Data to plot", "East [m];North [m]" },
     //                                                             { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
     // auto gnuPlotLatLon = std::make_shared<GnuPlot>("GnuPlot LatLon", optionsGnuPlotLatLon);
-    // std::static_pointer_cast<Node>(gnuPlotLatLon)->initialize();
 
     // std::map<std::string, std::string> optionsGnuPlotLat = { { "Start", "set autoscale xy\n"
     //                                                                     "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
@@ -82,7 +78,6 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     //                                                          { "1-Data to plot", "Time;Latitude" },
     //                                                          { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
     // auto gnuPlotLat = std::make_shared<GnuPlot>("GnuPlot Lat", optionsGnuPlotLat);
-    // std::static_pointer_cast<Node>(gnuPlotLat)->initialize();
 
     // std::map<std::string, std::string> optionsGnuPlotLon = { { "Start", "set autoscale xy\n"
     //                                                                     "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
@@ -94,7 +89,6 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     //                                                          { "1-Data to plot", "Time;Longitude" },
     //                                                          { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
     // auto gnuPlotLon = std::make_shared<GnuPlot>("GnuPlot Lon", optionsGnuPlotLon);
-    // std::static_pointer_cast<Node>(gnuPlotLon)->initialize();
 
     // std::map<std::string, std::string> optionsGnuPlotHeight = { { "Start", "set autoscale xy\n"
     //                                                                        "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
@@ -106,7 +100,6 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     //                                                             { "1-Data to plot", "Time;Height" },
     //                                                             { "1-Update", "plot [~1,2~] using 1:2 with lines title 'StateData'" } };
     // auto gnuPlotHeight = std::make_shared<GnuPlot>("GnuPlot Height", optionsGnuPlotHeight);
-    // std::static_pointer_cast<Node>(gnuPlotHeight)->initialize();
 
     // std::map<std::string, std::string> optionsGnuPlotVelocity = { { "Start", "set autoscale xy\n"
     //                                                                          "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
@@ -120,7 +113,6 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     //                                                                             "plot [~1,2,3,4~] using 1:3 with lines title 'East'\n"
     //                                                                             "plot [~1,2,3,4~] using 1:4 with lines title 'Down'" } };
     // auto gnuPlotVelocity = std::make_shared<GnuPlot>("GnuPlot Velocity", optionsGnuPlotVelocity);
-    // std::static_pointer_cast<Node>(gnuPlotVelocity)->initialize();
 
     // std::map<std::string, std::string> optionsGnuPlotAngles = { { "Start", "set autoscale xy\n"
     //                                                                        "set grid ytics lc rgb \"[hash]bbbbbb\" lw 1 lt 0\n"
@@ -134,7 +126,6 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     //                                                                           "plot [~1,2,3,4~] using 1:3 with lines title 'Pitch'\n"
     //                                                                           "plot [~1,2,3,4~] using 1:4 with lines title 'Yaw'" } };
     // auto gnuPlotAngles = std::make_shared<GnuPlot>("GnuPlot Angles", optionsGnuPlotAngles);
-    // std::static_pointer_cast<Node>(gnuPlotAngles)->initialize();
 
     // Configure callbacks
     auto imuIntegratorAsNode = std::static_pointer_cast<Node>(imuIntegrator);
@@ -149,14 +140,21 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
     imuFile->addCallback<VectorNavObs>(imuIntegratorAsNode, 0);
     imuIntegrator->incomingLinks.emplace(0, std::make_pair(imuFile, 0));
 
-    imuFile->addCallback<ImuPos>(imuIntegratorAsNode, 1);
-    imuIntegrator->incomingLinks.emplace(1, std::make_pair(imuFile, 1));
-
-    state->addCallback<StateData>(imuIntegratorAsNode, 2);
-    imuIntegrator->incomingLinks.emplace(2, std::make_pair(state, 0));
+    state->addCallback<StateData>(imuIntegratorAsNode, 1);
+    imuIntegrator->incomingLinks.emplace(1, std::make_pair(state, 0));
 
     imuIntegrator->addCallback<StateData>(stateAsNode, 0);
     state->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
+
+    std::static_pointer_cast<Node>(imuFile)->initialize();
+    std::static_pointer_cast<Node>(imuIntegrator)->initialize();
+    std::static_pointer_cast<Node>(state)->initialize();
+    // std::static_pointer_cast<Node>(gnuPlotLatLon)->initialize();
+    // std::static_pointer_cast<Node>(gnuPlotLat)->initialize();
+    // std::static_pointer_cast<Node>(gnuPlotLon)->initialize();
+    // std::static_pointer_cast<Node>(gnuPlotHeight)->initialize();
+    // std::static_pointer_cast<Node>(gnuPlotVelocity)->initialize();
+    // std::static_pointer_cast<Node>(gnuPlotAngles)->initialize();
 
     // imuIntegrator->addCallback<StateData>(gnuPlotLatLonAsNode, 0);
     // gnuPlotLatLon->incomingLinks.emplace(0, std::make_pair(imuIntegrator, 0));
@@ -193,7 +191,7 @@ TEST_CASE("[ImuIntegrator] Integrate Observation NED", "[ImuIntegrator]")
         Vector3d<Body> accel_b = Vector3d<Body>(0, 0, 0) + currentState->quaternion_bn() * accel_n;
         Vector3d<Platform> accel_p = Vector3d<Platform>(0, 0, 0) + quat_pb * accel_b;
 
-        auto obs = std::make_shared<ImuObs>();
+        auto obs = std::make_shared<ImuObs>(imuFile->imuPosition());
         obs->timeSinceStartup = static_cast<uint64_t>(dt * i * 10e9L);
         obs->insTime = InsTime(2, 72, 211996.0L + dt * i);
         obs->accelUncompXYZ = accel_p + gravity_p;
