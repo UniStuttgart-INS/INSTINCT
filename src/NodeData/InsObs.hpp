@@ -32,14 +32,14 @@ class InsObs : public NodeData
 
     /// @brief Returns the type of the data class
     /// @return The data type
-    [[nodiscard]] constexpr std::string_view type() const override
+    [[nodiscard]] static constexpr std::string_view type()
     {
         return std::string_view("InsObs");
     }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
-    [[nodiscard]] std::vector<std::string_view> parentTypes() const override
+    [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
         return {};
     }

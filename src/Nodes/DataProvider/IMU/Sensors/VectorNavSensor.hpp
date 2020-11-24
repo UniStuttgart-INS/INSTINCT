@@ -154,11 +154,11 @@ class VectorNavSensor final : public UartSensor, public Imu
         case PortType::Out:
             if (portIndex == 0)
             {
-                return std::make_pair(VectorNavObs().type(), std::string_view(""));
+                return std::make_pair(VectorNavObs::type(), std::string_view(""));
             }
             if (portIndex == 1)
             {
-                return std::make_pair(ImuPos().type(), std::string_view(""));
+                return std::make_pair(ImuPos::type(), std::string_view(""));
             }
         }
 

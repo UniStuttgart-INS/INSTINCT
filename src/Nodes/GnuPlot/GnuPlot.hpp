@@ -73,11 +73,11 @@ class GnuPlot final : public Node
                                     { "1", "1", "30", "3" } },
             { CONFIG_LIST, "Port Type",
                            "Select the type of the message to receive on this port",
-                           { "[" + std::string(ImuObs().type()) + "]", "",
-                             std::string(VectorNavObs().type()), "",
-                             std::string(RtklibPosObs().type()), "",
-                             std::string(KvhObs().type()), "",
-                             std::string(StateData().type()), "", } },
+                           { "[" + std::string(ImuObs::type()) + "]", "",
+                             std::string(VectorNavObs::type()), "",
+                             std::string(RtklibPosObs::type()), "",
+                             std::string(KvhObs::type()), "",
+                             std::string(StateData::type()), "", } },
             { CONFIG_VARIANT, "", "",
                   // ImuObs
                 { ConfigOptionsBase(CONFIG_LIST_MULTI, "Data to plot",
@@ -207,27 +207,27 @@ class GnuPlot final : public Node
     {
         if (inputPortDataTypes.count(portIndex))
         {
-            if (inputPortDataTypes.at(portIndex) == VectorNavObs().type())
+            if (inputPortDataTypes.at(portIndex) == VectorNavObs::type())
             {
                 auto obs = std::static_pointer_cast<VectorNavObs>(data);
                 handleVectorNavObs(obs, portIndex);
             }
-            else if (inputPortDataTypes.at(portIndex) == RtklibPosObs().type())
+            else if (inputPortDataTypes.at(portIndex) == RtklibPosObs::type())
             {
                 auto obs = std::static_pointer_cast<RtklibPosObs>(data);
                 handleRtklibPosObs(obs, portIndex);
             }
-            else if (inputPortDataTypes.at(portIndex) == KvhObs().type())
+            else if (inputPortDataTypes.at(portIndex) == KvhObs::type())
             {
                 auto obs = std::static_pointer_cast<KvhObs>(data);
                 handleKvhObs(obs, portIndex);
             }
-            else if (inputPortDataTypes.at(portIndex) == ImuObs().type())
+            else if (inputPortDataTypes.at(portIndex) == ImuObs::type())
             {
                 auto obs = std::static_pointer_cast<ImuObs>(data);
                 handleImuObs(obs, portIndex);
             }
-            else if (inputPortDataTypes.at(portIndex) == StateData().type())
+            else if (inputPortDataTypes.at(portIndex) == StateData::type())
             {
                 auto state = std::static_pointer_cast<StateData>(data);
                 handleStateData(state, portIndex);

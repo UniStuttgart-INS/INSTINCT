@@ -95,25 +95,25 @@ class State : public Node
         case PortType::In:
             if (portIndex == 0)
             {
-                return std::make_pair(StateData().type(), std::string_view("Update"));
+                return std::make_pair(StateData::type(), std::string_view("Update"));
             }
             if (portIndex == 1)
             {
-                return std::make_pair(GnssObs().type(), std::string_view("Init"));
+                return std::make_pair(GnssObs::type(), std::string_view("Init"));
             }
             if (portIndex == 2)
             {
-                return std::make_pair(ImuObs().type(), std::string_view("Init"));
+                return std::make_pair(ImuObs::type(), std::string_view("Init"));
             }
             if (portIndex == 3)
             {
-                return std::make_pair(ImuPos().type(), std::string_view("Init"));
+                return std::make_pair(ImuPos::type(), std::string_view("Init"));
             }
             break;
         case PortType::Out:
             if (portIndex == 0)
             {
-                return std::make_pair(StateData().type(), std::string_view(""));
+                return std::make_pair(StateData::type(), std::string_view(""));
             }
             break;
         }

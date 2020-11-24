@@ -100,11 +100,11 @@ class Navio2Sensor final : public Imu
         case PortType::Out:
             if (portIndex == 0)
             {
-                return std::make_pair(ImuObs().type(), std::string_view(""));
+                return std::make_pair(ImuObs::type(), std::string_view(""));
             }
             if (portIndex == 1)
             {
-                return std::make_pair(ImuPos().type(), std::string_view(""));
+                return std::make_pair(ImuPos::type(), std::string_view(""));
             }
         }
 

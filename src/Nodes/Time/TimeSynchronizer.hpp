@@ -57,9 +57,9 @@ class TimeSynchronizer final : public Node
             // clang-format off
             { CONFIG_LIST, "1-Port Type",
                            "Select the type of the message to receive on this port",
-                           { "[" + std::string(VectorNavObs().type()) + "]", "",
-                           std::string(ImuObs().type()), "",
-                           std::string(KvhObs().type()), "", } },
+                           { "[" + std::string(VectorNavObs::type()) + "]", "",
+                           std::string(ImuObs::type()), "",
+                           std::string(KvhObs::type()), "", } },
             // clang-format on
             { CONFIG_BOOL, "Use Fixed\nStart Time", "Use the Time configured here as start time", { "0" } },
             { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_EMPTY, "", "", {}), ConfigOptionsBase(CONFIG_INT, "Gps Cycle", "GPS Cycle at the beginning of the data recording", { "0", "0", "10" }) } },
@@ -106,7 +106,7 @@ class TimeSynchronizer final : public Node
             }
             if (portIndex == 1)
             {
-                return std::make_pair(InsObs().type(), std::string_view(""));
+                return std::make_pair(InsObs::type(), std::string_view(""));
             }
             break;
         case PortType::Out:
@@ -127,7 +127,7 @@ class TimeSynchronizer final : public Node
     {
         if (portIndex == 0)
         {
-            if (portDataType == VectorNavObs().type())
+            if (portDataType == VectorNavObs::type())
             {
                 auto obs = std::static_pointer_cast<VectorNavObs>(data);
                 if (syncVectorNavObs(obs))
@@ -135,7 +135,7 @@ class TimeSynchronizer final : public Node
                     invokeCallbacks(obs);
                 }
             }
-            else if (portDataType == ImuObs().type())
+            else if (portDataType == ImuObs::type())
             {
                 auto obs = std::static_pointer_cast<ImuObs>(data);
                 if (syncImuObs(obs))
@@ -143,7 +143,7 @@ class TimeSynchronizer final : public Node
                     invokeCallbacks(obs);
                 }
             }
-            else if (portDataType == KvhObs().type())
+            else if (portDataType == KvhObs::type())
             {
                 auto obs = std::static_pointer_cast<KvhObs>(data);
                 if (syncKvhObs(obs))
@@ -171,7 +171,7 @@ class TimeSynchronizer final : public Node
             const auto& sourceNode = incomingLinks[0].first.lock();
             auto& sourcePortIndex = incomingLinks[0].second;
 
-            if (portDataType == VectorNavObs().type())
+            if (portDataType == VectorNavObs::type())
             {
                 auto data = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputData(sourcePortIndex));
                 if (syncVectorNavObs(data))
@@ -179,7 +179,7 @@ class TimeSynchronizer final : public Node
                     return data;
                 }
             }
-            else if (portDataType == ImuObs().type())
+            else if (portDataType == ImuObs::type())
             {
                 auto data = std::static_pointer_cast<ImuObs>(sourceNode->requestOutputData(sourcePortIndex));
                 if (syncImuObs(data))
@@ -187,7 +187,7 @@ class TimeSynchronizer final : public Node
                     return data;
                 }
             }
-            else if (portDataType == KvhObs().type())
+            else if (portDataType == KvhObs::type())
             {
                 auto data = std::static_pointer_cast<KvhObs>(sourceNode->requestOutputData(sourcePortIndex));
                 if (syncKvhObs(data))
@@ -211,7 +211,7 @@ class TimeSynchronizer final : public Node
             // but the data we want to pull come from input port 0
             const auto& sourceNode = incomingLinks[0].first.lock();
             auto& sourcePortIndex = incomingLinks[0].second;
-            if (portDataType == VectorNavObs().type())
+            if (portDataType == VectorNavObs::type())
             {
                 auto peekData = std::static_pointer_cast<VectorNavObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));
                 if (syncVectorNavObs(peekData))
@@ -219,7 +219,7 @@ class TimeSynchronizer final : public Node
                     return peekData;
                 }
             }
-            else if (portDataType == ImuObs().type())
+            else if (portDataType == ImuObs::type())
             {
                 auto peekData = std::static_pointer_cast<ImuObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));
                 if (syncImuObs(peekData))
@@ -227,7 +227,7 @@ class TimeSynchronizer final : public Node
                     return peekData;
                 }
             }
-            else if (portDataType == KvhObs().type())
+            else if (portDataType == KvhObs::type())
             {
                 auto peekData = std::static_pointer_cast<KvhObs>(sourceNode->requestOutputDataPeek(sourcePortIndex));
                 if (syncKvhObs(peekData))

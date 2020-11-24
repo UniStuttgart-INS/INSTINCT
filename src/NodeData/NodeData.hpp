@@ -28,11 +28,11 @@ class NodeData
 
     /// @brief Returns the type of the data class
     /// @return The data type
-    [[nodiscard]] virtual constexpr std::string_view type() const = 0;
+    [[nodiscard]] static constexpr std::string_view type() { return ""; }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
-    [[nodiscard]] virtual std::vector<std::string_view> parentTypes() const = 0;
+    [[nodiscard]] static std::vector<std::string_view> parentTypes() { return {}; }
 };
 
 } // namespace NAV
