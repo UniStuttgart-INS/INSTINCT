@@ -713,13 +713,13 @@ class InsTime
     /// @return InsTime_GPSweekTow structure of the this object
     [[nodiscard]] constexpr InsTime_GPSweekTow toGPSweekTow() const
     {
-        InsTime_MJD mjd = toMJD();
+        InsTime_MJD mjd_leap = mjd;
         // Convert from UTC to GPST
-        mjd.mjd_frac += static_cast<long double>(leapGps2UTC(mjd)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
+        mjd_leap.mjd_frac += static_cast<long double>(leapGps2UTC(mjd_leap)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
 
         // Put everything in the time of week, as it gets splitted in InsTime_GPSweekTow constructor
-        auto tow = static_cast<long double>((mjd.mjd_day - InsTimeUtil::DIFF_TO_6_1_1980_MJD)) * InsTimeUtil::SECONDS_PER_DAY
-                   + mjd.mjd_frac * InsTimeUtil::SECONDS_PER_DAY;
+        auto tow = static_cast<long double>((mjd_leap.mjd_day - InsTimeUtil::DIFF_TO_6_1_1980_MJD)) * InsTimeUtil::SECONDS_PER_DAY
+                   + mjd_leap.mjd_frac * InsTimeUtil::SECONDS_PER_DAY;
 
         return InsTime_GPSweekTow(0, 0, tow);
     }

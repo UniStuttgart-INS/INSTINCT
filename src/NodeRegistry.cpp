@@ -2,98 +2,102 @@
 
 #include "util/Logger.hpp"
 
-#include "Nodes/NodeManager.hpp"
+#include "Node.hpp"
+#include "NodeData/NodeData.hpp"
 
-#include "Nodes/DataLogger/IMU/ImuDataLogger.hpp"
-#include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
-#include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
-#include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
-#include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
+#include <string_view>
 
-#include "Nodes/DataProvider/IMU/FileReader/ImuFile.hpp"
-#include "Nodes/DataProvider/IMU/FileReader/KvhFile.hpp"
-#include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
-#include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
-#include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
-#include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
-#include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
-#include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
-#include "Nodes/DataProvider/GNSS/Sensors/EmlidSensor.hpp"
-#include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
-#include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
-#include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
+/* -------------------------------------------------------------------------------------------------------- */
+/*                                              Private Members                                             */
+/* -------------------------------------------------------------------------------------------------------- */
 
-#include "Nodes/GnuPlot/GnuPlot.hpp"
-
-#include "Nodes/Integrator/ImuIntegrator.hpp"
-
-#include "Nodes/State/State.hpp"
-
-#include "Nodes/Estimators/KalmanFilter.hpp"
-
-#include "Nodes/Time/TimeSynchronizer.hpp"
-
-void NAV::NodeRegistry::registerNodeTypes(NAV::NodeManager& nodeManager)
+namespace NAV::NodeRegistry
 {
-    LOG_TRACE("called");
+/// List of all registered nodes
+std::vector<NodeInfo> registeredNodes_;
 
-    nodeManager.registerNodeType<NAV::ImuDataLogger>();
-    nodeManager.registerNodeType<NAV::KvhDataLogger>();
-    nodeManager.registerNodeType<NAV::VectorNavDataLogger>();
-    nodeManager.registerNodeType<NAV::UbloxDataLogger>();
-    nodeManager.registerNodeType<NAV::EmlidDataLogger>();
+/// List of all registered node data types
+std::map<std::string_view, std::vector<std::string_view>> registeredNodeDataTypes_;
 
-    nodeManager.registerNodeType<NAV::ImuFile>();
-    nodeManager.registerNodeType<NAV::KvhFile>();
-    nodeManager.registerNodeType<NAV::VectorNavFile>();
-    nodeManager.registerNodeType<NAV::RtklibPosFile>();
-    nodeManager.registerNodeType<NAV::UbloxFile>();
-    nodeManager.registerNodeType<NAV::EmlidFile>();
-    nodeManager.registerNodeType<NAV::VectorNavSensor>();
-    nodeManager.registerNodeType<NAV::KvhSensor>();
-    nodeManager.registerNodeType<NAV::Navio2Sensor>();
-    nodeManager.registerNodeType<NAV::UbloxSensor>();
-    nodeManager.registerNodeType<NAV::EmlidSensor>();
-    nodeManager.registerNodeType<NAV::ImuSimulator>();
+} // namespace NAV::NodeRegistry
+/* -------------------------------------------------------------------------------------------------------- */
+/*                                       Private Function Declarations                                      */
+/* -------------------------------------------------------------------------------------------------------- */
 
-    nodeManager.registerNodeType<NAV::GnuPlot>();
-
-    nodeManager.registerNodeType<NAV::ImuIntegrator>();
-
-    nodeManager.registerNodeType<NAV::State>();
-
-    nodeManager.registerNodeType<NAV::KalmanFilter>();
-
-    nodeManager.registerNodeType<NAV::TimeSynchronizer>();
+namespace NAV::NodeRegistry
+{
+/// @brief Registers a Node with the NodeManager
+/// @tparam T Node Class to register
+/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Nodes'
+template<typename T,
+         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+void registerNodeType()
+{
+    NodeInfo info;
+    info.constructor = []() { return new T(); }; // NOLINT(cppcoreguidelines-owning-memory)
+    info.type = T::typeStatic();
+    info.category = T::category();
+    registeredNodes_.push_back(info);
 }
 
-#include "NodeData/InsObs.hpp"
+/// @brief Register a NodeData with the NodeManager
+/// @tparam T NodeData Class to register
+/// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Makes sure template only exists for classes with base class 'NodeData'
+template<typename T,
+         typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
+void registerNodeDataType()
+{
+    registeredNodeDataTypes_[T::type()] = T::parentTypes();
+}
 
-#include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/IMU/KvhObs.hpp"
-#include "NodeData/IMU/VectorNavObs.hpp"
+} // namespace NAV::NodeRegistry
 
-#include "NodeData/GNSS/GnssObs.hpp"
-#include "NodeData/GNSS/RtklibPosObs.hpp"
-#include "NodeData/GNSS/UbloxObs.hpp"
-#include "NodeData/GNSS/EmlidObs.hpp"
+/* -------------------------------------------------------------------------------------------------------- */
+/*                                           Function Definitions                                           */
+/* -------------------------------------------------------------------------------------------------------- */
 
-#include "NodeData/State/StateData.hpp"
+const std::vector<NAV::NodeRegistry::NodeInfo>& NAV::NodeRegistry::registeredNodes()
+{
+    return registeredNodes_;
+}
 
-void NAV::NodeRegistry::registerNodeDataTypes(NAV::NodeManager& nodeManager)
+bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType, const std::string_view& parentType)
+{
+    if (childType == parentType)
+    {
+        return true;
+    }
+    for (const auto& [dataType, parentTypes] : registeredNodeDataTypes_)
+    {
+        if (dataType == childType)
+        {
+            for (const auto& parentTypeOfChild : parentTypes)
+            {
+                if (parentTypeOfChild == parentType)
+                {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+#include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
+
+void NAV::NodeRegistry::registerNodeTypes()
 {
     LOG_TRACE("called");
 
-    nodeManager.registerNodeDataType<NAV::InsObs>();
+    registerNodeType<VectorNavFile>();
+}
 
-    nodeManager.registerNodeDataType<NAV::ImuObs>();
-    nodeManager.registerNodeDataType<NAV::KvhObs>();
-    nodeManager.registerNodeDataType<NAV::VectorNavObs>();
+#include "NodeData/NodeData.hpp"
+#include "NodeData/InsObs.hpp"
 
-    nodeManager.registerNodeDataType<NAV::GnssObs>();
-    nodeManager.registerNodeDataType<NAV::RtklibPosObs>();
-    nodeManager.registerNodeDataType<NAV::UbloxObs>();
-    nodeManager.registerNodeDataType<NAV::EmlidObs>();
-
-    nodeManager.registerNodeDataType<NAV::StateData>();
+void NAV::NodeRegistry::registerNodeDataTypes()
+{
+    registerNodeDataType<NodeData>();
+    registerNodeDataType<InsObs>();
 }

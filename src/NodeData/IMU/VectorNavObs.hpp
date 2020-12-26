@@ -99,9 +99,9 @@ class VectorNavObs final : public ImuObs
 
         /// @brief Assignment operator
         /// @param[in] status Status to set
-        VpeStatus& operator=(const uint16_t& status)
+        VpeStatus& operator=(const uint16_t& uintStatus)
         {
-            this->status = status;
+            status = uintStatus;
             return *this;
         }
 

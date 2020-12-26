@@ -223,7 +223,10 @@
         { // MAIN: Build & run project
             "label": "MAIN: Build & run project",
             "type": "shell",
-            "group": "test",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
             "command": "./bin/${input:buildType}/navsos",
             "args": [
                 "-f",
