@@ -10,9 +10,6 @@
 [submodule "lib/navio2"]
 	path = lib/navio2
 	url = ../../ins/ins_staff/navio2.git
-[submodule "lib/nodeeditor"]
-	path = lib/nodeeditor
-	url = ../nodeeditor.git
 [submodule "lib/uartsensor"]
 	path = lib/uartsensor
 	url = ../uart-sensor.git
