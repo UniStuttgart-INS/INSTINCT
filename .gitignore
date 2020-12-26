@@ -22,8 +22,13 @@ coverage/*
 # Ignore root level compile_commands
 compile_commands.json
 
+# Coverage file
 junit.xml
 
 # Ignore config files
 config.ini
-config-dataflow.ini
+
+# Imgui files
+NavSoS.flow
+NavSoS.ini
+imgui.ini

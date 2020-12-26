@@ -66,7 +66,6 @@ include(cmake/StaticAnalyzers.cmake)
 option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" OFF)
 option(ENABLE_TESTING "Enable Test Builds" OFF)
 option(ENABLE_MAIN "Build Main file" ON)
-option(ENABLE_GUI "Build GUI" OFF)
 
 # Logging Level
 set(LOG_LEVEL
@@ -94,11 +93,67 @@ run_conan()
 # Libraries (inlcude as SYSTEM, to prevent Static Analazers to scan them)
 # ######################################################################################################################
 
-# Include VectorNav library
+# ------------------------------------------------- imgui ------------------------------------------------
+
+file(
+  GLOB _imgui_Sources
+  LIST_DIRECTORIES OFF
+  "${CMAKE_SOURCE_DIR}/lib/imgui/*.cpp" "${CMAKE_SOURCE_DIR}/lib/imgui/*.h")
+add_library(imgui ${_imgui_Sources})
+include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/imgui")
+set_target_properties(imgui PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(imgui PROPERTIES CXX_CPPCHECK "")
+
+# ------------------------------------------- imgui-node-editor ------------------------------------------ */
+
+# Define IMGUI_NODE_EDITOR_ROOT_DIR pointing to project root directory
+get_filename_component(IMGUI_NODE_EDITOR_ROOT_DIR ${CMAKE_SOURCE_DIR}/lib/imgui-node-editor ABSOLUTE CACHE)
+# Point CMake where to look for module files.
+list(APPEND CMAKE_MODULE_PATH ${IMGUI_NODE_EDITOR_ROOT_DIR}/misc/cmake-modules)
+find_package(imgui REQUIRED)
+find_package(imgui_node_editor REQUIRED)
+target_link_libraries(imgui_node_editor PRIVATE imgui)
+include_directories(SYSTEM lib/imgui-node-editor)
+# include_directories(SYSTEM lib/imgui-node-editor/external/imgui)
+set_target_properties(imgui_node_editor PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(imgui_node_editor PROPERTIES CXX_CPPCHECK "")
+
+# -------------------------------------------- ImGuiFileDialog ------------------------------------------- */
+
+add_library(
+  ImGuiFileDialog
+  "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialog.cpp"
+  "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialog.h"
+  "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialogConfig.h")
+include_directories(SYSTEM lib/ImGuiFileDialog/ImGuiFileDialog)
+
+# ------------------------------------------------ implot ------------------------------------------------ */
+
+file(
+  GLOB _implot_Sources
+  LIST_DIRECTORIES OFF
+  "${CMAKE_SOURCE_DIR}/lib/implot/*.cpp" "${CMAKE_SOURCE_DIR}/lib/implot/*.h")
+add_library(implot ${_implot_Sources})
+include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/implot")
+set_target_properties(implot PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(implot PROPERTIES CXX_CPPCHECK "")
+
+# ---------------------------------------------- Application --------------------------------------------- */
+
+add_subdirectory(lib/application)
+include_directories(SYSTEM lib/application/include)
+target_link_libraries(application PRIVATE implot)
+set_target_properties(application PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(application PROPERTIES CXX_CPPCHECK "")
+
+# ----------------------------------------------- VectorNav ---------------------------------------------- */
+
 add_subdirectory(lib/vnproglib libvncxx)
 include_directories(SYSTEM lib/vnproglib/include)
 set_target_properties(libvncxx PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
+
+# ------------------------------------------------ Navio2 ------------------------------------------------ */
 
 if(NOT APPLE)
   # Include navio2 library
@@ -108,14 +163,15 @@ if(NOT APPLE)
   set_target_properties(libnavio PROPERTIES CXX_CPPCHECK "")
 endif()
 
-# Include uart library
+# ------------------------------------------------- UART ------------------------------------------------- */
+
 add_subdirectory(lib/uartsensor libUartSensor)
 include_directories(SYSTEM lib/uartsensor/include)
+set_target_properties(libUartSensor PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(libUartSensor PROPERTIES CXX_CPPCHECK "")
 
-# Include gnuplot iostream
-include_directories(SYSTEM lib/gnuplot-iostream)
+# ------------------------------------------------- gcem ------------------------------------------------- */
 
-# Include gcem
 include_directories(SYSTEM lib/gcem/include)
 
 # ######################################################################################################################
@@ -130,21 +186,6 @@ find_package(Threads REQUIRED)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
 
-if(ENABLE_GUI)
-  if(APPLE AND NOT Qt5_DIR)
-    execute_process(COMMAND brew --prefix qt OUTPUT_VARIABLE qtlocation)
-    string(REGEX REPLACE "\n$" "" qtlocation "${qtlocation}")
-    set(Qt5_DIR
-        "${qtlocation}/lib/cmake/Qt5"
-        CACHE INTERNAL "")
-    message(STATUS "Qt5 Dir: ${Qt5_DIR}")
-  endif()
-
-  # Include nodeeditor library
-  add_subdirectory(lib/nodeeditor)
-  set_target_properties(nodes PROPERTIES CXX_CLANG_TIDY "")
-endif()
-
 add_subdirectory(src)
 
 if(ENABLE_TESTING)
@@ -156,9 +197,6 @@ option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
 if(ENABLE_UNITY)
   # Add for any project you want to apply unity builds for
   set_target_properties(${PROJECT_NAME_LOWERCASE} PROPERTIES UNITY_BUILD ON)
-  if(ENABLE_GUI)
-    set_target_properties("${PROJECT_NAME_LOWERCASE}-gui" PROPERTIES UNITY_BUILD ON)
-  endif()
 endif()
 
 # ######################################################################################################################

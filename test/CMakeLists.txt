@@ -43,6 +43,12 @@ target_link_libraries(
           CONAN_PKG::boost
           CONAN_PKG::eigen
           Threads::Threads
+          CONAN_PKG::nlohmann_json
+          imgui
+          imgui_node_editor
+          ImGuiFileDialog
+          implot
+          application
           libvncxx
           libUartSensor)
 
