@@ -1,9 +1,6 @@
 [submodule "lib/gcem"]
 	path = lib/gcem
 	url = https://github.com/kthohr/gcem.git
-[submodule "lib/gnuplot-iostream"]
-	path = lib/gnuplot-iostream
-	url = https://github.com/dstahlke/gnuplot-iostream
 [submodule "lib/vnproglib"]
 	path = lib/vnproglib
 	url = ../../ins/ins_staff/vnproglib.git
