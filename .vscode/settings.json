@@ -17,6 +17,7 @@
         "gtest",
         "hobiger",
         "kutta",
+        "mathbf",
         "quaterniond",
         "runge",
         "ublox"
@@ -104,5 +105,7 @@
     "clang-tidy.compilerArgs": [
         "-Wno-unknown-warning-option"
     ],
-    "comment-divider.length": 110
+    "comment-divider.length": 110,
+    "mathover.matchRegex": "\\/\\/\\sMath:\\s(.+)",
+    "mathover.forwardSkip": 9,
 }

@@ -123,6 +123,8 @@ run-tests:clang:
     when: always
     reports:
       junit: junit.xml
+    expire_in: 2h
+
 
 run-tests:gcc:
   extends: run-tests:clang
@@ -182,7 +184,7 @@ coverage:
     name: "Documentation & Coverage Report"
     paths:
       - public
-    expire_in: 7 days
+    expire_in: 2h
     reports:
       cobertura: public/coverage/cobertura-coverage.xml
   except:

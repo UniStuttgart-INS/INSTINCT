@@ -4,7 +4,7 @@
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
         // ║                                               CLEAN Tasks                                                ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        {
+        { // CLEAN: Remove Build Files
             "label": "CLEAN: Remove Build Files",
             "type": "shell",
             "group": "build",
@@ -20,117 +20,41 @@
             "presentation": {
                 "reveal": "never",
                 "echo": false,
-                "showReuseMessage": false
+                "showReuseMessage": false,
             },
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
         // ║                                               CMAKE Tasks                                                ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        {
-            "label": "CMAKE: Debug",
+        { // CMAKE: Main
+            "label": "CMAKE: Main",
             "type": "shell",
             "group": "build",
-            "command": "cmake",
+            "command": "bash",
             "args": [
-                "-Bbuild/Debug",
-                "-S.",
-                "-DCMAKE_BUILD_TYPE=Debug",
-                "-DENABLE_MAIN=ON",
-                "-DENABLE_GUI=OFF",
-                "-DENABLE_TESTING=OFF",
-                "-DENABLE_DOXYGEN=OFF",
-                "-DLOG_LEVEL=DEBUG",
-                // "-DENABLE_CLANG_TIDY=OFF",
-                // "-DENABLE_CPPCHECK=OFF",
-                // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
+                "-c",
+                "cmake -Bbuild/${input:buildType} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:staticAnalyzer}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:staticAnalyzer}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
             "options": {
                 "env": {
                     "CC": "/usr/bin/clang",
                     "CXX": "/usr/bin/clang++",
-                }
+                },
             },
             "presentation": {
-                "clear": true
+                "clear": true,
             },
             "problemMatcher": [],
         },
-        {
-            "label": "CMAKE: Release",
-            "type": "shell",
-            "group": "build",
-            "command": "cmake",
-            "args": [
-                "-Bbuild/Release",
-                "-S.",
-                "-DCMAKE_BUILD_TYPE=Release",
-                "-DENABLE_MAIN=ON",
-                "-DENABLE_GUI=OFF",
-                "-DENABLE_TESTING=OFF",
-                "-DENABLE_DOXYGEN=OFF",
-                "-DLOG_LEVEL=INFO",
-                // "-DENABLE_CLANG_TIDY=OFF",
-                // "-DENABLE_CPPCHECK=OFF",
-                // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
-            ],
-            "options": {
-                "env": {
-                    "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++",
-                }
-            },
-            "presentation": {
-                "clear": true
-            },
-            "problemMatcher": [],
-        },
-        {
-            "label": "CMAKE: GUI",
-            "type": "shell",
-            "group": "build",
-            "command": "cmake",
-            "args": [
-                "-Bbuild/Release",
-                "-S.",
-                "-DCMAKE_BUILD_TYPE=Release",
-                "-DENABLE_MAIN=ON",
-                "-DENABLE_GUI=ON",
-                "-DENABLE_TESTING=OFF",
-                "-DENABLE_DOXYGEN=OFF",
-                "-DLOG_LEVEL=INFO",
-                // "-DENABLE_CLANG_TIDY=OFF",
-                // "-DENABLE_CPPCHECK=OFF",
-                // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
-            ],
-            "options": {
-                "env": {
-                    "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++",
-                }
-            },
-            "presentation": {
-                "clear": true
-            },
-            "problemMatcher": [],
-        },
-        {
+        { // CMAKE: Testing
             "label": "CMAKE: Testing",
             "type": "shell",
             "group": "build",
-            "command": "cmake",
+            "command": "bash",
             "args": [
-                "-Bbuild/Debug",
-                "-S.",
-                "-DCMAKE_BUILD_TYPE=Debug",
-                "-DENABLE_MAIN=OFF",
-                "-DENABLE_GUI=OFF",
-                "-DENABLE_TESTING=ON",
-                "-DENABLE_DOXYGEN=OFF",
-                "-DLOG_LEVEL=TRACE",
-                // "-DENABLE_CLANG_TIDY=OFF",
-                // "-DENABLE_CPPCHECK=OFF",
-                // "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
+                "-c",
+                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:staticAnalyzer}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:staticAnalyzer}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
             "options": {
                 "env": {
@@ -143,7 +67,7 @@
             },
             "problemMatcher": [],
         },
-        {
+        { // CMAKE: Coverage
             "label": "CMAKE: Coverage",
             "type": "shell",
             "group": "build",
@@ -153,7 +77,6 @@
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Debug",
                 "-DENABLE_MAIN=OFF",
-                "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=ON",
                 "-DENABLE_DOXYGEN=OFF",
                 "-DENABLE_COVERAGE=TRUE",
@@ -173,7 +96,7 @@
             },
             "problemMatcher": [],
         },
-        {
+        { // CMAKE: Documentation
             "label": "CMAKE: Documentation",
             "type": "shell",
             "group": "build",
@@ -183,7 +106,6 @@
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DENABLE_MAIN=OFF",
-                "-DENABLE_GUI=OFF",
                 "-DENABLE_TESTING=OFF",
                 "-DENABLE_DOXYGEN=ON",
                 "-DLOG_LEVEL=OFF",
@@ -199,15 +121,15 @@
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
         // ║                                          CMAKE Configure Tasks                                           ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        {
-            "label": "CMAKE: Configure Debug",
+        { // CMAKE: Configure
+            "label": "CMAKE: Configure",
             "type": "shell",
             "group": "build",
             "command": "ccmake",
             "args": [
-                "-Bbuild/Debug",
+                "-Bbuild/${input:buildType}",
                 "-S.",
-                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_BUILD_TYPE=${input:buildType}",
             ],
             "options": {
                 "env": {
@@ -219,39 +141,15 @@
                 "focus": true
             },
             "dependsOn": [
-                "CMAKE: Debug",
-            ],
-            "problemMatcher": [],
-        },
-        {
-            "label": "CMAKE: Configure Release",
-            "type": "shell",
-            "group": "build",
-            "command": "ccmake",
-            "args": [
-                "-Bbuild/Release",
-                "-S.",
-                "-DCMAKE_BUILD_TYPE=Release",
-            ],
-            "options": {
-                "env": {
-                    "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++",
-                }
-            },
-            "presentation": {
-                "focus": true
-            },
-            "dependsOn": [
-                "CMAKE: Release",
+                "CMAKE: Main",
             ],
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
         // ║                                                Build Tasks                                               ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        {
-            "label": "DEBUG: Build project",
+        { // MAIN: Build project
+            "label": "MAIN: Build project",
             "type": "shell",
             "group": {
                 "kind": "build",
@@ -260,48 +158,16 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "build/Debug",
+                "build/${input:buildType}",
                 "--",
                 "-j",
             ],
             "dependsOn": [
-                "CMAKE: Debug",
+                "CMAKE: Main",
             ],
             "problemMatcher": [],
         },
-        {
-            "label": "GUI: Build project",
-            "type": "shell",
-            "group": "build",
-            "command": "cmake",
-            "args": [
-                "--build",
-                "build/Release",
-                "--",
-                "-j",
-            ],
-            "dependsOn": [
-                "CMAKE: GUI",
-            ],
-            "problemMatcher": [],
-        },
-        {
-            "label": "RELEASE: Build project",
-            "type": "shell",
-            "group": "build",
-            "command": "cmake",
-            "args": [
-                "--build",
-                "build/Release",
-                "--",
-                "-j",
-            ],
-            "dependsOn": [
-                "CMAKE: Release",
-            ],
-            "problemMatcher": [],
-        },
-        {
+        { // TEST: Build project
             "label": "TEST: Build project",
             "type": "shell",
             "group": "build",
@@ -317,7 +183,7 @@
             ],
             "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Build Coverage Report
             "label": "COVERAGE: Build Coverage Report",
             "type": "shell",
             "group": "build",
@@ -333,7 +199,7 @@
             ],
             "problemMatcher": [],
         },
-        {
+        { // DOXYGEN: Build Documentation
             "label": "DOXYGEN: Build Documentation",
             "type": "shell",
             "group": "build",
@@ -354,51 +220,21 @@
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
         // ║                                                Run Tasks                                                 ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        {
-            "label": "DEBUG: Build & run project",
+        { // MAIN: Build & run project
+            "label": "MAIN: Build & run project",
             "type": "shell",
             "group": "test",
-            "command": "./bin/Debug/navsos",
+            "command": "./bin/${input:buildType}/navsos",
             "args": [
                 "-f",
                 "config.ini",
-                "config-dataflow.ini",
             ],
             "dependsOn": [
-                "DEBUG: Build project",
+                "MAIN: Build project",
             ],
             "problemMatcher": [],
         },
-        {
-            "label": "RELEASE: Build & run project",
-            "type": "shell",
-            "group": "test",
-            "command": "./bin/Release/navsos",
-            "args": [
-                "-f",
-                "config.ini",
-                "config-dataflow.ini",
-            ],
-            "dependsOn": [
-                "RELEASE: Build project",
-            ],
-            "problemMatcher": [],
-        },
-        {
-            "label": "GUI: Build & run project",
-            "type": "shell",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
-            "command": "./bin/Release/navsos-gui",
-            "args": [],
-            "dependsOn": [
-                "GUI: Build project",
-            ],
-            "problemMatcher": [],
-        },
-        {
+        { // TEST: Build & run
             "label": "TEST: Build & run",
             "type": "shell",
             "group": "test",
@@ -416,7 +252,7 @@
             ],
             "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Run Coverage Tests
             "label": "COVERAGE: Run Coverage Tests",
             "type": "shell",
             "group": "test",
@@ -434,7 +270,7 @@
             ],
             "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Create
             "label": "COVERAGE: Create",
             "type": "shell",
             "group": "test",
@@ -448,7 +284,7 @@
             ],
             "problemMatcher": [],
         },
-        {
+        { // COVERAGE: Create & Show
             "label": "COVERAGE: Create & Show",
             "type": "shell",
             "group": "build",
@@ -461,7 +297,7 @@
             ],
             "problemMatcher": [],
         },
-        {
+        { // DOXYGEN: Create & Show
             "label": "DOXYGEN: Create & Show",
             "type": "shell",
             "group": "build",
@@ -477,50 +313,70 @@
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
         // ║                                             Debugging Tasks                                              ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
-        {
-            "label": "VALGRIND: Run profiler in Debug Mode",
+        { // VALGRIND: Run profiler
+            "label": "VALGRIND: Run profiler",
             "type": "shell",
             "group": "test",
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/Debug/callgrind.out --tool=callgrind bin/Debug/navsos -f config.ini config-dataflow.ini && kcachegrind bin/Debug/callgrind.out",
+                "valgrind --callgrind-out-file=bin/${input:buildType}/callgrind.out --tool=callgrind bin/${input:buildType}/navsos -f config.ini && kcachegrind bin/${input:buildType}/callgrind.out",
             ],
             "dependsOn": [
-                "DEBUG: Build project",
+                "MAIN: Build project",
             ],
             "problemMatcher": [],
         },
-        {
-            "label": "VALGRIND: Run profiler in Release Mode",
-            "type": "shell",
-            "group": "test",
-            "command": "bash",
-            "args": [
-                "-c",
-                "valgrind --callgrind-out-file=bin/Release/callgrind.out --tool=callgrind bin/Release/navsos -f config.ini config-dataflow.ini && kcachegrind bin/Release/callgrind.out",
-            ],
-            "dependsOn": [
-                "RELEASE: Build project",
-            ],
-            "problemMatcher": [],
-        },
-        {
+        { // VALGRIND: Memory Leak Check
             "label": "VALGRIND: Memory Leak Check",
             "type": "shell",
             "group": "test",
             "command": "valgrind",
             "args": [
                 "--leak-check=yes",
-                "bin/Debug/navsos",
+                "bin/${input:buildType}/navsos",
                 "-f",
                 "config.ini",
-                "config-dataflow.ini",
             ],
             "dependsOn": [
-                "DEBUG: Build project",
+                "MAIN: Build project",
             ],
             "problemMatcher": [],
         }
-    ]
+    ],
+    "inputs": [
+        { // buildType
+            "id": "buildType",
+            "type": "command",
+            "command": "statusBarParam.get.buildType",
+            "args": [
+                "Debug",
+                "Release",
+            ],
+        },
+        { // staticAnalyzer
+            "id": "staticAnalyzer",
+            "type": "command",
+            "command": "statusBarParam.get.staticAnalyzer",
+            "args": [
+                "Static Analyzers: ON",
+                "Static Analyzers: OFF",
+            ],
+        },
+        { // logLevel
+            "id": "logLevel",
+            "type": "command",
+            "command": "statusBarParam.get.logLevel",
+            "args": [
+                "Log Level: DATA",
+                "Log Level: TRACE",
+                "Log Level: DEBUG",
+                "Log Level: INFO",
+                "Log Level: WARN",
+                "Log Level: ERROR",
+                "Log Level: CRITICAL",
+                "Log Level: OFF",
+            ],
+        },
+    ],
 }
