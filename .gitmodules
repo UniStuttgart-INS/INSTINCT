@@ -16,3 +16,15 @@
 [submodule "lib/uartsensor"]
 	path = lib/uartsensor
 	url = ../uart-sensor.git
+[submodule "lib/imgui-node-editor"]
+	path = lib/imgui-node-editor
+	url = https://github.com/thedmd/imgui-node-editor
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = ../imgui.git
+[submodule "lib/ImGuiFileDialog"]
+	path = lib/ImGuiFileDialog
+	url = https://github.com/aiekick/ImGuiFileDialog.git
+[submodule "lib/implot"]
+	path = lib/implot
+	url = https://github.com/epezent/implot.git
