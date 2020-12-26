@@ -1,6 +1,6 @@
 /// @file StringUtil.hpp
 /// @brief Utility functions for working with std::strings
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-09-16
 
 #pragma once

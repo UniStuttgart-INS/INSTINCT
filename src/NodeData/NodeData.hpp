@@ -1,6 +1,6 @@
 /// @file NodeData.hpp
 /// @brief Abstract NodeData Class
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-04-16
 
 #pragma once

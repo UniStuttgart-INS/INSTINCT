@@ -1,6 +1,6 @@
 /// @file CallbackTimer.hpp
 /// @brief Starts a Periodic Timer
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-07-15
 
 #pragma once

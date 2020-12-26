@@ -1,6 +1,6 @@
 /// @file EmlidFile.hpp
 /// @brief File Reader for Emlid log files
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-06-23
 
 #pragma once

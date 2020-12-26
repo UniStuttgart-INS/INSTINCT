@@ -1,6 +1,6 @@
 /// @file Debug.hpp
 /// @brief Debug Utilities for the Project
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-05-12
 
 #pragma once

@@ -1,6 +1,6 @@
 /// @file InsTime.hpp
 /// @brief The class is responsible for all time-related tasks
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @author T. Lambertus (tomke-jantje.lambertus@nav.uni-stuttgart.de)
 /// @date 2020-12-02
 ///

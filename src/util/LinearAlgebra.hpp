@@ -1,6 +1,6 @@
 /// @file LinearAlgebra.hpp
 /// @brief Vector space operations
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-09-24
 /// @note To use Eigen directly again and ignore the frame checks, comment out the Matrix class and use this
 ///         constexpr auto StorageOptionsDefault = (Eigen::StorageOptions::ColMajor | Eigen::StorageOptions::AutoAlign);

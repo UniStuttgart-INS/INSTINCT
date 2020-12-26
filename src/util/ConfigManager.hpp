@@ -1,6 +1,6 @@
 /// @file ConfigManager.hpp
 /// @brief Config management for the Project
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-11
 
 #pragma once

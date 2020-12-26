@@ -1,6 +1,6 @@
 /// @file EmlidTypes.hpp
 /// @brief Type Definitions for Emlid messages for Emlid Reach M2 ER Protocol
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-06-23
 
 #pragma once

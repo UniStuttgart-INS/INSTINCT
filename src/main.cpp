@@ -11,7 +11,7 @@
 
 /// @file main.cpp
 /// @brief Main entry point for the program
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-12
 
 #include <iostream>

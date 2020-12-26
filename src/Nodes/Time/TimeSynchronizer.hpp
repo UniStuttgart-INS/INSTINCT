@@ -1,6 +1,6 @@
 /// @file TimeSynchronizer.hpp
 /// @brief Class to Synchronize Different Data Providers to the same Time base
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-04-21
 
 #pragma once

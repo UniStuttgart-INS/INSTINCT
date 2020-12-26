@@ -1,6 +1,6 @@
 /// @file Navio2Sensor.hpp
 /// @brief Vector Nav Sensors
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-07-13
 
 #pragma once

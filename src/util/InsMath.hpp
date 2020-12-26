@@ -1,6 +1,6 @@
 /// @file InsMath.hpp
 /// @brief
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-09-23
 
 #pragma once

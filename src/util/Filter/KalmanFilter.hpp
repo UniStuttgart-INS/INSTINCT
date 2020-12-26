@@ -1,6 +1,6 @@
 /// @file KalmanFilter.hpp
 /// @brief Generalized Kalman Filter class
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-10-15
 
 #pragma once

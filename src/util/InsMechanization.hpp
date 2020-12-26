@@ -1,6 +1,6 @@
 /// @file InsMechanization.hpp
 /// @brief Inertial Navigation Mechanization Functions
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-09-02
 
 #pragma once

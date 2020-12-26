@@ -1,6 +1,6 @@
 /// @file KalmanFilter.hpp
 /// @brief Class providing different types of Kalman Filters
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-05-18
 
 #pragma once

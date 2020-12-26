@@ -1,6 +1,6 @@
 /// @file State.hpp
 /// @brief State Information Node
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-08-21
 
 #pragma once

@@ -1,6 +1,6 @@
 /// @file Logger.hpp
 /// @brief Utility class for logging to console and file
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-05-08
 
 #pragma once

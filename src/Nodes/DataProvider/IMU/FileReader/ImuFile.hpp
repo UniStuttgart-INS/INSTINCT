@@ -1,6 +1,6 @@
 /// @file ImuFile.hpp
 /// @brief File Reader for Imu log files
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-16
 
 #pragma once

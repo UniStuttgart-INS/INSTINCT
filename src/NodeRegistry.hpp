@@ -1,6 +1,6 @@
 /// @file NodeRegistry.hpp
 /// @brief Utility class which specifies available nodes
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-05-14
 
 #pragma once

@@ -1,6 +1,6 @@
 /// @file InsTransformations.hpp
 /// @brief Transformation collection
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-09-08
 ///
 /// Coordinate Frames:

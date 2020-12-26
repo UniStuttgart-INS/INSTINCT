@@ -1,6 +1,6 @@
 /// @file KvhUtilities.hpp
 /// @brief Helper Functions to work with Kvh Sensors
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-07-28
 
 #pragma once

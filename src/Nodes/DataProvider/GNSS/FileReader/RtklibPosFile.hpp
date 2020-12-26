@@ -1,6 +1,6 @@
 /// @file RtklibPosFile.hpp
 /// @brief File Reader for RTKLIB Pos files
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-06-02
 
 #pragma once

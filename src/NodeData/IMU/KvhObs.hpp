@@ -1,6 +1,6 @@
 /// @file KvhObs.hpp
 /// @brief Data storage class for one KVH Imu observation
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-06-30
 
 #pragma once
