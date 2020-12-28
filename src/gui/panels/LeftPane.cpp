@@ -118,10 +118,10 @@ void NAV::gui::panels::ShowLeftPane(float paneWidth)
 
                 ed::NavigateToSelection();
             }
-            // if (ImGui::IsItemHovered() && !node.state.empty())
-            // {
-            //     ImGui::SetTooltip("State: %s", node.state.c_str());
-            // }
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::SetTooltip("Type: %s", node->type().c_str());
+            }
 
             auto id = std::string("(") + std::to_string(reinterpret_cast<uintptr_t>(node->id.AsPointer())) + ")";
             auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);

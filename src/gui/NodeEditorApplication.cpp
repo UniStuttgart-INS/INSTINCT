@@ -96,13 +96,13 @@ void NAV::gui::NodeEditorApplication::OnStart()
 
     // Stops the Editor from creating a log file, as we do it ourselves
     config.SaveSettings = [](const char* /*data*/, size_t /*size*/,
-                             ed::SaveReasonFlags /*reason*/, void* /*userPointer*/) -> bool {
+                             ed::SaveReasonFlags /*reason*/, void * /*userPointer*/) -> bool {
         return false;
     };
 
     // Trigger the changed bar on the node overview list when a node is moved
     config.SaveNodeSettings = [](ed::NodeId nodeId, const char* /*data*/, size_t /*size*/,
-                                 ed::SaveReasonFlags /*reason*/, void* /*userPointer*/) -> bool {
+                                 ed::SaveReasonFlags /*reason*/, void * /*userPointer*/) -> bool {
         // auto* self = static_cast<NodeEditorApplication*>(userPointer);
 
         auto* node = nm::FindNode(nodeId);
@@ -157,6 +157,18 @@ bool NAV::gui::NodeEditorApplication::OnQuitRequest()
 void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 {
     shortcutsEnabled = false;
+
+    auto& io = ImGui::GetIO();
+    if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
+    {
+        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+        {
+            globalAction = GlobalActions::None;
+            shortcutsEnabled = true;
+            return;
+        }
+    }
+
     ImGui::OpenPopup("Quit with unsaved changes?");
     if (ImGui::BeginPopupModal("Quit with unsaved changes?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -216,6 +228,18 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
     igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "");
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
+    auto& io = ImGui::GetIO();
+    if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
+    {
+        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+        {
+            globalAction = GlobalActions::None;
+            shortcutsEnabled = true;
+            igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
+            return;
+        }
+    }
+
     if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow"))
     {
         if (igfd::ImGuiFileDialog::Instance()->IsOk)
@@ -233,6 +257,18 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 {
     shortcutsEnabled = false;
+
+    auto& io = ImGui::GetIO();
+    if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
+    {
+        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+        {
+            globalAction = GlobalActions::None;
+            shortcutsEnabled = true;
+            return;
+        }
+    }
+
     ImGui::OpenPopup("Clear Nodes and discard unsaved changes?");
     if (ImGui::BeginPopupModal("Clear Nodes and discard unsaved changes?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -302,6 +338,20 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
     static bool loadSuccessful = true;
+
+    auto& io = ImGui::GetIO();
+    if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
+    {
+        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+        {
+            globalAction = GlobalActions::None;
+            shortcutsEnabled = true;
+            loadSuccessful = true;
+            igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
+            return;
+        }
+    }
+
     if (igfd::ImGuiFileDialog::Instance()->FileDialog("Load Flow"))
     {
         if (igfd::ImGuiFileDialog::Instance()->IsOk)
@@ -806,7 +856,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         if (node)
         {
             ImGui::Text("ID: %p", node->id.AsPointer());
-            ImGui::Text("Class: %s", node->type().c_str());
+            ImGui::Text("Type: %s", node->type().c_str());
             ImGui::Text("Kind: %s", std::string(node->kind).c_str());
             ImGui::Text("Inputs: %d", static_cast<int>(node->inputPins.size()));
             ImGui::Text("Outputs: %d", static_cast<int>(node->outputPins.size()));

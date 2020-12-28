@@ -101,13 +101,19 @@ class Node
     /// @brief Move assignment operator
     Node& operator=(Node&&) = delete;
 
+    /// @brief String representation of the Class Type
     [[nodiscard]] virtual std::string type() const = 0;
 
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set hasConfig to true
+    virtual void config() = 0;
+
+    /// @brief Saves the node into a json object
     [[nodiscard]] virtual json save() const = 0;
 
-    virtual void restore(json const& /*j*/) = 0;
-
-    virtual void config() = 0;
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    virtual void restore(const json& j) = 0;
 
     template<typename T>
     T* getInputValue(size_t portIndex)

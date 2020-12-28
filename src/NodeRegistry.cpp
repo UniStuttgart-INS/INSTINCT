@@ -84,12 +84,16 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType,
     return false;
 }
 
+#include "Nodes/GroupBox.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 
 void NAV::NodeRegistry::registerNodeTypes()
 {
     LOG_TRACE("called");
 
+    // GroupBox
+    registerNodeType<GroupBox>();
+    // Data Provider
     registerNodeType<VectorNavFile>();
 }
 
