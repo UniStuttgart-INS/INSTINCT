@@ -42,51 +42,6 @@ namespace nm = NAV::NodeManager;
 
 ax::NodeEditor::EditorContext* m_Editor = nullptr;
 
-// Node* NodeEditorApplication::SpawnInputActionNode()
-// {
-//     Node* node = nm::CreateNode("Title", ImColor(255, 128, 128)); // Red
-//     // nm::CreateNode(G"");                                       //Gray
-//     // nm::CreateNode("", ImColor(128, 195, 248));                //Blue
-//     // nm::CreateNode("", ImColor(255, 128, 64));                 // Orange
-//     nm::CreatePin(node, Pin::Kind::Output, "Delegate", Pin::Type::Delegate);
-//     nm::CreatePin(node, Pin::Kind::Output, "Flow", Pin::Type::Flow);
-//     nm::CreatePin(node, Pin::Kind::Output, "Bool", Pin::Type::Bool);
-//     nm::CreatePin(node, Pin::Kind::Output, "Int", Pin::Type::Int);
-//     nm::CreatePin(node, Pin::Kind::Output, "Float", Pin::Type::Float);
-//     nm::CreatePin(node, Pin::Kind::Output, "String", Pin::Type::String);
-//     nm::CreatePin(node, Pin::Kind::Output, "Object", Pin::Type::Object);
-//     nm::CreatePin(node, Pin::Kind::Output, "Function", Pin::Type::Function);
-
-//     nm::CreatePin(node, Pin::Kind::Input, "Flow", Pin::Type::Flow);
-//     nm::CreatePin(node, Pin::Kind::Input, "Bool", Pin::Type::Bool);
-//     nm::CreatePin(node, Pin::Kind::Input, "Int", Pin::Type::Int);
-//     nm::CreatePin(node, Pin::Kind::Input, "Float", Pin::Type::Float);
-//     nm::CreatePin(node, Pin::Kind::Input, "String", Pin::Type::String);
-//     nm::CreatePin(node, Pin::Kind::Input, "Object", Pin::Type::Object);
-//     nm::CreatePin(node, Pin::Kind::Input, "Function", Pin::Type::Function);
-//     nm::CreatePin(node, Pin::Kind::Input, "Delegate", Pin::Type::Delegate);
-
-//     return node;
-// }
-
-// Node* NodeEditorApplication::SpawnLessNode()
-// {
-//     Node* node = nm::CreateNode("<", ImColor(128, 195, 248), Node::Type::Simple);
-//     nm::CreatePin(node, Pin::Kind::Input, "", Pin::Type::Float);
-//     nm::CreatePin(node, Pin::Kind::Input, "", Pin::Type::Float);
-//     nm::CreatePin(node, Pin::Kind::Output, "", Pin::Type::Float);
-
-//     return node;
-// }
-
-// Node* NodeEditorApplication::SpawnGroupBox()
-// {
-//     Node* node = nm::CreateNode("Test GroupBox", ImColor(255, 255, 255), Node::Type::GroupBox);
-//     node->size = ImVec2(400, 300);
-
-//     return node;
-// }
-
 void NAV::gui::NodeEditorApplication::OnStart()
 {
     ed::Config config;
