@@ -112,7 +112,7 @@ bool NAV::gui::NodeEditorApplication::OnQuitRequest()
 
 void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 {
-    shortcutsEnabled = false;
+    ax::NodeEditor::EnableShortcuts(false);
 
     auto& io = ImGui::GetIO();
     if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
@@ -120,7 +120,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
             globalAction = GlobalActions::None;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             return;
         }
     }
@@ -171,7 +171,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         if (ImGui::Button("Cancel"))
         {
             globalAction = GlobalActions::None;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
@@ -180,7 +180,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
-    shortcutsEnabled = false;
+    ax::NodeEditor::EnableShortcuts(false);
     igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "");
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
@@ -190,7 +190,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
             globalAction = GlobalActions::None;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
             return;
         }
@@ -205,14 +205,14 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         }
 
         globalAction = GlobalActions::None;
-        shortcutsEnabled = true;
+        ax::NodeEditor::EnableShortcuts(true);
         igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
     }
 }
 
 void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 {
-    shortcutsEnabled = false;
+    ax::NodeEditor::EnableShortcuts(false);
 
     auto& io = ImGui::GetIO();
     if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
@@ -220,7 +220,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
             globalAction = GlobalActions::None;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             return;
         }
     }
@@ -243,7 +243,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
                 nm::DeleteAllLinks();
                 nm::DeleteAllNodes();
                 flow::DiscardChanges();
-                shortcutsEnabled = true;
+                ax::NodeEditor::EnableShortcuts(true);
                 ImGui::CloseCurrentPopup();
             }
         }
@@ -263,7 +263,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 
             globalAction = GlobalActions::None;
 
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
@@ -273,14 +273,14 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             nm::DeleteAllLinks();
             nm::DeleteAllNodes();
             flow::DiscardChanges();
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
         if (ImGui::Button("Cancel"))
         {
             globalAction = GlobalActions::None;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
@@ -289,7 +289,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 
 void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 {
-    shortcutsEnabled = false;
+    ax::NodeEditor::EnableShortcuts(false);
     igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "");
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
@@ -301,7 +301,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
             globalAction = GlobalActions::None;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             loadSuccessful = true;
             igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
             return;
@@ -316,7 +316,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
             if (loadSuccessful)
             {
                 globalAction = GlobalActions::None;
-                shortcutsEnabled = true;
+                ax::NodeEditor::EnableShortcuts(true);
                 frameCountNavigate = ImGui::GetFrameCount();
                 igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
             }
@@ -324,7 +324,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
         else
         {
             globalAction = GlobalActions::None;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
         }
     }
@@ -347,7 +347,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 
 void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
 {
-    shortcutsEnabled = false;
+    ed::EnableShortcuts(false);
     ImGui::OpenPopup("Rename Group Box");
     if (ImGui::BeginPopupModal("Rename Group Box", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -368,7 +368,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
                 }
                 nameBackup.clear();
                 renameNode = nullptr;
-                shortcutsEnabled = true;
+                ax::NodeEditor::EnableShortcuts(true);
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
                 return;
@@ -379,7 +379,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
         {
             nameBackup.clear();
             renameNode = nullptr;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
@@ -393,7 +393,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
         {
             nameBackup.clear();
             renameNode = nullptr;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
@@ -405,7 +405,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
             }
             nameBackup.clear();
             renameNode = nullptr;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
@@ -443,7 +443,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     gui::UpdateTouch(deltaTime);
 
-    if (shortcutsEnabled)
+    if (ed::AreShortcutsEnabled())
     {
         gui::checkShortcuts(globalAction);
     }
@@ -958,7 +958,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     if (ImGui::BeginPopup("Create New Node"))
     {
-        shortcutsEnabled = false;
+        ax::NodeEditor::EnableShortcuts(false);
         auto newNodePostion = openPopupPosition;
 
         static ImGuiTextFilter filter;
@@ -980,7 +980,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 filter.Clear();
                 node = constructor();
                 nm::AddNode(node);
-                shortcutsEnabled = true;
+                ax::NodeEditor::EnableShortcuts(true);
             }
         }
 
@@ -1019,7 +1019,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         if (showBackgroundContextMenu)
         {
             showBackgroundContextMenu = false;
-            shortcutsEnabled = true;
+            ax::NodeEditor::EnableShortcuts(true);
         }
         createNewNode = false;
     }
@@ -1032,13 +1032,25 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             if (!ImGui::Begin(fmt::format("{} ({})", node->type(), reinterpret_cast<uintptr_t>(node->id.AsPointer())).c_str(), &(node->showConfig),
                               ImGuiWindowFlags_AlwaysAutoResize))
             {
+                if (node->nodeDisabledShortcuts)
+                {
+                    node->nodeDisabledShortcuts = false;
+                    ax::NodeEditor::EnableShortcuts(true);
+                }
                 ImGui::End();
                 break;
             }
 
+            ax::NodeEditor::EnableShortcuts(false);
+            node->nodeDisabledShortcuts = true;
             node->config();
 
             ImGui::End();
+        }
+        else if (node->nodeDisabledShortcuts)
+        {
+            node->nodeDisabledShortcuts = false;
+            ax::NodeEditor::EnableShortcuts(true);
         }
     }
     ed::Resume();

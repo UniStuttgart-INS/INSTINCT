@@ -176,10 +176,13 @@ class Node
     ImColor color{ 255, 255, 255 };
     /// Size of the node in pixels
     ImVec2 size{ 0, 0 };
-    /// Flag if the config window should be shown
-    bool hasConfig = false;
     /// Flag if the config window is shown
     bool showConfig = false;
+
+    /// Flag if the config window should be shown
+    bool hasConfig = false;
+    /// Node disabled Shortcuts
+    bool nodeDisabledShortcuts = false;
 };
 
 } // namespace NAV

@@ -61,8 +61,6 @@ class NodeEditorApplication : public Application
 
     GlobalActions globalAction = GlobalActions::None;
 
-    bool shortcutsEnabled = true;
-
     int frameCountNavigate = 0;
 };
 
