@@ -96,13 +96,13 @@ void NAV::gui::NodeEditorApplication::OnStart()
 
     // Stops the Editor from creating a log file, as we do it ourselves
     config.SaveSettings = [](const char* /*data*/, size_t /*size*/,
-                             ed::SaveReasonFlags /*reason*/, void * /*userPointer*/) -> bool {
+                             ed::SaveReasonFlags /*reason*/, void* /*userPointer*/) -> bool {
         return false;
     };
 
     // Trigger the changed bar on the node overview list when a node is moved
     config.SaveNodeSettings = [](ed::NodeId nodeId, const char* /*data*/, size_t /*size*/,
-                                 ed::SaveReasonFlags /*reason*/, void * /*userPointer*/) -> bool {
+                                 ed::SaveReasonFlags /*reason*/, void* /*userPointer*/) -> bool {
         // auto* self = static_cast<NodeEditorApplication*>(userPointer);
 
         auto* node = nm::FindNode(nodeId);
@@ -485,6 +485,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 builder.Input(input.id);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                 input.drawPinIcon(nm::IsPinLinked(input.id), static_cast<int>(alpha * 255));
+                if (!input.dataIdentifier.empty() && ImGui::IsItemHovered())
+                {
+                    ed::Suspend();
+                    ImGui::SetTooltip("%s", std::string(input.dataIdentifier).c_str());
+                    ed::Resume();
+                }
                 ImGui::Spring(0);
                 if (!input.name.empty())
                 {
@@ -526,6 +532,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 }
                 ImGui::Spring(0);
                 output.drawPinIcon(nm::IsPinLinked(output.id), static_cast<int>(alpha * 255));
+                if (!output.dataIdentifier.empty() && ImGui::IsItemHovered())
+                {
+                    ed::Suspend();
+                    ImGui::SetTooltip("%s", std::string(output.dataIdentifier).c_str());
+                    ed::Resume();
+                }
                 ImGui::PopStyleVar();
                 util::BlueprintNodeBuilder::EndOutput();
             }

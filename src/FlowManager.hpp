@@ -24,6 +24,6 @@ void DiscardChanges();
 
 std::string GetCurrentFilename();
 
-void SetCurrentFilename(std::string newFilename);
+void SetCurrentFilename(const std::string& newFilename);
 
 } // namespace NAV::flow

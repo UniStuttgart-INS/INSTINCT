@@ -34,7 +34,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cmake -Bbuild/${input:buildType} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:staticAnalyzer}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:staticAnalyzer}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                "cmake -Bbuild/${input:buildType} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
             "options": {
                 "env": {
@@ -54,7 +54,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:staticAnalyzer}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:staticAnalyzer}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
             "options": {
                 "env": {
@@ -357,13 +357,22 @@
                 "Release",
             ],
         },
-        { // staticAnalyzer
-            "id": "staticAnalyzer",
+        { // clang-tidy
+            "id": "clangTidy",
             "type": "command",
-            "command": "statusBarParam.get.staticAnalyzer",
+            "command": "statusBarParam.get.clangTidy",
             "args": [
-                "Static Analyzers: ON",
-                "Static Analyzers: OFF",
+                "clang-tidy: ON",
+                "clang-tidy: OFF",
+            ],
+        },
+        { // cppcheck
+            "id": "cppcheck",
+            "type": "command",
+            "command": "statusBarParam.get.cppcheck",
+            "args": [
+                "cppcheck: ON",
+                "cppcheck: OFF",
             ],
         },
         { // logLevel

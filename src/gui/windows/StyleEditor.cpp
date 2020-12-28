@@ -75,7 +75,7 @@ void NAV::gui::windows::ShowStyleEditor(bool* show /* = nullptr*/)
             continue;
         }
 
-        ImGui::ColorEdit4(name, &editorStyle.Colors[i].x, edit_mode);
+        ImGui::ColorEdit4(name, &editorStyle.Colors[i].x, edit_mode); // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
     }
     ImGui::PopItemWidth();
 

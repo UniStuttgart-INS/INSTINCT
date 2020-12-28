@@ -24,6 +24,7 @@ class Pin
         /// @brief Type of the data on the Pin
         enum Value : uint8_t
         {
+            None,     ///< Not initialized
             Flow,     ///< NodeData Trigger
             Bool,     ///< Boolean
             Int,      ///< Integer Number
@@ -37,7 +38,7 @@ class Pin
 
         Type() = default;
 
-        //NOLINTNEXTLINE(hicpp-explicit-conversions)
+        //NOLINTNEXTLINE(hicpp-explicit-conversions, google-explicit-constructor)
         constexpr Type(Value type)
             : value(type) {}
 
@@ -96,6 +97,8 @@ class Pin
         {
             switch (value)
             {
+            case Type::None:
+                return "None";
             case Type::Flow:
                 return "Flow";
             case Type::Bool:
@@ -118,7 +121,7 @@ class Pin
         }
 
       private:
-        Value value;
+        Value value = Value::None;
     };
 
     /// Kind of the Pin (Input/Output)
@@ -127,13 +130,14 @@ class Pin
         /// @brief Kind of the Pin (Input/Output)
         enum Value : uint8_t
         {
+            None,
             Output,
             Input,
         };
 
         Kind() = default;
 
-        //NOLINTNEXTLINE(hicpp-explicit-conversions)
+        //NOLINTNEXTLINE(hicpp-explicit-conversions, google-explicit-constructor)
         constexpr Kind(Value kind)
             : value(kind) {}
 
@@ -164,6 +168,8 @@ class Pin
         {
             switch (value)
             {
+            case Kind::None:
+                return "None";
             case Kind::Input:
                 return "Input";
             case Kind::Output:
@@ -172,7 +178,7 @@ class Pin
         }
 
       private:
-        Value value;
+        Value value = Value::None;
     };
 
     using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*>;
@@ -218,9 +224,9 @@ class Pin
     /// Name of the Pin
     std::string name;
     /// Type of the Pin
-    Type type;
+    Type type = Type::None;
     /// Kind of the Pin (Input/Output)
-    Kind kind;
+    Kind kind = Kind::None;
     /// Reference to the parent node
     Node* parentNode = nullptr;
     /// Pointer to data which is transferred over this pin

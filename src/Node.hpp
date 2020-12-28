@@ -34,7 +34,7 @@ class Node
 
         Kind() = default;
 
-        //NOLINTNEXTLINE(hicpp-explicit-conversions)
+        //NOLINTNEXTLINE(hicpp-explicit-conversions, google-explicit-constructor)
         constexpr Kind(Value kind)
             : value(kind) {}
 
@@ -140,14 +140,14 @@ class Node
     {
         if constexpr (std::is_same_v<T, bool> || std::is_same_v<T, int> || std::is_same_v<T, float> || std::is_same_v<T, double> || std::is_same_v<T, std::string>)
         {
-            if (auto pval = std::get_if<T*>(&inputPins.at(portIndex).data))
+            if (const auto* pval = std::get_if<T*>(&inputPins.at(portIndex).data))
             {
                 return *pval;
             }
         }
         else // constexpr
         {
-            if (auto pval = std::get_if<void*>(&inputPins.at(portIndex).data))
+            if (const auto* pval = std::get_if<void*>(&inputPins.at(portIndex).data))
             {
                 return static_cast<T*>(*pval);
             }

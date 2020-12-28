@@ -9,10 +9,7 @@ if(ENABLE_CPPCHECK)
     set(CMAKE_CXX_CPPCHECK
         ${CPPCHECK}
         --error-exitcode=1
-        --suppress=missingInclude
-        --suppress=unmatchedSuppression
-        --suppress=useStlAlgorithm
-        --suppress=noExplicitConstructor
+        --suppressions-list=${CMAKE_CURRENT_SOURCE_DIR}/.cppcheck-suppressions-list
         --enable=warning
         --enable=style
         --enable=performance

@@ -293,7 +293,7 @@ bool NAV::NodeManager::IsPinLinked(ed::PinId id)
         return false;
     }
 
-    for (auto& link : m_links)
+    for (const auto& link : m_links)
     {
         if (link.startPinId == id || link.endPinId == id)
         {

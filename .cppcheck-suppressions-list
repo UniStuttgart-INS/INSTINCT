@@ -1,0 +1,5 @@
+// Global disables
+missingInclude
+unmatchedSuppression
+useStlAlgorithm
+noExplicitConstructor

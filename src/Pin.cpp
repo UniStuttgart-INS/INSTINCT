@@ -36,6 +36,8 @@ ImColor NAV::Pin::getIconColor() const
 {
     switch (Type::Value(type))
     {
+    case Type::None:
+        return ImColor(0, 0, 0);
     case Type::Flow:
         return ImColor(255, 255, 255);
     case Type::Bool:
@@ -66,6 +68,9 @@ void NAV::Pin::drawPinIcon(bool connected, int alpha) const
     color.Value.w = static_cast<float>(alpha) / 255.0F;
     switch (Type::Value(type))
     {
+    case Type::None:
+        iconType = PinIcon::Type::Grid;
+        break;
     case Type::Flow:
         iconType = PinIcon::Type::Flow;
         break;

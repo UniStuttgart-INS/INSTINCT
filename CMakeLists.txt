@@ -126,6 +126,8 @@ add_library(
   "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialog.h"
   "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialogConfig.h")
 include_directories(SYSTEM lib/ImGuiFileDialog/ImGuiFileDialog)
+set_target_properties(ImGuiFileDialog PROPERTIES CXX_CLANG_TIDY "")
+set_target_properties(ImGuiFileDialog PROPERTIES CXX_CPPCHECK "")
 
 # ------------------------------------------------ implot ------------------------------------------------ */
 

@@ -137,6 +137,8 @@ class Matrix : public Eigen::Matrix<_Scalar, _Rows, _Cols>
 
         _eig += rhs_eig;
 
+        *this = Matrix<_System_To, _System_From, _Scalar, _Rows, _Cols>(_eig);
+
         return *this;
     }
 
@@ -149,6 +151,8 @@ class Matrix : public Eigen::Matrix<_Scalar, _Rows, _Cols>
         const Eigen::Matrix<rhs_Scalar, rhs_Rows, rhs_Cols>& rhs_eig = rhs;
 
         _eig -= rhs_eig;
+
+        *this = Matrix<_System_To, _System_From, _Scalar, _Rows, _Cols>(_eig);
 
         return *this;
     }

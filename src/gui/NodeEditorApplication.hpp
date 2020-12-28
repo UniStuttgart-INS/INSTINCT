@@ -11,8 +11,6 @@
 
 #include "gui/GlobalActions.hpp"
 
-class Node;
-
 namespace NAV::gui
 {
 class NodeEditorApplication : public Application

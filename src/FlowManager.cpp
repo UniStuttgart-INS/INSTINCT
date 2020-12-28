@@ -293,7 +293,7 @@ std::string NAV::flow::GetCurrentFilename()
     return currentFilename;
 }
 
-void NAV::flow::SetCurrentFilename(std::string newFilename)
+void NAV::flow::SetCurrentFilename(const std::string& newFilename)
 {
     currentFilename = newFilename;
 }
