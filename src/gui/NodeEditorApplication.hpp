@@ -11,7 +11,11 @@
 
 #include "gui/GlobalActions.hpp"
 
-namespace NAV::gui
+namespace NAV
+{
+class Node;
+
+namespace gui
 {
 class NodeEditorApplication : public Application
 {
@@ -50,6 +54,7 @@ class NodeEditorApplication : public Application
     void ShowSaveAsRequested();
     void ShowClearNodesRequested();
     void ShowLoadRequested();
+    void ShowRenameNodeRequest(Node*& renameNode);
 
   private:
     ImTextureID m_HeaderBackground = nullptr;
@@ -61,4 +66,5 @@ class NodeEditorApplication : public Application
     int frameCountNavigate = 0;
 };
 
-} // namespace NAV::gui
+} // namespace gui
+} // namespace NAV

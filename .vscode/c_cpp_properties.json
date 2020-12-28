@@ -6,6 +6,7 @@
                 "${workspaceFolder}/src/**",
                 "${workspaceFolder}/lib/gcem/include",
                 "${workspaceFolder}/lib/imgui",
+                "${workspaceFolder}/lib/imgui/misc/cpp",
                 "${workspaceFolder}/lib/imgui-node-editor",
                 "${workspaceFolder}/lib/ImGuiFileDialog/ImGuiFileDialog",
                 "${workspaceFolder}/lib/implot",

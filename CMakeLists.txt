@@ -98,9 +98,11 @@ run_conan()
 file(
   GLOB _imgui_Sources
   LIST_DIRECTORIES OFF
-  "${CMAKE_SOURCE_DIR}/lib/imgui/*.cpp" "${CMAKE_SOURCE_DIR}/lib/imgui/*.h")
+  "${CMAKE_SOURCE_DIR}/lib/imgui/*.cpp" "${CMAKE_SOURCE_DIR}/lib/imgui/*.h"
+  "${CMAKE_SOURCE_DIR}/lib/imgui/misc/cpp/*.cpp" "${CMAKE_SOURCE_DIR}/lib/imgui/misc/cpp/*.h")
 add_library(imgui ${_imgui_Sources})
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/imgui")
+include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/imgui/misc/cpp")
 set_target_properties(imgui PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(imgui PROPERTIES CXX_CPPCHECK "")
 

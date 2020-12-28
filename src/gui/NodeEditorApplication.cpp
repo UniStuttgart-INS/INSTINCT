@@ -5,6 +5,7 @@ namespace ed = ax::NodeEditor;
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
+#include <imgui_stdlib.h>
 
 #include "ImGuiFileDialog.h"
 
@@ -338,6 +339,73 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
         if (ImGui::Button("Close"))
         {
             loadSuccessful = true;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+}
+
+void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
+{
+    shortcutsEnabled = false;
+    ImGui::OpenPopup("Rename Group Box");
+    if (ImGui::BeginPopupModal("Rename Group Box", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        static std::string nameBackup = renameNode->name;
+        if (nameBackup.empty())
+        {
+            nameBackup = renameNode->name;
+        }
+
+        auto& io = ImGui::GetIO();
+        if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
+        {
+            if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+            {
+                if (renameNode)
+                {
+                    renameNode->name = nameBackup;
+                }
+                nameBackup.clear();
+                renameNode = nullptr;
+                shortcutsEnabled = true;
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                return;
+            }
+        }
+
+        if (ImGui::InputTextWithHint("", "Enter the title here", &renameNode->name, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            nameBackup.clear();
+            renameNode = nullptr;
+            shortcutsEnabled = true;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Hold SHIFT or use mouse to select text.\n"
+                                 "CTRL+Left/Right to word jump.\n"
+                                 "CTRL+A or double-click to select all.\n"
+                                 "CTRL+X,CTRL+C,CTRL+V clipboard.\n"
+                                 "CTRL+Z,CTRL+Y undo/redo.\n"
+                                 "ESCAPE to revert.");
+        if (ImGui::Button("Accept"))
+        {
+            nameBackup.clear();
+            renameNode = nullptr;
+            shortcutsEnabled = true;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel"))
+        {
+            if (renameNode)
+            {
+                renameNode->name = nameBackup;
+            }
+            nameBackup.clear();
+            renameNode = nullptr;
+            shortcutsEnabled = true;
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
@@ -835,52 +903,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     if (renameNode) // Popup for renaming a node
     {
-        shortcutsEnabled = false;
-        ImGui::OpenPopup("Rename Group Box");
-        if (ImGui::BeginPopupModal("Rename Group Box", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            static std::string nameBackup = renameNode->name;
-            if (nameBackup.empty())
-            {
-                nameBackup = renameNode->name;
-            }
-            renameNode->name.resize(strlen(renameNode->name.c_str()));
-            if (ImGui::InputTextWithHint("", "Enter the title here", renameNode->name.data(), renameNode->name.capacity(),
-                                         ImGuiInputTextFlags_EnterReturnsTrue))
-            {
-                nameBackup.clear();
-                renameNode = nullptr;
-                shortcutsEnabled = true;
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SameLine();
-            gui::widgets::HelpMarker("Hold SHIFT or use mouse to select text.\n"
-                                     "CTRL+Left/Right to word jump.\n"
-                                     "CTRL+A or double-click to select all.\n"
-                                     "CTRL+X,CTRL+C,CTRL+V clipboard.\n"
-                                     "CTRL+Z,CTRL+Y undo/redo.\n"
-                                     "ESCAPE to revert.");
-            if (ImGui::Button("Accept"))
-            {
-                nameBackup.clear();
-                renameNode = nullptr;
-                shortcutsEnabled = true;
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Cancel"))
-            {
-                if (renameNode)
-                {
-                    renameNode->name = nameBackup;
-                }
-                nameBackup.clear();
-                renameNode = nullptr;
-                shortcutsEnabled = true;
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::EndPopup();
-        }
+        ShowRenameNodeRequest(renameNode);
     }
 
     if (ImGui::BeginPopup("Pin Context Menu"))
