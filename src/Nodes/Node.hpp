@@ -156,6 +156,20 @@ class Node
         return nullptr;
     }
 
+    /// @brief Calls all registered callbacks on the specified output port
+    /// @param[in] portIndex Output port where to call the callbacks
+    /// @param[in] data The data to pass to the callback targets
+    void invokeCallbacks(size_t portIndex, const std::shared_ptr<NodeData>& data)
+    {
+        if (callbacksEnabled)
+        {
+            for (auto& [node, callback] : outputPins.at(portIndex).callbacks)
+            {
+                std::invoke(callback, node, data);
+            }
+        }
+    }
+
     /// Unique Id of the Node
     ax::NodeEditor::NodeId id = 0;
     /// Kind of the Node
@@ -177,6 +191,9 @@ class Node
     bool hasConfig = false;
     /// Node disabled Shortcuts
     bool nodeDisabledShortcuts = false;
+
+    /// Enables the callbacks
+    bool callbacksEnabled = false;
 };
 
 } // namespace NAV

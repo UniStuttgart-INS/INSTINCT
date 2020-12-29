@@ -3,7 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
-                "~/.conan/data/**",
+                // "~/.conan/data/**",
                 "${workspaceFolder}/src/**",
                 "${workspaceFolder}/lib/gcem/include",
                 "${workspaceFolder}/lib/imgui",
@@ -20,7 +20,7 @@
                 "LOG_LEVEL=LOG_LEVEL_DATA",
             ],
             "cppStandard": "c++20",
-            "compilerPath": "/usr/bin/clang++",
+            "compilerPath": "/usr/bin/g++",
             "compileCommands": "${workspaceFolder}/compile_commands.json"
         }
     ],

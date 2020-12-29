@@ -10,10 +10,13 @@
 #include <string>
 #include <string_view>
 #include <variant>
+#include <vector>
+#include <memory>
 
 namespace NAV
 {
 class Node;
+class NodeData;
 
 class Pin
 {
@@ -181,7 +184,7 @@ class Pin
         Value value = Value::None;
     };
 
-    using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*>;
+    using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*, void (Node::*)(std::shared_ptr<NodeData>)>;
 
     /// @brief Default constructor
     Pin() = default;
@@ -231,6 +234,8 @@ class Pin
     Node* parentNode = nullptr;
     /// Pointer to data which is transferred over this pin
     PinData data = static_cast<void*>(nullptr);
+    /// Callback List
+    std::vector<std::pair<Node*, void (Node::*)(std::shared_ptr<NodeData>)>> callbacks;
     /// Unique name which is used for data flows
     std::string_view dataIdentifier;
 
