@@ -63,13 +63,13 @@ void DeleteAllLinks();
 Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::string_view& dataIdentifier = std::string_view(""), Pin::PinData data = static_cast<void*>(nullptr));
 
 /// @brief Create an Input Pin object
+/// @tparam T Node Class where the function is member of
+/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin
 /// @param[in] pinType Type of the pin
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
 /// @param[in] callback Callback to register with the pin
-/// @tparam T Node Class where the function is member of
-/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
@@ -86,6 +86,22 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 /// @param[in] data Pointer to data which is represented by the pin
 /// @return Pointer to the created pin
 Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string_view& dataIdentifier = std::string_view(""), Pin::PinData data = static_cast<void*>(nullptr));
+
+/// @brief Create an Output Pin object
+/// @tparam T Class where the function is member of
+/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
+/// @param[in] node Node to register the Pin for
+/// @param[in] name Display name of the Pin
+/// @param[in] pinType Type of the pin
+/// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+/// @param[in] callback Callback to register with the pin
+/// @return Pointer to the created pin
+template<typename T,
+         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string_view& dataIdentifier = std::string_view(""), std::shared_ptr<NAV::NodeData> (T::*callback)(bool) = nullptr)
+{
+    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(callback)));
+}
 
 /// @brief Finds the Node for the NodeId
 /// @param[in] id Unique Id of the Node to search for

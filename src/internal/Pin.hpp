@@ -184,7 +184,9 @@ class Pin
         Value value = Value::None;
     };
 
-    using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*, void (Node::*)(std::shared_ptr<NodeData>)>;
+    using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*,
+                                 void (Node::*)(std::shared_ptr<NodeData>),
+                                 std::shared_ptr<NAV::NodeData> (Node::*)(bool)>;
 
     /// @brief Default constructor
     Pin() = default;
