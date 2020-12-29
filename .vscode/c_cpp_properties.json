@@ -3,6 +3,7 @@
         {
             "name": "Linux",
             "includePath": [
+                "~/.conan/data/**",
                 "${workspaceFolder}/src/**",
                 "${workspaceFolder}/lib/gcem/include",
                 "${workspaceFolder}/lib/imgui",

@@ -7,10 +7,12 @@
 
 #include <string>
 #include <vector>
-#include <map>
 #include <fstream>
 
 #include "util/InsTime.hpp"
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 namespace NAV
 {
@@ -21,12 +23,9 @@ class FileReader
     /// File Type Enumeration
     enum FileType
     {
-        /// Not specified
-        NONE,
-        /// Binary data
-        BINARY,
-        /// Ascii text data
-        ASCII
+        NONE,   ///< Not specified
+        BINARY, ///< Binary data
+        ASCII,  ///< Ascii text data
     };
 
     /// @brief Copy constructor
@@ -39,18 +38,23 @@ class FileReader
     FileReader& operator=(FileReader&&) = delete;
 
   protected:
-    /// @brief Constructor
-    /// @param[in] name Name of the Node
-    /// @param[in] options Program options string map
-    explicit FileReader(std::string name, const std::map<std::string, std::string>& options);
-
     /// @brief Default constructor
     FileReader() = default;
     /// @brief Destructor
     virtual ~FileReader() = default;
 
+    /// @brief Saves the node into a json object
+    [[nodiscard]] json save() const;
+
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    void restore(const json& j);
+
     /// @brief Initialize the file reader
     void initialize();
+
+    /// @brief Deinitialize the file reader
+    void deinitialize();
 
     /// @brief Moves the read cursor to the start
     void resetReader();
@@ -62,7 +66,7 @@ class FileReader
     /// @brief Virtual Function to read the Header of a file
     virtual void readHeader();
 
-    /// Path to log file
+    /// Path to the file
     std::string path;
     /// File stream to read the file
     std::ifstream filestream;
@@ -72,16 +76,12 @@ class FileReader
     std::streampos dataStart = 0;
 
     /// Header Columns of a CSV file
-    std::vector<std::string> columns;
+    std::vector<std::string> headerColumns;
 
     /// Lower Time Limit of data to read
     InsTime lowerLimit{ InsTime_MJD(0, 0) };
     /// Upper Time Limit of data to read
     InsTime upperLimit;
-
-  private:
-    /// Name of the parent node
-    const std::string parentNodeName;
 };
 
 } // namespace NAV

@@ -5,89 +5,34 @@
 #include <sstream>
 #include "util/StringUtil.hpp"
 
-NAV::FileReader::FileReader(std::string name, const std::map<std::string, std::string>& options)
-    : parentNodeName(std::move(name))
+[[nodiscard]] json NAV::FileReader::save() const
 {
-    LOG_TRACE("{}: called", parentNodeName);
+    LOG_TRACE("called");
 
-    if (options.count("Path"))
+    json j;
+
+    j["path"] = path;
+
+    return j;
+}
+
+void NAV::FileReader::restore(json const& j)
+{
+    LOG_TRACE("called");
+
+    if (j.contains("path"))
     {
-        path = options.at("Path");
-    }
-    else
-    {
-        LOG_CRITICAL("{}: There was no path provided to the node", parentNodeName);
+        j.at("path").get_to(path);
     }
 
-    if (options.count("Time Start"))
-    {
-        try
-        {
-            std::string value = options.at("Time Start"); // 2020/01/01 - 00:00:00
-
-            std::string year = str::trim_copy(value.substr(0,
-                                                           value.find_first_of('/')));
-            std::string month = str::trim_copy(value.substr(value.find_first_of('/') + 1,
-                                                            value.find_last_of('/') - value.find_first_of('/') - 1));
-            std::string day = str::trim_copy(value.substr(value.find_last_of('/') + 1,
-                                                          value.find_first_of('-') - value.find_last_of('/') - 1));
-
-            std::string hour = str::trim_copy(value.substr(value.find_first_of('-') + 1,
-                                                           value.find_first_of(':') - value.find_first_of('-') - 1));
-            std::string minute = str::trim_copy(value.substr(value.find_first_of(':') + 1,
-                                                             value.find_last_of(':') - value.find_first_of(':') - 1));
-            std::string seconds = str::trim_copy(value.substr(value.find_last_of(':') + 1));
-
-            LOG_DEBUG("{}: Time Start {}/{}/{} - {}:{}:{}", name, year, month, day, hour, minute, seconds);
-
-            lowerLimit = InsTime(static_cast<uint16_t>(std::stoul(year)),
-                                 static_cast<uint16_t>(std::stoul(month)),
-                                 static_cast<uint16_t>(std::stoul(day)),
-                                 static_cast<uint16_t>(std::stoul(hour)),
-                                 static_cast<uint16_t>(std::stoul(minute)),
-                                 std::stold(seconds),
-                                 InsTime::TIME_SYSTEM::GPST);
-        }
-        catch (...)
-        {}
-    }
-    if (options.count("Time End"))
-    {
-        try
-        {
-            std::string value = options.at("Time End"); // 2020/01/01 - 00:00:00
-
-            std::string year = str::trim_copy(value.substr(0,
-                                                           value.find_first_of('/')));
-            std::string month = str::trim_copy(value.substr(value.find_first_of('/') + 1,
-                                                            value.find_last_of('/') - value.find_first_of('/') - 1));
-            std::string day = str::trim_copy(value.substr(value.find_last_of('/') + 1,
-                                                          value.find_first_of('-') - value.find_last_of('/') - 1));
-
-            std::string hour = str::trim_copy(value.substr(value.find_first_of('-') + 1,
-                                                           value.find_first_of(':') - value.find_first_of('-') - 1));
-            std::string minute = str::trim_copy(value.substr(value.find_first_of(':') + 1,
-                                                             value.find_last_of(':') - value.find_first_of(':') - 1));
-            std::string seconds = str::trim_copy(value.substr(value.find_last_of(':') + 1));
-
-            LOG_DEBUG("{}: Time End {}/{}/{} - {}:{}:{}", name, year, month, day, hour, minute, seconds);
-
-            upperLimit = InsTime(static_cast<uint16_t>(std::stoul(year)),
-                                 static_cast<uint16_t>(std::stoul(month)),
-                                 static_cast<uint16_t>(std::stoul(day)),
-                                 static_cast<uint16_t>(std::stoul(hour)),
-                                 static_cast<uint16_t>(std::stoul(minute)),
-                                 std::stold(seconds),
-                                 InsTime::TIME_SYSTEM::GPST);
-        }
-        catch (...)
-        {}
-    }
+    initialize();
 }
 
 void NAV::FileReader::initialize()
 {
-    LOG_TRACE("{}: called", parentNodeName);
+    deinitialize();
+
+    LOG_TRACE("called");
 
     fileType = determineFileType();
 
@@ -103,7 +48,7 @@ void NAV::FileReader::initialize()
 
     if (!filestream.good())
     {
-        LOG_CRITICAL("{}: Could not open file {}", parentNodeName, path);
+        LOG_CRITICAL("Could not open file {}", path);
         return;
     }
 
@@ -113,24 +58,35 @@ void NAV::FileReader::initialize()
 
     if (fileType == FileType::ASCII)
     {
-        LOG_DEBUG("{}: ASCII-File successfully initialized", parentNodeName);
+        LOG_DEBUG("ASCII-File successfully initialized");
     }
     else if (fileType == FileType::BINARY)
     {
-        LOG_DEBUG("{}: Binary-File successfully initialized", parentNodeName);
+        LOG_DEBUG("Binary-File successfully initialized");
+    }
+}
+
+void NAV::FileReader::deinitialize()
+{
+    LOG_TRACE("called");
+
+    if (filestream.is_open())
+    {
+        filestream.close();
+        filestream.clear();
     }
 }
 
 NAV::FileReader::FileType NAV::FileReader::determineFileType()
 {
-    LOG_TRACE("{}: called", parentNodeName);
+    LOG_TRACE("called");
 
-    auto filestream = std::ifstream(path);
+    auto filestreamHeader = std::ifstream(path);
     if (filestream.good())
     {
         std::string line;
-        std::getline(filestream, line);
-        filestream.close();
+        std::getline(filestreamHeader, line);
+        filestreamHeader.close();
 
         auto n = std::count(line.begin(), line.end(), ',');
 
@@ -142,16 +98,18 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
         return FileType::BINARY;
     }
 
-    LOG_CRITICAL("{} could not open file {}", parentNodeName, path);
+    LOG_CRITICAL("Could not open file {}", path);
     return FileType::NONE;
 }
 
 void NAV::FileReader::readHeader()
 {
-    LOG_TRACE("{}: called", parentNodeName);
+    LOG_TRACE("called");
 
     if (fileType == FileType::ASCII)
     {
+        headerColumns.clear();
+
         // Read header line
         std::string line;
         std::getline(filestream, line);
@@ -165,13 +123,15 @@ void NAV::FileReader::readHeader()
         {
             // Remove any trailing non text characters
             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-            columns.push_back(cell);
+            headerColumns.push_back(cell);
         }
     }
 }
 
 void NAV::FileReader::resetReader()
 {
+    LOG_TRACE("called");
+
     // Return to position
     filestream.clear();
     filestream.seekg(dataStart, std::ios_base::beg);

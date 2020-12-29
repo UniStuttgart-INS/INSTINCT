@@ -5,7 +5,7 @@
             "name": "C++ Debug (gdb)",
             "type": "cppdbg",
             "request": "launch",
-            "preLaunchTask": "DEBUG: Build project",
+            "preLaunchTask": "MAIN: Build project",
             "program": "${workspaceFolder}/bin/Debug/navsos",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "-fconfig.ini",
