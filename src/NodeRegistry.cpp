@@ -2,7 +2,7 @@
 
 #include "util/Logger.hpp"
 
-#include "Node.hpp"
+#include "Nodes/Node.hpp"
 #include "NodeData/NodeData.hpp"
 
 #include <string_view>
@@ -84,7 +84,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType,
     return false;
 }
 
-#include "Nodes/GroupBox.hpp"
+#include "Nodes/util/GroupBox.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 
 void NAV::NodeRegistry::registerNodeTypes()

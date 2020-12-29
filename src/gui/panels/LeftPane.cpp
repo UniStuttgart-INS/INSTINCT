@@ -5,7 +5,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui_internal.h>
 
-#include "NodeManager.hpp"
+#include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
 #include "gui/TouchTracker.hpp"

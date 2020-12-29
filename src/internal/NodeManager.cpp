@@ -1,11 +1,11 @@
-#include "NodeManager.hpp"
+#include "internal/NodeManager.hpp"
 namespace ed = ax::NodeEditor;
 
-#include "Node.hpp"
-#include "Link.hpp"
-#include "Pin.hpp"
+#include "Nodes/Node.hpp"
+#include "internal/Link.hpp"
+#include "internal/Pin.hpp"
 
-#include "FlowManager.hpp"
+#include "internal/FlowManager.hpp"
 
 #include <algorithm>
 

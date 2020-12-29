@@ -1,9 +1,9 @@
-#include "FlowManager.hpp"
+#include "internal/FlowManager.hpp"
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-#include "NodeManager.hpp"
+#include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
 #include <imgui_node_editor.h>
@@ -11,9 +11,9 @@ namespace ed = ax::NodeEditor;
 
 #include "NodeRegistry.hpp"
 
-#include "Node.hpp"
-#include "Link.hpp"
-#include "Pin.hpp"
+#include "Nodes/Node.hpp"
+#include "internal/Link.hpp"
+#include "internal/Pin.hpp"
 
 #include <fstream>
 #include <iomanip>

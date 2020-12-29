@@ -3,7 +3,7 @@
 #include "FileMenu.hpp"
 #include "EditMenu.hpp"
 
-#include "FlowManager.hpp"
+#include "internal/FlowManager.hpp"
 
 #include <imgui.h>
 #include <fmt/core.h>

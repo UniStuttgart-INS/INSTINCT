@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Node.hpp"
+#include "Nodes/Node.hpp"
 
 namespace NAV
 {

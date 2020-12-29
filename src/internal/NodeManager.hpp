@@ -7,9 +7,9 @@
 
 #include <imgui_node_editor.h>
 
-#include "Node.hpp"
-#include "Link.hpp"
-#include "Pin.hpp"
+#include "Nodes/Node.hpp"
+#include "internal/Link.hpp"
+#include "internal/Pin.hpp"
 
 #include <vector>
 

@@ -24,15 +24,15 @@ namespace util = ax::NodeEditor::Utilities;
 #include "gui/widgets/Splitter.hpp"
 #include "gui/widgets/HelpMarker.hpp"
 
-#include "Pin.hpp"
-#include "Node.hpp"
-#include "Link.hpp"
+#include "internal/Pin.hpp"
+#include "Nodes/Node.hpp"
+#include "internal/Link.hpp"
 
-#include "NodeManager.hpp"
+#include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "NodeRegistry.hpp"
 
-#include "FlowManager.hpp"
+#include "internal/FlowManager.hpp"
 
 #include <string>
 #include <array>

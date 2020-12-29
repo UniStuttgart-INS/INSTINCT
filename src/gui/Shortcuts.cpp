@@ -4,10 +4,10 @@
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;
 
-#include "NodeManager.hpp"
+#include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "FlowManager.hpp"
+#include "internal/FlowManager.hpp"
 
 #include <iostream>
 
