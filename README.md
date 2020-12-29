@@ -6,11 +6,9 @@ Navigation Software of the Institut of Navigation (University of Stuttgart)
 
 This software provides real-time and post processing functionality for navigational tasks. It can read from sensors and fuse together the data. It can fuse GNSS data with IMU data and do advanced functions like RTK, RAIM, ...
 
-The software consists of 2 parts
-* Main console program "```navsos```": Reads in instructions from boost program options config files
-* GUI program "```navsos-gui```": Data flow programming Qt5 GUI which exports the config file for the main program. It has main 2 advantages:
-    * Completely automatically generated. The GUI Code needs no maintenance, it is generated from the Node Interfaces which are provided by the main program.
-    * Completely optional because the boost program option config files can be provided manually.
+The software consists of one executable ```navsos```
+* It spawns a GUI on default where you can edit your flow
+* If now GUI is required, the application can be run in ```--nogui``` mode and a `.flow` file can be loaded manually
 
 ## Getting Started
 
@@ -18,12 +16,10 @@ The software consists of 2 parts
 
 * Needed:
     * [cmake](https://cmake.org/) A cross-platform open-source make system
-    * [make](https://www.gnu.org/software/make/) GNU make utility to maintain groups of programs
-    * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) Code formatting Tool
     * C++ compiler ([clang](https://clang.llvm.org/) is recommended, but others work as well) for compiling the project
 * Optional:
     * [Conan](https://conan.io) A distributed, open source, C/C++ package manager
-    * [gnuplot](http://www.gnuplot.info/) Plotting package. Needed if any plotting is intended
+    * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) Code formatting Tool
     * [ccache](https://ccache.dev/) Compiler cache that speeds up recompilation by caching previous compilations
     * [valgrind](http://valgrind.org/) CPU profiling & leak detection
     * [kcachegrind](http://kcachegrind.sourceforge.net) Visualization of Performance Profiling Data
@@ -36,8 +32,10 @@ The software consists of 2 parts
     * [Boost](https://www.boost.org/) Free peer-reviewed portable C++ source libraries
     * [Eigen](http://eigen.tuxfamily.org) C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms
     * [Catch2](https://github.com/catchorg/Catch2) Modern, C++-native, header-only, test framework for unit-tests, TDD and BDD
+    * [nlohmann_json](https://github.com/nlohmann/json) JSON for Modern C++ parser and generator.
 * GUI (optional):
-    * [Qt](https://www.qt.io/) A cross-platform application and UI framework
+    * [Dear ImGui](https://github.com/ocornut/imgui) Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies
+    * [Node Editor in ImGui](https://github.com/thedmd/imgui-node-editor) An implementation of node editor with ImGui-like API.
 
 ### Development Environment Setup
 
@@ -50,10 +48,7 @@ sudo pacman -S base-devel cmake clang
 trizen -S conan # AUR package
 
 # Optional
-sudo pacman -S ccache doxygen gnuplot cppcheck
-
-# GUI (optional)
-sudo pacman -S qt5-base
+sudo pacman -S ccache doxygen cppcheck
 
 # Profiling (optional)
 sudo pacman -S valgrind kcachegrind
@@ -71,10 +66,7 @@ sudo ln -sf /usr/bin/g++-10 /usr/bin/g++
 pip3 install conan --user
 
 # Optional
-sudo apt install ccache doxygen gnuplot gnuplot-x11 cppcheck
-
-# GUI (optional)
-sudo apt install qt5-default 
+sudo apt install ccache doxygen cppcheck
 
 # Profiling (optional)
 sudo apt install valgrind kcachegrind
@@ -103,7 +95,7 @@ pip3 install cmake
 # Install conan
 pip3 install conan --user
 ```
-Optional dependencies and GUI, see Ubuntu
+Optional dependencies, see Ubuntu
 
 #### MacOS
 ```
@@ -118,10 +110,7 @@ ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
 ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 
 # Optional
-brew install ccache gnuplot doxygen cppcheck
-
-# GUI (optional)
-brew install qt
+brew install ccache doxygen cppcheck
 ```
 
 #### Windows 10 (WSL):
@@ -170,17 +159,19 @@ It is strongly recommended to use [Visual Studio Code](https://code.visualstudio
 Recommended plugins for working with this project
 * [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools): C/C++ IntelliSense, debugging, and code browsing.
 * [CMake](https://marketplace.visualstudio.com/items?itemName=twxs.cmake): CMake langage support for Visual Studio Code
-* [Doxygen Documentation Generator](https://marketplace.visualstudio.com/items?itemName=cschlosser.doxdocgen): Automatic Doxygen generation by typing ```/** + [Enter]```
+* [Doxygen Documentation Generator](https://marketplace.visualstudio.com/items?itemName=cschlosser.doxdocgen): Automatic Doxygen generation by typing ```/// + [Enter]```
 * [Todo Tree](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree): Show TODO, FIXME, etc. comment tags in a tree view
 * [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker): Spelling checker for source code
 * [Log File Highlighter](https://marketplace.visualstudio.com/items?itemName=emilast.LogFileHighlighter): Adds color highlighting to log files to make it easier to follow the flow of log events and identify problems.
 * [Clang-Tidy](https://marketplace.visualstudio.com/items?itemName=notskm.clang-tidy) Integrates clang-tidy into VS Code
 * [cmake-format](https://marketplace.visualstudio.com/items?itemName=cheshirekow.cmake-format) Format listfiles so they don't look like crap
+* [mathover](https://marketplace.visualstudio.com/items?itemName=Remisa.mathover) Render LaTeX comments on hover
+* [Status Bar Parameter](https://marketplace.visualstudio.com/items?itemName=mschababerle.status-bar-param) Add selectable parameter to the status bar
 
 Recommended changes to the User's ```settings.json``` (**not** the project .vscode/settings.json)
 ```
 "editor.formatOnType": true,
-"doxdocgen.generic.authorEmail": "your.name@nav.uni-stuttgart.de",
+"doxdocgen.generic.authorEmail": "your.name@ins.uni-stuttgart.de",
 "doxdocgen.generic.authorName": "Y. Name",
 ```
 
@@ -209,11 +200,12 @@ Recommended changes to the User's ```keybindings.json```
 | Hotkey   | Action                                     | Default       |
 | :------: | :----------------------------------------- | ------------- |
 | ```F5``` | Debug the project                          | Default debug |
-| ```F6``` | Run Task: ```DEBUG: Build project```       | Default build |
-| ```F7``` | Run Task: ```DEBUG: Build & run project``` | Default test  |
+| ```F6``` | Run Task: ```MAIN: Build project```        | Default build |
+| ```F7``` | Run Task: ```MAIN: Build & run project```  | Default test  |
 | ```F8``` | Open Task List                             |               |
 
-* To start the GUI, execute the Task ```GUI: Build & run project```
+* To start the GUI, execute the Task ```MAIN: Build & run project```
+* To start without GUI, append a ```--nogui``` and a flow file to load
 * If you have problems with the build, execute the Task ```CLEAN: Remove build files```
 * If you want to provide tests, place them in the ```tests``` directory and execute them with the task ```TEST: Build & run```
 
