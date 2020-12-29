@@ -109,6 +109,12 @@ class Node
     /// @param[in] j Json object with the node state
     virtual void restore(const json& j) = 0;
 
+    /// @brief Initialize the Node
+    virtual void initialize() {}
+
+    /// @brief Deinitialize the Node
+    virtual void deinitialize() {}
+
     template<typename T>
     T* getInputValue(size_t portIndex)
     {
