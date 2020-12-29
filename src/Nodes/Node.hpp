@@ -19,6 +19,8 @@ using json = nlohmann::json;
 
 namespace NAV
 {
+class NodeData;
+
 class Node
 {
   public:
@@ -95,6 +97,10 @@ class Node
     /// @brief Move assignment operator
     Node& operator=(Node&&) = delete;
 
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                                 Interface                                                */
+    /* -------------------------------------------------------------------------------------------------------- */
+
     /// @brief String representation of the Class Type
     [[nodiscard]] virtual std::string type() const = 0;
 
@@ -110,10 +116,14 @@ class Node
     virtual void restore(const json& j) = 0;
 
     /// @brief Initialize the Node
-    virtual void initialize() {}
+    virtual void initialize();
 
     /// @brief Deinitialize the Node
-    virtual void deinitialize() {}
+    virtual void deinitialize();
+
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                             Member functions                                             */
+    /* -------------------------------------------------------------------------------------------------------- */
 
     template<typename T>
     T* getInputValue(size_t portIndex)
@@ -165,16 +175,11 @@ class Node
     /// @brief Calls all registered callbacks on the specified output port
     /// @param[in] portIndex Output port where to call the callbacks
     /// @param[in] data The data to pass to the callback targets
-    void invokeCallbacks(size_t portIndex, const std::shared_ptr<NodeData>& data)
-    {
-        if (callbacksEnabled)
-        {
-            for (auto& [node, callback] : outputPins.at(portIndex).callbacks)
-            {
-                std::invoke(callback, node, data);
-            }
-        }
-    }
+    void invokeCallbacks(size_t portIndex, const std::shared_ptr<NodeData>& data);
+
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                             Member variables                                             */
+    /* -------------------------------------------------------------------------------------------------------- */
 
     /// Unique Id of the Node
     ax::NodeEditor::NodeId id = 0;
