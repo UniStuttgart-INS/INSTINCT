@@ -29,6 +29,4 @@ junit.xml
 config.ini
 
 # Imgui files
-NavSoS.flow
 NavSoS.ini
-imgui.ini
