@@ -121,13 +121,13 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
 
     m_links.emplace_back(GetNextLinkId(), startPin->id, endPin->id, startPin->getIconColor());
 
-    if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Flow)
+    if (endPin->type == Pin::Type::Flow)
     {
-        endPin->data = startPin->data;
+        startPin->callbacks.emplace_back(endPin->parentNode, std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>)>(endPin->data));
     }
     else
     {
-        startPin->callbacks.emplace_back(endPin->parentNode, std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>)>(endPin->data));
+        endPin->data = startPin->data;
     }
 
     flow::ApplyChanges();
@@ -143,13 +143,13 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
     Pin* endPin = FindPin(link.endPinId);
     if (endPin && startPin)
     {
-        if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Flow)
+        if (endPin->type == Pin::Type::Flow)
         {
-            endPin->data = startPin->data;
+            startPin->callbacks.emplace_back(endPin->parentNode, std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>)>(endPin->data));
         }
         else
         {
-            startPin->callbacks.emplace_back(endPin->parentNode, std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>)>(endPin->data));
+            endPin->data = startPin->data;
         }
     }
     else
@@ -172,12 +172,12 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
     if (id != m_links.end())
     {
         if (Pin* endPin = FindPin(id->endPinId);
-            endPin && (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Flow))
+            endPin && endPin->type != Pin::Type::Flow)
         {
             endPin->data = static_cast<void*>(nullptr);
         }
         else if (Pin* startPin = FindPin(id->startPinId);
-                 startPin && endPin && (startPin->type == Pin::Type::Function || startPin->type == Pin::Type::Flow))
+                 startPin && endPin && startPin->type == Pin::Type::Flow)
         {
             auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
                                   std::make_pair(endPin->parentNode, std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>)>(endPin->data)));

@@ -177,6 +177,19 @@ class Node
     /// @param[in] data The data to pass to the callback targets
     void invokeCallbacks(size_t portIndex, const std::shared_ptr<NodeData>& data);
 
+    template<typename T, class... U>
+    T callInputFunction(size_t portIndex, U&&... u)
+    {
+        auto function = std::get_if<std::pair<Node*, void (Node::*)()>>(&inputPins.at(portIndex).data);
+
+        Node* node = function->first;
+        auto callbackProto = function->second;
+
+        auto callback = reinterpret_cast<T (Node::*)(U...)>(callbackProto);
+
+        return (node->*callback)(std::forward<U>(u)...);
+    }
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
     /* -------------------------------------------------------------------------------------------------------- */

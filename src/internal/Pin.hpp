@@ -39,7 +39,7 @@ class Pin
             Delegate, ///< Reference to the Node object
         };
 
-        Type() = default;
+        constexpr Type() = default;
 
         //NOLINTNEXTLINE(hicpp-explicit-conversions, google-explicit-constructor)
         constexpr Type(Value type)
@@ -186,7 +186,8 @@ class Pin
 
     using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*,
                                  void (Node::*)(std::shared_ptr<NodeData>),
-                                 std::shared_ptr<NAV::NodeData> (Node::*)(bool)>;
+                                 std::shared_ptr<NAV::NodeData> (Node::*)(bool),
+                                 std::pair<Node*, void (Node::*)()>>;
 
     /// @brief Default constructor
     Pin() = default;

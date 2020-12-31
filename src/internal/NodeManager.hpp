@@ -75,6 +75,8 @@ template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::string_view& dataIdentifier = std::string_view(""), void (T::*callback)(std::shared_ptr<NodeData>) = nullptr)
 {
+    assert(pinType == Pin::Type::Flow);
+
     return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<void (Node::*)(std::shared_ptr<NodeData>)>(callback)));
 }
 
@@ -87,7 +89,7 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 /// @return Pointer to the created pin
 Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string_view& dataIdentifier = std::string_view(""), Pin::PinData data = static_cast<void*>(nullptr));
 
-/// @brief Create an Output Pin object
+/// @brief Create an Output Pin object for Flow Pins
 /// @tparam T Class where the function is member of
 /// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
 /// @param[in] node Node to register the Pin for
@@ -100,7 +102,31 @@ template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string_view& dataIdentifier = std::string_view(""), std::shared_ptr<NAV::NodeData> (T::*callback)(bool) = nullptr)
 {
+    assert(pinType == Pin::Type::Flow);
+
     return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(callback)));
+}
+
+/// @brief Create an Output Pin object for Function Pins
+/// @tparam U
+/// @tparam P
+/// @tparam T
+/// @tparam T,
+/// typename
+/// @tparam T>>
+/// @param[in, out] node
+/// @param[in, out] name
+/// @param[in, out] pinType
+/// @param[in, out] dataIdentifier
+/// @param[in, out] callback
+/// @return
+template<typename U, typename... P, typename T,
+         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string_view& dataIdentifier = std::string_view(""), U (T::*callback)(P...) = nullptr)
+{
+    assert(pinType == Pin::Type::Function);
+
+    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(std::make_pair(node, reinterpret_cast<void (Node::*)()>(callback))));
 }
 
 /// @brief Finds the Node for the NodeId
