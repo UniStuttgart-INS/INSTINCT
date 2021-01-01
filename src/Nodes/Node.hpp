@@ -115,8 +115,8 @@ class Node
     /// @param[in] j Json object with the node state
     virtual void restore(const json& j) = 0;
 
-    /// @brief Initialize the Node
-    virtual void initialize();
+    /// @brief Abstract Initialization of the Node
+    virtual bool initialize();
 
     /// @brief Deinitialize the Node
     virtual void deinitialize();
@@ -190,6 +190,12 @@ class Node
         return (node->*callback)(std::forward<U>(u)...);
     }
 
+    /// @brief Node name and id
+    [[nodiscard]] std::string nameId() const
+    {
+        return fmt::format("{} ({})", name, size_t(id));
+    }
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
     /* -------------------------------------------------------------------------------------------------------- */
@@ -218,6 +224,12 @@ class Node
 
     /// Enables the callbacks
     bool callbacksEnabled = false;
+    /// Flag, if the node is initialized
+    bool isInitialized = false;
+
+  private:
+    /// Flag, if the node is currently initializing
+    bool isInitializing = false;
 };
 
 } // namespace NAV

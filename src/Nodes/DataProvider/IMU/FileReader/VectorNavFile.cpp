@@ -28,7 +28,7 @@ NAV::VectorNavFile::VectorNavFile()
 
 NAV::VectorNavFile::~VectorNavFile()
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 }
 
 std::string NAV::VectorNavFile::typeStatic()
@@ -143,7 +143,7 @@ void NAV::VectorNavFile::config()
 
 [[nodiscard]] json NAV::VectorNavFile::save() const
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 
     json j;
 
@@ -154,7 +154,7 @@ void NAV::VectorNavFile::config()
 
 void NAV::VectorNavFile::restore(json const& j)
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 
     if (j.contains("FileReader"))
     {
@@ -162,18 +162,32 @@ void NAV::VectorNavFile::restore(json const& j)
     }
 }
 
-void NAV::VectorNavFile::initialize()
+bool NAV::VectorNavFile::initialize()
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 
-    FileReader::initialize();
+    if (!Node::initialize()
+        || !FileReader::initialize())
+    {
+        return false;
+    }
+
+    return isInitialized = true;
 }
 
 void NAV::VectorNavFile::deinitialize()
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
+    Node::deinitialize();
+}
+
+std::vector<std::string> NAV::VectorNavFile::readHeaderCallback(bool okay)
+{
+    LOG_TRACE("{}, called {}", nameId(), okay);
+
+    return headerColumns;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
@@ -636,7 +650,7 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
     }
 
     LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-             name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
+             nameId(), obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
              obs->vpeStatus.value().status, obs->temperature.value());
 
     if (obs->insTime.has_value())

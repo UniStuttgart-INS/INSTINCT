@@ -50,7 +50,7 @@ class VectorNavDataLogger : public Node, public FileWriter
     void restore(const json& j) override;
 
     /// @brief Initialize the node
-    void initialize() override;
+    bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;

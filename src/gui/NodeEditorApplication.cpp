@@ -52,13 +52,13 @@ void NAV::gui::NodeEditorApplication::OnStart()
 
     // Stops the Editor from creating a log file, as we do it ourselves
     config.SaveSettings = [](const char* /*data*/, size_t /*size*/,
-                             ed::SaveReasonFlags /*reason*/, void * /*userPointer*/) -> bool {
+                             ed::SaveReasonFlags /*reason*/, void* /*userPointer*/) -> bool {
         return false;
     };
 
     // Trigger the changed bar on the node overview list when a node is moved
     config.SaveNodeSettings = [](ed::NodeId nodeId, const char* /*data*/, size_t /*size*/,
-                                 ed::SaveReasonFlags /*reason*/, void * /*userPointer*/) -> bool {
+                                 ed::SaveReasonFlags /*reason*/, void* /*userPointer*/) -> bool {
         // auto* self = static_cast<NodeEditorApplication*>(userPointer);
 
         auto* node = nm::FindNode(nodeId);
@@ -496,7 +496,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (!isSimple) // Header Text for Blueprint Nodes
             {
-                builder.Header(node->color);
+                if (node->isInitialized)
+                {
+                    builder.Header(ImColor(128, 255, 128)); // Light green
+                }
+                else
+                {
+                    builder.Header(node->color);
+                }
                 ImGui::Spring(0);
                 ImGui::TextUnformatted(node->name.c_str());
                 ImGui::Spring(1);

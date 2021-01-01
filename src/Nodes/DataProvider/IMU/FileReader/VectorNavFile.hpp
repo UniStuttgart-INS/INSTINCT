@@ -48,7 +48,7 @@ class VectorNavFile : public Imu, public FileReader
     void restore(const json& j) override;
 
     /// @brief Initialize the node
-    void initialize() override;
+    bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
@@ -62,6 +62,8 @@ class VectorNavFile : public Imu, public FileReader
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<NodeData> pollData(bool peek = false);
+
+    std::vector<std::string> readHeaderCallback(bool okay);
 };
 
 } // namespace NAV

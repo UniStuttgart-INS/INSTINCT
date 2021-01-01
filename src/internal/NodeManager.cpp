@@ -128,6 +128,10 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     else
     {
         endPin->data = startPin->data;
+        if (endPin->parentNode)
+        {
+            endPin->parentNode->isInitialized = false;
+        }
     }
 
     flow::ApplyChanges();
@@ -150,6 +154,10 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
         else
         {
             endPin->data = startPin->data;
+            if (endPin->parentNode)
+            {
+                endPin->parentNode->isInitialized = false;
+            }
         }
     }
     else
@@ -175,6 +183,10 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             endPin && endPin->type != Pin::Type::Flow)
         {
             endPin->data = static_cast<void*>(nullptr);
+            if (endPin->parentNode)
+            {
+                endPin->parentNode->isInitialized = false;
+            }
         }
         else if (Pin* startPin = FindPin(id->startPinId);
                  startPin && endPin && startPin->type == Pin::Type::Flow)

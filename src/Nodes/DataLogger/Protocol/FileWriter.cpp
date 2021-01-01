@@ -25,7 +25,7 @@ void NAV::FileWriter::restore(json const& j)
     initialize();
 }
 
-void NAV::FileWriter::initialize()
+bool NAV::FileWriter::initialize()
 {
     deinitialize();
 
@@ -34,7 +34,7 @@ void NAV::FileWriter::initialize()
     if (fileType == FileType::NONE)
     {
         LOG_ERROR("FileWriter needs the fileType set in the child class.");
-        return;
+        return false;
     }
 
     if (fileType == FileType::ASCII)
@@ -50,8 +50,10 @@ void NAV::FileWriter::initialize()
     if (!filestream.good())
     {
         LOG_CRITICAL("Could not open file {}", path);
-        return;
+        return false;
     }
+
+    return true;
 }
 
 void NAV::FileWriter::deinitialize()
@@ -64,10 +66,11 @@ void NAV::FileWriter::deinitialize()
         {
             filestream.flush();
             filestream.close();
-            filestream.clear();
         }
     }
     catch (...)
     {
     }
+
+    filestream.clear();
 }

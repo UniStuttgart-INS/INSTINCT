@@ -28,7 +28,7 @@ void NAV::FileReader::restore(json const& j)
     initialize();
 }
 
-void NAV::FileReader::initialize()
+bool NAV::FileReader::initialize()
 {
     deinitialize();
 
@@ -48,8 +48,8 @@ void NAV::FileReader::initialize()
 
     if (!filestream.good())
     {
-        LOG_CRITICAL("Could not open file {}", path);
-        return;
+        LOG_ERROR("Could not open file {}", path);
+        return false;
     }
 
     readHeader();
@@ -64,6 +64,8 @@ void NAV::FileReader::initialize()
     {
         LOG_DEBUG("Binary-File successfully initialized");
     }
+
+    return true;
 }
 
 void NAV::FileReader::deinitialize()
@@ -73,8 +75,9 @@ void NAV::FileReader::deinitialize()
     if (filestream.is_open())
     {
         filestream.close();
-        filestream.clear();
     }
+
+    filestream.clear();
 }
 
 NAV::FileReader::FileType NAV::FileReader::determineFileType()
@@ -98,7 +101,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
         return FileType::BINARY;
     }
 
-    LOG_CRITICAL("Could not open file {}", path);
+    LOG_ERROR("Could not open file {}", path);
     return FileType::NONE;
 }
 

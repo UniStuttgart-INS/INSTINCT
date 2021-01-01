@@ -29,7 +29,7 @@ NAV::VectorNavDataLogger::VectorNavDataLogger()
 
 NAV::VectorNavDataLogger::~VectorNavDataLogger()
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 }
 
 std::string NAV::VectorNavDataLogger::typeStatic()
@@ -74,7 +74,7 @@ void NAV::VectorNavDataLogger::config()
 
 [[nodiscard]] json NAV::VectorNavDataLogger::save() const
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 
     json j;
 
@@ -85,7 +85,7 @@ void NAV::VectorNavDataLogger::config()
 
 void NAV::VectorNavDataLogger::restore(json const& j)
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 
     if (j.contains("FileWriter"))
     {
@@ -93,11 +93,15 @@ void NAV::VectorNavDataLogger::restore(json const& j)
     }
 }
 
-void NAV::VectorNavDataLogger::initialize()
+bool NAV::VectorNavDataLogger::initialize()
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 
-    FileWriter::initialize();
+    if (!Node::initialize()
+        || !FileWriter::initialize())
+    {
+        return false;
+    }
 
     filestream << "GpsCycle,GpsWeek,GpsToW,TimeStartup,TimeSyncIn,SyncInCnt,"
                << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
@@ -105,13 +109,16 @@ void NAV::VectorNavDataLogger::initialize()
                << "MagX,MagY,MagZ,AccX,AccY,AccZ,GyroX,GyroY,GyroZ,AhrsStatus,Yaw,Pitch,Roll,Quat[0],Quat[1],Quat[2],Quat[3],"
                << "MagN,MagE,MagD,AccN,AccE,AccD,LinAccX,LinAccY,LinAccZ,LinAccN,LinAccE,LinAccD,"
                << "YawU,PitchU,RollU,YawRate,PitchRate,RollRate" << std::endl;
+
+    return isInitialized = true;
 }
 
 void NAV::VectorNavDataLogger::deinitialize()
 {
-    LOG_TRACE("{}: called", name);
+    LOG_TRACE("{}: called", nameId());
 
     FileWriter::deinitialize();
+    Node::deinitialize();
 }
 
 void NAV::VectorNavDataLogger::writeObservation(std::shared_ptr<NodeData> nodeData)

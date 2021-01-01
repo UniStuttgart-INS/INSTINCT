@@ -47,7 +47,7 @@ class FileWriter
     void restore(const json& j);
 
     /// @brief Initialize the file reader
-    void initialize();
+    bool initialize();
 
     /// @brief Deinitialize the file reader
     void deinitialize();
