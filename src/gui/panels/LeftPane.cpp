@@ -36,20 +36,7 @@ void NAV::gui::panels::ShowLeftPane(float paneWidth)
             ImGui::SetTooltip("Shortcut: F");
         }
         ImGui::Spring(0.0F);
-        if (ImGui::Button("Show Flow"))
-        {
-            for (const auto& link : nm::m_Links())
-            {
-                if (nm::FindPin(link.startPinId)->type == Pin::Type::Flow)
-                {
-                    ed::Flow(link.id);
-                }
-            }
-        }
-        if (ImGui::IsItemHovered())
-        {
-            ImGui::SetTooltip("Shortcut: Z");
-        }
+        ImGui::Checkbox("Show Flow", &nm::showFlowWhenInvokingCallbacks);
         ImGui::Spring();
         static bool showStyleEditor = false;
         if (ImGui::Button("Edit Style"))

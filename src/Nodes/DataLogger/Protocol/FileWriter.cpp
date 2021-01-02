@@ -49,7 +49,7 @@ bool NAV::FileWriter::initialize()
 
     if (!filestream.good())
     {
-        LOG_CRITICAL("Could not open file {}", path);
+        LOG_ERROR("Could not open file {}", path);
         return false;
     }
 

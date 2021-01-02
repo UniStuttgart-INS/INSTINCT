@@ -34,6 +34,16 @@ ed::PinId GetNextPinId();
 } // namespace NAV::NodeManager
 
 /* -------------------------------------------------------------------------------------------------------- */
+/*                                               Public Members                                             */
+/* -------------------------------------------------------------------------------------------------------- */
+
+namespace NAV::NodeManager
+{
+bool showFlowWhenInvokingCallbacks = true;
+
+} // namespace NAV::NodeManager
+
+/* -------------------------------------------------------------------------------------------------------- */
 /*                                           Function Definitions                                           */
 /* -------------------------------------------------------------------------------------------------------- */
 
@@ -130,8 +140,13 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
         endPin->data = startPin->data;
         if (endPin->parentNode)
         {
-            endPin->parentNode->isInitialized = false;
+            endPin->parentNode->deinitialize();
         }
+    }
+    if (startPin->parentNode && endPin->parentNode
+        && startPin->parentNode->isInitialized)
+    {
+        endPin->parentNode->initialize();
     }
 
     flow::ApplyChanges();
@@ -156,8 +171,13 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
             endPin->data = startPin->data;
             if (endPin->parentNode)
             {
-                endPin->parentNode->isInitialized = false;
+                endPin->parentNode->deinitialize();
             }
+        }
+        if (startPin->parentNode && endPin->parentNode
+            && startPin->parentNode->isInitialized)
+        {
+            endPin->parentNode->initialize();
         }
     }
     else
@@ -185,7 +205,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             endPin->data = static_cast<void*>(nullptr);
             if (endPin->parentNode)
             {
-                endPin->parentNode->isInitialized = false;
+                endPin->parentNode->deinitialize();
             }
         }
         else if (Pin* startPin = FindPin(id->startPinId);
@@ -369,4 +389,23 @@ std::vector<NAV::Node*> NAV::NodeManager::FindConnectedNodesToPin(ax::NodeEditor
     }
 
     return connectedNodes;
+}
+
+std::vector<NAV::Link*> NAV::NodeManager::FindConnectedLinksToPin(ax::NodeEditor::PinId id)
+{
+    if (!id)
+    {
+        return {};
+    }
+
+    std::vector<NAV::Link*> connectedLinks;
+    for (auto& link : m_links)
+    {
+        if (link.startPinId == id || link.endPinId == id)
+        {
+            connectedLinks.push_back(&link);
+        }
+    }
+
+    return connectedLinks;
 }

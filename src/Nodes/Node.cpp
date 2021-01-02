@@ -29,6 +29,22 @@ bool NAV::Node::initialize()
         }
     }
 
+    for (const auto& outputPin : outputPins)
+    {
+        auto connectedNodes = nm::FindConnectedNodesToPin(outputPin.id);
+        if (!connectedNodes.empty())
+        {
+            Node* connectedNode = connectedNodes.front();
+            if (!connectedNode->isInitialized && !connectedNode->isInitializing)
+            {
+                if (!connectedNode->initialize())
+                {
+                    LOG_WARN("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
+                }
+            }
+        }
+    }
+
     isInitializing = false;
 
     return true;
@@ -43,6 +59,15 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<NAV::Nod
 {
     if (callbacksEnabled)
     {
+        if (nm::showFlowWhenInvokingCallbacks)
+        {
+            auto connectedLinks = nm::FindConnectedLinksToPin(outputPins.at(portIndex).id);
+            for (auto& connectedLink : connectedLinks)
+            {
+                ax::NodeEditor::Flow(connectedLink->id);
+            }
+        }
+
         for (auto& [node, callback] : outputPins.at(portIndex).callbacks)
         {
             std::invoke(callback, node, data);

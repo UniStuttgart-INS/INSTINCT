@@ -26,17 +26,6 @@ void NAV::gui::checkShortcuts(GlobalActions& globalAction)
         {
             ed::NavigateToContent();
         }
-
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z)))
-        {
-            for (const auto& link : nm::m_Links())
-            {
-                if (nm::FindPin(link.startPinId)->type == Pin::Type::Flow)
-                {
-                    ed::Flow(link.id);
-                }
-            }
-        }
     }
     else if (io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
     {

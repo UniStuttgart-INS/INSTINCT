@@ -17,6 +17,9 @@
 
 namespace NAV::NodeManager
 {
+/// Flag if invokeCallbacks triggers a GUI Flow event
+extern bool showFlowWhenInvokingCallbacks;
+
 /// @brief List of all registered Nodes
 const std::vector<Node*>& m_Nodes();
 
@@ -153,5 +156,10 @@ bool IsPinLinked(ax::NodeEditor::PinId id);
 /// @param[in] id Unique Id of the Pin to search for
 /// @return List of Nodes which are connected to the pin
 std::vector<Node*> FindConnectedNodesToPin(ax::NodeEditor::PinId id);
+
+/// @brief Searches all link which are connected to the provided pin
+/// @param[in] id Unique Id of the Pin to search for
+/// @return List of Links which are connected to the pin
+std::vector<Link*> FindConnectedLinksToPin(ax::NodeEditor::PinId id);
 
 }; // namespace NAV::NodeManager
