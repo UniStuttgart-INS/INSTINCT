@@ -17,7 +17,7 @@ Application::Application(const char* name, const char* iniFilename)
 {
 }
 
-Application::Application(const char* name, const char* iniFilename, int argc, char** argv)
+Application::Application(const char* name, const char* iniFilename, int argc, const char* argv[])
     : m_Name(name),
       m_IniFilename(iniFilename),
       m_Platform(CreatePlatform(*this)),

@@ -9,7 +9,7 @@ struct Renderer;
 struct Application
 {
     Application(const char* name, const char* iniFilename);
-    Application(const char* name, const char* iniFilename, int argc, char** argv);
+    Application(const char* name, const char* iniFilename, int argc, const char* argv[]);
     virtual ~Application();
 
     bool Create(int width = -1, int height = -1);
@@ -55,4 +55,4 @@ struct Application
     ImFont* m_HeaderFont = nullptr;
 };
 
-int Main(int argc, char** argv);
+int Main(int argc, const char* argv[]);

@@ -39,7 +39,7 @@ struct PlatformWin32 final
 
     PlatformWin32(Application& application);
 
-    bool ApplicationStart(int argc, char** argv) override;
+    bool ApplicationStart(int argc, const char* argv[]) override;
     void ApplicationStop() override;
     bool OpenMainWindow(const char* title, int width, int height) override;
     bool CloseMainWindow() override;
@@ -78,7 +78,7 @@ PlatformWin32::PlatformWin32(Application& application)
 {
 }
 
-bool PlatformWin32::ApplicationStart(int argc, char** argv)
+bool PlatformWin32::ApplicationStart(int argc, const char* argv[])
 {
     if (s_Instance)
         return false;

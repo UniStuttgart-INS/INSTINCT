@@ -1,20 +1,20 @@
-# include "platform.h"
-# include "setup.h"
+#include "platform.h"
+#include "setup.h"
 
-# if BACKEND(IMGUI_GLFW)
+#if BACKEND(IMGUI_GLFW)
 
-# include "application.h"
-# include "renderer.h"
+    #include "application.h"
+    #include "renderer.h"
 
-# include <GLFW/glfw3.h>
+    #include <GLFW/glfw3.h>
 
-# if PLATFORM(WINDOWS)
-#     define GLFW_EXPOSE_NATIVE_WIN32
-#     include <GLFW/glfw3native.h>
-# endif
+    #if PLATFORM(WINDOWS)
+        #define GLFW_EXPOSE_NATIVE_WIN32
+        #include <GLFW/glfw3native.h>
+    #endif
 
-# include <imgui.h>
-# include "imgui_impl_glfw.h"
+    #include <imgui.h>
+    #include "imgui_impl_glfw.h"
 
 struct PlatformGLFW final
     : Platform
@@ -23,7 +23,7 @@ struct PlatformGLFW final
 
     PlatformGLFW(Application& application);
 
-    bool ApplicationStart(int argc, char** argv) override;
+    bool ApplicationStart(int argc, const char* argv[]) override;
     void ApplicationStop() override;
     bool OpenMainWindow(const char* title, int width, int height) override;
     bool CloseMainWindow() override;
@@ -39,12 +39,12 @@ struct PlatformGLFW final
 
     void UpdatePixelDensity();
 
-    Application&    m_Application;
-    GLFWwindow*     m_Window = nullptr;
-    bool            m_QuitRequested = false;
-    bool            m_IsMinimized = false;
-    bool            m_WasMinimized = false;
-    Renderer*       m_Renderer = nullptr;
+    Application& m_Application;
+    GLFWwindow* m_Window = nullptr;
+    bool m_QuitRequested = false;
+    bool m_IsMinimized = false;
+    bool m_WasMinimized = false;
+    Renderer* m_Renderer = nullptr;
 };
 
 std::unique_ptr<Platform> CreatePlatform(Application& application)
@@ -57,7 +57,7 @@ PlatformGLFW::PlatformGLFW(Application& application)
 {
 }
 
-bool PlatformGLFW::ApplicationStart(int argc, char** argv)
+bool PlatformGLFW::ApplicationStart(int argc, const char* argv[])
 {
     if (!glfwInit())
         return false;
@@ -77,32 +77,32 @@ bool PlatformGLFW::OpenMainWindow(const char* title, int width, int height)
 
     glfwWindowHint(GLFW_VISIBLE, 0);
 
-    using InitializerType = bool (*)(GLFWwindow* window, bool install_callbacks);
+    using InitializerType = bool (*)(GLFWwindow * window, bool install_callbacks);
 
     InitializerType initializer = nullptr;
 
-# if RENDERER(IMGUI_OGL3)
+    #if RENDERER(IMGUI_OGL3)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#    if PLATFORM(MACOS)
+        #if PLATFORM(MACOS)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#        ifdef GLFW_COCOA_RETINA_FRAMEBUFFER
+            #ifdef GLFW_COCOA_RETINA_FRAMEBUFFER
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GL_TRUE);
-#        endif
-#        ifdef GLFW_COCOA_GRAPHICS_SWITCHING
+            #endif
+            #ifdef GLFW_COCOA_GRAPHICS_SWITCHING
     glfwWindowHint(GLFW_COCOA_GRAPHICS_SWITCHING, GL_TRUE);
-#        endif
-#    endif
+            #endif
+        #endif
     initializer = &ImGui_ImplGlfw_InitForOpenGL;
-# else
+    #else
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     initializer = &ImGui_ImplGlfw_InitForNone;
-# endif
+    #endif
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL_TRUE);
 
-    width  = width  < 0 ? 1440 : width;
-    height = height < 0 ?  800 : height;
+    width = width < 0 ? 1440 : width;
+    height = height < 0 ? 800 : height;
 
     m_Window = glfwCreateWindow(width, height, title, nullptr, nullptr);
     if (!m_Window)
@@ -117,15 +117,13 @@ bool PlatformGLFW::OpenMainWindow(const char* title, int width, int height)
 
     glfwSetWindowUserPointer(m_Window, this);
 
-    glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
-    {
+    glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) {
         auto self = reinterpret_cast<PlatformGLFW*>(glfwGetWindowUserPointer(window));
         if (!self->m_QuitRequested)
             self->CloseMainWindow();
     });
 
-    glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconified)
-    {
+    glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow* window, int iconified) {
         auto self = reinterpret_cast<PlatformGLFW*>(glfwGetWindowUserPointer(window));
         if (iconified)
         {
@@ -138,8 +136,7 @@ bool PlatformGLFW::OpenMainWindow(const char* title, int width, int height)
         }
     });
 
-    auto onFramebuferSizeChanged = [](GLFWwindow* window, int width, int height)
-    {
+    auto onFramebuferSizeChanged = [](GLFWwindow* window, int width, int height) {
         auto self = reinterpret_cast<PlatformGLFW*>(glfwGetWindowUserPointer(window));
         if (self->m_Renderer)
         {
@@ -150,8 +147,7 @@ bool PlatformGLFW::OpenMainWindow(const char* title, int width, int height)
 
     glfwSetFramebufferSizeCallback(m_Window, onFramebuferSizeChanged);
 
-    auto onWindowContentScaleChanged = [](GLFWwindow* window, float xscale, float yscale)
-    {
+    auto onWindowContentScaleChanged = [](GLFWwindow* window, float xscale, float yscale) {
         auto self = reinterpret_cast<PlatformGLFW*>(glfwGetWindowUserPointer(window));
         self->UpdatePixelDensity();
     };
@@ -181,11 +177,11 @@ bool PlatformGLFW::CloseMainWindow()
 
 void* PlatformGLFW::GetMainWindowHandle() const
 {
-# if PLATFORM(WINDOWS)
+    #if PLATFORM(WINDOWS)
     return m_Window ? glfwGetWin32Window(m_Window) : nullptr;
-# else
+    #else
     return nullptr;
-# endif
+    #endif
 }
 
 void PlatformGLFW::SetMainWindowTitle(const char* title)
@@ -213,7 +209,7 @@ bool PlatformGLFW::ProcessMainWindowEvents()
 
     if (m_QuitRequested || glfwWindowShouldClose(m_Window))
     {
-        if(m_Application.OnQuitRequest())
+        if (m_Application.OnQuitRequest())
         {
             ImGui_ImplGlfw_Shutdown();
 
@@ -277,17 +273,17 @@ void PlatformGLFW::UpdatePixelDensity()
     glfwGetWindowContentScale(m_Window, &xscale, &yscale);
     float scale = xscale > yscale ? xscale : yscale;
 
-# if PLATFORM(WINDOWS)
-    float windowScale      = scale;
+    #if PLATFORM(WINDOWS)
+    float windowScale = scale;
     float framebufferScale = scale;
-# else
-    float windowScale      = 1.0f;
+    #else
+    float windowScale = 1.0f;
     float framebufferScale = scale;
-# endif
+    #endif
 
     SetWindowScale(windowScale); // this is how windows is scaled, not window content
 
     SetFramebufferScale(framebufferScale);
 }
 
-# endif // BACKEND(IMGUI_GLFW)
+#endif // BACKEND(IMGUI_GLFW)

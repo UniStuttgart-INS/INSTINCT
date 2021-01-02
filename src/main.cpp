@@ -5,7 +5,7 @@
 
 #include "NodeRegistry.hpp"
 
-int Main(int argc, char** argv)
+int Main(int argc, const char* argv[])
 {
     try
     {

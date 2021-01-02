@@ -9,7 +9,7 @@ struct Platform
 {
     virtual ~Platform() {};
 
-    virtual bool ApplicationStart(int argc, char** argv) = 0;
+    virtual bool ApplicationStart(int argc, const char* argv[]) = 0;
     virtual void ApplicationStop() = 0;
 
     virtual bool OpenMainWindow(const char* title, int width, int height) = 0;

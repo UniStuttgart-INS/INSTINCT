@@ -14,7 +14,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     return Main(__argc, __argv);
 }
 # else
-int main(int argc, char** argv)
+int main(int argc, const char* argv[])
 {
     return Main(argc, argv);
 }
