@@ -95,6 +95,8 @@ void NAV::VectorNavDataLogger::restore(json const& j)
 
 bool NAV::VectorNavDataLogger::initialize()
 {
+    deinitialize();
+
     LOG_TRACE("{}: called", nameId());
 
     if (!Node::initialize()

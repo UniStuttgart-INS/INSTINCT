@@ -164,6 +164,8 @@ void NAV::VectorNavFile::restore(json const& j)
 
 bool NAV::VectorNavFile::initialize()
 {
+    deinitialize();
+
     LOG_TRACE("{}: called", nameId());
 
     if (!Node::initialize()

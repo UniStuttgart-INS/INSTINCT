@@ -484,11 +484,16 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             const auto isSimple = node->kind == Node::Kind::Simple;
 
             bool hasOutputDelegates = false;
+            bool hasOutputFlows = false;
             for (const auto& output : node->outputPins)
             {
                 if (output.type == Pin::Type::Delegate)
                 {
                     hasOutputDelegates = true;
+                }
+                else if (output.type == Pin::Type::Flow)
+                {
+                    hasOutputFlows = true;
                 }
             }
 
@@ -507,7 +512,34 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::Spring(0);
                 ImGui::TextUnformatted(node->name.c_str());
                 ImGui::Spring(1);
-                ImGui::Dummy(ImVec2(0, 28));
+                if (hasOutputFlows)
+                {
+                    bool itemDisabled = false;
+                    if (!node->isInitialized && !node->callbacksEnabled)
+                    {
+                        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+                        itemDisabled = true;
+                    }
+
+                    ImGui::Checkbox("", &node->callbacksEnabled);
+                    if (ImGui::IsItemHovered())
+                    {
+                        ed::Suspend();
+                        ImGui::SetTooltip("Enable Callbacks");
+                        ed::Resume();
+                    }
+
+                    if (itemDisabled)
+                    {
+                        ImGui::PopItemFlag();
+                        ImGui::PopStyleVar();
+                    }
+                }
+                else
+                {
+                    ImGui::Dummy(ImVec2(0, 28));
+                }
                 if (hasOutputDelegates)
                 {
                     ImGui::BeginVertical("delegates", ImVec2(0, 28));

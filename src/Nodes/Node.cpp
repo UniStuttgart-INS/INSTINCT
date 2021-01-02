@@ -52,6 +52,7 @@ bool NAV::Node::initialize()
 
 void NAV::Node::deinitialize()
 {
+    callbacksEnabled = false;
     isInitialized = false;
 }
 
