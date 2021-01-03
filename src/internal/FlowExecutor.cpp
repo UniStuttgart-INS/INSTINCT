@@ -142,7 +142,7 @@ void NAV::FlowExecutor::execute()
 
     std::multimap<NAV::InsTime, Pin*> events;
 
-    for (Node* node : nm::m_Nodes())
+    for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
         if (node == nullptr)
         {
@@ -157,7 +157,7 @@ void NAV::FlowExecutor::execute()
                 return;
             }
 
-            if (outputPin.type == Pin::Type::Flow)
+            if (outputPin.type == Pin::Type::Flow && nm::IsPinLinked(outputPin.id))
             {
                 auto callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&outputPin.data);
                 if (callback != nullptr && *callback != nullptr)
