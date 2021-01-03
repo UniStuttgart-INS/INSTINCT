@@ -53,6 +53,9 @@ class VectorNavFile : public Imu, public FileReader
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Resets the node. Moves the read cursor to the start
+    void resetNode() override;
+
   private:
     constexpr static size_t OutputPortIndex_VectorNavFile = 0; ///< @brief Delegate
     constexpr static size_t OutputPortIndex_VectorNavObs = 1;  ///< @brief Flow (VectorNavObs)

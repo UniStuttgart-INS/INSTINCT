@@ -14,6 +14,7 @@ namespace ed = ax::NodeEditor;
 #include "Nodes/Node.hpp"
 #include "internal/Link.hpp"
 #include "internal/Pin.hpp"
+#include "util/ConfigManager.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -24,7 +25,7 @@ namespace ed = ax::NodeEditor;
 
 bool unsavedChanges = false;
 
-constexpr int loadingFramesToWait = 1;
+constexpr int loadingFramesToWait = 2;
 int loadingFrameCount = 0;
 
 std::string currentFilename;
@@ -243,11 +244,14 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
             nm::AddNode(node);
 
-            ed::SetNodePosition(node->id, nodeJson.at("pos").get<ImVec2>());
-
-            if (node->size.x > 0 && node->size.y > 0)
+            if (!ConfigManager::Get<bool>("nogui", false))
             {
-                ed::SetGroupSize(node->id, node->size);
+                ed::SetNodePosition(node->id, nodeJson.at("pos").get<ImVec2>());
+
+                if (node->size.x > 0 && node->size.y > 0)
+                {
+                    ed::SetGroupSize(node->id, node->size);
+                }
             }
         }
     }
@@ -262,7 +266,15 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         }
     }
 
-    loadingFrameCount = ImGui::GetFrameCount();
+    for (auto* node : nm::m_Nodes())
+    {
+        node->initialize();
+    }
+
+    if (!ConfigManager::Get<bool>("nogui", false))
+    {
+        loadingFrameCount = ImGui::GetFrameCount();
+    }
     unsavedChanges = false;
     currentFilename = filepath;
 
@@ -276,10 +288,13 @@ bool NAV::flow::HasUnsavedChanges()
 
 void NAV::flow::ApplyChanges()
 {
-    // This prevents the newly loaded gui elements from triggering the unsaved changes
-    if (ImGui::GetFrameCount() - loadingFrameCount >= loadingFramesToWait)
+    if (!ConfigManager::Get<bool>("nogui", false))
     {
-        unsavedChanges = true;
+        // This prevents the newly loaded gui elements from triggering the unsaved changes
+        if (ImGui::GetFrameCount() - loadingFrameCount >= loadingFramesToWait)
+        {
+            unsavedChanges = true;
+        }
     }
 }
 

@@ -56,6 +56,8 @@ void NAV::Node::deinitialize()
     isInitialized = false;
 }
 
+void NAV::Node::resetNode() {}
+
 void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<NAV::NodeData>& data)
 {
     if (callbacksEnabled)

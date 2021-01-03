@@ -56,12 +56,12 @@ class NodeEditorApplication : public Application
     void ShowLoadRequested();
     void ShowRenameNodeRequest(Node*& renameNode);
 
+    int frameCountNavigate = 0;
+
   private:
     ImTextureID m_HeaderBackground = nullptr;
 
     GlobalActions globalAction = GlobalActions::None;
-
-    int frameCountNavigate = 0;
 };
 
 } // namespace gui

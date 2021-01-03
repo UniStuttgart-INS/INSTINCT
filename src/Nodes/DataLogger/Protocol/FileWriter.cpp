@@ -21,8 +21,6 @@ void NAV::FileWriter::restore(json const& j)
     {
         j.at("path").get_to(path);
     }
-
-    initialize();
 }
 
 bool NAV::FileWriter::initialize()

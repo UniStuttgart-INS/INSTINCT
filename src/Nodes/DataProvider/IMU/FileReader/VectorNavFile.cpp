@@ -185,6 +185,11 @@ void NAV::VectorNavFile::deinitialize()
     Node::deinitialize();
 }
 
+void NAV::VectorNavFile::resetNode()
+{
+    FileReader::resetReader();
+}
+
 std::vector<std::string> NAV::VectorNavFile::readHeaderCallback(bool okay)
 {
     LOG_TRACE("{}, called {}", nameId(), okay);

@@ -231,6 +231,9 @@
             "args": [
                 "-f",
                 "config.ini",
+                "-l",
+                "flow/Default.flow",
+                // "--nogui",
             ],
             "dependsOn": [
                 "MAIN: Build project",

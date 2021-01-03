@@ -24,8 +24,6 @@ void NAV::FileReader::restore(json const& j)
     {
         j.at("path").get_to(path);
     }
-
-    initialize();
 }
 
 bool NAV::FileReader::initialize()

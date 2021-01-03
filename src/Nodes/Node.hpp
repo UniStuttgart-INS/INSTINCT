@@ -121,6 +121,9 @@ class Node
     /// @brief Deinitialize the Node
     virtual void deinitialize();
 
+    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
+    virtual void resetNode();
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member functions                                             */
     /* -------------------------------------------------------------------------------------------------------- */
