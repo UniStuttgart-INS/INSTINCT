@@ -64,6 +64,7 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
         node->id = GetNextNodeId();
     }
     m_nodes.push_back(node);
+    LOG_DEBUG("Creating node {}", size_t(node->id));
     for (auto& pin : node->inputPins)
     {
         pin.parentNode = node;
@@ -88,13 +89,40 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
 
 bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
 {
-    auto id = std::find_if(m_nodes.begin(),
+    auto it = std::find_if(m_nodes.begin(),
                            m_nodes.end(),
                            [nodeId](const auto& node) { return node->id == nodeId; });
-    if (id != m_nodes.end())
+    if (it != m_nodes.end())
     {
-        delete *id; // NOLINT(cppcoreguidelines-owning-memory)
-        m_nodes.erase(id);
+        LOG_DEBUG("Deleting node {}", size_t(nodeId));
+        for (Pin& inputPin : (*it)->inputPins)
+        {
+            for (size_t i = 0; i < m_links.size();)
+            {
+                if (m_links.at(i).endPinId == inputPin.id)
+                {
+                    NodeManager::DeleteLink(m_links.at(i).id);
+                    continue;
+                }
+                i++;
+            }
+        }
+        for (Pin& outputPin : (*it)->outputPins)
+        {
+            for (size_t i = 0; i < m_links.size();)
+            {
+                if (m_links.at(i).startPinId == outputPin.id)
+                {
+                    NodeManager::DeleteLink(m_links.at(i).id);
+                    continue;
+                }
+                i++;
+            }
+        }
+
+        (*it)->deinitialize();
+        delete *it; // NOLINT(cppcoreguidelines-owning-memory)
+        m_nodes.erase(it);
 
         flow::ApplyChanges();
 
@@ -108,6 +136,7 @@ void NAV::NodeManager::DeleteAllNodes()
 {
     for (auto& node : m_nodes)
     {
+        node->deinitialize();
         delete node; // NOLINT(cppcoreguidelines-owning-memory)
     }
 
@@ -130,6 +159,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     }
 
     m_links.emplace_back(GetNextLinkId(), startPin->id, endPin->id, startPin->getIconColor());
+    LOG_DEBUG("Creating link {} from pin {} to {}", size_t(m_links.back().id), size_t(startPin->id), size_t(endPin->id));
 
     if (endPin->type == Pin::Type::Flow)
     {
@@ -199,6 +229,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
                            [linkId](const auto& link) { return link.id == linkId; });
     if (id != m_links.end())
     {
+        LOG_DEBUG("Deleting link {}", size_t(linkId));
         if (Pin* endPin = FindPin(id->endPinId);
             endPin && endPin->type != Pin::Type::Flow)
         {

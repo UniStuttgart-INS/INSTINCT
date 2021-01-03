@@ -33,8 +33,6 @@ std::string NAV::GroupBox::category()
     return "GroupBox";
 }
 
-void NAV::GroupBox::config() {}
-
 [[nodiscard]] json NAV::GroupBox::save() const { return {}; }
 
 void NAV::GroupBox::restore(json const& /* j */) {}

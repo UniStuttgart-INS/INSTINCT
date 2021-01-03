@@ -115,6 +115,12 @@ bool NAV::gui::NodeEditorApplication::OnQuitRequest()
     }
 
     FlowExecutor::stop();
+
+    for (Node* node : nm::m_Nodes())
+    {
+        node->deinitialize();
+    }
+
     return true;
 }
 
@@ -925,12 +931,16 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::Separator();
         if (node)
         {
-            ImGui::Text("ID: %p", node->id.AsPointer());
+            ImGui::Text("ID: %lu", size_t(node->id));
             ImGui::Text("Type: %s", node->type().c_str());
             ImGui::Text("Kind: %s", std::string(node->kind).c_str());
-            ImGui::Text("Inputs: %d", static_cast<int>(node->inputPins.size()));
-            ImGui::Text("Outputs: %d", static_cast<int>(node->outputPins.size()));
+            ImGui::Text("Inputs: %lu", node->inputPins.size());
+            ImGui::Text("Outputs: %lu", node->outputPins.size());
             ImGui::Separator();
+            if (ImGui::MenuItem(node->isInitialized ? "Reinitialize" : "Initialize"))
+            {
+                node->initialize();
+            }
             if (ImGui::MenuItem("Rename"))
             {
                 renameNode = node;
@@ -938,7 +948,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         }
         else
         {
-            ImGui::Text("Unknown node: %p", contextNodeId.AsPointer());
+            ImGui::Text("Unknown node: %lu", size_t(contextNodeId));
         }
 
         if (ImGui::MenuItem("Delete"))
@@ -961,10 +971,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::Separator();
         if (pin)
         {
-            ImGui::Text("ID: %p", pin->id.AsPointer());
+            ImGui::Text("ID: %lu", size_t(pin->id));
             if (pin->parentNode)
             {
-                ImGui::Text("Node: %p", pin->parentNode->id.AsPointer());
+                ImGui::Text("Node: %lu", size_t(pin->parentNode->id));
             }
             else
             {
@@ -973,7 +983,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         }
         else
         {
-            ImGui::Text("Unknown pin: %p", contextPinId.AsPointer());
+            ImGui::Text("Unknown pin: %lu", size_t(contextPinId));
         }
 
         ImGui::EndPopup();
@@ -987,13 +997,13 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::Separator();
         if (link)
         {
-            ImGui::Text("ID: %p", link->id.AsPointer());
-            ImGui::Text("From: %p", link->startPinId.AsPointer());
-            ImGui::Text("To: %p", link->endPinId.AsPointer());
+            ImGui::Text("ID: %lu", size_t(link->id));
+            ImGui::Text("From: %lu", size_t(link->startPinId));
+            ImGui::Text("To: %lu", size_t(link->endPinId));
         }
         else
         {
-            ImGui::Text("Unknown link: %p", contextLinkId.AsPointer());
+            ImGui::Text("Unknown link: %lu", size_t(contextLinkId));
         }
         ImGui::Separator();
         if (ImGui::MenuItem("Delete"))
@@ -1090,7 +1100,11 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             ax::NodeEditor::EnableShortcuts(false);
             node->nodeDisabledShortcuts = true;
-            node->config();
+            node->guiConfig();
+            if (ImGui::Button(node->isInitialized ? "Reinitialize" : "Initialize"))
+            {
+                node->initialize();
+            }
 
             ImGui::End();
         }

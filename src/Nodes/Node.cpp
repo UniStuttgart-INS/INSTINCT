@@ -3,6 +3,8 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
+void NAV::Node::guiConfig() {}
+
 bool NAV::Node::initialize()
 {
     // Lock the node against recursive calling

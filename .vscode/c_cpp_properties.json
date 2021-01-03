@@ -13,8 +13,8 @@
                 "${workspaceFolder}/lib/implot",
                 "${workspaceFolder}/lib/navio2/include/navio/Common",
                 "${workspaceFolder}/lib/navio2/include/navio/Navio2",
-                "${workspaceFolder}/lib/uartsensor/include/uart/**",
-                "${workspaceFolder}/lib/vnproglib/include/vn/**",
+                "${workspaceFolder}/lib/uartsensor/include/**",
+                "${workspaceFolder}/lib/vnproglib/include/**",
             ],
             "defines": [
                 "LOG_LEVEL=LOG_LEVEL_DATA",

@@ -10,6 +10,7 @@
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 NAV::VectorNavDataLogger::VectorNavDataLogger()
 {
@@ -47,10 +48,15 @@ std::string NAV::VectorNavDataLogger::category()
     return "Data Logger";
 }
 
-void NAV::VectorNavDataLogger::config()
+void NAV::VectorNavDataLogger::guiConfig()
 {
     // Filepath
-    ImGui::InputText("Filepath", &path);
+    if (ImGui::InputText("Filepath", &path))
+    {
+        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
+        flow::ApplyChanges();
+        deinitialize();
+    }
     ImGui::SameLine();
     std::string saveFileDialogKey = fmt::format("Save VectorNav File ({})", id.AsPointer());
     if (ImGui::Button("Save"))
@@ -59,12 +65,13 @@ void NAV::VectorNavDataLogger::config()
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey))
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(400, 300)))
     {
         if (igfd::ImGuiFileDialog::Instance()->IsOk)
         {
             path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            LOG_DEBUG("Selected file: {}", path);
+            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
+            flow::ApplyChanges();
             initialize();
         }
 

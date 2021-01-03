@@ -35,10 +35,6 @@ class GroupBox : public Node
     /// @brief String representation of the Class Category
     [[nodiscard]] static std::string category();
 
-    /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
-    void config() override;
-
     /// @brief Saves the node into a json object
     [[nodiscard]] json save() const override;
 

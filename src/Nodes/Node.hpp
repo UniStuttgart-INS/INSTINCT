@@ -106,7 +106,7 @@ class Node
 
     /// @brief ImGui config window which is shown on double click
     /// @attention Don't forget to set hasConfig to true
-    virtual void config() = 0;
+    virtual void guiConfig();
 
     /// @brief Saves the node into a json object
     [[nodiscard]] virtual json save() const = 0;

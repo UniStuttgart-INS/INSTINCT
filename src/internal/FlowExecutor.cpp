@@ -117,15 +117,6 @@ void NAV::FlowExecutor::deinitialize()
     }
 
     _execute.store(false, std::memory_order_release);
-
-    // Reinitialize all nodes
-    for (Node* node : nm::m_Nodes())
-    {
-        if (!node->isInitialized)
-        {
-            node->initialize();
-        }
-    }
 }
 
 void NAV::FlowExecutor::execute()

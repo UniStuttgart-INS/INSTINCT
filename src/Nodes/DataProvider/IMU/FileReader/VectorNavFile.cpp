@@ -8,6 +8,7 @@
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/VectorNavObs.hpp"
 
@@ -46,10 +47,15 @@ std::string NAV::VectorNavFile::category()
     return "Data Provider";
 }
 
-void NAV::VectorNavFile::config()
+void NAV::VectorNavFile::guiConfig()
 {
     // Filepath
-    ImGui::InputText("Filepath", &path);
+    if (ImGui::InputText("Filepath", &path))
+    {
+        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
+        flow::ApplyChanges();
+        deinitialize();
+    }
     ImGui::SameLine();
     std::string openFileDialogKey = fmt::format("Select VectorNav File ({})", id.AsPointer());
     if (ImGui::Button("Open"))
@@ -63,7 +69,8 @@ void NAV::VectorNavFile::config()
         if (igfd::ImGuiFileDialog::Instance()->IsOk)
         {
             path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            LOG_DEBUG("Selected file: {}", path);
+            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
+            flow::ApplyChanges();
             initialize();
         }
 

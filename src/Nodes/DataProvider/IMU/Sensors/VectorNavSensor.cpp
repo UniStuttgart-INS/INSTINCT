@@ -4,26 +4,160 @@
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
 
-NAV::VectorNavSensor::VectorNavSensor(const std::string& name, const std::map<std::string, std::string>& options)
-    : UartSensor(options), Imu(name, options)
+#include "imgui_stdlib.h"
+#include "gui/widgets/HelpMarker.hpp"
+
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
+
+#include "NodeData/IMU/VectorNavObs.hpp"
+
+#include <map>
+
+NAV::VectorNavSensor::VectorNavSensor()
 {
-    LOG_TRACE("called for {}", name);
+    name = typeStatic();
 
-    if (options.count("Frequency"))
+    LOG_TRACE("{}: called", name);
+
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
+
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "VectorNavSensor", this);
+
+    nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type());
+
+    dividerFrequency = []() {
+        std::map<int, int, std::greater<int>> divFreq;
+        for (int freq = 1; freq <= IMU_DEFAULT_FREQUENCY; freq++)
+        {
+            int divider = static_cast<int>(std::round(IMU_DEFAULT_FREQUENCY / freq));
+
+            if (!divFreq.contains(divider)
+                || std::abs(divider - IMU_DEFAULT_FREQUENCY / freq) < std::abs(divider - IMU_DEFAULT_FREQUENCY / divFreq.at(divider)))
+            {
+                divFreq[divider] = freq;
+            }
+        }
+        std::vector<uint16_t> divs;
+        std::vector<std::string> freqs;
+        for (auto& [divider, freq] : divFreq)
+        {
+            divs.push_back(static_cast<uint16_t>(divider));
+            freqs.push_back(std::to_string(freq) + " Hz");
+        }
+        return std::make_pair(divs, freqs);
+    }();
+}
+
+NAV::VectorNavSensor::~VectorNavSensor()
+{
+    LOG_TRACE("{}: called", nameId());
+}
+
+std::string NAV::VectorNavSensor::typeStatic()
+{
+    return "VectorNavSensor";
+}
+
+std::string NAV::VectorNavSensor::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::VectorNavSensor::category()
+{
+    return "Data Provider";
+}
+
+void NAV::VectorNavSensor::guiConfig()
+{
+    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &sensorPort))
     {
-        config.outputFrequency = static_cast<uint16_t>(std::stoul(options.at("Frequency")));
+        LOG_DEBUG("{}: SensorPort changed to {}", nameId(), sensorPort);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("COM port where the sensor is attached to\n"
+                             "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
+                             "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
+                             "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
+                             "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
+                             "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)");
+
+    const char* items[] = { "Fastest", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" };
+    if (ImGui::Combo("Baudrate", &selectedBaudrate, items, IM_ARRAYSIZE(items)))
+    {
+        LOG_DEBUG("{}: Baudrate changed to {}", nameId(), sensorBaudrate());
+        flow::ApplyChanges();
+        deinitialize();
     }
 
-    ASSERT(config.outputFrequency <= IMU_DEFAULT_FREQUENCY, "Configured Output Frequency has to be less than IMU_DEFAULT_FREQUENCY");
-
-    // connect to the sensor
-    if (sensorBaudrate == BAUDRATE_FASTEST)
+    const char* currentFrequency = (selectedFrequency >= 0 && static_cast<size_t>(selectedFrequency) < dividerFrequency.second.size())
+                                       ? dividerFrequency.second.at(static_cast<size_t>(selectedFrequency)).c_str()
+                                       : "Unknown";
+    if (ImGui::SliderInt("Frequency", &selectedFrequency, 0, static_cast<int>(dividerFrequency.second.size()) - 1, currentFrequency))
     {
-        sensorBaudrate = static_cast<Baudrate>(vn::sensors::VnSensor::supportedBaudrates()[vn::sensors::VnSensor::supportedBaudrates().size() - 1]);
+        LOG_DEBUG("{}: Frequency changed to {}", nameId(), dividerFrequency.second.at(static_cast<size_t>(selectedFrequency)));
+        flow::ApplyChanges();
+        deinitialize();
     }
+}
+
+[[nodiscard]] json NAV::VectorNavSensor::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["UartSensor"] = UartSensor::save();
+    j["Frequency"] = dividerFrequency.second.at(static_cast<size_t>(selectedFrequency));
+
+    return j;
+}
+
+void NAV::VectorNavSensor::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("UartSensor"))
+    {
+        UartSensor::restore(j.at("UartSensor"));
+    }
+    if (j.contains("Frequency"))
+    {
+        std::string frequency;
+        j.at("Frequency").get_to(frequency);
+        for (size_t i = 0; i < dividerFrequency.second.size(); i++)
+        {
+            if (dividerFrequency.second.at(i) == frequency)
+            {
+                selectedFrequency = static_cast<int>(i);
+                break;
+            }
+        }
+    }
+}
+
+bool NAV::VectorNavSensor::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{}: called", nameId());
+
+    if (!Node::initialize())
+    {
+        return false;
+    }
+
+    // Choose baudrate
+    Baudrate targetBaudrate = sensorBaudrate() == BAUDRATE_FASTEST
+                                  ? static_cast<Baudrate>(vn::sensors::VnSensor::supportedBaudrates()[vn::sensors::VnSensor::supportedBaudrates().size() - 1])
+                                  : sensorBaudrate();
 
     Baudrate connectedBaudrate{};
-
     // Search for the VectorNav Sensor
     if (int32_t foundBaudrate = 0;
         vn::sensors::Searcher::search(sensorPort, &foundBaudrate))
@@ -34,36 +168,44 @@ NAV::VectorNavSensor::VectorNavSensor(const std::string& name, const std::map<st
     else if (std::vector<std::pair<std::string, uint32_t>> foundSensors = vn::sensors::Searcher::search();
              !foundSensors.empty())
     {
-        sensorPort = "";
-        // Some VectorNav sensors where found, try to identify the wanted one by it's name
-        for (auto [port, baudrate] : foundSensors)
+        if (foundSensors.size() == 1)
         {
-            vs.connect(port, baudrate);
-            std::string modelNumber = vs.readModelNumber();
-            vs.disconnect();
-
-            LOG_DEBUG("{} found VectorNav Sensor {} on port {} with baudrate {}", name, modelNumber, port, baudrate);
-
-            // Regex search may be better, but simple find is used here
-            if (modelNumber.find(name) != std::string::npos)
-            {
-                sensorPort = port;
-                connectedBaudrate = static_cast<Baudrate>(baudrate);
-                break;
-            }
+            sensorPort = foundSensors.at(0).first;
+            connectedBaudrate = static_cast<Baudrate>(foundSensors.at(0).second);
         }
-        // Sensor could not be identified
-        if (sensorPort.empty())
+        else
         {
-            // This point is also reached if a sensor is connected with USB but external power is off
-            LOG_CRITICAL("{} could not connect", name);
-            throw std::runtime_error(name + " could not connect");
+            sensorPort = "";
+            // Some VectorNav sensors where found, try to identify the wanted one by it's name
+            for (auto [port, baudrate] : foundSensors)
+            {
+                vs.connect(port, baudrate);
+                std::string modelNumber = vs.readModelNumber();
+                vs.disconnect();
+
+                LOG_DEBUG("{} found VectorNav Sensor {} on port {} with baudrate {}", nameId(), modelNumber, port, baudrate);
+
+                // Regex search may be better, but simple find is used here
+                if (modelNumber.find(name) != std::string::npos)
+                {
+                    sensorPort = port;
+                    connectedBaudrate = static_cast<Baudrate>(baudrate);
+                    break;
+                }
+            }
+            // Sensor could not be identified
+            if (sensorPort.empty())
+            {
+                // This point is also reached if a sensor is connected with USB but external power is off
+                LOG_ERROR("{} could not connect", nameId());
+                return false;
+            }
         }
     }
     else
     {
-        LOG_CRITICAL("{} could not connect", name);
-        throw std::runtime_error(name + " could not connect");
+        LOG_ERROR("{} could not connect", nameId());
+        return false;
     }
 
     // Connect to the sensor (vs.verifySensorConnectivity does not have to be called as sensor is already tested)
@@ -73,21 +215,21 @@ NAV::VectorNavSensor::VectorNavSensor(const std::string& name, const std::map<st
     LOG_DEBUG("{} connected on port {} with baudrate {}", vs.readModelNumber(), sensorPort, connectedBaudrate);
 
     // Change Connection Baudrate
-    if (sensorBaudrate != connectedBaudrate)
+    if (targetBaudrate != connectedBaudrate)
     {
         auto suppBaud = vn::sensors::VnSensor::supportedBaudrates();
-        if (std::find(suppBaud.begin(), suppBaud.end(), sensorBaudrate) != suppBaud.end())
+        if (std::find(suppBaud.begin(), suppBaud.end(), targetBaudrate) != suppBaud.end())
         {
-            vs.changeBaudRate(sensorBaudrate);
-            LOG_DEBUG("{} baudrate changed to {}", name, sensorBaudrate);
+            vs.changeBaudRate(targetBaudrate);
+            LOG_DEBUG("{} baudrate changed to {}", nameId(), static_cast<size_t>(targetBaudrate));
         }
         else
         {
-            LOG_CRITICAL("{} does not support baudrate {}", name, sensorBaudrate);
-            throw std::runtime_error(fmt::format("{} does not support baudrate {}", name, sensorBaudrate));
+            LOG_ERROR("{} does not support baudrate {}", nameId(), static_cast<size_t>(targetBaudrate));
+            return false;
         }
     }
-    ASSERT(vs.readSerialBaudRate() == sensorBaudrate, "Baudrate was not changed");
+    ASSERT(vs.readSerialBaudRate() == targetBaudrate, "Baudrate was not changed");
 
     // Change Heading Mode (and enable Filtering Mode, Tuning Mode)
     vn::sensors::VpeBasicControlRegister vpeReg = vs.readVpeBasicControl();
@@ -108,7 +250,7 @@ NAV::VectorNavSensor::VectorNavSensor(const std::string& name, const std::map<st
 
     // Configure Binary Output 1
     vn::sensors::BinaryOutputRegister bor(config.asyncMode,
-                                          static_cast<uint16_t>(IMU_DEFAULT_FREQUENCY / config.outputFrequency),
+                                          dividerFrequency.first.at(static_cast<size_t>(selectedFrequency)),
                                           config.commonField,
                                           config.timeField,
                                           config.imuField,
@@ -122,26 +264,39 @@ NAV::VectorNavSensor::VectorNavSensor(const std::string& name, const std::map<st
     }
     catch (const std::exception& e)
     {
-        LOG_CRITICAL("{} could not configure binary output register ({})", name, e.what());
+        LOG_CRITICAL("{} could not configure binary output register ({})", nameId(), e.what());
     }
 
     vs.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
-    LOG_DEBUG("{} successfully initialized", name);
+    LOG_DEBUG("{} successfully initialized", nameId());
+
+    return isInitialized = true;
 }
 
-NAV::VectorNavSensor::~VectorNavSensor()
+void NAV::VectorNavSensor::deinitialize()
 {
-    LOG_TRACE("called for {}", name);
+    LOG_TRACE("{}: called", nameId());
 
-    removeAllCallbacksOfType<VectorNavObs>();
-    callbacksEnabled = false;
+    if (!isInitialized)
+    {
+        return;
+    }
+
     if (vs.isConnected())
     {
-        vs.unregisterAsyncPacketReceivedHandler();
+        try
+        {
+            vs.unregisterAsyncPacketReceivedHandler();
+        }
+        catch (...)
+        {}
+
         vs.reset(true);
         vs.disconnect();
     }
+
+    Node::deinitialize();
 }
 
 void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, [[maybe_unused]] size_t index)
@@ -205,15 +360,15 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
             obs->yawPitchRollUncertainty.emplace(yawPitchRollUncertainty.x, yawPitchRollUncertainty.y, yawPitchRollUncertainty.z);
 
             LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-                     vnSensor->name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
+                     vnSensor->nameId(), obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
                      obs->vpeStatus.value().status, obs->temperature.value());
 
             // Calls all the callbacks
-            vnSensor->invokeCallbacks(obs);
+            vnSensor->invokeCallbacks(VectorNavSensor::OutputPortIndex_VectorNavObs, obs);
         }
         else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)
         {
-            LOG_WARN("{} received an ASCII Async message: {}", vnSensor->name, p.datastr());
+            LOG_WARN("{} received an ASCII Async message: {}", vnSensor->nameId(), p.datastr());
         }
     }
 }
