@@ -14,31 +14,57 @@ namespace nm = NAV::NodeManager;
 #include <variant>
 #include <memory>
 
-NAV::FlowExecutor::~FlowExecutor()
-{
-    if (_execute.load(std::memory_order_acquire))
-    {
-        stop();
-    };
-}
+#include <thread>
+#include <atomic>
 
-bool NAV::FlowExecutor::isRunning() const noexcept
+/* -------------------------------------------------------------------------------------------------------- */
+/*                                              Private Members                                             */
+/* -------------------------------------------------------------------------------------------------------- */
+
+std::atomic<bool> _execute{ false };
+std::thread _thd;
+
+/* -------------------------------------------------------------------------------------------------------- */
+/*                                       Private Function Declarations                                      */
+/* -------------------------------------------------------------------------------------------------------- */
+
+namespace NAV::FlowExecutor
+{
+/// @brief Initializes all Nodes if they are not initialized yet
+/// @return True if all nodes are initialized
+bool initialize();
+
+/// @brief Deinitialize all Nodes
+void deinitialize();
+
+/// @brief Main task of the thread
+void execute();
+
+} // namespace NAV::FlowExecutor
+
+/* -------------------------------------------------------------------------------------------------------- */
+/*                                           Function Definitions                                           */
+/* -------------------------------------------------------------------------------------------------------- */
+
+bool NAV::FlowExecutor::isRunning() noexcept
 {
     return (_execute.load(std::memory_order_acquire) && _thd.joinable());
 }
 
 void NAV::FlowExecutor::start()
 {
-    if (_execute.load(std::memory_order_acquire))
-    {
-        stop();
-    };
+    stop();
+
+    LOG_TRACE("called");
+
     _execute.store(true, std::memory_order_release);
-    _thd = std::thread(&FlowExecutor::execute, this);
+    _thd = std::thread(execute);
 }
 
 void NAV::FlowExecutor::stop()
 {
+    LOG_TRACE("called");
+
     _execute.store(false, std::memory_order_release);
     if (_thd.joinable())
     {
@@ -48,6 +74,8 @@ void NAV::FlowExecutor::stop()
 
 void NAV::FlowExecutor::waitForFinish()
 {
+    LOG_TRACE("called");
+
     if (isRunning())
     {
         _thd.join();
@@ -71,6 +99,11 @@ bool NAV::FlowExecutor::initialize()
         }
     }
 
+    if (!hasUninitializedNodes)
+    {
+        nm::EnableAllCallbacks();
+    }
+
     return !hasUninitializedNodes;
 }
 
@@ -82,6 +115,17 @@ void NAV::FlowExecutor::deinitialize()
     {
         node->deinitialize();
     }
+
+    _execute.store(false, std::memory_order_release);
+
+    // Reinitialize all nodes
+    for (Node* node : nm::m_Nodes())
+    {
+        if (!node->isInitialized)
+        {
+            node->initialize();
+        }
+    }
 }
 
 void NAV::FlowExecutor::execute()
@@ -90,6 +134,7 @@ void NAV::FlowExecutor::execute()
 
     if (!initialize())
     {
+        _execute.store(false, std::memory_order_release);
         return;
     }
 
@@ -106,6 +151,12 @@ void NAV::FlowExecutor::execute()
 
         for (Pin& outputPin : node->outputPins)
         {
+            if (!_execute.load(std::memory_order_acquire))
+            {
+                deinitialize();
+                return;
+            }
+
             if (outputPin.type == Pin::Type::Flow)
             {
                 auto callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&outputPin.data);
@@ -149,7 +200,7 @@ void NAV::FlowExecutor::execute()
 
     LOG_INFO("Processing Data from files");
     std::multimap<NAV::InsTime, Pin*>::iterator it;
-    while (it = events.begin(), it != events.end())
+    while (it = events.begin(), it != events.end() && _execute.load(std::memory_order_acquire))
     {
         Pin* pin = it->second;
         Node* node = pin->parentNode;

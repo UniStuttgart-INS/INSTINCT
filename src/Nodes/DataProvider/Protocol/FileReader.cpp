@@ -70,6 +70,8 @@ void NAV::FileReader::deinitialize()
 {
     LOG_TRACE("called");
 
+    headerColumns.clear();
+
     if (filestream.is_open())
     {
         filestream.close();

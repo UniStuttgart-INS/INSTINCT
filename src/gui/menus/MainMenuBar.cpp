@@ -2,6 +2,7 @@
 
 #include "FileMenu.hpp"
 #include "EditMenu.hpp"
+#include "RunMenu.hpp"
 
 #include "internal/FlowManager.hpp"
 
@@ -23,6 +24,11 @@ void NAV::gui::menus::ShowMainMenuBar(GlobalActions& globalAction)
         if (ImGui::BeginMenu("Edit"))
         {
             ShowEditMenu();
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Run"))
+        {
+            ShowRunMenu();
             ImGui::EndMenu();
         }
         // Move cursor to the right, as ImGui::Spring() is not working inside menu bars

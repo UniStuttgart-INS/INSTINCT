@@ -162,4 +162,10 @@ std::vector<Node*> FindConnectedNodesToPin(ax::NodeEditor::PinId id);
 /// @return List of Links which are connected to the pin
 std::vector<Link*> FindConnectedLinksToPin(ax::NodeEditor::PinId id);
 
+/// @brief Enables all Node callbacks
+void EnableAllCallbacks();
+
+/// @brief Disables all Node callbacks
+void DisableAllCallbacks();
+
 }; // namespace NAV::NodeManager

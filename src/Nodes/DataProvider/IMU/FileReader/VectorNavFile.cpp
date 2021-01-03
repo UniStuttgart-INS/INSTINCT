@@ -130,15 +130,6 @@ void NAV::VectorNavFile::config()
 
         ImGui::EndTable();
     }
-
-    if (ImGui::Button("Transmit data"))
-    {
-        auto obs = std::make_shared<VectorNavObs>(imuPos);
-
-        obs->temperature = 124;
-
-        invokeCallbacks(OutputPortIndex_VectorNavObs, obs);
-    }
 }
 
 [[nodiscard]] json NAV::VectorNavFile::save() const
@@ -188,13 +179,6 @@ void NAV::VectorNavFile::deinitialize()
 void NAV::VectorNavFile::resetNode()
 {
     FileReader::resetReader();
-}
-
-std::vector<std::string> NAV::VectorNavFile::readHeaderCallback(bool okay)
-{
-    LOG_TRACE("{}, called {}", nameId(), okay);
-
-    return headerColumns;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)

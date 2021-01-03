@@ -73,11 +73,9 @@ int Main(int argc, const char* argv[])
                 }
                 if (loadSuccessful)
                 {
-                    NAV::FlowExecutor flowExecutor;
+                    NAV::FlowExecutor::start();
 
-                    flowExecutor.start();
-
-                    flowExecutor.waitForFinish();
+                    NAV::FlowExecutor::waitForFinish();
                 }
             }
             else

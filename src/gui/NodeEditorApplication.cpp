@@ -33,6 +33,7 @@ namespace nm = NAV::NodeManager;
 #include "NodeRegistry.hpp"
 
 #include "internal/FlowManager.hpp"
+#include "internal/FlowExecutor.hpp"
 
 #include <string>
 #include <array>
@@ -51,14 +52,20 @@ void NAV::gui::NodeEditorApplication::OnStart()
     // config.UserPointer = this;
 
     // Stops the Editor from creating a log file, as we do it ourselves
+    // clang-format off
     config.SaveSettings = [](const char* /*data*/, size_t /*size*/,
                              ed::SaveReasonFlags /*reason*/, void* /*userPointer*/) -> bool {
+        // clang-format on
+
         return false;
     };
 
     // Trigger the changed bar on the node overview list when a node is moved
+    // clang-format off
     config.SaveNodeSettings = [](ed::NodeId nodeId, const char* /*data*/, size_t /*size*/,
                                  ed::SaveReasonFlags /*reason*/, void* /*userPointer*/) -> bool {
+        // clang-format on
+
         // auto* self = static_cast<NodeEditorApplication*>(userPointer);
 
         auto* node = nm::FindNode(nodeId);
@@ -107,6 +114,7 @@ bool NAV::gui::NodeEditorApplication::OnQuitRequest()
         return false;
     }
 
+    FlowExecutor::stop();
     return true;
 }
 

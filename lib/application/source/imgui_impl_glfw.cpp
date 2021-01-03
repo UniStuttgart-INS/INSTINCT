@@ -203,6 +203,18 @@ static bool ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks, Glfw
     io.KeyMap[ImGuiKey_7] = GLFW_KEY_7;
     io.KeyMap[ImGuiKey_8] = GLFW_KEY_8;
     io.KeyMap[ImGuiKey_9] = GLFW_KEY_9;
+    io.KeyMap[ImGuiKey_F1] = GLFW_KEY_F1;
+    io.KeyMap[ImGuiKey_F2] = GLFW_KEY_F2;
+    io.KeyMap[ImGuiKey_F3] = GLFW_KEY_F3;
+    io.KeyMap[ImGuiKey_F4] = GLFW_KEY_F4;
+    io.KeyMap[ImGuiKey_F5] = GLFW_KEY_F5;
+    io.KeyMap[ImGuiKey_F6] = GLFW_KEY_F6;
+    io.KeyMap[ImGuiKey_F7] = GLFW_KEY_F7;
+    io.KeyMap[ImGuiKey_F8] = GLFW_KEY_F8;
+    io.KeyMap[ImGuiKey_F9] = GLFW_KEY_F9;
+    io.KeyMap[ImGuiKey_F10] = GLFW_KEY_F10;
+    io.KeyMap[ImGuiKey_F11] = GLFW_KEY_F11;
+    io.KeyMap[ImGuiKey_F12] = GLFW_KEY_F12;
 
     int f_index = GetEnumValueForF();
     int d_index = GetEnumValueForD();

@@ -13,4 +13,5 @@ enum GlobalActions
     SaveAs,
     Clear,
     Load,
+    RunFlow,
 };

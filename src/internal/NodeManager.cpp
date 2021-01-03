@@ -409,3 +409,19 @@ std::vector<NAV::Link*> NAV::NodeManager::FindConnectedLinksToPin(ax::NodeEditor
 
     return connectedLinks;
 }
+
+void NAV::NodeManager::EnableAllCallbacks()
+{
+    for (auto* node : m_nodes)
+    {
+        node->callbacksEnabled = true;
+    }
+}
+
+void NAV::NodeManager::DisableAllCallbacks()
+{
+    for (auto* node : m_nodes)
+    {
+        node->callbacksEnabled = false;
+    }
+}
