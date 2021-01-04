@@ -1,23 +1,172 @@
 #include "ImuFile.hpp"
 
 #include "util/Logger.hpp"
-#include <ios>
-#include <cmath>
-#include <algorithm>
 
-NAV::ImuFile::ImuFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : ImuFileReader(name, options) {}
+#include "util/InsTransformations.hpp"
 
-std::shared_ptr<NAV::ImuObs> NAV::ImuFile::pollData(bool peek)
+#include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
+
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
+
+#include "NodeData/IMU/ImuObs.hpp"
+
+NAV::ImuFile::ImuFile()
+{
+    name = typeStatic();
+
+    LOG_TRACE("{}: called", name);
+
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
+
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "ImuFile", this);
+
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuFile::pollData);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
+}
+
+NAV::ImuFile::~ImuFile()
+{
+    LOG_TRACE("{}: called", nameId());
+}
+
+std::string NAV::ImuFile::typeStatic()
+{
+    return "ImuFile";
+}
+
+std::string NAV::ImuFile::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::ImuFile::category()
+{
+    return "Data Provider";
+}
+
+void NAV::ImuFile::guiConfig()
+{
+    // Filepath
+    if (ImGui::InputText("Filepath", &path))
+    {
+        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+    ImGui::SameLine();
+    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
+    if (ImGui::Button("Open"))
+    {
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "");
+        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+    }
+
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
+    {
+        if (igfd::ImGuiFileDialog::Instance()->IsOk)
+        {
+            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
+            flow::ApplyChanges();
+            initialize();
+        }
+
+        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
+    }
+
+    // Header info
+    if (ImGui::BeginTable(fmt::format("##ImuHeaders ({})", id.AsPointer()).c_str(), 2,
+                          ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+    {
+        ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableHeadersRow();
+
+        auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
+            ImGui::TableSetColumnIndex(index);
+            if (alwaysNormal || std::find(headerColumns.begin(), headerColumns.end(), searchText) != headerColumns.end())
+            {
+                ImGui::TextUnformatted(displayText);
+            }
+            else
+            {
+                ImGui::TextDisabled("%s", displayText);
+            }
+        };
+
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "GpsCycle", "GpsCycle");
+        TextColoredIfExists(1, "UnCompMag", "UnCompMagX");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "GpsWeek", "GpsWeek");
+        TextColoredIfExists(1, "UnCompAcc", "UnCompAccX");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "GpsToW", "GpsToW");
+        TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "TimeStartup", "TimeStartup");
+        TextColoredIfExists(1, "Temperature", "Temperature");
+
+        ImGui::EndTable();
+    }
+}
+
+[[nodiscard]] json NAV::ImuFile::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["FileReader"] = FileReader::save();
+
+    return j;
+}
+
+void NAV::ImuFile::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("FileReader"))
+    {
+        FileReader::restore(j.at("FileReader"));
+    }
+}
+
+bool NAV::ImuFile::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{}: called", nameId());
+
+    if (!Node::initialize()
+        || !FileReader::initialize())
+    {
+        return false;
+    }
+
+    return isInitialized = true;
+}
+
+void NAV::ImuFile::deinitialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    FileReader::deinitialize();
+    Node::deinitialize();
+}
+
+void NAV::ImuFile::resetNode()
+{
+    FileReader::resetReader();
+}
+
+std::shared_ptr<NAV::NodeData> NAV::ImuFile::pollData(bool peek)
 {
     auto obs = std::make_shared<ImuObs>(imuPos);
-
-    if (fileType == FileType::BINARY)
-    {
-        // TODO: Implement ImuFile Binary reading
-        LOG_CRITICAL("Binary ImuFile pollData is not implemented yet.");
-    }
-    // Ascii
 
     // Read line
     std::string line;
@@ -55,7 +204,7 @@ std::shared_ptr<NAV::ImuObs> NAV::ImuFile::pollData(bool peek)
     std::optional<double> gyroUncompZ;
 
     // Split line at comma
-    for (const auto& column : columns)
+    for (const auto& column : headerColumns)
     {
         if (std::getline(lineStream, cell, ','))
         {
@@ -164,7 +313,7 @@ std::shared_ptr<NAV::ImuObs> NAV::ImuFile::pollData(bool peek)
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(obs);
+        invokeCallbacks(OutputPortIndex_ImuObs, obs);
     }
 
     return obs;
