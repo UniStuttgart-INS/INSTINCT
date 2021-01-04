@@ -106,8 +106,8 @@ class VectorNavSensor : public Imu, public UartSensor
     void deinitialize() override;
 
   private:
-    constexpr static size_t OutputPortIndex_VectorNavFile = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_VectorNavObs = 1;  ///< @brief Flow (VectorNavObs)
+    constexpr static size_t OutputPortIndex_VectorNavSensor = 0; ///< @brief Delegate
+    constexpr static size_t OutputPortIndex_VectorNavObs = 1;    ///< @brief Flow (VectorNavObs)
 
     /// @brief Callback handler for notifications of new asynchronous data packets received
     /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler

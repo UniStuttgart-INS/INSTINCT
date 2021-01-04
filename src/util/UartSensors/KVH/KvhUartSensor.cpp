@@ -166,7 +166,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
             if (p->isValid())
             {
                 // We have a valid binary packet!!!.
-                LOG_TRACE("{}: Valid binary packet: Type={}, Length={}", name, packetType, _buffer.size());
+                LOG_DATA("{}: Valid binary packet: Type={}, Length={}", name, packetType, _buffer.size());
                 resetTracking();
                 return p;
             }
@@ -201,7 +201,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
                 if (p->isValid())
                 {
                     // We have a valid ascii packet!!!.
-                    LOG_TRACE("{}: Valid ascii packet: {}", name, p->datastr().substr(0, p->getRawDataLength() - 2));
+                    LOG_DATA("{}: Valid ascii packet: {}", name, p->datastr().substr(0, p->getRawDataLength() - 2));
                     return p;
                 }
                 // Invalid packet!
@@ -224,7 +224,6 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::kvh::KvhUartSensor::findPa
 void NAV::sensors::kvh::KvhUartSensor::packetFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData)
 {
     auto* sensor = static_cast<KvhUartSensor*>(userData);
-    LOG_TRACE("{} called", sensor->name);
 
     for (size_t i = 0; i < data.size(); i++, sensor->runningDataIndex++)
     {
@@ -240,8 +239,6 @@ void NAV::sensors::kvh::KvhUartSensor::packetFinderFunction(const std::vector<ui
 
 uart::protocol::Packet::Type NAV::sensors::kvh::KvhUartSensor::packetTypeFunction(const uart::protocol::Packet& packet)
 {
-    LOG_TRACE("called");
-
     if (packet.getRawDataLength() < 1)
     {
         LOG_CRITICAL("Packet does not contain any data.");
@@ -268,8 +265,6 @@ uart::protocol::Packet::Type NAV::sensors::kvh::KvhUartSensor::packetTypeFunctio
 
 bool NAV::sensors::kvh::KvhUartSensor::checksumFunction(const uart::protocol::Packet& packet)
 {
-    LOG_TRACE("called");
-
     // minumum binary packet is 9 bytes
     if (packet.getRawDataLength() < 1)
     {
@@ -299,14 +294,10 @@ bool NAV::sensors::kvh::KvhUartSensor::checksumFunction(const uart::protocol::Pa
 
 bool NAV::sensors::kvh::KvhUartSensor::isErrorFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
-    LOG_TRACE("called");
-
     return false;
 }
 
 bool NAV::sensors::kvh::KvhUartSensor::isResponseFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
-    LOG_TRACE("called");
-
     return false;
 }

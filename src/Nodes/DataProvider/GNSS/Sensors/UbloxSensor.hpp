@@ -5,26 +5,20 @@
 
 #pragma once
 
-#include "NodeData/GNSS/UbloxObs.hpp"
-#include "../Gnss.hpp"
-#include "../../Protocol/UartSensor.hpp"
+#include "Nodes/DataProvider/GNSS/Gnss.hpp"
+#include "Nodes/DataProvider/Protocol/UartSensor.hpp"
 #include "util/UartSensors/Ublox/UbloxUartSensor.hpp"
 
 namespace NAV
 {
 /// Ublox Sensor Class
-class UbloxSensor final : public UartSensor, public Gnss
+class UbloxSensor : public Gnss, public UartSensor
 {
   public:
-    /// @brief Constructor
-    /// @param[in] name Name of the Sensor
-    /// @param[in, out] options Program options string list
-    UbloxSensor(const std::string& name, const std::map<std::string, std::string>& options);
-
     /// @brief Default constructor
-    UbloxSensor() = default;
+    UbloxSensor();
     /// @brief Destructor
-    ~UbloxSensor() final;
+    ~UbloxSensor() override;
     /// @brief Copy constructor
     UbloxSensor(const UbloxSensor&) = delete;
     /// @brief Move constructor
@@ -34,82 +28,36 @@ class UbloxSensor final : public UartSensor, public Gnss
     /// @brief Move assignment operator
     UbloxSensor& operator=(UbloxSensor&&) = delete;
 
-    /// @brief Returns the String representation of the Class Type
-    /// @return The class type
-    [[nodiscard]] constexpr std::string_view type() const final
-    {
-        return std::string_view("UbloxSensor");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] static std::string typeStatic();
 
-    /// @brief Returns the String representation of the Class Category
-    /// @return The class category
-    [[nodiscard]] constexpr std::string_view category() const final
-    {
-        return std::string_view("DataProvider");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] std::string type() const override;
 
-    /// @brief Returns Gui Configuration options for the class
-    /// @return The gui configuration
-    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
-    {
-        return { { CONFIG_STRING, "Port", "COM port where the sensor is attached to\n"
-                                          "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
-                                          "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
-                                          "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
-                                          "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
-                                          "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)",
-                   { "/dev/ttyUSB0" } } };
-    }
+    /// @brief String representation of the Class Category
+    [[nodiscard]] static std::string category();
 
-    /// @brief Returns the context of the class
-    /// @return The class context
-    [[nodiscard]] constexpr NodeContext context() const final
-    {
-        return NodeContext::REAL_TIME;
-    }
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    void guiConfig() override;
 
-    /// @brief Returns the number of Ports
-    /// @param[in] portType Specifies the port type
-    /// @return The number of ports
-    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            break;
-        case PortType::Out:
-            return 1U;
-        }
+    /// @brief Saves the node into a json object
+    [[nodiscard]] json save() const override;
 
-        return 0U;
-    }
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    void restore(const json& j) override;
 
-    /// @brief Returns the data types provided by this class
-    /// @param[in] portType Specifies the port type
-    /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type and subtitle
-    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            break;
-        case PortType::Out:
-            if (portIndex == 0)
-            {
-                return std::make_pair(UbloxObs::type(), std::string_view(""));
-            }
-        }
+    /// @brief Initialize the node
+    bool initialize() override;
 
-        return std::make_pair(std::string_view(""), std::string_view(""));
-    }
-
-    /// @brief Handles the data sent on the input port
-    /// @param[in] portIndex The input port index
-    /// @param[in, out] data The data send on the input port
-    void handleInputData([[maybe_unused]] uint8_t portIndex, [[maybe_unused]] std::shared_ptr<NodeData> data) final {}
+    /// @brief Deinitialize the node
+    void deinitialize() override;
 
   private:
+    constexpr static size_t OutputPortIndex_UbloxSensor = 0; ///< @brief Delegate
+    constexpr static size_t OutputPortIndex_UbloxObs = 1;    ///< @brief Flow (UbloxObs)
+
     /// @brief Callback handler for notifications of new asynchronous data packets received
     /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
     /// @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message

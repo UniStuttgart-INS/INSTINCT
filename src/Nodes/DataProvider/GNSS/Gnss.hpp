@@ -25,23 +25,11 @@ class Gnss : public Node
     Gnss& operator=(Gnss&&) = delete;
 
   protected:
-    /// @brief Constructor
-    /// @param[in] name Name of the Gnss object
-    /// @param[in] options Program options string map
-    Gnss(const std::string& name, const std::map<std::string, std::string>& options);
-
     /// Default constructor
     Gnss() = default;
 
     /// Destructor
     ~Gnss() override = default;
-
-    /// @brief Returns Gui Configuration options for the class
-    /// @return The gui configuration
-    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
-    {
-        return {};
-    }
 
     /// Current Ins Time
     std::optional<InsTime> currentInsTime;

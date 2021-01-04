@@ -64,8 +64,12 @@ class EmlidUartSensor
 
     static bool checksumFunction(const uart::protocol::Packet& packet);
 
+    /// @brief Function which determines, if the packet is an Error Packet
+    /// @param[in] packet The packet to check
     static bool isErrorFunction(const uart::protocol::Packet& packet);
 
+    /// @brief Function which determines, if the packet is a Response
+    /// @param[in] packet The packet to check
     static bool isResponseFunction(const uart::protocol::Packet& packet);
 
     static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_LITTLE;
