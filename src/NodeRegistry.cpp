@@ -92,6 +92,10 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType,
 #include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 // Data Provider
+#include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
+#include "Nodes/DataProvider/GNSS/FileReader/UbloxFile.hpp"
+#include "Nodes/DataProvider/GNSS/Sensors/EmlidSensor.hpp"
 #include "Nodes/DataProvider/GNSS/Sensors/UbloxSensor.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
@@ -109,6 +113,10 @@ void NAV::NodeRegistry::registerNodeTypes()
     registerNodeType<KvhDataLogger>();
     registerNodeType<VectorNavDataLogger>();
     // Data Provider
+    registerNodeType<EmlidFile>();
+    registerNodeType<RtklibPosFile>();
+    registerNodeType<UbloxFile>();
+    registerNodeType<EmlidSensor>();
     registerNodeType<UbloxSensor>();
     registerNodeType<VectorNavFile>();
     registerNodeType<VectorNavSensor>();

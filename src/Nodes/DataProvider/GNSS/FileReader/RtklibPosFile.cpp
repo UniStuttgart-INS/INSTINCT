@@ -2,14 +2,190 @@
 
 #include "util/Logger.hpp"
 #include "util/InsTransformations.hpp"
-#include <ios>
-#include <cmath>
-#include <array>
 
-NAV::RtklibPosFile::RtklibPosFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : GnssFileReader(name, options) {}
+#include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
 
-std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
+
+#include "NodeData/GNSS/RtklibPosObs.hpp"
+
+NAV::RtklibPosFile::RtklibPosFile()
+{
+    name = typeStatic();
+
+    LOG_TRACE("{}: called", name);
+
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
+
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "RtklibPosFile", this);
+
+    nm::CreateOutputPin(this, "RtklibPosObs", Pin::Type::Flow, NAV::RtklibPosObs::type(), &RtklibPosFile::pollData);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
+}
+
+NAV::RtklibPosFile::~RtklibPosFile()
+{
+    LOG_TRACE("{}: called", nameId());
+}
+
+std::string NAV::RtklibPosFile::typeStatic()
+{
+    return "RtklibPosFile";
+}
+
+std::string NAV::RtklibPosFile::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::RtklibPosFile::category()
+{
+    return "Data Provider";
+}
+
+void NAV::RtklibPosFile::guiConfig()
+{
+    // Filepath
+    if (ImGui::InputText("Filepath", &path))
+    {
+        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+    ImGui::SameLine();
+    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
+    if (ImGui::Button("Open"))
+    {
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".pos", "");
+        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".pos", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+    }
+
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
+    {
+        if (igfd::ImGuiFileDialog::Instance()->IsOk)
+        {
+            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
+            flow::ApplyChanges();
+            initialize();
+        }
+
+        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
+    }
+
+    // Header info
+    if (ImGui::BeginTable(fmt::format("##RtklibPos ({})", id.AsPointer()).c_str(), 3,
+                          ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+    {
+        ImGui::TableSetupColumn("Basic", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("LLA", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("XYZ", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableHeadersRow();
+
+        auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
+            ImGui::TableSetColumnIndex(index);
+            if (alwaysNormal || std::find(headerColumns.begin(), headerColumns.end(), searchText) != headerColumns.end())
+            {
+                ImGui::TextUnformatted(displayText);
+            }
+            else
+            {
+                ImGui::TextDisabled("%s", displayText);
+            }
+        };
+
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "GpsWeek", "GpsWeek");
+        TextColoredIfExists(1, "latitude(deg)", "latitude(deg)");
+        TextColoredIfExists(2, "x-ecef(m)", "x-ecef(m)");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "GpsToW", "GpsToW");
+        TextColoredIfExists(1, "longitude(deg)", "longitude(deg)");
+        TextColoredIfExists(2, "y-ecef(m)", "y-ecef(m)");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "age(s)", "age(s)");
+        TextColoredIfExists(1, "height(m)", "height(m)");
+        TextColoredIfExists(2, "z-ecef(m)", "z-ecef(m)");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "ratio", "ratio");
+        TextColoredIfExists(1, "sdn(m)", "sdn(m)");
+        TextColoredIfExists(2, "sdx(m)", "sdx(m)");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "Q", "Q");
+        TextColoredIfExists(1, "sde(m)", "sde(m)");
+        TextColoredIfExists(2, "sdy(m)", "sdy(m)");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "ns", "ns");
+        TextColoredIfExists(1, "sdu(m)", "sdu(m)");
+        TextColoredIfExists(2, "sdz(m)", "sdz(m)");
+        ImGui::TableNextRow();
+        TextColoredIfExists(1, "sdne(m)", "sdne(m)");
+        TextColoredIfExists(2, "sdxy(m)", "sdxy(m)");
+        ImGui::TableNextRow();
+        TextColoredIfExists(1, "sdeu(m)", "sdeu(m)");
+        TextColoredIfExists(2, "sdyz(m)", "sdyz(m)");
+        ImGui::TableNextRow();
+        TextColoredIfExists(1, "sdun(m)", "sdun(m)");
+        TextColoredIfExists(2, "sdzx(m)", "sdzx(m)");
+
+        ImGui::EndTable();
+    }
+}
+
+[[nodiscard]] json NAV::RtklibPosFile::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["FileReader"] = FileReader::save();
+
+    return j;
+}
+
+void NAV::RtklibPosFile::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("FileReader"))
+    {
+        FileReader::restore(j.at("FileReader"));
+    }
+}
+
+bool NAV::RtklibPosFile::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{}: called", nameId());
+
+    if (!Node::initialize()
+        || !FileReader::initialize())
+    {
+        return false;
+    }
+
+    return isInitialized = true;
+}
+
+void NAV::RtklibPosFile::deinitialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    FileReader::deinitialize();
+    Node::deinitialize();
+}
+
+void NAV::RtklibPosFile::resetNode()
+{
+    FileReader::resetReader();
+}
+
+std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
 {
     auto obs = std::make_shared<RtklibPosObs>();
     // Get current position
@@ -44,7 +220,7 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
     std::optional<double> sdE;
     std::optional<double> sdU;
 
-    for (const auto& column : columns)
+    for (const auto& column : headerColumns)
     {
         if (lineStream >> cell)
         {
@@ -202,7 +378,7 @@ std::shared_ptr<NAV::RtklibPosObs> NAV::RtklibPosFile::pollData(bool peek)
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(obs);
+        invokeCallbacks(OutputPortIndex_RtklibPosObs, obs);
     }
 
     return obs;
@@ -233,12 +409,12 @@ void NAV::RtklibPosFile::readHeader()
         {
             if (cell == "GPST")
             {
-                columns.emplace_back("GpsWeek");
-                columns.emplace_back("GpsToW");
+                headerColumns.emplace_back("GpsWeek");
+                headerColumns.emplace_back("GpsToW");
             }
             else
             {
-                columns.push_back(cell);
+                headerColumns.push_back(cell);
             }
         }
     }

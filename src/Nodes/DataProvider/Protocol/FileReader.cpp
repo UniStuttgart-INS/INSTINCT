@@ -43,6 +43,10 @@ bool NAV::FileReader::initialize()
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
     }
+    else
+    {
+        return false;
+    }
 
     if (!filestream.good())
     {

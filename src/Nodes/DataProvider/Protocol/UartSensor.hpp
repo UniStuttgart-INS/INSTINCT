@@ -56,6 +56,10 @@ class UartSensor
     /// @brief Returns the Baudrate for the element Selected by the GUI
     [[nodiscard]] Baudrate sensorBaudrate() const;
 
+    /// @brief Returns the guiSelection for the given baudrate
+    /// @param[in] baud Baudrate to convert
+    int baudrate2Selection(Baudrate baud);
+
     /// COM port where the sensor is attached to
     ///
     /// - "COM1" (Windows format for physical and virtual (USB) serial port)
@@ -67,11 +71,6 @@ class UartSensor
 
     /// Baudrate for the sensor
     int selectedBaudrate = 0;
-
-  private:
-    /// @brief Returns the guiSelection for the given baudrate
-    /// @param[in] baud Baudrate to convert
-    int baudrate2Selection(Baudrate baud);
 };
 
 } // namespace NAV

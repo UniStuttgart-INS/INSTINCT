@@ -24,7 +24,7 @@ NAV::UbloxSensor::UbloxSensor()
     hasConfig = true;
 
     // TODO: Update the library to handle different baudrates
-    selectedBaudrate = 1; // Baudrate::BAUDRATE_9600;
+    selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
 
     nm::CreateOutputPin(this, "", Pin::Type::Delegate, "UbloxSensor", this);
 

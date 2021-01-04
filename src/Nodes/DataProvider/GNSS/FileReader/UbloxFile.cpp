@@ -1,24 +1,135 @@
 #include "UbloxFile.hpp"
 
 #include "util/Logger.hpp"
-#include <ios>
-#include <cmath>
-#include <array>
+
+#include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
+
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 
-NAV::UbloxFile::UbloxFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : GnssFileReader(name, options), sensor(name) {}
+#include "NodeData/GNSS/UbloxObs.hpp"
 
-std::shared_ptr<NAV::UbloxObs> NAV::UbloxFile::pollData(bool peek)
+NAV::UbloxFile::UbloxFile()
+    : sensor(typeStatic())
 {
-    if (fileType == FileType::ASCII)
+    name = typeStatic();
+
+    LOG_TRACE("{}: called", name);
+
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
+
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "UbloxFile", this);
+
+    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, NAV::UbloxObs::type(), &UbloxFile::pollData);
+}
+
+NAV::UbloxFile::~UbloxFile()
+{
+    LOG_TRACE("{}: called", nameId());
+}
+
+std::string NAV::UbloxFile::typeStatic()
+{
+    return "UbloxFile";
+}
+
+std::string NAV::UbloxFile::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::UbloxFile::category()
+{
+    return "Data Provider";
+}
+
+void NAV::UbloxFile::guiConfig()
+{
+    // Filepath
+    if (ImGui::InputText("Filepath", &path))
     {
-        // TODO: Implement UbloxFile Ascii reading
-        LOG_CRITICAL("Ascii UbloxFile pollData is not implemented yet.");
-        return nullptr;
+        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+    ImGui::SameLine();
+    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
+    if (ImGui::Button("Open"))
+    {
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".ubx", "");
+        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".ubx", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
+    {
+        if (igfd::ImGuiFileDialog::Instance()->IsOk)
+        {
+            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
+            flow::ApplyChanges();
+            initialize();
+        }
+
+        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
+    }
+}
+
+[[nodiscard]] json NAV::UbloxFile::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["FileReader"] = FileReader::save();
+
+    return j;
+}
+
+void NAV::UbloxFile::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("FileReader"))
+    {
+        FileReader::restore(j.at("FileReader"));
+    }
+}
+
+bool NAV::UbloxFile::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{}: called", nameId());
+
+    if (!Node::initialize()
+        || !FileReader::initialize())
+    {
+        return false;
+    }
+
+    return isInitialized = true;
+}
+
+void NAV::UbloxFile::deinitialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    FileReader::deinitialize();
+    Node::deinitialize();
+}
+
+void NAV::UbloxFile::resetNode()
+{
+    FileReader::resetReader();
+}
+
+std::shared_ptr<NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
+{
     // Get current position
     auto pos = filestream.tellg();
     uint8_t i = 0;
@@ -72,7 +183,7 @@ std::shared_ptr<NAV::UbloxObs> NAV::UbloxFile::pollData(bool peek)
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(obs);
+        invokeCallbacks(OutputPortIndex_UbloxObs, obs);
     }
 
     return obs;
@@ -80,7 +191,7 @@ std::shared_ptr<NAV::UbloxObs> NAV::UbloxFile::pollData(bool peek)
 
 NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
 {
-    LOG_TRACE("called for {}", name);
+    LOG_TRACE("called for {}", nameId());
 
     auto filestream = std::ifstream(path);
 
@@ -96,14 +207,15 @@ NAV::FileReader::FileType NAV::UbloxFile::determineFileType()
             || buffer.at(0) == sensors::ublox::UbloxUartSensor::AsciiStartChar)
         {
             filestream.close();
-            LOG_DEBUG("{} has the file type: Binary", name);
+            LOG_DEBUG("{} has the file type: Binary", nameId());
             return FileType::BINARY;
         }
         filestream.close();
 
-        LOG_CRITICAL("{} could not determine file type", name);
+        LOG_ERROR("{} could not determine file type", nameId());
+        return FileType::NONE;
     }
 
-    LOG_CRITICAL("{} could not open file {}", name, path);
+    LOG_ERROR("{} could not open file {}", nameId(), path);
     return FileType::NONE;
 }

@@ -118,6 +118,14 @@ void NAV::FlowExecutor::deinitialize()
     LOG_TRACE("called");
 
     _execute.store(false, std::memory_order_release);
+
+    if (!ConfigManager::Get<bool>("nogui", false))
+    {
+        for (NAV::Node* node : nm::m_Nodes())
+        {
+            node->deinitialize();
+        }
+    }
 }
 
 void NAV::FlowExecutor::execute()
@@ -239,8 +247,8 @@ void NAV::FlowExecutor::execute()
     }
 
     if (!ConfigManager::Get<bool>("nogui", false)
-        && !ConfigManager::Get<bool>("sigterm", false)
-        && !ConfigManager::Get<size_t>("duration", 0))
+        || (!ConfigManager::Get<bool>("sigterm", false)
+            && !ConfigManager::Get<size_t>("duration", 0)))
     {
         auto finish = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsed = finish - start;
