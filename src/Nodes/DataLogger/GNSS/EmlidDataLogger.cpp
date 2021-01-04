@@ -66,7 +66,7 @@ void NAV::EmlidDataLogger::guiConfig()
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".ubx", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(400, 300)))
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
     {
         if (igfd::ImGuiFileDialog::Instance()->IsOk)
         {

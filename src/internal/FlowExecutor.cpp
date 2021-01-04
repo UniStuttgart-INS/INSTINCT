@@ -8,6 +8,7 @@
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
+#include "util/ConfigManager.hpp"
 
 #include <chrono>
 #include <map>
@@ -86,6 +87,11 @@ bool NAV::FlowExecutor::initialize()
 {
     LOG_TRACE("called");
 
+    for (Node* node : nm::m_Nodes())
+    {
+        node->deinitialize();
+    }
+
     bool hasUninitializedNodes = false;
     for (Node* node : nm::m_Nodes())
     {
@@ -110,11 +116,6 @@ bool NAV::FlowExecutor::initialize()
 void NAV::FlowExecutor::deinitialize()
 {
     LOG_TRACE("called");
-
-    for (Node* node : nm::m_Nodes())
-    {
-        node->deinitialize();
-    }
 
     _execute.store(false, std::memory_order_release);
 }
@@ -237,9 +238,14 @@ void NAV::FlowExecutor::execute()
         events.erase(it);
     }
 
-    auto finish = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = finish - start;
-    LOG_INFO("Elapsed time: {} s", elapsed.count());
+    if (!ConfigManager::Get<bool>("nogui", false)
+        && !ConfigManager::Get<bool>("sigterm", false)
+        && !ConfigManager::Get<size_t>("duration", 0))
+    {
+        auto finish = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = finish - start;
+        LOG_INFO("Elapsed time: {} s", elapsed.count());
+    }
 
     deinitialize();
 }

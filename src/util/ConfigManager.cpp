@@ -26,7 +26,7 @@ NAV::ConfigManager::ConfigManager()
         ("version,v", "Display the version number")
         ("help,h", "Display this help message")
         ("sigterm", bpo::bool_switch()->default_value(false), "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM")
-        ("duration", bpo::value<size_t>()->default_value(10), "Program execution duration [sec]")
+        ("duration", bpo::value<size_t>()->default_value(0), "Program execution duration [sec]")
         ("nogui", bpo::bool_switch()->default_value(false), "Launch without the gui")
         ("load,l", bpo::value<std::string>(), "Flow file to load" )
     ;

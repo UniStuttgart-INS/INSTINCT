@@ -1,10 +1,12 @@
 #include "gui/NodeEditorApplication.hpp"
 
 #include <iostream>
+#include <chrono>
 
 #include "util/Logger.hpp"
 #include "util/Version.hpp"
 #include "util/ConfigManager.hpp"
+#include "util/Sleep.hpp"
 
 #include "NodeRegistry.hpp"
 #include "internal/FlowManager.hpp"
@@ -73,9 +75,31 @@ int Main(int argc, const char* argv[])
                 }
                 if (loadSuccessful)
                 {
+                    auto start = std::chrono::high_resolution_clock::now();
                     NAV::FlowExecutor::start();
 
                     NAV::FlowExecutor::waitForFinish();
+
+                    if (NAV::ConfigManager::Get<bool>("nogui", false)
+                        && NAV::ConfigManager::Get<bool>("sigterm", false))
+                    {
+                        NAV::Sleep::waitForSignal(true);
+                    }
+                    else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration", 0);
+                             NAV::ConfigManager::Get<bool>("nogui", false) && duration)
+                    {
+                        auto now = std::chrono::high_resolution_clock::now();
+                        std::chrono::duration<double> elapsed = now - start;
+                        if (elapsed.count() < static_cast<double>(duration))
+                        {
+                            NAV::Sleep::countDownSeconds(duration - static_cast<size_t>(elapsed.count()));
+                        }
+                    }
+
+                    for (NAV::Node* node : nm::m_Nodes())
+                    {
+                        node->deinitialize();
+                    }
                 }
             }
             else

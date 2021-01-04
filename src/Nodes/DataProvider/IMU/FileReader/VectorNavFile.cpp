@@ -57,14 +57,14 @@ void NAV::VectorNavFile::guiConfig()
         deinitialize();
     }
     ImGui::SameLine();
-    std::string openFileDialogKey = fmt::format("Select VectorNav File ({})", id.AsPointer());
+    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
     if (ImGui::Button("Open"))
     {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select VectorNav File", ".csv", "");
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "");
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey))
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
     {
         if (igfd::ImGuiFileDialog::Instance()->IsOk)
         {

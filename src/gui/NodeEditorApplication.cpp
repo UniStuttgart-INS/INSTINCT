@@ -941,6 +941,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             {
                 node->initialize();
             }
+            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized))
+            {
+                node->deinitialize();
+            }
             if (ImGui::MenuItem("Rename"))
             {
                 renameNode = node;
