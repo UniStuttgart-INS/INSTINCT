@@ -1,12 +1,13 @@
 #include "VectorNavDataLogger.hpp"
 
+#include "NodeData/IMU/VectorNavObs.hpp"
+
 #include "util/Logger.hpp"
 
 #include "imgui_stdlib.h"
 #include "ImGuiFileDialog.h"
 
 #include <iomanip> // std::setprecision
-#include <functional>
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -58,10 +59,10 @@ void NAV::VectorNavDataLogger::guiConfig()
         deinitialize();
     }
     ImGui::SameLine();
-    std::string saveFileDialogKey = fmt::format("Save VectorNav File ({})", id.AsPointer());
+    std::string saveFileDialogKey = fmt::format("Save File ({})", id.AsPointer());
     if (ImGui::Button("Save"))
     {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save VectorNav File", ".csv", "");
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".csv", "");
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 

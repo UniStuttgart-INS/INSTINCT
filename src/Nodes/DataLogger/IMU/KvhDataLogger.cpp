@@ -1,121 +1,213 @@
 #include "KvhDataLogger.hpp"
 
+#include "NodeData/IMU/KvhObs.hpp"
+
 #include "util/Logger.hpp"
+
+#include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
 
 #include <iomanip> // std::setprecision
 
-NAV::KvhDataLogger::KvhDataLogger(const std::string& name, const std::map<std::string, std::string>& options)
-    : DataLogger(name, options)
-{
-    LOG_TRACE("called for {}", name);
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
-    if (fileType == FileType::ASCII)
-    {
-        filestream << "GpsCycle,GpsWeek,GpsToW,TimeStartup,"
-                   << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
-                   << "Temperature,Status,SequenceNumber" << std::endl;
-    }
+NAV::KvhDataLogger::KvhDataLogger()
+{
+    name = typeStatic();
+
+    LOG_TRACE("{}: called", name);
+
+    fileType = FileType::ASCII;
+
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
+
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "KvhDataLogger", this);
+
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, NAV::KvhObs::type(), &KvhDataLogger::writeObservation);
 }
 
 NAV::KvhDataLogger::~KvhDataLogger()
 {
-    LOG_TRACE("called for {}", name);
+    LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::KvhDataLogger::writeObservation(std::shared_ptr<NAV::KvhObs>& obs)
+std::string NAV::KvhDataLogger::typeStatic()
 {
+    return "KvhDataLogger";
+}
+
+std::string NAV::KvhDataLogger::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::KvhDataLogger::category()
+{
+    return "Data Logger";
+}
+
+void NAV::KvhDataLogger::guiConfig()
+{
+    // Filepath
+    if (ImGui::InputText("Filepath", &path))
+    {
+        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+    ImGui::SameLine();
+    std::string saveFileDialogKey = fmt::format("Save File ({})", id.AsPointer());
+    if (ImGui::Button("Save"))
+    {
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".csv", "");
+        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+    }
+
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(400, 300)))
+    {
+        if (igfd::ImGuiFileDialog::Instance()->IsOk)
+        {
+            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
+            flow::ApplyChanges();
+            initialize();
+        }
+
+        igfd::ImGuiFileDialog::Instance()->CloseDialog(saveFileDialogKey);
+    }
+}
+
+[[nodiscard]] json NAV::KvhDataLogger::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["FileWriter"] = FileWriter::save();
+
+    return j;
+}
+
+void NAV::KvhDataLogger::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("FileWriter"))
+    {
+        FileWriter::restore(j.at("FileWriter"));
+    }
+}
+
+bool NAV::KvhDataLogger::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{}: called", nameId());
+
+    if (!Node::initialize()
+        || !FileWriter::initialize())
+    {
+        return false;
+    }
+
+    filestream << "GpsCycle,GpsWeek,GpsToW,TimeStartup,"
+               << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
+               << "Temperature,Status,SequenceNumber" << std::endl;
+
+    return isInitialized = true;
+}
+
+void NAV::KvhDataLogger::deinitialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    FileWriter::deinitialize();
+    Node::deinitialize();
+}
+
+void NAV::KvhDataLogger::writeObservation(std::shared_ptr<NodeData> nodeData)
+{
+    auto obs = std::static_pointer_cast<KvhObs>(nodeData);
+
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;
     constexpr int valuePrecision = 9;
 
-    if (fileType == FileType::BINARY)
+    if (obs->insTime.has_value())
     {
-        if (obs->raw.getRawDataLength() > 0)
-        {
-            filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
-        }
-        else
-        {
-            LOG_ERROR("{}: Tried to write binary, but observation had no binary data.", name);
-        }
+        filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().toGPSweekTow().gpsCycle;
     }
-    else if (fileType == FileType::ASCII)
+    filestream << ",";
+    if (obs->insTime.has_value())
     {
-        if (obs->insTime.has_value())
-        {
-            filestream << std::fixed << std::setprecision(gpsCyclePrecision) << obs->insTime.value().toGPSweekTow().gpsCycle;
-        }
-        filestream << ",";
-        if (obs->insTime.has_value())
-        {
-            filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().gpsWeek;
-        }
-        filestream << ",";
-        if (obs->insTime.has_value())
-        {
-            filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().tow;
-        }
-        filestream << ",";
-        if (obs->timeSinceStartup.has_value())
-        {
-            filestream << std::setprecision(valuePrecision) << obs->timeSinceStartup.value();
-        }
-        filestream << ",";
-        if (obs->magUncompXYZ.has_value())
-        {
-            filestream << obs->magUncompXYZ.value().x();
-        }
-        filestream << ",";
-        if (obs->magUncompXYZ.has_value())
-        {
-            filestream << obs->magUncompXYZ.value().y();
-        }
-        filestream << ",";
-        if (obs->magUncompXYZ.has_value())
-        {
-            filestream << obs->magUncompXYZ.value().z();
-        }
-        filestream << ",";
-        if (obs->accelUncompXYZ.has_value())
-        {
-            filestream << obs->accelUncompXYZ.value().x();
-        }
-        filestream << ",";
-        if (obs->accelUncompXYZ.has_value())
-        {
-            filestream << obs->accelUncompXYZ.value().y();
-        }
-        filestream << ",";
-        if (obs->accelUncompXYZ.has_value())
-        {
-            filestream << obs->accelUncompXYZ.value().z();
-        }
-        filestream << ",";
-        if (obs->gyroUncompXYZ.has_value())
-        {
-            filestream << obs->gyroUncompXYZ.value().x();
-        }
-        filestream << ",";
-        if (obs->gyroUncompXYZ.has_value())
-        {
-            filestream << obs->gyroUncompXYZ.value().y();
-        }
-        filestream << ",";
-        if (obs->gyroUncompXYZ.has_value())
-        {
-            filestream << obs->gyroUncompXYZ.value().z();
-        }
-        filestream << ",";
-        if (obs->temperature.has_value())
-        {
-            filestream << obs->temperature.value();
-        }
-        filestream << ",";
-        filestream << obs->status;
-        filestream << ",";
-        filestream << static_cast<uint16_t>(obs->sequenceNumber);
-        filestream << '\n';
+        filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().gpsWeek;
     }
-
-    invokeCallbacks(obs);
+    filestream << ",";
+    if (obs->insTime.has_value())
+    {
+        filestream << std::defaultfloat << std::setprecision(gpsTimePrecision) << obs->insTime.value().toGPSweekTow().tow;
+    }
+    filestream << ",";
+    if (obs->timeSinceStartup.has_value())
+    {
+        filestream << std::setprecision(valuePrecision) << obs->timeSinceStartup.value();
+    }
+    filestream << ",";
+    if (obs->magUncompXYZ.has_value())
+    {
+        filestream << obs->magUncompXYZ.value().x();
+    }
+    filestream << ",";
+    if (obs->magUncompXYZ.has_value())
+    {
+        filestream << obs->magUncompXYZ.value().y();
+    }
+    filestream << ",";
+    if (obs->magUncompXYZ.has_value())
+    {
+        filestream << obs->magUncompXYZ.value().z();
+    }
+    filestream << ",";
+    if (obs->accelUncompXYZ.has_value())
+    {
+        filestream << obs->accelUncompXYZ.value().x();
+    }
+    filestream << ",";
+    if (obs->accelUncompXYZ.has_value())
+    {
+        filestream << obs->accelUncompXYZ.value().y();
+    }
+    filestream << ",";
+    if (obs->accelUncompXYZ.has_value())
+    {
+        filestream << obs->accelUncompXYZ.value().z();
+    }
+    filestream << ",";
+    if (obs->gyroUncompXYZ.has_value())
+    {
+        filestream << obs->gyroUncompXYZ.value().x();
+    }
+    filestream << ",";
+    if (obs->gyroUncompXYZ.has_value())
+    {
+        filestream << obs->gyroUncompXYZ.value().y();
+    }
+    filestream << ",";
+    if (obs->gyroUncompXYZ.has_value())
+    {
+        filestream << obs->gyroUncompXYZ.value().z();
+    }
+    filestream << ",";
+    if (obs->temperature.has_value())
+    {
+        filestream << obs->temperature.value();
+    }
+    filestream << ",";
+    filestream << obs->status;
+    filestream << ",";
+    filestream << static_cast<uint16_t>(obs->sequenceNumber);
+    filestream << '\n';
 }

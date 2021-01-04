@@ -1,7 +1,7 @@
 /// @file VectorNavSensor.hpp
 /// @brief Vector Nav Sensors
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2021-01-03
+/// @date 2020-03-12
 
 #pragma once
 

@@ -1,17 +1,17 @@
 /// @file VectorNavDataLogger.hpp
 /// @brief Data Logger for VectorNav observations
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
-/// @date 2020-12-29
+/// @date 2020-03-17
 
 #pragma once
 
 #include "Nodes/Node.hpp"
 #include "Nodes/DataLogger/Protocol/FileWriter.hpp"
 
-#include "NodeData/IMU/VectorNavObs.hpp"
-
 namespace NAV
 {
+class NodeData;
+
 /// Data Logger for VectorNav observations
 class VectorNavDataLogger : public Node, public FileWriter
 {

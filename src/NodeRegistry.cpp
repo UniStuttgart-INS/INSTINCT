@@ -85,6 +85,10 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType,
 }
 
 #include "Nodes/util/GroupBox.hpp"
+#include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
+#include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
+#include "Nodes/DataLogger/IMU/ImuDataLogger.hpp"
+#include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
@@ -96,6 +100,10 @@ void NAV::NodeRegistry::registerNodeTypes()
     // GroupBox
     registerNodeType<GroupBox>();
     // Data Logger
+    registerNodeType<EmlidDataLogger>();
+    registerNodeType<UbloxDataLogger>();
+    registerNodeType<ImuDataLogger>();
+    registerNodeType<KvhDataLogger>();
     registerNodeType<VectorNavDataLogger>();
     // Data Provider
     registerNodeType<VectorNavFile>();

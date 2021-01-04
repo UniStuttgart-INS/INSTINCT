@@ -1,37 +1,139 @@
 #include "EmlidDataLogger.hpp"
 
+#include "NodeData/GNSS/EmlidObs.hpp"
+
 #include "util/Logger.hpp"
+
+#include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
 
 #include <iomanip> // std::setprecision
 
-NAV::EmlidDataLogger::EmlidDataLogger(const std::string& name, const std::map<std::string, std::string>& options)
-    : DataLogger(name, options)
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
+
+NAV::EmlidDataLogger::EmlidDataLogger()
 {
-    LOG_TRACE("called for {}", name);
+    name = typeStatic();
+
+    LOG_TRACE("{}: called", name);
+
+    fileType = FileType::BINARY;
+
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
+
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "EmlidDataLogger", this);
+
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, NAV::EmlidObs::type(), &EmlidDataLogger::writeObservation);
 }
 
 NAV::EmlidDataLogger::~EmlidDataLogger()
 {
-    LOG_TRACE("called for {}", name);
+    LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::EmlidDataLogger::writeObservation(std::shared_ptr<NAV::EmlidObs>& obs)
+std::string NAV::EmlidDataLogger::typeStatic()
 {
-    if (fileType == FileType::BINARY)
+    return "EmlidDataLogger";
+}
+
+std::string NAV::EmlidDataLogger::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::EmlidDataLogger::category()
+{
+    return "Data Logger";
+}
+
+void NAV::EmlidDataLogger::guiConfig()
+{
+    // Filepath
+    if (ImGui::InputText("Filepath", &path))
     {
-        if (obs->raw.getRawDataLength() > 0)
+        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+    ImGui::SameLine();
+    std::string saveFileDialogKey = fmt::format("Save File ({})", id.AsPointer());
+    if (ImGui::Button("Save"))
+    {
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".ubx", "");
+        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".ubx", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+    }
+
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(400, 300)))
+    {
+        if (igfd::ImGuiFileDialog::Instance()->IsOk)
         {
-            filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
+            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
+            flow::ApplyChanges();
+            initialize();
         }
-        else
-        {
-            LOG_ERROR("{}: Tried to write binary, but observation had no binary data.", name);
-        }
+
+        igfd::ImGuiFileDialog::Instance()->CloseDialog(saveFileDialogKey);
+    }
+}
+
+[[nodiscard]] json NAV::EmlidDataLogger::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["FileWriter"] = FileWriter::save();
+
+    return j;
+}
+
+void NAV::EmlidDataLogger::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("FileWriter"))
+    {
+        FileWriter::restore(j.at("FileWriter"));
+    }
+}
+
+bool NAV::EmlidDataLogger::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{}: called", nameId());
+
+    if (!Node::initialize()
+        || !FileWriter::initialize())
+    {
+        return false;
+    }
+
+    return isInitialized = true;
+}
+
+void NAV::EmlidDataLogger::deinitialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    FileWriter::deinitialize();
+    Node::deinitialize();
+}
+
+void NAV::EmlidDataLogger::writeObservation(std::shared_ptr<NodeData> nodeData)
+{
+    auto obs = std::static_pointer_cast<EmlidObs>(nodeData);
+
+    if (obs->raw.getRawDataLength() > 0)
+    {
+        filestream.write(reinterpret_cast<const char*>(obs->raw.getRawData().data()), static_cast<std::streamsize>(obs->raw.getRawDataLength()));
     }
     else
     {
-        LOG_CRITICAL("ASCII Logging of EmlidObs is not supported");
+        LOG_ERROR("{}: Tried to write binary, but observation had no binary data.", nameId());
     }
-
-    invokeCallbacks(obs);
 }
