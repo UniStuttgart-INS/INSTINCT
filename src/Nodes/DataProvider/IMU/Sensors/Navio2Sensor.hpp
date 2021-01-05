@@ -5,8 +5,7 @@
 
 #pragma once
 
-#include "NodeData/IMU/ImuObs.hpp"
-#include "../Imu.hpp"
+#include "Nodes/DataProvider/IMU/Imu.hpp"
 
 #if !__APPLE__
     #include "navio/Common/InertialSensor.h"
@@ -18,18 +17,13 @@
 namespace NAV
 {
 /// Navio2Sensor Sensor Class
-class Navio2Sensor final : public Imu
+class Navio2Sensor : public Imu
 {
   public:
-    /// @brief Constructor
-    /// @param[in] name Name of the Sensor
-    /// @param[in] options Program options string map
-    Navio2Sensor(const std::string& name, const std::map<std::string, std::string>& options);
-
     /// @brief Default constructor
-    Navio2Sensor() = default;
+    Navio2Sensor();
     /// @brief Destructor
-    ~Navio2Sensor() final;
+    ~Navio2Sensor() override;
     /// @brief Copy constructor
     Navio2Sensor(const Navio2Sensor&) = delete;
     /// @brief Move constructor
@@ -39,82 +33,38 @@ class Navio2Sensor final : public Imu
     /// @brief Move assignment operator
     Navio2Sensor& operator=(Navio2Sensor&&) = delete;
 
-    /// @brief Returns the String representation of the Class Type
-    /// @return The class type
-    [[nodiscard]] constexpr std::string_view type() const final
-    {
-        return std::string_view("Navio2Sensor");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] static std::string typeStatic();
 
-    /// @brief Returns the String representation of the Class Category
-    /// @return The class category
-    [[nodiscard]] constexpr std::string_view category() const final
-    {
-        return std::string_view("DataProvider");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] std::string type() const override;
 
-    /// @brief Returns Gui Configuration options for the class
-    /// @return The gui configuration
-    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const final
-    {
-        std::vector<ConfigOptions> configs = { { CONFIG_LIST, "Imu", "Select the IMU", { "[MPU9250]", "LSM9DS1" } },
-                                               { CONFIG_INT, "Frequency", "Data Output Frequency", { "0", "100", "200" } } };
-        auto imuConfigs = Imu::guiConfig();
-        configs.insert(configs.end(), imuConfigs.begin(), imuConfigs.end());
-        return configs;
-    }
+    /// @brief String representation of the Class Category
+    [[nodiscard]] static std::string category();
 
-    /// @brief Returns the context of the class
-    /// @return The class context
-    [[nodiscard]] constexpr NodeContext context() const final
-    {
-        return NodeContext::REAL_TIME;
-    }
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    void guiConfig() override;
 
-    /// @brief Returns the number of Ports
-    /// @param[in] portType Specifies the port type
-    /// @return The number of ports
-    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            break;
-        case PortType::Out:
-            return 1U;
-        }
+    /// @brief Saves the node into a json object
+    [[nodiscard]] json save() const override;
 
-        return 0U;
-    }
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    void restore(const json& j) override;
 
-    /// @brief Returns the data types provided by this class
-    /// @param[in] portType Specifies the port type
-    /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type and subtitle
-    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            break;
-        case PortType::Out:
-            if (portIndex == 0)
-            {
-                return std::make_pair(ImuObs::type(), std::string_view(""));
-            }
-        }
+    /// @brief Initialize the node
+    bool initialize() override;
 
-        return std::make_pair(std::string_view(""), std::string_view(""));
-    }
-
-    /// @brief Handles the data sent on the input port
-    /// @param[in] portIndex The input port index
-    /// @param[in, out] data The data send on the input port
-    void handleInputData([[maybe_unused]] uint8_t portIndex, [[maybe_unused]] std::shared_ptr<NodeData> data) final {}
+    /// @brief Deinitialize the node
+    void deinitialize() override;
 
   private:
+    constexpr static size_t OutputPortIndex_Navio2Sensor = 0; ///< @brief Delegate
+    constexpr static size_t OutputPortIndex_ImuObs = 1;       ///< @brief Flow (ImuObs)
+
     /// Enumeration of IMUs on the Navio2
-    enum ImuType
+    enum ImuType : int
     {
         /// MPU9250
         MPU,
@@ -131,7 +81,7 @@ class Navio2Sensor final : public Imu
     ImuType imuType = ImuType::MPU;
 
     /// OutputFrequency to calculate rateDivisor field.
-    uint16_t outputFrequency = 1;
+    int outputFrequency = 100;
 
     /// Timer object to handle async data requests
     CallbackTimer timer;

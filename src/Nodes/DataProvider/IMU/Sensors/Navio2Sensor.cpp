@@ -9,31 +9,93 @@
     #include "navio/Common/Util.h"
 #endif
 
-#include <chrono>
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
-NAV::Navio2Sensor::Navio2Sensor(const std::string& name, const std::map<std::string, std::string>& options)
-    : Imu(name, options)
+#include "NodeData/IMU/ImuObs.hpp"
+
+NAV::Navio2Sensor::Navio2Sensor()
 {
-    LOG_TRACE("called for {}", name);
+    name = typeStatic();
 
-    if (options.count("Frequency"))
+    LOG_TRACE("{}: called", name);
+
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
+
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "Navio2Sensor", this);
+
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
+}
+
+NAV::Navio2Sensor::~Navio2Sensor()
+{
+    LOG_TRACE("{}: called", nameId());
+}
+
+std::string NAV::Navio2Sensor::typeStatic()
+{
+    return "Navio2Sensor";
+}
+
+std::string NAV::Navio2Sensor::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::Navio2Sensor::category()
+{
+    return "Data Provider";
+}
+
+void NAV::Navio2Sensor::guiConfig()
+{
+    if (ImGui::Combo("IMU", reinterpret_cast<int*>(&imuType), "MPU9250\0LSM9DS1\0\0"))
     {
-        outputFrequency = static_cast<uint16_t>(std::stoul(options.at("Frequency")));
+        LOG_DEBUG("{}: IMU changed to {}", nameId(), imuType ? "LSM9DS1" : "MPU9250");
+        flow::ApplyChanges();
+        deinitialize();
     }
-    if (options.count("Imu"))
+
+    if (ImGui::SliderInt("Frequency", &outputFrequency, 1, 200, "%d Hz"))
     {
-        if (options.at("Imu") == "MPU9250")
-        {
-            imuType = ImuType::MPU;
-        }
-        else if (options.at("Imu") == "LSM9DS1")
-        {
-            imuType = ImuType::LSM;
-        }
-        else
-        {
-            LOG_CRITICAL("{}: Unknown IMU Type {}", name, options.at("Imu"));
-        }
+        LOG_DEBUG("{}: Frequency changed to {}", nameId(), outputFrequency);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+}
+
+[[nodiscard]] json NAV::Navio2Sensor::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["Frequency"] = outputFrequency;
+
+    return j;
+}
+
+void NAV::Navio2Sensor::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("Frequency"))
+    {
+        j.at("Frequency").get_to(outputFrequency);
+    }
+}
+
+bool NAV::Navio2Sensor::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{} ({}): called", nameId(), imuType ? "LSM9DS1" : "MPU9250");
+
+    if (!Node::initialize())
+    {
+        return false;
     }
 
 #if !__APPLE__
@@ -48,30 +110,34 @@ NAV::Navio2Sensor::Navio2Sensor(const std::string& name, const std::map<std::str
 
     if (!sensor->probe())
     {
-        LOG_CRITICAL("{} ({}): Sensor not enabled", name, options.at("Imu"));
+        LOG_ERROR("{} ({}): Sensor not enabled", nameId(), imuType ? "LSM9DS1" : "MPU9250");
+        return false;
     }
     sensor->initialize();
 #else
-    LOG_CRITICAL("{} ({}): MacOS is not supported by the Navio2 Node", name, options.at("Imu"));
+    LOG_ERROR("{} ({}): MacOS is not supported by the Navio2 Node", nameId(), imuType ? "LSM9DS1" : "MPU9250");
+    return false;
 #endif
 
     int outputInterval = static_cast<int>(1.0 / static_cast<double>(outputFrequency) * 1000.0);
     startTime = std::chrono::high_resolution_clock::now();
     timer.start(outputInterval, readImuThread, this);
 
-    LOG_DEBUG("{} successfully initialized {}", name, outputInterval);
+    return isInitialized = true;
 }
 
-NAV::Navio2Sensor::~Navio2Sensor()
+void NAV::Navio2Sensor::deinitialize()
 {
-    LOG_TRACE("called for {}", name);
+    LOG_TRACE("{} ({}): called", nameId(), imuType ? "LSM9DS1" : "MPU9250");
 
-    removeAllCallbacksOfType<ImuObs>();
-    callbacksEnabled = false;
     if (timer.is_running())
     {
         timer.stop();
     }
+
+    sensor.reset();
+
+    Node::deinitialize();
 }
 
 // void NAV::Navio2Sensor::readImuThread()
@@ -107,5 +173,5 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     LOG_DATA("DATA({}): {}, {}°C, a=({}, {}, {})", navio->name, obs->timeSinceStartup.value(), obs->temperature.value(),
              navio->ax, navio->ay, navio->az);
 
-    navio->invokeCallbacks(obs);
+    navio->invokeCallbacks(OutputPortIndex_ImuObs, obs);
 }
