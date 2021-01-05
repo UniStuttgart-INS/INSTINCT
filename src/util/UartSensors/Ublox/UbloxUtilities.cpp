@@ -1,6 +1,7 @@
 #include "UbloxUtilities.hpp"
 #include "UbloxTypes.hpp"
 
+#include "util/Eigen.hpp"
 #include "util/InsTransformations.hpp"
 #include "util/Logger.hpp"
 
@@ -257,9 +258,9 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                     obs->insTime = currentInsTime;
                 }
 
-                Vector3d<LLA> latLonAlt(trafo::deg2rad(std::get<UbxNavPosllh>(obs->data).lat * 1e-7),
-                                        trafo::deg2rad(std::get<UbxNavPosllh>(obs->data).lon * 1e-7),
-                                        std::get<UbxNavPosllh>(obs->data).height * 1e-3);
+                Eigen::Vector3d latLonAlt(trafo::deg2rad(std::get<UbxNavPosllh>(obs->data).lat * 1e-7),
+                                          trafo::deg2rad(std::get<UbxNavPosllh>(obs->data).lon * 1e-7),
+                                          std::get<UbxNavPosllh>(obs->data).height * 1e-3);
 
                 obs->position_ecef.emplace(trafo::lla2ecef_WGS84(latLonAlt));
 

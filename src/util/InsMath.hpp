@@ -7,7 +7,7 @@
 
 #include "InsConstants.hpp"
 
-#include "LinearAlgebra.hpp"
+#include "util/Eigen.hpp"
 
 namespace NAV
 {
@@ -26,13 +26,13 @@ double measureDistance(double lat1, double lon1, double lat2, double lon2);
 /// @return The roll angle in [rad]
 ///
 /// @note See E.-H. Shin (2005) - Estimation Techniques for Low-Cost Inertial Navigation (Chapter 2.6)
-double rollFromStaticAccelerationObs(const NAV::Vector3d<NAV::Body>& accel_b);
+double rollFromStaticAccelerationObs(const Eigen::Vector3d& accel_b);
 
 /// @brief Calculates the pitch angle from a static acceleration measurement
 /// @param[in] accel_b Acceleration measurement in static condition in [m/s^2]
 /// @return The pitch angle in [rad]
 ///
 /// @note See E.-H. Shin (2005) - Estimation Techniques for Low-Cost Inertial Navigation (Chapter 2.6)
-double pitchFromStaticAccelerationObs(const NAV::Vector3d<NAV::Body>& accel_b);
+double pitchFromStaticAccelerationObs(const Eigen::Vector3d& accel_b);
 
 } // namespace NAV

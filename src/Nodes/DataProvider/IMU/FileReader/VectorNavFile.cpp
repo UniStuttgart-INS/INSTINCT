@@ -221,7 +221,7 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
     std::stringstream lineStream(line);
     std::string cell;
 
-    Matrix3d<Navigation, Body> dcm_np = Matrix3d<Navigation, Body>::Zero();
+    Eigen::Matrix3d dcm_np = Eigen::Matrix3d::Zero();
 
     std::optional<uint16_t> gpsCycle = 0;
     std::optional<uint16_t> gpsWeek;
@@ -643,7 +643,7 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             obs->quaternion = trafo::quat_nb(trafo::deg2rad(obs->yawPitchRoll.value()(2)),
                                              trafo::deg2rad(obs->yawPitchRoll.value()(1)),
                                              trafo::deg2rad(obs->yawPitchRoll.value()(0)))
-                              * Quaterniond<Body, Platform>::Identity();
+                              * Eigen::Quaterniond::Identity();
         }
     }
 

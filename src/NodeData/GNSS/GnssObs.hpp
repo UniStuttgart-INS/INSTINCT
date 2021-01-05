@@ -7,7 +7,7 @@
 
 #include "NodeData/InsObs.hpp"
 
-#include "util/LinearAlgebra.hpp"
+#include "util/Eigen.hpp"
 
 namespace NAV
 {
@@ -44,6 +44,6 @@ class GnssObs : public InsObs
     }
 
     /// ECEF position [m]
-    std::optional<Vector3d<Earth>> position_ecef;
+    std::optional<Eigen::Vector3d> position_ecef;
 };
 } // namespace NAV

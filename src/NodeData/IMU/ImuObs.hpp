@@ -8,7 +8,7 @@
 #include "NodeData/InsObs.hpp"
 
 #include "ImuPos.hpp"
-#include "util/LinearAlgebra.hpp"
+#include "util/Eigen.hpp"
 
 namespace NAV
 {
@@ -56,11 +56,11 @@ class ImuObs : public InsObs
     std::optional<uint64_t> timeSinceStartup;
 
     /// The IMU magnetic field measured in units of [Gauss], given in the platform frame.
-    std::optional<Vector3d<Platform>> magUncompXYZ;
+    std::optional<Eigen::Vector3d> magUncompXYZ;
     /// The IMU acceleration measured in units of [m/s^2], given in the platform frame.
-    std::optional<Vector3d<Platform>> accelUncompXYZ;
+    std::optional<Eigen::Vector3d> accelUncompXYZ;
     /// The IMU angular rate measured in units of [rad/s], given in the platform frame.
-    std::optional<Vector3d<Platform>> gyroUncompXYZ;
+    std::optional<Eigen::Vector3d> gyroUncompXYZ;
 
     /// The IMU temperature measured in units of [Celsius].
     std::optional<double> temperature = 0.0;

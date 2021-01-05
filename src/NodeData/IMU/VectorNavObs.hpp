@@ -48,7 +48,7 @@ class VectorNavObs final : public ImuObs
 
     /// The estimated attitude quaternion. The first term is the scalar value.
     /// The attitude is given as the platform frame with respect to the local North East Down (NED) frame.
-    std::optional<Quaterniond<Navigation, Platform>> quaternion;
+    std::optional<Eigen::Quaterniond> quaternion;
 
     /// The estimated attitude Yaw, Pitch, and Roll angles measured in [degrees].
     /// The attitude is given as a 3,2,1 Euler angle sequence describing the platform frame
@@ -64,20 +64,20 @@ class VectorNavObs final : public ImuObs
     std::optional<uint32_t> syncInCnt;
 
     /// The compensated magnetic field measured in units of [Gauss], and given in the platform frame.
-    std::optional<Vector3d<Platform>> magCompXYZ;
+    std::optional<Eigen::Vector3d> magCompXYZ;
     /// The compensated acceleration measured in units of [m/s^2], and given in the platform frame.
-    std::optional<Vector3d<Platform>> accelCompXYZ;
+    std::optional<Eigen::Vector3d> accelCompXYZ;
     /// The compensated angular rate measured in units of [rad/s], and given in the platform frame.
-    std::optional<Vector3d<Platform>> gyroCompXYZ;
+    std::optional<Eigen::Vector3d> gyroCompXYZ;
 
     /// The time interval that the delta angle and velocities are integrated over in [seconds].
     std::optional<double> dtime;
     /// The delta rotation angles in [degree] incurred due to rotation, by the local platform reference frame,
     /// since the last time the values were outputted by the device.
-    std::optional<Vector3d<Platform>> dtheta;
+    std::optional<Eigen::Vector3d> dtheta;
     /// The delta velocity in [m/s] incurred due to motion, by the local platform reference frame,
     /// since the last time the values were outputted by the device.
-    std::optional<Vector3d<Platform>> dvel;
+    std::optional<Eigen::Vector3d> dvel;
 
     /// @brief The VPE status bitfield
     ///
@@ -175,16 +175,16 @@ class VectorNavObs final : public ImuObs
     std::optional<double> pressure;
 
     /// The compensated magnetic field measured in units of [Gauss], and given in the North East Down (NED) frame.
-    std::optional<Vector3d<Navigation>> magCompNED;
+    std::optional<Eigen::Vector3d> magCompNED;
     /// The compensated acceleration (with gravity) measured in units of [m/s^2], and given in the North East Down (NED) frame.
-    std::optional<Vector3d<Navigation>> accelCompNED;
+    std::optional<Eigen::Vector3d> accelCompNED;
     /// The compensated angular rate measured in units of [rad/s], and given in the North East Down (NED) frame.
-    std::optional<Vector3d<Navigation>> gyroCompNED;
+    std::optional<Eigen::Vector3d> gyroCompNED;
 
     /// The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the platform frame.
-    std::optional<Vector3d<Platform>> linearAccelXYZ;
+    std::optional<Eigen::Vector3d> linearAccelXYZ;
     /// The estimated linear acceleration (without gravity) reported in [m/s^2], and given in the North East Down (NED) frame.
-    std::optional<Vector3d<Navigation>> linearAccelNED;
+    std::optional<Eigen::Vector3d> linearAccelNED;
 
     /// The estimated attitude (Yaw, Pitch, Roll) uncertainty (1 Sigma), reported in degrees.
     std::optional<Eigen::Array3d> yawPitchRollUncertainty;
