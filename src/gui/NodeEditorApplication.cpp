@@ -1017,6 +1017,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::EndPopup();
     }
 
+    static bool setKeyboardFocus = true;
     if (ImGui::BeginPopup("Create New Node"))
     {
         ax::NodeEditor::EnableShortcuts(false);
@@ -1025,6 +1026,13 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         static ImGuiTextFilter filter;
 
         filter.Draw("");
+
+        if (setKeyboardFocus)
+        {
+            filter.Clear();
+            setKeyboardFocus = false;
+            ImGui::SetKeyboardFocusHere(0);
+        }
 
         Node* node = nullptr;
         for (size_t i = 0; i < NAV::NodeRegistry::registeredNodes().size(); i++)
@@ -1077,6 +1085,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     }
     else
     {
+        setKeyboardFocus = true;
         if (showBackgroundContextMenu)
         {
             showBackgroundContextMenu = false;
