@@ -16,26 +16,33 @@ Eigen::Vector3d trafo::rad2deg3(const Eigen::Vector3d& rad)
 
 Eigen::Vector3d trafo::quat2eulerZYX(const Eigen::Quaterniond& q)
 {
-    Eigen::Matrix3d dcm = q.toRotationMatrix();
+    // Given range [-pi:pi] x [-pi:pi] x [0:pi]
+    Eigen::Vector3d XYZ = q.toRotationMatrix().eulerAngles(2, 1, 0).reverse();
 
-    Eigen::Vector3d EulerAngles = Eigen::Vector3d::Zero();
-
-    EulerAngles(1) = asin(dcm(2, 0));
-    if (rad2deg(std::abs(EulerAngles(1))) < 89.0)
+    // Wanted range (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
+    if (XYZ.y() >= M_PI / 2.0 || XYZ.y() <= -M_PI / 2.0)
     {
-        EulerAngles(0) = -std::atan2((dcm(2, 1) / std::cos(EulerAngles(1))), (dcm(2, 2) / std::cos(EulerAngles(1))));
-
-        EulerAngles(2) = -std::atan2((dcm(1, 0) / std::cos(EulerAngles(1))), (dcm(0, 0) / std::cos(EulerAngles(1))));
+        double x = XYZ.x() > 0 ? XYZ.x() - M_PI : XYZ.x() + M_PI;
+        double y = XYZ.y() >= M_PI / 2.0 ? -(XYZ.y() - M_PI) : -(XYZ.y() + M_PI);
+        double z = XYZ.z() - M_PI;
+#ifndef NDEBUG
+        // Wanted range
+        if (x > -M_PI && x <= M_PI                // (-pi:pi]
+            && y > -M_PI / 2.0 && y <= M_PI / 2.0 // (-pi/2:pi/2]
+            && z > -M_PI && z <= M_PI)            // (-pi:pi]
+        {
+#endif
+            XYZ = { x, y, z };
+#ifndef NDEBUG
+        }
+        else
+        {
+            LOG_ERROR("\nCould not convert the angles [{}, {}, {}]", XYZ.x(), XYZ.y(), XYZ.z());
+        }
+#endif
     }
-    else
-    {
-        EulerAngles(0) = 0.0;
-        EulerAngles(2) = 0.0;
-    }
 
-    return EulerAngles;
-
-    // return q.toRotationMatrix().eulerAngles(2, 1, 0);
+    return XYZ;
 }
 
 Eigen::Quaterniond trafo::quat_ei(const double time, const double angularRate_ie)

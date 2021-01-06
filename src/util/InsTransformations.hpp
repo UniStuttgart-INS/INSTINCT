@@ -81,7 +81,7 @@ class trafo
 
     /// @brief Converts the quaternion to Euler rotation angles with rotation sequence ZYX
     /// @param[in] q Quaternion to convert
-    /// @return [angleZ, angleY, angleX]^T vector in [rad]. The returned angles are in the ranges [0:pi]x[-pi:pi]x[-pi:pi]
+    /// @return [angleX, angleY, angleZ]^T vector in [rad]. The returned angles are in the ranges (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     [[nodiscard]] static Eigen::Vector3d quat2eulerZYX(const Eigen::Quaterniond& q);
 
     /// @brief Quaternion for rotations from inertial to Earth-centered-Earth-fixed frame
