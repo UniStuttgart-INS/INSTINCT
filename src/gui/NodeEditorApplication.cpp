@@ -480,6 +480,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     ImGui::SameLine(0.0F, 12.0F);
 
+    // ToolTips have to be shown outside of the NodeEditor Context, so save the Tooltip and push it afterwards
+    std::string tooltipText;
+
     ed::Begin("Node editor");
     {
         static Pin* newLinkPin = nullptr;
@@ -613,10 +616,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 input.drawPinIcon(nm::IsPinLinked(input.id), static_cast<int>(alpha * 255));
                 if (!input.dataIdentifier.empty() && ImGui::IsItemHovered())
                 {
-                    ed::Suspend();
-                    ImGui::SetTooltip("%s", std::string(input.dataIdentifier).c_str());
-                    ed::Resume();
+                    tooltipText = std::string(input.dataIdentifier);
                 }
+
                 ImGui::Spring(0);
                 if (!input.name.empty())
                 {
@@ -660,9 +662,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 output.drawPinIcon(nm::IsPinLinked(output.id), static_cast<int>(alpha * 255));
                 if (!output.dataIdentifier.empty() && ImGui::IsItemHovered())
                 {
-                    ed::Suspend();
-                    ImGui::SetTooltip("%s", std::string(output.dataIdentifier).c_str());
-                    ed::Resume();
+                    tooltipText = std::string(output.dataIdentifier);
                 }
                 ImGui::PopStyleVar();
                 util::BlueprintNodeBuilder::EndOutput();
@@ -1130,6 +1130,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     ed::Resume();
 
     ed::End();
+
+    // Push the Tooltip on the stack if needed
+    if (!tooltipText.empty())
+    {
+        ImGui::SetTooltip("%s", tooltipText.c_str());
+    }
 
     ImGui::ShowDemoWindow();
     ImPlot::ShowDemoWindow();
