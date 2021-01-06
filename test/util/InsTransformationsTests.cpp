@@ -3,7 +3,7 @@
 #include "util/InsTransformations.hpp"
 #include "util/Logger.hpp"
 
-#include "util/LinearAlgebra.hpp"
+#include "util/Eigen.hpp"
 
 #include <limits>
 
@@ -11,13 +11,13 @@ namespace NAV
 {
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
-Matrix3d<Navigation, Body> DCM_nb(double roll, double pitch, double yaw)
+Eigen::Matrix3d DCM_nb(double roll, double pitch, double yaw)
 {
     double& R = roll;
     double& P = pitch;
     double& Y = yaw;
 
-    Matrix3d<Navigation, Body> DCM;
+    Eigen::Matrix3d DCM;
     // clang-format off
     DCM << cos(Y)*cos(P), cos(Y)*sin(P)*sin(R) - sin(Y)*cos(R), cos(Y)*sin(P)*cos(R) + sin(Y)*sin(R),
            sin(Y)*cos(P), sin(Y)*sin(P)*sin(R) + cos(Y)*cos(R), sin(Y)*sin(P)*cos(R) - cos(Y)*sin(R),
@@ -27,9 +27,9 @@ Matrix3d<Navigation, Body> DCM_nb(double roll, double pitch, double yaw)
     return DCM;
 }
 
-Matrix3d<Earth, Navigation> DCM_en(double latitude, double longitude)
+Eigen::Matrix3d DCM_en(double latitude, double longitude)
 {
-    Matrix3d<Earth, Navigation> DCM;
+    Eigen::Matrix3d DCM;
     // clang-format off
     DCM << -sin(latitude)*cos(longitude), -sin(longitude), -cos(latitude)*cos(longitude),
            -sin(latitude)*sin(longitude),  cos(longitude), -cos(latitude)*sin(longitude),
@@ -39,11 +39,11 @@ Matrix3d<Earth, Navigation> DCM_en(double latitude, double longitude)
     return DCM;
 }
 
-Matrix3d<Earth, Inertial> DCM_ei(const double time, const double angularRate_ie)
+Eigen::Matrix3d DCM_ei(const double time, const double angularRate_ie)
 {
     double a = angularRate_ie * time;
 
-    Matrix3d<Earth, Inertial> DCM;
+    Eigen::Matrix3d DCM;
     // clang-format off
     DCM <<  cos(a), sin(a), 0,
            -sin(a), cos(a), 0,
@@ -59,7 +59,7 @@ Matrix3d<Earth, Inertial> DCM_ei(const double time, const double angularRate_ie)
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return Vector containing [latitude 𝜙, longitude λ, altitude]^T in [rad, rad, m]
 /// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications
-Vector3d<LLA> ecef2lla_iter(const Vector3d<Earth>& ecef, double a, double e_squared)
+Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& ecef, double a, double e_squared)
 {
     // Value is used every iteration and does not change
     double sqrt_x1x1_x2x2 = std::sqrt(std::pow(ecef(0), 2) + std::pow(ecef(1), 2));
@@ -99,7 +99,7 @@ Vector3d<LLA> ecef2lla_iter(const Vector3d<Earth>& ecef, double a, double e_squa
     double altitude = sqrt_x1x1_x2x2 / std::cos(latitude);
     altitude -= N;
 
-    return Vector3d<LLA>(latitude, longitude, altitude);
+    return Eigen::Vector3d(latitude, longitude, altitude);
 }
 
 TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformations]")
@@ -148,15 +148,37 @@ TEST_CASE("[InsTransformations] Radian to degree conversion constexpr", "[InsTra
 
 TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransformations]")
 {
-    // Conversions with https://www.andre-gaschler.com/rotationconverter
+    auto quat = [](double alpha, double beta, double gamma) {
+        Eigen::AngleAxisd xAngle(alpha, Eigen::Vector3d::UnitX());
+        Eigen::AngleAxisd yAngle(beta, Eigen::Vector3d::UnitY());
+        Eigen::AngleAxisd zAngle(gamma, Eigen::Vector3d::UnitZ());
 
-    //                              w    ,     x    ,     y    ,      z
-    auto q = Eigen::Quaterniond(0.6612731, 0.6451492, 0.2785897, -0.2624657);
-    auto ZYX = trafo::quat2eulerZYX(q);
+        return Eigen::Quaterniond(zAngle * yAngle * xAngle);
+    };
 
-    CHECK(ZYX.z() == Approx(trafo::deg2rad(-1.0)).margin(0.000001));
-    CHECK(ZYX.y() == Approx(trafo::deg2rad(-45.0)).margin(0.000001));
-    CHECK(ZYX.x() == Approx(trafo::deg2rad(-89)).margin(0.000001));
+    double delta = trafo::rad2deg(0.01);
+    bool error = false;
+    // (-pi:pi]x(-pi/2:pi/2]x(-pi:pi]
+    for (double alpha = -M_PI + delta; alpha <= M_PI && !error; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter)
+    {
+        for (double beta = -M_PI / 2.0 + delta; beta <= M_PI / 2.0 && !error; beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter)
+        {
+            for (double gamma = -M_PI + delta; gamma <= M_PI && !error; gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter)
+            {
+                auto q = quat(alpha, beta, gamma);
+                auto ZYX = trafo::rad2deg3(trafo::quat2eulerZYX(q));
+                CHECK(ZYX.x() == Approx(trafo::rad2deg(alpha)).margin(1e-8));
+                CHECK(ZYX.y() == Approx(trafo::rad2deg(beta)).margin(1e-8));
+                CHECK(ZYX.z() == Approx(trafo::rad2deg(gamma)).margin(1e-8));
+                if (std::abs(ZYX.x() - trafo::rad2deg(alpha)) >= 1e-8
+                    || std::abs(ZYX.y() - trafo::rad2deg(beta)) >= 1e-8
+                    || std::abs(ZYX.z() - trafo::rad2deg(gamma)) >= 1e-8)
+                {
+                    error = true;
+                }
+            }
+        }
+    }
 }
 
 TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[InsTransformations]")
@@ -184,8 +206,8 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     // auto starHalfDay = 86164.0905 / 2.0;
     // auto q_ei = trafo::quat_ei(starHalfDay);
 
-    Vector3d<Inertial> x_i{ 1, -2.5, 22 };
-    Vector3d<Earth> x_e = q_ei * x_i;
+    Eigen::Vector3d x_i{ 1, -2.5, 22 };
+    Eigen::Vector3d x_e = q_ei * x_i;
 
     CHECK(x_e.x() == Approx(-2.5).margin(0.000001));
     CHECK(x_e.y() == Approx(-1).margin(0.000001));
@@ -217,7 +239,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
 
     auto q_ne = trafo::quat_ne(latitude, longitude);
 
-    Vector3d<Earth> x_e{ 1, 2, 3 };
+    Eigen::Vector3d x_e{ 1, 2, 3 };
     auto x_n = q_ne * x_e;
 
     CHECK(x_n.x() == Approx(-1.0));
@@ -347,8 +369,8 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     yaw = trafo::deg2rad(-45);
     auto q_bn = trafo::quat_bn(roll, pitch, yaw);
 
-    Vector3d<Navigation> x_n{ 1.0, 1.0, 0.0 };
-    Vector3d<Body> x_b = q_bn * x_n;
+    Eigen::Vector3d x_n{ 1.0, 1.0, 0.0 };
+    Eigen::Vector3d x_b = q_bn * x_n;
 
     CHECK(x_b.x() == Approx(0.0).margin(EPSILON));
     CHECK(x_b.y() == Approx(std::sqrt(2)).margin(EPSILON));
@@ -405,8 +427,8 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
 
     auto q_bp = trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ);
 
-    Vector3d<Platform> x_p{ 2.0, 0.0, 9.81 };
-    Vector3d<Body> x_b = q_bp * x_p;
+    Eigen::Vector3d x_p{ 2.0, 0.0, 9.81 };
+    Eigen::Vector3d x_b = q_bp * x_p;
 
     CHECK(x_b.x() == Approx(-std::sqrt(2)));
     CHECK(x_b.y() == Approx(-std::sqrt(2)));
@@ -422,9 +444,9 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     double latitude = trafo::deg2rad(48.78081);
     double longitude = trafo::deg2rad(9.172012);
     double altitude = 254;
-    Vector3d<Earth> ecef_ref = Vector3d<Earth>(4157.128, 671.224, 4774.723) * 1000;
-    Vector3d<Earth> ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
-    Vector3d<LLA> lla = trafo::ecef2lla_WGS84(ecef_ref);
+    Eigen::Vector3d ecef_ref = Eigen::Vector3d(4157.128, 671.224, 4774.723) * 1000;
+    Eigen::Vector3d ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
+    Eigen::Vector3d lla = trafo::ecef2lla_WGS84(ecef_ref);
     CHECK(ecef.x() == Approx(ecef_ref.x()));
     CHECK(ecef.y() == Approx(ecef_ref.y()));
     CHECK(ecef.z() == Approx(ecef_ref.z()));
@@ -439,7 +461,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     latitude = trafo::deg2rad(40.712728);
     longitude = trafo::deg2rad(-74.006015);
     altitude = 13;
-    ecef_ref = Vector3d<Earth>(1334.001, -4654.06, 4138.303) * 1000;
+    ecef_ref = Eigen::Vector3d(1334.001, -4654.06, 4138.303) * 1000;
     ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     lla = trafo::ecef2lla_WGS84(ecef_ref);
     CHECK(ecef.x() == Approx(ecef_ref.x()));
@@ -454,7 +476,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     latitude = 0;
     longitude = 0;
     altitude = -3492;
-    ecef_ref = Vector3d<Earth>(6374.645, 0, 0) * 1000;
+    ecef_ref = Eigen::Vector3d(6374.645, 0, 0) * 1000;
     ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     lla = trafo::ecef2lla_WGS84(ecef_ref);
     CHECK(ecef.x() == Approx(ecef_ref.x()));
@@ -469,7 +491,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     latitude = trafo::deg2rad(-89.9999);
     longitude = trafo::deg2rad(0);
     altitude = 2801;
-    ecef_ref = Vector3d<Earth>(0.011, 0, -6359.553) * 1000;
+    ecef_ref = Eigen::Vector3d(0.011, 0, -6359.553) * 1000;
     ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     lla = trafo::ecef2lla_WGS84(ecef_ref);
     CHECK(ecef.x() == Approx(ecef_ref.x()).margin(0.2));
@@ -484,7 +506,7 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     latitude = trafo::deg2rad(40);
     longitude = trafo::deg2rad(180);
     altitude = -5097;
-    ecef_ref = Vector3d<Earth>(-4888.803, 0, 4074.709) * 1000;
+    ecef_ref = Eigen::Vector3d(-4888.803, 0, 4074.709) * 1000;
     ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
     lla = trafo::ecef2lla_WGS84(ecef_ref);
     CHECK(ecef.x() == Approx(ecef_ref.x()));
@@ -514,9 +536,9 @@ TEST_CASE("[InsTransformations] ECEF <=> LLH iterative conversion", "[InsTransfo
     double latitude = trafo::deg2rad(48.78081);
     double longitude = trafo::deg2rad(9.172012);
     double altitude = 254;
-    Vector3d<Earth> ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
-    Vector3d<LLA> lla = trafo::ecef2lla_WGS84(ecef);
-    Vector3d<LLA> lla_iter = ecef2lla_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    Eigen::Vector3d ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
+    Eigen::Vector3d lla = trafo::ecef2lla_WGS84(ecef);
+    Eigen::Vector3d lla_iter = ecef2lla_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
     CHECK(lla.x() == Approx(latitude));
     CHECK(lla.y() == Approx(longitude));
@@ -592,21 +614,21 @@ TEST_CASE("[InsTransformations] ECEF <=> LLH iterative conversion", "[InsTransfo
 
 TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
 {
-    Quaterniond<Body, Platform> q_bp(Eigen::AngleAxisd(trafo::deg2rad(-90), Eigen::Vector3d::UnitZ()));
-    Quaterniond<Navigation, Body> q_nb = trafo::quat_nb(trafo::deg2rad(20), trafo::deg2rad(50), trafo::deg2rad(190));
-    Quaterniond<Earth, Navigation> q_en = trafo::quat_en(trafo::deg2rad(10), trafo::deg2rad(40));
+    Eigen::Quaterniond q_bp(Eigen::AngleAxisd(trafo::deg2rad(-90), Eigen::Vector3d::UnitZ()));
+    Eigen::Quaterniond q_nb = trafo::quat_nb(trafo::deg2rad(20), trafo::deg2rad(50), trafo::deg2rad(190));
+    Eigen::Quaterniond q_en = trafo::quat_en(trafo::deg2rad(10), trafo::deg2rad(40));
 
-    Vector3d<Platform> v_p{ 1, 3, 5 };
+    Eigen::Vector3d v_p{ 1, 3, 5 };
 
-    Vector3d<Body> v_b = q_bp * v_p;
-    Vector3d<Navigation> v_n = q_nb * v_b;
-    Vector3d<Earth> v_e = q_en * v_n;
+    Eigen::Vector3d v_b = q_bp * v_p;
+    Eigen::Vector3d v_n = q_nb * v_b;
+    Eigen::Vector3d v_e = q_en * v_n;
 
-    Quaterniond<Navigation, Platform> q_np = q_nb * q_bp;
-    Vector3d<Navigation> v_n_direct = q_np * v_p;
+    Eigen::Quaterniond q_np = q_nb * q_bp;
+    Eigen::Vector3d v_n_direct = q_np * v_p;
 
-    Quaterniond<Earth, Platform> q_ep = q_en * q_nb * q_bp;
-    Vector3d<Earth> v_e_direct = q_ep * v_p;
+    Eigen::Quaterniond q_ep = q_en * q_nb * q_bp;
+    Eigen::Vector3d v_e_direct = q_ep * v_p;
 
     CHECK(v_n.x() == Approx(v_n_direct.x()));
     CHECK(v_n.y() == Approx(v_n_direct.y()));
