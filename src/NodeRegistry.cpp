@@ -103,6 +103,11 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType,
 #include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
+// Data Simulator
+#include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
+#include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
+// State
+#include "Nodes/State/State.hpp"
 
 void NAV::NodeRegistry::registerNodeTypes()
 {
@@ -128,6 +133,10 @@ void NAV::NodeRegistry::registerNodeTypes()
     registerNodeType<KvhSensor>();
     registerNodeType<Navio2Sensor>();
     registerNodeType<VectorNavSensor>();
+    // Data Simulator
+    registerNodeType<ImuSimulator>();
+    // State
+    registerNodeType<State>();
 }
 
 #include "NodeData/NodeData.hpp"

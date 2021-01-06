@@ -22,13 +22,13 @@ class StateData : public InsObs
     /// @brief Destructor
     ~StateData() override = default;
     /// @brief Copy constructor
-    StateData(const StateData&) = delete;
+    StateData(const StateData&) = default;
     /// @brief Move constructor
-    StateData(StateData&&) = delete;
+    StateData(StateData&&) = default;
     /// @brief Copy assignment operator
-    StateData& operator=(const StateData&) = delete;
+    StateData& operator=(const StateData&) = default;
     /// @brief Move assignment operator
-    StateData& operator=(StateData&&) = delete;
+    StateData& operator=(StateData&&) = default;
 
     /// @brief Returns the type of the data class
     /// @return The data type
@@ -113,7 +113,7 @@ class StateData : public InsObs
         // }
 
         // return EulerAngles;
-        return trafo::quat2eulerZYX(quaternion_bn());
+        return trafo::quat2eulerZYX(quaternion_nb());
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
