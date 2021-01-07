@@ -108,6 +108,8 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType,
 #include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
 // State
 #include "Nodes/State/State.hpp"
+// Uime
+#include "Nodes/Time/TimeSynchronizer.hpp"
 
 void NAV::NodeRegistry::registerNodeTypes()
 {
@@ -137,6 +139,8 @@ void NAV::NodeRegistry::registerNodeTypes()
     registerNodeType<ImuSimulator>();
     // State
     registerNodeType<State>();
+    // Time
+    registerNodeType<TimeSynchronizer>();
 }
 
 #include "NodeData/NodeData.hpp"
