@@ -208,8 +208,17 @@ bool NAV::VectorNavSensor::initialize()
         return false;
     }
 
-    // Connect to the sensor (vs.verifySensorConnectivity does not have to be called as sensor is already tested)
-    vs.connect(sensorPort, connectedBaudrate);
+    try
+    {
+        // Connect to the sensor (vs.verifySensorConnectivity does not have to be called as sensor is already tested)
+        vs.connect(sensorPort, connectedBaudrate);
+    }
+    catch (const std::exception& e)
+    {
+        LOG_ERROR("{}: Failed to connect to sensor on port {} with baudrate {} with error: {}", nameId(),
+                  sensorPort, connectedBaudrate, e.what());
+        return false;
+    }
 
     // Query the sensor's model number
     LOG_DEBUG("{} connected on port {} with baudrate {}", vs.readModelNumber(), sensorPort, connectedBaudrate);
