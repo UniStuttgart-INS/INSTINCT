@@ -42,8 +42,7 @@ class VectorNavObs final : public ImuObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
-        std::vector<std::string_view> parents{ "ImuObs" };
-        return parents;
+        return { ImuObs::type() };
     }
 
     /// The estimated attitude quaternion. The first term is the scalar value.

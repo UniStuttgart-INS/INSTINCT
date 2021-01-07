@@ -73,7 +73,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType,
         {
             for (const auto& parentTypeOfChild : parentTypes)
             {
-                if (parentTypeOfChild == parentType)
+                if (NodeDataTypeIsChildOf(parentTypeOfChild, parentType))
                 {
                     return true;
                 }
@@ -141,6 +141,10 @@ void NAV::NodeRegistry::registerNodeTypes()
 
 #include "NodeData/NodeData.hpp"
 #include "NodeData/InsObs.hpp"
+#include "NodeData/GNSS/EmlidObs.hpp"
+#include "NodeData/GNSS/GnssObs.hpp"
+#include "NodeData/GNSS/RtklibPosObs.hpp"
+#include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
@@ -149,6 +153,11 @@ void NAV::NodeRegistry::registerNodeDataTypes()
 {
     registerNodeDataType<NodeData>();
     registerNodeDataType<InsObs>();
+    // GNSS
+    registerNodeDataType<EmlidObs>();
+    registerNodeDataType<GnssObs>();
+    registerNodeDataType<RtklibPosObs>();
+    registerNodeDataType<UbloxObs>();
     // IMU
     registerNodeDataType<ImuObs>();
     registerNodeDataType<KvhObs>();

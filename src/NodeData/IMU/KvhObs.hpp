@@ -50,8 +50,7 @@ class KvhObs final : public ImuObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
-        std::vector<std::string_view> parents{ "ImuObs" };
-        return parents;
+        return { ImuObs::type() };
     }
 
     /// Complete message raw binary data including header and checksum

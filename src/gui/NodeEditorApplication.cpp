@@ -809,12 +809,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                             showLabel("End Pin already linked", ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
-                        else if (startPin->type == Pin::Type::Flow && !NAV::NodeRegistry::NodeDataTypeIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
+                        else if (startPin->type == Pin::Type::Flow
+                                 && !NAV::NodeRegistry::NodeDataTypeIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
                         {
                             showLabel(fmt::format("The data type [{}] can't be linked to [{}]", startPin->dataIdentifier, endPin->dataIdentifier).c_str(), ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
-                        else if (startPin->type == Pin::Type::Delegate && (startPin->parentNode == nullptr || endPin->dataIdentifier != startPin->parentNode->type()))
+                        else if (startPin->type == Pin::Type::Delegate
+                                 && (startPin->parentNode == nullptr || endPin->dataIdentifier != startPin->parentNode->type()))
                         {
                             if (startPin->parentNode != nullptr)
                             {

@@ -39,8 +39,7 @@ class GnssObs : public InsObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
-        std::vector<std::string_view> parents{ "InsObs" };
-        return parents;
+        return { InsObs::type() };
     }
 
     /// ECEF position [m]

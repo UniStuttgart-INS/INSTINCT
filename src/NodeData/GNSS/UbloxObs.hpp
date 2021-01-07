@@ -49,8 +49,7 @@ class UbloxObs : public GnssObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
-        std::vector<std::string_view> parents{ "GnssObs" };
-        return parents;
+        return { GnssObs::type() };
     }
 
     /// Ubx Message Class (NONE if NMEA message)
