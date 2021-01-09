@@ -83,6 +83,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ed::SetCurrentEditor(m_Editor);
 
     ImGui::GetStyle().FrameRounding = 4.0F;
+    ed::GetStyle().FlowDuration = 1.0F;
 
     m_HeaderBackground = LoadTexture("resources/images/BlueprintBackground.png");
 }

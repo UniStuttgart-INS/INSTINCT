@@ -12,6 +12,7 @@
 #include <variant>
 #include <vector>
 #include <memory>
+#include <tuple>
 
 namespace NAV
 {
@@ -238,7 +239,7 @@ class Pin
     /// Pointer to data which is transferred over this pin
     PinData data = static_cast<void*>(nullptr);
     /// Callback List
-    std::vector<std::pair<Node*, void (Node::*)(std::shared_ptr<NodeData>)>> callbacks;
+    std::vector<std::tuple<Node*, void (Node::*)(std::shared_ptr<NodeData>), ax::NodeEditor::LinkId>> callbacks;
     /// Unique name which is used for data flows
     std::string_view dataIdentifier;
 

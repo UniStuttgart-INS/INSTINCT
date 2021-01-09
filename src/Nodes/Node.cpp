@@ -64,18 +64,17 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<NAV::Nod
 {
     if (callbacksEnabled)
     {
-        if (nm::showFlowWhenInvokingCallbacks)
+        for (auto& [node, callback, linkId] : outputPins.at(portIndex).callbacks)
         {
-            auto connectedLinks = nm::FindConnectedLinksToPin(outputPins.at(portIndex).id);
-            for (auto& connectedLink : connectedLinks)
+            if (node->isInitialized)
             {
-                ax::NodeEditor::Flow(connectedLink->id);
-            }
-        }
+                if (nm::showFlowWhenInvokingCallbacks)
+                {
+                    ax::NodeEditor::Flow(linkId);
+                }
 
-        for (auto& [node, callback] : outputPins.at(portIndex).callbacks)
-        {
-            std::invoke(callback, node, data);
+                std::invoke(callback, node, data);
+            }
         }
     }
 }

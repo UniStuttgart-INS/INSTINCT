@@ -220,6 +220,12 @@ bool NAV::VectorNavSensor::initialize()
         return false;
     }
 
+    if (!vs.verifySensorConnectivity())
+    {
+        LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor does not answer", nameId(),
+                  sensorPort, connectedBaudrate);
+        return false;
+    }
     // Query the sensor's model number
     LOG_DEBUG("{} connected on port {} with baudrate {}", vs.readModelNumber(), sensorPort, connectedBaudrate);
 
@@ -300,9 +306,18 @@ void NAV::VectorNavSensor::deinitialize()
         }
         catch (...)
         {}
-
-        vs.reset(true);
-        vs.disconnect();
+        try
+        {
+            vs.reset(true);
+        }
+        catch (...)
+        {}
+        try
+        {
+            vs.disconnect();
+        }
+        catch (...)
+        {}
     }
 
     Node::deinitialize();
