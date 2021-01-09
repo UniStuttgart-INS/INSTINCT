@@ -52,7 +52,7 @@ void NAV::State::guiConfig()
         LOG_DEBUG("{}: Dynamic State Initialization changed to {}", nameId(), dynamicStateInit);
         flow::ApplyChanges();
     }
-    if (!dynamicStateInit)
+    if (dynamicStateInit)
     {
         if (ImGui::InputDouble("Init Duration", &initDuration, 0.1, 1.0, "%.2f s"))
         {

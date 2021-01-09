@@ -10,22 +10,15 @@
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/StateData.hpp"
 
-#include "Nodes/State/State.hpp"
-
 namespace NAV
 {
 class ImuIntegrator : public Node
 {
   public:
-    /// @brief Constructor
-    /// @param[in] name Name of the object
-    /// @param[in] options Program options string map
-    ImuIntegrator(const std::string& name, const std::map<std::string, std::string>& options);
-
     /// @brief Default constructor
-    ImuIntegrator() = default;
+    ImuIntegrator();
     /// @brief Destructor
-    ~ImuIntegrator() override = default;
+    ~ImuIntegrator() override;
     /// @brief Copy constructor
     ImuIntegrator(const ImuIntegrator&) = delete;
     /// @brief Move constructor
@@ -35,116 +28,55 @@ class ImuIntegrator : public Node
     /// @brief Move assignment operator
     ImuIntegrator& operator=(ImuIntegrator&&) = delete;
 
-    /// @brief Initialize the Node. Here virtual functions of children can be called
-    void initialize() final;
+    /// @brief String representation of the Class Type
+    [[nodiscard]] static std::string typeStatic();
 
-    /// @brief Initialize the Node. Here virtual functions of children can be called
-    void deinitialize() final;
+    /// @brief String representation of the Class Type
+    [[nodiscard]] std::string type() const override;
 
-    /// @brief Returns the String representation of the Class Type
-    /// @return The class type
-    [[nodiscard]] constexpr std::string_view type() const override
-    {
-        return std::string_view("ImuIntegrator");
-    }
+    /// @brief String representation of the Class Category
+    [[nodiscard]] static std::string category();
 
-    /// @brief Returns the String representation of the Class Category
-    /// @return The class category
-    [[nodiscard]] constexpr std::string_view category() const override
-    {
-        return std::string_view("Integrator");
-    }
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    void guiConfig() override;
 
-    /// @brief Returns Gui Configuration options for the class
-    /// @return The gui configuration
-    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
-    {
-        return { { CONFIG_LIST, "Integration Frame", "", { "[ECEF]", "NED" } } };
-    }
+    /// @brief Saves the node into a json object
+    [[nodiscard]] json save() const override;
 
-    /// @brief Returns the context of the class
-    /// @return The class context
-    [[nodiscard]] constexpr NodeContext context() const override
-    {
-        return NodeContext::ALL;
-    }
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    void restore(const json& j) override;
 
-    /// @brief Returns the number of Ports
-    /// @param[in] portType Specifies the port type
-    /// @return The number of ports
-    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const override
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            return 2U;
-        case PortType::Out:
-            return 1U;
-        }
+    /// @brief Initialize the node
+    bool initialize() override;
 
-        return 0U;
-    }
+    /// @brief Deinitialize the node
+    void deinitialize() override;
 
-    /// @brief Returns the data types provided by this class
-    /// @param[in] portType Specifies the port type
-    /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type and subtitle
-    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const override
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            if (portIndex == 0)
-            {
-                return std::make_pair(ImuObs::type(), std::string_view(""));
-            }
-            if (portIndex == 1)
-            {
-                return std::make_pair(StateData::type(), std::string_view(""));
-            }
-            break;
-        case PortType::Out:
-            if (portIndex == 0)
-            {
-                return std::make_pair(StateData::type(), std::string_view(""));
-            }
-            break;
-        }
-
-        return std::make_pair(std::string_view(""), std::string_view(""));
-    }
-
-    /// @brief Handles the data sent on the input port
-    /// @param[in] portIndex The input port index
-    /// @param[in, out] data The data send on the input port
-    void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) override
-    {
-        if (portIndex == 0)
-        {
-            auto obs = std::static_pointer_cast<ImuObs>(data);
-            integrateObservation(obs);
-        }
-    }
+  private:
+    constexpr static size_t OutputPortIndex_ImuIntegrator = 0; ///< @brief Delegate
+    constexpr static size_t OutputPortIndex_StateData = 1;     ///< @brief Flow (StateData)
+    constexpr static size_t InputPortIndex_ImuObs = 0;         ///< @brief Flow (ImuObs)
+    constexpr static size_t InputPortIndex_StateData = 1;      ///< @brief Object (StateData)
 
   private:
     /// @brief Integrates the Imu Observation data
-    /// @param[in] imuObs__t0 ImuObs to process
-    void integrateObservation(std::shared_ptr<ImuObs>& imuObs__t0);
+    /// @param[in] nodeData ImuObs to process
+    void integrateObservation(std::shared_ptr<NodeData> nodeData);
 
     /// IMU Observation at the time tₖ₋₁
-    std::shared_ptr<NAV::ImuObs> imuObs__t1 = nullptr;
+    std::shared_ptr<ImuObs> imuObs__t1 = nullptr;
     /// IMU Observation at the time tₖ₋₂
-    std::shared_ptr<NAV::ImuObs> imuObs__t2 = nullptr;
+    std::shared_ptr<ImuObs> imuObs__t2 = nullptr;
 
     /// State Data at the time tₖ₋₂
     std::shared_ptr<StateData> stateData__t2 = nullptr;
 
-    /// Pointer to the State Node connected on the StateData port
-    std::shared_ptr<State> stateNode = nullptr;
-    /// Output Port Index of the state node to request the StateData
-    uint8_t stateNodeOutputPortIndex = 200;
+    /// State Data at initialization
+    std::shared_ptr<StateData> stateData__init = nullptr;
 
-    enum IntegrationFrame
+    enum IntegrationFrame : int
     {
         ECEF,
         NED
