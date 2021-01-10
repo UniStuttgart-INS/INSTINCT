@@ -40,6 +40,32 @@ class ScrollingBuffer
         }
     }
 
+    // TODO: Resize
+
+    T back()
+    {
+        if (data_.size() < maxSize || offset_ == 0)
+        {
+            return data_.back();
+        }
+        else
+        {
+            return data_.at(offset_ - 1);
+        }
+    }
+
+    T front()
+    {
+        if (data_.size() < maxSize)
+        {
+            return data_.front();
+        }
+        else
+        {
+            return data_.at(offset_);
+        }
+    }
+
     [[nodiscard]] int offset() const
     {
         return static_cast<int>(offset_);

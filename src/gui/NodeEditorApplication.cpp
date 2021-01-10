@@ -906,7 +906,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         ImGui::OpenPopup("Pin Context Menu");
     }
-    else if (ed::ShowLinkContextMenu(&contextLinkId))
+    else if (ed::ShowLinkContextMenu(&contextLinkId) && ed::IsActive())
     {
         ImGui::OpenPopup("Link Context Menu");
     }

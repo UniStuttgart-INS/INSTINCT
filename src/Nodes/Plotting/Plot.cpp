@@ -97,7 +97,7 @@ void NAV::Plot::guiConfig()
                         {
                             auto& plotData = pinData.plotData.at(plotDataIndex);
 
-                            if (!plotData.show)
+                            if (!plotData.hasData)
                             {
                                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
                             }
@@ -106,7 +106,7 @@ void NAV::Plot::guiConfig()
                             {
                                 plotInfo.selectedXdata.at(pinIndex) = plotDataIndex;
                             }
-                            if (!plotData.show)
+                            if (!plotData.hasData)
                             {
                                 ImGui::PopStyleVar();
                             }
@@ -127,9 +127,10 @@ void NAV::Plot::guiConfig()
             ImGui::CheckboxFlags(("Y-Axis 3##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                  &plotInfo.plotFlags, ImPlotFlags_YAxis3);
 
-            ImGui::SetNextItemWidth(100);
+            float sideWidth = 180.0F;
+            ImGui::SetNextItemWidth(sideWidth);
             ImGui::BeginGroup();
-            if (ImGui::BeginCombo(("Pin##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+            if (ImGui::BeginCombo(("##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                   ("Pin " + std::to_string(plotInfo.selectedPin + 1)).c_str()))
             {
                 for (int n = 0; n < nInputPins; n++)
@@ -148,37 +149,103 @@ void NAV::Plot::guiConfig()
                 }
                 ImGui::EndCombo();
             }
-            // data.at(plotInfo.selectedPin)
+            auto comboBoxSize = ImGui::GetItemRectSize();
+            ImGui::BeginChild(("Data Drag" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                              ImVec2(sideWidth, ImPlot::GetStyle().PlotDefaultSize.y - comboBoxSize.y - ImGui::GetStyle().ItemSpacing.y), false);
 
-            // ImGui::Selectable(label, false, 0, ImVec2(100, 0));
-            // if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-            // {
-            //     ImGui::SetDragDropPayload("DND_PLOT", &i, sizeof(int));
-            //     ImGui::TextUnformatted(label);
-            //     ImGui::EndDragDropSource();
-            // }
+            for (size_t plotDataIndex = 0; plotDataIndex < data.at(static_cast<size_t>(plotInfo.selectedPin)).plotData.size(); plotDataIndex++)
+            {
+                auto& plotData = data.at(static_cast<size_t>(plotInfo.selectedPin)).plotData.at(plotDataIndex);
 
+                if (!plotData.hasData)
+                {
+                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+                }
+                std::string label = plotData.displayName;
+                ImGui::Selectable(label.c_str(), false, 0);
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+                {
+                    auto* ptrPlotData = &plotData;
+                    ImGui::SetDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                              &ptrPlotData, sizeof(PinData::PlotData*));
+                    ImGui::TextUnformatted(label.c_str());
+                    ImGui::EndDragDropSource();
+                }
+
+                if (!plotData.hasData)
+                {
+                    ImGui::PopStyleVar();
+                }
+            }
+            ImGui::EndChild();
             ImGui::EndGroup();
+
             ImGui::SameLine();
 
-            if (ImPlot::BeginPlot((plotInfo.title + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                  "x", "f(x)", ImVec2(-1, 0), plotInfo.plotFlags))
+            std::string xLabel = data.at(0).allDisplayNames.at(plotInfo.selectedXdata.at(0));
+            if (!data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.data().empty())
             {
-                static float xs1[1001], ys1[1001];
-                for (int i = 0; i < 1001; ++i)
+                double xMin = data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.front();
+                double xMax = data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.back();
+
+                if (!std::isnan(xMin) && !std::isnan(xMax))
                 {
-                    xs1[i] = static_cast<float>(i) * 0.001F;
-                    ys1[i] = 0.5F + 0.5F * sinf(50.0F * (xs1[i] + static_cast<float>(ImGui::GetTime()) / 10.0F));
+                    ImPlot::SetNextPlotLimitsX(xMin, xMax, ImGuiCond_Always);
                 }
-                static double xs2[11], ys2[11];
-                for (int i = 0; i < 11; ++i)
+            }
+            if (ImPlot::BeginPlot((plotInfo.title + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                  xLabel.c_str(), nullptr, ImVec2(-1, 0), plotInfo.plotFlags | ImPlotAxisFlags_LockMin))
+            {
+                for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
                 {
-                    xs2[i] = static_cast<float>(i) * 0.1F;
-                    ys2[i] = xs2[i] * xs2[i];
+                    for (auto& plotData : data.at(pinIndex).plotData)
+                    {
+                        if (plotData.show
+                            && plotData.hasData
+                            && (plotData.yAxis == ImPlotYAxis_1
+                                || (plotData.yAxis == ImPlotYAxis_2 && (plotInfo.plotFlags & ImPlotFlags_YAxis2))
+                                || (plotData.yAxis == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
+                        {
+                            ImPlot::SetPlotYAxis(plotData.yAxis);
+                            ImPlot::PlotLine(plotData.displayName.c_str(),
+                                             data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data().data(),
+                                             plotData.buffer.data().data(),
+                                             static_cast<int>(plotData.buffer.data().size()),
+                                             plotData.buffer.offset(), sizeof(double));
+                            // allow legend labels to be dragged and dropped
+                            if (ImPlot::BeginLegendDragDropSource(plotData.displayName.c_str()))
+                            {
+                                auto* ptrPlotData = &plotData;
+                                ImGui::SetDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                                          &ptrPlotData, sizeof(PinData::PlotData*));
+                                ImGui::TextUnformatted(plotData.displayName.c_str());
+                                ImPlot::EndLegendDragDropSource();
+                            }
+                        }
+                    }
                 }
-                ImPlot::PlotLine("sin(x)", xs1, ys1, 1001);
-                ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
-                ImPlot::PlotLine("x^2", xs2, ys2, 11);
+
+                // make our plot a drag and drop target
+                if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
+                    {
+                        auto plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
+
+                        plotData->show = true;
+                        plotData->yAxis = 0;
+                        // set specific y-axis if hovered
+                        for (int y = 0; y < 3; y++)
+                        {
+                            if (ImPlot::IsPlotYAxisHovered(y))
+                            {
+                                plotData->yAxis = y;
+                            }
+                        }
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+
                 ImPlot::EndPlot();
             }
         }
@@ -217,6 +284,8 @@ bool NAV::Plot::initialize()
     {
         return false;
     }
+
+    startValue_Time = std::nan("");
 
     return isInitialized = true;
 }
@@ -318,7 +387,6 @@ void NAV::Plot::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
         if (plotInfo.selectedXdata.size() > pinIndex)
         {
             plotInfo.selectedXdata.at(pinIndex) = 0;
-            plotInfo.dataToPlot.at(pinIndex).clear();
         }
     }
 }
@@ -351,12 +419,10 @@ void NAV::Plot::updateNumberOfInputPins()
         while (plotInfo.selectedXdata.size() < static_cast<size_t>(nInputPins))
         {
             plotInfo.selectedXdata.emplace_back(0);
-            plotInfo.dataToPlot[plotInfo.dataToPlot.size()] = {};
         }
         while (plotInfo.selectedXdata.size() > static_cast<size_t>(nInputPins))
         {
             plotInfo.selectedXdata.pop_back();
-            plotInfo.dataToPlot.erase(plotInfo.dataToPlot.size() - 1);
         }
     }
 }
@@ -388,7 +454,7 @@ void NAV::Plot::plotVectorNavObs(std::shared_ptr<VectorNavObs> obs, size_t pinIn
         if (hasValue)
         {
             pinData.plotData.at(index).buffer.AddValue(value);
-            pinData.plotData.at(index).show = true;
+            pinData.plotData.at(index).hasData = true;
         }
         else
         {

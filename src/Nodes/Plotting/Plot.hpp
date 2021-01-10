@@ -98,7 +98,10 @@ class Plot : public Node
 
             std::string displayName;
             ScrollingBuffer<double> buffer;
+            bool hasData = false;
+
             bool show = false;
+            int yAxis = 0;
         };
 
         void addPlotDataItem(std::string displayName)
@@ -116,20 +119,8 @@ class Plot : public Node
 
     struct PlotInfo
     {
-        struct DataToPlot
-        {
-            size_t dataIndex = 0;
-            size_t yAxis = 0;
-        };
-
         PlotInfo(const std::string& title, size_t nInputPins)
-            : title(title), headerText(title), selectedXdata(nInputPins, 0)
-        {
-            while (dataToPlot.size() < nInputPins)
-            {
-                dataToPlot[dataToPlot.size()] = {};
-            }
-        }
+            : title(title), headerText(title), selectedXdata(nInputPins, 0) {}
 
         std::string title;
         std::string headerText;
@@ -137,8 +128,6 @@ class Plot : public Node
         int plotFlags = 0;
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;
-        /// @brief Key: PinIndex, Value: Data To Plot
-        std::map<size_t, std::vector<DataToPlot>> dataToPlot;
     };
 
     std::vector<PlotInfo> plotInfos;
