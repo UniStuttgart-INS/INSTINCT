@@ -910,7 +910,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         ImGui::OpenPopup("Link Context Menu");
     }
-    else if (ed::ShowBackgroundContextMenu())
+    else if (ed::ShowBackgroundContextMenu() && ed::IsActive())
     {
         ImGui::OpenPopup("Create New Node");
         showBackgroundContextMenu = true;
@@ -1103,7 +1103,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         if (node->hasConfig && node->showConfig)
         {
             if (!ImGui::Begin(fmt::format("{} ({})", node->type(), reinterpret_cast<uintptr_t>(node->id.AsPointer())).c_str(), &(node->showConfig),
-                              ImGuiWindowFlags_AlwaysAutoResize))
+                              ImGuiWindowFlags_None))
             {
                 if (node->nodeDisabledShortcuts)
                 {

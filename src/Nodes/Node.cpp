@@ -1,5 +1,7 @@
 #include "Node.hpp"
 
+#include <stdexcept>
+
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
@@ -60,6 +62,13 @@ void NAV::Node::deinitialize()
 
 void NAV::Node::resetNode() {}
 
+bool NAV::Node::onCreateLink(Pin* /*startPin*/, Pin* /*endPin*/)
+{
+    return true;
+}
+
+void NAV::Node::onDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
+
 void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<NAV::NodeData>& data)
 {
     if (callbacksEnabled)
@@ -73,8 +82,28 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<NAV::Nod
                     ax::NodeEditor::Flow(linkId);
                 }
 
-                std::invoke(callback, node, data);
+                std::invoke(callback, node, data, linkId);
             }
         }
     }
+}
+
+size_t NAV::Node::pinIndexFromId(ax::NodeEditor::PinId pinId) const
+{
+    for (size_t i = 0; i < inputPins.size(); i++)
+    {
+        if (pinId == inputPins.at(i).id)
+        {
+            return i;
+        }
+    }
+    for (size_t i = 0; i < outputPins.size(); i++)
+    {
+        if (pinId == outputPins.at(i).id)
+        {
+            return i;
+        }
+    }
+
+    throw std::runtime_error(fmt::format("{}: The Pin {} is not on this node.", nameId(), size_t(pinId)).c_str());
 }

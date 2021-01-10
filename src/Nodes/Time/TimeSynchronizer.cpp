@@ -195,7 +195,7 @@ void NAV::TimeSynchronizer::deinitialize()
     Node::deinitialize();
 }
 
-void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::NodeData> nodeData)
+void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::NodeData> nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto obs = std::static_pointer_cast<InsObs>(nodeData);
 
@@ -240,7 +240,7 @@ std::shared_ptr<NAV::NodeData> NAV::TimeSynchronizer::pollData(bool peek)
     return nullptr;
 }
 
-void NAV::TimeSynchronizer::syncObs(std::shared_ptr<NAV::NodeData> nodeData)
+void NAV::TimeSynchronizer::syncObs(std::shared_ptr<NAV::NodeData> nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     if (inputPins.at(InputPortIndex_ObsToSync).dataIdentifier == ImuObs::type()
         || inputPins.at(InputPortIndex_ObsToSync).dataIdentifier == VectorNavObs::type())

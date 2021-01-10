@@ -158,13 +158,20 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
         return nullptr;
     }
 
+    if (!startPin->parentNode || !startPin->parentNode->onCreateLink(startPin, endPin)
+        || !endPin->parentNode || !endPin->parentNode->onCreateLink(startPin, endPin))
+    {
+        LOG_ERROR("The new Link was refused by one of the Nodes it should connect to.");
+        return nullptr;
+    }
+
     m_links.emplace_back(GetNextLinkId(), startPin->id, endPin->id, startPin->getIconColor());
     LOG_DEBUG("Creating link {} from pin {} to {}", size_t(m_links.back().id), size_t(startPin->id), size_t(endPin->id));
 
     if (endPin->type == Pin::Type::Flow)
     {
         startPin->callbacks.emplace_back(endPin->parentNode,
-                                         std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>)>(endPin->data),
+                                         std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>, ax::NodeEditor::LinkId)>(endPin->data),
                                          m_links.back().id);
     }
     else
@@ -194,10 +201,18 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
     Pin* endPin = FindPin(link.endPinId);
     if (endPin && startPin)
     {
+        if (!startPin->parentNode || !startPin->parentNode->onCreateLink(startPin, endPin)
+            || !endPin->parentNode || !endPin->parentNode->onCreateLink(startPin, endPin))
+        {
+            LOG_ERROR("Link {} was refused by one of the Nodes it should connect to.", size_t(link.id));
+            m_links.pop_back();
+            return;
+        }
+
         if (endPin->type == Pin::Type::Flow)
         {
             startPin->callbacks.emplace_back(endPin->parentNode,
-                                             std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>)>(endPin->data),
+                                             std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>, ax::NodeEditor::LinkId)>(endPin->data),
                                              link.id);
         }
         else
@@ -234,29 +249,42 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
     if (id != m_links.end())
     {
         LOG_DEBUG("Deleting link {}", size_t(linkId));
-        if (Pin* endPin = FindPin(id->endPinId);
-            endPin && endPin->type != Pin::Type::Flow)
+        Pin* endPin = FindPin(id->endPinId);
+        Pin* startPin = FindPin(id->startPinId);
+
+        if (startPin && endPin)
         {
-            endPin->data = static_cast<void*>(nullptr);
+            if (startPin->parentNode)
+            {
+                startPin->parentNode->onDeleteLink(startPin, endPin);
+            }
             if (endPin->parentNode)
             {
-                endPin->parentNode->deinitialize();
+                endPin->parentNode->onDeleteLink(startPin, endPin);
             }
-        }
-        else if (Pin* startPin = FindPin(id->startPinId);
-                 startPin && endPin && startPin->type == Pin::Type::Flow)
-        {
-            auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
-                                  std::make_tuple(endPin->parentNode,
-                                                  std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>)>(endPin->data),
-                                                  linkId));
-            if (iter != startPin->callbacks.end())
+
+            if (endPin->type != Pin::Type::Flow)
             {
-                startPin->callbacks.erase(iter);
+                endPin->data = static_cast<void*>(nullptr);
+                if (endPin->parentNode)
+                {
+                    endPin->parentNode->deinitialize();
+                }
             }
-            else
+            else if (startPin->type == Pin::Type::Flow)
             {
-                LOG_ERROR("Tried to delete link {}, with type Flow or Function, but could not find the callback.", linkId.AsPointer());
+                auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
+                                      std::make_tuple(endPin->parentNode,
+                                                      std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>, ax::NodeEditor::LinkId)>(endPin->data),
+                                                      linkId));
+                if (iter != startPin->callbacks.end())
+                {
+                    startPin->callbacks.erase(iter);
+                }
+                else
+                {
+                    LOG_ERROR("Tried to delete link {}, with type Flow or Function, but could not find the callback.", linkId.AsPointer());
+                }
             }
         }
 

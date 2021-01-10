@@ -62,11 +62,13 @@ class State : public Node
 
     /// @brief Initialize the State with Imu data
     /// @param[in] state Partial state data
-    void initAttitude(std::shared_ptr<NodeData> nodeData);
+    /// @param[in] linkId Id of the link over which the data is received
+    void initAttitude(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Initialize the State with Gnss data
     /// @param[in] state Partial state data
-    void initPositionVelocity(std::shared_ptr<NodeData> nodeData);
+    /// @param[in] linkId Id of the link over which the data is received
+    void initPositionVelocity(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Finalize the initialization
     /// @param[in] currentTime The latest time
@@ -74,7 +76,8 @@ class State : public Node
 
     /// @brief Update the current State
     /// @param[in] state The new state
-    void updateState(std::shared_ptr<NodeData> state);
+    /// @param[in] linkId Id of the link over which the data is received
+    void updateState(std::shared_ptr<NodeData> state, ax::NodeEditor::LinkId linkId);
 
     /// The initial vehicle state
     StateData initialState;

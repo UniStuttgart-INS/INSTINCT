@@ -58,7 +58,8 @@ class EmlidDataLogger : public Node, public FileWriter
   private:
     /// @brief Write Observation to the file
     /// @param[in] nodeData The received observation
-    void writeObservation(std::shared_ptr<NodeData> nodeData);
+    /// @param[in] linkId Id of the link over which the data is received
+    void writeObservation(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
 };
 
 } // namespace NAV

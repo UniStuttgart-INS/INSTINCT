@@ -76,11 +76,11 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::string_view& dataIdentifier = std::string_view(""), void (T::*callback)(std::shared_ptr<NodeData>) = nullptr)
+Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::string_view& dataIdentifier = std::string_view(""), void (T::*callback)(std::shared_ptr<NodeData>, ax::NodeEditor::LinkId) = nullptr)
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<void (Node::*)(std::shared_ptr<NodeData>)>(callback)));
+    return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<void (Node::*)(std::shared_ptr<NodeData>, ax::NodeEditor::LinkId)>(callback)));
 }
 
 /// @brief Create an Output Pin object

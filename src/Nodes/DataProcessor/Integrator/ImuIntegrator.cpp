@@ -96,7 +96,7 @@ void NAV::ImuIntegrator::deinitialize()
     Node::deinitialize();
 }
 
-void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::NodeData> nodeData)
+void NAV::ImuIntegrator::integrateObservation(std::shared_ptr<NAV::NodeData> nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     /// IMU Observation at the time tₖ
     auto imuObs__t0 = std::static_pointer_cast<ImuObs>(nodeData);

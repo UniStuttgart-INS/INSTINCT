@@ -124,6 +124,17 @@ class Node
     /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
     virtual void resetNode();
 
+    /// @brief Called when a new link is to be established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    /// @return True if link is allowed, false if link is rejected
+    virtual bool onCreateLink(Pin* startPin, Pin* endPin);
+
+    /// @brief Called when a link is to be deleted
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    virtual void onDeleteLink(Pin* startPin, Pin* endPin);
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member functions                                             */
     /* -------------------------------------------------------------------------------------------------------- */
@@ -192,6 +203,11 @@ class Node
 
         return (node->*callback)(std::forward<U>(u)...);
     }
+
+    /// @brief Returns the index of the pin
+    /// @param[in] pinId Id of the Pin
+    /// @return The index of the pin
+    [[nodiscard]] size_t pinIndexFromId(ax::NodeEditor::PinId pinId) const;
 
     /// @brief Node name and id
     [[nodiscard]] std::string nameId() const

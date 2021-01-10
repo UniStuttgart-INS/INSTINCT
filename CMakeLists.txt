@@ -103,6 +103,7 @@ file(
 add_library(imgui ${_imgui_Sources})
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/imgui")
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/imgui/misc/cpp")
+target_compile_definitions(imgui PUBLIC "ImDrawIdx=unsigned int")
 set_target_properties(imgui PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(imgui PROPERTIES CXX_CPPCHECK "")
 
@@ -139,6 +140,7 @@ file(
   "${CMAKE_SOURCE_DIR}/lib/implot/*.cpp" "${CMAKE_SOURCE_DIR}/lib/implot/*.h")
 add_library(implot ${_implot_Sources})
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/implot")
+target_compile_definitions(implot PUBLIC "ImDrawIdx=unsigned int")
 set_target_properties(implot PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(implot PROPERTIES CXX_CPPCHECK "")
 

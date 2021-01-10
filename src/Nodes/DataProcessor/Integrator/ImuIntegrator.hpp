@@ -63,7 +63,8 @@ class ImuIntegrator : public Node
   private:
     /// @brief Integrates the Imu Observation data
     /// @param[in] nodeData ImuObs to process
-    void integrateObservation(std::shared_ptr<NodeData> nodeData);
+    /// @param[in] linkId Id of the link over which the data is received
+    void integrateObservation(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
 
     /// IMU Observation at the time tₖ₋₁
     std::shared_ptr<ImuObs> imuObs__t1 = nullptr;

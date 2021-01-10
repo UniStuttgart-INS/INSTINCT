@@ -186,9 +186,9 @@ class Pin
     };
 
     using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*,
-                                 void (Node::*)(std::shared_ptr<NodeData>),
-                                 std::shared_ptr<NAV::NodeData> (Node::*)(bool),
-                                 std::pair<Node*, void (Node::*)()>>;
+                                 void (Node::*)(std::shared_ptr<NodeData>, ax::NodeEditor::LinkId), // Input Flow, receive data
+                                 std::shared_ptr<NAV::NodeData> (Node::*)(bool),                    // Output Flow, read data
+                                 std::pair<Node*, void (Node::*)()>>;                               // Output Function, callable
 
     /// @brief Default constructor
     Pin() = default;
@@ -239,7 +239,7 @@ class Pin
     /// Pointer to data which is transferred over this pin
     PinData data = static_cast<void*>(nullptr);
     /// Callback List
-    std::vector<std::tuple<Node*, void (Node::*)(std::shared_ptr<NodeData>), ax::NodeEditor::LinkId>> callbacks;
+    std::vector<std::tuple<Node*, void (Node::*)(std::shared_ptr<NodeData>, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> callbacks;
     /// Unique name which is used for data flows
     std::string_view dataIdentifier;
 

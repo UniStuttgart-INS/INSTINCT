@@ -108,13 +108,8 @@ void to_json(json& j, const Node& node)
 }
 void from_json(const json& j, Node& node)
 {
-    size_t id = 0;
-    j.at("id").get_to(id);
-    node.id = id;
-
-    std::string kindString;
-    j.at("kind").get_to(kindString);
-    node.kind = Node::Kind(kindString);
+    node.id = j.at("id").get<size_t>();
+    node.kind = Node::Kind(j.at("kind").get<std::string>());
 
     j.at("name").get_to(node.name);
     j.at("color").get_to(node.color);
@@ -123,6 +118,10 @@ void from_json(const json& j, Node& node)
     auto inputPins = j.at("inputPins").get<std::vector<Pin>>();
     for (size_t i = 0; i < inputPins.size(); ++i)
     {
+        if (node.inputPins.size() <= i)
+        {
+            break;
+        }
         node.inputPins.at(i).id = inputPins.at(i).id;
         node.inputPins.at(i).parentNode = &node;
     }
@@ -130,6 +129,10 @@ void from_json(const json& j, Node& node)
     auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
     for (size_t i = 0; i < outputPins.size(); ++i)
     {
+        if (node.outputPins.size() <= i)
+        {
+            break;
+        }
         node.outputPins.at(i).id = outputPins.at(i).id;
         node.outputPins.at(i).parentNode = &node;
     }
@@ -241,6 +244,8 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
             nodeJson.get_to<Node>(*node);
             node->restore(nodeJson.at("data"));
+            // Load second time in case restore changed the amount of pins
+            nodeJson.get_to<Node>(*node);
 
             nm::AddNode(node);
 

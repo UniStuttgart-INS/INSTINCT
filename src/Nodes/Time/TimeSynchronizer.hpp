@@ -63,11 +63,13 @@ class TimeSynchronizer : public Node
 
     /// @brief Gets the gps time
     /// @param[in] nodeData InsObs to process
-    void syncTime(std::shared_ptr<NodeData> nodeData);
+    /// @param[in] linkId Id of the link over which the data is received
+    void syncTime(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Updates Observations with gps time and calls callbacks
     /// @param[in] nodeData Observation to process
-    void syncObs(std::shared_ptr<NodeData> nodeData);
+    /// @param[in] linkId Id of the link over which the data is received
+    void syncObs(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Polls data from the input port and tries to sync it
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
