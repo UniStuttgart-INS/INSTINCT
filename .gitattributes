@@ -1,1 +1,2 @@
 .vscode/tasks.json filter=lfs diff=lfs merge=lfs -text lockable
+conanfile.json filter=lfs diff=lfs merge=lfs -text lockable
