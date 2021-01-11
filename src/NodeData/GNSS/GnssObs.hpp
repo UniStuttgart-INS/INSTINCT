@@ -1,13 +1,13 @@
 /// @file GnssObs.hpp
 /// @brief Abstract GNSS Observation Class
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-19
 
 #pragma once
 
 #include "NodeData/InsObs.hpp"
 
-#include "util/LinearAlgebra.hpp"
+#include "util/Eigen.hpp"
 
 namespace NAV
 {
@@ -39,11 +39,10 @@ class GnssObs : public InsObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
-        std::vector<std::string_view> parents{ "InsObs" };
-        return parents;
+        return { InsObs::type() };
     }
 
     /// ECEF position [m]
-    std::optional<Vector3d<Earth>> position_ecef;
+    std::optional<Eigen::Vector3d> position_ecef;
 };
 } // namespace NAV

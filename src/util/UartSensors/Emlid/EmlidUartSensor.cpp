@@ -85,7 +85,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::emlid::EmlidUartSensor::fi
             binaryPayloadLength |= static_cast<uint16_t>(static_cast<uint16_t>(dataByte) << 8U);
             binaryPayloadLength = uart::stoh(binaryPayloadLength, endianness);
             numOfBytesRemainingForCompletePacket = binaryPayloadLength + 2U;
-            LOG_TRACE("{}: Binary packet: Id={:0x}, payload length={}", name, binaryMsgId, binaryPayloadLength);
+            LOG_DATA("{}: Binary packet: Id={:0x}, payload length={}", name, binaryMsgId, binaryPayloadLength);
         }
         else
         {
@@ -131,7 +131,7 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::emlid::EmlidUartSensor::fi
                 if (p->isValid())
                 {
                     // We have a valid ascii packet!!!.
-                    LOG_TRACE("{}: Valid ascii packet: {}", name, p->datastr().substr(0, p->getRawDataLength() - 2));
+                    LOG_DATA("{}: Valid ascii packet: {}", name, p->datastr().substr(0, p->getRawDataLength() - 2));
                     return p;
                 }
                 // Invalid packet!
@@ -148,7 +148,6 @@ std::unique_ptr<uart::protocol::Packet> NAV::sensors::emlid::EmlidUartSensor::fi
 void NAV::sensors::emlid::EmlidUartSensor::packetFinderFunction(const std::vector<uint8_t>& data, const uart::xplat::TimeStamp& timestamp, uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData, void* userData)
 {
     auto* sensor = static_cast<EmlidUartSensor*>(userData);
-    LOG_TRACE("{} called", sensor->name);
 
     for (size_t i = 0; i < data.size(); i++, sensor->runningDataIndex++)
     {
@@ -164,8 +163,6 @@ void NAV::sensors::emlid::EmlidUartSensor::packetFinderFunction(const std::vecto
 
 uart::protocol::Packet::Type NAV::sensors::emlid::EmlidUartSensor::packetTypeFunction(const uart::protocol::Packet& packet)
 {
-    LOG_TRACE("called");
-
     if (packet.getRawDataLength() < 1)
     {
         LOG_CRITICAL("Packet does not contain any data.");
@@ -188,8 +185,6 @@ uart::protocol::Packet::Type NAV::sensors::emlid::EmlidUartSensor::packetTypeFun
 
 bool NAV::sensors::emlid::EmlidUartSensor::checksumFunction(const uart::protocol::Packet& packet)
 {
-    LOG_TRACE("called");
-
     if (packet.getRawDataLength() <= 8)
     {
         return false;
@@ -214,14 +209,10 @@ bool NAV::sensors::emlid::EmlidUartSensor::checksumFunction(const uart::protocol
 
 bool NAV::sensors::emlid::EmlidUartSensor::isErrorFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
-    LOG_TRACE("called");
-
     return false;
 }
 
 bool NAV::sensors::emlid::EmlidUartSensor::isResponseFunction([[maybe_unused]] const uart::protocol::Packet& packet)
 {
-    LOG_TRACE("called");
-
     return false;
 }

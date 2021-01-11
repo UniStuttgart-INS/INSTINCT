@@ -1,18 +1,24 @@
 [submodule "lib/gcem"]
 	path = lib/gcem
 	url = https://github.com/kthohr/gcem.git
-[submodule "lib/gnuplot-iostream"]
-	path = lib/gnuplot-iostream
-	url = https://github.com/dstahlke/gnuplot-iostream
 [submodule "lib/vnproglib"]
 	path = lib/vnproglib
 	url = ../../ins/ins_staff/vnproglib.git
 [submodule "lib/navio2"]
 	path = lib/navio2
 	url = ../../ins/ins_staff/navio2.git
-[submodule "lib/nodeeditor"]
-	path = lib/nodeeditor
-	url = ../nodeeditor.git
 [submodule "lib/uartsensor"]
 	path = lib/uartsensor
 	url = ../uart-sensor.git
+[submodule "lib/imgui-node-editor"]
+	path = lib/imgui-node-editor
+	url = https://github.com/thedmd/imgui-node-editor
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = ../imgui.git
+[submodule "lib/ImGuiFileDialog"]
+	path = lib/ImGuiFileDialog
+	url = https://github.com/aiekick/ImGuiFileDialog.git
+[submodule "lib/implot"]
+	path = lib/implot
+	url = https://github.com/epezent/implot.git

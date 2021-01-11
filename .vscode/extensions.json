@@ -9,6 +9,8 @@
         "streetsidesoftware.code-spell-checker",
         "emilast.LogFileHighlighter",
         "notskm.clang-tidy",
-        "cheshirekow.cmake-format"
+        "cheshirekow.cmake-format",
+        "remisa.mathover",
+        "mschababerle.status-bar-param",
     ]
 }

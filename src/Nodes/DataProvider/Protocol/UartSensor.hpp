@@ -1,12 +1,14 @@
 /// @file UartSensor.hpp
 /// @brief Abstract Uart Sensor Class
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-11
 
 #pragma once
 
 #include <string>
-#include <map>
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 namespace NAV
 {
@@ -39,14 +41,24 @@ class UartSensor
     UartSensor& operator=(UartSensor&&) = delete;
 
   protected:
-    /// @brief Constructor
-    /// @param[in] options Program options string map
-    explicit UartSensor(const std::map<std::string, std::string>& options);
-
     /// @brief Default constructor
     UartSensor() = default;
     /// @brief Destructor
-    virtual ~UartSensor() = default;
+    ~UartSensor() = default;
+
+    /// @brief Saves the node into a json object
+    [[nodiscard]] json save() const;
+
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    void restore(const json& j);
+
+    /// @brief Returns the Baudrate for the element Selected by the GUI
+    [[nodiscard]] Baudrate sensorBaudrate() const;
+
+    /// @brief Returns the guiSelection for the given baudrate
+    /// @param[in] baud Baudrate to convert
+    static int baudrate2Selection(Baudrate baud);
 
     /// COM port where the sensor is attached to
     ///
@@ -58,7 +70,7 @@ class UartSensor
     std::string sensorPort;
 
     /// Baudrate for the sensor
-    Baudrate sensorBaudrate = BAUDRATE_FASTEST;
+    int selectedBaudrate = 0;
 };
 
 } // namespace NAV

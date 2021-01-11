@@ -1,6 +1,6 @@
 /// @file RtklibPosObs.hpp
 /// @brief RTKLIB Pos Observation Class
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-06-02
 
 #pragma once
@@ -37,8 +37,7 @@ class RtklibPosObs : public GnssObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
-        std::vector<std::string_view> parents{ "GnssObs" };
-        return parents;
+        return { GnssObs::type() };
     }
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
     std::optional<uint8_t> Q;

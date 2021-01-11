@@ -1,29 +1,24 @@
 /// @file ImuSimulator.hpp
 /// @brief Imu Observation Simulator
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-16
 
 #pragma once
 
-#include "../Imu.hpp"
-#include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/State/StateData.hpp"
+#include "Nodes/DataProvider/IMU/Imu.hpp"
+
+#include "util/Eigen.hpp"
 
 namespace NAV
 {
-/// File Reader for Imu log files
-class ImuSimulator final : public Imu
+/// Imu Observation Simulator
+class ImuSimulator : public Imu
 {
   public:
-    /// @brief Constructor
-    /// @param[in] name Name of the Sensor which wrote the file
-    /// @param[in] options Program options string map
-    ImuSimulator(const std::string& name, const std::map<std::string, std::string>& options);
-
     /// @brief Default constructor
-    ImuSimulator() = default;
+    ImuSimulator();
     /// @brief Destructor
-    ~ImuSimulator() final = default;
+    ~ImuSimulator() override;
     /// @brief Copy constructor
     ImuSimulator(const ImuSimulator&) = delete;
     /// @brief Move constructor
@@ -33,130 +28,44 @@ class ImuSimulator final : public Imu
     /// @brief Move assignment operator
     ImuSimulator& operator=(ImuSimulator&&) = delete;
 
-    /// @brief Returns the String representation of the Class Type
-    /// @return The class type
-    [[nodiscard]] constexpr std::string_view type() const final
-    {
-        return std::string_view("ImuSimulator");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] static std::string typeStatic();
 
-    /// @brief Returns the String representation of the Class Category
-    /// @return The class category
-    [[nodiscard]] constexpr std::string_view category() const final
-    {
-        return std::string_view("DataSimulator");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] std::string type() const override;
 
-    /// @brief Returns the context of the class
-    /// @return The class context
-    [[nodiscard]] constexpr NodeContext context() const final
-    {
-        return NodeContext::POST_PROCESSING;
-    }
+    /// @brief String representation of the Class Category
+    [[nodiscard]] static std::string category();
 
-    /// @brief Returns the number of Ports
-    /// @param[in] portType Specifies the port type
-    /// @return The number of ports
-    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            return 1U;
-        case PortType::Out:
-            return 1U;
-        }
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    void guiConfig() override;
 
-        return 0U;
-    }
+    /// @brief Saves the node into a json object
+    [[nodiscard]] json save() const override;
 
-    /// @brief Returns the data types provided by this class
-    /// @param[in] portType Specifies the port type
-    /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type and subtitle
-    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            if (portIndex == 0)
-            {
-                return std::make_pair(StateData::type(), std::string_view(""));
-            }
-            break;
-        case PortType::Out:
-            if (portIndex == 0)
-            {
-                return std::make_pair(ImuObs::type(), std::string_view(""));
-            }
-            break;
-        }
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    void restore(const json& j) override;
 
-        return std::make_pair(std::string_view(""), std::string_view(""));
-    }
+    /// @brief Initialize the node
+    bool initialize() override;
 
-    /// @brief Returns Gui Configuration options for the class
-    /// @return The gui configuration
-    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
-    {
-        std::vector<ConfigOptions> configs = {
-            { CONFIG_STRING, "Duration", "Duration of the data gerneation in [s]", { "1" } },
-            { CONFIG_STRING, "Frequency", "Frequency of the data generation in [Hz]", { "10" } },
-            { CONFIG_FLOAT3, "Accel n", "Acceleration in navigation frame in [m/s^2]", { "-100", "0", "100", "5", "-100", "0", "100", "5", "-100", "0", "100", "5" } },
-            { CONFIG_FLOAT3, "Accel b", "Acceleration in body frame in [m/s^2]", { "-100", "0", "100", "5", "-100", "0", "100", "5", "-100", "0", "100", "5" } },
-            { CONFIG_FLOAT3, "Accel p", "Acceleration in platform frame in [m/s^2]", { "-100", "0", "100", "5", "-100", "0", "100", "5", "-100", "0", "100", "5" } },
-            { CONFIG_FLOAT3, "Gyro n", "Angular velocity in navigation frame in [rad/s]", { "-10", "0", "10", "5", "-10", "0", "10", "5", "-10", "0", "10", "5" } },
-            { CONFIG_FLOAT3, "Gyro b", "Angular velocity in body frame in [rad/s]", { "-10", "0", "10", "5", "-10", "0", "10", "5", "-10", "0", "10", "5" } },
-            { CONFIG_FLOAT3, "Gyro p", "Angular velocity in platform frame in [rad/s]", { "-10", "0", "10", "5", "-10", "0", "10", "5", "-10", "0", "10", "5" } },
-            { CONFIG_FLOAT3, "Mag n", "Magnetic field in navigation frame in [Gauss]", { "-10", "0", "10", "5", "-10", "0", "10", "5", "-10", "0", "10", "5" } },
-            { CONFIG_FLOAT3, "Mag b", "Magnetic field in body frame in [Gauss]", { "-10", "0", "10", "5", "-10", "0", "10", "5", "-10", "0", "10", "5" } },
-            { CONFIG_FLOAT3, "Mag p", "Magnetic field in platform frame in [Gauss]", { "-10", "0", "10", "5", "-10", "0", "10", "5", "-10", "0", "10", "5" } },
-            { CONFIG_FLOAT, "Temperature", "Temperature measured in units of [Celsius]", { "-273,15", "20", "1000", "2" } }
-        };
-        auto imuConfigs = Imu::guiConfig();
-        configs.insert(configs.end(), imuConfigs.begin(), imuConfigs.end());
-        return configs;
-    }
+    /// @brief Deinitialize the node
+    void deinitialize() override;
 
-    /// @brief Handles the data sent on the input port
-    /// @param[in] portIndex The input port index
-    /// @param[in, out] data The data send on the input port
-    void handleInputData([[maybe_unused]] uint8_t portIndex, [[maybe_unused]] std::shared_ptr<NodeData> data) final {}
-
-    /// @brief Requests the node to send out its data
-    /// @param[in] portIndex The output port index
-    /// @return The requested data or nullptr if no data available
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) final
-    {
-        if (portIndex == 0)
-        {
-            return pollData();
-        }
-
-        return nullptr;
-    }
-
-    /// @brief Requests the node to peek its output data
-    /// @param[in] portIndex The output port index
-    /// @return The requested data or nullptr if no data available
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex) final
-    {
-        if (portIndex == 0)
-        {
-            return pollData(true);
-        }
-
-        return nullptr;
-    }
-
-    /// @brief Resets the node
-    void resetNode() final;
+    /// @brief Resets the node. Moves the read cursor to the start
+    void resetNode() override;
 
   private:
+    constexpr static size_t OutputPortIndex_ImuFile = 0;  ///< @brief Delegate
+    constexpr static size_t OutputPortIndex_ImuObs = 1;   ///< @brief Flow (ImuObs)
+    constexpr static size_t InputPortIndex_StateData = 0; ///< @brief Object (StateData)
+
     /// @brief Polls the next simulated data
     /// @param[in] peek Specifies if the data should be peeked or read
     /// @return The simulated observation
-    [[nodiscard]] std::shared_ptr<ImuObs> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<NodeData> pollData(bool peek = false);
 
     /// Duration of the data gerneation in [s]
     double duration = 1.0;
@@ -166,25 +75,25 @@ class ImuSimulator final : public Imu
     double currentSimTime = 0.0;
 
     /// Acceleration in navigation frame in [m/s^2]
-    Vector3d<Navigation> accel_n;
+    Eigen::Vector3f accel_n{ 0, 0, 0 };
     /// Acceleration in body frame in [m/s^2]
-    Vector3d<Body> accel_b;
+    Eigen::Vector3f accel_b{ 0, 0, 0 };
     /// Acceleration in platform frame in [m/s^2]
-    Vector3d<Platform> accel_p;
+    Eigen::Vector3f accel_p{ 0, 0, 0 };
     /// Angular velocity in navigation frame in [rad/s]
-    Vector3d<Navigation> gyro_n;
+    Eigen::Vector3f gyro_n{ 0, 0, 0 };
     /// Angular velocity in body frame in [rad/s]
-    Vector3d<Body> gyro_b;
+    Eigen::Vector3f gyro_b{ 0, 0, 0 };
     /// Angular velocity in platform frame in [rad/s]
-    Vector3d<Platform> gyro_p;
+    Eigen::Vector3f gyro_p{ 0, 0, 0 };
     /// Magnetic field in navigation frame in [Gauss]
-    Vector3d<Navigation> mag_n;
+    Eigen::Vector3f mag_n{ 0, 0, 0 };
     /// Magnetic field in body frame in [Gauss]
-    Vector3d<Body> mag_b;
+    Eigen::Vector3f mag_b{ 0, 0, 0 };
     /// Magnetic field in platform frame in [Gauss]
-    Vector3d<Platform> mag_p;
+    Eigen::Vector3f mag_p{ 0, 0, 0 };
     /// Temperature measured in units of [Celsius]
-    double temperature = 0.0;
+    double temperature = 20.0;
 };
 
 } // namespace NAV

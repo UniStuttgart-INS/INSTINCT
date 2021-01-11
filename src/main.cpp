@@ -1,35 +1,21 @@
-/// @mainpage NavSoS Documentation
-///
-/// @section sec1 Introduction
-/// This software provides real-time and post processing functionality for navigational tasks. It can read from sensors and fuse together the data. It can fuse GNSS data with IMU data and do advanced functions like RTK, RAIM, ...
-///
-/// @section sec4 Code Elements
-///     - @link src/main.cpp Main File @endlink
-///     - @link src/DataProvider/DataProvider.hpp Data Provider Class @endlink
-///         - @link src/DataProvider/IMU/Imu.hpp IMU Data Provider Class @endlink
-///         - @link src/DataProvider/GNSS/Gnss.hpp GNSS Data Provider Class @endlink
-
-/// @file main.cpp
-/// @brief Main entry point for the program
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
-/// @date 2020-03-12
+#include "gui/NodeEditorApplication.hpp"
 
 #include <iostream>
 #include <chrono>
 
 #include "util/Logger.hpp"
 #include "util/Version.hpp"
-#include "util/Sleep.hpp"
 #include "util/ConfigManager.hpp"
+#include "util/Sleep.hpp"
 
-#include "Nodes/NodeManager.hpp"
 #include "NodeRegistry.hpp"
+#include "internal/FlowManager.hpp"
+#include "internal/FlowExecutor.hpp"
 
-#include "Nodes/GnuPlot/GnuPlot.hpp"
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
 
-#include "NodeData/InsObs.hpp"
-
-int main(int argc, const char* argv[])
+int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
 {
     // Config Manager object
     NAV::ConfigManager configManager;
@@ -59,164 +45,98 @@ int main(int argc, const char* argv[])
         // Program configuration
         NAV::ConfigManager::FetchConfigs(argc, argv);
 
-        // Create a Node Manager
-        NAV::NodeManager nodeManager;
-
         // Register all Node Types which are available to the program
-        NAV::NodeRegistry::registerNodeTypes(nodeManager);
+        NAV::NodeRegistry::registerNodeTypes();
 
         // Register all Node Data Types which are available to the program
-        NAV::NodeRegistry::registerNodeDataTypes(nodeManager);
+        NAV::NodeRegistry::registerNodeDataTypes();
 
-        // Processes all nodes which are specified in the config file
-        nodeManager.processConfigFile();
-
-        // Call constructors of all nodes from the config file
-        nodeManager.constructNodes();
-
-        // Establish data links between the nodes
-        nodeManager.linkNodes();
-
-        // Call initialize function of all nodes from the config file
-        nodeManager.initializeNodes();
-
-        // Enable the callbacks for all nodes
-        nodeManager.enableAllCallbacks();
-
-        // Read data files
-        if (NAV::NodeManager::appContext == NAV::Node::NodeContext::POST_PROCESSING)
+        if (NAV::ConfigManager::Get<bool>("nogui", false))
         {
-            LOG_INFO("Post Processing Mode");
+            LOG_INFO("Starting in No-GUI Mode");
 
-            auto start = std::chrono::high_resolution_clock::now();
-
-            std::multimap<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>> events;
-            // Get first event of all nodes
-            for (const auto& node : nodeManager.nodes())
+            if (NAV::ConfigManager::HasKey("load"))
             {
-                bool dataEventCreated = false;
-                for (uint8_t portIndex = 0; portIndex < node->nPorts(NAV::Node::PortType::Out); portIndex++)
-                {
-                    LOG_DEBUG("Searching node {} on output port {} for data", node->getName(), portIndex);
-                    // Add next data event from the node
-                    while (true)
-                    {
-                        // Check if data available
-                        if (auto nextUpdateTime = std::static_pointer_cast<NAV::InsObs>(node->requestOutputDataPeek(portIndex)))
-                        {
-                            // Check if data has a time
-                            if (nextUpdateTime->insTime.has_value())
-                            {
-                                events.insert(std::make_pair(nextUpdateTime->insTime.value(), std::make_pair(node, portIndex)));
-                                LOG_INFO("Taking Data from {} on output port {} into account.", node->getName(), portIndex);
-                                dataEventCreated = true;
-                                break;
-                            }
+                nm::showFlowWhenInvokingCallbacks = false;
 
-                            // Remove data without calling the callback if no time stamp
-                            // For post processing all data needs a time stamp
-                            node->callbacksEnabled = false;
-                            static_cast<void>(node->requestOutputData(portIndex));
-                            node->callbacksEnabled = true;
-                        }
-                        else
+                bool loadSuccessful = false;
+                try
+                {
+                    LOG_INFO("Loading flow file: {}", NAV::ConfigManager::Get<std::string>("load", ""));
+                    loadSuccessful = NAV::flow::LoadFlow(NAV::ConfigManager::Get<std::string>("load", ""));
+                }
+                catch (...)
+                {
+                    nm::DeleteAllLinks();
+                    nm::DeleteAllNodes();
+                    NAV::flow::DiscardChanges();
+                    NAV::flow::SetCurrentFilename("");
+                    LOG_ERROR("Loading flow file failed");
+                }
+                if (loadSuccessful)
+                {
+                    auto start = std::chrono::high_resolution_clock::now();
+                    NAV::FlowExecutor::start();
+
+                    NAV::FlowExecutor::waitForFinish();
+
+                    if (NAV::ConfigManager::Get<bool>("nogui", false)
+                        && NAV::ConfigManager::Get<bool>("sigterm", false))
+                    {
+                        NAV::Sleep::waitForSignal(true);
+                    }
+                    else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration", 0);
+                             NAV::ConfigManager::Get<bool>("nogui", false) && duration)
+                    {
+                        auto now = std::chrono::high_resolution_clock::now();
+                        std::chrono::duration<double> elapsed = now - start;
+                        if (elapsed.count() < static_cast<double>(duration))
                         {
-                            break;
+                            NAV::Sleep::countDownSeconds(duration - static_cast<size_t>(elapsed.count()));
                         }
                     }
-                    if (!dataEventCreated)
+
+                    for (NAV::Node* node : nm::m_Nodes())
                     {
-                        node->resetNode();
+                        node->deinitialize();
                     }
                 }
-            }
-
-            LOG_INFO("Processing Data from files");
-            std::multimap<NAV::InsTime, std::pair<std::shared_ptr<NAV::Node>, uint8_t>>::iterator it;
-            while (it = events.begin(), it != events.end())
-            {
-                auto& node = it->second.first;
-                auto& portIndex = it->second.second;
-                if (node->requestOutputData(portIndex) == nullptr)
-                {
-                    LOG_ERROR("{} - {} could not poll its observation despite being able to peek it.", node->type(), node->getName());
-                }
-
-                // Add next data event from the node
-                while (true)
-                {
-                    // Check if data available
-                    if (auto nextUpdateTime = std::static_pointer_cast<NAV::InsObs>(node->requestOutputDataPeek(portIndex)))
-                    {
-                        // Check if data has a time
-                        if (nextUpdateTime->insTime.has_value())
-                        {
-                            events.insert(std::make_pair(nextUpdateTime->insTime.value(), it->second));
-                            break;
-                        }
-
-                        // Remove data without calling the callback if no time stamp
-                        // For post processing all data needs a time stamp
-                        node->callbacksEnabled = false;
-                        static_cast<void>(node->requestOutputData(portIndex));
-                        node->callbacksEnabled = true;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                events.erase(it);
-            }
-
-            auto finish = std::chrono::high_resolution_clock::now();
-
-            std::chrono::duration<double> elapsed = finish - start;
-
-            LOG_INFO("Elapsed time: {} s", elapsed.count());
-        }
-        // Wait and receive data packages in other threads
-        else
-        {
-            if (NAV::ConfigManager::Get<bool>("sigterm", false))
-            {
-                NAV::Sleep::waitForSignal(true);
             }
             else
             {
-                NAV::Sleep::countDownSeconds(NAV::ConfigManager::Get<size_t>("duration", 5));
+                LOG_CRITICAL("When running in No-GUI Mode you have to specify a flow file to load (-l)");
             }
         }
-
-        // Stop all callbacks
-        nodeManager.disableAllCallbacks();
-
-        // Update all GnuPlot Windows and wait for them to open
-        bool waitForGnuplot = false;
-        for (const auto& node : nodeManager.nodes())
+        else
         {
-            if (node && node->type() == NAV::GnuPlot().type())
+            LOG_INFO("Starting the GUI");
+            NAV::gui::NodeEditorApplication app("NavSoS - Navigation Software Stuttgart (Institute of Navigation)", "NavSoS.ini", argc, argv);
+
+            if (app.Create())
             {
-                if (std::static_pointer_cast<NAV::GnuPlot>(node)->update())
+                if (NAV::ConfigManager::HasKey("load"))
                 {
-                    waitForGnuplot = true;
+                    try
+                    {
+                        LOG_INFO("Loading flow file: {}", NAV::ConfigManager::Get<std::string>("load", ""));
+                        if (NAV::flow::LoadFlow(NAV::ConfigManager::Get<std::string>("load", "")))
+                        {
+                            app.frameCountNavigate = ImGui::GetFrameCount();
+                        }
+                    }
+                    catch (...)
+                    {
+                        nm::DeleteAllLinks();
+                        nm::DeleteAllNodes();
+                        NAV::flow::DiscardChanges();
+                        NAV::flow::SetCurrentFilename("");
+                        LOG_ERROR("Loading flow file failed");
+                    }
                 }
+
+                return app.Run();
             }
         }
-
-        // Delete all Nodes except the Gnuplot
-        nodeManager.deleteAllNodesExcept(NAV::GnuPlot().type());
-
-        if (waitForGnuplot)
-        {
-            LOG_INFO("Programm finished and waits for Gnuplot windows to close...");
-            NAV::Sleep::waitForSignal();
-            [[maybe_unused]] auto result = system("pkill gnuplot_qt > /dev/null 2>&1"); // NOLINT
-        }
-
-        // Delete all Nodes to call the destructors
-        nodeManager.deleteAllNodes();
 
         return EXIT_SUCCESS;
     }

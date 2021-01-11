@@ -1,6 +1,6 @@
 /// @file State.hpp
 /// @brief State Information Node
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-08-21
 
 #pragma once
@@ -16,15 +16,10 @@ namespace NAV
 class State : public Node
 {
   public:
-    /// @brief Constructor
-    /// @param[in] name Name of the object
-    /// @param[in] options Program options string map
-    State(const std::string& name, const std::map<std::string, std::string>& options);
-
     /// @brief Default constructor
-    State() = default;
+    State();
     /// @brief Destructor
-    ~State() override = default;
+    ~State() override;
     /// @brief Copy constructor
     State(const State&) = delete;
     /// @brief Move constructor
@@ -34,134 +29,46 @@ class State : public Node
     /// @brief Move assignment operator
     State& operator=(State&&) = delete;
 
-    /// @brief Returns the String representation of the Class Type
-    /// @return The class type
-    [[nodiscard]] constexpr std::string_view type() const override
-    {
-        return std::string_view("State");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] static std::string typeStatic();
 
-    /// @brief Returns the String representation of the Class Category
-    /// @return The class category
-    [[nodiscard]] constexpr std::string_view category() const override
-    {
-        return std::string_view("State");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] std::string type() const override;
 
-    /// @brief Returns Gui Configuration options for the class
-    /// @return The gui configuration
-    [[nodiscard]] std::vector<ConfigOptions> guiConfig() const override
-    {
-        return {
-            { CONFIG_BOOL, "Static\nInitialization", "Get the initial state from the GUI", { "0" } },
-            { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_FLOAT, "Init Time", "Time in [s] to initialize the state.", { "0.01", "5", "60", "2" }), ConfigOptionsBase(CONFIG_FLOAT3, "Init LatLonAlt", "Initial values for Latitude [deg], Longitude [deg] and Height [m]", { "-89.99999999", "0", "89.99999999", "10", "-179.99999999", "0", "179.99999999", "10", "-1000", "0", "20000", "4" }) } },
-            { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_EMPTY, "", "", {}), ConfigOptionsBase(CONFIG_FLOAT3, "Init RollPitchYaw", "Initial values for Roll, Pitch and Yaw in [deg]", { "-180", "0", "180", "2", "-90", "0", "90", "2", "-180", "0", "180", "2" }) } },
-            { CONFIG_VARIANT, "", "", { ConfigOptionsBase(CONFIG_EMPTY, "", "", {}), ConfigOptionsBase(CONFIG_FLOAT3, "Init Velocity", "Initial velocity in navigation (NED) frame [m/s]", { "-100", "0", "100", "3", "-100", "0", "100", "3", "-100", "0", "100", "3" }) } },
-        };
-    }
+    /// @brief String representation of the Class Category
+    [[nodiscard]] static std::string category();
 
-    /// @brief Returns the context of the class
-    /// @return The class context
-    [[nodiscard]] constexpr NodeContext context() const override
-    {
-        return NodeContext::ALL;
-    }
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    void guiConfig() override;
 
-    /// @brief Returns the number of Ports
-    /// @param[in] portType Specifies the port type
-    /// @return The number of ports
-    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const override
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            return 3U;
-        case PortType::Out:
-            return 1U;
-        }
+    /// @brief Saves the node into a json object
+    [[nodiscard]] json save() const override;
 
-        return 0U;
-    }
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    void restore(const json& j) override;
 
-    /// @brief Returns the data types provided by this class
-    /// @param[in] portType Specifies the port type
-    /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type and subtitle
-    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const override
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            if (portIndex == 0)
-            {
-                return std::make_pair(StateData::type(), std::string_view("Update"));
-            }
-            if (portIndex == 1)
-            {
-                return std::make_pair(GnssObs::type(), std::string_view("Init"));
-            }
-            if (portIndex == 2)
-            {
-                return std::make_pair(ImuObs::type(), std::string_view("Init"));
-            }
-            break;
-        case PortType::Out:
-            if (portIndex == 0)
-            {
-                return std::make_pair(StateData::type(), std::string_view(""));
-            }
-            break;
-        }
+    /// @brief Initialize the node
+    bool initialize() override;
 
-        return std::make_pair(std::string_view(""), std::string_view(""));
-    }
-
-    /// @brief Handles the data sent on the input port
-    /// @param[in] portIndex The input port index
-    /// @param[in, out] data The data send on the input port
-    void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) override
-    {
-        if (portIndex == 0)
-        {
-            auto obs = std::static_pointer_cast<StateData>(data);
-            updateState(obs);
-        }
-        else if (portIndex == 1 && dynamicStateInit)
-        {
-            auto obs = std::static_pointer_cast<GnssObs>(data);
-            initPositionVelocity(obs);
-        }
-        else if (portIndex == 2 && dynamicStateInit)
-        {
-            auto obs = std::static_pointer_cast<ImuObs>(data);
-            initAttitude(obs);
-        }
-    }
-
-    /// @brief Requests the node to send out its data
-    /// @param[in] portIndex The output port index
-    /// @return The requested data or nullptr if no data available
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) override
-    {
-        if (portIndex == 0)
-        {
-            return currentState;
-        }
-
-        return nullptr;
-    }
-
-    /// The initial vehicle state
-    std::shared_ptr<StateData> initialState;
+    /// @brief Deinitialize the node
+    void deinitialize() override;
 
   private:
+    constexpr static size_t OutputPortIndex_State = 0;    ///< @brief Delegate
+    constexpr static size_t OutputPortIndex_ImuObs = 1;   ///< @brief Flow (ImuObs)
+    constexpr static size_t InputPortIndex_StateData = 0; ///< @brief Object (StateData)
+
     /// @brief Initialize the State with Imu data
     /// @param[in] state Partial state data
-    void initAttitude(std::shared_ptr<ImuObs>& obs);
+    /// @param[in] linkId Id of the link over which the data is received
+    void initAttitude(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Initialize the State with Gnss data
     /// @param[in] state Partial state data
-    void initPositionVelocity(std::shared_ptr<GnssObs>& obs);
+    /// @param[in] linkId Id of the link over which the data is received
+    void initPositionVelocity(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Finalize the initialization
     /// @param[in] currentTime The latest time
@@ -169,14 +76,21 @@ class State : public Node
 
     /// @brief Update the current State
     /// @param[in] state The new state
-    void updateState(std::shared_ptr<StateData>& state);
+    /// @param[in] linkId Id of the link over which the data is received
+    void updateState(const std::shared_ptr<NodeData>& state, ax::NodeEditor::LinkId linkId);
+
+    /// The initial vehicle state
+    StateData initialState;
 
     /// The current vehicle state
-    std::shared_ptr<StateData> currentState;
+    StateData currentState;
 
-    bool dynamicStateInit = false;
+    bool dynamicStateInit = true;
+    std::array<float, 3> initLatLonAlt{ 0, 0, 0 };
+    std::array<float, 3> initRollPitchYaw{ 0, 0, 0 };
+    std::array<float, 3> initVelocityNED{ 0, 0, 0 };
 
-    double averageOverSeconds = 5;
+    double initDuration = 5;
     InsTime averageStartTime;
 
     double countAveragedAttitude = 0;

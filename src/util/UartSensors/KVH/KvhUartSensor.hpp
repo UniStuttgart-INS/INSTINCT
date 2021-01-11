@@ -1,6 +1,6 @@
 /// @file KvhUartSensor.hpp
 /// @brief Class to read out KVH Sensors
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-07-28
 
 #pragma once
@@ -68,8 +68,12 @@ class KvhUartSensor
 
     static bool checksumFunction(const uart::protocol::Packet& packet);
 
+    /// @brief Function which determines, if the packet is an Error Packet
+    /// @param[in] packet The packet to check
     static bool isErrorFunction(const uart::protocol::Packet& packet);
 
+    /// @brief Function which determines, if the packet is a Response
+    /// @param[in] packet The packet to check
     static bool isResponseFunction(const uart::protocol::Packet& packet);
 
     static constexpr size_t packetHeaderLength = 0;

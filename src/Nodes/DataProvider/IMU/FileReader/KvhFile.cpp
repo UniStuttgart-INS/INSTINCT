@@ -1,16 +1,178 @@
 #include "KvhFile.hpp"
 
 #include "util/Logger.hpp"
-#include <ios>
-#include <cmath>
-#include <algorithm>
+
+#include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
+
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
 
 #include "util/UartSensors/KVH/KvhUtilities.hpp"
 
-NAV::KvhFile::KvhFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : ImuFileReader(name, options), sensor(name) {}
+#include "NodeData/IMU/KvhObs.hpp"
 
-std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
+NAV::KvhFile::KvhFile()
+    : sensor(typeStatic())
+{
+    name = typeStatic();
+
+    LOG_TRACE("{}: called", name);
+
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
+
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "KvhFile", this);
+
+    nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, NAV::KvhObs::type(), &KvhFile::pollData);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
+}
+
+NAV::KvhFile::~KvhFile()
+{
+    LOG_TRACE("{}: called", nameId());
+}
+
+std::string NAV::KvhFile::typeStatic()
+{
+    return "KvhFile";
+}
+
+std::string NAV::KvhFile::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::KvhFile::category()
+{
+    return "Data Provider";
+}
+
+void NAV::KvhFile::guiConfig()
+{
+    // Filepath
+    if (ImGui::InputText("Filepath", &path))
+    {
+        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+    ImGui::SameLine();
+    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
+    if (ImGui::Button("Open"))
+    {
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "");
+        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+    }
+
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
+    {
+        if (igfd::ImGuiFileDialog::Instance()->IsOk)
+        {
+            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
+            flow::ApplyChanges();
+            initialize();
+        }
+
+        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
+    }
+    if (fileType == FileType::ASCII)
+    {
+        // Header info
+        if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 2,
+                              ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+        {
+            ImGui::TableSetupColumn("Basic", ImGuiTableColumnFlags_WidthAutoResize);
+            ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
+            ImGui::TableHeadersRow();
+
+            auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
+                ImGui::TableSetColumnIndex(index);
+                if (alwaysNormal || std::find(headerColumns.begin(), headerColumns.end(), searchText) != headerColumns.end())
+                {
+                    ImGui::TextUnformatted(displayText);
+                }
+                else
+                {
+                    ImGui::TextDisabled("%s", displayText);
+                }
+            };
+
+            ImGui::TableNextRow();
+            TextColoredIfExists(0, "GpsTime", "GpsToW");
+            TextColoredIfExists(1, "UnCompMag", "UnCompMagX");
+            ImGui::TableNextRow();
+            TextColoredIfExists(0, "TimeStartup", "TimeStartup");
+            TextColoredIfExists(1, "UnCompAcc", "UnCompAccX");
+            ImGui::TableNextRow();
+            TextColoredIfExists(0, "Temperature", "Temperature");
+            TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX");
+            ImGui::TableNextRow();
+            TextColoredIfExists(0, "Status", "Status");
+            ImGui::TableNextRow();
+            TextColoredIfExists(0, "SequenceNumber", "SequenceNumber");
+
+            ImGui::EndTable();
+        }
+    }
+    else if (fileType == FileType::BINARY)
+    {
+        ImGui::TextUnformatted("Binary file");
+    }
+}
+
+[[nodiscard]] json NAV::KvhFile::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["FileReader"] = FileReader::save();
+
+    return j;
+}
+
+void NAV::KvhFile::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("FileReader"))
+    {
+        FileReader::restore(j.at("FileReader"));
+    }
+}
+
+bool NAV::KvhFile::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{}: called", nameId());
+
+    if (!Node::initialize()
+        || !FileReader::initialize())
+    {
+        return false;
+    }
+
+    return isInitialized = true;
+}
+
+void NAV::KvhFile::deinitialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    FileReader::deinitialize();
+    Node::deinitialize();
+}
+
+void NAV::KvhFile::resetNode()
+{
+    FileReader::resetReader();
+}
+
+std::shared_ptr<NAV::NodeData> NAV::KvhFile::pollData(bool peek)
 {
     std::shared_ptr<KvhObs> obs = nullptr;
 
@@ -79,7 +241,7 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
         std::optional<double> gyroUncompZ;
 
         // Split line at comma
-        for (const auto& column : columns)
+        for (const auto& column : headerColumns)
         {
             if (std::getline(lineStream, cell, ','))
             {
@@ -217,7 +379,7 @@ std::shared_ptr<NAV::KvhObs> NAV::KvhFile::pollData(bool peek)
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(obs);
+        invokeCallbacks(OutputPortIndex_KvhObs, obs);
     }
 
     return obs;

@@ -2,44 +2,142 @@
 
 #include "util/Logger.hpp"
 
+#include "imgui_stdlib.h"
+#include "gui/widgets/HelpMarker.hpp"
+
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
+
 #include "util/UartSensors/KVH/KvhUtilities.hpp"
 
-NAV::KvhSensor::KvhSensor(const std::string& name, const std::map<std::string, std::string>& options)
-    : UartSensor(options), Imu(name, options), sensor(name)
+#include "NodeData/IMU/KvhObs.hpp"
+
+NAV::KvhSensor::KvhSensor()
 {
-    LOG_TRACE("called for {}", name);
+    name = typeStatic();
 
-    // connect to the sensor
-    try
-    {
-        // TODO: Update the library to handle different baudrates
-        sensorBaudrate = Baudrate::BAUDRATE_921600;
+    LOG_TRACE("{}: called", name);
 
-        sensor->connect(sensorPort, sensorBaudrate);
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
 
-        LOG_DEBUG("{} connected on port {} with baudrate {}", name, sensorPort, sensorBaudrate);
-    }
-    catch (...)
-    {
-        LOG_CRITICAL("{} could not connect", name);
-    }
+    // TODO: Update the library to handle different baudrates
+    selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_921600);
 
-    sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "KvhSensor", this);
 
-    LOG_DEBUG("{} successfully initialized", name);
+    nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, NAV::KvhObs::type());
 }
 
 NAV::KvhSensor::~KvhSensor()
 {
-    LOG_TRACE("called for {}", name);
+    LOG_TRACE("{}: called", nameId());
+}
 
-    removeAllCallbacksOfType<KvhObs>();
-    callbacksEnabled = false;
+std::string NAV::KvhSensor::typeStatic()
+{
+    return "KvhSensor";
+}
+
+std::string NAV::KvhSensor::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::KvhSensor::category()
+{
+    return "Data Provider";
+}
+
+void NAV::KvhSensor::guiConfig()
+{
+    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &sensorPort))
+    {
+        LOG_DEBUG("{}: SensorPort changed to {}", nameId(), sensorPort);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("COM port where the sensor is attached to\n"
+                             "- \"COM1\" (Windows format for physical and virtual (USB) serial port)\n"
+                             "- \"/dev/ttyS1\" (Linux format for physical serial port)\n"
+                             "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
+                             "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
+                             "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)");
+}
+
+[[nodiscard]] json NAV::KvhSensor::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["UartSensor"] = UartSensor::save();
+
+    return j;
+}
+
+void NAV::KvhSensor::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("UartSensor"))
+    {
+        UartSensor::restore(j.at("UartSensor"));
+    }
+}
+
+bool NAV::KvhSensor::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{}: called", nameId());
+
+    if (!Node::initialize())
+    {
+        return false;
+    }
+
+    // connect to the sensor
+    try
+    {
+        sensor->connect(sensorPort, sensorBaudrate());
+
+        LOG_DEBUG("{} connected on port {} with baudrate {}", nameId(), sensorPort, sensorBaudrate());
+    }
+    catch (...)
+    {
+        LOG_ERROR("{} could not connect", nameId());
+        return false;
+    }
+
+    sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
+
+    return isInitialized = true;
+}
+
+void NAV::KvhSensor::deinitialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (!isInitialized)
+    {
+        return;
+    }
+
     if (sensor->isConnected())
     {
-        sensor->unregisterAsyncPacketReceivedHandler();
+        try
+        {
+            sensor->unregisterAsyncPacketReceivedHandler();
+        }
+        catch (...)
+        {}
         sensor->disconnect();
     }
+
+    Node::deinitialize();
 }
 
 void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, [[maybe_unused]] size_t index)
@@ -67,7 +165,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
         kvhSensor->prevSequenceNumber = obs->sequenceNumber;
 
         // Calls all the callbacks
-        kvhSensor->invokeCallbacks(obs);
+        kvhSensor->invokeCallbacks(OutputPortIndex_KvhObs, obs);
     }
     else if (p.type() == uart::protocol::Packet::Type::TYPE_ASCII)
     {

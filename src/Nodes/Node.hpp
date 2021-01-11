@@ -1,48 +1,94 @@
 /// @file Node.hpp
-/// @brief Abstract Node Class
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
-/// @date 2020-03-18
+/// @brief Node Class
+/// @author T. Topp (thomas@topp.cc)
+/// @date 2020-12-14
 
 #pragma once
 
-#include <string>
-#include <string_view>
-#include <memory>
-#include <map>
-#include <variant>
+#include <imgui_node_editor.h>
 
-#include "DataCallback.hpp"
-#include "NodeData/NodeData.hpp"
+#include "internal/Pin.hpp"
+
+#include "util/Logger.hpp"
+
+#include <string>
+#include <vector>
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 namespace NAV
 {
-/// Abstract Node Class
-class Node : public DataCallback
+class NodeData;
+
+class Node
 {
   public:
-    /// Port Type
-    enum PortType
+    /// Kind information class
+    struct Kind
     {
-        In, ///< Input Port
-        Out ///< Output Port
-    };
+        enum Value : uint8_t
+        {
+            Blueprint,
+            Simple,
+            GroupBox,
+        };
 
-    /// Node Context
-    enum NodeContext
-    {
-        REAL_TIME,
-        POST_PROCESSING,
-        ALL
-    };
+        Kind() = default;
 
-    /// @brief Constructor
-    /// @param[in] name Name of the Node
-    explicit Node(std::string name);
+        //NOLINTNEXTLINE(hicpp-explicit-conversions, google-explicit-constructor)
+        constexpr Kind(Value kind)
+            : value(kind) {}
+
+        explicit Kind(const std::string& string)
+        {
+            if (string == "Blueprint")
+            {
+                value = Kind::Blueprint;
+            }
+            else if (string == "Simple")
+            {
+                value = Kind::Simple;
+            }
+            else if (string == "GroupBox")
+            {
+                value = Kind::GroupBox;
+            }
+        }
+
+        explicit operator Value() const { return value; } // Allow switch(Node::Value(kind)) and comparisons.
+        explicit operator bool() = delete;                // Prevent usage: if(fruit)
+        Kind& operator=(Value v)
+        {
+            value = v;
+            return *this;
+        }
+
+        constexpr bool operator==(const Kind& other) const { return value == other.value; }
+        constexpr bool operator!=(const Kind& other) const { return value != other.value; }
+
+        explicit operator std::string() const
+        {
+            switch (value)
+            {
+            case Kind::Blueprint:
+                return "Blueprint";
+            case Kind::Simple:
+                return "Simple";
+            case Kind::GroupBox:
+                return "GroupBox";
+            }
+            return "";
+        }
+
+      private:
+        Value value;
+    };
 
     /// @brief Default constructor
     Node() = default;
     /// @brief Destructor
-    ~Node() override = default;
+    virtual ~Node() = default;
     /// @brief Copy constructor
     Node(const Node&) = delete;
     /// @brief Move constructor
@@ -52,87 +98,158 @@ class Node : public DataCallback
     /// @brief Move assignment operator
     Node& operator=(Node&&) = delete;
 
-    /// @brief Returns the String representation of the Class Type
-    /// @return The class type
-    [[nodiscard]] virtual constexpr std::string_view type() const = 0;
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                                 Interface                                                */
+    /* -------------------------------------------------------------------------------------------------------- */
 
-    /// @brief Returns the String representation of the Class Category
-    /// @return The class category
-    [[nodiscard]] virtual constexpr std::string_view category() const = 0;
+    /// @brief String representation of the Class Type
+    [[nodiscard]] virtual std::string type() const = 0;
 
-    /// @brief Config Option Types Enumeration
-    enum ConfigOptionType
-    {
-        CONFIG_N_INPUT_PORTS,   ///< Integer: Min, Default, Max, Amount of Config Options to repeat
-        CONFIG_BOOL,            ///< Boolean: Default
-        CONFIG_INT,             ///< Integer: Min, Default, Max
-        CONFIG_FLOAT,           ///< Float: Min, Default, Max, Decimals
-        CONFIG_FLOAT3,          ///< Float Vector: Min1, Default1, Max1, Decimals1, Min2, Default2, Max2, Decimals2, Min3, Default3, Max3, Decimals3
-        CONFIG_STRING,          ///< String
-        CONFIG_STRING_BOX,      ///< String Box
-        CONFIG_LIST,            ///< List: "option1", "[default]", "option3"
-        CONFIG_LIST_MULTI,      ///< List which repeats: "option1", "[default]", "option3"
-        CONFIG_LIST_LIST_MULTI, ///< 2 Lists which repeat: "[List1default]", "List1option2", "|", "List2option1|[List2default]"
-        CONFIG_MAP_INT,         ///< String Key and Integer Value: "key", "min", "default", "max"
-        CONFIG_VARIANT,         ///< Variant: ConfigOptionsBase(option1), ConfigOptionsBase(option2)
-        CONFIG_EMPTY            ///< Empty Config, not to be displayed. Only useful in combination with a variant
-    };
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set hasConfig to true
+    virtual void guiConfig();
 
-    using ConfigOptionsBase = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::string>>;
-    using ConfigOptions = std::tuple<ConfigOptionType, std::string, std::string, std::vector<std::variant<std::string, ConfigOptionsBase>>>;
+    /// @brief Saves the node into a json object
+    [[nodiscard]] virtual json save() const = 0;
 
-    /// @brief Returns Gui Configuration options for the class
-    /// @return The gui configuration
-    [[nodiscard]] virtual std::vector<ConfigOptions> guiConfig() const = 0;
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    virtual void restore(const json& j) = 0;
 
-    /// @brief Returns the context of the class
-    /// @return The class context
-    [[nodiscard]] virtual constexpr NodeContext context() const = 0;
+    /// @brief Abstract Initialization of the Node
+    virtual bool initialize();
 
-    /// @brief Returns the number of Ports
-    /// @param[in] portType Specifies the port type
-    /// @return The number of ports
-    [[nodiscard]] virtual constexpr uint8_t nPorts(PortType portType) const = 0;
-
-    /// @brief Returns the data types provided by this class
-    /// @param[in] portType Specifies the port type
-    /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type and subtitle
-    [[nodiscard]] virtual constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const = 0;
-
-    /// @brief Handles the data sent on the input port
-    /// @param[in] portIndex The input port index
-    /// @param[in, out] data The data send on the input port
-    ///
-    /// @note The shared_ptr is copied on purpose to guarantee the data stays alive during function execution
-    virtual void handleInputData(uint8_t portIndex, std::shared_ptr<NodeData> data) = 0;
-
-    /// @brief Requests the node to send out its data
-    /// @param[in] portIndex The output port index
-    /// @return The requested data or nullptr if no data available
-    [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex);
-
-    /// @brief Requests the node to peek its output data
-    /// @param[in] portIndex The output port index
-    /// @return The requested data or nullptr if no data available
-    [[nodiscard]] virtual std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex);
-
-    /// @brief Initialize the Node. Here virtual functions of children can be called
-    virtual void initialize();
-
-    /// @brief Deinitialize the Node. Here virtual functions of children can be called
+    /// @brief Deinitialize the Node
     virtual void deinitialize();
 
     /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
     virtual void resetNode();
 
-    /// @brief Get the name string of the Node
-    /// @return The Name of the Node
-    [[nodiscard]] const std::string& getName() const;
+    /// @brief Called when a new link is to be established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    /// @return True if link is allowed, false if link is rejected
+    virtual bool onCreateLink(Pin* startPin, Pin* endPin);
 
-  protected:
+    /// @brief Called when a link is to be deleted
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    virtual void onDeleteLink(Pin* startPin, Pin* endPin);
+
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                             Member functions                                             */
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    template<typename T>
+    [[nodiscard]] T* getInputValue(size_t portIndex)
+    {
+        // clang-format off
+        if constexpr (std::is_same_v<T, bool>
+                   || std::is_same_v<T, int>
+                   || std::is_same_v<T, float>
+                   || std::is_same_v<T, double>
+                   || std::is_same_v<T, std::string>)
+        { // clang-format on
+            if (auto* pval = std::get_if<T*>(&inputPins.at(portIndex).data))
+            {
+                return *pval;
+            }
+        }
+        else // constexpr
+        {
+            if (auto* pval = std::get_if<void*>(&inputPins.at(portIndex).data))
+            {
+                return static_cast<T*>(*pval);
+            }
+        }
+
+        return nullptr;
+    }
+
+    template<typename T>
+    [[nodiscard]] T* getInputValue(size_t portIndex) const
+    {
+        if constexpr (std::is_same_v<T, bool> || std::is_same_v<T, int> || std::is_same_v<T, float> || std::is_same_v<T, double> || std::is_same_v<T, std::string>)
+        {
+            if (const auto* pval = std::get_if<T*>(&inputPins.at(portIndex).data))
+            {
+                return *pval;
+            }
+        }
+        else // constexpr
+        {
+            if (const auto* pval = std::get_if<void*>(&inputPins.at(portIndex).data))
+            {
+                return static_cast<T*>(*pval);
+            }
+        }
+
+        return nullptr;
+    }
+
+    /// @brief Calls all registered callbacks on the specified output port
+    /// @param[in] portIndex Output port where to call the callbacks
+    /// @param[in] data The data to pass to the callback targets
+    void invokeCallbacks(size_t portIndex, const std::shared_ptr<NodeData>& data);
+
+    template<typename T, class... U>
+    T callInputFunction(size_t portIndex, U&&... u)
+    {
+        auto* function = std::get_if<std::pair<Node*, void (Node::*)()>>(&inputPins.at(portIndex).data);
+
+        Node* node = function->first;
+        auto callbackProto = function->second;
+
+        auto callback = reinterpret_cast<T (Node::*)(U...)>(callbackProto);
+
+        return (node->*callback)(std::forward<U>(u)...);
+    }
+
+    /// @brief Returns the index of the pin
+    /// @param[in] pinId Id of the Pin
+    /// @return The index of the pin
+    [[nodiscard]] size_t pinIndexFromId(ax::NodeEditor::PinId pinId) const;
+
+    /// @brief Node name and id
+    [[nodiscard]] std::string nameId() const
+    {
+        return fmt::format("{} ({})", name, size_t(id));
+    }
+
+    /* -------------------------------------------------------------------------------------------------------- */
+    /*                                             Member variables                                             */
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    /// Unique Id of the Node
+    ax::NodeEditor::NodeId id = 0;
+    /// Kind of the Node
+    Kind kind = Kind::Blueprint;
     /// Name of the Node
-    const std::string name;
+    std::string name;
+    /// List of input pins
+    std::vector<Pin> inputPins;
+    /// List of output pins
+    std::vector<Pin> outputPins;
+    /// Color of the node
+    ImColor color{ 255, 255, 255 };
+    /// Size of the node in pixels
+    ImVec2 size{ 0, 0 };
+    /// Flag if the config window is shown
+    bool showConfig = false;
+
+    /// Flag if the config window should be shown
+    bool hasConfig = false;
+    /// Node disabled Shortcuts
+    bool nodeDisabledShortcuts = false;
+
+    /// Enables the callbacks
+    bool callbacksEnabled = false;
+    /// Flag, if the node is initialized
+    bool isInitialized = false;
+
+  private:
+    /// Flag, if the node is currently initializing
+    bool isInitializing = false;
 };
 
 } // namespace NAV

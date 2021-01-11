@@ -1,6 +1,6 @@
 /// @file UbloxObs.hpp
 /// @brief ublox Observation Class
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-19
 
 #pragma once
@@ -49,8 +49,7 @@ class UbloxObs : public GnssObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
-        std::vector<std::string_view> parents{ "GnssObs" };
-        return parents;
+        return { GnssObs::type() };
     }
 
     /// Ubx Message Class (NONE if NMEA message)

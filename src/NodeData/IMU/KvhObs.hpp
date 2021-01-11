@@ -1,6 +1,6 @@
 /// @file KvhObs.hpp
 /// @brief Data storage class for one KVH Imu observation
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-06-30
 
 #pragma once
@@ -50,8 +50,7 @@ class KvhObs final : public ImuObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
-        std::vector<std::string_view> parents{ "ImuObs" };
-        return parents;
+        return { ImuObs::type() };
     }
 
     /// Complete message raw binary data including header and checksum

@@ -1,6 +1,6 @@
 /// @file EmlidObs.hpp
 /// @brief Emlid Observation Class
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-06-23
 
 #pragma once
@@ -48,8 +48,7 @@ class EmlidObs : public GnssObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string_view> parentTypes()
     {
-        std::vector<std::string_view> parents{ "GnssObs" };
-        return parents;
+        return { GnssObs::type() };
     }
 
     /// Erb Message ID

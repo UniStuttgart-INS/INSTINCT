@@ -2,13 +2,193 @@
 
 #include "util/Logger.hpp"
 #include "util/InsTransformations.hpp"
-#include <ios>
-#include <cmath>
 
-NAV::VectorNavFile::VectorNavFile(const std::string& name, const std::map<std::string, std::string>& options)
-    : ImuFileReader(name, options) {}
+#include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
 
-std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+#include "internal/FlowManager.hpp"
+
+#include "NodeData/IMU/VectorNavObs.hpp"
+
+NAV::VectorNavFile::VectorNavFile()
+{
+    name = typeStatic();
+
+    LOG_TRACE("{}: called", name);
+
+    color = ImColor(255, 128, 128);
+    hasConfig = true;
+
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "VectorNavFile", this);
+
+    nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type(), &VectorNavFile::pollData);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
+}
+
+NAV::VectorNavFile::~VectorNavFile()
+{
+    LOG_TRACE("{}: called", nameId());
+}
+
+std::string NAV::VectorNavFile::typeStatic()
+{
+    return "VectorNavFile";
+}
+
+std::string NAV::VectorNavFile::type() const
+{
+    return typeStatic();
+}
+
+std::string NAV::VectorNavFile::category()
+{
+    return "Data Provider";
+}
+
+void NAV::VectorNavFile::guiConfig()
+{
+    // Filepath
+    if (ImGui::InputText("Filepath", &path))
+    {
+        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
+        flow::ApplyChanges();
+        deinitialize();
+    }
+    ImGui::SameLine();
+    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
+    if (ImGui::Button("Open"))
+    {
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "");
+        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+    }
+
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
+    {
+        if (igfd::ImGuiFileDialog::Instance()->IsOk)
+        {
+            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
+            flow::ApplyChanges();
+            initialize();
+        }
+
+        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
+    }
+
+    // Header info
+    if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 3,
+                          ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+    {
+        ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableHeadersRow();
+
+        auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
+            ImGui::TableSetColumnIndex(index);
+            if (alwaysNormal || std::find(headerColumns.begin(), headerColumns.end(), searchText) != headerColumns.end())
+            {
+                ImGui::TextUnformatted(displayText);
+            }
+            else
+            {
+                ImGui::TextDisabled("%s", displayText);
+            }
+        };
+
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "GpsTime", "GpsToW");
+        TextColoredIfExists(1, "VpeStatus", "AhrsStatus");
+        TextColoredIfExists(2, "YawPitchRoll", "Yaw");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "TimeStartup", "TimeStartup");
+        TextColoredIfExists(1, "UncompMag", "UnCompMagX");
+        TextColoredIfExists(2, "Quaternion", "Quat[0]");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "TimeSyncIn", "TimeSyncIn");
+        TextColoredIfExists(1, "UncompAccel", "UnCompAccX");
+        TextColoredIfExists(2, "DCM", "C[0.0]");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "SyncInCnt", "SyncInCnt");
+        TextColoredIfExists(1, "UncompAngularRate", "UnCompGyroX");
+        TextColoredIfExists(2, "MagNed", "MagN");
+        ImGui::TableNextRow();
+        TextColoredIfExists(0, "SyncOutCnt", "SyncOutCnt");
+        TextColoredIfExists(1, "Temp", "Temperature");
+        TextColoredIfExists(2, "AccelNed", "AccN");
+        ImGui::TableNextRow();
+        TextColoredIfExists(1, "Pres", "Pressure");
+        TextColoredIfExists(2, "GyroNed", "YawRate");
+        ImGui::TableNextRow();
+        TextColoredIfExists(1, "DeltaTheta", "DeltaThetaX");
+        TextColoredIfExists(2, "LinearAccelBody", "LinAccX");
+        ImGui::TableNextRow();
+        TextColoredIfExists(1, "DeltaVel", "DeltaVelX");
+        TextColoredIfExists(2, "LinearAccelNed", "LinAccN");
+        ImGui::TableNextRow();
+        TextColoredIfExists(1, "Mag", "MagX");
+        TextColoredIfExists(2, "YprU", "YawU");
+        ImGui::TableNextRow();
+        TextColoredIfExists(1, "Accel", "AccX");
+        ImGui::TableNextRow();
+        TextColoredIfExists(1, "AngularRate", "GyroX");
+
+        ImGui::EndTable();
+    }
+}
+
+[[nodiscard]] json NAV::VectorNavFile::save() const
+{
+    LOG_TRACE("{}: called", nameId());
+
+    json j;
+
+    j["FileReader"] = FileReader::save();
+
+    return j;
+}
+
+void NAV::VectorNavFile::restore(json const& j)
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("FileReader"))
+    {
+        FileReader::restore(j.at("FileReader"));
+    }
+}
+
+bool NAV::VectorNavFile::initialize()
+{
+    deinitialize();
+
+    LOG_TRACE("{}: called", nameId());
+
+    if (!Node::initialize()
+        || !FileReader::initialize())
+    {
+        return false;
+    }
+
+    return isInitialized = true;
+}
+
+void NAV::VectorNavFile::deinitialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    FileReader::deinitialize();
+    Node::deinitialize();
+}
+
+void NAV::VectorNavFile::resetNode()
+{
+    FileReader::resetReader();
+}
+
+std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 {
     auto obs = std::make_shared<VectorNavObs>(imuPos);
 
@@ -41,7 +221,7 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
     std::stringstream lineStream(line);
     std::string cell;
 
-    Matrix3d<Navigation, Body> dcm_np = Matrix3d<Navigation, Body>::Zero();
+    Eigen::Matrix3d dcm_np = Eigen::Matrix3d::Zero();
 
     std::optional<uint16_t> gpsCycle = 0;
     std::optional<uint16_t> gpsWeek;
@@ -97,7 +277,7 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
     std::optional<double> gyroCompD;
 
     // Split line at comma
-    for (const auto& column : columns)
+    for (const auto& column : headerColumns)
     {
         if (std::getline(lineStream, cell, ','))
         {
@@ -463,12 +643,12 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
             obs->quaternion = trafo::quat_nb(trafo::deg2rad(obs->yawPitchRoll.value()(2)),
                                              trafo::deg2rad(obs->yawPitchRoll.value()(1)),
                                              trafo::deg2rad(obs->yawPitchRoll.value()(0)))
-                              * Quaterniond<Body, Platform>::Identity();
+                              * Eigen::Quaterniond::Identity();
         }
     }
 
     LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-             name, obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
+             nameId(), obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
              obs->vpeStatus.value().status, obs->temperature.value());
 
     if (obs->insTime.has_value())
@@ -489,44 +669,8 @@ std::shared_ptr<NAV::VectorNavObs> NAV::VectorNavFile::pollData(bool peek)
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(obs);
+        invokeCallbacks(OutputPortIndex_VectorNavObs, obs);
     }
 
     return obs;
-}
-
-NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
-{
-    LOG_TRACE("called for {}", name);
-
-    constexpr uint8_t BinaryStartChar = 0xFA;
-
-    auto filestream = std::ifstream(path);
-
-    constexpr uint16_t BUFFER_SIZE = 256;
-
-    std::array<char, BUFFER_SIZE> buffer{};
-    if (filestream.good())
-    {
-        filestream.read(buffer.data(), BUFFER_SIZE);
-
-        if (std::strstr(buffer.data(), "TimeStartup"))
-        {
-            filestream.close();
-            LOG_DEBUG("{}: File type is ASCII", name);
-            return FileType::ASCII;
-        }
-        if (memmem(buffer.data(), BUFFER_SIZE, "Control Center", sizeof("Control Center")) != nullptr
-            || static_cast<unsigned char>(buffer.at(0)) == BinaryStartChar)
-        {
-            filestream.close();
-            LOG_DEBUG("{}: File type is binary", name);
-            return FileType::BINARY;
-        }
-        filestream.close();
-        LOG_CRITICAL("{}: Could not determine file type", name);
-    }
-
-    LOG_CRITICAL("{}: Could not open file {}", name, path);
-    return FileType::NONE;
 }

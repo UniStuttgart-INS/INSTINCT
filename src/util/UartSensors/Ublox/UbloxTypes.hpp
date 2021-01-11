@@ -1,6 +1,6 @@
 /// @file UbloxTypes.hpp
 /// @brief Type Definitions for Ublox messages
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-05-19
 
 #pragma once

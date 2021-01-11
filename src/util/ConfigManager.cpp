@@ -25,10 +25,10 @@ NAV::ConfigManager::ConfigManager()
         ("config,f", bpo::value<std::vector<std::string>>()->multitoken(), "List of configuration files to read parameters from")
         ("version,v", "Display the version number")
         ("help,h", "Display this help message")
-        ("sigterm", bpo::value<bool>()->default_value(false),"Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM")
-        ("duration", bpo::value<size_t>()->default_value(10), "Program execution duration [sec]")
-        ("node", bpo::value<std::vector<std::string>>()->multitoken(), "Node registration.\nFormat: Type, Name, [Options...]")
-        ("link", bpo::value<std::vector<std::string>>()->multitoken(), "Node Link.\nFormat: From(Name), Message Type, To(Name)")
+        ("sigterm", bpo::bool_switch()->default_value(false), "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM")
+        ("duration", bpo::value<size_t>()->default_value(0), "Program execution duration [sec]")
+        ("nogui", bpo::bool_switch()->default_value(false), "Launch without the gui")
+        ("load,l", bpo::value<std::string>(), "Flow file to load" )
     ;
     // clang-format on
 }

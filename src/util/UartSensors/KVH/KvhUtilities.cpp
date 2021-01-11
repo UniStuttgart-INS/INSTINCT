@@ -75,12 +75,11 @@ static const std::array<uint32_t, 256> ui32aCRCTable = {
 
 uint32_t NAV::sensors::kvh::ui32CalcImuCRC(const std::vector<uint8_t>& rawData)
 {
-    uint32_t ixTableEntry{ 0 };
     uint32_t ui32CRCVal = 0xFFFFFFFF;
 
     for (size_t i = 0; i < rawData.size() - sizeof(uint32_t); i++)
     {
-        ixTableEntry = ((ui32CRCVal >> 24U) ^ rawData.at(i)) & 0xFFU;
+        uint32_t ixTableEntry = ((ui32CRCVal >> 24U) ^ rawData.at(i)) & 0xFFU;
         ui32CRCVal = ui32aCRCTable.at(ixTableEntry) ^ (ui32CRCVal << 8U);
     }
 

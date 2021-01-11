@@ -1,6 +1,6 @@
 /// @file NodeData.hpp
 /// @brief Abstract NodeData Class
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-04-16
 
 #pragma once
@@ -18,13 +18,13 @@ class NodeData
     /// @brief Destructor
     virtual ~NodeData() = default;
     /// @brief Copy constructor
-    NodeData(const NodeData&) = delete;
+    NodeData(const NodeData&) = default;
     /// @brief Move constructor
-    NodeData(NodeData&&) = delete;
+    NodeData(NodeData&&) = default;
     /// @brief Copy assignment operator
-    NodeData& operator=(const NodeData&) = delete;
+    NodeData& operator=(const NodeData&) = default;
     /// @brief Move assignment operator
-    NodeData& operator=(NodeData&&) = delete;
+    NodeData& operator=(NodeData&&) = default;
 
     /// @brief Returns the type of the data class
     /// @return The data type

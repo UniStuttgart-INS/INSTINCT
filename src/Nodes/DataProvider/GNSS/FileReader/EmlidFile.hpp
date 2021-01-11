@@ -1,30 +1,25 @@
 /// @file EmlidFile.hpp
 /// @brief File Reader for Emlid log files
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-06-23
 
 #pragma once
 
-#include "../GnssFileReader.hpp"
-#include "NodeData/GNSS/EmlidObs.hpp"
+#include "Nodes/DataProvider/GNSS/Gnss.hpp"
+#include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
 #include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
 
 namespace NAV
 {
 /// File Reader for Emlid log files
-class EmlidFile final : public GnssFileReader
+class EmlidFile : public Gnss, public FileReader
 {
   public:
-    /// @brief Constructor
-    /// @param[in] name Name of the Node
-    /// @param[in] options Program options string map
-    EmlidFile(const std::string& name, const std::map<std::string, std::string>& options);
-
     /// @brief Default constructor
-    EmlidFile() = default;
+    EmlidFile();
     /// @brief Destructor
-    ~EmlidFile() final = default;
+    ~EmlidFile() override;
     /// @brief Copy constructor
     EmlidFile(const EmlidFile&) = delete;
     /// @brief Move constructor
@@ -34,103 +29,47 @@ class EmlidFile final : public GnssFileReader
     /// @brief Move assignment operator
     EmlidFile& operator=(EmlidFile&&) = delete;
 
-    /// @brief Returns the String representation of the Class Type
-    /// @return The class type
-    [[nodiscard]] constexpr std::string_view type() const final
-    {
-        return std::string_view("EmlidFile");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] static std::string typeStatic();
 
-    /// @brief Returns the String representation of the Class Category
-    /// @return The class category
-    [[nodiscard]] constexpr std::string_view category() const final
-    {
-        return std::string_view("DataProvider");
-    }
+    /// @brief String representation of the Class Type
+    [[nodiscard]] std::string type() const override;
 
-    /// @brief Returns the context of the class
-    /// @return The class context
-    [[nodiscard]] constexpr NodeContext context() const final
-    {
-        return NodeContext::POST_PROCESSING;
-    }
+    /// @brief String representation of the Class Category
+    [[nodiscard]] static std::string category();
 
-    /// @brief Returns the number of Ports
-    /// @param[in] portType Specifies the port type
-    /// @return The number of ports
-    [[nodiscard]] constexpr uint8_t nPorts(PortType portType) const final
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            break;
-        case PortType::Out:
-            return 1U;
-        }
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    void guiConfig() override;
 
-        return 0U;
-    }
+    /// @brief Saves the node into a json object
+    [[nodiscard]] json save() const override;
 
-    /// @brief Returns the data types provided by this class
-    /// @param[in] portType Specifies the port type
-    /// @param[in] portIndex Port index on which the data is sent
-    /// @return The data type and subtitle
-    [[nodiscard]] constexpr std::pair<std::string_view, std::string_view> dataType(PortType portType, uint8_t portIndex) const final
-    {
-        switch (portType)
-        {
-        case PortType::In:
-            break;
-        case PortType::Out:
-            if (portIndex == 0)
-            {
-                return std::make_pair(EmlidObs::type(), std::string_view(""));
-            }
-        }
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    void restore(const json& j) override;
 
-        return std::make_pair(std::string_view(""), std::string_view(""));
-    }
+    /// @brief Initialize the node
+    bool initialize() override;
 
-    /// @brief Handles the data sent on the input port
-    /// @param[in] portIndex The input port index
-    /// @param[in, out] data The data send on the input port
-    void handleInputData([[maybe_unused]] uint8_t portIndex, [[maybe_unused]] std::shared_ptr<NodeData> data) final {}
+    /// @brief Deinitialize the node
+    void deinitialize() override;
 
-    /// @brief Requests the node to send out its data
-    /// @param[in] portIndex The output port index
-    /// @return The requested data or nullptr if no data available
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputData(uint8_t portIndex) final
-    {
-        if (portIndex == 0)
-        {
-            return pollData();
-        }
-
-        return nullptr;
-    }
-
-    /// @brief Requests the node to peek its output data
-    /// @param[in] portIndex The output port index
-    /// @return The requested data or nullptr if no data available
-    [[nodiscard]] std::shared_ptr<NodeData> requestOutputDataPeek(uint8_t portIndex) final
-    {
-        if (portIndex == 0)
-        {
-            return pollData(true);
-        }
-
-        return nullptr;
-    }
+    /// @brief Resets the node. Moves the read cursor to the start
+    void resetNode() override;
 
   private:
-    /// @brief Polls the data from the file
+    constexpr static size_t OutputPortIndex_EmlidFile = 0; ///< @brief Delegate
+    constexpr static size_t OutputPortIndex_EmlidObs = 1;  ///< @brief Flow (EmlidObs)
+
+    /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<EmlidObs> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<NodeData> pollData(bool peek = false);
 
-    /// @brief Determines the type of the file (ASCII or binary)
+    /// @brief Determines the type of the file
     /// @return The File Type
-    [[nodiscard]] FileType determineFileType() final;
+    [[nodiscard]] FileType determineFileType() override;
 
     /// Sensor Object
     sensors::emlid::EmlidUartSensor sensor;

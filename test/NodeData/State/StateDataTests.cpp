@@ -15,7 +15,7 @@ TEST_CASE("[StateData] Reference Functions", "[StateData]")
     CHECK(state.quaternion_nb().coeffs() == quat_nb_coeff);
 
     quat_nb_coeff = Eigen::Vector4d(5, 6, 7, 8);
-    auto quat_nb = Quaterniond<Navigation, Body>(quat_nb_coeff);
+    auto quat_nb = Eigen::Quaterniond(quat_nb_coeff);
 
     state.quaternion_nb() = quat_nb;
 
@@ -23,7 +23,7 @@ TEST_CASE("[StateData] Reference Functions", "[StateData]")
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    Vector3d<LLA> latLonAlt = Vector3d<LLA>(5, 6, 7);
+    Eigen::Vector3d latLonAlt = Eigen::Vector3d(5, 6, 7);
     auto pos_e = trafo::lla2ecef_WGS84(latLonAlt);
     state.position_ecef() = pos_e;
 
@@ -43,7 +43,7 @@ TEST_CASE("[StateData] Reference Functions", "[StateData]")
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    auto vel_n = Vector3d<Navigation>(5, 6, 7);
+    auto vel_n = Eigen::Vector3d(5, 6, 7);
 
     state.velocity_n() = vel_n;
 

@@ -3,19 +3,23 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/src/**",
-                "${workspaceFolder}/lib/**",
                 "~/.conan/data/**",
-                "/usr/include/qt/**"
+                "${workspaceFolder}/src/**",
+                "${workspaceFolder}/lib/gcem/include",
+                "${workspaceFolder}/lib/imgui",
+                "${workspaceFolder}/lib/imgui/misc/cpp",
+                "${workspaceFolder}/lib/imgui-node-editor",
+                "${workspaceFolder}/lib/ImGuiFileDialog/ImGuiFileDialog",
+                "${workspaceFolder}/lib/implot",
+                "${workspaceFolder}/lib/navio2/include/",
+                "${workspaceFolder}/lib/uartsensor/include/**",
+                "${workspaceFolder}/lib/vnproglib/include/**",
             ],
             "defines": [
-                "NODE_EDITOR_SHARED",
-                "NODE_EDITOR_EXPORTS",
-                "-DDISABLE_SENSORS",
-                "LOG_LEVEL=LOG_LEVEL_DATA"
+                "LOG_LEVEL=LOG_LEVEL_DATA",
             ],
             "cppStandard": "c++20",
-            "compilerPath": "/usr/bin/gcc",
+            "compilerPath": "/usr/bin/g++",
             "compileCommands": "${workspaceFolder}/compile_commands.json"
         }
     ],

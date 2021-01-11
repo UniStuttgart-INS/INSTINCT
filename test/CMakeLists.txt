@@ -21,17 +21,8 @@ endforeach(TMP_PATH)
 
 # Link all files in the Source directory
 include_directories(${CMAKE_SOURCE_DIR}/src)
-add_executable(
-  tests
-  util/InsTimeTests.cpp
-  util/InsMechanizationTests.cpp
-  util/InsTransformationsTests.cpp
-  util/LinearAlgebraTests.cpp
-  util/LoggerTests.cpp
-  NodeData/State/StateDataTests.cpp
-  Nodes/DataLogger/IMU/VectorNavDataLoggerTest.cpp
-  Nodes/Integrator/ImuIntegratorTest.cpp
-  ${SRC_FILES})
+add_executable(tests util/InsTimeTests.cpp util/InsMechanizationTests.cpp util/InsTransformationsTests.cpp
+                     util/LoggerTests.cpp NodeData/State/StateDataTests.cpp ${SRC_FILES})
 
 target_link_libraries(
   tests
@@ -43,6 +34,12 @@ target_link_libraries(
           CONAN_PKG::boost
           CONAN_PKG::eigen
           Threads::Threads
+          CONAN_PKG::nlohmann_json
+          imgui
+          imgui_node_editor
+          ImGuiFileDialog
+          implot
+          application
           libvncxx
           libUartSensor)
 
@@ -53,7 +50,10 @@ endif()
 target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
-# whatever you want, or use different for different binaries catch_discover_tests(tests)
+# whatever you want, or use different for different binaries
+
+# catch_discover_tests(tests)
+
 catch_discover_tests(
   tests
   REPORTER

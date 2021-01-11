@@ -1,6 +1,6 @@
 /// @file Sleep.hpp
 /// @brief Class to catch system signals and sleep
-/// @author T. Topp (thomas.topp@nav.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-10
 
 #pragma once
