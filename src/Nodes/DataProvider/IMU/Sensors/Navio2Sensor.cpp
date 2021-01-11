@@ -135,7 +135,9 @@ void NAV::Navio2Sensor::deinitialize()
         timer.stop();
     }
 
+#if !__APPLE__
     sensor.reset();
+#endif
 
     Node::deinitialize();
 }
