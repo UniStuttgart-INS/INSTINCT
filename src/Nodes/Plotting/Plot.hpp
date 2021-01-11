@@ -93,50 +93,73 @@ class Plot : public Node
     {
         struct PlotData
         {
+            /// @brief Constructor
+            /// @param[in] displayName Display name of the contained data
+            /// @param[in] size Size of the buffer
             explicit PlotData(std::string displayName, size_t size)
                 : displayName(std::move(displayName)), buffer(size) {}
 
+            /// Display name of the contained data
             std::string displayName;
+            /// Buffer for the data
             ScrollingBuffer<double> buffer;
+            /// Flag if data was received, as the buffer contains std::nan("") otherwise
             bool hasData = false;
-
-            bool show = false;
-            int yAxis = 0;
+            /// Key: PlotIndex; Value: yAxis
+            std::map<size_t, int> plotOnAxis;
         };
 
+        /// @brief Adds a plotData Element to the list
+        /// @param[in] displayName Display name of the contained data
         void addPlotDataItem(const std::string& displayName)
         {
             plotData.emplace_back(displayName, size);
             allDisplayNames.push_back(displayName);
         }
-
+        /// Size of all buffers of the plotData elements
         size_t size = 2000;
+        /// List with all the data
         std::vector<PlotData> plotData;
+        /// Concatenated list of all display names in the plotData list
         std::vector<std::string> allDisplayNames;
     };
 
+    /// Data storage for each pin
     std::vector<PinData> data;
 
     struct PlotInfo
     {
+        /// @brief Constructor
+        /// @param[in] title Title of the ImPlot
+        /// @param[in] nInputPins Amount of inputPins
         PlotInfo(const std::string& title, size_t nInputPins)
             : title(title), headerText(title), selectedXdata(nInputPins, 0) {}
 
+        /// Title of the ImPlot
         std::string title;
+        /// Title of the CollapsingHeader
         std::string headerText;
+        /// Selected pin in the GUI for the Drag & Drop Data
         int selectedPin = 0;
+        /// Flags which are passed to the plot
         int plotFlags = 0;
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;
     };
 
+    /// Info for each plot window
     std::vector<PlotInfo> plotInfos;
 
+    /// Amount of input pins (should equal data.size())
     int nInputPins = 1;
+    /// Amount of plot windows (should equal plotInfos.size())
     int nPlots = 0;
 
+    /// Start Time for calculation of relative time with the GPS ToW
     double startValue_Time = std::nan("");
+    /// Start Longitude for calculation of relative North-South
     // double startValue_North = std::nan("");
+    /// Start Latitude for calculation of relative East-West
     // double startValue_East = std::nan("");
 };
 

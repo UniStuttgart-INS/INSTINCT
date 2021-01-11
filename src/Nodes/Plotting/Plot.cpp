@@ -156,9 +156,18 @@ void NAV::Plot::guiConfig()
                 {
                     for (auto& plotData : pinData.plotData)
                     {
-                        plotData.show = false;
+                        plotData.plotOnAxis.erase(plotNum);
                     }
                 }
+            }
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
+                {
+                    auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
+                    plotData->plotOnAxis.erase(plotNum);
+                }
+                ImGui::EndDragDropTarget();
             }
             auto buttonSize = ImGui::GetItemRectSize();
             ImGui::BeginChild(("Data Drag" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
@@ -212,13 +221,13 @@ void NAV::Plot::guiConfig()
                 {
                     for (auto& plotData : data.at(pinIndex).plotData)
                     {
-                        if (plotData.show
+                        if (plotData.plotOnAxis.contains(plotNum)
                             && plotData.hasData
-                            && (plotData.yAxis == ImPlotYAxis_1
-                                || (plotData.yAxis == ImPlotYAxis_2 && (plotInfo.plotFlags & ImPlotFlags_YAxis2))
-                                || (plotData.yAxis == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
+                            && (plotData.plotOnAxis.at(plotNum) == ImPlotYAxis_1
+                                || (plotData.plotOnAxis.at(plotNum) == ImPlotYAxis_2 && (plotInfo.plotFlags & ImPlotFlags_YAxis2))
+                                || (plotData.plotOnAxis.at(plotNum) == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
                         {
-                            ImPlot::SetPlotYAxis(plotData.yAxis);
+                            ImPlot::SetPlotYAxis(plotData.plotOnAxis.at(plotNum));
                             ImPlot::PlotLine(plotData.displayName.c_str(),
                                              data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data().data(),
                                              plotData.buffer.data().data(),
@@ -244,14 +253,13 @@ void NAV::Plot::guiConfig()
                     {
                         auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
 
-                        plotData->show = true;
-                        plotData->yAxis = 0;
+                        plotData->plotOnAxis[plotNum] = 0;
                         // set specific y-axis if hovered
                         for (int y = 0; y < 3; y++)
                         {
                             if (ImPlot::IsPlotYAxisHovered(y))
                             {
-                                plotData->yAxis = y;
+                                plotData->plotOnAxis[plotNum] = y;
                             }
                         }
                     }
