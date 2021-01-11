@@ -12,31 +12,6 @@ The software consists of one executable ```navsos```
 
 ## Getting Started
 
-### Dependencies
-
-* Needed:
-    * [cmake](https://cmake.org/) A cross-platform open-source make system
-    * C++ compiler ([clang](https://clang.llvm.org/) is recommended, but others work as well) for compiling the project
-* Optional:
-    * [Conan](https://conan.io) A distributed, open source, C/C++ package manager
-    * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) Code formatting Tool
-    * [ccache](https://ccache.dev/) Compiler cache that speeds up recompilation by caching previous compilations
-    * [valgrind](http://valgrind.org/) CPU profiling & leak detection
-    * [kcachegrind](http://kcachegrind.sourceforge.net) Visualization of Performance Profiling Data
-    * [doxygen](http://www.doxygen.nl/) Documentation system for C++, C, Java, IDL and PHP
-    * [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) Clang-based C++ "linter" tool
-    * [cppcheck](http://cppcheck.sourceforge.net/) A tool for static C/C++ code analysis
-* Libraries (Install yourself and change cmake link targets or let them automatically be installed by Conan):
-    * [spdlog](https://github.com/gabime/spdlog) Fast C++ logging library
-    * [fmt](https://github.com/fmtlib/fmt) A modern formatting library https://fmt.dev
-    * [Boost](https://www.boost.org/) Free peer-reviewed portable C++ source libraries
-    * [Eigen](http://eigen.tuxfamily.org) C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms
-    * [Catch2](https://github.com/catchorg/Catch2) Modern, C++-native, header-only, test framework for unit-tests, TDD and BDD
-    * [nlohmann_json](https://github.com/nlohmann/json) JSON for Modern C++ parser and generator.
-* GUI (optional):
-    * [Dear ImGui](https://github.com/ocornut/imgui) Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies
-    * [Node Editor in ImGui](https://github.com/thedmd/imgui-node-editor) An implementation of node editor with ImGui-like API.
-
 ### Development Environment Setup
 
 Most library dependencies are managed by Conan.io, so you just need to install the basics.
@@ -44,7 +19,7 @@ Most library dependencies are managed by Conan.io, so you just need to install t
 #### ArchLinux:
 ```
 # Needed
-sudo pacman -S base-devel cmake clang
+sudo pacman -S base-devel cmake clang glfw-x11
 trizen -S conan # AUR package
 
 # Optional
@@ -59,7 +34,7 @@ sudo pacman -S valgrind kcachegrind
 # Needed
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y build-essential clang clang-tidy cmake python3-pip
+sudo apt install -y build-essential clang clang-tidy cmake python3-pip libglfw3-dev libglfw3
 sudo apt install -y gcc-10 g++-10
 sudo ln -sf /usr/bin/gcc-10 /usr/bin/gcc
 sudo ln -sf /usr/bin/g++-10 /usr/bin/g++
@@ -89,7 +64,7 @@ echo 'export LD_LIBRARY_PATH=/usr/local/clang_10.0.0/lib:$LD_LIBRARY_PATH' >> ~/
 source ~/.bashrc
 
 # Install cmake
-sudo apt-get install build-essential python3-pip
+sudo apt-get install build-essential python3-pip libglfw3-dev libglfw3
 pip3 install cmake
 
 # Install conan
@@ -105,7 +80,7 @@ xcode-select --install
 brew update
 
 # Needed
-brew install cmake llvm conan
+brew install cmake llvm conan glfw3
 ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
 ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 
@@ -205,9 +180,36 @@ Recommended changes to the User's ```keybindings.json```
 | ```F8``` | Open Task List                             |               |
 
 * To start the GUI, execute the Task ```MAIN: Build & run project```
-* To start without GUI, append a ```--nogui``` and a flow file to load
+* To start without GUI, append a ```--nogui``` and a flow file to load with ```-o filepath```
 * If you have problems with the build, execute the Task ```CLEAN: Remove build files```
 * If you want to provide tests, place them in the ```tests``` directory and execute them with the task ```TEST: Build & run```
+
+
+## Dependencies
+
+* Needed:
+    * [cmake](https://cmake.org/) A cross-platform open-source make system
+    * C++ compiler ([clang](https://clang.llvm.org/) is recommended, but others work as well) for compiling the project
+* Optional:
+    * [Conan](https://conan.io) A distributed, open source, C/C++ package manager
+    * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) Code formatting Tool
+    * [ccache](https://ccache.dev/) Compiler cache that speeds up recompilation by caching previous compilations
+    * [valgrind](http://valgrind.org/) CPU profiling & leak detection
+    * [kcachegrind](http://kcachegrind.sourceforge.net) Visualization of Performance Profiling Data
+    * [doxygen](http://www.doxygen.nl/) Documentation system for C++, C, Java, IDL and PHP
+    * [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) Clang-based C++ "linter" tool
+    * [cppcheck](http://cppcheck.sourceforge.net/) A tool for static C/C++ code analysis
+* Libraries (Install yourself and change cmake link targets or let them automatically be installed by Conan):
+    * [spdlog](https://github.com/gabime/spdlog) Fast C++ logging library
+    * [fmt](https://github.com/fmtlib/fmt) A modern formatting library https://fmt.dev
+    * [Boost](https://www.boost.org/) Free peer-reviewed portable C++ source libraries
+    * [Eigen](http://eigen.tuxfamily.org) C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms
+    * [Catch2](https://github.com/catchorg/Catch2) Modern, C++-native, header-only, test framework for unit-tests, TDD and BDD
+    * [nlohmann_json](https://github.com/nlohmann/json) JSON for Modern C++ parser and generator.
+* GUI (optional):
+    * [Dear ImGui](https://github.com/ocornut/imgui) Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies
+    * [Node Editor in ImGui](https://github.com/thedmd/imgui-node-editor) An implementation of node editor with ImGui-like API.
+
 
 ## Help
 
