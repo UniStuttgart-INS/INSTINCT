@@ -536,7 +536,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     if (!node->isInitialized && !node->callbacksEnabled)
                     {
                         ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                         itemDisabled = true;
                     }
 

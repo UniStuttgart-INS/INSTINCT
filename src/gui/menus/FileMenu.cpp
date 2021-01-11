@@ -2,7 +2,6 @@
 
 #include <imgui.h>
 #include <imgui_node_editor.h>
-namespace ed = ax::NodeEditor;
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

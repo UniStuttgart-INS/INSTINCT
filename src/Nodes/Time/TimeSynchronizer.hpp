@@ -64,12 +64,12 @@ class TimeSynchronizer : public Node
     /// @brief Gets the gps time
     /// @param[in] nodeData InsObs to process
     /// @param[in] linkId Id of the link over which the data is received
-    void syncTime(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
+    void syncTime(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Updates Observations with gps time and calls callbacks
     /// @param[in] nodeData Observation to process
     /// @param[in] linkId Id of the link over which the data is received
-    void syncObs(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
+    void syncObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Polls data from the input port and tries to sync it
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
@@ -79,12 +79,12 @@ class TimeSynchronizer : public Node
     /// @brief Updates ImuObs Observations with gps time and calls callbacks
     /// @param[in] obs ImuObs to process
     /// @return True if the time was updated
-    bool syncImuObs(std::shared_ptr<ImuObs> obs);
+    bool syncImuObs(const std::shared_ptr<ImuObs>& obs);
 
     /// @brief Updates Kvh Observations with gps time and calls callbacks
     /// @param[in] obs KvhObs to process
     /// @return True if the time was updated
-    bool syncKvhObs(std::shared_ptr<KvhObs> obs);
+    bool syncKvhObs(const std::shared_ptr<KvhObs>& obs);
 
     /// Selected Port Type in the Gui
     int selectedPortType = 1;

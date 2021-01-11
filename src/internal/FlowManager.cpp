@@ -172,7 +172,7 @@ void NAV::flow::SaveFlow(GlobalActions& globalAction)
     }
     else
     {
-        SaveFlowAs(currentFilename.c_str());
+        SaveFlowAs(currentFilename);
     }
 }
 

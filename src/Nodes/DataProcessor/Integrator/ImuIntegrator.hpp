@@ -60,11 +60,10 @@ class ImuIntegrator : public Node
     constexpr static size_t InputPortIndex_ImuObs = 0;         ///< @brief Flow (ImuObs)
     constexpr static size_t InputPortIndex_StateData = 1;      ///< @brief Object (StateData)
 
-  private:
     /// @brief Integrates the Imu Observation data
     /// @param[in] nodeData ImuObs to process
     /// @param[in] linkId Id of the link over which the data is received
-    void integrateObservation(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
+    void integrateObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// IMU Observation at the time tₖ₋₁
     std::shared_ptr<ImuObs> imuObs__t1 = nullptr;

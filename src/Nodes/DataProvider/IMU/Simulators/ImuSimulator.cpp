@@ -243,7 +243,7 @@ std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
         return nullptr;
     }
 
-    if (auto stateData = getInputValue<StateData>(InputPortIndex_StateData))
+    if (auto* stateData = getInputValue<StateData>(InputPortIndex_StateData))
     {
         auto quat_bn = Eigen::Quaterniond::Identity();
         auto quat_ne = Eigen::Quaterniond::Identity();

@@ -32,7 +32,7 @@ void to_json(json& j, const Matrix<_Scalar, _Rows, _Cols>& matrix)
     {
         for (int c = 0; c < _Cols; c++)
         {
-            j[std::to_string(r).c_str()][std::to_string(c).c_str()] = matrix(r, c);
+            j[std::to_string(r)][std::to_string(c)] = matrix(r, c);
         }
     }
 }
@@ -44,7 +44,7 @@ void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
     {
         for (int c = 0; c < _Cols; c++)
         {
-            j.at(std::to_string(r).c_str()).at(std::to_string(c).c_str()).get_to(matrix(r, c));
+            j.at(std::to_string(r)).at(std::to_string(c)).get_to(matrix(r, c));
         }
     }
 }

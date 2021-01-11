@@ -159,7 +159,7 @@ void NAV::FlowExecutor::execute()
 
             if (outputPin.type == Pin::Type::Flow && nm::IsPinLinked(outputPin.id))
             {
-                auto callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&outputPin.data);
+                auto* callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&outputPin.data);
                 if (callback != nullptr && *callback != nullptr)
                 {
                     LOG_DEBUG("Searching node {} on output pin {} for data", node->nameId(), size_t(outputPin.id));
@@ -204,7 +204,7 @@ void NAV::FlowExecutor::execute()
     {
         Pin* pin = it->second;
         Node* node = pin->parentNode;
-        auto callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&pin->data);
+        auto* callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&pin->data);
         if (callback != nullptr && *callback != nullptr)
         {
             // Trigger the already peeked observation and invoke it's callbacks (peek = false)

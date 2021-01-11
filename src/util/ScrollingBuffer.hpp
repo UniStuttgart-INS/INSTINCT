@@ -13,7 +13,7 @@ template<class T>
 class ScrollingBuffer
 {
   public:
-    ScrollingBuffer(size_t maxSize = 2000)
+    explicit ScrollingBuffer(size_t maxSize = 2000)
         : maxSize(maxSize)
     {
         data_.reserve(maxSize);
@@ -48,10 +48,8 @@ class ScrollingBuffer
         {
             return data_.back();
         }
-        else
-        {
-            return data_.at(offset_ - 1);
-        }
+
+        return data_.at(offset_ - 1);
     }
 
     T front()
@@ -60,10 +58,8 @@ class ScrollingBuffer
         {
             return data_.front();
         }
-        else
-        {
-            return data_.at(offset_);
-        }
+
+        return data_.at(offset_);
     }
 
     [[nodiscard]] int offset() const

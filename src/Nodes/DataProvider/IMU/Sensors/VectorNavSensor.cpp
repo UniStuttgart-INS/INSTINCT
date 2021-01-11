@@ -29,7 +29,7 @@ NAV::VectorNavSensor::VectorNavSensor()
     nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type());
 
     dividerFrequency = []() {
-        std::map<int, int, std::greater<int>> divFreq;
+        std::map<int, int, std::greater<>> divFreq;
         for (int freq = 1; freq <= IMU_DEFAULT_FREQUENCY; freq++)
         {
             int divider = static_cast<int>(std::round(IMU_DEFAULT_FREQUENCY / freq));
@@ -87,8 +87,8 @@ void NAV::VectorNavSensor::guiConfig()
                              "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
                              "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)");
 
-    const char* items[] = { "Fastest", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" };
-    if (ImGui::Combo("Baudrate", &selectedBaudrate, items, IM_ARRAYSIZE(items)))
+    std::array<const char*, 10> items = { "Fastest", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" };
+    if (ImGui::Combo("Baudrate", &selectedBaudrate, items.data(), items.size()))
     {
         LOG_DEBUG("{}: Baudrate changed to {}", nameId(), sensorBaudrate());
         flow::ApplyChanges();

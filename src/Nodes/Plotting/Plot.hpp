@@ -74,12 +74,12 @@ class Plot : public Node
     /// @brief Plot the data on this port
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received
-    void plotData(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId);
+    void plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotVectorNavObs(std::shared_ptr<VectorNavObs> obs, size_t pinIndex);
+    void plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex);
 
     /// @brief Checks if the given data type is supported for link creation
     /// @param[in] dataIdentifier Type to check
@@ -104,7 +104,7 @@ class Plot : public Node
             int yAxis = 0;
         };
 
-        void addPlotDataItem(std::string displayName)
+        void addPlotDataItem(const std::string& displayName)
         {
             plotData.emplace_back(displayName, size);
             allDisplayNames.push_back(displayName);

@@ -11,4 +11,4 @@ namespace NAV::gui::panels
 /// @param[in] paneWidth Width of the pane
 void ShowLeftPane(float paneWidth);
 
-} // namespace gui::panels
+} // namespace NAV::gui::panels

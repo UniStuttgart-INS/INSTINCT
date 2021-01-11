@@ -195,7 +195,7 @@ void NAV::TimeSynchronizer::deinitialize()
     Node::deinitialize();
 }
 
-void NAV::TimeSynchronizer::syncTime(std::shared_ptr<NAV::NodeData> nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::TimeSynchronizer::syncTime(const std::shared_ptr<NAV::NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto obs = std::static_pointer_cast<InsObs>(nodeData);
 
@@ -214,7 +214,7 @@ std::shared_ptr<NAV::NodeData> NAV::TimeSynchronizer::pollData(bool peek)
         if (Pin* pin = nm::FindPin(link->startPinId))
         {
             Node* node = pin->parentNode;
-            auto callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&pin->data);
+            auto* callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&pin->data);
             if (node != nullptr && callback != nullptr && *callback != nullptr)
             {
                 std::shared_ptr<NAV::NodeData> data = (node->**callback)(peek);
@@ -240,7 +240,7 @@ std::shared_ptr<NAV::NodeData> NAV::TimeSynchronizer::pollData(bool peek)
     return nullptr;
 }
 
-void NAV::TimeSynchronizer::syncObs(std::shared_ptr<NAV::NodeData> nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::TimeSynchronizer::syncObs(const std::shared_ptr<NAV::NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     if (inputPins.at(InputPortIndex_ObsToSync).dataIdentifier == ImuObs::type()
         || inputPins.at(InputPortIndex_ObsToSync).dataIdentifier == VectorNavObs::type())
@@ -259,7 +259,7 @@ void NAV::TimeSynchronizer::syncObs(std::shared_ptr<NAV::NodeData> nodeData, ax:
     }
 }
 
-bool NAV::TimeSynchronizer::syncImuObs(std::shared_ptr<NAV::ImuObs> obs)
+bool NAV::TimeSynchronizer::syncImuObs(const std::shared_ptr<NAV::ImuObs>& obs)
 {
     if (obs == nullptr)
     {
@@ -282,7 +282,7 @@ bool NAV::TimeSynchronizer::syncImuObs(std::shared_ptr<NAV::ImuObs> obs)
     return obs->insTime.has_value();
 }
 
-bool NAV::TimeSynchronizer::syncKvhObs(std::shared_ptr<NAV::KvhObs> obs)
+bool NAV::TimeSynchronizer::syncKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
 {
     if (obs == nullptr)
     {

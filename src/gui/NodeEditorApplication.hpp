@@ -33,7 +33,7 @@ class NodeEditorApplication : public Application
     /// @brief Move assignment operator
     NodeEditorApplication& operator=(NodeEditorApplication&&) = delete;
 
-    /// Bring the Application Constructors into this class
+    /// Bring the Application Constructors into this class (NOLINTNEXTLINE)
     using Application::Application;
 
     // static Node* SpawnInputActionNode();
@@ -54,7 +54,7 @@ class NodeEditorApplication : public Application
     void ShowSaveAsRequested();
     void ShowClearNodesRequested();
     void ShowLoadRequested();
-    void ShowRenameNodeRequest(Node*& renameNode);
+    static void ShowRenameNodeRequest(Node*& renameNode);
 
     int frameCountNavigate = 0;
 

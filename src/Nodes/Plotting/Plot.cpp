@@ -99,7 +99,7 @@ void NAV::Plot::guiConfig()
 
                             if (!plotData.hasData)
                             {
-                                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+                                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                             }
                             const bool is_selected = (plotInfo.selectedXdata.at(pinIndex) == plotDataIndex);
                             if (ImGui::Selectable(pinData.allDisplayNames.at(plotDataIndex).c_str(), is_selected))
@@ -166,13 +166,11 @@ void NAV::Plot::guiConfig()
                               true);
 
             // Left Data Selectables
-            for (size_t plotDataIndex = 0; plotDataIndex < data.at(static_cast<size_t>(plotInfo.selectedPin)).plotData.size(); plotDataIndex++)
+            for (auto& plotData : data.at(static_cast<size_t>(plotInfo.selectedPin)).plotData)
             {
-                auto& plotData = data.at(static_cast<size_t>(plotInfo.selectedPin)).plotData.at(plotDataIndex);
-
                 if (!plotData.hasData)
                 {
-                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                 }
                 std::string label = plotData.displayName;
                 ImGui::Selectable(label.c_str(), false, 0);
@@ -244,7 +242,7 @@ void NAV::Plot::guiConfig()
                 {
                     if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
                     {
-                        auto plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
+                        auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
 
                         plotData->show = true;
                         plotData->yAxis = 0;
@@ -441,7 +439,7 @@ void NAV::Plot::updateNumberOfInputPins()
     }
 }
 
-void NAV::Plot::plotData(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId)
+void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
     if (Link* link = nm::FindLink(linkId))
     {
@@ -456,7 +454,7 @@ void NAV::Plot::plotData(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::Lin
     }
 }
 
-void NAV::Plot::plotVectorNavObs(std::shared_ptr<VectorNavObs> obs, size_t pinIndex)
+void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex)
 {
     auto& pinData = data.at(pinIndex);
 

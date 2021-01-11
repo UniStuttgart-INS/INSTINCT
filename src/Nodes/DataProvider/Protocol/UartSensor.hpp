@@ -58,7 +58,7 @@ class UartSensor
 
     /// @brief Returns the guiSelection for the given baudrate
     /// @param[in] baud Baudrate to convert
-    int baudrate2Selection(Baudrate baud);
+    static int baudrate2Selection(Baudrate baud);
 
     /// COM port where the sensor is attached to
     ///

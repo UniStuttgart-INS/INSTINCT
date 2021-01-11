@@ -171,7 +171,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     if (endPin->type == Pin::Type::Flow)
     {
         startPin->callbacks.emplace_back(endPin->parentNode,
-                                         std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>, ax::NodeEditor::LinkId)>(endPin->data),
+                                         std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                          m_links.back().id);
     }
     else
@@ -212,7 +212,7 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
         if (endPin->type == Pin::Type::Flow)
         {
             startPin->callbacks.emplace_back(endPin->parentNode,
-                                             std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>, ax::NodeEditor::LinkId)>(endPin->data),
+                                             std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                              link.id);
         }
         else
@@ -275,7 +275,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             {
                 auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
                                       std::make_tuple(endPin->parentNode,
-                                                      std::get<void (NAV::Node::*)(std::shared_ptr<NAV::NodeData>, ax::NodeEditor::LinkId)>(endPin->data),
+                                                      std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                                       linkId));
                 if (iter != startPin->callbacks.end())
                 {

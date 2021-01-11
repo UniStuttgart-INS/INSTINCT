@@ -103,6 +103,7 @@ file(
 add_library(imgui ${_imgui_Sources})
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/imgui")
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/imgui/misc/cpp")
+target_link_libraries(imgui PRIVATE project_options)
 target_compile_definitions(imgui PUBLIC "ImDrawIdx=unsigned int")
 set_target_properties(imgui PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(imgui PROPERTIES CXX_CPPCHECK "")
@@ -115,7 +116,7 @@ get_filename_component(IMGUI_NODE_EDITOR_ROOT_DIR ${CMAKE_SOURCE_DIR}/lib/imgui-
 list(APPEND CMAKE_MODULE_PATH ${IMGUI_NODE_EDITOR_ROOT_DIR}/misc/cmake-modules)
 find_package(imgui REQUIRED)
 find_package(imgui_node_editor REQUIRED)
-target_link_libraries(imgui_node_editor PRIVATE imgui)
+target_link_libraries(imgui_node_editor PRIVATE project_options imgui)
 include_directories(SYSTEM lib/imgui-node-editor)
 # include_directories(SYSTEM lib/imgui-node-editor/external/imgui)
 set_target_properties(imgui_node_editor PROPERTIES CXX_CLANG_TIDY "")
@@ -129,6 +130,7 @@ add_library(
   "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialog.h"
   "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialogConfig.h")
 include_directories(SYSTEM lib/ImGuiFileDialog/ImGuiFileDialog)
+target_link_libraries(ImGuiFileDialog PRIVATE project_options)
 set_target_properties(ImGuiFileDialog PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(ImGuiFileDialog PROPERTIES CXX_CPPCHECK "")
 
@@ -140,6 +142,7 @@ file(
   "${CMAKE_SOURCE_DIR}/lib/implot/*.cpp" "${CMAKE_SOURCE_DIR}/lib/implot/*.h")
 add_library(implot ${_implot_Sources})
 include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/lib/implot")
+target_link_libraries(implot PRIVATE project_options)
 target_compile_definitions(implot PUBLIC "ImDrawIdx=unsigned int")
 set_target_properties(implot PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(implot PROPERTIES CXX_CPPCHECK "")
@@ -148,7 +151,7 @@ set_target_properties(implot PROPERTIES CXX_CPPCHECK "")
 
 add_subdirectory(lib/application)
 include_directories(SYSTEM lib/application/include)
-target_link_libraries(application PRIVATE implot)
+target_link_libraries(application PRIVATE project_options implot)
 set_target_properties(application PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(application PROPERTIES CXX_CPPCHECK "")
 

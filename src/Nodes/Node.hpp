@@ -141,7 +141,7 @@ class Node
     /* -------------------------------------------------------------------------------------------------------- */
 
     template<typename T>
-    T* getInputValue(size_t portIndex)
+    [[nodiscard]] T* getInputValue(size_t portIndex)
     {
         // clang-format off
         if constexpr (std::is_same_v<T, bool>
@@ -167,7 +167,7 @@ class Node
     }
 
     template<typename T>
-    T* getInputValue(size_t portIndex) const
+    [[nodiscard]] T* getInputValue(size_t portIndex) const
     {
         if constexpr (std::is_same_v<T, bool> || std::is_same_v<T, int> || std::is_same_v<T, float> || std::is_same_v<T, double> || std::is_same_v<T, std::string>)
         {
@@ -195,7 +195,7 @@ class Node
     template<typename T, class... U>
     T callInputFunction(size_t portIndex, U&&... u)
     {
-        auto function = std::get_if<std::pair<Node*, void (Node::*)()>>(&inputPins.at(portIndex).data);
+        auto* function = std::get_if<std::pair<Node*, void (Node::*)()>>(&inputPins.at(portIndex).data);
 
         Node* node = function->first;
         auto callbackProto = function->second;

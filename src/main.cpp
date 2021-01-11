@@ -15,7 +15,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-int Main(int argc, const char* argv[])
+int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
 {
     // Config Manager object
     NAV::ConfigManager configManager;

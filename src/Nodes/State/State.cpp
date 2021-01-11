@@ -184,13 +184,13 @@ void NAV::State::deinitialize()
     Node::deinitialize();
 }
 
-void NAV::State::updateState(std::shared_ptr<NodeData> state, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::State::updateState(const std::shared_ptr<NodeData>& state, ax::NodeEditor::LinkId /*linkId*/)
 {
     // Process the data here
     currentState = *std::static_pointer_cast<StateData>(state);
 }
 
-void NAV::State::initAttitude(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::State::initAttitude(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
 
@@ -220,7 +220,7 @@ void NAV::State::initAttitude(std::shared_ptr<NodeData> nodeData, ax::NodeEditor
     finalizeInit(obs->insTime.value());
 }
 
-void NAV::State::initPositionVelocity(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::State::initPositionVelocity(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto obs = std::static_pointer_cast<GnssObs>(nodeData);
 
