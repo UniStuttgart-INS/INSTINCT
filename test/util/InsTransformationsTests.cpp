@@ -153,17 +153,17 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
         Eigen::AngleAxisd yAngle(beta, Eigen::Vector3d::UnitY());
         Eigen::AngleAxisd zAngle(gamma, Eigen::Vector3d::UnitZ());
 
-        return Eigen::Quaterniond(zAngle * yAngle * xAngle);
+        return zAngle * yAngle * xAngle;
     };
 
     double delta = trafo::rad2deg(0.01);
     bool error = false;
     // (-pi:pi]x(-pi/2:pi/2]x(-pi:pi]
-    for (double alpha = -M_PI + delta; alpha <= M_PI && !error; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter)
+    for (double alpha = -M_PI + delta; alpha <= M_PI && !error; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
-        for (double beta = -M_PI / 2.0 + delta; beta <= M_PI / 2.0 && !error; beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter)
+        for (double beta = -M_PI / 2.0 + delta; beta <= M_PI / 2.0 && !error; beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
         {
-            for (double gamma = -M_PI + delta; gamma <= M_PI && !error; gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter)
+            for (double gamma = -M_PI + delta; gamma <= M_PI && !error; gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
                 auto q = quat(alpha, beta, gamma);
                 auto ZYX = trafo::rad2deg3(trafo::quat2eulerZYX(q));
