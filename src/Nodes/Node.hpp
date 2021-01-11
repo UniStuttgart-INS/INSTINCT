@@ -78,6 +78,7 @@ class Node
             case Kind::GroupBox:
                 return "GroupBox";
             }
+            return "";
         }
 
       private:

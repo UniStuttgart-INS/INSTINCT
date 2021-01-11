@@ -95,4 +95,5 @@ int NAV::UartSensor::baudrate2Selection(Baudrate baud)
     case BAUDRATE_921600:
         return 9;
     }
+    return 0;
 }

@@ -168,4 +168,4 @@ void EnableAllCallbacks();
 /// @brief Disables all Node callbacks
 void DisableAllCallbacks();
 
-}; // namespace NAV::NodeManager
+} // namespace NAV::NodeManager

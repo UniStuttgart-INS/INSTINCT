@@ -122,6 +122,7 @@ class Pin
             case Type::Delegate:
                 return "Delegate";
             }
+            return "";
         }
 
       private:

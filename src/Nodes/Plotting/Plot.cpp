@@ -150,9 +150,22 @@ void NAV::Plot::guiConfig()
                 ImGui::EndCombo();
             }
             auto comboBoxSize = ImGui::GetItemRectSize();
+            if (ImGui::Button(("Clear##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), ImVec2(sideWidth, 0)))
+            {
+                for (auto& pinData : data)
+                {
+                    for (auto& plotData : pinData.plotData)
+                    {
+                        plotData.show = false;
+                    }
+                }
+            }
+            auto buttonSize = ImGui::GetItemRectSize();
             ImGui::BeginChild(("Data Drag" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                              ImVec2(sideWidth, ImPlot::GetStyle().PlotDefaultSize.y - comboBoxSize.y - ImGui::GetStyle().ItemSpacing.y), false);
+                              ImVec2(sideWidth, ImPlot::GetStyle().PlotDefaultSize.y - comboBoxSize.y - buttonSize.y - 2 * ImGui::GetStyle().ItemSpacing.y),
+                              true);
 
+            // Left Data Selectables
             for (size_t plotDataIndex = 0; plotDataIndex < data.at(static_cast<size_t>(plotInfo.selectedPin)).plotData.size(); plotDataIndex++)
             {
                 auto& plotData = data.at(static_cast<size_t>(plotInfo.selectedPin)).plotData.at(plotDataIndex);
@@ -177,13 +190,14 @@ void NAV::Plot::guiConfig()
                     ImGui::PopStyleVar();
                 }
             }
+
             ImGui::EndChild();
             ImGui::EndGroup();
 
             ImGui::SameLine();
 
-            std::string xLabel = data.at(0).allDisplayNames.at(plotInfo.selectedXdata.at(0));
-            if (!data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.data().empty())
+            std::string xLabel = data.at(0).allDisplayNames.empty() ? "" : data.at(0).allDisplayNames.at(plotInfo.selectedXdata.at(0));
+            if (!data.at(0).plotData.empty() && !data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.data().empty())
             {
                 double xMin = data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.front();
                 double xMax = data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.back();
@@ -429,8 +443,6 @@ void NAV::Plot::updateNumberOfInputPins()
 
 void NAV::Plot::plotData(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::LinkId linkId)
 {
-    LOG_TRACE("{}: called", nameId());
-
     if (Link* link = nm::FindLink(linkId))
     {
         if (Pin* sourcePin = nm::FindPin(link->startPinId))
@@ -446,8 +458,6 @@ void NAV::Plot::plotData(std::shared_ptr<NodeData> nodeData, ax::NodeEditor::Lin
 
 void NAV::Plot::plotVectorNavObs(std::shared_ptr<VectorNavObs> obs, size_t pinIndex)
 {
-    LOG_TRACE("{}: called", nameId());
-
     auto& pinData = data.at(pinIndex);
 
     auto addData = [&pinData](bool hasValue, size_t index, double value) {

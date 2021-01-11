@@ -57,7 +57,8 @@ ImColor NAV::Pin::getIconColor() const
     case Type::Delegate:
         return ImColor(255, 48, 48);
     }
-};
+    return ImColor(0, 0, 0);
+}
 
 void NAV::Pin::drawPinIcon(bool connected, int alpha) const
 {
@@ -104,4 +105,4 @@ void NAV::Pin::drawPinIcon(bool connected, int alpha) const
 
     gui::widgets::PinIcon::Draw(ImVec2(static_cast<float>(m_PinIconSize), static_cast<float>(m_PinIconSize)),
                                 iconType, connected, color, ImColor(32, 32, 32, alpha));
-};
+}

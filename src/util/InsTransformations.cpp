@@ -65,7 +65,7 @@ Eigen::Quaterniond trafo::quat_en(const double latitude, const double longitude)
     Eigen::AngleAxisd longitudeAngle(longitude, Eigen::Vector3d::UnitZ());
     Eigen::AngleAxisd latitudeAngle(-M_PI_2 - latitude, Eigen::Vector3d::UnitY());
 
-    return Eigen::Quaterniond(longitudeAngle * latitudeAngle);
+    return longitudeAngle * latitudeAngle;
 }
 
 Eigen::Quaterniond trafo::quat_ne(const double latitude, const double longitude)
@@ -81,7 +81,7 @@ Eigen::Quaterniond trafo::quat_nb(const double roll, const double pitch, const d
     Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
     Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitZ());
 
-    return Eigen::Quaterniond(yawAngle * pitchAngle * rollAngle);
+    return yawAngle * pitchAngle * rollAngle;
 }
 
 Eigen::Quaterniond trafo::quat_bn(const double roll, const double pitch, const double yaw)
@@ -96,7 +96,7 @@ Eigen::Quaterniond trafo::quat_bp(double mountingAngleX, double mountingAngleY, 
     Eigen::AngleAxisd yAngle(mountingAngleY, Eigen::Vector3d::UnitY());
     Eigen::AngleAxisd zAngle(mountingAngleZ, Eigen::Vector3d::UnitZ());
 
-    return Eigen::Quaterniond(zAngle * yAngle * xAngle);
+    return zAngle * yAngle * xAngle;
 }
 
 Eigen::Quaterniond trafo::quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ)

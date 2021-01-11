@@ -28,8 +28,8 @@ Checks:          '*,-fuchsia-*,
                   -google-readability-todo,
                   -google-runtime-references,
                   -readability-implicit-bool-conversion,
-                  -readability-magic-numbers',
-                  -readability-use-anyofallof
+                  -readability-magic-numbers,
+                  -readability-use-anyofallof'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 FormatStyle:     file
