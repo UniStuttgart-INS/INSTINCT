@@ -62,7 +62,7 @@ void NAV::KvhFile::guiConfig()
     std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
     if (ImGui::Button("Open"))
     {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "");
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "data");
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 
@@ -76,7 +76,7 @@ void NAV::KvhFile::guiConfig()
             initialize();
         }
 
-        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
+        igfd::ImGuiFileDialog::Instance()->CloseDialog();
     }
     if (fileType == FileType::ASCII)
     {

@@ -62,7 +62,7 @@ void NAV::EmlidDataLogger::guiConfig()
     std::string saveFileDialogKey = fmt::format("Save File ({})", id.AsPointer());
     if (ImGui::Button("Save"))
     {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".ubx", "");
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".ubx", "logs", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".ubx", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 
@@ -76,7 +76,7 @@ void NAV::EmlidDataLogger::guiConfig()
             initialize();
         }
 
-        igfd::ImGuiFileDialog::Instance()->CloseDialog(saveFileDialogKey);
+        igfd::ImGuiFileDialog::Instance()->CloseDialog();
     }
 }
 

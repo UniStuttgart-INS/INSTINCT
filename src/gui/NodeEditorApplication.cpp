@@ -148,7 +148,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "");
+                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "flow", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
@@ -170,7 +170,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
             }
 
             globalAction = GlobalActions::None;
-            igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
+            igfd::ImGuiFileDialog::Instance()->CloseDialog();
             Quit();
             ImGui::CloseCurrentPopup();
         }
@@ -196,7 +196,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
     ax::NodeEditor::EnableShortcuts(false);
-    igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "");
+    igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "flow", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
     auto& io = ImGui::GetIO();
@@ -206,7 +206,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         {
             globalAction = GlobalActions::None;
             ax::NodeEditor::EnableShortcuts(true);
-            igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
+            igfd::ImGuiFileDialog::Instance()->CloseDialog();
             return;
         }
     }
@@ -221,7 +221,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 
         globalAction = GlobalActions::None;
         ax::NodeEditor::EnableShortcuts(true);
-        igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
+        igfd::ImGuiFileDialog::Instance()->CloseDialog();
     }
 }
 
@@ -248,7 +248,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "");
+                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "flow", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
@@ -258,6 +258,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
                 nm::DeleteAllLinks();
                 nm::DeleteAllNodes();
                 flow::DiscardChanges();
+                flow::SetCurrentFilename("");
                 ax::NodeEditor::EnableShortcuts(true);
                 ImGui::CloseCurrentPopup();
             }
@@ -270,10 +271,11 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
                 flow::SetCurrentFilename(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
                 flow::SaveFlowAs(flow::GetCurrentFilename());
 
-                igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
+                igfd::ImGuiFileDialog::Instance()->CloseDialog();
                 nm::DeleteAllLinks();
                 nm::DeleteAllNodes();
                 flow::DiscardChanges();
+                flow::SetCurrentFilename("");
             }
 
             globalAction = GlobalActions::None;
@@ -288,6 +290,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             nm::DeleteAllLinks();
             nm::DeleteAllNodes();
             flow::DiscardChanges();
+            flow::SetCurrentFilename("");
             ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
@@ -305,7 +308,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 {
     ax::NodeEditor::EnableShortcuts(false);
-    igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "");
+    igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "flow", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
     static bool loadSuccessful = true;
@@ -318,7 +321,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
             globalAction = GlobalActions::None;
             ax::NodeEditor::EnableShortcuts(true);
             loadSuccessful = true;
-            igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
+            igfd::ImGuiFileDialog::Instance()->CloseDialog();
             return;
         }
     }
@@ -333,14 +336,14 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
                 globalAction = GlobalActions::None;
                 ax::NodeEditor::EnableShortcuts(true);
                 frameCountNavigate = ImGui::GetFrameCount();
-                igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
+                igfd::ImGuiFileDialog::Instance()->CloseDialog();
             }
         }
         else
         {
             globalAction = GlobalActions::None;
             ax::NodeEditor::EnableShortcuts(true);
-            igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
+            igfd::ImGuiFileDialog::Instance()->CloseDialog();
         }
     }
     if (!loadSuccessful)

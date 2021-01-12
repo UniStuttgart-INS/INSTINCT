@@ -60,7 +60,7 @@ void NAV::RtklibPosFile::guiConfig()
     std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
     if (ImGui::Button("Open"))
     {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".pos", "");
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".pos", "data");
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".pos", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 
@@ -74,7 +74,7 @@ void NAV::RtklibPosFile::guiConfig()
             initialize();
         }
 
-        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
+        igfd::ImGuiFileDialog::Instance()->CloseDialog();
     }
 
     // Header info
