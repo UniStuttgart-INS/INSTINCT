@@ -29,6 +29,7 @@ constexpr int loadingFramesToWait = 2;
 int loadingFrameCount = 0;
 
 std::string currentFilename;
+std::string programRootPath;
 
 void to_json(json& j, const ImColor& color)
 {
@@ -316,4 +317,14 @@ std::string NAV::flow::GetCurrentFilename()
 void NAV::flow::SetCurrentFilename(const std::string& newFilename)
 {
     currentFilename = newFilename;
+}
+
+std::string NAV::flow::GetProgramRootPath()
+{
+    return programRootPath;
+}
+
+void NAV::flow::SetProgramRootPath(const std::string& newRootPath)
+{
+    programRootPath = newRootPath;
 }

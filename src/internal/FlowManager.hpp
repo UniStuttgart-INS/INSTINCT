@@ -26,4 +26,8 @@ std::string GetCurrentFilename();
 
 void SetCurrentFilename(const std::string& newFilename);
 
+std::string GetProgramRootPath();
+
+void SetProgramRootPath(const std::string& newRootPath);
+
 } // namespace NAV::flow

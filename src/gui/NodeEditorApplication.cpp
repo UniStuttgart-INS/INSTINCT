@@ -41,6 +41,7 @@ namespace nm = NAV::NodeManager;
 #include <map>
 #include <algorithm>
 #include <utility>
+#include <filesystem>
 
 ax::NodeEditor::EditorContext* m_Editor = nullptr;
 
@@ -86,6 +87,8 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ed::GetStyle().FlowDuration = 1.0F;
 
     m_HeaderBackground = LoadTexture("resources/images/BlueprintBackground.png");
+
+    flow::SetProgramRootPath(std::filesystem::current_path());
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()
@@ -148,6 +151,12 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
+                if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+                    std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+                {
+                    LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+                    std::filesystem::current_path(targetPath);
+                }
                 igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
@@ -196,6 +205,13 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
     ax::NodeEditor::EnableShortcuts(false);
+
+    if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+        std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+    {
+        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+        std::filesystem::current_path(targetPath);
+    }
     igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
@@ -248,6 +264,12 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
+                if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+                    std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+                {
+                    LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+                    std::filesystem::current_path(targetPath);
+                }
                 igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
@@ -308,6 +330,13 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 {
     ax::NodeEditor::EnableShortcuts(false);
+
+    if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+        std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+    {
+        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+        std::filesystem::current_path(targetPath);
+    }
     igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "", 1, nullptr);
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
