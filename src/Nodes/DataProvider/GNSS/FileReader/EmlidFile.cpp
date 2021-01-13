@@ -61,7 +61,7 @@ void NAV::EmlidFile::guiConfig()
     std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
     if (ImGui::Button("Open"))
     {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".ubx", "data");
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".ubx", "");
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".ubx", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 

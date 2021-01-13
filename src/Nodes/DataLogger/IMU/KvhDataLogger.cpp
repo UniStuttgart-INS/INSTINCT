@@ -62,7 +62,7 @@ void NAV::KvhDataLogger::guiConfig()
     std::string saveFileDialogKey = fmt::format("Save File ({})", id.AsPointer());
     if (ImGui::Button("Save"))
     {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".csv", "logs", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".csv", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 

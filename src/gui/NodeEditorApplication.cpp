@@ -148,7 +148,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "flow", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
@@ -196,7 +196,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
     ax::NodeEditor::EnableShortcuts(false);
-    igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "flow", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+    igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
     auto& io = ImGui::GetIO();
@@ -248,7 +248,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "flow", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
@@ -308,7 +308,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 {
     ax::NodeEditor::EnableShortcuts(false);
-    igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "flow", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+    igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "", 1, nullptr);
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
     static bool loadSuccessful = true;

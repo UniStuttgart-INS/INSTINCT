@@ -60,7 +60,7 @@ void NAV::VectorNavFile::guiConfig()
     std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
     if (ImGui::Button("Open"))
     {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "data");
+        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "");
         igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
     }
 
