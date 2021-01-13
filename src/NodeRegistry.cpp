@@ -84,6 +84,8 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType,
     return false;
 }
 
+// Utility
+#include "Nodes/util/Demo.hpp"
 #include "Nodes/util/GroupBox.hpp"
 // Data Logger
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
@@ -118,7 +120,8 @@ void NAV::NodeRegistry::registerNodeTypes()
 {
     LOG_TRACE("called");
 
-    // GroupBox
+    // Utility
+    registerNodeType<Demo>();
     registerNodeType<GroupBox>();
     // Data Logger
     registerNodeType<EmlidDataLogger>();
