@@ -55,8 +55,7 @@ class UbloxSensor : public Gnss, public UartSensor
     void deinitialize() override;
 
   private:
-    constexpr static size_t OutputPortIndex_UbloxSensor = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_UbloxObs = 1;    ///< @brief Flow (UbloxObs)
+    constexpr static size_t OutputPortIndex_UbloxObs = 1; ///< @brief Flow (UbloxObs)
 
     /// @brief Callback handler for notifications of new asynchronous data packets received
     /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler

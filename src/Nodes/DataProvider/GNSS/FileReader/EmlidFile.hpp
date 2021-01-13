@@ -59,8 +59,7 @@ class EmlidFile : public Gnss, public FileReader
     void resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_EmlidFile = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_EmlidObs = 1;  ///< @brief Flow (EmlidObs)
+    constexpr static size_t OutputPortIndex_EmlidObs = 1; ///< @brief Flow (EmlidObs)
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read

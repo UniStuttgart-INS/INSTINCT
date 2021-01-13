@@ -57,7 +57,6 @@ class VectorNavFile : public Imu, public FileReader
     void resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_VectorNavFile = 0; ///< @brief Delegate
     constexpr static size_t OutputPortIndex_VectorNavObs = 1;  ///< @brief Flow (VectorNavObs)
     constexpr static size_t OutputPortIndex_HeaderColumns = 2; ///< @brief Object (std::vector<std::string>)
 

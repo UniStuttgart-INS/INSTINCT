@@ -57,8 +57,7 @@ class RtklibPosFile : public Gnss, public FileReader
     void resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_RtklibPosFile = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_RtklibPosObs = 1;  ///< @brief Flow (RtklibPosObs)
+    constexpr static size_t OutputPortIndex_RtklibPosObs = 1; ///< @brief Flow (RtklibPosObs)
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read

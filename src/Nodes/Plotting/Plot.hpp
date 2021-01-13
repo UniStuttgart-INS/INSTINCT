@@ -69,8 +69,6 @@ class Plot : public Node
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
   private:
-    constexpr static size_t OutputPortIndex_Plot = 0; ///< @brief Delegate
-
     /// @brief Plot the data on this port
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received

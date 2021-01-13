@@ -59,8 +59,7 @@ class UbloxFile : public Gnss, public FileReader
     void resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_UbloxFile = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_UbloxObs = 1;  ///< @brief Flow (UbloxObs)
+    constexpr static size_t OutputPortIndex_UbloxObs = 1; ///< @brief Flow (UbloxObs)
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read

@@ -60,8 +60,7 @@ class Navio2Sensor : public Imu
     void deinitialize() override;
 
   private:
-    constexpr static size_t OutputPortIndex_Navio2Sensor = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_ImuObs = 1;       ///< @brief Flow (ImuObs)
+    constexpr static size_t OutputPortIndex_ImuObs = 1; ///< @brief Flow (ImuObs)
 
     /// Enumeration of IMUs on the Navio2
     enum ImuType : int

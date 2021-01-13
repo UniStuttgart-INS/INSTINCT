@@ -56,7 +56,6 @@ class State : public Node
     void deinitialize() override;
 
   private:
-    constexpr static size_t OutputPortIndex_State = 0;    ///< @brief Delegate
     constexpr static size_t OutputPortIndex_ImuObs = 1;   ///< @brief Flow (ImuObs)
     constexpr static size_t InputPortIndex_StateData = 0; ///< @brief Object (StateData)
 

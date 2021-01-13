@@ -57,7 +57,6 @@ class ImuFile : public Imu, public FileReader
     void resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_ImuFile = 0;       ///< @brief Delegate
     constexpr static size_t OutputPortIndex_ImuObs = 1;        ///< @brief Flow (ImuObs)
     constexpr static size_t OutputPortIndex_HeaderColumns = 2; ///< @brief Object (std::vector<std::string>)
 

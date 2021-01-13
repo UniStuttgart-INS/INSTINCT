@@ -55,10 +55,9 @@ class ImuIntegrator : public Node
     void deinitialize() override;
 
   private:
-    constexpr static size_t OutputPortIndex_ImuIntegrator = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_StateData = 1;     ///< @brief Flow (StateData)
-    constexpr static size_t InputPortIndex_ImuObs = 0;         ///< @brief Flow (ImuObs)
-    constexpr static size_t InputPortIndex_StateData = 1;      ///< @brief Object (StateData)
+    constexpr static size_t OutputPortIndex_StateData = 1; ///< @brief Flow (StateData)
+    constexpr static size_t InputPortIndex_ImuObs = 0;     ///< @brief Flow (ImuObs)
+    constexpr static size_t InputPortIndex_StateData = 1;  ///< @brief Object (StateData)
 
     /// @brief Integrates the Imu Observation data
     /// @param[in] nodeData ImuObs to process

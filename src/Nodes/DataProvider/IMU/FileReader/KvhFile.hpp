@@ -59,7 +59,6 @@ class KvhFile : public Imu, public FileReader
     void resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_KvhFile = 0;       ///< @brief Delegate
     constexpr static size_t OutputPortIndex_KvhObs = 1;        ///< @brief Flow (KvhObs)
     constexpr static size_t OutputPortIndex_HeaderColumns = 2; ///< @brief Object (std::vector<std::string>)
 

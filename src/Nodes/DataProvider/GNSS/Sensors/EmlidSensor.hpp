@@ -55,8 +55,7 @@ class EmlidSensor : public Gnss, public UartSensor
     void deinitialize() override;
 
   private:
-    constexpr static size_t OutputPortIndex_EmlidSensor = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_EmlidObs = 1;    ///< @brief Flow (EmlidObs)
+    constexpr static size_t OutputPortIndex_EmlidObs = 1; ///< @brief Flow (EmlidObs)
 
     /// @brief Callback handler for notifications of new asynchronous data packets received
     /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler

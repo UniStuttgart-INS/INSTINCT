@@ -55,8 +55,7 @@ class KvhSensor : public Imu, public UartSensor
     void deinitialize() override;
 
   private:
-    constexpr static size_t OutputPortIndex_KvhSensor = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_KvhObs = 1;    ///< @brief Flow (KvhObs)
+    constexpr static size_t OutputPortIndex_KvhObs = 1; ///< @brief Flow (KvhObs)
 
     /// @brief Callback handler for notifications of new asynchronous data packets received
     /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
