@@ -3,7 +3,6 @@
 #include "util/Logger.hpp"
 #include "util/InsTransformations.hpp"
 
-#include "imgui_stdlib.h"
 #include "ImGuiFileDialog.h"
 
 #include "internal/NodeManager.hpp"

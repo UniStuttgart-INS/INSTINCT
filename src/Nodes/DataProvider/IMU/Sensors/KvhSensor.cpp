@@ -2,7 +2,6 @@
 
 #include "util/Logger.hpp"
 
-#include "imgui_stdlib.h"
 #include "gui/widgets/HelpMarker.hpp"
 
 #include "internal/NodeManager.hpp"

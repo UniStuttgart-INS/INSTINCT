@@ -4,7 +4,6 @@
 
 #include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
-#include "imgui_stdlib.h"
 #include "gui/widgets/HelpMarker.hpp"
 
 #include "internal/NodeManager.hpp"

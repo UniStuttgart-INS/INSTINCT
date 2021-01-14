@@ -3,7 +3,6 @@
 #include "util/Logger.hpp"
 
 #include "implot.h"
-#include "imgui_stdlib.h"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
