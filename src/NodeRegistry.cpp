@@ -5,7 +5,7 @@
 #include "Nodes/Node.hpp"
 #include "NodeData/NodeData.hpp"
 
-#include <string_view>
+#include <string>
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                              Private Members                                             */
@@ -17,7 +17,7 @@ namespace NAV::NodeRegistry
 std::vector<NodeInfo> registeredNodes_;
 
 /// List of all registered node data types
-std::map<std::string_view, std::vector<std::string_view>> registeredNodeDataTypes_;
+std::map<std::string, std::vector<std::string>> registeredNodeDataTypes_;
 
 } // namespace NAV::NodeRegistry
 /* -------------------------------------------------------------------------------------------------------- */
@@ -61,7 +61,7 @@ const std::vector<NAV::NodeRegistry::NodeInfo>& NAV::NodeRegistry::registeredNod
     return registeredNodes_;
 }
 
-bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string_view& childType, const std::string_view& parentType)
+bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string& childType, const std::string& parentType)
 {
     if (childType == parentType)
     {

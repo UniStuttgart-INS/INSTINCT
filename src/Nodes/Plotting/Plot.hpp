@@ -82,7 +82,7 @@ class Plot : public Node
     /// @brief Checks if the given data type is supported for link creation
     /// @param[in] dataIdentifier Type to check
     /// @return True if supported, false if not
-    static bool isDataTypeSupported(std::string_view dataIdentifier);
+    static bool isDataTypeSupported(std::string dataIdentifier);
 
     /// @brief Adds Input Pins depending on the variable nInputPins
     void updateNumberOfInputPins();

@@ -39,14 +39,14 @@ class EmlidObs : public GnssObs
 
     /// @brief Returns the type of the data class
     /// @return The data type
-    [[nodiscard]] static constexpr std::string_view type()
+    [[nodiscard]] static std::string type()
     {
-        return std::string_view("EmlidObs");
+        return std::string("EmlidObs");
     }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
-    [[nodiscard]] static std::vector<std::string_view> parentTypes()
+    [[nodiscard]] static std::vector<std::string> parentTypes()
     {
         return { GnssObs::type() };
     }

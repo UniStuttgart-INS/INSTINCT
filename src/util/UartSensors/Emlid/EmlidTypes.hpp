@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <string_view>
+#include <string>
 #include <array>
 #include <optional>
 #include <bitset>
@@ -135,6 +135,6 @@ struct ErbRtk
 ///
 /// @param[in] idName String of the ERB Class
 /// @return The ERB ID
-[[nodiscard]] ErbMessageID getMsgIdFromString(const std::string_view& idName);
+[[nodiscard]] ErbMessageID getMsgIdFromString(const std::string& idName);
 
 } // namespace NAV::sensors::emlid

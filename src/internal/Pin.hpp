@@ -8,7 +8,6 @@
 #include <imgui_node_editor.h>
 
 #include <string>
-#include <string_view>
 #include <variant>
 #include <vector>
 #include <memory>
@@ -242,7 +241,7 @@ class Pin
     /// Callback List
     std::vector<std::tuple<Node*, void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> callbacks;
     /// Unique name which is used for data flows
-    std::string_view dataIdentifier;
+    std::string dataIdentifier;
 
   private:
     /// Size of the Pin Icons in [px]
