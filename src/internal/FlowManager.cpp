@@ -274,7 +274,10 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
 
     for (auto* node : nm::m_Nodes())
     {
-        node->initialize();
+        if (!node->isInitialized)
+        {
+            node->initialize();
+        }
     }
 
     if (!ConfigManager::Get<bool>("nogui", false))

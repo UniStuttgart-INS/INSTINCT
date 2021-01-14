@@ -12,6 +12,8 @@ bool NAV::Node::initialize()
     // Lock the node against recursive calling
     isInitializing = true;
 
+    LOG_DEBUG("{}: Initializing Node", nameId());
+
     for (const auto& inputPin : inputPins)
     {
         if (inputPin.type != Pin::Type::Flow)
@@ -22,28 +24,13 @@ bool NAV::Node::initialize()
                 Node* connectedNode = connectedNodes.front();
                 if (!connectedNode->isInitialized && !connectedNode->isInitializing)
                 {
+                    LOG_DEBUG("{}: Initializing connected Node '{}' on input Pin {}", nameId(), connectedNode->nameId(), size_t(inputPin.id));
                     if (!connectedNode->initialize())
                     {
                         LOG_ERROR("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
                         isInitializing = false;
                         return false;
                     }
-                }
-            }
-        }
-    }
-
-    for (const auto& outputPin : outputPins)
-    {
-        auto connectedNodes = nm::FindConnectedNodesToPin(outputPin.id);
-        if (!connectedNodes.empty())
-        {
-            Node* connectedNode = connectedNodes.front();
-            if (!connectedNode->isInitialized && !connectedNode->isInitializing)
-            {
-                if (!connectedNode->initialize())
-                {
-                    LOG_WARN("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
                 }
             }
         }
