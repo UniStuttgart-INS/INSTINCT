@@ -1011,13 +1011,17 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         if (pin)
         {
             ImGui::Text("ID: %lu", size_t(pin->id));
-            if (pin->parentNode)
+            ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
+            ImGui::Text("Type: %s", std::string(pin->type).c_str());
+            if (!pin->callbacks.empty())
             {
-                ImGui::Text("Node: %lu", size_t(pin->parentNode->id));
-            }
-            else
-            {
-                ImGui::Text("Node: %s", "<none>");
+                ImGui::Text("Callbacks:");
+                ImGui::Indent();
+                for (auto& callback : pin->callbacks)
+                {
+                    ImGui::BulletText("%s", std::get<0>(callback)->nameId().c_str());
+                }
+                ImGui::Unindent();
             }
         }
         else
