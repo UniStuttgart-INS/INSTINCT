@@ -8,6 +8,7 @@
 #include "Nodes/Node.hpp"
 
 #include <Eigen/Core>
+#include <array>
 
 namespace NAV
 {
@@ -69,14 +70,22 @@ class Demo : public Node
 
     struct DemoData
     {
-        int integer = 12;
+        std::array<int, 3> integer = { 12, -2, 2 };
         bool boolean = false;
     };
 
   private:
     constexpr static size_t OutputPortIndex_NodeData = 1; ///< @brief Flow (NodeData)
     constexpr static size_t OutputPortIndex_InsObs = 2;   ///< @brief Flow (InsObs)
-    constexpr static size_t InputPortIndex_StateData = 0; ///< @brief Object (StateData)
+    constexpr static size_t InputPortIndex_DemoNode = 0;  ///< @brief Delegate (Demo)
+    constexpr static size_t InputPortIndex_Bool = 3;      ///< @brief Bool
+    constexpr static size_t InputPortIndex_Int = 4;       ///< @brief Int
+    constexpr static size_t InputPortIndex_Float = 5;     ///< @brief Float
+    constexpr static size_t InputPortIndex_Double = 6;    ///< @brief Double
+    constexpr static size_t InputPortIndex_String = 7;    ///< @brief String
+    constexpr static size_t InputPortIndex_DemoData = 8;  ///< @brief DemoData
+    constexpr static size_t InputPortIndex_Matrix = 9;    ///< @brief Matrix
+    constexpr static size_t InputPortIndex_Function = 10; ///< @brief Function
 
     /// @brief Receive Sensor Data
     /// @param[in] nodeData Data to plot
@@ -98,12 +107,12 @@ class Demo : public Node
     const size_t nPollData = 20;
 
     bool valueBool = true;
-    int valueInt = -123;
+    int valueInt = -1;
     float valueFloat = 65.4F;
-    double valueDouble = 1242352.342;
+    double valueDouble = 1242.342;
     std::string valueString = "Demo";
     DemoData valueObject;
-    Eigen::MatrixXd valueMatrix;
+    Eigen::Matrix<float, -1, -1, Eigen::RowMajor> valueMatrix;
 
     DemoData callbackFunction(int integer, bool boolean);
 };
