@@ -7,8 +7,9 @@
 
 #include "Nodes/Node.hpp"
 
-#include <Eigen/Core>
+#include "util/Eigen.hpp"
 #include <array>
+#include "util/CallbackTimer.hpp"
 
 namespace NAV
 {
@@ -101,10 +102,22 @@ class Demo : public Node
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<NodeData> pollData(bool peek = false);
+
+    /// Timer object to handle async data requests
+    CallbackTimer timer;
+
+    /// @brief Function which performs the async data reading
+    /// @param[in] userData Pointer to the object
+    static void readSensorDataThread(void* userData);
+
+    int outputFrequency = 1;
+    int receivedDataFromSensorCnt = 0;
+    int receivedDataFromFileReaderCnt = 0;
+
     /// Counter for data Reading
-    size_t iPollData = 0;
+    int iPollData = 0;
     /// Amount of Observations to be read
-    const size_t nPollData = 20;
+    int nPollData = 20;
 
     bool valueBool = true;
     int valueInt = -1;
@@ -112,9 +125,13 @@ class Demo : public Node
     double valueDouble = 1242.342;
     std::string valueString = "Demo";
     DemoData valueObject;
-    Eigen::Matrix<float, -1, -1, Eigen::RowMajor> valueMatrix;
+    Eigen::MatrixXd valueMatrix = Eigen::MatrixXd::Identity(3, 3);
 
-    DemoData callbackFunction(int integer, bool boolean);
+    size_t callbackCounter = 0;
+    std::string receivedDataFromCallback;
+    int callbackInt = 0;
+    bool callbackBool = false;
+    std::string callbackFunction(int integer1, int integer2, bool boolean);
 };
 
 } // namespace NAV
