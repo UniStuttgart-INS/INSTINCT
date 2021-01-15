@@ -171,8 +171,13 @@ class Node
     template<typename T>
     [[nodiscard]] T* getInputValue(size_t portIndex) const
     {
-        if constexpr (std::is_same_v<T, bool> || std::is_same_v<T, int> || std::is_same_v<T, float> || std::is_same_v<T, double> || std::is_same_v<T, std::string>)
-        {
+        // clang-format off
+        if constexpr (std::is_same_v<T, bool>
+                   || std::is_same_v<T, int>
+                   || std::is_same_v<T, float>
+                   || std::is_same_v<T, double>
+                   || std::is_same_v<T, std::string>)
+        { // clang-format on
             if (const auto* pval = std::get_if<T*>(&inputPins.at(portIndex).data))
             {
                 return *pval;
@@ -195,16 +200,19 @@ class Node
     void invokeCallbacks(size_t portIndex, const std::shared_ptr<NodeData>& data);
 
     template<typename T, class... U>
-    T callInputFunction(size_t portIndex, U&&... u)
+    T callInputFunction(size_t portIndex, const U&... u)
     {
-        auto* function = std::get_if<std::pair<Node*, void (Node::*)()>>(&inputPins.at(portIndex).data);
+        if (auto* function = std::get_if<std::pair<Node*, void (Node::*)()>>(&inputPins.at(portIndex).data))
+        {
+            Node* node = function->first;
+            auto callbackProto = function->second;
 
-        Node* node = function->first;
-        auto callbackProto = function->second;
+            auto callback = reinterpret_cast<T (Node::*)(U...)>(callbackProto);
 
-        auto callback = reinterpret_cast<T (Node::*)(U...)>(callbackProto);
+            return (node->*callback)(std::forward<const U>(u)...);
+        }
 
-        return (node->*callback)(std::forward<U>(u)...);
+        return T{};
     }
 
     /// @brief Returns the index of the pin
