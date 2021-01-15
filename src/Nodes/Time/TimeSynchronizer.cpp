@@ -15,8 +15,6 @@ NAV::TimeSynchronizer::TimeSynchronizer()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "TimeSynchronizer", this);
-
     nm::CreateOutputPin(this, "Obs", Pin::Type::Flow, NAV::ImuObs::type(), &TimeSynchronizer::pollData);
 
     nm::CreateInputPin(this, "Obs", Pin::Type::Flow, NAV::ImuObs::type(), &TimeSynchronizer::syncObs);

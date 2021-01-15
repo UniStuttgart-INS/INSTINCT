@@ -16,8 +16,6 @@ NAV::State::State()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "State", this);
-
     nm::CreateOutputPin(this, "StateData", Pin::Type::Object, NAV::StateData::type(), &currentState);
 
     nm::CreateInputPin(this, "StateData\nUpdate", Pin::Type::Flow, NAV::StateData::type(), &State::updateState);

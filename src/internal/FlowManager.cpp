@@ -124,7 +124,6 @@ void from_json(const json& j, Node& node)
             break;
         }
         node.inputPins.at(i).id = inputPins.at(i).id;
-        node.inputPins.at(i).parentNode = &node;
     }
 
     auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
@@ -135,7 +134,6 @@ void from_json(const json& j, Node& node)
             break;
         }
         node.outputPins.at(i).id = outputPins.at(i).id;
-        node.outputPins.at(i).parentNode = &node;
     }
 }
 
@@ -243,12 +241,12 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
                 continue;
             }
 
+            nm::AddNode(node);
+
             nodeJson.get_to<Node>(*node);
             node->restore(nodeJson.at("data"));
             // Load second time in case restore changed the amount of pins
             nodeJson.get_to<Node>(*node);
-
-            nm::AddNode(node);
 
             if (!ConfigManager::Get<bool>("nogui", false))
             {

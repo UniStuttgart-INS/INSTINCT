@@ -22,8 +22,6 @@ NAV::KvhFile::KvhFile()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "KvhFile", this);
-
     nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, NAV::KvhObs::type(), &KvhFile::pollData);
     nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
 }

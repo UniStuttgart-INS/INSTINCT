@@ -20,8 +20,6 @@ NAV::VectorNavFile::VectorNavFile()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "VectorNavFile", this);
-
     nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type(), &VectorNavFile::pollData);
     nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
 }

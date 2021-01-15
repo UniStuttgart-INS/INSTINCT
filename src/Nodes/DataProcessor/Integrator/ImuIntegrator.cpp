@@ -19,8 +19,6 @@ NAV::ImuIntegrator::ImuIntegrator()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "ImuIntegrator", this);
-
     nm::CreateOutputPin(this, "StateData", Pin::Type::Flow, NAV::StateData::type());
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuIntegrator::integrateObservation);

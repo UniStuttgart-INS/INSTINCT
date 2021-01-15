@@ -17,8 +17,6 @@ NAV::Plot::Plot()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "Plot", this);
-
     updateNumberOfInputPins();
 }
 

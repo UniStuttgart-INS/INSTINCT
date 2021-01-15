@@ -20,8 +20,6 @@ NAV::RtklibPosFile::RtklibPosFile()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "RtklibPosFile", this);
-
     nm::CreateOutputPin(this, "RtklibPosObs", Pin::Type::Flow, NAV::RtklibPosObs::type(), &RtklibPosFile::pollData);
     nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
 }

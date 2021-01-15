@@ -23,8 +23,6 @@ NAV::EmlidDataLogger::EmlidDataLogger()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "EmlidDataLogger", this);
-
     nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, NAV::EmlidObs::type(), &EmlidDataLogger::writeObservation);
 }
 

@@ -36,7 +36,6 @@ NAV::Demo::Demo()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, typeStatic(), this);
     nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::NodeData::type());
     nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, NAV::InsObs::type(), &Demo::pollData);
     nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, "", &valueBool);

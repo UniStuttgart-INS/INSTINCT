@@ -23,8 +23,6 @@ NAV::UbloxDataLogger::UbloxDataLogger()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "UbloxDataLogger", this);
-
     nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, NAV::UbloxObs::type(), &UbloxDataLogger::writeObservation);
 }
 

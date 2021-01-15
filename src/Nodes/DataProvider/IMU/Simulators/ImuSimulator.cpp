@@ -20,8 +20,6 @@ NAV::ImuSimulator::ImuSimulator()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "ImuSimulator", this);
-
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuSimulator::pollData);
     nm::CreateInputPin(this, "State", Pin::Type::Object, NAV::StateData::type());
 }

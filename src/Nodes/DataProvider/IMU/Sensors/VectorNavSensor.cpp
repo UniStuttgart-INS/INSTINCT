@@ -23,8 +23,6 @@ NAV::VectorNavSensor::VectorNavSensor()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "VectorNavSensor", this);
-
     nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type());
 
     dividerFrequency = []() {

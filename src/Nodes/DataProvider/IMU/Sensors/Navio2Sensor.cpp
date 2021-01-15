@@ -24,8 +24,6 @@ NAV::Navio2Sensor::Navio2Sensor()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "Navio2Sensor", this);
-
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
 }
 

@@ -65,6 +65,17 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
     }
     m_nodes.push_back(node);
     LOG_DEBUG("Creating node {}", size_t(node->id));
+
+    if (node->outputPins.empty() || node->outputPins.front().type != Pin::Type::Delegate)
+    {
+        Pin pin = Pin(GetNextPinId(), "", Pin::Type::Delegate, Pin::Kind::Output, node);
+
+        pin.data = node;
+        pin.dataIdentifier = node->type();
+
+        node->outputPins.insert(node->outputPins.begin(), pin);
+    }
+
     for (auto& pin : node->inputPins)
     {
         pin.parentNode = node;

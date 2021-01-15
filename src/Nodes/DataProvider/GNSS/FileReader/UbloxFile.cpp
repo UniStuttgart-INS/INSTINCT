@@ -22,8 +22,6 @@ NAV::UbloxFile::UbloxFile()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "UbloxFile", this);
-
     nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, NAV::UbloxObs::type(), &UbloxFile::pollData);
 }
 

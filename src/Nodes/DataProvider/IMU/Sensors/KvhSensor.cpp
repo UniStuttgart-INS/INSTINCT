@@ -24,8 +24,6 @@ NAV::KvhSensor::KvhSensor()
     // TODO: Update the library to handle different baudrates
     selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_921600);
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "KvhSensor", this);
-
     nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, NAV::KvhObs::type());
 }
 

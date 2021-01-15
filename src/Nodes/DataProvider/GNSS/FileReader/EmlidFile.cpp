@@ -22,8 +22,6 @@ NAV::EmlidFile::EmlidFile()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "EmlidFile", this);
-
     nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, NAV::EmlidObs::type(), &EmlidFile::pollData);
 }
 
