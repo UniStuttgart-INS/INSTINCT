@@ -43,8 +43,32 @@ bool NAV::Node::initialize()
 
 void NAV::Node::deinitialize()
 {
+    // Lock the node against recursive calling
+    isDeinitializing = true;
+
+    LOG_DEBUG("{}: Deinitializing Node", nameId());
+
     callbacksEnabled = false;
+
+    for (const auto& outputPin : outputPins)
+    {
+        if (outputPin.type != Pin::Type::Flow)
+        {
+            auto connectedNodes = nm::FindConnectedNodesToPin(outputPin.id);
+            for (auto* connectedNode : connectedNodes)
+            {
+                if (connectedNode->isInitialized && !connectedNode->isDeinitializing)
+                {
+                    LOG_DEBUG("{}: Deinitializing connected Node '{}' on output Pin {}", nameId(), connectedNode->nameId(), size_t(outputPin.id));
+                    connectedNode->deinitialize();
+                }
+            }
+        }
+    }
+
     isInitialized = false;
+
+    isDeinitializing = false;
 }
 
 void NAV::Node::resetNode() {}

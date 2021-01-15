@@ -252,6 +252,8 @@ class Node
   private:
     /// Flag, if the node is currently initializing
     bool isInitializing = false;
+    /// Flag, if the node is currently deinitializing
+    bool isDeinitializing = false;
 };
 
 } // namespace NAV

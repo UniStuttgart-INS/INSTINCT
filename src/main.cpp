@@ -67,10 +67,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
                 }
                 catch (...)
                 {
-                    nm::DeleteAllLinks();
                     nm::DeleteAllNodes();
-                    NAV::flow::DiscardChanges();
-                    NAV::flow::SetCurrentFilename("");
                     LOG_ERROR("Loading flow file failed");
                 }
                 if (loadSuccessful)
@@ -96,10 +93,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
                         }
                     }
 
-                    for (NAV::Node* node : nm::m_Nodes())
-                    {
-                        node->deinitialize();
-                    }
+                    nm::DeleteAllNodes();
                 }
             }
             else

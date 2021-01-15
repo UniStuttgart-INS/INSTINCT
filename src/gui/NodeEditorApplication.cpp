@@ -120,10 +120,7 @@ bool NAV::gui::NodeEditorApplication::OnQuitRequest()
 
     FlowExecutor::stop();
 
-    for (Node* node : nm::m_Nodes())
-    {
-        node->deinitialize();
-    }
+    nm::DeleteAllNodes();
 
     return true;
 }

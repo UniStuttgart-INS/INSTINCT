@@ -177,15 +177,10 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     else
     {
         endPin->data = startPin->data;
-        if (endPin->parentNode)
+        if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized)
         {
             endPin->parentNode->deinitialize();
         }
-    }
-    if (startPin->parentNode && endPin->parentNode
-        && startPin->parentNode->isInitialized)
-    {
-        endPin->parentNode->initialize();
     }
 
     flow::ApplyChanges();
@@ -218,15 +213,10 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
         else
         {
             endPin->data = startPin->data;
-            if (endPin->parentNode)
+            if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized)
             {
                 endPin->parentNode->deinitialize();
             }
-        }
-        if (startPin->parentNode && endPin->parentNode
-            && startPin->parentNode->isInitialized)
-        {
-            endPin->parentNode->initialize();
         }
     }
     else

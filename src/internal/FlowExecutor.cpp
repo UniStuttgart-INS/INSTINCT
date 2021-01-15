@@ -87,11 +87,6 @@ bool NAV::FlowExecutor::initialize()
 {
     LOG_TRACE("called");
 
-    for (Node* node : nm::m_Nodes())
-    {
-        node->deinitialize();
-    }
-
     bool hasUninitializedNodes = false;
     for (Node* node : nm::m_Nodes())
     {
@@ -103,6 +98,7 @@ bool NAV::FlowExecutor::initialize()
                 hasUninitializedNodes = true;
             }
         }
+        node->resetNode();
     }
 
     if (!hasUninitializedNodes)
@@ -119,13 +115,7 @@ void NAV::FlowExecutor::deinitialize()
 
     _execute.store(false, std::memory_order_release);
 
-    if (!ConfigManager::Get<bool>("nogui", false))
-    {
-        for (NAV::Node* node : nm::m_Nodes())
-        {
-            node->deinitialize();
-        }
-    }
+    nm::DisableAllCallbacks();
 }
 
 void NAV::FlowExecutor::execute()
