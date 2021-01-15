@@ -1138,7 +1138,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         if (node->hasConfig && node->showConfig)
         {
-            if (!ImGui::Begin(fmt::format("{} ({})", node->type(), reinterpret_cast<uintptr_t>(node->id.AsPointer())).c_str(), &(node->showConfig),
+            if (!ImGui::Begin(fmt::format("{} ({})", node->type(), size_t(node->id)).c_str(), &(node->showConfig),
                               ImGuiWindowFlags_None))
             {
                 if (node->nodeDisabledShortcuts)
@@ -1147,7 +1147,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     ax::NodeEditor::EnableShortcuts(true);
                 }
                 ImGui::End();
-                break;
+                continue;
             }
 
             ax::NodeEditor::EnableShortcuts(false);
