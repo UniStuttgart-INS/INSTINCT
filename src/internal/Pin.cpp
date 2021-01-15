@@ -23,7 +23,7 @@ bool NAV::Pin::canCreateLink(const Pin& b) const
         dataTypesMatch = false;
     }
 
-    if ((type == Pin::Type::Object || type == Pin::Type::Function)
+    if ((type == Pin::Type::Object || type == Pin::Type::Matrix || type == Pin::Type::Function)
         && (dataIdentifier.empty() || b.dataIdentifier.empty() || dataIdentifier != b.dataIdentifier))
     {
         dataTypesMatch = false;

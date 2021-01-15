@@ -857,7 +857,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                             }
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
-                        else if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Function)
+                        else if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix || startPin->type == Pin::Type::Function)
                                  && (startPin->dataIdentifier.empty() || endPin->dataIdentifier.empty() || startPin->dataIdentifier != endPin->dataIdentifier))
                         {
                             showLabel(fmt::format("The data type [{}]\ncan't be linked to [{}]", startPin->dataIdentifier, endPin->dataIdentifier).c_str(), ImColor(45, 32, 32, 180));
