@@ -208,7 +208,9 @@ class Node
             auto callbackProto = function->second;
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-function-type" // NOLINT
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic ignored "-Wcast-function-type" // NOLINT
+#endif
             auto callback = reinterpret_cast<T (Node::*)(Args...)>(callbackProto);
 #pragma GCC diagnostic pop
 

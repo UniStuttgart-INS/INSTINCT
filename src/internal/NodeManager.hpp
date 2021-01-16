@@ -130,8 +130,11 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
     assert(pinType == Pin::Type::Function);
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcast-function-type" // NOLINT
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic ignored "-Wcast-function-type" // NOLINT
+#endif
     return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(std::make_pair(node, reinterpret_cast<void (Node::*)()>(callback))));
+
 #pragma GCC diagnostic pop
 }
 
