@@ -54,7 +54,8 @@ void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
         }
         matrix = Eigen::Matrix<_Scalar, _Rows, _Cols>::Zero(rows + 1, cols + 1);
     }
-    for (int r = 0; j.contains(std::to_string(r)); r++)
+
+    for (int r = 0; j.contains(std::to_string(r)); r++) // NOLINT(readability-misleading-indentation)
     {
         for (int c = 0; j.at(std::to_string(r)).contains(std::to_string(c)); c++)
         {

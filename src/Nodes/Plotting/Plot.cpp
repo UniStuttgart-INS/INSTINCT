@@ -408,7 +408,7 @@ void NAV::Plot::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
     }
 }
 
-bool NAV::Plot::isDataTypeSupported(std::string dataIdentifier)
+bool NAV::Plot::isDataTypeSupported(const std::string& dataIdentifier)
 {
     return dataIdentifier == VectorNavObs::type();
 }

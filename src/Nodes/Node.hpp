@@ -199,17 +199,20 @@ class Node
     /// @param[in] data The data to pass to the callback targets
     void invokeCallbacks(size_t portIndex, const std::shared_ptr<NodeData>& data);
 
-    template<typename T, class... U>
-    T callInputFunction(size_t portIndex, const U&... u)
+    template<typename T, class... Args>
+    T callInputFunction(size_t portIndex, const Args&... args)
     {
         if (auto* function = std::get_if<std::pair<Node*, void (Node::*)()>>(&inputPins.at(portIndex).data))
         {
             Node* node = function->first;
             auto callbackProto = function->second;
 
-            auto callback = reinterpret_cast<T (Node::*)(U...)>(callbackProto);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type" // NOLINT
+            auto callback = reinterpret_cast<T (Node::*)(Args...)>(callbackProto);
+#pragma GCC diagnostic pop
 
-            return (node->*callback)(std::forward<const U>(u)...);
+            return (node->*callback)(std::forward<const Args>(args)...);
         }
 
         return T{};
