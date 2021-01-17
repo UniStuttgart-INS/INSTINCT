@@ -145,7 +145,6 @@ doxygen:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target doxygen-docs -- -j2
   artifacts:
-    untracked: true
     paths:
       - doc/html
     expire_in: 2h
@@ -162,7 +161,6 @@ coverage:
     - python3 tools/lcov_cobertura.py coverage/coverage.info --output coverage/cobertura-coverage.xml
   coverage: '/Total:\| ?(\d+\.?\d+\%)/'
   artifacts:
-    untracked: true
     paths:
       - coverage
     expire_in: 2h
