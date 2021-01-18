@@ -4,7 +4,7 @@
 
 #include "util/Logger.hpp"
 
-#include "ImGuiFileDialog.h"
+#include "gui/widgets/FileDialog.hpp"
 
 #include <iomanip> // std::setprecision
 
@@ -48,32 +48,10 @@ std::string NAV::ImuDataLogger::category()
 
 void NAV::ImuDataLogger::guiConfig()
 {
-    // Filepath
-    if (ImGui::InputText("Filepath", &path))
+    if (gui::widgets::FileDialogSave(path, "Save File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
-        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
         flow::ApplyChanges();
         deinitialize();
-    }
-    ImGui::SameLine();
-    std::string saveFileDialogKey = fmt::format("Save File ({})", id.AsPointer());
-    if (ImGui::Button("Save"))
-    {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".csv", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
-        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
-    }
-
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
-    {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
-        {
-            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
-            flow::ApplyChanges();
-            initialize();
-        }
-
-        igfd::ImGuiFileDialog::Instance()->CloseDialog();
     }
 }
 

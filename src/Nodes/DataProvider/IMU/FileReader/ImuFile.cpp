@@ -4,7 +4,7 @@
 
 #include "util/InsTransformations.hpp"
 
-#include "ImGuiFileDialog.h"
+#include "gui/widgets/FileDialog.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -47,32 +47,10 @@ std::string NAV::ImuFile::category()
 
 void NAV::ImuFile::guiConfig()
 {
-    // Filepath
-    if (ImGui::InputText("Filepath", &path))
+    if (gui::widgets::FileDialogLoad(path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
-        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
         flow::ApplyChanges();
         deinitialize();
-    }
-    ImGui::SameLine();
-    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
-    if (ImGui::Button("Open"))
-    {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "");
-        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
-    }
-
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
-    {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
-        {
-            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
-            flow::ApplyChanges();
-            initialize();
-        }
-
-        igfd::ImGuiFileDialog::Instance()->CloseDialog();
     }
 
     // Header info
