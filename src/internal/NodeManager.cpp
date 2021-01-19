@@ -164,15 +164,15 @@ void NAV::NodeManager::DeleteAllNodes()
 
 NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
 {
-    if (!startPin || !endPin)
+    if (!startPin || !endPin || !startPin->parentNode || !endPin->parentNode)
     {
         return nullptr;
     }
 
-    if (!startPin->parentNode || !startPin->parentNode->onCreateLink(startPin, endPin)
-        || !endPin->parentNode || !endPin->parentNode->onCreateLink(startPin, endPin))
+    if (!startPin->parentNode->onCreateLink(startPin, endPin) || !endPin->parentNode->onCreateLink(startPin, endPin))
     {
-        LOG_ERROR("The new Link was refused by one of the Nodes it should connect to.");
+        LOG_ERROR("The new Link between node '{}' and '{}' was refused by one of the Nodes it should connect to.",
+                  startPin->parentNode->nameId(), endPin->parentNode->nameId());
         return nullptr;
     }
 
@@ -207,10 +207,33 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
     Pin* endPin = FindPin(link.endPinId);
     if (endPin && startPin)
     {
-        if (!startPin->parentNode || !startPin->parentNode->onCreateLink(startPin, endPin)
-            || !endPin->parentNode || !endPin->parentNode->onCreateLink(startPin, endPin))
+        if (!startPin->parentNode || !endPin->parentNode)
         {
-            LOG_ERROR("Link {} was refused by one of the Nodes it should connect to.", size_t(link.id));
+            LOG_CRITICAL("Tried to add Link from pinId {} to {}, but the pins do not have parentNodes",
+                         size_t(link.startPinId), size_t(link.endPinId));
+        }
+
+        if (!startPin->canCreateLink(*endPin))
+        {
+            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} can not be added because the pins do not match", size_t(link.id),
+                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
+            m_links.pop_back();
+            return;
+        }
+
+        if (!startPin->parentNode->onCreateLink(startPin, endPin))
+        {
+            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the start Node.", size_t(link.id),
+                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
+            m_links.pop_back();
+            return;
+        }
+        if (!endPin->parentNode->onCreateLink(startPin, endPin))
+        {
+            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the end Node.", size_t(link.id),
+                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
+            // Undo the Link adding on the start node
+            startPin->parentNode->onDeleteLink(startPin, endPin);
             m_links.pop_back();
             return;
         }
@@ -233,11 +256,10 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
     else
     {
         LOG_CRITICAL("Tried to add Link from pinId {} to {}, but one of them does not exist",
-                     reinterpret_cast<uintptr_t>(link.startPinId.AsPointer()),
-                     reinterpret_cast<uintptr_t>(link.endPinId.AsPointer()));
+                     size_t(link.startPinId), size_t(link.endPinId));
     }
 
-    m_NextId = std::max(m_NextId, reinterpret_cast<uintptr_t>(link.id.AsPointer()) + 1);
+    m_NextId = std::max(m_NextId, size_t(link.id) + 1);
 
     flow::ApplyChanges();
 }
