@@ -111,12 +111,13 @@ tests:gcc:
 # ║                                                        Test                                                        ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-run-tests:clang:
+.run-tests:
   stage: test
-  needs: ["tests:clang"]
   script:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
+  after_script:
+    - cd build/Debug/test
     - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
     - sed -i ':begin;$!N;s/<\/testsuites>\n<testsuites>//;tbegin;P;D' ../../../junit.xml
   artifacts:
@@ -125,13 +126,16 @@ run-tests:clang:
       junit: junit.xml
     expire_in: 2h
 
+run-tests:clang:
+  extends: .run-tests
+  needs: ["tests:clang"]
+
 
 run-tests:gcc:
-  extends: run-tests:clang
+  extends: .run-tests
   needs: ["tests:gcc"]
   artifacts:
     untracked: true
-    expire_in: 2h
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                      Analyze                                                       ║
