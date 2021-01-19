@@ -53,14 +53,14 @@ void NAV::Navio2Sensor::guiConfig()
     {
         LOG_DEBUG("{}: IMU changed to {}", nameId(), imuType ? "LSM9DS1" : "MPU9250");
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 
     if (ImGui::SliderInt("Frequency", &outputFrequency, 1, 200, "%d Hz"))
     {
         LOG_DEBUG("{}: Frequency changed to {}", nameId(), outputFrequency);
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 }
 
@@ -87,14 +87,7 @@ void NAV::Navio2Sensor::restore(json const& j)
 
 bool NAV::Navio2Sensor::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{} ({}): called", nameId(), imuType ? "LSM9DS1" : "MPU9250");
-
-    if (!Node::initialize())
-    {
-        return false;
-    }
 
 #if !__APPLE__
     if (imuType == ImuType::MPU)
@@ -121,7 +114,7 @@ bool NAV::Navio2Sensor::initialize()
     startTime = std::chrono::high_resolution_clock::now();
     timer.start(outputInterval, readImuThread, this);
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::Navio2Sensor::deinitialize()
@@ -136,8 +129,6 @@ void NAV::Navio2Sensor::deinitialize()
 #if !__APPLE__
     sensor.reset();
 #endif
-
-    Node::deinitialize();
 }
 
 // void NAV::Navio2Sensor::readImuThread()

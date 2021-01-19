@@ -51,7 +51,7 @@ void NAV::ImuDataLogger::guiConfig()
     if (gui::widgets::FileDialogSave(path, "Save File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 }
 
@@ -78,12 +78,9 @@ void NAV::ImuDataLogger::restore(json const& j)
 
 bool NAV::ImuDataLogger::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileWriter::initialize())
+    if (!FileWriter::initialize())
     {
         return false;
     }
@@ -92,7 +89,7 @@ bool NAV::ImuDataLogger::initialize()
                << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
                << "Temperature" << std::endl;
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::ImuDataLogger::deinitialize()
@@ -100,7 +97,6 @@ void NAV::ImuDataLogger::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileWriter::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)

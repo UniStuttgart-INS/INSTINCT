@@ -51,12 +51,6 @@ class Plot : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Initialize the node
-    bool initialize() override;
-
-    /// @brief Deinitialize the node
-    void deinitialize() override;
-
     /// @brief Called when a new link is to be established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
@@ -69,6 +63,12 @@ class Plot : public Node
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
   private:
+    /// @brief Initialize the node
+    bool initialize() override;
+
+    /// @brief Deinitialize the node
+    void deinitialize() override;
+
     /// @brief Plot the data on this port
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received

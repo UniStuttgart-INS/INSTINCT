@@ -210,23 +210,14 @@ void NAV::ImuSimulator::restore(json const& j)
 
 bool NAV::ImuSimulator::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::ImuSimulator::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-    Node::deinitialize();
 }
 
 void NAV::ImuSimulator::resetNode()

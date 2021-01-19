@@ -49,7 +49,7 @@ void NAV::RtklibPosFile::guiConfig()
     if (gui::widgets::FileDialogLoad(path, "Select File", ".pos", { ".pos" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 
     // Header info
@@ -134,17 +134,9 @@ void NAV::RtklibPosFile::restore(json const& j)
 
 bool NAV::RtklibPosFile::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileReader::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return FileReader::initialize();
 }
 
 void NAV::RtklibPosFile::deinitialize()
@@ -152,7 +144,6 @@ void NAV::RtklibPosFile::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::RtklibPosFile::resetNode()

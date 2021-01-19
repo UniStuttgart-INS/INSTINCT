@@ -23,6 +23,7 @@ namespace util = ax::NodeEditor::Utilities;
 
 #include "gui/widgets/Splitter.hpp"
 #include "gui/widgets/HelpMarker.hpp"
+#include "gui/widgets/Spinner.hpp"
 
 #include "internal/Pin.hpp"
 #include "Nodes/Node.hpp"
@@ -47,6 +48,8 @@ ax::NodeEditor::EditorContext* m_Editor = nullptr;
 
 void NAV::gui::NodeEditorApplication::OnStart()
 {
+    LOG_TRACE("called");
+
     ed::Config config;
 
     // config.SettingsFile = "NavSoS.json";
@@ -93,6 +96,15 @@ void NAV::gui::NodeEditorApplication::OnStart()
 
 void NAV::gui::NodeEditorApplication::OnStop()
 {
+    LOG_TRACE("called");
+
+    FlowExecutor::stop();
+
+    initList.clear();
+    nm::Stop();
+
+    nm::DeleteAllNodes();
+
     auto releaseTexture = [this](ImTextureID& id) {
         if (id)
         {
@@ -112,15 +124,13 @@ void NAV::gui::NodeEditorApplication::OnStop()
 
 bool NAV::gui::NodeEditorApplication::OnQuitRequest()
 {
+    LOG_TRACE("called");
+
     if (flow::HasUnsavedChanges())
     {
         globalAction = GlobalActions::QuitUnsaved;
         return false;
     }
-
-    FlowExecutor::stop();
-
-    nm::DeleteAllNodes();
 
     return true;
 }
@@ -485,6 +495,37 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         break;
     }
 
+    if (!initList.empty())
+    {
+        Node* node = initList.front().first;
+        bool init = initList.front().second;
+        if ((init && !node->isInitializing())        // Finished with init (success or fail)
+            || (!init && !node->isDeinitializing())) // Finished with deinit
+        {
+            initList.pop_front();
+            currentInitNodeId = 0;
+        }
+        else if (currentInitNodeId == 0) // Currently no thread running
+        {
+            currentInitNodeId = size_t(node->id);
+            if (initThread.joinable())
+            {
+                initThread.request_stop();
+                initThread.join();
+            }
+            initThread = std::jthread([node, init]() {
+                if (init)
+                {
+                    node->initializeNode();
+                }
+                else
+                {
+                    node->deinitializeNode();
+                }
+            });
+        }
+    }
+
     gui::UpdateTouch(deltaTime);
 
     if (ed::AreShortcutsEnabled())
@@ -548,7 +589,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (!isSimple) // Header Text for Blueprint Nodes
             {
-                if (node->isInitialized)
+                if (node->isInitialized())
                 {
                     builder.Header(ImColor(128, 255, 128)); // Light green
                 }
@@ -559,10 +600,18 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::Spring(0);
                 ImGui::TextUnformatted(node->name.c_str());
                 ImGui::Spring(1);
-                if (hasOutputFlows)
+                if (node->isInitializing())
+                {
+                    gui::widgets::Spinner(("##Spinner " + node->nameId()).c_str(), ImColor(144, 238, 144), 10.0F, 1.0F);
+                }
+                else if (node->isDeinitializing())
+                {
+                    gui::widgets::Spinner(("##Spinner " + node->nameId()).c_str(), ImColor(255, 160, 122), 10.0F, 1.0F);
+                }
+                else if (hasOutputFlows)
                 {
                     bool itemDisabled = false;
-                    if (!node->isInitialized && !node->callbacksEnabled)
+                    if (!node->isInitialized() && !node->callbacksEnabled)
                     {
                         ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
@@ -969,17 +1018,23 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Inputs: %lu", node->inputPins.size());
             ImGui::Text("Outputs: %lu", node->outputPins.size());
             ImGui::Separator();
-            if (ImGui::MenuItem(node->isInitialized ? "Reinitialize" : "Initialize"))
+            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "", false, !node->isInitializing() && !node->isDeinitializing()))
             {
-                node->initialize();
+                node->isInitializing_ = true;
+                initList.emplace_back(node, true);
             }
-            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized))
+            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized() && !node->isInitializing() && !node->isDeinitializing()))
             {
-                node->deinitialize();
+                node->isDeinitializing_ = true;
+                initList.emplace_back(node, false);
             }
             if (ImGui::MenuItem("Rename"))
             {
                 renameNode = node;
+            }
+            if (ImGui::MenuItem("Delete", "", false, !node->isInitializing() && !node->isDeinitializing()))
+            {
+                ed::DeleteNode(contextNodeId);
             }
         }
         else
@@ -987,10 +1042,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Unknown node: %lu", size_t(contextNodeId));
         }
 
-        if (ImGui::MenuItem("Delete"))
-        {
-            ed::DeleteNode(contextNodeId);
-        }
         ImGui::EndPopup();
     }
 
@@ -1150,10 +1201,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ax::NodeEditor::EnableShortcuts(false);
             node->nodeDisabledShortcuts = true;
             node->guiConfig();
-            if (ImGui::Button(node->isInitialized ? "Reinitialize" : "Initialize"))
-            {
-                node->initialize();
-            }
 
             ImGui::End();
         }

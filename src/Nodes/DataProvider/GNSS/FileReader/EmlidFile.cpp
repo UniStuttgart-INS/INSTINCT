@@ -50,7 +50,7 @@ void NAV::EmlidFile::guiConfig()
     if (gui::widgets::FileDialogLoad(path, "Select File", ".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 }
 
@@ -77,17 +77,9 @@ void NAV::EmlidFile::restore(json const& j)
 
 bool NAV::EmlidFile::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileReader::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return FileReader::initialize();
 }
 
 void NAV::EmlidFile::deinitialize()
@@ -95,7 +87,6 @@ void NAV::EmlidFile::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::EmlidFile::resetNode()

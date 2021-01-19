@@ -49,7 +49,7 @@ void NAV::VectorNavFile::guiConfig()
     if (gui::widgets::FileDialogLoad(path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 
     // Header info
@@ -137,17 +137,9 @@ void NAV::VectorNavFile::restore(json const& j)
 
 bool NAV::VectorNavFile::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileReader::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return FileReader::initialize();
 }
 
 void NAV::VectorNavFile::deinitialize()
@@ -155,7 +147,6 @@ void NAV::VectorNavFile::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::VectorNavFile::resetNode()

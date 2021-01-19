@@ -90,9 +90,9 @@ bool NAV::FlowExecutor::initialize()
     bool hasUninitializedNodes = false;
     for (Node* node : nm::m_Nodes())
     {
-        if (!node->isInitialized)
+        if (!node->isInitialized())
         {
-            if (!node->initialize())
+            if (!node->initializeNode())
             {
                 LOG_ERROR("Node {} fails to initialize. Please check the node configuration.", node->nameId());
                 hasUninitializedNodes = true;

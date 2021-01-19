@@ -49,12 +49,6 @@ class Demo : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Initialize the node
-    bool initialize() override;
-
-    /// @brief Deinitialize the node
-    void deinitialize() override;
-
     /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
     void resetNode() override;
 
@@ -87,6 +81,12 @@ class Demo : public Node
     constexpr static size_t InputPortIndex_DemoData = 8;  ///< @brief DemoData
     constexpr static size_t InputPortIndex_Matrix = 9;    ///< @brief Matrix
     constexpr static size_t InputPortIndex_Function = 10; ///< @brief Function
+
+    /// @brief Initialize the node
+    bool initialize() override;
+
+    /// @brief Deinitialize the node
+    void deinitialize() override;
 
     /// @brief Receive Sensor Data
     /// @param[in] nodeData Data to plot

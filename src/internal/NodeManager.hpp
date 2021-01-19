@@ -46,7 +46,7 @@ Link* CreateLink(Pin* startPin, Pin* endPin);
 
 /// @brief Add the provided link object to the list of links
 /// @param[in] link Link object to add to the list
-void AddLink(const Link& link);
+bool AddLink(const Link& link);
 
 /// @brief Delete the link provided by id
 /// @param[in] linkId Unique Id of the Link to delete
@@ -173,5 +173,15 @@ void EnableAllCallbacks();
 
 /// @brief Disables all Node callbacks
 void DisableAllCallbacks();
+
+/// @brief Initializes all nodes.
+/// @return Returns false if one of the nodes could not initialize
+bool InitializeAllNodes();
+
+/// @brief Initializes all nodes in a separate thread
+void InitializeAllNodesAsync();
+
+/// @brief Stops all active threads
+void Stop();
 
 } // namespace NAV::NodeManager

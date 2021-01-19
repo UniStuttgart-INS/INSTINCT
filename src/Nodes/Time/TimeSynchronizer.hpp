@@ -49,16 +49,16 @@ class TimeSynchronizer : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+  private:
+    constexpr static size_t OutputPortIndex_ObsToSync = 1; ///< @brief Flow
+    constexpr static size_t InputPortIndex_ObsToSync = 0;  ///< @brief Flow
+    constexpr static size_t InputPortIndex_InsObs = 1;     ///< @brief Flow (InsObs)
+
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
-
-  private:
-    constexpr static size_t OutputPortIndex_ObsToSync = 1; ///< @brief Flow
-    constexpr static size_t InputPortIndex_ObsToSync = 0;  ///< @brief Flow
-    constexpr static size_t InputPortIndex_InsObs = 1;     ///< @brief Flow (InsObs)
 
     /// @brief Gets the gps time
     /// @param[in] nodeData InsObs to process

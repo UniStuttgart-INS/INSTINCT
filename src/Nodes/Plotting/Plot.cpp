@@ -293,25 +293,16 @@ void NAV::Plot::restore(json const& j)
 
 bool NAV::Plot::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
-
-    if (!Node::initialize())
-    {
-        return false;
-    }
 
     startValue_Time = std::nan("");
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::Plot::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-    Node::deinitialize();
 }
 
 bool NAV::Plot::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)

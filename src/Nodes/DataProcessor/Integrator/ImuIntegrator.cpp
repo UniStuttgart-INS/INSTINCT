@@ -75,23 +75,14 @@ void NAV::ImuIntegrator::restore(json const& j)
 
 bool NAV::ImuIntegrator::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::ImuIntegrator::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-    Node::deinitialize();
 }
 
 void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)

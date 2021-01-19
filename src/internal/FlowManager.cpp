@@ -203,11 +203,13 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
 
 bool NAV::flow::LoadFlow(const std::string& filepath)
 {
+    LOG_TRACE("called for path {}", filepath);
+    bool loadSuccessful = true;
     std::ifstream filestream(filepath);
 
     if (!filestream.good())
     {
-        std::cerr << "Load Flow error: Could not open file: " << filepath;
+        LOG_ERROR("Load Flow error: Could not open file: {}", filepath);
         return false;
     }
 
@@ -238,6 +240,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
             if (node == nullptr)
             {
                 LOG_ERROR("Node type ({}) is not a valid type.", nodeJson.at("type").get<std::string>());
+                loadSuccessful = false;
                 continue;
             }
 
@@ -266,16 +269,23 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         {
             Link link = linkJson.get<Link>();
 
-            nm::AddLink(link);
+            if (!nm::AddLink(link))
+            {
+                loadSuccessful = false;
+            }
         }
     }
 
-    for (auto* node : nm::m_Nodes())
+    if (ConfigManager::Get<bool>("nogui", false))
     {
-        if (!node->isInitialized)
+        if (!nm::InitializeAllNodes())
         {
-            node->initialize();
+            loadSuccessful = false;
         }
+    }
+    else
+    {
+        nm::InitializeAllNodesAsync();
     }
 
     if (!ConfigManager::Get<bool>("nogui", false))
@@ -285,7 +295,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     unsavedChanges = false;
     currentFilename = filepath;
 
-    return true;
+    return loadSuccessful;
 }
 
 bool NAV::flow::HasUnsavedChanges()

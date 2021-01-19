@@ -23,6 +23,11 @@ namespace NAV
 {
 class NodeData;
 
+namespace gui
+{
+class NodeEditorApplication;
+} // namespace gui
+
 class Node
 {
   public:
@@ -118,11 +123,11 @@ class Node
     /// @param[in] j Json object with the node state
     virtual void restore(const json& j) = 0;
 
-    /// @brief Abstract Initialization of the Node
-    virtual bool initialize();
+    /// @brief Initialize the Node
+    bool initializeNode();
 
     /// @brief Deinitialize the Node
-    virtual void deinitialize();
+    void deinitializeNode();
 
     /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
     virtual void resetNode();
@@ -259,14 +264,32 @@ class Node
 
     /// Enables the callbacks
     bool callbacksEnabled = false;
-    /// Flag, if the node is initialized
-    bool isInitialized = false;
+
+    /// @brief Flag, if the node is initialized
+    [[nodiscard]] bool isInitialized() const;
+
+    /// @brief Flag, if the node is currently initializing
+    [[nodiscard]] bool isInitializing() const;
+
+    /// @brief Flag, if the node is currently deinitializing
+    [[nodiscard]] bool isDeinitializing() const;
 
   private:
+    /// @brief Abstract Initialization of the Node
+    virtual bool initialize();
+
+    /// @brief Deinitialize the Node
+    virtual void deinitialize();
+
+    /// Flag, if the node is initialized
+    bool isInitialized_ = false;
+
     /// Flag, if the node is currently initializing
-    bool isInitializing = false;
+    bool isInitializing_ = false;
     /// Flag, if the node is currently deinitializing
-    bool isDeinitializing = false;
+    bool isDeinitializing_ = false;
+
+    friend class gui::NodeEditorApplication;
 };
 
 } // namespace NAV

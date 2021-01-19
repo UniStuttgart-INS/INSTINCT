@@ -50,7 +50,7 @@ void NAV::ImuFile::guiConfig()
     if (gui::widgets::FileDialogLoad(path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 
     // Header info
@@ -113,17 +113,9 @@ void NAV::ImuFile::restore(json const& j)
 
 bool NAV::ImuFile::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileReader::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return FileReader::initialize();
 }
 
 void NAV::ImuFile::deinitialize()
@@ -131,7 +123,6 @@ void NAV::ImuFile::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::ImuFile::resetNode()

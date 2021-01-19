@@ -51,7 +51,7 @@ void NAV::KvhFile::guiConfig()
     if (gui::widgets::FileDialogLoad(path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 
     if (fileType == FileType::ASCII)
@@ -122,17 +122,9 @@ void NAV::KvhFile::restore(json const& j)
 
 bool NAV::KvhFile::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileReader::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return FileReader::initialize();
 }
 
 void NAV::KvhFile::deinitialize()
@@ -140,7 +132,6 @@ void NAV::KvhFile::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::KvhFile::resetNode()

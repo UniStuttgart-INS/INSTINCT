@@ -51,7 +51,7 @@ void NAV::UbloxDataLogger::guiConfig()
     if (gui::widgets::FileDialogSave(path, "Save File", ".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 }
 
@@ -78,17 +78,9 @@ void NAV::UbloxDataLogger::restore(json const& j)
 
 bool NAV::UbloxDataLogger::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileWriter::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return FileWriter::initialize();
 }
 
 void NAV::UbloxDataLogger::deinitialize()
@@ -96,7 +88,6 @@ void NAV::UbloxDataLogger::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileWriter::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::UbloxDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)

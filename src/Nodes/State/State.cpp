@@ -163,23 +163,14 @@ void NAV::State::restore(json const& j)
 
 bool NAV::State::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::State::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-    Node::deinitialize();
 }
 
 void NAV::State::updateState(const std::shared_ptr<NodeData>& state, ax::NodeEditor::LinkId /*linkId*/)

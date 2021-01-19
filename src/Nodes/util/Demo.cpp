@@ -9,6 +9,7 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/InsObs.hpp"
 
 #include <chrono>
+#include <thread>
 
 namespace NAV
 {
@@ -382,14 +383,10 @@ void NAV::Demo::restore(json const& j)
 
 bool NAV::Demo::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize())
-    {
-        return false;
-    }
+    // To Show the Initialization in the GUI
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 
     receivedDataFromSensorCnt = 0;
     receivedDataFromFileReaderCnt = 0;
@@ -400,7 +397,7 @@ bool NAV::Demo::initialize()
     int outputInterval = static_cast<int>(1.0 / static_cast<double>(outputFrequency) * 1000.0);
     timer.start(outputInterval, readSensorDataThread, this);
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::Demo::deinitialize()
@@ -411,8 +408,6 @@ void NAV::Demo::deinitialize()
     {
         timer.stop();
     }
-
-    Node::deinitialize();
 }
 
 void NAV::Demo::resetNode()

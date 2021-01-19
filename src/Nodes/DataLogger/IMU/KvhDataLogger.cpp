@@ -51,7 +51,7 @@ void NAV::KvhDataLogger::guiConfig()
     if (gui::widgets::FileDialogSave(path, "Save File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 }
 
@@ -78,12 +78,9 @@ void NAV::KvhDataLogger::restore(json const& j)
 
 bool NAV::KvhDataLogger::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileWriter::initialize())
+    if (!FileWriter::initialize())
     {
         return false;
     }
@@ -92,7 +89,7 @@ bool NAV::KvhDataLogger::initialize()
                << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
                << "Temperature,Status,SequenceNumber" << std::endl;
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::KvhDataLogger::deinitialize()
@@ -100,7 +97,6 @@ void NAV::KvhDataLogger::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileWriter::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::KvhDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)

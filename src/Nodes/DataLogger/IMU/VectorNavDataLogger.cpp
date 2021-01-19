@@ -51,7 +51,7 @@ void NAV::VectorNavDataLogger::guiConfig()
     if (gui::widgets::FileDialogSave(path, "Save File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 }
 
@@ -78,12 +78,9 @@ void NAV::VectorNavDataLogger::restore(json const& j)
 
 bool NAV::VectorNavDataLogger::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileWriter::initialize())
+    if (!FileWriter::initialize())
     {
         return false;
     }
@@ -95,7 +92,7 @@ bool NAV::VectorNavDataLogger::initialize()
                << "MagN,MagE,MagD,AccN,AccE,AccD,LinAccX,LinAccY,LinAccZ,LinAccN,LinAccE,LinAccD,"
                << "YawU,PitchU,RollU,YawRate,PitchRate,RollRate" << std::endl;
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::VectorNavDataLogger::deinitialize()
@@ -103,7 +100,6 @@ void NAV::VectorNavDataLogger::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileWriter::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)

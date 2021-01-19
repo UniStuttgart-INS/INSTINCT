@@ -8,6 +8,7 @@ namespace ed = ax::NodeEditor;
 #include "internal/FlowManager.hpp"
 
 #include <algorithm>
+#include <thread>
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                              Private Members                                             */
@@ -16,6 +17,7 @@ namespace ed = ax::NodeEditor;
 std::vector<NAV::Node*> m_nodes;
 std::vector<NAV::Link> m_links;
 size_t m_NextId = 1;
+std::jthread nodeInitThread;
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                       Private Function Declarations                                      */
@@ -100,6 +102,12 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
 
 bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
 {
+    if (nodeInitThread.joinable())
+    {
+        nodeInitThread.request_stop();
+        nodeInitThread.join();
+    }
+
     auto it = std::find_if(m_nodes.begin(),
                            m_nodes.end(),
                            [nodeId](const auto& node) { return node->id == nodeId; });
@@ -131,7 +139,10 @@ bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
             }
         }
 
-        (*it)->deinitialize();
+        if ((*it)->isInitialized())
+        {
+            (*it)->deinitializeNode();
+        }
         delete *it; // NOLINT(cppcoreguidelines-owning-memory)
         m_nodes.erase(it);
 
@@ -145,13 +156,17 @@ bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
 
 void NAV::NodeManager::DeleteAllNodes()
 {
-    for (auto& node : m_nodes)
+    if (nodeInitThread.joinable())
     {
-        node->deinitialize();
-        delete node; // NOLINT(cppcoreguidelines-owning-memory)
+        nodeInitThread.request_stop();
+        nodeInitThread.join();
     }
 
-    m_nodes.clear();
+    while (!m_nodes.empty())
+    {
+        NodeManager::DeleteNode(m_nodes.back()->id);
+    }
+
     m_NextId = 1;
 
     for (const auto& link : m_links)
@@ -188,9 +203,12 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     else
     {
         endPin->data = startPin->data;
-        if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized)
+        if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
         {
-            endPin->parentNode->deinitialize();
+            if (endPin->parentNode->isInitialized())
+            {
+                endPin->parentNode->deinitializeNode();
+            }
         }
     }
 
@@ -199,7 +217,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     return &m_links.back();
 }
 
-void NAV::NodeManager::AddLink(const NAV::Link& link)
+bool NAV::NodeManager::AddLink(const NAV::Link& link)
 {
     m_links.push_back(link);
 
@@ -209,8 +227,9 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
     {
         if (!startPin->parentNode || !endPin->parentNode)
         {
-            LOG_CRITICAL("Tried to add Link from pinId {} to {}, but the pins do not have parentNodes",
-                         size_t(link.startPinId), size_t(link.endPinId));
+            LOG_ERROR("Tried to add Link from pinId {} to {}, but the pins do not have parentNodes",
+                      size_t(link.startPinId), size_t(link.endPinId));
+            return false;
         }
 
         if (!startPin->canCreateLink(*endPin))
@@ -218,7 +237,7 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
             LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} can not be added because the pins do not match", size_t(link.id),
                       startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
             m_links.pop_back();
-            return;
+            return false;
         }
 
         if (!startPin->parentNode->onCreateLink(startPin, endPin))
@@ -226,7 +245,7 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
             LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the start Node.", size_t(link.id),
                       startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
             m_links.pop_back();
-            return;
+            return false;
         }
         if (!endPin->parentNode->onCreateLink(startPin, endPin))
         {
@@ -235,7 +254,7 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
             // Undo the Link adding on the start node
             startPin->parentNode->onDeleteLink(startPin, endPin);
             m_links.pop_back();
-            return;
+            return false;
         }
 
         if (endPin->type == Pin::Type::Flow)
@@ -247,21 +266,27 @@ void NAV::NodeManager::AddLink(const NAV::Link& link)
         else
         {
             endPin->data = startPin->data;
-            if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized)
+            if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
             {
-                endPin->parentNode->deinitialize();
+                if (endPin->parentNode->isInitialized())
+                {
+                    endPin->parentNode->deinitializeNode();
+                }
             }
         }
     }
     else
     {
-        LOG_CRITICAL("Tried to add Link from pinId {} to {}, but one of them does not exist",
-                     size_t(link.startPinId), size_t(link.endPinId));
+        LOG_ERROR("Tried to add Link from pinId {} to {}, but one of them does not exist",
+                  size_t(link.startPinId), size_t(link.endPinId));
+        return false;
     }
 
     m_NextId = std::max(m_NextId, size_t(link.id) + 1);
 
     flow::ApplyChanges();
+
+    return true;
 }
 
 bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
@@ -291,7 +316,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
                 endPin->data = static_cast<void*>(nullptr);
                 if (endPin->parentNode)
                 {
-                    endPin->parentNode->deinitialize();
+                    endPin->parentNode->deinitializeNode();
                 }
             }
             else if (startPin->type == Pin::Type::Flow)
@@ -325,8 +350,7 @@ void NAV::NodeManager::DeleteAllLinks()
 {
     while (!m_links.empty())
     {
-        auto& link = m_links.front();
-        NodeManager::DeleteLink(link.id);
+        NodeManager::DeleteLink(m_links.back().id);
     }
 
     m_NextId = 1;
@@ -511,5 +535,58 @@ void NAV::NodeManager::DisableAllCallbacks()
     for (auto* node : m_nodes)
     {
         node->callbacksEnabled = false;
+    }
+}
+
+bool NAV::NodeManager::InitializeAllNodes()
+{
+    LOG_TRACE("called");
+    bool nodeCouldNotInitialize = false;
+    for (auto* node : m_nodes)
+    {
+        if (!node->isInitialized())
+        {
+            if (!node->initializeNode())
+            {
+                nodeCouldNotInitialize = true;
+            }
+        }
+    }
+
+    return !nodeCouldNotInitialize;
+}
+
+void NAV::NodeManager::InitializeAllNodesAsync()
+{
+    LOG_TRACE("called");
+    if (nodeInitThread.joinable())
+    {
+        LOG_DEBUG("Joining old node Init Thread");
+        nodeInitThread.request_stop();
+        nodeInitThread.join();
+    }
+
+    nodeInitThread = std::jthread([](const std::stop_token& st) {
+        for (auto* node : m_nodes)
+        {
+            if (st.stop_requested())
+            {
+                break;
+            }
+            if (!node->isInitialized())
+            {
+                node->initializeNode();
+            }
+        }
+    });
+}
+
+void NAV::NodeManager::Stop()
+{
+    if (nodeInitThread.joinable())
+    {
+        LOG_DEBUG("Joining node Init Thread");
+        nodeInitThread.request_stop();
+        nodeInitThread.join();
     }
 }

@@ -66,7 +66,7 @@ void NAV::TimeSynchronizer::guiConfig()
     {
         LOG_DEBUG("{}: Use Fixed Start Time changed to {}", nameId(), useFixedStartTime);
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 
     if (useFixedStartTime)
@@ -79,7 +79,7 @@ void NAV::TimeSynchronizer::guiConfig()
             }
             LOG_DEBUG("{}: Gps Cycle changed to {}", nameId(), gpsCycle);
             flow::ApplyChanges();
-            deinitialize();
+            deinitializeNode();
         }
         if (ImGui::InputInt("Gps Week", &gpsWeek))
         {
@@ -89,7 +89,7 @@ void NAV::TimeSynchronizer::guiConfig()
             }
             LOG_DEBUG("{}: Gps Week changed to {}", nameId(), gpsWeek);
             flow::ApplyChanges();
-            deinitialize();
+            deinitializeNode();
         }
 
         if (ImGui::InputFloat("Gps ToW", &gpsToW, 1.0F, 3600.0F))
@@ -104,7 +104,7 @@ void NAV::TimeSynchronizer::guiConfig()
             }
             LOG_DEBUG("{}: Gps Week changed to {}", nameId(), gpsWeek);
             flow::ApplyChanges();
-            deinitialize();
+            deinitializeNode();
         }
     }
 }
@@ -165,14 +165,7 @@ void NAV::TimeSynchronizer::restore(json const& j)
 
 bool NAV::TimeSynchronizer::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
-
-    if (!Node::initialize())
-    {
-        return false;
-    }
 
     startupGpsTime.reset();
     startupImuTime.reset();
@@ -183,14 +176,12 @@ bool NAV::TimeSynchronizer::initialize()
         startupGpsTime = InsTime(gpsCycle, gpsWeek, gpsToW);
     }
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::TimeSynchronizer::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-    Node::deinitialize();
 }
 
 void NAV::TimeSynchronizer::syncTime(const std::shared_ptr<NAV::NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)

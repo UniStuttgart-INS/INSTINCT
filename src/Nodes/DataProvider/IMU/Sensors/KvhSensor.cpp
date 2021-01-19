@@ -53,7 +53,7 @@ void NAV::KvhSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), sensorPort);
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("COM port where the sensor is attached to\n"
@@ -87,14 +87,7 @@ void NAV::KvhSensor::restore(json const& j)
 
 bool NAV::KvhSensor::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
-
-    if (!Node::initialize())
-    {
-        return false;
-    }
 
     // connect to the sensor
     try
@@ -111,14 +104,14 @@ bool NAV::KvhSensor::initialize()
 
     sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::KvhSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (!isInitialized)
+    if (!isInitialized())
     {
         return;
     }
@@ -133,8 +126,6 @@ void NAV::KvhSensor::deinitialize()
         {}
         sensor->disconnect();
     }
-
-    Node::deinitialize();
 }
 
 void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, [[maybe_unused]] size_t index)
