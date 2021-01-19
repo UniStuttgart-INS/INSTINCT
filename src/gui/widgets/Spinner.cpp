@@ -38,8 +38,8 @@ void NAV::gui::widgets::Spinner(const char* label, const ImU32& color, float rad
     for (int i = 0; i < num_segments; i++)
     {
         const float a = a_min + (static_cast<float>(i) / static_cast<float>(num_segments)) * (a_max - a_min);
-        window->DrawList->PathLineTo(ImVec2(centre.x + ImCos(a + g.Time * 8) * radius,
-                                            centre.y + ImSin(a + g.Time * 8) * radius));
+        window->DrawList->PathLineTo(ImVec2(centre.x + ImCos(a + static_cast<float>(g.Time) * 8) * radius,
+                                            centre.y + ImSin(a + static_cast<float>(g.Time) * 8) * radius));
     }
 
     window->DrawList->PathStroke(color, false, thickness);
