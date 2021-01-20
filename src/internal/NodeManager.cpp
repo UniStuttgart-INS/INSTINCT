@@ -568,15 +568,18 @@ void NAV::NodeManager::InitializeAllNodesAsync()
     }
 
     nodeInitThread = std::jthread([](const std::stop_token& st) {
-        for (auto* node : m_nodes)
+        // If this thread is running, and a node is added, the node vector will be moved and all pointers are invalid
+        // That's why a for-range does not work here and we have to access the elements via at()
+        size_t amountOfNodes = m_nodes.size();
+        for (size_t i = 0; i < amountOfNodes && i < m_nodes.size(); i++)
         {
             if (st.stop_requested())
             {
                 break;
             }
-            if (!node->isInitialized())
+            if (!m_nodes.at(i)->isInitialized())
             {
-                node->initializeNode();
+                m_nodes.at(i)->initializeNode();
             }
         }
     });
