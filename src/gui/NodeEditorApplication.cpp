@@ -977,6 +977,13 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ed::NodeId nodeId = 0;
                 while (ed::QueryDeletedNode(&nodeId))
                 {
+                    if (Node* node = nm::FindNode(nodeId))
+                    {
+                        if (node->isInitializing() || node->isDeinitializing())
+                        {
+                            break;
+                        }
+                    }
                     if (ed::AcceptDeletedItem())
                     {
                         nm::DeleteNode(nodeId);
@@ -1138,16 +1145,45 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         }
 
         Node* node = nullptr;
-        for (size_t i = 0; i < NAV::NodeRegistry::registeredNodes().size(); i++)
+        for (size_t i = 0; i < NAV::NodeRegistry::RegisteredNodes().size(); i++)
         {
-            const auto& category = NAV::NodeRegistry::registeredNodes().at(i).category;
-            if (i > 0 && category != NAV::NodeRegistry::registeredNodes().at(i - 1).category)
+            const auto& category = NAV::NodeRegistry::RegisteredNodes().at(i).category;
+            if (i > 0 && category != NAV::NodeRegistry::RegisteredNodes().at(i - 1).category)
             {
                 ImGui::Separator();
             }
-            const auto& displayName = NAV::NodeRegistry::registeredNodes().at(i).type;
-            const auto& constructor = NAV::NodeRegistry::registeredNodes().at(i).constructor;
-            if (filter.PassFilter(displayName.c_str()) && ImGui::MenuItem(displayName.c_str()))
+            bool compatibleNode = true;
+            if (newNodeLinkPin)
+            {
+                compatibleNode = false;
+                Pin::Kind searchPinKind = newNodeLinkPin->kind == Pin::Kind::Input ? Pin::Kind::Output : Pin::Kind::Input;
+                for (const auto& pinInfo : NAV::NodeRegistry::RegisteredNodes().at(i).pinInfo)
+                {
+                    const std::vector<std::string>& startPinDataIdentifier = newNodeLinkPin->kind == Pin::Kind::Input ? pinInfo.dataIdentifier : newNodeLinkPin->dataIdentifier;
+                    const std::vector<std::string>& endPinDataIdentifier = newNodeLinkPin->kind == Pin::Kind::Input ? newNodeLinkPin->dataIdentifier : pinInfo.dataIdentifier;
+                    const std::string& startPinParentNodeType = newNodeLinkPin->kind == Pin::Kind::Input ? NAV::NodeRegistry::RegisteredNodes().at(i).type : newNodeLinkPin->parentNode->type();
+
+                    if (pinInfo.kind == searchPinKind && pinInfo.type == newNodeLinkPin->type)
+                    {
+                        if ((pinInfo.type == Pin::Type::Flow
+                             && NAV::NodeRegistry::NodeDataTypeIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
+                            || (pinInfo.type == Pin::Type::Delegate
+                                && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
+                            || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix || pinInfo.type == Pin::Type::Function)
+                                && (startPinDataIdentifier.empty()
+                                    || endPinDataIdentifier.empty()
+                                    || std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinDataIdentifier.front()) != endPinDataIdentifier.end()))
+                            || pinInfo.type == Pin::Type::Bool || pinInfo.type == Pin::Type::Int || pinInfo.type == Pin::Type::Float || pinInfo.type == Pin::Type::String)
+                        {
+                            compatibleNode = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            const auto& displayName = NAV::NodeRegistry::RegisteredNodes().at(i).type;
+            const auto& constructor = NAV::NodeRegistry::RegisteredNodes().at(i).constructor;
+            if (compatibleNode && filter.PassFilter(displayName.c_str()) && ImGui::MenuItem(displayName.c_str()))
             {
                 filter.Clear();
                 node = constructor();

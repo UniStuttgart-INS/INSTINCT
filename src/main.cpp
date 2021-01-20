@@ -46,10 +46,10 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
         NAV::ConfigManager::FetchConfigs(argc, argv);
 
         // Register all Node Types which are available to the program
-        NAV::NodeRegistry::registerNodeTypes();
+        NAV::NodeRegistry::RegisterNodeTypes();
 
         // Register all Node Data Types which are available to the program
-        NAV::NodeRegistry::registerNodeDataTypes();
+        NAV::NodeRegistry::RegisterNodeDataTypes();
 
         if (NAV::ConfigManager::Get<bool>("nogui", false))
         {

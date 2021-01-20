@@ -77,6 +77,7 @@ void NAV::Node::deinitializeNode()
     }
 
     // Deinitialize the node itself
+    resetNode();
     deinitialize();
     isInitialized_ = false;
 

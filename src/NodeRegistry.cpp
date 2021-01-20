@@ -37,6 +37,17 @@ void registerNodeType()
     info.constructor = []() { return new T(); }; // NOLINT(cppcoreguidelines-owning-memory)
     info.type = T::typeStatic();
     info.category = T::category();
+
+    T obj;
+    for (const Pin& pin : obj.inputPins)
+    {
+        info.pinInfo.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
+    }
+    for (const Pin& pin : obj.outputPins)
+    {
+        info.pinInfo.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
+    }
+
     registeredNodes_.push_back(info);
 }
 
@@ -56,7 +67,7 @@ void registerNodeDataType()
 /*                                           Function Definitions                                           */
 /* -------------------------------------------------------------------------------------------------------- */
 
-const std::vector<NAV::NodeRegistry::NodeInfo>& NAV::NodeRegistry::registeredNodes()
+const std::vector<NAV::NodeRegistry::NodeInfo>& NAV::NodeRegistry::RegisteredNodes()
 {
     return registeredNodes_;
 }
@@ -122,7 +133,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 // Time
 #include "Nodes/Time/TimeSynchronizer.hpp"
 
-void NAV::NodeRegistry::registerNodeTypes()
+void NAV::NodeRegistry::RegisterNodeTypes()
 {
     LOG_TRACE("called");
 
@@ -169,7 +180,7 @@ void NAV::NodeRegistry::registerNodeTypes()
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 
-void NAV::NodeRegistry::registerNodeDataTypes()
+void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
     registerNodeDataType<NodeData>();
     registerNodeDataType<InsObs>();

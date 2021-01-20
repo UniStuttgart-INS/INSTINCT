@@ -96,6 +96,9 @@ class Pin
         constexpr bool operator==(const Type& other) const { return value == other.value; }
         constexpr bool operator!=(const Type& other) const { return value != other.value; }
 
+        constexpr bool operator==(const Value& other) const { return value == other; }
+        constexpr bool operator!=(const Value& other) const { return value != other; }
+
         explicit operator std::string() const
         {
             switch (value)
@@ -167,6 +170,9 @@ class Pin
 
         constexpr bool operator==(const Kind& other) const { return value == other.value; }
         constexpr bool operator!=(const Kind& other) const { return value != other.value; }
+
+        constexpr bool operator==(const Value& other) const { return value == other; }
+        constexpr bool operator!=(const Value& other) const { return value != other; }
 
         explicit operator std::string() const
         {

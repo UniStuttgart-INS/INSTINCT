@@ -25,9 +25,9 @@ Logger::Logger(const std::string& logpath)
 
     // See https://github.com/gabime/spdlog/wiki/3.-Custom-formatting for formatting options
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
-    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [%s:%3#] [%!()] %v");
+    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [%s:%#] [%!()] %v");
 #elif SPDLOG_ACTIVE_LEVEL == SPDLOG_LEVEL_DEBUG
-    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [%s:%3#] %v");
+    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] [%s:%#] %v");
 #else
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%L%$] %v");
 #endif

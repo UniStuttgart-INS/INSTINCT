@@ -229,7 +229,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
                 continue;
             }
             Node* node = nullptr;
-            for (const auto& nodeInfo : NAV::NodeRegistry::registeredNodes())
+            for (const auto& nodeInfo : NAV::NodeRegistry::RegisteredNodes())
             {
                 if (nodeInfo.type == nodeJson.at("type"))
                 {
@@ -305,13 +305,10 @@ bool NAV::flow::HasUnsavedChanges()
 
 void NAV::flow::ApplyChanges()
 {
-    if (!ConfigManager::Get<bool>("nogui", false))
+    // This prevents the newly loaded gui elements from triggering the unsaved changes
+    if (ImGui::GetCurrentContext() && ImGui::GetFrameCount() - loadingFrameCount >= loadingFramesToWait)
     {
-        // This prevents the newly loaded gui elements from triggering the unsaved changes
-        if (ImGui::GetFrameCount() - loadingFrameCount >= loadingFramesToWait)
-        {
-            unsavedChanges = true;
-        }
+        unsavedChanges = true;
     }
 }
 
