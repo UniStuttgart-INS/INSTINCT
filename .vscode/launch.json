@@ -9,7 +9,6 @@
             "program": "${workspaceFolder}/bin/Debug/navsos",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
                 "-fconfig.ini",
-                "config-dataflow.ini",
                 "-l",
                 "flow/Default.flow",
                 // "--nogui",
