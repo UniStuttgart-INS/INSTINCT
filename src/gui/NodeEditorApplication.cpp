@@ -1151,7 +1151,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             bool categoryHasItems = false;
             for (const auto& nodeInfo : nodeInfoList)
             {
-                if (nodeInfo.hasCompatiblePin(newNodeLinkPin) && filter.PassFilter(nodeInfo.type.c_str()))
+                if (nodeInfo.hasCompatiblePin(newNodeLinkPin)
+                    && (filter.PassFilter(nodeInfo.type.c_str()) || filter.PassFilter(category.c_str())))
                 {
                     categoryHasItems = true;
                     break;
@@ -1167,7 +1168,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         const auto& displayName = nodeInfo.type;
                         const auto& constructor = nodeInfo.constructor;
                         ImGui::Indent();
-                        if (nodeInfo.hasCompatiblePin(newNodeLinkPin) && filter.PassFilter(displayName.c_str())
+                        if (nodeInfo.hasCompatiblePin(newNodeLinkPin)
+                            && (filter.PassFilter(nodeInfo.type.c_str()) || filter.PassFilter(category.c_str()))
                             && ImGui::MenuItem(displayName.c_str()))
                         {
                             filter.Clear();
