@@ -240,8 +240,8 @@ class Pin
     PinData data = static_cast<void*>(nullptr);
     /// Callback List
     std::vector<std::tuple<Node*, void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> callbacks;
-    /// Unique name which is used for data flows
-    std::string dataIdentifier;
+    /// One or multiple Data Identifiers (Unique name which is used for data flows)
+    std::vector<std::string> dataIdentifier;
 
   private:
     /// Size of the Pin Icons in [px]

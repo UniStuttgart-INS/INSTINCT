@@ -79,11 +79,6 @@ class Plot : public Node
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex);
 
-    /// @brief Checks if the given data type is supported for link creation
-    /// @param[in] dataIdentifier Type to check
-    /// @return True if supported, false if not
-    static bool isDataTypeSupported(const std::string& dataIdentifier);
-
     /// @brief Adds Input Pins depending on the variable nInputPins
     void updateNumberOfInputPins();
 

@@ -23,7 +23,7 @@ NAV::VectorNavDataLogger::VectorNavDataLogger()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, NAV::VectorNavObs::type(), &VectorNavDataLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::VectorNavObs::type() }, &VectorNavDataLogger::writeObservation);
 }
 
 NAV::VectorNavDataLogger::~VectorNavDataLogger()

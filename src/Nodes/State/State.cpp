@@ -18,9 +18,9 @@ NAV::State::State()
 
     nm::CreateOutputPin(this, "StateData", Pin::Type::Object, NAV::StateData::type(), &currentState);
 
-    nm::CreateInputPin(this, "StateData\nUpdate", Pin::Type::Flow, NAV::StateData::type(), &State::updateState);
-    nm::CreateInputPin(this, "GnssObs\nInit", Pin::Type::Flow, NAV::GnssObs::type(), &State::initPositionVelocity);
-    nm::CreateInputPin(this, "ImuObs\nInit", Pin::Type::Flow, NAV::ImuObs::type(), &State::initAttitude);
+    nm::CreateInputPin(this, "StateData\nUpdate", Pin::Type::Flow, { NAV::StateData::type() }, &State::updateState);
+    nm::CreateInputPin(this, "GnssObs\nInit", Pin::Type::Flow, { NAV::GnssObs::type() }, &State::initPositionVelocity);
+    nm::CreateInputPin(this, "ImuObs\nInit", Pin::Type::Flow, { NAV::ImuObs::type() }, &State::initAttitude);
 }
 
 NAV::State::~State()

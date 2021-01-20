@@ -693,9 +693,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 builder.Input(input.id);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                 input.drawPinIcon(nm::IsPinLinked(input.id), static_cast<int>(alpha * 255));
-                if (!input.dataIdentifier.empty() && ImGui::IsItemHovered())
+                if (ImGui::IsItemHovered())
                 {
-                    tooltipText = std::string(input.dataIdentifier);
+                    tooltipText = fmt::format("{}", fmt::join(input.dataIdentifier, "\n"));
                 }
 
                 ImGui::Spring(0);
@@ -739,9 +739,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 }
                 ImGui::Spring(0);
                 output.drawPinIcon(nm::IsPinLinked(output.id), static_cast<int>(alpha * 255));
-                if (!output.dataIdentifier.empty() && ImGui::IsItemHovered())
+                if (ImGui::IsItemHovered())
                 {
-                    tooltipText = std::string(output.dataIdentifier);
+                    tooltipText = fmt::format("{}", fmt::join(output.dataIdentifier, "\n"));
                 }
                 ImGui::PopStyleVar();
                 util::BlueprintNodeBuilder::EndOutput();
@@ -891,22 +891,38 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         else if (startPin->type == Pin::Type::Flow
                                  && !NAV::NodeRegistry::NodeDataTypeIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
                         {
-                            showLabel(fmt::format("The data type [{}] can't be linked to [{}]", startPin->dataIdentifier, endPin->dataIdentifier).c_str(), ImColor(45, 32, 32, 180));
+                            showLabel(fmt::format("The data type [{}]\ncan't be linked to [{}]",
+                                                  fmt::join(startPin->dataIdentifier, ","),
+                                                  fmt::join(endPin->dataIdentifier, ","))
+                                          .c_str(),
+                                      ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
                         else if (startPin->type == Pin::Type::Delegate
-                                 && (startPin->parentNode == nullptr || endPin->dataIdentifier != startPin->parentNode->type()))
+                                 && (startPin->parentNode == nullptr
+                                     || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->parentNode->type()) == endPin->dataIdentifier.end()))
                         {
                             if (startPin->parentNode != nullptr)
                             {
-                                showLabel(fmt::format("The delegate type [{}] can't be linked to [{}]", startPin->parentNode->type(), endPin->dataIdentifier).c_str(), ImColor(45, 32, 32, 180));
+                                showLabel(fmt::format("The delegate type [{}]\ncan't be linked to [{}]",
+                                                      startPin->parentNode->type(),
+                                                      fmt::join(endPin->dataIdentifier, ","))
+                                              .c_str(),
+                                          ImColor(45, 32, 32, 180));
                             }
+
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
                         else if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix || startPin->type == Pin::Type::Function)
-                                 && (startPin->dataIdentifier.empty() || endPin->dataIdentifier.empty() || startPin->dataIdentifier != endPin->dataIdentifier))
+                                 && (startPin->dataIdentifier.empty()
+                                     || endPin->dataIdentifier.empty()
+                                     || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->dataIdentifier.front()) == endPin->dataIdentifier.end()))
                         {
-                            showLabel(fmt::format("The data type [{}]\ncan't be linked to [{}]", startPin->dataIdentifier, endPin->dataIdentifier).c_str(), ImColor(45, 32, 32, 180));
+                            showLabel(fmt::format("The data type [{}]\ncan't be linked to [{}]",
+                                                  fmt::join(startPin->dataIdentifier, ","),
+                                                  fmt::join(endPin->dataIdentifier, ","))
+                                          .c_str(),
+                                      ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
                         else

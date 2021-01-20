@@ -309,14 +309,9 @@ bool NAV::Plot::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 
-    if (!isDataTypeSupported(startPin->dataIdentifier))
-    {
-        return false;
-    }
-
     size_t pinIndex = pinIndexFromId(endPin->id);
 
-    if (startPin->dataIdentifier == VectorNavObs::type())
+    if (startPin->dataIdentifier.front() == VectorNavObs::type())
     {
         // InsObs
         data.at(pinIndex).addPlotDataItem("Time [s]");
@@ -399,16 +394,11 @@ void NAV::Plot::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
     }
 }
 
-bool NAV::Plot::isDataTypeSupported(const std::string& dataIdentifier)
-{
-    return dataIdentifier == VectorNavObs::type();
-}
-
 void NAV::Plot::updateNumberOfInputPins()
 {
     while (inputPins.size() < static_cast<size_t>(nInputPins))
     {
-        nm::CreateInputPin(this, ("Pin " + std::to_string(inputPins.size() + 1)).c_str(), Pin::Type::Flow, NAV::InsObs::type(), &Plot::plotData);
+        nm::CreateInputPin(this, ("Pin " + std::to_string(inputPins.size() + 1)).c_str(), Pin::Type::Flow, { VectorNavObs::type() }, &Plot::plotData);
         data.emplace_back();
     }
     while (inputPins.size() > static_cast<size_t>(nInputPins))
@@ -442,7 +432,7 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
         if (Pin* sourcePin = nm::FindPin(link->startPinId))
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
-            if (sourcePin->dataIdentifier == VectorNavObs::type())
+            if (sourcePin->dataIdentifier.front() == VectorNavObs::type())
             {
                 plotVectorNavObs(std::static_pointer_cast<VectorNavObs>(nodeData), pinIndex);
             }

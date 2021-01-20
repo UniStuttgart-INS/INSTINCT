@@ -48,17 +48,17 @@ NAV::Demo::Demo()
     nm::CreateOutputPin(this, "Matrix", Pin::Type::Matrix, "Eigen::MatrixXd", &valueMatrix);
     nm::CreateOutputPin(this, "Function", Pin::Type::Function, "std::string (*)(int, bool)", &Demo::callbackFunction);
 
-    nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, typeStatic());
-    nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::NodeData::type(), &Demo::receiveSensorData);
-    nm::CreateInputPin(this, "FileReader\n Data", Pin::Type::Flow, NAV::InsObs::type(), &Demo::receiveFileReaderData);
+    nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
+    nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveSensorData);
+    nm::CreateInputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::InsObs::type() }, &Demo::receiveFileReaderData);
     nm::CreateInputPin(this, "Bool", Pin::Type::Bool);
     nm::CreateInputPin(this, "Int", Pin::Type::Int);
     nm::CreateInputPin(this, "Float", Pin::Type::Float);
     nm::CreateInputPin(this, "Double", Pin::Type::Float);
     nm::CreateInputPin(this, "String", Pin::Type::String);
-    nm::CreateInputPin(this, "Object", Pin::Type::Object, "Demo::DemoData");
-    nm::CreateInputPin(this, "Matrix", Pin::Type::Matrix, "Eigen::MatrixXd");
-    nm::CreateInputPin(this, "Function", Pin::Type::Function, "std::string (*)(int, bool)");
+    nm::CreateInputPin(this, "Object", Pin::Type::Object, { "Demo::DemoData" });
+    nm::CreateInputPin(this, "Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" });
+    nm::CreateInputPin(this, "Function", Pin::Type::Function, { "std::string (*)(int, bool)" });
 }
 
 NAV::Demo::~Demo()

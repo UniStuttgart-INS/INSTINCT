@@ -68,12 +68,13 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
     m_nodes.push_back(node);
     LOG_DEBUG("Creating node {}", size_t(node->id));
 
+    // Create Delegate output pin
     if (node->outputPins.empty() || node->outputPins.front().type != Pin::Type::Delegate)
     {
         Pin pin = Pin(GetNextPinId(), "", Pin::Type::Delegate, Pin::Kind::Output, node);
 
         pin.data = node;
-        pin.dataIdentifier = node->type();
+        pin.dataIdentifier.push_back(node->type());
 
         node->outputPins.insert(node->outputPins.begin(), pin);
     }
@@ -363,7 +364,7 @@ void NAV::NodeManager::DeleteAllLinks()
     flow::ApplyChanges();
 }
 
-NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::string& dataIdentifier, NAV::Pin::PinData data)
+NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinData data)
 {
     node->inputPins.emplace_back(GetNextPinId(), name, pinType, Pin::Kind::Input, node);
 
@@ -380,7 +381,7 @@ NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, N
     node->outputPins.emplace_back(GetNextPinId(), name, pinType, Pin::Kind::Output, node);
 
     node->outputPins.back().data = data;
-    node->outputPins.back().dataIdentifier = dataIdentifier;
+    node->outputPins.back().dataIdentifier = { dataIdentifier };
 
     flow::ApplyChanges();
 

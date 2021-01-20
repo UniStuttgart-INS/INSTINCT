@@ -61,21 +61,27 @@ const std::vector<NAV::NodeRegistry::NodeInfo>& NAV::NodeRegistry::registeredNod
     return registeredNodes_;
 }
 
-bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::string& childType, const std::string& parentType)
+bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes)
 {
-    if (childType == parentType)
+    for (const auto& childType : childTypes)
     {
-        return true;
-    }
-    for (const auto& [dataType, parentTypes] : registeredNodeDataTypes_)
-    {
-        if (dataType == childType)
+        for (const auto& parentType : parentTypes)
         {
-            for (const auto& parentTypeOfChild : parentTypes)
+            if (childType == parentType)
             {
-                if (NodeDataTypeIsChildOf(parentTypeOfChild, parentType))
+                return true;
+            }
+            for (const auto& [dataType, parentTypes] : registeredNodeDataTypes_)
+            {
+                if (dataType == childType)
                 {
-                    return true;
+                    for (const auto& parentTypeOfChild : parentTypes)
+                    {
+                        if (NodeDataTypeIsChildOf({ parentTypeOfChild }, { parentType }))
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
         }

@@ -23,7 +23,7 @@ NAV::ImuDataLogger::ImuDataLogger()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, NAV::ImuObs::type(), &ImuDataLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuDataLogger::writeObservation);
 }
 
 NAV::ImuDataLogger::~ImuDataLogger()

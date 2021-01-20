@@ -17,8 +17,8 @@ NAV::TimeSynchronizer::TimeSynchronizer()
 
     nm::CreateOutputPin(this, "Obs", Pin::Type::Flow, NAV::ImuObs::type(), &TimeSynchronizer::pollData);
 
-    nm::CreateInputPin(this, "Obs", Pin::Type::Flow, NAV::ImuObs::type(), &TimeSynchronizer::syncObs);
-    nm::CreateInputPin(this, "Time", Pin::Type::Flow, NAV::InsObs::type(), &TimeSynchronizer::syncTime);
+    nm::CreateInputPin(this, "Obs", Pin::Type::Flow, { NAV::ImuObs::type(), VectorNavObs::type(), KvhObs::type() }, &TimeSynchronizer::syncObs);
+    nm::CreateInputPin(this, "Time", Pin::Type::Flow, { NAV::InsObs::type() }, &TimeSynchronizer::syncTime);
 }
 
 NAV::TimeSynchronizer::~TimeSynchronizer()
@@ -43,25 +43,6 @@ std::string NAV::TimeSynchronizer::category()
 
 void NAV::TimeSynchronizer::guiConfig()
 {
-    if (ImGui::Combo("Port Type", &selectedPortType, "VectorNavObs\0ImuObs\0KvhObs\0\0"))
-    {
-        if (selectedPortType == 0)
-        {
-            inputPins.at(InputPortIndex_ObsToSync).dataIdentifier = VectorNavObs::type();
-        }
-        else if (selectedPortType == 1)
-        {
-            inputPins.at(InputPortIndex_ObsToSync).dataIdentifier = ImuObs::type();
-        }
-        else if (selectedPortType == 2)
-        {
-            inputPins.at(InputPortIndex_ObsToSync).dataIdentifier = KvhObs::type();
-        }
-        outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier = inputPins.at(InputPortIndex_ObsToSync).dataIdentifier;
-
-        LOG_DEBUG("{}: Use Fixed Start Time changed to {}", nameId(), useFixedStartTime);
-        flow::ApplyChanges();
-    }
     if (ImGui::Checkbox("Use Fixed Start Time", &useFixedStartTime))
     {
         LOG_DEBUG("{}: Use Fixed Start Time changed to {}", nameId(), useFixedStartTime);
@@ -115,7 +96,6 @@ void NAV::TimeSynchronizer::guiConfig()
 
     json j;
 
-    j["selectedPortType"] = selectedPortType;
     j["useFixedStartTime"] = useFixedStartTime;
     j["gpsCycle"] = gpsCycle;
     j["gpsWeek"] = gpsWeek;
@@ -128,23 +108,6 @@ void NAV::TimeSynchronizer::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (j.contains("selectedPortType"))
-    {
-        j.at("selectedPortType").get_to(selectedPortType);
-        if (selectedPortType == 0)
-        {
-            inputPins.at(InputPortIndex_ObsToSync).dataIdentifier = VectorNavObs::type();
-        }
-        else if (selectedPortType == 1)
-        {
-            inputPins.at(InputPortIndex_ObsToSync).dataIdentifier = ImuObs::type();
-        }
-        else if (selectedPortType == 2)
-        {
-            inputPins.at(InputPortIndex_ObsToSync).dataIdentifier = KvhObs::type();
-        }
-        outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier = inputPins.at(InputPortIndex_ObsToSync).dataIdentifier;
-    }
     if (j.contains("useFixedStartTime"))
     {
         j.at("useFixedStartTime").get_to(useFixedStartTime);
@@ -160,6 +123,31 @@ void NAV::TimeSynchronizer::restore(json const& j)
     if (j.contains("gpsToW"))
     {
         j.at("gpsToW").get_to(gpsToW);
+    }
+}
+
+bool NAV::TimeSynchronizer::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+{
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+
+    if (endPin && endPin->id == inputPins.at(InputPortIndex_ObsToSync).id)
+    {
+        if (startPin)
+        {
+            outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier = startPin->dataIdentifier;
+        }
+    }
+
+    return true;
+}
+
+void NAV::TimeSynchronizer::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+{
+    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+
+    if (endPin->id == inputPins.at(InputPortIndex_ObsToSync).id)
+    {
+        outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier = { NAV::ImuObs::type() };
     }
 }
 
@@ -207,15 +195,15 @@ std::shared_ptr<NAV::NodeData> NAV::TimeSynchronizer::pollData(bool peek)
             if (node != nullptr && callback != nullptr && *callback != nullptr)
             {
                 std::shared_ptr<NAV::NodeData> data = (node->**callback)(peek);
-                if (outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier == ImuObs::type()
-                    || outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier == VectorNavObs::type())
+                if (outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier.front() == ImuObs::type()
+                    || outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier.front() == VectorNavObs::type())
                 {
                     if (syncImuObs(std::static_pointer_cast<ImuObs>(data)))
                     {
                         return data;
                     }
                 }
-                else if (outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier == KvhObs::type())
+                else if (outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier.front() == KvhObs::type())
                 {
                     if (syncKvhObs(std::static_pointer_cast<KvhObs>(data)))
                     {
@@ -231,15 +219,15 @@ std::shared_ptr<NAV::NodeData> NAV::TimeSynchronizer::pollData(bool peek)
 
 void NAV::TimeSynchronizer::syncObs(const std::shared_ptr<NAV::NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    if (inputPins.at(InputPortIndex_ObsToSync).dataIdentifier == ImuObs::type()
-        || inputPins.at(InputPortIndex_ObsToSync).dataIdentifier == VectorNavObs::type())
+    if (outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier.front() == ImuObs::type()
+        || outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier.front() == VectorNavObs::type())
     {
         if (syncImuObs(std::static_pointer_cast<ImuObs>(nodeData)))
         {
             invokeCallbacks(OutputPortIndex_ObsToSync, nodeData);
         }
     }
-    else if (inputPins.at(InputPortIndex_ObsToSync).dataIdentifier == KvhObs::type())
+    else if (outputPins.at(OutputPortIndex_ObsToSync).dataIdentifier.front() == KvhObs::type())
     {
         if (syncKvhObs(std::static_pointer_cast<KvhObs>(nodeData)))
         {

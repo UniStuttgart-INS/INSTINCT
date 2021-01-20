@@ -21,8 +21,8 @@ NAV::ImuIntegrator::ImuIntegrator()
 
     nm::CreateOutputPin(this, "StateData", Pin::Type::Flow, NAV::StateData::type());
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuIntegrator::integrateObservation);
-    nm::CreateInputPin(this, "StateData", Pin::Type::Object, NAV::StateData::type());
+    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::integrateObservation);
+    nm::CreateInputPin(this, "StateData", Pin::Type::Object, { NAV::StateData::type() });
 }
 
 NAV::ImuIntegrator::~ImuIntegrator()

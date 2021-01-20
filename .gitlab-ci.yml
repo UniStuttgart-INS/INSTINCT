@@ -53,14 +53,14 @@ clang-tidy:
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
-    - clang-tidy --extra-arg=-Wno-unknown-warning-option $(find src -type f -name "*.cpp")
+    - find src -type f -name "*.cpp" -exec echo '##### Linting {}' \; -exec clang-tidy --extra-arg=-Wno-unknown-warning-option {} \;
 
 clang-tidy:tests:
   stage: checks
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
-    - clang-tidy --extra-arg=-Wno-unknown-warning-option $(find test -type f -name "*.cpp")
+    - find test -type f -name "*.cpp" -exec echo '##### Linting {}' \; -exec clang-tidy --extra-arg=-Wno-unknown-warning-option {} \;
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                  Build Main & GUI                                                  ║

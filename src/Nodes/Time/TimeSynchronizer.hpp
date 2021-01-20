@@ -49,6 +49,17 @@ class TimeSynchronizer : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Called when a new link is to be established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    /// @return True if link is allowed, false if link is rejected
+    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+
+    /// @brief Called when a link is to be deleted
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    void onDeleteLink(Pin* startPin, Pin* endPin) override;
+
   private:
     constexpr static size_t OutputPortIndex_ObsToSync = 1; ///< @brief Flow
     constexpr static size_t InputPortIndex_ObsToSync = 0;  ///< @brief Flow
@@ -84,9 +95,6 @@ class TimeSynchronizer : public Node
     /// @param[in] obs KvhObs to process
     /// @return True if the time was updated
     bool syncKvhObs(const std::shared_ptr<KvhObs>& obs);
-
-    /// Selected Port Type in the Gui
-    int selectedPortType = 1;
 
     /// Flag whether to use the provided start time or wait for a signal on the input port
     bool useFixedStartTime = false;

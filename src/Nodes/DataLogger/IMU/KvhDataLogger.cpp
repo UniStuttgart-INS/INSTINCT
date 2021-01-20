@@ -23,7 +23,7 @@ NAV::KvhDataLogger::KvhDataLogger()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, NAV::KvhObs::type(), &KvhDataLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::KvhObs::type() }, &KvhDataLogger::writeObservation);
 }
 
 NAV::KvhDataLogger::~KvhDataLogger()

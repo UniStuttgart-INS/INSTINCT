@@ -21,7 +21,7 @@ NAV::ImuSimulator::ImuSimulator()
     hasConfig = true;
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuSimulator::pollData);
-    nm::CreateInputPin(this, "State", Pin::Type::Object, NAV::StateData::type());
+    nm::CreateInputPin(this, "State", Pin::Type::Object, { NAV::StateData::type() });
 }
 
 NAV::ImuSimulator::~ImuSimulator()

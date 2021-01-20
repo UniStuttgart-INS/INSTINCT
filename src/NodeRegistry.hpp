@@ -29,7 +29,7 @@ struct NodeInfo
 /// @brief Reference to List of all registered Nodes
 const std::vector<NodeInfo>& registeredNodes();
 
-bool NodeDataTypeIsChildOf(const std::string& childType, const std::string& parentType);
+bool NodeDataTypeIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes);
 
 /// @brief Register all available Node types for the program
 void registerNodeTypes();
