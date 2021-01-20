@@ -1145,50 +1145,40 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         }
 
         Node* node = nullptr;
-        for (size_t i = 0; i < NAV::NodeRegistry::RegisteredNodes().size(); i++)
+        for (const auto& [category, nodeInfoList] : NAV::NodeRegistry::RegisteredNodes())
         {
-            const auto& category = NAV::NodeRegistry::RegisteredNodes().at(i).category;
-            if (i > 0 && category != NAV::NodeRegistry::RegisteredNodes().at(i - 1).category)
+            // Prevent category from showing, if it is empty
+            bool categoryHasItems = false;
+            for (const auto& nodeInfo : nodeInfoList)
             {
-                ImGui::Separator();
-            }
-            bool compatibleNode = true;
-            if (newNodeLinkPin)
-            {
-                compatibleNode = false;
-                Pin::Kind searchPinKind = newNodeLinkPin->kind == Pin::Kind::Input ? Pin::Kind::Output : Pin::Kind::Input;
-                for (const auto& pinInfo : NAV::NodeRegistry::RegisteredNodes().at(i).pinInfo)
+                if (nodeInfo.hasCompatiblePin(newNodeLinkPin) && filter.PassFilter(nodeInfo.type.c_str()))
                 {
-                    const std::vector<std::string>& startPinDataIdentifier = newNodeLinkPin->kind == Pin::Kind::Input ? pinInfo.dataIdentifier : newNodeLinkPin->dataIdentifier;
-                    const std::vector<std::string>& endPinDataIdentifier = newNodeLinkPin->kind == Pin::Kind::Input ? newNodeLinkPin->dataIdentifier : pinInfo.dataIdentifier;
-                    const std::string& startPinParentNodeType = newNodeLinkPin->kind == Pin::Kind::Input ? NAV::NodeRegistry::RegisteredNodes().at(i).type : newNodeLinkPin->parentNode->type();
-
-                    if (pinInfo.kind == searchPinKind && pinInfo.type == newNodeLinkPin->type)
-                    {
-                        if ((pinInfo.type == Pin::Type::Flow
-                             && NAV::NodeRegistry::NodeDataTypeIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
-                            || (pinInfo.type == Pin::Type::Delegate
-                                && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
-                            || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix || pinInfo.type == Pin::Type::Function)
-                                && (startPinDataIdentifier.empty()
-                                    || endPinDataIdentifier.empty()
-                                    || std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinDataIdentifier.front()) != endPinDataIdentifier.end()))
-                            || pinInfo.type == Pin::Type::Bool || pinInfo.type == Pin::Type::Int || pinInfo.type == Pin::Type::Float || pinInfo.type == Pin::Type::String)
-                        {
-                            compatibleNode = true;
-                            break;
-                        }
-                    }
+                    categoryHasItems = true;
+                    break;
                 }
             }
-            const auto& displayName = NAV::NodeRegistry::RegisteredNodes().at(i).type;
-            const auto& constructor = NAV::NodeRegistry::RegisteredNodes().at(i).constructor;
-            if (compatibleNode && filter.PassFilter(displayName.c_str()) && ImGui::MenuItem(displayName.c_str()))
+            if (categoryHasItems)
             {
-                filter.Clear();
-                node = constructor();
-                nm::AddNode(node);
-                ax::NodeEditor::EnableShortcuts(true);
+                ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+                if (ImGui::TreeNode((category + "##NewNodeTree").c_str()))
+                {
+                    for (const auto& nodeInfo : nodeInfoList)
+                    {
+                        const auto& displayName = nodeInfo.type;
+                        const auto& constructor = nodeInfo.constructor;
+                        ImGui::Indent();
+                        if (nodeInfo.hasCompatiblePin(newNodeLinkPin) && filter.PassFilter(displayName.c_str())
+                            && ImGui::MenuItem(displayName.c_str()))
+                        {
+                            filter.Clear();
+                            node = constructor();
+                            nm::AddNode(node);
+                            ax::NodeEditor::EnableShortcuts(true);
+                        }
+                        ImGui::Unindent();
+                    }
+                    ImGui::TreePop();
+                }
             }
         }
 

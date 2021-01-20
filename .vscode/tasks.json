@@ -365,8 +365,8 @@
             "type": "command",
             "command": "statusBarParam.get.compiler",
             "args": [
-                "gcc",
                 "clang",
+                "gcc",
             ],
         },
         { // clang-tidy
@@ -374,8 +374,8 @@
             "type": "command",
             "command": "statusBarParam.get.clangTidy",
             "args": [
-                "clang-tidy: ON",
                 "clang-tidy: OFF",
+                "clang-tidy: ON",
             ],
         },
         { // cppcheck
@@ -383,8 +383,8 @@
             "type": "command",
             "command": "statusBarParam.get.cppcheck",
             "args": [
-                "cppcheck: ON",
                 "cppcheck: OFF",
+                "cppcheck: ON",
             ],
         },
         { // logLevel

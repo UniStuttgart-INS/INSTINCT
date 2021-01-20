@@ -229,11 +229,18 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
                 continue;
             }
             Node* node = nullptr;
-            for (const auto& nodeInfo : NAV::NodeRegistry::RegisteredNodes())
+            for (const auto& registeredNode : NAV::NodeRegistry::RegisteredNodes())
             {
-                if (nodeInfo.type == nodeJson.at("type"))
+                for (const auto& nodeInfo : registeredNode.second)
                 {
-                    node = nodeInfo.constructor();
+                    if (nodeInfo.type == nodeJson.at("type"))
+                    {
+                        node = nodeInfo.constructor();
+                        break;
+                    }
+                }
+                if (node != nullptr)
+                {
                     break;
                 }
             }

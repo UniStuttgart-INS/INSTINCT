@@ -71,8 +71,13 @@ class Node
             return *this;
         }
 
-        constexpr bool operator==(const Kind& other) const { return value == other.value; }
-        constexpr bool operator!=(const Kind& other) const { return value != other.value; }
+        friend constexpr bool operator==(const Node::Kind& lhs, const Node::Kind& rhs);
+        friend constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind& rhs);
+
+        friend constexpr bool operator==(const Node::Kind& lhs, const Node::Kind::Value& rhs);
+        friend constexpr bool operator==(const Node::Kind::Value& lhs, const Node::Kind& rhs);
+        friend constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind::Value& rhs);
+        friend constexpr bool operator!=(const Node::Kind::Value& lhs, const Node::Kind& rhs);
 
         explicit operator std::string() const
         {
@@ -291,5 +296,13 @@ class Node
 
     friend class gui::NodeEditorApplication;
 };
+
+constexpr bool operator==(const Node::Kind& lhs, const Node::Kind& rhs) { return lhs.value == rhs.value; }
+constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind& rhs) { return lhs.value != rhs.value; }
+
+constexpr bool operator==(const Node::Kind& lhs, const Node::Kind::Value& rhs) { return lhs.value == rhs; }
+constexpr bool operator==(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return lhs == rhs.value; }
+constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind::Value& rhs) { return lhs.value != rhs; }
+constexpr bool operator!=(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return lhs != rhs.value; }
 
 } // namespace NAV

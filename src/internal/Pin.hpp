@@ -93,11 +93,13 @@ class Pin
             return *this;
         }
 
-        constexpr bool operator==(const Type& other) const { return value == other.value; }
-        constexpr bool operator!=(const Type& other) const { return value != other.value; }
+        friend constexpr bool operator==(const Pin::Type& lhs, const Pin::Type& rhs);
+        friend constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type& rhs);
 
-        constexpr bool operator==(const Value& other) const { return value == other; }
-        constexpr bool operator!=(const Value& other) const { return value != other; }
+        friend constexpr bool operator==(const Pin::Type& lhs, const Pin::Type::Value& rhs);
+        friend constexpr bool operator==(const Pin::Type::Value& lhs, const Pin::Type& rhs);
+        friend constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type::Value& rhs);
+        friend constexpr bool operator!=(const Pin::Type::Value& lhs, const Pin::Type& rhs);
 
         explicit operator std::string() const
         {
@@ -168,11 +170,13 @@ class Pin
             return *this;
         }
 
-        constexpr bool operator==(const Kind& other) const { return value == other.value; }
-        constexpr bool operator!=(const Kind& other) const { return value != other.value; }
+        friend constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind& rhs);
+        friend constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind& rhs);
 
-        constexpr bool operator==(const Value& other) const { return value == other; }
-        constexpr bool operator!=(const Value& other) const { return value != other; }
+        friend constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind::Value& rhs);
+        friend constexpr bool operator==(const Pin::Kind::Value& lhs, const Pin::Kind& rhs);
+        friend constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind::Value& rhs);
+        friend constexpr bool operator!=(const Pin::Kind::Value& lhs, const Pin::Kind& rhs);
 
         explicit operator std::string() const
         {
@@ -253,5 +257,21 @@ class Pin
     /// Size of the Pin Icons in [px]
     static constexpr int m_PinIconSize = 24;
 };
+
+constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind& rhs) { return lhs.value == rhs.value; }
+constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind& rhs) { return lhs.value != rhs.value; }
+
+constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind::Value& rhs) { return lhs.value == rhs; }
+constexpr bool operator==(const Pin::Kind::Value& lhs, const Pin::Kind& rhs) { return lhs == rhs.value; }
+constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind::Value& rhs) { return lhs.value != rhs; }
+constexpr bool operator!=(const Pin::Kind::Value& lhs, const Pin::Kind& rhs) { return lhs != rhs.value; }
+
+constexpr bool operator==(const Pin::Type& lhs, const Pin::Type& rhs) { return lhs.value == rhs.value; }
+constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type& rhs) { return lhs.value != rhs.value; }
+
+constexpr bool operator==(const Pin::Type& lhs, const Pin::Type::Value& rhs) { return lhs.value == rhs; }
+constexpr bool operator==(const Pin::Type::Value& lhs, const Pin::Type& rhs) { return lhs == rhs.value; }
+constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type::Value& rhs) { return lhs.value != rhs; }
+constexpr bool operator!=(const Pin::Type::Value& lhs, const Pin::Type& rhs) { return lhs != rhs.value; }
 
 } // namespace NAV

@@ -13,10 +13,12 @@
 
 namespace NAV::NodeRegistry
 {
-/// List of all registered nodes
-std::vector<NodeInfo> registeredNodes_;
+/// List of all registered nodes.
+/// Key: category, Value: Nodes
+std::map<std::string, std::vector<NodeInfo>> registeredNodes_;
 
-/// List of all registered node data types
+/// List of all registered node data types.
+/// Key: NodeData.type(), Value: parentTypes()
 std::map<std::string, std::vector<std::string>> registeredNodeDataTypes_;
 
 } // namespace NAV::NodeRegistry
@@ -36,19 +38,18 @@ void registerNodeType()
     NodeInfo info;
     info.constructor = []() { return new T(); }; // NOLINT(cppcoreguidelines-owning-memory)
     info.type = T::typeStatic();
-    info.category = T::category();
 
     T obj;
     for (const Pin& pin : obj.inputPins)
     {
-        info.pinInfo.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
+        info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }
     for (const Pin& pin : obj.outputPins)
     {
-        info.pinInfo.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
+        info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }
 
-    registeredNodes_.push_back(info);
+    registeredNodes_[T::category()].push_back(info);
 }
 
 /// @brief Register a NodeData with the NodeManager
@@ -67,7 +68,41 @@ void registerNodeDataType()
 /*                                           Function Definitions                                           */
 /* -------------------------------------------------------------------------------------------------------- */
 
-const std::vector<NAV::NodeRegistry::NodeInfo>& NAV::NodeRegistry::RegisteredNodes()
+bool NAV::NodeRegistry::NodeInfo::hasCompatiblePin(const Pin* pin) const
+{
+    if (pin == nullptr)
+    {
+        return true;
+    }
+
+    Pin::Kind searchPinKind = pin->kind == Pin::Kind::Input ? Pin::Kind::Output : Pin::Kind::Input;
+    for (const auto& pinInfo : this->pinInfoList)
+    {
+        const std::vector<std::string>& startPinDataIdentifier = pin->kind == Pin::Kind::Input ? pinInfo.dataIdentifier : pin->dataIdentifier;
+        const std::vector<std::string>& endPinDataIdentifier = pin->kind == Pin::Kind::Input ? pin->dataIdentifier : pinInfo.dataIdentifier;
+        const std::string& startPinParentNodeType = pin->kind == Pin::Kind::Input ? this->type : pin->parentNode->type();
+
+        if (pinInfo.kind == searchPinKind && pinInfo.type == pin->type)
+        {
+            if ((pinInfo.type == Pin::Type::Flow
+                 && NAV::NodeRegistry::NodeDataTypeIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
+                || (pinInfo.type == Pin::Type::Delegate
+                    && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
+                || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix || pinInfo.type == Pin::Type::Function)
+                    && (startPinDataIdentifier.empty()
+                        || endPinDataIdentifier.empty()
+                        || std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinDataIdentifier.front()) != endPinDataIdentifier.end()))
+                || pinInfo.type == Pin::Type::Bool || pinInfo.type == Pin::Type::Int || pinInfo.type == Pin::Type::Float || pinInfo.type == Pin::Type::String)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+const std::map<std::string, std::vector<NAV::NodeRegistry::NodeInfo>>& NAV::NodeRegistry::RegisteredNodes()
 {
     return registeredNodes_;
 }

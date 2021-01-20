@@ -9,6 +9,7 @@
 #include <memory>
 #include <functional>
 #include <vector>
+#include <map>
 
 #include "internal/Pin.hpp"
 
@@ -37,14 +38,16 @@ struct NodeInfo
     std::function<Node*()> constructor;
     /// Class Type of the node
     std::string type;
-    /// Category of the node
-    std::string category;
     /// List of port data types
-    std::vector<PinInfo> pinInfo;
+    std::vector<PinInfo> pinInfoList;
+
+    /// @brief Checks if the node has a pin which can be linked
+    /// @param[in] pin Pin to link to
+    [[nodiscard]] bool hasCompatiblePin(const Pin* pin) const;
 };
 
 /// @brief Reference to List of all registered Nodes
-const std::vector<NodeInfo>& RegisteredNodes();
+const std::map<std::string, std::vector<NodeInfo>>& RegisteredNodes();
 
 bool NodeDataTypeIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes);
 
