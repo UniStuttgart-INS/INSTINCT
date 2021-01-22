@@ -577,7 +577,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     static float leftPaneWidth = 400.0F;
     static float rightPaneWidth = 800.0F;
-    gui::widgets::Splitter(true, 4.0F, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
+    gui::widgets::Splitter("Main Splitter", true, 4.0F, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
 
     bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - 4.0F);
 

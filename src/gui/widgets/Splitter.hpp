@@ -8,6 +8,7 @@
 namespace NAV::gui::widgets
 {
 /// @brief Vertical or horizontal Screen Divider
+/// @param[in] str_id Unique Id for splitter creation
 /// @param[in] split_vertically Vertical or horizontal splitter
 /// @param[in] thickness Thickness in Pixels
 /// @param[in, out] size1 Size left or above the splitter
@@ -16,7 +17,7 @@ namespace NAV::gui::widgets
 /// @param[in] min_size2 Minimum size right or below the spliter
 /// @param[in] splitter_long_axis_size Length of the splitter
 /// @return True when the splitter is moved
-bool Splitter(bool split_vertically, float thickness,
+bool Splitter(const char* str_id, bool split_vertically, float thickness,
               float* size1, float* size2,
               float min_size1, float min_size2,
               float splitter_long_axis_size = -1.0F);

@@ -8,6 +8,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "gui/widgets/Splitter.hpp"
+
 NAV::Plot::Plot()
 {
     name = typeStatic();
@@ -81,59 +83,101 @@ void NAV::Plot::guiConfig()
                 plotInfo.headerText = plotInfo.title;
                 LOG_DEBUG("{}: # Header changed to {}", nameId(), plotInfo.headerText);
             }
-            for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
+            if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), 3,
+                                  ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
             {
-                auto& pinData = data.at(pinIndex);
+                ImGui::TableSetupColumn("Pin");
+                ImGui::TableSetupColumn("X Data");
+                ImGui::TableSetupColumn("# Data Points");
+                ImGui::TableHeadersRow();
 
-                if (!pinData.allDisplayNames.empty())
+                for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
                 {
-                    if (ImGui::BeginCombo(("X Data for Pin " + std::to_string(pinIndex) + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                          pinData.allDisplayNames.at(plotInfo.selectedXdata.at(pinIndex)).c_str()))
+                    ImGui::TableNextRow();
+                    ImGui::TableNextColumn(); // Pin
+                    ImGui::Text("%zu - %s", pinIndex + 1, data.at(pinIndex).dataIdentifier.c_str());
+
+                    ImGui::TableNextColumn(); // X Data
+                    auto& pinData = data.at(pinIndex);
+                    if (!pinData.plotData.empty())
                     {
-                        for (size_t plotDataIndex = 0; plotDataIndex < pinData.plotData.size(); plotDataIndex++)
+                        ImGui::SetNextItemWidth(200.0F);
+                        if (ImGui::BeginCombo(("##X Data for Pin " + std::to_string(pinIndex + 1) + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                              pinData.plotData.at(plotInfo.selectedXdata.at(pinIndex)).displayName.c_str()))
                         {
-                            auto& plotData = pinData.plotData.at(plotDataIndex);
+                            for (size_t plotDataIndex = 0; plotDataIndex < pinData.plotData.size(); plotDataIndex++)
+                            {
+                                auto& plotData = pinData.plotData.at(plotDataIndex);
 
-                            if (!plotData.hasData)
-                            {
-                                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
-                            }
-                            const bool is_selected = (plotInfo.selectedXdata.at(pinIndex) == plotDataIndex);
-                            if (ImGui::Selectable(pinData.allDisplayNames.at(plotDataIndex).c_str(), is_selected))
-                            {
-                                plotInfo.selectedXdata.at(pinIndex) = plotDataIndex;
-                            }
-                            if (!plotData.hasData)
-                            {
-                                ImGui::PopStyleVar();
-                            }
+                                if (!plotData.hasData)
+                                {
+                                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+                                }
+                                const bool is_selected = (plotInfo.selectedXdata.at(pinIndex) == plotDataIndex);
+                                if (ImGui::Selectable(pinData.plotData.at(plotDataIndex).displayName.c_str(), is_selected))
+                                {
+                                    plotInfo.selectedXdata.at(pinIndex) = plotDataIndex;
+                                }
+                                if (!plotData.hasData)
+                                {
+                                    ImGui::PopStyleVar();
+                                }
 
-                            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                            if (is_selected)
-                            {
-                                ImGui::SetItemDefaultFocus();
+                                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                                if (is_selected)
+                                {
+                                    ImGui::SetItemDefaultFocus();
+                                }
                             }
+                            ImGui::EndCombo();
                         }
-                        ImGui::EndCombo();
+                    }
+
+                    ImGui::TableNextColumn(); // # Data Points
+                    if (ImGui::DragInt(("##Data Points" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum) + " - " + std::to_string(pinIndex + 1)).c_str(),
+                                       &pinData.size, 10.0F, 0, INT32_MAX / 2))
+                    {
+                        if (pinData.size < 0)
+                        {
+                            pinData.size = 0;
+                        }
+                        for (auto& plotData : pinData.plotData)
+                        {
+                            plotData.buffer.resize(static_cast<size_t>(pinData.size));
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::SetTooltip("The amount of data which should be stored before the buffer gets reused.\nEnter 0 to show all data.");
                     }
                 }
+
+                ImGui::EndTable();
             }
+
             ImGui::CheckboxFlags(("Y-Axis 2##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                  &plotInfo.plotFlags, ImPlotFlags_YAxis2);
             ImGui::SameLine();
             ImGui::CheckboxFlags(("Y-Axis 3##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                  &plotInfo.plotFlags, ImPlotFlags_YAxis3);
 
-            float sideWidth = 180.0F;
-            ImGui::SetNextItemWidth(sideWidth);
+            gui::widgets::Splitter((std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                   true, 4.0F, &plotInfo.leftPaneWidth, &plotInfo.rightPaneWidth, 150.0F, 80.0F, ImPlot::GetStyle().PlotDefaultSize.y);
+
+            ImGui::SetNextItemWidth(plotInfo.leftPaneWidth - 2.0F);
             ImGui::BeginGroup();
             if (ImGui::BeginCombo(("##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                  ("Pin " + std::to_string(plotInfo.selectedPin + 1)).c_str()))
+                                  ("Pin " + std::to_string(plotInfo.selectedPin + 1)
+                                   + " - " + data.at(static_cast<size_t>(plotInfo.selectedPin)).dataIdentifier)
+                                      .c_str()))
             {
                 for (int n = 0; n < nInputPins; n++)
                 {
                     const bool is_selected = (plotInfo.selectedPin == n);
-                    if (ImGui::Selectable(("Pin " + std::to_string(n + 1)).c_str(), is_selected, 0))
+                    if (ImGui::Selectable(("Pin " + std::to_string(n + 1)
+                                           + " - " + data.at(static_cast<size_t>(n)).dataIdentifier)
+                                              .c_str(),
+                                          is_selected, 0))
                     {
                         plotInfo.selectedPin = n;
                     }
@@ -147,7 +191,7 @@ void NAV::Plot::guiConfig()
                 ImGui::EndCombo();
             }
             auto comboBoxSize = ImGui::GetItemRectSize();
-            if (ImGui::Button(("Clear##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), ImVec2(sideWidth, 0)))
+            if (ImGui::Button(("Clear##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), ImVec2(plotInfo.leftPaneWidth - 2.0F, 0)))
             {
                 for (auto& pinData : data)
                 {
@@ -168,7 +212,7 @@ void NAV::Plot::guiConfig()
             }
             auto buttonSize = ImGui::GetItemRectSize();
             ImGui::BeginChild(("Data Drag" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                              ImVec2(sideWidth, ImPlot::GetStyle().PlotDefaultSize.y - comboBoxSize.y - buttonSize.y - 2 * ImGui::GetStyle().ItemSpacing.y),
+                              ImVec2(plotInfo.leftPaneWidth - 2.0F, ImPlot::GetStyle().PlotDefaultSize.y - comboBoxSize.y - buttonSize.y - 2 * ImGui::GetStyle().ItemSpacing.y),
                               true);
 
             // Left Data Selectables
@@ -200,17 +244,47 @@ void NAV::Plot::guiConfig()
 
             ImGui::SameLine();
 
-            std::string xLabel = data.at(0).allDisplayNames.empty() ? "" : data.at(0).allDisplayNames.at(plotInfo.selectedXdata.at(0));
-            if (!data.at(0).plotData.empty() && !data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.data().empty())
-            {
-                double xMin = data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.front();
-                double xMax = data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).buffer.back();
+            std::string xLabel = data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).displayName;
 
-                if (!std::isnan(xMin) && !std::isnan(xMax))
+            double xMin = std::nan("");
+            double xMax = std::nan("");
+            for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++) // Search xLimits on all Pins
+            {
+                if (data.at(pinIndex).plotData.empty()
+                    || data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.empty())
                 {
-                    ImPlot::SetNextPlotLimitsX(xMin, xMax, ImGuiCond_Always);
+                    continue;
+                }
+                double xMinPin = data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.front();
+                double xMaxPin = data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.back();
+                if (!std::isnan(xMinPin))
+                {
+                    if (std::isnan(xMin))
+                    {
+                        xMin = xMinPin;
+                    }
+                    else if (xMinPin < xMin)
+                    {
+                        xMin = xMinPin;
+                    }
+                }
+                if (!std::isnan(xMaxPin))
+                {
+                    if (std::isnan(xMax))
+                    {
+                        xMax = xMaxPin;
+                    }
+                    else if (xMaxPin > xMax)
+                    {
+                        xMax = xMaxPin;
+                    }
                 }
             }
+            if (!std::isnan(xMin) && !std::isnan(xMax))
+            {
+                ImPlot::SetNextPlotLimitsX(xMin, xMax, ImGuiCond_Always);
+            }
+
             if (ImPlot::BeginPlot((plotInfo.title + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                   xLabel.c_str(), nullptr, ImVec2(-1, 0), plotInfo.plotFlags | ImPlotAxisFlags_LockMin))
             {
@@ -225,13 +299,13 @@ void NAV::Plot::guiConfig()
                                 || (plotData.plotOnAxis.at(plotNum) == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
                         {
                             ImPlot::SetPlotYAxis(plotData.plotOnAxis.at(plotNum));
-                            ImPlot::PlotLine(plotData.displayName.c_str(),
-                                             data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data().data(),
-                                             plotData.buffer.data().data(),
-                                             static_cast<int>(plotData.buffer.data().size()),
+                            ImPlot::PlotLine((plotData.displayName + "##" + std::to_string(pinIndex)).c_str(),
+                                             data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
+                                             plotData.buffer.data(),
+                                             static_cast<int>(plotData.buffer.size()),
                                              plotData.buffer.offset(), sizeof(double));
                             // allow legend labels to be dragged and dropped
-                            if (ImPlot::BeginLegendDragDropSource(plotData.displayName.c_str()))
+                            if (ImPlot::BeginLegendDragDropSource((plotData.displayName + "##" + std::to_string(pinIndex)).c_str()))
                             {
                                 auto* ptrPlotData = &plotData;
                                 ImGui::SetDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
@@ -311,7 +385,48 @@ bool NAV::Plot::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
 
     size_t pinIndex = pinIndexFromId(endPin->id);
 
-    if (startPin->dataIdentifier.front() == VectorNavObs::type())
+    data.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
+
+    if (startPin->dataIdentifier.front() == ImuObs::type())
+    {
+        // InsObs
+        data.at(pinIndex).addPlotDataItem("Time [s]");
+        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        // ImuObs
+        data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
+        data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
+        data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
+        data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
+        data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
+        data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
+        data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
+        data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
+        data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
+        data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
+        data.at(pinIndex).addPlotDataItem("Temperature [°C]");
+    }
+    else if (startPin->dataIdentifier.front() == KvhObs::type())
+    {
+        // InsObs
+        data.at(pinIndex).addPlotDataItem("Time [s]");
+        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        // ImuObs
+        data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
+        data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
+        data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
+        data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
+        data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
+        data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
+        data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
+        data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
+        data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
+        data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
+        data.at(pinIndex).addPlotDataItem("Temperature [°C]");
+        // KvhObs
+        data.at(pinIndex).addPlotDataItem("Status [bits]");
+        data.at(pinIndex).addPlotDataItem("Sequence Number [.]");
+    }
+    else if (startPin->dataIdentifier.front() == VectorNavObs::type())
     {
         // InsObs
         data.at(pinIndex).addPlotDataItem("Time [s]");
@@ -376,14 +491,14 @@ bool NAV::Plot::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
     return true;
 }
 
-void NAV::Plot::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+void NAV::Plot::onDeleteLink([[maybe_unused]] Pin* startPin, Pin* endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 
     // Empty old pin data
     size_t pinIndex = pinIndexFromId(endPin->id);
     data.at(pinIndex).plotData.clear();
-    data.at(pinIndex).allDisplayNames.clear();
+    data.at(pinIndex).dataIdentifier.clear();
 
     for (auto& plotInfo : plotInfos)
     {
@@ -398,11 +513,21 @@ void NAV::Plot::updateNumberOfInputPins()
 {
     while (inputPins.size() < static_cast<size_t>(nInputPins))
     {
-        nm::CreateInputPin(this, ("Pin " + std::to_string(inputPins.size() + 1)).c_str(), Pin::Type::Flow, { VectorNavObs::type() }, &Plot::plotData);
+        nm::CreateInputPin(this, ("Pin " + std::to_string(inputPins.size() + 1)).c_str(), Pin::Type::Flow,
+                           { ImuObs::type(), KvhObs::type(), VectorNavObs::type() },
+                           &Plot::plotData);
         data.emplace_back();
     }
     while (inputPins.size() > static_cast<size_t>(nInputPins))
     {
+        for (auto& plotInfo : plotInfos)
+        {
+            if (plotInfo.selectedPin >= nInputPins)
+            {
+                plotInfo.selectedPin = nInputPins - 1;
+            }
+        }
+
         auto connectedLinks = nm::FindConnectedLinksToPin(inputPins.back().id);
         for (Link* link : connectedLinks)
         {
@@ -425,6 +550,17 @@ void NAV::Plot::updateNumberOfInputPins()
     }
 }
 
+void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
+{
+    auto& pinData = data.at(pinIndex);
+
+    pinData.plotData.at(dataIndex).buffer.AddValue(value);
+    if (!std::isnan(value))
+    {
+        pinData.plotData.at(dataIndex).hasData = true;
+    }
+}
+
 void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
     if (Link* link = nm::FindLink(linkId))
@@ -432,7 +568,16 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
         if (Pin* sourcePin = nm::FindPin(link->startPinId))
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
-            if (sourcePin->dataIdentifier.front() == VectorNavObs::type())
+
+            if (sourcePin->dataIdentifier.front() == ImuObs::type())
+            {
+                plotImuObs(std::static_pointer_cast<ImuObs>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == KvhObs::type())
+            {
+                plotKvhObs(std::static_pointer_cast<KvhObs>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == VectorNavObs::type())
             {
                 plotVectorNavObs(std::static_pointer_cast<VectorNavObs>(nodeData), pinIndex);
             }
@@ -440,22 +585,8 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
     }
 }
 
-void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex)
+void NAV::Plot::plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex)
 {
-    auto& pinData = data.at(pinIndex);
-
-    auto addData = [&pinData](bool hasValue, size_t index, double value) {
-        if (hasValue)
-        {
-            pinData.plotData.at(index).buffer.AddValue(value);
-            pinData.plotData.at(index).hasData = true;
-        }
-        else
-        {
-            pinData.plotData.at(index).buffer.AddValue(std::nan(""));
-        }
-    };
-
     if (obs->insTime.has_value())
     {
         if (std::isnan(startValue_Time))
@@ -466,61 +597,120 @@ void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_
     size_t i = 0;
 
     // InsObs
-    addData(obs->insTime.has_value(), i++, static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time);
-    addData(obs->insTime.has_value(), i++, static_cast<double>(obs->insTime->toGPSweekTow().tow));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // ImuObs
-    addData(obs->timeSinceStartup.has_value(), i++, static_cast<double>(obs->timeSinceStartup.value()));
-    addData(obs->magUncompXYZ.has_value(), i++, obs->magUncompXYZ->x());
-    addData(obs->magUncompXYZ.has_value(), i++, obs->magUncompXYZ->y());
-    addData(obs->magUncompXYZ.has_value(), i++, obs->magUncompXYZ->z());
-    addData(obs->accelUncompXYZ.has_value(), i++, obs->accelUncompXYZ->x());
-    addData(obs->accelUncompXYZ.has_value(), i++, obs->accelUncompXYZ->y());
-    addData(obs->accelUncompXYZ.has_value(), i++, obs->accelUncompXYZ->z());
-    addData(obs->gyroUncompXYZ.has_value(), i++, obs->gyroUncompXYZ->x());
-    addData(obs->gyroUncompXYZ.has_value(), i++, obs->gyroUncompXYZ->y());
-    addData(obs->gyroUncompXYZ.has_value(), i++, obs->gyroUncompXYZ->z());
-    addData(obs->temperature.has_value(), i++, obs->temperature.value());
+    addData(pinIndex, i++, obs->timeSinceStartup.has_value() ? static_cast<double>(obs->timeSinceStartup.value()) : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
+}
+
+void NAV::Plot::plotKvhObs(const std::shared_ptr<KvhObs>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(startValue_Time))
+        {
+            startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // ImuObs
+    addData(pinIndex, i++, obs->timeSinceStartup.has_value() ? static_cast<double>(obs->timeSinceStartup.value()) : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
+    // KvhObs
+    addData(pinIndex, i++, static_cast<double>(obs->status.to_ulong()));
+    addData(pinIndex, i++, obs->sequenceNumber < 128 ? obs->sequenceNumber : std::nan(""));
+}
+
+void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(startValue_Time))
+        {
+            startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // ImuObs
+    addData(pinIndex, i++, obs->timeSinceStartup.has_value() ? static_cast<double>(obs->timeSinceStartup.value()) : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magUncompXYZ.has_value() ? obs->magUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelUncompXYZ.has_value() ? obs->accelUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
     // VectorNavObs
-    addData(obs->quaternion.has_value(), i++, obs->quaternion->w());
-    addData(obs->quaternion.has_value(), i++, obs->quaternion->x());
-    addData(obs->quaternion.has_value(), i++, obs->quaternion->y());
-    addData(obs->quaternion.has_value(), i++, obs->quaternion->z());
-    addData(obs->yawPitchRoll.has_value(), i++, obs->yawPitchRoll->x());
-    addData(obs->yawPitchRoll.has_value(), i++, obs->yawPitchRoll->y());
-    addData(obs->yawPitchRoll.has_value(), i++, obs->yawPitchRoll->z());
-    addData(obs->timeSinceSyncIn.has_value(), i++, static_cast<double>(obs->timeSinceSyncIn.value()));
-    addData(obs->syncInCnt.has_value(), i++, obs->syncInCnt.value());
-    addData(obs->magCompXYZ.has_value(), i++, obs->magCompXYZ->x());
-    addData(obs->magCompXYZ.has_value(), i++, obs->magCompXYZ->y());
-    addData(obs->magCompXYZ.has_value(), i++, obs->magCompXYZ->z());
-    addData(obs->accelCompXYZ.has_value(), i++, obs->accelCompXYZ->x());
-    addData(obs->accelCompXYZ.has_value(), i++, obs->accelCompXYZ->y());
-    addData(obs->accelCompXYZ.has_value(), i++, obs->accelCompXYZ->z());
-    addData(obs->gyroCompXYZ.has_value(), i++, obs->gyroCompXYZ->x());
-    addData(obs->gyroCompXYZ.has_value(), i++, obs->gyroCompXYZ->y());
-    addData(obs->gyroCompXYZ.has_value(), i++, obs->gyroCompXYZ->z());
-    addData(obs->dtime.has_value(), i++, obs->dtime.value());
-    addData(obs->dtheta.has_value(), i++, obs->dtheta->x());
-    addData(obs->dtheta.has_value(), i++, obs->dtheta->y());
-    addData(obs->dtheta.has_value(), i++, obs->dtheta->z());
-    addData(obs->dvel.has_value(), i++, obs->dvel->x());
-    addData(obs->dvel.has_value(), i++, obs->dvel->y());
-    addData(obs->dvel.has_value(), i++, obs->dvel->z());
-    addData(obs->vpeStatus.has_value(), i++, obs->vpeStatus->status);
-    addData(obs->pressure.has_value(), i++, obs->pressure.value());
-    addData(obs->magCompNED.has_value(), i++, obs->magCompNED->x());
-    addData(obs->magCompNED.has_value(), i++, obs->magCompNED->y());
-    addData(obs->magCompNED.has_value(), i++, obs->magCompNED->z());
-    addData(obs->accelCompNED.has_value(), i++, obs->accelCompNED->x());
-    addData(obs->accelCompNED.has_value(), i++, obs->accelCompNED->y());
-    addData(obs->accelCompNED.has_value(), i++, obs->accelCompNED->z());
-    addData(obs->gyroCompNED.has_value(), i++, obs->gyroCompNED->x());
-    addData(obs->gyroCompNED.has_value(), i++, obs->gyroCompNED->y());
-    addData(obs->gyroCompNED.has_value(), i++, obs->gyroCompNED->z());
-    addData(obs->linearAccelXYZ.has_value(), i++, obs->linearAccelXYZ->x());
-    addData(obs->linearAccelXYZ.has_value(), i++, obs->linearAccelXYZ->y());
-    addData(obs->linearAccelXYZ.has_value(), i++, obs->linearAccelXYZ->z());
-    addData(obs->linearAccelNED.has_value(), i++, obs->linearAccelNED->x());
-    addData(obs->linearAccelNED.has_value(), i++, obs->linearAccelNED->y());
-    addData(obs->linearAccelNED.has_value(), i++, obs->linearAccelNED->z());
+    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->w() : std::nan(""));
+    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->x() : std::nan(""));
+    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->y() : std::nan(""));
+    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->z() : std::nan(""));
+    addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->x() : std::nan(""));
+    addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->y() : std::nan(""));
+    addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->z() : std::nan(""));
+    addData(pinIndex, i++, obs->timeSinceSyncIn.has_value() ? static_cast<double>(obs->timeSinceSyncIn.value()) : std::nan(""));
+    addData(pinIndex, i++, obs->syncInCnt.has_value() ? obs->syncInCnt.value() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->dtime.has_value() ? obs->dtime.value() : std::nan(""));
+    addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->x() : std::nan(""));
+    addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->y() : std::nan(""));
+    addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->z() : std::nan(""));
+    addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->x() : std::nan(""));
+    addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->y() : std::nan(""));
+    addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->z() : std::nan(""));
+    addData(pinIndex, i++, obs->vpeStatus.has_value() ? obs->vpeStatus->status : std::nan(""));
+    addData(pinIndex, i++, obs->pressure.has_value() ? obs->pressure.value() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompNED.has_value() ? obs->magCompNED->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompNED.has_value() ? obs->magCompNED->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompNED.has_value() ? obs->magCompNED->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompNED.has_value() ? obs->accelCompNED->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompNED.has_value() ? obs->accelCompNED->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompNED.has_value() ? obs->accelCompNED->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompNED.has_value() ? obs->gyroCompNED->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompNED.has_value() ? obs->gyroCompNED->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompNED.has_value() ? obs->gyroCompNED->z() : std::nan(""));
+    addData(pinIndex, i++, obs->linearAccelXYZ.has_value() ? obs->linearAccelXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->linearAccelXYZ.has_value() ? obs->linearAccelXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->linearAccelXYZ.has_value() ? obs->linearAccelXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->linearAccelNED.has_value() ? obs->linearAccelNED->x() : std::nan(""));
+    addData(pinIndex, i++, obs->linearAccelNED.has_value() ? obs->linearAccelNED->y() : std::nan(""));
+    addData(pinIndex, i++, obs->linearAccelNED.has_value() ? obs->linearAccelNED->z() : std::nan(""));
 }

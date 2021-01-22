@@ -11,6 +11,8 @@
 
 #include "util/ScrollingBuffer.hpp"
 
+#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
 
 namespace NAV
@@ -63,25 +65,6 @@ class Plot : public Node
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
   private:
-    /// @brief Initialize the node
-    bool initialize() override;
-
-    /// @brief Deinitialize the node
-    void deinitialize() override;
-
-    /// @brief Plot the data on this port
-    /// @param[in] nodeData Data to plot
-    /// @param[in] linkId Id of the link over which the data is received
-    void plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex);
-
-    /// @brief Adds Input Pins depending on the variable nInputPins
-    void updateNumberOfInputPins();
-
     struct PinData
     {
         struct PlotData
@@ -106,19 +89,15 @@ class Plot : public Node
         /// @param[in] displayName Display name of the contained data
         void addPlotDataItem(const std::string& displayName)
         {
-            plotData.emplace_back(displayName, size);
-            allDisplayNames.push_back(displayName);
+            plotData.emplace_back(displayName, static_cast<size_t>(size));
         }
         /// Size of all buffers of the plotData elements
-        size_t size = 2000;
+        int size = 2000;
+        /// Data Identifier of the connected pin
+        std::string dataIdentifier;
         /// List with all the data
         std::vector<PlotData> plotData;
-        /// Concatenated list of all display names in the plotData list
-        std::vector<std::string> allDisplayNames;
     };
-
-    /// Data storage for each pin
-    std::vector<PinData> data;
 
     struct PlotInfo
     {
@@ -138,7 +117,50 @@ class Plot : public Node
         int plotFlags = 0;
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;
+
+        /// Width of plot Data content
+        float leftPaneWidth = 180.0F;
+        /// Width of the plot
+        float rightPaneWidth = 400.0F;
     };
+
+    /// @brief Initialize the node
+    bool initialize() override;
+
+    /// @brief Deinitialize the node
+    void deinitialize() override;
+
+    /// @brief Adds Input Pins depending on the variable nInputPins
+    void updateNumberOfInputPins();
+
+    /// @brief Add Data to the buffer of the pin
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    /// @param[in] dataIndex Index of the data to insert
+    /// @param[in] value The value to insert
+    void addData(size_t pinIndex, size_t dataIndex, double value);
+
+    /// @brief Plot the data on this port
+    /// @param[in] nodeData Data to plot
+    /// @param[in] linkId Id of the link over which the data is received
+    void plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotKvhObs(const std::shared_ptr<KvhObs>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex);
+
+    /// Data storage for each pin
+    std::vector<PinData> data;
 
     /// Info for each plot window
     std::vector<PlotInfo> plotInfos;
