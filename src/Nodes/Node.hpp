@@ -264,8 +264,6 @@ class Node
 
     /// Flag if the config window should be shown
     bool hasConfig = false;
-    /// Node disabled Shortcuts
-    bool nodeDisabledShortcuts = false;
 
     /// Enables the callbacks
     bool callbacksEnabled = false;

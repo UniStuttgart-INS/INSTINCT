@@ -390,9 +390,10 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
             return FileType::ASCII;
         }
 
-        LOG_CRITICAL("{} could not determine file type", name);
+        LOG_ERROR("{} could not determine file type", name);
+        return FileType::NONE;
     }
 
-    LOG_CRITICAL("{} could not open file {}", name, path);
+    LOG_ERROR("{} could not open file {}", name, path);
     return FileType::NONE;
 }

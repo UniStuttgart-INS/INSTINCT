@@ -269,7 +269,9 @@ bool NAV::VectorNavSensor::initialize()
     }
     catch (const std::exception& e)
     {
-        LOG_CRITICAL("{} could not configure binary output register ({})", nameId(), e.what());
+        LOG_ERROR("{} could not configure binary output register ({})", nameId(), e.what());
+        deinitializeNode();
+        return false;
     }
 
     vs.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);

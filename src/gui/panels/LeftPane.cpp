@@ -16,9 +16,11 @@ namespace nm = NAV::NodeManager;
 
 namespace ed = ax::NodeEditor;
 
-void NAV::gui::panels::ShowLeftPane(float paneWidth)
+bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 {
     auto& io = ImGui::GetIO();
+
+    bool paneActive = false;
 
     ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));
 
@@ -146,5 +148,12 @@ void NAV::gui::panels::ShowLeftPane(float paneWidth)
         ImGui::Unindent();
     }
 
+    if (ImGui::IsWindowFocused())
+    {
+        paneActive = true;
+    }
+
     ImGui::EndChild();
+
+    return paneActive;
 }

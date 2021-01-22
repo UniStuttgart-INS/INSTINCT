@@ -161,7 +161,8 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
     if (fileType == FileType::BINARY)
     {
         // TODO: Implement VectorNavFile Binary reading
-        LOG_CRITICAL("Binary VectorNavFile pollData is not implemented yet.");
+        LOG_ERROR("Binary VectorNavFile pollData is not implemented yet.");
+        return nullptr;
     }
     // Ascii
 
