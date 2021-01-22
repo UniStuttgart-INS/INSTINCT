@@ -338,64 +338,122 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 {
     ax::NodeEditor::EnableShortcuts(false);
 
-    if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
-        std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+    if (flow::HasUnsavedChanges())
     {
-        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
-        std::filesystem::current_path(targetPath);
-    }
-    igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "", 1, nullptr);
-    igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
-
-    static bool loadSuccessful = true;
-
-    auto& io = ImGui::GetIO();
-    if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
-    {
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+        ImGui::OpenPopup("Discard unsaved changes?");
+        if (ImGui::BeginPopupModal("Discard unsaved changes?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
         {
-            globalAction = GlobalActions::None;
-            ax::NodeEditor::EnableShortcuts(true);
-            loadSuccessful = true;
-            igfd::ImGuiFileDialog::Instance()->CloseDialog();
-            return;
-        }
-    }
+            ImGui::Text("Do you want to save your changes or discard them before loading?");
+            if (ImGui::Button("Save"))
+            {
+                if (flow::GetCurrentFilename().empty())
+                {
+                    if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+                        std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+                    {
+                        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+                        std::filesystem::current_path(targetPath);
+                    }
+                    igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow##Load", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                    igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+                }
+                else
+                {
+                    flow::SaveFlowAs(flow::GetCurrentFilename());
+                    flow::DiscardChanges();
+                    ImGui::CloseCurrentPopup();
+                }
+            }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog("Load Flow"))
-    {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
-        {
-            loadSuccessful = flow::LoadFlow(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
-            if (loadSuccessful)
+            if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow##Load"))
+            {
+                if (igfd::ImGuiFileDialog::Instance()->IsOk)
+                {
+                    flow::SetCurrentFilename(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+                    flow::SaveFlowAs(flow::GetCurrentFilename());
+                }
+
+                flow::DiscardChanges();
+                igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Discard"))
+            {
+                flow::DiscardChanges();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel"))
             {
                 globalAction = GlobalActions::None;
                 ax::NodeEditor::EnableShortcuts(true);
-                frameCountNavigate = ImGui::GetFrameCount();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+    }
+    else
+    {
+        if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+            std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+        {
+            LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+            std::filesystem::current_path(targetPath);
+        }
+        igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "", 1, nullptr);
+        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+
+        static bool loadSuccessful = true;
+
+        auto& io = ImGui::GetIO();
+        if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
+        {
+            if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+            {
+                globalAction = GlobalActions::None;
+                ax::NodeEditor::EnableShortcuts(true);
+                loadSuccessful = true;
+                igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                return;
+            }
+        }
+
+        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Load Flow"))
+        {
+            if (igfd::ImGuiFileDialog::Instance()->IsOk)
+            {
+                loadSuccessful = flow::LoadFlow(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+                if (loadSuccessful)
+                {
+                    globalAction = GlobalActions::None;
+                    ax::NodeEditor::EnableShortcuts(true);
+                    frameCountNavigate = ImGui::GetFrameCount();
+                    igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                }
+            }
+            else
+            {
+                globalAction = GlobalActions::None;
+                ax::NodeEditor::EnableShortcuts(true);
                 igfd::ImGuiFileDialog::Instance()->CloseDialog();
             }
         }
-        else
+        if (!loadSuccessful)
         {
-            globalAction = GlobalActions::None;
-            ax::NodeEditor::EnableShortcuts(true);
-            igfd::ImGuiFileDialog::Instance()->CloseDialog();
+            ImGui::OpenPopup("Could not open file");
         }
-    }
-    if (!loadSuccessful)
-    {
-        ImGui::OpenPopup("Could not open file");
-    }
 
-    if (ImGui::BeginPopupModal("Could not open file", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
-    {
-        ImGui::Text("The filename specified is invalid\nor the program has insufficient\npermissions to access the file");
-        if (ImGui::Button("Close"))
+        if (ImGui::BeginPopupModal("Could not open file", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
         {
-            loadSuccessful = true;
-            ImGui::CloseCurrentPopup();
+            ImGui::Text("The filename specified is invalid\nor the program has insufficient\npermissions to access the file");
+            if (ImGui::Button("Close"))
+            {
+                loadSuccessful = true;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
         }
-        ImGui::EndPopup();
     }
 }
 
