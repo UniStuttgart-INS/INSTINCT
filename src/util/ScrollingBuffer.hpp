@@ -6,6 +6,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 namespace NAV
 {
@@ -40,14 +41,12 @@ class ScrollingBuffer
             dataEnd = (dataEnd + 1) % maxSize;
         }
     }
+
     void clear()
     {
-        if (data_.size() > 0)
-        {
-            data_.clear();
-            dataStart = 0;
-            dataEnd = 0;
-        }
+        data_.clear();
+        dataStart = 0;
+        dataEnd = 0;
     }
 
     bool empty()
@@ -76,6 +75,9 @@ class ScrollingBuffer
                 std::copy(data_.begin(), std::next(data_.begin() + static_cast<int64_t>(dataEnd)),
                           std::next(data_.begin() + static_cast<int64_t>(to_vector.size() - 1)));
                 std::copy(to_vector.begin(), to_vector.end(), data_.begin());
+
+                data_.resize(data_.size() - (dataStart - dataEnd));
+                maxSize = data_.size();
 
                 dataStart = 0;
                 dataEnd = 0;
@@ -116,12 +118,15 @@ class ScrollingBuffer
                 }
                 else // (dataStart != 0)
                 {
+                    // 5, 6, _, _, 2, 3, 4,
+                    // 5, 6, _, _, 2, 3, 4,
+
                     // 6, 7, 3, 4, 5,
                     // 6, 7, 4, 5,
-                    auto diff = std::min(maxSize - targetSize, maxSize - dataStart);
+                    auto diff = std::min(maxSize - targetSize, maxSize - dataEnd);
 
-                    std::copy(std::next(data_.begin(), static_cast<int64_t>(dataStart + diff)), data_.end(),
-                              std::next(data_.begin(), static_cast<int64_t>(dataStart)));
+                    std::copy(std::next(data_.begin(), static_cast<int64_t>(dataEnd + diff)), data_.end(),
+                              std::next(data_.begin(), static_cast<int64_t>(dataEnd)));
                     maxSize -= diff;
                     data_.resize(maxSize);
                     dataStart %= maxSize;
@@ -165,12 +170,12 @@ class ScrollingBuffer
 
     T back()
     {
-        if (data_.size() < maxSize || dataStart == 0)
+        if (data_.size() < maxSize || dataEnd == 0)
         {
             return data_.back();
         }
 
-        return data_.at(dataStart - 1);
+        return data_.at(dataEnd - 1);
     }
 
     T front()
@@ -193,6 +198,9 @@ class ScrollingBuffer
         return data_.data();
     }
 
+    template<class U>
+    friend std::ostream& operator<<(std::ostream& os, const NAV::ScrollingBuffer<U>& buffer); // NOLINT(readability-redundant-declaration)
+
   private:
     bool infiniteBuffer = false;
     size_t maxSize;
@@ -200,5 +208,16 @@ class ScrollingBuffer
     size_t dataEnd = 0;
     std::vector<T> data_;
 };
+
+template<class U>
+std::ostream& operator<<(std::ostream& os, const NAV::ScrollingBuffer<U>& buffer)
+{
+    for (size_t i = 0; i < buffer.maxSize; i++)
+    {
+        os << ((i < buffer.data_.size() && (i >= buffer.dataStart || i < buffer.dataEnd)) ? std::to_string(buffer.data_.at(i)) : "_")
+           << ", ";
+    }
+    return os << '\n';
+}
 
 } // namespace NAV

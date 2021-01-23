@@ -105,19 +105,25 @@ Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& ecef, double a, double e_sq
 TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformations]")
 {
     double rad_90 = trafo::deg2rad(90);
-    double rad_180 = trafo::deg2rad(180);
-    double rad_360 = trafo::deg2rad(360);
+    double rad_180 = trafo::deg2rad(180.0);
+    double rad_360 = trafo::deg2rad(360.0F);
 
     REQUIRE(rad_90 == M_PI_2);
     REQUIRE(rad_180 == M_PI);
     REQUIRE(rad_360 == M_PI * 2.0);
+
+    Eigen::Vector3d rad3 = trafo::deg2rad3({ 90, 180, 360 });
+
+    REQUIRE(rad3.x() == M_PI_2);
+    REQUIRE(rad3.y() == M_PI);
+    REQUIRE(rad3.z() == M_PI * 2.0);
 }
 
 TEST_CASE("[InsTransformations] Degree to radian conversion constexpr", "[InsTransformations]")
 {
     constexpr double rad_90 = trafo::deg2rad(90);
-    constexpr double rad_180 = trafo::deg2rad(180);
-    constexpr double rad_360 = trafo::deg2rad(360);
+    constexpr double rad_180 = trafo::deg2rad(180.0);
+    constexpr double rad_360 = trafo::deg2rad(360.0F);
 
     STATIC_REQUIRE(rad_90 == M_PI_2);
     STATIC_REQUIRE(rad_180 == M_PI);
@@ -133,6 +139,12 @@ TEST_CASE("[InsTransformations] Radian to degree conversion", "[InsTransformatio
     REQUIRE(deg_90 == 90);
     REQUIRE(deg_180 == 180);
     REQUIRE(deg_360 == 360);
+
+    Eigen::Vector3d deg3 = trafo::rad2deg3({ M_PI_2, M_PI, M_PI * 2.0 });
+
+    REQUIRE(deg3.x() == 90);
+    REQUIRE(deg3.y() == 180);
+    REQUIRE(deg3.z() == 360);
 }
 
 TEST_CASE("[InsTransformations] Radian to degree conversion constexpr", "[InsTransformations]")
@@ -212,6 +224,11 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     CHECK(x_e.x() == Approx(-2.5).margin(0.000001));
     CHECK(x_e.y() == Approx(-1).margin(0.000001));
     CHECK(x_e.z() == Approx(22.0).margin(0.000001));
+
+    auto q_ie = trafo::quat_ie(siderialDay4, InsConst::angularVelocity_ie);
+
+    auto q_identity = q_ie * q_ei;
+    CHECK(q_identity.coeffs() == Eigen::Quaterniond::Identity().coeffs());
 }
 
 TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[InsTransformations]")
