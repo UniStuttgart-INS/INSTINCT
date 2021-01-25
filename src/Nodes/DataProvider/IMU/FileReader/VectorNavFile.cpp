@@ -149,9 +149,11 @@ void NAV::VectorNavFile::deinitialize()
     FileReader::deinitialize();
 }
 
-void NAV::VectorNavFile::resetNode()
+bool NAV::VectorNavFile::resetNode()
 {
     FileReader::resetReader();
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)

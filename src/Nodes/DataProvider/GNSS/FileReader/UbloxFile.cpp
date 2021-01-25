@@ -89,9 +89,11 @@ void NAV::UbloxFile::deinitialize()
     FileReader::deinitialize();
 }
 
-void NAV::UbloxFile::resetNode()
+bool NAV::UbloxFile::resetNode()
 {
     FileReader::resetReader();
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::UbloxFile::pollData(bool peek)

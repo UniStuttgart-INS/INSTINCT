@@ -49,8 +49,8 @@ class Demo : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
-    void resetNode() override;
+    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    bool resetNode() override;
 
     /// @brief Called when a new link is to be established
     /// @param[in] startPin Pin where the link starts

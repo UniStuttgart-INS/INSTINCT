@@ -53,6 +53,9 @@ class Navio2Sensor : public Imu
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    bool resetNode() override;
+
   private:
     constexpr static size_t OutputPortIndex_ImuObs = 1; ///< @brief Flow (ImuObs)
 

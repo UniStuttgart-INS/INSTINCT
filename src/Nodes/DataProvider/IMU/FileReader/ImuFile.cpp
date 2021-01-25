@@ -125,9 +125,11 @@ void NAV::ImuFile::deinitialize()
     FileReader::deinitialize();
 }
 
-void NAV::ImuFile::resetNode()
+bool NAV::ImuFile::resetNode()
 {
     FileReader::resetReader();
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::ImuFile::pollData(bool peek)

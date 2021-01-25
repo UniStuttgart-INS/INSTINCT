@@ -77,6 +77,12 @@ bool NAV::ImuIntegrator::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    imuObs__t1 = nullptr;
+    imuObs__t2 = nullptr;
+
+    stateData__t2 = nullptr;
+    stateData__init = nullptr;
+
     return true;
 }
 

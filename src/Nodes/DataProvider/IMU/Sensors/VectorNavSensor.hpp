@@ -99,6 +99,9 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    bool resetNode() override;
+
   private:
     constexpr static size_t OutputPortIndex_VectorNavObs = 1; ///< @brief Flow (VectorNavObs)
 

@@ -138,6 +138,11 @@ void NAV::VectorNavSensor::restore(json const& j)
     }
 }
 
+bool NAV::VectorNavSensor::resetNode()
+{
+    return true;
+}
+
 bool NAV::VectorNavSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());

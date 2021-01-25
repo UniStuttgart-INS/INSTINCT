@@ -220,9 +220,11 @@ void NAV::ImuSimulator::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::ImuSimulator::resetNode()
+bool NAV::ImuSimulator::resetNode()
 {
     currentSimTime = 0.0;
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)

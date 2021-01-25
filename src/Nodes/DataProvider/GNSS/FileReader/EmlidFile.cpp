@@ -89,9 +89,11 @@ void NAV::EmlidFile::deinitialize()
     FileReader::deinitialize();
 }
 
-void NAV::EmlidFile::resetNode()
+bool NAV::EmlidFile::resetNode()
 {
     FileReader::resetReader();
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::EmlidFile::pollData(bool peek)

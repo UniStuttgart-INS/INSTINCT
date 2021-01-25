@@ -85,6 +85,11 @@ void NAV::KvhSensor::restore(json const& j)
     }
 }
 
+bool NAV::KvhSensor::resetNode()
+{
+    return true;
+}
+
 bool NAV::KvhSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());

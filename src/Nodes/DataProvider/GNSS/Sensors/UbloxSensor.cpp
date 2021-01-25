@@ -86,6 +86,11 @@ void NAV::UbloxSensor::restore(json const& j)
     }
 }
 
+bool NAV::UbloxSensor::resetNode()
+{
+    return true;
+}
+
 bool NAV::UbloxSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());

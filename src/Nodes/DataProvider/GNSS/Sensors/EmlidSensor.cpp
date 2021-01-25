@@ -86,6 +86,11 @@ void NAV::EmlidSensor::restore(json const& j)
     }
 }
 
+bool NAV::EmlidSensor::resetNode()
+{
+    return true;
+}
+
 bool NAV::EmlidSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());

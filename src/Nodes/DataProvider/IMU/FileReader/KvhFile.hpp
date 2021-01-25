@@ -50,7 +50,7 @@ class KvhFile : public Imu, public FileReader
     void restore(const json& j) override;
 
     /// @brief Resets the node. Moves the read cursor to the start
-    void resetNode() override;
+    bool resetNode() override;
 
   private:
     constexpr static size_t OutputPortIndex_KvhObs = 1;        ///< @brief Flow (KvhObs)

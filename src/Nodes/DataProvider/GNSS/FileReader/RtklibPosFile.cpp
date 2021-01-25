@@ -146,9 +146,11 @@ void NAV::RtklibPosFile::deinitialize()
     FileReader::deinitialize();
 }
 
-void NAV::RtklibPosFile::resetNode()
+bool NAV::RtklibPosFile::resetNode()
 {
     FileReader::resetReader();
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)

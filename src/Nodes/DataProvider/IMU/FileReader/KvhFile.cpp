@@ -134,9 +134,11 @@ void NAV::KvhFile::deinitialize()
     FileReader::deinitialize();
 }
 
-void NAV::KvhFile::resetNode()
+bool NAV::KvhFile::resetNode()
 {
     FileReader::resetReader();
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::KvhFile::pollData(bool peek)

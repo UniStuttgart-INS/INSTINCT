@@ -413,11 +413,13 @@ void NAV::Demo::deinitialize()
     }
 }
 
-void NAV::Demo::resetNode()
+bool NAV::Demo::resetNode()
 {
     LOG_TRACE("{}: called", nameId());
     // Here you could reset a FileReader
     iPollData = 0;
+
+    return true;
 }
 
 bool NAV::Demo::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)

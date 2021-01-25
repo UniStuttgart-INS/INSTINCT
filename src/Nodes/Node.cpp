@@ -7,6 +7,12 @@ namespace nm = NAV::NodeManager;
 
 void NAV::Node::guiConfig() {}
 
+json NAV::Node::save() const { return {}; }
+
+void NAV::Node::restore(const json& /*j*/) {}
+
+void NAV::Node::restoreAtferLink(const json& /*j*/) {}
+
 bool NAV::Node::initializeNode()
 {
     // Lock the node against recursive calling
@@ -91,7 +97,12 @@ bool NAV::Node::initialize()
 
 void NAV::Node::deinitialize() {}
 
-void NAV::Node::resetNode() {}
+bool NAV::Node::resetNode()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    return initialize();
+}
 
 bool NAV::Node::onCreateLink(Pin* /*startPin*/, Pin* /*endPin*/)
 {

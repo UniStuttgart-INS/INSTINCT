@@ -85,6 +85,11 @@ void NAV::Navio2Sensor::restore(json const& j)
     }
 }
 
+bool NAV::Navio2Sensor::resetNode()
+{
+    return true;
+}
+
 bool NAV::Navio2Sensor::initialize()
 {
     LOG_TRACE("{} ({}): called", nameId(), imuType ? "LSM9DS1" : "MPU9250");

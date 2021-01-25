@@ -375,6 +375,15 @@ bool NAV::Plot::initialize()
 
     startValue_Time = std::nan("");
 
+    for (auto& pinData : data)
+    {
+        for (auto& plotData : pinData.plotData)
+        {
+            plotData.hasData = false;
+            plotData.buffer.clear();
+        }
+    }
+
     return true;
 }
 

@@ -122,11 +122,15 @@ class Node
     virtual void guiConfig();
 
     /// @brief Saves the node into a json object
-    [[nodiscard]] virtual json save() const = 0;
+    [[nodiscard]] virtual json save() const;
 
     /// @brief Restores the node from a json object
     /// @param[in] j Json object with the node state
-    virtual void restore(const json& j) = 0;
+    virtual void restore(const json& j);
+
+    /// @brief Restores link related properties of the node from a json object
+    /// @param[in] j Json object with the node state
+    virtual void restoreAtferLink(const json& j);
 
     /// @brief Initialize the Node
     bool initializeNode();
@@ -134,8 +138,8 @@ class Node
     /// @brief Deinitialize the Node
     void deinitializeNode();
 
-    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
-    virtual void resetNode();
+    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    virtual bool resetNode();
 
     /// @brief Called when a new link is to be established
     /// @param[in] startPin Pin where the link starts
