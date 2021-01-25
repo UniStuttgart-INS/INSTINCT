@@ -5,12 +5,13 @@
 
 #pragma once
 
-#include "GnssObs.hpp"
+#include "NodeData/InsObs.hpp"
+#include "util/Eigen.hpp"
 
 namespace NAV
 {
 /// RTKLIB Observation Class
-class RtklibPosObs : public GnssObs
+class RtklibPosObs : public InsObs
 {
   public:
     /// @brief Default constructor
@@ -37,8 +38,12 @@ class RtklibPosObs : public GnssObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { GnssObs::type() };
+        return { InsObs::type() };
     }
+
+    /// ECEF position [m]
+    std::optional<Eigen::Vector3d> position_ecef;
+
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
     std::optional<uint8_t> Q;
     /// Number of satellites

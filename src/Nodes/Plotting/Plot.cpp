@@ -10,6 +10,8 @@ namespace nm = NAV::NodeManager;
 
 #include "gui/widgets/Splitter.hpp"
 
+#include "util/InsTransformations.hpp"
+#include "util/InsMath.hpp"
 #include <algorithm>
 
 namespace NAV
@@ -503,7 +505,38 @@ bool NAV::Plot::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
 
     data.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
 
-    if (startPin->dataIdentifier.front() == ImuObs::type())
+    if (startPin->dataIdentifier.front() == RtklibPosObs::type())
+    {
+        // InsObs
+        data.at(pinIndex).addPlotDataItem("Time [s]");
+        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        // RtklibPosObs
+        data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
+        data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
+        data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
+        data.at(pinIndex).addPlotDataItem("Latitude [deg]");
+        data.at(pinIndex).addPlotDataItem("Longitude [deg]");
+        data.at(pinIndex).addPlotDataItem("Altitude [m]");
+        data.at(pinIndex).addPlotDataItem("North/South [m]");
+        data.at(pinIndex).addPlotDataItem("East/West [m]");
+        data.at(pinIndex).addPlotDataItem("Q [-]");
+        data.at(pinIndex).addPlotDataItem("ns [-]");
+        data.at(pinIndex).addPlotDataItem("sdx [m]");
+        data.at(pinIndex).addPlotDataItem("sdy [m]");
+        data.at(pinIndex).addPlotDataItem("sdz [m]");
+        data.at(pinIndex).addPlotDataItem("sdn [m]");
+        data.at(pinIndex).addPlotDataItem("sde [m]");
+        data.at(pinIndex).addPlotDataItem("sdu [m]");
+        data.at(pinIndex).addPlotDataItem("sdxy [m]");
+        data.at(pinIndex).addPlotDataItem("sdyz [m]");
+        data.at(pinIndex).addPlotDataItem("sdzx [m]");
+        data.at(pinIndex).addPlotDataItem("sdne [m]");
+        data.at(pinIndex).addPlotDataItem("sdeu [m]");
+        data.at(pinIndex).addPlotDataItem("sdun [m]");
+        data.at(pinIndex).addPlotDataItem("age [s]");
+        data.at(pinIndex).addPlotDataItem("ratio [-]");
+    }
+    else if (startPin->dataIdentifier.front() == ImuObs::type())
     {
         // InsObs
         data.at(pinIndex).addPlotDataItem("Time [s]");
@@ -630,7 +663,8 @@ void NAV::Plot::updateNumberOfInputPins()
     while (inputPins.size() < static_cast<size_t>(nInputPins))
     {
         nm::CreateInputPin(this, ("Pin " + std::to_string(inputPins.size() + 1)).c_str(), Pin::Type::Flow,
-                           { ImuObs::type(), KvhObs::type(), VectorNavObs::type() },
+                           { RtklibPosObs::type(),
+                             ImuObs::type(), KvhObs::type(), VectorNavObs::type() },
                            &Plot::plotData);
         data.emplace_back();
     }
@@ -697,7 +731,11 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
 
-            if (sourcePin->dataIdentifier.front() == ImuObs::type())
+            if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
+            {
+                plotRtklibPosObs(std::static_pointer_cast<RtklibPosObs>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == ImuObs::type())
             {
                 plotImuObs(std::static_pointer_cast<ImuObs>(nodeData), pinIndex);
             }
@@ -711,6 +749,79 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
             }
         }
     }
+}
+
+void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(startValue_Time))
+        {
+            startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    /// [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
+    std::optional<Eigen::Vector3d> position_lla;
+    /// North/South deviation [m]
+    std::optional<double> northSouth;
+    /// East/West deviation [m]
+    std::optional<double> eastWest;
+    if (obs->position_ecef.has_value())
+    {
+        position_lla = trafo::ecef2lla_WGS84(obs->position_ecef.value());
+
+        if (std::isnan(startValue_North))
+        {
+            startValue_North = position_lla->x();
+        }
+        int sign = position_lla->x() > startValue_North ? 1 : -1;
+        northSouth = measureDistance(position_lla->x(), position_lla->y(),
+                                     startValue_North, position_lla->y())
+                     * sign;
+
+        if (std::isnan(startValue_East))
+        {
+            startValue_East = position_lla->y();
+        }
+        sign = position_lla->y() > startValue_East ? 1 : -1;
+        eastWest = measureDistance(position_lla->x(), position_lla->y(),
+                                   position_lla->x(), startValue_East)
+                   * sign;
+
+        position_lla->x() = trafo::rad2deg(position_lla->x());
+        position_lla->y() = trafo::rad2deg(position_lla->y());
+    }
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // RtklibPosObs
+    addData(pinIndex, i++, obs->position_ecef.has_value() ? obs->position_ecef->x() : std::nan(""));
+    addData(pinIndex, i++, obs->position_ecef.has_value() ? obs->position_ecef->y() : std::nan(""));
+    addData(pinIndex, i++, obs->position_ecef.has_value() ? obs->position_ecef->z() : std::nan(""));
+    addData(pinIndex, i++, position_lla.has_value() ? position_lla->x() : std::nan(""));
+    addData(pinIndex, i++, position_lla.has_value() ? position_lla->y() : std::nan(""));
+    addData(pinIndex, i++, position_lla.has_value() ? position_lla->z() : std::nan(""));
+    addData(pinIndex, i++, northSouth.has_value() ? northSouth.value() : std::nan(""));
+    addData(pinIndex, i++, eastWest.has_value() ? eastWest.value() : std::nan(""));
+    addData(pinIndex, i++, obs->Q.has_value() ? obs->Q.value() : std::nan(""));
+    addData(pinIndex, i++, obs->ns.has_value() ? obs->ns.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdXYZ.has_value() ? obs->sdXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->sdXYZ.has_value() ? obs->sdXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->sdXYZ.has_value() ? obs->sdXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->sdNEU.has_value() ? obs->sdNEU->x() : std::nan(""));
+    addData(pinIndex, i++, obs->sdNEU.has_value() ? obs->sdNEU->y() : std::nan(""));
+    addData(pinIndex, i++, obs->sdNEU.has_value() ? obs->sdNEU->z() : std::nan(""));
+    addData(pinIndex, i++, obs->sdxy.has_value() ? obs->sdxy.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdyz.has_value() ? obs->sdyz.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdzx.has_value() ? obs->sdzx.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdne.has_value() ? obs->sdne.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdeu.has_value() ? obs->sdeu.value() : std::nan(""));
+    addData(pinIndex, i++, obs->sdun.has_value() ? obs->sdun.value() : std::nan(""));
+    addData(pinIndex, i++, obs->age.has_value() ? obs->age.value() : std::nan(""));
+    addData(pinIndex, i++, obs->ratio.has_value() ? obs->ratio.value() : std::nan(""));
 }
 
 void NAV::Plot::plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex)

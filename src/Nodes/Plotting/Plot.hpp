@@ -11,6 +11,7 @@
 
 #include "util/ScrollingBuffer.hpp"
 
+#include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
@@ -166,6 +167,11 @@ class Plot : public Node
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
     void plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
@@ -191,10 +197,10 @@ class Plot : public Node
 
     /// Start Time for calculation of relative time with the GPS ToW
     double startValue_Time = std::nan("");
-    /// Start Longitude for calculation of relative North-South
-    // double startValue_North = std::nan("");
-    /// Start Latitude for calculation of relative East-West
-    // double startValue_East = std::nan("");
+    /// Start Latitude [rad] for calculation of relative North-South
+    double startValue_North = std::nan("");
+    /// Start Longitude [rad] for calculation of relative East-West
+    double startValue_East = std::nan("");
 };
 
 } // namespace NAV
