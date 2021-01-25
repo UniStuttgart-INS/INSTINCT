@@ -49,16 +49,15 @@ class State : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+  private:
+    constexpr static size_t OutputPortIndex_ImuObs = 1;   ///< @brief Flow (ImuObs)
+    constexpr static size_t InputPortIndex_StateData = 0; ///< @brief Object (StateData)
+
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
-
-  private:
-    constexpr static size_t OutputPortIndex_State = 0;    ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_ImuObs = 1;   ///< @brief Flow (ImuObs)
-    constexpr static size_t InputPortIndex_StateData = 0; ///< @brief Object (StateData)
 
     /// @brief Initialize the State with Imu data
     /// @param[in] state Partial state data

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <string_view>
+#include <string>
 #include <array>
 #include <optional>
 #include <bitset>
@@ -971,20 +971,20 @@ enum UbxUpdMessages
 ///
 /// @param[in] className String of the UBX Class
 /// @return The UBX class
-[[nodiscard]] UbxClass getMsgClassFromString(const std::string_view& className);
+[[nodiscard]] UbxClass getMsgClassFromString(const std::string& className);
 
 /// @brief Get the UBX Msg Id From String object
 ///
 /// @param[in] msgClass The Ubx Msg Class to search in
 /// @param[in] idName String of the Msg Id
 /// @return The Msg Id integer
-[[nodiscard]] uint8_t getMsgIdFromString(UbxClass msgClass, const std::string_view& idName);
+[[nodiscard]] uint8_t getMsgIdFromString(UbxClass msgClass, const std::string& idName);
 
 /// @brief Get the UBX Msg Id From String objects
 ///
 /// @param[in] className String of the UBX class
 /// @param[in] idName String of the Msg Id
 /// @return The Msg Id integer
-[[nodiscard]] uint8_t getMsgIdFromString(const std::string_view& className, const std::string_view& idName);
+[[nodiscard]] uint8_t getMsgIdFromString(const std::string& className, const std::string& idName);
 
 } // namespace NAV::sensors::ublox

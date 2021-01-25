@@ -49,19 +49,18 @@ class KvhFile : public Imu, public FileReader
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Resets the node. Moves the read cursor to the start
+    bool resetNode() override;
+
+  private:
+    constexpr static size_t OutputPortIndex_KvhObs = 1;        ///< @brief Flow (KvhObs)
+    constexpr static size_t OutputPortIndex_HeaderColumns = 2; ///< @brief Object (std::vector<std::string>)
+
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
-
-    /// @brief Resets the node. Moves the read cursor to the start
-    void resetNode() override;
-
-  private:
-    constexpr static size_t OutputPortIndex_KvhFile = 0;       ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_KvhObs = 1;        ///< @brief Flow (KvhObs)
-    constexpr static size_t OutputPortIndex_HeaderColumns = 2; ///< @brief Object (std::vector<std::string>)
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read

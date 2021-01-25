@@ -14,6 +14,14 @@ message(STATUS "${CMAKE_PROJECT_NAME}: ${PROJECT_VERSION}")
 
 # ######################################################################################################################
 
+# Stop generation if compiler was changed
+if((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" AND NOT $ENV{CC} MATCHES ".*clang") OR
+    (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT $ENV{CC} MATCHES ".*gcc"))
+  message(FATAL_ERROR "The Compiler was changed! Build directory is ${CMAKE_CXX_COMPILER_ID} and environment CC=$ENV{CC}. Please clean the build files and run cmake again.")
+endif()
+
+# ######################################################################################################################
+
 # Export the SDKROOT Environment Variable for MacOS
 if(APPLE)
   if(NOT DEFINED ENV{SDKROOT})
@@ -23,6 +31,8 @@ if(APPLE)
     message(STATUS "SDK-Path: $ENV{SDKROOT}")
   endif()
 endif()
+
+# ######################################################################################################################
 
 # Basic settings
 include(cmake/StandardProjectSettings.cmake)

@@ -4,8 +4,7 @@
 
 #include "util/Logger.hpp"
 
-#include "imgui_stdlib.h"
-#include "ImGuiFileDialog.h"
+#include "gui/widgets/FileDialog.hpp"
 
 #include <iomanip> // std::setprecision
 
@@ -24,9 +23,7 @@ NAV::VectorNavDataLogger::VectorNavDataLogger()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "VectorNavDataLogger", this);
-
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, NAV::VectorNavObs::type(), &VectorNavDataLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::VectorNavObs::type() }, &VectorNavDataLogger::writeObservation);
 }
 
 NAV::VectorNavDataLogger::~VectorNavDataLogger()
@@ -51,32 +48,10 @@ std::string NAV::VectorNavDataLogger::category()
 
 void NAV::VectorNavDataLogger::guiConfig()
 {
-    // Filepath
-    if (ImGui::InputText("Filepath", &path))
+    if (gui::widgets::FileDialogSave(path, "Save File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
-        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
         flow::ApplyChanges();
-        deinitialize();
-    }
-    ImGui::SameLine();
-    std::string saveFileDialogKey = fmt::format("Save File ({})", id.AsPointer());
-    if (ImGui::Button("Save"))
-    {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".csv", "");
-        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
-    }
-
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
-    {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
-        {
-            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
-            flow::ApplyChanges();
-            initialize();
-        }
-
-        igfd::ImGuiFileDialog::Instance()->CloseDialog(saveFileDialogKey);
+        deinitializeNode();
     }
 }
 
@@ -103,12 +78,9 @@ void NAV::VectorNavDataLogger::restore(json const& j)
 
 bool NAV::VectorNavDataLogger::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileWriter::initialize())
+    if (!FileWriter::initialize())
     {
         return false;
     }
@@ -120,7 +92,7 @@ bool NAV::VectorNavDataLogger::initialize()
                << "MagN,MagE,MagD,AccN,AccE,AccD,LinAccX,LinAccY,LinAccZ,LinAccN,LinAccE,LinAccD,"
                << "YawU,PitchU,RollU,YawRate,PitchRate,RollRate" << std::endl;
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::VectorNavDataLogger::deinitialize()
@@ -128,7 +100,6 @@ void NAV::VectorNavDataLogger::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileWriter::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)

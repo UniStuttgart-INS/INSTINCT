@@ -29,6 +29,7 @@ constexpr int loadingFramesToWait = 2;
 int loadingFrameCount = 0;
 
 std::string currentFilename;
+std::string programRootPath;
 
 void to_json(json& j, const ImColor& color)
 {
@@ -71,7 +72,7 @@ namespace NAV
 void to_json(json& j, const Pin& pin)
 {
     j = json{
-        { "id", reinterpret_cast<uintptr_t>(pin.id.AsPointer()) },
+        { "id", size_t(pin.id) },
         { "type", std::string(pin.type) },
         { "name", pin.name },
     };
@@ -95,7 +96,7 @@ void to_json(json& j, const Node& node)
     realSize.x -= 16;
     realSize.y -= 38;
     j = json{
-        { "id", reinterpret_cast<uintptr_t>(node.id.AsPointer()) },
+        { "id", size_t(node.id) },
         { "type", node.type() },
         { "kind", std::string(node.kind) },
         { "name", node.name },
@@ -123,7 +124,6 @@ void from_json(const json& j, Node& node)
             break;
         }
         node.inputPins.at(i).id = inputPins.at(i).id;
-        node.inputPins.at(i).parentNode = &node;
     }
 
     auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
@@ -134,16 +134,15 @@ void from_json(const json& j, Node& node)
             break;
         }
         node.outputPins.at(i).id = outputPins.at(i).id;
-        node.outputPins.at(i).parentNode = &node;
     }
 }
 
 void to_json(json& j, const Link& link)
 {
     j = json{
-        { "id", reinterpret_cast<uintptr_t>(link.id.AsPointer()) },
-        { "startPinId", reinterpret_cast<uintptr_t>(link.startPinId.AsPointer()) },
-        { "endPinId", reinterpret_cast<uintptr_t>(link.endPinId.AsPointer()) },
+        { "id", size_t(link.id) },
+        { "startPinId", size_t(link.startPinId) },
+        { "endPinId", size_t(link.endPinId) },
         { "color", link.color },
     };
 }
@@ -189,12 +188,12 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     json j;
     for (const auto& node : nm::m_Nodes())
     {
-        j["nodes"]["node-" + std::to_string(reinterpret_cast<uintptr_t>(node->id.AsPointer()))] = *node;
-        j["nodes"]["node-" + std::to_string(reinterpret_cast<uintptr_t>(node->id.AsPointer()))]["data"] = node->save();
+        j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
+        j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
     }
     for (const auto& link : nm::m_Links())
     {
-        j["links"]["link-" + std::to_string(reinterpret_cast<uintptr_t>(link.id.AsPointer()))] = link;
+        j["links"]["link-" + std::to_string(size_t(link.id))] = link;
     }
 
     filestream << std::setw(4) << j << std::endl;
@@ -204,11 +203,13 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
 
 bool NAV::flow::LoadFlow(const std::string& filepath)
 {
+    LOG_TRACE("called for path {}", filepath);
+    bool loadSuccessful = true;
     std::ifstream filestream(filepath);
 
     if (!filestream.good())
     {
-        std::cerr << "Load Flow error: Could not open file: " << filepath;
+        LOG_ERROR("Load Flow error: Could not open file: {}", filepath);
         return false;
     }
 
@@ -228,26 +229,37 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
                 continue;
             }
             Node* node = nullptr;
-            for (const auto& nodeInfo : NAV::NodeRegistry::registeredNodes())
+            for (const auto& registeredNode : NAV::NodeRegistry::RegisteredNodes())
             {
-                if (nodeInfo.type == nodeJson.at("type"))
+                for (const auto& nodeInfo : registeredNode.second)
                 {
-                    node = nodeInfo.constructor();
+                    if (nodeInfo.type == nodeJson.at("type"))
+                    {
+                        node = nodeInfo.constructor();
+                        break;
+                    }
+                }
+                if (node != nullptr)
+                {
                     break;
                 }
             }
             if (node == nullptr)
             {
                 LOG_ERROR("Node type ({}) is not a valid type.", nodeJson.at("type").get<std::string>());
+                loadSuccessful = false;
                 continue;
             }
 
+            nm::AddNode(node);
+
             nodeJson.get_to<Node>(*node);
-            node->restore(nodeJson.at("data"));
+            if (nodeJson.contains("data"))
+            {
+                node->restore(nodeJson.at("data"));
+            }
             // Load second time in case restore changed the amount of pins
             nodeJson.get_to<Node>(*node);
-
-            nm::AddNode(node);
 
             if (!ConfigManager::Get<bool>("nogui", false))
             {
@@ -267,13 +279,37 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         {
             Link link = linkJson.get<Link>();
 
-            nm::AddLink(link);
+            if (!nm::AddLink(link))
+            {
+                loadSuccessful = false;
+            }
+        }
+    }
+    if (j.contains("nodes"))
+    {
+        for (const auto& node : nm::m_Nodes())
+        {
+            if (j.at("nodes").contains("node-" + std::to_string(size_t(node->id))))
+            {
+                const auto& nodeJson = j.at("nodes").at("node-" + std::to_string(size_t(node->id)));
+                if (nodeJson.contains("data"))
+                {
+                    node->restoreAtferLink(nodeJson.at("data"));
+                }
+            }
         }
     }
 
-    for (auto* node : nm::m_Nodes())
+    if (ConfigManager::Get<bool>("nogui", false))
     {
-        node->initialize();
+        if (!nm::InitializeAllNodes())
+        {
+            loadSuccessful = false;
+        }
+    }
+    else
+    {
+        nm::InitializeAllNodesAsync();
     }
 
     if (!ConfigManager::Get<bool>("nogui", false))
@@ -283,7 +319,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     unsavedChanges = false;
     currentFilename = filepath;
 
-    return true;
+    return loadSuccessful;
 }
 
 bool NAV::flow::HasUnsavedChanges()
@@ -293,13 +329,10 @@ bool NAV::flow::HasUnsavedChanges()
 
 void NAV::flow::ApplyChanges()
 {
-    if (!ConfigManager::Get<bool>("nogui", false))
+    // This prevents the newly loaded gui elements from triggering the unsaved changes
+    if (ImGui::GetCurrentContext() && ImGui::GetFrameCount() - loadingFrameCount >= loadingFramesToWait)
     {
-        // This prevents the newly loaded gui elements from triggering the unsaved changes
-        if (ImGui::GetFrameCount() - loadingFrameCount >= loadingFramesToWait)
-        {
-            unsavedChanges = true;
-        }
+        unsavedChanges = true;
     }
 }
 
@@ -316,4 +349,14 @@ std::string NAV::flow::GetCurrentFilename()
 void NAV::flow::SetCurrentFilename(const std::string& newFilename)
 {
     currentFilename = newFilename;
+}
+
+std::string NAV::flow::GetProgramRootPath()
+{
+    return programRootPath;
+}
+
+void NAV::flow::SetProgramRootPath(const std::string& newRootPath)
+{
+    programRootPath = newRootPath;
 }

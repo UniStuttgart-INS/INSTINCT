@@ -3,8 +3,7 @@
 #include "util/Logger.hpp"
 #include "util/InsTransformations.hpp"
 
-#include "imgui_stdlib.h"
-#include "ImGuiFileDialog.h"
+#include "gui/widgets/FileDialog.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -20,8 +19,6 @@ NAV::VectorNavFile::VectorNavFile()
 
     color = ImColor(255, 128, 128);
     hasConfig = true;
-
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "VectorNavFile", this);
 
     nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type(), &VectorNavFile::pollData);
     nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
@@ -49,32 +46,10 @@ std::string NAV::VectorNavFile::category()
 
 void NAV::VectorNavFile::guiConfig()
 {
-    // Filepath
-    if (ImGui::InputText("Filepath", &path))
+    if (gui::widgets::FileDialogLoad(path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
-        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
         flow::ApplyChanges();
-        deinitialize();
-    }
-    ImGui::SameLine();
-    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
-    if (ImGui::Button("Open"))
-    {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "");
-        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
-    }
-
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
-    {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
-        {
-            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
-            flow::ApplyChanges();
-            initialize();
-        }
-
-        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
+        deinitializeNode();
     }
 
     // Header info
@@ -162,17 +137,9 @@ void NAV::VectorNavFile::restore(json const& j)
 
 bool NAV::VectorNavFile::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileReader::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return FileReader::initialize();
 }
 
 void NAV::VectorNavFile::deinitialize()
@@ -180,12 +147,13 @@ void NAV::VectorNavFile::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
-    Node::deinitialize();
 }
 
-void NAV::VectorNavFile::resetNode()
+bool NAV::VectorNavFile::resetNode()
 {
     FileReader::resetReader();
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
@@ -195,7 +163,8 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
     if (fileType == FileType::BINARY)
     {
         // TODO: Implement VectorNavFile Binary reading
-        LOG_CRITICAL("Binary VectorNavFile pollData is not implemented yet.");
+        LOG_ERROR("Binary VectorNavFile pollData is not implemented yet.");
+        return nullptr;
     }
     // Ascii
 

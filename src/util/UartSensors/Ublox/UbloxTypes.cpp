@@ -1,6 +1,6 @@
 #include "UbloxTypes.hpp"
 
-NAV::sensors::ublox::UbxClass NAV::sensors::ublox::getMsgClassFromString(const std::string_view& className)
+NAV::sensors::ublox::UbxClass NAV::sensors::ublox::getMsgClassFromString(const std::string& className)
 {
     if (className == "NAV")
     {
@@ -62,7 +62,7 @@ NAV::sensors::ublox::UbxClass NAV::sensors::ublox::getMsgClassFromString(const s
     return static_cast<UbxClass>(NULL);
 }
 
-uint8_t NAV::sensors::ublox::getMsgIdFromString(NAV::sensors::ublox::UbxClass msgClass, const std::string_view& idName)
+uint8_t NAV::sensors::ublox::getMsgIdFromString(NAV::sensors::ublox::UbxClass msgClass, const std::string& idName)
 {
     if (msgClass == UbxClass::UBX_CLASS_ACK)
     {
@@ -742,7 +742,7 @@ uint8_t NAV::sensors::ublox::getMsgIdFromString(NAV::sensors::ublox::UbxClass ms
     return UINT8_MAX;
 }
 
-uint8_t NAV::sensors::ublox::getMsgIdFromString(const std::string_view& className, const std::string_view& idName)
+uint8_t NAV::sensors::ublox::getMsgIdFromString(const std::string& className, const std::string& idName)
 {
     return getMsgIdFromString(getMsgClassFromString(className), idName);
 }

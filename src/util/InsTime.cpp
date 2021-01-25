@@ -95,7 +95,7 @@ std::ostream& operator<<(std::ostream& os, const InsTime_JD& jd)
 
 std::ostream& operator<<(std::ostream& os, const InsTime_GPSweekTow& gpsWeekTow)
 {
-    return os << "cylce=" << gpsWeekTow.gpsCycle
+    return os << "cycle=" << gpsWeekTow.gpsCycle
               << ", week=" << gpsWeekTow.gpsWeek
               << ", tow=" << std::setprecision(20) << gpsWeekTow.tow;
 }

@@ -53,14 +53,14 @@ clang-tidy:
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
-    - clang-tidy --extra-arg=-Wno-unknown-warning-option $(find src -type f -name "*.cpp")
+    - ret=0; for f in $(find src -type f -name "*.cpp"); do echo '##### Linting '$f; clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
 
 clang-tidy:tests:
   stage: checks
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
-    - clang-tidy --extra-arg=-Wno-unknown-warning-option $(find test -type f -name "*.cpp")
+    - ret=0; for f in $(find test -type f -name "*.cpp"); do echo '##### Linting '$f; clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                  Build Main & GUI                                                  ║
@@ -111,12 +111,13 @@ tests:gcc:
 # ║                                                        Test                                                        ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-run-tests:clang:
+.run-tests:
   stage: test
-  needs: ["tests:clang"]
   script:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
+  after_script:
+    - cd build/Debug/test
     - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
     - sed -i ':begin;$!N;s/<\/testsuites>\n<testsuites>//;tbegin;P;D' ../../../junit.xml
   artifacts:
@@ -125,13 +126,16 @@ run-tests:clang:
       junit: junit.xml
     expire_in: 2h
 
+run-tests:clang:
+  extends: .run-tests
+  needs: ["tests:clang"]
+
 
 run-tests:gcc:
-  extends: run-tests:clang
+  extends: .run-tests
   needs: ["tests:gcc"]
   artifacts:
     untracked: true
-    expire_in: 2h
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                      Analyze                                                       ║
@@ -145,7 +149,6 @@ doxygen:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target doxygen-docs -- -j2
   artifacts:
-    untracked: true
     paths:
       - doc/html
     expire_in: 2h
@@ -162,7 +165,6 @@ coverage:
     - python3 tools/lcov_cobertura.py coverage/coverage.info --output coverage/cobertura-coverage.xml
   coverage: '/Total:\| ?(\d+\.?\d+\%)/'
   artifacts:
-    untracked: true
     paths:
       - coverage
     expire_in: 2h

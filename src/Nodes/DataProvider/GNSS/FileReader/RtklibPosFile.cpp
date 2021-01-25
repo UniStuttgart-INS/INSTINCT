@@ -3,8 +3,7 @@
 #include "util/Logger.hpp"
 #include "util/InsTransformations.hpp"
 
-#include "imgui_stdlib.h"
-#include "ImGuiFileDialog.h"
+#include "gui/widgets/FileDialog.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -20,8 +19,6 @@ NAV::RtklibPosFile::RtklibPosFile()
 
     color = ImColor(255, 128, 128);
     hasConfig = true;
-
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "RtklibPosFile", this);
 
     nm::CreateOutputPin(this, "RtklibPosObs", Pin::Type::Flow, NAV::RtklibPosObs::type(), &RtklibPosFile::pollData);
     nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
@@ -49,32 +46,10 @@ std::string NAV::RtklibPosFile::category()
 
 void NAV::RtklibPosFile::guiConfig()
 {
-    // Filepath
-    if (ImGui::InputText("Filepath", &path))
+    if (gui::widgets::FileDialogLoad(path, "Select File", ".pos", { ".pos" }, size_t(id), nameId()))
     {
-        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
         flow::ApplyChanges();
-        deinitialize();
-    }
-    ImGui::SameLine();
-    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
-    if (ImGui::Button("Open"))
-    {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".pos", "");
-        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".pos", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
-    }
-
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
-    {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
-        {
-            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
-            flow::ApplyChanges();
-            initialize();
-        }
-
-        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
+        deinitializeNode();
     }
 
     // Header info
@@ -159,17 +134,9 @@ void NAV::RtklibPosFile::restore(json const& j)
 
 bool NAV::RtklibPosFile::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileReader::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return FileReader::initialize();
 }
 
 void NAV::RtklibPosFile::deinitialize()
@@ -177,12 +144,13 @@ void NAV::RtklibPosFile::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
-    Node::deinitialize();
 }
 
-void NAV::RtklibPosFile::resetNode()
+bool NAV::RtklibPosFile::resetNode()
 {
     FileReader::resetReader();
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)

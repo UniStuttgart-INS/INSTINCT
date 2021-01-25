@@ -47,19 +47,18 @@ class ImuFile : public Imu, public FileReader
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Resets the node. Moves the read cursor to the start
+    bool resetNode() override;
+
+  private:
+    constexpr static size_t OutputPortIndex_ImuObs = 1;        ///< @brief Flow (ImuObs)
+    constexpr static size_t OutputPortIndex_HeaderColumns = 2; ///< @brief Object (std::vector<std::string>)
+
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
-
-    /// @brief Resets the node. Moves the read cursor to the start
-    void resetNode() override;
-
-  private:
-    constexpr static size_t OutputPortIndex_ImuFile = 0;       ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_ImuObs = 1;        ///< @brief Flow (ImuObs)
-    constexpr static size_t OutputPortIndex_HeaderColumns = 2; ///< @brief Object (std::vector<std::string>)
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read

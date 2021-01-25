@@ -4,8 +4,7 @@
 
 #include "util/Logger.hpp"
 
-#include "imgui_stdlib.h"
-#include "ImGuiFileDialog.h"
+#include "gui/widgets/FileDialog.hpp"
 
 #include <iomanip> // std::setprecision
 
@@ -24,9 +23,7 @@ NAV::ImuDataLogger::ImuDataLogger()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "ImuDataLogger", this);
-
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, NAV::ImuObs::type(), &ImuDataLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuDataLogger::writeObservation);
 }
 
 NAV::ImuDataLogger::~ImuDataLogger()
@@ -51,32 +48,10 @@ std::string NAV::ImuDataLogger::category()
 
 void NAV::ImuDataLogger::guiConfig()
 {
-    // Filepath
-    if (ImGui::InputText("Filepath", &path))
+    if (gui::widgets::FileDialogSave(path, "Save File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
-        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
         flow::ApplyChanges();
-        deinitialize();
-    }
-    ImGui::SameLine();
-    std::string saveFileDialogKey = fmt::format("Save File ({})", id.AsPointer());
-    if (ImGui::Button("Save"))
-    {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(saveFileDialogKey, "Save File", ".csv", "");
-        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
-    }
-
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(saveFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
-    {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
-        {
-            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
-            flow::ApplyChanges();
-            initialize();
-        }
-
-        igfd::ImGuiFileDialog::Instance()->CloseDialog(saveFileDialogKey);
+        deinitializeNode();
     }
 }
 
@@ -103,12 +78,9 @@ void NAV::ImuDataLogger::restore(json const& j)
 
 bool NAV::ImuDataLogger::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileWriter::initialize())
+    if (!FileWriter::initialize())
     {
         return false;
     }
@@ -117,7 +89,7 @@ bool NAV::ImuDataLogger::initialize()
                << "UnCompMagX,UnCompMagY,UnCompMagZ,UnCompAccX,UnCompAccY,UnCompAccZ,UnCompGyroX,UnCompGyroY,UnCompGyroZ,"
                << "Temperature" << std::endl;
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::ImuDataLogger::deinitialize()
@@ -125,7 +97,6 @@ void NAV::ImuDataLogger::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileWriter::deinitialize();
-    Node::deinitialize();
 }
 
 void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)

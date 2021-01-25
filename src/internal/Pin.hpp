@@ -8,7 +8,6 @@
 #include <imgui_node_editor.h>
 
 #include <string>
-#include <string_view>
 #include <variant>
 #include <vector>
 #include <memory>
@@ -94,8 +93,13 @@ class Pin
             return *this;
         }
 
-        constexpr bool operator==(const Type& other) const { return value == other.value; }
-        constexpr bool operator!=(const Type& other) const { return value != other.value; }
+        friend constexpr bool operator==(const Pin::Type& lhs, const Pin::Type& rhs);
+        friend constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type& rhs);
+
+        friend constexpr bool operator==(const Pin::Type& lhs, const Pin::Type::Value& rhs);
+        friend constexpr bool operator==(const Pin::Type::Value& lhs, const Pin::Type& rhs);
+        friend constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type::Value& rhs);
+        friend constexpr bool operator!=(const Pin::Type::Value& lhs, const Pin::Type& rhs);
 
         explicit operator std::string() const
         {
@@ -166,8 +170,13 @@ class Pin
             return *this;
         }
 
-        constexpr bool operator==(const Kind& other) const { return value == other.value; }
-        constexpr bool operator!=(const Kind& other) const { return value != other.value; }
+        friend constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind& rhs);
+        friend constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind& rhs);
+
+        friend constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind::Value& rhs);
+        friend constexpr bool operator==(const Pin::Kind::Value& lhs, const Pin::Kind& rhs);
+        friend constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind::Value& rhs);
+        friend constexpr bool operator!=(const Pin::Kind::Value& lhs, const Pin::Kind& rhs);
 
         explicit operator std::string() const
         {
@@ -241,12 +250,28 @@ class Pin
     PinData data = static_cast<void*>(nullptr);
     /// Callback List
     std::vector<std::tuple<Node*, void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> callbacks;
-    /// Unique name which is used for data flows
-    std::string_view dataIdentifier;
+    /// One or multiple Data Identifiers (Unique name which is used for data flows)
+    std::vector<std::string> dataIdentifier;
 
   private:
     /// Size of the Pin Icons in [px]
     static constexpr int m_PinIconSize = 24;
 };
+
+constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind& rhs) { return lhs.value == rhs.value; }
+constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind& rhs) { return lhs.value != rhs.value; }
+
+constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind::Value& rhs) { return lhs.value == rhs; }
+constexpr bool operator==(const Pin::Kind::Value& lhs, const Pin::Kind& rhs) { return lhs == rhs.value; }
+constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind::Value& rhs) { return lhs.value != rhs; }
+constexpr bool operator!=(const Pin::Kind::Value& lhs, const Pin::Kind& rhs) { return lhs != rhs.value; }
+
+constexpr bool operator==(const Pin::Type& lhs, const Pin::Type& rhs) { return lhs.value == rhs.value; }
+constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type& rhs) { return lhs.value != rhs.value; }
+
+constexpr bool operator==(const Pin::Type& lhs, const Pin::Type::Value& rhs) { return lhs.value == rhs; }
+constexpr bool operator==(const Pin::Type::Value& lhs, const Pin::Type& rhs) { return lhs == rhs.value; }
+constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type::Value& rhs) { return lhs.value != rhs; }
+constexpr bool operator!=(const Pin::Type::Value& lhs, const Pin::Type& rhs) { return lhs != rhs.value; }
 
 } // namespace NAV

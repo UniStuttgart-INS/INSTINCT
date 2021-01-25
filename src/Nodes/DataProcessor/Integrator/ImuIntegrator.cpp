@@ -19,12 +19,10 @@ NAV::ImuIntegrator::ImuIntegrator()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "ImuIntegrator", this);
-
     nm::CreateOutputPin(this, "StateData", Pin::Type::Flow, NAV::StateData::type());
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuIntegrator::integrateObservation);
-    nm::CreateInputPin(this, "StateData", Pin::Type::Object, NAV::StateData::type());
+    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::integrateObservation);
+    nm::CreateInputPin(this, "StateData", Pin::Type::Object, { NAV::StateData::type() });
 }
 
 NAV::ImuIntegrator::~ImuIntegrator()
@@ -77,23 +75,20 @@ void NAV::ImuIntegrator::restore(json const& j)
 
 bool NAV::ImuIntegrator::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize())
-    {
-        return false;
-    }
+    imuObs__t1 = nullptr;
+    imuObs__t2 = nullptr;
 
-    return isInitialized = true;
+    stateData__t2 = nullptr;
+    stateData__init = nullptr;
+
+    return true;
 }
 
 void NAV::ImuIntegrator::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-    Node::deinitialize();
 }
 
 void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)

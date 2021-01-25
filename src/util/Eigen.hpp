@@ -28,9 +28,9 @@ using AngleAxisld = AngleAxis<long double>;
 template<typename _Scalar, int _Rows, int _Cols>
 void to_json(json& j, const Matrix<_Scalar, _Rows, _Cols>& matrix)
 {
-    for (int r = 0; r < _Rows; r++)
+    for (int r = 0; r < matrix.rows(); r++)
     {
-        for (int c = 0; c < _Cols; c++)
+        for (int c = 0; c < matrix.cols(); c++)
         {
             j[std::to_string(r)][std::to_string(c)] = matrix(r, c);
         }
@@ -40,9 +40,24 @@ void to_json(json& j, const Matrix<_Scalar, _Rows, _Cols>& matrix)
 template<typename _Scalar, int _Rows, int _Cols>
 void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
 {
-    for (int r = 0; r < _Rows; r++)
+    if constexpr (_Rows == -1 || _Cols == -1)
     {
-        for (int c = 0; c < _Cols; c++)
+        int rows = -1;
+        int cols = -1;
+        for (int r = 0; j.contains(std::to_string(r)); r++)
+        {
+            rows = std::max(r, rows);
+            for (int c = 0; j.at(std::to_string(r)).contains(std::to_string(c)); c++)
+            {
+                cols = std::max(c, cols);
+            }
+        }
+        matrix = Eigen::Matrix<_Scalar, _Rows, _Cols>::Zero(rows + 1, cols + 1);
+    }
+
+    for (int r = 0; j.contains(std::to_string(r)); r++) // NOLINT(readability-misleading-indentation)
+    {
+        for (int c = 0; j.at(std::to_string(r)).contains(std::to_string(c)); c++)
         {
             j.at(std::to_string(r)).at(std::to_string(c)).get_to(matrix(r, c));
         }

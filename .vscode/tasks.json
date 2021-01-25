@@ -34,14 +34,14 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cmake -Bbuild/${input:buildType} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
-            "options": {
-                "env": {
-                    "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++",
-                },
-            },
+            // "options": {
+            //     "env": {
+            //         "CC": "/usr/bin/clang",
+            //         "CXX": "/usr/bin/clang++",
+            //     },
+            // },
             "presentation": {
                 "clear": true,
             },
@@ -54,14 +54,14 @@
             "command": "bash",
             "args": [
                 "-c",
-                "cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                "CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
-            "options": {
-                "env": {
-                    "CC": "/usr/bin/clang",
-                    "CXX": "/usr/bin/clang++",
-                }
-            },
+            // "options": {
+            //     "env": {
+            //         "CC": "/usr/bin/clang",
+            //         "CXX": "/usr/bin/clang++",
+            //     }
+            // },
             "presentation": {
                 "clear": true
             },
@@ -360,13 +360,22 @@
                 "Release",
             ],
         },
+        { // compiler
+            "id": "compiler",
+            "type": "command",
+            "command": "statusBarParam.get.compiler",
+            "args": [
+                "clang",
+                "gcc",
+            ],
+        },
         { // clang-tidy
             "id": "clangTidy",
             "type": "command",
             "command": "statusBarParam.get.clangTidy",
             "args": [
-                "clang-tidy: ON",
                 "clang-tidy: OFF",
+                "clang-tidy: ON",
             ],
         },
         { // cppcheck
@@ -374,8 +383,8 @@
             "type": "command",
             "command": "statusBarParam.get.cppcheck",
             "args": [
-                "cppcheck: ON",
                 "cppcheck: OFF",
+                "cppcheck: ON",
             ],
         },
         { // logLevel

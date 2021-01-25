@@ -2,6 +2,8 @@
 
 Navigation Software of the Institut of Navigation (University of Stuttgart)
 
+![overview](resources/images/Demo.gif)
+
 ## Description
 
 This software provides real-time and post processing functionality for navigational tasks. It can read from sensors and fuse together the data. It can fuse GNSS data with IMU data and do advanced functions like RTK, RAIM, ...

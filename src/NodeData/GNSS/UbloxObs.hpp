@@ -5,10 +5,11 @@
 
 #pragma once
 
-#include "GnssObs.hpp"
+#include "NodeData/InsObs.hpp"
 
 #include <variant>
 
+#include "util/Eigen.hpp"
 #include "uart/protocol/packet.hpp"
 
 #include "util/UartSensors/Ublox/UbloxTypes.hpp"
@@ -16,7 +17,7 @@
 namespace NAV
 {
 /// ublox Observation Class
-class UbloxObs : public GnssObs
+class UbloxObs : public InsObs
 {
   public:
     /// @brief Constructor
@@ -40,17 +41,20 @@ class UbloxObs : public GnssObs
 
     /// @brief Returns the type of the data class
     /// @return The data type
-    [[nodiscard]] static constexpr std::string_view type()
+    [[nodiscard]] static std::string type()
     {
-        return std::string_view("UbloxObs");
+        return std::string("UbloxObs");
     }
 
     /// @brief Returns the parent types of the data class
     /// @return The parent data types
-    [[nodiscard]] static std::vector<std::string_view> parentTypes()
+    [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { GnssObs::type() };
+        return { InsObs::type() };
     }
+
+    /// ECEF position [m]
+    std::optional<Eigen::Vector3d> position_ecef;
 
     /// Ubx Message Class (NONE if NMEA message)
     sensors::ublox::UbxClass msgClass = sensors::ublox::UbxClass::UBX_CLASS_NONE;

@@ -23,6 +23,7 @@ namespace util = ax::NodeEditor::Utilities;
 
 #include "gui/widgets/Splitter.hpp"
 #include "gui/widgets/HelpMarker.hpp"
+#include "gui/widgets/Spinner.hpp"
 
 #include "internal/Pin.hpp"
 #include "Nodes/Node.hpp"
@@ -41,11 +42,14 @@ namespace nm = NAV::NodeManager;
 #include <map>
 #include <algorithm>
 #include <utility>
+#include <filesystem>
 
 ax::NodeEditor::EditorContext* m_Editor = nullptr;
 
 void NAV::gui::NodeEditorApplication::OnStart()
 {
+    LOG_TRACE("called");
+
     ed::Config config;
 
     // config.SettingsFile = "NavSoS.json";
@@ -86,10 +90,21 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ed::GetStyle().FlowDuration = 1.0F;
 
     m_HeaderBackground = LoadTexture("resources/images/BlueprintBackground.png");
+
+    flow::SetProgramRootPath(std::filesystem::current_path());
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()
 {
+    LOG_TRACE("called");
+
+    FlowExecutor::stop();
+
+    initList.clear();
+    nm::Stop();
+
+    nm::DeleteAllNodes();
+
     auto releaseTexture = [this](ImTextureID& id) {
         if (id)
         {
@@ -109,17 +124,12 @@ void NAV::gui::NodeEditorApplication::OnStop()
 
 bool NAV::gui::NodeEditorApplication::OnQuitRequest()
 {
+    LOG_TRACE("called");
+
     if (flow::HasUnsavedChanges())
     {
         globalAction = GlobalActions::QuitUnsaved;
         return false;
-    }
-
-    FlowExecutor::stop();
-
-    for (Node* node : nm::m_Nodes())
-    {
-        node->deinitialize();
     }
 
     return true;
@@ -127,15 +137,12 @@ bool NAV::gui::NodeEditorApplication::OnQuitRequest()
 
 void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 {
-    ax::NodeEditor::EnableShortcuts(false);
-
     auto& io = ImGui::GetIO();
     if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
     {
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
             globalAction = GlobalActions::None;
-            ax::NodeEditor::EnableShortcuts(true);
             return;
         }
     }
@@ -148,7 +155,13 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "");
+                if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+                    std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+                {
+                    LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+                    std::filesystem::current_path(targetPath);
+                }
+                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
@@ -170,7 +183,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
             }
 
             globalAction = GlobalActions::None;
-            igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
+            igfd::ImGuiFileDialog::Instance()->CloseDialog();
             Quit();
             ImGui::CloseCurrentPopup();
         }
@@ -186,7 +199,6 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
         if (ImGui::Button("Cancel"))
         {
             globalAction = GlobalActions::None;
-            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
@@ -195,8 +207,13 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
 
 void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 {
-    ax::NodeEditor::EnableShortcuts(false);
-    igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "");
+    if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+        std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+    {
+        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+        std::filesystem::current_path(targetPath);
+    }
+    igfd::ImGuiFileDialog::Instance()->OpenDialog("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
     igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
 
     auto& io = ImGui::GetIO();
@@ -205,8 +222,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
             globalAction = GlobalActions::None;
-            ax::NodeEditor::EnableShortcuts(true);
-            igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
+            igfd::ImGuiFileDialog::Instance()->CloseDialog();
             return;
         }
     }
@@ -220,22 +236,18 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         }
 
         globalAction = GlobalActions::None;
-        ax::NodeEditor::EnableShortcuts(true);
-        igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
+        igfd::ImGuiFileDialog::Instance()->CloseDialog();
     }
 }
 
 void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 {
-    ax::NodeEditor::EnableShortcuts(false);
-
     auto& io = ImGui::GetIO();
     if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
     {
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
         {
             globalAction = GlobalActions::None;
-            ax::NodeEditor::EnableShortcuts(true);
             return;
         }
     }
@@ -248,7 +260,13 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         {
             if (flow::GetCurrentFilename().empty())
             {
-                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "");
+                if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+                    std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+                {
+                    LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+                    std::filesystem::current_path(targetPath);
+                }
+                igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
                 igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
             }
             else
@@ -258,7 +276,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
                 nm::DeleteAllLinks();
                 nm::DeleteAllNodes();
                 flow::DiscardChanges();
-                ax::NodeEditor::EnableShortcuts(true);
+                flow::SetCurrentFilename("");
                 ImGui::CloseCurrentPopup();
             }
         }
@@ -270,15 +288,15 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
                 flow::SetCurrentFilename(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
                 flow::SaveFlowAs(flow::GetCurrentFilename());
 
-                igfd::ImGuiFileDialog::Instance()->CloseDialog("Save Flow");
+                igfd::ImGuiFileDialog::Instance()->CloseDialog();
                 nm::DeleteAllLinks();
                 nm::DeleteAllNodes();
                 flow::DiscardChanges();
+                flow::SetCurrentFilename("");
             }
 
             globalAction = GlobalActions::None;
 
-            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
@@ -288,14 +306,13 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             nm::DeleteAllLinks();
             nm::DeleteAllNodes();
             flow::DiscardChanges();
-            ax::NodeEditor::EnableShortcuts(true);
+            flow::SetCurrentFilename("");
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
         if (ImGui::Button("Cancel"))
         {
             globalAction = GlobalActions::None;
-            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
@@ -304,65 +321,123 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
 
 void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 {
-    ax::NodeEditor::EnableShortcuts(false);
-    igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "");
-    igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
-
-    static bool loadSuccessful = true;
-
-    auto& io = ImGui::GetIO();
-    if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
+    if (flow::HasUnsavedChanges())
     {
-        if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+        ImGui::OpenPopup("Discard unsaved changes?");
+        if (ImGui::BeginPopupModal("Discard unsaved changes?", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
         {
-            globalAction = GlobalActions::None;
-            ax::NodeEditor::EnableShortcuts(true);
-            loadSuccessful = true;
-            igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
-            return;
-        }
-    }
+            ImGui::Text("Do you want to save your changes or discard them before loading?");
+            if (ImGui::Button("Save"))
+            {
+                if (flow::GetCurrentFilename().empty())
+                {
+                    if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+                        std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+                    {
+                        LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+                        std::filesystem::current_path(targetPath);
+                    }
+                    igfd::ImGuiFileDialog::Instance()->OpenModal("Save Flow##Load", "Save Flow", ".flow", "", 1, nullptr, ImGuiFileDialogFlags_ConfirmOverwrite);
+                    igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+                }
+                else
+                {
+                    flow::SaveFlowAs(flow::GetCurrentFilename());
+                    flow::DiscardChanges();
+                    ImGui::CloseCurrentPopup();
+                }
+            }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog("Load Flow"))
-    {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
-        {
-            loadSuccessful = flow::LoadFlow(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
-            if (loadSuccessful)
+            if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow##Load"))
+            {
+                if (igfd::ImGuiFileDialog::Instance()->IsOk)
+                {
+                    flow::SetCurrentFilename(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+                    flow::SaveFlowAs(flow::GetCurrentFilename());
+                }
+
+                flow::DiscardChanges();
+                igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Discard"))
+            {
+                flow::DiscardChanges();
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel"))
             {
                 globalAction = GlobalActions::None;
-                ax::NodeEditor::EnableShortcuts(true);
-                frameCountNavigate = ImGui::GetFrameCount();
-                igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+    }
+    else
+    {
+        if (std::string targetPath = flow::GetProgramRootPath() + "/flow";
+            std::filesystem::current_path() != targetPath && std::filesystem::exists(targetPath))
+        {
+            LOG_DEBUG("Changing current path to: {}", std::filesystem::current_path().string());
+            std::filesystem::current_path(targetPath);
+        }
+        igfd::ImGuiFileDialog::Instance()->OpenDialog("Load Flow", "Load Flow", ".flow", "", 1, nullptr);
+        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".flow", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+
+        static bool loadSuccessful = true;
+
+        auto& io = ImGui::GetIO();
+        if (!io.KeyCtrl && !io.KeyAlt && !io.KeyShift && !io.KeySuper)
+        {
+            if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape)))
+            {
+                globalAction = GlobalActions::None;
+                loadSuccessful = true;
+                igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                return;
             }
         }
-        else
-        {
-            globalAction = GlobalActions::None;
-            ax::NodeEditor::EnableShortcuts(true);
-            igfd::ImGuiFileDialog::Instance()->CloseDialog("Load Flow");
-        }
-    }
-    if (!loadSuccessful)
-    {
-        ImGui::OpenPopup("Could not open file");
-    }
 
-    if (ImGui::BeginPopupModal("Could not open file", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
-    {
-        ImGui::Text("The filename specified is invalid\nor the program has insufficient\npermissions to access the file");
-        if (ImGui::Button("Close"))
+        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Load Flow"))
         {
-            loadSuccessful = true;
-            ImGui::CloseCurrentPopup();
+            if (igfd::ImGuiFileDialog::Instance()->IsOk)
+            {
+                loadSuccessful = flow::LoadFlow(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
+                if (loadSuccessful)
+                {
+                    globalAction = GlobalActions::None;
+                    frameCountNavigate = ImGui::GetFrameCount();
+                    igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                }
+            }
+            else
+            {
+                globalAction = GlobalActions::None;
+                igfd::ImGuiFileDialog::Instance()->CloseDialog();
+            }
         }
-        ImGui::EndPopup();
+        if (!loadSuccessful)
+        {
+            ImGui::OpenPopup("Could not open file");
+        }
+
+        if (ImGui::BeginPopupModal("Could not open file", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize))
+        {
+            ImGui::Text("The filename specified is invalid\nor the program has insufficient\npermissions to access the file");
+            if (ImGui::Button("Close"))
+            {
+                loadSuccessful = true;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
     }
 }
 
 void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
 {
-    ed::EnableShortcuts(false);
     ImGui::OpenPopup("Rename Group Box");
     if (ImGui::BeginPopupModal("Rename Group Box", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -383,7 +458,6 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
                 }
                 nameBackup.clear();
                 renameNode = nullptr;
-                ax::NodeEditor::EnableShortcuts(true);
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
                 return;
@@ -394,7 +468,6 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
         {
             nameBackup.clear();
             renameNode = nullptr;
-            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
@@ -408,7 +481,6 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
         {
             nameBackup.clear();
             renameNode = nullptr;
-            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
@@ -420,7 +492,6 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
             }
             nameBackup.clear();
             renameNode = nullptr;
-            ax::NodeEditor::EnableShortcuts(true);
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
@@ -456,6 +527,37 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         break;
     }
 
+    if (!initList.empty()) // Start thread to (De-)/Initialize Nodes
+    {
+        Node* node = initList.front().first;
+        bool init = initList.front().second;
+        if ((init && !node->isInitializing())        // Finished with init (success or fail)
+            || (!init && !node->isDeinitializing())) // Finished with deinit
+        {
+            initList.pop_front();
+            currentInitNodeId = 0;
+        }
+        else if (currentInitNodeId == 0) // Currently no thread running
+        {
+            currentInitNodeId = size_t(node->id);
+            if (initThread.joinable())
+            {
+                initThread.request_stop();
+                initThread.join();
+            }
+            initThread = std::jthread([node, init]() {
+                if (init)
+                {
+                    node->initializeNode();
+                }
+                else
+                {
+                    node->deinitializeNode();
+                }
+            });
+        }
+    }
+
     gui::UpdateTouch(deltaTime);
 
     if (ed::AreShortcutsEnabled())
@@ -475,9 +577,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     static float leftPaneWidth = 400.0F;
     static float rightPaneWidth = 800.0F;
-    gui::widgets::Splitter(true, 4.0F, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
+    gui::widgets::Splitter("Main Splitter", true, 4.0F, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
 
-    gui::panels::ShowLeftPane(leftPaneWidth - 4.0F);
+    bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - 4.0F);
 
     ImGui::SameLine(0.0F, 12.0F);
 
@@ -519,7 +621,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (!isSimple) // Header Text for Blueprint Nodes
             {
-                if (node->isInitialized)
+                if (node->isInitialized())
                 {
                     builder.Header(ImColor(128, 255, 128)); // Light green
                 }
@@ -530,10 +632,18 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ImGui::Spring(0);
                 ImGui::TextUnformatted(node->name.c_str());
                 ImGui::Spring(1);
-                if (hasOutputFlows)
+                if (node->isInitializing())
+                {
+                    gui::widgets::Spinner(("##Spinner " + node->nameId()).c_str(), ImColor(144, 238, 144), 10.0F, 1.0F);
+                }
+                else if (node->isDeinitializing())
+                {
+                    gui::widgets::Spinner(("##Spinner " + node->nameId()).c_str(), ImColor(255, 160, 122), 10.0F, 1.0F);
+                }
+                else if (hasOutputFlows)
                 {
                     bool itemDisabled = false;
-                    if (!node->isInitialized && !node->callbacksEnabled)
+                    if (!node->isInitialized() && !node->callbacksEnabled)
                     {
                         ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
@@ -615,9 +725,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 builder.Input(input.id);
                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                 input.drawPinIcon(nm::IsPinLinked(input.id), static_cast<int>(alpha * 255));
-                if (!input.dataIdentifier.empty() && ImGui::IsItemHovered())
+                if (ImGui::IsItemHovered())
                 {
-                    tooltipText = std::string(input.dataIdentifier);
+                    tooltipText = fmt::format("{}", fmt::join(input.dataIdentifier, "\n"));
                 }
 
                 ImGui::Spring(0);
@@ -661,9 +771,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 }
                 ImGui::Spring(0);
                 output.drawPinIcon(nm::IsPinLinked(output.id), static_cast<int>(alpha * 255));
-                if (!output.dataIdentifier.empty() && ImGui::IsItemHovered())
+                if (ImGui::IsItemHovered())
                 {
-                    tooltipText = std::string(output.dataIdentifier);
+                    tooltipText = fmt::format("{}", fmt::join(output.dataIdentifier, "\n"));
                 }
                 ImGui::PopStyleVar();
                 util::BlueprintNodeBuilder::EndOutput();
@@ -813,22 +923,38 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         else if (startPin->type == Pin::Type::Flow
                                  && !NAV::NodeRegistry::NodeDataTypeIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
                         {
-                            showLabel(fmt::format("The data type [{}] can't be linked to [{}]", startPin->dataIdentifier, endPin->dataIdentifier).c_str(), ImColor(45, 32, 32, 180));
+                            showLabel(fmt::format("The data type [{}]\ncan't be linked to [{}]",
+                                                  fmt::join(startPin->dataIdentifier, ","),
+                                                  fmt::join(endPin->dataIdentifier, ","))
+                                          .c_str(),
+                                      ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
                         else if (startPin->type == Pin::Type::Delegate
-                                 && (startPin->parentNode == nullptr || endPin->dataIdentifier != startPin->parentNode->type()))
+                                 && (startPin->parentNode == nullptr
+                                     || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->parentNode->type()) == endPin->dataIdentifier.end()))
                         {
                             if (startPin->parentNode != nullptr)
                             {
-                                showLabel(fmt::format("The delegate type [{}] can't be linked to [{}]", startPin->parentNode->type(), endPin->dataIdentifier).c_str(), ImColor(45, 32, 32, 180));
+                                showLabel(fmt::format("The delegate type [{}]\ncan't be linked to [{}]",
+                                                      startPin->parentNode->type(),
+                                                      fmt::join(endPin->dataIdentifier, ","))
+                                              .c_str(),
+                                          ImColor(45, 32, 32, 180));
                             }
+
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
-                        else if (startPin->type == Pin::Type::Object
-                                 && (startPin->dataIdentifier.empty() || endPin->dataIdentifier.empty() || startPin->dataIdentifier != endPin->dataIdentifier))
+                        else if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix || startPin->type == Pin::Type::Function)
+                                 && (startPin->dataIdentifier.empty()
+                                     || endPin->dataIdentifier.empty()
+                                     || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->dataIdentifier.front()) == endPin->dataIdentifier.end()))
                         {
-                            showLabel(fmt::format("The data type [{}]\ncan't be linked to [{}]", startPin->dataIdentifier, endPin->dataIdentifier).c_str(), ImColor(45, 32, 32, 180));
+                            showLabel(fmt::format("The data type [{}]\ncan't be linked to [{}]",
+                                                  fmt::join(startPin->dataIdentifier, ","),
+                                                  fmt::join(endPin->dataIdentifier, ","))
+                                          .c_str(),
+                                      ImColor(45, 32, 32, 180));
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
                         else
@@ -883,6 +1009,13 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 ed::NodeId nodeId = 0;
                 while (ed::QueryDeletedNode(&nodeId))
                 {
+                    if (Node* node = nm::FindNode(nodeId))
+                    {
+                        if (node->isInitializing() || node->isDeinitializing())
+                        {
+                            break;
+                        }
+                    }
                     if (ed::AcceptDeletedItem())
                     {
                         nm::DeleteNode(nodeId);
@@ -895,8 +1028,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::SetCursorScreenPos(cursorTopLeft);
     }
 
+    // Shortcut enable/disable
+    ax::NodeEditor::EnableShortcuts(ed::IsActive() || leftPaneActive);
+
     auto openPopupPosition = ImGui::GetMousePos();
-    static bool showBackgroundContextMenu = false;
     ed::Suspend();
     if (ed::ShowNodeContextMenu(&contextNodeId))
     {
@@ -913,7 +1048,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     else if (ed::ShowBackgroundContextMenu() && ed::IsActive())
     {
         ImGui::OpenPopup("Create New Node");
-        showBackgroundContextMenu = true;
         newNodeLinkPin = nullptr;
     }
     else if (ed::NodeId doubleClickedNodeId = ed::GetDoubleClickedNode())
@@ -940,17 +1074,23 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Inputs: %lu", node->inputPins.size());
             ImGui::Text("Outputs: %lu", node->outputPins.size());
             ImGui::Separator();
-            if (ImGui::MenuItem(node->isInitialized ? "Reinitialize" : "Initialize"))
+            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "", false, !node->isInitializing() && !node->isDeinitializing()))
             {
-                node->initialize();
+                node->isInitializing_ = true;
+                initList.emplace_back(node, true);
             }
-            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized))
+            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized() && !node->isInitializing() && !node->isDeinitializing()))
             {
-                node->deinitialize();
+                node->isDeinitializing_ = true;
+                initList.emplace_back(node, false);
             }
             if (ImGui::MenuItem("Rename"))
             {
                 renameNode = node;
+            }
+            if (ImGui::MenuItem("Delete", "", false, !node->isInitializing() && !node->isDeinitializing()))
+            {
+                ed::DeleteNode(contextNodeId);
             }
         }
         else
@@ -958,10 +1098,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Unknown node: %lu", size_t(contextNodeId));
         }
 
-        if (ImGui::MenuItem("Delete"))
-        {
-            ed::DeleteNode(contextNodeId);
-        }
         ImGui::EndPopup();
     }
 
@@ -979,13 +1115,17 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         if (pin)
         {
             ImGui::Text("ID: %lu", size_t(pin->id));
-            if (pin->parentNode)
+            ImGui::Text("Node: %s", pin->parentNode ? std::to_string(size_t(pin->parentNode->id)).c_str() : "<none>");
+            ImGui::Text("Type: %s", std::string(pin->type).c_str());
+            if (!pin->callbacks.empty())
             {
-                ImGui::Text("Node: %lu", size_t(pin->parentNode->id));
-            }
-            else
-            {
-                ImGui::Text("Node: %s", "<none>");
+                ImGui::Text("Callbacks:");
+                ImGui::Indent();
+                for (auto& callback : pin->callbacks)
+                {
+                    ImGui::BulletText("%s", std::get<0>(callback)->nameId().c_str());
+                }
+                ImGui::Unindent();
             }
         }
         else
@@ -1023,7 +1163,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     static bool setKeyboardFocus = true;
     if (ImGui::BeginPopup("Create New Node"))
     {
-        ax::NodeEditor::EnableShortcuts(false);
         auto newNodePostion = openPopupPosition;
 
         static ImGuiTextFilter filter;
@@ -1038,21 +1177,41 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         }
 
         Node* node = nullptr;
-        for (size_t i = 0; i < NAV::NodeRegistry::registeredNodes().size(); i++)
+        for (const auto& [category, nodeInfoList] : NAV::NodeRegistry::RegisteredNodes())
         {
-            const auto& category = NAV::NodeRegistry::registeredNodes().at(i).category;
-            if (i > 0 && category != NAV::NodeRegistry::registeredNodes().at(i - 1).category)
+            // Prevent category from showing, if it is empty
+            bool categoryHasItems = false;
+            for (const auto& nodeInfo : nodeInfoList)
             {
-                ImGui::Separator();
+                if (nodeInfo.hasCompatiblePin(newNodeLinkPin)
+                    && (filter.PassFilter(nodeInfo.type.c_str()) || filter.PassFilter(category.c_str())))
+                {
+                    categoryHasItems = true;
+                    break;
+                }
             }
-            const auto& displayName = NAV::NodeRegistry::registeredNodes().at(i).type;
-            const auto& constructor = NAV::NodeRegistry::registeredNodes().at(i).constructor;
-            if (filter.PassFilter(displayName.c_str()) && ImGui::MenuItem(displayName.c_str()))
+            if (categoryHasItems)
             {
-                filter.Clear();
-                node = constructor();
-                nm::AddNode(node);
-                ax::NodeEditor::EnableShortcuts(true);
+                ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+                if (ImGui::TreeNode((category + "##NewNodeTree").c_str()))
+                {
+                    for (const auto& nodeInfo : nodeInfoList)
+                    {
+                        const auto& displayName = nodeInfo.type;
+                        const auto& constructor = nodeInfo.constructor;
+                        ImGui::Indent();
+                        if (nodeInfo.hasCompatiblePin(newNodeLinkPin)
+                            && (filter.PassFilter(nodeInfo.type.c_str()) || filter.PassFilter(category.c_str()))
+                            && ImGui::MenuItem(displayName.c_str()))
+                        {
+                            filter.Clear();
+                            node = constructor();
+                            nm::AddNode(node);
+                        }
+                        ImGui::Unindent();
+                    }
+                    ImGui::TreePop();
+                }
             }
         }
 
@@ -1089,11 +1248,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     else
     {
         setKeyboardFocus = true;
-        if (showBackgroundContextMenu)
-        {
-            showBackgroundContextMenu = false;
-            ax::NodeEditor::EnableShortcuts(true);
-        }
         createNewNode = false;
     }
     ImGui::PopStyleVar();
@@ -1102,32 +1256,20 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         if (node->hasConfig && node->showConfig)
         {
-            if (!ImGui::Begin(fmt::format("{} ({})", node->type(), reinterpret_cast<uintptr_t>(node->id.AsPointer())).c_str(), &(node->showConfig),
-                              ImGuiWindowFlags_None))
+            if (ImGui::Begin(fmt::format("{} ({})", node->type(), size_t(node->id)).c_str(), &(node->showConfig),
+                             ImGuiWindowFlags_None))
             {
-                if (node->nodeDisabledShortcuts)
-                {
-                    node->nodeDisabledShortcuts = false;
-                    ax::NodeEditor::EnableShortcuts(true);
-                }
-                ImGui::End();
-                break;
+                node->guiConfig();
             }
-
-            ax::NodeEditor::EnableShortcuts(false);
-            node->nodeDisabledShortcuts = true;
-            node->guiConfig();
-            if (ImGui::Button(node->isInitialized ? "Reinitialize" : "Initialize"))
+            else // Window is collapsed
             {
-                node->initialize();
+                if (ImGui::IsWindowFocused())
+                {
+                    ed::EnableShortcuts(true);
+                }
             }
 
             ImGui::End();
-        }
-        else if (node->nodeDisabledShortcuts)
-        {
-            node->nodeDisabledShortcuts = false;
-            ax::NodeEditor::EnableShortcuts(true);
         }
     }
     ed::Resume();

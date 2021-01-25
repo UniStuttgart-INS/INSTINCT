@@ -46,10 +46,10 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
         NAV::ConfigManager::FetchConfigs(argc, argv);
 
         // Register all Node Types which are available to the program
-        NAV::NodeRegistry::registerNodeTypes();
+        NAV::NodeRegistry::RegisterNodeTypes();
 
         // Register all Node Data Types which are available to the program
-        NAV::NodeRegistry::registerNodeDataTypes();
+        NAV::NodeRegistry::RegisterNodeDataTypes();
 
         if (NAV::ConfigManager::Get<bool>("nogui", false))
         {
@@ -67,10 +67,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
                 }
                 catch (...)
                 {
-                    nm::DeleteAllLinks();
                     nm::DeleteAllNodes();
-                    NAV::flow::DiscardChanges();
-                    NAV::flow::SetCurrentFilename("");
                     LOG_ERROR("Loading flow file failed");
                 }
                 if (loadSuccessful)
@@ -96,10 +93,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
                         }
                     }
 
-                    for (NAV::Node* node : nm::m_Nodes())
-                    {
-                        node->deinitialize();
-                    }
+                    nm::DeleteAllNodes();
                 }
             }
             else

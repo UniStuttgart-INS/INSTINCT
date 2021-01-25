@@ -21,8 +21,15 @@ endforeach(TMP_PATH)
 
 # Link all files in the Source directory
 include_directories(${CMAKE_SOURCE_DIR}/src)
-add_executable(tests util/InsTimeTests.cpp util/InsMechanizationTests.cpp util/InsTransformationsTests.cpp
-                     util/LoggerTests.cpp NodeData/State/StateDataTests.cpp ${SRC_FILES})
+add_executable(
+  tests
+  util/InsTimeTests.cpp
+  util/InsMechanizationTests.cpp
+  util/InsTransformationsTests.cpp
+  util/LoggerTests.cpp
+  util/ScrollingBufferTests.cpp
+  NodeData/State/StateDataTests.cpp
+  ${SRC_FILES})
 
 target_link_libraries(
   tests

@@ -25,18 +25,24 @@ void CallbackTimer::start(int interval, const std::function<void(void*)>& func, 
     {
         stop();
     };
+    _interval.store(interval, std::memory_order_release);
     _execute.store(true, std::memory_order_release);
-    _thd = std::thread([this, interval, func, userData]() {
+    _thd = std::thread([this, func, userData]() {
         while (_execute.load(std::memory_order_acquire))
         {
             auto start = std::chrono::high_resolution_clock::now();
             func(userData);
             // std::this_thread::sleep_for(
-            //     std::chrono::milliseconds(interval));
+            //     std::chrono::milliseconds(_interval));
 
-            std::this_thread::sleep_until(start + std::chrono::milliseconds(interval));
+            std::this_thread::sleep_until(start + std::chrono::milliseconds(_interval.load(std::memory_order_acquire)));
         }
     });
+}
+
+void CallbackTimer::setInterval(int interval)
+{
+    _interval.store(interval, std::memory_order_release);
 }
 
 bool CallbackTimer::is_running() const noexcept

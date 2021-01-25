@@ -49,18 +49,17 @@ class EmlidFile : public Gnss, public FileReader
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Resets the node. Moves the read cursor to the start
+    bool resetNode() override;
+
+  private:
+    constexpr static size_t OutputPortIndex_EmlidObs = 1; ///< @brief Flow (EmlidObs)
+
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
-
-    /// @brief Resets the node. Moves the read cursor to the start
-    void resetNode() override;
-
-  private:
-    constexpr static size_t OutputPortIndex_EmlidFile = 0; ///< @brief Delegate
-    constexpr static size_t OutputPortIndex_EmlidObs = 1;  ///< @brief Flow (EmlidObs)
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read

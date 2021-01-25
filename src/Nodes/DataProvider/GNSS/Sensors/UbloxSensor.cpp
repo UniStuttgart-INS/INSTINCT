@@ -4,7 +4,6 @@
 
 #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 
-#include "imgui_stdlib.h"
 #include "gui/widgets/HelpMarker.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -25,8 +24,6 @@ NAV::UbloxSensor::UbloxSensor()
 
     // TODO: Update the library to handle different baudrates
     selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
-
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "UbloxSensor", this);
 
     nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, NAV::UbloxObs::type());
 }
@@ -57,7 +54,7 @@ void NAV::UbloxSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), sensorPort);
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("COM port where the sensor is attached to\n"
@@ -89,16 +86,14 @@ void NAV::UbloxSensor::restore(json const& j)
     }
 }
 
+bool NAV::UbloxSensor::resetNode()
+{
+    return true;
+}
+
 bool NAV::UbloxSensor::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
-
-    if (!Node::initialize())
-    {
-        return false;
-    }
 
     // connect to the sensor
     try
@@ -115,14 +110,14 @@ bool NAV::UbloxSensor::initialize()
 
     sensor->registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::UbloxSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (!isInitialized)
+    if (!isInitialized())
     {
         return;
     }
@@ -138,8 +133,6 @@ void NAV::UbloxSensor::deinitialize()
 
         sensor->disconnect();
     }
-
-    Node::deinitialize();
 }
 
 void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, [[maybe_unused]] size_t index)

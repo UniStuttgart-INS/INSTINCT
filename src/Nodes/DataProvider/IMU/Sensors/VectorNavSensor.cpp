@@ -4,7 +4,6 @@
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
 
-#include "imgui_stdlib.h"
 #include "gui/widgets/HelpMarker.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -23,8 +22,6 @@ NAV::VectorNavSensor::VectorNavSensor()
 
     color = ImColor(255, 128, 128);
     hasConfig = true;
-
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "VectorNavSensor", this);
 
     nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type());
 
@@ -77,7 +74,7 @@ void NAV::VectorNavSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), sensorPort);
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("COM port where the sensor is attached to\n"
@@ -92,7 +89,7 @@ void NAV::VectorNavSensor::guiConfig()
     {
         LOG_DEBUG("{}: Baudrate changed to {}", nameId(), sensorBaudrate());
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 
     const char* currentFrequency = (selectedFrequency >= 0 && static_cast<size_t>(selectedFrequency) < dividerFrequency.second.size())
@@ -102,7 +99,7 @@ void NAV::VectorNavSensor::guiConfig()
     {
         LOG_DEBUG("{}: Frequency changed to {}", nameId(), dividerFrequency.second.at(static_cast<size_t>(selectedFrequency)));
         flow::ApplyChanges();
-        deinitialize();
+        deinitializeNode();
     }
 }
 
@@ -141,16 +138,14 @@ void NAV::VectorNavSensor::restore(json const& j)
     }
 }
 
+bool NAV::VectorNavSensor::resetNode()
+{
+    return true;
+}
+
 bool NAV::VectorNavSensor::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
-
-    if (!Node::initialize())
-    {
-        return false;
-    }
 
     // Choose baudrate
     Baudrate targetBaudrate = sensorBaudrate() == BAUDRATE_FASTEST
@@ -279,21 +274,23 @@ bool NAV::VectorNavSensor::initialize()
     }
     catch (const std::exception& e)
     {
-        LOG_CRITICAL("{} could not configure binary output register ({})", nameId(), e.what());
+        LOG_ERROR("{} could not configure binary output register ({})", nameId(), e.what());
+        deinitializeNode();
+        return false;
     }
 
     vs.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
     LOG_DEBUG("{} successfully initialized", nameId());
 
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::VectorNavSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (!isInitialized)
+    if (!isInitialized())
     {
         return;
     }
@@ -319,8 +316,6 @@ void NAV::VectorNavSensor::deinitialize()
         catch (...)
         {}
     }
-
-    Node::deinitialize();
 }
 
 void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, [[maybe_unused]] size_t index)

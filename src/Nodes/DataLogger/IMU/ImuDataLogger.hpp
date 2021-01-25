@@ -49,13 +49,13 @@ class ImuDataLogger : public Node, public FileWriter
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+  private:
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-  private:
     /// @brief Write Observation to the file
     /// @param[in] nodeData The received observation
     /// @param[in] linkId Id of the link over which the data is received

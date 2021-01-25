@@ -34,9 +34,14 @@ class CallbackTimer
     /// @param[in, out] userData User Data which will be passed to the callback function
     void start(int interval, const std::function<void(void*)>& func, void* userData);
 
+    /// @brief Set the Interval of the timer
+    /// @param[in] interval Interval in [ms] when to trigger the callback
+    void setInterval(int interval);
+
     [[nodiscard]] bool is_running() const noexcept;
 
   private:
+    std::atomic<int> _interval{ 0 };
     std::atomic<bool> _execute{ false };
     std::thread _thd;
 };

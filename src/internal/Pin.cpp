@@ -10,21 +10,25 @@ bool NAV::Pin::canCreateLink(const Pin& b) const
 {
     bool dataTypesMatch = true;
 
-    if (type == Pin::Type::Flow
-        && ((kind == Kind::Output && !NAV::NodeRegistry::NodeDataTypeIsChildOf(dataIdentifier, b.dataIdentifier))
-            || (kind == Kind::Input && !NAV::NodeRegistry::NodeDataTypeIsChildOf(b.dataIdentifier, dataIdentifier))))
+    const Pin* startPin = (kind == Kind::Output ? this : &b);
+    const Pin* endPin = (kind == Kind::Output ? &b : this);
+
+    if (startPin->type == Pin::Type::Flow
+        && !NAV::NodeRegistry::NodeDataTypeIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
     {
         dataTypesMatch = false;
     }
 
-    if (type == Pin::Type::Delegate
-        && (parentNode == nullptr || b.dataIdentifier != parentNode->type()))
+    if (startPin->type == Pin::Type::Delegate
+        && (parentNode == nullptr
+            || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->parentNode->type()) == endPin->dataIdentifier.end()))
     {
         dataTypesMatch = false;
     }
 
-    if (type == Pin::Type::Object
-        && (dataIdentifier.empty() || b.dataIdentifier.empty() || dataIdentifier != b.dataIdentifier))
+    if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix || startPin->type == Pin::Type::Function)
+        && (dataIdentifier.empty() || b.dataIdentifier.empty()
+            || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->dataIdentifier.front()) == endPin->dataIdentifier.end()))
     {
         dataTypesMatch = false;
     }

@@ -16,13 +16,11 @@ NAV::State::State()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "State", this);
-
     nm::CreateOutputPin(this, "StateData", Pin::Type::Object, NAV::StateData::type(), &currentState);
 
-    nm::CreateInputPin(this, "StateData\nUpdate", Pin::Type::Flow, NAV::StateData::type(), &State::updateState);
-    nm::CreateInputPin(this, "GnssObs\nInit", Pin::Type::Flow, NAV::GnssObs::type(), &State::initPositionVelocity);
-    nm::CreateInputPin(this, "ImuObs\nInit", Pin::Type::Flow, NAV::ImuObs::type(), &State::initAttitude);
+    nm::CreateInputPin(this, "StateData\nUpdate", Pin::Type::Flow, { NAV::StateData::type() }, &State::updateState);
+    nm::CreateInputPin(this, "GnssObs\nInit", Pin::Type::Flow, { NAV::GnssObs::type() }, &State::initPositionVelocity);
+    nm::CreateInputPin(this, "ImuObs\nInit", Pin::Type::Flow, { NAV::ImuObs::type() }, &State::initAttitude);
 }
 
 NAV::State::~State()
@@ -165,23 +163,14 @@ void NAV::State::restore(json const& j)
 
 bool NAV::State::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::State::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-    Node::deinitialize();
 }
 
 void NAV::State::updateState(const std::shared_ptr<NodeData>& state, ax::NodeEditor::LinkId /*linkId*/)

@@ -2,8 +2,7 @@
 
 #include "util/Logger.hpp"
 
-#include "imgui_stdlib.h"
-#include "ImGuiFileDialog.h"
+#include "gui/widgets/FileDialog.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -22,8 +21,6 @@ NAV::KvhFile::KvhFile()
 
     color = ImColor(255, 128, 128);
     hasConfig = true;
-
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "KvhFile", this);
 
     nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, NAV::KvhObs::type(), &KvhFile::pollData);
     nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
@@ -51,33 +48,12 @@ std::string NAV::KvhFile::category()
 
 void NAV::KvhFile::guiConfig()
 {
-    // Filepath
-    if (ImGui::InputText("Filepath", &path))
+    if (gui::widgets::FileDialogLoad(path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
-        LOG_DEBUG("{}: Filepath changed to {}", nameId(), path);
         flow::ApplyChanges();
-        deinitialize();
-    }
-    ImGui::SameLine();
-    std::string openFileDialogKey = fmt::format("Select File ({})", id.AsPointer());
-    if (ImGui::Button("Open"))
-    {
-        igfd::ImGuiFileDialog::Instance()->OpenDialog(openFileDialogKey, "Select File", ".csv", "");
-        igfd::ImGuiFileDialog::Instance()->SetExtentionInfos(".csv", ImVec4(0.0F, 1.0F, 0.0F, 0.9F));
+        deinitializeNode();
     }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog(openFileDialogKey, ImGuiWindowFlags_NoCollapse, ImVec2(600, 500)))
-    {
-        if (igfd::ImGuiFileDialog::Instance()->IsOk)
-        {
-            path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
-            LOG_DEBUG("{}: Selected file: {}", nameId(), path);
-            flow::ApplyChanges();
-            initialize();
-        }
-
-        igfd::ImGuiFileDialog::Instance()->CloseDialog(openFileDialogKey);
-    }
     if (fileType == FileType::ASCII)
     {
         // Header info
@@ -146,17 +122,9 @@ void NAV::KvhFile::restore(json const& j)
 
 bool NAV::KvhFile::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize()
-        || !FileReader::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return FileReader::initialize();
 }
 
 void NAV::KvhFile::deinitialize()
@@ -164,12 +132,13 @@ void NAV::KvhFile::deinitialize()
     LOG_TRACE("{}: called", nameId());
 
     FileReader::deinitialize();
-    Node::deinitialize();
 }
 
-void NAV::KvhFile::resetNode()
+bool NAV::KvhFile::resetNode()
 {
     FileReader::resetReader();
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::KvhFile::pollData(bool peek)
@@ -423,9 +392,10 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
             return FileType::ASCII;
         }
 
-        LOG_CRITICAL("{} could not determine file type", name);
+        LOG_ERROR("{} could not determine file type", name);
+        return FileType::NONE;
     }
 
-    LOG_CRITICAL("{} could not open file {}", name, path);
+    LOG_ERROR("{} could not open file {}", name, path);
     return FileType::NONE;
 }

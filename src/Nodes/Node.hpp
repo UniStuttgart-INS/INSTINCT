@@ -5,7 +5,9 @@
 
 #pragma once
 
+#include <imgui.h>
 #include <imgui_node_editor.h>
+#include <imgui_stdlib.h>
 
 #include "internal/Pin.hpp"
 
@@ -20,6 +22,11 @@ using json = nlohmann::json;
 namespace NAV
 {
 class NodeData;
+
+namespace gui
+{
+class NodeEditorApplication;
+} // namespace gui
 
 class Node
 {
@@ -64,8 +71,13 @@ class Node
             return *this;
         }
 
-        constexpr bool operator==(const Kind& other) const { return value == other.value; }
-        constexpr bool operator!=(const Kind& other) const { return value != other.value; }
+        friend constexpr bool operator==(const Node::Kind& lhs, const Node::Kind& rhs);
+        friend constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind& rhs);
+
+        friend constexpr bool operator==(const Node::Kind& lhs, const Node::Kind::Value& rhs);
+        friend constexpr bool operator==(const Node::Kind::Value& lhs, const Node::Kind& rhs);
+        friend constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind::Value& rhs);
+        friend constexpr bool operator!=(const Node::Kind::Value& lhs, const Node::Kind& rhs);
 
         explicit operator std::string() const
         {
@@ -110,20 +122,24 @@ class Node
     virtual void guiConfig();
 
     /// @brief Saves the node into a json object
-    [[nodiscard]] virtual json save() const = 0;
+    [[nodiscard]] virtual json save() const;
 
     /// @brief Restores the node from a json object
     /// @param[in] j Json object with the node state
-    virtual void restore(const json& j) = 0;
+    virtual void restore(const json& j);
 
-    /// @brief Abstract Initialization of the Node
-    virtual bool initialize();
+    /// @brief Restores link related properties of the node from a json object
+    /// @param[in] j Json object with the node state
+    virtual void restoreAtferLink(const json& j);
+
+    /// @brief Initialize the Node
+    bool initializeNode();
 
     /// @brief Deinitialize the Node
-    virtual void deinitialize();
+    void deinitializeNode();
 
-    /// @brief Resets the node. In case of file readers, that moves the read cursor to the start
-    virtual void resetNode();
+    /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
+    virtual bool resetNode();
 
     /// @brief Called when a new link is to be established
     /// @param[in] startPin Pin where the link starts
@@ -169,8 +185,13 @@ class Node
     template<typename T>
     [[nodiscard]] T* getInputValue(size_t portIndex) const
     {
-        if constexpr (std::is_same_v<T, bool> || std::is_same_v<T, int> || std::is_same_v<T, float> || std::is_same_v<T, double> || std::is_same_v<T, std::string>)
-        {
+        // clang-format off
+        if constexpr (std::is_same_v<T, bool>
+                   || std::is_same_v<T, int>
+                   || std::is_same_v<T, float>
+                   || std::is_same_v<T, double>
+                   || std::is_same_v<T, std::string>)
+        { // clang-format on
             if (const auto* pval = std::get_if<T*>(&inputPins.at(portIndex).data))
             {
                 return *pval;
@@ -192,17 +213,25 @@ class Node
     /// @param[in] data The data to pass to the callback targets
     void invokeCallbacks(size_t portIndex, const std::shared_ptr<NodeData>& data);
 
-    template<typename T, class... U>
-    T callInputFunction(size_t portIndex, U&&... u)
+    template<typename T, class... Args>
+    T callInputFunction(size_t portIndex, const Args&... args)
     {
-        auto* function = std::get_if<std::pair<Node*, void (Node::*)()>>(&inputPins.at(portIndex).data);
+        if (auto* function = std::get_if<std::pair<Node*, void (Node::*)()>>(&inputPins.at(portIndex).data))
+        {
+            Node* node = function->first;
+            auto callbackProto = function->second;
 
-        Node* node = function->first;
-        auto callbackProto = function->second;
+#pragma GCC diagnostic push
+#if defined(__GNUC__) && !defined(__clang__)
+    #pragma GCC diagnostic ignored "-Wcast-function-type" // NOLINT
+#endif
+            auto callback = reinterpret_cast<T (Node::*)(Args...)>(callbackProto);
+#pragma GCC diagnostic pop
 
-        auto callback = reinterpret_cast<T (Node::*)(U...)>(callbackProto);
+            return (node->*callback)(std::forward<const Args>(args)...);
+        }
 
-        return (node->*callback)(std::forward<U>(u)...);
+        return T{};
     }
 
     /// @brief Returns the index of the pin
@@ -239,17 +268,43 @@ class Node
 
     /// Flag if the config window should be shown
     bool hasConfig = false;
-    /// Node disabled Shortcuts
-    bool nodeDisabledShortcuts = false;
 
     /// Enables the callbacks
     bool callbacksEnabled = false;
-    /// Flag, if the node is initialized
-    bool isInitialized = false;
+
+    /// @brief Flag, if the node is initialized
+    [[nodiscard]] bool isInitialized() const;
+
+    /// @brief Flag, if the node is currently initializing
+    [[nodiscard]] bool isInitializing() const;
+
+    /// @brief Flag, if the node is currently deinitializing
+    [[nodiscard]] bool isDeinitializing() const;
 
   private:
+    /// @brief Abstract Initialization of the Node
+    virtual bool initialize();
+
+    /// @brief Deinitialize the Node
+    virtual void deinitialize();
+
+    /// Flag, if the node is initialized
+    bool isInitialized_ = false;
+
     /// Flag, if the node is currently initializing
-    bool isInitializing = false;
+    bool isInitializing_ = false;
+    /// Flag, if the node is currently deinitializing
+    bool isDeinitializing_ = false;
+
+    friend class gui::NodeEditorApplication;
 };
+
+constexpr bool operator==(const Node::Kind& lhs, const Node::Kind& rhs) { return lhs.value == rhs.value; }
+constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind& rhs) { return lhs.value != rhs.value; }
+
+constexpr bool operator==(const Node::Kind& lhs, const Node::Kind::Value& rhs) { return lhs.value == rhs; }
+constexpr bool operator==(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return lhs == rhs.value; }
+constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind::Value& rhs) { return lhs.value != rhs; }
+constexpr bool operator!=(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return lhs != rhs.value; }
 
 } // namespace NAV

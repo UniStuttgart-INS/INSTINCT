@@ -20,10 +20,8 @@ NAV::ImuSimulator::ImuSimulator()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Delegate, "ImuSimulator", this);
-
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuSimulator::pollData);
-    nm::CreateInputPin(this, "State", Pin::Type::Object, NAV::StateData::type());
+    nm::CreateInputPin(this, "State", Pin::Type::Object, { NAV::StateData::type() });
 }
 
 NAV::ImuSimulator::~ImuSimulator()
@@ -212,28 +210,21 @@ void NAV::ImuSimulator::restore(json const& j)
 
 bool NAV::ImuSimulator::initialize()
 {
-    deinitialize();
-
     LOG_TRACE("{}: called", nameId());
 
-    if (!Node::initialize())
-    {
-        return false;
-    }
-
-    return isInitialized = true;
+    return true;
 }
 
 void NAV::ImuSimulator::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-    Node::deinitialize();
 }
 
-void NAV::ImuSimulator::resetNode()
+bool NAV::ImuSimulator::resetNode()
 {
     currentSimTime = 0.0;
+
+    return true;
 }
 
 std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)

@@ -9,6 +9,9 @@
 #include <memory>
 #include <functional>
 #include <vector>
+#include <map>
+
+#include "internal/Pin.hpp"
 
 namespace NAV
 {
@@ -16,26 +19,43 @@ class Node;
 
 namespace NodeRegistry
 {
+struct PinInfo
+{
+    PinInfo(const Pin::Kind& kind, const Pin::Type& type, std::vector<std::string> dataIdentifier)
+        : kind(kind), type(type), dataIdentifier(std::move(dataIdentifier)) {}
+
+    /// Kind of the Pin (Input/Output)
+    Pin::Kind kind = Pin::Kind::None;
+    /// Type of the Pin
+    Pin::Type type = Pin::Type::None;
+    /// One or multiple Data Identifiers (Unique name which is used for data flows)
+    std::vector<std::string> dataIdentifier;
+};
+
 struct NodeInfo
 {
     /// Constructor
     std::function<Node*()> constructor;
     /// Class Type of the node
     std::string type;
-    /// Category of the node
-    std::string category;
+    /// List of port data types
+    std::vector<PinInfo> pinInfoList;
+
+    /// @brief Checks if the node has a pin which can be linked
+    /// @param[in] pin Pin to link to
+    [[nodiscard]] bool hasCompatiblePin(const Pin* pin) const;
 };
 
 /// @brief Reference to List of all registered Nodes
-const std::vector<NodeInfo>& registeredNodes();
+const std::map<std::string, std::vector<NodeInfo>>& RegisteredNodes();
 
-bool NodeDataTypeIsChildOf(const std::string_view& childType, const std::string_view& parentType);
+bool NodeDataTypeIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes);
 
 /// @brief Register all available Node types for the program
-void registerNodeTypes();
+void RegisterNodeTypes();
 
 /// @brief Register all available NodeData types for the program
-void registerNodeDataTypes();
+void RegisterNodeDataTypes();
 
 } // namespace NodeRegistry
 

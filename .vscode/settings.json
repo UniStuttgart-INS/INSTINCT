@@ -108,4 +108,33 @@
     "comment-divider.length": 110,
     "mathover.matchRegex": "\\/\\/\\sMath:\\s(.+)",
     "mathover.forwardSkip": 9,
+    "search.exclude": {
+        ".vscode": true,
+        "bin": true,
+        "build": true,
+        "cmake": true,
+        "data": true,
+        "flow": true,
+        "logs": true,
+        "resources": true,
+        "tools": true,
+    },
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/tools": true,
+        ".clang-format": true,
+        ".clang-tidy": true,
+        ".cmake-format.yaml": true,
+        ".cppcheck-suppressions-list": true,
+        ".gitlab-ci.yml": true,
+        ".gitmodules": true,
+        "DoxygenLayout.xml": true,
+        "NavSoS.ini": true,
+        "compile_commands.json": true,
+    }
 }
