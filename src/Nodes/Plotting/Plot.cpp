@@ -41,6 +41,7 @@ void to_json(json& j, const Plot::PinData& data)
         { "dataIdentifier", data.dataIdentifier },
         { "size", data.size },
         { "plotData", data.plotData },
+        { "plotStyle", data.plotStyle },
     };
 }
 void from_json(const json& j, Plot::PinData& data)
@@ -60,6 +61,10 @@ void from_json(const json& j, Plot::PinData& data)
         {
             plotData.buffer = ScrollingBuffer<double>(static_cast<size_t>(data.size));
         }
+    }
+    if (j.contains("plotStyle"))
+    {
+        j.at("plotStyle").get_to(data.plotStyle);
     }
 }
 
@@ -153,134 +158,171 @@ std::string NAV::Plot::category()
 
 void NAV::Plot::guiConfig()
 {
-    if (ImGui::InputInt("# Input Pins", &nInputPins))
+    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    if (ImGui::CollapsingHeader(("Options##" + std::to_string(size_t(id))).c_str()))
     {
-        if (nInputPins < 1)
+        if (ImGui::InputInt("# Input Pins", &nInputPins))
         {
-            nInputPins = 1;
+            if (nInputPins < 1)
+            {
+                nInputPins = 1;
+            }
+            LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), nInputPins);
+            flow::ApplyChanges();
+            updateNumberOfInputPins();
         }
-        LOG_DEBUG("{}: # Input Pins changed to {}", nameId(), nInputPins);
-        flow::ApplyChanges();
-        updateNumberOfInputPins();
-    }
-    if (ImGui::InputInt("# Plots", &nPlots))
-    {
-        if (nPlots < 0)
+        if (ImGui::InputInt("# Plots", &nPlots))
         {
-            nPlots = 0;
+            if (nPlots < 0)
+            {
+                nPlots = 0;
+            }
+            LOG_DEBUG("{}: # Plots changed to {}", nameId(), nPlots);
+            flow::ApplyChanges();
+            updateNumberOfPlots();
         }
-        LOG_DEBUG("{}: # Plots changed to {}", nameId(), nPlots);
-        flow::ApplyChanges();
-        updateNumberOfPlots();
+        if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id))).c_str(), 3,
+                              ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+        {
+            ImGui::TableSetupColumn("Pin");
+            ImGui::TableSetupColumn("# Data Points");
+            ImGui::TableSetupColumn("Plot Style");
+            ImGui::TableHeadersRow();
+
+            for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
+            {
+                auto& pinData = data.at(pinIndex);
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn(); // Pin
+                ImGui::Text("%zu - %s", pinIndex + 1, data.at(pinIndex).dataIdentifier.c_str());
+
+                ImGui::TableNextColumn(); // # Data Points
+                ImGui::SetNextItemWidth(100.0F);
+                if (ImGui::DragInt(("##Data Points" + std::to_string(size_t(id)) + " - " + std::to_string(pinIndex + 1)).c_str(),
+                                   &pinData.size, 10.0F, 0, INT32_MAX / 2))
+                {
+                    if (pinData.size < 0)
+                    {
+                        pinData.size = 0;
+                    }
+                    for (auto& plotData : pinData.plotData)
+                    {
+                        flow::ApplyChanges();
+                        plotData.buffer.resize(static_cast<size_t>(pinData.size));
+                    }
+                }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("The amount of data which should be stored before the buffer gets reused.\nEnter 0 to show all data.");
+                }
+
+                ImGui::TableNextColumn(); // Plot Style
+                ImGui::SetNextItemWidth(100.0F);
+                if (ImGui::Combo(("##Plot Style for Pin " + std::to_string(pinIndex + 1) + " - " + std::to_string(size_t(id))).c_str(),
+                                 reinterpret_cast<int*>(&pinData.plotStyle), "Line\0Scatter\0\0"))
+                {
+                    flow::ApplyChanges();
+                }
+            }
+
+            ImGui::EndTable();
+        }
     }
+
     for (size_t plotNum = 0; plotNum < static_cast<size_t>(nPlots); plotNum++)
     {
         auto& plotInfo = plotInfos.at(plotNum);
         if (ImGui::CollapsingHeader((plotInfo.headerText + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
         {
-            ImGui::InputText(("Title##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.title);
-            if (plotInfo.headerText != plotInfo.title && !ImGui::IsItemActive())
+            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+            if (ImGui::TreeNode(("Options##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
             {
-                plotInfo.headerText = plotInfo.title;
-                flow::ApplyChanges();
-                LOG_DEBUG("{}: # Header changed to {}", nameId(), plotInfo.headerText);
-            }
-            if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), 3,
-                                  ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
-            {
-                ImGui::TableSetupColumn("Pin");
-                ImGui::TableSetupColumn("X Data");
-                ImGui::TableSetupColumn("# Data Points");
-                ImGui::TableHeadersRow();
-
-                for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
+                ImGui::InputText(("Title##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.title);
+                if (plotInfo.headerText != plotInfo.title && !ImGui::IsItemActive())
                 {
-                    ImGui::TableNextRow();
-                    ImGui::TableNextColumn(); // Pin
-                    ImGui::Text("%zu - %s", pinIndex + 1, data.at(pinIndex).dataIdentifier.c_str());
+                    plotInfo.headerText = plotInfo.title;
+                    flow::ApplyChanges();
+                    LOG_DEBUG("{}: # Header changed to {}", nameId(), plotInfo.headerText);
+                }
+                if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), 2,
+                                      ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                {
+                    ImGui::TableSetupColumn("Pin");
+                    ImGui::TableSetupColumn("X Data");
+                    ImGui::TableHeadersRow();
 
-                    ImGui::TableNextColumn(); // X Data
-                    auto& pinData = data.at(pinIndex);
-                    if (!pinData.plotData.empty())
+                    for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
                     {
-                        ImGui::SetNextItemWidth(200.0F);
-                        if (ImGui::BeginCombo(("##X Data for Pin " + std::to_string(pinIndex + 1) + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                              pinData.plotData.at(plotInfo.selectedXdata.at(pinIndex)).displayName.c_str()))
+                        ImGui::TableNextRow();
+                        ImGui::TableNextColumn(); // Pin
+                        ImGui::Text("%zu - %s", pinIndex + 1, data.at(pinIndex).dataIdentifier.c_str());
+
+                        ImGui::TableNextColumn(); // X Data
+                        auto& pinData = data.at(pinIndex);
+                        if (!pinData.plotData.empty())
                         {
-                            for (size_t plotDataIndex = 0; plotDataIndex < pinData.plotData.size(); plotDataIndex++)
+                            ImGui::SetNextItemWidth(200.0F);
+                            if (ImGui::BeginCombo(("##X Data for Pin " + std::to_string(pinIndex + 1) + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                                  pinData.plotData.at(plotInfo.selectedXdata.at(pinIndex)).displayName.c_str()))
                             {
-                                auto& plotData = pinData.plotData.at(plotDataIndex);
+                                for (size_t plotDataIndex = 0; plotDataIndex < pinData.plotData.size(); plotDataIndex++)
+                                {
+                                    auto& plotData = pinData.plotData.at(plotDataIndex);
 
-                                if (!plotData.hasData)
-                                {
-                                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
-                                }
-                                const bool is_selected = (plotInfo.selectedXdata.at(pinIndex) == plotDataIndex);
-                                if (ImGui::Selectable(pinData.plotData.at(plotDataIndex).displayName.c_str(), is_selected))
-                                {
-                                    flow::ApplyChanges();
-                                    plotInfo.selectedXdata.at(pinIndex) = plotDataIndex;
-                                }
-                                if (!plotData.hasData)
-                                {
-                                    ImGui::PopStyleVar();
-                                }
+                                    if (!plotData.hasData)
+                                    {
+                                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+                                    }
+                                    const bool is_selected = (plotInfo.selectedXdata.at(pinIndex) == plotDataIndex);
+                                    if (ImGui::Selectable(pinData.plotData.at(plotDataIndex).displayName.c_str(), is_selected))
+                                    {
+                                        flow::ApplyChanges();
+                                        plotInfo.selectedXdata.at(pinIndex) = plotDataIndex;
+                                    }
+                                    if (!plotData.hasData)
+                                    {
+                                        ImGui::PopStyleVar();
+                                    }
 
-                                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                                if (is_selected)
-                                {
-                                    ImGui::SetItemDefaultFocus();
+                                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                                    if (is_selected)
+                                    {
+                                        ImGui::SetItemDefaultFocus();
+                                    }
                                 }
+                                ImGui::EndCombo();
                             }
-                            ImGui::EndCombo();
                         }
                     }
 
-                    ImGui::TableNextColumn(); // # Data Points
-                    if (ImGui::DragInt(("##Data Points" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum) + " - " + std::to_string(pinIndex + 1)).c_str(),
-                                       &pinData.size, 10.0F, 0, INT32_MAX / 2))
-                    {
-                        if (pinData.size < 0)
-                        {
-                            pinData.size = 0;
-                        }
-                        for (auto& plotData : pinData.plotData)
-                        {
-                            flow::ApplyChanges();
-                            plotData.buffer.resize(static_cast<size_t>(pinData.size));
-                        }
-                    }
-                    if (ImGui::IsItemHovered())
-                    {
-                        ImGui::SetTooltip("The amount of data which should be stored before the buffer gets reused.\nEnter 0 to show all data.");
-                    }
+                    ImGui::EndTable();
                 }
 
-                ImGui::EndTable();
-            }
+                if (ImGui::CheckboxFlags(("Y-Axis 2##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                         &plotInfo.plotFlags, ImPlotFlags_YAxis2))
+                {
+                    flow::ApplyChanges();
+                }
+                ImGui::SameLine();
+                if (ImGui::CheckboxFlags(("Y-Axis 3##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                         &plotInfo.plotFlags, ImPlotFlags_YAxis3))
+                {
+                    flow::ApplyChanges();
+                }
+                ImGui::SameLine();
+                if (ImGui::Checkbox(("Auto Limit X-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                    &plotInfo.autoLimitXaxis))
+                {
+                    flow::ApplyChanges();
+                }
+                ImGui::SameLine();
+                if (ImGui::Checkbox(("Auto Limit Y-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                    &plotInfo.autoLimitYaxis))
+                {
+                    flow::ApplyChanges();
+                }
 
-            if (ImGui::CheckboxFlags(("Y-Axis 2##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                     &plotInfo.plotFlags, ImPlotFlags_YAxis2))
-            {
-                flow::ApplyChanges();
-            }
-            ImGui::SameLine();
-            if (ImGui::CheckboxFlags(("Y-Axis 3##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                     &plotInfo.plotFlags, ImPlotFlags_YAxis3))
-            {
-                flow::ApplyChanges();
-            }
-            ImGui::SameLine();
-            if (ImGui::Checkbox(("Auto Limit X-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                &plotInfo.autoLimitXaxis))
-            {
-                flow::ApplyChanges();
-            }
-            ImGui::SameLine();
-            if (ImGui::Checkbox(("Auto Limit Y-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                &plotInfo.autoLimitYaxis))
-            {
-                flow::ApplyChanges();
+                ImGui::TreePop();
             }
 
             gui::widgets::Splitter((std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
@@ -391,13 +433,25 @@ void NAV::Plot::guiConfig()
                                 || (plotData.plotOnAxis.at(plotNum) == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
                         {
                             ImPlot::SetPlotYAxis(plotData.plotOnAxis.at(plotNum));
-                            ImPlot::PlotLine((plotData.displayName + " (Pin " + std::to_string(pinIndex + 1) + ")").c_str(),
-                                             data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
-                                             plotData.buffer.data(),
-                                             static_cast<int>(plotData.buffer.size()),
-                                             plotData.buffer.offset(), sizeof(double));
+                            if (data.at(pinIndex).plotStyle == PinData::PlotStyle::Line)
+                            {
+                                ImPlot::PlotLine((plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + data.at(pinIndex).dataIdentifier + ")").c_str(),
+                                                 data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
+                                                 plotData.buffer.data(),
+                                                 static_cast<int>(plotData.buffer.size()),
+                                                 plotData.buffer.offset(), sizeof(double));
+                            }
+                            else if (data.at(pinIndex).plotStyle == PinData::PlotStyle::Scatter)
+                            {
+                                ImPlot::SetNextMarkerStyle(ImPlotMarker_Cross, 3, ImVec4(0, 0, 0, -1), IMPLOT_AUTO, ImVec4(0, 0, 0, -1));
+                                ImPlot::PlotScatter((plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + data.at(pinIndex).dataIdentifier + ")").c_str(),
+                                                    data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
+                                                    plotData.buffer.data(),
+                                                    static_cast<int>(plotData.buffer.size()),
+                                                    plotData.buffer.offset(), sizeof(double));
+                            }
                             // allow legend labels to be dragged and dropped
-                            if (ImPlot::BeginLegendDragDropSource((plotData.displayName + " (Pin " + std::to_string(pinIndex + 1) + ")").c_str()))
+                            if (ImPlot::BeginLegendDragDropSource((plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + data.at(pinIndex).dataIdentifier + ")").c_str()))
                             {
                                 auto* ptrPlotData = &plotData;
                                 ImGui::SetDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
@@ -536,6 +590,21 @@ bool NAV::Plot::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
         data.at(pinIndex).addPlotDataItem("age [s]");
         data.at(pinIndex).addPlotDataItem("ratio [-]");
     }
+    else if (startPin->dataIdentifier.front() == UbloxObs::type())
+    {
+        // InsObs
+        data.at(pinIndex).addPlotDataItem("Time [s]");
+        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        // UbloxObs
+        data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
+        data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
+        data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
+        data.at(pinIndex).addPlotDataItem("Latitude [deg]");
+        data.at(pinIndex).addPlotDataItem("Longitude [deg]");
+        data.at(pinIndex).addPlotDataItem("Altitude [m]");
+        data.at(pinIndex).addPlotDataItem("North/South [m]");
+        data.at(pinIndex).addPlotDataItem("East/West [m]");
+    }
     else if (startPin->dataIdentifier.front() == ImuObs::type())
     {
         // InsObs
@@ -663,7 +732,7 @@ void NAV::Plot::updateNumberOfInputPins()
     while (inputPins.size() < static_cast<size_t>(nInputPins))
     {
         nm::CreateInputPin(this, ("Pin " + std::to_string(inputPins.size() + 1)).c_str(), Pin::Type::Flow,
-                           { RtklibPosObs::type(),
+                           { RtklibPosObs::type(), UbloxObs::type(),
                              ImuObs::type(), KvhObs::type(), VectorNavObs::type() },
                            &Plot::plotData);
         data.emplace_back();
@@ -734,6 +803,10 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
             if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
                 plotRtklibPosObs(std::static_pointer_cast<RtklibPosObs>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
+            {
+                plotUbloxObs(std::static_pointer_cast<UbloxObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuObs::type())
             {
@@ -822,6 +895,63 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_
     addData(pinIndex, i++, obs->sdun.has_value() ? obs->sdun.value() : std::nan(""));
     addData(pinIndex, i++, obs->age.has_value() ? obs->age.value() : std::nan(""));
     addData(pinIndex, i++, obs->ratio.has_value() ? obs->ratio.value() : std::nan(""));
+}
+
+void NAV::Plot::plotUbloxObs(const std::shared_ptr<UbloxObs>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(startValue_Time))
+        {
+            startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    /// [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
+    std::optional<Eigen::Vector3d> position_lla;
+    /// North/South deviation [m]
+    std::optional<double> northSouth;
+    /// East/West deviation [m]
+    std::optional<double> eastWest;
+    if (obs->position_ecef.has_value())
+    {
+        position_lla = trafo::ecef2lla_WGS84(obs->position_ecef.value());
+
+        if (std::isnan(startValue_North))
+        {
+            startValue_North = position_lla->x();
+        }
+        int sign = position_lla->x() > startValue_North ? 1 : -1;
+        northSouth = measureDistance(position_lla->x(), position_lla->y(),
+                                     startValue_North, position_lla->y())
+                     * sign;
+
+        if (std::isnan(startValue_East))
+        {
+            startValue_East = position_lla->y();
+        }
+        sign = position_lla->y() > startValue_East ? 1 : -1;
+        eastWest = measureDistance(position_lla->x(), position_lla->y(),
+                                   position_lla->x(), startValue_East)
+                   * sign;
+
+        position_lla->x() = trafo::rad2deg(position_lla->x());
+        position_lla->y() = trafo::rad2deg(position_lla->y());
+
+        // InsObs
+        addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+        addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+        // RtklibPosObs
+        addData(pinIndex, i++, obs->position_ecef.has_value() ? obs->position_ecef->x() : std::nan(""));
+        addData(pinIndex, i++, obs->position_ecef.has_value() ? obs->position_ecef->y() : std::nan(""));
+        addData(pinIndex, i++, obs->position_ecef.has_value() ? obs->position_ecef->z() : std::nan(""));
+        addData(pinIndex, i++, position_lla.has_value() ? position_lla->x() : std::nan(""));
+        addData(pinIndex, i++, position_lla.has_value() ? position_lla->y() : std::nan(""));
+        addData(pinIndex, i++, position_lla.has_value() ? position_lla->z() : std::nan(""));
+        addData(pinIndex, i++, northSouth.has_value() ? northSouth.value() : std::nan(""));
+        addData(pinIndex, i++, eastWest.has_value() ? eastWest.value() : std::nan(""));
+    }
 }
 
 void NAV::Plot::plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex)

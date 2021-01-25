@@ -5,10 +5,11 @@
 
 #pragma once
 
-#include "GnssObs.hpp"
+#include "NodeData/InsObs.hpp"
 
 #include <variant>
 
+#include "util/Eigen.hpp"
 #include "uart/protocol/packet.hpp"
 
 #include "util/UartSensors/Ublox/UbloxTypes.hpp"
@@ -16,7 +17,7 @@
 namespace NAV
 {
 /// ublox Observation Class
-class UbloxObs : public GnssObs
+class UbloxObs : public InsObs
 {
   public:
     /// @brief Constructor
@@ -49,8 +50,11 @@ class UbloxObs : public GnssObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { GnssObs::type() };
+        return { InsObs::type() };
     }
+
+    /// ECEF position [m]
+    std::optional<Eigen::Vector3d> position_ecef;
 
     /// Ubx Message Class (NONE if NMEA message)
     sensors::ublox::UbxClass msgClass = sensors::ublox::UbxClass::UBX_CLASS_NONE;

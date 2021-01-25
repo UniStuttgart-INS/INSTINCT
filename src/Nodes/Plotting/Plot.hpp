@@ -12,6 +12,7 @@
 #include "util/ScrollingBuffer.hpp"
 
 #include "NodeData/GNSS/RtklibPosObs.hpp"
+#include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/VectorNavObs.hpp"
@@ -88,6 +89,12 @@ class Plot : public Node
             std::map<size_t, int> plotOnAxis;
         };
 
+        enum class PlotStyle : int
+        {
+            Line,
+            Scatter,
+        };
+
         /// @brief Adds a plotData Element to the list
         /// @param[in] displayName Display name of the contained data
         void addPlotDataItem(const std::string& displayName)
@@ -106,6 +113,8 @@ class Plot : public Node
         std::string dataIdentifier;
         /// List with all the data
         std::vector<PlotData> plotData;
+        /// Plot style for all data on the pin
+        PlotStyle plotStyle = PlotStyle::Line;
     };
 
     struct PlotInfo
@@ -168,6 +177,11 @@ class Plot : public Node
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotUbloxObs(const std::shared_ptr<UbloxObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
