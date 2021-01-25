@@ -9,7 +9,7 @@ TEST_CASE("[ScrollingBuffer] AddValue", "[ScrollingBuffer]")
 {
     ScrollingBuffer<int> buffer1(5);
     std::cout << "Empty Buffer  : " << buffer1; // _, _, _, _, _,
-    REQUIRE(buffer1.size() == 0);
+    REQUIRE(buffer1.empty());
     REQUIRE(buffer1.offset() == 0);
     REQUIRE(buffer1.empty());
     for (int i = 0; i < 5; i++)
@@ -37,7 +37,7 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions", "[ScrollingBuffer]")
 {
     ScrollingBuffer<double> buffer1(5);
     std::cout << "Empty Buffer  : " << buffer1; // _, _, _, _, _,
-    REQUIRE(buffer1.size() == 0);
+    REQUIRE(buffer1.empty());
     REQUIRE(buffer1.offset() == 0);
     REQUIRE(buffer1.empty());
     for (int i = 0; i < 5; i++)
@@ -74,7 +74,7 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions", "[ScrollingBuffer]")
 
     buffer1.clear();
     std::cout << "Clear      (3): " << buffer1; // _, _, _, _, _,
-    REQUIRE(buffer1.size() == 0);
+    REQUIRE(buffer1.empty());
     REQUIRE(buffer1.offset() == 0);
 }
 
@@ -274,7 +274,7 @@ TEST_CASE("[ScrollingBuffer] Clear", "[ScrollingBuffer]")
 
     buffer1.clear();
     std::cout << "Clear  (7): " << buffer1; // _, _, _, _, _, _, _,
-    REQUIRE(buffer1.size() == 0);
+    REQUIRE(buffer1.empty());
     REQUIRE(buffer1.offset() == 0);
 }
 
