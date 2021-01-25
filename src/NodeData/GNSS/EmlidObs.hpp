@@ -5,18 +5,19 @@
 
 #pragma once
 
-#include "GnssObs.hpp"
+#include "NodeData/InsObs.hpp"
 
 #include <variant>
 
 #include "uart/protocol/packet.hpp"
 
 #include "util/UartSensors/Emlid/EmlidTypes.hpp"
+#include "util/Eigen.hpp"
 
 namespace NAV
 {
 /// Emlid Observation Class
-class EmlidObs : public GnssObs
+class EmlidObs : public InsObs
 {
   public:
     /// @brief Constructor
@@ -48,7 +49,7 @@ class EmlidObs : public GnssObs
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { GnssObs::type() };
+        return { InsObs::type() };
     }
 
     /// Erb Message ID
@@ -70,6 +71,9 @@ class EmlidObs : public GnssObs
         sensors::emlid::ErbRtk   // RTK: RTK information
         >
         data{};
+
+    /// ECEF position [m]
+    std::optional<Eigen::Vector3d> position_ecef;
 };
 
 } // namespace NAV

@@ -41,8 +41,5 @@ class GnssObs : public InsObs
     {
         return { InsObs::type() };
     }
-
-    /// ECEF position [m]
-    std::optional<Eigen::Vector3d> position_ecef;
 };
 } // namespace NAV

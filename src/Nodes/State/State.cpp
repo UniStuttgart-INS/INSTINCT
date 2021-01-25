@@ -19,7 +19,7 @@ NAV::State::State()
     nm::CreateOutputPin(this, "StateData", Pin::Type::Object, NAV::StateData::type(), &currentState);
 
     nm::CreateInputPin(this, "StateData\nUpdate", Pin::Type::Flow, { NAV::StateData::type() }, &State::updateState);
-    nm::CreateInputPin(this, "GnssObs\nInit", Pin::Type::Flow, { NAV::GnssObs::type() }, &State::initPositionVelocity);
+    nm::CreateInputPin(this, "UbloxObs\nInit", Pin::Type::Flow, { NAV::UbloxObs::type() }, &State::initPositionVelocity);
     nm::CreateInputPin(this, "ImuObs\nInit", Pin::Type::Flow, { NAV::ImuObs::type() }, &State::initAttitude);
 }
 
@@ -211,7 +211,7 @@ void NAV::State::initAttitude(const std::shared_ptr<NodeData>& nodeData, ax::Nod
 
 void NAV::State::initPositionVelocity(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::static_pointer_cast<GnssObs>(nodeData);
+    auto obs = std::static_pointer_cast<UbloxObs>(nodeData);
 
     if (obs->position_ecef.has_value())
     {

@@ -9,7 +9,7 @@
 
 #include "NodeData/State/StateData.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/GNSS/GnssObs.hpp"
+#include "NodeData/GNSS/UbloxObs.hpp"
 
 namespace NAV
 {
