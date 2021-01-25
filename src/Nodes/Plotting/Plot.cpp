@@ -223,6 +223,10 @@ void NAV::Plot::guiConfig()
                     ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                 }
                 std::string label = plotData.displayName;
+                if (plotData.plotOnAxis.contains(plotNum))
+                {
+                    label += fmt::format(" (Y{})", plotData.plotOnAxis.at(plotNum) + 1);
+                }
                 ImGui::Selectable(label.c_str(), false, 0);
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                 {
@@ -299,7 +303,7 @@ void NAV::Plot::guiConfig()
                                 || (plotData.plotOnAxis.at(plotNum) == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
                         {
                             ImPlot::SetPlotYAxis(plotData.plotOnAxis.at(plotNum));
-                            ImPlot::PlotLine((plotData.displayName + "##" + std::to_string(pinIndex)).c_str(),
+                            ImPlot::PlotLine((plotData.displayName + " (Pin " + std::to_string(pinIndex + 1) + ")").c_str(),
                                              data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
                                              plotData.buffer.data(),
                                              static_cast<int>(plotData.buffer.size()),
