@@ -139,6 +139,8 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 // Utility
 #include "Nodes/util/Demo.hpp"
 #include "Nodes/util/GroupBox.hpp"
+// Simple
+#include "Nodes/Simple/Matrix.hpp"
 // Data Logger
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
@@ -175,6 +177,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Utility
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
+    // Simple
+    registerNodeType<Matrix>();
     // Data Logger
     registerNodeType<EmlidDataLogger>();
     registerNodeType<UbloxDataLogger>();

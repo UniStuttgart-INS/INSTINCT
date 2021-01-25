@@ -69,7 +69,7 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
     LOG_DEBUG("Creating node {}", size_t(node->id));
 
     // Create Delegate output pin
-    if (node->outputPins.empty() || node->outputPins.front().type != Pin::Type::Delegate)
+    if (node->kind == Node::Kind::Blueprint && (node->outputPins.empty() || node->outputPins.front().type != Pin::Type::Delegate))
     {
         Pin pin = Pin(GetNextPinId(), "", Pin::Type::Delegate, Pin::Kind::Output, node);
 
