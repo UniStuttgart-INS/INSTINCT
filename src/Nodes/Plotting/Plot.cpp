@@ -10,6 +10,8 @@ namespace nm = NAV::NodeManager;
 
 #include "gui/widgets/Splitter.hpp"
 
+#include <algorithm>
+
 NAV::Plot::Plot()
 {
     name = typeStatic();
@@ -160,6 +162,12 @@ void NAV::Plot::guiConfig()
             ImGui::SameLine();
             ImGui::CheckboxFlags(("Y-Axis 3##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                  &plotInfo.plotFlags, ImPlotFlags_YAxis3);
+            ImGui::SameLine();
+            ImGui::Checkbox(("Auto Limit X-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                            &plotInfo.autoLimitXaxis);
+            ImGui::SameLine();
+            ImGui::Checkbox(("Auto Limit Y-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                            &plotInfo.autoLimitYaxis);
 
             gui::widgets::Splitter((std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                    true, 4.0F, &plotInfo.leftPaneWidth, &plotInfo.rightPaneWidth, 150.0F, 80.0F, ImPlot::GetStyle().PlotDefaultSize.y);
@@ -249,48 +257,9 @@ void NAV::Plot::guiConfig()
             ImGui::SameLine();
 
             std::string xLabel = data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).displayName;
-
-            double xMin = std::nan("");
-            double xMax = std::nan("");
-            for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++) // Search xLimits on all Pins
-            {
-                if (data.at(pinIndex).plotData.empty()
-                    || data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.empty())
-                {
-                    continue;
-                }
-                double xMinPin = data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.front();
-                double xMaxPin = data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.back();
-                if (!std::isnan(xMinPin))
-                {
-                    if (std::isnan(xMin))
-                    {
-                        xMin = xMinPin;
-                    }
-                    else if (xMinPin < xMin)
-                    {
-                        xMin = xMinPin;
-                    }
-                }
-                if (!std::isnan(xMaxPin))
-                {
-                    if (std::isnan(xMax))
-                    {
-                        xMax = xMaxPin;
-                    }
-                    else if (xMaxPin > xMax)
-                    {
-                        xMax = xMaxPin;
-                    }
-                }
-            }
-            if (!std::isnan(xMin) && !std::isnan(xMax))
-            {
-                ImPlot::SetNextPlotLimitsX(xMin, xMax, ImGuiCond_Always);
-            }
-
+            ImPlot::FitNextPlotAxes(plotInfo.autoLimitXaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis);
             if (ImPlot::BeginPlot((plotInfo.title + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                  xLabel.c_str(), nullptr, ImVec2(-1, 0), plotInfo.plotFlags | ImPlotAxisFlags_LockMin))
+                                  xLabel.c_str(), nullptr, ImVec2(-1, 0), plotInfo.plotFlags))
             {
                 for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
                 {
@@ -309,7 +278,7 @@ void NAV::Plot::guiConfig()
                                              static_cast<int>(plotData.buffer.size()),
                                              plotData.buffer.offset(), sizeof(double));
                             // allow legend labels to be dragged and dropped
-                            if (ImPlot::BeginLegendDragDropSource((plotData.displayName + "##" + std::to_string(pinIndex)).c_str()))
+                            if (ImPlot::BeginLegendDragDropSource((plotData.displayName + " (Pin " + std::to_string(pinIndex + 1) + ")").c_str()))
                             {
                                 auto* ptrPlotData = &plotData;
                                 ImGui::SetDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),

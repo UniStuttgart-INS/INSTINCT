@@ -49,12 +49,12 @@ class ScrollingBuffer
         dataEnd = 0;
     }
 
-    bool empty()
+    [[nodiscard]] bool empty() const
     {
         return data_.empty();
     }
 
-    size_t size()
+    [[nodiscard]] size_t size() const
     {
         return data_.size() - (dataStart - dataEnd);
     }
@@ -168,7 +168,7 @@ class ScrollingBuffer
         }
     }
 
-    T back()
+    [[nodiscard]] T back() const
     {
         if (data_.size() < maxSize || dataEnd == 0)
         {
@@ -178,7 +178,7 @@ class ScrollingBuffer
         return data_.at(dataEnd - 1);
     }
 
-    T front()
+    [[nodiscard]] T front() const
     {
         if (data_.size() < maxSize)
         {
@@ -186,6 +186,32 @@ class ScrollingBuffer
         }
 
         return data_.at(dataStart);
+    }
+
+    [[nodiscard]] T max() const
+    {
+        T currentMax = front();
+        for (size_t i = 0; i < data_.size(); i++)
+        {
+            if (i >= dataStart || i < dataEnd)
+            {
+                currentMax = std::max(currentMax, data_.at(i));
+            }
+        }
+        return currentMax;
+    }
+
+    [[nodiscard]] T min() const
+    {
+        T currentMin = front();
+        for (size_t i = 0; i < data_.size(); i++)
+        {
+            if (i >= dataStart || i < dataEnd)
+            {
+                currentMin = std::min(currentMin, data_.at(i));
+            }
+        }
+        return currentMin;
     }
 
     [[nodiscard]] int offset() const

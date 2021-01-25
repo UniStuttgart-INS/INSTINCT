@@ -115,6 +115,10 @@ class Plot : public Node
         int selectedPin = 0;
         /// Flags which are passed to the plot
         int plotFlags = 0;
+        /// Flag whether to automaticaly set the x-Axis limits
+        bool autoLimitXaxis = false;
+        /// Flag whether to automaticaly set the y-Axis limits
+        bool autoLimitYaxis = false;
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;
 
