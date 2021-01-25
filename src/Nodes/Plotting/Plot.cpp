@@ -12,6 +12,111 @@ namespace nm = NAV::NodeManager;
 
 #include <algorithm>
 
+namespace NAV
+{
+void to_json(json& j, const Plot::PinData::PlotData& data)
+{
+    j = json{
+        { "plotOnAxis", data.plotOnAxis },
+        { "displayName", data.displayName },
+    };
+}
+void from_json(const json& j, Plot::PinData::PlotData& data)
+{
+    if (j.contains("plotOnAxis"))
+    {
+        j.at("plotOnAxis").get_to(data.plotOnAxis);
+    }
+    if (j.contains("displayName"))
+    {
+        j.at("displayName").get_to(data.displayName);
+    }
+}
+
+void to_json(json& j, const Plot::PinData& data)
+{
+    j = json{
+        { "dataIdentifier", data.dataIdentifier },
+        { "size", data.size },
+        { "plotData", data.plotData },
+    };
+}
+void from_json(const json& j, Plot::PinData& data)
+{
+    if (j.contains("dataIdentifier"))
+    {
+        j.at("dataIdentifier").get_to(data.dataIdentifier);
+    }
+    if (j.contains("size"))
+    {
+        j.at("size").get_to(data.size);
+    }
+    if (j.contains("plotData"))
+    {
+        j.at("plotData").get_to(data.plotData);
+        for (auto& plotData : data.plotData)
+        {
+            plotData.buffer = ScrollingBuffer<double>(static_cast<size_t>(data.size));
+        }
+    }
+}
+
+void to_json(json& j, const Plot::PlotInfo& data)
+{
+    j = json{
+        { "autoLimitXaxis", data.autoLimitXaxis },
+        { "autoLimitYaxis", data.autoLimitYaxis },
+        { "headerText", data.headerText },
+        { "leftPaneWidth", data.leftPaneWidth },
+        { "plotFlags", data.plotFlags },
+        { "rightPaneWidth", data.rightPaneWidth },
+        { "selectedPin", data.selectedPin },
+        { "selectedXdata", data.selectedXdata },
+        { "title", data.title },
+    };
+}
+void from_json(const json& j, Plot::PlotInfo& data)
+{
+    if (j.contains("autoLimitXaxis"))
+    {
+        j.at("autoLimitXaxis").get_to(data.autoLimitXaxis);
+    }
+    if (j.contains("autoLimitYaxis"))
+    {
+        j.at("autoLimitYaxis").get_to(data.autoLimitYaxis);
+    }
+    if (j.contains("headerText"))
+    {
+        j.at("headerText").get_to(data.headerText);
+    }
+    if (j.contains("leftPaneWidth"))
+    {
+        j.at("leftPaneWidth").get_to(data.leftPaneWidth);
+    }
+    if (j.contains("plotFlags"))
+    {
+        j.at("plotFlags").get_to(data.plotFlags);
+    }
+    if (j.contains("rightPaneWidth"))
+    {
+        j.at("rightPaneWidth").get_to(data.rightPaneWidth);
+    }
+    if (j.contains("selectedPin"))
+    {
+        j.at("selectedPin").get_to(data.selectedPin);
+    }
+    if (j.contains("selectedXdata"))
+    {
+        j.at("selectedXdata").get_to(data.selectedXdata);
+    }
+    if (j.contains("title"))
+    {
+        j.at("title").get_to(data.title);
+    }
+}
+
+} // namespace NAV
+
 NAV::Plot::Plot()
 {
     name = typeStatic();
@@ -62,17 +167,9 @@ void NAV::Plot::guiConfig()
         {
             nPlots = 0;
         }
-        while (static_cast<size_t>(nPlots) > plotInfos.size())
-        {
-            plotInfos.emplace_back("Plot " + std::to_string(plotInfos.size() + 1), nInputPins);
-        }
-        while (static_cast<size_t>(nPlots) < plotInfos.size())
-        {
-            plotInfos.pop_back();
-        }
-
         LOG_DEBUG("{}: # Plots changed to {}", nameId(), nPlots);
         flow::ApplyChanges();
+        updateNumberOfPlots();
     }
     for (size_t plotNum = 0; plotNum < static_cast<size_t>(nPlots); plotNum++)
     {
@@ -83,6 +180,7 @@ void NAV::Plot::guiConfig()
             if (plotInfo.headerText != plotInfo.title && !ImGui::IsItemActive())
             {
                 plotInfo.headerText = plotInfo.title;
+                flow::ApplyChanges();
                 LOG_DEBUG("{}: # Header changed to {}", nameId(), plotInfo.headerText);
             }
             if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), 3,
@@ -118,6 +216,7 @@ void NAV::Plot::guiConfig()
                                 const bool is_selected = (plotInfo.selectedXdata.at(pinIndex) == plotDataIndex);
                                 if (ImGui::Selectable(pinData.plotData.at(plotDataIndex).displayName.c_str(), is_selected))
                                 {
+                                    flow::ApplyChanges();
                                     plotInfo.selectedXdata.at(pinIndex) = plotDataIndex;
                                 }
                                 if (!plotData.hasData)
@@ -145,6 +244,7 @@ void NAV::Plot::guiConfig()
                         }
                         for (auto& plotData : pinData.plotData)
                         {
+                            flow::ApplyChanges();
                             plotData.buffer.resize(static_cast<size_t>(pinData.size));
                         }
                     }
@@ -157,17 +257,29 @@ void NAV::Plot::guiConfig()
                 ImGui::EndTable();
             }
 
-            ImGui::CheckboxFlags(("Y-Axis 2##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                 &plotInfo.plotFlags, ImPlotFlags_YAxis2);
+            if (ImGui::CheckboxFlags(("Y-Axis 2##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                     &plotInfo.plotFlags, ImPlotFlags_YAxis2))
+            {
+                flow::ApplyChanges();
+            }
             ImGui::SameLine();
-            ImGui::CheckboxFlags(("Y-Axis 3##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                 &plotInfo.plotFlags, ImPlotFlags_YAxis3);
+            if (ImGui::CheckboxFlags(("Y-Axis 3##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                     &plotInfo.plotFlags, ImPlotFlags_YAxis3))
+            {
+                flow::ApplyChanges();
+            }
             ImGui::SameLine();
-            ImGui::Checkbox(("Auto Limit X-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                            &plotInfo.autoLimitXaxis);
+            if (ImGui::Checkbox(("Auto Limit X-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                &plotInfo.autoLimitXaxis))
+            {
+                flow::ApplyChanges();
+            }
             ImGui::SameLine();
-            ImGui::Checkbox(("Auto Limit Y-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                            &plotInfo.autoLimitYaxis);
+            if (ImGui::Checkbox(("Auto Limit Y-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                &plotInfo.autoLimitYaxis))
+            {
+                flow::ApplyChanges();
+            }
 
             gui::widgets::Splitter((std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                    true, 4.0F, &plotInfo.leftPaneWidth, &plotInfo.rightPaneWidth, 150.0F, 80.0F, ImPlot::GetStyle().PlotDefaultSize.y);
@@ -205,6 +317,10 @@ void NAV::Plot::guiConfig()
                 {
                     for (auto& plotData : pinData.plotData)
                     {
+                        if (plotData.plotOnAxis.contains(plotNum))
+                        {
+                            flow::ApplyChanges();
+                        }
                         plotData.plotOnAxis.erase(plotNum);
                     }
                 }
@@ -215,6 +331,7 @@ void NAV::Plot::guiConfig()
                 {
                     auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
                     plotData->plotOnAxis.erase(plotNum);
+                    flow::ApplyChanges();
                 }
                 ImGui::EndDragDropTarget();
             }
@@ -306,6 +423,7 @@ void NAV::Plot::guiConfig()
                                 plotData->plotOnAxis[plotNum] = y;
                             }
                         }
+                        flow::ApplyChanges();
                     }
                     ImGui::EndDragDropTarget();
                 }
@@ -323,6 +441,9 @@ void NAV::Plot::guiConfig()
     json j;
 
     j["nInputPins"] = nInputPins;
+    j["nPlots"] = nPlots;
+    j["pinData"] = data;
+    j["plotInfos"] = plotInfos;
 
     return j;
 }
@@ -335,6 +456,19 @@ void NAV::Plot::restore(json const& j)
     {
         j.at("nInputPins").get_to(nInputPins);
         updateNumberOfInputPins();
+    }
+    if (j.contains("nPlots"))
+    {
+        j.at("nPlots").get_to(nPlots);
+        updateNumberOfPlots();
+    }
+    if (j.contains("pinData"))
+    {
+        j.at("pinData").get_to(data);
+    }
+    if (j.contains("plotInfos"))
+    {
+        j.at("plotInfos").get_to(plotInfos);
     }
 }
 
@@ -529,6 +663,18 @@ void NAV::Plot::updateNumberOfInputPins()
         {
             plotInfo.selectedXdata.pop_back();
         }
+    }
+}
+
+void NAV::Plot::updateNumberOfPlots()
+{
+    while (static_cast<size_t>(nPlots) > plotInfos.size())
+    {
+        plotInfos.emplace_back("Plot " + std::to_string(plotInfos.size() + 1), nInputPins);
+    }
+    while (static_cast<size_t>(nPlots) < plotInfos.size())
+    {
+        plotInfos.pop_back();
     }
 }
 

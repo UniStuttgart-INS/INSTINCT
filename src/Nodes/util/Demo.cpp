@@ -22,8 +22,14 @@ void to_json(json& j, const Demo::DemoData& data)
 }
 void from_json(const json& j, Demo::DemoData& data)
 {
-    j.at("boolean").get_to(data.boolean);
-    j.at("integer").get_to(data.integer);
+    if (j.contains("boolean"))
+    {
+        j.at("boolean").get_to(data.boolean);
+    }
+    if (j.contains("integer"))
+    {
+        j.at("integer").get_to(data.integer);
+    }
 }
 
 } // namespace NAV

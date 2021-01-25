@@ -18,6 +18,8 @@ class ScrollingBuffer
         : maxSize(maxSize)
     {
         data_.reserve(maxSize);
+
+        resize(maxSize);
     }
 
     void AddValue(T value)

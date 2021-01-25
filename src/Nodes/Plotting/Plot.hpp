@@ -64,11 +64,13 @@ class Plot : public Node
     /// @param[in] endPin Pin where the link ends
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
-  private:
     struct PinData
     {
         struct PlotData
         {
+            /// @brief Default constructor
+            PlotData() = default;
+
             /// @brief Constructor
             /// @param[in] displayName Display name of the contained data
             /// @param[in] size Size of the buffer
@@ -89,7 +91,13 @@ class Plot : public Node
         /// @param[in] displayName Display name of the contained data
         void addPlotDataItem(const std::string& displayName)
         {
-            plotData.emplace_back(displayName, static_cast<size_t>(size));
+            if (std::find_if(plotData.begin(),
+                             plotData.end(),
+                             [displayName](const PlotData& plotData) { return plotData.displayName == displayName; })
+                == plotData.end())
+            {
+                plotData.emplace_back(displayName, static_cast<size_t>(size));
+            }
         }
         /// Size of all buffers of the plotData elements
         int size = 2000;
@@ -101,6 +109,9 @@ class Plot : public Node
 
     struct PlotInfo
     {
+        /// @brief Default constructor
+        PlotInfo() = default;
+
         /// @brief Constructor
         /// @param[in] title Title of the ImPlot
         /// @param[in] nInputPins Amount of inputPins
@@ -116,9 +127,9 @@ class Plot : public Node
         /// Flags which are passed to the plot
         int plotFlags = 0;
         /// Flag whether to automaticaly set the x-Axis limits
-        bool autoLimitXaxis = false;
+        bool autoLimitXaxis = true;
         /// Flag whether to automaticaly set the y-Axis limits
-        bool autoLimitYaxis = false;
+        bool autoLimitYaxis = true;
         /// @brief Key: PinIndex, Value: plotData to use for x-Axis
         std::vector<size_t> selectedXdata;
 
@@ -128,14 +139,18 @@ class Plot : public Node
         float rightPaneWidth = 400.0F;
     };
 
+  private:
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Adds Input Pins depending on the variable nInputPins
+    /// @brief Adds/Deletes Input Pins depending on the variable nInputPins
     void updateNumberOfInputPins();
+
+    /// @brief Adds/Deletes Plots depending on the variable nPlots
+    void updateNumberOfPlots();
 
     /// @brief Add Data to the buffer of the pin
     /// @param[in] pinIndex Index of the input pin where the data was received

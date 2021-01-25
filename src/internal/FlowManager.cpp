@@ -254,7 +254,10 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
             nm::AddNode(node);
 
             nodeJson.get_to<Node>(*node);
+            if (nodeJson.contains("data"))
+            {
             node->restore(nodeJson.at("data"));
+            }
             // Load second time in case restore changed the amount of pins
             nodeJson.get_to<Node>(*node);
 
@@ -279,6 +282,20 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
             if (!nm::AddLink(link))
             {
                 loadSuccessful = false;
+            }
+        }
+    }
+    if (j.contains("nodes"))
+    {
+        for (const auto& node : nm::m_Nodes())
+        {
+            if (j.at("nodes").contains("node-" + std::to_string(size_t(node->id))))
+            {
+                const auto& nodeJson = j.at("nodes").at("node-" + std::to_string(size_t(node->id)));
+                if (nodeJson.contains("data"))
+                {
+                    node->restoreAtferLink(nodeJson.at("data"));
+                }
             }
         }
     }
