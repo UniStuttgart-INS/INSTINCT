@@ -87,7 +87,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             }
 
             bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node->id) != selectedNodes.end();
-            if (ImGui::Selectable((node->name + "##" + std::to_string(reinterpret_cast<uintptr_t>(node->id.AsPointer()))).c_str(), &isSelected))
+            if (ImGui::Selectable((node->name + "##" + std::to_string(size_t(node->id))).c_str(), &isSelected))
             {
                 if (io.KeyCtrl)
                 {
@@ -112,7 +112,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
                 ImGui::SetTooltip("Type: %s", node->type().c_str());
             }
 
-            auto id = std::string("(") + std::to_string(reinterpret_cast<uintptr_t>(node->id.AsPointer())) + ")";
+            auto id = std::string("(") + std::to_string(size_t(node->id)) + ")";
             auto textSize = ImGui::CalcTextSize(id.c_str(), nullptr);
             auto iconPanelPos = start + ImVec2(paneWidth - ImGui::GetStyle().FramePadding.x - ImGui::GetStyle().IndentSpacing - ImGui::GetStyle().ItemInnerSpacing.x * 1, ImGui::GetTextLineHeight() / 2);
             ImGui::GetWindowDrawList()->AddText(
@@ -143,8 +143,8 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         }
         ImGui::EndHorizontal();
         ImGui::Indent();
-        for (size_t i = 0; i < nodeCount; ++i) { ImGui::Text("%s (%lu)", nm::FindNode(selectedNodes[i])->name.c_str(), reinterpret_cast<uintptr_t>(selectedNodes[i].AsPointer())); }
-        for (size_t i = 0; i < linkCount; ++i) { ImGui::Text("Link (%lu)", reinterpret_cast<uintptr_t>(selectedLinks[i].AsPointer())); }
+        for (size_t i = 0; i < nodeCount; ++i) { ImGui::Text("%s (%lu)", nm::FindNode(selectedNodes[i])->name.c_str(), size_t(selectedNodes[i])); }
+        for (size_t i = 0; i < linkCount; ++i) { ImGui::Text("Link (%lu)", size_t(selectedLinks[i])); }
         ImGui::Unindent();
     }
 

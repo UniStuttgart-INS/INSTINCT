@@ -88,14 +88,14 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
         pin.parentNode = node;
     }
 
-    m_NextId = std::max(m_NextId, reinterpret_cast<uintptr_t>(node->id.AsPointer()) + 1);
+    m_NextId = std::max(m_NextId, size_t(node->id) + 1);
     for (const auto& pin : node->inputPins)
     {
-        m_NextId = std::max(m_NextId, reinterpret_cast<uintptr_t>(pin.id.AsPointer()) + 1);
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
     }
     for (const auto& pin : node->outputPins)
     {
-        m_NextId = std::max(m_NextId, reinterpret_cast<uintptr_t>(pin.id.AsPointer()) + 1);
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
     }
 
     flow::ApplyChanges();
@@ -172,7 +172,7 @@ void NAV::NodeManager::DeleteAllNodes()
 
     for (const auto& link : m_links)
     {
-        m_NextId = std::max(m_NextId, reinterpret_cast<uintptr_t>(link.id.AsPointer()) + 1);
+        m_NextId = std::max(m_NextId, size_t(link.id) + 1);
     }
 
     flow::ApplyChanges();
@@ -358,7 +358,7 @@ void NAV::NodeManager::DeleteAllLinks()
 
     for (const auto& node : m_nodes)
     {
-        m_NextId = std::max(m_NextId, reinterpret_cast<uintptr_t>(node->id.AsPointer()) + 1);
+        m_NextId = std::max(m_NextId, size_t(node->id) + 1);
     }
 
     flow::ApplyChanges();

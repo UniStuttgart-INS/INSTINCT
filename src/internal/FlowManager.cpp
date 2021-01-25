@@ -72,7 +72,7 @@ namespace NAV
 void to_json(json& j, const Pin& pin)
 {
     j = json{
-        { "id", reinterpret_cast<uintptr_t>(pin.id.AsPointer()) },
+        { "id", size_t(pin.id) },
         { "type", std::string(pin.type) },
         { "name", pin.name },
     };
@@ -96,7 +96,7 @@ void to_json(json& j, const Node& node)
     realSize.x -= 16;
     realSize.y -= 38;
     j = json{
-        { "id", reinterpret_cast<uintptr_t>(node.id.AsPointer()) },
+        { "id", size_t(node.id) },
         { "type", node.type() },
         { "kind", std::string(node.kind) },
         { "name", node.name },
@@ -140,9 +140,9 @@ void from_json(const json& j, Node& node)
 void to_json(json& j, const Link& link)
 {
     j = json{
-        { "id", reinterpret_cast<uintptr_t>(link.id.AsPointer()) },
-        { "startPinId", reinterpret_cast<uintptr_t>(link.startPinId.AsPointer()) },
-        { "endPinId", reinterpret_cast<uintptr_t>(link.endPinId.AsPointer()) },
+        { "id", size_t(link.id) },
+        { "startPinId", size_t(link.startPinId) },
+        { "endPinId", size_t(link.endPinId) },
         { "color", link.color },
     };
 }
@@ -188,12 +188,12 @@ void NAV::flow::SaveFlowAs(const std::string& filepath)
     json j;
     for (const auto& node : nm::m_Nodes())
     {
-        j["nodes"]["node-" + std::to_string(reinterpret_cast<uintptr_t>(node->id.AsPointer()))] = *node;
-        j["nodes"]["node-" + std::to_string(reinterpret_cast<uintptr_t>(node->id.AsPointer()))]["data"] = node->save();
+        j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
+        j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
     }
     for (const auto& link : nm::m_Links())
     {
-        j["links"]["link-" + std::to_string(reinterpret_cast<uintptr_t>(link.id.AsPointer()))] = link;
+        j["links"]["link-" + std::to_string(size_t(link.id))] = link;
     }
 
     filestream << std::setw(4) << j << std::endl;
@@ -256,7 +256,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
             nodeJson.get_to<Node>(*node);
             if (nodeJson.contains("data"))
             {
-            node->restore(nodeJson.at("data"));
+                node->restore(nodeJson.at("data"));
             }
             // Load second time in case restore changed the amount of pins
             nodeJson.get_to<Node>(*node);
