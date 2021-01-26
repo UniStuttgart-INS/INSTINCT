@@ -49,7 +49,7 @@ void NAV::RtklibPosFile::guiConfig()
     if (gui::widgets::FileDialogLoad(path, "Select File", ".pos", { ".pos" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        initializeNode();
     }
 
     // Header info

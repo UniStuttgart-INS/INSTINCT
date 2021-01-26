@@ -50,7 +50,7 @@ void NAV::EmlidFile::guiConfig()
     if (gui::widgets::FileDialogLoad(path, "Select File", ".ubx", { ".ubx" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        initializeNode();
     }
 }
 

@@ -53,8 +53,11 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
     // Filepath
     if (ImGui::InputText("Filepath", &path))
     {
-        LOG_DEBUG("{}: Filepath changed to {}", nameId, path);
-        changed = true;
+        if (std::filesystem::exists(path))
+        {
+            LOG_DEBUG("{}: Filepath changed to {}", nameId, path);
+            changed = true;
+        }
     }
     ImGui::SameLine();
     std::string openFileDialogKey = fmt::format("Select File ({})", id);
