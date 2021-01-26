@@ -51,7 +51,7 @@ void NAV::KvhFile::guiConfig()
     if (gui::widgets::FileDialogLoad(path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
-        deinitializeNode();
+        initializeNode();
     }
 
     if (fileType == FileType::ASCII)
