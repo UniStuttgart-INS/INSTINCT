@@ -132,6 +132,9 @@ class Demo : public Node
     int callbackInt = 0;
     bool callbackBool = false;
     std::string callbackFunction(int integer1, int integer2, bool boolean);
+
+    size_t stringUpdateCounter = 0;
+    void stringUpdatedNotifyFunction();
 };
 
 } // namespace NAV

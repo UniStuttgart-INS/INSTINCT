@@ -156,31 +156,9 @@ class Node
     /*                                             Member functions                                             */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    template<typename T>
-    [[nodiscard]] T* getInputValue(size_t portIndex)
-    {
-        // clang-format off
-        if constexpr (std::is_same_v<T, bool>
-                   || std::is_same_v<T, int>
-                   || std::is_same_v<T, float>
-                   || std::is_same_v<T, double>
-                   || std::is_same_v<T, std::string>)
-        { // clang-format on
-            if (auto* pval = std::get_if<T*>(&inputPins.at(portIndex).data))
-            {
-                return *pval;
-            }
-        }
-        else // constexpr
-        {
-            if (auto* pval = std::get_if<void*>(&inputPins.at(portIndex).data))
-            {
-                return static_cast<T*>(*pval);
-            }
-        }
-
-        return nullptr;
-    }
+    /// @brief Notifies connected nodes about the change
+    /// @param[in] portIndex Input Port index where to set the value
+    void notifyInputValueChanged(size_t portIndex);
 
     template<typename T>
     [[nodiscard]] T* getInputValue(size_t portIndex) const

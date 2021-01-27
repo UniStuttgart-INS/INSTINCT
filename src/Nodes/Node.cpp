@@ -111,6 +111,20 @@ bool NAV::Node::onCreateLink(Pin* /*startPin*/, Pin* /*endPin*/)
 
 void NAV::Node::onDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
+void NAV::Node::notifyInputValueChanged(size_t portIndex)
+{
+    auto connectedLinks = nm::FindConnectedLinksToPin(inputPins.at(portIndex).id);
+    if (!connectedLinks.empty())
+    {
+        Pin* startPin = nm::FindPin(connectedLinks.front()->startPinId);
+
+        for (auto& notifyFunc : startPin->notifyFunc)
+        {
+            std::invoke(notifyFunc.second, notifyFunc.first);
+        }
+    }
+}
+
 void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<NAV::NodeData>& data)
 {
     if (callbacksEnabled)

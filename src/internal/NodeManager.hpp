@@ -83,6 +83,31 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
     return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId)>(callback)));
 }
 
+/// @brief Create an Input Pin object
+/// @tparam T Node Class where the function is member of
+/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
+/// @param[in] node Node to register the Pin for
+/// @param[in] name Display name of the Pin
+/// @param[in] pinType Type of the pin
+/// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+/// @param[in] notifyFunc Function to call when the data is updated
+/// @return Pointer to the created pin
+template<typename T,
+         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, void (T::*notifyFunc)())
+{
+    assert(pinType != Pin::Type::Flow && pinType != Pin::Type::Function && pinType != Pin::Type::Delegate);
+
+    Pin* pin = CreateInputPin(node, name, pinType, dataIdentifier);
+
+    if (pin)
+    {
+        pin->notifyFunc.emplace_back(node, reinterpret_cast<void (Node::*)()>(notifyFunc));
+    }
+
+    return pin;
+}
+
 /// @brief Create an Output Pin object
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin
@@ -113,7 +138,8 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 /// @brief Create an Output Pin object for Function Pins
 /// @tparam U Return value type of the callback
 /// @tparam P Parameter types of the callback
-/// @tparam T Callback is member function of class with base Node
+/// @tparam T Node Class where the function is member of
+/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin
 /// @param[in] pinType Type of the pin

@@ -61,7 +61,7 @@ NAV::Demo::Demo()
     nm::CreateInputPin(this, "Int", Pin::Type::Int);
     nm::CreateInputPin(this, "Float", Pin::Type::Float);
     nm::CreateInputPin(this, "Double", Pin::Type::Float);
-    nm::CreateInputPin(this, "String", Pin::Type::String);
+    nm::CreateInputPin(this, "String", Pin::Type::String, {}, &Demo::stringUpdatedNotifyFunction);
     nm::CreateInputPin(this, "Object", Pin::Type::Object, { "Demo::DemoData" });
     nm::CreateInputPin(this, "Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" });
     nm::CreateInputPin(this, "Function", Pin::Type::Function, { "std::string (*)(int, bool)" });
@@ -97,7 +97,7 @@ void NAV::Demo::guiConfig()
 
         /* ----------------------------------------------- Delegate ----------------------------------------------- */
         ImGui::TableNextColumn();
-        auto* connectedNode = getInputValue<Demo>(InputPortIndex_DemoNode);
+        const auto* connectedNode = getInputValue<Demo>(InputPortIndex_DemoNode);
         ImGui::Text("Delegate: %s", connectedNode ? connectedNode->nameId().c_str() : "N/A");
         ImGui::TableNextColumn();
         /* ------------------------------------------------ Sensor ------------------------------------------------ */
@@ -121,7 +121,7 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------- Bool ------------------------------------------------- */
         ImGui::TableNextColumn();
-        auto* connectedBool = getInputValue<bool>(InputPortIndex_Bool);
+        const auto* connectedBool = getInputValue<bool>(InputPortIndex_Bool);
         ImGui::Text("Bool: %s", connectedBool ? (*connectedBool ? "true" : "false") : "N/A");
         ImGui::TableNextColumn();
         if (ImGui::Checkbox("Bool", &valueBool))
@@ -130,7 +130,7 @@ void NAV::Demo::guiConfig()
         }
         /* -------------------------------------------------- Int ------------------------------------------------- */
         ImGui::TableNextColumn();
-        if (auto* connectedInt = getInputValue<int>(InputPortIndex_Int))
+        if (const auto* connectedInt = getInputValue<int>(InputPortIndex_Int))
         {
             ImGui::Text("Int: %d", *connectedInt);
         }
@@ -155,7 +155,7 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------- Float ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedFloat = getInputValue<float>(InputPortIndex_Float))
+        if (const auto* connectedFloat = getInputValue<float>(InputPortIndex_Float))
         {
             ImGui::Text("Float: %.3f", *connectedFloat);
         }
@@ -170,7 +170,7 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ Double ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedDouble = getInputValue<double>(InputPortIndex_Double))
+        if (const auto* connectedDouble = getInputValue<double>(InputPortIndex_Double))
         {
             ImGui::Text("Double: %.6f", *connectedDouble);
         }
@@ -185,16 +185,23 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ String ------------------------------------------------ */
         ImGui::TableNextColumn();
-        auto* connectedString = getInputValue<std::string>(InputPortIndex_String);
-        ImGui::Text("String: %s", connectedString ? connectedString->c_str() : "N/A");
-        ImGui::TableNextColumn();
-        if (ImGui::InputText("String", &valueString))
+
+        if (auto* connectedString = getInputValue<std::string>(InputPortIndex_String);
+            connectedString == nullptr)
         {
+            ImGui::Text("String: N/A");
+        }
+        else if (ImGui::InputText("String", connectedString))
+        {
+            notifyInputValueChanged(InputPortIndex_String);
             flow::ApplyChanges();
         }
+        ImGui::Text("The String was updated %lu time%s", stringUpdateCounter, stringUpdateCounter > 1 || stringUpdateCounter == 0 ? "s" : "");
+        ImGui::TableNextColumn();
+        ImGui::Text("String: %s", valueString.c_str());
         /* ------------------------------------------------ Object ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedObject = getInputValue<DemoData>(InputPortIndex_DemoData))
+        if (const auto* connectedObject = getInputValue<DemoData>(InputPortIndex_DemoData))
         {
             ImGui::Text("Object: [%d, %d, %d], %s", connectedObject->integer.at(0), connectedObject->integer.at(1), connectedObject->integer.at(2),
                         connectedObject->boolean ? "true" : "false");
@@ -215,7 +222,7 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------ Matrix ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Matrix))
+        if (const auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Matrix))
         {
             if (connectedMatrix->rows() == 3 && connectedMatrix->cols() == 3)
             {
@@ -403,6 +410,8 @@ bool NAV::Demo::initialize()
     callbackCounter = 0;
     receivedDataFromCallback = "";
 
+    stringUpdateCounter = 0;
+
     int outputInterval = static_cast<int>(1.0 / static_cast<double>(outputFrequency) * 1000.0);
     timer.start(outputInterval, readSensorDataThread, this);
 
@@ -503,4 +512,9 @@ std::string NAV::Demo::callbackFunction(int integer1, int integer2, bool boolean
                        callbackCounter,
                        callbackCounter > 1 ? "s" : "",
                        integer1, integer2, boolean);
+}
+
+void NAV::Demo::stringUpdatedNotifyFunction()
+{
+    stringUpdateCounter++;
 }

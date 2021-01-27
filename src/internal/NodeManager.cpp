@@ -204,6 +204,11 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     else
     {
         endPin->data = startPin->data;
+        if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+        {
+            startPin->notifyFunc.push_back(endPin->notifyFunc.front());
+        }
+
         if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
         {
             if (endPin->parentNode->isInitialized())
@@ -267,6 +272,11 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
         else
         {
             endPin->data = startPin->data;
+            if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+            {
+                startPin->notifyFunc.push_back(endPin->notifyFunc.front());
+            }
+
             if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
             {
                 if (endPin->parentNode->isInitialized())
@@ -315,6 +325,20 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             if (endPin->type != Pin::Type::Flow)
             {
                 endPin->data = static_cast<void*>(nullptr);
+                if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+                {
+                    auto iter = std::find(startPin->notifyFunc.begin(), startPin->notifyFunc.end(),
+                                          endPin->notifyFunc.front());
+                    if (iter != startPin->notifyFunc.end())
+                    {
+                        startPin->notifyFunc.erase(iter);
+                    }
+                    else
+                    {
+                        LOG_ERROR("Tried to delete link {}, with type Flow, but could not find the callback.", linkId.AsPointer());
+                    }
+                }
+
                 if (endPin->parentNode)
                 {
                     endPin->parentNode->deinitializeNode();
@@ -332,7 +356,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
                 }
                 else
                 {
-                    LOG_ERROR("Tried to delete link {}, with type Flow or Function, but could not find the callback.", linkId.AsPointer());
+                    LOG_ERROR("Tried to delete link {}, with type Flow, but could not find the callback.", linkId.AsPointer());
                 }
             }
         }
