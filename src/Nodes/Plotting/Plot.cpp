@@ -232,6 +232,7 @@ void NAV::Plot::guiConfig()
     for (size_t plotNum = 0; plotNum < static_cast<size_t>(nPlots); plotNum++)
     {
         auto& plotInfo = plotInfos.at(plotNum);
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader((plotInfo.headerText + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
         {
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);

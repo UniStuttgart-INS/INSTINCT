@@ -58,11 +58,25 @@ class Matrix : public Node
     /// @param[in] endPin Pin where the link ends
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
-  private:
-    struct BlockInfo
+    class Block
     {
-        BlockInfo(int startRow, int startCol, int blockRows, int blockCols)
-            : startRow(startRow), startCol(startCol), blockRows(blockRows), blockCols(blockCols) {}
+      public:
+        /// @brief Default constructor
+        Block() = default;
+
+        Block(Eigen::MatrixXd& matrix, std::string pinName, int startRow, int startCol, int blockRows, int blockCols);
+
+        Eigen::Block<Eigen::MatrixXd> operator()();
+
+        [[nodiscard]] json to_json() const;
+        void from_json(const json& j);
+
+        friend class Matrix;
+
+      private:
+        Eigen::MatrixXd* matrix = nullptr;
+
+        std::string pinName;
 
         int startRow = 0;
         int startCol = 0;
@@ -70,6 +84,7 @@ class Matrix : public Node
         int blockCols = 1;
     };
 
+  private:
     /// @brief Initialize the node
     bool initialize() override;
 
@@ -79,12 +94,6 @@ class Matrix : public Node
     /// @brief Adds/Deletes Output Pins depending on the variable nBlocks
     void updateNumberOfOutputPins();
 
-    Eigen::Block<Eigen::MatrixXd> block(size_t blockIndex = 0)
-    {
-        return matrix.block(blocks.at(blockIndex).startRow, blocks.at(blockIndex).startCol,
-                            blocks.at(blockIndex).blockRows, blocks.at(blockIndex).blockCols);
-    }
-
     /// Number of Rows
     int nRows = 3;
     /// Number of Columns
@@ -93,7 +102,7 @@ class Matrix : public Node
     int nBlocks = 0;
 
     /// List of subblocks
-    std::vector<BlockInfo> blocks;
+    std::vector<Block> blocks;
 
     /// The matrix object
     Eigen::MatrixXd matrix;

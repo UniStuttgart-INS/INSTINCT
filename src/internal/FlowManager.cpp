@@ -124,6 +124,7 @@ void from_json(const json& j, Node& node)
             break;
         }
         node.inputPins.at(i).id = inputPins.at(i).id;
+        node.inputPins.at(i).name = inputPins.at(i).name;
     }
 
     auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
@@ -134,6 +135,7 @@ void from_json(const json& j, Node& node)
             break;
         }
         node.outputPins.at(i).id = outputPins.at(i).id;
+        node.outputPins.at(i).name = outputPins.at(i).name;
     }
 }
 

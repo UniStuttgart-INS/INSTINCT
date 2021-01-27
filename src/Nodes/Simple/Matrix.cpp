@@ -4,6 +4,61 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+namespace NAV
+{
+void to_json(json& j, const Matrix::Block& data)
+{
+    j = data.to_json();
+}
+void from_json(const json& j, Matrix::Block& data)
+{
+    data.from_json(j);
+}
+
+} // namespace NAV
+
+NAV::Matrix::Block::Block(Eigen::MatrixXd& matrix, std::string pinName, int startRow, int startCol, int blockRows, int blockCols)
+    : matrix(&matrix), pinName(std::move(pinName)), startRow(startRow), startCol(startCol), blockRows(blockRows), blockCols(blockCols) {}
+
+Eigen::Block<Eigen::MatrixXd> NAV::Matrix::Block::operator()()
+{
+    return matrix->block(startRow, startCol, blockRows, blockCols);
+}
+
+[[nodiscard]] json NAV::Matrix::Block::to_json() const
+{
+    return json{
+        { "pinName", pinName },
+        { "startRow", startRow },
+        { "startCol", startCol },
+        { "blockRows", blockRows },
+        { "blockCols", blockCols },
+    };
+}
+void NAV::Matrix::Block::from_json(const json& j)
+{
+    if (j.contains("pinName"))
+    {
+        j.at("pinName").get_to(pinName);
+    }
+    if (j.contains("startRow"))
+    {
+        j.at("startRow").get_to(startRow);
+    }
+    if (j.contains("startCol"))
+    {
+        j.at("startCol").get_to(startCol);
+    }
+    if (j.contains("blockRows"))
+    {
+        j.at("blockRows").get_to(blockRows);
+    }
+    if (j.contains("blockCols"))
+    {
+        j.at("blockCols").get_to(blockCols);
+    }
+}
+
 NAV::Matrix::Matrix()
 {
     name = typeStatic();
@@ -16,7 +71,7 @@ NAV::Matrix::Matrix()
 
     nm::CreateOutputPin(this, "", Pin::Type::Matrix, "Eigen::MatrixXd", &matrix);
 
-    initMatrix = Eigen::MatrixXd(nRows, nCols);
+    initMatrix = Eigen::MatrixXd::Zero(nRows, nCols);
 
     updateNumberOfOutputPins();
 }
@@ -153,8 +208,71 @@ void NAV::Matrix::guiConfig()
 
     for (size_t blockIndex = 0; blockIndex < blocks.size(); blockIndex++)
     {
-        if (ImGui::CollapsingHeader(("Block " + std::to_string(blockIndex + 1) + "## " + std::to_string(size_t(id))).c_str()))
+        Pin& outputPin = outputPins.at(blockIndex + 1);
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader((outputPin.name + "## " + std::to_string(size_t(id))).c_str()))
         {
+            auto& block = blocks.at(blockIndex);
+            ImGui::InputText(("Pin name##" + std::to_string(size_t(id)) + " - " + std::to_string(blockIndex)).c_str(), &block.pinName);
+            if (outputPin.name != block.pinName && !ImGui::IsItemActive())
+            {
+                outputPin.name = block.pinName;
+                flow::ApplyChanges();
+                LOG_DEBUG("{}: # Pin name changed to {}", nameId(), outputPin.name);
+            }
+            if (ImGui::InputInt(("Start Row##" + std::to_string(size_t(id)) + " - " + std::to_string(blockIndex)).c_str(), &block.startRow))
+            {
+                if (block.startRow < 0)
+                {
+                    block.startRow = 0;
+                }
+                else if (block.startRow >= matrix.rows())
+                {
+                    block.startRow = static_cast<int>(matrix.rows() - 1);
+                }
+                flow::ApplyChanges();
+                LOG_DEBUG("{}: # Start Row of pin {} changed to {}", nameId(), outputPin.name, block.startRow);
+            }
+            if (ImGui::InputInt(("Start Col##" + std::to_string(size_t(id)) + " - " + std::to_string(blockIndex)).c_str(), &block.startCol))
+            {
+                if (block.startCol < 0)
+                {
+                    block.startCol = 0;
+                }
+                else if (block.startCol >= matrix.cols())
+                {
+                    block.startCol = static_cast<int>(matrix.cols() - 1);
+                }
+                flow::ApplyChanges();
+                LOG_DEBUG("{}: # Start Col of pin {} changed to {}", nameId(), outputPin.name, block.startCol);
+            }
+            if (ImGui::InputInt(("Block Rows##" + std::to_string(size_t(id)) + " - " + std::to_string(blockIndex)).c_str(), &block.blockRows))
+            {
+                if (block.blockRows < 1)
+                {
+                    block.blockRows = 1;
+                }
+                else if (block.blockRows >= matrix.rows())
+                {
+                    block.blockRows = static_cast<int>(matrix.rows());
+                }
+                flow::ApplyChanges();
+                LOG_DEBUG("{}: # Block rows of pin {} changed to {}", nameId(), outputPin.name, block.blockRows);
+            }
+            if (ImGui::InputInt(("Block Cols##" + std::to_string(size_t(id)) + " - " + std::to_string(blockIndex)).c_str(), &block.blockCols))
+            {
+                if (block.blockCols < 1)
+                {
+                    block.blockCols = 1;
+                }
+                else if (block.blockCols >= matrix.cols())
+                {
+                    block.blockCols = static_cast<int>(matrix.cols());
+                }
+                flow::ApplyChanges();
+                LOG_DEBUG("{}: # Block cols of pin {} changed to {}", nameId(), outputPin.name, block.blockCols);
+            }
         }
     }
 }
@@ -167,6 +285,8 @@ void NAV::Matrix::guiConfig()
 
     j["nRows"] = nRows;
     j["nCols"] = nCols;
+    j["nBlocks"] = nBlocks;
+    j["blocks"] = blocks;
     j["matrix"] = initMatrix;
 
     return j;
@@ -183,6 +303,15 @@ void NAV::Matrix::restore(json const& j)
     if (j.contains("nCols"))
     {
         j.at("nCols").get_to(nCols);
+    }
+    if (j.contains("nBlocks"))
+    {
+        j.at("nBlocks").get_to(nBlocks);
+        updateNumberOfOutputPins();
+    }
+    if (j.contains("blocks"))
+    {
+        j.at("blocks").get_to(blocks);
     }
     if (j.contains("matrix"))
     {
@@ -206,18 +335,22 @@ void NAV::Matrix::deinitialize()
 
 void NAV::Matrix::updateNumberOfOutputPins()
 {
-    // while (outputPins.size() - 1 < static_cast<size_t>(nBlocks))
-    // {
-    //     blocks.emplace_back(0, 0, initMatrix.rows(), initMatrix.cols());
-    //     // nm::CreateOutputPin(this, "Function", Pin::Type::Function, "std::string (*)(int, bool)", &Demo::callbackFunction);
-    //     // nm::CreateOutputPin(this, ("Block " + std::to_string(blocks.size())).c_str(), Pin::Type::Function, "Eigen::Block<Eigen::MatrixXd> (*)()",
-    //     //                     [this]() { return block(blocks.size() - 1); });
-    // }
-    // while (outputPins.size() - 1 > static_cast<size_t>(nBlocks))
-    // {
-    //     blocks.pop_back();
-    //     inputPins.pop_back();
-    // }
+    while (outputPins.size() - 1 < static_cast<size_t>(nBlocks))
+    {
+        blocks.emplace_back(matrix, std::to_string(blocks.size() + 1), 0, 0, initMatrix.rows(), 1);
+        nm::CreateOutputPin(this, std::to_string(blocks.size()).c_str(), Pin::Type::Matrix, "Matrix::Block", &blocks.back());
+    }
+    while (outputPins.size() - 1 > static_cast<size_t>(nBlocks))
+    {
+        auto connectedLinks = nm::FindConnectedLinksToPin(inputPins.back().id);
+        for (Link* link : connectedLinks)
+        {
+            nm::DeleteLink(link->id);
+        }
+        inputPins.pop_back();
+
+        blocks.pop_back();
+    }
 }
 
 bool NAV::Matrix::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
