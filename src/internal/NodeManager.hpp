@@ -111,21 +111,18 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 }
 
 /// @brief Create an Output Pin object for Function Pins
-/// @tparam U
-/// @tparam P
-/// @tparam T
-/// @tparam T,
-/// typename
-/// @tparam T>>
-/// @param[in, out] node
-/// @param[in, out] name
-/// @param[in, out] pinType
-/// @param[in, out] dataIdentifier
-/// @param[in, out] callback
-/// @return
+/// @tparam U Return value type of the callback
+/// @tparam P Parameter types of the callback
+/// @tparam T Callback is member function of class with base Node
+/// @param[in] node Node to register the Pin for
+/// @param[in] name Display name of the Pin
+/// @param[in] pinType Type of the pin
+/// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+/// @param[in] function Function to register with the pin
+/// @return Pointer to the created pin
 template<typename U, typename... P, typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string& dataIdentifier = std::string(""), U (T::*callback)(P...) = nullptr)
+Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string& dataIdentifier = std::string(""), U (T::*function)(P...) = nullptr)
 {
     assert(pinType == Pin::Type::Function);
 
@@ -133,7 +130,7 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 #if defined(__GNUC__) && !defined(__clang__)
     #pragma GCC diagnostic ignored "-Wcast-function-type" // NOLINT
 #endif
-    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(std::make_pair(node, reinterpret_cast<void (Node::*)()>(callback))));
+    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(std::make_pair(node, reinterpret_cast<void (Node::*)()>(function))));
 
 #pragma GCC diagnostic pop
 }

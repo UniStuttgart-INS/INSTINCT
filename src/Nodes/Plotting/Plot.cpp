@@ -42,6 +42,7 @@ void to_json(json& j, const Plot::PinData& data)
         { "size", data.size },
         { "plotData", data.plotData },
         { "plotStyle", data.plotStyle },
+        { "pinType", data.pinType },
     };
 }
 void from_json(const json& j, Plot::PinData& data)
@@ -65,6 +66,10 @@ void from_json(const json& j, Plot::PinData& data)
     if (j.contains("plotStyle"))
     {
         j.at("plotStyle").get_to(data.plotStyle);
+    }
+    if (j.contains("pinType"))
+    {
+        j.at("pinType").get_to(data.pinType);
     }
 }
 
@@ -133,6 +138,9 @@ NAV::Plot::Plot()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
+    dataIdentifier = { RtklibPosObs::type(), UbloxObs::type(),
+                       ImuObs::type(), KvhObs::type(), VectorNavObs::type() };
+
     updateNumberOfInputPins();
 }
 
@@ -181,10 +189,11 @@ void NAV::Plot::guiConfig()
             flow::ApplyChanges();
             updateNumberOfPlots();
         }
-        if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id))).c_str(), 3,
+        if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id))).c_str(), 4,
                               ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("Pin");
+            ImGui::TableSetupColumn("Pin Type");
             ImGui::TableSetupColumn("# Data Points");
             ImGui::TableSetupColumn("Plot Style");
             ImGui::TableHeadersRow();
@@ -195,6 +204,38 @@ void NAV::Plot::guiConfig()
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn(); // Pin
                 ImGui::Text("%zu - %s", pinIndex + 1, data.at(pinIndex).dataIdentifier.c_str());
+
+                ImGui::TableNextColumn(); // Pin Type
+                ImGui::SetNextItemWidth(100.0F);
+                if (ImGui::Combo(("##Pin Type for Pin " + std::to_string(pinIndex + 1) + " - " + std::to_string(size_t(id))).c_str(),
+                                 reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
+                {
+                    switch (pinData.pinType)
+                    {
+                    case PinData::PinType::Flow:
+                        inputPins.at(pinIndex).type = Pin::Type::Flow;
+                        inputPins.at(pinIndex).dataIdentifier = dataIdentifier;
+                        break;
+                    case PinData::PinType::Bool:
+                        inputPins.at(pinIndex).type = Pin::Type::Bool;
+                        inputPins.at(pinIndex).dataIdentifier.clear();
+                        break;
+                    case PinData::PinType::Int:
+                        inputPins.at(pinIndex).type = Pin::Type::Int;
+                        inputPins.at(pinIndex).dataIdentifier.clear();
+                        break;
+                    case PinData::PinType::Float:
+                        inputPins.at(pinIndex).type = Pin::Type::Float;
+                        inputPins.at(pinIndex).dataIdentifier.clear();
+                        break;
+                    case PinData::PinType::Matrix:
+                        inputPins.at(pinIndex).type = Pin::Type::Matrix;
+                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd", "Matrix::Block" };
+                        break;
+                    }
+
+                    flow::ApplyChanges();
+                }
 
                 ImGui::TableNextColumn(); // # Data Points
                 ImGui::SetNextItemWidth(100.0F);
@@ -444,7 +485,7 @@ void NAV::Plot::guiConfig()
                             }
                             else if (data.at(pinIndex).plotStyle == PinData::PlotStyle::Scatter)
                             {
-                                ImPlot::SetNextMarkerStyle(ImPlotMarker_Cross, 3, ImVec4(0, 0, 0, -1), IMPLOT_AUTO, ImVec4(0, 0, 0, -1));
+                                ImPlot::SetNextMarkerStyle(ImPlotMarker_Cross, 2, ImVec4(0, 0, 0, -1), IMPLOT_AUTO, ImVec4(0, 0, 0, -1));
                                 ImPlot::PlotScatter((plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + data.at(pinIndex).dataIdentifier + ")").c_str(),
                                                     data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
                                                     plotData.buffer.data(),
@@ -733,9 +774,7 @@ void NAV::Plot::updateNumberOfInputPins()
     while (inputPins.size() < static_cast<size_t>(nInputPins))
     {
         nm::CreateInputPin(this, ("Pin " + std::to_string(inputPins.size() + 1)).c_str(), Pin::Type::Flow,
-                           { RtklibPosObs::type(), UbloxObs::type(),
-                             ImuObs::type(), KvhObs::type(), VectorNavObs::type() },
-                           &Plot::plotData);
+                           dataIdentifier, &Plot::plotData);
         data.emplace_back();
     }
     while (inputPins.size() > static_cast<size_t>(nInputPins))

@@ -95,6 +95,15 @@ class Plot : public Node
             Scatter,
         };
 
+        enum class PinType : int
+        {
+            Flow,   ///< NodeData Trigger
+            Bool,   ///< Boolean
+            Int,    ///< Integer Number
+            Float,  ///< Floating Point Number
+            Matrix, ///< Matrix Object
+        };
+
         /// @brief Adds a plotData Element to the list
         /// @param[in] displayName Display name of the contained data
         void addPlotDataItem(const std::string& displayName)
@@ -115,6 +124,8 @@ class Plot : public Node
         std::vector<PlotData> plotData;
         /// Plot style for all data on the pin
         PlotStyle plotStyle = PlotStyle::Line;
+        /// Pin Type
+        PinType pinType = PinType::Flow;
     };
 
     struct PlotInfo
@@ -208,6 +219,8 @@ class Plot : public Node
     int nInputPins = 1;
     /// Amount of plot windows (should equal plotInfos.size())
     int nPlots = 0;
+    /// Possible data identifiers to connect
+    std::vector<std::string> dataIdentifier;
 
     /// Start Time for calculation of relative time with the GPS ToW
     double startValue_Time = std::nan("");
