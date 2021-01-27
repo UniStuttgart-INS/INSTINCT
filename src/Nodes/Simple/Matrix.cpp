@@ -17,6 +17,8 @@ NAV::Matrix::Matrix()
     nm::CreateOutputPin(this, "", Pin::Type::Matrix, "Eigen::MatrixXd", &matrix);
 
     initMatrix = Eigen::MatrixXd(nRows, nCols);
+
+    updateNumberOfOutputPins();
 }
 
 NAV::Matrix::~Matrix()
@@ -61,7 +63,7 @@ void NAV::Matrix::guiConfig()
                 }
             }
             initMatrix = mat;
-            initializeNode();
+            initializeNode(); // Updates the matrix
         }
         if (ImGui::InputInt("Cols", &nCols))
         {
@@ -80,7 +82,17 @@ void NAV::Matrix::guiConfig()
                 }
             }
             initMatrix = mat;
-            initializeNode();
+            initializeNode(); // Updates the matrix
+        }
+        if (ImGui::InputInt("# Subblocks", &nBlocks))
+        {
+            if (nBlocks < 0)
+            {
+                nBlocks = 0;
+            }
+            LOG_DEBUG("{}: nBlocks changed to {}", nameId(), nBlocks);
+            flow::ApplyChanges();
+            updateNumberOfOutputPins();
         }
 
         ImGui::TextUnformatted("Init Matrix:");
@@ -138,6 +150,13 @@ void NAV::Matrix::guiConfig()
             ImGui::EndTable();
         }
     }
+
+    for (size_t blockIndex = 0; blockIndex < blocks.size(); blockIndex++)
+    {
+        if (ImGui::CollapsingHeader(("Block " + std::to_string(blockIndex + 1) + "## " + std::to_string(size_t(id))).c_str()))
+        {
+        }
+    }
 }
 
 [[nodiscard]] json NAV::Matrix::save() const
@@ -183,6 +202,22 @@ bool NAV::Matrix::initialize()
 void NAV::Matrix::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
+}
+
+void NAV::Matrix::updateNumberOfOutputPins()
+{
+    // while (outputPins.size() - 1 < static_cast<size_t>(nBlocks))
+    // {
+    //     blocks.emplace_back(0, 0, initMatrix.rows(), initMatrix.cols());
+    //     // nm::CreateOutputPin(this, "Function", Pin::Type::Function, "std::string (*)(int, bool)", &Demo::callbackFunction);
+    //     // nm::CreateOutputPin(this, ("Block " + std::to_string(blocks.size())).c_str(), Pin::Type::Function, "Eigen::Block<Eigen::MatrixXd> (*)()",
+    //     //                     [this]() { return block(blocks.size() - 1); });
+    // }
+    // while (outputPins.size() - 1 > static_cast<size_t>(nBlocks))
+    // {
+    //     blocks.pop_back();
+    //     inputPins.pop_back();
+    // }
 }
 
 bool NAV::Matrix::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)

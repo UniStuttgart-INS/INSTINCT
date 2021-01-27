@@ -59,16 +59,41 @@ class Matrix : public Node
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
   private:
+    struct BlockInfo
+    {
+        BlockInfo(int startRow, int startCol, int blockRows, int blockCols)
+            : startRow(startRow), startCol(startCol), blockRows(blockRows), blockCols(blockCols) {}
+
+        int startRow = 0;
+        int startCol = 0;
+        int blockRows = 1;
+        int blockCols = 1;
+    };
+
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Adds/Deletes Output Pins depending on the variable nBlocks
+    void updateNumberOfOutputPins();
+
+    Eigen::Block<Eigen::MatrixXd> block(size_t blockIndex = 0)
+    {
+        return matrix.block(blocks.at(blockIndex).startRow, blocks.at(blockIndex).startCol,
+                            blocks.at(blockIndex).blockRows, blocks.at(blockIndex).blockCols);
+    }
+
     /// Number of Rows
     int nRows = 3;
     /// Number of Columns
     int nCols = 3;
+    /// Number of subblocks of the matrix
+    int nBlocks = 0;
+
+    /// List of subblocks
+    std::vector<BlockInfo> blocks;
 
     /// The matrix object
     Eigen::MatrixXd matrix;
