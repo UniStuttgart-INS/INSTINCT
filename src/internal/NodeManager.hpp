@@ -30,6 +30,10 @@ const std::vector<Link>& m_Links();
 /// @param[in] node Node object to add to the list
 void AddNode(Node* node);
 
+/// @brief Update the provided node object
+/// @param[in] node Node object to add to the list
+void UpdateNode(Node* node);
+
 /// @brief Delete the node provided by id
 /// @param[in] linkId Unique Id of the Node to delete
 /// @return True if delete was successful, false if NodeId does not exist

@@ -101,6 +101,27 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
     flow::ApplyChanges();
 }
 
+void NAV::NodeManager::UpdateNode(Node* node)
+{
+    for (auto& pin : node->inputPins)
+    {
+        pin.parentNode = node;
+    }
+    for (auto& pin : node->outputPins)
+    {
+        pin.parentNode = node;
+    }
+
+    for (const auto& pin : node->inputPins)
+    {
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
+    }
+    for (const auto& pin : node->outputPins)
+    {
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
+    }
+}
+
 bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
 {
     if (nodeInitThread.joinable())

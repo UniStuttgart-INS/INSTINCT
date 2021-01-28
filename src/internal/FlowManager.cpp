@@ -270,6 +270,8 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
             // Load second time in case restore changed the amount of pins
             nodeJson.get_to<Node>(*node);
 
+            nm::UpdateNode(node);
+
             if (!ConfigManager::Get<bool>("nogui", false))
             {
                 ed::SetNodePosition(node->id, nodeJson.at("pos").get<ImVec2>());
