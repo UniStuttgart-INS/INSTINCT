@@ -15,9 +15,12 @@ message(STATUS "${CMAKE_PROJECT_NAME}: ${PROJECT_VERSION}")
 # ######################################################################################################################
 
 # Stop generation if compiler was changed
-if((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" AND NOT $ENV{CC} MATCHES ".*clang") OR
-    (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT $ENV{CC} MATCHES ".*gcc"))
-  message(FATAL_ERROR "The Compiler was changed! Build directory is ${CMAKE_CXX_COMPILER_ID} and environment CC=$ENV{CC}. Please clean the build files and run cmake again.")
+if((CMAKE_CXX_COMPILER_ID MATCHES ".*Clang" AND NOT $ENV{CC} MATCHES ".*clang") OR (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
+                                                                                    AND NOT $ENV{CC} MATCHES ".*gcc"))
+  message(
+    FATAL_ERROR
+      "The Compiler was changed! Build directory is ${CMAKE_CXX_COMPILER_ID} and environment CC=$ENV{CC}. Please clean the build files and run cmake again."
+  )
 endif()
 
 # ######################################################################################################################
@@ -47,7 +50,7 @@ target_compile_features(project_options INTERFACE cxx_std_20)
 if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
   option(ENABLE_BUILD_WITH_TIME_TRACE "Enable -ftime-trace to generate time tracing .json files on clang" OFF)
   if(ENABLE_BUILD_WITH_TIME_TRACE)
-    add_compile_definitions(project_options INTERFACE -ftime-trace)
+    target_compile_options(project_options INTERFACE -ftime-trace)
   endif()
 endif()
 

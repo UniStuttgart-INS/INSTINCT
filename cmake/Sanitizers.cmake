@@ -52,7 +52,7 @@ function(enable_sanitizers project_name)
   if(LIST_OF_SANITIZERS)
     if(NOT "${LIST_OF_SANITIZERS}" STREQUAL "")
       target_compile_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
-      target_link_libraries(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
+      target_link_options(${project_name} INTERFACE -fsanitize=${LIST_OF_SANITIZERS})
     endif()
   endif()
 
