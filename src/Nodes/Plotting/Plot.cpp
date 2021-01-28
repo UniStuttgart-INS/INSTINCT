@@ -10,9 +10,12 @@ namespace nm = NAV::NodeManager;
 
 #include "gui/widgets/Splitter.hpp"
 
+#include "util/Time/TimeBase.hpp"
 #include "util/InsTransformations.hpp"
 #include "util/InsMath.hpp"
 #include <algorithm>
+
+#include "Nodes/Simple/Matrix.hpp"
 
 namespace NAV
 {
@@ -210,6 +213,13 @@ void NAV::Plot::guiConfig()
                 if (ImGui::Combo(("##Pin Type for Pin " + std::to_string(pinIndex + 1) + " - " + std::to_string(size_t(id))).c_str(),
                                  reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
                 {
+                    auto connectedLinks = nm::FindConnectedLinksToPin(inputPins.at(pinIndex).id);
+                    if (!connectedLinks.empty())
+                    {
+                        nm::DeleteLink(connectedLinks.front()->id);
+                    }
+                    inputPins.at(pinIndex).notifyFunc.clear();
+
                     switch (pinData.pinType)
                     {
                     case PinData::PinType::Flow:
@@ -219,18 +229,22 @@ void NAV::Plot::guiConfig()
                     case PinData::PinType::Bool:
                         inputPins.at(pinIndex).type = Pin::Type::Bool;
                         inputPins.at(pinIndex).dataIdentifier.clear();
+                        inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
                         break;
                     case PinData::PinType::Int:
                         inputPins.at(pinIndex).type = Pin::Type::Int;
                         inputPins.at(pinIndex).dataIdentifier.clear();
+                        inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
                         break;
                     case PinData::PinType::Float:
                         inputPins.at(pinIndex).type = Pin::Type::Float;
                         inputPins.at(pinIndex).dataIdentifier.clear();
+                        inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
                         break;
                     case PinData::PinType::Matrix:
                         inputPins.at(pinIndex).type = Pin::Type::Matrix;
                         inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd", "Matrix::Block" };
+                        inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
                         break;
                     }
 
@@ -563,6 +577,27 @@ void NAV::Plot::restore(json const& j)
     if (j.contains("pinData"))
     {
         j.at("pinData").get_to(data);
+
+        for (size_t inputPinIndex = 0; inputPinIndex < inputPins.size(); inputPinIndex++)
+        {
+            switch (data.at(inputPinIndex).pinType)
+            {
+            case Plot::PinData::PinType::Bool:
+                inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
+                break;
+            case Plot::PinData::PinType::Int:
+                inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
+                break;
+            case Plot::PinData::PinType::Float:
+                inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
+                break;
+            case Plot::PinData::PinType::Matrix:
+                inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
+                break;
+            default:
+                break;
+            }
+        }
     }
     if (j.contains("plotInfos"))
     {
@@ -593,162 +628,229 @@ void NAV::Plot::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-bool NAV::Plot::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 
     size_t pinIndex = pinIndexFromId(endPin->id);
 
-    data.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
+    if (inputPins.at(pinIndex).type == Pin::Type::Flow)
+    {
+        data.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
 
-    if (startPin->dataIdentifier.front() == RtklibPosObs::type())
-    {
-        // InsObs
-        data.at(pinIndex).addPlotDataItem("Time [s]");
-        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
-        // RtklibPosObs
-        data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
-        data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
-        data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
-        data.at(pinIndex).addPlotDataItem("Latitude [deg]");
-        data.at(pinIndex).addPlotDataItem("Longitude [deg]");
-        data.at(pinIndex).addPlotDataItem("Altitude [m]");
-        data.at(pinIndex).addPlotDataItem("North/South [m]");
-        data.at(pinIndex).addPlotDataItem("East/West [m]");
-        data.at(pinIndex).addPlotDataItem("Q [-]");
-        data.at(pinIndex).addPlotDataItem("ns [-]");
-        data.at(pinIndex).addPlotDataItem("sdx [m]");
-        data.at(pinIndex).addPlotDataItem("sdy [m]");
-        data.at(pinIndex).addPlotDataItem("sdz [m]");
-        data.at(pinIndex).addPlotDataItem("sdn [m]");
-        data.at(pinIndex).addPlotDataItem("sde [m]");
-        data.at(pinIndex).addPlotDataItem("sdu [m]");
-        data.at(pinIndex).addPlotDataItem("sdxy [m]");
-        data.at(pinIndex).addPlotDataItem("sdyz [m]");
-        data.at(pinIndex).addPlotDataItem("sdzx [m]");
-        data.at(pinIndex).addPlotDataItem("sdne [m]");
-        data.at(pinIndex).addPlotDataItem("sdeu [m]");
-        data.at(pinIndex).addPlotDataItem("sdun [m]");
-        data.at(pinIndex).addPlotDataItem("age [s]");
-        data.at(pinIndex).addPlotDataItem("ratio [-]");
+        if (startPin->dataIdentifier.front() == RtklibPosObs::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // RtklibPosObs
+            data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Latitude [deg]");
+            data.at(pinIndex).addPlotDataItem("Longitude [deg]");
+            data.at(pinIndex).addPlotDataItem("Altitude [m]");
+            data.at(pinIndex).addPlotDataItem("North/South [m]");
+            data.at(pinIndex).addPlotDataItem("East/West [m]");
+            data.at(pinIndex).addPlotDataItem("Q [-]");
+            data.at(pinIndex).addPlotDataItem("ns [-]");
+            data.at(pinIndex).addPlotDataItem("sdx [m]");
+            data.at(pinIndex).addPlotDataItem("sdy [m]");
+            data.at(pinIndex).addPlotDataItem("sdz [m]");
+            data.at(pinIndex).addPlotDataItem("sdn [m]");
+            data.at(pinIndex).addPlotDataItem("sde [m]");
+            data.at(pinIndex).addPlotDataItem("sdu [m]");
+            data.at(pinIndex).addPlotDataItem("sdxy [m]");
+            data.at(pinIndex).addPlotDataItem("sdyz [m]");
+            data.at(pinIndex).addPlotDataItem("sdzx [m]");
+            data.at(pinIndex).addPlotDataItem("sdne [m]");
+            data.at(pinIndex).addPlotDataItem("sdeu [m]");
+            data.at(pinIndex).addPlotDataItem("sdun [m]");
+            data.at(pinIndex).addPlotDataItem("age [s]");
+            data.at(pinIndex).addPlotDataItem("ratio [-]");
+        }
+        else if (startPin->dataIdentifier.front() == UbloxObs::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // UbloxObs
+            data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Latitude [deg]");
+            data.at(pinIndex).addPlotDataItem("Longitude [deg]");
+            data.at(pinIndex).addPlotDataItem("Altitude [m]");
+            data.at(pinIndex).addPlotDataItem("North/South [m]");
+            data.at(pinIndex).addPlotDataItem("East/West [m]");
+        }
+        else if (startPin->dataIdentifier.front() == ImuObs::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // ImuObs
+            data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
+            data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Temperature [°C]");
+        }
+        else if (startPin->dataIdentifier.front() == KvhObs::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // ImuObs
+            data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
+            data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Temperature [°C]");
+            // KvhObs
+            data.at(pinIndex).addPlotDataItem("Status [bits]");
+            data.at(pinIndex).addPlotDataItem("Sequence Number [.]");
+        }
+        else if (startPin->dataIdentifier.front() == VectorNavObs::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // ImuObs
+            data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
+            data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Temperature [°C]");
+            // VectorNavObs
+            data.at(pinIndex).addPlotDataItem("Quaternion W []");
+            data.at(pinIndex).addPlotDataItem("Quaternion X []");
+            data.at(pinIndex).addPlotDataItem("Quaternion Y []");
+            data.at(pinIndex).addPlotDataItem("Quaternion Z []");
+            data.at(pinIndex).addPlotDataItem("Yaw [deg]");
+            data.at(pinIndex).addPlotDataItem("Pitch [deg]");
+            data.at(pinIndex).addPlotDataItem("Roll [deg]");
+            data.at(pinIndex).addPlotDataItem("Time since syncIn [ns]");
+            data.at(pinIndex).addPlotDataItem("SyncIn Count []");
+            data.at(pinIndex).addPlotDataItem("Mag comp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag comp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag comp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Accel comp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel comp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel comp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Gyro comp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro comp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro comp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem("dTime [s]");
+            data.at(pinIndex).addPlotDataItem("dTheta X [deg]");
+            data.at(pinIndex).addPlotDataItem("dTheta Y [deg]");
+            data.at(pinIndex).addPlotDataItem("dTheta Z [deg]");
+            data.at(pinIndex).addPlotDataItem("dVelocity X [m/s]");
+            data.at(pinIndex).addPlotDataItem("dVelocity Y [m/s]");
+            data.at(pinIndex).addPlotDataItem("dVelocity Z [m/s]");
+            data.at(pinIndex).addPlotDataItem("VPE Status [bits]");
+            data.at(pinIndex).addPlotDataItem("Pressure [kPa]");
+            data.at(pinIndex).addPlotDataItem("Mag comp N [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag comp E [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag comp D [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Accel comp N [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel comp E [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel comp D [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Gyro comp N [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro comp E [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro comp D [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Linear Accel X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Linear Accel Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Linear Accel Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Linear Accel N [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Linear Accel E [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Linear Accel D [m/s^2]");
+        }
     }
-    else if (startPin->dataIdentifier.front() == UbloxObs::type())
+    else if (inputPins.at(pinIndex).type == Pin::Type::Bool)
     {
-        // InsObs
-        data.at(pinIndex).addPlotDataItem("Time [s]");
-        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
-        // UbloxObs
-        data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
-        data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
-        data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
-        data.at(pinIndex).addPlotDataItem("Latitude [deg]");
-        data.at(pinIndex).addPlotDataItem("Longitude [deg]");
-        data.at(pinIndex).addPlotDataItem("Altitude [m]");
-        data.at(pinIndex).addPlotDataItem("North/South [m]");
-        data.at(pinIndex).addPlotDataItem("East/West [m]");
-    }
-    else if (startPin->dataIdentifier.front() == ImuObs::type())
-    {
-        // InsObs
-        data.at(pinIndex).addPlotDataItem("Time [s]");
-        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
-        // ImuObs
-        data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
-        data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Temperature [°C]");
-    }
-    else if (startPin->dataIdentifier.front() == KvhObs::type())
-    {
-        // InsObs
-        data.at(pinIndex).addPlotDataItem("Time [s]");
-        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
-        // ImuObs
-        data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
-        data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Temperature [°C]");
-        // KvhObs
-        data.at(pinIndex).addPlotDataItem("Status [bits]");
-        data.at(pinIndex).addPlotDataItem("Sequence Number [.]");
-    }
-    else if (startPin->dataIdentifier.front() == VectorNavObs::type())
-    {
-        // InsObs
-        data.at(pinIndex).addPlotDataItem("Time [s]");
-        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
-        // ImuObs
-        data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
-        data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Temperature [°C]");
-        // VectorNavObs
-        data.at(pinIndex).addPlotDataItem("Quaternion W []");
-        data.at(pinIndex).addPlotDataItem("Quaternion X []");
-        data.at(pinIndex).addPlotDataItem("Quaternion Y []");
-        data.at(pinIndex).addPlotDataItem("Quaternion Z []");
-        data.at(pinIndex).addPlotDataItem("Yaw [deg]");
-        data.at(pinIndex).addPlotDataItem("Pitch [deg]");
-        data.at(pinIndex).addPlotDataItem("Roll [deg]");
-        data.at(pinIndex).addPlotDataItem("Time since syncIn [ns]");
-        data.at(pinIndex).addPlotDataItem("SyncIn Count []");
-        data.at(pinIndex).addPlotDataItem("Mag comp X [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag comp Y [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag comp Z [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Accel comp X [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel comp Y [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel comp Z [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Gyro comp X [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro comp Y [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro comp Z [rad/s]");
-        data.at(pinIndex).addPlotDataItem("dTime [s]");
-        data.at(pinIndex).addPlotDataItem("dTheta X [deg]");
-        data.at(pinIndex).addPlotDataItem("dTheta Y [deg]");
-        data.at(pinIndex).addPlotDataItem("dTheta Z [deg]");
-        data.at(pinIndex).addPlotDataItem("dVelocity X [m/s]");
-        data.at(pinIndex).addPlotDataItem("dVelocity Y [m/s]");
-        data.at(pinIndex).addPlotDataItem("dVelocity Z [m/s]");
-        data.at(pinIndex).addPlotDataItem("VPE Status [bits]");
-        data.at(pinIndex).addPlotDataItem("Pressure [kPa]");
-        data.at(pinIndex).addPlotDataItem("Mag comp N [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag comp E [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Mag comp D [Gauss]");
-        data.at(pinIndex).addPlotDataItem("Accel comp N [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel comp E [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Accel comp D [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Gyro comp N [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro comp E [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Gyro comp D [rad/s]");
-        data.at(pinIndex).addPlotDataItem("Linear Accel X [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Linear Accel Y [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Linear Accel Z [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Linear Accel N [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Linear Accel E [m/s^2]");
-        data.at(pinIndex).addPlotDataItem("Linear Accel D [m/s^2]");
-    }
+        data.at(pinIndex).dataIdentifier = startPin->name;
 
-    return true;
+        // InsObs
+        data.at(pinIndex).addPlotDataItem("Time [s]");
+        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        // Bool
+        data.at(pinIndex).addPlotDataItem("Boolean");
+    }
+    else if (inputPins.at(pinIndex).type == Pin::Type::Int)
+    {
+        data.at(pinIndex).dataIdentifier = startPin->name;
+
+        // InsObs
+        data.at(pinIndex).addPlotDataItem("Time [s]");
+        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        // Int
+        data.at(pinIndex).addPlotDataItem("Integer");
+    }
+    else if (inputPins.at(pinIndex).type == Pin::Type::Float)
+    {
+        data.at(pinIndex).dataIdentifier = startPin->name;
+
+        // InsObs
+        data.at(pinIndex).addPlotDataItem("Time [s]");
+        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        // Float
+        data.at(pinIndex).addPlotDataItem("Float");
+    }
+    else if (inputPins.at(pinIndex).type == Pin::Type::Matrix)
+    {
+        data.at(pinIndex).dataIdentifier = startPin->name;
+
+        // InsObs
+        data.at(pinIndex).addPlotDataItem("Time [s]");
+        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        // Matrix
+        if (startPin->dataIdentifier.front() == "Eigen::MatrixXd")
+        {
+            if (auto* matrix = getInputValue<Eigen::MatrixXd>(pinIndex))
+            {
+                for (int row = 0; row < matrix->rows(); row++)
+                {
+                    for (int col = 0; col < matrix->cols(); col++)
+                    {
+                        data.at(pinIndex).addPlotDataItem(std::to_string(row) + ", " + std::to_string(col));
+                    }
+                }
+            }
+        }
+        else if (startPin->dataIdentifier.front() == "Matrix::Block")
+        {
+            if (auto* mBlock = getInputValue<Matrix::Block>(pinIndex))
+            {
+                auto matrix = (*mBlock)();
+                for (int row = 0; row < matrix.rows(); row++)
+                {
+                    for (int col = 0; col < matrix.cols(); col++)
+                    {
+                        data.at(pinIndex).addPlotDataItem(std::to_string(row) + ", " + std::to_string(col));
+                    }
+                }
+            }
+        }
+    }
 }
 
 void NAV::Plot::onDeleteLink([[maybe_unused]] Pin* startPin, Pin* endPin)
@@ -829,6 +931,156 @@ void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
     if (!std::isnan(value))
     {
         pinData.plotData.at(dataIndex).hasData = true;
+    }
+}
+
+void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
+{
+    if (Link* link = nm::FindLink(linkId))
+    {
+        size_t pinIndex = pinIndexFromId(link->endPinId);
+
+        LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
+
+        auto currentTime = util::time::GetCurrentTime();
+        auto* value = getInputValue<bool>(pinIndex);
+
+        if (value != nullptr && !currentTime.empty())
+        {
+            if (std::isnan(startValue_Time))
+            {
+                startValue_Time = static_cast<double>(currentTime.toGPSweekTow().tow);
+            }
+
+            size_t i = 0;
+
+            // InsObs
+            addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - startValue_Time);
+            addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+            // Boolean
+            addData(pinIndex, i++, static_cast<double>(*value));
+        }
+    }
+}
+
+void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
+{
+    if (Link* link = nm::FindLink(linkId))
+    {
+        size_t pinIndex = pinIndexFromId(link->endPinId);
+
+        LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
+
+        auto currentTime = util::time::GetCurrentTime();
+        auto* value = getInputValue<int>(pinIndex);
+
+        if (value != nullptr && !currentTime.empty())
+        {
+            if (std::isnan(startValue_Time))
+            {
+                startValue_Time = static_cast<double>(currentTime.toGPSweekTow().tow);
+            }
+
+            size_t i = 0;
+
+            // InsObs
+            addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - startValue_Time);
+            addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+            // Integer
+            addData(pinIndex, i++, static_cast<double>(*value));
+        }
+    }
+}
+
+void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
+{
+    if (Link* link = nm::FindLink(linkId))
+    {
+        size_t pinIndex = pinIndexFromId(link->endPinId);
+
+        LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
+
+        auto currentTime = util::time::GetCurrentTime();
+        auto* value = getInputValue<double>(pinIndex);
+
+        if (value != nullptr && !currentTime.empty())
+        {
+            if (std::isnan(startValue_Time))
+            {
+                startValue_Time = static_cast<double>(currentTime.toGPSweekTow().tow);
+            }
+
+            size_t i = 0;
+
+            // InsObs
+            addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - startValue_Time);
+            addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+            // Double
+            addData(pinIndex, i++, *value);
+        }
+    }
+}
+
+void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
+{
+    if (Link* link = nm::FindLink(linkId))
+    {
+        if (Pin* sourcePin = nm::FindPin(link->startPinId))
+        {
+            size_t pinIndex = pinIndexFromId(link->endPinId);
+
+            LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
+
+            auto currentTime = util::time::GetCurrentTime();
+            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+            {
+                auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
+
+                if (value != nullptr && !currentTime.empty())
+                {
+                    if (std::isnan(startValue_Time))
+                    {
+                        startValue_Time = static_cast<double>(currentTime.toGPSweekTow().tow);
+                    }
+
+                    size_t i = 0;
+
+                    // InsObs
+                    addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - startValue_Time);
+                    addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+                    // Matrix
+                    for (int row = 0; row < value->rows(); row++)
+                    {
+                        for (int col = 0; col < value->cols(); col++)
+                        {
+                            addData(pinIndex, i++, (*value)(row, col));
+                        }
+                    }
+                }
+            }
+            else if (sourcePin->dataIdentifier.front() == "Matrix::Block")
+            {
+                auto* value = getInputValue<Matrix::Block>(pinIndex);
+
+                if (value != nullptr && !currentTime.empty())
+                {
+                    if (std::isnan(startValue_Time))
+                    {
+                        startValue_Time = static_cast<double>(currentTime.toGPSweekTow().tow);
+                    }
+
+                    size_t i = 0;
+
+                    auto matrix = (*value)();
+
+                    // InsObs
+                    addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - startValue_Time);
+                    addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
+                    // Matrix
+                    addData(pinIndex, i++, matrix(0, 0));
+                }
+            }
+        }
     }
 }
 
