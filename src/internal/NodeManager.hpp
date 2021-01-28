@@ -52,6 +52,10 @@ Link* CreateLink(Pin* startPin, Pin* endPin);
 /// @param[in] link Link object to add to the list
 bool AddLink(const Link& link);
 
+/// @brief Refresh the link and the connected nodes
+/// @param[in] linkId Unique Id of the Link to refresh
+void RefreshLink(ax::NodeEditor::LinkId linkId);
+
 /// @brief Delete the link provided by id
 /// @param[in] linkId Unique Id of the Link to delete
 /// @return True if delete was successful, false if LinkId does not exist
