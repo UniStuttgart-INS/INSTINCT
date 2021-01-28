@@ -133,8 +133,8 @@ constexpr int32_t daysInMonth(int32_t month, int32_t year)
 /// Modified Julien Date [UTC]
 struct InsTime_MJD
 {
-    int32_t mjd_day = InsTimeUtil::END_OF_THE_CENTURY_MJD; ///< Full days since 17. November 1858 [UTC]
-    long double mjd_frac = 0.0L;                           ///< Decimal fractions of a day of the Modified Julien Date [UTC]
+    int32_t mjd_day = 0;         ///< Full days since 17. November 1858 [UTC]
+    long double mjd_frac = 0.0L; ///< Decimal fractions of a day of the Modified Julien Date [UTC]
 
     /// @brief Default constructor
     constexpr InsTime_MJD() = default;
@@ -939,6 +939,12 @@ class InsTime
     }
 
     /* ---------------------------- Utility Functions --------------------------- */
+
+    /// @brief Checks if the Time object has a value
+    [[nodiscard]] constexpr bool empty() const
+    {
+        return mjd.mjd_day == 0 && mjd.mjd_frac == 0.0L;
+    }
 
     /// @brief Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time
     /// (Changes time, so that it corresponds to the time of GLONASS ORBIT last element)

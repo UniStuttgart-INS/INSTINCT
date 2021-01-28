@@ -2,6 +2,7 @@
 
 #include "util/Logger.hpp"
 
+#include "util/Time/TimeBase.hpp"
 #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
 
 #include "gui/widgets/HelpMarker.hpp"
@@ -143,5 +144,9 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 
     sensors::ublox::decryptUbloxObs(obs, ubSensor->currentInsTime);
 
+    if (obs->insTime.has_value())
+    {
+        util::time::SetCurrentTime(obs->insTime.value());
+    }
     ubSensor->invokeCallbacks(OutputPortIndex_UbloxObs, obs);
 }

@@ -8,6 +8,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "util/Time/TimeBase.hpp"
 #include "util/UartSensors/KVH/KvhUtilities.hpp"
 
 #include "NodeData/IMU/KvhObs.hpp"
@@ -158,6 +159,11 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
         kvhSensor->prevSequenceNumber = obs->sequenceNumber;
 
         // Calls all the callbacks
+        if (InsTime currentTime = util::time::GetCurrentTime();
+            !currentTime.empty())
+        {
+            obs->insTime = currentTime;
+        }
         kvhSensor->invokeCallbacks(OutputPortIndex_KvhObs, obs);
     }
     else if (p.type() == uart::protocol::Packet::Type::TYPE_ASCII)

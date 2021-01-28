@@ -1,6 +1,7 @@
 #include "Demo.hpp"
 
 #include "util/Logger.hpp"
+#include "util/Time/TimeBase.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -89,6 +90,17 @@ std::string NAV::Demo::category()
 
 void NAV::Demo::guiConfig()
 {
+    if (ImGui::Button("Set current Ins Time"))
+    {
+        std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        auto* t = std::localtime(&now);
+        util::time::SetCurrentTime(InsTime(static_cast<uint16_t>(t->tm_year + 1900),
+                                           static_cast<uint16_t>(t->tm_mon),
+                                           static_cast<uint16_t>(t->tm_mday),
+                                           static_cast<uint16_t>(t->tm_hour),
+                                           static_cast<uint16_t>(t->tm_min),
+                                           static_cast<long double>(t->tm_sec)));
+    }
     if (ImGui::BeginTable("##DemoValues", 2, ImGuiTableFlags_Borders))
     {
         ImGui::TableSetupColumn("Input");
@@ -232,70 +244,70 @@ void NAV::Demo::guiConfig()
             connectedMatrix == nullptr)
         {
             ImGui::TextUnformatted("Matrix: N/A");
-            }
-            else
-            {
-        float itemWidth = ImGui::GetContentRegionAvail().x / 3.0F - 2 * ImGui::GetStyle().ItemInnerSpacing.x;
-        ImGui::SetNextItemWidth(itemWidth);
+        }
+        else
+        {
+            float itemWidth = ImGui::GetContentRegionAvail().x / 3.0F - 2 * ImGui::GetStyle().ItemInnerSpacing.x;
+            ImGui::SetNextItemWidth(itemWidth);
             if (ImGui::InputDouble("##0,0", &(*connectedMatrix)(0, 0), 0.0, 0.0, "%.1f")) // We don't want a label,
             {                                                                             // but the label has to be an unique identifier.
                 flow::ApplyChanges();                                                     // So use ##, which hides everything after it
                 notifyInputValueChanged(InputPortIndex_Matrix);
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(itemWidth);
             if (ImGui::InputDouble("##0,1", &(*connectedMatrix)(0, 1), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            {
+                flow::ApplyChanges();
                 notifyInputValueChanged(InputPortIndex_Matrix);
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(itemWidth);
             if (ImGui::InputDouble("##0,2", &(*connectedMatrix)(0, 2), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            {
+                flow::ApplyChanges();
                 notifyInputValueChanged(InputPortIndex_Matrix);
-        }
+            }
 
-        ImGui::SetNextItemWidth(itemWidth);
+            ImGui::SetNextItemWidth(itemWidth);
             if (ImGui::InputDouble("##1,0", &(*connectedMatrix)(1, 0), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            {
+                flow::ApplyChanges();
                 notifyInputValueChanged(InputPortIndex_Matrix);
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(itemWidth);
             if (ImGui::InputDouble("##1,1", &(*connectedMatrix)(1, 1), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            {
+                flow::ApplyChanges();
                 notifyInputValueChanged(InputPortIndex_Matrix);
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(itemWidth);
             if (ImGui::InputDouble("##1,2", &(*connectedMatrix)(1, 2), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            {
+                flow::ApplyChanges();
                 notifyInputValueChanged(InputPortIndex_Matrix);
-        }
+            }
 
-        ImGui::SetNextItemWidth(itemWidth);
+            ImGui::SetNextItemWidth(itemWidth);
             if (ImGui::InputDouble("##2,0", &(*connectedMatrix)(2, 0), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            {
+                flow::ApplyChanges();
                 notifyInputValueChanged(InputPortIndex_Matrix);
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(itemWidth);
             if (ImGui::InputDouble("##2,1", &(*connectedMatrix)(2, 1), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            {
+                flow::ApplyChanges();
                 notifyInputValueChanged(InputPortIndex_Matrix);
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(itemWidth);
             if (ImGui::InputDouble("##2,2", &(*connectedMatrix)(2, 2), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            {
+                flow::ApplyChanges();
                 notifyInputValueChanged(InputPortIndex_Matrix);
             }
         }
@@ -505,7 +517,7 @@ std::shared_ptr<NAV::NodeData> NAV::Demo::pollData(bool peek)
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     auto* t = std::localtime(&now);
 
-    obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year),
+    obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
                            static_cast<uint16_t>(t->tm_mon),
                            static_cast<uint16_t>(t->tm_mday),
                            static_cast<uint16_t>(t->tm_hour),

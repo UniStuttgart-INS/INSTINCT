@@ -9,6 +9,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "util/ConfigManager.hpp"
+#include "util/Time/TimeBase.hpp"
 
 #include <chrono>
 #include <map>
@@ -103,6 +104,8 @@ bool NAV::FlowExecutor::initialize()
 
     if (!hasUninitializedNodes)
     {
+        util::time::SetMode(util::time::Mode::POST_PROCESSING);
+
         nm::EnableAllCallbacks();
     }
 
@@ -116,6 +119,8 @@ void NAV::FlowExecutor::deinitialize()
     _execute.store(false, std::memory_order_release);
 
     nm::DisableAllCallbacks();
+
+    util::time::SetMode(util::time::Mode::REAL_TIME);
 }
 
 void NAV::FlowExecutor::execute()
@@ -197,6 +202,9 @@ void NAV::FlowExecutor::execute()
         auto* callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&pin->data);
         if (callback != nullptr && *callback != nullptr)
         {
+            // Update the global time
+            util::time::SetCurrentTime(it->first);
+
             // Trigger the already peeked observation and invoke it's callbacks (peek = false)
             if ((node->**callback)(false) == nullptr)
             {

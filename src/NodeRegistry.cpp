@@ -167,8 +167,6 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/Plotting/Plot.hpp"
 // State
 #include "Nodes/State/State.hpp"
-// Time
-#include "Nodes/Time/TimeSynchronizer.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
 {
@@ -205,8 +203,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<Plot>();
     // State
     registerNodeType<State>();
-    // Time
-    registerNodeType<TimeSynchronizer>();
 }
 
 #include "NodeData/NodeData.hpp"

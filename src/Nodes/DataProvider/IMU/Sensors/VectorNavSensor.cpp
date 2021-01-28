@@ -12,6 +12,8 @@ namespace nm = NAV::NodeManager;
 
 #include "NodeData/IMU/VectorNavObs.hpp"
 
+#include "util/Time/TimeBase.hpp"
+
 #include <map>
 
 NAV::VectorNavSensor::VectorNavSensor()
@@ -383,6 +385,11 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                      obs->vpeStatus.value().status, obs->temperature.value());
 
             // Calls all the callbacks
+            if (InsTime currentTime = util::time::GetCurrentTime();
+                !currentTime.empty())
+            {
+                obs->insTime = currentTime;
+            }
             vnSensor->invokeCallbacks(VectorNavSensor::OutputPortIndex_VectorNavObs, obs);
         }
         else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)

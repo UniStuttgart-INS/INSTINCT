@@ -15,6 +15,8 @@ namespace nm = NAV::NodeManager;
 
 #include "NodeData/IMU/ImuObs.hpp"
 
+#include "util/Time/TimeBase.hpp"
+
 NAV::Navio2Sensor::Navio2Sensor()
 {
     name = typeStatic();
@@ -169,5 +171,10 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     LOG_DATA("DATA({}): {}, {}°C, a=({}, {}, {})", navio->name, obs->timeSinceStartup.value(), obs->temperature.value(),
              navio->ax, navio->ay, navio->az);
 
+    if (InsTime currentTime = util::time::GetCurrentTime();
+        !currentTime.empty())
+    {
+        obs->insTime = currentTime;
+    }
     navio->invokeCallbacks(OutputPortIndex_ImuObs, obs);
 }

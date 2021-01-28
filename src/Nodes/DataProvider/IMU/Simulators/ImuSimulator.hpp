@@ -8,6 +8,7 @@
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
 #include "util/Eigen.hpp"
+#include "util/InsTime.hpp"
 
 namespace NAV
 {
@@ -65,6 +66,9 @@ class ImuSimulator : public Imu
     /// @param[in] peek Specifies if the data should be peeked or read
     /// @return The simulated observation
     [[nodiscard]] std::shared_ptr<NodeData> pollData(bool peek = false);
+
+    /// Global starttime
+    InsTime startTime;
 
     /// Duration of the data gerneation in [s]
     double duration = 1.0;
