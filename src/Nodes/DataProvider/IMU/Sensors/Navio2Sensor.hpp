@@ -88,7 +88,7 @@ class Navio2Sensor : public Imu
     /// Timer object to handle async data requests
     CallbackTimer timer;
     /// Start Time to calculate the TimeSinceStartup
-    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+    std::chrono::time_point<std::chrono::steady_clock> startTime;
 
     /// Accelerometer X data, which are read into by the sensor
     float ax{};

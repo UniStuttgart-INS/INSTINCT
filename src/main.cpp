@@ -72,7 +72,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
                 }
                 if (loadSuccessful)
                 {
-                    auto start = std::chrono::high_resolution_clock::now();
+                    auto start = std::chrono::steady_clock::now();
                     NAV::FlowExecutor::start();
 
                     NAV::FlowExecutor::waitForFinish();
@@ -85,7 +85,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
                     else if (size_t duration = NAV::ConfigManager::Get<size_t>("duration", 0);
                              NAV::ConfigManager::Get<bool>("nogui", false) && duration)
                     {
-                        auto now = std::chrono::high_resolution_clock::now();
+                        auto now = std::chrono::steady_clock::now();
                         std::chrono::duration<double> elapsed = now - start;
                         if (elapsed.count() < static_cast<double>(duration))
                         {

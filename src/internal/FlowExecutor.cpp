@@ -128,7 +128,7 @@ void NAV::FlowExecutor::execute()
         return;
     }
 
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::steady_clock::now();
 
     std::multimap<NAV::InsTime, Pin*> events;
 
@@ -240,7 +240,7 @@ void NAV::FlowExecutor::execute()
         || (!ConfigManager::Get<bool>("sigterm", false)
             && !ConfigManager::Get<size_t>("duration", 0)))
     {
-        auto finish = std::chrono::high_resolution_clock::now();
+        auto finish = std::chrono::steady_clock::now();
         std::chrono::duration<double> elapsed = finish - start;
         LOG_INFO("Elapsed time: {} s", elapsed.count());
     }

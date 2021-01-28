@@ -116,7 +116,7 @@ bool NAV::Navio2Sensor::initialize()
 #endif
 
     int outputInterval = static_cast<int>(1.0 / static_cast<double>(outputFrequency) * 1000.0);
-    startTime = std::chrono::high_resolution_clock::now();
+    startTime = std::chrono::steady_clock::now();
     timer.start(outputInterval, readImuThread, this);
 
     return true;
@@ -142,7 +142,7 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     auto* navio = static_cast<Navio2Sensor*>(userData);
     auto obs = std::make_shared<ImuObs>(navio->imuPos);
 
-    auto currentTime = std::chrono::high_resolution_clock::now();
+    auto currentTime = std::chrono::steady_clock::now();
 #if !__APPLE__
     navio->sensor->update();
 

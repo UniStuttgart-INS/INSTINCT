@@ -30,7 +30,7 @@ void CallbackTimer::start(int interval, const std::function<void(void*)>& func, 
     _thd = std::thread([this, func, userData]() {
         while (_execute.load(std::memory_order_acquire))
         {
-            auto start = std::chrono::high_resolution_clock::now();
+            auto start = std::chrono::steady_clock::now();
             func(userData);
             // std::this_thread::sleep_for(
             //     std::chrono::milliseconds(_interval));
