@@ -244,6 +244,9 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
         }
     }
 
+    startPin->parentNode->afterCreateLink(startPin, endPin);
+    endPin->parentNode->afterCreateLink(startPin, endPin);
+
     flow::ApplyChanges();
 
     return &m_links.back();
@@ -316,6 +319,9 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
                 }
             }
         }
+
+        startPin->parentNode->afterCreateLink(startPin, endPin);
+        endPin->parentNode->afterCreateLink(startPin, endPin);
     }
     else
     {

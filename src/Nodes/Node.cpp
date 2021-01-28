@@ -111,6 +111,10 @@ bool NAV::Node::onCreateLink(Pin* /*startPin*/, Pin* /*endPin*/)
 
 void NAV::Node::onDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
+void NAV::Node::afterCreateLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
+
+void NAV::Node::afterDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
+
 void NAV::Node::notifyInputValueChanged(size_t portIndex)
 {
     auto connectedLinks = nm::FindConnectedLinksToPin(inputPins.at(portIndex).id);

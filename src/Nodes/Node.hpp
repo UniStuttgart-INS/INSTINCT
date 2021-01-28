@@ -152,6 +152,16 @@ class Node
     /// @param[in] endPin Pin where the link ends
     virtual void onDeleteLink(Pin* startPin, Pin* endPin);
 
+    /// @brief Called when a new link was established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    virtual void afterCreateLink(Pin* startPin, Pin* endPin);
+
+    /// @brief Called when a link was deleted
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    virtual void afterDeleteLink(Pin* startPin, Pin* endPin);
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member functions                                             */
     /* -------------------------------------------------------------------------------------------------------- */
