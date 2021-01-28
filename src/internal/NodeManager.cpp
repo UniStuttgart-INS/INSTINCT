@@ -244,8 +244,11 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
         }
     }
 
-    startPin->parentNode->afterCreateLink(startPin, endPin);
-    endPin->parentNode->afterCreateLink(startPin, endPin);
+    if (startPin && endPin && startPin->parentNode && endPin->parentNode)
+    {
+        startPin->parentNode->afterCreateLink(startPin, endPin);
+        endPin->parentNode->afterCreateLink(startPin, endPin);
+    }
 
     flow::ApplyChanges();
 
@@ -320,8 +323,11 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             }
         }
 
-        startPin->parentNode->afterCreateLink(startPin, endPin);
-        endPin->parentNode->afterCreateLink(startPin, endPin);
+        if (startPin && endPin && startPin->parentNode && endPin->parentNode)
+        {
+            startPin->parentNode->afterCreateLink(startPin, endPin);
+            endPin->parentNode->afterCreateLink(startPin, endPin);
+        }
     }
     else
     {
@@ -422,8 +428,11 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
             }
         }
 
-        startPin->parentNode->afterCreateLink(startPin, endPin);
-        endPin->parentNode->afterCreateLink(startPin, endPin);
+        if (startPin && endPin && startPin->parentNode && endPin->parentNode)
+        {
+            startPin->parentNode->afterCreateLink(startPin, endPin);
+            endPin->parentNode->afterCreateLink(startPin, endPin);
+        }
     }
     else
     {
