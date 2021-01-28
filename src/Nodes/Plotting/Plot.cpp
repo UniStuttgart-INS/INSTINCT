@@ -459,7 +459,7 @@ void NAV::Plot::guiConfig()
 
             ImGui::SameLine();
 
-            std::string xLabel = data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).displayName;
+            std::string xLabel = !data.at(0).plotData.empty() ? data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).displayName : "";
             ImPlot::FitNextPlotAxes(plotInfo.autoLimitXaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis);
             if (ImPlot::BeginPlot((plotInfo.title + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                   xLabel.c_str(), nullptr, ImVec2(-1, 0), plotInfo.plotFlags))
