@@ -1076,6 +1076,11 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Separator();
             if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "", false, !node->isInitializing() && !node->isDeinitializing()))
             {
+                if (node->isInitialized())
+                {
+                    node->isDeinitializing_ = true;
+                    initList.emplace_back(node, false);
+                }
                 node->isInitializing_ = true;
                 initList.emplace_back(node, true);
             }

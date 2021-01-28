@@ -206,7 +206,12 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
         endPin->data = startPin->data;
         if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
         {
-            startPin->notifyFunc.push_back(endPin->notifyFunc.front());
+            if (!endPin->notifyFunc.empty())
+            {
+                startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
+                                                  std::get<1>(endPin->notifyFunc.front()),
+                                                  m_links.back().id);
+            }
         }
 
         if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
@@ -274,7 +279,12 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             endPin->data = startPin->data;
             if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
             {
-                startPin->notifyFunc.push_back(endPin->notifyFunc.front());
+                if (!endPin->notifyFunc.empty())
+                {
+                    startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
+                                                      std::get<1>(endPin->notifyFunc.front()),
+                                                      m_links.back().id);
+                }
             }
 
             if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
@@ -327,15 +337,16 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
                 endPin->data = static_cast<void*>(nullptr);
                 if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
                 {
-                    auto iter = std::find(startPin->notifyFunc.begin(), startPin->notifyFunc.end(),
-                                          endPin->notifyFunc.front());
-                    if (iter != startPin->notifyFunc.end())
+                    if (!endPin->notifyFunc.empty())
                     {
-                        startPin->notifyFunc.erase(iter);
-                    }
-                    else
-                    {
-                        LOG_ERROR("Tried to delete link {}, with type Flow, but could not find the callback.", linkId.AsPointer());
+                        auto iter = std::find(startPin->notifyFunc.begin(), startPin->notifyFunc.end(),
+                                              std::make_tuple(std::get<0>(endPin->notifyFunc.front()),
+                                                              std::get<1>(endPin->notifyFunc.front()),
+                                                              linkId));
+                        if (iter != startPin->notifyFunc.end())
+                        {
+                            startPin->notifyFunc.erase(iter);
+                        }
                     }
                 }
 

@@ -160,6 +160,14 @@ class Node
     /// @param[in] portIndex Input Port index where to set the value
     void notifyInputValueChanged(size_t portIndex);
 
+    /// @brief Notifies connected nodes about the change
+    /// @param[in] portIndex Output Port index where to set the value
+    void notifyOutputValueChanged(size_t portIndex);
+
+    /// @brief Get Input Value connected on the pin
+    /// @tparam T Type of the connected object
+    /// @param[in] portIndex Input port where to call the callbacks
+    /// @return Pointer to the object
     template<typename T>
     [[nodiscard]] T* getInputValue(size_t portIndex) const
     {

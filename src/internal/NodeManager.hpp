@@ -94,7 +94,7 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, void (T::*notifyFunc)())
+Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, void (T::*notifyFunc)(ax::NodeEditor::LinkId))
 {
     assert(pinType != Pin::Type::Flow && pinType != Pin::Type::Function && pinType != Pin::Type::Delegate);
 
@@ -102,7 +102,7 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 
     if (pin)
     {
-        pin->notifyFunc.emplace_back(node, reinterpret_cast<void (Node::*)()>(notifyFunc));
+        pin->notifyFunc.emplace_back(node, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(notifyFunc), 0);
     }
 
     return pin;

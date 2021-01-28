@@ -118,10 +118,18 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
     {
         Pin* startPin = nm::FindPin(connectedLinks.front()->startPinId);
 
-        for (auto& notifyFunc : startPin->notifyFunc)
+        for (auto& [node, callback, linkId] : startPin->notifyFunc)
         {
-            std::invoke(notifyFunc.second, notifyFunc.first);
+            std::invoke(callback, node, linkId);
         }
+    }
+}
+
+void NAV::Node::notifyOutputValueChanged(size_t portIndex)
+{
+    for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFunc)
+    {
+        std::invoke(callback, node, linkId);
     }
 }
 

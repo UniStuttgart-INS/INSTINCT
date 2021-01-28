@@ -249,7 +249,7 @@ class Pin
     /// Pointer to data which is transferred over this pin
     PinData data = static_cast<void*>(nullptr);
     /// Notify Function to call when the data is updated
-    std::vector<std::pair<Node*, void (Node::*)()>> notifyFunc;
+    std::vector<std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> notifyFunc;
     /// Callback List
     std::vector<std::tuple<Node*, void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> callbacks;
     /// One or multiple Data Identifiers (Unique name which is used for data flows)

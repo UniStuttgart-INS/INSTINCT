@@ -127,6 +127,7 @@ void NAV::Demo::guiConfig()
         if (ImGui::Checkbox("Bool", &valueBool))
         {
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_Bool);
         }
         /* -------------------------------------------------- Int ------------------------------------------------- */
         ImGui::TableNextColumn();
@@ -152,6 +153,7 @@ void NAV::Demo::guiConfig()
             }
 
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_Int);
         }
         /* ------------------------------------------------- Float ------------------------------------------------ */
         ImGui::TableNextColumn();
@@ -167,25 +169,27 @@ void NAV::Demo::guiConfig()
         if (ImGui::DragFloat("Float", &valueFloat))
         {
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_Float);
         }
         /* ------------------------------------------------ Double ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (const auto* connectedDouble = getInputValue<double>(InputPortIndex_Double))
-        {
-            ImGui::Text("Double: %.6f", *connectedDouble);
-        }
-        else
+
+        if (auto* connectedDouble = getInputValue<double>(InputPortIndex_Double);
+            connectedDouble == nullptr)
         {
             ImGui::TextUnformatted("Double: N/A");
         }
-        ImGui::TableNextColumn();
-        if (ImGui::InputDouble("Double", &valueDouble))
+        else if (auto floatFromDouble = static_cast<float>(*connectedDouble);
+                 ImGui::DragFloat("Double", &floatFromDouble, 1.0F, 0.0F, 0.0F, "%.6f"))
         {
+            *connectedDouble = floatFromDouble;
             flow::ApplyChanges();
+            notifyInputValueChanged(InputPortIndex_Double);
         }
+        ImGui::TableNextColumn();
+        ImGui::Text("Double: %.6f", valueDouble);
         /* ------------------------------------------------ String ------------------------------------------------ */
         ImGui::TableNextColumn();
-
         if (auto* connectedString = getInputValue<std::string>(InputPortIndex_String);
             connectedString == nullptr)
         {
@@ -193,8 +197,8 @@ void NAV::Demo::guiConfig()
         }
         else if (ImGui::InputText("String", connectedString))
         {
-            notifyInputValueChanged(InputPortIndex_String);
             flow::ApplyChanges();
+            notifyInputValueChanged(InputPortIndex_String);
         }
         ImGui::Text("The String was updated %lu time%s", stringUpdateCounter, stringUpdateCounter > 1 || stringUpdateCounter == 0 ? "s" : "");
         ImGui::TableNextColumn();
@@ -214,88 +218,100 @@ void NAV::Demo::guiConfig()
         if (ImGui::InputInt3("", valueObject.integer.data()))
         {
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_DemoData);
         }
         ImGui::SameLine();
         if (ImGui::Checkbox("Object", &valueObject.boolean))
         {
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_DemoData);
         }
         /* ------------------------------------------------ Matrix ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (const auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Matrix))
+        if (auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Matrix);
+            connectedMatrix == nullptr)
         {
-            if (connectedMatrix->rows() == 3 && connectedMatrix->cols() == 3)
-            {
-                ImGui::Text("Matrix: [%.1f, %.1f, %.1f]\n"
-                            "               [%.1f, %.1f, %.1f]\n"
-                            "               [%.1f, %.1f, %.1f]",
-                            (*connectedMatrix)(0, 0), (*connectedMatrix)(0, 1), (*connectedMatrix)(0, 2),
-                            (*connectedMatrix)(1, 0), (*connectedMatrix)(1, 1), (*connectedMatrix)(1, 2),
-                            (*connectedMatrix)(2, 0), (*connectedMatrix)(2, 1), (*connectedMatrix)(2, 2));
+            ImGui::TextUnformatted("Matrix: N/A");
             }
             else
             {
-                ImGui::TextUnformatted("Matrix: Not 3x3");
+        float itemWidth = ImGui::GetContentRegionAvail().x / 3.0F - 2 * ImGui::GetStyle().ItemInnerSpacing.x;
+        ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputDouble("##0,0", &(*connectedMatrix)(0, 0), 0.0, 0.0, "%.1f")) // We don't want a label,
+            {                                                                             // but the label has to be an unique identifier.
+                flow::ApplyChanges();                                                     // So use ##, which hides everything after it
+                notifyInputValueChanged(InputPortIndex_Matrix);
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputDouble("##0,1", &(*connectedMatrix)(0, 1), 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+                notifyInputValueChanged(InputPortIndex_Matrix);
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputDouble("##0,2", &(*connectedMatrix)(0, 2), 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+                notifyInputValueChanged(InputPortIndex_Matrix);
+        }
+
+        ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputDouble("##1,0", &(*connectedMatrix)(1, 0), 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+                notifyInputValueChanged(InputPortIndex_Matrix);
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputDouble("##1,1", &(*connectedMatrix)(1, 1), 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+                notifyInputValueChanged(InputPortIndex_Matrix);
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputDouble("##1,2", &(*connectedMatrix)(1, 2), 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+                notifyInputValueChanged(InputPortIndex_Matrix);
+        }
+
+        ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputDouble("##2,0", &(*connectedMatrix)(2, 0), 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+                notifyInputValueChanged(InputPortIndex_Matrix);
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputDouble("##2,1", &(*connectedMatrix)(2, 1), 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+                notifyInputValueChanged(InputPortIndex_Matrix);
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(itemWidth);
+            if (ImGui::InputDouble("##2,2", &(*connectedMatrix)(2, 2), 0.0, 0.0, "%.1f"))
+        {
+            flow::ApplyChanges();
+                notifyInputValueChanged(InputPortIndex_Matrix);
             }
+        }
+        ImGui::TableNextColumn();
+        if (valueMatrix.rows() == 3 && valueMatrix.cols() == 3)
+        {
+            ImGui::Text("Matrix: [%.1f, %.1f, %.1f]\n"
+                        "               [%.1f, %.1f, %.1f]\n"
+                        "               [%.1f, %.1f, %.1f]",
+                        valueMatrix(0, 0), valueMatrix(0, 1), valueMatrix(0, 2),
+                        valueMatrix(1, 0), valueMatrix(1, 1), valueMatrix(1, 2),
+                        valueMatrix(2, 0), valueMatrix(2, 1), valueMatrix(2, 2));
         }
         else
         {
-            ImGui::TextUnformatted("Matrix: N/A");
-        }
-        ImGui::TableNextColumn();
-        float itemWidth = ImGui::GetContentRegionAvail().x / 3.0F - 2 * ImGui::GetStyle().ItemInnerSpacing.x;
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##0,0", &valueMatrix(0, 0), 0.0, 0.0, "%.1f")) // We don't want a label,
-        {                                                                      // but the label has to be an unique identifier.
-            flow::ApplyChanges();                                              // So use ##, which hides everything after it
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##0,1", &valueMatrix(0, 1), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##0,2", &valueMatrix(0, 2), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##1,0", &valueMatrix(1, 0), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##1,1", &valueMatrix(1, 1), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##1,2", &valueMatrix(1, 2), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##2,0", &valueMatrix(2, 0), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##2,1", &valueMatrix(2, 1), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##2,2", &valueMatrix(2, 2), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            ImGui::TextUnformatted("Matrix: Not 3x3");
         }
         /* ----------------------------------------------- Function ----------------------------------------------- */
         ImGui::TableNextColumn();
@@ -304,6 +320,7 @@ void NAV::Demo::guiConfig()
             receivedDataFromCallback = callInputFunction<std::string>(InputPortIndex_Function, 20, callbackInt, callbackBool);
         }
         ImGui::SameLine();
+        float itemWidth = ImGui::GetContentRegionAvail().x / 3.0F - 2 * ImGui::GetStyle().ItemInnerSpacing.x;
         ImGui::SetNextItemWidth(itemWidth);
         if (ImGui::SliderInt("##CallbackInt", &callbackInt, -10, 10))
         {
@@ -399,7 +416,7 @@ bool NAV::Demo::initialize()
     LOG_TRACE("{}: called", nameId());
 
     // To Show the Initialization in the GUI
-    std::this_thread::sleep_until(std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(3000));
+    std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(3000));
 
     // Currently crashes clang-tidy (Stack dump: #0 Calling std::chrono::operator<=>), so use sleep_until
     // std::this_thread::sleep_for(std::chrono::milliseconds(3000));
@@ -514,7 +531,7 @@ std::string NAV::Demo::callbackFunction(int integer1, int integer2, bool boolean
                        integer1, integer2, boolean);
 }
 
-void NAV::Demo::stringUpdatedNotifyFunction()
+void NAV::Demo::stringUpdatedNotifyFunction(ax::NodeEditor::LinkId /*linkId*/)
 {
     stringUpdateCounter++;
 }
