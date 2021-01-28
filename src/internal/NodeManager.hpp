@@ -20,6 +20,9 @@ namespace NAV::NodeManager
 /// Flag if invokeCallbacks triggers a GUI Flow event
 extern bool showFlowWhenInvokingCallbacks;
 
+/// Flag if notifyOutputValueChanged & notifyInputValueChanged triggers a GUI Flow event
+extern bool showFlowWhenNotifyingValueChange;
+
 /// @brief List of all registered Nodes
 const std::vector<Node*>& m_Nodes();
 

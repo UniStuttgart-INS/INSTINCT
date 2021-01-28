@@ -124,6 +124,11 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
 
         for (auto& [node, callback, linkId] : startPin->notifyFunc)
         {
+            if (nm::showFlowWhenNotifyingValueChange)
+            {
+                ax::NodeEditor::Flow(linkId);
+            }
+
             std::invoke(callback, node, linkId);
         }
     }
@@ -133,6 +138,11 @@ void NAV::Node::notifyOutputValueChanged(size_t portIndex)
 {
     for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFunc)
     {
+        if (nm::showFlowWhenNotifyingValueChange)
+        {
+            ax::NodeEditor::Flow(linkId);
+        }
+
         std::invoke(callback, node, linkId);
     }
 }

@@ -42,6 +42,7 @@ ed::PinId GetNextPinId();
 namespace NAV::NodeManager
 {
 bool showFlowWhenInvokingCallbacks = true;
+bool showFlowWhenNotifyingValueChange = false;
 
 } // namespace NAV::NodeManager
 
