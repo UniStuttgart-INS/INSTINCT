@@ -504,3 +504,27 @@ void NAV::Matrix::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] 
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 }
+
+void NAV::Matrix::onNotifyValueChanged(ax::NodeEditor::LinkId linkId)
+{
+    if (Link* link = nm::FindLink(linkId))
+    {
+        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
+
+        if (link->startPinId == outputPins.front().id) // Change on the Eigen::MatrixXd Pin notified
+        {
+            for (size_t i = 1; i < outputPins.size(); i++) // Loop through all MatrixBlock pins and trigger a notify
+            {
+                for (auto& [node, callback, linkId] : outputPins.at(i).notifyFunc)
+                {
+                    if (nm::showFlowWhenNotifyingValueChange)
+                    {
+                        ax::NodeEditor::Flow(linkId);
+                    }
+
+                    std::invoke(callback, node, linkId);
+                }
+            }
+        }
+    }
+}

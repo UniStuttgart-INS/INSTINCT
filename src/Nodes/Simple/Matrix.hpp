@@ -58,6 +58,10 @@ class Matrix : public Node
     /// @param[in] endPin Pin where the link ends
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
+    /// @brief Notifies the node ifself, that some data was changed
+    /// @param[in] linkId Id of the link on which data is changed
+    void onNotifyValueChanged(ax::NodeEditor::LinkId linkId) override;
+
   private:
     /// @brief Initialize the node
     bool initialize() override;

@@ -248,83 +248,60 @@ void NAV::Demo::guiConfig()
         }
         else
         {
-            float itemWidth = ImGui::GetContentRegionAvail().x / 3.0F - 2 * ImGui::GetStyle().ItemInnerSpacing.x;
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputDouble("##0,0", &(*connectedMatrix)(0, 0), 0.0, 0.0, "%.1f")) // We don't want a label,
-            {                                                                             // but the label has to be an unique identifier.
-                flow::ApplyChanges();                                                     // So use ##, which hides everything after it
-                notifyInputValueChanged(InputPortIndex_Matrix);
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputDouble("##0,1", &(*connectedMatrix)(0, 1), 0.0, 0.0, "%.1f"))
+            if (ImGui::BeginTable("Init Matrix", static_cast<int>(connectedMatrix->cols() + 1),
+                                  ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
             {
-                flow::ApplyChanges();
-                notifyInputValueChanged(InputPortIndex_Matrix);
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputDouble("##0,2", &(*connectedMatrix)(0, 2), 0.0, 0.0, "%.1f"))
-            {
-                flow::ApplyChanges();
-                notifyInputValueChanged(InputPortIndex_Matrix);
-            }
-
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputDouble("##1,0", &(*connectedMatrix)(1, 0), 0.0, 0.0, "%.1f"))
-            {
-                flow::ApplyChanges();
-                notifyInputValueChanged(InputPortIndex_Matrix);
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputDouble("##1,1", &(*connectedMatrix)(1, 1), 0.0, 0.0, "%.1f"))
-            {
-                flow::ApplyChanges();
-                notifyInputValueChanged(InputPortIndex_Matrix);
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputDouble("##1,2", &(*connectedMatrix)(1, 2), 0.0, 0.0, "%.1f"))
-            {
-                flow::ApplyChanges();
-                notifyInputValueChanged(InputPortIndex_Matrix);
-            }
-
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputDouble("##2,0", &(*connectedMatrix)(2, 0), 0.0, 0.0, "%.1f"))
-            {
-                flow::ApplyChanges();
-                notifyInputValueChanged(InputPortIndex_Matrix);
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputDouble("##2,1", &(*connectedMatrix)(2, 1), 0.0, 0.0, "%.1f"))
-            {
-                flow::ApplyChanges();
-                notifyInputValueChanged(InputPortIndex_Matrix);
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(itemWidth);
-            if (ImGui::InputDouble("##2,2", &(*connectedMatrix)(2, 2), 0.0, 0.0, "%.1f"))
-            {
-                flow::ApplyChanges();
-                notifyInputValueChanged(InputPortIndex_Matrix);
+                ImGui::TableSetupColumn("");
+                for (int64_t col = 0; col < connectedMatrix->cols(); col++)
+                {
+                    ImGui::TableSetupColumn(std::to_string(col).c_str());
+                }
+                ImGui::TableHeadersRow();
+                for (int64_t row = 0; row < connectedMatrix->rows(); row++)
+                {
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted(std::to_string(row).c_str());
+                    ImU32 cell_bg_color = ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_TableHeaderBg]);
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                    for (int64_t col = 0; col < connectedMatrix->cols(); col++)
+                    {
+                        ImGui::TableNextColumn();
+                        ImGui::SetNextItemWidth(50);
+                        if (ImGui::InputDouble(("##initMatrix(" + std::to_string(row) + ", " + std::to_string(col) + ")").c_str(),
+                                               &(*connectedMatrix)(row, col), 0.0, 0.0, "%.1f"))
+                        {
+                            flow::ApplyChanges();
+                            notifyInputValueChanged(InputPortIndex_Matrix);
+                        }
+                    }
+                }
+                ImGui::EndTable();
             }
         }
         ImGui::TableNextColumn();
-        if (valueMatrix.rows() == 3 && valueMatrix.cols() == 3)
+        if (ImGui::BeginTable("Current Matrix", static_cast<int>(valueMatrix.cols() + 1),
+                              ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
         {
-            ImGui::Text("Matrix: [%.1f, %.1f, %.1f]\n"
-                        "               [%.1f, %.1f, %.1f]\n"
-                        "               [%.1f, %.1f, %.1f]",
-                        valueMatrix(0, 0), valueMatrix(0, 1), valueMatrix(0, 2),
-                        valueMatrix(1, 0), valueMatrix(1, 1), valueMatrix(1, 2),
-                        valueMatrix(2, 0), valueMatrix(2, 1), valueMatrix(2, 2));
-        }
-        else
-        {
-            ImGui::TextUnformatted("Matrix: Not 3x3");
+            ImGui::TableSetupColumn("");
+            for (int64_t col = 0; col < valueMatrix.cols(); col++)
+            {
+                ImGui::TableSetupColumn(std::to_string(col).c_str());
+            }
+            ImGui::TableHeadersRow();
+            for (int64_t row = 0; row < valueMatrix.rows(); row++)
+            {
+                ImGui::TableNextColumn();
+                ImGui::TextUnformatted(std::to_string(row).c_str());
+                ImU32 cell_bg_color = ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_TableHeaderBg]);
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                for (int64_t col = 0; col < valueMatrix.cols(); col++)
+                {
+                    ImGui::TableNextColumn();
+                    ImGui::Text("%.1f", valueMatrix(row, col));
+                }
+            }
+
+            ImGui::EndTable();
         }
         /* ----------------------------------------------- Function ----------------------------------------------- */
         ImGui::TableNextColumn();

@@ -162,6 +162,10 @@ class Node
     /// @param[in] endPin Pin where the link ends
     virtual void afterDeleteLink(Pin* startPin, Pin* endPin);
 
+    /// @brief Notifies the node ifself, that some data was changed
+    /// @param[in] linkId Id of the link on which data is changed
+    virtual void onNotifyValueChanged(ax::NodeEditor::LinkId linkId);
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member functions                                             */
     /* -------------------------------------------------------------------------------------------------------- */
@@ -236,10 +240,16 @@ class Node
     [[nodiscard]] size_t pinIndexFromId(ax::NodeEditor::PinId pinId) const;
 
     /// @brief Node name and id
-    [[nodiscard]] std::string nameId() const
-    {
-        return fmt::format("{} ({})", name, size_t(id));
-    }
+    [[nodiscard]] std::string nameId() const;
+
+    /// @brief Flag, if the node is initialized
+    [[nodiscard]] bool isInitialized() const;
+
+    /// @brief Flag, if the node is currently initializing
+    [[nodiscard]] bool isInitializing() const;
+
+    /// @brief Flag, if the node is currently deinitializing
+    [[nodiscard]] bool isDeinitializing() const;
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
@@ -267,15 +277,6 @@ class Node
 
     /// Enables the callbacks
     bool callbacksEnabled = false;
-
-    /// @brief Flag, if the node is initialized
-    [[nodiscard]] bool isInitialized() const;
-
-    /// @brief Flag, if the node is currently initializing
-    [[nodiscard]] bool isInitializing() const;
-
-    /// @brief Flag, if the node is currently deinitializing
-    [[nodiscard]] bool isDeinitializing() const;
 
   private:
     /// @brief Abstract Initialization of the Node

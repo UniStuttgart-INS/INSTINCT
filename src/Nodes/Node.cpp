@@ -115,21 +115,30 @@ void NAV::Node::afterCreateLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
 void NAV::Node::afterDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
+void NAV::Node::onNotifyValueChanged(ax::NodeEditor::LinkId /*linkId*/) {}
+
 void NAV::Node::notifyInputValueChanged(size_t portIndex)
 {
     auto connectedLinks = nm::FindConnectedLinksToPin(inputPins.at(portIndex).id);
     if (!connectedLinks.empty())
     {
-        Pin* startPin = nm::FindPin(connectedLinks.front()->startPinId);
-
-        for (auto& [node, callback, linkId] : startPin->notifyFunc)
+        if (Pin* startPin = nm::FindPin(connectedLinks.front()->startPinId))
         {
-            if (nm::showFlowWhenNotifyingValueChange)
+            if (startPin->parentNode)
             {
-                ax::NodeEditor::Flow(linkId);
+                // Notify the node itself that changes were made
+                startPin->parentNode->onNotifyValueChanged(connectedLinks.front()->id);
             }
+            // Notify all nodes which registered a notify callback
+            for (auto& [node, callback, linkId] : startPin->notifyFunc)
+            {
+                if (nm::showFlowWhenNotifyingValueChange)
+                {
+                    ax::NodeEditor::Flow(linkId);
+                }
 
-            std::invoke(callback, node, linkId);
+                std::invoke(callback, node, linkId);
+            }
         }
     }
 }
@@ -184,6 +193,11 @@ size_t NAV::Node::pinIndexFromId(ax::NodeEditor::PinId pinId) const
     }
 
     throw std::runtime_error(fmt::format("{}: The Pin {} is not on this node.", nameId(), size_t(pinId)).c_str());
+}
+
+std::string NAV::Node::nameId() const
+{
+    return fmt::format("{} ({})", name, size_t(id));
 }
 
 bool NAV::Node::isInitialized() const
