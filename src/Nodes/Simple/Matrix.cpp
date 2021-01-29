@@ -526,5 +526,39 @@ void NAV::Matrix::onNotifyValueChanged(ax::NodeEditor::LinkId linkId)
                 }
             }
         }
+        else // Change on any MatrixBlock Pin notified
+        {
+            size_t pinIndex = pinIndexFromId(link->startPinId);
+
+            auto& block = blocks.at(pinIndex - 1);
+
+            for (size_t i = 0; i < outputPins.size(); i++) // Loop through all pins and trigger a notify
+            {
+                if (i == pinIndex) // Don't trigger notify on self, as this is done already by notifyInputValueChanged
+                {
+                    continue;
+                }
+
+                auto& otherBlock = blocks.at(i - 1);
+
+                if (i == 0 // Trigger notify on Eigen::MatrixXd pin
+                    ||     // Check if modified block is part of any other subblock
+                    (((otherBlock.startRow <= block.startRow && otherBlock.startRow + otherBlock.blockRows > block.startRow)
+                      || (otherBlock.startRow >= block.startRow && otherBlock.startRow < block.startRow + block.blockRows))
+                     && ((otherBlock.startCol <= block.startCol && otherBlock.startCol + otherBlock.blockCols > block.startCol)
+                         || (otherBlock.startCol >= block.startCol && otherBlock.startCol < block.startCol + block.blockCols))))
+                {
+                    for (auto& [node, callback, linkId] : outputPins.at(i).notifyFunc)
+                    {
+                        if (nm::showFlowWhenNotifyingValueChange)
+                        {
+                            ax::NodeEditor::Flow(linkId);
+                        }
+
+                        std::invoke(callback, node, linkId);
+                    }
+                }
+            }
+        }
     }
 }
