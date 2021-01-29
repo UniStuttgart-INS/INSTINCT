@@ -249,7 +249,7 @@ void NAV::FlowExecutor::execute()
             && !ConfigManager::Get<size_t>("duration", 0)))
     {
         auto finish = std::chrono::steady_clock::now();
-        std::chrono::duration<double> elapsed = finish - start;
+        [[maybe_unused]] std::chrono::duration<double> elapsed = finish - start;
         LOG_INFO("Elapsed time: {} s", elapsed.count());
     }
 
