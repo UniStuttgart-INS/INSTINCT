@@ -15,8 +15,6 @@ namespace nm = NAV::NodeManager;
 #include "util/InsMath.hpp"
 #include <algorithm>
 
-#include "Nodes/Simple/Matrix.hpp"
-
 namespace NAV
 {
 void to_json(json& j, const Plot::PinData::PlotData& data)
@@ -243,7 +241,7 @@ void NAV::Plot::guiConfig()
                         break;
                     case PinData::PinType::Matrix:
                         inputPins.at(pinIndex).type = Pin::Type::Matrix;
-                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd", "Matrix::Block" };
+                        inputPins.at(pinIndex).dataIdentifier = { "Eigen::MatrixXd", "BlockMatrix" };
                         inputPins.at(pinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
                         break;
                     }
@@ -836,9 +834,9 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
                 }
             }
         }
-        else if (startPin->dataIdentifier.front() == "Matrix::Block")
+        else if (startPin->dataIdentifier.front() == "BlockMatrix")
         {
-            if (auto* mBlock = getInputValue<Matrix::Block>(pinIndex))
+            if (auto* mBlock = getInputValue<BlockMatrix>(pinIndex))
             {
                 auto matrix = (*mBlock)();
                 for (int row = 0; row < matrix.rows(); row++)
@@ -1058,9 +1056,9 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
                     }
                 }
             }
-            else if (sourcePin->dataIdentifier.front() == "Matrix::Block")
+            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
             {
-                auto* value = getInputValue<Matrix::Block>(pinIndex);
+                auto* value = getInputValue<BlockMatrix>(pinIndex);
 
                 if (value != nullptr && !currentTime.empty())
                 {

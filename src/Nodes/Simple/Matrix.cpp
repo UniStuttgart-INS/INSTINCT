@@ -4,61 +4,6 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-namespace NAV
-{
-void to_json(json& j, const Matrix::Block& data)
-{
-    j = data.to_json();
-}
-void from_json(const json& j, Matrix::Block& data)
-{
-    data.from_json(j);
-}
-
-} // namespace NAV
-
-NAV::Matrix::Block::Block(Eigen::MatrixXd& matrix, std::string pinName, int startRow, int startCol, int blockRows, int blockCols)
-    : matrix(&matrix), pinName(std::move(pinName)), startRow(startRow), startCol(startCol), blockRows(blockRows), blockCols(blockCols) {}
-
-Eigen::Block<Eigen::MatrixXd> NAV::Matrix::Block::operator()()
-{
-    return matrix->block(startRow, startCol, blockRows, blockCols);
-}
-
-[[nodiscard]] json NAV::Matrix::Block::to_json() const
-{
-    return json{
-        { "pinName", pinName },
-        { "startRow", startRow },
-        { "startCol", startCol },
-        { "blockRows", blockRows },
-        { "blockCols", blockCols },
-    };
-}
-void NAV::Matrix::Block::from_json(const json& j)
-{
-    if (j.contains("pinName"))
-    {
-        j.at("pinName").get_to(pinName);
-    }
-    if (j.contains("startRow"))
-    {
-        j.at("startRow").get_to(startRow);
-    }
-    if (j.contains("startCol"))
-    {
-        j.at("startCol").get_to(startCol);
-    }
-    if (j.contains("blockRows"))
-    {
-        j.at("blockRows").get_to(blockRows);
-    }
-    if (j.contains("blockCols"))
-    {
-        j.at("blockCols").get_to(blockCols);
-    }
-}
-
 NAV::Matrix::Matrix()
 {
     name = typeStatic();
@@ -246,7 +191,7 @@ void NAV::Matrix::guiConfig()
                 for (int64_t col = 0; col < initMatrix.cols(); col++)
                 {
                     ImGui::TableNextColumn();
-                    ImGui::SetNextItemWidth(30);
+                    ImGui::SetNextItemWidth(50);
                     if (ImGui::InputDouble(("##initMatrix(" + std::to_string(row) + ", " + std::to_string(col) + ")").c_str(),
                                            &initMatrix(row, col), 0.0, 0.0, "%.1f"))
                     {
@@ -520,7 +465,7 @@ void NAV::Matrix::updateNumberOfOutputPins()
     while (outputPins.size() - 1 < static_cast<size_t>(nBlocks))
     {
         blocks.emplace_back(matrix, std::to_string(blocks.size() + 1), 0, 0, initMatrix.rows(), initMatrix.cols());
-        nm::CreateOutputPin(this, std::to_string(blocks.size()).c_str(), Pin::Type::Matrix, "Matrix::Block", &blocks.back());
+        nm::CreateOutputPin(this, std::to_string(blocks.size()).c_str(), Pin::Type::Matrix, "BlockMatrix", &blocks.back());
     }
     while (outputPins.size() - 1 > static_cast<size_t>(nBlocks))
     {
@@ -532,7 +477,7 @@ void NAV::Matrix::updateNumberOfOutputPins()
         outputPins.pop_back();
         blocks.pop_back();
     }
-    
+
     for (size_t blockIndex = 0; blockIndex < blocks.size(); blockIndex++)
     {
         blocks.at(blockIndex).matrix = &matrix;
