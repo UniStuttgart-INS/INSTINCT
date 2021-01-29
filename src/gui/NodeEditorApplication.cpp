@@ -174,7 +174,7 @@ void NAV::gui::NodeEditorApplication::ShowQuitRequested()
             }
         }
 
-        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow"))
+        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
         {
             if (igfd::ImGuiFileDialog::Instance()->IsOk)
             {
@@ -227,7 +227,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         }
     }
 
-    if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow"))
+    if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
     {
         if (igfd::ImGuiFileDialog::Instance()->IsOk)
         {
@@ -281,7 +281,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             }
         }
 
-        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow"))
+        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
         {
             if (igfd::ImGuiFileDialog::Instance()->IsOk)
             {
@@ -348,7 +348,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
                 }
             }
 
-            if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow##Load"))
+            if (igfd::ImGuiFileDialog::Instance()->FileDialog("Save Flow##Load", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
             {
                 if (igfd::ImGuiFileDialog::Instance()->IsOk)
                 {
@@ -400,7 +400,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
             }
         }
 
-        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Load Flow"))
+        if (igfd::ImGuiFileDialog::Instance()->FileDialog("Load Flow", ImGuiWindowFlags_NoCollapse, ImVec2(600, 400)))
         {
             if (igfd::ImGuiFileDialog::Instance()->IsOk)
             {
