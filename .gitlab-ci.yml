@@ -51,14 +51,14 @@ check-image:
 clang-tidy:
   stage: checks
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
     - ret=0; for f in $(find src -type f -name "*.cpp"); do echo '##### Linting '$f; clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
 
 clang-tidy:tests:
   stage: checks
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
     - ret=0; for f in $(find test -type f -name "*.cpp"); do echo '##### Linting '$f; clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
 
@@ -70,7 +70,7 @@ clang-tidy:tests:
   stage: build
   needs: ["check-image"]
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
 
 main:clang:
@@ -83,6 +83,23 @@ main:gcc:
     - .build:main
     - .gcc
 
+.build:main:LOG_OFF:
+  extends:
+    - .build:main
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release -- -j2
+
+main:clang:LOG_OFF:
+  extends:
+    - .build:main:LOG_OFF
+    - .clang
+
+main:gcc:LOG_OFF:
+  extends:
+    - .build:main:LOG_OFF
+    - .gcc
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                                     Build Tests                                                    ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
@@ -91,7 +108,7 @@ main:gcc:
   stage: build
   needs: ["check-image"]
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
     untracked: true
@@ -105,6 +122,23 @@ tests:clang:
 tests:gcc:
   extends:
     - .build:tests
+    - .gcc
+
+.build:tests:LOG_OFF:
+  extends:
+    - .build:tests
+  script:
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Debug -- -j2
+
+tests:clang:LOG_OFF:
+  extends:
+    - .build:tests:LOG_OFF
+    - .clang
+
+tests:gcc:LOG_OFF:
+  extends:
+    - .build:tests:LOG_OFF
     - .gcc
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
@@ -223,7 +257,7 @@ coverage:
   extends:
     - .build:ubuntu:20.04
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
     untracked: true
@@ -233,7 +267,7 @@ coverage:
   extends:
     - .build:ubuntu:20.04
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
 
 ubuntu:20.04:clang:release:
@@ -303,7 +337,7 @@ run-tests:ubuntu:20.04:gcc:
   extends:
     - .build:archlinux:latest
   script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug -- -j2
   artifacts:
     untracked: true
@@ -313,7 +347,7 @@ run-tests:ubuntu:20.04:gcc:
   extends:
     - .build:archlinux:latest
   script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=TRACE -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
 
 archlinux:latest:clang:release:
