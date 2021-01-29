@@ -51,16 +51,14 @@ NAV::InsTime NAV::util::time::GetCurrentTime()
 
 void NAV::util::time::SetCurrentTime(const NAV::InsTime& insTime)
 {
-    if (insTime > currentTime)
+    if (insTime < currentTime)
     {
-        currentTimeComputer = std::chrono::steady_clock::now();
-        currentTime = insTime;
-    }
-    else
-    {
-        LOG_WARN("Tried to update current Time {} to {}, but the new time is earlier.",
+        LOG_WARN("Updated current Time {} to {}, but the new time is earlier.",
                  currentTime.GetStringOfDate(), insTime.GetStringOfDate());
     }
+
+    currentTimeComputer = std::chrono::steady_clock::now();
+    currentTime = insTime;
 }
 
 void NAV::util::time::ClearCurrentTime()
