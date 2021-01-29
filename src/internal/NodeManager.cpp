@@ -225,12 +225,10 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
             m_links.pop_back();
             return nullptr;
         }
-        else
-        {
-            startPin->callbacks.emplace_back(endPin->parentNode,
-                                             std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
-                                             m_links.back().id);
-        }
+
+        startPin->callbacks.emplace_back(endPin->parentNode,
+                                         std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                         m_links.back().id);
     }
     else
     {
@@ -307,6 +305,13 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
 
         if (endPin->type == Pin::Type::Flow)
         {
+            if (endPin->data.index() == 0)
+            {
+                LOG_ERROR("Tried to register callback, but endPin has no data");
+                m_links.pop_back();
+                return false;
+            }
+
             startPin->callbacks.emplace_back(endPin->parentNode,
                                              std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                              link.id);
