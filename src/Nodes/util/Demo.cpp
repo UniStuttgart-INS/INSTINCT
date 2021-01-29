@@ -7,10 +7,11 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/IMU/ImuObs.hpp"
 
 #include <chrono>
 #include <thread>
+#include <random>
 
 namespace NAV
 {
@@ -44,7 +45,7 @@ NAV::Demo::Demo()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::NodeData::type());
+    nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::ImuObs::type());
     nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, NAV::InsObs::type(), &Demo::pollData);
     nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, "", &valueBool);
     nm::CreateOutputPin(this, "Int", Pin::Type::Int, "", &valueInt);
@@ -56,7 +57,7 @@ NAV::Demo::Demo()
     nm::CreateOutputPin(this, "Function", Pin::Type::Function, "std::string (*)(int, bool)", &Demo::callbackFunction);
 
     nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
-    nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveSensorData);
+    nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, &Demo::receiveSensorData);
     nm::CreateInputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::InsObs::type() }, &Demo::receiveFileReaderData);
     nm::CreateInputPin(this, "Bool", Pin::Type::Bool);
     nm::CreateInputPin(this, "Int", Pin::Type::Int);
@@ -497,7 +498,34 @@ void NAV::Demo::readSensorDataThread(void* userData)
 {
     auto* node = static_cast<Demo*>(userData);
 
-    auto obs = std::make_shared<NodeData>();
+    auto imuPos = ImuPos();
+    auto obs = std::make_shared<ImuObs>(imuPos);
+
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto* t = std::localtime(&now);
+
+    obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
+                           static_cast<uint16_t>(t->tm_mon),
+                           static_cast<uint16_t>(t->tm_mday),
+                           static_cast<uint16_t>(t->tm_hour),
+                           static_cast<uint16_t>(t->tm_min),
+                           static_cast<long double>(t->tm_sec));
+
+    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator(static_cast<uint64_t>(seed));
+
+    std::uniform_real_distribution<double> distribution(-9.0, 9.0);
+    obs->accelUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
+
+    distribution = std::uniform_real_distribution<double>(-3.0, 3.0);
+    obs->gyroUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
+
+    distribution = std::uniform_real_distribution<double>(-1.0, 1.0);
+    obs->magUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
+
+    distribution = std::uniform_real_distribution<double>(15.0, 25.0);
+    obs->temperature = distribution(generator);
+
     node->invokeCallbacks(OutputPortIndex_NodeData, obs);
 }
 
