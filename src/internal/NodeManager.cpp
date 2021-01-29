@@ -42,7 +42,7 @@ ed::PinId GetNextPinId();
 namespace NAV::NodeManager
 {
 bool showFlowWhenInvokingCallbacks = true;
-bool showFlowWhenNotifyingValueChange = false;
+bool showFlowWhenNotifyingValueChange = true;
 
 } // namespace NAV::NodeManager
 
@@ -219,9 +219,18 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
 
     if (endPin->type == Pin::Type::Flow)
     {
-        startPin->callbacks.emplace_back(endPin->parentNode,
-                                         std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
-                                         m_links.back().id);
+        if (endPin->data.index() == 0)
+        {
+            LOG_ERROR("Tried to register callback, but endPin has no data");
+            m_links.pop_back();
+            return nullptr;
+        }
+        else
+        {
+            startPin->callbacks.emplace_back(endPin->parentNode,
+                                             std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                             m_links.back().id);
+        }
     }
     else
     {

@@ -201,7 +201,7 @@ bool NAV::VectorNavSensor::initialize()
     }
     else
     {
-        LOG_ERROR("{} could not connect", nameId());
+        LOG_ERROR("{} could not connect. Is the sensor connected and do you have read permissions?", nameId());
         return false;
     }
 

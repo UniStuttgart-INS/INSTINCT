@@ -223,6 +223,7 @@ void NAV::Plot::guiConfig()
                     case PinData::PinType::Flow:
                         inputPins.at(pinIndex).type = Pin::Type::Flow;
                         inputPins.at(pinIndex).dataIdentifier = dataIdentifier;
+                        inputPins.at(pinIndex).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
                         break;
                     case PinData::PinType::Bool:
                         inputPins.at(pinIndex).type = Pin::Type::Bool;
