@@ -37,8 +37,6 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         {
             ImGui::SetTooltip("Shortcut: F");
         }
-        ImGui::Spring(0.0F);
-        ImGui::Checkbox("Show Flow", &nm::showFlowWhenInvokingCallbacks);
         ImGui::Spring();
         static bool showStyleEditor = false;
         if (ImGui::Button("Edit Style"))
@@ -46,6 +44,10 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             showStyleEditor = true;
         }
         ImGui::EndHorizontal();
+
+        ImGui::Checkbox("Show Callback Flow", &nm::showFlowWhenInvokingCallbacks);
+        ImGui::SameLine();
+        ImGui::Checkbox("Show Notify Flow", &nm::showFlowWhenNotifyingValueChange);
 
         if (showStyleEditor)
         {

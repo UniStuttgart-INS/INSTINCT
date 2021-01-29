@@ -20,6 +20,9 @@ namespace NAV::NodeManager
 /// Flag if invokeCallbacks triggers a GUI Flow event
 extern bool showFlowWhenInvokingCallbacks;
 
+/// Flag if notifyOutputValueChanged & notifyInputValueChanged triggers a GUI Flow event
+extern bool showFlowWhenNotifyingValueChange;
+
 /// @brief List of all registered Nodes
 const std::vector<Node*>& m_Nodes();
 
@@ -29,6 +32,10 @@ const std::vector<Link>& m_Links();
 /// @brief Add the provided node object to the list of nodes
 /// @param[in] node Node object to add to the list
 void AddNode(Node* node);
+
+/// @brief Update the provided node object
+/// @param[in] node Node object to add to the list
+void UpdateNode(Node* node);
 
 /// @brief Delete the node provided by id
 /// @param[in] linkId Unique Id of the Node to delete
@@ -47,6 +54,10 @@ Link* CreateLink(Pin* startPin, Pin* endPin);
 /// @brief Add the provided link object to the list of links
 /// @param[in] link Link object to add to the list
 bool AddLink(const Link& link);
+
+/// @brief Refresh the link and the connected nodes
+/// @param[in] linkId Unique Id of the Link to refresh
+void RefreshLink(ax::NodeEditor::LinkId linkId);
 
 /// @brief Delete the link provided by id
 /// @param[in] linkId Unique Id of the Link to delete
@@ -83,6 +94,31 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
     return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId)>(callback)));
 }
 
+/// @brief Create an Input Pin object
+/// @tparam T Node Class where the function is member of
+/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
+/// @param[in] node Node to register the Pin for
+/// @param[in] name Display name of the Pin
+/// @param[in] pinType Type of the pin
+/// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+/// @param[in] notifyFunc Function to call when the data is updated
+/// @return Pointer to the created pin
+template<typename T,
+         typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
+Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, void (T::*notifyFunc)(ax::NodeEditor::LinkId))
+{
+    assert(pinType != Pin::Type::Flow && pinType != Pin::Type::Function && pinType != Pin::Type::Delegate);
+
+    Pin* pin = CreateInputPin(node, name, pinType, dataIdentifier);
+
+    if (pin)
+    {
+        pin->notifyFunc.emplace_back(node, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(notifyFunc), 0);
+    }
+
+    return pin;
+}
+
 /// @brief Create an Output Pin object
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin
@@ -111,21 +147,19 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 }
 
 /// @brief Create an Output Pin object for Function Pins
-/// @tparam U
-/// @tparam P
-/// @tparam T
-/// @tparam T,
-/// typename
-/// @tparam T>>
-/// @param[in, out] node
-/// @param[in, out] name
-/// @param[in, out] pinType
-/// @param[in, out] dataIdentifier
-/// @param[in, out] callback
-/// @return
+/// @tparam U Return value type of the callback
+/// @tparam P Parameter types of the callback
+/// @tparam T Node Class where the function is member of
+/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
+/// @param[in] node Node to register the Pin for
+/// @param[in] name Display name of the Pin
+/// @param[in] pinType Type of the pin
+/// @param[in] dataIdentifier Identifier of the data which is represented by the pin
+/// @param[in] function Function to register with the pin
+/// @return Pointer to the created pin
 template<typename U, typename... P, typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string& dataIdentifier = std::string(""), U (T::*callback)(P...) = nullptr)
+Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string& dataIdentifier = std::string(""), U (T::*function)(P...) = nullptr)
 {
     assert(pinType == Pin::Type::Function);
 
@@ -133,7 +167,7 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 #if defined(__GNUC__) && !defined(__clang__)
     #pragma GCC diagnostic ignored "-Wcast-function-type" // NOLINT
 #endif
-    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(std::make_pair(node, reinterpret_cast<void (Node::*)()>(callback))));
+    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(std::make_pair(node, reinterpret_cast<void (Node::*)()>(function))));
 
 #pragma GCC diagnostic pop
 }

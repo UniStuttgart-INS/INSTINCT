@@ -55,11 +55,10 @@ class Plot : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Called when a new link is to be established
+    /// @brief Called when a new link was established
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+    void afterCreateLink(Pin* startPin, Pin* endPin) override;
 
     /// @brief Called when a link is to be deleted
     /// @param[in] startPin Pin where the link starts
@@ -95,6 +94,15 @@ class Plot : public Node
             Scatter,
         };
 
+        enum class PinType : int
+        {
+            Flow,   ///< NodeData Trigger
+            Bool,   ///< Boolean
+            Int,    ///< Integer Number
+            Float,  ///< Floating Point Number
+            Matrix, ///< Matrix Object
+        };
+
         /// @brief Adds a plotData Element to the list
         /// @param[in] displayName Display name of the contained data
         void addPlotDataItem(const std::string& displayName)
@@ -115,6 +123,8 @@ class Plot : public Node
         std::vector<PlotData> plotData;
         /// Plot style for all data on the pin
         PlotStyle plotStyle = PlotStyle::Line;
+        /// Pin Type
+        PinType pinType = PinType::Flow;
     };
 
     struct PlotInfo
@@ -168,6 +178,22 @@ class Plot : public Node
     /// @param[in] value The value to insert
     void addData(size_t pinIndex, size_t dataIndex, double value);
 
+    /// @brief Plots the data on this port
+    /// @param[in] linkId Id of the link over which the data is received
+    void plotBoolean(ax::NodeEditor::LinkId linkId);
+
+    /// @brief Plots the data on this port
+    /// @param[in] linkId Id of the link over which the data is received
+    void plotInteger(ax::NodeEditor::LinkId linkId);
+
+    /// @brief Plots the data on this port
+    /// @param[in] linkId Id of the link over which the data is received
+    void plotFloat(ax::NodeEditor::LinkId linkId);
+
+    /// @brief Plots the data on this port
+    /// @param[in] linkId Id of the link over which the data is received
+    void plotMatrix(ax::NodeEditor::LinkId linkId);
+
     /// @brief Plot the data on this port
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received
@@ -208,6 +234,8 @@ class Plot : public Node
     int nInputPins = 1;
     /// Amount of plot windows (should equal plotInfos.size())
     int nPlots = 0;
+    /// Possible data identifiers to connect
+    std::vector<std::string> dataIdentifier;
 
     /// Start Time for calculation of relative time with the GPS ToW
     double startValue_Time = std::nan("");

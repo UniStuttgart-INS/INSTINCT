@@ -75,6 +75,7 @@ void to_json(json& j, const Pin& pin)
         { "id", size_t(pin.id) },
         { "type", std::string(pin.type) },
         { "name", pin.name },
+        { "dataIdentifier", pin.dataIdentifier },
     };
 }
 void from_json(const json& j, Pin& pin)
@@ -88,6 +89,8 @@ void from_json(const json& j, Pin& pin)
     pin.type = Pin::Type(typeString);
 
     j.at("name").get_to(pin.name);
+
+    j.at("dataIdentifier").get_to(pin.dataIdentifier);
 }
 
 void to_json(json& j, const Node& node)
@@ -124,6 +127,9 @@ void from_json(const json& j, Node& node)
             break;
         }
         node.inputPins.at(i).id = inputPins.at(i).id;
+        node.inputPins.at(i).type = inputPins.at(i).type;
+        node.inputPins.at(i).name = inputPins.at(i).name;
+        node.inputPins.at(i).dataIdentifier = inputPins.at(i).dataIdentifier;
     }
 
     auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
@@ -134,6 +140,9 @@ void from_json(const json& j, Node& node)
             break;
         }
         node.outputPins.at(i).id = outputPins.at(i).id;
+        node.outputPins.at(i).type = outputPins.at(i).type;
+        node.outputPins.at(i).name = outputPins.at(i).name;
+        node.outputPins.at(i).dataIdentifier = outputPins.at(i).dataIdentifier;
     }
 }
 
@@ -260,6 +269,8 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
             }
             // Load second time in case restore changed the amount of pins
             nodeJson.get_to<Node>(*node);
+
+            nm::UpdateNode(node);
 
             if (!ConfigManager::Get<bool>("nogui", false))
             {

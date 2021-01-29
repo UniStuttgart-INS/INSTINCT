@@ -3,6 +3,7 @@
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
 #include "util/InsGravity.hpp"
+#include "util/Time/TimeBase.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -212,7 +213,9 @@ bool NAV::ImuSimulator::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    return true;
+    startTime = util::time::GetCurrentTime();
+
+    return !startTime.empty();
 }
 
 void NAV::ImuSimulator::deinitialize()
@@ -234,7 +237,7 @@ std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
         return nullptr;
     }
 
-    if (auto* stateData = getInputValue<StateData>(InputPortIndex_StateData))
+    if (const auto* stateData = getInputValue<StateData>(InputPortIndex_StateData))
     {
         auto quat_bn = Eigen::Quaterniond::Identity();
         auto quat_ne = Eigen::Quaterniond::Identity();
@@ -248,6 +251,7 @@ std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
 
         auto obs = std::make_shared<ImuObs>(imuPos);
         obs->timeSinceStartup = static_cast<uint64_t>(currentSimTime * 1e9);
+        obs->insTime = startTime + std::chrono::nanoseconds(obs->timeSinceStartup.value());
 
         /// g_n Gravity vector in [m/s^2], in navigation coordinates
         Eigen::Vector3d gravity_n{ 0, 0, gravity::gravityMagnitude_Gleason(latitude) };

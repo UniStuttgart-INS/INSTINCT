@@ -2,6 +2,7 @@
 
 #include "util/Logger.hpp"
 
+#include "util/Time/TimeBase.hpp"
 #include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
 #include "gui/widgets/HelpMarker.hpp"
@@ -143,5 +144,9 @@ void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 
     sensors::emlid::decryptEmlidObs(obs, erSensor->currentInsTime);
 
+    if (obs->insTime.has_value())
+    {
+        util::time::SetCurrentTime(obs->insTime.value());
+    }
     erSensor->invokeCallbacks(OutputPortIndex_EmlidObs, obs);
 }

@@ -72,6 +72,13 @@ class Demo : public Node
   private:
     constexpr static size_t OutputPortIndex_NodeData = 1; ///< @brief Flow (NodeData)
     constexpr static size_t OutputPortIndex_InsObs = 2;   ///< @brief Flow (InsObs)
+    constexpr static size_t OutputPortIndex_Bool = 3;     ///< @brief Bool
+    constexpr static size_t OutputPortIndex_Int = 4;      ///< @brief Int
+    constexpr static size_t OutputPortIndex_Float = 5;    ///< @brief Float
+    constexpr static size_t OutputPortIndex_Double = 6;   ///< @brief Double
+    constexpr static size_t OutputPortIndex_String = 7;   ///< @brief String
+    constexpr static size_t OutputPortIndex_DemoData = 8; ///< @brief DemoData
+    constexpr static size_t OutputPortIndex_Matrix = 9;   ///< @brief Matrix
     constexpr static size_t InputPortIndex_DemoNode = 0;  ///< @brief Delegate (Demo)
     constexpr static size_t InputPortIndex_Bool = 3;      ///< @brief Bool
     constexpr static size_t InputPortIndex_Int = 4;       ///< @brief Int
@@ -132,6 +139,9 @@ class Demo : public Node
     int callbackInt = 0;
     bool callbackBool = false;
     std::string callbackFunction(int integer1, int integer2, bool boolean);
+
+    size_t stringUpdateCounter = 0;
+    void stringUpdatedNotifyFunction(ax::NodeEditor::LinkId linkId);
 };
 
 } // namespace NAV

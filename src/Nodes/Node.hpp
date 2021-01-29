@@ -152,36 +152,36 @@ class Node
     /// @param[in] endPin Pin where the link ends
     virtual void onDeleteLink(Pin* startPin, Pin* endPin);
 
+    /// @brief Called when a new link was established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    virtual void afterCreateLink(Pin* startPin, Pin* endPin);
+
+    /// @brief Called when a link was deleted
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    virtual void afterDeleteLink(Pin* startPin, Pin* endPin);
+
+    /// @brief Notifies the node ifself, that some data was changed
+    /// @param[in] linkId Id of the link on which data is changed
+    virtual void onNotifyValueChanged(ax::NodeEditor::LinkId linkId);
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member functions                                             */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    template<typename T>
-    [[nodiscard]] T* getInputValue(size_t portIndex)
-    {
-        // clang-format off
-        if constexpr (std::is_same_v<T, bool>
-                   || std::is_same_v<T, int>
-                   || std::is_same_v<T, float>
-                   || std::is_same_v<T, double>
-                   || std::is_same_v<T, std::string>)
-        { // clang-format on
-            if (auto* pval = std::get_if<T*>(&inputPins.at(portIndex).data))
-            {
-                return *pval;
-            }
-        }
-        else // constexpr
-        {
-            if (auto* pval = std::get_if<void*>(&inputPins.at(portIndex).data))
-            {
-                return static_cast<T*>(*pval);
-            }
-        }
+    /// @brief Notifies connected nodes about the change
+    /// @param[in] portIndex Input Port index where to set the value
+    void notifyInputValueChanged(size_t portIndex);
 
-        return nullptr;
-    }
+    /// @brief Notifies connected nodes about the change
+    /// @param[in] portIndex Output Port index where to set the value
+    void notifyOutputValueChanged(size_t portIndex);
 
+    /// @brief Get Input Value connected on the pin
+    /// @tparam T Type of the connected object
+    /// @param[in] portIndex Input port where to call the callbacks
+    /// @return Pointer to the object
     template<typename T>
     [[nodiscard]] T* getInputValue(size_t portIndex) const
     {
@@ -240,10 +240,16 @@ class Node
     [[nodiscard]] size_t pinIndexFromId(ax::NodeEditor::PinId pinId) const;
 
     /// @brief Node name and id
-    [[nodiscard]] std::string nameId() const
-    {
-        return fmt::format("{} ({})", name, size_t(id));
-    }
+    [[nodiscard]] std::string nameId() const;
+
+    /// @brief Flag, if the node is initialized
+    [[nodiscard]] bool isInitialized() const;
+
+    /// @brief Flag, if the node is currently initializing
+    [[nodiscard]] bool isInitializing() const;
+
+    /// @brief Flag, if the node is currently deinitializing
+    [[nodiscard]] bool isDeinitializing() const;
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
@@ -271,15 +277,6 @@ class Node
 
     /// Enables the callbacks
     bool callbacksEnabled = false;
-
-    /// @brief Flag, if the node is initialized
-    [[nodiscard]] bool isInitialized() const;
-
-    /// @brief Flag, if the node is currently initializing
-    [[nodiscard]] bool isInitializing() const;
-
-    /// @brief Flag, if the node is currently deinitializing
-    [[nodiscard]] bool isDeinitializing() const;
 
   private:
     /// @brief Abstract Initialization of the Node

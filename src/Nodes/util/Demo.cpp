@@ -1,15 +1,17 @@
 #include "Demo.hpp"
 
 #include "util/Logger.hpp"
+#include "util/Time/TimeBase.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/InsObs.hpp"
+#include "NodeData/IMU/ImuObs.hpp"
 
 #include <chrono>
 #include <thread>
+#include <random>
 
 namespace NAV
 {
@@ -43,7 +45,7 @@ NAV::Demo::Demo()
     color = ImColor(255, 128, 128);
     hasConfig = true;
 
-    nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::NodeData::type());
+    nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::ImuObs::type());
     nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, NAV::InsObs::type(), &Demo::pollData);
     nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, "", &valueBool);
     nm::CreateOutputPin(this, "Int", Pin::Type::Int, "", &valueInt);
@@ -55,13 +57,13 @@ NAV::Demo::Demo()
     nm::CreateOutputPin(this, "Function", Pin::Type::Function, "std::string (*)(int, bool)", &Demo::callbackFunction);
 
     nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
-    nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::NodeData::type() }, &Demo::receiveSensorData);
+    nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, &Demo::receiveSensorData);
     nm::CreateInputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::InsObs::type() }, &Demo::receiveFileReaderData);
     nm::CreateInputPin(this, "Bool", Pin::Type::Bool);
     nm::CreateInputPin(this, "Int", Pin::Type::Int);
     nm::CreateInputPin(this, "Float", Pin::Type::Float);
     nm::CreateInputPin(this, "Double", Pin::Type::Float);
-    nm::CreateInputPin(this, "String", Pin::Type::String);
+    nm::CreateInputPin(this, "String", Pin::Type::String, {}, &Demo::stringUpdatedNotifyFunction);
     nm::CreateInputPin(this, "Object", Pin::Type::Object, { "Demo::DemoData" });
     nm::CreateInputPin(this, "Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" });
     nm::CreateInputPin(this, "Function", Pin::Type::Function, { "std::string (*)(int, bool)" });
@@ -89,6 +91,17 @@ std::string NAV::Demo::category()
 
 void NAV::Demo::guiConfig()
 {
+    if (ImGui::Button("Set current Ins Time"))
+    {
+        std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        auto* t = std::localtime(&now);
+        util::time::SetCurrentTime(InsTime(static_cast<uint16_t>(t->tm_year + 1900),
+                                           static_cast<uint16_t>(t->tm_mon),
+                                           static_cast<uint16_t>(t->tm_mday),
+                                           static_cast<uint16_t>(t->tm_hour),
+                                           static_cast<uint16_t>(t->tm_min),
+                                           static_cast<long double>(t->tm_sec)));
+    }
     if (ImGui::BeginTable("##DemoValues", 2, ImGuiTableFlags_Borders))
     {
         ImGui::TableSetupColumn("Input");
@@ -97,7 +110,7 @@ void NAV::Demo::guiConfig()
 
         /* ----------------------------------------------- Delegate ----------------------------------------------- */
         ImGui::TableNextColumn();
-        auto* connectedNode = getInputValue<Demo>(InputPortIndex_DemoNode);
+        const auto* connectedNode = getInputValue<Demo>(InputPortIndex_DemoNode);
         ImGui::Text("Delegate: %s", connectedNode ? connectedNode->nameId().c_str() : "N/A");
         ImGui::TableNextColumn();
         /* ------------------------------------------------ Sensor ------------------------------------------------ */
@@ -121,16 +134,17 @@ void NAV::Demo::guiConfig()
         }
         /* ------------------------------------------------- Bool ------------------------------------------------- */
         ImGui::TableNextColumn();
-        auto* connectedBool = getInputValue<bool>(InputPortIndex_Bool);
+        const auto* connectedBool = getInputValue<bool>(InputPortIndex_Bool);
         ImGui::Text("Bool: %s", connectedBool ? (*connectedBool ? "true" : "false") : "N/A");
         ImGui::TableNextColumn();
         if (ImGui::Checkbox("Bool", &valueBool))
         {
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_Bool);
         }
         /* -------------------------------------------------- Int ------------------------------------------------- */
         ImGui::TableNextColumn();
-        if (auto* connectedInt = getInputValue<int>(InputPortIndex_Int))
+        if (const auto* connectedInt = getInputValue<int>(InputPortIndex_Int))
         {
             ImGui::Text("Int: %d", *connectedInt);
         }
@@ -152,10 +166,11 @@ void NAV::Demo::guiConfig()
             }
 
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_Int);
         }
         /* ------------------------------------------------- Float ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedFloat = getInputValue<float>(InputPortIndex_Float))
+        if (const auto* connectedFloat = getInputValue<float>(InputPortIndex_Float))
         {
             ImGui::Text("Float: %.3f", *connectedFloat);
         }
@@ -167,34 +182,43 @@ void NAV::Demo::guiConfig()
         if (ImGui::DragFloat("Float", &valueFloat))
         {
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_Float);
         }
         /* ------------------------------------------------ Double ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedDouble = getInputValue<double>(InputPortIndex_Double))
-        {
-            ImGui::Text("Double: %.6f", *connectedDouble);
-        }
-        else
+
+        if (auto* connectedDouble = getInputValue<double>(InputPortIndex_Double);
+            connectedDouble == nullptr)
         {
             ImGui::TextUnformatted("Double: N/A");
         }
-        ImGui::TableNextColumn();
-        if (ImGui::InputDouble("Double", &valueDouble))
+        else if (auto floatFromDouble = static_cast<float>(*connectedDouble);
+                 ImGui::DragFloat("Double", &floatFromDouble, 1.0F, 0.0F, 0.0F, "%.6f"))
         {
+            *connectedDouble = floatFromDouble;
             flow::ApplyChanges();
+            notifyInputValueChanged(InputPortIndex_Double);
         }
+        ImGui::TableNextColumn();
+        ImGui::Text("Double: %.6f", valueDouble);
         /* ------------------------------------------------ String ------------------------------------------------ */
         ImGui::TableNextColumn();
-        auto* connectedString = getInputValue<std::string>(InputPortIndex_String);
-        ImGui::Text("String: %s", connectedString ? connectedString->c_str() : "N/A");
-        ImGui::TableNextColumn();
-        if (ImGui::InputText("String", &valueString))
+        if (auto* connectedString = getInputValue<std::string>(InputPortIndex_String);
+            connectedString == nullptr)
+        {
+            ImGui::Text("String: N/A");
+        }
+        else if (ImGui::InputText("String", connectedString))
         {
             flow::ApplyChanges();
+            notifyInputValueChanged(InputPortIndex_String);
         }
+        ImGui::Text("The String was updated %lu time%s", stringUpdateCounter, stringUpdateCounter > 1 || stringUpdateCounter == 0 ? "s" : "");
+        ImGui::TableNextColumn();
+        ImGui::Text("String: %s", valueString.c_str());
         /* ------------------------------------------------ Object ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedObject = getInputValue<DemoData>(InputPortIndex_DemoData))
+        if (const auto* connectedObject = getInputValue<DemoData>(InputPortIndex_DemoData))
         {
             ImGui::Text("Object: [%d, %d, %d], %s", connectedObject->integer.at(0), connectedObject->integer.at(1), connectedObject->integer.at(2),
                         connectedObject->boolean ? "true" : "false");
@@ -207,88 +231,77 @@ void NAV::Demo::guiConfig()
         if (ImGui::InputInt3("", valueObject.integer.data()))
         {
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_DemoData);
         }
         ImGui::SameLine();
         if (ImGui::Checkbox("Object", &valueObject.boolean))
         {
             flow::ApplyChanges();
+            notifyOutputValueChanged(OutputPortIndex_DemoData);
         }
         /* ------------------------------------------------ Matrix ------------------------------------------------ */
         ImGui::TableNextColumn();
-        if (auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Matrix))
-        {
-            if (connectedMatrix->rows() == 3 && connectedMatrix->cols() == 3)
-            {
-                ImGui::Text("Matrix: [%.1f, %.1f, %.1f]\n"
-                            "               [%.1f, %.1f, %.1f]\n"
-                            "               [%.1f, %.1f, %.1f]",
-                            (*connectedMatrix)(0, 0), (*connectedMatrix)(0, 1), (*connectedMatrix)(0, 2),
-                            (*connectedMatrix)(1, 0), (*connectedMatrix)(1, 1), (*connectedMatrix)(1, 2),
-                            (*connectedMatrix)(2, 0), (*connectedMatrix)(2, 1), (*connectedMatrix)(2, 2));
-            }
-            else
-            {
-                ImGui::TextUnformatted("Matrix: Not 3x3");
-            }
-        }
-        else
+        if (auto* connectedMatrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Matrix);
+            connectedMatrix == nullptr)
         {
             ImGui::TextUnformatted("Matrix: N/A");
         }
+        else
+        {
+            if (ImGui::BeginTable("Init Matrix", static_cast<int>(connectedMatrix->cols() + 1),
+                                  ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+            {
+                ImGui::TableSetupColumn("");
+                for (int64_t col = 0; col < connectedMatrix->cols(); col++)
+                {
+                    ImGui::TableSetupColumn(std::to_string(col).c_str());
+                }
+                ImGui::TableHeadersRow();
+                for (int64_t row = 0; row < connectedMatrix->rows(); row++)
+                {
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted(std::to_string(row).c_str());
+                    ImU32 cell_bg_color = ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_TableHeaderBg]);
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                    for (int64_t col = 0; col < connectedMatrix->cols(); col++)
+                    {
+                        ImGui::TableNextColumn();
+                        ImGui::SetNextItemWidth(50);
+                        if (ImGui::InputDouble(("##initMatrix(" + std::to_string(row) + ", " + std::to_string(col) + ")").c_str(),
+                                               &(*connectedMatrix)(row, col), 0.0, 0.0, "%.1f"))
+                        {
+                            flow::ApplyChanges();
+                            notifyInputValueChanged(InputPortIndex_Matrix);
+                        }
+                    }
+                }
+                ImGui::EndTable();
+            }
+        }
         ImGui::TableNextColumn();
-        float itemWidth = ImGui::GetContentRegionAvail().x / 3.0F - 2 * ImGui::GetStyle().ItemInnerSpacing.x;
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##0,0", &valueMatrix(0, 0), 0.0, 0.0, "%.1f")) // We don't want a label,
-        {                                                                      // but the label has to be an unique identifier.
-            flow::ApplyChanges();                                              // So use ##, which hides everything after it
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##0,1", &valueMatrix(0, 1), 0.0, 0.0, "%.1f"))
+        if (ImGui::BeginTable("Current Matrix", static_cast<int>(valueMatrix.cols() + 1),
+                              ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
         {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##0,2", &valueMatrix(0, 2), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
+            ImGui::TableSetupColumn("");
+            for (int64_t col = 0; col < valueMatrix.cols(); col++)
+            {
+                ImGui::TableSetupColumn(std::to_string(col).c_str());
+            }
+            ImGui::TableHeadersRow();
+            for (int64_t row = 0; row < valueMatrix.rows(); row++)
+            {
+                ImGui::TableNextColumn();
+                ImGui::TextUnformatted(std::to_string(row).c_str());
+                ImU32 cell_bg_color = ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_TableHeaderBg]);
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                for (int64_t col = 0; col < valueMatrix.cols(); col++)
+                {
+                    ImGui::TableNextColumn();
+                    ImGui::Text("%.1f", valueMatrix(row, col));
+                }
+            }
 
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##1,0", &valueMatrix(1, 0), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##1,1", &valueMatrix(1, 1), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##1,2", &valueMatrix(1, 2), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##2,0", &valueMatrix(2, 0), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##2,1", &valueMatrix(2, 1), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::InputDouble("##2,2", &valueMatrix(2, 2), 0.0, 0.0, "%.1f"))
-        {
-            flow::ApplyChanges();
+            ImGui::EndTable();
         }
         /* ----------------------------------------------- Function ----------------------------------------------- */
         ImGui::TableNextColumn();
@@ -297,6 +310,7 @@ void NAV::Demo::guiConfig()
             receivedDataFromCallback = callInputFunction<std::string>(InputPortIndex_Function, 20, callbackInt, callbackBool);
         }
         ImGui::SameLine();
+        float itemWidth = ImGui::GetContentRegionAvail().x / 3.0F - 2 * ImGui::GetStyle().ItemInnerSpacing.x;
         ImGui::SetNextItemWidth(itemWidth);
         if (ImGui::SliderInt("##CallbackInt", &callbackInt, -10, 10))
         {
@@ -392,7 +406,7 @@ bool NAV::Demo::initialize()
     LOG_TRACE("{}: called", nameId());
 
     // To Show the Initialization in the GUI
-    std::this_thread::sleep_until(std::chrono::high_resolution_clock::now() + std::chrono::milliseconds(3000));
+    std::this_thread::sleep_until(std::chrono::steady_clock::now() + std::chrono::milliseconds(3000));
 
     // Currently crashes clang-tidy (Stack dump: #0 Calling std::chrono::operator<=>), so use sleep_until
     // std::this_thread::sleep_for(std::chrono::milliseconds(3000));
@@ -402,6 +416,8 @@ bool NAV::Demo::initialize()
 
     callbackCounter = 0;
     receivedDataFromCallback = "";
+
+    stringUpdateCounter = 0;
 
     int outputInterval = static_cast<int>(1.0 / static_cast<double>(outputFrequency) * 1000.0);
     timer.start(outputInterval, readSensorDataThread, this);
@@ -459,7 +475,34 @@ void NAV::Demo::readSensorDataThread(void* userData)
 {
     auto* node = static_cast<Demo*>(userData);
 
-    auto obs = std::make_shared<NodeData>();
+    auto imuPos = ImuPos();
+    auto obs = std::make_shared<ImuObs>(imuPos);
+
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    auto* t = std::localtime(&now);
+
+    obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
+                           static_cast<uint16_t>(t->tm_mon),
+                           static_cast<uint16_t>(t->tm_mday),
+                           static_cast<uint16_t>(t->tm_hour),
+                           static_cast<uint16_t>(t->tm_min),
+                           static_cast<long double>(t->tm_sec));
+
+    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator(static_cast<uint64_t>(seed));
+
+    std::uniform_real_distribution<double> distribution(-9.0, 9.0);
+    obs->accelUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
+
+    distribution = std::uniform_real_distribution<double>(-3.0, 3.0);
+    obs->gyroUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
+
+    distribution = std::uniform_real_distribution<double>(-1.0, 1.0);
+    obs->magUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));
+
+    distribution = std::uniform_real_distribution<double>(15.0, 25.0);
+    obs->temperature = distribution(generator);
+
     node->invokeCallbacks(OutputPortIndex_NodeData, obs);
 }
 
@@ -479,7 +522,7 @@ std::shared_ptr<NAV::NodeData> NAV::Demo::pollData(bool peek)
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     auto* t = std::localtime(&now);
 
-    obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year),
+    obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
                            static_cast<uint16_t>(t->tm_mon),
                            static_cast<uint16_t>(t->tm_mday),
                            static_cast<uint16_t>(t->tm_hour),
@@ -503,4 +546,9 @@ std::string NAV::Demo::callbackFunction(int integer1, int integer2, bool boolean
                        callbackCounter,
                        callbackCounter > 1 ? "s" : "",
                        integer1, integer2, boolean);
+}
+
+void NAV::Demo::stringUpdatedNotifyFunction(ax::NodeEditor::LinkId /*linkId*/)
+{
+    stringUpdateCounter++;
 }

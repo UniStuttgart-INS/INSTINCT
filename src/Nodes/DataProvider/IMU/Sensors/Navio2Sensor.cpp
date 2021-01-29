@@ -15,6 +15,8 @@ namespace nm = NAV::NodeManager;
 
 #include "NodeData/IMU/ImuObs.hpp"
 
+#include "util/Time/TimeBase.hpp"
+
 NAV::Navio2Sensor::Navio2Sensor()
 {
     name = typeStatic();
@@ -116,7 +118,7 @@ bool NAV::Navio2Sensor::initialize()
 #endif
 
     int outputInterval = static_cast<int>(1.0 / static_cast<double>(outputFrequency) * 1000.0);
-    startTime = std::chrono::high_resolution_clock::now();
+    startTime = std::chrono::steady_clock::now();
     timer.start(outputInterval, readImuThread, this);
 
     return true;
@@ -142,7 +144,7 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     auto* navio = static_cast<Navio2Sensor*>(userData);
     auto obs = std::make_shared<ImuObs>(navio->imuPos);
 
-    auto currentTime = std::chrono::high_resolution_clock::now();
+    auto currentTime = std::chrono::steady_clock::now();
 #if !__APPLE__
     navio->sensor->update();
 
@@ -169,5 +171,10 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     LOG_DATA("DATA({}): {}, {}°C, a=({}, {}, {})", navio->name, obs->timeSinceStartup.value(), obs->temperature.value(),
              navio->ax, navio->ay, navio->az);
 
+    if (InsTime currentTime = util::time::GetCurrentTime();
+        !currentTime.empty())
+    {
+        obs->insTime = currentTime;
+    }
     navio->invokeCallbacks(OutputPortIndex_ImuObs, obs);
 }

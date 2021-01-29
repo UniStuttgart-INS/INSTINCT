@@ -42,6 +42,7 @@ ed::PinId GetNextPinId();
 namespace NAV::NodeManager
 {
 bool showFlowWhenInvokingCallbacks = true;
+bool showFlowWhenNotifyingValueChange = false;
 
 } // namespace NAV::NodeManager
 
@@ -69,7 +70,7 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
     LOG_DEBUG("Creating node {}", size_t(node->id));
 
     // Create Delegate output pin
-    if (node->outputPins.empty() || node->outputPins.front().type != Pin::Type::Delegate)
+    if (node->kind == Node::Kind::Blueprint && (node->outputPins.empty() || node->outputPins.front().type != Pin::Type::Delegate))
     {
         Pin pin = Pin(GetNextPinId(), "", Pin::Type::Delegate, Pin::Kind::Output, node);
 
@@ -99,6 +100,27 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
     }
 
     flow::ApplyChanges();
+}
+
+void NAV::NodeManager::UpdateNode(Node* node)
+{
+    for (auto& pin : node->inputPins)
+    {
+        pin.parentNode = node;
+    }
+    for (auto& pin : node->outputPins)
+    {
+        pin.parentNode = node;
+    }
+
+    for (const auto& pin : node->inputPins)
+    {
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
+    }
+    for (const auto& pin : node->outputPins)
+    {
+        m_NextId = std::max(m_NextId, size_t(pin.id) + 1);
+    }
 }
 
 bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
@@ -204,6 +226,16 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     else
     {
         endPin->data = startPin->data;
+        if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+        {
+            if (!endPin->notifyFunc.empty())
+            {
+                startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
+                                                  std::get<1>(endPin->notifyFunc.front()),
+                                                  m_links.back().id);
+            }
+        }
+
         if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
         {
             if (endPin->parentNode->isInitialized())
@@ -211,6 +243,12 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
                 endPin->parentNode->deinitializeNode();
             }
         }
+    }
+
+    if (startPin && endPin && startPin->parentNode && endPin->parentNode)
+    {
+        startPin->parentNode->afterCreateLink(startPin, endPin);
+        endPin->parentNode->afterCreateLink(startPin, endPin);
     }
 
     flow::ApplyChanges();
@@ -267,6 +305,16 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
         else
         {
             endPin->data = startPin->data;
+            if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+            {
+                if (!endPin->notifyFunc.empty())
+                {
+                    startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
+                                                      std::get<1>(endPin->notifyFunc.front()),
+                                                      m_links.back().id);
+                }
+            }
+
             if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
             {
                 if (endPin->parentNode->isInitialized())
@@ -274,6 +322,12 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
                     endPin->parentNode->deinitializeNode();
                 }
             }
+        }
+
+        if (startPin && endPin && startPin->parentNode && endPin->parentNode)
+        {
+            startPin->parentNode->afterCreateLink(startPin, endPin);
+            endPin->parentNode->afterCreateLink(startPin, endPin);
         }
     }
     else
@@ -288,6 +342,107 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
     flow::ApplyChanges();
 
     return true;
+}
+
+void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
+{
+    Link* link = NodeManager::FindLink(linkId);
+
+    if (link == nullptr)
+    {
+        LOG_ERROR("Tried to refresh Link {}, but the link does not exist", size_t(linkId));
+        return;
+    }
+
+    Pin* startPin = FindPin(link->startPinId);
+    Pin* endPin = FindPin(link->endPinId);
+    if (endPin && startPin)
+    {
+        if (!startPin->parentNode || !endPin->parentNode)
+        {
+            LOG_ERROR("Tried to refresh Link from pinId {} to {}, but the pins do not have parentNodes",
+                      size_t(link->startPinId), size_t(link->endPinId));
+            return;
+        }
+
+        startPin->parentNode->onDeleteLink(startPin, endPin);
+        if (!startPin->parentNode->onCreateLink(startPin, endPin))
+        {
+            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the start Node.", size_t(link->id),
+                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
+        }
+
+        endPin->parentNode->onDeleteLink(startPin, endPin);
+        if (!endPin->parentNode->onCreateLink(startPin, endPin))
+        {
+            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the end Node.", size_t(link->id),
+                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
+        }
+
+        if (endPin->type == Pin::Type::Flow)
+        {
+            auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
+                                  std::make_tuple(endPin->parentNode,
+                                                  std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                                  linkId));
+            if (iter != startPin->callbacks.end())
+            {
+                startPin->callbacks.erase(iter);
+            }
+            else
+            {
+                LOG_ERROR("Tried to delete link {}, with type Flow, but could not find the callback.", linkId.AsPointer());
+            }
+
+            startPin->callbacks.emplace_back(endPin->parentNode,
+                                             std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                             link->id);
+        }
+        else
+        {
+            endPin->data = startPin->data;
+            if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+            {
+                if (!endPin->notifyFunc.empty())
+                {
+                    auto iter = std::find(startPin->notifyFunc.begin(), startPin->notifyFunc.end(),
+                                          std::make_tuple(std::get<0>(endPin->notifyFunc.front()),
+                                                          std::get<1>(endPin->notifyFunc.front()),
+                                                          linkId));
+                    if (iter != startPin->notifyFunc.end())
+                    {
+                        startPin->notifyFunc.erase(iter);
+                    }
+
+                    startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
+                                                      std::get<1>(endPin->notifyFunc.front()),
+                                                      m_links.back().id);
+                }
+            }
+
+            if (startPin->parentNode && endPin->parentNode && !startPin->parentNode->isInitialized())
+            {
+                if (endPin->parentNode->isInitialized())
+                {
+                    endPin->parentNode->deinitializeNode();
+                }
+            }
+        }
+
+        if (startPin && endPin && startPin->parentNode && endPin->parentNode)
+        {
+            startPin->parentNode->afterCreateLink(startPin, endPin);
+            endPin->parentNode->afterCreateLink(startPin, endPin);
+        }
+    }
+    else
+    {
+        LOG_ERROR("Tried to refresh Link from pinId {} to {}, but one of them does not exist",
+                  size_t(link->startPinId), size_t(link->endPinId));
+        return;
+    }
+
+    flow::ApplyChanges();
 }
 
 bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
@@ -315,6 +470,21 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             if (endPin->type != Pin::Type::Flow)
             {
                 endPin->data = static_cast<void*>(nullptr);
+                if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+                {
+                    if (!endPin->notifyFunc.empty())
+                    {
+                        auto iter = std::find(startPin->notifyFunc.begin(), startPin->notifyFunc.end(),
+                                              std::make_tuple(std::get<0>(endPin->notifyFunc.front()),
+                                                              std::get<1>(endPin->notifyFunc.front()),
+                                                              linkId));
+                        if (iter != startPin->notifyFunc.end())
+                        {
+                            startPin->notifyFunc.erase(iter);
+                        }
+                    }
+                }
+
                 if (endPin->parentNode)
                 {
                     endPin->parentNode->deinitializeNode();
@@ -332,7 +502,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
                 }
                 else
                 {
-                    LOG_ERROR("Tried to delete link {}, with type Flow or Function, but could not find the callback.", linkId.AsPointer());
+                    LOG_ERROR("Tried to delete link {}, with type Flow, but could not find the callback.", linkId.AsPointer());
                 }
             }
         }
