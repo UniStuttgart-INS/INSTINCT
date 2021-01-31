@@ -10,6 +10,8 @@ namespace ed = ax::NodeEditor;
 #include <algorithm>
 #include <thread>
 
+#include "NodeRegistry.hpp"
+
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                              Private Members                                             */
 /* -------------------------------------------------------------------------------------------------------- */
@@ -74,7 +76,22 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
     {
         Pin pin = Pin(GetNextPinId(), "", Pin::Type::Delegate, Pin::Kind::Output, node);
 
-        pin.data = node;
+        for ([[maybe_unused]] const auto& [category, nodeInfoList] : NodeRegistry::RegisteredNodes())
+        {
+            for (const auto& nodeInfo : nodeInfoList)
+            {
+                if (nodeInfo.type == node->type())
+                {
+                    pin.data = reinterpret_cast<void*>(reinterpret_cast<char*>(node) - nodeInfo.addressOffsetNode);
+                    break;
+                }
+            }
+            if (std::get<void*>(pin.data) != nullptr)
+            {
+                break;
+            }
+        }
+
         pin.dataIdentifier.push_back(node->type());
 
         node->outputPins.insert(node->outputPins.begin(), pin);
