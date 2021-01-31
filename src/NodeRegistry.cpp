@@ -49,6 +49,8 @@ void registerNodeType()
         info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }
 
+    info.addressOffsetNode = reinterpret_cast<char*>(static_cast<Node*>(&obj)) - reinterpret_cast<char*>(&obj);
+
     registeredNodes_[T::category()].push_back(info);
 }
 
