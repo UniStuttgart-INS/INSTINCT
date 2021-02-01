@@ -9,6 +9,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/UartSensors/Emlid/EmlidUtilities.hpp"
+#include "util/Time/TimeBase.hpp"
 
 #include "NodeData/GNSS/EmlidObs.hpp"
 
@@ -125,7 +126,16 @@ std::shared_ptr<NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
         return nullptr;
     }
 
-    sensors::emlid::decryptEmlidObs(obs, currentInsTime, peek);
+    sensors::emlid::decryptEmlidObs(obs, peek);
+
+    if (!obs->insTime.has_value())
+    {
+        if (auto currentTime = util::time::GetCurrentTime();
+            !currentTime.empty())
+        {
+            obs->insTime = currentTime;
+        }
+    }
 
     if (peek)
     {

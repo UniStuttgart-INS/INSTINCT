@@ -5,14 +5,14 @@
 
 #pragma once
 
-#include "Nodes/DataProvider/GNSS/Gnss.hpp"
+#include "Nodes/Node.hpp"
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
 #include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
 
 namespace NAV
 {
 /// Emlid Sensor Class
-class EmlidSensor : public Gnss, public UartSensor
+class EmlidSensor : public Node, public UartSensor
 {
   public:
     /// @brief Default constructor

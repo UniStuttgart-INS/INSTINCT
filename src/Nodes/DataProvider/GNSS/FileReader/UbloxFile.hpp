@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Nodes/DataProvider/GNSS/Gnss.hpp"
+#include "Nodes/Node.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
 #include "util/UartSensors/Ublox/UbloxUartSensor.hpp"
@@ -13,7 +13,7 @@
 namespace NAV
 {
 /// File Reader for Ublox log files
-class UbloxFile : public Gnss, public FileReader
+class UbloxFile : public Node, public FileReader
 {
   public:
     /// @brief Default constructor

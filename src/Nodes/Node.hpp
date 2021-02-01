@@ -278,6 +278,9 @@ class Node
     /// Enables the callbacks
     bool callbacksEnabled = false;
 
+    /// Stop the node change to trigger a flow change while (de-)/initializing
+    bool dontTriggerChanges = false;
+
   private:
     /// @brief Abstract Initialization of the Node
     virtual bool initialize();

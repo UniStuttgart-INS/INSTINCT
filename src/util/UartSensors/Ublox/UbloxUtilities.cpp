@@ -5,7 +5,9 @@
 #include "util/InsTransformations.hpp"
 #include "util/Logger.hpp"
 
-void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, std::optional<NAV::InsTime>& currentInsTime, bool peek)
+#include "util/Time/TimeBase.hpp"
+
+void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, bool peek)
 {
     if (obs->raw.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {
@@ -23,12 +25,6 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 std::get<UbxAckAck>(obs->data).clsID = obs->raw.extractUint8();
                 std::get<UbxAckAck>(obs->data).msgID = obs->raw.extractUint8();
 
-                // Set the observation time to the last known gps time
-                if (currentInsTime.has_value())
-                {
-                    obs->insTime = currentInsTime;
-                }
-
                 LOG_DATA("UBX:  ACK-ACK, clsID {}, msgID {}", std::get<UbxAckAck>(obs->data).clsID, std::get<UbxAckAck>(obs->data).msgID);
             }
             else if (msgId == UbxAckMessages::UBX_ACK_NAK)
@@ -36,12 +32,6 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 obs->data = UbxAckNak();
                 std::get<UbxAckNak>(obs->data).clsID = obs->raw.extractUint8();
                 std::get<UbxAckNak>(obs->data).msgID = obs->raw.extractUint8();
-
-                // Set the observation time to the last known gps time
-                if (currentInsTime.has_value())
-                {
-                    obs->insTime = currentInsTime;
-                }
 
                 if (!peek)
                 {
@@ -52,7 +42,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             {
                 if (!peek)
                 {
-                    LOG_WARN("UBX:  ACK-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                    LOG_DATA("UBX:  ACK-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
                 }
             }
         }
@@ -62,7 +52,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxAidMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  AID-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  AID-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // Configuration Input Messages: Configure the receiver
@@ -71,7 +61,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxCfgMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  CFG-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  CFG-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // External Sensor Fusion Messages: External Sensor Measurements and Status Information
@@ -82,14 +72,14 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             {
                 if (!peek)
                 {
-                    LOG_WARN("UBX:  ESF-INS, Size {}, not implemented yet!", obs->raw.getRawDataLength());
+                    LOG_DATA("UBX:  ESF-INS, Size {}, not implemented yet!", obs->raw.getRawDataLength());
                 }
             }
             else if (msgId == UbxEsfMessages::UBX_ESF_MEAS)
             {
                 if (!peek)
                 {
-                    LOG_WARN("UBX:  ESF-MEAS, Size {}, not implemented yet!", obs->raw.getRawDataLength());
+                    LOG_DATA("UBX:  ESF-MEAS, Size {}, not implemented yet!", obs->raw.getRawDataLength());
                 }
             }
             else if (msgId == UbxEsfMessages::UBX_ESF_RAW)
@@ -115,14 +105,14 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             {
                 if (!peek)
                 {
-                    LOG_WARN("UBX:  ESF-STATUS, Size {}, not implemented yet!", obs->raw.getRawDataLength());
+                    LOG_DATA("UBX:  ESF-STATUS, Size {}, not implemented yet!", obs->raw.getRawDataLength());
                 }
             }
             else
             {
                 if (!peek)
                 {
-                    LOG_WARN("UBX:  ESF-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                    LOG_DATA("UBX:  ESF-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
                 }
             }
         }
@@ -132,7 +122,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxHnrMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  HNR-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  HNR-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // Information Messages: Printf-Style Messages, with IDs such as Error, Warning, Notice
@@ -141,7 +131,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxInfMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  INF-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  INF-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // Logging Messages: Log creation, deletion, info and retrieval
@@ -150,7 +140,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxLogMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  LOG-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  LOG-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // Multiple GNSS Assistance Messages: Assistance data for various GNSS
@@ -159,7 +149,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxMgaMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  MGA-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  MGA-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
@@ -168,7 +158,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxMonMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  MON-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  MON-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
@@ -193,13 +183,14 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 std::get<UbxNavAtt>(obs->data).accHeading = obs->raw.extractUint32();
 
                 // Calculate the insTime with the iTOW
-                if (currentInsTime.has_value())
+                auto currentTime = util::time::GetCurrentTime();
+                if (!currentTime.empty())
                 {
-                    auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsCycle,
-                                           gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavAtt>(obs->data).iTOW) / 1000.0L);
-                    obs->insTime = currentInsTime;
+                    auto gpst = currentTime.toGPSweekTow();
+                    currentTime = InsTime(gpst.gpsCycle,
+                                          gpst.gpsWeek,
+                                          static_cast<long double>(std::get<UbxNavAtt>(obs->data).iTOW) / 1000.0L);
+                    obs->insTime = currentTime;
                 }
 
                 if (!peek)
@@ -218,13 +209,14 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 std::get<UbxNavPosecef>(obs->data).pAcc = obs->raw.extractUint32();
 
                 // Calculate the insTime with the iTOW
-                if (currentInsTime.has_value())
+                auto currentTime = util::time::GetCurrentTime();
+                if (!currentTime.empty())
                 {
-                    auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsCycle,
-                                           gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavPosecef>(obs->data).iTOW) / 1000.0L);
-                    obs->insTime = currentInsTime;
+                    auto gpst = currentTime.toGPSweekTow();
+                    currentTime = InsTime(gpst.gpsCycle,
+                                          gpst.gpsWeek,
+                                          static_cast<long double>(std::get<UbxNavPosecef>(obs->data).iTOW) / 1000.0L);
+                    obs->insTime = currentTime;
                 }
 
                 obs->position_ecef.emplace(std::get<UbxNavPosecef>(obs->data).ecefX * 1e-2,
@@ -249,13 +241,14 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 std::get<UbxNavPosllh>(obs->data).vAcc = obs->raw.extractUint32();
 
                 // Calculate the insTime with the iTOW
-                if (currentInsTime.has_value())
+                auto currentTime = util::time::GetCurrentTime();
+                if (!currentTime.empty())
                 {
-                    auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsCycle,
-                                           gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavPosllh>(obs->data).iTOW) / 1000.0L);
-                    obs->insTime = currentInsTime;
+                    auto gpst = currentTime.toGPSweekTow();
+                    currentTime = InsTime(gpst.gpsCycle,
+                                          gpst.gpsWeek,
+                                          static_cast<long double>(std::get<UbxNavPosllh>(obs->data).iTOW) / 1000.0L);
+                    obs->insTime = currentTime;
                 }
 
                 Eigen::Vector3d latLonAlt(trafo::deg2rad(std::get<UbxNavPosllh>(obs->data).lat * 1e-7),
@@ -284,13 +277,14 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                 std::get<UbxNavVelned>(obs->data).cAcc = obs->raw.extractUint32();
 
                 // Calculate the insTime with the iTOW
-                if (currentInsTime.has_value())
+                auto currentTime = util::time::GetCurrentTime();
+                if (!currentTime.empty())
                 {
-                    auto gpst = currentInsTime.value().toGPSweekTow();
-                    currentInsTime.emplace(gpst.gpsCycle,
-                                           gpst.gpsWeek,
-                                           static_cast<long double>(std::get<UbxNavVelned>(obs->data).iTOW) / 1000.0L);
-                    obs->insTime = currentInsTime;
+                    auto gpst = currentTime.toGPSweekTow();
+                    currentTime = InsTime(gpst.gpsCycle,
+                                          gpst.gpsWeek,
+                                          static_cast<long double>(std::get<UbxNavVelned>(obs->data).iTOW) / 1000.0L);
+                    obs->insTime = currentTime;
                 }
 
                 if (!peek)
@@ -302,7 +296,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             {
                 if (!peek)
                 {
-                    LOG_WARN("UBX:  NAV-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                    LOG_DATA("UBX:  NAV-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
                 }
             }
         }
@@ -342,10 +336,9 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                     );
                 }
 
-                currentInsTime.emplace(0,
+                obs->insTime = InsTime(0,
                                        std::get<UbxRxmRawx>(obs->data).week,
                                        static_cast<long double>(std::get<UbxRxmRawx>(obs->data).rcvTow));
-                obs->insTime = currentInsTime;
 
                 if (!peek)
                 {
@@ -371,12 +364,6 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
                     std::get<UbxRxmSfrbx>(obs->data).dwrd.emplace_back(obs->raw.extractUint32());
                 }
 
-                // Set the observation time to the last known gps time
-                if (currentInsTime.has_value())
-                {
-                    obs->insTime = currentInsTime;
-                }
-
                 if (!peek)
                 {
                     LOG_DATA("UBX:  RXM-SFRBX, gnssId {}, svId {}, freqId {}, numWords {}",
@@ -387,7 +374,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             {
                 if (!peek)
                 {
-                    LOG_WARN("UBX:  RXM-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                    LOG_DATA("UBX:  RXM-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
                 }
             }
         }
@@ -397,7 +384,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxSecMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  SEC-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  SEC-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // Timing Messages: Time Pulse Output, Time Mark Results
@@ -406,7 +393,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxTimMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  TIM-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  TIM-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         // Firmware Update Messages: Memory/Flash erase/write, Reboot, Flash identification, etc.
@@ -415,14 +402,14 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, s
             [[maybe_unused]] auto msgId = static_cast<UbxUpdMessages>(obs->msgId);
             if (!peek)
             {
-                LOG_WARN("UBX:  UPD-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  UPD-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
             }
         }
         else
         {
             if (!peek)
             {
-                LOG_WARN("UBX:  {:x}-{:x}, Size {}, not implemented yet!", obs->msgClass, obs->msgId, obs->raw.getRawDataLength());
+                LOG_DATA("UBX:  {:x}-{:x}, Size {}, not implemented yet!", obs->msgClass, obs->msgId, obs->raw.getRawDataLength());
             }
         }
     }

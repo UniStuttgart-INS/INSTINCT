@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Nodes/DataProvider/GNSS/Gnss.hpp"
+#include "Nodes/Node.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
 #include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
@@ -13,7 +13,7 @@
 namespace NAV
 {
 /// File Reader for Emlid log files
-class EmlidFile : public Gnss, public FileReader
+class EmlidFile : public Node, public FileReader
 {
   public:
     /// @brief Default constructor

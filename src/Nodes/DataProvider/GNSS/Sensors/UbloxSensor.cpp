@@ -25,6 +25,7 @@ NAV::UbloxSensor::UbloxSensor()
 
     // TODO: Update the library to handle different baudrates
     selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
+    sensorPort = "/dev/ttyACM0";
 
     nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, NAV::UbloxObs::type());
 }
@@ -142,11 +143,17 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 
     auto obs = std::make_shared<UbloxObs>(p);
 
-    sensors::ublox::decryptUbloxObs(obs, ubSensor->currentInsTime);
+    sensors::ublox::decryptUbloxObs(obs);
 
     if (obs->insTime.has_value())
     {
         util::time::SetCurrentTime(obs->insTime.value());
     }
+    else if (auto currentTime = util::time::GetCurrentTime();
+             !currentTime.empty())
+    {
+        obs->insTime = currentTime;
+    }
+
     ubSensor->invokeCallbacks(OutputPortIndex_UbloxObs, obs);
 }

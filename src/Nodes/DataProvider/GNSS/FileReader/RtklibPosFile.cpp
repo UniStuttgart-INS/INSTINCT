@@ -2,6 +2,7 @@
 
 #include "util/Logger.hpp"
 #include "util/InsTransformations.hpp"
+#include "util/Time/TimeBase.hpp"
 
 #include "gui/widgets/FileDialog.hpp"
 
@@ -320,6 +321,16 @@ std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
     if (sdN.has_value() && sdE.has_value() && sdU.has_value())
     {
         obs->sdNEU.emplace(sdN.value(), sdE.value(), sdU.value());
+    }
+
+    if (obs->insTime.has_value())
+    {
+        util::time::SetCurrentTime(obs->insTime.value());
+    }
+    else if (auto currentTime = util::time::GetCurrentTime();
+             !currentTime.empty())
+    {
+        obs->insTime = currentTime;
     }
 
     if (peek)
