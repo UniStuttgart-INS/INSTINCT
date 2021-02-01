@@ -105,6 +105,7 @@ bool NAV::FlowExecutor::initialize()
     if (!hasUninitializedNodes)
     {
         util::time::SetMode(util::time::Mode::POST_PROCESSING);
+        util::time::ClearCurrentTime();
 
         nm::EnableAllCallbacks();
     }

@@ -9,6 +9,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/UartSensors/Ublox/UbloxUtilities.hpp"
+#include "util/Time/TimeBase.hpp"
 
 #include "NodeData/GNSS/UbloxObs.hpp"
 
@@ -125,7 +126,17 @@ std::shared_ptr<NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
         return nullptr;
     }
 
-    sensors::ublox::decryptUbloxObs(obs, currentInsTime, peek);
+    sensors::ublox::decryptUbloxObs(obs, peek);
+
+    if (obs->insTime.has_value())
+    {
+        util::time::SetCurrentTime(obs->insTime.value());
+    }
+    else if (auto currentTime = util::time::GetCurrentTime();
+             !currentTime.empty())
+    {
+        obs->insTime = currentTime;
+    }
 
     if (peek)
     {

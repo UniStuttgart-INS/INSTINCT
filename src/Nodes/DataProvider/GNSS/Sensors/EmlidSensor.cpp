@@ -142,7 +142,17 @@ void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 
     auto obs = std::make_shared<EmlidObs>(p);
 
-    sensors::emlid::decryptEmlidObs(obs, erSensor->currentInsTime);
+    sensors::emlid::decryptEmlidObs(obs);
+
+    if (obs->insTime.has_value())
+    {
+        util::time::SetCurrentTime(obs->insTime.value());
+    }
+    else if (auto currentTime = util::time::GetCurrentTime();
+             !currentTime.empty())
+    {
+        obs->insTime = currentTime;
+    }
 
     if (obs->insTime.has_value())
     {

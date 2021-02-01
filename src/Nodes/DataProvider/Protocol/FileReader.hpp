@@ -81,7 +81,7 @@ class FileReader
     /// Lower Time Limit of data to read
     InsTime lowerLimit{ InsTime_MJD(0, 0) };
     /// Upper Time Limit of data to read
-    InsTime upperLimit;
+    InsTime upperLimit{ InsTime_MJD(InsTimeUtil::END_OF_THE_CENTURY_MJD, 0) };
 };
 
 } // namespace NAV

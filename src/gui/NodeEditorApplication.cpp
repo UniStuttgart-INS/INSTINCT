@@ -77,7 +77,17 @@ void NAV::gui::NodeEditorApplication::OnStart()
         {
             return false;
         }
-        flow::ApplyChanges();
+        if (!node->isInitializing() && !node->isDeinitializing())
+        {
+            if (node->dontTriggerChanges)
+            {
+                node->dontTriggerChanges = false;
+            }
+            else
+            {
+                flow::ApplyChanges();
+            }
+        }
         gui::TouchNode(nodeId);
 
         return true;
@@ -546,6 +556,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 initThread.join();
             }
             initThread = std::jthread([node, init]() {
+                node->dontTriggerChanges = true;
                 if (init)
                 {
                     node->initializeNode();

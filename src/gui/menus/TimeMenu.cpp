@@ -54,6 +54,7 @@ void NAV::gui::menus::ShowTimeMenu()
                             static_cast<uint16_t>(hour),
                             static_cast<uint16_t>(min),
                             sec);
+            util::time::ClearCurrentTime();
             util::time::SetCurrentTime(newTime);
 
             cycle = newTime.toGPSweekTow().gpsCycle;
@@ -72,6 +73,7 @@ void NAV::gui::menus::ShowTimeMenu()
             InsTime newTime(static_cast<uint16_t>(cycle),
                             static_cast<uint16_t>(week),
                             tow);
+            util::time::ClearCurrentTime();
             util::time::SetCurrentTime(newTime);
 
             year = newTime.toYMDHMS().year;
@@ -81,5 +83,22 @@ void NAV::gui::menus::ShowTimeMenu()
             min = newTime.toYMDHMS().min;
             sec = static_cast<double>(newTime.toYMDHMS().sec);
         }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Reset"))
+    {
+        util::time::ClearCurrentTime();
+
+        currentTime = util::time::GetCurrentTime();
+        year = currentTime.toYMDHMS().year;
+        month = currentTime.toYMDHMS().month;
+        day = currentTime.toYMDHMS().day;
+        hour = currentTime.toYMDHMS().hour;
+        min = currentTime.toYMDHMS().min;
+        sec = static_cast<double>(currentTime.toYMDHMS().sec);
+
+        cycle = currentTime.toGPSweekTow().gpsCycle;
+        week = currentTime.toGPSweekTow().gpsWeek;
+        tow = static_cast<double>(currentTime.toGPSweekTow().tow);
     }
 }

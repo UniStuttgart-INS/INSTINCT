@@ -51,14 +51,21 @@ NAV::InsTime NAV::util::time::GetCurrentTime()
 
 void NAV::util::time::SetCurrentTime(const NAV::InsTime& insTime)
 {
-    if (insTime < currentTime)
+    if (auto currentExactTime = GetCurrentTime();
+        insTime < currentExactTime)
     {
-        LOG_WARN("Updated current Time {} to {}, but the new time is earlier.",
-                 currentTime.GetStringOfDate(), insTime.GetStringOfDate());
+        LOG_TRACE("Not updating current Time [{} {:.6f}] to [{} {:.6f}], because the new time is earlier.",
+                  currentExactTime.toGPSweekTow().gpsWeek, currentExactTime.toGPSweekTow().tow,
+                  insTime.toGPSweekTow().gpsWeek, insTime.toGPSweekTow().tow);
     }
-
-    currentTimeComputer = std::chrono::steady_clock::now();
-    currentTime = insTime;
+    else if (insTime >= currentExactTime)
+    {
+        LOG_DEBUG("Updating current Time [{} {:.6f}] to [{} {:.6f}]",
+                  currentExactTime.toGPSweekTow().gpsWeek, currentExactTime.toGPSweekTow().tow,
+                  insTime.toGPSweekTow().gpsWeek, insTime.toGPSweekTow().tow);
+        currentTimeComputer = std::chrono::steady_clock::now();
+        currentTime = insTime;
+    }
 }
 
 void NAV::util::time::ClearCurrentTime()

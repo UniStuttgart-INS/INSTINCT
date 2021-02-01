@@ -5,14 +5,14 @@
 
 #pragma once
 
-#include "Nodes/DataProvider/GNSS/Gnss.hpp"
+#include "Nodes/Node.hpp"
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
 #include "util/UartSensors/Ublox/UbloxUartSensor.hpp"
 
 namespace NAV
 {
 /// Ublox Sensor Class
-class UbloxSensor : public Gnss, public UartSensor
+class UbloxSensor : public Node, public UartSensor
 {
   public:
     /// @brief Default constructor

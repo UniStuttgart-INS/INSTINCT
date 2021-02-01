@@ -5,13 +5,13 @@
 
 #pragma once
 
-#include "Nodes/DataProvider/GNSS/Gnss.hpp"
+#include "Nodes/Node.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
 namespace NAV
 {
 /// File Reader for RTKLIB pos log files
-class RtklibPosFile : public Gnss, public FileReader
+class RtklibPosFile : public Node, public FileReader
 {
   public:
     /// @brief Default constructor
