@@ -130,6 +130,8 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
 
                 return app.Run();
             }
+
+            LOG_CRITICAL("Could not create the window");
         }
 
         return EXIT_SUCCESS;
