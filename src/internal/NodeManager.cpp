@@ -682,46 +682,94 @@ bool NAV::NodeManager::IsPinLinked(ed::PinId id)
     return false;
 }
 
-std::vector<NAV::Node*> NAV::NodeManager::FindConnectedNodesToPin(ax::NodeEditor::PinId id)
+std::vector<NAV::Node*> NAV::NodeManager::FindConnectedNodesToOutputPin(ax::NodeEditor::PinId id)
 {
-    if (!id)
-    {
-        return {};
-    }
-
     std::vector<NAV::Node*> connectedNodes;
     for (const auto& link : m_links)
     {
         if (link.startPinId == id)
         {
-            connectedNodes.push_back(FindPin(link.endPinId)->parentNode);
-        }
-        else if (link.endPinId == id)
-        {
-            connectedNodes.push_back(FindPin(link.startPinId)->parentNode);
+            if (Pin* pin = FindPin(link.endPinId))
+            {
+                if (pin->parentNode)
+                {
+                    connectedNodes.push_back(pin->parentNode);
+                }
+            }
         }
     }
 
     return connectedNodes;
 }
 
-std::vector<NAV::Link*> NAV::NodeManager::FindConnectedLinksToPin(ax::NodeEditor::PinId id)
+NAV::Node* NAV::NodeManager::FindConnectedNodeToInputPin(ax::NodeEditor::PinId id)
 {
-    if (!id)
+    for (const auto& link : m_links)
     {
-        return {};
+        if (link.endPinId == id)
+        {
+            if (Pin* pin = FindPin(link.startPinId))
+            {
+                return pin->parentNode;
+            }
+        }
     }
 
+    return nullptr;
+}
+
+std::vector<NAV::Link*> NAV::NodeManager::FindConnectedLinksToOutputPin(ax::NodeEditor::PinId id)
+{
     std::vector<NAV::Link*> connectedLinks;
     for (auto& link : m_links)
     {
-        if (link.startPinId == id || link.endPinId == id)
+        if (link.startPinId == id)
         {
             connectedLinks.push_back(&link);
         }
     }
 
     return connectedLinks;
+}
+
+NAV::Link* NAV::NodeManager::FindConnectedLinkToInputPin(ax::NodeEditor::PinId id)
+{
+    for (auto& link : m_links)
+    {
+        if (link.endPinId == id)
+        {
+            return &link;
+        }
+    }
+
+    return nullptr;
+}
+
+std::vector<NAV::Pin*> NAV::NodeManager::FindConnectedPinsToOutputPin(ax::NodeEditor::PinId id)
+{
+    std::vector<NAV::Pin*> connectedPins;
+    for (auto& link : m_links)
+    {
+        if (link.startPinId == id)
+        {
+            connectedPins.push_back(FindPin(link.endPinId));
+        }
+    }
+
+    return connectedPins;
+}
+
+NAV::Pin* NAV::NodeManager::FindConnectedPinToInputPin(ax::NodeEditor::PinId id)
+{
+    for (auto& link : m_links)
+    {
+        if (link.endPinId == id)
+        {
+            return FindPin(link.startPinId);
+        }
+    }
+
+    return nullptr;
 }
 
 void NAV::NodeManager::EnableAllCallbacks()

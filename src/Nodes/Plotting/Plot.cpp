@@ -237,10 +237,9 @@ void NAV::Plot::guiConfig()
                 if (ImGui::Combo(("##Pin Type for Pin " + std::to_string(pinIndex + 1) + " - " + std::to_string(size_t(id))).c_str(),
                                  reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
                 {
-                    auto connectedLinks = nm::FindConnectedLinksToPin(inputPins.at(pinIndex).id);
-                    if (!connectedLinks.empty())
+                    if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(pinIndex).id))
                     {
-                        nm::DeleteLink(connectedLinks.front()->id);
+                        nm::DeleteLink(connectedLink->id);
                     }
                     inputPins.at(pinIndex).notifyFunc.clear();
 
@@ -914,10 +913,9 @@ void NAV::Plot::updateNumberOfInputPins()
             }
         }
 
-        auto connectedLinks = nm::FindConnectedLinksToPin(inputPins.back().id);
-        for (Link* link : connectedLinks)
+        if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
         {
-            nm::DeleteLink(link->id);
+            nm::DeleteLink(connectedLink->id);
         }
         inputPins.pop_back();
         data.pop_back();

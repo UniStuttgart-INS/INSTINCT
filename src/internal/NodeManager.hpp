@@ -192,15 +192,35 @@ Pin* FindPin(ax::NodeEditor::PinId id);
 /// @return true if the Pin is linked, otherwise false
 bool IsPinLinked(ax::NodeEditor::PinId id);
 
-/// @brief Searches all nodes which are connected to the provided pin
-/// @param[in] id Unique Id of the Pin to search for
-/// @return List of Nodes which are connected to the pin
-std::vector<Node*> FindConnectedNodesToPin(ax::NodeEditor::PinId id);
+/// @brief Searches all nodes which are connected to the provided output pin
+/// @param[in] id Unique Id of the output Pin to search for
+/// @return List of Nodes which are connected to the output pin
+std::vector<Node*> FindConnectedNodesToOutputPin(ax::NodeEditor::PinId id);
 
-/// @brief Searches all link which are connected to the provided pin
-/// @param[in] id Unique Id of the Pin to search for
+/// @brief Searches the node which is connected to the provided input pin
+/// @param[in] id Unique Id of the input Pin to search for
+/// @return Pointer to the node which is connected to the input pin
+Node* FindConnectedNodeToInputPin(ax::NodeEditor::PinId id);
+
+/// @brief Searches all link which are connected to the provided output pin
+/// @param[in] id Unique Id of the output Pin to search for
 /// @return List of Links which are connected to the pin
-std::vector<Link*> FindConnectedLinksToPin(ax::NodeEditor::PinId id);
+std::vector<Link*> FindConnectedLinksToOutputPin(ax::NodeEditor::PinId id);
+
+/// @brief Searches the link which is connected to the provided input pin
+/// @param[in] id Unique Id of the input Pin to search for
+/// @return Pointer to the link which is connected to the input pin
+Link* FindConnectedLinkToInputPin(ax::NodeEditor::PinId id);
+
+/// @brief Searches all pins which are connected to the provided output pin
+/// @param[in] id Unique Id of the output Pin to search for
+/// @return List of Pins which are connected to the pin
+std::vector<Pin*> FindConnectedPinsToOutputPin(ax::NodeEditor::PinId id);
+
+/// @brief Searches the pin which is connected to the provided input pin
+/// @param[in] id Unique Id of the input Pin to search for
+/// @return Pointer to the output pin which is connected to the input pin
+Pin* FindConnectedPinToInputPin(ax::NodeEditor::PinId id);
 
 /// @brief Enables all Node callbacks
 void EnableAllCallbacks();

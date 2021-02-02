@@ -92,7 +92,7 @@ void NAV::Matrix::guiConfig()
             }
             for (auto& outputPin : outputPins)
             {
-                auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                 for (auto& connectedLink : connectedLinks)
                 {
                     nm::RefreshLink(connectedLink->id);
@@ -145,7 +145,7 @@ void NAV::Matrix::guiConfig()
             }
             for (auto& outputPin : outputPins)
             {
-                auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                 for (auto& connectedLink : connectedLinks)
                 {
                     nm::RefreshLink(connectedLink->id);
@@ -272,7 +272,7 @@ void NAV::Matrix::guiConfig()
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
-                    auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                    auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                     for (auto& connectedLink : connectedLinks)
                     {
                         nm::RefreshLink(connectedLink->id);
@@ -302,7 +302,7 @@ void NAV::Matrix::guiConfig()
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
-                    auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                    auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                     for (auto& connectedLink : connectedLinks)
                     {
                         nm::RefreshLink(connectedLink->id);
@@ -323,7 +323,7 @@ void NAV::Matrix::guiConfig()
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
-                    auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                    auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                     for (auto& connectedLink : connectedLinks)
                     {
                         nm::RefreshLink(connectedLink->id);
@@ -344,7 +344,7 @@ void NAV::Matrix::guiConfig()
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
-                    auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                    auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                     for (auto& connectedLink : connectedLinks)
                     {
                         nm::RefreshLink(connectedLink->id);
@@ -469,7 +469,7 @@ void NAV::Matrix::updateNumberOfOutputPins()
     }
     while (outputPins.size() - 1 > static_cast<size_t>(nBlocks))
     {
-        auto connectedLinks = nm::FindConnectedLinksToPin(outputPins.back().id);
+        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.back().id);
         for (Link* link : connectedLinks)
         {
             nm::DeleteLink(link->id);
@@ -485,7 +485,7 @@ void NAV::Matrix::updateNumberOfOutputPins()
     }
     for (auto& outputPin : outputPins)
     {
-        auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
         for (auto& connectedLink : connectedLinks)
         {
             nm::RefreshLink(connectedLink->id);
