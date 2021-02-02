@@ -231,7 +231,7 @@ class Plot : public Node
     std::vector<PlotInfo> plotInfos;
 
     /// Amount of input pins (should equal data.size())
-    int nInputPins = 1;
+    int nInputPins = 5;
     /// Amount of plot windows (should equal plotInfos.size())
     int nPlots = 0;
     /// Possible data identifiers to connect

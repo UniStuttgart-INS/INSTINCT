@@ -143,6 +143,32 @@ NAV::Plot::Plot()
                        ImuObs::type(), KvhObs::type(), VectorNavObs::type() };
 
     updateNumberOfInputPins();
+
+    // PinData::PinType::Flow:
+    data.at(0).pinType = PinData::PinType::Flow;
+    inputPins.at(0).type = Pin::Type::Flow;
+    inputPins.at(0).dataIdentifier = dataIdentifier;
+    inputPins.at(0).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+    // PinData::PinType::Bool:
+    data.at(1).pinType = PinData::PinType::Bool;
+    inputPins.at(1).type = Pin::Type::Bool;
+    inputPins.at(1).dataIdentifier.clear();
+    inputPins.at(1).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
+    // PinData::PinType::Int:
+    data.at(2).pinType = PinData::PinType::Int;
+    inputPins.at(2).type = Pin::Type::Int;
+    inputPins.at(2).dataIdentifier.clear();
+    inputPins.at(2).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
+    // PinData::PinType::Float:
+    data.at(3).pinType = PinData::PinType::Float;
+    inputPins.at(3).type = Pin::Type::Float;
+    inputPins.at(3).dataIdentifier.clear();
+    inputPins.at(3).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
+    // PinData::PinType::Matrix:
+    data.at(4).pinType = PinData::PinType::Matrix;
+    inputPins.at(4).type = Pin::Type::Matrix;
+    inputPins.at(4).dataIdentifier = { "Eigen::MatrixXd", "BlockMatrix" };
+    inputPins.at(4).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
 }
 
 NAV::Plot::~Plot()
