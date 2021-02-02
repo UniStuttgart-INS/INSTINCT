@@ -1,3 +1,5 @@
+/*
+
 #include "State.hpp"
 
 #include "util/Logger.hpp"
@@ -173,13 +175,13 @@ void NAV::State::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::State::updateState(const std::shared_ptr<NodeData>& state, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::State::updateState(const std::shared_ptr<NodeData>& state, ax::NodeEditor::LinkId linkId)
 {
     // Process the data here
     currentState = *std::static_pointer_cast<StateData>(state);
 }
 
-void NAV::State::initAttitude(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::State::initAttitude(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
 
@@ -209,7 +211,7 @@ void NAV::State::initAttitude(const std::shared_ptr<NodeData>& nodeData, ax::Nod
     finalizeInit(obs->insTime.value());
 }
 
-void NAV::State::initPositionVelocity(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::State::initPositionVelocity(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
     auto obs = std::static_pointer_cast<UbloxObs>(nodeData);
 
@@ -284,3 +286,4 @@ void NAV::State::finalizeInit(const InsTime& currentTime)
         currentState.velocity_n() = initialState.velocity_n();
     }
 }
+*/

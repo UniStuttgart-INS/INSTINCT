@@ -604,6 +604,7 @@ void NAV::Plot::restore(json const& j)
 
         for (size_t inputPinIndex = 0; inputPinIndex < inputPins.size(); inputPinIndex++)
         {
+            inputPins.at(inputPinIndex).notifyFunc.clear();
             switch (data.at(inputPinIndex).pinType)
             {
             case Plot::PinData::PinType::Bool:

@@ -8,7 +8,7 @@
 #include "Nodes/Node.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/State/StateData.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 namespace NAV
 {
@@ -48,16 +48,35 @@ class ImuIntegrator : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Called when a new link is to be established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    /// @return True if link is allowed, false if link is rejected
+    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+
   private:
-    constexpr static size_t OutputPortIndex_StateData = 1; ///< @brief Flow (StateData)
     constexpr static size_t InputPortIndex_ImuObs = 0;     ///< @brief Flow (ImuObs)
-    constexpr static size_t InputPortIndex_StateData = 1;  ///< @brief Object (StateData)
+    constexpr static size_t InputPortIndex_Position = 1;   ///< @brief Matrix
+    constexpr static size_t InputPortIndex_Velocity = 2;   ///< @brief Matrix
+    constexpr static size_t InputPortIndex_Quaternion = 3; ///< @brief Matrix
 
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    bool getCurrentPosition(Eigen::Vector3d& position);
+
+    void setCurrentPosition(const Eigen::Vector3d& position);
+
+    bool getCurrentVelocity(Eigen::Vector3d& velocity);
+
+    void setCurrentVelocity(const Eigen::Vector3d& velocity);
+
+    bool getCurrentQuaternion_nb(Eigen::Quaterniond& quaternion_nb);
+
+    void setCurrentQuaternion_nb(const Eigen::Quaterniond& quaternion_nb);
 
     /// @brief Integrates the Imu Observation data
     /// @param[in] nodeData ImuObs to process
@@ -69,11 +88,11 @@ class ImuIntegrator : public Node
     /// IMU Observation at the time tₖ₋₂
     std::shared_ptr<ImuObs> imuObs__t2 = nullptr;
 
-    /// State Data at the time tₖ₋₂
-    std::shared_ptr<StateData> stateData__t2 = nullptr;
+    /// Position, Velocity and Attitude at the time tₖ₋₂
+    std::shared_ptr<PosVelAtt> posVelAtt__t2 = nullptr;
 
-    /// State Data at initialization
-    std::shared_ptr<StateData> stateData__init = nullptr;
+    /// Position, Velocity and Attitude at initialization
+    std::shared_ptr<PosVelAtt> posVelAtt__init = nullptr;
 
     enum IntegrationFrame : int
     {

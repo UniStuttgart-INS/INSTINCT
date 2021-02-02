@@ -539,14 +539,12 @@ void NAV::Matrix::onNotifyValueChanged(ax::NodeEditor::LinkId linkId)
                     continue;
                 }
 
-                auto& otherBlock = blocks.at(i - 1);
-
                 if (i == 0 // Trigger notify on Eigen::MatrixXd pin
                     ||     // Check if modified block is part of any other subblock
-                    (((otherBlock.startRow <= block.startRow && otherBlock.startRow + otherBlock.blockRows > block.startRow)
-                      || (otherBlock.startRow >= block.startRow && otherBlock.startRow < block.startRow + block.blockRows))
-                     && ((otherBlock.startCol <= block.startCol && otherBlock.startCol + otherBlock.blockCols > block.startCol)
-                         || (otherBlock.startCol >= block.startCol && otherBlock.startCol < block.startCol + block.blockCols))))
+                    (((blocks.at(i - 1).startRow <= block.startRow && blocks.at(i - 1).startRow + blocks.at(i - 1).blockRows > block.startRow)
+                      || (blocks.at(i - 1).startRow >= block.startRow && blocks.at(i - 1).startRow < block.startRow + block.blockRows))
+                     && ((blocks.at(i - 1).startCol <= block.startCol && blocks.at(i - 1).startCol + blocks.at(i - 1).blockCols > block.startCol)
+                         || (blocks.at(i - 1).startCol >= block.startCol && blocks.at(i - 1).startCol < block.startCol + block.blockCols))))
                 {
                     for (auto& [node, callback, linkId] : outputPins.at(i).notifyFunc)
                     {

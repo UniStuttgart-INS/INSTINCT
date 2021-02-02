@@ -1,11 +1,9 @@
-/// @file StateData.hpp
-/// @brief State Data
+/// @file PosVelAtt.hpp
+/// @brief Position, Velocity and Attitude Storage Class
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-08-21
 
 #pragma once
-
-#include "NodeData/InsObs.hpp"
 
 #include "util/InsTransformations.hpp"
 
@@ -13,37 +11,10 @@
 
 namespace NAV
 {
-/// IMU Observation storage class
-class StateData : public InsObs
+/// Position, Velocity and Attitude Storage Class
+class PosVelAtt
 {
   public:
-    /// @brief Default constructor
-    StateData() = default;
-    /// @brief Destructor
-    ~StateData() override = default;
-    /// @brief Copy constructor
-    StateData(const StateData&) = default;
-    /// @brief Move constructor
-    StateData(StateData&&) = default;
-    /// @brief Copy assignment operator
-    StateData& operator=(const StateData&) = default;
-    /// @brief Move assignment operator
-    StateData& operator=(StateData&&) = default;
-
-    /// @brief Returns the type of the data class
-    /// @return The data type
-    [[nodiscard]] static std::string type()
-    {
-        return std::string("StateData");
-    }
-
-    /// @brief Returns the parent types of the data class
-    /// @return The parent data types
-    [[nodiscard]] static std::vector<std::string> parentTypes()
-    {
-        return { InsObs::type() };
-    }
-
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                           Rotation Quaternions                                           */
     /* -------------------------------------------------------------------------------------------------------- */
@@ -146,22 +117,6 @@ class StateData : public InsObs
 
     /// Returns the velocity in [m/s], in navigation coordinates
     [[nodiscard]] const Eigen::Vector3d& velocity_n() const { return v_n; }
-
-    // double_t NavTime = 0.0;
-    // double_t MagneticHeading = 0.0;
-
-    // /* Kalman Filter State Vector */
-    // Eigen::VectorXd X; //(Current) State vector [N*1]
-    // Eigen::VectorXd Z; //(Current) Measurement vector [M*1]
-
-    // Eigen::Vector3d GyroBias = { 0.0, 0.0, 0.0 };
-    // Eigen::Vector3d AccelBias = { 0.0, 0.0, 0.0 };
-
-    // Eigen::Vector3d VelocityNoise = { 0.0, 0.0, 0.0 };
-    // Eigen::Vector3d AngleNoise = { 0.0, 0.0, 0.0 };
-
-    // Eigen::Vector3d GyroNoise = { 0.0, 0.0, 0.0 };
-    // Eigen::Vector3d AccelNoise = { 0.0, 0.0, 0.0 };
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */

@@ -4,7 +4,7 @@
 /// @date 2020-08-21
 
 #pragma once
-
+/*
 #include "Nodes/Node.hpp"
 
 #include "NodeData/State/StateData.hpp"
@@ -98,3 +98,4 @@ class State : public Node
 };
 
 } // namespace NAV
+*/

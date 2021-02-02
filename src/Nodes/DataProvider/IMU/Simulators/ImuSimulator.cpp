@@ -10,7 +10,6 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/State/StateData.hpp"
 
 NAV::ImuSimulator::ImuSimulator()
 {
@@ -22,7 +21,7 @@ NAV::ImuSimulator::ImuSimulator()
     hasConfig = true;
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuSimulator::pollData);
-    nm::CreateInputPin(this, "State", Pin::Type::Object, { NAV::StateData::type() });
+    // nm::CreateInputPin(this, "State", Pin::Type::Object, { NAV::StateData::type() });
 }
 
 NAV::ImuSimulator::~ImuSimulator()
@@ -230,8 +229,9 @@ bool NAV::ImuSimulator::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
+std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool /*peek*/)
 {
+    /*
     if (currentSimTime > duration)
     {
         return nullptr;
@@ -272,7 +272,7 @@ std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
         }
 
         return obs;
-    }
+    }*/
 
     return nullptr;
 }
