@@ -208,7 +208,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/NodeData.hpp"
 #include "NodeData/InsObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
-#include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
@@ -221,7 +220,6 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<InsObs>();
     // GNSS
     registerNodeDataType<EmlidObs>();
-    registerNodeDataType<GnssObs>();
     registerNodeDataType<RtklibPosObs>();
     registerNodeDataType<UbloxObs>();
     // IMU

@@ -1,7 +1,6 @@
 #include "Demo.hpp"
 
 #include "util/Logger.hpp"
-#include "util/Time/TimeBase.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -91,17 +90,6 @@ std::string NAV::Demo::category()
 
 void NAV::Demo::guiConfig()
 {
-    if (ImGui::Button("Set current Ins Time"))
-    {
-        std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-        auto* t = std::localtime(&now);
-        util::time::SetCurrentTime(InsTime(static_cast<uint16_t>(t->tm_year + 1900),
-                                           static_cast<uint16_t>(t->tm_mon),
-                                           static_cast<uint16_t>(t->tm_mday),
-                                           static_cast<uint16_t>(t->tm_hour),
-                                           static_cast<uint16_t>(t->tm_min),
-                                           static_cast<long double>(t->tm_sec)));
-    }
     if (ImGui::BeginTable("##DemoValues", 2, ImGuiTableFlags_Borders))
     {
         ImGui::TableSetupColumn("Input");
