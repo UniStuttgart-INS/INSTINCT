@@ -9,6 +9,10 @@
 
 #include "util/InsTime.hpp"
 
+#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/GNSS/UbloxObs.hpp"
+#include "NodeData/GNSS/RtklibPosObs.hpp"
+
 namespace NAV
 {
 /// Position, Velocity, Attitude Initializer from GPS and IMU data
@@ -59,14 +63,22 @@ class PosVelAttInitializer : public Node
     void deinitialize() override;
 
     /// @brief Receive Imu Observations
-    /// @param[in] nodeData Data to plot
+    /// @param[in] nodeData Imu Data
     /// @param[in] linkId Id of the link over which the data is received
     void receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive Gnss Observations
-    /// @param[in] nodeData Data to plot
+    /// @param[in] nodeData Gnss Data
     /// @param[in] linkId Id of the link over which the data is received
     void receiveGnssObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    /// @brief Receive Ublox Observations
+    /// @param[in] obs Ublox Data
+    void receiveUbloxObs(const std::shared_ptr<UbloxObs>& obs);
+
+    /// @brief Receive Ublox Observations
+    /// @param[in] obs RtklibPos Data
+    void receiveRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs);
 
     /// Time in [s] to initialize the state
     double initDuration = 5.0;

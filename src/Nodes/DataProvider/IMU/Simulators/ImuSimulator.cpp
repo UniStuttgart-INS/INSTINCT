@@ -10,6 +10,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 NAV::ImuSimulator::ImuSimulator()
 {
@@ -229,15 +230,14 @@ bool NAV::ImuSimulator::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool /*peek*/)
+std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
 {
-    /*
     if (currentSimTime > duration)
     {
         return nullptr;
     }
 
-    if (const auto* stateData = getInputValue<StateData>(InputPortIndex_StateData))
+    if (const auto* stateData = getInputValue<PosVelAtt>(InputPortIndex_StateData))
     {
         auto quat_bn = Eigen::Quaterniond::Identity();
         auto quat_ne = Eigen::Quaterniond::Identity();
@@ -272,7 +272,7 @@ std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool /*peek*/)
         }
 
         return obs;
-    }*/
+    }
 
     return nullptr;
 }

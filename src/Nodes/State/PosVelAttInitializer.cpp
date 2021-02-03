@@ -6,10 +6,6 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/GNSS/UbloxObs.hpp"
-#include "NodeData/GNSS/RtklibPosObs.hpp"
-
 NAV::PosVelAttInitializer::PosVelAttInitializer()
 {
     name = typeStatic();
@@ -107,10 +103,40 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
     }
 }
 
-void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
-    auto obs = std::static_pointer_cast<ImuObs>(nodeData);
+    if (Link* link = nm::FindLink(linkId))
+    {
+        if (Pin* sourcePin = nm::FindPin(link->startPinId))
+        {
+            if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
+            {
+                receiveRtklibPosObs(std::static_pointer_cast<RtklibPosObs>(nodeData));
+            }
+            else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
+            {
+                receiveUbloxObs(std::static_pointer_cast<UbloxObs>(nodeData));
+            }
+        }
+    }
+}
 
+void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>& obs)
+{
+    if (!obs->insTime.has_value())
+    {
+        LOG_ERROR("{}: Can only process data with an insTime", nameId());
+        return;
+    }
+
+    if (startTime.empty())
+    {
+        startTime = obs->insTime.value();
+    }
+}
+
+void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs)
+{
     if (!obs->insTime.has_value())
     {
         LOG_ERROR("{}: Can only process data with an insTime", nameId());
