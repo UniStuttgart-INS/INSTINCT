@@ -298,7 +298,7 @@ void NAV::Plot::guiConfig()
                 ImGui::TableNextColumn(); // Plot Style
                 ImGui::SetNextItemWidth(100.0F);
                 if (ImGui::Combo(("##Plot Style for Pin " + std::to_string(pinIndex + 1) + " - " + std::to_string(size_t(id))).c_str(),
-                                 reinterpret_cast<int*>(&pinData.plotStyle), "Line\0Scatter\0\0"))
+                                 reinterpret_cast<int*>(&pinData.plotStyle), "Scatter\0Line\0\0"))
                 {
                     flow::ApplyChanges();
                 }
@@ -523,7 +523,7 @@ void NAV::Plot::guiConfig()
                             }
                             else if (data.at(pinIndex).plotStyle == PinData::PlotStyle::Scatter)
                             {
-                                ImPlot::SetNextMarkerStyle(ImPlotMarker_Cross, 2, ImVec4(0, 0, 0, -1), IMPLOT_AUTO, ImVec4(0, 0, 0, -1));
+                                ImPlot::SetNextMarkerStyle(ImPlotMarker_Cross, 1, ImVec4(0, 0, 0, -1), IMPLOT_AUTO, ImVec4(0, 0, 0, -1));
                                 ImPlot::PlotScatter((plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + data.at(pinIndex).dataIdentifier + ")").c_str(),
                                                     data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
                                                     plotData.buffer.data(),
@@ -708,6 +708,9 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Altitude [m]");
             data.at(pinIndex).addPlotDataItem("North/South [m]");
             data.at(pinIndex).addPlotDataItem("East/West [m]");
+            data.at(pinIndex).addPlotDataItem("Velocity N [m/s]");
+            data.at(pinIndex).addPlotDataItem("Velocity E [m/s]");
+            data.at(pinIndex).addPlotDataItem("Velocity D [m/s]");
         }
         else if (startPin->dataIdentifier.front() == ImuObs::type())
         {
@@ -1222,18 +1225,52 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<UbloxObs>& obs, size_t pinInd
             startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
         }
     }
-    size_t i = 0;
 
+    /// Position in ECEF coordinates in [m]
+    std::optional<Eigen::Vector3d> position_ecef;
     /// [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     std::optional<Eigen::Vector3d> position_lla;
+    /// Velocity in NED coordinates in [m/s]
+    std::optional<Eigen::Vector3d> velocity_ned;
+
+    if (obs->msgClass == sensors::ublox::UbxClass::UBX_CLASS_NAV)
+    {
+        auto msgId = static_cast<sensors::ublox::UbxNavMessages>(obs->msgId);
+        if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSECEF)
+        {
+            position_ecef.emplace(std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
+                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
+                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
+            position_lla = trafo::ecef2lla_WGS84(position_ecef.value());
+        }
+        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSLLH)
+        {
+            position_lla.emplace(trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
+                                 trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
+                                 std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
+        }
+        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_VELNED)
+        {
+            velocity_ned.emplace(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
+                                 std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
+                                 std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
+        }
+        else
+        {
+            return;
+        }
+    }
+    else
+    {
+        return;
+    }
     /// North/South deviation [m]
     std::optional<double> northSouth;
     /// East/West deviation [m]
     std::optional<double> eastWest;
-    if (obs->position_ecef.has_value())
-    {
-        position_lla = trafo::ecef2lla_WGS84(obs->position_ecef.value());
 
+    if (position_lla.has_value())
+    {
         if (std::isnan(startValue_North))
         {
             startValue_North = position_lla->x();
@@ -1254,20 +1291,24 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<UbloxObs>& obs, size_t pinInd
 
         position_lla->x() = trafo::rad2deg(position_lla->x());
         position_lla->y() = trafo::rad2deg(position_lla->y());
-
-        // InsObs
-        addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
-        addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
-        // RtklibPosObs
-        addData(pinIndex, i++, obs->position_ecef.has_value() ? obs->position_ecef->x() : std::nan(""));
-        addData(pinIndex, i++, obs->position_ecef.has_value() ? obs->position_ecef->y() : std::nan(""));
-        addData(pinIndex, i++, obs->position_ecef.has_value() ? obs->position_ecef->z() : std::nan(""));
-        addData(pinIndex, i++, position_lla.has_value() ? position_lla->x() : std::nan(""));
-        addData(pinIndex, i++, position_lla.has_value() ? position_lla->y() : std::nan(""));
-        addData(pinIndex, i++, position_lla.has_value() ? position_lla->z() : std::nan(""));
-        addData(pinIndex, i++, northSouth.has_value() ? northSouth.value() : std::nan(""));
-        addData(pinIndex, i++, eastWest.has_value() ? eastWest.value() : std::nan(""));
     }
+
+    size_t i = 0;
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // UbloxObs
+    addData(pinIndex, i++, position_ecef.has_value() ? position_ecef->x() : std::nan(""));
+    addData(pinIndex, i++, position_ecef.has_value() ? position_ecef->y() : std::nan(""));
+    addData(pinIndex, i++, position_ecef.has_value() ? position_ecef->z() : std::nan(""));
+    addData(pinIndex, i++, position_lla.has_value() ? position_lla->x() : std::nan(""));
+    addData(pinIndex, i++, position_lla.has_value() ? position_lla->y() : std::nan(""));
+    addData(pinIndex, i++, position_lla.has_value() ? position_lla->z() : std::nan(""));
+    addData(pinIndex, i++, northSouth.has_value() ? northSouth.value() : std::nan(""));
+    addData(pinIndex, i++, eastWest.has_value() ? eastWest.value() : std::nan(""));
+    addData(pinIndex, i++, velocity_ned.has_value() ? velocity_ned->x() : std::nan(""));
+    addData(pinIndex, i++, velocity_ned.has_value() ? velocity_ned->y() : std::nan(""));
+    addData(pinIndex, i++, velocity_ned.has_value() ? velocity_ned->z() : std::nan(""));
 }
 
 void NAV::Plot::plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex)
