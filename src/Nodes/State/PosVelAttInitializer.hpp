@@ -13,6 +13,8 @@
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 
+#include <bitset>
+
 namespace NAV
 {
 /// Position, Velocity, Attitude Initializer from GPS and IMU data
@@ -52,15 +54,34 @@ class PosVelAttInitializer : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Called when a new link is to be established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    /// @return True if link is allowed, false if link is rejected
+    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+
+    /// @brief Called when a link is to be deleted
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    void onDeleteLink(Pin* startPin, Pin* endPin) override;
+
   private:
-    constexpr static size_t OutputPortIndex_NodeData = 1; ///< @brief Flow (NodeData)
-    constexpr static size_t InputPortIndex_DemoNode = 0;  ///< @brief Flow (Demo)
+    constexpr static size_t OutputPortIndex_ImuObs = 1;  ///< @brief Flow (ImuObs)
+    constexpr static size_t OutputPortIndex_GnssObs = 2; ///< @brief Flow (GnssObs)
+    constexpr static size_t InputPortIndex_ImuObs = 0;   ///< @brief Flow (ImuObs)
+    constexpr static size_t InputPortIndex_GnssObs = 1;  ///< @brief Flow (GnssObs)
+    constexpr static size_t InputPortIndex_Position = 2; ///< @brief Matrix
+    constexpr static size_t InputPortIndex_Velocity = 3; ///< @brief Matrix
+    constexpr static size_t InputPortIndex_Attitude = 4; ///< @brief Matrix
 
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    /// Checks whether all Flags are set and writes logs messages
+    void finalizeInit();
 
     /// @brief Receive Imu Observations
     /// @param[in] nodeData Imu Data
@@ -80,16 +101,33 @@ class PosVelAttInitializer : public Node
     /// @param[in] obs RtklibPos Data
     void receiveRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs);
 
+    enum class InitFlag
+    {
+        NOT_CONNECTED,
+        CONNECTED,
+        INITIALIZED,
+    };
+
+    /// Position Flag
+    InitFlag determinePosition = InitFlag::NOT_CONNECTED;
+    /// Velocity Flag
+    InitFlag determineVelocity = InitFlag::NOT_CONNECTED;
+    /// Attitude Flag
+    InitFlag determineAttitude = InitFlag::NOT_CONNECTED;
+
     /// Time in [s] to initialize the state
     double initDuration = 5.0;
 
     /// Start time of the averageing process
     InsTime startTime;
 
+    /// Position Accuracy to achieve in [cm]
+    float positionAccuracyThreshold = 10;
+    /// Flags for XYZ or NED if the position accuracy is below the threshold
+    std::bitset<3> positionAccuracyFullfilled;
+
     /// Count of received attitude measurements
     double countAveragedAttitude = 0.0;
-    /// Count of received position measurements
-    double countAveragedPosition = 0.0;
     /// Count of received velocity measurements
     double countAveragedVelocity = 0.0;
 };

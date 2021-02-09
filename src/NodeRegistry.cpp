@@ -168,6 +168,8 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/DataProvider/IMU/Simulators/ImuSimulator.hpp"
 // Plotting
 #include "Nodes/Plotting/Plot.hpp"
+// State
+#include "Nodes/State/PosVelAttInitializer.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
 {
@@ -201,8 +203,10 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<VectorNavSensor>();
     // Data Simulator
     registerNodeType<ImuSimulator>();
-    // Data Provider
+    // Plotting
     registerNodeType<Plot>();
+    // State
+    registerNodeType<PosVelAttInitializer>();
 }
 
 #include "NodeData/NodeData.hpp"
