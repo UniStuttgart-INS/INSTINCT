@@ -77,11 +77,62 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     }
 }
 
-bool NAV::PosVelAttInitializer::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+bool NAV::PosVelAttInitializer::onCreateLink(Pin* startPin, Pin* endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 
-    if (endPin)
+    bool canConnect = false;
+    if (startPin && endPin)
+    {
+        size_t endPinIndex = pinIndexFromId(endPin->id);
+
+        int64_t rows = 3;
+        int64_t cols = 1;
+
+        if (endPinIndex == InputPortIndex_Attitude)
+        {
+            rows = 4;
+        }
+
+        if (endPinIndex == InputPortIndex_Position
+            || endPinIndex == InputPortIndex_Velocity
+            || endPinIndex == InputPortIndex_Attitude)
+        {
+            if (startPin->dataIdentifier.front() == "Eigen::MatrixXd")
+            {
+                if (const auto* pval = std::get_if<void*>(&startPin->data))
+                {
+                    if (auto* mat = static_cast<Eigen::MatrixXd*>(*pval))
+                    {
+                        if (mat->rows() == rows && mat->cols() == cols)
+                        {
+                            canConnect = true;
+                        }
+                    }
+                }
+            }
+            else if (startPin->dataIdentifier.front() == "BlockMatrix")
+            {
+                if (const auto* pval = std::get_if<void*>(&startPin->data))
+                {
+                    if (auto* block = static_cast<BlockMatrix*>(*pval))
+                    {
+                        auto mat = (*block)();
+                        if (mat.rows() == rows && mat.cols() == cols)
+                        {
+                            canConnect = true;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            canConnect = true;
+        }
+    }
+
+    if (canConnect)
     {
         if (endPin->id == inputPins.at(InputPortIndex_Position).id)
         {
@@ -97,7 +148,7 @@ bool NAV::PosVelAttInitializer::onCreateLink([[maybe_unused]] Pin* startPin, [[m
         }
     }
 
-    return true;
+    return canConnect;
 }
 
 void NAV::PosVelAttInitializer::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
@@ -286,37 +337,147 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
     {
         auto msgId = static_cast<sensors::ublox::UbxNavMessages>(obs->msgId);
         if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_ATT)
+        // && determineAttitude != InitFlag::NOT_CONNECTED)
         {
             LOG_DEBUG("{}: UBX_NAV_ATT: Roll {}, Pitch {}, Heading {} [deg]", nameId(),
                       std::get<sensors::ublox::UbxNavAtt>(obs->data).roll * 1e-5,
                       std::get<sensors::ublox::UbxNavAtt>(obs->data).pitch * 1e-5,
                       std::get<sensors::ublox::UbxNavAtt>(obs->data).heading * 1e-5);
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSECEF)
+        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSECEF
+                 && determinePosition != InitFlag::NOT_CONNECTED)
         {
-            LOG_DEBUG("{}: UBX_NAV_POSECEF: ECEF {}, {}, {} [m]", nameId(),
-                      std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
-                      std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
-                      std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
-        }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSLLH)
-        {
-            Eigen::Vector3d latLonAlt(trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
-                                      trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
-                                      std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
+            positionAccuracyFullfilled.set(0, static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc) <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(1, static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc) <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(2, static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc) <= positionAccuracyThreshold);
 
-            LOG_DEBUG("{}: UBX_NAV_POSLLH: ECEF {}, {}, {} [m]", nameId(),
-                      trafo::lla2ecef_WGS84(latLonAlt).x(),
-                      trafo::lla2ecef_WGS84(latLonAlt).y(),
-                      trafo::lla2ecef_WGS84(latLonAlt).z());
+            if (positionAccuracyFullfilled.all())
+            {
+                if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
+                {
+                    Eigen::Vector3d position_ecef(std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
+                                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
+                                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
+
+                    LOG_DATA("{}: UBX_NAV_POSECEF: ECEF {}, {}, {} [m]", nameId(),
+                             position_ecef.x(), position_ecef.y(), position_ecef.z());
+
+                    if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+                    {
+                        if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
+                        {
+                            (*matrix)(0, 0) = position_ecef.x();
+                            (*matrix)(1, 0) = position_ecef.y();
+                            (*matrix)(2, 0) = position_ecef.z();
+                            determinePosition = InitFlag::INITIALIZED;
+                            finalizeInit();
+                        }
+                    }
+                    else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
+                    {
+                        if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Position))
+                        {
+                            auto matrix = (*value)();
+                            matrix(0, 0) = position_ecef.x();
+                            matrix(1, 0) = position_ecef.y();
+                            matrix(2, 0) = position_ecef.z();
+                            determinePosition = InitFlag::INITIALIZED;
+                            finalizeInit();
+                        }
+                    }
+                }
+            }
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_VELNED)
+        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSLLH
+                 && determinePosition != InitFlag::NOT_CONNECTED)
         {
-            LOG_DEBUG("{}: UBX_NAV_VELNED: {}, {}, {} [cm/s], {} [deg]", nameId(),
-                      std::get<sensors::ublox::UbxNavVelned>(obs->data).velN,
-                      std::get<sensors::ublox::UbxNavVelned>(obs->data).velE,
-                      std::get<sensors::ublox::UbxNavVelned>(obs->data).velD,
-                      std::get<sensors::ublox::UbxNavVelned>(obs->data).heading * 1e-5);
+            positionAccuracyFullfilled.set(0, std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1 <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(1, std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1 <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(2, std::get<sensors::ublox::UbxNavPosllh>(obs->data).vAcc * 1e-1 <= positionAccuracyThreshold);
+
+            if (positionAccuracyFullfilled.all())
+            {
+                if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
+                {
+                    Eigen::Vector3d latLonAlt(trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
+                                              trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
+                                              std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
+
+                    auto position_ecef = trafo::lla2ecef_WGS84(latLonAlt);
+
+                    LOG_DATA("{}: UBX_NAV_POSLLH: ECEF {}, {}, {} [m]", nameId(),
+                             position_ecef.x(), position_ecef.y(), position_ecef.z());
+
+                    if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+                    {
+                        if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
+                        {
+                            (*matrix)(0, 0) = position_ecef.x();
+                            (*matrix)(1, 0) = position_ecef.y();
+                            (*matrix)(2, 0) = position_ecef.z();
+                            determinePosition = InitFlag::INITIALIZED;
+                            finalizeInit();
+                        }
+                    }
+                    else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
+                    {
+                        if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Position))
+                        {
+                            auto matrix = (*value)();
+                            matrix(0, 0) = position_ecef.x();
+                            matrix(1, 0) = position_ecef.y();
+                            matrix(2, 0) = position_ecef.z();
+                            determinePosition = InitFlag::INITIALIZED;
+                            finalizeInit();
+                        }
+                    }
+                }
+            }
+        }
+        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_VELNED
+                 && determineVelocity != InitFlag::NOT_CONNECTED)
+        {
+            velocityAccuracyFullfilled.set(0, static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc) <= velocityAccuracyThreshold);
+            velocityAccuracyFullfilled.set(1, static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc) <= velocityAccuracyThreshold);
+            velocityAccuracyFullfilled.set(2, static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc) <= velocityAccuracyThreshold);
+
+            if (velocityAccuracyFullfilled.all())
+            {
+                if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Velocity).id))
+                {
+                    Eigen::Vector3d velocity_n(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
+                                               std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
+                                               std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
+
+                    LOG_DATA("{}: UBX_NAV_VELNED: {}, {}, {} [m/s], {} [deg]", nameId(),
+                             velocity_n.x(), velocity_n.y(), velocity_n.z(),
+                             std::get<sensors::ublox::UbxNavVelned>(obs->data).heading * 1e-5);
+
+                    if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+                    {
+                        if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
+                        {
+                            (*matrix)(0, 0) = velocity_n.x();
+                            (*matrix)(1, 0) = velocity_n.y();
+                            (*matrix)(2, 0) = velocity_n.z();
+                            determineVelocity = InitFlag::INITIALIZED;
+                            finalizeInit();
+                        }
+                    }
+                    else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
+                    {
+                        if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
+                        {
+                            auto matrix = (*value)();
+                            matrix(0, 0) = velocity_n.x();
+                            matrix(1, 0) = velocity_n.y();
+                            matrix(2, 0) = velocity_n.z();
+                            determineVelocity = InitFlag::INITIALIZED;
+                            finalizeInit();
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -327,15 +488,15 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<Rtklib
     {
         if (obs->sdXYZ.has_value())
         {
-            positionAccuracyFullfilled.set(0, obs->sdXYZ->x() <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(1, obs->sdXYZ->y() <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(2, obs->sdXYZ->z() <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(0, obs->sdXYZ->x() * 1e2 <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(1, obs->sdXYZ->y() * 1e2 <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(2, obs->sdXYZ->z() * 1e2 <= positionAccuracyThreshold);
         }
         else if (obs->sdNEU.has_value())
         {
-            positionAccuracyFullfilled.set(0, obs->sdNEU->x() <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(1, obs->sdNEU->y() <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(2, obs->sdNEU->z() <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(0, obs->sdNEU->x() * 1e2 <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(1, obs->sdNEU->y() * 1e2 <= positionAccuracyThreshold);
+            positionAccuracyFullfilled.set(2, obs->sdNEU->z() * 1e2 <= positionAccuracyThreshold);
         }
         if (positionAccuracyFullfilled.all())
         {

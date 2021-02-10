@@ -126,6 +126,11 @@ class PosVelAttInitializer : public Node
     /// Flags for XYZ or NED if the position accuracy is below the threshold
     std::bitset<3> positionAccuracyFullfilled;
 
+    /// Velocity Accuracy to achieve in [cm/s]
+    float velocityAccuracyThreshold = 10;
+    /// Flags if the NED velocity accuracy is below the threshold
+    std::bitset<3> velocityAccuracyFullfilled;
+
     /// Count of received attitude measurements
     double countAveragedAttitude = 0.0;
     /// Count of received velocity measurements

@@ -20,6 +20,7 @@ bool NAV::Node::initializeNode()
 
     if (isInitialized())
     {
+        resetNode();
         deinitializeNode();
     }
 
@@ -81,7 +82,6 @@ void NAV::Node::deinitializeNode()
     }
 
     // Deinitialize the node itself
-    resetNode();
     deinitialize();
     isInitialized_ = false;
 
