@@ -75,7 +75,7 @@ void NAV::Transformation::deinitialize()
 
 void NAV::Transformation::onNotifyValueChanged(ax::NodeEditor::LinkId linkId)
 {
-    if (Link* link = nm::FindLink(linkId))
+    if ([[maybe_unused]] Link* link = nm::FindLink(linkId))
     {
         LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
     }
@@ -83,8 +83,10 @@ void NAV::Transformation::onNotifyValueChanged(ax::NodeEditor::LinkId linkId)
 
 void NAV::Transformation::notifyFunction(ax::NodeEditor::LinkId linkId)
 {
-    if (Link* link = nm::FindLink(linkId))
+    if ([[maybe_unused]] Link* link = nm::FindLink(linkId))
     {
         LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
+
+        notifyOutputValueChanged(OutputPortIndex_Matrix);
     }
 }

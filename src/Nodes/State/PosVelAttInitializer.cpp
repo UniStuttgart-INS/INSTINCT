@@ -29,13 +29,6 @@ NAV::PosVelAttInitializer::PosVelAttInitializer()
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow);
     nm::CreateOutputPin(this, "GnssObs", Pin::Type::Flow);
-
-    lastPositionAccuracy = { std::numeric_limits<float>::infinity(),
-                             std::numeric_limits<float>::infinity(),
-                             std::numeric_limits<float>::infinity() };
-    lastVelocityAccuracy = { std::numeric_limits<float>::infinity(),
-                             std::numeric_limits<float>::infinity(),
-                             std::numeric_limits<float>::infinity() };
 }
 
 NAV::PosVelAttInitializer::~PosVelAttInitializer()
@@ -570,7 +563,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                 {
                     if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
                     {
-                        auto latLonAlt = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(matrix->data(), 3));
+                        [[maybe_unused]] auto latLonAlt = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(matrix->data(), 3));
                         LOG_INFO("{}: Position initialized to Lat {:3.4f} [°], Lon {:3.4f} [°], Alt {:4.4f} [m]", nameId(),
                                  trafo::rad2deg(latLonAlt.x()),
                                  trafo::rad2deg(latLonAlt.y()),
@@ -583,7 +576,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                     {
                         auto matrix = (*value)();
 
-                        auto latLonAlt = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(matrix.data(), 3));
+                        [[maybe_unused]] auto latLonAlt = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(matrix.data(), 3));
                         LOG_INFO("{}: Position initialized to Lat {:3.4f} [°], Lon {:3.4f} [°], Alt {:4.4f} [m]", nameId(),
                                  trafo::rad2deg(latLonAlt.x()), trafo::rad2deg(latLonAlt.y()), latLonAlt.z());
                     }
@@ -596,7 +589,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
             {
                 if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
                 {
-                    if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
+                    if ([[maybe_unused]] auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
                     {
                         LOG_INFO("{}: State initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
                                  (*matrix)(0, 0), (*matrix)(1, 0), (*matrix)(2, 0));
@@ -606,7 +599,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                 {
                     if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
                     {
-                        auto matrix = (*value)();
+                        [[maybe_unused]] auto matrix = (*value)();
                         LOG_INFO("{}: State initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
                                  matrix(0, 0), matrix(1, 0), matrix(2, 0));
                     }
@@ -622,7 +615,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                     if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Attitude))
                     {
                         auto quat_nb = Eigen::Quaterniond((*matrix)(0, 0), (*matrix)(1, 0), (*matrix)(2, 0), (*matrix)(3, 0));
-                        auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
+                        [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
                         LOG_INFO("{}: State initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
                                  trafo::rad2deg(rollPitchYaw.x()),
                                  trafo::rad2deg(rollPitchYaw.y()),
@@ -635,7 +628,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                     {
                         auto matrix = (*value)();
                         auto quat_nb = Eigen::Quaterniond(matrix(0, 0), matrix(1, 0), matrix(2, 0), matrix(3, 0));
-                        auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
+                        [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
                         LOG_INFO("{}: State initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
                                  trafo::rad2deg(rollPitchYaw.x()),
                                  trafo::rad2deg(rollPitchYaw.y()),

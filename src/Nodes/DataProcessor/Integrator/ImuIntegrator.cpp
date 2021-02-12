@@ -103,10 +103,8 @@ bool NAV::ImuIntegrator::onCreateLink(Pin* startPin, Pin* endPin)
                         {
                             return true;
                         }
-                        else
-                        {
-                            LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
-                        }
+
+                        LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
                     }
                 }
             }
@@ -121,10 +119,8 @@ bool NAV::ImuIntegrator::onCreateLink(Pin* startPin, Pin* endPin)
                         {
                             return true;
                         }
-                        else
-                        {
-                            LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
-                        }
+
+                        LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
                     }
                 }
             }

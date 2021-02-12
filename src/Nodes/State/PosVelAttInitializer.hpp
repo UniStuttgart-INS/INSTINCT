@@ -13,6 +13,8 @@
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 
+#include <limits>
+
 namespace NAV
 {
 /// Position, Velocity, Attitude Initializer from GPS and IMU data
@@ -122,12 +124,16 @@ class PosVelAttInitializer : public Node
     /// Position Accuracy to achieve in [cm]
     float positionAccuracyThreshold = 10;
     /// Last position accuracy in [cm] for XYZ or NED
-    std::array<float, 3> lastPositionAccuracy;
+    std::array<float, 3> lastPositionAccuracy = { std::numeric_limits<float>::infinity(),
+                                                  std::numeric_limits<float>::infinity(),
+                                                  std::numeric_limits<float>::infinity() };
 
     /// Velocity Accuracy to achieve in [cm/s]
     float velocityAccuracyThreshold = 10;
     /// Last velocity accuracy in [cm/s] for XYZ or NED
-    std::array<float, 3> lastVelocityAccuracy;
+    std::array<float, 3> lastVelocityAccuracy = { std::numeric_limits<float>::infinity(),
+                                                  std::numeric_limits<float>::infinity(),
+                                                  std::numeric_limits<float>::infinity() };
 
     /// Count of received attitude measurements
     double countAveragedAttitude = 0.0;
