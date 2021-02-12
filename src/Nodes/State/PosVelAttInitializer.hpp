@@ -13,8 +13,6 @@
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 
-#include <bitset>
-
 namespace NAV
 {
 /// Position, Velocity, Attitude Initializer from GPS and IMU data
@@ -119,22 +117,26 @@ class PosVelAttInitializer : public Node
     double initDuration = 5.0;
 
     /// Start time of the averageing process
-    InsTime startTime;
+    uint64_t startTime = 0;
 
     /// Position Accuracy to achieve in [cm]
     float positionAccuracyThreshold = 10;
-    /// Flags for XYZ or NED if the position accuracy is below the threshold
-    std::bitset<3> positionAccuracyFullfilled;
+    /// Last position accuracy in [cm] for XYZ or NED
+    std::array<float, 3> lastPositionAccuracy;
 
     /// Velocity Accuracy to achieve in [cm/s]
     float velocityAccuracyThreshold = 10;
-    /// Flags if the NED velocity accuracy is below the threshold
-    std::bitset<3> velocityAccuracyFullfilled;
+    /// Last velocity accuracy in [cm/s] for XYZ or NED
+    std::array<float, 3> lastVelocityAccuracy;
 
     /// Count of received attitude measurements
     double countAveragedAttitude = 0.0;
-    /// Count of received velocity measurements
-    double countAveragedVelocity = 0.0;
+    /// Averaged Attitude (roll, pitch, yaw) in [rad]
+    std::array<double, 3> averagedAttitude = { 0.0, 0.0, 0.0 };
+    /// Whether the IMU values should be used or we want to override the values manually
+    std::array<bool, 3> overrideRollPitchYaw = { false, false, false };
+    /// Values to override Roll, Pitch and Yaw with in [deg]
+    std::array<float, 3> overrideValuesRollPitchYaw = {};
 };
 
 } // namespace NAV

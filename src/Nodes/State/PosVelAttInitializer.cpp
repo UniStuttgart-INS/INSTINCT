@@ -8,6 +8,9 @@ namespace nm = NAV::NodeManager;
 
 #include "util/UartSensors/Ublox/UbloxTypes.hpp"
 #include "util/InsTransformations.hpp"
+#include "util/InsMath.hpp"
+
+#include <limits>
 
 NAV::PosVelAttInitializer::PosVelAttInitializer()
 {
@@ -26,6 +29,13 @@ NAV::PosVelAttInitializer::PosVelAttInitializer()
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow);
     nm::CreateOutputPin(this, "GnssObs", Pin::Type::Flow);
+
+    lastPositionAccuracy = { std::numeric_limits<float>::infinity(),
+                             std::numeric_limits<float>::infinity(),
+                             std::numeric_limits<float>::infinity() };
+    lastVelocityAccuracy = { std::numeric_limits<float>::infinity(),
+                             std::numeric_limits<float>::infinity(),
+                             std::numeric_limits<float>::infinity() };
 }
 
 NAV::PosVelAttInitializer::~PosVelAttInitializer()
@@ -50,9 +60,251 @@ std::string NAV::PosVelAttInitializer::category()
 
 void NAV::PosVelAttInitializer::guiConfig()
 {
-    if (ImGui::InputDouble("Initialization Duration", &initDuration, 0.0, 0.0, "%.3f s"))
+    if (nm::IsPinLinked(inputPins.at(InputPortIndex_ImuObs).id))
     {
-        flow::ApplyChanges();
+        ImGui::SetNextItemWidth(100);
+        if (ImGui::InputDouble("Initialization Duration Attitude", &initDuration, 0.0, 0.0, "%.3f s"))
+        {
+            flow::ApplyChanges();
+        }
+    }
+
+    if (ImGui::BeginTable(("Initialized State##" + std::to_string(size_t(id))).c_str(),
+                          4, ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+    {
+        ImGui::TableSetupColumn("");
+        ImGui::TableSetupColumn("");
+        ImGui::TableSetupColumn("Threshold");
+        ImGui::TableSetupColumn("Accuracy");
+        ImGui::TableHeadersRow();
+
+        /* -------------------------------------------------------------------------------------------------------- */
+        /*                                                 Position                                                 */
+        /* -------------------------------------------------------------------------------------------------------- */
+
+        ImGui::TableNextColumn();
+        ImGui::Text("Position");
+        ImGui::TableNextColumn();
+        float size = 7.0F;
+        ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size / 1.2F,
+                                                           ImGui::GetCursorScreenPos().y + size * 1.8F),
+                                                    size,
+                                                    determinePosition == InitFlag::NOT_CONNECTED
+                                                        ? ImColor(255.0F, 255.0F, 0.0F)
+                                                        : (determinePosition == InitFlag::CONNECTED
+                                                               ? ImColor(255.0F, 0.0F, 0.0F)
+                                                               : ImColor(0.0F, 255.0F, 0.0F)));
+        ImGui::Selectable(("##determinePosition" + std::to_string(size_t(id))).c_str(),
+                          false, ImGuiSelectableFlags_Disabled, ImVec2(1.6F * size, 0.0F));
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("%s", determinePosition == InitFlag::NOT_CONNECTED
+                                        ? "Not connected, so won't be initialized"
+                                        : (determinePosition == InitFlag::CONNECTED
+                                               ? "To be initialized"
+                                               : "Successfully Initialized"));
+        }
+        ImGui::TableNextColumn();
+        ImGui::SetNextItemWidth(-FLT_MIN);
+        if (ImGui::DragFloat(("##positionAccuracyThreshold" + std::to_string(size_t(id))).c_str(),
+                             &positionAccuracyThreshold, 0.1F, 0.0F, 1000.0F, "%.1f cm"))
+        {
+            flow::ApplyChanges();
+        }
+        ImGui::TableNextColumn();
+        ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size * 1.2F,
+                                                           ImGui::GetCursorScreenPos().y + size * 1.8F),
+                                                    size,
+                                                    lastPositionAccuracy.at(0) <= positionAccuracyThreshold
+                                                        ? ImColor(0.0F, 255.0F, 0.0F)
+                                                        : ImColor(255.0F, 0.0F, 0.0F));
+        ImGui::Selectable(("##lastPositionAccuracy.at(0)" + std::to_string(size_t(id))).c_str(),
+                          false, ImGuiSelectableFlags_Disabled, ImVec2(2.0F * size, 0.0F));
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("Last: %.3f cm", lastPositionAccuracy.at(0));
+        }
+        ImGui::SameLine();
+        ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size * 1.2F,
+                                                           ImGui::GetCursorScreenPos().y + size * 1.8F),
+                                                    size,
+                                                    lastPositionAccuracy.at(1) <= positionAccuracyThreshold
+                                                        ? ImColor(0.0F, 255.0F, 0.0F)
+                                                        : ImColor(255.0F, 0.0F, 0.0F));
+        ImGui::Selectable(("##lastPositionAccuracy.at(1)" + std::to_string(size_t(id))).c_str(),
+                          false, ImGuiSelectableFlags_Disabled, ImVec2(2.0F * size, 0.0F));
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("Last: %.3f cm", lastPositionAccuracy.at(1));
+        }
+        ImGui::SameLine();
+        ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size * 1.2F,
+                                                           ImGui::GetCursorScreenPos().y + size * 1.8F),
+                                                    size,
+                                                    lastPositionAccuracy.at(2) <= positionAccuracyThreshold
+                                                        ? ImColor(0.0F, 255.0F, 0.0F)
+                                                        : ImColor(255.0F, 0.0F, 0.0F));
+        ImGui::Selectable(("##lastPositionAccuracy.at(2)" + std::to_string(size_t(id))).c_str(),
+                          false, ImGuiSelectableFlags_Disabled, ImVec2(2.0F * size, 0.0F));
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("Last: %.3f cm", lastPositionAccuracy.at(2));
+        }
+
+        /* -------------------------------------------------------------------------------------------------------- */
+        /*                                                 Velocity                                                 */
+        /* -------------------------------------------------------------------------------------------------------- */
+
+        ImGui::TableNextColumn();
+        ImGui::Text("Velocity");
+        ImGui::TableNextColumn();
+        ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size / 1.2F,
+                                                           ImGui::GetCursorScreenPos().y + size * 1.8F),
+                                                    size,
+                                                    determineVelocity == InitFlag::NOT_CONNECTED
+                                                        ? ImColor(255.0F, 255.0F, 0.0F)
+                                                        : (determineVelocity == InitFlag::CONNECTED
+                                                               ? ImColor(255.0F, 0.0F, 0.0F)
+                                                               : ImColor(0.0F, 255.0F, 0.0F)));
+        ImGui::Selectable(("##determineVelocity" + std::to_string(size_t(id))).c_str(),
+                          false, ImGuiSelectableFlags_Disabled, ImVec2(1.6F * size, 0.0F));
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("%s", determineVelocity == InitFlag::NOT_CONNECTED
+                                        ? "Not connected, so won't be initialized"
+                                        : (determineVelocity == InitFlag::CONNECTED
+                                               ? "To be initialized"
+                                               : "Successfully Initialized"));
+        }
+        ImGui::TableNextColumn();
+        ImGui::SetNextItemWidth(-FLT_MIN);
+        if (ImGui::DragFloat(("##velocityAccuracyThreshold" + std::to_string(size_t(id))).c_str(),
+                             &velocityAccuracyThreshold, 1.0F, 0.0F, 1000.0F, "%.0f cm/s"))
+        {
+            flow::ApplyChanges();
+        }
+        ImGui::TableNextColumn();
+        ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size * 1.2F,
+                                                           ImGui::GetCursorScreenPos().y + size * 1.8F),
+                                                    size,
+                                                    lastVelocityAccuracy.at(0) <= velocityAccuracyThreshold
+                                                        ? ImColor(0.0F, 255.0F, 0.0F)
+                                                        : ImColor(255.0F, 0.0F, 0.0F));
+        ImGui::Selectable(("##lastVelocityAccuracy.at(0)" + std::to_string(size_t(id))).c_str(),
+                          false, ImGuiSelectableFlags_Disabled, ImVec2(2.0F * size, 0.0F));
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("Last: %.3f cm", lastVelocityAccuracy.at(0));
+        }
+        ImGui::SameLine();
+        ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size * 1.2F,
+                                                           ImGui::GetCursorScreenPos().y + size * 1.8F),
+                                                    size,
+                                                    lastVelocityAccuracy.at(1) <= velocityAccuracyThreshold
+                                                        ? ImColor(0.0F, 255.0F, 0.0F)
+                                                        : ImColor(255.0F, 0.0F, 0.0F));
+        ImGui::Selectable(("##lastVelocityAccuracy.at(1)" + std::to_string(size_t(id))).c_str(),
+                          false, ImGuiSelectableFlags_Disabled, ImVec2(2.0F * size, 0.0F));
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("Last: %.3f cm", lastVelocityAccuracy.at(1));
+        }
+        ImGui::SameLine();
+        ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size * 1.2F,
+                                                           ImGui::GetCursorScreenPos().y + size * 1.8F),
+                                                    size,
+                                                    lastVelocityAccuracy.at(2) <= velocityAccuracyThreshold
+                                                        ? ImColor(0.0F, 255.0F, 0.0F)
+                                                        : ImColor(255.0F, 0.0F, 0.0F));
+        ImGui::Selectable(("##lastVelocityAccuracy.at(2)" + std::to_string(size_t(id))).c_str(),
+                          false, ImGuiSelectableFlags_Disabled, ImVec2(2.0F * size, 0.0F));
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("Last: %.3f cm", lastVelocityAccuracy.at(2));
+        }
+
+        /* -------------------------------------------------------------------------------------------------------- */
+        /*                                                 Attitude                                                 */
+        /* -------------------------------------------------------------------------------------------------------- */
+
+        ImGui::TableNextColumn();
+        ImGui::Text("Attitude");
+        ImGui::TableNextColumn();
+        ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size / 1.2F,
+                                                           ImGui::GetCursorScreenPos().y + size * 1.4F),
+                                                    size,
+                                                    determineAttitude == InitFlag::NOT_CONNECTED
+                                                        ? ImColor(255.0F, 255.0F, 0.0F)
+                                                        : (determineAttitude == InitFlag::CONNECTED
+                                                               ? ImColor(255.0F, 0.0F, 0.0F)
+                                                               : ImColor(0.0F, 255.0F, 0.0F)));
+        ImGui::Selectable(("##determineAttitude" + std::to_string(size_t(id))).c_str(),
+                          false, ImGuiSelectableFlags_Disabled, ImVec2(1.6F * size, 0.0F));
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("%s", determineAttitude == InitFlag::NOT_CONNECTED
+                                        ? "Not connected, so won't be initialized"
+                                        : (determineAttitude == InitFlag::CONNECTED
+                                               ? "To be initialized"
+                                               : "Successfully Initialized"));
+        }
+        ImGui::TableNextColumn();
+
+        ImGui::EndTable();
+    }
+
+    if (ImGui::BeginTable(("Overrides##" + std::to_string(size_t(id))).c_str(),
+                          2, ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+    {
+        ImGui::TableNextColumn();
+        if (ImGui::Checkbox(("Override Roll##" + std::to_string(size_t(id))).c_str(), &overrideRollPitchYaw.at(0)))
+        {
+            flow::ApplyChanges();
+        }
+        ImGui::TableNextColumn();
+        if (overrideRollPitchYaw.at(0))
+        {
+            ImGui::SetNextItemWidth(60);
+            if (ImGui::DragFloat(("##overrideValuesRollPitchYaw.at(0)" + std::to_string(size_t(id))).c_str(),
+                                 &overrideValuesRollPitchYaw.at(0), 1.0F, -180.0F, 180.0F, "%.1f °"))
+            {
+                flow::ApplyChanges();
+            }
+        }
+
+        ImGui::TableNextColumn();
+        if (ImGui::Checkbox(("Override Pitch##" + std::to_string(size_t(id))).c_str(), &overrideRollPitchYaw.at(1)))
+        {
+            flow::ApplyChanges();
+        }
+        ImGui::TableNextColumn();
+        if (overrideRollPitchYaw.at(1))
+        {
+            ImGui::SetNextItemWidth(60);
+            if (ImGui::DragFloat(("##overrideValuesRollPitchYaw.at(1)" + std::to_string(size_t(id))).c_str(),
+                                 &overrideValuesRollPitchYaw.at(1), 1.0F, -90.0F, 90.0F, "%.1f °"))
+            {
+                flow::ApplyChanges();
+            }
+        }
+
+        ImGui::TableNextColumn();
+        if (ImGui::Checkbox(("Override Yaw##" + std::to_string(size_t(id))).c_str(), &overrideRollPitchYaw.at(2)))
+        {
+            flow::ApplyChanges();
+        }
+        ImGui::TableNextColumn();
+        if (overrideRollPitchYaw.at(2))
+        {
+            ImGui::SetNextItemWidth(60);
+            if (ImGui::DragFloat(("##overrideValuesRollPitchYaw.at(2)" + std::to_string(size_t(id))).c_str(),
+                                 &overrideValuesRollPitchYaw.at(2), 1.0F, -180.0F, 180.0F, "%.1f °"))
+            {
+                flow::ApplyChanges();
+            }
+        }
+
+        ImGui::EndTable();
     }
 }
 
@@ -63,6 +315,10 @@ void NAV::PosVelAttInitializer::guiConfig()
     json j;
 
     j["initDuration"] = initDuration;
+    j["positionAccuracyThreshold"] = positionAccuracyThreshold;
+    j["velocityAccuracyThreshold"] = velocityAccuracyThreshold;
+    j["overrideRollPitchYaw"] = overrideRollPitchYaw;
+    j["overrideValuesRollPitchYaw"] = overrideValuesRollPitchYaw;
 
     return j;
 }
@@ -75,6 +331,22 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     {
         j.at("initDuration").get_to(initDuration);
     }
+    if (j.contains("positionAccuracyThreshold"))
+    {
+        j.at("positionAccuracyThreshold").get_to(positionAccuracyThreshold);
+    }
+    if (j.contains("velocityAccuracyThreshold"))
+    {
+        j.at("velocityAccuracyThreshold").get_to(velocityAccuracyThreshold);
+    }
+    if (j.contains("overrideRollPitchYaw"))
+    {
+        j.at("overrideRollPitchYaw").get_to(overrideRollPitchYaw);
+    }
+    if (j.contains("overrideValuesRollPitchYaw"))
+    {
+        j.at("overrideValuesRollPitchYaw").get_to(overrideValuesRollPitchYaw);
+    }
 }
 
 bool NAV::PosVelAttInitializer::onCreateLink(Pin* startPin, Pin* endPin)
@@ -84,6 +356,10 @@ bool NAV::PosVelAttInitializer::onCreateLink(Pin* startPin, Pin* endPin)
     bool canConnect = false;
     if (startPin && endPin)
     {
+        if (endPin->parentNode->id != id) // Link on Output Port
+        {
+            return true;
+        }
         size_t endPinIndex = pinIndexFromId(endPin->id);
 
         int64_t rows = 3;
@@ -108,6 +384,10 @@ bool NAV::PosVelAttInitializer::onCreateLink(Pin* startPin, Pin* endPin)
                         {
                             canConnect = true;
                         }
+                        else
+                        {
+                            LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
+                        }
                     }
                 }
             }
@@ -122,6 +402,10 @@ bool NAV::PosVelAttInitializer::onCreateLink(Pin* startPin, Pin* endPin)
                         {
                             canConnect = true;
                         }
+                        else
+                        {
+                            LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
+                        }
                     }
                 }
             }
@@ -129,6 +413,14 @@ bool NAV::PosVelAttInitializer::onCreateLink(Pin* startPin, Pin* endPin)
         else
         {
             canConnect = true;
+            if (endPinIndex == InputPortIndex_ImuObs)
+            {
+                outputPins.at(OutputPortIndex_ImuObs).dataIdentifier = startPin->dataIdentifier;
+            }
+            else if (endPinIndex == InputPortIndex_GnssObs)
+            {
+                outputPins.at(OutputPortIndex_GnssObs).dataIdentifier = startPin->dataIdentifier;
+            }
         }
     }
 
@@ -169,6 +461,25 @@ void NAV::PosVelAttInitializer::onDeleteLink([[maybe_unused]] Pin* startPin, [[m
         {
             determineAttitude = InitFlag::NOT_CONNECTED;
         }
+        else if (endPin->id == inputPins.at(InputPortIndex_ImuObs).id)
+        {
+            outputPins.at(OutputPortIndex_ImuObs).dataIdentifier.clear();
+            auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_ImuObs).id);
+            for (auto& connectedLink : connectedLinks)
+            {
+                nm::DeleteLink(connectedLink->id);
+            }
+        }
+        else if (endPin->id == inputPins.at(InputPortIndex_GnssObs).id)
+        {
+            outputPins.at(OutputPortIndex_GnssObs).dataIdentifier.clear();
+            auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_GnssObs).id);
+            for (auto& connectedLink : connectedLinks)
+            {
+                nm::DeleteLink(connectedLink->id);
+            }
+        }
+        deinitializeNode();
     }
 }
 
@@ -176,7 +487,8 @@ bool NAV::PosVelAttInitializer::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    countAveragedVelocity = 0.0;
+    startTime = 0;
+
     countAveragedAttitude = 0.0;
 
     if (determinePosition == InitFlag::INITIALIZED)
@@ -190,6 +502,48 @@ bool NAV::PosVelAttInitializer::initialize()
     if (determineAttitude == InitFlag::INITIALIZED)
     {
         determineAttitude = InitFlag::CONNECTED;
+    }
+
+    lastPositionAccuracy = { std::numeric_limits<float>::infinity(),
+                             std::numeric_limits<float>::infinity(),
+                             std::numeric_limits<float>::infinity() };
+    lastVelocityAccuracy = { std::numeric_limits<float>::infinity(),
+                             std::numeric_limits<float>::infinity(),
+                             std::numeric_limits<float>::infinity() };
+
+    // Attitude is given by user
+    if (determineAttitude == InitFlag::CONNECTED
+        && overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(0))
+    {
+        if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Attitude).id))
+        {
+            auto quat_nb = trafo::quat_nb(overrideValuesRollPitchYaw.at(0), overrideValuesRollPitchYaw.at(1), overrideValuesRollPitchYaw.at(2));
+            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+            {
+                if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Attitude))
+                {
+                    (*matrix)(0, 0) = quat_nb.coeffs().w();
+                    (*matrix)(1, 0) = quat_nb.coeffs().x();
+                    (*matrix)(2, 0) = quat_nb.coeffs().y();
+                    (*matrix)(3, 0) = quat_nb.coeffs().z();
+                    determineAttitude = InitFlag::INITIALIZED;
+                    finalizeInit();
+                }
+            }
+            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
+            {
+                if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Attitude))
+                {
+                    auto matrix = (*value)();
+                    matrix(0, 0) = quat_nb.coeffs().w();
+                    matrix(1, 0) = quat_nb.coeffs().x();
+                    matrix(2, 0) = quat_nb.coeffs().y();
+                    matrix(3, 0) = quat_nb.coeffs().z();
+                    determineAttitude = InitFlag::INITIALIZED;
+                    finalizeInit();
+                }
+            }
+        }
     }
 
     return true;
@@ -244,7 +598,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                 {
                     if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
                     {
-                        LOG_INFO("{}: State initialized to v_N {:3.5f}, v_E {:3.5f}, v_D {:3.5f} [m/s]", nameId(),
+                        LOG_INFO("{}: State initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
                                  (*matrix)(0, 0), (*matrix)(1, 0), (*matrix)(2, 0));
                     }
                 }
@@ -253,7 +607,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                     if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
                     {
                         auto matrix = (*value)();
-                        LOG_INFO("{}: State initialized to v_N {:3.5f}, v_E {:3.5f}, v_D {:3.5f} [m/s]", nameId(),
+                        LOG_INFO("{}: State initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
                                  matrix(0, 0), matrix(1, 0), matrix(2, 0));
                     }
                 }
@@ -267,10 +621,12 @@ void NAV::PosVelAttInitializer::finalizeInit()
                 {
                     if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Attitude))
                     {
-                        LOG_INFO("{}: State initialized to Roll {:3.5f}, Pitch {:3.5f}, Yaw {:3.4f} [°]", nameId(),
-                                 trafo::rad2deg((*matrix)(0, 0)),
-                                 trafo::rad2deg((*matrix)(1, 0)),
-                                 trafo::rad2deg((*matrix)(2, 0)));
+                        auto quat_nb = Eigen::Quaterniond((*matrix)(0, 0), (*matrix)(1, 0), (*matrix)(2, 0), (*matrix)(3, 0));
+                        auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
+                        LOG_INFO("{}: State initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
+                                 trafo::rad2deg(rollPitchYaw.x()),
+                                 trafo::rad2deg(rollPitchYaw.y()),
+                                 trafo::rad2deg(rollPitchYaw.z()));
                     }
                 }
                 else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
@@ -278,10 +634,12 @@ void NAV::PosVelAttInitializer::finalizeInit()
                     if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Attitude))
                     {
                         auto matrix = (*value)();
-                        LOG_INFO("{}: State initialized to Roll {:3.5f}, Pitch {:3.5f}, Yaw {:3.4f} [°]", nameId(),
-                                 trafo::rad2deg(matrix(0, 0)),
-                                 trafo::rad2deg(matrix(1, 0)),
-                                 trafo::rad2deg(matrix(2, 0)));
+                        auto quat_nb = Eigen::Quaterniond(matrix(0, 0), matrix(1, 0), matrix(2, 0), matrix(3, 0));
+                        auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
+                        LOG_INFO("{}: State initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
+                                 trafo::rad2deg(rollPitchYaw.x()),
+                                 trafo::rad2deg(rollPitchYaw.y()),
+                                 trafo::rad2deg(rollPitchYaw.z()));
                     }
                 }
             }
@@ -291,17 +649,87 @@ void NAV::PosVelAttInitializer::finalizeInit()
 
 void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
+    if (determinePosition != InitFlag::CONNECTED
+        && determineVelocity != InitFlag::CONNECTED
+        && determineAttitude != InitFlag::CONNECTED)
+    {
+        invokeCallbacks(OutputPortIndex_ImuObs, nodeData);
+        return;
+    }
+
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
 
-    if (!obs->insTime.has_value())
+    if (!obs->timeSinceStartup.has_value())
     {
         LOG_ERROR("{}: Can only process data with an insTime", nameId());
         return;
     }
 
-    if (startTime.empty())
+    if (startTime == 0)
     {
-        startTime = obs->insTime.value();
+        startTime = obs->timeSinceStartup.value();
+    }
+
+    // Position and rotation information for conversion of IMU data from platform to body frame
+    const auto& imuPosition = obs->imuPos;
+
+    const Eigen::Vector3d magUncomp_b = imuPosition.quatMag_bp() * obs->magUncompXYZ.value();
+    auto magneticHeading = std::atan2(magUncomp_b.y(), magUncomp_b.x());
+
+    const Eigen::Vector3d accelUncomp_b = imuPosition.quatAccel_bp() * obs->accelUncompXYZ.value() * -1;
+    auto roll = rollFromStaticAccelerationObs(accelUncomp_b);
+    auto pitch = pitchFromStaticAccelerationObs(accelUncomp_b);
+
+    // TODO: Determine Velocity first and if vehicle not static, initialize the attitude from velocity
+
+    // Average with previous attitude
+    countAveragedAttitude++;
+    if (countAveragedAttitude > 1)
+    {
+        averagedAttitude.at(0) = (averagedAttitude.at(0) * (countAveragedAttitude - 1) + roll) / countAveragedAttitude;
+        averagedAttitude.at(1) = (averagedAttitude.at(1) * (countAveragedAttitude - 1) + pitch) / countAveragedAttitude;
+        averagedAttitude.at(2) = (averagedAttitude.at(2) * (countAveragedAttitude - 1) + magneticHeading) / countAveragedAttitude;
+    }
+    else
+    {
+        averagedAttitude.at(0) = roll;
+        averagedAttitude.at(1) = pitch;
+        averagedAttitude.at(2) = magneticHeading;
+    }
+
+    if (static_cast<double>(obs->timeSinceStartup.value() - startTime) * 1e-9 >= initDuration)
+    {
+        if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Attitude).id))
+        {
+            auto quat_nb = trafo::quat_nb(overrideRollPitchYaw.at(0) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(0)) : averagedAttitude.at(0),
+                                          overrideRollPitchYaw.at(1) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(1)) : averagedAttitude.at(1),
+                                          overrideRollPitchYaw.at(2) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(2)) : averagedAttitude.at(2));
+            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+            {
+                if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Attitude))
+                {
+                    (*matrix)(0, 0) = quat_nb.coeffs().w();
+                    (*matrix)(1, 0) = quat_nb.coeffs().x();
+                    (*matrix)(2, 0) = quat_nb.coeffs().y();
+                    (*matrix)(3, 0) = quat_nb.coeffs().z();
+                    determineAttitude = InitFlag::INITIALIZED;
+                    finalizeInit();
+                }
+            }
+            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
+            {
+                if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Attitude))
+                {
+                    auto matrix = (*value)();
+                    matrix(0, 0) = quat_nb.coeffs().w();
+                    matrix(1, 0) = quat_nb.coeffs().x();
+                    matrix(2, 0) = quat_nb.coeffs().y();
+                    matrix(3, 0) = quat_nb.coeffs().z();
+                    determineAttitude = InitFlag::INITIALIZED;
+                    finalizeInit();
+                }
+            }
+        }
     }
 }
 
@@ -339,28 +767,27 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
         if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_ATT)
         // && determineAttitude != InitFlag::NOT_CONNECTED)
         {
-            LOG_DEBUG("{}: UBX_NAV_ATT: Roll {}, Pitch {}, Heading {} [deg]", nameId(),
-                      std::get<sensors::ublox::UbxNavAtt>(obs->data).roll * 1e-5,
-                      std::get<sensors::ublox::UbxNavAtt>(obs->data).pitch * 1e-5,
-                      std::get<sensors::ublox::UbxNavAtt>(obs->data).heading * 1e-5);
+            // LOG_DATA("{}: UBX_NAV_ATT: Roll {}, Pitch {}, Heading {} [deg]", nameId(),
+            //           std::get<sensors::ublox::UbxNavAtt>(obs->data).roll * 1e-5,
+            //           std::get<sensors::ublox::UbxNavAtt>(obs->data).pitch * 1e-5,
+            //           std::get<sensors::ublox::UbxNavAtt>(obs->data).heading * 1e-5);
         }
         else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSECEF
                  && determinePosition != InitFlag::NOT_CONNECTED)
         {
-            positionAccuracyFullfilled.set(0, static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc) <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(1, static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc) <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(2, static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc) <= positionAccuracyThreshold);
+            lastPositionAccuracy.at(0) = static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc);
+            lastPositionAccuracy.at(1) = static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc);
+            lastPositionAccuracy.at(2) = static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc);
 
-            if (positionAccuracyFullfilled.all())
+            if (lastPositionAccuracy.at(0) <= positionAccuracyThreshold
+                && lastPositionAccuracy.at(1) <= positionAccuracyThreshold
+                && lastPositionAccuracy.at(2) <= positionAccuracyThreshold)
             {
                 if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
                 {
                     Eigen::Vector3d position_ecef(std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
                                                   std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
                                                   std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
-
-                    LOG_DATA("{}: UBX_NAV_POSECEF: ECEF {}, {}, {} [m]", nameId(),
-                             position_ecef.x(), position_ecef.y(), position_ecef.z());
 
                     if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
                     {
@@ -391,11 +818,13 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
         else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSLLH
                  && determinePosition != InitFlag::NOT_CONNECTED)
         {
-            positionAccuracyFullfilled.set(0, std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1 <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(1, std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1 <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(2, std::get<sensors::ublox::UbxNavPosllh>(obs->data).vAcc * 1e-1 <= positionAccuracyThreshold);
+            lastPositionAccuracy.at(0) = static_cast<float>(std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1);
+            lastPositionAccuracy.at(1) = static_cast<float>(std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1);
+            lastPositionAccuracy.at(2) = static_cast<float>(std::get<sensors::ublox::UbxNavPosllh>(obs->data).vAcc * 1e-1);
 
-            if (positionAccuracyFullfilled.all())
+            if (lastPositionAccuracy.at(0) <= positionAccuracyThreshold
+                && lastPositionAccuracy.at(1) <= positionAccuracyThreshold
+                && lastPositionAccuracy.at(2) <= positionAccuracyThreshold)
             {
                 if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
                 {
@@ -404,9 +833,6 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
                                               std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
 
                     auto position_ecef = trafo::lla2ecef_WGS84(latLonAlt);
-
-                    LOG_DATA("{}: UBX_NAV_POSLLH: ECEF {}, {}, {} [m]", nameId(),
-                             position_ecef.x(), position_ecef.y(), position_ecef.z());
 
                     if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
                     {
@@ -437,11 +863,13 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
         else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_VELNED
                  && determineVelocity != InitFlag::NOT_CONNECTED)
         {
-            velocityAccuracyFullfilled.set(0, static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc) <= velocityAccuracyThreshold);
-            velocityAccuracyFullfilled.set(1, static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc) <= velocityAccuracyThreshold);
-            velocityAccuracyFullfilled.set(2, static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc) <= velocityAccuracyThreshold);
+            lastVelocityAccuracy.at(0) = static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc);
+            lastVelocityAccuracy.at(1) = static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc);
+            lastVelocityAccuracy.at(2) = static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc);
 
-            if (velocityAccuracyFullfilled.all())
+            if (lastVelocityAccuracy.at(0) <= velocityAccuracyThreshold
+                && lastVelocityAccuracy.at(1) <= velocityAccuracyThreshold
+                && lastVelocityAccuracy.at(2) <= velocityAccuracyThreshold)
             {
                 if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Velocity).id))
                 {
@@ -488,17 +916,20 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<Rtklib
     {
         if (obs->sdXYZ.has_value())
         {
-            positionAccuracyFullfilled.set(0, obs->sdXYZ->x() * 1e2 <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(1, obs->sdXYZ->y() * 1e2 <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(2, obs->sdXYZ->z() * 1e2 <= positionAccuracyThreshold);
+            lastPositionAccuracy.at(0) = static_cast<float>(obs->sdXYZ->x() * 1e2);
+            lastPositionAccuracy.at(1) = static_cast<float>(obs->sdXYZ->y() * 1e2);
+            lastPositionAccuracy.at(2) = static_cast<float>(obs->sdXYZ->z() * 1e2);
         }
         else if (obs->sdNEU.has_value())
         {
-            positionAccuracyFullfilled.set(0, obs->sdNEU->x() * 1e2 <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(1, obs->sdNEU->y() * 1e2 <= positionAccuracyThreshold);
-            positionAccuracyFullfilled.set(2, obs->sdNEU->z() * 1e2 <= positionAccuracyThreshold);
+            lastPositionAccuracy.at(0) = static_cast<float>(obs->sdNEU->x() * 1e2);
+            lastPositionAccuracy.at(1) = static_cast<float>(obs->sdNEU->y() * 1e2);
+            lastPositionAccuracy.at(2) = static_cast<float>(obs->sdNEU->z() * 1e2);
         }
-        if (positionAccuracyFullfilled.all())
+
+        if (lastPositionAccuracy.at(0) <= positionAccuracyThreshold
+            && lastPositionAccuracy.at(1) <= positionAccuracyThreshold
+            && lastPositionAccuracy.at(2) <= positionAccuracyThreshold)
         {
             if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
             {
