@@ -47,13 +47,33 @@ class Transformation : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Notifies the node ifself, that some data was changed
+    /// @brief Called when a new link is to be established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    /// @return True if link is allowed, false if link is rejected
+    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+
+    /// @brief Notifies the node, that some data was changed on one of it's output ports
     /// @param[in] linkId Id of the link on which data is changed
-    void onNotifyValueChanged(ax::NodeEditor::LinkId linkId) override;
+    void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId) override;
 
   private:
-    constexpr static size_t OutputPortIndex_Matrix = 1; ///< @brief Matrix
+    constexpr static size_t OutputPortIndex_Matrix = 0; ///< @brief Matrix
     constexpr static size_t InputPortIndex_Matrix = 0;  ///< @brief Matrix
+
+    enum class Type : int
+    {
+        ECEF_2_LLArad,
+        ECEF_2_LLAdeg,
+        LLArad_2_ECEF,
+        LLAdeg_2_ECEF,
+        Quat_nb_2_RollPitchYawRad,
+        Quat_nb_2_RollPitchYawDeg,
+        RollPitchYawRad_2_Quat_nb,
+        RollPitchYawDeg_2_Quat_nb,
+        // CONJUGATE,
+        // TRANSPOSE,
+    };
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -61,12 +81,24 @@ class Transformation : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Function to call when the value is changed
+    /// @brief Function to call when the input value is changed
     /// @param[in] linkId Link Id over which the notification is sent
-    void notifyFunction(ax::NodeEditor::LinkId linkId);
+    void notifyOnInputValueChanged(ax::NodeEditor::LinkId linkId);
+
+    /// @brief Checks if the connected Matrix has the specified size
+    /// @param[in] transformationType The type of the Transformation
+    /// @param[in] startPin Pin where the matrix is found
+    bool inputMatrixHasSize(Type transformationType, Pin* startPin);
+
+    /// @brief Set the Matrix Size according to the specified Transformation
+    /// @param[in] transformationType The type of the Transformation
+    void setMatrixSize(Type transformationType);
 
     /// The matrix object
     Eigen::MatrixXd matrix;
+
+    /// Algorithm to use
+    Type selectedTransformation = Type::ECEF_2_LLArad;
 };
 
 } // namespace NAV

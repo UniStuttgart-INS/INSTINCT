@@ -54,9 +54,9 @@ void NAV::util::time::SetCurrentTime(const NAV::InsTime& insTime)
     if (auto currentExactTime = GetCurrentTime();
         insTime < currentExactTime)
     {
-        LOG_TRACE("Not updating current Time [{} {:.6f}] to [{} {:.6f}], because the new time is earlier.",
-                  currentExactTime.toGPSweekTow().gpsWeek, currentExactTime.toGPSweekTow().tow,
-                  insTime.toGPSweekTow().gpsWeek, insTime.toGPSweekTow().tow);
+        LOG_DATA("Not updating current Time [{} {:.6f}] to [{} {:.6f}], because the new time is earlier.",
+                 currentExactTime.toGPSweekTow().gpsWeek, currentExactTime.toGPSweekTow().tow,
+                 insTime.toGPSweekTow().gpsWeek, insTime.toGPSweekTow().tow);
     }
     else if (insTime >= currentExactTime)
     {

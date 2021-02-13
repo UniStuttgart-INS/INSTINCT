@@ -581,6 +581,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                                  trafo::rad2deg(latLonAlt.x()), trafo::rad2deg(latLonAlt.y()), latLonAlt.z());
                     }
                 }
+                notifyInputValueChanged(InputPortIndex_Position);
             }
         }
         if (determineVelocity == InitFlag::INITIALIZED)
@@ -604,6 +605,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                                  matrix(0, 0), matrix(1, 0), matrix(2, 0));
                     }
                 }
+                notifyInputValueChanged(InputPortIndex_Velocity);
             }
         }
         if (determineAttitude == InitFlag::INITIALIZED)
@@ -635,6 +637,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                                  trafo::rad2deg(rollPitchYaw.z()));
                     }
                 }
+                notifyInputValueChanged(InputPortIndex_Attitude);
             }
         }
     }
