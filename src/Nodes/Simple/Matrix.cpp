@@ -430,6 +430,7 @@ void NAV::Matrix::restore(json const& j)
     {
         j.at("matrix").get_to(initMatrix);
         matrix = initMatrix;
+        outputPins.at(OutputPortIndex_FullMatrix).data = Pin::PinData(&matrix);
     }
     if (j.contains("blocks"))
     {
@@ -505,7 +506,7 @@ void NAV::Matrix::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] 
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 }
 
-void NAV::Matrix::onNotifyValueChanged(ax::NodeEditor::LinkId linkId)
+void NAV::Matrix::notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId)
 {
     if (Link* link = nm::FindLink(linkId))
     {

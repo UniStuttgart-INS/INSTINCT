@@ -113,22 +113,32 @@ void NAV::Node::afterCreateLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
 void NAV::Node::afterDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
-void NAV::Node::onNotifyValueChanged(ax::NodeEditor::LinkId /*linkId*/) {}
+void NAV::Node::notifyOnOutputValueChanged(ax::NodeEditor::LinkId /*linkId*/) {}
 
 void NAV::Node::notifyInputValueChanged(size_t portIndex)
 {
     if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(portIndex).id))
     {
+        // TODO: Reverse Flow Animation
+        // if (nm::showFlowWhenNotifyingValueChange)
+        // {
+        //     ax::NodeEditor::Flow(connectedLink->id);
+        // }
+
         if (Pin* startPin = nm::FindPin(connectedLink->startPinId))
         {
             if (startPin->parentNode)
             {
                 // Notify the node itself that changes were made
-                startPin->parentNode->onNotifyValueChanged(connectedLink->id);
+                startPin->parentNode->notifyOnOutputValueChanged(connectedLink->id);
             }
             // Notify all nodes which registered a notify callback
             for (auto& [node, callback, linkId] : startPin->notifyFunc)
             {
+                if (node->id == id)
+                {
+                    continue;
+                }
                 if (nm::showFlowWhenNotifyingValueChange)
                 {
                     ax::NodeEditor::Flow(linkId);
