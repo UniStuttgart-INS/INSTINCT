@@ -5,6 +5,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
+#include <Eigen/Dense>
 
 NAV::ARMA::ARMA()
 {
@@ -42,10 +43,16 @@ std::string NAV::ARMA::category()
 
 void NAV::ARMA::guiConfig()
 {
-    if (ImGui::Combo("combo 2 (one-liner)", &orderSelection, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0"))
+    /*if (ImGui::Combo("combo 2 (one-liner)", &orderSelection, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0"))
     {
         flow::ApplyChanges();
-    }
+    }*/
+
+    ImGui::InputInt("select p", &p);
+    //ImGui::SameLine();
+
+    ImGui::InputInt("select q", &q);
+    ImGui::SameLine();
 }
 
 [[nodiscard]] json NAV::ARMA::save() const
@@ -81,23 +88,225 @@ void NAV::ARMA::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
+/// @brief calculate autocorrelation function (ACF)
+/// @param[in] x vector of data
+/// @param[out] acf vector of acf values
+Eigen::VectorXd acf_function(const Eigen::VectorXd& x)
+{
+    int tt = 0; // acf loop iterator
+    int tau = 0;
+
+    double covar = 0.0; // variable declaration
+    double mean = 0.0;
+    double variance = 0.0;
+
+    Eigen::VectorXd acf(x.size());
+
+    mean = x.mean();
+
+    for (tt = 0; tt < x.size(); tt++)
+    {
+        variance += (x(tt) - mean) * (x(tt) - mean); // sum of variance
+    }
+
+    for (tau = 0; tau < x.size(); tau++)
+    { // acf: correlation to delta_tau
+
+        for (tt = 0; tt < x.size() - tau; tt++)
+        {
+            covar += (x(tt) - mean) * (x(tt + tau) - mean); // 'covar' sum
+        }
+        acf(tau) = covar / variance; // calculate sum/variance
+        covar = 0;                   // reset 'covar' for next sum
+    }
+    return acf;
+}
+
+/// @brief calculate partial autocorrelation function (PACF)
+/// @param[in] x vector of data @param[in] acf vector of acf @param[in] p order of AR process
+/// @param[out] pacf_output joined vector of pacf values and initial e_hat for Hannan-Rissanen
+Eigen::VectorXd pacf_function(const Eigen::VectorXd& x, Eigen::VectorXd& acf, int p)
+{
+    //pacf
+    int ii = 0;
+
+    double sum1 = 0.0;
+    double sum2 = 0.0;
+    double sum3 = 0.0;
+
+    Eigen::VectorXd pacf(x.size() - 1);
+    Eigen::VectorXd e_hat_initial(x.size());
+    Eigen::VectorXd phi_tau(x.size());
+    Eigen::VectorXd phi_tau_i(x.size());
+    Eigen::VectorXd phi_initial(p + 1);
+    Eigen::VectorXd pacf_output(x.size() * 2); // size of vectors pacf + e_hat_initial
+
+    // PACF while E(eta_t) = 0
+
+    pacf(0) = acf(1); // initial value phi_1_1 = p(1)
+    phi_tau_i(0) = pacf(0);
+    sum1 = acf(1) * acf(1);
+    sum2 = acf(1) * acf(1);
+
+    e_hat_initial(0) = 0; // first iteration step
+
+    for (int tau = 2; tau < x.size(); tau++)
+    {
+        if (tau == p + 2)
+        { // Hannan Rissanen initial phi
+            for (int m = 0; m < p + 1; m++)
+            {
+                phi_initial(m) = phi_tau_i(m);
+            }
+        }
+
+        pacf(tau - 1) = (acf(tau) - sum1) / (1 - sum2);
+        sum1 = 0;
+        sum2 = 0;
+        phi_tau = Eigen::VectorXd::Zero(x.size() - 1);
+
+        for (ii = 0; ii < tau - 1; ii++)
+        {
+            phi_tau(ii) = (phi_tau_i(ii) - pacf(tau - 1) * phi_tau_i(tau - ii - 2));
+            sum1 += phi_tau(ii) * acf(tau - ii); // top sum
+            sum2 += phi_tau(ii) * acf(ii + 1);   // bottom sum
+        }
+        phi_tau_i = phi_tau; // last element of phi_tau_i -> phi_tau_tau
+        phi_tau_i(tau - 1) = pacf(tau - 1);
+        sum1 += pacf(tau - 1) * acf(1);
+        sum2 += pacf(tau - 1) * acf(tau);
+
+        if (tau > p + 1)
+        {
+            for (int m = 0; m < p + 1; m++)
+            {
+                sum3 += x(tau - m - 2) * phi_initial(m);
+            }
+            e_hat_initial(tau - 1) = x(tau - 1) - sum3; // calculate initial e_hat for hannan-rissanen
+            sum3 = 0;
+        }
+        else
+        {
+            e_hat_initial(tau - 1) = 0;
+        }
+    }
+
+    for (int m = 0; m < p + 1; m++)
+    { // e_hat at Y_n
+        sum3 += x(x.size() - m - 2) * phi_initial(m);
+    }
+    e_hat_initial(x.size() - 1) = x(x.size() - 1) - sum3;
+
+    pacf_output << pacf, e_hat_initial;
+    return pacf_output;
+}
+
+/// @brief fill A matrix for Hannan-Rissanen
+/// @param[in] x vector of data @param[in] e_hat_initial for least squares @param[in] p order of AR process @param[in] q order of MA process
+/// @param[out] A filled matrix
+Eigen::MatrixXd matrix_function(const Eigen::VectorXd& x, const Eigen::VectorXd& e_hat_initial, int p, int q)
+{
+    int row = (x.size() - max(p, q); //?
+    int column = p + q;
+
+    Eigen::MatrixXd A(row, column);
+    for (int t_HR = p; t_HR < x.size(); t_HR++)
+    { // fill A
+        for (int i_HR = 0; i_HR < p; i_HR++)
+        {
+            A(t_HR - p, i_HR) = x(t_HR - i_HR - 1); // AR
+        }
+        for (int i_HR = p; i_HR < p + q; i_HR++)
+        {
+            A(t_HR - p, i_HR) = -e_hat_initial(t_HR - i_HR + p - 1); // MA
+        }
+    }
+    return A;
+}
+
 void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
+    buffer.push_back(obs);
 
-    // buffer.push_back(obs);
+    if (buffer.size() == 1000)
+    {
+        int k = 0;
+        int skip = 0; //skip part of deque that has already been outputted
+        int deque_it = 0;
+        for (auto& obs : buffer)
+        {
+            const Eigen::Vector3d& acc = obs->accelUncompXYZ.value();
+            Eigen::VectorXd x(buffer.size());
+            x(k) = acc(1);
+            k++;
+            std::cout << buffer.size() << std::endl;
 
-    // for (auto& obs : buffer)
-    // {
-    // }
-    // buffer.pop_back();
+            // calculate acf
 
-    LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
+            Eigen::VectorXd acf = acf_function(x);
 
-    auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
+            // calculate pacf & initial ê
 
-    newImuObs->insTime = obs->insTime;
-    newImuObs->accelUncompXYZ = obs->accelUncompXYZ;
+            Eigen::VectorXd pacf_result = pacf_function(x, acf, p);
+            Eigen::VectorXd pacf = pacf_result.head(x.size());
+            Eigen::VectorXd e_hat_initial = pacf_result.tail(x.size());
 
-    invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
+            // arma process
+
+            int row = x.size() - max(p, q); //?
+            int column = p + q;
+            double sum_HR = 0;
+
+            Eigen::VectorXd x_vec(column);
+            Eigen::VectorXd y_hat(x.size());
+            Eigen::VectorXd e_hat(x.size());
+
+            for (int it = 0; it < 2; it++)
+            {
+                Eigen::MatrixXd A = matrix_function(x, e_hat_initial, p, q);
+
+                x_vec = (A.transpose() * A).ldlt().solve(A.transpose() * x.tail(x.size() - p)); // (A'A)^-1*A'y for t > max(p, q)
+
+                e_hat = e_hat_initial;
+
+                for (int i_HR = 0; i_HR < p; i_HR++)
+                {                            // calculate e_hat for new variables
+                    e_hat_initial(i_HR) = 0; // t <= max(p,q) = 0
+                    y_hat(i_HR) = x(i_HR);
+                }
+                for (int t_HR = p; t_HR < x.size(); t_HR++)
+                { // AR
+                    for (int i_HR = 0; i_HR < p; i_HR++)
+                    {
+                        sum_HR += x_vec(i_HR) * x(t_HR - i_HR - 1);
+                    }
+                    for (int i_HR = p; i_HR < p + q; i_HR++)
+                    { // MA
+                        sum_HR -= x_vec(i_HR) * e_hat(t_HR - i_HR + p - 1);
+                    }
+                    e_hat_initial(t_HR) = x(t_HR) - sum_HR;
+                    y_hat(t_HR) = sum_HR;
+                    sum_HR = 0;
+                }
+            }
+        }
+        for (auto& obs : buffer)
+        {
+            if (deque_it > skip)
+            {
+                // Einträge aus y_hat an obs übergeben?
+                LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
+
+                auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
+
+                newImuObs->insTime = obs->insTime;
+                newImuObs->accelUncompXYZ = obs->accelUncompXYZ;
+                invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
+            }
+            deque_it++;
+        }
+    }
+    const int skip = 500;
+    buffer.erase(buffer.begin(), buffer.end() - skip); //erase part of already processed data
 }

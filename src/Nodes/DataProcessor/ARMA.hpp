@@ -68,7 +68,9 @@ class ARMA : public Node
 
     std::deque<std::shared_ptr<ImuObs>> buffer;
 
-    int orderSelection = 0;
+    //int orderSelection = 0;
+    int p = 5;
+    int q = 3;
 };
 
 } // namespace NAV

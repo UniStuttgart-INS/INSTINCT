@@ -9,6 +9,7 @@
     "C_Cpp.default.cppStandard": "c++20",
     "cSpell.words": [
         "Doxygen",
+        "Eigen",
         "GNSS",
         "Kalman",
         "cmake",
@@ -136,5 +137,6 @@
         "DoxygenLayout.xml": true,
         "NavSoS.ini": true,
         "compile_commands.json": true,
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
