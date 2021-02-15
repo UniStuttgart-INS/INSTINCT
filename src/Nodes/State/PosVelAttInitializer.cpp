@@ -670,7 +670,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
     const auto& imuPosition = obs->imuPos;
 
     const Eigen::Vector3d magUncomp_b = imuPosition.quatMag_bp() * obs->magUncompXYZ.value();
-    auto magneticHeading = std::atan2(magUncomp_b.y(), magUncomp_b.x());
+    auto magneticHeading = -std::atan2(magUncomp_b.y(), magUncomp_b.x());
 
     const Eigen::Vector3d accelUncomp_b = imuPosition.quatAccel_bp() * obs->accelUncompXYZ.value() * -1;
     auto roll = rollFromStaticAccelerationObs(accelUncomp_b);

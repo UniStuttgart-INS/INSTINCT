@@ -16,8 +16,8 @@ NAV::Transformation::Transformation()
     hasConfig = true;
     kind = Kind::Simple;
 
-    nm::CreateOutputPin(this, "ECEF", Pin::Type::Matrix, "Eigen::MatrixXd", &matrix);
-    nm::CreateInputPin(this, "LLA [rad]", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" }, &Transformation::notifyOnInputValueChanged);
+    nm::CreateInputPin(this, "ECEF", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" }, &Transformation::notifyOnInputValueChanged);
+    nm::CreateOutputPin(this, "LLA [rad]", Pin::Type::Matrix, "Eigen::MatrixXd", &matrix);
 }
 
 NAV::Transformation::~Transformation()
