@@ -90,7 +90,6 @@ void NAV::ARMA::deinitialize()
 
 /// @brief calculate autocorrelation function (ACF)
 /// @param[in] x vector of data
-/// @param[out] acf vector of acf values
 Eigen::VectorXd acf_function(const Eigen::VectorXd& x)
 {
     int tt = 0; // acf loop iterator
@@ -203,13 +202,9 @@ Eigen::VectorXd pacf_function(const Eigen::VectorXd& x, Eigen::VectorXd& acf, in
 
 /// @brief fill A matrix for Hannan-Rissanen
 /// @param[in] x vector of data @param[in] e_hat_initial for least squares @param[in] p order of AR process @param[in] q order of MA process
-/// @param[out] A filled matrix
 Eigen::MatrixXd matrix_function(const Eigen::VectorXd& x, const Eigen::VectorXd& e_hat_initial, int p, int q)
 {
-    int row = (x.size() - max(p, q); //?
-    int column = p + q;
-
-    Eigen::MatrixXd A(row, column);
+    Eigen::MatrixXd A(1000 - p, p + q); // conversion long to int?
     for (int t_HR = p; t_HR < x.size(); t_HR++)
     { // fill A
         for (int i_HR = 0; i_HR < p; i_HR++)
@@ -254,11 +249,9 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
 
             // arma process
 
-            int row = x.size() - max(p, q); //?
-            int column = p + q;
-            double sum_HR = 0;
+            double sum_HR = 0.0;
 
-            Eigen::VectorXd x_vec(column);
+            Eigen::VectorXd x_vec(p + q);
             Eigen::VectorXd y_hat(x.size());
             Eigen::VectorXd e_hat(x.size());
 
@@ -266,7 +259,7 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
             {
                 Eigen::MatrixXd A = matrix_function(x, e_hat_initial, p, q);
 
-                x_vec = (A.transpose() * A).ldlt().solve(A.transpose() * x.tail(x.size() - p)); // (A'A)^-1*A'y for t > max(p, q)
+                x_vec = (A.transpose() * A).ldlt().solve(A.transpose() * x.tail(x.size() - p)); // t > max(p, q)
 
                 e_hat = e_hat_initial;
 
@@ -295,7 +288,7 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
         {
             if (deque_it > skip)
             {
-                // Einträge aus y_hat an obs übergeben?
+                //obs->accelUncompXYZ = ;
                 LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
 
                 auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
@@ -308,5 +301,5 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
         }
     }
     const int skip = 500;
-    buffer.erase(buffer.begin(), buffer.end() - skip); //erase part of already processed data
+    buffer.erase(buffer.begin(), buffer.begin() + skip); //erase part of already processed data
 }
