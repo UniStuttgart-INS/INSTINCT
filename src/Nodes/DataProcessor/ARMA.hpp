@@ -68,9 +68,17 @@ class ARMA : public Node
 
     std::deque<std::shared_ptr<ImuObs>> buffer;
 
-    //int orderSelection = 0;
+    //loop iterator
+    int k = 0;
+
+    // arma order
     int p = 5;
     int q = 3;
+
+    // buffer initialization
+    int deque_size = 1000;
+    int overlap = 0;
+    int refresh_overlap = 500;
 };
 
 } // namespace NAV
