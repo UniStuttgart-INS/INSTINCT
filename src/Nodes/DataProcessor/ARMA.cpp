@@ -236,7 +236,6 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
             x(k, 2) = acc(2);
             k++;
         }
-        //std::cout << x.col(0) << std::endl;
 
         for (int obs_num = 0; obs_num < 3; obs_num++)
         {
@@ -301,6 +300,6 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
         {
             overlap = refresh_overlap;
         }
-        buffer.erase(buffer.begin(), buffer.begin() + overlap); //erase part of already processed data
+        buffer.erase(buffer.begin(), buffer.end() - overlap); //erase part of already processed data
     }
 }

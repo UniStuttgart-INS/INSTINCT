@@ -78,7 +78,7 @@ class ARMA : public Node
     // buffer initialization
     int deque_size = 1000;
     int overlap = 0;
-    int refresh_overlap = 500;
+    int refresh_overlap = 10;
 };
 
 } // namespace NAV
