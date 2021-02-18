@@ -9,7 +9,7 @@ NAV::GroupBox::GroupBox()
     name = typeStatic();
     kind = Node::Kind::GroupBox;
     color = ImColor(255, 255, 255);
-    hasConfig = true;
+    hasConfig = false;
     size = ImVec2(400, 300);
 }
 
