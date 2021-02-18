@@ -19,6 +19,9 @@ enum class Mode
 /// @param[in] mode Real time or postprocessing
 void SetMode(Mode mode);
 
+/// @brief Get the time mode
+Mode GetMode();
+
 /// @brief Get the current time.
 /// @return Pointer to the current time or nullptr if it is not known yet.
 InsTime GetCurrentTime();

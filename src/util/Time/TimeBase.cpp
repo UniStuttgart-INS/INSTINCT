@@ -33,6 +33,11 @@ namespace NAV::util::time
 /*                                           Function Definitions                                           */
 /* -------------------------------------------------------------------------------------------------------- */
 
+NAV::util::time::Mode NAV::util::time::GetMode()
+{
+    return timeMode;
+}
+
 void NAV::util::time::SetMode(NAV::util::time::Mode mode)
 {
     timeMode = mode;

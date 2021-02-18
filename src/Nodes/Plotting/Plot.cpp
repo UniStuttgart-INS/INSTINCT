@@ -1104,7 +1104,13 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
                     addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - startValue_Time);
                     addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
                     // Matrix
-                    addData(pinIndex, i++, matrix(0, 0));
+                    for (int row = 0; row < matrix.rows(); row++)
+                    {
+                        for (int col = 0; col < matrix.cols(); col++)
+                        {
+                            addData(pinIndex, i++, matrix(row, col));
+                        }
+                    }
                 }
             }
         }
