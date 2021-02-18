@@ -440,14 +440,12 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
                                           std::make_tuple(std::get<0>(endPin->notifyFunc.front()),
                                                           std::get<1>(endPin->notifyFunc.front()),
                                                           linkId));
-                    if (iter != startPin->notifyFunc.end())
+                    if (iter == startPin->notifyFunc.end())
                     {
-                        startPin->notifyFunc.erase(iter);
+                        startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
+                                                          std::get<1>(endPin->notifyFunc.front()),
+                                                          linkId);
                     }
-
-                    startPin->notifyFunc.emplace_back(std::get<0>(endPin->notifyFunc.front()),
-                                                      std::get<1>(endPin->notifyFunc.front()),
-                                                      m_links.back().id);
                 }
             }
 
