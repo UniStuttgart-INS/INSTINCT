@@ -504,41 +504,6 @@ bool NAV::PosVelAttInitializer::initialize()
                              std::numeric_limits<float>::infinity(),
                              std::numeric_limits<float>::infinity() };
 
-    // Attitude is given by user
-    if (determineAttitude == InitFlag::CONNECTED
-        && overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(0))
-    {
-        if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Attitude).id))
-        {
-            auto quat_nb = trafo::quat_nb(overrideValuesRollPitchYaw.at(0), overrideValuesRollPitchYaw.at(1), overrideValuesRollPitchYaw.at(2));
-            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-            {
-                if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Attitude))
-                {
-                    (*matrix)(0, 0) = quat_nb.coeffs().w();
-                    (*matrix)(1, 0) = quat_nb.coeffs().x();
-                    (*matrix)(2, 0) = quat_nb.coeffs().y();
-                    (*matrix)(3, 0) = quat_nb.coeffs().z();
-                    determineAttitude = InitFlag::INITIALIZED;
-                    finalizeInit();
-                }
-            }
-            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-            {
-                if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Attitude))
-                {
-                    auto matrix = (*value)();
-                    matrix(0, 0) = quat_nb.coeffs().w();
-                    matrix(1, 0) = quat_nb.coeffs().x();
-                    matrix(2, 0) = quat_nb.coeffs().y();
-                    matrix(3, 0) = quat_nb.coeffs().z();
-                    determineAttitude = InitFlag::INITIALIZED;
-                    finalizeInit();
-                }
-            }
-        }
-    }
-
     return true;
 }
 
@@ -693,7 +658,9 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
         averagedAttitude.at(2) = magneticHeading;
     }
 
-    if (static_cast<double>(obs->timeSinceStartup.value() - startTime) * 1e-9 >= initDuration)
+    if (static_cast<double>(obs->timeSinceStartup.value() - startTime) * 1e-9 >= initDuration
+        || (determineAttitude == InitFlag::CONNECTED
+            && overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(0)))
     {
         if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Attitude).id))
         {

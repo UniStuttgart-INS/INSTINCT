@@ -1,148 +1,5 @@
 {
     "links": {
-        "link-100": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 64,
-            "id": 100,
-            "startPinId": 73
-        },
-        "link-126": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 63,
-            "id": 126,
-            "startPinId": 102
-        },
-        "link-232": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 230,
-            "id": 232,
-            "startPinId": 73
-        },
-        "link-257": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 253,
-            "id": 257,
-            "startPinId": 75
-        },
-        "link-265": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 62,
-            "id": 265,
-            "startPinId": 261
-        },
-        "link-266": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 65,
-            "id": 266,
-            "startPinId": 74
-        },
-        "link-267": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 66,
-            "id": 267,
-            "startPinId": 75
-        },
-        "link-269": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 255,
-            "id": 269,
-            "startPinId": 68
-        },
-        "link-291": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 133,
-            "id": 291,
-            "startPinId": 67
-        },
-        "link-292": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 285,
-            "id": 292,
-            "startPinId": 67
-        },
-        "link-293": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 286,
-            "id": 293,
-            "startPinId": 73
-        },
-        "link-294": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 287,
-            "id": 294,
-            "startPinId": 74
-        },
-        "link-295": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 288,
-            "id": 295,
-            "startPinId": 75
-        },
         "link-331": {
             "color": {
                 "a": 255,
@@ -175,39 +32,6 @@
             "endPinId": 305,
             "id": 336,
             "startPinId": 261
-        },
-        "link-337": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 306,
-            "id": 337,
-            "startPinId": 102
-        },
-        "link-338": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 307,
-            "id": 338,
-            "startPinId": 328
-        },
-        "link-339": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 308,
-            "id": 339,
-            "startPinId": 329
         },
         "link-340": {
             "color": {
@@ -264,118 +88,63 @@
             "id": 344,
             "startPinId": 310
         },
-        "link-348": {
+        "link-407": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 133,
+            "id": 407,
+            "startPinId": 310
+        },
+        "link-411": {
             "color": {
                 "a": 255,
                 "b": 0,
                 "g": 165,
                 "r": 255
             },
-            "endPinId": 258,
-            "id": 348,
+            "endPinId": 408,
+            "id": 411,
             "startPinId": 315
         },
-        "link-349": {
+        "link-412": {
             "color": {
                 "a": 255,
                 "b": 0,
                 "g": 165,
                 "r": 255
             },
-            "endPinId": 259,
-            "id": 349,
-            "startPinId": 229
-        },
-        "link-350": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 260,
-            "id": 350,
+            "endPinId": 409,
+            "id": 412,
             "startPinId": 329
         },
-        "link-351": {
+        "link-413": {
             "color": {
                 "a": 255,
                 "b": 0,
                 "g": 165,
                 "r": 255
             },
-            "endPinId": 345,
-            "id": 351,
-            "startPinId": 74
-        },
-        "link-352": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 346,
-            "id": 352,
+            "endPinId": 410,
+            "id": 413,
             "startPinId": 324
         },
-        "link-353": {
+        "link-444": {
             "color": {
                 "a": 255,
                 "b": 0,
                 "g": 165,
                 "r": 255
             },
-            "endPinId": 347,
-            "id": 353,
-            "startPinId": 252
+            "endPinId": 443,
+            "id": 444,
+            "startPinId": 330
         }
     },
     "nodes": {
-        "node-103": {
-            "color": {
-                "a": 255,
-                "b": 128,
-                "g": 128,
-                "r": 255
-            },
-            "data": {
-                "FileReader": {
-                    "path": "/home/topas/Documents/Coding/NavSoS/data/2020-09-21_VN100_static_data/ub-log.ubx"
-                }
-            },
-            "id": 103,
-            "inputPins": [],
-            "kind": "Blueprint",
-            "name": "UbloxFile",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "UbloxFile"
-                    ],
-                    "id": 104,
-                    "name": "",
-                    "type": "Delegate"
-                },
-                {
-                    "dataIdentifier": [
-                        "UbloxObs"
-                    ],
-                    "id": 102,
-                    "name": "UbloxObs",
-                    "type": "Flow"
-                }
-            ],
-            "pos": {
-                "x": -213.0,
-                "y": 76.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "UbloxFile"
-        },
         "node-138": {
             "color": {
                 "a": 255,
@@ -384,8 +153,8 @@
                 "r": 255
             },
             "data": {
-                "nInputPins": 8,
-                "nPlots": 3,
+                "nInputPins": 5,
+                "nPlots": 4,
                 "pinData": [
                     {
                         "dataIdentifier": "VectorNavObs",
@@ -445,26 +214,46 @@
                             },
                             {
                                 "displayName": "Quaternion W []",
-                                "plotOnAxis": []
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Quaternion X []",
-                                "plotOnAxis": []
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Quaternion Y []",
-                                "plotOnAxis": []
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Quaternion Z []",
-                                "plotOnAxis": []
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Yaw [deg]",
                                 "plotOnAxis": [
                                     [
                                         2,
-                                        2
+                                        0
                                     ]
                                 ]
                             },
@@ -473,7 +262,7 @@
                                 "plotOnAxis": [
                                     [
                                         2,
-                                        1
+                                        0
                                     ]
                                 ]
                             },
@@ -627,66 +416,6 @@
                                 "plotOnAxis": []
                             }
                         ],
-                        "plotStyle": 1,
-                        "size": 0
-                    },
-                    {
-                        "dataIdentifier": "UbloxObs",
-                        "pinType": 0,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "GPS time of week [s]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "X-ECEF [m]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "Y-ECEF [m]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "Z-ECEF [m]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "Latitude [deg]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "Longitude [deg]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "Altitude [m]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "North/South [m]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "East/West [m]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "Velocity N [m/s]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "Velocity E [m/s]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "Velocity D [m/s]",
-                                "plotOnAxis": []
-                            }
-                        ],
                         "plotStyle": 0,
                         "size": 0
                     },
@@ -704,116 +433,15 @@
                             },
                             {
                                 "displayName": "0, 0",
-                                "plotOnAxis": [
-                                    [
-                                        0,
-                                        0
-                                    ]
-                                ]
+                                "plotOnAxis": []
                             },
                             {
                                 "displayName": "1, 0",
-                                "plotOnAxis": [
-                                    [
-                                        0,
-                                        1
-                                    ]
-                                ]
+                                "plotOnAxis": []
                             },
                             {
                                 "displayName": "2, 0",
-                                "plotOnAxis": [
-                                    [
-                                        0,
-                                        2
-                                    ]
-                                ]
-                            }
-                        ],
-                        "plotStyle": 1,
-                        "size": 0
-                    },
-                    {
-                        "dataIdentifier": "LLA [deg]",
-                        "pinType": 4,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]",
                                 "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "GPS time of week [s]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "0, 0",
-                                "plotOnAxis": [
-                                    [
-                                        0,
-                                        0
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "1, 0",
-                                "plotOnAxis": [
-                                    [
-                                        0,
-                                        1
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "2, 0",
-                                "plotOnAxis": [
-                                    [
-                                        0,
-                                        2
-                                    ]
-                                ]
-                            }
-                        ],
-                        "plotStyle": 1,
-                        "size": 0
-                    },
-                    {
-                        "dataIdentifier": "Velocity NED",
-                        "pinType": 4,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "GPS time of week [s]",
-                                "plotOnAxis": []
-                            },
-                            {
-                                "displayName": "0, 0",
-                                "plotOnAxis": [
-                                    [
-                                        1,
-                                        0
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "1, 0",
-                                "plotOnAxis": [
-                                    [
-                                        1,
-                                        1
-                                    ]
-                                ]
-                            },
-                            {
-                                "displayName": "2, 0",
-                                "plotOnAxis": [
-                                    [
-                                        1,
-                                        2
-                                    ]
-                                ]
                             }
                         ],
                         "plotStyle": 1,
@@ -888,7 +516,7 @@
                                 "plotOnAxis": [
                                     [
                                         2,
-                                        1
+                                        0
                                     ]
                                 ]
                             },
@@ -897,7 +525,7 @@
                                 "plotOnAxis": [
                                     [
                                         2,
-                                        2
+                                        0
                                     ]
                                 ]
                             }
@@ -906,7 +534,7 @@
                         "size": 0
                     },
                     {
-                        "dataIdentifier": "RollPitchYaw [deg]",
+                        "dataIdentifier": "Quaternion nb",
                         "pinType": 4,
                         "plotData": [
                             {
@@ -921,7 +549,7 @@
                                 "displayName": "0, 0",
                                 "plotOnAxis": [
                                     [
-                                        2,
+                                        3,
                                         0
                                     ]
                                 ]
@@ -930,8 +558,8 @@
                                 "displayName": "1, 0",
                                 "plotOnAxis": [
                                     [
-                                        2,
-                                        1
+                                        3,
+                                        0
                                     ]
                                 ]
                             },
@@ -939,8 +567,17 @@
                                 "displayName": "2, 0",
                                 "plotOnAxis": [
                                     [
-                                        2,
-                                        2
+                                        3,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "3, 0",
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
                                     ]
                                 ]
                             }
@@ -955,15 +592,12 @@
                         "autoLimitYaxis": true,
                         "headerText": "Position",
                         "leftPaneWidth": 180.0,
-                        "plotFlags": 768,
+                        "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 3,
+                        "selectedPin": 1,
                         "selectedXdata": [
                             0,
-                            0,
-                            0,
-                            0,
-                            0,
+                            3,
                             0,
                             0,
                             0
@@ -977,11 +611,8 @@
                         "leftPaneWidth": 180.0,
                         "plotFlags": 768,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 5,
+                        "selectedPin": 0,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
                             0,
                             0,
                             0,
@@ -995,13 +626,10 @@
                         "autoLimitYaxis": true,
                         "headerText": "Attitude",
                         "leftPaneWidth": 180.0,
-                        "plotFlags": 768,
+                        "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 3,
                         "selectedXdata": [
-                            0,
-                            0,
-                            0,
                             0,
                             0,
                             0,
@@ -1009,6 +637,23 @@
                             0
                         ],
                         "title": "Attitude"
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Quaternion",
+                        "leftPaneWidth": 180.0,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 4,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "title": "Quaternion"
                     }
                 ]
             },
@@ -1028,22 +673,19 @@
                 },
                 {
                     "dataIdentifier": [
-                        "RtklibPosObs",
-                        "UbloxObs",
-                        "ImuObs",
-                        "KvhObs",
-                        "VectorNavObs"
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
                     ],
-                    "id": 255,
+                    "id": 408,
                     "name": "Pin 2",
-                    "type": "Flow"
+                    "type": "Matrix"
                 },
                 {
                     "dataIdentifier": [
                         "Eigen::MatrixXd",
                         "BlockMatrix"
                     ],
-                    "id": 258,
+                    "id": 409,
                     "name": "Pin 3",
                     "type": "Matrix"
                 },
@@ -1052,7 +694,7 @@
                         "Eigen::MatrixXd",
                         "BlockMatrix"
                     ],
-                    "id": 259,
+                    "id": 410,
                     "name": "Pin 4",
                     "type": "Matrix"
                 },
@@ -1061,35 +703,8 @@
                         "Eigen::MatrixXd",
                         "BlockMatrix"
                     ],
-                    "id": 260,
+                    "id": 443,
                     "name": "Pin 5",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 345,
-                    "name": "Pin 6",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 346,
-                    "name": "Pin 7",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 347,
-                    "name": "Pin 8",
                     "type": "Matrix"
                 }
             ],
@@ -1106,102 +721,14 @@
                 }
             ],
             "pos": {
-                "x": 920.0,
-                "y": -108.0
+                "x": 822.0,
+                "y": 55.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "Plot"
-        },
-        "node-231": {
-            "color": {
-                "a": 255,
-                "b": 128,
-                "g": 128,
-                "r": 255
-            },
-            "data": {
-                "selectedTransformation": 1
-            },
-            "id": 231,
-            "inputPins": [
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 230,
-                    "name": "ECEF",
-                    "type": "Matrix"
-                }
-            ],
-            "kind": "Simple",
-            "name": "to",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd"
-                    ],
-                    "id": 229,
-                    "name": "LLA [deg]",
-                    "type": "Matrix"
-                }
-            ],
-            "pos": {
-                "x": 467.0,
-                "y": 350.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Transformation"
-        },
-        "node-254": {
-            "color": {
-                "a": 255,
-                "b": 128,
-                "g": 128,
-                "r": 255
-            },
-            "data": {
-                "selectedTransformation": 5
-            },
-            "id": 254,
-            "inputPins": [
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 253,
-                    "name": "Quat_nb",
-                    "type": "Matrix"
-                }
-            ],
-            "kind": "Simple",
-            "name": "to",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd"
-                    ],
-                    "id": 252,
-                    "name": "RollPitchYaw [deg]",
-                    "type": "Matrix"
-                }
-            ],
-            "pos": {
-                "x": 424.0,
-                "y": 408.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Transformation"
         },
         "node-263": {
             "color": {
@@ -1212,7 +739,7 @@
             },
             "data": {
                 "FileReader": {
-                    "path": "/home/topas/Documents/Coding/NavSoS/data/2020-09-21_VN100_static_data/vn100-log-2.csv"
+                    "path": "/home/topas/Documents/Coding/NavSoS/data/vn100_R+-90_P+-90_Y+-90.csv"
                 }
             },
             "id": 263,
@@ -1246,84 +773,14 @@
                 }
             ],
             "pos": {
-                "x": -230.0,
-                "y": -64.0
+                "x": -166.0,
+                "y": -80.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "VectorNavFile"
-        },
-        "node-289": {
-            "color": {
-                "a": 255,
-                "b": 128,
-                "g": 128,
-                "r": 255
-            },
-            "data": {
-                "integrationFrame": 0
-            },
-            "id": 289,
-            "inputPins": [
-                {
-                    "dataIdentifier": [
-                        "ImuObs"
-                    ],
-                    "id": 285,
-                    "name": "ImuObs",
-                    "type": "Flow"
-                },
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 286,
-                    "name": "Position ECEF",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 287,
-                    "name": "Velocity NED",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 288,
-                    "name": "Quaternion nb",
-                    "type": "Matrix"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "ImuIntegrator",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "ImuIntegrator"
-                    ],
-                    "id": 290,
-                    "name": "",
-                    "type": "Delegate"
-                }
-            ],
-            "pos": {
-                "x": 498.0,
-                "y": 456.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "ImuIntegrator"
         },
         "node-312": {
             "color": {
@@ -1335,14 +792,14 @@
             "data": {
                 "initDuration": 5.0,
                 "overrideRollPitchYaw": [
-                    false,
-                    false,
-                    false
+                    true,
+                    true,
+                    true
                 ],
                 "overrideValuesRollPitchYaw": [
-                    0.47600001096725464,
-                    0.0,
-                    0.0
+                    -1.600000023841858,
+                    -0.20000000298023224,
+                    44.02000045776367
                 ],
                 "positionAccuracyThreshold": 80.0,
                 "velocityAccuracyThreshold": 10.0
@@ -1414,9 +871,7 @@
                     "type": "Flow"
                 },
                 {
-                    "dataIdentifier": [
-                        "UbloxObs"
-                    ],
+                    "dataIdentifier": [],
                     "id": 311,
                     "name": "GnssObs",
                     "type": "Flow"
@@ -1424,7 +879,7 @@
             ],
             "pos": {
                 "x": 424.0,
-                "y": -482.0
+                "y": -82.0
             },
             "size": {
                 "x": 0.0,
@@ -1468,7 +923,7 @@
             ],
             "pos": {
                 "x": 454.0,
-                "y": -285.0
+                "y": 115.0
             },
             "size": {
                 "x": 0.0,
@@ -1538,7 +993,7 @@
             ],
             "pos": {
                 "x": 488.0,
-                "y": -176.0
+                "y": 224.0
             },
             "size": {
                 "x": 0.0,
@@ -1582,7 +1037,7 @@
             ],
             "pos": {
                 "x": 408.0,
-                "y": -228.0
+                "y": 172.0
             },
             "size": {
                 "x": 0.0,
@@ -1623,13 +1078,13 @@
                 ],
                 "matrix": {
                     "0": {
-                        "0": 0.0
+                        "0": 4156882.0
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 672027.0
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 4775018.0
                     },
                     "3": {
                         "0": 0.0
@@ -1697,36 +1152,13 @@
             ],
             "pos": {
                 "x": 111.0,
-                "y": -312.0
+                "y": 88.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "Matrix"
-        },
-        "node-333": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "data": null,
-            "id": 333,
-            "inputPins": [],
-            "kind": "GroupBox",
-            "name": "ECEF IMU Integration",
-            "outputPins": [],
-            "pos": {
-                "x": 80.0,
-                "y": 80.0
-            },
-            "size": {
-                "x": 672.0,
-                "y": 522.0
-            },
-            "type": "GroupBox"
         },
         "node-334": {
             "color": {
@@ -1743,7 +1175,7 @@
             "outputPins": [],
             "pos": {
                 "x": 80.0,
-                "y": -528.0
+                "y": -128.0
             },
             "size": {
                 "x": 672.0,
@@ -1765,236 +1197,14 @@
             "name": "Inputs",
             "outputPins": [],
             "pos": {
-                "x": -352.0,
+                "x": -192.0,
                 "y": -128.0
             },
             "size": {
-                "x": 400.0,
-                "y": 300.0
+                "x": 240.0,
+                "y": 138.0
             },
             "type": "GroupBox"
-        },
-        "node-69": {
-            "color": {
-                "a": 255,
-                "b": 128,
-                "g": 128,
-                "r": 255
-            },
-            "data": {
-                "initDuration": 5.0,
-                "overrideRollPitchYaw": [
-                    false,
-                    false,
-                    false
-                ],
-                "overrideValuesRollPitchYaw": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "positionAccuracyThreshold": 80.0,
-                "velocityAccuracyThreshold": 10.0
-            },
-            "id": 69,
-            "inputPins": [
-                {
-                    "dataIdentifier": [
-                        "ImuObs"
-                    ],
-                    "id": 62,
-                    "name": "ImuObs",
-                    "type": "Flow"
-                },
-                {
-                    "dataIdentifier": [
-                        "UbloxObs",
-                        "RtklibPosObs"
-                    ],
-                    "id": 63,
-                    "name": "GnssObs",
-                    "type": "Flow"
-                },
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 64,
-                    "name": "Position ECEF",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 65,
-                    "name": "Velocity NED",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd",
-                        "BlockMatrix"
-                    ],
-                    "id": 66,
-                    "name": "Quaternion nb",
-                    "type": "Matrix"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "PosVelAttInitializer",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "PosVelAttInitializer"
-                    ],
-                    "id": 70,
-                    "name": "",
-                    "type": "Delegate"
-                },
-                {
-                    "dataIdentifier": [
-                        "VectorNavObs"
-                    ],
-                    "id": 67,
-                    "name": "ImuObs",
-                    "type": "Flow"
-                },
-                {
-                    "dataIdentifier": [
-                        "UbloxObs"
-                    ],
-                    "id": 68,
-                    "name": "GnssObs",
-                    "type": "Flow"
-                }
-            ],
-            "pos": {
-                "x": 450.0,
-                "y": 156.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "PosVelAttInitializer"
-        },
-        "node-72": {
-            "color": {
-                "a": 255,
-                "b": 128,
-                "g": 128,
-                "r": 255
-            },
-            "data": {
-                "blocks": [
-                    {
-                        "blockCols": 1,
-                        "blockRows": 3,
-                        "pinName": "Position ECEF",
-                        "startCol": 0,
-                        "startRow": 0
-                    },
-                    {
-                        "blockCols": 1,
-                        "blockRows": 3,
-                        "pinName": "Velocity NED",
-                        "startCol": 0,
-                        "startRow": 3
-                    },
-                    {
-                        "blockCols": 1,
-                        "blockRows": 4,
-                        "pinName": "Quaternion nb",
-                        "startCol": 0,
-                        "startRow": 6
-                    }
-                ],
-                "matrix": {
-                    "0": {
-                        "0": 0.0
-                    },
-                    "1": {
-                        "0": 0.0
-                    },
-                    "2": {
-                        "0": 0.0
-                    },
-                    "3": {
-                        "0": 0.0
-                    },
-                    "4": {
-                        "0": 0.0
-                    },
-                    "5": {
-                        "0": 0.0
-                    },
-                    "6": {
-                        "0": 0.0
-                    },
-                    "7": {
-                        "0": 0.0
-                    },
-                    "8": {
-                        "0": 0.0
-                    },
-                    "9": {
-                        "0": 0.0
-                    }
-                },
-                "nBlocks": 3,
-                "nCols": 1,
-                "nRows": 10
-            },
-            "id": 72,
-            "inputPins": [],
-            "kind": "Simple",
-            "name": "Matrix",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "Eigen::MatrixXd"
-                    ],
-                    "id": 71,
-                    "name": "",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "BlockMatrix"
-                    ],
-                    "id": 73,
-                    "name": "Position ECEF",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "BlockMatrix"
-                    ],
-                    "id": 74,
-                    "name": "Velocity NED",
-                    "type": "Matrix"
-                },
-                {
-                    "dataIdentifier": [
-                        "BlockMatrix"
-                    ],
-                    "id": 75,
-                    "name": "Quaternion nb",
-                    "type": "Matrix"
-                }
-            ],
-            "pos": {
-                "x": 111.0,
-                "y": 324.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Matrix"
         }
     }
 }
