@@ -420,7 +420,7 @@
                         "size": 0
                     },
                     {
-                        "dataIdentifier": "LLA [deg]",
+                        "dataIdentifier": "NED",
                         "pinType": 4,
                         "plotData": [
                             {
@@ -433,15 +433,30 @@
                             },
                             {
                                 "displayName": "0, 0",
-                                "plotOnAxis": []
+                                "plotOnAxis": [
+                                    [
+                                        0,
+                                        0
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "1, 0",
-                                "plotOnAxis": []
+                                "plotOnAxis": [
+                                    [
+                                        0,
+                                        0
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "2, 0",
-                                "plotOnAxis": []
+                                "plotOnAxis": [
+                                    [
+                                        0,
+                                        0
+                                    ]
+                                ]
                             }
                         ],
                         "plotStyle": 1,
@@ -473,7 +488,7 @@
                                 "plotOnAxis": [
                                     [
                                         1,
-                                        1
+                                        0
                                     ]
                                 ]
                             },
@@ -482,7 +497,7 @@
                                 "plotOnAxis": [
                                     [
                                         1,
-                                        2
+                                        0
                                     ]
                                 ]
                             }
@@ -597,7 +612,7 @@
                         "selectedPin": 1,
                         "selectedXdata": [
                             0,
-                            3,
+                            0,
                             0,
                             0,
                             0
@@ -609,9 +624,9 @@
                         "autoLimitYaxis": true,
                         "headerText": "Velocity",
                         "leftPaneWidth": 180.0,
-                        "plotFlags": 768,
+                        "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 2,
                         "selectedXdata": [
                             0,
                             0,
@@ -797,9 +812,9 @@
                     true
                 ],
                 "overrideValuesRollPitchYaw": [
-                    -1.600000023841858,
-                    -0.20000000298023224,
-                    44.02000045776367
+                    -0.6000000238418579,
+                    0.3499999940395355,
+                    45.5
                 ],
                 "positionAccuracyThreshold": 80.0,
                 "velocityAccuracyThreshold": 10.0
@@ -895,7 +910,18 @@
                 "r": 255
             },
             "data": {
-                "selectedTransformation": 1
+                "latLonAlt_ref": {
+                    "0": {
+                        "0": 0.8514297928500592
+                    },
+                    "1": {
+                        "0": 0.1602793742879991
+                    },
+                    "2": {
+                        "0": 400.55509730794876
+                    }
+                },
+                "selectedTransformation": 8
             },
             "id": 316,
             "inputPins": [
@@ -917,7 +943,7 @@
                         "Eigen::MatrixXd"
                     ],
                     "id": 315,
-                    "name": "LLA [deg]",
+                    "name": "NED",
                     "type": "Matrix"
                 }
             ],
@@ -1009,6 +1035,17 @@
                 "r": 255
             },
             "data": {
+                "latLonAlt_ref": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
                 "selectedTransformation": 5
             },
             "id": 325,

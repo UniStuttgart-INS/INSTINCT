@@ -53,7 +53,8 @@ std::string NAV::PosVelAttInitializer::category()
 
 void NAV::PosVelAttInitializer::guiConfig()
 {
-    if (nm::IsPinLinked(inputPins.at(InputPortIndex_ImuObs).id))
+    if (nm::IsPinLinked(inputPins.at(InputPortIndex_ImuObs).id)
+        && !(overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2)))
     {
         ImGui::SetNextItemWidth(100);
         if (ImGui::InputDouble("Initialization Duration Attitude", &initDuration, 0.0, 0.0, "%.3f s"))
@@ -557,7 +558,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                 {
                     if ([[maybe_unused]] auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
                     {
-                        LOG_INFO("{}: State initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
+                        LOG_INFO("{}: Velocity initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
                                  (*matrix)(0, 0), (*matrix)(1, 0), (*matrix)(2, 0));
                     }
                 }
@@ -566,7 +567,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                     if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
                     {
                         [[maybe_unused]] auto matrix = (*value)();
-                        LOG_INFO("{}: State initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
+                        LOG_INFO("{}: Velocity initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
                                  matrix(0, 0), matrix(1, 0), matrix(2, 0));
                     }
                 }
@@ -583,7 +584,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                     {
                         auto quat_nb = Eigen::Quaterniond((*matrix)(0, 0), (*matrix)(1, 0), (*matrix)(2, 0), (*matrix)(3, 0));
                         [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
-                        LOG_INFO("{}: State initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
+                        LOG_INFO("{}: Attitude initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
                                  trafo::rad2deg(rollPitchYaw.x()),
                                  trafo::rad2deg(rollPitchYaw.y()),
                                  trafo::rad2deg(rollPitchYaw.z()));
@@ -596,7 +597,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
                         auto matrix = (*value)();
                         auto quat_nb = Eigen::Quaterniond(matrix(0, 0), matrix(1, 0), matrix(2, 0), matrix(3, 0));
                         [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
-                        LOG_INFO("{}: State initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
+                        LOG_INFO("{}: Attitude initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
                                  trafo::rad2deg(rollPitchYaw.x()),
                                  trafo::rad2deg(rollPitchYaw.y()),
                                  trafo::rad2deg(rollPitchYaw.z()));
