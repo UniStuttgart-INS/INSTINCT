@@ -52,6 +52,8 @@ void NAV::Transformation::guiConfig()
                      "Quat_nb to Roll, Pitch, Yaw [deg]\0"
                      "Roll, Pitch, Yaw [rad] to Quat_nb\0"
                      "Roll, Pitch, Yaw [deg] to Quat_nb\0"
+                     "ECEF to NED\0"
+                     "NED to ECEF\0"
                      //  "Conjugate\0"
                      //  "Transpose\0"
                      "\0"))
@@ -90,8 +92,13 @@ void NAV::Transformation::guiConfig()
             inputPins.at(InputPortIndex_Matrix).name = "RollPitchYaw [deg]";
             outputPins.at(OutputPortIndex_Matrix).name = "Quat_nb";
             break;
-
-        default:
+        case Type::ECEF_2_NED:
+            inputPins.at(InputPortIndex_Matrix).name = "ECEF";
+            outputPins.at(OutputPortIndex_Matrix).name = "NED";
+            break;
+        case Type::NED_2_ECEF:
+            inputPins.at(InputPortIndex_Matrix).name = "NED";
+            outputPins.at(OutputPortIndex_Matrix).name = "ECEF";
             break;
         }
         if (!inputMatrixHasSize(selectedTransformation, nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Matrix).id)))
@@ -112,6 +119,24 @@ void NAV::Transformation::guiConfig()
 
         flow::ApplyChanges();
     }
+
+    if (selectedTransformation == Type::ECEF_2_NED
+        || selectedTransformation == Type::NED_2_ECEF)
+    {
+        std::array<float, 3> latLonAlt = { static_cast<float>(latLonAlt_ref.x()),
+                                           static_cast<float>(latLonAlt_ref.y()),
+                                           static_cast<float>(latLonAlt_ref.z()) };
+        if (ImGui::InputFloat3("LatLonAlt Origin for NED Frame", latLonAlt.data()))
+        {
+            latLonAlt_ref = { latLonAlt.at(0), latLonAlt.at(1), latLonAlt.at(2) };
+            flow::ApplyChanges();
+        }
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip("Only needed if transformation from NED to ECEF frame is needed.\n"
+                              "Otherwise it initializes to the first ECEF value.");
+        }
+    }
 }
 
 [[nodiscard]] json NAV::Transformation::save() const
@@ -121,6 +146,7 @@ void NAV::Transformation::guiConfig()
     json j;
 
     j["selectedTransformation"] = selectedTransformation;
+    j["latLonAlt_ref"] = latLonAlt_ref;
 
     return j;
 }
@@ -133,11 +159,17 @@ void NAV::Transformation::restore(json const& j)
     {
         j.at("selectedTransformation").get_to(selectedTransformation);
     }
+    if (j.contains("latLonAlt_ref"))
+    {
+        j.at("latLonAlt_ref").get_to(latLonAlt_ref);
+    }
 }
 
 bool NAV::Transformation::initialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+    latLonAlt_ref = Eigen::Vector3d::Zero();
 
     return true;
 }
@@ -222,6 +254,21 @@ void NAV::Transformation::notifyOnOutputValueChanged(ax::NodeEditor::LinkId link
                                                                                            matrix(2, 0),
                                                                                            matrix(3, 0))));
                     break;
+                case Type::ECEF_2_NED:
+                    if (latLonAlt_ref.isZero())
+                    {
+                        LOG_ERROR("{}: You must set a reference point first for the conversion NED => ECEF", nameId());
+                        return;
+                    }
+                    *inputMatrix = trafo::ned2ecef(Eigen::Map<Eigen::Vector3d>(matrix.data()), latLonAlt_ref);
+                    break;
+                case Type::NED_2_ECEF:
+                    if (latLonAlt_ref.isZero())
+                    {
+                        latLonAlt_ref = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(matrix.data()));
+                    }
+                    *inputMatrix = trafo::ecef2ned(Eigen::Map<Eigen::Vector3d>(matrix.data()), latLonAlt_ref);
+                    break;
                 }
                 notifyInputValueChanged(InputPortIndex_Matrix);
             }
@@ -270,6 +317,21 @@ void NAV::Transformation::notifyOnOutputValueChanged(ax::NodeEditor::LinkId link
                                                                                           matrix(1, 0),
                                                                                           matrix(2, 0),
                                                                                           matrix(3, 0))));
+                    break;
+                case Type::ECEF_2_NED:
+                    if (latLonAlt_ref.isZero())
+                    {
+                        LOG_ERROR("{}: You must set a reference point first for the conversion NED => ECEF", nameId());
+                        return;
+                    }
+                    inputMatrix = trafo::ned2ecef(Eigen::Map<Eigen::Vector3d>(matrix.data()), latLonAlt_ref);
+                    break;
+                case Type::NED_2_ECEF:
+                    if (latLonAlt_ref.isZero())
+                    {
+                        latLonAlt_ref = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(matrix.data()));
+                    }
+                    inputMatrix = trafo::ecef2ned(Eigen::Map<Eigen::Vector3d>(matrix.data()), latLonAlt_ref);
                     break;
                 }
                 notifyInputValueChanged(InputPortIndex_Matrix);
@@ -330,6 +392,21 @@ void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkI
                                             trafo::deg2rad((*inputMatrix)(2, 0)))
                                  .coeffs();
                     break;
+                case Type::ECEF_2_NED:
+                    if (latLonAlt_ref.isZero())
+                    {
+                        latLonAlt_ref = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(inputMatrix->data()));
+                    }
+                    matrix = trafo::ecef2ned(Eigen::Map<Eigen::Vector3d>(inputMatrix->data()), latLonAlt_ref);
+                    break;
+                case Type::NED_2_ECEF:
+                    if (latLonAlt_ref.isZero())
+                    {
+                        LOG_ERROR("{}: You must set a reference point first for the conversion NED => ECEF", nameId());
+                        return;
+                    }
+                    matrix = trafo::ned2ecef(Eigen::Map<Eigen::Vector3d>(inputMatrix->data()), latLonAlt_ref);
+                    break;
                 }
                 notifyOutputValueChanged(OutputPortIndex_Matrix);
             }
@@ -379,6 +456,21 @@ void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkI
                                             trafo::deg2rad(inputMatrix(2, 0)))
                                  .coeffs();
                     break;
+                case Type::ECEF_2_NED:
+                    if (latLonAlt_ref.isZero())
+                    {
+                        latLonAlt_ref = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(inputMatrix.data()));
+                    }
+                    matrix = trafo::ecef2ned(Eigen::Map<Eigen::Vector3d>(inputMatrix.data()), latLonAlt_ref);
+                    break;
+                case Type::NED_2_ECEF:
+                    if (latLonAlt_ref.isZero())
+                    {
+                        LOG_ERROR("{}: You must set a reference point first for the conversion NED => ECEF", nameId());
+                        return;
+                    }
+                    matrix = trafo::ned2ecef(Eigen::Map<Eigen::Vector3d>(inputMatrix.data()), latLonAlt_ref);
+                    break;
                 }
                 notifyOutputValueChanged(OutputPortIndex_Matrix);
             }
@@ -404,6 +496,8 @@ bool NAV::Transformation::inputMatrixHasSize(Type transformationType, Pin* start
     case Type::LLAdeg_2_ECEF:
     case Type::RollPitchYawRad_2_Quat_nb:
     case Type::RollPitchYawDeg_2_Quat_nb:
+    case Type::ECEF_2_NED:
+    case Type::NED_2_ECEF:
         rows = 3;
         cols = 1;
         break;
@@ -459,6 +553,8 @@ void NAV::Transformation::setMatrixSize(Type transformationType)
     case Type::LLAdeg_2_ECEF:
     case Type::Quat_nb_2_RollPitchYawRad:
     case Type::Quat_nb_2_RollPitchYawDeg:
+    case Type::ECEF_2_NED:
+    case Type::NED_2_ECEF:
         matrix = Eigen::MatrixXd::Zero(3, 1);
         break;
     case Type::RollPitchYawRad_2_Quat_nb:
