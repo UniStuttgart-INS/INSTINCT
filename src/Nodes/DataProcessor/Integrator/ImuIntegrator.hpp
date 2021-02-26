@@ -66,16 +66,31 @@ class ImuIntegrator : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Get the current Position
+    /// @param[out] position The Vector to return the result in
+    /// @return True, if the position was successfully returned, otherwise false (Pin not connected, ...)
     bool getCurrentPosition(Eigen::Vector3d& position);
 
+    /// @brief Set the current Position on the input pin
+    /// @param[in] position The position to set
     void setCurrentPosition(const Eigen::Vector3d& position);
 
+    /// @brief Get the current Velocity
+    /// @param[out] velocity The Vector to return the result in
+    /// @return True, if the velocity was successfully returned, otherwise false (Pin not connected, ...)
     bool getCurrentVelocity(Eigen::Vector3d& velocity);
 
+    /// @brief Set the current Velocity on the input pin
+    /// @param[in] velocity The velocity to set
     void setCurrentVelocity(const Eigen::Vector3d& velocity);
 
+    /// @brief Get the current Attitude Quaternion
+    /// @param[out] quaternion_nb The Quaternion to return the result in
+    /// @return True, if the attitude was successfully returned, otherwise false (Pin not connected, ...)
     bool getCurrentQuaternion_nb(Eigen::Quaterniond& quaternion_nb);
 
+    /// @brief Set the current Attitude Quaternion on the input pin
+    /// @param[in] quaternion_nb The Attitude Quaternion to set
     void setCurrentQuaternion_nb(const Eigen::Quaterniond& quaternion_nb);
 
     /// @brief Integrates the Imu Observation data
@@ -99,6 +114,7 @@ class ImuIntegrator : public Node
         ECEF,
         NED
     };
+    /// Frame to integrate the observations in
     IntegrationFrame integrationFrame = IntegrationFrame::ECEF;
 };
 

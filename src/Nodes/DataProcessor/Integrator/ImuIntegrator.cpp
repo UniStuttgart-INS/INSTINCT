@@ -364,15 +364,23 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
 
     /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& angularVelocity_ip_p__t1 = imuObs__t1->gyroUncompXYZ.value();
+    const Eigen::Vector3d& angularVelocity_ip_p__t1 = imuObs__t1->gyroCompXYZ.has_value()
+                                                          ? imuObs__t1->gyroCompXYZ.value()
+                                                          : imuObs__t1->gyroUncompXYZ.value();
     /// ω_ip_p (tₖ) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ
-    const Eigen::Vector3d& angularVelocity_ip_p__t0 = imuObs__t0->gyroUncompXYZ.value();
+    const Eigen::Vector3d& angularVelocity_ip_p__t0 = imuObs__t0->gyroCompXYZ.has_value()
+                                                          ? imuObs__t0->gyroCompXYZ.value()
+                                                          : imuObs__t0->gyroUncompXYZ.value();
 
     /// a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& acceleration_p__t1 = imuObs__t1->accelUncompXYZ.value();
+    const Eigen::Vector3d& acceleration_p__t1 = imuObs__t1->accelCompXYZ.has_value()
+                                                    ? imuObs__t1->accelCompXYZ.value()
+                                                    : imuObs__t1->accelUncompXYZ.value();
     /// a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
-    const Eigen::Vector3d& acceleration_p__t0 = imuObs__t0->accelUncompXYZ.value();
+    const Eigen::Vector3d& acceleration_p__t0 = imuObs__t0->accelCompXYZ.has_value()
+                                                    ? imuObs__t0->accelCompXYZ.value()
+                                                    : imuObs__t0->accelUncompXYZ.value();
 
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& velocity_n__t1 = posVelAtt__t1->velocity_n();

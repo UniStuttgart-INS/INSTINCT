@@ -635,12 +635,18 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = obs->imuPos;
 
-    const Eigen::Vector3d magUncomp_b = imuPosition.quatMag_bp() * obs->magUncompXYZ.value();
-    auto magneticHeading = -std::atan2(magUncomp_b.y(), magUncomp_b.x());
+    // Choose compenated data if available, otherwise uncompensated
+    const Eigen::Vector3d& mag_p = obs->magCompXYZ.has_value() ? obs->magCompXYZ.value() : obs->magUncompXYZ.value();
+    const Eigen::Vector3d& accel_p = obs->accelCompXYZ.has_value() ? obs->accelCompXYZ.value() : obs->accelUncompXYZ.value();
 
-    const Eigen::Vector3d accelUncomp_b = imuPosition.quatAccel_bp() * obs->accelUncompXYZ.value() * -1;
-    auto roll = rollFromStaticAccelerationObs(accelUncomp_b);
-    auto pitch = pitchFromStaticAccelerationObs(accelUncomp_b);
+    // Calculate Magnetic Heading
+    const Eigen::Vector3d mag_b = imuPosition.quatMag_bp() * mag_p;
+    auto magneticHeading = -std::atan2(mag_b.y(), mag_b.x());
+
+    // Calculate Roll and Pitch from gravity vector direction (only valid under static conditions)
+    const Eigen::Vector3d accel_b = imuPosition.quatAccel_bp() * accel_p * -1;
+    auto roll = rollFromStaticAccelerationObs(accel_b);
+    auto pitch = pitchFromStaticAccelerationObs(accel_b);
 
     // TODO: Determine Velocity first and if vehicle not static, initialize the attitude from velocity
 
