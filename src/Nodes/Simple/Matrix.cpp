@@ -92,7 +92,7 @@ void NAV::Matrix::guiConfig()
             }
             for (auto& outputPin : outputPins)
             {
-                auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                 for (auto& connectedLink : connectedLinks)
                 {
                     nm::RefreshLink(connectedLink->id);
@@ -145,7 +145,7 @@ void NAV::Matrix::guiConfig()
             }
             for (auto& outputPin : outputPins)
             {
-                auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                 for (auto& connectedLink : connectedLinks)
                 {
                     nm::RefreshLink(connectedLink->id);
@@ -272,7 +272,7 @@ void NAV::Matrix::guiConfig()
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
-                    auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                    auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                     for (auto& connectedLink : connectedLinks)
                     {
                         nm::RefreshLink(connectedLink->id);
@@ -302,7 +302,7 @@ void NAV::Matrix::guiConfig()
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
-                    auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                    auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                     for (auto& connectedLink : connectedLinks)
                     {
                         nm::RefreshLink(connectedLink->id);
@@ -323,7 +323,7 @@ void NAV::Matrix::guiConfig()
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
-                    auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                    auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                     for (auto& connectedLink : connectedLinks)
                     {
                         nm::RefreshLink(connectedLink->id);
@@ -344,7 +344,7 @@ void NAV::Matrix::guiConfig()
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
-                    auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+                    auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
                     for (auto& connectedLink : connectedLinks)
                     {
                         nm::RefreshLink(connectedLink->id);
@@ -430,6 +430,7 @@ void NAV::Matrix::restore(json const& j)
     {
         j.at("matrix").get_to(initMatrix);
         matrix = initMatrix;
+        outputPins.at(OutputPortIndex_FullMatrix).data = Pin::PinData(&matrix);
     }
     if (j.contains("blocks"))
     {
@@ -469,7 +470,7 @@ void NAV::Matrix::updateNumberOfOutputPins()
     }
     while (outputPins.size() - 1 > static_cast<size_t>(nBlocks))
     {
-        auto connectedLinks = nm::FindConnectedLinksToPin(outputPins.back().id);
+        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.back().id);
         for (Link* link : connectedLinks)
         {
             nm::DeleteLink(link->id);
@@ -485,7 +486,7 @@ void NAV::Matrix::updateNumberOfOutputPins()
     }
     for (auto& outputPin : outputPins)
     {
-        auto connectedLinks = nm::FindConnectedLinksToPin(outputPin.id);
+        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPin.id);
         for (auto& connectedLink : connectedLinks)
         {
             nm::RefreshLink(connectedLink->id);
@@ -505,7 +506,7 @@ void NAV::Matrix::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] 
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 }
 
-void NAV::Matrix::onNotifyValueChanged(ax::NodeEditor::LinkId linkId)
+void NAV::Matrix::notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId)
 {
     if (Link* link = nm::FindLink(linkId))
     {
@@ -539,14 +540,12 @@ void NAV::Matrix::onNotifyValueChanged(ax::NodeEditor::LinkId linkId)
                     continue;
                 }
 
-                auto& otherBlock = blocks.at(i - 1);
-
                 if (i == 0 // Trigger notify on Eigen::MatrixXd pin
                     ||     // Check if modified block is part of any other subblock
-                    (((otherBlock.startRow <= block.startRow && otherBlock.startRow + otherBlock.blockRows > block.startRow)
-                      || (otherBlock.startRow >= block.startRow && otherBlock.startRow < block.startRow + block.blockRows))
-                     && ((otherBlock.startCol <= block.startCol && otherBlock.startCol + otherBlock.blockCols > block.startCol)
-                         || (otherBlock.startCol >= block.startCol && otherBlock.startCol < block.startCol + block.blockCols))))
+                    (((blocks.at(i - 1).startRow <= block.startRow && blocks.at(i - 1).startRow + blocks.at(i - 1).blockRows > block.startRow)
+                      || (blocks.at(i - 1).startRow >= block.startRow && blocks.at(i - 1).startRow < block.startRow + block.blockRows))
+                     && ((blocks.at(i - 1).startCol <= block.startCol && blocks.at(i - 1).startCol + blocks.at(i - 1).blockCols > block.startCol)
+                         || (blocks.at(i - 1).startCol >= block.startCol && blocks.at(i - 1).startCol < block.startCol + block.blockCols))))
                 {
                     for (auto& [node, callback, linkId] : outputPins.at(i).notifyFunc)
                     {

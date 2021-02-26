@@ -58,11 +58,13 @@ class Matrix : public Node
     /// @param[in] endPin Pin where the link ends
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
-    /// @brief Notifies the node ifself, that some data was changed
+    /// @brief Notifies the node, that some data was changed on one of it's output ports
     /// @param[in] linkId Id of the link on which data is changed
-    void onNotifyValueChanged(ax::NodeEditor::LinkId linkId) override;
+    void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId) override;
 
   private:
+    constexpr static size_t OutputPortIndex_FullMatrix = 0; ///< @brief Matrix
+
     /// @brief Initialize the node
     bool initialize() override;
 

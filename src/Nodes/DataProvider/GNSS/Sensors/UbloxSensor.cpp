@@ -147,7 +147,10 @@ void NAV::UbloxSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
 
     if (obs->insTime.has_value())
     {
-        util::time::SetCurrentTime(obs->insTime.value());
+        if (util::time::GetMode() == util::time::Mode::REAL_TIME)
+        {
+            util::time::SetCurrentTime(obs->insTime.value());
+        }
     }
     else if (auto currentTime = util::time::GetCurrentTime();
              !currentTime.empty())

@@ -53,9 +53,6 @@ class UbloxObs : public InsObs
         return { InsObs::type() };
     }
 
-    /// ECEF position [m]
-    std::optional<Eigen::Vector3d> position_ecef;
-
     /// Ubx Message Class (NONE if NMEA message)
     sensors::ublox::UbxClass msgClass = sensors::ublox::UbxClass::UBX_CLASS_NONE;
     /// Ubx Message ID

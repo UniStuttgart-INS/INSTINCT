@@ -1,12 +1,12 @@
 #include <catch2/catch.hpp>
 
-#include "NodeData/State/StateData.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 namespace NAV
 {
-TEST_CASE("[StateData] Reference Functions", "[StateData]")
+TEST_CASE("[PosVelAtt] Reference Functions", "[PosVelAtt]")
 {
-    StateData state;
+    PosVelAtt state;
 
     auto quat_nb_coeff = Eigen::Vector4d(1, 2, 3, 4);
 

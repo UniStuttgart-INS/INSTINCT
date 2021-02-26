@@ -80,18 +80,18 @@ class ImuPos
 
   private:
     /// Accelerometer position in body frame coordinates in [m]
-    Eigen::Vector3d positionAccel_b;
+    Eigen::Vector3d positionAccel_b = { 0, 0, 0 };
     /// Gyroscope position in body frame coordinates in [m]
-    Eigen::Vector3d positionGyro_b;
+    Eigen::Vector3d positionGyro_b = { 0, 0, 0 };
     /// Magnetometer position in body frame coordinates in [m]
-    Eigen::Vector3d positionMag_b;
+    Eigen::Vector3d positionMag_b = { 0, 0, 0 };
 
     /// Quaternion from accelerometer platform frame to body frame
-    Eigen::Quaterniond quaternionAccel_bp;
+    Eigen::Quaterniond quaternionAccel_bp = { 1, 0, 0, 0 };
     /// Quaternion from gyroscope platform frame to body frame
-    Eigen::Quaterniond quaternionGyro_bp;
+    Eigen::Quaterniond quaternionGyro_bp = { 1, 0, 0, 0 };
     /// Quaternion from magnetometer platform frame to body frame
-    Eigen::Quaterniond quaternionMag_bp;
+    Eigen::Quaterniond quaternionMag_bp = { 1, 0, 0, 0 };
 
     friend class Imu;
 };

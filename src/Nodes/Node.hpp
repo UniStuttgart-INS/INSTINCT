@@ -162,9 +162,9 @@ class Node
     /// @param[in] endPin Pin where the link ends
     virtual void afterDeleteLink(Pin* startPin, Pin* endPin);
 
-    /// @brief Notifies the node ifself, that some data was changed
+    /// @brief Notifies the node, that some data was changed on one of it's output ports
     /// @param[in] linkId Id of the link on which data is changed
-    virtual void onNotifyValueChanged(ax::NodeEditor::LinkId linkId);
+    virtual void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId);
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member functions                                             */

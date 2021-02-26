@@ -90,8 +90,8 @@ class Plot : public Node
 
         enum class PlotStyle : int
         {
-            Line,
             Scatter,
+            Line,
         };
 
         enum class PinType : int
@@ -122,7 +122,7 @@ class Plot : public Node
         /// List with all the data
         std::vector<PlotData> plotData;
         /// Plot style for all data on the pin
-        PlotStyle plotStyle = PlotStyle::Line;
+        PlotStyle plotStyle = PlotStyle::Scatter;
         /// Pin Type
         PinType pinType = PinType::Flow;
     };
@@ -231,7 +231,7 @@ class Plot : public Node
     std::vector<PlotInfo> plotInfos;
 
     /// Amount of input pins (should equal data.size())
-    int nInputPins = 1;
+    int nInputPins = 5;
     /// Amount of plot windows (should equal plotInfos.size())
     int nPlots = 0;
     /// Possible data identifiers to connect

@@ -219,10 +219,6 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, b
                     obs->insTime = currentTime;
                 }
 
-                obs->position_ecef.emplace(std::get<UbxNavPosecef>(obs->data).ecefX * 1e-2,
-                                           std::get<UbxNavPosecef>(obs->data).ecefY * 1e-2,
-                                           std::get<UbxNavPosecef>(obs->data).ecefZ * 1e-2);
-
                 if (!peek)
                 {
                     LOG_DATA("UBX: NAV-POSECEF, iTOW {}, x {}, y {}, z {}", std::get<UbxNavPosecef>(obs->data).iTOW, std::get<UbxNavPosecef>(obs->data).ecefX, std::get<UbxNavPosecef>(obs->data).ecefY, std::get<UbxNavPosecef>(obs->data).ecefZ);
@@ -250,12 +246,6 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, b
                                           static_cast<long double>(std::get<UbxNavPosllh>(obs->data).iTOW) / 1000.0L);
                     obs->insTime = currentTime;
                 }
-
-                Eigen::Vector3d latLonAlt(trafo::deg2rad(std::get<UbxNavPosllh>(obs->data).lat * 1e-7),
-                                          trafo::deg2rad(std::get<UbxNavPosllh>(obs->data).lon * 1e-7),
-                                          std::get<UbxNavPosllh>(obs->data).height * 1e-3);
-
-                obs->position_ecef.emplace(trafo::lla2ecef_WGS84(latLonAlt));
 
                 if (!peek)
                 {
