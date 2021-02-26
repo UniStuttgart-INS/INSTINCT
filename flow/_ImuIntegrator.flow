@@ -1,0 +1,1247 @@
+{
+    "links": {
+        "link-331": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 323,
+            "id": 331,
+            "startPinId": 330
+        },
+        "link-332": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 314,
+            "id": 332,
+            "startPinId": 328
+        },
+        "link-336": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 305,
+            "id": 336,
+            "startPinId": 261
+        },
+        "link-340": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 309,
+            "id": 340,
+            "startPinId": 330
+        },
+        "link-341": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 318,
+            "id": 341,
+            "startPinId": 328
+        },
+        "link-342": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 319,
+            "id": 342,
+            "startPinId": 329
+        },
+        "link-343": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 320,
+            "id": 343,
+            "startPinId": 330
+        },
+        "link-344": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 317,
+            "id": 344,
+            "startPinId": 310
+        },
+        "link-407": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 133,
+            "id": 407,
+            "startPinId": 310
+        },
+        "link-411": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 408,
+            "id": 411,
+            "startPinId": 315
+        },
+        "link-412": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 409,
+            "id": 412,
+            "startPinId": 329
+        },
+        "link-413": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 410,
+            "id": 413,
+            "startPinId": 324
+        },
+        "link-444": {
+            "color": {
+                "a": 255,
+                "b": 0,
+                "g": 165,
+                "r": 255
+            },
+            "endPinId": 443,
+            "id": 444,
+            "startPinId": 330
+        }
+    },
+    "nodes": {
+        "node-138": {
+            "color": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "data": {
+                "nInputPins": 5,
+                "nPlots": 4,
+                "pinData": [
+                    {
+                        "dataIdentifier": "VectorNavObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Time since startup [ns]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Mag uncomp X [Gauss]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Mag uncomp Y [Gauss]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Mag uncomp Z [Gauss]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Accel uncomp X [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Accel uncomp Y [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Accel uncomp Z [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Gyro uncomp X [rad/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Gyro uncomp Y [rad/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Gyro uncomp Z [rad/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Temperature [°C]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Quaternion W []",
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Quaternion X []",
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Quaternion Y []",
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Quaternion Z []",
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Yaw [deg]",
+                                "plotOnAxis": [
+                                    [
+                                        2,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Pitch [deg]",
+                                "plotOnAxis": [
+                                    [
+                                        2,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Roll [deg]",
+                                "plotOnAxis": [
+                                    [
+                                        2,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Time since syncIn [ns]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "SyncIn Count []",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Mag comp X [Gauss]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Mag comp Y [Gauss]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Mag comp Z [Gauss]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Accel comp X [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Accel comp Y [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Accel comp Z [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Gyro comp X [rad/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Gyro comp Y [rad/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Gyro comp Z [rad/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "dTime [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "dTheta X [deg]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "dTheta Y [deg]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "dTheta Z [deg]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "dVelocity X [m/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "dVelocity Y [m/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "dVelocity Z [m/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "VPE Status [bits]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Pressure [kPa]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Mag comp N [Gauss]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Mag comp E [Gauss]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Mag comp D [Gauss]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Accel comp N [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Accel comp E [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Accel comp D [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Gyro comp N [rad/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Gyro comp E [rad/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Gyro comp D [rad/s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Linear Accel X [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Linear Accel Y [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Linear Accel Z [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Linear Accel N [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Linear Accel E [m/s^2]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "Linear Accel D [m/s^2]",
+                                "plotOnAxis": []
+                            }
+                        ],
+                        "plotStyle": 0,
+                        "size": 0
+                    },
+                    {
+                        "dataIdentifier": "NED",
+                        "pinType": 4,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "0, 0",
+                                "plotOnAxis": [
+                                    [
+                                        0,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "1, 0",
+                                "plotOnAxis": [
+                                    [
+                                        0,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "2, 0",
+                                "plotOnAxis": [
+                                    [
+                                        0,
+                                        0
+                                    ]
+                                ]
+                            }
+                        ],
+                        "plotStyle": 1,
+                        "size": 0
+                    },
+                    {
+                        "dataIdentifier": "Velocity NED",
+                        "pinType": 4,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "0, 0",
+                                "plotOnAxis": [
+                                    [
+                                        1,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "1, 0",
+                                "plotOnAxis": [
+                                    [
+                                        1,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "2, 0",
+                                "plotOnAxis": [
+                                    [
+                                        1,
+                                        0
+                                    ]
+                                ]
+                            }
+                        ],
+                        "plotStyle": 1,
+                        "size": 0
+                    },
+                    {
+                        "dataIdentifier": "RollPitchYaw [deg]",
+                        "pinType": 4,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "0, 0",
+                                "plotOnAxis": [
+                                    [
+                                        2,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "1, 0",
+                                "plotOnAxis": [
+                                    [
+                                        2,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "2, 0",
+                                "plotOnAxis": [
+                                    [
+                                        2,
+                                        0
+                                    ]
+                                ]
+                            }
+                        ],
+                        "plotStyle": 1,
+                        "size": 0
+                    },
+                    {
+                        "dataIdentifier": "Quaternion nb",
+                        "pinType": 4,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxis": []
+                            },
+                            {
+                                "displayName": "0, 0",
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "1, 0",
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "2, 0",
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "3, 0",
+                                "plotOnAxis": [
+                                    [
+                                        3,
+                                        0
+                                    ]
+                                ]
+                            }
+                        ],
+                        "plotStyle": 1,
+                        "size": 0
+                    }
+                ],
+                "plotInfos": [
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Position",
+                        "leftPaneWidth": 180.0,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "title": "Position"
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Velocity",
+                        "leftPaneWidth": 180.0,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "title": "Velocity"
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Attitude",
+                        "leftPaneWidth": 180.0,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 3,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "title": "Attitude"
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Quaternion",
+                        "leftPaneWidth": 180.0,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 4,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "title": "Quaternion"
+                    }
+                ]
+            },
+            "id": 138,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "RtklibPosObs",
+                        "UbloxObs",
+                        "ImuObs",
+                        "KvhObs",
+                        "VectorNavObs"
+                    ],
+                    "id": 133,
+                    "name": "Pin 1",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 408,
+                    "name": "Pin 2",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 409,
+                    "name": "Pin 3",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 410,
+                    "name": "Pin 4",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 443,
+                    "name": "Pin 5",
+                    "type": "Matrix"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "Plot"
+                    ],
+                    "id": 139,
+                    "name": "",
+                    "type": "Delegate"
+                }
+            ],
+            "pos": {
+                "x": 822.0,
+                "y": 55.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-263": {
+            "color": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "data": {
+                "FileReader": {
+                    "path": "/home/topas/Documents/Coding/NavSoS/data/vn100_R+-90_P+-90_Y+-90.csv"
+                }
+            },
+            "id": 263,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VectorNavFile",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "VectorNavFile"
+                    ],
+                    "id": 264,
+                    "name": "",
+                    "type": "Delegate"
+                },
+                {
+                    "dataIdentifier": [
+                        "VectorNavObs"
+                    ],
+                    "id": 261,
+                    "name": "VectorNavObs",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "std::vector<std::string>"
+                    ],
+                    "id": 262,
+                    "name": "Header Columns",
+                    "type": "Object"
+                }
+            ],
+            "pos": {
+                "x": -166.0,
+                "y": -80.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavFile"
+        },
+        "node-312": {
+            "color": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "data": {
+                "initDuration": 5.0,
+                "overrideRollPitchYaw": [
+                    true,
+                    true,
+                    true
+                ],
+                "overrideValuesRollPitchYaw": [
+                    -0.6000000238418579,
+                    0.3499999940395355,
+                    45.5
+                ],
+                "positionAccuracyThreshold": 80.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "id": 312,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "ImuObs"
+                    ],
+                    "id": 305,
+                    "name": "ImuObs",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "UbloxObs",
+                        "RtklibPosObs"
+                    ],
+                    "id": 306,
+                    "name": "GnssObs",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 307,
+                    "name": "Position ECEF",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 308,
+                    "name": "Velocity NED",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 309,
+                    "name": "Quaternion nb",
+                    "type": "Matrix"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "PosVelAttInitializer",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "PosVelAttInitializer"
+                    ],
+                    "id": 313,
+                    "name": "",
+                    "type": "Delegate"
+                },
+                {
+                    "dataIdentifier": [
+                        "VectorNavObs"
+                    ],
+                    "id": 310,
+                    "name": "ImuObs",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [],
+                    "id": 311,
+                    "name": "GnssObs",
+                    "type": "Flow"
+                }
+            ],
+            "pos": {
+                "x": 424.0,
+                "y": -82.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
+        },
+        "node-316": {
+            "color": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "data": {
+                "latLonAlt_ref": {
+                    "0": {
+                        "0": 0.8514297928500592
+                    },
+                    "1": {
+                        "0": 0.1602793742879991
+                    },
+                    "2": {
+                        "0": 400.55509730794876
+                    }
+                },
+                "selectedTransformation": 8
+            },
+            "id": 316,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 314,
+                    "name": "ECEF",
+                    "type": "Matrix"
+                }
+            ],
+            "kind": "Simple",
+            "name": "to",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd"
+                    ],
+                    "id": 315,
+                    "name": "NED",
+                    "type": "Matrix"
+                }
+            ],
+            "pos": {
+                "x": 454.0,
+                "y": 115.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Transformation"
+        },
+        "node-321": {
+            "color": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "data": {
+                "integrationFrame": 1
+            },
+            "id": 321,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "ImuObs"
+                    ],
+                    "id": 317,
+                    "name": "ImuObs",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 318,
+                    "name": "Position ECEF",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 319,
+                    "name": "Velocity NED",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 320,
+                    "name": "Quaternion nb",
+                    "type": "Matrix"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ImuIntegrator",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "ImuIntegrator"
+                    ],
+                    "id": 322,
+                    "name": "",
+                    "type": "Delegate"
+                }
+            ],
+            "pos": {
+                "x": 488.0,
+                "y": 224.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuIntegrator"
+        },
+        "node-325": {
+            "color": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "data": {
+                "latLonAlt_ref": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "selectedTransformation": 5
+            },
+            "id": 325,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd",
+                        "BlockMatrix"
+                    ],
+                    "id": 323,
+                    "name": "Quat_nb",
+                    "type": "Matrix"
+                }
+            ],
+            "kind": "Simple",
+            "name": "to",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd"
+                    ],
+                    "id": 324,
+                    "name": "RollPitchYaw [deg]",
+                    "type": "Matrix"
+                }
+            ],
+            "pos": {
+                "x": 408.0,
+                "y": 172.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Transformation"
+        },
+        "node-327": {
+            "color": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "data": {
+                "blocks": [
+                    {
+                        "blockCols": 1,
+                        "blockRows": 3,
+                        "pinName": "Position ECEF",
+                        "startCol": 0,
+                        "startRow": 0
+                    },
+                    {
+                        "blockCols": 1,
+                        "blockRows": 3,
+                        "pinName": "Velocity NED",
+                        "startCol": 0,
+                        "startRow": 3
+                    },
+                    {
+                        "blockCols": 1,
+                        "blockRows": 4,
+                        "pinName": "Quaternion nb",
+                        "startCol": 0,
+                        "startRow": 6
+                    }
+                ],
+                "matrix": {
+                    "0": {
+                        "0": 4156882.0
+                    },
+                    "1": {
+                        "0": 672027.0
+                    },
+                    "2": {
+                        "0": 4775018.0
+                    },
+                    "3": {
+                        "0": 0.0
+                    },
+                    "4": {
+                        "0": 0.0
+                    },
+                    "5": {
+                        "0": 0.0
+                    },
+                    "6": {
+                        "0": 0.0
+                    },
+                    "7": {
+                        "0": 0.0
+                    },
+                    "8": {
+                        "0": 0.0
+                    },
+                    "9": {
+                        "0": 0.0
+                    }
+                },
+                "nBlocks": 3,
+                "nCols": 1,
+                "nRows": 10
+            },
+            "id": 327,
+            "inputPins": [],
+            "kind": "Simple",
+            "name": "Matrix",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "Eigen::MatrixXd"
+                    ],
+                    "id": 326,
+                    "name": "",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "BlockMatrix"
+                    ],
+                    "id": 328,
+                    "name": "Position ECEF",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "BlockMatrix"
+                    ],
+                    "id": 329,
+                    "name": "Velocity NED",
+                    "type": "Matrix"
+                },
+                {
+                    "dataIdentifier": [
+                        "BlockMatrix"
+                    ],
+                    "id": 330,
+                    "name": "Quaternion nb",
+                    "type": "Matrix"
+                }
+            ],
+            "pos": {
+                "x": 111.0,
+                "y": 88.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Matrix"
+        },
+        "node-334": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "data": null,
+            "id": 334,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "NED IMU Integration",
+            "outputPins": [],
+            "pos": {
+                "x": 80.0,
+                "y": -128.0
+            },
+            "size": {
+                "x": 672.0,
+                "y": 490.0
+            },
+            "type": "GroupBox"
+        },
+        "node-335": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "data": null,
+            "id": 335,
+            "inputPins": [],
+            "kind": "GroupBox",
+            "name": "Inputs",
+            "outputPins": [],
+            "pos": {
+                "x": -192.0,
+                "y": -128.0
+            },
+            "size": {
+                "x": 240.0,
+                "y": 138.0
+            },
+            "type": "GroupBox"
+        }
+    }
+}

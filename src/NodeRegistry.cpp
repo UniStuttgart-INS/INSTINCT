@@ -143,6 +143,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/util/GroupBox.hpp"
 // Simple
 #include "Nodes/Simple/Matrix.hpp"
+#include "Nodes/Simple/Transformation.hpp"
 // Data Logger
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
@@ -169,7 +170,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 // Plotting
 #include "Nodes/Plotting/Plot.hpp"
 // State
-#include "Nodes/State/State.hpp"
+#include "Nodes/State/PosVelAttInitializer.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
 {
@@ -180,6 +181,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<GroupBox>();
     // Simple
     registerNodeType<Matrix>();
+    registerNodeType<Transformation>();
     // Data Logger
     registerNodeType<EmlidDataLogger>();
     registerNodeType<UbloxDataLogger>();
@@ -203,16 +205,15 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<VectorNavSensor>();
     // Data Simulator
     registerNodeType<ImuSimulator>();
-    // Data Provider
+    // Plotting
     registerNodeType<Plot>();
     // State
-    registerNodeType<State>();
+    registerNodeType<PosVelAttInitializer>();
 }
 
 #include "NodeData/NodeData.hpp"
 #include "NodeData/InsObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
-#include "NodeData/GNSS/GnssObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
@@ -225,7 +226,6 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<InsObs>();
     // GNSS
     registerNodeDataType<EmlidObs>();
-    registerNodeDataType<GnssObs>();
     registerNodeDataType<RtklibPosObs>();
     registerNodeDataType<UbloxObs>();
     // IMU

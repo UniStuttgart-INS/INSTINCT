@@ -10,7 +10,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
-#include "NodeData/State/StateData.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 NAV::ImuSimulator::ImuSimulator()
 {
@@ -22,7 +22,7 @@ NAV::ImuSimulator::ImuSimulator()
     hasConfig = true;
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuSimulator::pollData);
-    nm::CreateInputPin(this, "State", Pin::Type::Object, { NAV::StateData::type() });
+    // nm::CreateInputPin(this, "State", Pin::Type::Object, { NAV::StateData::type() });
 }
 
 NAV::ImuSimulator::~ImuSimulator()
@@ -237,7 +237,7 @@ std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
         return nullptr;
     }
 
-    if (const auto* stateData = getInputValue<StateData>(InputPortIndex_StateData))
+    if (const auto* stateData = getInputValue<PosVelAtt>(InputPortIndex_StateData))
     {
         auto quat_bn = Eigen::Quaterniond::Identity();
         auto quat_ne = Eigen::Quaterniond::Identity();

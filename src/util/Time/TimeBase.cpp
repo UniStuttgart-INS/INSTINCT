@@ -33,6 +33,11 @@ namespace NAV::util::time
 /*                                           Function Definitions                                           */
 /* -------------------------------------------------------------------------------------------------------- */
 
+NAV::util::time::Mode NAV::util::time::GetMode()
+{
+    return timeMode;
+}
+
 void NAV::util::time::SetMode(NAV::util::time::Mode mode)
 {
     timeMode = mode;
@@ -54,15 +59,18 @@ void NAV::util::time::SetCurrentTime(const NAV::InsTime& insTime)
     if (auto currentExactTime = GetCurrentTime();
         insTime < currentExactTime)
     {
-        LOG_TRACE("Not updating current Time [{} {:.6f}] to [{} {:.6f}], because the new time is earlier.",
-                  currentExactTime.toGPSweekTow().gpsWeek, currentExactTime.toGPSweekTow().tow,
-                  insTime.toGPSweekTow().gpsWeek, insTime.toGPSweekTow().tow);
+        LOG_DATA("Not updating current Time [{} {:.6f}] to [{} {:.6f}], because the new time is earlier.",
+                 currentExactTime.toGPSweekTow().gpsWeek, currentExactTime.toGPSweekTow().tow,
+                 insTime.toGPSweekTow().gpsWeek, insTime.toGPSweekTow().tow);
     }
     else if (insTime >= currentExactTime)
     {
-        LOG_DEBUG("Updating current Time [{} {:.6f}] to [{} {:.6f}]",
-                  currentExactTime.toGPSweekTow().gpsWeek, currentExactTime.toGPSweekTow().tow,
-                  insTime.toGPSweekTow().gpsWeek, insTime.toGPSweekTow().tow);
+        if (timeMode == Mode::REAL_TIME)
+        {
+            LOG_INFO("Updating current Time [{} {:.6f}] to [{} {:.6f}]",
+                     currentExactTime.toGPSweekTow().gpsWeek, currentExactTime.toGPSweekTow().tow,
+                     insTime.toGPSweekTow().gpsWeek, insTime.toGPSweekTow().tow);
+        }
         currentTimeComputer = std::chrono::steady_clock::now();
         currentTime = insTime;
     }

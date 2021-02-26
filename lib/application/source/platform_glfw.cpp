@@ -1,6 +1,8 @@
 #include "platform.h"
 #include "setup.h"
 
+#include <iostream>
+
 #if BACKEND(IMGUI_GLFW)
 
     #include "application.h"
@@ -106,7 +108,12 @@ bool PlatformGLFW::OpenMainWindow(const char* title, int width, int height)
 
     m_Window = glfwCreateWindow(width, height, title, nullptr, nullptr);
     if (!m_Window)
+    {
+        const char** buffer;
+        glfwGetError(buffer);
+        std::cerr << *buffer << '\n';
         return false;
+    }
 
     if (!initializer || !initializer(m_Window, true))
     {

@@ -20,6 +20,7 @@ bool NAV::Node::initializeNode()
 
     if (isInitialized())
     {
+        resetNode();
         deinitializeNode();
     }
 
@@ -30,10 +31,8 @@ bool NAV::Node::initializeNode()
     {
         if (inputPin.type != Pin::Type::Flow)
         {
-            auto connectedNodes = nm::FindConnectedNodesToPin(inputPin.id);
-            if (!connectedNodes.empty())
+            if (Node* connectedNode = nm::FindConnectedNodeToInputPin(inputPin.id))
             {
-                Node* connectedNode = connectedNodes.front();
                 if (!connectedNode->isInitialized() && !connectedNode->isInitializing())
                 {
                     LOG_DEBUG("{}: Initializing connected Node '{}' on input Pin {}", nameId(), connectedNode->nameId(), size_t(inputPin.id));
@@ -70,7 +69,7 @@ void NAV::Node::deinitializeNode()
     {
         if (outputPin.type != Pin::Type::Flow)
         {
-            auto connectedNodes = nm::FindConnectedNodesToPin(outputPin.id);
+            auto connectedNodes = nm::FindConnectedNodesToOutputPin(outputPin.id);
             for (auto* connectedNode : connectedNodes)
             {
                 if (connectedNode->isInitialized() && !connectedNode->isDeinitializing())
@@ -83,7 +82,6 @@ void NAV::Node::deinitializeNode()
     }
 
     // Deinitialize the node itself
-    resetNode();
     deinitialize();
     isInitialized_ = false;
 
@@ -115,23 +113,32 @@ void NAV::Node::afterCreateLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
 void NAV::Node::afterDeleteLink(Pin* /*startPin*/, Pin* /*endPin*/) {}
 
-void NAV::Node::onNotifyValueChanged(ax::NodeEditor::LinkId /*linkId*/) {}
+void NAV::Node::notifyOnOutputValueChanged(ax::NodeEditor::LinkId /*linkId*/) {}
 
 void NAV::Node::notifyInputValueChanged(size_t portIndex)
 {
-    auto connectedLinks = nm::FindConnectedLinksToPin(inputPins.at(portIndex).id);
-    if (!connectedLinks.empty())
+    if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(portIndex).id))
     {
-        if (Pin* startPin = nm::FindPin(connectedLinks.front()->startPinId))
+        // TODO: Reverse Flow Animation
+        // if (nm::showFlowWhenNotifyingValueChange)
+        // {
+        //     ax::NodeEditor::Flow(connectedLink->id);
+        // }
+
+        if (Pin* startPin = nm::FindPin(connectedLink->startPinId))
         {
             if (startPin->parentNode)
             {
                 // Notify the node itself that changes were made
-                startPin->parentNode->onNotifyValueChanged(connectedLinks.front()->id);
+                startPin->parentNode->notifyOnOutputValueChanged(connectedLink->id);
             }
             // Notify all nodes which registered a notify callback
             for (auto& [node, callback, linkId] : startPin->notifyFunc)
             {
+                if (node->id == id)
+                {
+                    continue;
+                }
                 if (nm::showFlowWhenNotifyingValueChange)
                 {
                     ax::NodeEditor::Flow(linkId);

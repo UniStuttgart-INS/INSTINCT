@@ -317,12 +317,18 @@ run-tests:ubuntu:20.04:gcc:
 # ║                                                  Arch Linux Latest                                                 ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
+# GitLab CI Fix for:
+# error: failed to initialize alpm library
+# (could not find or read directory: /var/lib/pacman/)
+# https://www.reddit.com/r/archlinux/comments/lek2ba/arch_linux_on_docker_ci_could_not_find_or_read/
+
 .build:archlinux:latest:
   stage: build
   extends: .schedule
   image: archlinux:latest
   needs: []
   before_script:
+    - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
     - pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck python-pip glfw-x11
     - pip install conan
@@ -375,6 +381,7 @@ archlinux:latest:gcc:debug:
   extends: .schedule
   image: archlinux:latest
   before_script:
+    - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
     - pacman -Sy
     - pacman -S --noconfirm --needed cmake
     - cmake --version

@@ -112,22 +112,27 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 * Navigate with Linux terminal to your source code folder and type ```code .```
 
 [Get the GUI to work](https://github.com/microsoft/WSL/issues/4793#issuecomment-577232999):
-* Install [VcXsrv](https://sourceforge.net/projects/vcxsrv/)
+* In Ubuntu install a new [OpenGL Version](https://launchpad.net/~oibaf/+archive/ubuntu/graphics-drivers/):
+```
+sudo add-apt-repository ppa:oibaf/graphics-drivers
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt purge mesa-vulkan-drivers
+```
+* Install [VcXsrv](https://sourceforge.net/projects/vcxsrv/) in Windows
 * Run with these settings:
     * Multiple windows, Display number: -1
     * Start no client
-    * Disable access control
+    * Extra Settings
+        * [ ] Native opengl
+        * [x] Disable access control
 * Hover with your mouse over the system tray icon and verify that it says ```hostname:0.0```
 * Find your host IP address (run in windows console: ```ipconfig```), e.g. 192.168.1.3
-* In the ```.bash_profile``` add the following and replace the ip address there:
+* In the ```.bashrc``` add the following and replace the ip address there:
 ```
 export DISPLAY=192.168.1.3:0.0
-export LIBGL_ALWAYS_INDIRECT=1
 ```
-
-### Post installation
-
-- Create a file `config.ini` in the project root folder. The VSCode run tasks call the executable with this config file and if the file does not exist there will be an error. However if there is an empty file, it works.
+* Restart your computer
 
 ### VSCode Configuration
 
