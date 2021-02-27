@@ -134,7 +134,7 @@
         ".gitlab-ci.yml": true,
         ".gitmodules": true,
         "DoxygenLayout.xml": true,
-        "NavSoS.ini": true,
+        "INSTINCT.ini": true,
         "compile_commands.json": true,
     }
 }

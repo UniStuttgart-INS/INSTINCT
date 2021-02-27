@@ -227,7 +227,7 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "command": "./bin/${input:buildType}/navsos",
+            "command": "./bin/${input:buildType}/instinct",
             "args": [
                 "-f",
                 "config.ini",
@@ -326,7 +326,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/${input:buildType}/callgrind.out --tool=callgrind bin/${input:buildType}/navsos -f config.ini && kcachegrind bin/${input:buildType}/callgrind.out",
+                "valgrind --callgrind-out-file=bin/${input:buildType}/callgrind.out --tool=callgrind bin/${input:buildType}/instinct -f config.ini && kcachegrind bin/${input:buildType}/callgrind.out",
             ],
             "dependsOn": [
                 "MAIN: Build project",
@@ -340,7 +340,7 @@
             "command": "valgrind",
             "args": [
                 "--leak-check=yes",
-                "bin/${input:buildType}/navsos",
+                "bin/${input:buildType}/instinct",
                 "-f",
                 "config.ini",
             ],
