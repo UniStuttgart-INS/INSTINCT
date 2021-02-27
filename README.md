@@ -1,4 +1,4 @@
-# NavSoS - Navigation Software Stuttgart
+# INSTINCT - INS Toolkit for Integrated Navigation Concepts and Training
 
 Navigation Software of the Institut of Navigation (University of Stuttgart)
 
@@ -8,7 +8,7 @@ Navigation Software of the Institut of Navigation (University of Stuttgart)
 
 This software provides real-time and post processing functionality for navigational tasks. It can read from sensors and fuse together the data. It can fuse GNSS data with IMU data and do advanced functions like RTK, RAIM, ...
 
-The software consists of one executable ```navsos```
+The software consists of one executable ```instinct```
 * It spawns a GUI on default where you can edit your flow
 * If now GUI is required, the application can be run in ```--nogui``` mode and a `.flow` file can be loaded manually
 
@@ -222,13 +222,13 @@ Recommended changes to the User's ```keybindings.json```
 
 The help function can be shown by calling the binary with the ```-h | --help``` parameter
 ```
-navsos --help
+instinct --help
 ```
 
 ## Authors
 
-* [M.Sc. Thomas Topp](mailto:topp@ins.uni-stuttgart.de?subject=[GitLab/NavSoS]%20)
-* [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[GitLab/NavSoS]%20)
+* [M.Sc. Thomas Topp](mailto:topp@ins.uni-stuttgart.de?subject=[GitLab/INSTINCT]%20)
+* [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[GitLab/INSTINCT]%20)
 
 ## Version History
 

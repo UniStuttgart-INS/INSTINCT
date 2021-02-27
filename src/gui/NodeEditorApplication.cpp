@@ -52,7 +52,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
 
     ed::Config config;
 
-    // config.SettingsFile = "NavSoS.json";
+    // config.SettingsFile = "INSTINCT.json";
     // config.UserPointer = this;
 
     // Stops the Editor from creating a log file, as we do it ourselves
@@ -1304,6 +1304,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     std::string title = (flow::HasUnsavedChanges() ? "● " : "")
                         + (flow::GetCurrentFilename().empty() ? "" : flow::GetCurrentFilename() + " - ")
-                        + "NavSoS";
+                        + "INSTINCT";
     SetTitle(title.c_str());
 }
