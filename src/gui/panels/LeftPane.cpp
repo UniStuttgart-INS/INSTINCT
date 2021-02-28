@@ -90,7 +90,11 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
 
             // Circle to show init status
             ImU32 circleCol = 0;
-            if (node->isInitializing())
+            if (!node->enabled)
+            {
+                circleCol = IM_COL32(192, 192, 192, 255);
+            }
+            else if (node->isInitializing())
             {
                 circleCol = IM_COL32(143, 188, 143, 255);
             }

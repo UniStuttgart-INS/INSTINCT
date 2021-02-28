@@ -283,6 +283,9 @@ class Node
     /// Flag if the config window should be shown
     bool hasConfig = false;
 
+    /// Flag if the node is enabled
+    bool enabled = true;
+
     /// Enables the callbacks
     bool callbacksEnabled = false;
 

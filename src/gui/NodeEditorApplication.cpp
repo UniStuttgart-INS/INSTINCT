@@ -632,7 +632,11 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (!isSimple) // Header Text for Blueprint Nodes
             {
-                if (node->isInitialized())
+                if (!node->enabled) // Node disabled
+                {
+                    builder.Header(ImColor(192, 192, 192)); // Silver
+                }
+                else if (node->isInitialized())
                 {
                     builder.Header(ImColor(128, 255, 128)); // Light green
                 }
@@ -1085,7 +1089,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Inputs: %lu", node->inputPins.size());
             ImGui::Text("Outputs: %lu", node->outputPins.size());
             ImGui::Separator();
-            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "", false, !node->isInitializing() && !node->isDeinitializing()))
+            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "", false, node->enabled && !node->isInitializing() && !node->isDeinitializing()))
             {
                 if (node->isInitialized())
                 {
@@ -1095,15 +1099,33 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 node->isInitializing_ = true;
                 initList.emplace_back(node, true);
             }
-            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized() && !node->isInitializing() && !node->isDeinitializing()))
+            if (ImGui::MenuItem("Deinitialize", "", false, node->enabled && node->isInitialized() && !node->isInitializing() && !node->isDeinitializing()))
             {
                 node->isDeinitializing_ = true;
                 initList.emplace_back(node, false);
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem(node->enabled ? "Disable" : "Enable", "", false))
+            {
+                if (node->enabled)
+                {
+                    if (node->isInitialized())
+                    {
+                        node->isDeinitializing_ = true;
+                        initList.emplace_back(node, false);
+                    }
+                    node->enabled = false;
+                }
+                else
+                {
+                    node->enabled = true;
+                }
             }
             if (ImGui::MenuItem("Rename"))
             {
                 renameNode = node;
             }
+            ImGui::Separator();
             if (ImGui::MenuItem("Delete", "", false, !node->isInitializing() && !node->isDeinitializing()))
             {
                 ed::DeleteNode(contextNodeId);
