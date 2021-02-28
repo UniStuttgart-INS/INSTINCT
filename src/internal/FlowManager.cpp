@@ -106,6 +106,7 @@ void to_json(json& j, const Node& node)
         { "color", node.color },
         { "size", node.size.x == 0 && node.size.y == 0 ? node.size : realSize },
         { "pos", ed::GetNodePosition(node.id) },
+        { "enabled", node.enabled },
         { "inputPins", node.inputPins },
         { "outputPins", node.outputPins },
     };
@@ -118,6 +119,7 @@ void from_json(const json& j, Node& node)
     j.at("name").get_to(node.name);
     j.at("color").get_to(node.color);
     j.at("size").get_to(node.size);
+    j.at("enabled").get_to(node.enabled);
 
     auto inputPins = j.at("inputPins").get<std::vector<Pin>>();
     for (size_t i = 0; i < inputPins.size(); ++i)
