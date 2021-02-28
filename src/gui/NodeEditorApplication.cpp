@@ -1120,6 +1120,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 {
                     node->enabled = true;
                 }
+                flow::ApplyChanges();
             }
             if (ImGui::MenuItem("Rename"))
             {

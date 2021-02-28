@@ -18,7 +18,7 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
         {
             hasInitializedNodes = true;
         }
-        else
+        else if (node->enabled)
         {
             allNodesInitialized = false;
         }
@@ -27,7 +27,7 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
     {
         for (auto* node : nm::m_Nodes())
         {
-            if (!node->isInitialized())
+            if (node->enabled && !node->isInitialized())
             {
                 node->isInitializing_ = true;
                 initList.emplace_back(node, true);
@@ -38,20 +38,26 @@ void NAV::gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList)
     {
         for (auto* node : nm::m_Nodes())
         {
-            if (node->isInitialized())
+            if (node->enabled && node->isInitialized())
             {
                 node->isDeinitializing_ = true;
                 initList.emplace_back(node, false);
             }
-            node->isInitializing_ = true;
-            initList.emplace_back(node, true);
+        }
+        for (auto* node : nm::m_Nodes())
+        {
+            if (node->enabled)
+            {
+                node->isInitializing_ = true;
+                initList.emplace_back(node, true);
+            }
         }
     }
     if (ImGui::MenuItem("Deinitialize all Nodes", nullptr, false, hasInitializedNodes))
     {
         for (auto* node : nm::m_Nodes())
         {
-            if (node->isInitialized())
+            if (node->enabled && node->isInitialized())
             {
                 node->isDeinitializing_ = true;
                 initList.emplace_back(node, false);
