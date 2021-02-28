@@ -672,6 +672,7 @@
                     }
                 ]
             },
+            "enabled": true,
             "id": 138,
             "inputPins": [
                 {
@@ -757,6 +758,7 @@
                     "path": "/home/topas/Documents/Coding/INSTINCT/data/vn100_R+-90_P+-90_Y+-90.csv"
                 }
             },
+            "enabled": true,
             "id": 263,
             "inputPins": [],
             "kind": "Blueprint",
@@ -819,6 +821,7 @@
                 "positionAccuracyThreshold": 80.0,
                 "velocityAccuracyThreshold": 10.0
             },
+            "enabled": true,
             "id": 312,
             "inputPins": [
                 {
@@ -923,6 +926,7 @@
                 },
                 "selectedTransformation": 8
             },
+            "enabled": true,
             "id": 316,
             "inputPins": [
                 {
@@ -967,6 +971,7 @@
             "data": {
                 "integrationFrame": 1
             },
+            "enabled": true,
             "id": 321,
             "inputPins": [
                 {
@@ -1048,6 +1053,7 @@
                 },
                 "selectedTransformation": 5
             },
+            "enabled": true,
             "id": 325,
             "inputPins": [
                 {
@@ -1149,6 +1155,7 @@
                 "nCols": 1,
                 "nRows": 10
             },
+            "enabled": true,
             "id": 327,
             "inputPins": [],
             "kind": "Simple",
@@ -1205,6 +1212,7 @@
                 "r": 255
             },
             "data": null,
+            "enabled": true,
             "id": 334,
             "inputPins": [],
             "kind": "GroupBox",
@@ -1228,6 +1236,7 @@
                 "r": 255
             },
             "data": null,
+            "enabled": true,
             "id": 335,
             "inputPins": [],
             "kind": "GroupBox",
