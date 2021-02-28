@@ -305,7 +305,7 @@ class Node
     bool isDeinitializing_ = false;
 
     friend class gui::NodeEditorApplication;
-    friend void gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>&);
+    friend void gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
 };
 
 constexpr bool operator==(const Node::Kind& lhs, const Node::Kind& rhs) { return lhs.value == rhs.value; }
