@@ -576,7 +576,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         gui::checkShortcuts(globalAction);
     }
 
-    gui::menus::ShowMainMenuBar(globalAction);
+    gui::menus::ShowMainMenuBar(globalAction, initList);
 
     ed::SetCurrentEditor(m_Editor);
 

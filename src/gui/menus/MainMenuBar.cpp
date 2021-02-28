@@ -10,7 +10,7 @@
 #include <imgui.h>
 #include <fmt/core.h>
 
-void NAV::gui::menus::ShowMainMenuBar(GlobalActions& globalAction)
+void NAV::gui::menus::ShowMainMenuBar(GlobalActions& globalAction, std::deque<std::pair<Node*, bool>>& initList)
 {
     auto& io = ImGui::GetIO();
 
@@ -29,7 +29,7 @@ void NAV::gui::menus::ShowMainMenuBar(GlobalActions& globalAction)
         }
         if (ImGui::BeginMenu("Run"))
         {
-            ShowRunMenu();
+            ShowRunMenu(initList);
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Time"))
