@@ -45,11 +45,23 @@ void from_json(const json& j, ImColor& color)
     int r = 0;
     int g = 0;
     int b = 0;
-    int a = 0;
-    j.at("r").get_to(r);
-    j.at("g").get_to(g);
-    j.at("b").get_to(b);
-    j.at("a").get_to(a);
+    int a = 255;
+    if (j.contains("r"))
+    {
+        j.at("r").get_to(r);
+    }
+    if (j.contains("g"))
+    {
+        j.at("g").get_to(g);
+    }
+    if (j.contains("b"))
+    {
+        j.at("b").get_to(b);
+    }
+    if (j.contains("a"))
+    {
+        j.at("a").get_to(a);
+    }
 
     color = ImColor(r, g, b, a);
 }
@@ -63,8 +75,14 @@ void to_json(json& j, const ImVec2& vec2)
 }
 void from_json(const json& j, ImVec2& vec2)
 {
-    j.at("x").get_to(vec2.x);
-    j.at("y").get_to(vec2.y);
+    if (j.contains("x"))
+    {
+        j.at("x").get_to(vec2.x);
+    }
+    if (j.contains("y"))
+    {
+        j.at("y").get_to(vec2.y);
+    }
 }
 
 namespace NAV
@@ -84,13 +102,22 @@ void from_json(const json& j, Pin& pin)
     j.at("id").get_to(id);
     pin.id = id;
 
-    std::string typeString;
-    j.at("type").get_to(typeString);
-    pin.type = Pin::Type(typeString);
+    if (j.contains("type"))
+    {
+        std::string typeString;
+        j.at("type").get_to(typeString);
+        pin.type = Pin::Type(typeString);
+    }
 
-    j.at("name").get_to(pin.name);
+    if (j.contains("name"))
+    {
+        j.at("name").get_to(pin.name);
+    }
 
-    j.at("dataIdentifier").get_to(pin.dataIdentifier);
+    if (j.contains("dataIdentifier"))
+    {
+        j.at("dataIdentifier").get_to(pin.dataIdentifier);
+    }
 }
 
 void to_json(json& j, const Node& node)
@@ -106,6 +133,7 @@ void to_json(json& j, const Node& node)
         { "color", node.color },
         { "size", node.size.x == 0 && node.size.y == 0 ? node.size : realSize },
         { "pos", ed::GetNodePosition(node.id) },
+        { "enabled", node.enabled },
         { "inputPins", node.inputPins },
         { "outputPins", node.outputPins },
     };
@@ -113,36 +141,57 @@ void to_json(json& j, const Node& node)
 void from_json(const json& j, Node& node)
 {
     node.id = j.at("id").get<size_t>();
-    node.kind = Node::Kind(j.at("kind").get<std::string>());
-
-    j.at("name").get_to(node.name);
-    j.at("color").get_to(node.color);
-    j.at("size").get_to(node.size);
-
-    auto inputPins = j.at("inputPins").get<std::vector<Pin>>();
-    for (size_t i = 0; i < inputPins.size(); ++i)
+    if (j.contains("kind"))
     {
-        if (node.inputPins.size() <= i)
-        {
-            break;
-        }
-        node.inputPins.at(i).id = inputPins.at(i).id;
-        node.inputPins.at(i).type = inputPins.at(i).type;
-        node.inputPins.at(i).name = inputPins.at(i).name;
-        node.inputPins.at(i).dataIdentifier = inputPins.at(i).dataIdentifier;
+        node.kind = Node::Kind(j.at("kind").get<std::string>());
+    }
+    if (j.contains("name"))
+    {
+        j.at("name").get_to(node.name);
+    }
+    if (j.contains("color"))
+    {
+        j.at("color").get_to(node.color);
+    }
+    if (j.contains("size"))
+    {
+        j.at("size").get_to(node.size);
+    }
+    if (j.contains("enabled"))
+    {
+        j.at("enabled").get_to(node.enabled);
     }
 
-    auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
-    for (size_t i = 0; i < outputPins.size(); ++i)
+    if (j.contains("inputPins"))
     {
-        if (node.outputPins.size() <= i)
+        auto inputPins = j.at("inputPins").get<std::vector<Pin>>();
+        for (size_t i = 0; i < inputPins.size(); ++i)
         {
-            break;
+            if (node.inputPins.size() <= i)
+            {
+                break;
+            }
+            node.inputPins.at(i).id = inputPins.at(i).id;
+            node.inputPins.at(i).type = inputPins.at(i).type;
+            node.inputPins.at(i).name = inputPins.at(i).name;
+            node.inputPins.at(i).dataIdentifier = inputPins.at(i).dataIdentifier;
         }
-        node.outputPins.at(i).id = outputPins.at(i).id;
-        node.outputPins.at(i).type = outputPins.at(i).type;
-        node.outputPins.at(i).name = outputPins.at(i).name;
-        node.outputPins.at(i).dataIdentifier = outputPins.at(i).dataIdentifier;
+    }
+
+    if (j.contains("outputPins"))
+    {
+        auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
+        for (size_t i = 0; i < outputPins.size(); ++i)
+        {
+            if (node.outputPins.size() <= i)
+            {
+                break;
+            }
+            node.outputPins.at(i).id = outputPins.at(i).id;
+            node.outputPins.at(i).type = outputPins.at(i).type;
+            node.outputPins.at(i).name = outputPins.at(i).name;
+            node.outputPins.at(i).dataIdentifier = outputPins.at(i).dataIdentifier;
+        }
     }
 }
 
@@ -167,7 +216,10 @@ void from_json(const json& j, Link& link)
     j.at("endPinId").get_to(id);
     link.endPinId = id;
 
-    j.at("color").get_to(link.color);
+    if (j.contains("color"))
+    {
+        j.at("color").get_to(link.color);
+    }
 }
 
 } // namespace NAV

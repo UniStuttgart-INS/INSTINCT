@@ -91,15 +91,18 @@ bool NAV::FlowExecutor::initialize()
     bool hasUninitializedNodes = false;
     for (Node* node : nm::m_Nodes())
     {
-        if (!node->isInitialized())
+        if (node->enabled)
         {
-            if (!node->initializeNode())
+            if (!node->isInitialized())
             {
-                LOG_ERROR("Node {} fails to initialize. Please check the node configuration.", node->nameId());
-                hasUninitializedNodes = true;
+                if (!node->initializeNode())
+                {
+                    LOG_ERROR("Node {} fails to initialize. Please check the node configuration.", node->nameId());
+                    hasUninitializedNodes = true;
+                }
             }
+            node->resetNode();
         }
-        node->resetNode();
     }
 
     if (!hasUninitializedNodes)
@@ -140,7 +143,7 @@ void NAV::FlowExecutor::execute()
 
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
-        if (node == nullptr)
+        if (node == nullptr || !node->enabled)
         {
             continue;
         }

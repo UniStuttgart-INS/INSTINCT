@@ -15,6 +15,11 @@ void NAV::Node::restoreAtferLink(const json& /*j*/) {}
 
 bool NAV::Node::initializeNode()
 {
+    if (!enabled)
+    {
+        return false;
+    }
+
     // Lock the node against recursive calling
     isInitializing_ = true;
 
@@ -90,7 +95,7 @@ void NAV::Node::deinitializeNode()
 
 bool NAV::Node::initialize()
 {
-    return true;
+    return enabled;
 }
 
 void NAV::Node::deinitialize() {}
@@ -127,24 +132,24 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
 
         if (Pin* startPin = nm::FindPin(connectedLink->startPinId))
         {
-            if (startPin->parentNode)
+            if (startPin->parentNode && startPin->parentNode->enabled)
             {
                 // Notify the node itself that changes were made
                 startPin->parentNode->notifyOnOutputValueChanged(connectedLink->id);
-            }
-            // Notify all nodes which registered a notify callback
-            for (auto& [node, callback, linkId] : startPin->notifyFunc)
-            {
-                if (node->id == id)
+                // Notify all nodes which registered a notify callback
+                for (auto& [node, callback, linkId] : startPin->notifyFunc)
                 {
-                    continue;
-                }
-                if (nm::showFlowWhenNotifyingValueChange)
-                {
-                    ax::NodeEditor::Flow(linkId);
-                }
+                    if (node->id == id)
+                    {
+                        continue;
+                    }
+                    if (nm::showFlowWhenNotifyingValueChange)
+                    {
+                        ax::NodeEditor::Flow(linkId);
+                    }
 
-                std::invoke(callback, node, linkId);
+                    std::invoke(callback, node, linkId);
+                }
             }
         }
     }
@@ -154,6 +159,11 @@ void NAV::Node::notifyOutputValueChanged(size_t portIndex)
 {
     for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFunc)
     {
+        if (!node->enabled)
+        {
+            continue;
+        }
+
         if (nm::showFlowWhenNotifyingValueChange)
         {
             ax::NodeEditor::Flow(linkId);
@@ -169,7 +179,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<NAV::Nod
     {
         for (auto& [node, callback, linkId] : outputPins.at(portIndex).callbacks)
         {
-            if (node->isInitialized())
+            if (node->enabled && node->isInitialized())
             {
                 if (nm::showFlowWhenInvokingCallbacks)
                 {
