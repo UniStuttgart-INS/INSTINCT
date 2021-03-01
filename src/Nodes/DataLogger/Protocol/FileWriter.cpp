@@ -2,6 +2,8 @@
 
 #include "util/Logger.hpp"
 
+#include "internal/FlowManager.hpp"
+
 [[nodiscard]] json NAV::FileWriter::save() const
 {
     LOG_TRACE("called");
@@ -35,19 +37,25 @@ bool NAV::FileWriter::initialize()
         return false;
     }
 
+    std::string filepath = path;
+    if (!path.starts_with('/') && !path.starts_with('~'))
+    {
+        filepath = flow::GetProgramRootPath() + '/' + path;
+    }
+
     if (fileType == FileType::ASCII)
     {
-        filestream.open(path, std::ios_base::trunc);
+        filestream.open(filepath, std::ios_base::trunc);
     }
     else if (fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
-        filestream.open(path, std::ios_base::trunc | std::ios_base::binary);
+        filestream.open(filepath, std::ios_base::trunc | std::ios_base::binary);
     }
 
     if (!filestream.good())
     {
-        LOG_ERROR("Could not open file {}", path);
+        LOG_ERROR("Could not open file {}", filepath);
         return false;
     }
 
