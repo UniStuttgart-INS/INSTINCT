@@ -72,22 +72,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
 
         // auto* self = static_cast<NodeEditorApplication*>(userPointer);
 
-        auto* node = nm::FindNode(nodeId);
-        if (!node)
-        {
-            return false;
-        }
-        if (!node->isInitializing() && !node->isDeinitializing())
-        {
-            if (node->dontTriggerChanges)
-            {
-                node->dontTriggerChanges = false;
-            }
-            else
-            {
-                flow::ApplyChanges();
-            }
-        }
+        flow::ApplyChanges();
         gui::TouchNode(nodeId);
 
         return true;
@@ -448,8 +433,9 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 
 void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
 {
-    ImGui::OpenPopup("Rename Group Box");
-    if (ImGui::BeginPopupModal("Rename Group Box", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    const char* title = renameNode->kind == Node::Kind::GroupBox ? "Rename Group Box" : "Rename Node";
+    ImGui::OpenPopup(title);
+    if (ImGui::BeginPopupModal(title, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
         static std::string nameBackup = renameNode->name;
         if (nameBackup.empty())
@@ -491,6 +477,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
         {
             nameBackup.clear();
             renameNode = nullptr;
+            flow::ApplyChanges();
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
@@ -556,7 +543,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 initThread.join();
             }
             initThread = std::jthread([node, init]() {
-                node->dontTriggerChanges = true;
                 if (init)
                 {
                     node->initializeNode();
