@@ -12,7 +12,7 @@
 	url = ../uart-sensor.git
 [submodule "lib/imgui-node-editor"]
 	path = lib/imgui-node-editor
-	url = https://github.com/thedmd/imgui-node-editor
+	url = ../imgui-node-editor.git
 [submodule "lib/imgui"]
 	path = lib/imgui
 	url = ../imgui.git

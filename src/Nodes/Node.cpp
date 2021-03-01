@@ -124,11 +124,10 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
 {
     if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(portIndex).id))
     {
-        // TODO: Reverse Flow Animation
-        // if (nm::showFlowWhenNotifyingValueChange)
-        // {
-        //     ax::NodeEditor::Flow(connectedLink->id);
-        // }
+        if (nm::showFlowWhenNotifyingValueChange)
+        {
+            ax::NodeEditor::Flow(connectedLink->id, true);
+        }
 
         if (Pin* startPin = nm::FindPin(connectedLink->startPinId))
         {
