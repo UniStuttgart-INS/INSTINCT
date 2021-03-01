@@ -1,5 +1,7 @@
 #include "FileDialog.hpp"
 
+#include "internal/FlowManager.hpp"
+
 #include "util/Logger.hpp"
 
 #include "imgui.h"
@@ -35,6 +37,10 @@ bool NAV::gui::widgets::FileDialogSave(std::string& path, const char* vName,
         if (igfd::ImGuiFileDialog::Instance()->IsOk)
         {
             path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+            if (path.find(flow::GetProgramRootPath()) != std::string::npos)
+            {
+                path = path.substr(flow::GetProgramRootPath().size() + 1);
+            }
             LOG_DEBUG("{}: Selected file: {}", nameId, path);
             changed = true;
         }
@@ -77,6 +83,10 @@ bool NAV::gui::widgets::FileDialogLoad(std::string& path, const char* vName,
             if (std::filesystem::exists(igfd::ImGuiFileDialog::Instance()->GetFilePathName()))
             {
                 path = igfd::ImGuiFileDialog::Instance()->GetFilePathName();
+                if (path.find(flow::GetProgramRootPath()) != std::string::npos)
+                {
+                    path = path.substr(flow::GetProgramRootPath().size() + 1);
+                }
                 LOG_DEBUG("{}: Selected file: {}", nameId, path);
                 changed = true;
             }

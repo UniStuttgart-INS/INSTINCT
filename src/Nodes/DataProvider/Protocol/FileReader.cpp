@@ -2,6 +2,8 @@
 
 #include "util/Logger.hpp"
 
+#include "internal/FlowManager.hpp"
+
 #include <sstream>
 #include "util/StringUtil.hpp"
 
@@ -34,14 +36,20 @@ bool NAV::FileReader::initialize()
 
     fileType = determineFileType();
 
+    std::string filepath = path;
+    if (!path.starts_with('/') && !path.starts_with('~'))
+    {
+        filepath = flow::GetProgramRootPath() + '/' + path;
+    }
+
     if (fileType == FileType::ASCII)
     {
-        filestream = std::ifstream(path);
+        filestream = std::ifstream(filepath);
     }
     else if (fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
-        filestream = std::ifstream(path, std::ios_base::in | std::ios_base::binary);
+        filestream = std::ifstream(filepath, std::ios_base::in | std::ios_base::binary);
     }
     else
     {
@@ -50,7 +58,7 @@ bool NAV::FileReader::initialize()
 
     if (!filestream.good())
     {
-        LOG_ERROR("Could not open file {}", path);
+        LOG_ERROR("Could not open file {}", filepath);
         return false;
     }
 
@@ -88,7 +96,13 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
 {
     LOG_TRACE("called");
 
-    auto filestreamHeader = std::ifstream(path);
+    std::string filepath = path;
+    if (!path.starts_with('/') && !path.starts_with('~'))
+    {
+        filepath = flow::GetProgramRootPath() + '/' + path;
+    }
+
+    auto filestreamHeader = std::ifstream(filepath);
     if (filestream.good())
     {
         std::string line;
@@ -105,7 +119,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
         return FileType::BINARY;
     }
 
-    LOG_ERROR("Could not open file {}", path);
+    LOG_ERROR("Could not open file {}", filepath);
     return FileType::NONE;
 }
 

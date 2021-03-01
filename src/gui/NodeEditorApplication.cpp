@@ -52,7 +52,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
 
     ed::Config config;
 
-    // config.SettingsFile = "NavSoS.json";
+    // config.SettingsFile = "INSTINCT.json";
     // config.UserPointer = this;
 
     // Stops the Editor from creating a log file, as we do it ourselves
@@ -72,22 +72,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
 
         // auto* self = static_cast<NodeEditorApplication*>(userPointer);
 
-        auto* node = nm::FindNode(nodeId);
-        if (!node)
-        {
-            return false;
-        }
-        if (!node->isInitializing() && !node->isDeinitializing())
-        {
-            if (node->dontTriggerChanges)
-            {
-                node->dontTriggerChanges = false;
-            }
-            else
-            {
-                flow::ApplyChanges();
-            }
-        }
+        flow::ApplyChanges();
         gui::TouchNode(nodeId);
 
         return true;
@@ -100,8 +85,6 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ed::GetStyle().FlowDuration = 1.0F;
 
     m_HeaderBackground = LoadTexture("resources/images/BlueprintBackground.png");
-
-    flow::SetProgramRootPath(std::filesystem::current_path());
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()
@@ -448,8 +431,9 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
 
 void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
 {
-    ImGui::OpenPopup("Rename Group Box");
-    if (ImGui::BeginPopupModal("Rename Group Box", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    const char* title = renameNode->kind == Node::Kind::GroupBox ? "Rename Group Box" : "Rename Node";
+    ImGui::OpenPopup(title);
+    if (ImGui::BeginPopupModal(title, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
         static std::string nameBackup = renameNode->name;
         if (nameBackup.empty())
@@ -491,6 +475,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
         {
             nameBackup.clear();
             renameNode = nullptr;
+            flow::ApplyChanges();
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
@@ -556,7 +541,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 initThread.join();
             }
             initThread = std::jthread([node, init]() {
-                node->dontTriggerChanges = true;
                 if (init)
                 {
                     node->initializeNode();
@@ -576,7 +560,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         gui::checkShortcuts(globalAction);
     }
 
-    gui::menus::ShowMainMenuBar(globalAction);
+    gui::menus::ShowMainMenuBar(globalAction, initList);
 
     ed::SetCurrentEditor(m_Editor);
 
@@ -586,8 +570,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     static bool createNewNode = false;
     static Pin* newNodeLinkPin = nullptr;
 
-    static float leftPaneWidth = 400.0F;
-    static float rightPaneWidth = 800.0F;
+    static float leftPaneWidth = 350.0F;
+    static float rightPaneWidth = 850.0F;
     gui::widgets::Splitter("Main Splitter", true, 4.0F, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
 
     bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - 4.0F);
@@ -632,7 +616,11 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (!isSimple) // Header Text for Blueprint Nodes
             {
-                if (node->isInitialized())
+                if (!node->enabled) // Node disabled
+                {
+                    builder.Header(ImColor(192, 192, 192)); // Silver
+                }
+                else if (node->isInitialized())
                 {
                     builder.Header(ImColor(128, 255, 128)); // Light green
                 }
@@ -1085,7 +1073,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Inputs: %lu", node->inputPins.size());
             ImGui::Text("Outputs: %lu", node->outputPins.size());
             ImGui::Separator();
-            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "", false, !node->isInitializing() && !node->isDeinitializing()))
+            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "", false, node->enabled && !node->isInitializing() && !node->isDeinitializing()))
             {
                 if (node->isInitialized())
                 {
@@ -1095,15 +1083,34 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 node->isInitializing_ = true;
                 initList.emplace_back(node, true);
             }
-            if (ImGui::MenuItem("Deinitialize", "", false, node->isInitialized() && !node->isInitializing() && !node->isDeinitializing()))
+            if (ImGui::MenuItem("Deinitialize", "", false, node->enabled && node->isInitialized() && !node->isInitializing() && !node->isDeinitializing()))
             {
                 node->isDeinitializing_ = true;
                 initList.emplace_back(node, false);
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem(node->enabled ? "Disable" : "Enable", "", false))
+            {
+                if (node->enabled)
+                {
+                    if (node->isInitialized())
+                    {
+                        node->isDeinitializing_ = true;
+                        initList.emplace_back(node, false);
+                    }
+                    node->enabled = false;
+                }
+                else
+                {
+                    node->enabled = true;
+                }
+                flow::ApplyChanges();
             }
             if (ImGui::MenuItem("Rename"))
             {
                 renameNode = node;
             }
+            ImGui::Separator();
             if (ImGui::MenuItem("Delete", "", false, !node->isInitializing() && !node->isDeinitializing()))
             {
                 ed::DeleteNode(contextNodeId);
@@ -1304,6 +1311,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     std::string title = (flow::HasUnsavedChanges() ? "● " : "")
                         + (flow::GetCurrentFilename().empty() ? "" : flow::GetCurrentFilename() + " - ")
-                        + "NavSoS";
+                        + "INSTINCT";
     SetTitle(title.c_str());
 }

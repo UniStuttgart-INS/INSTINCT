@@ -5,9 +5,13 @@
 
 #pragma once
 
+#include "Nodes/Node.hpp"
+
+#include <deque>
+
 namespace NAV::gui::menus
 {
 /// @brief Show the run menu dropdown
-void ShowRunMenu();
+void ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
 
 } // namespace NAV::gui::menus

@@ -83,10 +83,35 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
             if (const auto progress = gui::GetTouchProgress(node->id); progress != 0.0F)
             {
                 ImGui::GetWindowDrawList()->AddLine(
-                    start + ImVec2(-8, 0),
-                    start + ImVec2(-8, ImGui::GetTextLineHeight()),
+                    start + ImVec2(-18, 0),
+                    start + ImVec2(-18, ImGui::GetTextLineHeight()),
                     IM_COL32(255, 0, 0, 255 - static_cast<int>(255 * progress)), 4.0F);
             }
+
+            // Circle to show init status
+            ImU32 circleCol = 0;
+            if (!node->enabled)
+            {
+                circleCol = IM_COL32(192, 192, 192, 255);
+            }
+            else if (node->isInitializing())
+            {
+                circleCol = IM_COL32(143, 188, 143, 255);
+            }
+            else if (node->isDeinitializing())
+            {
+                circleCol = IM_COL32(240, 128, 128, 255);
+            }
+            else if (node->isInitialized())
+            {
+                circleCol = IM_COL32(0, 255, 0, 255);
+            }
+            else // if (!node->isInitialized())
+            {
+                circleCol = IM_COL32(255, 0, 0, 255);
+            }
+            ImGui::GetWindowDrawList()->AddCircleFilled(start + ImVec2(-8, ImGui::GetTextLineHeight() / 2.0F + 1.0F),
+                                                        5.0F, circleCol);
 
             bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node->id) != selectedNodes.end();
             if (ImGui::Selectable((node->name + "##" + std::to_string(size_t(node->id))).c_str(), &isSelected))

@@ -15,17 +15,25 @@
 
 #include <string>
 #include <vector>
+#include <deque>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 namespace NAV
 {
+class Node;
 class NodeData;
 
 namespace gui
 {
 class NodeEditorApplication;
+
+namespace menus
+{
+void ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
+} // namespace menus
+
 } // namespace gui
 
 class Node
@@ -275,11 +283,11 @@ class Node
     /// Flag if the config window should be shown
     bool hasConfig = false;
 
+    /// Flag if the node is enabled
+    bool enabled = true;
+
     /// Enables the callbacks
     bool callbacksEnabled = false;
-
-    /// Stop the node change to trigger a flow change while (de-)/initializing
-    bool dontTriggerChanges = false;
 
   private:
     /// @brief Abstract Initialization of the Node
@@ -297,6 +305,7 @@ class Node
     bool isDeinitializing_ = false;
 
     friend class gui::NodeEditorApplication;
+    friend void gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
 };
 
 constexpr bool operator==(const Node::Kind& lhs, const Node::Kind& rhs) { return lhs.value == rhs.value; }

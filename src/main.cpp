@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <filesystem>
 
 #include "util/Logger.hpp"
 #include "util/Version.hpp"
@@ -32,7 +33,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
         // User requested the help text of the program
         if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h"))
         {
-            std::cout << "NavSoS " << PROJECT_VERSION_STRING << " - Navigation Software Stuttgart\n\n"
+            std::cout << "INSTINCT " << PROJECT_VERSION_STRING << " - INS Toolkit for Integrated Navigation Concepts and Training\n\n"
                       << NAV::ConfigManager::GetProgramOptions() << '\n';
             return EXIT_SUCCESS;
         }
@@ -40,7 +41,10 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
 
     try
     {
-        Logger logger("logs/navsos.log");
+        Logger logger("logs/instinct.log");
+
+        // Save the root path of the program
+        NAV::flow::SetProgramRootPath(std::filesystem::current_path());
 
         // Program configuration
         NAV::ConfigManager::FetchConfigs(argc, argv);
@@ -104,7 +108,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
         else
         {
             LOG_INFO("Starting the GUI");
-            NAV::gui::NodeEditorApplication app("NavSoS - Navigation Software Stuttgart (Institute of Navigation)", "NavSoS.ini", argc, argv);
+            NAV::gui::NodeEditorApplication app("INSTINCT - INS Toolkit for Integrated Navigation Concepts and Training", "INSTINCT.ini", argc, argv);
 
             if (app.Create())
             {

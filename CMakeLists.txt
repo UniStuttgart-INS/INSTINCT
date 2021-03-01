@@ -6,7 +6,7 @@ extract_project_version()
 
 # Set the project name, version and language
 project(
-  "NavSoS"
+  "INSTINCT"
   VERSION ${PROJECT_VERSION}
   LANGUAGES CXX)
 string(TOLOWER ${CMAKE_PROJECT_NAME} PROJECT_NAME_LOWERCASE)
