@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <filesystem>
 
 #include "util/Logger.hpp"
 #include "util/Version.hpp"
@@ -41,6 +42,9 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
     try
     {
         Logger logger("logs/instinct.log");
+
+        // Save the root path of the program
+        NAV::flow::SetProgramRootPath(std::filesystem::current_path());
 
         // Program configuration
         NAV::ConfigManager::FetchConfigs(argc, argv);

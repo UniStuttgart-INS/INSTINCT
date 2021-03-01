@@ -85,8 +85,6 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ed::GetStyle().FlowDuration = 1.0F;
 
     m_HeaderBackground = LoadTexture("resources/images/BlueprintBackground.png");
-
-    flow::SetProgramRootPath(std::filesystem::current_path());
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()
