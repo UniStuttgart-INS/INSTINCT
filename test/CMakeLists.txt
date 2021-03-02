@@ -23,6 +23,7 @@ endforeach(TMP_PATH)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 add_executable(
   tests
+  util/UartSensors/Ublox/UbloxTypesTests.cpp
   util/InsTimeTests.cpp
   util/InsMechanizationTests.cpp
   util/InsTransformationsTests.cpp
