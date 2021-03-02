@@ -88,13 +88,11 @@ class Transformation : public Node
     void notifyOnInputValueChanged(ax::NodeEditor::LinkId linkId);
 
     /// @brief Checks if the connected Matrix has the specified size
-    /// @param[in] transformationType The type of the Transformation
     /// @param[in] startPin Pin where the matrix is found
-    static bool inputMatrixHasSize(Type transformationType, Pin* startPin);
+    bool inputMatrixHasSize(Pin* startPin);
 
-    /// @brief Set the Matrix Size according to the specified Transformation
-    /// @param[in] transformationType The type of the Transformation
-    void setMatrixSize(Type transformationType);
+    /// @brief Updates the Matrix Size according to the selected Transformation
+    void updateMatrixSize();
 
     /// The matrix object
     Eigen::MatrixXd matrix;

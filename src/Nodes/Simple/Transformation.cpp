@@ -101,7 +101,7 @@ void NAV::Transformation::guiConfig()
             outputPins.at(OutputPortIndex_Matrix).name = "ECEF";
             break;
         }
-        if (!inputMatrixHasSize(selectedTransformation, nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Matrix).id)))
+        if (!inputMatrixHasSize(nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Matrix).id)))
         {
             if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(InputPortIndex_Matrix).id))
             {
@@ -109,7 +109,7 @@ void NAV::Transformation::guiConfig()
             }
         }
 
-        setMatrixSize(selectedTransformation);
+        updateMatrixSize();
 
         auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_Matrix).id);
         for (auto& connectedLink : connectedLinks)
@@ -185,12 +185,12 @@ bool NAV::Transformation::onCreateLink(Pin* startPin, Pin* endPin)
 
     if (startPin && endPin && endPin->id == inputPins.at(InputPortIndex_Matrix).id)
     {
-        if (!inputMatrixHasSize(selectedTransformation, startPin))
+        if (!inputMatrixHasSize(startPin))
         {
             return false;
         }
 
-        setMatrixSize(selectedTransformation);
+        updateMatrixSize();
 
         auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_Matrix).id);
         for (auto& connectedLink : connectedLinks)
@@ -478,7 +478,7 @@ void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkI
     }
 }
 
-bool NAV::Transformation::inputMatrixHasSize(Type transformationType, Pin* startPin)
+bool NAV::Transformation::inputMatrixHasSize(Pin* startPin)
 {
     if (!startPin)
     {
@@ -488,7 +488,7 @@ bool NAV::Transformation::inputMatrixHasSize(Type transformationType, Pin* start
     int64_t rows = 0;
     int64_t cols = 0;
 
-    switch (transformationType)
+    switch (selectedTransformation)
     {
     case Type::ECEF_2_LLArad:
     case Type::ECEF_2_LLAdeg:
@@ -543,9 +543,9 @@ bool NAV::Transformation::inputMatrixHasSize(Type transformationType, Pin* start
     return false;
 }
 
-void NAV::Transformation::setMatrixSize(Type transformationType)
+void NAV::Transformation::updateMatrixSize()
 {
-    switch (transformationType)
+    switch (selectedTransformation)
     {
     case Type::ECEF_2_LLArad:
     case Type::ECEF_2_LLAdeg:
