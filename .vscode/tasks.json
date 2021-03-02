@@ -54,7 +54,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
             // "options": {
             //     "env": {
