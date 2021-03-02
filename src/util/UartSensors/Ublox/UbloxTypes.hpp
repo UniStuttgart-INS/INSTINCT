@@ -508,7 +508,6 @@ struct UbxEsfRaw
 {
     struct UbxEsfRawData
     {
-        UbxEsfRawData(uint32_t data, uint32_t sTtag) : data(data), sTtag(sTtag) {}
         uint32_t data = 0;  ///< data. Same as in UBX-ESF-MEAS (see graphic below)
         uint32_t sTtag = 0; ///< sensor time tag
     };
@@ -865,28 +864,26 @@ struct UbxRxmRawx
 {
     struct UbxRxmRawxData
     {
-        UbxRxmRawxData(double prMes, double cpMes, float doMes, uint8_t gnssId, uint8_t svId, uint8_t reserved2, uint8_t freqId, uint16_t locktime, uint8_t cno, uint8_t prStdev, uint8_t cpStdev, uint8_t doStdev, uint8_t trkStat, uint8_t reserved3)
-            : prMes(prMes), cpMes(cpMes), doMes(doMes), gnssId(gnssId), svId(svId), reserved2(reserved2), freqId(freqId), locktime(locktime), cno(cno), prStdev(prStdev), cpStdev(cpStdev), doStdev(doStdev), trkStat(trkStat), reserved3(reserved3) {}
         /// Pseudorange measurement [m].
         /// GLONASS inter frequency channel delays are compensated with an internal calibration table.
-        double prMes;
+        double prMes = 0.0;
         /// Carrier phase measurement [cycles].
         /// The carrier phase initial ambiguity is initialized using an approximate
         /// value to make the magnitude of the phase close to the pseudorange measurement.
         /// Clock resets are applied to both phase and code measurements in accordance with the RINEX specification.
-        double cpMes;
-        float doMes;                ///< Doppler measurement (positive sign for approaching satellites) [Hz]
-        uint8_t gnssId;             ///< GNSS identifier (see Satellite Numbering for a list of identifiers)
-        uint8_t svId;               ///< Satellite identifier (see Satellite Numbering)
-        uint8_t reserved2;          ///< Reserved
-        uint8_t freqId;             ///< Only used for GLONASS: This is the frequency slot + 7 (range from 0 to 13)
-        uint16_t locktime;          ///< Carrier phase locktime counter [ms] (maximum 64500ms)
-        uint8_t cno;                ///< Carrier-to-noise density ratio (signal strength) [dB-Hz]
+        double cpMes = 0.0;
+        float doMes = 0.0F;         ///< Doppler measurement (positive sign for approaching satellites) [Hz]
+        uint8_t gnssId = 0;         ///< GNSS identifier (see Satellite Numbering for a list of identifiers)
+        uint8_t svId = 0;           ///< Satellite identifier (see Satellite Numbering)
+        uint8_t sigId = 0;          ///< New style signal identifier (see Signal Identifiers).(not supported in protocol versions less than 27)
+        uint8_t freqId = 0;         ///< Only used for GLONASS: This is the frequency slot + 7 (range from 0 to 13)
+        uint16_t locktime = 0;      ///< Carrier phase locktime counter [ms] (maximum 64500ms)
+        uint8_t cno = 0;            ///< Carrier-to-noise density ratio (signal strength) [dB-Hz]
         std::bitset<1 * 8> prStdev; ///< Estimated pseudorange measurement standard deviation [m * 0.01*2^n] (see graphic below)
         std::bitset<1 * 8> cpStdev; ///< Estimated carrier phase measurement standard deviation [cycles * 0.004] (note a raw value of 0x0F indicates the value is invalid) (see graphic below)
         std::bitset<1 * 8> doStdev; ///< Estimated Doppler measurement standard deviation. [Hz * 0.002*2^n] (see graphic below)
         std::bitset<1 * 8> trkStat; ///< Tracking status bitfield (see graphic below)
-        uint8_t reserved3;          ///< Reserved
+        uint8_t reserved2 = 0;      ///< Reserved
     };
 
     /// Measurement time of week in receiverblocal time approximately aligned to the GPS time system.
@@ -901,7 +898,8 @@ struct UbxRxmRawx
     int8_t leapS = 0;
     uint8_t numMeas = 0;                ///< Number of measurements to follow
     std::bitset<1 * 8> recStat;         ///< Receiver tracking status bitfield (see graphic below)
-    std::array<uint8_t, 3> reserved1{}; ///< Reserved
+    uint8_t version = 0;                ///< Message version (0x01 for this version).
+    std::array<uint8_t, 2> reserved1{}; ///< Reserved
     std::vector<UbxRxmRawxData> data;   ///< Repeated block
 };
 

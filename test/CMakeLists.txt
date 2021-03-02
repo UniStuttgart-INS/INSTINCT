@@ -23,6 +23,8 @@ endforeach(TMP_PATH)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 add_executable(
   tests
+  util/UartSensors/Ublox/UbloxTypesTests.cpp
+  util/UartSensors/Ublox/UbloxUtilitiesTests.cpp
   util/InsTimeTests.cpp
   util/InsMechanizationTests.cpp
   util/InsTransformationsTests.cpp
@@ -59,13 +61,6 @@ target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries
 
-# catch_discover_tests(tests)
+catch_discover_tests(tests)
 
-catch_discover_tests(
-  tests
-  REPORTER
-  junit
-  OUTPUT_DIR
-  .
-  OUTPUT_SUFFIX
-  .xml)
+# catch_discover_tests( tests REPORTER junit OUTPUT_DIR . OUTPUT_SUFFIX .xml)
