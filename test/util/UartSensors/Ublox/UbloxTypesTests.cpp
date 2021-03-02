@@ -3,64 +3,6 @@
 #include "util/UartSensors/Ublox/UbloxTypes.hpp"
 namespace ub = NAV::sensors::ublox;
 
-#include <random>
-
-TEST_CASE("[UbloxTypes] UbxEsfRaw::UbxEsfRawData()", "[UbloxTypes]")
-{
-    std::random_device rd;  // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-    std::uniform_int_distribution<uint32_t> distrib(1, 6);
-
-    auto data = distrib(gen);
-    auto sTtag = distrib(gen);
-    ub::UbxEsfRaw::UbxEsfRawData test(data, sTtag);
-    REQUIRE(test.data == data);
-    REQUIRE(test.sTtag == sTtag);
-}
-
-TEST_CASE("[UbloxTypes] UbxRxmRawx::UbxRxmRawxData()", "[UbloxTypes]")
-{
-    std::random_device rd;  // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-    std::uniform_real_distribution<> distrib(-1e2, 1e2);
-
-    std::uniform_int_distribution<uint8_t> distrib2(1, 255);
-
-    double prMes = distrib(gen);
-    double cpMes = distrib(gen);
-    auto doMes = static_cast<float>(distrib(gen));
-    uint8_t gnssId = distrib2(gen);
-    uint8_t svId = distrib2(gen);
-    uint8_t reserved2 = distrib2(gen);
-    uint8_t freqId = distrib2(gen);
-    uint16_t locktime = distrib2(gen);
-    uint8_t cno = distrib2(gen);
-    uint8_t prStdev = distrib2(gen);
-    uint8_t cpStdev = distrib2(gen);
-    uint8_t doStdev = distrib2(gen);
-    uint8_t trkStat = distrib2(gen);
-    uint8_t reserved3 = distrib2(gen);
-
-    ub::UbxRxmRawx::UbxRxmRawxData test(prMes, cpMes, doMes, gnssId, svId,
-                                        reserved2, freqId, locktime, cno, prStdev,
-                                        cpStdev, doStdev, trkStat, reserved3);
-
-    REQUIRE(test.prMes == prMes);
-    REQUIRE(test.cpMes == cpMes);
-    REQUIRE(test.doMes == doMes);
-    REQUIRE(test.gnssId == gnssId);
-    REQUIRE(test.svId == svId);
-    REQUIRE(test.reserved2 == reserved2);
-    REQUIRE(test.freqId == freqId);
-    REQUIRE(test.locktime == locktime);
-    REQUIRE(test.cno == cno);
-    REQUIRE(test.prStdev == prStdev);
-    REQUIRE(test.cpStdev == cpStdev);
-    REQUIRE(test.doStdev == doStdev);
-    REQUIRE(test.trkStat == trkStat);
-    REQUIRE(test.reserved3 == reserved3);
-}
-
 TEST_CASE("[UbloxTypes] getMsgClassFromString", "[UbloxTypes]")
 {
     REQUIRE(ub::getMsgClassFromString("NAV") == ub::UbxClass::UBX_CLASS_NAV);
