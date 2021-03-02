@@ -326,7 +326,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "valgrind --callgrind-out-file=bin/${input:buildType}/callgrind.out --tool=callgrind bin/${input:buildType}/instinct -f config.ini && kcachegrind bin/${input:buildType}/callgrind.out",
+                "valgrind --callgrind-out-file=bin/${input:buildType}/callgrind.out --tool=callgrind bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind bin/${input:buildType}/callgrind.out",
             ],
             "dependsOn": [
                 "MAIN: Build project",
@@ -343,6 +343,9 @@
                 "bin/${input:buildType}/instinct",
                 "-f",
                 "config.ini",
+                "--nogui",
+                "-l",
+                "flow/Default.flow",
             ],
             "dependsOn": [
                 "MAIN: Build project",
