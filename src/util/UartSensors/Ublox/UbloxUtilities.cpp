@@ -91,7 +91,10 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, b
                 }
                 for (int i = 0; i < (obs->payloadLength - 4) / 8; i++)
                 {
-                    std::get<UbxEsfRaw>(obs->data).data.emplace_back(obs->raw.extractUint32(), obs->raw.extractUint32());
+                    NAV::sensors::ublox::UbxEsfRaw::UbxEsfRawData ubxEsfRawData;
+                    ubxEsfRawData.data = obs->raw.extractUint32();
+                    ubxEsfRawData.sTtag = obs->raw.extractUint32();
+                    std::get<UbxEsfRaw>(obs->data).data.push_back(ubxEsfRawData);
                 }
 
                 // TODO: - UBX_ESF_RAW: Calculate the insTime somehow from the sensor time tag (sTtag)
@@ -303,27 +306,29 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, b
                 std::get<UbxRxmRawx>(obs->data).leapS = obs->raw.extractInt8();
                 std::get<UbxRxmRawx>(obs->data).numMeas = obs->raw.extractUint8();
                 std::get<UbxRxmRawx>(obs->data).recStat = obs->raw.extractUint8();
+                std::get<UbxRxmRawx>(obs->data).version = obs->raw.extractUint8();
                 for (auto& reserved1 : std::get<UbxRxmRawx>(obs->data).reserved1)
                 {
                     reserved1 = obs->raw.extractUint8();
                 }
                 for (size_t i = 0; i < std::get<UbxRxmRawx>(obs->data).numMeas; i++)
                 {
-                    std::get<UbxRxmRawx>(obs->data).data.emplace_back(obs->raw.extractDouble(), // prMes
-                                                                      obs->raw.extractDouble(), // cpMes
-                                                                      obs->raw.extractFloat(),  // doMes
-                                                                      obs->raw.extractUint8(),  // gnssId
-                                                                      obs->raw.extractUint8(),  // svId
-                                                                      obs->raw.extractUint8(),  // reserved2
-                                                                      obs->raw.extractUint8(),  // freqId
-                                                                      obs->raw.extractUint16(), // locktime
-                                                                      obs->raw.extractUint8(),  // cno
-                                                                      obs->raw.extractUint8(),  // prStdev
-                                                                      obs->raw.extractUint8(),  // cpStdev
-                                                                      obs->raw.extractUint8(),  // doStdev
-                                                                      obs->raw.extractUint8(),  // trkStat
-                                                                      obs->raw.extractUint8()   // reserved3
-                    );
+                    NAV::sensors::ublox::UbxRxmRawx::UbxRxmRawxData ubxRxmRawxData;
+                    ubxRxmRawxData.prMes = obs->raw.extractDouble();
+                    ubxRxmRawxData.cpMes = obs->raw.extractDouble();
+                    ubxRxmRawxData.doMes = obs->raw.extractFloat();
+                    ubxRxmRawxData.gnssId = obs->raw.extractUint8();
+                    ubxRxmRawxData.svId = obs->raw.extractUint8();
+                    ubxRxmRawxData.sigId = obs->raw.extractUint8();
+                    ubxRxmRawxData.freqId = obs->raw.extractUint8();
+                    ubxRxmRawxData.locktime = obs->raw.extractUint16();
+                    ubxRxmRawxData.cno = obs->raw.extractUint8();
+                    ubxRxmRawxData.prStdev = obs->raw.extractUint8();
+                    ubxRxmRawxData.cpStdev = obs->raw.extractUint8();
+                    ubxRxmRawxData.doStdev = obs->raw.extractUint8();
+                    ubxRxmRawxData.trkStat = obs->raw.extractUint8();
+                    ubxRxmRawxData.reserved2 = obs->raw.extractUint8();
+                    std::get<UbxRxmRawx>(obs->data).data.push_back(ubxRxmRawxData);
                 }
 
                 obs->insTime = InsTime(0,
