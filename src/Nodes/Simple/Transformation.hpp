@@ -90,7 +90,7 @@ class Transformation : public Node
     /// @brief Checks if the connected Matrix has the specified size
     /// @param[in] transformationType The type of the Transformation
     /// @param[in] startPin Pin where the matrix is found
-    bool inputMatrixHasSize(Type transformationType, Pin* startPin);
+    static bool inputMatrixHasSize(Type transformationType, Pin* startPin);
 
     /// @brief Set the Matrix Size according to the specified Transformation
     /// @param[in] transformationType The type of the Transformation
