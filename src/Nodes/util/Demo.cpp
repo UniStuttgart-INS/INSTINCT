@@ -476,8 +476,8 @@ void NAV::Demo::readSensorDataThread(void* userData)
                            static_cast<uint16_t>(t->tm_min),
                            static_cast<long double>(t->tm_sec));
 
-    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::default_random_engine generator(static_cast<uint64_t>(seed));
+    std::random_device rd;
+    std::default_random_engine generator(rd());
 
     std::uniform_real_distribution<double> distribution(-9.0, 9.0);
     obs->accelUncompXYZ = Eigen::Vector3d(distribution(generator), distribution(generator), distribution(generator));

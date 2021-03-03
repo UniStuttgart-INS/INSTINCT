@@ -19,7 +19,8 @@ namespace ed = ax::NodeEditor;
 std::vector<NAV::Node*> m_nodes;
 std::vector<NAV::Link> m_links;
 size_t m_NextId = 1;
-std::jthread nodeInitThread;
+bool nodeInitThread_stopRequested = false;
+std::thread nodeInitThread;
 
 /* -------------------------------------------------------------------------------------------------------- */
 /*                                       Private Function Declarations                                      */
@@ -144,7 +145,8 @@ bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
 {
     if (nodeInitThread.joinable())
     {
-        nodeInitThread.request_stop();
+        // nodeInitThread.request_stop();
+        nodeInitThread_stopRequested = true;
         nodeInitThread.join();
     }
 
@@ -198,7 +200,8 @@ void NAV::NodeManager::DeleteAllNodes()
 {
     if (nodeInitThread.joinable())
     {
-        nodeInitThread.request_stop();
+        // nodeInitThread.request_stop();
+        nodeInitThread_stopRequested = true;
         nodeInitThread.join();
     }
 
@@ -813,17 +816,21 @@ void NAV::NodeManager::InitializeAllNodesAsync()
     if (nodeInitThread.joinable())
     {
         LOG_DEBUG("Joining old node Init Thread");
-        nodeInitThread.request_stop();
+        // nodeInitThread.request_stop();
+        nodeInitThread_stopRequested = true;
         nodeInitThread.join();
     }
 
-    nodeInitThread = std::jthread([](const std::stop_token& st) {
+    // nodeInitThread = std::jthread([](const std::stop_token& st) {
+    nodeInitThread_stopRequested = false;
+    nodeInitThread = std::thread([]() {
         // If this thread is running, and a node is added, the node vector will be moved and all pointers are invalid
         // That's why a for-range does not work here and we have to access the elements via at()
         size_t amountOfNodes = m_nodes.size();
         for (size_t i = 0; i < amountOfNodes && i < m_nodes.size(); i++)
         {
-            if (st.stop_requested())
+            // if (st.stop_requested())
+            if (nodeInitThread_stopRequested)
             {
                 break;
             }
@@ -840,7 +847,8 @@ void NAV::NodeManager::Stop()
     if (nodeInitThread.joinable())
     {
         LOG_DEBUG("Joining node Init Thread");
-        nodeInitThread.request_stop();
+        // nodeInitThread.request_stop();
+        nodeInitThread_stopRequested = true;
         nodeInitThread.join();
     }
 }

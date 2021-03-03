@@ -2,6 +2,8 @@
 
 #include <imgui_internal.h>
 
+#include <cmath>
+
 void NAV::gui::widgets::Spinner(const char* label, const ImU32& color, float radius, float thickness)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();

@@ -537,10 +537,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             currentInitNodeId = size_t(node->id);
             if (initThread.joinable())
             {
-                initThread.request_stop();
+                // initThread.request_stop();
+                initThread_stopRequested = true;
                 initThread.join();
             }
-            initThread = std::jthread([node, init]() {
+            // initThread = std::jthread([node, init]() {
+            initThread = std::thread([node, init]() {
                 if (init)
                 {
                     node->initializeNode();
