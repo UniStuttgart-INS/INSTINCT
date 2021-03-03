@@ -569,9 +569,9 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "varying vec4 Frag_Color;\n"
         "void main()\n"
         "{\n"
-        "    vec4 col = Frag_Color * texture2D(Texture, Frag_UV.st);\n"
+        "    vec4 col = Frag_Color * texture(Texture, Frag_UV.st);\n"
         "    col.xyz *= col.w;"
-        "    gl_FragColor = col;\n"
+        "    Out_Color = col;\n"
         "}\n";
 
     const GLchar* fragment_shader_glsl_130 =
@@ -581,9 +581,9 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "out vec4 Out_Color;\n"
         "void main()\n"
         "{\n"
-        "    vec4 col = Frag_Color * texture2D(Texture, Frag_UV.st);\n"
+        "    vec4 col = Frag_Color * texture(Texture, Frag_UV.st);\n"
         "    col.xyz *= col.w;"
-        "    gl_FragColor = col;\n"
+        "    Out_Color = col;\n"
         "}\n";
 
     const GLchar* fragment_shader_glsl_300_es =
@@ -594,9 +594,9 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "layout (location = 0) out vec4 Out_Color;\n"
         "void main()\n"
         "{\n"
-        "    vec4 col = Frag_Color * texture2D(Texture, Frag_UV.st);\n"
+        "    vec4 col = Frag_Color * texture(Texture, Frag_UV.st);\n"
         "    col.xyz *= col.w;"
-        "    gl_FragColor = col;\n"
+        "    Out_Color = col;\n"
         "}\n";
 
     const GLchar* fragment_shader_glsl_410_core =
@@ -606,9 +606,9 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "layout (location = 0) out vec4 Out_Color;\n"
         "void main()\n"
         "{\n"
-        "    vec4 col = Frag_Color * texture2D(Texture, Frag_UV.st);\n"
+        "    vec4 col = Frag_Color * texture(Texture, Frag_UV.st);\n"
         "    col.xyz *= col.w;"
-        "    gl_FragColor = col;\n"
+        "    Out_Color = col;\n"
         "}\n";
 
     // Select shaders matching our GLSL versions

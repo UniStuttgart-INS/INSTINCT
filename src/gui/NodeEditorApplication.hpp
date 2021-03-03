@@ -66,7 +66,8 @@ class NodeEditorApplication : public Application
 
     GlobalActions globalAction = GlobalActions::None;
 
-    std::jthread initThread;
+    bool initThread_stopRequested = false;
+    std::thread initThread;
     size_t currentInitNodeId = 0;
     /// List of Node* & flag (init=true, deinit=false)
     std::deque<std::pair<Node*, bool>> initList;
