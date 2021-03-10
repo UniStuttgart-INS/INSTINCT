@@ -44,14 +44,9 @@ std::string NAV::ARMA::category()
 
 void NAV::ARMA::guiConfig()
 {
-    /*if (ImGui::Combo("combo 2 (one-liner)", &orderSelection, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0"))
-    {
-        flow::ApplyChanges();
-    }*/
-
+    ImGui::Checkbox("calculate ACF", &ACF_CHECK);
+    ImGui::Checkbox("calculate PACF", &PACF_CHECK);
     ImGui::InputInt("Deque size", &deque_size);
-    //ImGui::SameLine();
-    ImGui::InputInt("Deque overlap", &refresh_overlap);
     ImGui::SameLine();
 }
 
@@ -79,7 +74,19 @@ void NAV::ARMA::restore(json const& j)
 bool NAV::ARMA::initialize()
 {
     LOG_TRACE("{}: called", nameId());
+    // acf
+    acf = Eigen::VectorXd::Zero(deque_size);
 
+    // pacf
+    pacf = Eigen::VectorXd::Zero(deque_size - 1);
+    e_hat_initial = Eigen::VectorXd::Zero(deque_size);
+
+    // arma
+    A = Eigen::MatrixXd::Zero(deque_size - std::max(p, q), p + q);
+    y = Eigen::MatrixXd::Zero(deque_size, 3);
+    y_hat = Eigen::MatrixXd::Zero(deque_size, 3);
+    x = Eigen::VectorXd::Zero(p + q);
+    e_hat = Eigen::VectorXd::Zero(deque_size);
     return true;
 }
 
@@ -89,95 +96,99 @@ void NAV::ARMA::deinitialize()
 }
 
 /// @brief calculate autocorrelation function (ACF)
-/// @param[in] x vector of data
-Eigen::VectorXd acf_function(const Eigen::VectorXd& x)
+/// @param[in] y vector of data
+void acf_function(const Eigen::VectorXd& y, bool& ACF_CHECK, int p, Eigen::VectorXd& acf)
 {
     int tt = 0; // acf loop iterator
     int tau = 0;
+    int acf_size = static_cast<int>(y.size());
 
-    double cov = 0.0; // variable declaration
+    double cov = 0.0;
     double var = 0.0;
+    double mean = y.mean();
 
-    Eigen::VectorXd acf(x.size());
-
-    for (tt = 0; tt < x.size(); tt++)
+    for (tt = 0; tt < acf_size; tt++)
     {
-        var += (x(tt) - x.mean()) * (x(tt) - x.mean()); // sum of variance
+        var += (y(tt) - mean) * (y(tt) - mean); // sum of variance
     }
-
-    for (tau = 0; tau < x.size(); tau++)
+    if (ACF_CHECK)
+    { //box checker
+        acf_size = p + 2;
+    }
+    for (tau = 0; tau < acf_size; tau++)
     { // acf: correlation to delta_tau
 
-        for (tt = 0; tt < x.size() - tau; tt++)
+        for (tt = 0; tt < acf_size - tau; tt++)
         {
-            cov += (x(tt) - x.mean()) * (x(tt + tau) - x.mean()); // 'cov' sum
+            cov += (y(tt) - mean) * (y(tt + tau) - mean); // 'cov' sum
         }
-        acf(tau) = cov / var; // calculate sum/variance
-        cov = 0;              // reset 'covar' for next sum
+        acf(tau) = cov / var;
+        cov = 0; // reset 'cov' for next sum
     }
-    return acf;
 }
 
 /// @brief calculate partial autocorrelation function (PACF)
-/// @param[in] x vector of data @param[in] acf vector of acf @param[in] p order of AR process
-/// @param[out] pacf_output joined vector of pacf values and initial e_hat for Hannan-Rissanen
-Eigen::VectorXd pacf_function(const Eigen::VectorXd& x, Eigen::VectorXd& acf, int p)
+/// @param[in] y vector of data @param[in] acf vector of acf @param[in] p order of AR process
+/// @param[out] pacf vector of pacf values @param[out] initial_e_hat vector of initial ê for Hannan-Rissanen
+void pacf_function(const Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, bool& PACF_CHECK, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial)
 {
+    Eigen::VectorXd phi_tau;
+    Eigen::VectorXd phi_tau_i;
+    Eigen::VectorXd phi_initial;
+
+    phi_tau = Eigen::VectorXd::Zero(y.size());
+    phi_tau_i = Eigen::VectorXd::Zero(y.size());
+    phi_initial = Eigen::VectorXd::Zero(p + 1);
+
     int ii = 0;
+    int pacf_size = static_cast<int>(y.size());
 
     double sum1 = 0.0;
     double sum2 = 0.0;
     double sum3 = 0.0;
 
-    Eigen::VectorXd pacf(x.size() - 1);
-    Eigen::VectorXd e_hat_initial(x.size());
-    Eigen::VectorXd phi_tau(x.size());
-    Eigen::VectorXd phi_tau_i(x.size());
-    Eigen::VectorXd phi_initial(p + 1);
-    Eigen::VectorXd pacf_output(x.size() * 2 - 1); // size of vectors pacf + e_hat_initial
-
     // PACF while E(eta_t) = 0
-
+    // first iteration step
     pacf(0) = acf(1); // initial value phi_1_1 = p(1)
     phi_tau_i(0) = pacf(0);
     sum1 = acf(1) * acf(1);
     sum2 = acf(1) * acf(1);
 
-    e_hat_initial(0) = 0; // first iteration step
+    e_hat_initial(0) = 0;
 
-    for (int tau = 2; tau < x.size(); tau++)
+    for (int tau = 2; tau < pacf_size; tau++)
     {
+        // Hannan-Rissanen initial phi
         if (tau == p + 2)
-        { // Hannan Rissanen initial phi
-            for (int m = 0; m < p + 1; m++)
-            {
-                phi_initial(m) = phi_tau_i(m);
-            }
-        }
-
-        pacf(tau - 1) = (acf(tau) - sum1) / (1 - sum2);
-        sum1 = 0;
-        sum2 = 0;
-        phi_tau = Eigen::VectorXd::Zero(x.size() - 1);
-
-        for (ii = 0; ii < tau - 1; ii++)
         {
-            phi_tau(ii) = (phi_tau_i(ii) - pacf(tau - 1) * phi_tau_i(tau - ii - 2));
-            sum1 += phi_tau(ii) * acf(tau - ii); // top sum
-            sum2 += phi_tau(ii) * acf(ii + 1);   // bottom sum
+            phi_initial = phi_tau_i;
         }
-        phi_tau_i = phi_tau; // last element of phi_tau_i -> phi_tau_tau
-        phi_tau_i(tau - 1) = pacf(tau - 1);
-        sum1 += pacf(tau - 1) * acf(1);
-        sum2 += pacf(tau - 1) * acf(tau);
+        if (tau < p + 2 || PACF_CHECK) // skip this for tau > p + 2 if PACF CHECK is false
+        {
+            pacf(tau - 1) = (acf(tau) - sum1) / (1 - sum2);
+            sum1 = 0;
+            sum2 = 0;
 
+            for (ii = 0; ii < tau - 1; ii++)
+            {
+                phi_tau(ii) = (phi_tau_i(ii) - pacf(tau - 1) * phi_tau_i(tau - ii - 2));
+                sum1 += phi_tau(ii) * acf(tau - ii); // top sum
+                sum2 += phi_tau(ii) * acf(ii + 1);   // bottom sum
+            }
+            phi_tau_i = phi_tau; // last element of phi_tau_i -> phi_tau_tau
+            phi_tau_i(tau - 1) = pacf(tau - 1);
+            sum1 += pacf(tau - 1) * acf(1);
+            sum2 += pacf(tau - 1) * acf(tau);
+        }
+
+        // Hannan-Rissanen initial e_hat
         if (tau > p + 1)
         {
             for (int m = 0; m < p + 1; m++)
             {
-                sum3 += x(tau - m - 2) * phi_initial(m);
+                sum3 += y(tau - m - 2) * phi_initial(m);
             }
-            e_hat_initial(tau - 1) = x(tau - 1) - sum3; // calculate initial e_hat for hannan-rissanen
+            e_hat_initial(tau - 1) = y(tau - 1) - sum3;
             sum3 = 0;
         }
         else
@@ -188,118 +199,92 @@ Eigen::VectorXd pacf_function(const Eigen::VectorXd& x, Eigen::VectorXd& acf, in
 
     for (int m = 0; m < p + 1; m++)
     { // e_hat at Y_n
-        sum3 += x(x.size() - m - 2) * phi_initial(m);
+        sum3 += y(pacf_size - m - 2) * phi_initial(m);
     }
-    e_hat_initial(x.size() - 1) = x(x.size() - 1) - sum3;
-
-    pacf_output << pacf, e_hat_initial;
-    return pacf_output;
+    e_hat_initial(pacf_size - 1) = y(pacf_size - 1) - sum3;
 }
 
 /// @brief fill A matrix for Hannan-Rissanen
-/// @param[in] x vector of data @param[in] e_hat_initial for least squares @param[in] p order of AR process @param[in] q order of MA process
-Eigen::MatrixXd matrix_function(const Eigen::VectorXd& x, const Eigen::VectorXd& e_hat_initial, int p, int q)
+/// @param[in] y vector of data @param[in] e_hat_initial for least squares @param[in] p order of AR process @param[in] q order of MA process
+void matrix_function(const Eigen::VectorXd& y, const Eigen::VectorXd& e_hat_initial, int p, int q, Eigen::MatrixXd& A)
 {
-    Eigen::MatrixXd A(static_cast<int>(x.size()) - std::max(p, q), p + q); // conversion long to int?
-    for (int t_HR = p; t_HR < x.size(); t_HR++)
-    { // fill A
+    for (int t_HR = p; t_HR < y.size(); t_HR++)
+    {
         for (int i_HR = 0; i_HR < p; i_HR++)
         {
-            A(t_HR - p, i_HR) = x(t_HR - i_HR - 1); // AR
+            A(t_HR - p, i_HR) = y(t_HR - i_HR - 1); // AR
         }
         for (int i_HR = p; i_HR < p + q; i_HR++)
         {
             A(t_HR - p, i_HR) = -e_hat_initial(t_HR - i_HR + p - 1); // MA
         }
     }
-    return A;
 }
 
 void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    buffer.push_back(std::static_pointer_cast<ImuObs>(nodeData));
-
+    auto obs = std::static_pointer_cast<ImuObs>(nodeData);
+    auto newImuObs = std::make_shared<ImuObs>(obs->imuPos); // nicht in jeder schleife?
+    buffer.push_back(obs);
     if (static_cast<int>(buffer.size()) == deque_size)
     {
-        Eigen::MatrixXd y_hat(buffer.size(), 3);
-        Eigen::MatrixXd x(buffer.size(), 3);
-
-        Eigen::VectorXd x_vec(p + q);
-        Eigen::VectorXd e_hat(buffer.size());
         k = 0;
         for (auto& obs : buffer)
         {
-            const Eigen::Vector3d& acc = obs->accelUncompXYZ.value();
-
-            x(k, 0) = acc(0);
-            x(k, 1) = acc(1);
-            x(k, 2) = acc(2);
+            const Eigen::Vector3d acc = obs->accelUncompXYZ.value();
+            y(k, 0) = acc(0);
+            y(k, 1) = acc(1);
+            y(k, 2) = acc(2);
             k++;
         }
-
-        for (int obs_num = 0; obs_num < 3; obs_num++)
+        for (int obs_num = 0; obs_num < 3; obs_num++) // number of observations (e.g. acceleration (x,y,z))
         {
             // calculate acf
-            Eigen::VectorXd acf = acf_function(x.col(obs_num));
+            acf_function(y.col(obs_num), ACF_CHECK, p, acf);
 
             // calculate pacf & initial ê
-            Eigen::VectorXd pacf_result = pacf_function(x.col(obs_num), acf, p);
-            Eigen::VectorXd pacf = pacf_result.head(x.rows() - 1);
-            Eigen::VectorXd e_hat_initial = pacf_result.tail(x.rows());
+            pacf_function(y.col(obs_num), acf, p, PACF_CHECK, pacf, e_hat_initial);
 
             // arma process
             double sum_HR = 0.0;
 
             for (int it = 0; it < 2; it++)
             {
-                Eigen::MatrixXd A = matrix_function(x.col(obs_num), e_hat_initial, p, q);
+                matrix_function(y.col(obs_num), e_hat_initial, p, q, A);
 
-                x_vec = (A.transpose() * A).ldlt().solve(A.transpose() * x.col(obs_num).tail(x.rows() - p)); // t > max(p, q)
-                //
-                e_hat = e_hat_initial;
+                x = (A.transpose() * A).ldlt().solve(A.transpose() * y.col(obs_num).tail(deque_size - p)); // t > max(p, q)
+                e_hat = e_hat_initial;                                                                     // e_hat copy
 
                 for (int i_HR = 0; i_HR < p; i_HR++)
                 {                            // calculate e_hat for new variables
                     e_hat_initial(i_HR) = 0; // t <= max(p,q) = 0
-                    y_hat(i_HR, obs_num) = x(i_HR, obs_num);
+                    y_hat(i_HR, obs_num) = y(i_HR, obs_num);
                 }
-                for (int t_HR = p; t_HR < x.rows(); t_HR++)
+                for (int t_HR = p; t_HR < deque_size; t_HR++)
                 { // AR
                     for (int i_HR = 0; i_HR < p; i_HR++)
                     {
-                        sum_HR += x_vec(i_HR) * x(t_HR - i_HR - 1, obs_num);
+                        sum_HR += x(i_HR) * y(t_HR - i_HR - 1, obs_num);
                     }
                     for (int i_HR = p; i_HR < p + q; i_HR++)
                     { // MA
-                        sum_HR -= x_vec(i_HR) * e_hat(t_HR - i_HR + p - 1);
+                        sum_HR -= x(i_HR) * e_hat(t_HR - i_HR + p - 1);
                     }
-                    e_hat_initial(t_HR) = x(t_HR, obs_num) - sum_HR;
+                    e_hat_initial(t_HR) = y(t_HR, obs_num) - sum_HR;
                     y_hat(t_HR, obs_num) = sum_HR;
                     sum_HR = 0;
                 }
             }
         }
-        // deque iterator
-        auto iter = buffer.begin();
-        std::advance(iter, overlap);
-        k = 0;
-        for (; iter != buffer.end(); iter++)
-        {
-            auto obs = *iter;
-            LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
-
-            auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
-
-            newImuObs->insTime = obs->insTime;
-            newImuObs->accelUncompXYZ = Eigen::Vector3d(y_hat(k, 0), y_hat(k, 1), y_hat(k, 2));
-            k++;
-            invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
-        }
-
-        if (overlap == 0)
-        {
-            overlap = refresh_overlap;
-        }
-        buffer.erase(buffer.begin(), buffer.end() - overlap); //erase part of already processed data
+        LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
+        newImuObs->insTime = obs->insTime.value();
+        newImuObs->accelUncompXYZ = Eigen::Vector3d(y_hat(deque_size - 1, 0), y_hat(deque_size - 1, 1), y_hat(deque_size - 1, 2));
+        invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
+        buffer.pop_front(); //delete first element of deque
+    }
+    else
+    {
+        newImuObs = obs;
+        invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
     }
 }

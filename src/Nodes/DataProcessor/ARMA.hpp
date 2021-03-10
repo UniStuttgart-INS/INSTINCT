@@ -77,8 +77,25 @@ class ARMA : public Node
 
     // buffer initialization
     int deque_size = 1000;
-    int overlap = 0;
-    int refresh_overlap = 10;
+
+    //acf/pacf check initialization
+    bool ACF_CHECK = false;
+    bool PACF_CHECK = false;
+
+    // used vectors
+    // acf
+    Eigen::VectorXd acf;
+
+    // pacf
+    Eigen::VectorXd pacf;
+    Eigen::VectorXd e_hat_initial;
+
+    // arma
+    Eigen::MatrixXd A;
+    Eigen::MatrixXd y_hat;
+    Eigen::MatrixXd y;
+    Eigen::VectorXd x;
+    Eigen::VectorXd e_hat;
 };
 
 } // namespace NAV
