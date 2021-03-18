@@ -396,7 +396,7 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     const Eigen::Vector3d position_e__t1 = posVelAtt__t1->position_ecef();
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
-    const Eigen::Vector3d gravity_n__t1(0, 0, gravity::gravityMagnitude_Gleason(posVelAtt__t1->latitude()));
+    const Eigen::Vector3d gravity_n__t1(0, 0, gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;
 

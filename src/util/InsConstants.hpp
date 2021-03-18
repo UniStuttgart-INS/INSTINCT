@@ -32,6 +32,8 @@ constexpr double WGS84_f = 1.0 / 298.257223563;
 constexpr double WGS84_b = WGS84_a - WGS84_f * WGS84_a;
 /// Square of the first eccentricity of the ellipsoid (World Geodetic System 1984)
 constexpr double WGS84_e_squared = 2 * WGS84_f - WGS84_f * WGS84_f;
+/// Gravitational constant (mass of Earth’s atmosphere included) [m³/s²] (World Geodetic System 1984)
+constexpr double WGS84_MU = 3.986004418e14;
 
 /// Semi-major axis = equatorial radius (Geodetic Reference System 1980)
 constexpr double GRS80_a = 6378137;

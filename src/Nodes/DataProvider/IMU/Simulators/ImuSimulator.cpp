@@ -242,11 +242,13 @@ std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
         auto quat_bn = Eigen::Quaterniond::Identity();
         auto quat_ne = Eigen::Quaterniond::Identity();
         double latitude = 0;
+        double altitude = 0;
         if (stateData)
         {
             quat_bn = stateData->quaternion_bn();
             quat_ne = stateData->quaternion_ne();
             latitude = stateData->latitude();
+            altitude = stateData->altitude();
         }
 
         auto obs = std::make_shared<ImuObs>(imuPos);
@@ -254,7 +256,7 @@ std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
         obs->insTime = startTime + std::chrono::nanoseconds(obs->timeSinceStartup.value());
 
         /// g_n Gravity vector in [m/s^2], in navigation coordinates
-        Eigen::Vector3d gravity_n{ 0, 0, gravity::gravityMagnitude_Gleason(latitude) };
+        Eigen::Vector3d gravity_n{ 0, 0, gravity::gravityMagnitude_SomiglianaAltitude(latitude, altitude) };
 
         /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
         Eigen::Vector3d angularVelocity_ie_n = quat_ne * InsConst::angularVelocity_ie_e;

@@ -127,7 +127,7 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
     double mountingAngleY = 180;
     double mountingAngleZ = 0;
 
-    auto gravity = gravity::gravityMagnitude_Gleason(latitude);
+    auto gravity = gravity::gravityMagnitude_SomiglianaAltitude(latitude, altitude);
     Eigen::Vector3d gravity_n{ 0, 0, gravity };
     Eigen::Vector3d gravity_e = trafo::quat_en(latitude, longitude) * gravity_n;
 
@@ -188,7 +188,7 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
     double pitch = 0;
     double yaw = trafo::deg2rad(45);
 
-    auto gravity = gravity::gravityMagnitude_Gleason(latitude);
+    auto gravity = gravity::gravityMagnitude_SomiglianaAltitude(latitude, altitude);
     Eigen::Vector3d gravity_n{ 0, 0, gravity };
 
     /// a_p Acceleration in [m/s^2], in navigation coordinates
