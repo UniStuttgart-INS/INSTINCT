@@ -7,6 +7,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 #include <Eigen/Dense>
 #include <iterator>
+#include <boost/math/distributions/students_t.hpp>
 
 NAV::ARMA::ARMA()
 {
@@ -44,10 +45,45 @@ std::string NAV::ARMA::category()
 
 void NAV::ARMA::guiConfig()
 {
-    ImGui::Checkbox("calculate ACF", &ACF_CHECK);
-    ImGui::Checkbox("calculate PACF", &PACF_CHECK);
-    ImGui::InputInt("Deque size", &deque_size);
-    ImGui::SameLine();
+    if (ImGui::TreeNode("Initialize Parameters"))
+    {
+        ImGui::Checkbox("Initialize", &INITIALIZE);
+        ImGui::InputInt("Deque size", &deque_size); // int input for initialization size
+        ImGui::InputInt("p", &p);
+        ImGui::InputInt("q", &q);
+        /*ImGui::Checkbox("process ACF", &ACF_CHECK); // checkboxes for ACF, PACF
+        ImGui::SameLine();
+        ImGui::Checkbox("process PACF", &PACF_CHECK);*/
+        static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+        if (ImGui::BeginTable("##table1", 3, flags))
+        {
+            ImGui::TableSetupColumn("ARMA Parameter");
+            ImGui::TableSetupColumn("estimate");
+            ImGui::TableSetupColumn("p");
+            ImGui::TableHeadersRow();
+
+            for (int table_row = 0; table_row < p + q; table_row++)
+            {
+                ImGui::TableNextRow();
+                //ImGui::TableSetColumnIndex(table_col);
+                ImGui::TableNextColumn();
+                if (table_row < p)
+                {
+                    ImGui::Text("phi %d", table_row + 1);
+                }
+                else
+                {
+                    ImGui::Text("theta %d", table_row - p + 1);
+                }
+                ImGui::TableNextColumn();
+                ImGui::Text("%f", x(table_row));
+                ImGui::TableNextColumn();
+                ImGui::Text("%f", emp_sig(table_row));
+            }
+            ImGui::EndTable();
+        }
+        ImGui::TreePop();
+    }
 }
 
 [[nodiscard]] json NAV::ARMA::save() const
@@ -74,19 +110,25 @@ void NAV::ARMA::restore(json const& j)
 bool NAV::ARMA::initialize()
 {
     LOG_TRACE("{}: called", nameId());
-    // acf
-    acf = Eigen::VectorXd::Zero(deque_size);
 
-    // pacf
-    pacf = Eigen::VectorXd::Zero(deque_size - 1);
-    e_hat_initial = Eigen::VectorXd::Zero(deque_size);
+    buffer.clear();
 
-    // arma
-    A = Eigen::MatrixXd::Zero(deque_size - std::max(p, q), p + q);
-    y = Eigen::MatrixXd::Zero(deque_size, 3);
-    y_hat = Eigen::MatrixXd::Zero(deque_size, 3);
-    x = Eigen::VectorXd::Zero(p + q);
-    e_hat = Eigen::VectorXd::Zero(deque_size);
+    // INIT_ARMA
+    p_mem = Eigen::VectorXi::Constant(num_obs, p); // init p, q
+    q_mem = Eigen::VectorXi::Constant(num_obs, q);
+    y = Eigen::VectorXd::Zero(deque_size);  // trajectory container
+    x = Eigen::VectorXd::Zero(p + q);       // ARMA slope parameters
+    emp_sig = Eigen::VectorXd::Zero(p + q); // empirical significance (p-Value)
+
+    // CALC_ARMA
+    m = static_cast<int>(std::max(p, q));
+    y_arma = Eigen::VectorXd::Zero(m + 1);
+    y_hat_arma = Eigen::VectorXd::Zero(num_obs);
+    e_arma = Eigen::VectorXd::Zero(num_obs);
+
+    e.clear();
+    e_size = 0;
+
     return true;
 }
 
@@ -97,8 +139,10 @@ void NAV::ARMA::deinitialize()
 
 /// @brief calculate autocorrelation function (ACF)
 /// @param[in] y vector of data
-void acf_function(const Eigen::VectorXd& y, bool& ACF_CHECK, int p, Eigen::VectorXd& acf)
+void acf_function(const Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
 {
+    bool ACF_CHECK = false;
+
     int tt = 0; // acf loop iterator
     int tau = 0;
     int acf_size = static_cast<int>(y.size());
@@ -111,8 +155,8 @@ void acf_function(const Eigen::VectorXd& y, bool& ACF_CHECK, int p, Eigen::Vecto
     {
         var += (y(tt) - mean) * (y(tt) - mean); // sum of variance
     }
-    if (ACF_CHECK)
-    { //box checker
+    if (ACF_CHECK) // skip 'cause of runtime
+    {
         acf_size = p + 2;
     }
     for (tau = 0; tau < acf_size; tau++)
@@ -130,18 +174,16 @@ void acf_function(const Eigen::VectorXd& y, bool& ACF_CHECK, int p, Eigen::Vecto
 /// @brief calculate partial autocorrelation function (PACF)
 /// @param[in] y vector of data @param[in] acf vector of acf @param[in] p order of AR process
 /// @param[out] pacf vector of pacf values @param[out] initial_e_hat vector of initial ê for Hannan-Rissanen
-void pacf_function(const Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, bool& PACF_CHECK, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial)
+void pacf_function(const Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial)
 {
-    Eigen::VectorXd phi_tau;
-    Eigen::VectorXd phi_tau_i;
-    Eigen::VectorXd phi_initial;
+    bool PACF_CHECK = false;
+    int pacf_size = static_cast<int>(y.size());
 
-    phi_tau = Eigen::VectorXd::Zero(y.size());
-    phi_tau_i = Eigen::VectorXd::Zero(y.size());
-    phi_initial = Eigen::VectorXd::Zero(p + 1);
+    Eigen::VectorXd phi_tau = Eigen::VectorXd::Zero(pacf_size);
+    Eigen::VectorXd phi_tau_i = Eigen::VectorXd::Zero(pacf_size);
+    Eigen::VectorXd phi_initial = Eigen::VectorXd::Zero(p + 1);
 
     int ii = 0;
-    int pacf_size = static_cast<int>(y.size());
 
     double sum1 = 0.0;
     double sum2 = 0.0;
@@ -156,14 +198,16 @@ void pacf_function(const Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, bool& 
 
     e_hat_initial(0) = 0;
 
-    for (int tau = 2; tau < pacf_size; tau++)
+    for (int tau = 2; tau <= pacf_size; tau++)
     {
         // Hannan-Rissanen initial phi
         if (tau == p + 2)
         {
             phi_initial = phi_tau_i;
         }
-        if (tau < p + 2 || PACF_CHECK) // skip this for tau > p + 2 if PACF CHECK is false
+
+        // skip this for tau > p + 2 if PACF CHECK is false:
+        if (tau < p + 2 || (PACF_CHECK && tau < pacf_size))
         {
             pacf(tau - 1) = (acf(tau) - sum1) / (1 - sum2);
             sum1 = 0;
@@ -184,9 +228,9 @@ void pacf_function(const Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, bool& 
         // Hannan-Rissanen initial e_hat
         if (tau > p + 1)
         {
-            for (int m = 0; m < p + 1; m++)
+            for (int iter = 0; iter < p + 1; iter++)
             {
-                sum3 += y(tau - m - 2) * phi_initial(m);
+                sum3 += y(tau - iter - 2) * phi_initial(iter);
             }
             e_hat_initial(tau - 1) = y(tau - 1) - sum3;
             sum3 = 0;
@@ -196,28 +240,90 @@ void pacf_function(const Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, bool& 
             e_hat_initial(tau - 1) = 0;
         }
     }
-
-    for (int m = 0; m < p + 1; m++)
-    { // e_hat at Y_n
-        sum3 += y(pacf_size - m - 2) * phi_initial(m);
-    }
-    e_hat_initial(pacf_size - 1) = y(pacf_size - 1) - sum3;
 }
-
 /// @brief fill A matrix for Hannan-Rissanen
-/// @param[in] y vector of data @param[in] e_hat_initial for least squares @param[in] p order of AR process @param[in] q order of MA process
-void matrix_function(const Eigen::VectorXd& y, const Eigen::VectorXd& e_hat_initial, int p, int q, Eigen::MatrixXd& A)
+/// @param[in] y vector of data @param[in] e_hat_initial residuals @param[in] p order of AR process @param[in] q order of MA process
+void matrix_function(const Eigen::VectorXd& y, const Eigen::VectorXd& e_hat_initial, int p, int q, int m, Eigen::MatrixXd& A)
 {
-    for (int t_HR = p; t_HR < y.size(); t_HR++)
+    for (int t_HR = m; t_HR < y.size(); t_HR++)
     {
         for (int i_HR = 0; i_HR < p; i_HR++)
         {
-            A(t_HR - p, i_HR) = y(t_HR - i_HR - 1); // AR
+            A(t_HR - m, i_HR) = y(t_HR - i_HR - 1); // AR
         }
         for (int i_HR = p; i_HR < p + q; i_HR++)
         {
-            A(t_HR - p, i_HR) = -e_hat_initial(t_HR - i_HR + p - 1); // MA
+            A(t_HR - m, i_HR) = -e_hat_initial(t_HR - i_HR + p - 1); // MA
         }
+    }
+}
+
+/// @brief Initialize ARMA parameters
+/// @param[in] y vector of data @param[in] @param[in] p order of AR process @param[in] q order of MA process
+void init_arma(const Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig)
+{
+    // variable declaration
+    // acf
+    Eigen::VectorXd acf = Eigen::VectorXd::Zero(deque_size);
+    // pacf
+    Eigen::VectorXd pacf = Eigen::VectorXd::Zero(deque_size - 1);
+    Eigen::VectorXd e_hat_initial = Eigen::VectorXd::Zero(deque_size);
+    // arma
+    Eigen::MatrixXd A = Eigen::MatrixXd::Zero(deque_size - m, p + q);
+    Eigen::MatrixXd y_hat = Eigen::VectorXd::Zero(deque_size);
+    Eigen::VectorXd e_hat = Eigen::VectorXd::Zero(deque_size);
+    // parameter test
+    Eigen::VectorXd t = Eigen::VectorXd::Zero(p + q);
+    Eigen::MatrixXd Cov_inv = Eigen::MatrixXd::Zero(p + q, p + q); // inverse Covariance matrix of least squares estimator
+
+    // calculate acf
+    acf_function(y, p, acf);
+
+    // calculate pacf & initial ê
+    pacf_function(y, acf, p, pacf, e_hat_initial);
+
+    // arma process
+    double sum_HR = 0.0;
+
+    for (int it = 0; it < 2; it++)
+    {
+        matrix_function(y, e_hat_initial, p, q, m, A);
+
+        x = (A.transpose() * A).ldlt().solve(A.transpose() * y.tail(deque_size - m)); // t > max(p, q)
+
+        e_hat = e_hat_initial; // e_hat copy
+
+        for (int i_HR = 0; i_HR < m; i_HR++) // t <= max(p,q) = 0
+        {
+            e_hat_initial(i_HR) = 0;
+            y_hat(i_HR) = y(i_HR);
+        }
+        for (int t_HR = m; t_HR < deque_size; t_HR++) // calculate e_hat for x
+        {                                             // AR
+            for (int i_HR = 0; i_HR < p; i_HR++)
+            {
+                sum_HR += x(i_HR) * y(t_HR - i_HR - 1);
+            }
+            for (int i_HR = p; i_HR < p + q; i_HR++)
+            { // MA
+                sum_HR -= x(i_HR) * e_hat(t_HR - i_HR + p - 1);
+            }
+            e_hat_initial(t_HR) = y(t_HR) - sum_HR;
+            y_hat(t_HR) = sum_HR;
+            sum_HR = 0;
+        }
+    }
+    // parameter test
+    int df = deque_size - p - q - 1;  //degrees of freedom
+    boost::math::students_t dist(df); // T distribution
+
+    double e_square = e_hat_initial.transpose() * e_hat_initial;
+    double var_e = e_square / df;
+    Cov_inv = (A.transpose() * A).inverse();
+    for (int j = 0; j < p + q; j++)
+    {
+        t(j) = x(j) / sqrt(var_e * Cov_inv(j, j));
+        emp_sig(j) = 2 * boost::math::pdf(dist, t(j));
     }
 }
 
@@ -226,65 +332,120 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
     auto newImuObs = std::make_shared<ImuObs>(obs->imuPos); // nicht in jeder schleife?
     buffer.push_back(obs);
-    if (static_cast<int>(buffer.size()) == deque_size)
+    if (INITIALIZE)
     {
-        k = 0;
-        for (auto& obs : buffer)
+        if (static_cast<int>(buffer.size()) == deque_size)
         {
-            const Eigen::Vector3d acc = obs->accelUncompXYZ.value();
-            y(k, 0) = acc(0);
-            y(k, 1) = acc(1);
-            y(k, 2) = acc(2);
-            k++;
-        }
-        for (int obs_num = 0; obs_num < 3; obs_num++) // number of observations (e.g. acceleration (x,y,z))
-        {
-            // calculate acf
-            acf_function(y.col(obs_num), ACF_CHECK, p, acf);
+            std::cout << "Initializing..." << std::endl;
+            x_mem = Eigen::MatrixXd::Zero(p + q, num_obs);
 
-            // calculate pacf & initial ê
-            pacf_function(y.col(obs_num), acf, p, PACF_CHECK, pacf, e_hat_initial);
-
-            // arma process
-            double sum_HR = 0.0;
-
-            for (int it = 0; it < 2; it++)
+            for (int obs_index = 0; obs_index < num_obs; obs_index++)
             {
-                matrix_function(y.col(obs_num), e_hat_initial, p, q, A);
+                p = p_mem(obs_index); // reset p, q
+                q = q_mem(obs_index);
 
-                x = (A.transpose() * A).ldlt().solve(A.transpose() * y.col(obs_num).tail(deque_size - p)); // t > max(p, q)
-                e_hat = e_hat_initial;                                                                     // e_hat copy
-
-                for (int i_HR = 0; i_HR < p; i_HR++)
-                {                            // calculate e_hat for new variables
-                    e_hat_initial(i_HR) = 0; // t <= max(p,q) = 0
-                    y_hat(i_HR, obs_num) = y(i_HR, obs_num);
+                k = 0;
+                for (auto& obs : buffer)
+                {
+                    const Eigen::Vector3d acc = obs->accelUncompXYZ.value();
+                    y(k) = acc(obs_index);
+                    k++;
                 }
-                for (int t_HR = p; t_HR < deque_size; t_HR++)
-                { // AR
-                    for (int i_HR = 0; i_HR < p; i_HR++)
+                INITIALIZE = true;
+                while (INITIALIZE)
+                {
+                    x.resize(p + q);       // resize
+                    emp_sig.resize(p + q); // resize
+
+                    m = static_cast<int>(std::max(p, q));
+                    init_arma(y, p, q, m, deque_size, x, emp_sig);
+                    // zero slope parameter test: search for emp_sig(p-Value) > alpha(0.05)
+                    if (emp_sig.maxCoeff() > 0.05)
                     {
-                        sum_HR += x(i_HR) * y(t_HR - i_HR - 1, obs_num);
+                        int arma_it = 0;
+                        for (arma_it = 0; arma_it < p + q; arma_it++)
+                        {
+                            if (emp_sig(arma_it) == emp_sig.maxCoeff()) // find index of maximum
+                            {
+                                break;
+                            }
+                        }
+                        if (arma_it < p)
+                        {
+                            p--; // reduce MA order by 1
+                        }
+                        else
+                        {
+                            q--; // reduce AR order by 1
+                        }
                     }
-                    for (int i_HR = p; i_HR < p + q; i_HR++)
-                    { // MA
-                        sum_HR -= x(i_HR) * e_hat(t_HR - i_HR + p - 1);
+                    else
+                    {
+                        std::cout << "Initialized parameters for trajectory" << std::endl;
+                        INITIALIZE = false;
                     }
-                    e_hat_initial(t_HR) = y(t_HR, obs_num) - sum_HR;
-                    y_hat(t_HR, obs_num) = sum_HR;
-                    sum_HR = 0;
                 }
+                sleep(2);
+                x_mem.col(obs_index) = x;
+                p_mem(obs_index) = p;
+                q_mem(obs_index) = q;
             }
+            deinitialize();
         }
-        LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
-        newImuObs->insTime = obs->insTime.value();
-        newImuObs->accelUncompXYZ = Eigen::Vector3d(y_hat(deque_size - 1, 0), y_hat(deque_size - 1, 1), y_hat(deque_size - 1, 2));
-        invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
-        buffer.pop_front(); //delete first element of deque
     }
-    else
+    else // calculate y_hat through arma equation
     {
-        newImuObs = obs;
-        invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
+        // TEST------------------------
+        /*x_mem << 0.798614, 1.801001, 1.248315,
+            0.201373, -0.000942, -0.248335,
+            0.640432, 0.863703, 0.268208,
+            0.159436, 0.245296, 0.294927;*/
+        //--------------------------------
+        m = static_cast<int>(std::max(p_mem.maxCoeff(), q_mem.maxCoeff()));
+        if (static_cast<int>(buffer.size()) - 1 == m) // buff t < max(p,q)
+        {
+            for (int obs_index = 0; obs_index < num_obs; obs_index++)
+            {
+                k = 0;
+                for (auto& obs : buffer)
+                {
+                    const Eigen::Vector3d acc = obs->accelUncompXYZ.value();
+                    y_arma(k) = acc(obs_index); // write parameter to y
+                    k++;
+                }
+                double sum_HR = 0.0;
+                for (int i_HR = 0; i_HR < p_mem(obs_index) + q_mem(obs_index); i_HR++) // arma equation
+                {
+                    if (i_HR < p_mem(obs_index))
+                    {
+                        sum_HR += x_mem(i_HR, obs_index) * y_arma(m - i_HR - 1);
+                    }
+                    else
+                    {
+                        sum_HR -= x_mem(i_HR, obs_index) * e.at(static_cast<unsigned>(e_size - i_HR - 1 + p_mem(obs_index)))(obs_index);
+                    }
+                }
+                e_arma(obs_index) = y_arma(m) - sum_HR;
+                y_hat_arma(obs_index) = sum_HR;
+                sum_HR = 0;
+            }
+
+            LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
+            newImuObs->insTime = obs->insTime.value();
+            newImuObs->accelUncompXYZ = Eigen::Vector3d(y_hat_arma);
+            newImuObs->gyroUncompXYZ = obs->gyroUncompXYZ;
+            invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
+
+            e.push_back(e_arma); // write ê to vector
+            e_size++;
+            buffer.pop_front(); //delete first element of deque
+        }
+        else
+        {
+            e.emplace_back(Eigen::VectorXd::Zero(num_obs)); // for t < max(p,q): e = 0
+            e_size++;
+            newImuObs = obs;
+            invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
+        }
     }
 }

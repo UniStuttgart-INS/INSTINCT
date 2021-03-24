@@ -71,31 +71,34 @@ class ARMA : public Node
     //loop iterator
     int k = 0;
 
+    bool INITIALIZE = false;
     // arma order
-    int p = 5;
+    int p = 3;
     int q = 3;
 
     // buffer initialization
-    int deque_size = 1000;
+    int deque_size = 5000;
+    int num_obs = 3;
 
-    //acf/pacf check initialization
-    bool ACF_CHECK = false;
-    bool PACF_CHECK = false;
-
-    // used vectors
-    // acf
-    Eigen::VectorXd acf;
-
-    // pacf
-    Eigen::VectorXd pacf;
-    Eigen::VectorXd e_hat_initial;
-
-    // arma
-    Eigen::MatrixXd A;
-    Eigen::MatrixXd y_hat;
-    Eigen::MatrixXd y;
+    // INIT ARMA
+    Eigen::VectorXd y;
+    Eigen::VectorXd emp_sig;
     Eigen::VectorXd x;
-    Eigen::VectorXd e_hat;
+
+    Eigen::MatrixXd x_mem;
+    //x_mem << 0.798614, 1.801001, 1.248315, 0.201373, -0.000942, -0.248335, 0.640432, 0.863703, 0.268208, 0.159436, 0.245296, 0.294927;
+    Eigen::VectorXi p_mem = Eigen::VectorXi::Zero(num_obs);
+    Eigen::VectorXi q_mem = Eigen::VectorXi::Zero(num_obs);
+
+    // CALC ARMA
+    int m;
+
+    Eigen::VectorXd y_hat_arma;
+    Eigen::VectorXd e_arma;
+    Eigen::VectorXd y_arma;
+
+    std::vector<Eigen::VectorXd> e;
+    int e_size = 0;
 };
 
 } // namespace NAV
