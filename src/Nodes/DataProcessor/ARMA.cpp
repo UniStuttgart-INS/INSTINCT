@@ -62,7 +62,7 @@ void NAV::ARMA::guiConfig()
             ImGui::TableSetupColumn("p");
             ImGui::TableHeadersRow();
 
-            for (int table_row = 0; table_row < p + q; table_row++)
+            for (int table_row = 0; table_row < x.size(); table_row++)
             {
                 ImGui::TableNextRow();
                 //ImGui::TableSetColumnIndex(table_col);
