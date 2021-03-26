@@ -177,17 +177,35 @@ Recommended changes to the User's ```keybindings.json```
 ]
 ```
 
-### Executing the program
+### Compiling & Executing the program
 
-| Hotkey   | Action                                     | Default       |
-| :------: | :----------------------------------------- | ------------- |
-| ```F5``` | Debug the project                          | Default debug |
-| ```F6``` | Run Task: ```MAIN: Build project```        | Default build |
-| ```F7``` | Run Task: ```MAIN: Build & run project```  | Default test  |
-| ```F8``` | Open Task List                             |               |
+##### Console
+
+Cmake
+```
+export CC=clang && export CXX=clang++ && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
+```
+Build
+```
+cmake --build build/Release -- -j
+```
+
+Run the executable
+```
+./bin/Release/instinct -f config.ini -l flow/Default.flow
+```
+
+##### VSCode
+
+|  Hotkey  | Action                                    | Default       |
+| :------: | :---------------------------------------- | ------------- |
+| ```F5``` | Debug the project                         | Default debug |
+| ```F6``` | Run Task: ```MAIN: Build project```       | Default build |
+| ```F7``` | Run Task: ```MAIN: Build & run project``` | Default test  |
+| ```F8``` | Open Task List                            |               |
 
 * To start the GUI, execute the Task ```MAIN: Build & run project```
-* To start without GUI, append a ```--nogui``` and a flow file to load with ```-o filepath```
+* To start without GUI, append a ```--nogui``` and a flow file to load with ```-l filepath```
 * If you have problems with the build, execute the Task ```CLEAN: Remove build files```
 * If you want to provide tests, place them in the ```tests``` directory and execute them with the task ```TEST: Build & run```
 
