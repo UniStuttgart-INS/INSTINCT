@@ -73,8 +73,8 @@ class ARMA : public Node
 
     bool INITIALIZE = false;
     // arma order
-    int p = 3;
-    int q = 3;
+    int p = 2;
+    int q = 2;
 
     // buffer initialization
     int deque_size = 5000;
@@ -86,7 +86,6 @@ class ARMA : public Node
     Eigen::VectorXd x;
 
     Eigen::MatrixXd x_mem;
-    //x_mem << 0.798614, 1.801001, 1.248315, 0.201373, -0.000942, -0.248335, 0.640432, 0.863703, 0.268208, 0.159436, 0.245296, 0.294927;
     Eigen::VectorXi p_mem = Eigen::VectorXi::Zero(num_obs);
     Eigen::VectorXi q_mem = Eigen::VectorXi::Zero(num_obs);
 
@@ -99,6 +98,10 @@ class ARMA : public Node
 
     std::vector<Eigen::VectorXd> e;
     int e_size = 0;
+
+    Eigen::Vector3d y_mean;
+    int size_counter = 0;
+    double sum = 0;
 };
 
 } // namespace NAV
