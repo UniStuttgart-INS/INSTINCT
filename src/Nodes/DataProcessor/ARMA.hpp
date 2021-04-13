@@ -77,31 +77,22 @@ class ARMA : public Node
     int q = 2;
 
     // buffer initialization
-    int deque_size = 5000;
+    int deque_size = 1000;
     int num_obs = 3;
 
     // INIT ARMA
     Eigen::VectorXd y;
+    Eigen::VectorXd y_hat;
     Eigen::VectorXd emp_sig;
     Eigen::VectorXd x;
 
-    Eigen::MatrixXd x_mem;
     Eigen::VectorXi p_mem = Eigen::VectorXi::Zero(num_obs);
     Eigen::VectorXi q_mem = Eigen::VectorXi::Zero(num_obs);
 
     // CALC ARMA
     int m;
-
-    Eigen::VectorXd y_hat_arma;
-    Eigen::VectorXd e_arma;
-    Eigen::VectorXd y_arma;
-
-    std::vector<Eigen::VectorXd> e;
-    int e_size = 0;
-
-    Eigen::Vector3d y_mean;
-    int size_counter = 0;
-    double sum = 0;
+    double y_mean;
+    Eigen::VectorXd y_hat_t;
 };
 
 } // namespace NAV
