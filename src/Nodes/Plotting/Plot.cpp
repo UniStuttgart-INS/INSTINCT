@@ -728,6 +728,15 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
             data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
             data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Mag Comp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag Comp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag Comp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Accel Comp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel Comp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel Comp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Gyro Comp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro Comp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro Comp Z [rad/s]");
             data.at(pinIndex).addPlotDataItem("Temperature [°C]");
         }
         else if (startPin->dataIdentifier.front() == KvhObs::type())
@@ -746,6 +755,15 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
             data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
             data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Mag Comp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag Comp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag Comp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Accel Comp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel Comp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel Comp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Gyro Comp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro Comp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro Comp Z [rad/s]");
             data.at(pinIndex).addPlotDataItem("Temperature [°C]");
             // KvhObs
             data.at(pinIndex).addPlotDataItem("Status [bits]");
@@ -767,6 +785,15 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
             data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
             data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Mag Comp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag Comp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Mag Comp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Accel Comp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel Comp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accel Comp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Gyro Comp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro Comp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyro Comp Z [rad/s]");
             data.at(pinIndex).addPlotDataItem("Temperature [°C]");
             // VectorNavObs
             data.at(pinIndex).addPlotDataItem("Quaternion W []");
@@ -778,15 +805,6 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Roll [deg]");
             data.at(pinIndex).addPlotDataItem("Time since syncIn [ns]");
             data.at(pinIndex).addPlotDataItem("SyncIn Count []");
-            data.at(pinIndex).addPlotDataItem("Mag comp X [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag comp Y [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag comp Z [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Accel comp X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel comp Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel comp Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Gyro comp X [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro comp Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro comp Z [rad/s]");
             data.at(pinIndex).addPlotDataItem("dTime [s]");
             data.at(pinIndex).addPlotDataItem("dTheta X [deg]");
             data.at(pinIndex).addPlotDataItem("dTheta Y [deg]");
@@ -1342,6 +1360,15 @@ void NAV::Plot::plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex)
     addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->x() : std::nan(""));
     addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->y() : std::nan(""));
     addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
     addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
 }
 
@@ -1370,6 +1397,15 @@ void NAV::Plot::plotKvhObs(const std::shared_ptr<KvhObs>& obs, size_t pinIndex)
     addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->x() : std::nan(""));
     addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->y() : std::nan(""));
     addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
     addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
     // KvhObs
     addData(pinIndex, i++, static_cast<double>(obs->status.to_ulong()));
@@ -1401,6 +1437,15 @@ void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_
     addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->x() : std::nan(""));
     addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->y() : std::nan(""));
     addData(pinIndex, i++, obs->gyroUncompXYZ.has_value() ? obs->gyroUncompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
     addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
     // VectorNavObs
     addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->w() : std::nan(""));
@@ -1412,15 +1457,6 @@ void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_
     addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->z() : std::nan(""));
     addData(pinIndex, i++, obs->timeSinceSyncIn.has_value() ? static_cast<double>(obs->timeSinceSyncIn.value()) : std::nan(""));
     addData(pinIndex, i++, obs->syncInCnt.has_value() ? obs->syncInCnt.value() : std::nan(""));
-    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->x() : std::nan(""));
-    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->y() : std::nan(""));
-    addData(pinIndex, i++, obs->magCompXYZ.has_value() ? obs->magCompXYZ->z() : std::nan(""));
-    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->x() : std::nan(""));
-    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->y() : std::nan(""));
-    addData(pinIndex, i++, obs->accelCompXYZ.has_value() ? obs->accelCompXYZ->z() : std::nan(""));
-    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->x() : std::nan(""));
-    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->y() : std::nan(""));
-    addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
     addData(pinIndex, i++, obs->dtime.has_value() ? obs->dtime.value() : std::nan(""));
     addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->x() : std::nan(""));
     addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->y() : std::nan(""));
