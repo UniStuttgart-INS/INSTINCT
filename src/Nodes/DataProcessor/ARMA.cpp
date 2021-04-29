@@ -48,9 +48,6 @@ void NAV::ARMA::guiConfig()
     ImGui::InputInt("Deque size", &deque_size); // int input for initialization size
     ImGui::InputInt("p", &p);
     ImGui::InputInt("q", &q);
-    /*ImGui::Checkbox("process ACF", &ACF_CHECK); // checkboxes for ACF, PACF
-        ImGui::SameLine();
-        ImGui::Checkbox("process PACF", &PACF_CHECK);*/
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("##table1", 3, flags))
     {
@@ -110,9 +107,10 @@ bool NAV::ARMA::initialize()
     // INIT_ARMA
     p_mem = Eigen::VectorXi::Constant(num_obs, p); // init p, q
     q_mem = Eigen::VectorXi::Constant(num_obs, q);
-    y = Eigen::VectorXd::Zero(deque_size);  // trajectory container
-    x = Eigen::VectorXd::Zero(p + q);       // ARMA slope parameters
-    emp_sig = Eigen::VectorXd::Zero(p + q); // empirical significance (p-Value)
+    y = Eigen::MatrixXd::Zero(deque_size, num_obs); // trajectory container
+    y_rbm = Eigen::VectorXd::Zero(deque_size);      // y (reduced by mean)
+    x = Eigen::VectorXd::Zero(p + q);               // ARMA slope parameters
+    emp_sig = Eigen::VectorXd::Zero(p + q);         // empirical significance (p-Value)
     y_hat = Eigen::VectorXd::Zero(deque_size);
 
     // CALC_ARMA
@@ -132,47 +130,39 @@ void NAV::ARMA::deinitialize()
 /// @param[in] y vector of data
 void acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
 {
-    bool ACF_CHECK = false;
-
-    int tt = 0; // acf loop iterator
-    int tau = 0;
     int acf_size = static_cast<int>(y.size());
+    int ar_approx = p + 3;
 
     double cov = 0.0;
     double var = 0.0;
     double mean = y.mean();
 
-    for (tt = 0; tt < acf_size; tt++)
+    for (int i = 0; i < acf_size; i++)
     {
-        var += (y(tt) - mean) * (y(tt) - mean); // sum of variance
+        var += (y(i) - mean) * (y(i) - mean); // sum of variance
     }
-    if (ACF_CHECK) // skip 'cause of runtime
-    {
-        acf_size = p + 2;
-    }
-    for (tau = 0; tau < acf_size; tau++)
+    for (int tau = 0; tau < ar_approx + 1; tau++)
     { // acf: correlation to delta_tau
 
-        for (tt = 0; tt < acf_size - tau; tt++)
+        for (int i = 0; i < acf_size - tau; i++)
         {
-            cov += (y(tt) - mean) * (y(tt + tau) - mean); // 'cov' sum
+            cov += (y(i) - mean) * (y(i + tau) - mean); // 'cov' sum
         }
         acf(tau) = cov / var;
         cov = 0; // reset 'cov' for next sum
     }
 }
 
-/// @brief calculate partial autocorrelation function (PACF)
+/// @brief calculate partial autocorrelation function (PACF) via Durbin-Levinson
 /// @param[in] y vector of data @param[in] acf vector of acf @param[in] p order of AR process
 /// @param[out] pacf vector of pacf values @param[out] initial_e_hat vector of initial ê for Hannan-Rissanen
 void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial)
 {
-    bool PACF_CHECK = false;
     int pacf_size = static_cast<int>(y.size());
-    int ar_approx = p + 2; // AR process of order > max(p,q) to approximate arma
+    int ar_approx = p + 3; // AR process of order > max(p,q) to approximate arma
 
-    Eigen::VectorXd phi_tau = Eigen::VectorXd::Zero(pacf_size);
-    Eigen::VectorXd phi_tau_i = Eigen::VectorXd::Zero(pacf_size);
+    Eigen::VectorXd phi_tau = Eigen::VectorXd::Zero(ar_approx);
+    Eigen::VectorXd phi_tau_i = Eigen::VectorXd::Zero(ar_approx);
     Eigen::VectorXd phi_initial = Eigen::VectorXd::Zero(ar_approx);
 
     double sum1 = 0.0;
@@ -186,18 +176,18 @@ void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::Vecto
     sum1 = acf(1) * acf(1);
     sum2 = acf(1) * acf(1);
 
-    e_hat_initial(0) = 0;
+    e_hat_initial(0) = 0; // first entry
 
     for (int tau = 2; tau <= pacf_size; tau++)
     {
         // Hannan-Rissanen initial phi
         if (tau == ar_approx + 1)
         {
-            phi_initial = phi_tau_i.head(tau - 1);
+            phi_initial = phi_tau_i;
+            //std::cout << phi_initial << std::endl;
         }
-
-        // skip this if phi_initial is determined and PACF CHECK is false:
-        if (tau < ar_approx + 1 || (PACF_CHECK && tau < pacf_size))
+        // skip this if phi_initial is determined:
+        if (tau < ar_approx + 1)
         {
             pacf(tau - 1) = (acf(tau) - sum1) / (1 - sum2);
             sum1 = 0;
@@ -209,8 +199,8 @@ void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::Vecto
                 sum1 += phi_tau(i) * acf(tau - i); // top sum
                 sum2 += phi_tau(i) * acf(i + 1);   // bottom sum
             }
-            phi_tau_i = phi_tau; // last element of phi_tau_i -> phi_tau_tau
-            phi_tau_i(tau - 1) = pacf(tau - 1);
+            phi_tau_i = phi_tau;
+            phi_tau_i(tau - 1) = pacf(tau - 1); // last element of phi_tau_i -> phi_tau_tau
             sum1 += pacf(tau - 1) * acf(1);
             sum2 += pacf(tau - 1) * acf(tau);
         }
@@ -251,7 +241,7 @@ void matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, i
 
 /// @brief Initialize ARMA parameters
 /// @param[in] y vector of data @param[in] @param[in] p order of AR process @param[in] q order of MA process
-void estimation(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat)
+void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat)
 {
     // declaration
     // acf
@@ -263,7 +253,7 @@ void estimation(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::
     Eigen::MatrixXd A = Eigen::MatrixXd::Zero(deque_size - m, p + q);
     // arma parameter test
     Eigen::VectorXd t = Eigen::VectorXd::Zero(p + q);
-    Eigen::MatrixXd Cov_inv = Eigen::MatrixXd::Zero(p + q, p + q); // inverse Covariance matrix of least squares estimator
+    Eigen::MatrixXd ata_inv = Eigen::MatrixXd::Zero(p + q, p + q); // inverse Covariance matrix of least squares estimator
 
     int df = deque_size - p - q - 1;  //degrees of freedom   // aus schleife rausziehen?
     boost::math::students_t dist(df); // T distribution
@@ -274,8 +264,7 @@ void estimation(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::
     // calculate pacf & initial ê
     pacf_function(y, acf, p, pacf, e_hat);
     // arma process
-    //for (int it = 0; it < 2; it++)
-    while (e_hat.transpose() * e_hat > 0.1 * df)
+    for (int it = 0; it < 2; it++)
     {
         matrix_function(y, e_hat, p, q, m, A); //set A
 
@@ -287,16 +276,16 @@ void estimation(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::
         }
         y_hat.tail(deque_size - m) = A * x;
         e_hat = y - y_hat;
-        std::cout << e_hat.transpose() * e_hat << std::endl;
+        //std::cout << e_hat.transpose() * e_hat << std::endl;
     }
 
     // arma parameter test
     double e_square = e_hat.transpose() * e_hat;
     double var_e = e_square / df;
-    Cov_inv = (A.transpose() * A).inverse();
+    ata_inv = (A.transpose() * A).inverse();
     for (int j = 0; j < p + q; j++)
     {
-        t(j) = x(j) / sqrt(var_e * Cov_inv(j, j));
+        t(j) = x(j) / sqrt(var_e * ata_inv(j, j));
         emp_sig(j) = 2 * boost::math::pdf(dist, t(j));
     }
 }
@@ -309,30 +298,35 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
     if (static_cast<int>(buffer.size()) == deque_size)
     {
         std::cout << "Initializing..." << std::endl;
-
-        for (int obs_index = 0; obs_index < num_obs; obs_index++)
+        k = 0;
+        for (auto& obs : buffer) // read observations from buffer to y
         {
-            p = p_mem(obs_index); // reset p, q
-            q = q_mem(obs_index);
+            const Eigen::Vector3d acc = obs->accelCompXYZ.value();
+            y.row(k) = acc.transpose();
+            k++;
+        }
+        //std::cout << y << std::endl;
+        for (int obs_nr = 0; obs_nr < num_obs; obs_nr++)
+        {
+            p = p_mem(obs_nr); // reset p, q
+            q = q_mem(obs_nr);
 
-            k = 0;
-            for (auto& obs : buffer)
-            {
-                const Eigen::Vector3d acc = obs->accelUncompXYZ.value();
-                y(k) = acc(obs_index);
-                k++;
-            }
-            y_mean = y.mean();
-            y = y - y_mean * Eigen::VectorXd::Ones(deque_size, 1); // reduce y by mean
-            //std::cout << y.mean() << std::endl;
+            y_mean = y.col(obs_nr).mean();
+            y_rbm = y.col(obs_nr) - y_mean * Eigen::VectorXd::Ones(deque_size, 1); // reduce y by mean
+
             INITIALIZE = true;
             while (INITIALIZE)
             {
+                if (p + q == 0) //arma(0,0) -> y_hat = 0
+                {
+                    y_hat(deque_size - 1) = 0;
+                    break;
+                }
                 x.resize(p + q);       // resize
                 emp_sig.resize(p + q); // resize
 
                 m = static_cast<int>(std::max(p, q));
-                estimation(y, p, q, m, deque_size, x, emp_sig, y_hat);
+                hannan_rissanen(y_rbm, p, q, m, deque_size, x, emp_sig, y_hat);
                 // zero slope parameter test: search for emp_sig(p-Value) > alpha(0.05)
                 if (emp_sig.maxCoeff() > 0.05)
                 {
@@ -360,13 +354,13 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
                     //sleep(1);
                 }
             }
-            y_hat_t(obs_index) = y_hat(deque_size - 1) + y_mean;
+            y_hat_t(obs_nr) = y_hat(deque_size - 1); //+ y_mean;
         }
         // output
         LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
         newImuObs->insTime = obs->insTime.value();
-        newImuObs->accelUncompXYZ = Eigen::Vector3d(y_hat_t);
-        newImuObs->gyroUncompXYZ = obs->gyroUncompXYZ;
+        newImuObs->accelCompXYZ = Eigen::Vector3d(y_hat_t);
+        newImuObs->gyroCompXYZ = obs->gyroCompXYZ;
         invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
         buffer.pop_front();
     }

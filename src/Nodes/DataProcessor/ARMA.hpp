@@ -81,7 +81,8 @@ class ARMA : public Node
     int num_obs = 3;
 
     // INIT ARMA
-    Eigen::VectorXd y;
+    Eigen::MatrixXd y;
+    Eigen::VectorXd y_rbm;
     Eigen::VectorXd y_hat;
     Eigen::VectorXd emp_sig;
     Eigen::VectorXd x;
