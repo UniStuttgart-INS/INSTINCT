@@ -1,0 +1,116 @@
+{
+    "links": {
+        "link-147": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 144,
+            "id": 147,
+            "startPinId": 122
+        }
+    },
+    "nodes": {
+        "node-124": {
+            "color": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "data": {
+                "FileReader": {
+                    "path": "test/data/vectornav.csv"
+                }
+            },
+            "enabled": true,
+            "id": 124,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VectorNavFile",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "VectorNavFile"
+                    ],
+                    "id": 125,
+                    "name": "",
+                    "type": "Delegate"
+                },
+                {
+                    "dataIdentifier": [
+                        "VectorNavObs"
+                    ],
+                    "id": 122,
+                    "name": "VectorNavObs",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "std::vector<std::string>"
+                    ],
+                    "id": 123,
+                    "name": "Header Columns",
+                    "type": "Object"
+                }
+            ],
+            "pos": {
+                "x": 150.0,
+                "y": 284.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavFile"
+        },
+        "node-145": {
+            "color": {
+                "a": 255,
+                "b": 128,
+                "g": 128,
+                "r": 255
+            },
+            "data": {
+                "FileWriter": {
+                    "path": "test/logs/VectorNavDataLogger.csv"
+                }
+            },
+            "enabled": true,
+            "id": 145,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "VectorNavObs"
+                    ],
+                    "id": 144,
+                    "name": "writeObservation",
+                    "type": "Flow"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavDataLogger",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "VectorNavDataLogger"
+                    ],
+                    "id": 146,
+                    "name": "",
+                    "type": "Delegate"
+                }
+            ],
+            "pos": {
+                "x": 521.0,
+                "y": 286.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavDataLogger"
+        }
+    }
+}
