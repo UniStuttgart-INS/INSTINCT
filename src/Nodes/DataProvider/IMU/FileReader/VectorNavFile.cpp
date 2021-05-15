@@ -616,9 +616,12 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
         }
     }
 
-    LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-             nameId(), obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
-             obs->vpeStatus.value().status, obs->temperature.value());
+    LOG_DATA("DATA({}): {}, {}, {}, {}, {}", nameId(),
+             obs->timeSinceStartup.has_value() ? std::to_string(obs->timeSinceStartup.value()) : "N/A",
+             obs->syncInCnt.has_value() ? std::to_string(obs->syncInCnt.value()) : "N/A",
+             obs->timeSinceSyncIn.has_value() ? std::to_string(obs->timeSinceSyncIn.value()) : "N/A",
+             obs->vpeStatus.has_value() ? std::to_string(obs->vpeStatus.value().status) : "N/A",
+             obs->temperature.has_value() ? std::to_string(obs->temperature.value()) : "N/A");
 
     if (obs->insTime.has_value())
     {
