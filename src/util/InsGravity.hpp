@@ -15,5 +15,6 @@ namespace NAV::gravity
 ///
 /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2 - eq. 6.16)
 [[nodiscard]] double gravityMagnitude_SomiglianaAltitude(const double& latitude, const double& altitude);
+[[nodiscard]] double gravityMagnitude_WGS84(const double& latitude, const double& altitude);
 
 } // namespace NAV::gravity
