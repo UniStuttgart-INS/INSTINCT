@@ -2,6 +2,8 @@
 
 #include "InsConstants.hpp"
 #include <cmath>
+//#include <vector>
+
 double NAV::gravity::gravityMagnitude_SomiglianaAltitude(const double& latitude, const double& altitude)
 {
     // eq 6.16 has a fault in the denominator, it should be a sin^2(latitude)
@@ -23,11 +25,34 @@ double NAV::gravity::gravityMagnitude_WGS84(const double& latitude, const double
 {
     // geocentric latitude determination from geographic latitude
     double latitude_geocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * tan(latitude));
+    // effective radius determination, i.e. earth radius on WGS84 ellipsoid plus local altitude --> possible error!! altitude is in n-sys, while WGS84 is actually e-sys!
+    double radius_effective = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitude_geocentric), 2.0)) - altitude;
+
+    // Derivation of gravity, i.e. gravitational potential derived after effective radius
+    double gravitation = InsConst::WGS84_MU * std::pow(radius_effective, -2.0)
+                         - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radius_effective, -4.0) * (3 * std::pow(sin(latitude_geocentric), 2.0) - 1)
+                         - std::pow(InsConst::angularVelocity_ie, 2.0) * radius_effective * std::pow(std::cos(latitude_geocentric), 2.0);
+    //double gravitation = -(-InsConst::WGS84_MU / std::pow(radius_effective, 2.0) * (1.0 - 3.0 * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) / (2.0 * std::pow(radius_effective, 2.0)) * (3.0 * std::pow(std::sin(latitude_geocentric), 2.0) - 1.0))
+    //                     + std::pow(InsConst::angularVelocity_ie, 2.0) * radius_effective * std::pow(std::cos(latitude_geocentric), 2.0));
+    //double gravitation = InsConst::WGS84_MU * std::pow(radius_effective, -2.0)
+    //                   - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radius_effective, -4.0) * (3 * std::pow(sin(latitude_geocentric), 2.0) - 1);
+
+    // Gravity vector in n system
+    //const Eigen::Vector3d gravityWGS84(centrifugation, 0, gravitation - centrifugation);
+
+    return gravitation;
+}
+
+double NAV::gravity::centrifugal_WGS84(const double& latitude, const double& altitude)
+{
+    // geocentric latitude determination from geographic latitude
+    double latitude_geocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * tan(latitude));
     // effective radius determination, i.e. earth radius on WGS84 ellipsoid plus local altitude
     double radius_effective = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::sin(latitude_geocentric)) - altitude;
 
-    // Derivation of gravity, i.e. gravitational potential derived after effective radius
-    return InsConst::WGS84_MU * std::pow(radius_effective, -2.0)
-           - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radius_effective, -4.0) * (3 * std::pow(sin(latitude_geocentric), 2.0) - 1)
-           - std::pow(InsConst::angularVelocity_ie, 2.0) * radius_effective * std::pow(std::cos(latitude_geocentric), 2.0);
+    // Centrifugal force in e system
+    //double centrifugation = -std::pow(InsConst::angularVelocity_ie, 2.0) * radius_effective * std::pow(std::cos(latitude_geocentric), 2.0);
+    double centrifugation = -std::pow(InsConst::angularVelocity_ie, 2.0) * radius_effective * std::cos(latitude_geocentric);
+
+    return centrifugation;
 }

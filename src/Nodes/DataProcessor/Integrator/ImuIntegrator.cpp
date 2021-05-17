@@ -396,7 +396,18 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     const Eigen::Vector3d position_e__t1 = posVelAtt__t1->position_ecef();
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
-    const Eigen::Vector3d gravity_n__t1(0, 0, gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
+    //    const Eigen::Vector3d gravity_n__t1(0, 0, 0 * gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
+    // Centrifugal Acceleration in north
+    //double centrifugal_n = gravity::centrifugal_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()) * std::sin(posVelAtt__t1->latitude());
+    // Centrifugal Acceleration in down
+    //    double centrifugal_d = gravity::centrifugal_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()) * std::cos(posVelAtt__t1->latitude());
+    // Gravitation (only down in NED)
+    double gravitation = gravity::gravityMagnitude_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+
+    // Gravity vector NED
+    //const Eigen::Vector3d gravity_n__t1(centrifugal_n, 0, gravitation - centrifugal_d);
+    const Eigen::Vector3d gravity_n__t1(0, 0, gravitation);
+
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;
 
@@ -470,7 +481,8 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
 
         setCurrentPosition(posVelAtt__t0.position_ecef());
         setCurrentVelocity(posVelAtt__t0.velocity_n());
-        setCurrentQuaternion_nb(posVelAtt__t0.quaternion_nb());
+        // setCurrentQuaternion_nb(posVelAtt__t0.quaternion_nb());
+        setCurrentQuaternion_nb(Eigen::Quaterniond{ 1, 0, 0, 0 }); // mmm: Testweise: forcen auf null Lagewinkel
     }
     else if (integrationFrame == IntegrationFrame::NED)
     {

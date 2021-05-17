@@ -42,6 +42,7 @@ NAV::SkydelImuStream::SkydelImuStream() : port(4444), sender_endpoint_(udp::v4()
     // socket_ = boost::asio::ip::udp::socket(ioservice, sender_endpoint_);
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
+    counter = 0;
 }
 
 NAV::SkydelImuStream::~SkydelImuStream()
@@ -112,7 +113,11 @@ void NAV::SkydelImuStream::do_receive()
         boost::asio::buffer(data_, max_length), sender_endpoint_,
         [this](boost::system::error_code ed, std::size_t sdfe) {
             // std::cout << ed << sdfe;
+
+            counter++;
+
             if ((!ed) & (sdfe > 0)) {}
+
             std::vector<std::string> v;
             boost::algorithm::split(v, data_, boost::is_any_of(","));
             //std::cout << std::stod(v.at(0)) *10.0 << '\n';
@@ -126,30 +131,37 @@ void NAV::SkydelImuStream::do_receive()
             //    obs->in sTime = currentTime;
             //}
 
-            if (v.size() == 7)
+            if (counter > 5)
             {
-                auto obs = std::make_shared<ImuObs>(this->imuPos);
-                obs->timeSinceStartup = std::stod(v.at(0)) * 1e6;
+                counter = 0;
 
-                // if (startTime.empty())
-                // {
-                //     startTime = util::time::GetCurrentTime();
-                //     timeSinceStartupStart = obs->timeSinceStartup.value();
-                // }
-
-                // obs->insTime = startTime + std::chrono::milliseconds((obs->timeSinceStartup.value() - timeSinceStartupStart));
-
-                obs->accelUncompXYZ.emplace(std::stod(v.at(1)), std::stod(v.at(2)), std::stod(v.at(3)));
-                obs->gyroUncompXYZ.emplace(std::stod(v.at(4)), std::stod(v.at(5)), std::stod(v.at(6)));
-                obs->magUncompXYZ.emplace(0.0, 0.0, 0.0);
-
-                // Calls all the callbacks
-                if (InsTime currentTime = util::time::GetCurrentTime();
-                    !currentTime.empty())
+                if (v.size() == 7)
                 {
-                    obs->insTime = currentTime;
+                    auto obs = std::make_shared<ImuObs>(this->imuPos);
+                    obs->timeSinceStartup = std::stod(v.at(0)) * 1e6;
+
+                    // if (startTime.empty())
+                    // {
+                    //     startTime = util::time::GetCurrentTime();
+                    //     timeSinceStartupStart = obs->timeSinceStartup.value();
+                    // }
+
+                    // obs->insTime = startTime + std::chrono::milliseconds((obs->timeSinceStartup.value() - timeSinceStartupStart));
+
+                    obs->accelCompXYZ.emplace(std::stod(v.at(1)), std::stod(v.at(2)), std::stod(v.at(3)));
+                    obs->gyroCompXYZ.emplace(std::stod(v.at(4)) - 0 * 2.54542332900245e-07, std::stod(v.at(5)),
+                                             std::stod(v.at(6)) + 0 * 7.29207107393694e-05);
+                    obs->magCompXYZ.emplace(0.0, 0.0, 0.0);
+
+                    // Calls all the callbacks
+                    if (InsTime currentTime = util::time::GetCurrentTime();
+                        !currentTime.empty())
+                    {
+                        obs->insTime = currentTime;
+                    }
+
+                    this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
                 }
-                this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
             }
 
             // if (!breakStream)
