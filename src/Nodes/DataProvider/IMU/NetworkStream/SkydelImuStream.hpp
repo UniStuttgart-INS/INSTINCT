@@ -85,10 +85,10 @@ class SkydelImuStream : public Imu
         max_length = 1024
     };
 
-    uint16_t port;
-    boost::asio::ip::udp::endpoint sender_endpoint_;
-    std::array<char, max_length> data_;
-    boost::asio::ip::udp::socket socket_;
+    uint16_t m_port{ 4444 };
+    boost::asio::ip::udp::endpoint m_senderEndpoint;
+    std::array<char, max_length> m_data{};
+    boost::asio::ip::udp::socket m_socket;
     int counter;
     // bool breakStream;
 

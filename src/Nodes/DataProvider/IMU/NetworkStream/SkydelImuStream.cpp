@@ -26,8 +26,8 @@ using boost::asio::ip::udp;
 //using namespace boost::algorithm;
 //using boost::algorithm;
 
-NAV::SkydelImuStream::SkydelImuStream() : port(4444), sender_endpoint_(udp::v4(), port), data_({}), socket_(ioservice, sender_endpoint_)
-
+NAV::SkydelImuStream::SkydelImuStream()
+    : m_senderEndpoint(udp::v4(), m_port), m_socket(ioservice, m_senderEndpoint)
 {
     name = typeStatic();
 
@@ -37,9 +37,9 @@ NAV::SkydelImuStream::SkydelImuStream() : port(4444), sender_endpoint_(udp::v4()
     hasConfig = true;
     // breakStream = false;
 
-    //port = 4444;
-    //sender_endpoint_ = boost::asio::ip::udp::endpoint(udp::v4(), port);
-    // socket_ = boost::asio::ip::udp::socket(ioservice, sender_endpoint_);
+    //m_port = 4444;
+    //m_senderEndpoint = boost::asio::ip::udp::endpoint(udp::v4(), m_port);
+    // m_socket = boost::asio::ip::udp::socket(ioservice, m_senderEndpoint);
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
     counter = 0;
@@ -109,8 +109,8 @@ bool NAV::SkydelImuStream::resetNode()
 
 void NAV::SkydelImuStream::do_receive()
 {
-    socket_.async_receive_from(
-        boost::asio::buffer(data_, max_length), sender_endpoint_,
+    m_socket.async_receive_from(
+        boost::asio::buffer(m_data, max_length), m_senderEndpoint,
         [this](boost::system::error_code ed, std::size_t sdfe) {
             // std::cout << ed << sdfe;
 
@@ -119,10 +119,10 @@ void NAV::SkydelImuStream::do_receive()
             if ((!ed) & (sdfe > 0)) {}
 
             std::vector<std::string> v;
-            boost::algorithm::split(v, data_, boost::is_any_of(","));
+            boost::algorithm::split(v, m_data, boost::is_any_of(","));
             //std::cout << std::stod(v.at(0)) *10.0 << '\n';
-            //std::cout << data_;
-            // LOG_TRACE("{}: reading 4444", data_);
+            //std::cout << m_data;
+            // LOG_TRACE("{}: reading 4444", m_data);
 
             // LOG_TRACE("mm: Test");
             //if (InsTime currentTime = util::time::GetCurrentTime();
