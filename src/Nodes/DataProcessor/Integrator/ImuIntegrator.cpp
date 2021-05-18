@@ -419,9 +419,9 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     /// Gravity vector determination
     if (gravityModel == GravityModel::Somigliana)
     {
-        LOG_TRACE("Gravity model 'Somigliana' called");
+        // LOG_TRACE("Gravity model 'Somigliana' called");
 
-        const Eigen::Vector3d gravity_n__t1(0, 0, 0 * gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
+        const Eigen::Vector3d gravity_n__t1(0.0, 0.0, gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
     }
     else if (gravityModel == GravityModel::WGS84_Skydel)
     {
@@ -429,8 +429,6 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
 
         double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
         // Gravity vector NED
-        //const Eigen::Vector3d gravity_n__t1(centrifugal_n, 0, gravitation - centrifugal_d);
-        // double centrifugalAcceleration_n = 0.0;
         const Eigen::Vector3d gravity_n__t1(0.0, 0.0, gravityMagnitude);
     }
     else
@@ -442,9 +440,11 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
 
         // North-component of the centrifugal acceleration
         double centrifugalAcceleration_n = centrifugalAccelerationMagnitude * std::sin(posVelAtt__t1->latitude());
+        // Down-component of the centrifugal acceleration
+        double centrifugalAcceleration_d = centrifugalAccelerationMagnitude * std::cos(posVelAtt__t1->latitude());
 
-        // Gravity vector NED
-        const Eigen::Vector3d gravity_n__t1(centrifugalAcceleration_n, 0.0, gravityMagnitude - centrifugalAcceleration_n);
+        // Gravity vector NED: centrifugalAcceleration_n acts towards south, the down-component is included in gravityMagnitude hence the addition of centrifugalAccelerationMagnitude, then subtraction of centrifugalAcceleration_d since it acts towards -Down
+        const Eigen::Vector3d gravity_n__t1(-centrifugalAcceleration_n, 0.0, gravityMagnitude + centrifugalAccelerationMagnitude - centrifugalAcceleration_d);
     }
 
     /// g_e Gravity vector in [m/s^2], in earth coordinates

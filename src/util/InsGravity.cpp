@@ -58,5 +58,5 @@ double NAV::gravity::centrifugalAccelerationMagnitude_WGS84(const double& latitu
 
     // Centrifugal force in e system
     //double centrifugation = -std::pow(InsConst::angularVelocity_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
-    return -std::pow(InsConst::angularVelocity_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
+    return std::pow(InsConst::angularVelocity_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 }
