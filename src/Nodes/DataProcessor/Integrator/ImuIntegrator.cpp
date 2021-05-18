@@ -398,11 +398,11 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
     //    const Eigen::Vector3d gravity_n__t1(0, 0, 0 * gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
     // Centrifugal Acceleration in north
-    //double centrifugal_n = gravity::centrifugal_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()) * std::sin(posVelAtt__t1->latitude());
+    //double centrifugal_n = gravity::centrifugalAcc_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()) * std::sin(posVelAtt__t1->latitude());
     // Centrifugal Acceleration in down
-    //    double centrifugal_d = gravity::centrifugal_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()) * std::cos(posVelAtt__t1->latitude());
+    //    double centrifugal_d = gravity::centrifugalAcc_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()) * std::cos(posVelAtt__t1->latitude());
     // Gravitation (only down in NED)
-    double gravitation = gravity::gravityMagnitude_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+    double gravitation = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
 
     // Gravity vector NED
     //const Eigen::Vector3d gravity_n__t1(centrifugal_n, 0, gravitation - centrifugal_d);
