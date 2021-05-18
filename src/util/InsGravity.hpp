@@ -17,6 +17,6 @@ namespace NAV::gravity
 [[nodiscard]] double gravityMagnitude_SomiglianaAltitude(const double& latitude, const double& altitude);
 [[nodiscard]] double gravityMagnitude_WGS84_Skydel(const double& latitude, const double& altitude);
 [[nodiscard]] double gravityMagnitude_WGS84(const double& latitude, const double& altitude);
-[[nodiscard]] double centrifugalAcc_WGS84(const double& latitude, const double& altitude);
+[[nodiscard]] double centrifugalAccelerationMagnitude_WGS84(const double& latitude, const double& altitude);
 
 } // namespace NAV::gravity
