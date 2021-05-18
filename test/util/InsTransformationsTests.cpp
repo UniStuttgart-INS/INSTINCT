@@ -228,7 +228,10 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     auto q_ie = trafo::quat_ie(siderialDay4, InsConst::angularVelocity_ie);
 
     auto q_identity = q_ie * q_ei;
-    CHECK(q_identity.coeffs() == Eigen::Quaterniond::Identity().coeffs());
+    CHECK(q_identity.coeffs()(0) == Approx(Eigen::Quaterniond::Identity().coeffs()(0)).margin(EPSILON));
+    CHECK(q_identity.coeffs()(1) == Approx(Eigen::Quaterniond::Identity().coeffs()(1)).margin(EPSILON));
+    CHECK(q_identity.coeffs()(2) == Approx(Eigen::Quaterniond::Identity().coeffs()(2)).margin(EPSILON));
+    CHECK(q_identity.coeffs()(3) == Approx(Eigen::Quaterniond::Identity().coeffs()(3)).margin(EPSILON));
 }
 
 TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[InsTransformations]")
