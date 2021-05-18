@@ -52,6 +52,22 @@ void NAV::ImuIntegrator::guiConfig()
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame ? "NED" : "ECEF");
         flow::ApplyChanges();
     }
+    if (ImGui::Combo("Gravity Model", reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0\0"))
+    {
+        if (gravityModel == 0)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84");
+        }
+        else if (gravityModel == 1)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84_Skydel");
+        }
+        else if (gravityModel == 2)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "Somigliana");
+        }
+        flow::ApplyChanges();
+    }
 }
 
 [[nodiscard]] json NAV::ImuIntegrator::save() const
@@ -61,6 +77,7 @@ void NAV::ImuIntegrator::guiConfig()
     json j;
 
     j["integrationFrame"] = integrationFrame;
+    j["gravityModel"] = gravityModel;
 
     return j;
 }
@@ -72,6 +89,10 @@ void NAV::ImuIntegrator::restore(json const& j)
     if (j.contains("integrationFrame"))
     {
         integrationFrame = static_cast<IntegrationFrame>(j.at("integrationFrame").get<int>());
+    }
+    if (j.contains("gravityModel"))
+    {
+        gravityModel = static_cast<GravityModel>(j.at("gravityModel").get<int>());
     }
 }
 
@@ -395,18 +416,36 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     /// x_e (tₖ₋₁) Position in [m], in ECEF coordinates, at the time tₖ₋₁
     const Eigen::Vector3d position_e__t1 = posVelAtt__t1->position_ecef();
 
-    /// g_n Gravity vector in [m/s^2], in navigation coordinates
-    //    const Eigen::Vector3d gravity_n__t1(0, 0, 0 * gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
-    // Centrifugal Acceleration in north
-    //double centrifugal_n = gravity::centrifugalAccelerationMagnitude_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()) * std::sin(posVelAtt__t1->latitude());
-    // Centrifugal Acceleration in down
-    //    double centrifugal_d = gravity::centrifugalAccelerationMagnitude_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()) * std::cos(posVelAtt__t1->latitude());
-    // Gravitation (only down in NED)
-    double gravitation = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+    /// Gravity vector determination
+    if (gravityModel == GravityModel::Somigliana)
+    {
+        LOG_TRACE("Gravity model 'Somigliana' called");
 
-    // Gravity vector NED
-    //const Eigen::Vector3d gravity_n__t1(centrifugal_n, 0, gravitation - centrifugal_d);
-    const Eigen::Vector3d gravity_n__t1(0, 0, gravitation);
+        const Eigen::Vector3d gravity_n__t1(0, 0, 0 * gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
+    }
+    else if (gravityModel == GravityModel::WGS84_Skydel)
+    {
+        // LOG_TRACE("Gravity model 'WGS84_Skydel' called");
+
+        double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        // Gravity vector NED
+        //const Eigen::Vector3d gravity_n__t1(centrifugal_n, 0, gravitation - centrifugal_d);
+        // double centrifugalAcceleration_n = 0.0;
+        const Eigen::Vector3d gravity_n__t1(0.0, 0.0, gravityMagnitude);
+    }
+    else
+    {
+        // LOG_TRACE("Gravity model 'WGS84' called");
+
+        double gravityMagnitude = gravity::gravityMagnitude_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        double centrifugalAccelerationMagnitude = gravity::centrifugalAccelerationMagnitude_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+
+        // North-component of the centrifugal acceleration
+        double centrifugalAcceleration_n = centrifugalAccelerationMagnitude * std::sin(posVelAtt__t1->latitude());
+
+        // Gravity vector NED
+        const Eigen::Vector3d gravity_n__t1(centrifugalAcceleration_n, 0.0, gravityMagnitude - centrifugalAcceleration_n);
+    }
 
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;

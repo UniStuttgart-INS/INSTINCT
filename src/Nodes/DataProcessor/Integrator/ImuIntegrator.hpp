@@ -116,6 +116,18 @@ class ImuIntegrator : public Node
     };
     /// Frame to integrate the observations in
     IntegrationFrame integrationFrame = IntegrationFrame::ECEF;
+
+    /// Gravity Model selection
+    enum GravityModel : int
+    {
+        WGS84,
+        WGS84_Skydel,
+        Somigliana
+    };
+    GravityModel gravityModel = GravityModel::WGS84;
+
+    /// g_n Gravity vector in [m/s^2], in navigation coordinates
+    const Eigen::Vector3d gravity_n__t1;
 };
 
 } // namespace NAV
