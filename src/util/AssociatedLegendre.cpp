@@ -1,9 +1,10 @@
 #include "AssociatedLegendre.hpp"
 
 #include "InsConstants.hpp"
+#include "InsMath.hpp"
 #include <cmath>
 
-double associatedLegendre(int N, double x)
+Eigen::ArrayXXd associatedLegendre(int N, double x)
 {
     Eigen::ArrayXXd P = Eigen::ArrayXXd::Zero(N, N);
     Eigen::ArrayXXd Pd = Eigen::ArrayXXd::Zero(N, N);
@@ -50,7 +51,7 @@ double associatedLegendre(int N, double x)
             P(mm, nn) = factor * std::pow((1.0 - std::pow(x, 2.0)), ((static_cast<double>(mm) - 1.0) / 2.0)) * full_derivs(mm - 1, nn);
 
             Pd(mm, nn) = -factor * ((static_cast<double>(mm) - 1.0) / 2.0) * std::pow((1.0 - std::pow(x, 2.0)), ((((static_cast<double>(mm) - 1.0) / 2.0) - 1.0))) * 2.0 * x
-                         + factor * std::pow((1.0 - std::pow(x, 2.0), (((static_cast<double>(mm) - 1.0) / 2.0)))) * full_derivs(mm, nn);
+                         + factor * std::pow(1.0 - std::pow(x, 2.0), (((static_cast<double>(mm) - 1.0) / 2.0))) * full_derivs(mm, nn);
 
             // Pd(m,n) = -factor*((m-1)/2)*(1 - x^2)^(((m-1)/2)-1)*2*x + ...
             //     factor*(1-x^2)^((m-1)/2)*full_derivs(m,n);
@@ -64,22 +65,23 @@ double associatedLegendre(int N, double x)
         {
             if (n >= m)
             {
-                double factor = (2 * n + 1) * factorial(n - m) / factorial(n + m);
+                uint32_t factor = (2 * static_cast<uint32_t>(n + 1)) * NAV::factorial(static_cast<uint32_t>(n - m)) / NAV::factorial(static_cast<uint32_t>(n + m));
 
                 if (m != 0)
                 {
-                    factor = factor * 2.0;
+                    factor = factor * 2;
                 }
 
-                factor = std::sqrt(factor);
+                double Factor = std::sqrt(static_cast<double>(factor));
 
-                P(m + 1, n + 1) = P(m + 1, n + 1) * factor;
-                Pd(m + 1, n + 1) = Pd(m + 1, n + 1) * factor;
+                P(m + 1, n + 1) = P(m + 1, n + 1) * Factor;
+                Pd(m + 1, n + 1) = Pd(m + 1, n + 1) * Factor;
             }
         }
     }
 
-    double testReturn = 0.0;
+    Eigen::ArrayXXd P2 = Eigen::ArrayXXd::Zero(N, 2 * N);
+    P2 << P, Pd;
 
-    return testReturn;
+    return P2;
 }

@@ -5,14 +5,16 @@
 
 #pragma once
 
+#include "util/Eigen.hpp"
+
 namespace NAV::legendre
 {
 /// @brief Calculates the associated Legendre Polynomials necessary for the EGM96
-// /// @param[in] latitude Latitude where to calculate the gravity for
-// /// @param[in] altitude Altitude where to calculate the gravity for
-/// @return Associated Legendre Polynomial Parameters
+/// @param[in] degreeN of Legendre polynomial
+/// @param[in] x data points
+/// @return Associated Legendre Polynomial Parameters as P2 << P, Pd (derivative)
 ///
 // /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2 - eq. 6.16)
-[[nodiscard]] double associatedLegendre(int N, double x);
+[[nodiscard]] Eigen::ArrayXXd associatedLegendre(int degreeN, double x);
 
 } // namespace NAV::legendre

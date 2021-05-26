@@ -30,3 +30,8 @@ double NAV::pitchFromStaticAccelerationObs(const Eigen::Vector3d& accel_b)
     // Another possible calculation would be:
     // return std::atan2((-accel_b.x()), sqrt(std::pow(accel_b.y(), 2) + std::pow(accel_b.z(), 2)));
 }
+
+uint32_t NAV::factorial(uint32_t n)
+{
+    return (n == 1 || n == 0) ? 1 : n * factorial(n - 1);
+}

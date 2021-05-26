@@ -35,4 +35,9 @@ double rollFromStaticAccelerationObs(const Eigen::Vector3d& accel_b);
 /// @note See E.-H. Shin (2005) - Estimation Techniques for Low-Cost Inertial Navigation (Chapter 2.6)
 double pitchFromStaticAccelerationObs(const Eigen::Vector3d& accel_b);
 
+/// @brief Calculates the factorial of an unsigned integer
+/// @param[in] n Unsigned integer
+/// @return The factorial
+uint32_t factorial(uint32_t n);
+
 } // namespace NAV
