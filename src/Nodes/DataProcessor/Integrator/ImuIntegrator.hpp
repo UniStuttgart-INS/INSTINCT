@@ -122,7 +122,8 @@ class ImuIntegrator : public Node
     {
         WGS84,
         WGS84_Skydel,
-        Somigliana
+        Somigliana,
+        EGM96
     };
     GravityModel gravityModel = GravityModel::WGS84;
 

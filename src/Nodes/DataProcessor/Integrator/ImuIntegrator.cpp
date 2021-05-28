@@ -52,7 +52,7 @@ void NAV::ImuIntegrator::guiConfig()
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame ? "NED" : "ECEF");
         flow::ApplyChanges();
     }
-    if (ImGui::Combo("Gravity Model", reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0\0"))
+    if (ImGui::Combo("Gravity Model", reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
     {
         if (gravityModel == 0)
         {
@@ -65,6 +65,10 @@ void NAV::ImuIntegrator::guiConfig()
         else if (gravityModel == 2)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "Somigliana");
+        }
+        else if (gravityModel == 3)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "EGM96");
         }
         flow::ApplyChanges();
     }
@@ -430,6 +434,14 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
         double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
         // Gravity vector NED
         const Eigen::Vector3d gravity_n__t1(0.0, 0.0, gravityMagnitude);
+    }
+    else if (gravityModel == GravityModel::EGM96)
+    {
+        LOG_TRACE("Gravity model 'EGM96' called");
+        int egm96degree = 10;
+        const Eigen::Vector3d gravityVector = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->altitude(), egm96degree);
+        // LOG_DEBUG("");
+        const Eigen::Vector3d gravity_n__t1(gravityVector(0), gravityVector(1), gravityVector(2));
     }
     else
     {
