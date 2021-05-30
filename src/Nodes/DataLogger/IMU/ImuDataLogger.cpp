@@ -24,6 +24,7 @@ NAV::ImuDataLogger::ImuDataLogger()
     hasConfig = true;
 
     nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuDataLogger::writeObservation);
+    //nm::CreateInputPin(this, "writeObservation", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" }, &ImuDataLogger::writeObservation);
 }
 
 NAV::ImuDataLogger::~ImuDataLogger()
@@ -98,8 +99,8 @@ void NAV::ImuDataLogger::deinitialize()
 
     FileWriter::deinitialize();
 }
-
 void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+//void NAV::ImuDataLogger::writeObservation(ax::NodeEditor::LinkId linkId)
 {
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
 
@@ -139,42 +140,79 @@ void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeD
     filestream << ",";
     if (obs->magUncompXYZ.has_value())
     {
-        filestream << obs->magUncompXYZ.value().z();
+        filestream << obs->magCompXYZ.value().z();
     }
     filestream << ",";
-    if (obs->accelUncompXYZ.has_value())
+    if (obs->accelCompXYZ.has_value())
     {
-        filestream << obs->accelUncompXYZ.value().x();
+        filestream << obs->accelCompXYZ.value().x();
     }
     filestream << ",";
-    if (obs->accelUncompXYZ.has_value())
+    if (obs->accelCompXYZ.has_value())
     {
-        filestream << obs->accelUncompXYZ.value().y();
+        filestream << obs->accelCompXYZ.value().y();
     }
     filestream << ",";
-    if (obs->accelUncompXYZ.has_value())
+    if (obs->accelCompXYZ.has_value())
     {
-        filestream << obs->accelUncompXYZ.value().z();
+        filestream << obs->accelCompXYZ.value().z();
     }
     filestream << ",";
-    if (obs->gyroUncompXYZ.has_value())
+    if (obs->gyroCompXYZ.has_value())
     {
-        filestream << obs->gyroUncompXYZ.value().x();
+        filestream << obs->gyroCompXYZ.value().x();
     }
     filestream << ",";
-    if (obs->gyroUncompXYZ.has_value())
+    if (obs->gyroCompXYZ.has_value())
     {
-        filestream << obs->gyroUncompXYZ.value().y();
+        filestream << obs->gyroCompXYZ.value().y();
     }
     filestream << ",";
-    if (obs->gyroUncompXYZ.has_value())
+    if (obs->gyroCompXYZ.has_value())
     {
-        filestream << obs->gyroUncompXYZ.value().z();
+        filestream << obs->gyroCompXYZ.value().z();
     }
     filestream << ",";
     if (obs->temperature.has_value())
     {
         filestream << obs->temperature.value();
+        /*if (Link* link = nm::FindLink(linkId))
+    {
+        if (Pin* sourcePin = nm::FindPin(link->startPinId))
+        {
+            size_t pinIndex = pinIndexFromId(link->endPinId);
+
+            LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
+
+            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
+            {
+                auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
+                // Matrix
+                //for (int row = 0; row < value->rows(); row++)
+                //{
+                for (int col = 0; col < value->cols(); col++)
+                {
+                    //addData(pinIndex, i++, (*value)(row, col));
+                    filestream << (*value)(0, col);
+                }
+                //}
+            }
+            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
+            {
+                auto* value = getInputValue<BlockMatrix>(pinIndex);
+
+                auto matrix = (*value)();
+
+                // Matrix
+                //for (int row = 0; row < matrix.rows(); row++)
+                //{
+                for (int col = 0; col < matrix.cols(); col++)
+                {
+                    filestream << matrix(0, col);
+                }
+                //}
+            }
+        }*/
+        filestream << '\n';
     }
-    filestream << '\n';
 }

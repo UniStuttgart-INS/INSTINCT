@@ -45,11 +45,12 @@ std::string NAV::ARMA::category()
 
 void NAV::ARMA::guiConfig()
 {
-    ImGui::InputInt("Deque size", &deque_size); // int input for initialization size
-    ImGui::InputInt("p", &p);
-    ImGui::InputInt("q", &q);
+    // GUI ARMA node input
+    ImGui::InputInt("Deque size", &deque_size); // int input of modelling size
+    ImGui::InputInt("p", &p);                   // int input of initial AR-order
+    ImGui::InputInt("q", &q);                   // int input of initial MA-order
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-    if (ImGui::BeginTable("##table1", 3, flags))
+    if (ImGui::BeginTable("##table1", 3, flags)) // display ARMA parameters (phi and theta) in table
     {
         ImGui::TableSetupColumn("ARMA Parameter");
         ImGui::TableSetupColumn("estimate");
@@ -60,18 +61,18 @@ void NAV::ARMA::guiConfig()
         {
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
-            if (table_row < p)
+            if (table_row < p) // columns for AR-parameters (phi)
             {
                 ImGui::Text("phi %d", table_row + 1);
             }
-            else
+            else // columns for MA-parameters (theta)
             {
                 ImGui::Text("theta %d", table_row - p + 1);
             }
             ImGui::TableNextColumn();
-            ImGui::Text("%f", x(table_row));
+            ImGui::Text("%f", x(table_row)); //display parameter
             ImGui::TableNextColumn();
-            ImGui::Text("%f", emp_sig(table_row));
+            ImGui::Text("%f", emp_sig(table_row)); // display p-Value of zero slope test
         }
         ImGui::EndTable();
     }
@@ -102,21 +103,20 @@ bool NAV::ARMA::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    buffer.clear();
+    buffer.clear(); // clear deque
 
-    // INIT_ARMA
-    p_mem = Eigen::VectorXi::Constant(num_obs, p); // init p, q
-    q_mem = Eigen::VectorXi::Constant(num_obs, q);
-    y = Eigen::MatrixXd::Zero(deque_size, num_obs); // trajectory container
+    // declaration
+    p_mem = p; // reset p, q to initial for next observation
+    q_mem = q;
+    y = Eigen::MatrixXd::Zero(deque_size, num_obs); // measurement data
     y_rbm = Eigen::VectorXd::Zero(deque_size);      // y (reduced by mean)
     x = Eigen::VectorXd::Zero(p + q);               // ARMA slope parameters
-    emp_sig = Eigen::VectorXd::Zero(p + q);         // empirical significance (p-Value)
-    y_hat = Eigen::VectorXd::Zero(deque_size);
+    emp_sig = Eigen::VectorXd::Zero(p + q);         // empirical significance (p-Value) of parameters
+    y_hat = Eigen::VectorXd::Zero(deque_size);      // ARMA estimates for y_rbm
 
-    // CALC_ARMA
-    m = static_cast<int>(std::max(p, q));
+    m = static_cast<int>(std::max(p, q)); // value of superior order (p or q)
     y_mean = 0.0;
-    y_hat_t = Eigen::VectorXd::Zero(num_obs);
+    y_hat_t = Eigen::VectorXd::Zero(num_obs); // output container
 
     return true;
 }
@@ -127,26 +127,31 @@ void NAV::ARMA::deinitialize()
 }
 
 /// @brief calculate autocorrelation function (ACF)
-/// @param[in] y vector of data
+/// @param[in] y vector of data @param[in] p order of AR process
+/// @param[out] acf vector of acf values
 void acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
 {
-    int acf_size = static_cast<int>(y.size());
-    int ar_approx = p + 3;
+    int acf_size = static_cast<int>(y.size()); // size of y
+    /* Calculation of initial ê through Yule-Walker:
+    model approximation through AR(m)-process with m > max(p,q)
+    therefore limited amount of ACF values required to calculate PACF */
+    int p_approx = p + 3; // in this case AR(p + 3)
 
-    double cov = 0.0;
-    double var = 0.0;
+    double cov = 0.0; // covariance of measured values
+    double var = 0.0; // variance of measured values
     double mean = y.mean();
 
     for (int i = 0; i < acf_size; i++)
     {
         var += (y(i) - mean) * (y(i) - mean); // sum of variance
     }
-    for (int tau = 0; tau < ar_approx + 1; tau++)
+    // Calculation limited to required ACF values for Yule-Walker
+    for (int tau = 0; tau < p_approx + 1; tau++)
     { // acf: correlation to delta_tau
 
         for (int i = 0; i < acf_size - tau; i++)
         {
-            cov += (y(i) - mean) * (y(i + tau) - mean); // 'cov' sum
+            cov += (y(i) - mean) * (y(i + tau) - mean); // sum of covariance
         }
         acf(tau) = cov / var;
         cov = 0; // reset 'cov' for next sum
@@ -159,11 +164,13 @@ void acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
 void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial)
 {
     int pacf_size = static_cast<int>(y.size());
-    int ar_approx = p + 3; // AR process of order > max(p,q) to approximate arma
+    /* Calculation of initial ê through Yule-Walker:
+    AR(m) parameters (phi_1...m) are equal to phi_m_1...m from PACF */
+    int p_approx = p + 3; // AR order > max(p,q) to approximate ARMA
 
-    Eigen::VectorXd phi_tau = Eigen::VectorXd::Zero(ar_approx);
-    Eigen::VectorXd phi_tau_i = Eigen::VectorXd::Zero(ar_approx);
-    Eigen::VectorXd phi_initial = Eigen::VectorXd::Zero(ar_approx);
+    Eigen::VectorXd phi_tau = Eigen::VectorXd::Zero(p_approx);     // phi_tau_1...tau
+    Eigen::VectorXd phi_tau_i = Eigen::VectorXd::Zero(p_approx);   // phi_tau-1_1...tau-1 (from previous iteration)
+    Eigen::VectorXd phi_initial = Eigen::VectorXd::Zero(p_approx); // Yule-Walker ARMA-Parameters
 
     double sum1 = 0.0;
     double sum2 = 0.0;
@@ -181,13 +188,13 @@ void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::Vecto
     for (int tau = 2; tau <= pacf_size; tau++)
     {
         // Hannan-Rissanen initial phi
-        if (tau == ar_approx + 1)
+        if (tau == p_approx + 1) // hand over AR parameters at matching moment
         {
             phi_initial = phi_tau_i;
-            //std::cout << phi_initial << std::endl;
         }
+        // PACF calculation through Durbin-Levinson
         // skip this if phi_initial is determined:
-        if (tau < ar_approx + 1)
+        if (tau < p_approx + 1)
         {
             pacf(tau - 1) = (acf(tau) - sum1) / (1 - sum2);
             sum1 = 0;
@@ -196,8 +203,8 @@ void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::Vecto
             for (int i = 0; i < tau - 1; i++)
             {
                 phi_tau(i) = (phi_tau_i(i) - pacf(tau - 1) * phi_tau_i(tau - i - 2));
-                sum1 += phi_tau(i) * acf(tau - i); // top sum
-                sum2 += phi_tau(i) * acf(i + 1);   // bottom sum
+                sum1 += phi_tau(i) * acf(tau - i); // numerator sum
+                sum2 += phi_tau(i) * acf(i + 1);   // denominator sum
             }
             phi_tau_i = phi_tau;
             phi_tau_i(tau - 1) = pacf(tau - 1); // last element of phi_tau_i -> phi_tau_tau
@@ -205,41 +212,41 @@ void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::Vecto
             sum2 += pacf(tau - 1) * acf(tau);
         }
 
-        // Hannan-Rissanen initial e_hat
-        if (tau > ar_approx)
+        /* Hannan-Rissanen initial ê
+        calculate estimates of y (y_hat) for AR(p_approx)-process to determine resulting ê */
+        if (tau > p_approx)
         {
-            for (int iter = 0; iter < ar_approx; iter++)
+            for (int iter = 0; iter < p_approx; iter++)
             {
-                sum3 += y(tau - iter - 2) * phi_initial(iter);
+                sum3 += y(tau - iter - 2) * phi_initial(iter); // y_hat of current tau
             }
-            e_hat_initial(tau - 1) = y(tau - 1) - sum3;
+            e_hat_initial(tau - 1) = y(tau - 1) - sum3; // ê = y - y_hat
             sum3 = 0;
         }
         else
         {
-            e_hat_initial(tau - 1) = 0;
+            e_hat_initial(tau - 1) = 0; // ê_t for t < m = 0 (condition in Yule-Walker estimation)
         }
     }
 }
-/// @brief fill A matrix for Hannan-Rissanen
-/// @param[in] y vector of data @param[in] e_hat_initial residuals @param[in] p order of AR process @param[in] q order of MA process
+/// @brief fill A matrix for least squares
+/// @param[in] y vector of data @param[in] e_hat residuals @param[in] p order of AR process @param[in] q order of MA process
 void matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, int m, Eigen::MatrixXd& A)
 {
-    for (int t_HR = m; t_HR < y.size(); t_HR++)
+    for (int t = m; t < y.size(); t++) // rows
     {
-        //A(t_HR, 0) = 1; //as phi0 being constant
-        for (int i_HR = 0; i_HR < p; i_HR++)
+        for (int i = 0; i < p; i++) // AR columns
         {
-            A(t_HR - m, i_HR) = y(t_HR - i_HR - 1); // AR
+            A(t - m, i) = y(t - i - 1); // dependency of y_t-1 ... y_t-p
         }
-        for (int i_HR = p; i_HR < p + q; i_HR++)
+        for (int i = p; i < p + q; i++) // MA columns
         {
-            A(t_HR - m, i_HR) = -e_hat(t_HR - i_HR + p - 1); // MA
+            A(t - m, i) = -e_hat(t - i + p - 1); // dependency of ê_t-1 ... ê_t-q
         }
     }
 }
 
-/// @brief Initialize ARMA parameters
+/// @brief Calculate ARMA parameters through Hannan-Rissanen
 /// @param[in] y vector of data @param[in] @param[in] p order of AR process @param[in] q order of MA process
 void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat)
 {
@@ -255,7 +262,8 @@ void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Ei
     Eigen::VectorXd t = Eigen::VectorXd::Zero(p + q);
     Eigen::MatrixXd ata_inv = Eigen::MatrixXd::Zero(p + q, p + q); // inverse Covariance matrix of least squares estimator
 
-    int df = deque_size - p - q - 1;  //degrees of freedom   // aus schleife rausziehen?
+    // necessary for parameter test:
+    int df = deque_size - p - q - 1;  //degrees of freedom
     boost::math::students_t dist(df); // T distribution
 
     // calculate acf
@@ -274,48 +282,49 @@ void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Ei
         {
             y_hat(i_HR) = y(i_HR); //y_hat = y
         }
-        y_hat.tail(deque_size - m) = A * x;
+        y_hat.tail(deque_size - m) = A * x; // calculate y_hat and ê for t > max(p,q)
         e_hat = y - y_hat;
-        //std::cout << e_hat.transpose() * e_hat << std::endl;
     }
 
-    // arma parameter test
+    // arma parameter test (parameter significance test)
     double e_square = e_hat.transpose() * e_hat;
-    double var_e = e_square / df;
+    double var_e = e_square / df; // sigma^2_e
     ata_inv = (A.transpose() * A).inverse();
     for (int j = 0; j < p + q; j++)
     {
-        t(j) = x(j) / sqrt(var_e * ata_inv(j, j));
-        emp_sig(j) = 2 * boost::math::pdf(dist, t(j));
+        t(j) = x(j) / sqrt(var_e * ata_inv(j, j));     // t quantile
+        emp_sig(j) = 2 * boost::math::pdf(dist, t(j)); // probability for two-sided t-Test
     }
 }
 
 void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
-    auto newImuObs = std::make_shared<ImuObs>(obs->imuPos); // nicht in jeder schleife?
-    buffer.push_back(obs);
-    if (static_cast<int>(buffer.size()) == deque_size)
+    auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
+    buffer.push_back(obs); // push latest IMU epoch to deque
+
+    if (static_cast<int>(buffer.size()) == deque_size) // deque filled
     {
         std::cout << "Initializing..." << std::endl;
+
         k = 0;
         for (auto& obs : buffer) // read observations from buffer to y
         {
-            const Eigen::Vector3d acc = obs->accelCompXYZ.value();
-            y.row(k) = acc.transpose();
+            const Eigen::Vector3d acc = obs->accelCompXYZ.value(); // acceleration in x, y and z
+            const Eigen::Vector3d gyro = obs->gyroCompXYZ.value(); // gyro in x, y and z
+            y.row(k) << acc.transpose(), gyro.transpose();         // write to y
             k++;
         }
-        //std::cout << y << std::endl;
-        for (int obs_nr = 0; obs_nr < num_obs; obs_nr++)
+        for (int obs_nr = 0; obs_nr < num_obs; obs_nr++) // build ARMA-model for each observation
         {
-            p = p_mem(obs_nr); // reset p, q
-            q = q_mem(obs_nr);
+            p = p_mem; // reset p, q to initial for next observation
+            q = q_mem;
 
             y_mean = y.col(obs_nr).mean();
             y_rbm = y.col(obs_nr) - y_mean * Eigen::VectorXd::Ones(deque_size, 1); // reduce y by mean
 
-            INITIALIZE = true;
-            while (INITIALIZE)
+            INITIALIZE = true; // set INITIALIZE true for each observation
+            while (INITIALIZE) // while initializing ARMA-parameters
             {
                 if (p + q == 0) //arma(0,0) -> y_hat = 0
                 {
@@ -326,7 +335,9 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
                 emp_sig.resize(p + q); // resize
 
                 m = static_cast<int>(std::max(p, q));
-                hannan_rissanen(y_rbm, p, q, m, deque_size, x, emp_sig, y_hat);
+
+                hannan_rissanen(y_rbm, p, q, m, deque_size, x, emp_sig, y_hat); // parameter estimation
+
                 // zero slope parameter test: search for emp_sig(p-Value) > alpha(0.05)
                 if (emp_sig.maxCoeff() > 0.05)
                 {
@@ -338,29 +349,28 @@ void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::Nod
                             break;
                         }
                     }
-                    if (arma_it < p)
+                    if (arma_it < p) // if p-value has maximum for phi
                     {
-                        p--; // reduce MA order by 1
+                        p--; // reduce AR order by 1
                     }
-                    else
+                    else // if p-value has maximum for theta
                     {
-                        q--; // reduce AR order by 1
+                        q--; // reduce MA order by 1
                     }
                 }
                 else
                 {
                     std::cout << "Initialized parameters for trajectory" << std::endl;
-                    INITIALIZE = false;
-                    //sleep(1);
+                    INITIALIZE = false; // initialized parameters for observation
                 }
             }
-            y_hat_t(obs_nr) = y_hat(deque_size - 1); //+ y_mean;
+            y_hat_t(obs_nr) = y_hat(deque_size - 1) + y_mean; // hand over last entry of y_hat and add y_mean
         }
         // output
         LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
         newImuObs->insTime = obs->insTime.value();
-        newImuObs->accelCompXYZ = Eigen::Vector3d(y_hat_t);
-        newImuObs->gyroCompXYZ = obs->gyroCompXYZ;
+        newImuObs->accelCompXYZ = Eigen::Vector3d(y_hat_t.head(3)); // output estimations of accelerometer observations
+        newImuObs->gyroCompXYZ = Eigen::Vector3d(y_hat_t.tail(3));  // output estimations of gyro observations
         invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
         buffer.pop_front();
     }

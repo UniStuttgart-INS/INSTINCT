@@ -60,6 +60,7 @@ class ImuDataLogger : public Node, public FileWriter
     /// @param[in] nodeData The received observation
     /// @param[in] linkId Id of the link over which the data is received
     void writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    //void writeObservation(ax::NodeEditor::LinkId linkId);
 };
 
 } // namespace NAV

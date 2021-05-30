@@ -71,29 +71,26 @@ class ARMA : public Node
     //loop iterator
     int k = 0;
 
-    bool INITIALIZE = false;
-    // arma order
-    int p = 2;
-    int q = 2;
+    bool INITIALIZE = false; // parameter initialization indicator
+    // ARMA order
+    int p = 2; // AR order
+    int q = 2; // MA order
 
-    // buffer initialization
-    int deque_size = 1000;
-    int num_obs = 3;
+    int deque_size = 1000; // modelling size
+    int num_obs = 6;       // number of observations (3-axis accelerometer / 3-axis gyro)
 
-    // INIT ARMA
-    Eigen::MatrixXd y;
-    Eigen::VectorXd y_rbm;
-    Eigen::VectorXd y_hat;
-    Eigen::VectorXd emp_sig;
-    Eigen::VectorXd x;
+    Eigen::MatrixXd y;       // measurement data
+    Eigen::VectorXd y_rbm;   // y (reduced by mean)
+    Eigen::VectorXd y_hat;   // ARMA estimates for y_rbm
+    Eigen::VectorXd emp_sig; // empirical significance (p-Value) of parameters
+    Eigen::VectorXd x;       // ARMA slope parameters
+    Eigen::VectorXd y_hat_t; // output container
 
-    Eigen::VectorXi p_mem = Eigen::VectorXi::Zero(num_obs);
-    Eigen::VectorXi q_mem = Eigen::VectorXi::Zero(num_obs);
+    int p_mem; // p, q memory to reset for each observation
+    int q_mem;
 
-    // CALC ARMA
-    int m;
+    int m; // value of superior order (p or q)
     double y_mean;
-    Eigen::VectorXd y_hat_t;
 };
 
 } // namespace NAV
