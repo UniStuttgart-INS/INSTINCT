@@ -17,13 +17,12 @@ Eigen::MatrixXd NAV::utilGravity::readAscii2Matrix()
     uint32_t nmbrOfLines = static_cast<uint32_t>(std::count(std::istreambuf_iterator<char>(myfileN), std::istreambuf_iterator<char>(), '\n'));
     // loadfile.seekg(0, std::ios::beg); // Resetting the line counter of istreambuf_iterator
 
-    LOG_DEBUG("Number of lines in 'egm96_to360.ascii':_{}", nmbrOfLines);
+    // LOG_DEBUG("Number of lines in 'egm96_to360.ascii':_{}", nmbrOfLines);
     //LOG_DEBUG("Current file path:_{}", std::filesystem::current_path()); //During run of INSTINCT: "/home/mm/Documents/Git/INSTINCT/flow"
 
     int i = 0;
     int j = 0;
     Eigen::MatrixXd coeffs(nmbrOfLines, 6);
-    //Eigen::MatrixXd coeffs = Eigen::MatrixXd::Zero(nmbrOfLines,6);
 
     if (myfile.is_open())
     {
