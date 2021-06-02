@@ -20,6 +20,6 @@ namespace NAV::gravity
 [[nodiscard]] double gravityMagnitude_WGS84_Skydel(const double& latitude, const double& altitude);
 [[nodiscard]] double gravityMagnitude_WGS84(const double& latitude, const double& altitude);
 [[nodiscard]] double centrifugalAccelerationMagnitude_WGS84(const double& latitude, const double& altitude);
-[[nodiscard]] Eigen::Vector3d gravity_EGM96(const double& latitude, const double& altitude, int ndegree);
+[[nodiscard]] Eigen::Vector3d gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree);
 
 } // namespace NAV::gravity
