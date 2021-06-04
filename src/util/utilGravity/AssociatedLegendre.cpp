@@ -84,7 +84,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre
             }
         }
     }
-    LOG_DEBUG("Associated Legendre Polynomial coefficients NORMALIZED:\nP =\n{}\nPd =\n{}", P, Pd);
+    // LOG_DEBUG("Associated Legendre Polynomial coefficients NORMALIZED:\nP =\n{}\nPd =\n{}", P, Pd);
 
     return std::make_pair(P, Pd);
 }
