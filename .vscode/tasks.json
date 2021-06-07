@@ -235,6 +235,9 @@
                 "flow/Default.flow",
                 // "--nogui",
             ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+            },
             "dependsOn": [
                 "MAIN: Build project",
             ],
@@ -328,6 +331,9 @@
                 "-c",
                 "valgrind --callgrind-out-file=bin/${input:buildType}/callgrind.out --tool=callgrind bin/${input:buildType}/instinct -f config.ini --nogui -l flow/Default.flow && kcachegrind bin/${input:buildType}/callgrind.out",
             ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+            },
             "dependsOn": [
                 "MAIN: Build project",
             ],
@@ -347,6 +353,9 @@
                 "-l",
                 "flow/Default.flow",
             ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+            },
             "dependsOn": [
                 "MAIN: Build project",
             ],
