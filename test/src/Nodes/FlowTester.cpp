@@ -33,6 +33,7 @@ void testFlow(const char* path)
     LOG_INFO("Starting in No-GUI Mode");
 
     nm::showFlowWhenInvokingCallbacks = false;
+    nm::showFlowWhenNotifyingValueChange = false;
 
     bool loadSuccessful = false;
     try
