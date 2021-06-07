@@ -30,8 +30,3 @@ double NAV::pitchFromStaticAccelerationObs(const Eigen::Vector3d& accel_b)
     // Another possible calculation would be:
     // return std::atan2((-accel_b.x()), sqrt(std::pow(accel_b.y(), 2) + std::pow(accel_b.z(), 2)));
 }
-
-uint64_t NAV::factorial(uint64_t n)
-{
-    return (n == 1 || n == 0) ? 1 : n * factorial(n - 1); // uint64_t is required to calculate factorials of n > 12 (Limit of uint32_t). The limit of uint64_t is at n = 20
-}

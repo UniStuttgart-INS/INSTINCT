@@ -69,7 +69,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre
                 auto nn = static_cast<double>(n);
 
                 // Normalization factor, consistent with equation (4.1.6) from "GUT User Guide" (https://earth.esa.int/documents/10174/1500266/GUT_UserGuide)
-                double factor = (2.0 * nn + 1.0) * static_cast<double>(NAV::factorial(n - m)) / static_cast<double>(NAV::factorial(n + m));
+                double factor = (2.0 * nn + 1.0) * static_cast<double>(NAV::utilGravity::factorial(n - m)) / static_cast<double>(NAV::utilGravity::factorial(n + m));
 
                 if (m != 0)
                 {
@@ -87,4 +87,9 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre
     // LOG_DEBUG("Associated Legendre Polynomial coefficients NORMALIZED:\nP =\n{}\nPd =\n{}", P, Pd);
 
     return std::make_pair(P, Pd);
+}
+
+uint64_t NAV::utilGravity::factorial(uint64_t n)
+{
+    return (n == 1 || n == 0) ? 1 : n * factorial(n - 1); // uint64_t is required to calculate factorials of n > 12 (Limit of uint32_t). The limit of uint64_t is at n = 20
 }
