@@ -20,18 +20,22 @@ foreach(TMP_PATH ${SRC_FILES})
 endforeach(TMP_PATH)
 
 # Link all files in the Source directory
-include_directories(${CMAKE_SOURCE_DIR}/src)
 add_executable(
   tests
-  util/UartSensors/Ublox/UbloxTypesTests.cpp
-  util/UartSensors/Ublox/UbloxUtilitiesTests.cpp
-  util/InsTimeTests.cpp
-  util/InsMechanizationTests.cpp
-  util/InsTransformationsTests.cpp
-  util/LoggerTests.cpp
-  util/ScrollingBufferTests.cpp
-  NodeData/State/StateDataTests.cpp
+  src/util/UartSensors/Ublox/UbloxTypesTests.cpp
+  src/util/UartSensors/Ublox/UbloxUtilitiesTests.cpp
+  src/util/InsTimeTests.cpp
+  src/util/InsMechanizationTests.cpp
+  src/util/InsTransformationsTests.cpp
+  src/util/LoggerTests.cpp
+  src/util/ScrollingBufferTests.cpp
+  src/NodeData/State/StateDataTests.cpp
+  src/Nodes/FlowTester.cpp
+  src/Nodes/DataLogger/IMU/VectorNavDataLoggerTests.cpp
   ${SRC_FILES})
+
+target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(tests PRIVATE src)
 
 target_link_libraries(
   tests
@@ -61,13 +65,13 @@ target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries
 
-# catch_discover_tests(tests)
-
 catch_discover_tests(
   tests
+  WORKING_DIRECTORY
+  ${CMAKE_SOURCE_DIR}
   REPORTER
   junit
   OUTPUT_DIR
-  .
+  ${CMAKE_SOURCE_DIR}/build
   OUTPUT_SUFFIX
   .xml)

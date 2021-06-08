@@ -62,6 +62,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
             if (NAV::ConfigManager::HasKey("load"))
             {
                 nm::showFlowWhenInvokingCallbacks = false;
+                nm::showFlowWhenNotifyingValueChange = false;
 
                 bool loadSuccessful = false;
                 try

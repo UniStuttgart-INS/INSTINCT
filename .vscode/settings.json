@@ -136,5 +136,8 @@
         "DoxygenLayout.xml": true,
         "INSTINCT.ini": true,
         "compile_commands.json": true,
-    }
+    },
+    "todo-tree.filtering.excludeGlobs": [
+        "**/lib"
+    ]
 }
