@@ -73,7 +73,7 @@ double NAV::gravity::centrifugalAccelerationMagnitude_WGS84(const double& latitu
 Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree)
 {
     // Read ascii file that contains all EGM96 parameters
-    Eigen::MatrixXd coeffs = NAV::utilGravity::readAscii2Matrix();
+    static Eigen::MatrixXd coeffs = NAV::utilGravity::readAscii2Matrix();
 
     // Geocentric latitude determination from geographic latitude and elevation and azimuth
     double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));

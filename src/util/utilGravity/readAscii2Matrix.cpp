@@ -9,7 +9,7 @@
 Eigen::MatrixXd NAV::utilGravity::readAscii2Matrix()
 {
     std::string line;
-    std::ifstream myfileN("../resources/Data/egm96_to360.ascii");
+    std::ifstream myfileN("../resources/Data/egm96_to360.ascii"); // Evtl. Pfad anpassen wegen "workspaceFolder" in tasks.json
     std::ifstream myfile("../resources/Data/egm96_to360.ascii");
     std::string delimiter = " ";
     size_t pos = 0;
