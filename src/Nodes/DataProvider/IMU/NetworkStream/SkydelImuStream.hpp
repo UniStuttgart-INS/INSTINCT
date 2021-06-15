@@ -89,7 +89,9 @@ class SkydelImuStream : public Imu
     boost::asio::ip::udp::endpoint m_senderEndpoint;
     std::array<char, max_length> m_data{};
     boost::asio::ip::udp::socket m_socket;
-    int counter;
+
+    std::vector<std::string> splittedStringRcvd;
+    bool stop;
     // bool breakStream;
 
     // InsTime startTime;
