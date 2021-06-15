@@ -2,7 +2,6 @@
 #include "util/Logger.hpp"
 
 #include "util/InsConstants.hpp"
-#include "util/InsMath.hpp"
 #include <cmath>
 
 std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre(int N, double x)

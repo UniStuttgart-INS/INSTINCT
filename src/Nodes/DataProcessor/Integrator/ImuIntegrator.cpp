@@ -447,52 +447,31 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     // LOG_DEBUG("position_e__t1 =\n{}", position_e__t1);
 
     /// Gravity vector determination
-    // if (gravityModel == GravityModel::Somigliana)
-    // {
-    //     // LOG_TRACE("Gravity model 'Somigliana' called");
+    if (gravityModel == GravityModel::Somigliana)
+    {
+        gravity_n__t1 = gravity::gravity_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+    }
+    else if (gravityModel == GravityModel::WGS84_Skydel)
+    {
+        double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        // Gravity vector NED
+        const Eigen::Vector3d gravityVector(0.0, 0.0, gravityMagnitude);
+        gravity_n__t1 = gravityVector;
+    }
+    else if (gravityModel == GravityModel::EGM96)
+    {
+        int egm96degree = 10;
+        gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
+    }
+    else
+    {
+        gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+    }
 
-    //     const Eigen::Vector3d gravity_n__t1(0.0, 0.0, gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
-    // }
-    // else if (gravityModel == GravityModel::WGS84_Skydel)
-    // {
-    //     // LOG_TRACE("Gravity model 'WGS84_Skydel' called");
-
-    //     double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-    //     // Gravity vector NED
-    //     const Eigen::Vector3d gravity_n__t1(0.0, 0.0, gravityMagnitude);
-    // }
-    // else if (gravityModel == GravityModel::EGM96)
-    // {
-    // LOG_TRACE("Gravity model 'EGM96' called");
-    int egm96degree = 10;
-    const Eigen::Vector3d gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
-    // const Eigen::Vector3d gravity_n__t1(gravityVector(0), gravityVector(1), gravityVector(2));
-    // LOG_DEBUG("Gravity model EGM96 -------------------------------------------------------------------------------------");
     LOG_DEBUG("Gravity vector in NED:\n{}", gravity_n__t1);
-    // LOG_DEBUG("Norm of the gravity vector in NED:\n{}", gravity_n__t1.squaredNorm());
-    // }
-    // else
-    // {
-    //     // LOG_TRACE("Gravity model 'WGS84' called");
-
-    //     double gravityMagnitude = gravity::gravityMagnitude_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-    //     double centrifugalAccelerationMagnitude = gravity::centrifugalAccelerationMagnitude_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-
-    //     // North-component of the centrifugal acceleration
-    //     double centrifugalAcceleration_n = centrifugalAccelerationMagnitude * std::sin(posVelAtt__t1->latitude());
-    //     // Down-component of the centrifugal acceleration
-    //     double centrifugalAcceleration_d = centrifugalAccelerationMagnitude * std::cos(posVelAtt__t1->latitude());
-
-    //     // Gravity vector NED: centrifugalAcceleration_n acts towards south, the down-component is included in gravityMagnitude hence the addition of centrifugalAccelerationMagnitude, then subtraction of centrifugalAcceleration_d since it acts towards -Down
-    //     const Eigen::Vector3d gravity_n__t1(-centrifugalAcceleration_n, 0.0, gravityMagnitude + centrifugalAccelerationMagnitude - centrifugalAcceleration_d);
-    //     // LOG_DEBUG("Gravity vector in NED:\n{}", gravity_n__t1);
-    // }
-    // LOG_DEBUG("Gravity model '{}' called", gravityModel);
 
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;
-    // LOG_DEBUG("gravity_e__t1 =\n{}", gravity_e__t1);
-    // LOG_DEBUG("Norm of gravity_e__t1 =\n{}", gravity_e__t1.norm());
 
     if (integrationFrame == IntegrationFrame::ECEF)
     {
@@ -572,18 +551,14 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
         /// ω_ip_b (tₖ₋₁) Angular velocity in [rad/s],
         /// of the inertial to platform system, in body coordinates, at the time tₖ₋₁
         const Eigen::Vector3d angularVelocity_ip_b__t1 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t1;
-        // LOG_DEBUG("angularVelocity_ip_b__t1 =\n{}", angularVelocity_ip_b__t1);
         /// ω_ip_b (tₖ) Angular velocity in [rad/s],
         /// of the inertial to platform system, in body coordinates, at the time tₖ
         const Eigen::Vector3d angularVelocity_ip_b__t0 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t0;
-        // LOG_DEBUG("angularVelocity_ip_b__t0 = {}", angularVelocity_ip_b__t0);
 
         /// a_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
         const Eigen::Vector3d acceleration_b__t1 = imuPosition.quatAccel_bp() * acceleration_p__t1;
-        LOG_DEBUG("acceleration_b__t1 =\n{}", acceleration_b__t1);
         /// a_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
         const Eigen::Vector3d acceleration_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
-        LOG_DEBUG("acceleration_b__t0 =\n{}", acceleration_b__t0);
 
         /// q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
         const Eigen::Quaterniond quaternion_nb__t1 = posVelAtt__t1->quaternion_nb();
@@ -600,11 +575,9 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
 
         /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
         Eigen::Vector3d angularVelocity_en_n__t1 = transportRate(posVelAtt__t1->latLonAlt(), velocity_n__t1, R_N, R_E);
-        // LOG_DEBUG("angularVelocity_en_n__t1 =\n{}", angularVelocity_en_n__t1);
 
         /// [x_n, x_e, x_d] (tₖ₋₁) Position NED in [m] at the time tₖ₋₁
         Eigen::Vector3d position_n__t1 = trafo::ecef2ned(position_e__t1, posVelAtt__init->latLonAlt());
-        LOG_DEBUG("position_n__t1 =\n{}", position_n__t1);
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Attitude Update                                             */
@@ -639,7 +612,6 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
 
         /// [x_n, x_e, x_d] (tₖ) Position NED in [m] at the time tₖ
         Eigen::Vector3d position_n__t0 = updatePosition_n(timeDifferenceSec__t0, position_n__t1, velocity_n__t1);
-        LOG_DEBUG("position_n__t0 =\n{}", position_n__t0);
 
         /// x_e (tₖ) Position in [m], in ECEF coordinates, at the time tₖ
         Eigen::Vector3d position_e__t0 = trafo::ned2ecef(position_n__t0, posVelAtt__init->latLonAlt());
