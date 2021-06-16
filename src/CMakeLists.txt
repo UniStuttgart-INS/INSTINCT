@@ -28,7 +28,7 @@ if(ENABLE_MAIN)
             libvncxx
             libUartSensor)
 
-  if(NOT APPLE)
+  if(NOT APPLE AND NOT WIN32)
     target_link_libraries(${PROJECT_NAME_LOWERCASE} PRIVATE libnavio)
   endif()
 

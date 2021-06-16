@@ -35,7 +35,6 @@ class Pin
             String,   ///< std::string
             Object,   ///< Generic Object
             Matrix,   ///< Matrix Object
-            Function, ///< Callback
             Delegate, ///< Reference to the Node object
         };
 
@@ -74,10 +73,6 @@ class Pin
             else if (typeString == "Matrix")
             {
                 value = Type::Matrix;
-            }
-            else if (typeString == "Function")
-            {
-                value = Type::Function;
             }
             else if (typeString == "Delegate")
             {
@@ -121,8 +116,6 @@ class Pin
                 return "Object";
             case Type::Matrix:
                 return "Matrix";
-            case Type::Function:
-                return "Function";
             case Type::Delegate:
                 return "Delegate";
             }
@@ -197,8 +190,7 @@ class Pin
 
     using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*,
                                  void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId), // Input Flow, receive data
-                                 std::shared_ptr<NAV::NodeData> (Node::*)(bool),                           // Output Flow, read data
-                                 std::pair<Node*, void (Node::*)()>>;                                      // Output Function, callable
+                                 std::shared_ptr<NAV::NodeData> (Node::*)(bool)>;                          // Output Flow, read data
 
     /// @brief Default constructor
     Pin() = default;

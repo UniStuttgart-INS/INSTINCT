@@ -87,7 +87,6 @@ class Demo : public Node
     constexpr static size_t InputPortIndex_String = 7;    ///< @brief String
     constexpr static size_t InputPortIndex_DemoData = 8;  ///< @brief DemoData
     constexpr static size_t InputPortIndex_Matrix = 9;    ///< @brief Matrix
-    constexpr static size_t InputPortIndex_Function = 10; ///< @brief Function
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -133,12 +132,6 @@ class Demo : public Node
     std::string valueString = "Demo";
     DemoData valueObject;
     Eigen::MatrixXd valueMatrix = Eigen::MatrixXd::Identity(3, 3);
-
-    size_t callbackCounter = 0;
-    std::string receivedDataFromCallback;
-    int callbackInt = 0;
-    bool callbackBool = false;
-    std::string callbackFunction(int integer1, int integer2, bool boolean);
 
     size_t stringUpdateCounter = 0;
     void stringUpdatedNotifyFunction(ax::NodeEditor::LinkId linkId);

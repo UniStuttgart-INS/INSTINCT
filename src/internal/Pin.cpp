@@ -26,7 +26,7 @@ bool NAV::Pin::canCreateLink(const Pin& b) const
         dataTypesMatch = false;
     }
 
-    if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix || startPin->type == Pin::Type::Function)
+    if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix)
         && (dataIdentifier.empty() || b.dataIdentifier.empty()
             || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->dataIdentifier.front()) == endPin->dataIdentifier.end()))
     {
@@ -56,8 +56,6 @@ ImColor NAV::Pin::getIconColor() const
         return ImColor(51, 150, 215);
     case Type::Matrix:
         return ImColor(255, 165, 0);
-    case Type::Function:
-        return ImColor(218, 0, 183);
     case Type::Delegate:
         return ImColor(255, 48, 48);
     }
@@ -96,9 +94,6 @@ void NAV::Pin::drawPinIcon(bool connected, int alpha) const
         // break;
     case Type::Matrix:
         iconType = PinIcon::Type::Diamond;
-        break;
-    case Type::Function:
-        iconType = PinIcon::Type::Grid;
         break;
     case Type::Delegate:
         iconType = PinIcon::Type::Square;
