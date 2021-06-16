@@ -45,7 +45,31 @@ Eigen::Vector3d NAV::gravity::gravity_SomiglianaAltitude(const double& latitude,
     // Magnitude of the gravity, i.e. without orientation
     double gravityMagnitude = k * g_0;
 
-    Eigen::Vector3d gravity_n = centrifugalAcceleration_WGS84(latitude, altitude, gravityMagnitude);
+    Eigen::Vector3d gravity_n = centrifugalAcceleration_Somigliana(latitude, altitude, gravityMagnitude);
+
+    return gravity_n;
+}
+
+Eigen::Vector3d NAV::gravity::centrifugalAcceleration_Somigliana(const double& latitude, const double& altitude, double gravityMagnitude)
+{
+    // Geocentric latitude determination from geographic latitude
+    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * tan(latitude));
+    // Radius of spheroid determination
+    double radiusSpheroid = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0)) + altitude;
+
+    // Centrifugal force magnitude
+    double centrifugalAccelerationMagnitude = std::pow(InsConst::angularVelocity_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
+
+    // North-component of the centrifugal acceleration
+    double centrifAcc_n = centrifugalAccelerationMagnitude * std::sin(latitude);
+    // Down-component of the centrifugal acceleration
+    double centrifAcc_d = centrifugalAccelerationMagnitude * std::cos(latitude);
+
+    // Down component of the gravitation (i.e. NOT gravity! See Groves (2013) Chapter 2.4.7)
+    auto gravitation_down = (2.0 * centrifAcc_d + std::sqrt(4.0 * centrifAcc_d * centrifAcc_d - 4.0 * (centrifAcc_n * centrifAcc_n + centrifAcc_d * centrifAcc_d - gravityMagnitude * gravityMagnitude))) / 2.0;
+
+    // Gravity vector in NED
+    Eigen::Vector3d gravity_n(-centrifAcc_n, 0.0, gravitation_down - centrifAcc_d);
 
     return gravity_n;
 }
