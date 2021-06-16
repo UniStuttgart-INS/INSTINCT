@@ -147,10 +147,7 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
 
     Eigen::Vector3d gravity_n = R_ne * gravity_ecef;
 
-    // Orientation of the centrifugal acceleration
-    Eigen::Vector3d gravity_nn = centrifugalAcceleration_WGS84(latitude, altitude, gravity_n.norm());
-
-    return gravity_nn;
+    return gravity_n;
 }
 
 Eigen::Vector3d NAV::gravity::centrifugalAcceleration_WGS84(const double& latitude, const double& altitude, double gravityMagnitude)
