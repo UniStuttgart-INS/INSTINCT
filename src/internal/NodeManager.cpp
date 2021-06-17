@@ -44,8 +44,13 @@ ed::PinId GetNextPinId();
 
 namespace NAV::NodeManager
 {
+#if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
 bool showFlowWhenInvokingCallbacks = true;
 bool showFlowWhenNotifyingValueChange = true;
+#else
+bool showFlowWhenInvokingCallbacks = false;
+bool showFlowWhenNotifyingValueChange = false;
+#endif
 
 } // namespace NAV::NodeManager
 
@@ -435,7 +440,7 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
         else
         {
             endPin->data = startPin->data;
-            if ( endPin->type != Pin::Type::Delegate)
+            if (endPin->type != Pin::Type::Delegate)
             {
                 if (!endPin->notifyFunc.empty())
                 {

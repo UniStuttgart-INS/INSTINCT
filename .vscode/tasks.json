@@ -62,7 +62,7 @@
                 "args": [
                     "-Bbuild/${input:buildType}",
                     "-S.",
-                    "-DCMAKE_BUILD_TYPE=${input:buildType} ",
+                    "-DCMAKE_BUILD_TYPE=${input:buildType}",
                     "-DENABLE_MAIN=ON",
                     "-DENABLE_TESTING=OFF",
                     "-DENABLE_DOXYGEN=OFF",
@@ -88,18 +88,34 @@
             "label": "CMAKE: Testing",
             "type": "shell",
             "group": "build",
-            "command": "bash",
-            "args": [
-                "-c",
-                "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
-            ],
-            // "options": {
-            //     "env": {
-            //         "CC": "/usr/bin/clang",
-            //         "CXX": "/usr/bin/clang++",
-            //     }
-            // },
+            "linux": {
+                "command": "bash",
+                "args": [
+                    "-c",
+                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                ],
+                // "options": {
+                //     "env": {
+                //         "CC": "/usr/bin/clang",
+                //         "CXX": "/usr/bin/clang++",
+                //     }
+                // },
+            },
             "windows": {
+                "command": "cmake",
+                "args": [
+                    "-Bbuild/Debug",
+                    "-S.",
+                    "-DCMAKE_BUILD_TYPE=Debug",
+                    "-DENABLE_MAIN=OFF",
+                    "-DENABLE_TESTING=ON",
+                    "-DENABLE_DOXYGEN=OFF",
+                    "-DLOG_LEVEL=TRACE",
+                    "-DENABLE_CLANG_TIDY=OFF",
+                    "-DENABLE_CPPCHECK=OFF",
+                    "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
+                    "-DWARNINGS_AS_ERRORS=OFF",
+                ],
                 "options": {
                     "env": {
                         "VSLANG": "1033",
@@ -230,14 +246,21 @@
             "label": "TEST: Build project",
             "type": "shell",
             "group": "build",
-            "command": "cmake",
-            "args": [
-                "--build",
-                "build/Debug",
-                "--",
-                "-j",
-            ],
+            "linux": {
+                "command": "cmake",
+                "args": [
+                    "--build",
+                    "build/Debug",
+                    "--",
+                    "-j",
+                ],
+            },
             "windows": {
+                "command": "cmake",
+                "args": [
+                    "--build",
+                    "build/Debug",
+                ],
                 "options": {
                     "env": {
                         "VSLANG": "1033",

@@ -42,11 +42,7 @@ bool NAV::FileReader::initialize()
         filepath = flow::GetProgramRootPath() + '/' + path;
     }
 
-    if (fileType == FileType::ASCII)
-    {
-        filestream = std::ifstream(filepath);
-    }
-    else if (fileType == FileType::BINARY)
+    if (fileType == FileType::ASCII || fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         filestream = std::ifstream(filepath, std::ios_base::in | std::ios_base::binary);

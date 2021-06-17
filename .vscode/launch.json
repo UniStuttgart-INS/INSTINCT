@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C++ Debug (gdb)",
+            "name": "Linux Debug",
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "MAIN: Build project",
@@ -28,7 +28,7 @@
             ]
         },
         {
-            "name": "C++ Debug Tests (gdb)",
+            "name": "Linux Debug Tests",
             "type": "cppdbg",
             "request": "launch",
             "preLaunchTask": "TEST: Build project",
@@ -46,6 +46,34 @@
                     "ignoreFailures": true
                 }
             ]
-        }
+        },
+        {
+            "name": "Windows Debug",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "preLaunchTask": "MAIN: Build project",
+            "program": "${workspaceFolder}/bin/Debug/instinct",
+            "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
+                "-fconfig.ini",
+                "-l",
+                "flow/Default.flow",
+                // "--nogui",
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "integratedTerminal",
+        },
+        {
+            "name": "Windows Debug Tests",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "preLaunchTask": "TEST: Build project",
+            "program": "${workspaceFolder}/bin/Debug/tests",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "integratedTerminal",
+        },
     ]
 }
