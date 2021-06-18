@@ -8,14 +8,10 @@
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
 #include <cstdlib>
-#include <iostream>
 #include <boost/asio.hpp>
-#include <chrono>
 #include <thread>
-#include <fstream>
 #include <string>
 #include <vector>
-#include <boost/algorithm/string.hpp>
 
 #include "util/InsTime.hpp"
 
@@ -61,13 +57,14 @@ class SkydelImuStream : public Imu
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     bool resetNode() override;
 
+    /// @brief Receive Skydel network stream data
     void do_receive();
 
     // Asynchronous receive fct
-    //void async_receive_from();
     boost::asio::io_context ioservice;
 
   private:
+    // Number of the output port of the SkydelImuStream node
     constexpr static size_t OutputPortIndex_ImuObs = 1; ///< @brief Flow (ImuObs)
 
     /// @brief Initialize the node
@@ -77,60 +74,25 @@ class SkydelImuStream : public Imu
     void deinitialize() override;
 
     // Thread for receiver fct
-    int ReceiverThread();
-
     std::thread TestThread;
+
+    // Network data stream buffer size (boost::asio)
     enum
     {
         max_length = 1024
     };
 
-    uint16_t m_port{ 4444 };
-    boost::asio::ip::udp::endpoint m_senderEndpoint;
+    // Network data stream array
     std::array<char, max_length> m_data{};
+
+    // boost setup
+    boost::asio::ip::udp::endpoint m_senderEndpoint;
     boost::asio::ip::udp::socket m_socket;
 
-    std::vector<std::string> splittedStringRcvd;
+    // Stop handler: once true, the asynchronous receive function stops
     bool stop;
-    // bool breakStream;
-
-    // InsTime startTime;
-    // uint64_t timeSinceStartupStart = 0;
-
-    /*
-    /// The Imu type
-    ImuType imuType = ImuType::MPU;
-
-    /// OutputFrequency to calculate rateDivisor field.
-    int outputFrequency = 100;
-
-    /// Timer object to handle async data requests
-    CallbackTimer timer;
-    /// Start Time to calculate the TimeSinceStartup
-    std::chrono::time_point<std::chrono::steady_clock> startTime;
-
-    /// Accelerometer X data, which are read into by the sensor
-    float ax{};
-    /// Accelerometer Y data, which are read into by the sensor
-    float ay{};
-    /// Accelerometer Z data, which are read into by the sensor
-    float az{};
-    /// Gyroscope X data, which are read into by the sensor
-    float gx{};
-    /// Gyroscope Y data, which are read into by the sensor
-    float gy{};
-    /// Gyroscope Z data, which are read into by the sensor
-    float gz{};
-    /// Magnetometer X data, which are read into by the sensor
-    float mx{};
-    /// Magnetometer Y data, which are read into by the sensor
-    float my{};
-    /// Magnetometer Z data, which are read into by the sensor
-    float mz{};
-*/
-    /// @brief Function which performs the async data reading
-    /// @param[in, out] userData Pointer to the SkydelImuStream object
-    static void readImuThread(void* userData);
+    // Startup handler: used in 'initialize()' to differentiate between startup and re-initialization
+    bool isStartup;
 };
 
 } // namespace NAV
