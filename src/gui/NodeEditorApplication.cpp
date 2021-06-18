@@ -85,6 +85,7 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ed::GetStyle().FlowDuration = 1.0F;
 
     m_HeaderBackground = LoadTexture("resources/images/BlueprintBackground.png");
+    m_InstinctLogo = LoadTexture("resources/images/INSTINCT_Logo_Text_white_small.png");
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()
@@ -106,6 +107,7 @@ void NAV::gui::NodeEditorApplication::OnStop()
         }
     };
 
+    releaseTexture(m_InstinctLogo);
     releaseTexture(m_HeaderBackground);
 
     if (m_Editor)

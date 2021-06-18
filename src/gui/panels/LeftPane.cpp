@@ -10,6 +10,7 @@ namespace nm = NAV::NodeManager;
 
 #include "gui/TouchTracker.hpp"
 #include "gui/windows/StyleEditor.hpp"
+#include "gui/NodeEditorApplication.hpp"
 
 #include <string>
 #include <algorithm>
@@ -25,6 +26,9 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
     ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));
 
     paneWidth = ImGui::GetContentRegionAvailWidth();
+
+    ImGui::Image(NodeEditorApplication::m_InstinctLogo, ImVec2(paneWidth, paneWidth * 3000.0F / 13070.0F));
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0F);
 
     { // Control Buttons
         ImGui::BeginHorizontal("Control Buttons", ImVec2(paneWidth, 0));

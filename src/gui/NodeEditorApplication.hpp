@@ -61,6 +61,8 @@ class NodeEditorApplication : public Application
 
     int frameCountNavigate = 0;
 
+    static inline ImTextureID m_InstinctLogo = nullptr;
+
   private:
     ImTextureID m_HeaderBackground = nullptr;
 
