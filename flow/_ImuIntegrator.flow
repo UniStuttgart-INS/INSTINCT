@@ -154,7 +154,7 @@
             },
             "data": {
                 "FileReader": {
-                    "path": "/home/topas/Documents/Coding/INSTINCT/data/vn100_R+-90_P+-90_Y+-90.csv"
+                    "path": "data/vn100_R+-90_P+-90_Y+-90.csv"
                 }
             },
             "enabled": true,

@@ -18,7 +18,7 @@ void testFlow(const char* path)
     std::vector<const char*> argv = { "", "--nogui", "-l", path, nullptr };
 
     // Save the root path of the program
-    NAV::flow::SetProgramRootPath(std::filesystem::current_path());
+    NAV::flow::SetProgramRootPath(std::filesystem::current_path().string());
 
     // Program configuration
     NAV::ConfigManager configManager;

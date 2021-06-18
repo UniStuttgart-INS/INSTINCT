@@ -729,7 +729,18 @@ TEST_CASE("[InsTime] Comparisions greater", "[InsTime]")
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     auto insTime_JD_g_1 = InsTime_JD(2453047, 0.0596990740740740740L);
-    auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740741740L);
+    auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740750740L);
+
+    // auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740741740L);
+    // Works only in Linux                  |         (long double precision too small in Windows)
+    // InsTime_JD(2453046, 0.0596990740740740740L) <  // 5158 Sekunden
+    // InsTime_JD(2453046, 0.0596990740740741740L);   // 5158.000000000009 (9 Picosekunden)
+    //
+    // Works in Windows and Linux          |
+    // InsTime_JD(2453046, 0.0596990740740740740L) <  // 5158
+    // InsTime_JD(2453046, 0.0596990740740750740L);   // 5158.000000000086 (86 Picosekunden)
+    // TODO: Consider using boost::multiprecision for the
+
     TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_1));
     TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_2));
 
@@ -773,7 +784,7 @@ TEST_CASE("[InsTime] Comparisions greater constexpr", "[InsTime]")
 
     // Conversion: https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl
     constexpr auto insTime_JD_g_1 = InsTime_JD(2453047, 0.0596990740740740740L);
-    constexpr auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740741740L);
+    constexpr auto insTime_JD_g_2 = InsTime_JD(2453046, 0.0596990740740750740L);
     STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_1));
     STATIC_TEST_GREATER_OBJECT(insTime, InsTime(insTime_JD_g_2));
 

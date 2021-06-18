@@ -33,6 +33,8 @@ if(APPLE)
     set(ENV{SDKROOT} ${sdkpath})
     message(STATUS "SDK-Path: $ENV{SDKROOT}")
   endif()
+elseif(WIN32)
+  add_compile_definitions(_USE_MATH_DEFINES)
 endif()
 
 # ######################################################################################################################
@@ -142,6 +144,11 @@ add_library(
   "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialog.cpp"
   "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialog.h"
   "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/ImGuiFileDialog/ImGuiFileDialogConfig.h")
+
+if(WIN32)
+  target_include_directories(ImGuiFileDialog PUBLIC "${CMAKE_SOURCE_DIR}/lib/ImGuiFileDialog/3rdparty/dirent/include")
+endif()
+
 include_directories(SYSTEM lib/ImGuiFileDialog/ImGuiFileDialog)
 target_link_libraries(ImGuiFileDialog PRIVATE project_options)
 set_target_properties(ImGuiFileDialog PROPERTIES CXX_CLANG_TIDY "")
@@ -165,6 +172,7 @@ set_target_properties(implot PROPERTIES CXX_CPPCHECK "")
 add_subdirectory(lib/application)
 include_directories(SYSTEM lib/application/include)
 target_link_libraries(application PRIVATE project_options implot)
+target_compile_definitions(application PUBLIC "_CONSOLE")
 set_target_properties(application PROPERTIES CXX_CLANG_TIDY "")
 set_target_properties(application PROPERTIES CXX_CPPCHECK "")
 
@@ -177,7 +185,7 @@ set_target_properties(libvncxx PROPERTIES CXX_CPPCHECK "")
 
 # ------------------------------------------------ Navio2 ------------------------------------------------ */
 
-if(NOT APPLE)
+if(NOT APPLE AND NOT WIN32)
   # Include navio2 library
   add_subdirectory(lib/navio2 libnavio)
   include_directories(SYSTEM lib/navio2/include)
@@ -205,8 +213,13 @@ find_package(Threads REQUIRED)
 # ######################################################################################################################
 
 # Specify output path for executable files
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
+if(NOT MSVC OR NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
+else()
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Release) # it always takes the DEBUG path (MSVC...)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
+endif()
 
 add_subdirectory(src)
 
@@ -221,27 +234,43 @@ if(ENABLE_UNITY)
   set_target_properties(${PROJECT_NAME_LOWERCASE} PROPERTIES UNITY_BUILD ON)
 endif()
 
+# Because MSVC sucks and we need to tell the linker to link the release versions manually
+if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
+  set_target_properties(
+    ${PROJECT_NAME_LOWERCASE}
+    imgui
+    imgui_node_editor
+    ImGuiFileDialog
+    implot
+    application
+    libvncxx
+    libUartSensor
+    PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+endif()
+
 # ######################################################################################################################
 # Copy compile_commands.json to root directory
 # ######################################################################################################################
 
-message(STATUS "Copying compile commands from ${CMAKE_BINARY_DIR}/compile_commands.json to ${CMAKE_CURRENT_LIST_DIR}")
+if(NOT WIN32)
+  message(STATUS "Copying compile commands from ${CMAKE_BINARY_DIR}/compile_commands.json to ${CMAKE_CURRENT_LIST_DIR}")
 
-# Copy to source directory
-add_custom_target(copy-compile-commands ALL DEPENDS ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json)
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/compile_commands.json
-          ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json
-  DEPENDS # Unlike "proper" targets like executables and libraries, custom command / target pairs will not set up source
-          # file dependencies, so we need to list file explicitly here
-          generate-compile-commands ${CMAKE_BINARY_DIR}/compile_commands.json)
+  # Copy to source directory
+  add_custom_target(copy-compile-commands ALL DEPENDS ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json)
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/compile_commands.json
+            ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json
+    DEPENDS # Unlike "proper" targets like executables and libraries, custom command / target pairs will not set up
+            # source file dependencies, so we need to list file explicitly here
+            generate-compile-commands ${CMAKE_BINARY_DIR}/compile_commands.json)
 
-# Generate the compilation commands. Necessary so cmake knows where it came from and if for some reason you delete it.
-add_custom_target(generate-compile-commands DEPENDS ${CMAKE_BINARY_DIR}/compile_commands.json)
-add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/compile_commands.json COMMAND ${CMAKE_COMMAND} -B${CMAKE_BINARY_DIR}
-                                                                            -S${CMAKE_SOURCE_DIR})
+  # Generate the compilation commands. Necessary so cmake knows where it came from and if for some reason you delete it.
+  add_custom_target(generate-compile-commands DEPENDS ${CMAKE_BINARY_DIR}/compile_commands.json)
+  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/compile_commands.json COMMAND ${CMAKE_COMMAND} -B${CMAKE_BINARY_DIR}
+                                                                              -S${CMAKE_SOURCE_DIR})
 
-# if(NOT EXISTS ${CMAKE_BINARY_DIR}/compile_commands.json) message(SEND_ERROR "There is no compile_commands.json in the
-# path ${CMAKE_BINARY_DIR}") elseif(NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json) message(SEND_ERROR
-# "Copying the compile commands failed!") endif()
+  # if(NOT EXISTS ${CMAKE_BINARY_DIR}/compile_commands.json) message(SEND_ERROR "There is no compile_commands.json in
+  # the path ${CMAKE_BINARY_DIR}") elseif(NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json) message(SEND_ERROR
+  # "Copying the compile commands failed!") endif()
+endif()

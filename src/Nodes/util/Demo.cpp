@@ -53,7 +53,6 @@ NAV::Demo::Demo()
     nm::CreateOutputPin(this, "String", Pin::Type::String, "", &valueString);
     nm::CreateOutputPin(this, "Object", Pin::Type::Object, "Demo::DemoData", &valueObject);
     nm::CreateOutputPin(this, "Matrix", Pin::Type::Matrix, "Eigen::MatrixXd", &valueMatrix);
-    nm::CreateOutputPin(this, "Function", Pin::Type::Function, "std::string (*)(int, bool)", &Demo::callbackFunction);
 
     nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
     nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, &Demo::receiveSensorData);
@@ -65,7 +64,6 @@ NAV::Demo::Demo()
     nm::CreateInputPin(this, "String", Pin::Type::String, {}, &Demo::stringUpdatedNotifyFunction);
     nm::CreateInputPin(this, "Object", Pin::Type::Object, { "Demo::DemoData" });
     nm::CreateInputPin(this, "Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" });
-    nm::CreateInputPin(this, "Function", Pin::Type::Function, { "std::string (*)(int, bool)" });
 }
 
 NAV::Demo::~Demo()
@@ -291,26 +289,6 @@ void NAV::Demo::guiConfig()
 
             ImGui::EndTable();
         }
-        /* ----------------------------------------------- Function ----------------------------------------------- */
-        ImGui::TableNextColumn();
-        if (ImGui::Button("Call Function"))
-        {
-            receivedDataFromCallback = callInputFunction<std::string>(InputPortIndex_Function, 20, callbackInt, callbackBool);
-        }
-        ImGui::SameLine();
-        float itemWidth = ImGui::GetContentRegionAvail().x / 3.0F - 2 * ImGui::GetStyle().ItemInnerSpacing.x;
-        ImGui::SetNextItemWidth(itemWidth);
-        if (ImGui::SliderInt("##CallbackInt", &callbackInt, -10, 10))
-        {
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        if (ImGui::Checkbox("##CallbackBool", &callbackBool))
-        {
-            flow::ApplyChanges();
-        }
-
-        ImGui::Text("%s", receivedDataFromCallback.c_str());
 
         ImGui::TableNextColumn();
 
@@ -333,8 +311,6 @@ void NAV::Demo::guiConfig()
     j["valueString"] = valueString;
     j["valueObject"] = valueObject;
     j["valueMatrix"] = valueMatrix;
-    j["callbackInt"] = callbackInt;
-    j["callbackBool"] = callbackBool;
 
     return j;
 }
@@ -379,14 +355,6 @@ void NAV::Demo::restore(json const& j)
     {
         j.at("valueMatrix").get_to(valueMatrix);
     }
-    if (j.contains("callbackInt"))
-    {
-        j.at("callbackInt").get_to(callbackInt);
-    }
-    if (j.contains("callbackBool"))
-    {
-        j.at("callbackBool").get_to(callbackBool);
-    }
 }
 
 bool NAV::Demo::initialize()
@@ -401,9 +369,6 @@ bool NAV::Demo::initialize()
 
     receivedDataFromSensorCnt = 0;
     receivedDataFromFileReaderCnt = 0;
-
-    callbackCounter = 0;
-    receivedDataFromCallback = "";
 
     stringUpdateCounter = 0;
 
@@ -524,16 +489,6 @@ std::shared_ptr<NAV::NodeData> NAV::Demo::pollData(bool peek)
     }
 
     return obs;
-}
-
-std::string NAV::Demo::callbackFunction(int integer1, int integer2, bool boolean)
-{
-    callbackCounter++;
-    return fmt::format("{} called {} time{}\nwith parameters: {}, {}, {}",
-                       nameId(),
-                       callbackCounter,
-                       callbackCounter > 1 ? "s" : "",
-                       integer1, integer2, boolean);
 }
 
 void NAV::Demo::stringUpdatedNotifyFunction(ax::NodeEditor::LinkId /*linkId*/)

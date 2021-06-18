@@ -1,12 +1,13 @@
 #include "Sleep.hpp"
 #include "Logger.hpp"
 
-#if !_WIN32 && !__linux__ && !__APPLE__ && !__CYGWIN__ && !__QNXNTO__
+#if !__linux__ && !__APPLE__ && !__CYGWIN__ && !__QNXNTO__
     #include <chrono>
     #include <thread>
+#else
+    #include <unistd.h>
 #endif
 #include <csignal>
-#include <unistd.h>
 
 /// Flag for interrupt check
 static volatile sig_atomic_t usr_interrupt = 0;
@@ -21,6 +22,7 @@ void NAV::Sleep::waitForSignal(bool showText)
 {
     LOG_TRACE("called");
 
+#if !_WIN32
     usr_interrupt = 0;
     sigset_t mask;
     sigset_t oldmask;
@@ -49,6 +51,9 @@ void NAV::Sleep::waitForSignal(bool showText)
     signal(SIGUSR1, SIG_DFL);
     signal(SIGINT, SIG_DFL);
     signal(SIGTERM, SIG_DFL);
+#else
+    LOG_ERROR("Waiting for Sigterm is not supported in Windows");
+#endif
 }
 
 void NAV::Sleep::countDownSeconds(size_t seconds)
@@ -63,9 +68,7 @@ void NAV::Sleep::countDownSeconds(size_t seconds)
         LOG_INFO("{} seconds till program finishes", seconds - i);
 
         // Use of system sleep better here, as it interrupts on signal
-#if _WIN32
-        Sleep(1000);
-#elif __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
+#if __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
         sleep(1);
 #else
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));

@@ -972,7 +972,7 @@ void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
 {
     auto& pinData = data.at(pinIndex);
 
-    pinData.plotData.at(dataIndex).buffer.AddValue(value);
+    pinData.plotData.at(dataIndex).buffer.addValue(value);
     if (!std::isnan(value))
     {
         pinData.plotData.at(dataIndex).hasData = true;

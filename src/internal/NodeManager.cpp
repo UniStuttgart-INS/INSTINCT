@@ -44,8 +44,13 @@ ed::PinId GetNextPinId();
 
 namespace NAV::NodeManager
 {
+#if !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
 bool showFlowWhenInvokingCallbacks = true;
 bool showFlowWhenNotifyingValueChange = true;
+#else
+bool showFlowWhenInvokingCallbacks = false;
+bool showFlowWhenNotifyingValueChange = false;
+#endif
 
 } // namespace NAV::NodeManager
 
@@ -253,7 +258,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     else
     {
         endPin->data = startPin->data;
-        if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+        if (endPin->type != Pin::Type::Delegate)
         {
             if (!endPin->notifyFunc.empty())
             {
@@ -339,7 +344,7 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
         else
         {
             endPin->data = startPin->data;
-            if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+            if (endPin->type != Pin::Type::Delegate)
             {
                 if (!endPin->notifyFunc.empty())
                 {
@@ -435,7 +440,7 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
         else
         {
             endPin->data = startPin->data;
-            if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+            if (endPin->type != Pin::Type::Delegate)
             {
                 if (!endPin->notifyFunc.empty())
                 {
@@ -502,7 +507,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             if (endPin->type != Pin::Type::Flow)
             {
                 endPin->data = static_cast<void*>(nullptr);
-                if (endPin->type != Pin::Type::Function && endPin->type != Pin::Type::Delegate)
+                if (endPin->type != Pin::Type::Delegate)
                 {
                     if (!endPin->notifyFunc.empty())
                     {

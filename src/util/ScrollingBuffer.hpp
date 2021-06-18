@@ -26,7 +26,7 @@ class ScrollingBuffer
 
     /// @brief Adds a value to the end of the buffer
     /// @param[in] value The value to add to the buffer
-    void AddValue(const T& value)
+    void addValue(const T& value)
     {
         if (m_infiniteBuffer) // The buffer should grow when adding new values
         {
@@ -80,14 +80,13 @@ class ScrollingBuffer
             if (m_dataStart != 0) // Buffer is scrolled and needs to be sorted
             {
                 std::vector<T> to_vector;
-                std::copy(std::next(m_data.begin() + static_cast<int64_t>(m_dataStart - 1)), m_data.end(),
+                std::copy(std::next(m_data.begin(), static_cast<int64_t>(m_dataStart)), m_data.end(),
                           std::back_inserter(to_vector));
 
-                std::copy(m_data.begin(), std::next(m_data.begin() + static_cast<int64_t>(m_dataEnd)),
-                          std::next(m_data.begin() + static_cast<int64_t>(to_vector.size() - 1)));
-                std::copy(to_vector.begin(), to_vector.end(), m_data.begin());
+                std::copy(m_data.begin(), std::next(m_data.begin(), static_cast<int64_t>(m_dataEnd)),
+                          std::back_inserter(to_vector));
+                m_data.swap(to_vector);
 
-                m_data.resize(m_data.size() - (m_dataStart - m_dataEnd));
                 m_maxSize = m_data.size();
 
                 m_dataStart = 0;

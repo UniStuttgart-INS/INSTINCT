@@ -44,7 +44,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
         Logger logger("logs/instinct.log");
 
         // Save the root path of the program
-        NAV::flow::SetProgramRootPath(std::filesystem::current_path());
+        NAV::flow::SetProgramRootPath(std::filesystem::current_path().string());
 
         // Program configuration
         NAV::ConfigManager::FetchConfigs(argc, argv);

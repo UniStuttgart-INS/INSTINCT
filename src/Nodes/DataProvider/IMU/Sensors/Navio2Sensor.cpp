@@ -3,7 +3,7 @@
 #include "util/Debug.hpp"
 #include "util/Logger.hpp"
 
-#if !__APPLE__
+#if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
     #include "navio/Common/MPU9250.h"
     #include "navio/Navio2/LSM9DS1.h"
     #include "navio/Common/Util.h"
@@ -96,7 +96,7 @@ bool NAV::Navio2Sensor::initialize()
 {
     LOG_TRACE("{} ({}): called", nameId(), imuType ? "LSM9DS1" : "MPU9250");
 
-#if !__APPLE__
+#if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
     if (imuType == ImuType::MPU)
     {
         sensor = std::make_unique<MPU9250>();
@@ -133,7 +133,7 @@ void NAV::Navio2Sensor::deinitialize()
         timer.stop();
     }
 
-#if !__APPLE__
+#if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
     sensor.reset();
 #endif
 }
@@ -145,7 +145,7 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     auto obs = std::make_shared<ImuObs>(navio->imuPos);
 
     auto currentTime = std::chrono::steady_clock::now();
-#if !__APPLE__
+#if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
     navio->sensor->update();
 
     navio->sensor->read_accelerometer(&navio->ax, &navio->ay, &navio->az);

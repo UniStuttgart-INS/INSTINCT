@@ -7,7 +7,7 @@
 
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
-#if !__APPLE__
+#if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
     #include "navio/Common/InertialSensor.h"
 #endif
 
@@ -74,7 +74,7 @@ class Navio2Sensor : public Imu
         LSM
     };
 
-#if !__APPLE__
+#if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
     /// Sensor object
     std::unique_ptr<InertialSensor> sensor;
 #endif

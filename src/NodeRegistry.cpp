@@ -90,7 +90,7 @@ bool NAV::NodeRegistry::NodeInfo::hasCompatiblePin(const Pin* pin) const
                  && NAV::NodeRegistry::NodeDataTypeIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
                 || (pinInfo.type == Pin::Type::Delegate
                     && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
-                || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix || pinInfo.type == Pin::Type::Function)
+                || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix)
                     && (startPinDataIdentifier.empty()
                         || endPinDataIdentifier.empty()
                         || std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinDataIdentifier.front()) != endPinDataIdentifier.end()))

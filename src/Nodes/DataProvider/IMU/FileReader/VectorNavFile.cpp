@@ -607,7 +607,7 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
         {
             obs->quaternion.emplace(dcm_np);
         }
-        else if (!obs->yawPitchRoll.value().isZero())
+        else if (obs->yawPitchRoll.has_value() && !obs->yawPitchRoll.value().isZero())
         {
             obs->quaternion = trafo::quat_nb(trafo::deg2rad(obs->yawPitchRoll.value()(2)),
                                              trafo::deg2rad(obs->yawPitchRoll.value()(1)),
