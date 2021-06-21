@@ -449,10 +449,12 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     /// Gravity vector determination
     if (gravityModel == GravityModel::Somigliana)
     {
+        LOG_DATA("Gravity calculated with Somigliana model");
         gravity_n__t1 = gravity::gravity_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
     }
-    else if (gravityModel == GravityModel::WGS84_Skydel)
+    else if (gravityModel == GravityModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
     {
+        LOG_DATA("Gravity calculated with WGS84 model as in the Skydel Simulator plug-in");
         double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
         // Gravity vector NED
         const Eigen::Vector3d gravityVector(0.0, 0.0, gravityMagnitude);
@@ -460,15 +462,17 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     }
     else if (gravityModel == GravityModel::EGM96)
     {
+        LOG_DATA("Gravity calculated with EGM96");
         int egm96degree = 10;
         gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
     }
     else
     {
+        LOG_DATA("Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')");
         gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
     }
 
-    LOG_DEBUG("Gravity vector in NED:\n{}", gravity_n__t1);
+    LOG_DATA("Gravity vector in NED:\n{}", gravity_n__t1);
 
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;

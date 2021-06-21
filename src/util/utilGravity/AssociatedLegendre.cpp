@@ -25,7 +25,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre
         L(i) = ((2.0 * n + 1.0) * x * L(i - 1) - n * L(i - 2)) / (n + 1.0);
         Ld(i) = ((2.0 * n + 1.0) * (L(i - 1) + x * Ld(i - 1)) - n * Ld(i - 2)) / (n + 1.0);
     }
-    // LOG_DEBUG("First rows:\nL =\n{}\nLd =\n{}", L.transpose(), Ld.transpose());
+    LOG_DATA("First rows of the Associated Legendre Polynomial Coefficient Matrix and its derivative:\nL =\n{}\nLd =\n{}", L.transpose(), Ld.transpose());
 
     P.row(0) = L.transpose();
     Pd.row(0) = Ld.transpose();
@@ -41,7 +41,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre
             full_derivs(j, k) = ((2.0 * m + 1.0) * (jj * full_derivs(j - 1, k - 1) + x * full_derivs(j, k - 1)) - m * full_derivs(j, k - 2)) / (m + 1.0);
         }
     }
-    // LOG_DEBUG("full_derivs =\n{}", full_derivs);
+    LOG_DATA("Derivative matrix 'full_derivs' of the Associated Legendre Polynomials =\n{}", full_derivs);
 
     for (int m = 1; m <= N - 1; m++)
     {
@@ -54,7 +54,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre
                        + std::pow((1.0 - std::pow(x, 2.0)), (mm - 1.0) / 2.0) * full_derivs(m, n);
         }
     }
-    // LOG_DEBUG("Associated Legendre Polynomial coefficients:\nP =\n{}\nPd =\n{}", P, Pd);
+    LOG_DATA("Associated Legendre Polynomial coefficients:\nP =\n{}\nPd =\n{}", P, Pd);
 
     // Normalize values
     auto Nlong = static_cast<uint64_t>(N);
@@ -83,7 +83,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre
             }
         }
     }
-    // LOG_DEBUG("Associated Legendre Polynomial coefficients NORMALIZED:\nP =\n{}\nPd =\n{}", P, Pd);
+    LOG_DATA("Associated Legendre Polynomial coefficients NORMALIZED:\nP =\n{}\nPd =\n{}", P, Pd);
 
     return std::make_pair(P, Pd);
 }

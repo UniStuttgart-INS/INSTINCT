@@ -192,13 +192,11 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
     Eigen::Vector3d eleAziAlt{ 0.0, elevation, azimuth };
     Eigen::Vector3d gravity_ecef = NAV::trafo::sph2ecef(gravity_sph, eleAziAlt);
 
-    // Rotation of the ECEF gravity vector to NED
+    // Rotation of the ECEF gravity vector to NED     //TODO: Make rotation of EGM96 gravity vector via quaternions instead of a rotation matrix // trafo::quat_ne(latitude, azimuth);
     Eigen::Matrix3d R_ne;
     R_ne << -std::sin(latitude) * std::cos(azimuth), -std::sin(latitude) * std::sin(azimuth), std::cos(latitude),
         -std::sin(azimuth), std::cos(azimuth), 0.0,
         -std::cos(latitude) * std::cos(azimuth), -std::cos(latitude) * std::sin(azimuth), -std::sin(latitude);
-
-    // trafo::quat_ne(latitude, azimuth);
 
     Eigen::Vector3d gravity_n = R_ne * gravity_ecef;
 

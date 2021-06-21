@@ -68,7 +68,7 @@ void NAV::SkydelImuStream::guiConfig()
 
 [[nodiscard]] json NAV::SkydelImuStream::save() const
 {
-    //LOG_TRACE("{}: called", nameId());
+    LOG_TRACE("{}: called", nameId());
 
     json j;
 
@@ -166,6 +166,10 @@ void NAV::SkydelImuStream::do_receive()
 
                 this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
             }
+            else
+            {
+                LOG_ERROR("Error receiving the network stream from Skydel");
+            }
 
             if (!stop)
             {
@@ -176,6 +180,8 @@ void NAV::SkydelImuStream::do_receive()
 
 bool NAV::SkydelImuStream::initialize()
 {
+    LOG_TRACE("{}: called", nameId());
+
     stop = false;
 
     do_receive();
@@ -196,7 +202,6 @@ bool NAV::SkydelImuStream::initialize()
 
     isStartup = false;
 
-    LOG_TRACE("{}: initialized", name);
     return true;
 }
 
