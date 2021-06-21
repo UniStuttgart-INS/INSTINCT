@@ -19,8 +19,8 @@ NAV::KvhSensor::KvhSensor()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 360, 70 };
 
     // TODO: Update the library to handle different baudrates
     selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_921600);

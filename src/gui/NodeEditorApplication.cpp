@@ -595,7 +595,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
         for (const auto& node : nm::m_Nodes()) // Blueprint || Simple
         {
-            if (node->kind != Node::Kind::Blueprint && node->kind != Node::Kind::Simple)
+            if (node->kind != Node::Kind::Blueprint && node->kind != Node::Kind::Simple) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
             {
                 continue;
             }
@@ -630,7 +630,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 }
                 else
                 {
-                    builder.Header(node->color);
+                    builder.Header(ImColor(255, 128, 128)); // Light red
                 }
                 ImGui::Spring(0);
                 ImGui::TextUnformatted(node->name.c_str());
@@ -948,7 +948,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
-                        else if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix)
+                        else if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
                                  && (startPin->dataIdentifier.empty()
                                      || endPin->dataIdentifier.empty()
                                      || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->dataIdentifier.front()) == endPin->dataIdentifier.end()))
@@ -1283,6 +1283,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         if (node->hasConfig && node->showConfig)
         {
+            ImGui::SetNextWindowSize(node->guiConfigDefaultWindowSize, ImGuiCond_FirstUseEver);
             if (ImGui::Begin(fmt::format("{} ({})", node->type(), size_t(node->id)).c_str(), &(node->showConfig),
                              ImGuiWindowFlags_None))
             {

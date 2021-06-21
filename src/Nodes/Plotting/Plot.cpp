@@ -136,8 +136,8 @@ NAV::Plot::Plot()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 750, 650 };
 
     dataIdentifier = { RtklibPosObs::type(), UbloxObs::type(),
                        ImuObs::type(), KvhObs::type(), VectorNavObs::type() };

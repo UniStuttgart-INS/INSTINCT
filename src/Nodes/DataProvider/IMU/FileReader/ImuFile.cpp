@@ -18,8 +18,8 @@ NAV::ImuFile::ImuFile()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 370, 180 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuFile::pollData);
     nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);

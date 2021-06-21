@@ -10,8 +10,8 @@ NAV::Matrix::Matrix()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 330, 420 };
     kind = Kind::Simple;
 
     nm::CreateOutputPin(this, "", Pin::Type::Matrix, "Eigen::MatrixXd", &matrix);

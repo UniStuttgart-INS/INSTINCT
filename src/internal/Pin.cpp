@@ -26,7 +26,7 @@ bool NAV::Pin::canCreateLink(const Pin& b) const
         dataTypesMatch = false;
     }
 
-    if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix)
+    if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
         && (dataIdentifier.empty() || b.dataIdentifier.empty()
             || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->dataIdentifier.front()) == endPin->dataIdentifier.end()))
     {

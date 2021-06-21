@@ -22,8 +22,8 @@ NAV::VectorNavSensor::VectorNavSensor()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 345, 120 };
 
     nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type());
 

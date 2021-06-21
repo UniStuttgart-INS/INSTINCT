@@ -252,8 +252,6 @@ class Node
     std::vector<Pin> inputPins;
     /// List of output pins
     std::vector<Pin> outputPins;
-    /// Color of the node
-    ImColor color{ 255, 255, 255 };
     /// Size of the node in pixels
     ImVec2 size{ 0, 0 };
     /// Flag if the config window is shown
@@ -267,6 +265,11 @@ class Node
 
     /// Enables the callbacks
     bool callbacksEnabled = false;
+
+  protected:
+    /// The Default Window size for new config windows.
+    /// Only set the variable if the object/window has no persistently saved data (no entry in .ini file)
+    ImVec2 guiConfigDefaultWindowSize{ 500.0F, 400.0F };
 
   private:
     /// @brief Abstract Initialization of the Node

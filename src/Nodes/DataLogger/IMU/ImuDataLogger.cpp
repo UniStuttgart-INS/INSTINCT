@@ -20,8 +20,8 @@ NAV::ImuDataLogger::ImuDataLogger()
 
     fileType = FileType::ASCII;
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 380, 70 };
 
     nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuDataLogger::writeObservation);
 }

@@ -130,7 +130,6 @@ void to_json(json& j, const Node& node)
         { "type", node.type() },
         { "kind", std::string(node.kind) },
         { "name", node.name },
-        { "color", node.color },
         { "size", node.size.x == 0 && node.size.y == 0 ? node.size : realSize },
         { "pos", ed::GetNodePosition(node.id) },
         { "enabled", node.enabled },
@@ -148,10 +147,6 @@ void from_json(const json& j, Node& node)
     if (j.contains("name"))
     {
         j.at("name").get_to(node.name);
-    }
-    if (j.contains("color"))
-    {
-        j.at("color").get_to(node.color);
     }
     if (j.contains("size"))
     {
