@@ -1,48 +1,32 @@
 #include "SkydelImuStream.hpp"
 
-#include "util/Debug.hpp"
-#include "util/Logger.hpp"
-
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
-#include "internal/FlowManager.hpp"
-
-#include "NodeData/IMU/ImuObs.hpp"
-
-#include "util/Time/TimeBase.hpp"
-
-// Includes for IMU Stream
-#include <cstdlib>
-#include <iostream>
 #include <boost/asio.hpp>
-#include <chrono>
 #include <thread>
-#include <fstream>
 #include <string>
 #include <vector>
-#include <boost/algorithm/string.hpp>
 
+#include "util/Debug.hpp"
+#include "util/Logger.hpp"
+#include "internal/NodeManager.hpp"
+#include "internal/FlowManager.hpp"
+#include "NodeData/IMU/ImuObs.hpp"
+#include "util/Time/TimeBase.hpp"
+
+namespace nm = NAV::NodeManager;
 using boost::asio::ip::udp;
-//using namespace boost::algorithm;
-//using boost::algorithm;
 
 NAV::SkydelImuStream::SkydelImuStream()
-    : m_senderEndpoint(udp::v4(), m_port), m_socket(ioservice, m_senderEndpoint)
+    : m_senderEndpoint(udp::v4(), 4444), m_socket(ioservice, m_senderEndpoint)
 {
     name = typeStatic();
 
-    // LOG_TRACE("{}: called", name);
-
     color = ImColor(255, 128, 128);
     hasConfig = true;
-    // breakStream = false;
-
-    //m_port = 4444;
-    //m_senderEndpoint = boost::asio::ip::udp::endpoint(udp::v4(), m_port);
-    // m_socket = boost::asio::ip::udp::socket(ioservice, m_senderEndpoint);
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
-    counter = 0;
+
+    stop = false;
+    isStartup = true;
 }
 
 NAV::SkydelImuStream::~SkydelImuStream()
@@ -79,11 +63,12 @@ void NAV::SkydelImuStream::guiConfig()
         LOG_DEBUG("Test Button 2");
     }
     */
+    // Schieberegler machen um Datenrate einzustellen
 }
 
 [[nodiscard]] json NAV::SkydelImuStream::save() const
 {
-    //LOG_TRACE("{}: called", nameId());
+    LOG_TRACE("{}: called", nameId());
 
     json j;
 
@@ -111,89 +96,111 @@ void NAV::SkydelImuStream::do_receive()
 {
     m_socket.async_receive_from(
         boost::asio::buffer(m_data, max_length), m_senderEndpoint,
-        [this](boost::system::error_code ed, std::size_t sdfe) {
-            // std::cout << ed << sdfe;
-
-            counter++;
-
-            if ((!ed) & (sdfe > 0)) {}
-
-            std::vector<std::string> v;
-            boost::algorithm::split(v, m_data, boost::is_any_of(","));
-            //std::cout << std::stod(v.at(0)) *10.0 << '\n';
-            //std::cout << m_data;
-            // LOG_TRACE("{}: reading 4444", m_data);
-
-            // LOG_TRACE("mm: Test");
-            //if (InsTime currentTime = util::time::GetCurrentTime();
-            //   !currentTime.empty())
-            //{
-            //    obs->in sTime = currentTime;
-            //}
-
-            if (counter > 5)
+        [this](boost::system::error_code errorRcvd, std::size_t bytesRcvd) {
+            if ((!errorRcvd) && (bytesRcvd > 0))
             {
-                counter = 0;
+                // Splitting the incoming string analogous to 'ImuFile.cpp'
+                std::stringstream lineStream(std::string(m_data.begin(), m_data.end()));
+                std::string cell;
+                auto obs = std::make_shared<ImuObs>(this->imuPos);
 
-                if (v.size() == 7)
+                //  Inits for simulated measurement variables
+                double accelX = 0.0;
+                double accelY = 0.0;
+                double accelZ = 0.0;
+                double gyroX = 0.0;
+                double gyroY = 0.0;
+                double gyroZ = 0.0;
+
+                for (size_t i = 0; i < 7; i++)
                 {
-                    auto obs = std::make_shared<ImuObs>(this->imuPos);
-                    obs->timeSinceStartup = std::stod(v.at(0)) * 1e6;
-
-                    // if (startTime.empty())
-                    // {
-                    //     startTime = util::time::GetCurrentTime();
-                    //     timeSinceStartupStart = obs->timeSinceStartup.value();
-                    // }
-
-                    // obs->insTime = startTime + std::chrono::milliseconds((obs->timeSinceStartup.value() - timeSinceStartupStart));
-
-                    obs->accelCompXYZ.emplace(std::stod(v.at(1)), std::stod(v.at(2)), std::stod(v.at(3)));
-                    obs->gyroCompXYZ.emplace(std::stod(v.at(4)) - 0 * 2.54542332900245e-07, std::stod(v.at(5)),
-                                             std::stod(v.at(6)) + 0 * 7.29207107393694e-05);
-                    obs->magCompXYZ.emplace(0.0, 0.0, 0.0);
-
-                    // Calls all the callbacks
-                    if (InsTime currentTime = util::time::GetCurrentTime();
-                        !currentTime.empty())
+                    // Reading string from csv
+                    if (std::getline(lineStream, cell, ','))
                     {
-                        obs->insTime = currentTime;
-                    }
+                        switch (i)
+                        {
+                        case 0:
+                            obs->timeSinceStartup = std::stod(cell) * 1e6;
+                            break;
+                        case 1:
+                            accelX = std::stod(cell);
+                            break;
+                        case 2:
+                            accelY = std::stod(cell);
+                            break;
+                        case 3:
+                            accelZ = std::stod(cell);
+                            break;
+                        case 4:
+                            gyroX = std::stod(cell);
+                            break;
+                        case 5:
+                            gyroY = std::stod(cell);
+                            break;
+                        case 6:
+                            gyroZ = std::stod(cell);
+                            break;
 
-                    this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
+                        default:
+                            LOG_ERROR("Error in network stream: Cell index is out of bounds");
+                            break;
+                        }
+
+                        InsTime currentTime = util::time::GetCurrentTime();
+                        if (!currentTime.empty())
+                        {
+                            obs->insTime = currentTime;
+                        }
+                    }
+                    else
+                    {
+                        LOG_ERROR("Error in IMU stream: Reading a string from csv failed");
+                        return;
+                    }
                 }
+
+                // Arranging the network stream data into output format
+                obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
+                obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
+                obs->magCompXYZ.emplace(0.0, 0.0, 0.0); // Magnetometer data is not simulated by Skydel, but required for Integrator
+
+                this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
+            }
+            else
+            {
+                LOG_ERROR("Error receiving the network stream from Skydel");
             }
 
-            // if (!breakStream)
-            // {
-            do_receive();
-            // }
-            // else
-            // {
-            //     TestThread.join();
-            // }
+            if (!stop)
+            {
+                do_receive();
+            }
         });
 }
 
 bool NAV::SkydelImuStream::initialize()
 {
-    //    sensor = std::make_unique<>();
+    LOG_TRACE("{}: called", nameId());
 
-    //    int ReceiverThread()
-    //  {
-    // breakStream = false;
+    stop = false;
 
     do_receive();
 
-    TestThread = std::thread([=, this]() { ioservice.run(); });
-    //std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    if (isStartup)
+    {
+        TestThread = std::thread([=, this]() {
+            ioservice.run();
+        });
+    }
+    else
+    {
+        TestThread = std::thread([=, this]() {
+            ioservice.restart();
+            ioservice.run();
+        });
+    }
 
-    //io_context.run();
-
-    //return 0;
-    //};
-
-    LOG_TRACE("{}: initialized", name);
+    isStartup = false;
 
     return true;
 }
@@ -202,33 +209,7 @@ void NAV::SkydelImuStream::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    // breakStream = true;
-
-    // LOG_TRACE("{}: de-initialized", nameId());
-
-    // if (!isInitialized())
-    // {
-    //     return;
-    // }
-
-    //TestThread.join();
-
-    // startTime = InsTime{};
-}
-
-void NAV::SkydelImuStream::readImuThread(void* userData)
-{
-    //LOG_TRACE("mm: Test");
-    //std::cout << userData << std::endl;
-    //return true;
-    //std::cout << "mmTest" << std::endl;
-    auto* skydel = static_cast<SkydelImuStream*>(userData);
-    auto obs = std::make_shared<ImuObs>(skydel->imuPos);
-    LOG_TRACE("mm: Test");
-    //if (InsTime currentTime = util::time::GetCurrentTime();
-    //   !currentTime.empty())
-    //{
-    //    obs->insTime = currentTime;
-    //}
-    skydel->invokeCallbacks(OutputPortIndex_ImuObs, obs);
+    stop = true;
+    ioservice.stop();
+    TestThread.join();
 }

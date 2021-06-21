@@ -122,12 +122,13 @@ class ImuIntegrator : public Node
     {
         WGS84,
         WGS84_Skydel,
-        Somigliana
+        Somigliana,
+        EGM96
     };
     GravityModel gravityModel = GravityModel::WGS84;
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
-    const Eigen::Vector3d gravity_n__t1;
+    Eigen::Vector3d gravity_n__t1;
 };
 
 } // namespace NAV

@@ -215,4 +215,19 @@ Eigen::Vector3d trafo::ecef2lla_GRS80(const Eigen::Vector3d& ecef)
     return ecef2lla(ecef, InsConst::GRS80_a, InsConst::GRS80_b, InsConst::GRS80_e_squared);
 }
 
+Eigen::Vector3d trafo::sph2ecef(const Eigen::Vector3d& position_s, const Eigen::Vector3d& sph)
+{
+    const auto& elevation = sph(1);
+    const auto& azimuth = sph(2);
+
+    Eigen::Matrix3d R_se;
+    R_se << std::sin(elevation) * std::cos(azimuth), std::cos(elevation) * std::cos(azimuth), -std::sin(azimuth),
+        std::sin(elevation) * std::sin(azimuth), std::cos(elevation) * std::sin(azimuth), std::cos(azimuth),
+        std::cos(elevation), -std::sin(elevation), 0.0;
+
+    Eigen::Vector3d position_e = R_se * position_s;
+
+    return position_e;
+}
+
 } // namespace NAV

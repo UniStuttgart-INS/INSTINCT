@@ -170,6 +170,11 @@ class trafo
     /// @return Vector containing [latitude 𝜙, longitude λ, altitude]^T in [rad, rad, m]
     [[nodiscard]] static Eigen::Vector3d ecef2lla_GRS80(const Eigen::Vector3d& ecef);
 
+    /// @brief Converts spherical Earth-centered-Earth-fixed coordinates into cartesian coordinates
+    /// @param[in] sph elevation and azimuth in radians
+    /// @return The ECEF coordinates in [m]
+    [[nodiscard]] static Eigen::Vector3d sph2ecef(const Eigen::Vector3d& position_s, const Eigen::Vector3d& sph);
+
   private:
     /// @brief Converts latitude, longitude and altitude into Earth-centered-Earth-fixed coordinates
     /// @param[in] latLonAlt [𝜙 latitude, λ longitude, altitude]^T in [rad, rad, m]
