@@ -11,7 +11,7 @@
                 "-fconfig.ini",
                 "-l",
                 "flow/Default.flow",
-                "--nogui",
+                // "--nogui",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

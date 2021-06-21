@@ -151,15 +151,15 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
     /// g_n Gravity vector in [m/s^2], in spherical coordinates
     Eigen::Vector3d gravity_sph = { -InsConst::WGS84_MU / (radius * radius), 0.0, 0.0 };
 
-    // Associated Legendre Polynomial Coefficients 'P' and their derivatives 'Pd'
-    auto [P, Pd] = NAV::utilGravity::associatedLegendre(ndegree + 1, std::sin(elevation));
-
     double Pnm = 0;
     double Pnmd = 0;
 
     auto coeffsRows = coeffs.rows();
 
-    for (int i = 0; i < coeffsRows; i++)
+    // Associated Legendre Polynomial Coefficients 'P' and their derivatives 'Pd'
+    auto [P, Pd] = NAV::utilGravity::associatedLegendre(ndegree + 1, std::sin(elevation));
+
+    for (int i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {
         // Retrieving EGM96 coefficients
         auto n = static_cast<int>(coeffs(i, 0)); // Degree of the Associated Legendre Polynomial
@@ -189,7 +189,7 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
     }
 
     // Rotation of the spherical gravity vector to ECEF coordinates
-    Eigen::Vector3d eleAziAlt = { 0.0, elevation, azimuth };
+    Eigen::Vector3d eleAziAlt{ 0.0, elevation, azimuth };
     Eigen::Vector3d gravity_ecef = NAV::trafo::sph2ecef(gravity_sph, eleAziAlt);
 
     // Rotation of the ECEF gravity vector to NED

@@ -97,7 +97,7 @@ void NAV::SkydelImuStream::do_receive()
     m_socket.async_receive_from(
         boost::asio::buffer(m_data, max_length), m_senderEndpoint,
         [this](boost::system::error_code errorRcvd, std::size_t bytesRcvd) {
-            if ((!errorRcvd) & (bytesRcvd > 0))
+            if ((!errorRcvd) && (bytesRcvd > 0))
             {
                 // Splitting the incoming string analogous to 'ImuFile.cpp'
                 std::stringstream lineStream(std::string(m_data.begin(), m_data.end()));
