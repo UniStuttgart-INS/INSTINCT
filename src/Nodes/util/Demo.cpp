@@ -41,8 +41,8 @@ NAV::Demo::Demo()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 630, 410 };
 
     nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::ImuObs::type());
     nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, NAV::InsObs::type(), &Demo::pollData);
@@ -290,8 +290,6 @@ void NAV::Demo::guiConfig()
             ImGui::EndTable();
         }
 
-        ImGui::TableNextColumn();
-
         ImGui::EndTable();
     }
 }
@@ -432,7 +430,7 @@ void NAV::Demo::readSensorDataThread(void* userData)
     auto obs = std::make_shared<ImuObs>(imuPos);
 
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    auto* t = std::localtime(&now);
+    auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
 
     obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
                            static_cast<uint16_t>(t->tm_mon),
@@ -473,7 +471,7 @@ std::shared_ptr<NAV::NodeData> NAV::Demo::pollData(bool peek)
     auto obs = std::make_shared<InsObs>();
 
     std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    auto* t = std::localtime(&now);
+    auto* t = std::localtime(&now); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
 
     obs->insTime = InsTime(static_cast<uint16_t>(t->tm_year + 1900),
                            static_cast<uint16_t>(t->tm_mon),

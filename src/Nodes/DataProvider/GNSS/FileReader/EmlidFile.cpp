@@ -20,8 +20,8 @@ NAV::EmlidFile::EmlidFile()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 380, 70 };
 
     nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, NAV::EmlidObs::type(), &EmlidFile::pollData);
 }

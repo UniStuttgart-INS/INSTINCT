@@ -12,8 +12,8 @@ NAV::Transformation::Transformation()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 305, 70 };
     kind = Kind::Simple;
 
     nm::CreateInputPin(this, "ECEF", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" }, &Transformation::notifyOnInputValueChanged);
@@ -42,6 +42,7 @@ std::string NAV::Transformation::category()
 
 void NAV::Transformation::guiConfig()
 {
+    ImGui::SetNextItemWidth(280.0F);
     if (ImGui::Combo(("##Transformation" + std::to_string(size_t(id))).c_str(),
                      reinterpret_cast<int*>(&selectedTransformation),
                      "ECEF to LLA [rad]\0"

@@ -16,8 +16,8 @@ NAV::ImuIntegrator::ImuIntegrator()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 255, 65 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::integrateObservation);
     nm::CreateInputPin(this, "Position ECEF", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
@@ -47,6 +47,7 @@ std::string NAV::ImuIntegrator::category()
 
 void NAV::ImuIntegrator::guiConfig()
 {
+    ImGui::SetNextItemWidth(100);
     if (ImGui::Combo("Integration Frame", reinterpret_cast<int*>(&integrationFrame), "ECEF\0NED\0\0"))
     {
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame ? "NED" : "ECEF");

@@ -20,8 +20,8 @@ NAV::UbloxFile::UbloxFile()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 380, 70 };
 
     nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, NAV::UbloxObs::type(), &UbloxFile::pollData);
 }

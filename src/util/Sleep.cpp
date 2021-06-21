@@ -41,12 +41,12 @@ void NAV::Sleep::waitForSignal(bool showText)
     }
 
     // Wait for a signal to arrive.
-    sigprocmask(SIG_BLOCK, &mask, &oldmask);
+    sigprocmask(SIG_BLOCK, &mask, &oldmask); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
     while (!usr_interrupt)
     {
-        sigsuspend(&oldmask);
+        sigsuspend(&oldmask); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
     }
-    sigprocmask(SIG_UNBLOCK, &mask, nullptr);
+    sigprocmask(SIG_UNBLOCK, &mask, nullptr); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
 
     signal(SIGUSR1, SIG_DFL);
     signal(SIGINT, SIG_DFL);
@@ -69,7 +69,7 @@ void NAV::Sleep::countDownSeconds(size_t seconds)
 
         // Use of system sleep better here, as it interrupts on signal
 #if __linux__ || __APPLE__ || __CYGWIN__ || __QNXNTO__
-        sleep(1);
+        sleep(1); // NOLINT(concurrency-mt-unsafe) // FIXME: error: function is not thread safe
 #else
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 #endif

@@ -18,8 +18,8 @@ NAV::ImuSimulator::ImuSimulator()
 
     LOG_TRACE("{}: called", name);
 
-    color = ImColor(255, 128, 128);
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 405, 390 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuSimulator::pollData);
     // nm::CreateInputPin(this, "State", Pin::Type::Object, { NAV::StateData::type() });
