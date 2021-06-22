@@ -544,7 +544,15 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             }
         }
 
+        // Iterator 'id' can be invalidated if the input link caused also the ouput link to be deleted
+        // Therefore the iterator needs to be searched again
+        id = std::find_if(m_links.begin(),
+                          m_links.end(),
+                          [linkId](const auto& link) { return link.id == linkId; });
+        if (id != m_links.end())
+        {
         m_links.erase(id);
+        }
 
         flow::ApplyChanges();
 
