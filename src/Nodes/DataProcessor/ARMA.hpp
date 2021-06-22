@@ -66,30 +66,57 @@ class ARMA : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
+    /// @brief calculate autocorrelation function (ACF)
+    /// @param[in] y vector of data
+    /// @param[in] p order of AR process
+    /// @param[out] acf vector of acf values
+    void acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf);
+
+    /// @brief calculate partial autocorrelation function (PACF) via Durbin-Levinson
+    /// @param[in] y vector of data
+    /// @param[in] acf vector of acf
+    /// @param[in] p order of AR process
+    /// @param[out] pacf vector of pacf values
+    /// @param[out] initial_e_hat vector of initial ê for Hannan-Rissanen
+    void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial);
+
+    /// @brief Calculate ARMA parameters through Hannan-Rissanen
+    /// @param[in] y vector of data
+    /// @param[in] p order of AR process
+    /// @param[in] q order of MA process
+    void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat);
+
+    /// @brief fill A matrix for least squares
+    /// @param[in] y vector of data
+    /// @param[in] e_hat residuals
+    /// @param[in] p order of AR process
+    /// @param[in] q order of MA process
+    void matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, int m, Eigen::MatrixXd& A);
+
     std::deque<std::shared_ptr<ImuObs>> buffer;
 
-    //loop iterator
+    /// loop iterator
     int k = 0;
 
-    bool INITIALIZE = false; // parameter initialization indicator
+    bool INITIALIZE = false; ///< parameter initialization indicator
     // ARMA order
-    int p = 2; // AR order
-    int q = 2; // MA order
+    int p = 2; ///< AR order
+    int q = 2; ///< MA order
 
-    int deque_size = 1000; // modelling size
-    int num_obs = 6;       // number of observations (3-axis accelerometer / 3-axis gyro)
+    int deque_size = 1000; ///< modelling size
+    int num_obs = 6;       ///< number of observations (3-axis accelerometer / 3-axis gyro)
 
-    Eigen::MatrixXd y;       // measurement data
-    Eigen::VectorXd y_rbm;   // y (reduced by mean)
-    Eigen::VectorXd y_hat;   // ARMA estimates for y_rbm
-    Eigen::VectorXd emp_sig; // empirical significance (p-Value) of parameters
-    Eigen::VectorXd x;       // ARMA slope parameters
-    Eigen::VectorXd y_hat_t; // output container
+    Eigen::MatrixXd y;       ///< measurement data
+    Eigen::VectorXd y_rbm;   ///< y (reduced by mean)
+    Eigen::VectorXd y_hat;   ///< ARMA estimates for y_rbm
+    Eigen::VectorXd emp_sig; ///< empirical significance (p-Value) of parameters
+    Eigen::VectorXd x;       ///< ARMA slope parameters
+    Eigen::VectorXd y_hat_t; ///< output container
 
-    int p_mem; // p, q memory to reset for each observation
-    int q_mem;
+    int p_mem; ///< p memory to reset for each observation
+    int q_mem; ///< q memory to reset for each observation
 
-    int m; // value of superior order (p or q)
+    int m; ///< value of superior order (p or q)
     double y_mean;
 };
 

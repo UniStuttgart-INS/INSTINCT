@@ -84,7 +84,9 @@ void NAV::ARMA::guiConfig()
 
     json j;
 
-    // j["outputFrequency"] = outputFrequency;
+    j["deque_size"] = deque_size;
+    j["p"] = p;
+    j["q"] = q;
 
     return j;
 }
@@ -93,9 +95,17 @@ void NAV::ARMA::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (j.contains("outputFrequency"))
+    if (j.contains("deque_size"))
     {
-        // j.at("outputFrequency").get_to(outputFrequency);
+        j.at("deque_size").get_to(deque_size);
+    }
+    if (j.contains("p"))
+    {
+        j.at("p").get_to(p);
+    }
+    if (j.contains("q"))
+    {
+        j.at("q").get_to(q);
     }
 }
 
@@ -126,10 +136,7 @@ void NAV::ARMA::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-/// @brief calculate autocorrelation function (ACF)
-/// @param[in] y vector of data @param[in] p order of AR process
-/// @param[out] acf vector of acf values
-void acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
+void NAV::ARMA::acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
 {
     int acf_size = static_cast<int>(y.size()); // size of y
     /* Calculation of initial ê through Yule-Walker:
@@ -158,10 +165,7 @@ void acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
     }
 }
 
-/// @brief calculate partial autocorrelation function (PACF) via Durbin-Levinson
-/// @param[in] y vector of data @param[in] acf vector of acf @param[in] p order of AR process
-/// @param[out] pacf vector of pacf values @param[out] initial_e_hat vector of initial ê for Hannan-Rissanen
-void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial)
+void NAV::ARMA::pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial)
 {
     int pacf_size = static_cast<int>(y.size());
     /* Calculation of initial ê through Yule-Walker:
@@ -229,9 +233,8 @@ void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::Vecto
         }
     }
 }
-/// @brief fill A matrix for least squares
-/// @param[in] y vector of data @param[in] e_hat residuals @param[in] p order of AR process @param[in] q order of MA process
-void matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, int m, Eigen::MatrixXd& A)
+
+void NAV::ARMA::matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, int m, Eigen::MatrixXd& A)
 {
     for (int t = m; t < y.size(); t++) // rows
     {
@@ -246,9 +249,7 @@ void matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, i
     }
 }
 
-/// @brief Calculate ARMA parameters through Hannan-Rissanen
-/// @param[in] y vector of data @param[in] @param[in] p order of AR process @param[in] q order of MA process
-void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat)
+void NAV::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat)
 {
     // declaration
     // acf
