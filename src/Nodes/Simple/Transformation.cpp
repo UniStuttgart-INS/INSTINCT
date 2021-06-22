@@ -207,7 +207,7 @@ void NAV::Transformation::notifyOnOutputValueChanged(ax::NodeEditor::LinkId link
 {
     if ([[maybe_unused]] Link* link = nm::FindLink(linkId))
     {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
+        LOG_DATA("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
     }
 
     if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Matrix).id))
@@ -345,7 +345,7 @@ void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkI
 {
     if ([[maybe_unused]] Link* link = nm::FindLink(linkId))
     {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
+        LOG_DATA("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
     }
 
     if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Matrix).id))

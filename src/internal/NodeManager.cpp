@@ -75,7 +75,7 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
         node->id = GetNextNodeId();
     }
     m_nodes.push_back(node);
-    LOG_DEBUG("Creating node {}", size_t(node->id));
+    LOG_DEBUG("Creating node: {}", node->nameId());
 
     // Create Delegate output pin
     if (node->kind == Node::Kind::Blueprint && (node->outputPins.empty() || node->outputPins.front().type != Pin::Type::Delegate))
@@ -127,6 +127,7 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
 
 void NAV::NodeManager::UpdateNode(Node* node)
 {
+    LOG_TRACE("called for node: {}", node->nameId());
     for (auto& pin : node->inputPins)
     {
         pin.parentNode = node;
@@ -148,6 +149,7 @@ void NAV::NodeManager::UpdateNode(Node* node)
 
 bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
 {
+    LOG_TRACE("called for node with id {}", size_t(nodeId));
     if (nodeInitThread.joinable())
     {
         // nodeInitThread.request_stop();
@@ -160,7 +162,7 @@ bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
                            [nodeId](const auto& node) { return node->id == nodeId; });
     if (it != m_nodes.end())
     {
-        LOG_DEBUG("Deleting node {}", size_t(nodeId));
+        LOG_DEBUG("Deleting node: {}", (*it)->nameId());
         for (Pin& inputPin : (*it)->inputPins)
         {
             for (size_t i = 0; i < m_links.size();)
@@ -203,6 +205,7 @@ bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
 
 void NAV::NodeManager::DeleteAllNodes()
 {
+    LOG_TRACE("called");
     if (nodeInitThread.joinable())
     {
         // nodeInitThread.request_stop();
@@ -231,6 +234,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     {
         return nullptr;
     }
+    LOG_TRACE("called: {} of [{}] ==> {} of [{}]", size_t(startPin->id), startPin->parentNode->nameId(), size_t(endPin->id), endPin->parentNode->nameId());
 
     if (!startPin->parentNode->onCreateLink(startPin, endPin) || !endPin->parentNode->onCreateLink(startPin, endPin))
     {
@@ -240,7 +244,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
     }
 
     m_links.emplace_back(GetNextLinkId(), startPin->id, endPin->id, startPin->getIconColor());
-    LOG_DEBUG("Creating link {} from pin {} to {}", size_t(m_links.back().id), size_t(startPin->id), size_t(endPin->id));
+    LOG_DEBUG("Creating link {} from pin {} of [{}] ==> {} of [{}]", size_t(m_links.back().id), size_t(startPin->id), startPin->parentNode->nameId(), size_t(endPin->id), endPin->parentNode->nameId());
 
     if (endPin->type == Pin::Type::Flow)
     {
@@ -290,6 +294,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
 
 bool NAV::NodeManager::AddLink(const NAV::Link& link)
 {
+    LOG_TRACE("called for link with id {}", size_t(link.id));
     m_links.push_back(link);
 
     Pin* startPin = FindPin(link.startPinId);
@@ -385,6 +390,7 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
 
 void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
 {
+    LOG_TRACE("called for link with id {}", size_t(linkId));
     Link* link = NodeManager::FindLink(linkId);
 
     if (link == nullptr)
@@ -484,17 +490,19 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
 
 bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
 {
+    LOG_TRACE("called for link with id {}", size_t(linkId));
     auto id = std::find_if(m_links.begin(),
                            m_links.end(),
                            [linkId](const auto& link) { return link.id == linkId; });
     if (id != m_links.end())
     {
-        LOG_DEBUG("Deleting link {}", size_t(linkId));
         Pin* endPin = FindPin(id->endPinId);
         Pin* startPin = FindPin(id->startPinId);
 
         if (startPin && endPin)
         {
+            LOG_DEBUG("Deleting link {} from pin {} of [{}] ==> pin {} of [{}]", size_t(linkId),
+                      size_t(startPin->id), startPin->parentNode->nameId(), size_t(endPin->id), endPin->parentNode->nameId());
             if (startPin->parentNode)
             {
                 startPin->parentNode->onDeleteLink(startPin, endPin);
@@ -551,7 +559,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
                           [linkId](const auto& link) { return link.id == linkId; });
         if (id != m_links.end())
         {
-        m_links.erase(id);
+            m_links.erase(id);
         }
 
         flow::ApplyChanges();
@@ -564,6 +572,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
 
 void NAV::NodeManager::DeleteAllLinks()
 {
+    LOG_TRACE("called");
     while (!m_links.empty())
     {
         NodeManager::DeleteLink(m_links.back().id);
@@ -581,6 +590,7 @@ void NAV::NodeManager::DeleteAllLinks()
 
 NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinData data)
 {
+    LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     node->inputPins.emplace_back(GetNextPinId(), name, pinType, Pin::Kind::Input, node);
 
     node->inputPins.back().data = data;
@@ -593,6 +603,7 @@ NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NA
 
 NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::string& dataIdentifier, NAV::Pin::PinData data)
 {
+    LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     node->outputPins.emplace_back(GetNextPinId(), name, pinType, Pin::Kind::Output, node);
 
     node->outputPins.back().data = data;
@@ -788,6 +799,7 @@ NAV::Pin* NAV::NodeManager::FindConnectedPinToInputPin(ax::NodeEditor::PinId id)
 
 void NAV::NodeManager::EnableAllCallbacks()
 {
+    LOG_TRACE("called");
     for (auto* node : m_nodes)
     {
         if (node->enabled)
@@ -799,6 +811,7 @@ void NAV::NodeManager::EnableAllCallbacks()
 
 void NAV::NodeManager::DisableAllCallbacks()
 {
+    LOG_TRACE("called");
     for (auto* node : m_nodes)
     {
         node->callbacksEnabled = false;
@@ -857,6 +870,7 @@ void NAV::NodeManager::InitializeAllNodesAsync()
 
 void NAV::NodeManager::Stop()
 {
+    LOG_TRACE("called");
     if (nodeInitThread.joinable())
     {
         LOG_DEBUG("Joining node Init Thread");

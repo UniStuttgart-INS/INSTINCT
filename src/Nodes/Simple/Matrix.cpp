@@ -510,7 +510,7 @@ void NAV::Matrix::notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId)
 {
     if (Link* link = nm::FindLink(linkId))
     {
-        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
+        LOG_DATA("{}: called for {} ==> {}", nameId(), size_t(link->startPinId), size_t(link->endPinId));
 
         if (link->startPinId == outputPins.front().id) // Change on the Eigen::MatrixXd Pin notified
         {
