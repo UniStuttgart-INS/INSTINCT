@@ -1,6 +1,6 @@
 /// @file ARMA.hpp
 /// @brief ARMA Node
-/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @author MSc. Janis Thürsam (janis.thuersam@yahoo.de)
 /// @date 2021-01-13
 
 #pragma once
