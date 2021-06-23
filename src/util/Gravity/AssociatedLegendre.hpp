@@ -11,7 +11,7 @@ namespace NAV::util::gravity
 {
 /// @brief Calculates the associated Legendre Polynomials necessary for the EGM96
 /// @param[in] degreeN of Legendre polynomial
-/// @param[in] x data points
+/// @param[in] x sampling points of the polynomials
 /// @return Associated Legendre Polynomial Parameters as P2 << P, Pd (derivative)
 ///
 // /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2 - eq. 6.16)
@@ -22,4 +22,4 @@ namespace NAV::util::gravity
 /// @return The factorial
 uint64_t factorial(uint64_t n);
 
-} // namespace NAV::utilGravity
+} // namespace NAV::util::gravity

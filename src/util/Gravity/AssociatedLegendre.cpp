@@ -4,7 +4,7 @@
 #include "util/InsConstants.hpp"
 #include <cmath>
 
-std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre(int N, double x)
+std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::util::gravity::associatedLegendre(int N, double x)
 {
     Eigen::MatrixXd P = Eigen::MatrixXd::Zero(N, N);
     Eigen::MatrixXd Pd = Eigen::MatrixXd::Zero(N, N);
@@ -68,7 +68,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre
                 auto nn = static_cast<double>(n);
 
                 // Normalization factor, consistent with equation (4.1.6) from "GUT User Guide" (https://earth.esa.int/documents/10174/1500266/GUT_UserGuide)
-                double factor = (2.0 * nn + 1.0) * static_cast<double>(NAV::utilGravity::factorial(n - m)) / static_cast<double>(NAV::utilGravity::factorial(n + m));
+                double factor = (2.0 * nn + 1.0) * static_cast<double>(NAV::util::gravity::factorial(n - m)) / static_cast<double>(NAV::util::gravity::factorial(n + m));
 
                 if (m != 0)
                 {
@@ -88,7 +88,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::utilGravity::associatedLegendre
     return std::make_pair(P, Pd);
 }
 
-uint64_t NAV::utilGravity::factorial(uint64_t n)
+uint64_t NAV::util::gravity::factorial(uint64_t n)
 {
     return (n == 1 || n == 0) ? 1 : n * factorial(n - 1); // uint64_t is required to calculate factorials of n > 12 (Limit of uint32_t). The limit of uint64_t is at n = 20
 }

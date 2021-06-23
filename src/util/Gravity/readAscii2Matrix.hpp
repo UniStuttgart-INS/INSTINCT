@@ -12,8 +12,5 @@ namespace NAV::util::gravity
 /// @brief Read function for EGM96 coefficients
 /// @param[in] coeffsFile Ascii file of the EGM96 coefficients
 /// @return 'coeffs' MatrixXd of the EGM96 coefficients
-///
-// /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2 - eq. 6.16)
 [[nodiscard]] Eigen::MatrixXd readAscii2Matrix();
-
-} // namespace NAV::utilGravity
+} // namespace NAV::util::gravity

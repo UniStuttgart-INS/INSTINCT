@@ -6,11 +6,11 @@
 #include "util/Logger.hpp"
 #include <filesystem>
 
-Eigen::MatrixXd NAV::utilGravity::readAscii2Matrix()
+Eigen::MatrixXd NAV::util::gravity::readAscii2Matrix()
 {
     std::string line;
-    std::ifstream myfileN("../resources/Data/egm96_to360.ascii"); // Evtl. Pfad anpassen wegen "workspaceFolder" in tasks.json
-    std::ifstream myfile("../resources/Data/egm96_to360.ascii");
+    std::ifstream myfileN("resources/data/egm96_to360.ascii");
+    std::ifstream myfile("resources/data/egm96_to360.ascii");
     char delimiter = ' ';
     size_t pos = 0;
     std::string token;
@@ -39,7 +39,7 @@ Eigen::MatrixXd NAV::utilGravity::readAscii2Matrix()
                     token = line.substr(0, pos);
                     coeffs(i, j) = std::strtod(token.c_str(), nullptr);
 
-                    line.erase(0, pos + delimiter.length());
+                    line.erase(0, pos + 1);
 
                     if (j < 5)
                     {
