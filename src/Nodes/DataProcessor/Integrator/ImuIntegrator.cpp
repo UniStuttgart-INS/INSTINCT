@@ -558,7 +558,6 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
         posVelAtt__t0.velocity_n() = velocity_n__t0;
         // Store body to navigation frame quaternion in the state
         posVelAtt__t0.quaternion_nb() = quaternion_nb__t0;
-        //posVelAtt__t0.quaternion_nb() = trafo::quat_nb(0, 0, 0); //quaternion_nb__t0;
 
         setCurrentPosition(posVelAtt__t0.position_ecef());
         setCurrentVelocity(posVelAtt__t0.velocity_n());

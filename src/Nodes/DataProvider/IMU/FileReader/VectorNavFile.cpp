@@ -367,7 +367,7 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             }
             else if (column == "AccX")
             {
-                accelCompX = std::stod(cell) - 0.2203;
+                accelCompX = std::stod(cell);
             }
             else if (column == "AccY")
             {

@@ -24,7 +24,6 @@ NAV::ImuDataLogger::ImuDataLogger()
     hasConfig = true;
 
     nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuDataLogger::writeObservation);
-    //nm::CreateInputPin(this, "writeObservation", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" }, &ImuDataLogger::writeObservation);
 }
 
 NAV::ImuDataLogger::~ImuDataLogger()
@@ -176,43 +175,6 @@ void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeD
     if (obs->temperature.has_value())
     {
         filestream << obs->temperature.value();
-        /*if (Link* link = nm::FindLink(linkId))
-    {
-        if (Pin* sourcePin = nm::FindPin(link->startPinId))
-        {
-            size_t pinIndex = pinIndexFromId(link->endPinId);
-
-            LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
-
-            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-            {
-                auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
-                // Matrix
-                //for (int row = 0; row < value->rows(); row++)
-                //{
-                for (int col = 0; col < value->cols(); col++)
-                {
-                    //addData(pinIndex, i++, (*value)(row, col));
-                    filestream << (*value)(0, col);
-                }
-                //}
-            }
-            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-            {
-                auto* value = getInputValue<BlockMatrix>(pinIndex);
-
-                auto matrix = (*value)();
-
-                // Matrix
-                //for (int row = 0; row < matrix.rows(); row++)
-                //{
-                for (int col = 0; col < matrix.cols(); col++)
-                {
-                    filestream << matrix(0, col);
-                }
-                //}
-            }
-        }*/
-        filestream << '\n';
     }
+    filestream << '\n';
 }

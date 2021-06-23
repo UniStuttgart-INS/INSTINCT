@@ -36,12 +36,12 @@
                 "-c",
                 "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
             ],
-            /*"options": {
-                "env": {
-                    "DISPLAY": "192.168.2.120:0.0",
-                    "LIBGL_ALWAYS_INDIRECT": "1",
-                },
-            },*/
+            // "options": {
+            //     "env": {
+            //         "CC": "/usr/bin/clang",
+            //         "CXX": "/usr/bin/clang++",
+            //     },
+            // },
             "presentation": {
                 "clear": true,
             },

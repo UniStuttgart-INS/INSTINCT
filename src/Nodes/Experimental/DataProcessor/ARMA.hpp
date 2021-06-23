@@ -84,7 +84,7 @@ class ARMA : public Node
     /// @param[in] y vector of data
     /// @param[in] p order of AR process
     /// @param[in] q order of MA process
-    void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat);
+    static void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat);
 
     /// @brief fill A matrix for least squares
     /// @param[in] y vector of data

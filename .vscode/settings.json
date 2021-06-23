@@ -9,23 +9,16 @@
     "C_Cpp.default.cppStandard": "c++20",
     "cSpell.words": [
         "Doxygen",
-        "Eigen",
         "GNSS",
         "Kalman",
-        "arma",
         "cmake",
         "coeffs",
-        "covar",
         "docopt",
         "gtest",
         "hobiger",
-        "init",
         "kutta",
-        "ldlt",
         "mathbf",
-        "pacf",
         "quaterniond",
-        "rissanen",
         "runge",
         "ublox"
     ],
@@ -143,6 +136,5 @@
         "DoxygenLayout.xml": true,
         "INSTINCT.ini": true,
         "compile_commands.json": true,
-    },
-    "C_Cpp.errorSquiggles": "Disabled"
+    }
 }
