@@ -47,13 +47,6 @@ class SkydelImuStream : public Imu
     /// @attention Don't forget to set hasConfig to true in the constructor of the node
     void guiConfig() override;
 
-    /// @brief Saves the node into a json object
-    [[nodiscard]] json save() const override;
-
-    /// @brief Restores the node from a json object
-    /// @param[in] j Json object with the node state
-    void restore(const json& j) override;
-
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     bool resetNode() override;
 
@@ -77,10 +70,11 @@ class SkydelImuStream : public Imu
     std::thread TestThread;
 
     // Network data stream buffer size (boost::asio)
-    enum
-    {
-        max_length = 1024
-    };
+    // enum
+    // {
+    //     max_length = 1024
+    // };
+    constexpr static unsigned int max_length = 1024;
 
     // Network data stream array
     std::array<char, max_length> m_data{};

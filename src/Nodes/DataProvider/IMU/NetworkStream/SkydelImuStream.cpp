@@ -24,9 +24,6 @@ NAV::SkydelImuStream::SkydelImuStream()
     hasConfig = false;
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
-
-    stop = false;
-    isStartup = true;
 }
 
 NAV::SkydelImuStream::~SkydelImuStream()
@@ -51,40 +48,7 @@ std::string NAV::SkydelImuStream::category()
 
 void NAV::SkydelImuStream::guiConfig()
 {
-    /*  // Checkbox Beispiel von TT
-    static bool chk1 = false;
-    if (ImGui::Checkbox("Test##1", &chk1))
-    {
-        LOG_DEBUG("Test Button 1");
-    }
-    static bool chk2 = false;
-    if (ImGui::Checkbox("Test##2", &chk2))
-    {
-        LOG_DEBUG("Test Button 2");
-    }
-    */
-    // Schieberegler machen um Datenrate einzustellen
-}
-
-[[nodiscard]] json NAV::SkydelImuStream::save() const
-{
-    LOG_TRACE("{}: called", nameId());
-
-    json j;
-
-    j["Frequency"] = 1;
-
-    return j;
-}
-
-void NAV::SkydelImuStream::restore(json const& j)
-{
-    LOG_TRACE("{}: called", nameId());
-
-    if (j.contains("Frequency"))
-    {
-        // j.at("Frequency").get_to(outputFrequency);
-    }
+    //TODO: Configure slider to enable custom data rate setting
 }
 
 bool NAV::SkydelImuStream::resetNode()
@@ -162,7 +126,6 @@ void NAV::SkydelImuStream::do_receive()
                 // Arranging the network stream data into output format
                 obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
                 obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
-                obs->magCompXYZ.emplace(0.0, 0.0, 0.0); // Magnetometer data is not simulated by Skydel, but required for Integrator
 
                 this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
             }
@@ -194,7 +157,7 @@ bool NAV::SkydelImuStream::initialize()
     }
     else
     {
-        TestThread = std::thread([=, ioservice]() {
+        TestThread = std::thread([=, this]() {
             ioservice.restart();
             ioservice.run();
         });
