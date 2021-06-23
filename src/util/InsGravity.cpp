@@ -1,11 +1,13 @@
 #include "InsGravity.hpp"
+
+#include <cmath>
+#include <optional>
+
+#include "Eigen/Core"
+#include "util/InsTransformations.hpp"
 #include "util/Logger.hpp"
 #include "InsConstants.hpp"
-#include "utilGravity/AssociatedLegendre.hpp"
-#include "utilGravity/readAscii2Matrix.hpp"
-#include "Eigen/Core"
-#include <cmath>
-#include "util/InsTransformations.hpp"
+#include "Gravity/AssociatedLegendre.hpp"
 
 #include <string>
 #include <fstream>
@@ -135,10 +137,23 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration_WGS84(const double& latitu
     return gravity_n;
 }
 
+Eigen::MatrixXd NAV::gravity::readCoeffs()
+{
+    LOG_TRACE("Reading in EGM96 coefficients");
+
+    // Coefficients of the EGM96 (gravity model)
+    coeffsEGM96 = NAV::util::gravity::readAscii2Matrix();
+
+    return coeffsEGM96;
+}
+
 Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree)
 {
-    // Read ascii file that contains all EGM96 parameters
-    static Eigen::MatrixXd coeffs = NAV::utilGravity::readAscii2Matrix();
+    if (coeffsEGM96.size() == 0) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
+    {
+        LOG_INFO("Coefficients of the EGM96 were not loaded --> reloading now");
+        readCoeffs();
+    }
 
     // Geocentric latitude determination from geographic latitude and elevation and azimuth
     double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
@@ -154,18 +169,18 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
     double Pnm = 0;
     double Pnmd = 0;
 
-    auto coeffsRows = coeffs.rows();
+    auto coeffsRows = coeffsEGM96.rows();
 
     // Associated Legendre Polynomial Coefficients 'P' and their derivatives 'Pd'
-    auto [P, Pd] = NAV::utilGravity::associatedLegendre(ndegree + 1, std::sin(elevation));
+    auto [P, Pd] = NAV::util::gravity::associatedLegendre(ndegree + 1, std::sin(elevation));
 
     for (int i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {
         // Retrieving EGM96 coefficients
-        auto n = static_cast<int>(coeffs(i, 0)); // Degree of the Associated Legendre Polynomial
-        auto m = static_cast<int>(coeffs(i, 1)); // Order of the Associated Legendre Polynomial
-        auto C = coeffs(i, 2);
-        auto S = coeffs(i, 3);
+        auto n = static_cast<int>(coeffsEGM96(i, 0)); // Degree of the Associated Legendre Polynomial
+        auto m = static_cast<int>(coeffsEGM96(i, 1)); // Order of the Associated Legendre Polynomial
+        auto C = coeffsEGM96(i, 2);
+        auto S = coeffsEGM96(i, 3);
 
         if (n == ndegree + 1)
         {
