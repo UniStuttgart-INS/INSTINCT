@@ -9,7 +9,7 @@ namespace nm = NAV::NodeManager;
 #include <iterator>
 #include <boost/math/distributions/students_t.hpp>
 
-NAV::ARMA::ARMA()
+NAV::experimental::ARMA::ARMA()
 {
     name = typeStatic();
 
@@ -23,27 +23,27 @@ NAV::ARMA::ARMA()
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
 }
 
-NAV::ARMA::~ARMA()
+NAV::experimental::ARMA::~ARMA()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-std::string NAV::ARMA::typeStatic()
+std::string NAV::experimental::ARMA::typeStatic()
 {
     return "ARMA";
 }
 
-std::string NAV::ARMA::type() const
+std::string NAV::experimental::ARMA::type() const
 {
     return typeStatic();
 }
 
-std::string NAV::ARMA::category()
+std::string NAV::experimental::ARMA::category()
 {
-    return "DataProcessor";
+    return "Experimental/DataProcessor";
 }
 
-void NAV::ARMA::guiConfig()
+void NAV::experimental::ARMA::guiConfig()
 {
     // GUI ARMA node input
     ImGui::InputInt("Deque size", &deque_size); // int input of modelling size
@@ -78,7 +78,7 @@ void NAV::ARMA::guiConfig()
     }
 }
 
-[[nodiscard]] json NAV::ARMA::save() const
+[[nodiscard]] json NAV::experimental::ARMA::save() const
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -91,7 +91,7 @@ void NAV::ARMA::guiConfig()
     return j;
 }
 
-void NAV::ARMA::restore(json const& j)
+void NAV::experimental::ARMA::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -109,7 +109,7 @@ void NAV::ARMA::restore(json const& j)
     }
 }
 
-bool NAV::ARMA::initialize()
+bool NAV::experimental::ARMA::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -131,12 +131,12 @@ bool NAV::ARMA::initialize()
     return true;
 }
 
-void NAV::ARMA::deinitialize()
+void NAV::experimental::ARMA::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::ARMA::acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
+void NAV::experimental::ARMA::acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
 {
     int acf_size = static_cast<int>(y.size()); // size of y
     /* Calculation of initial ê through Yule-Walker:
@@ -165,7 +165,7 @@ void NAV::ARMA::acf_function(Eigen::VectorXd& y, int p, Eigen::VectorXd& acf)
     }
 }
 
-void NAV::ARMA::pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial)
+void NAV::experimental::ARMA::pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial)
 {
     int pacf_size = static_cast<int>(y.size());
     /* Calculation of initial ê through Yule-Walker:
@@ -234,7 +234,7 @@ void NAV::ARMA::pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, E
     }
 }
 
-void NAV::ARMA::matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, int m, Eigen::MatrixXd& A)
+void NAV::experimental::ARMA::matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, int m, Eigen::MatrixXd& A)
 {
     for (int t = m; t < y.size(); t++) // rows
     {
@@ -249,7 +249,7 @@ void NAV::ARMA::matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int 
     }
 }
 
-void NAV::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat)
+void NAV::experimental::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat)
 {
     // declaration
     // acf
@@ -298,7 +298,7 @@ void NAV::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deq
     }
 }
 
-void NAV::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
     auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
