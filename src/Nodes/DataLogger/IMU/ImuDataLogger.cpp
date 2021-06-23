@@ -98,6 +98,7 @@ void NAV::ImuDataLogger::deinitialize()
 
     FileWriter::deinitialize();
 }
+
 void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
