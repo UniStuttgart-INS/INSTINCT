@@ -11,7 +11,7 @@ Eigen::MatrixXd NAV::utilGravity::readAscii2Matrix()
     std::string line;
     std::ifstream myfileN("../resources/Data/egm96_to360.ascii"); // Evtl. Pfad anpassen wegen "workspaceFolder" in tasks.json
     std::ifstream myfile("../resources/Data/egm96_to360.ascii");
-    std::string delimiter = " ";
+    char delimiter = ' ';
     size_t pos = 0;
     std::string token;
     uint32_t nmbrOfLines = static_cast<uint32_t>(std::count(std::istreambuf_iterator<char>(myfileN), std::istreambuf_iterator<char>(), '\n'));

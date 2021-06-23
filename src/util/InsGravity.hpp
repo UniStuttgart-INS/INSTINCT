@@ -20,7 +20,7 @@ namespace NAV::gravity
 
 /// @brief Calculates the local gravity vector at the WGS84 reference ellipsoid
 ///        using the Somigliana model and makes corrections for altitude
-/// @param[in] latitude Latitude where to calculate the gravity for
+/// @param[in] latitude Latitude in [rad]
 /// @param[in] altitude Altitude where to calculate the gravity for
 /// @return Gravity vector in [m/s^2]
 ///

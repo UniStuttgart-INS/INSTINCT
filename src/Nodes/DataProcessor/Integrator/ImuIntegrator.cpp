@@ -9,7 +9,6 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
-#include <chrono>
 
 NAV::ImuIntegrator::ImuIntegrator()
 {
@@ -168,7 +167,7 @@ bool NAV::ImuIntegrator::initialize()
     posVelAtt__t2 = nullptr;
     posVelAtt__init = nullptr;
 
-    LOG_DEBUG("ImuIntegrator initialized -------------------------------------------------------------------------------");
+    LOG_DEBUG("ImuIntegrator initialized");
 
     return true;
 }

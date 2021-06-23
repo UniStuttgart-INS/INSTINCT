@@ -142,7 +142,7 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
 
     // Geocentric latitude determination from geographic latitude and elevation and azimuth
     double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
-    double elevation = M_PI_2 - latitudeGeocentric; // radians
+    double elevation = M_PI_2 - latitudeGeocentric; // [rad]
     double azimuth = longitude;
 
     // Radius determination (Spheroid)

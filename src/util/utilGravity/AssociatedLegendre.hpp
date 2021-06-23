@@ -7,7 +7,7 @@
 
 #include "util/Eigen.hpp"
 
-namespace NAV::utilGravity
+namespace NAV::util::gravity
 {
 /// @brief Calculates the associated Legendre Polynomials necessary for the EGM96
 /// @param[in] degreeN of Legendre polynomial

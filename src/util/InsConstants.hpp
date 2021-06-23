@@ -14,7 +14,7 @@ namespace NAV::InsConst
 /// @note D. D. McCarthy, G. Petit (Hrsg.): IERS Conventions (2003) (IERS Technical Note No. 32), Kap. 1: General Definitions and Numerical Standards.
 ///         ftp://tai.bipm.org/iers/conv2003/chapter1/tn32_c1.pdf
 constexpr double angularVelocity_ie = 7.2921151467e-05;
-constexpr double angularVelocity_ie_Skydel = 7.2921155e-5; // Skydel (for compatibility with Skydel's IMU plugin)
+constexpr double angularVelocity_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibility with Skydel's IMU plugin)
 
 /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
 const static Eigen::Vector3d angularVelocity_ie_e{ 0.0, 0.0, angularVelocity_ie };

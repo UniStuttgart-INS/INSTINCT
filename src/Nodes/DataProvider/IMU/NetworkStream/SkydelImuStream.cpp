@@ -21,7 +21,7 @@ NAV::SkydelImuStream::SkydelImuStream()
     name = typeStatic();
 
     color = ImColor(255, 128, 128);
-    hasConfig = true;
+    hasConfig = false;
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
 
@@ -194,7 +194,7 @@ bool NAV::SkydelImuStream::initialize()
     }
     else
     {
-        TestThread = std::thread([=, this]() {
+        TestThread = std::thread([=, ioservice]() {
             ioservice.restart();
             ioservice.run();
         });

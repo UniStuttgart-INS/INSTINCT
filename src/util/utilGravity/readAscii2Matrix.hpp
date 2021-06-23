@@ -7,7 +7,7 @@
 
 #include "util/Eigen.hpp"
 
-namespace NAV::utilGravity
+namespace NAV::util::gravity
 {
 /// @brief Read function for EGM96 coefficients
 /// @param[in] coeffsFile Ascii file of the EGM96 coefficients

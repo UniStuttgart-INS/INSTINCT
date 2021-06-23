@@ -90,9 +90,9 @@ class SkydelImuStream : public Imu
     boost::asio::ip::udp::socket m_socket;
 
     // Stop handler: once true, the asynchronous receive function stops
-    bool stop;
+    bool stop = false;
     // Startup handler: used in 'initialize()' to differentiate between startup and re-initialization
-    bool isStartup;
+    bool isStartup = true;
 };
 
 } // namespace NAV
