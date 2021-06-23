@@ -99,7 +99,6 @@ void NAV::ImuDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
-//void NAV::ImuDataLogger::writeObservation(ax::NodeEditor::LinkId linkId)
 {
     auto obs = std::static_pointer_cast<ImuObs>(nodeData);
 
@@ -139,37 +138,37 @@ void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeD
     filestream << ",";
     if (obs->magUncompXYZ.has_value())
     {
-        filestream << obs->magCompXYZ.value().z();
+        filestream << obs->magUncompXYZ.value().z();
     }
     filestream << ",";
-    if (obs->accelCompXYZ.has_value())
+    if (obs->accelUncompXYZ.has_value())
     {
-        filestream << obs->accelCompXYZ.value().x();
+        filestream << obs->accelUncompXYZ.value().x();
     }
     filestream << ",";
-    if (obs->accelCompXYZ.has_value())
+    if (obs->accelUncompXYZ.has_value())
     {
-        filestream << obs->accelCompXYZ.value().y();
+        filestream << obs->accelUncompXYZ.value().y();
     }
     filestream << ",";
-    if (obs->accelCompXYZ.has_value())
+    if (obs->accelUncompXYZ.has_value())
     {
-        filestream << obs->accelCompXYZ.value().z();
+        filestream << obs->accelUncompXYZ.value().z();
     }
     filestream << ",";
-    if (obs->gyroCompXYZ.has_value())
+    if (obs->gyroUncompXYZ.has_value())
     {
-        filestream << obs->gyroCompXYZ.value().x();
+        filestream << obs->gyroUncompXYZ.value().x();
     }
     filestream << ",";
-    if (obs->gyroCompXYZ.has_value())
+    if (obs->gyroUncompXYZ.has_value())
     {
-        filestream << obs->gyroCompXYZ.value().y();
+        filestream << obs->gyroUncompXYZ.value().y();
     }
     filestream << ",";
-    if (obs->gyroCompXYZ.has_value())
+    if (obs->gyroUncompXYZ.has_value())
     {
-        filestream << obs->gyroCompXYZ.value().z();
+        filestream << obs->gyroUncompXYZ.value().z();
     }
     filestream << ",";
     if (obs->temperature.has_value())

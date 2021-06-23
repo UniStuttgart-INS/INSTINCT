@@ -170,15 +170,8 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
         }
         ImGui::EndHorizontal();
         ImGui::Indent();
-        for (size_t i = 0; i < nodeCount; ++i)
-        {
-            auto* node = nm::FindNode(selectedNodes[i]);
-            ImGui::Text("%s (%lu)", node != nullptr ? node->name.c_str() : "", size_t(selectedNodes[i]));
-        }
-        for (size_t i = 0; i < linkCount; ++i)
-        {
-            ImGui::Text("Link (%lu)", size_t(selectedLinks[i]));
-        }
+        for (size_t i = 0; i < nodeCount; ++i) { ImGui::Text("%s (%lu)", nm::FindNode(selectedNodes[i])->name.c_str(), size_t(selectedNodes[i])); }
+        for (size_t i = 0; i < linkCount; ++i) { ImGui::Text("Link (%lu)", size_t(selectedLinks[i])); }
         ImGui::Unindent();
     }
 
