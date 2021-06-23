@@ -126,9 +126,6 @@ class ImuIntegrator : public Node
         EGM96
     };
     GravityModel gravityModel = GravityModel::WGS84;
-
-    /// g_n Gravity vector in [m/s^2], in navigation coordinates
-    Eigen::Vector3d gravity_n__t1;
 };
 
 } // namespace NAV

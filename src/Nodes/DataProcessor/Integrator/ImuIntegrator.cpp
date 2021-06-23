@@ -54,19 +54,19 @@ void NAV::ImuIntegrator::guiConfig()
     }
     if (ImGui::Combo("Gravity Model", reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
     {
-        if (gravityModel == 0)
+        if (gravityModel == WGS84)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84");
         }
-        else if (gravityModel == 1)
+        else if (gravityModel == WGS84_Skydel)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84_Skydel");
         }
-        else if (gravityModel == 2)
+        else if (gravityModel == Somigliana)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "Somigliana");
         }
-        else if (gravityModel == 3)
+        else if (gravityModel == EGM96)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "EGM96");
         }
@@ -166,6 +166,8 @@ bool NAV::ImuIntegrator::initialize()
 
     posVelAtt__t2 = nullptr;
     posVelAtt__init = nullptr;
+
+    NAV::gravity::readCoeffs();
 
     LOG_DEBUG("ImuIntegrator initialized");
 
@@ -445,6 +447,9 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     const Eigen::Vector3d position_e__t1 = posVelAtt__t1->position_ecef();
     // LOG_DEBUG("position_e__t1 =\n{}", position_e__t1);
 
+    /// g_n Gravity vector in [m/s^2], in navigation coordinates
+    Eigen::Vector3d gravity_n__t1;
+
     /// Gravity vector determination
     if (gravityModel == GravityModel::Somigliana)
     {
@@ -546,8 +551,7 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
 
         setCurrentPosition(posVelAtt__t0.position_ecef());
         setCurrentVelocity(posVelAtt__t0.velocity_n());
-        // setCurrentQuaternion_nb(posVelAtt__t0.quaternion_nb());
-        setCurrentQuaternion_nb(Eigen::Quaterniond{ 1, 0, 0, 0 }); // mmm: Testweise: forcen auf null Lagewinkel
+        setCurrentQuaternion_nb(posVelAtt__t0.quaternion_nb());
     }
     else if (integrationFrame == IntegrationFrame::NED)
     {
