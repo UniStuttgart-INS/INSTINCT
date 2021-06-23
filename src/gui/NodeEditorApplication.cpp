@@ -1093,6 +1093,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 initList.emplace_back(node, false);
             }
             ImGui::Separator();
+            if (node->hasConfig && ImGui::MenuItem("Configure", "", false))
+            {
+                node->showConfig = true;
+            }
             if (ImGui::MenuItem(node->enabled ? "Disable" : "Enable", "", false))
             {
                 if (node->enabled)
@@ -1283,6 +1287,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         if (node->hasConfig && node->showConfig)
         {
+            ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5F, ImGui::GetIO().DisplaySize.y * 0.5F);
+            ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5F, 0.5F));
             ImGui::SetNextWindowSize(node->guiConfigDefaultWindowSize, ImGuiCond_FirstUseEver);
             if (ImGui::Begin(fmt::format("{} ({})", node->type(), size_t(node->id)).c_str(), &(node->showConfig),
                              ImGuiWindowFlags_None))
