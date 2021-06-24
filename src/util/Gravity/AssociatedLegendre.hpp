@@ -14,12 +14,12 @@ namespace NAV::util::gravity
 /// @param[in] x sampling points of the polynomials
 /// @return Associated Legendre Polynomial Parameters as P2 << P, Pd (derivative)
 ///
-// /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2 - eq. 6.16)
+/// @note See https://github.com/lukasbystricky/SpaceSimulator/blob/master/Utilities/Math/associated_legendre.m (last accessed on June 24th, 2021)
 [[nodiscard]] std::pair<Eigen::MatrixXd, Eigen::MatrixXd> associatedLegendre(int degreeN, double x);
 
 /// @brief Calculates the factorial of an unsigned integer
 /// @param[in] n Unsigned integer
-/// @return The factorial
+/// @return The factorial of 'n'
 uint64_t factorial(uint64_t n);
 
 } // namespace NAV::util::gravity
