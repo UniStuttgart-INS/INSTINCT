@@ -44,7 +44,7 @@ namespace NAV::gravity
 /// @param[in] altitude Altitude in [m]
 /// @return Gravity vector in [m/s^2] in NED frame
 ///
-/// @note See Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.3 - eq. 4.89)
+/// @note See 'INS-Projects/INSTINCT/SpecificLiterature/GravityPotentialWGS84' in NC folder (eq. (3) derived after 'r')
 [[nodiscard]] Eigen::Vector3d gravity_WGS84(const double& latitude, const double& altitude);
 
 /// @brief Calculates a gravity vector that contains the centrifugal acceleration for the Somigliana model (which already has an altitude compensation)
@@ -53,7 +53,7 @@ namespace NAV::gravity
 /// @param[in] gravityMagnitude Magnitude of gravity on a body according to Somigliana model
 /// @return Gravity vector in [m/s^2] in NED frame
 ///
-/// @note See Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.3 - eq. 4.89)
+/// @note See Groves (2013) Chapter 2.4.7
 [[nodiscard]] Eigen::Vector3d centrifugalAcceleration_Somigliana(const double& latitude, const double& altitude, double gravityMagnitude);
 
 /// @brief Calculates a gravity vector that contains the centrifugal acceleration and an altitude compensation for the WGS84 model
@@ -62,7 +62,7 @@ namespace NAV::gravity
 /// @param[in] gravityMagnitude Magnitude of gravity on a body according to Somigliana model
 /// @return Gravity vector in [m/s^2] in NED frame
 ///
-/// @note See Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.3 - eq. 4.89)
+/// @note See Groves (2013) Chapter 2.4.7
 [[nodiscard]] Eigen::Vector3d centrifugalAcceleration_WGS84(const double& latitude, const double& altitude, double gravityMagnitude);
 
 /// @brief Calculates the local gravity vector at the WGS84 reference ellipsoid using the EGM96 spherical harmonic
@@ -73,10 +73,11 @@ namespace NAV::gravity
 /// @param[in] ndegree Degree of the EGM96 (1 <= ndegree <= 10)
 /// @return Gravity vector in [m/s^2] in NED frame
 ///
-/// @note See Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.3 - eq. 4.89) //TODO: NC folder for literature that is not officially published (INS-Projects/INSTINCT)
+/// @note See https://github.com/lukasbystricky/SpaceSimulator/blob/master/Environment/Geopoential/geopotential.m (last accessed on June 24th, 2021)
 [[nodiscard]] Eigen::Vector3d gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree);
 
-// Reads in EGM96 coeffs before runtime, e.g. at initialization of the ImuIntegrator
+/// @brief Reads in EGM96 coeffs before runtime, e.g. at initialization of the ImuIntegrator
+/// @return Matrix 'coeffsEGM96'
 Eigen::MatrixXd readCoeffs();
 
 // Coeffs of the EGM96 (gravity model)

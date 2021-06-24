@@ -59,7 +59,7 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration_Somigliana(const double& l
     // Radius of spheroid determination
     double radiusSpheroid = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0)) + altitude;
 
-    // Centrifugal force magnitude
+    // Centrifugal acceleration magnitude (see Groves (2013) Chapter 2.4.7 - fig. 2.28)
     double centrifugalAccelerationMagnitude = std::pow(InsConst::angularVelocity_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 
     // North-component of the centrifugal acceleration
@@ -67,7 +67,7 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration_Somigliana(const double& l
     // Down-component of the centrifugal acceleration
     double centrifAcc_d = centrifugalAccelerationMagnitude * std::cos(latitude);
 
-    // Down component of the gravitation (i.e. NOT gravity! See Groves (2013) Chapter 2.4.7)
+    // Down component of the gravitation (i.e. NOT gravity! See Groves (2013) Chapter 2.4.7 - eq. 2.136)
     auto gravitation_down = (2.0 * centrifAcc_d + std::sqrt(4.0 * centrifAcc_d * centrifAcc_d - 4.0 * (centrifAcc_n * centrifAcc_n + centrifAcc_d * centrifAcc_d - gravityMagnitude * gravityMagnitude))) / 2.0;
 
     // Gravity vector in NED
@@ -114,7 +114,7 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration_WGS84(const double& latitu
     double radiusSpheroid = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0));
     double radiusEarthBody = radiusSpheroid + std::abs(altitude);
 
-    // Centrifugal acceleration magnitude on earth's surface and on body
+    // Centrifugal acceleration magnitude on earth's surface and on body (see Groves (2013) Chapter 2.4.7 - fig. 2.28)
     double centrifugalAccelerationMagnitudeSurface = std::pow(InsConst::angularVelocity_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
     double centrifugalAccelerationMagnitudeBody = std::pow(InsConst::angularVelocity_ie, 2.0) * radiusEarthBody * std::pow(std::cos(latitudeGeocentric), 2.0);
 
@@ -125,7 +125,7 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration_WGS84(const double& latitu
     double centrifAcc_dS = centrifugalAccelerationMagnitudeSurface * std::cos(latitude);
     double centrifAcc_dB = centrifugalAccelerationMagnitudeBody * std::cos(latitude);
 
-    // Down component of the gravitation (i.e. NOT gravity! See Groves (2013) Chapter 2.4.7) on earth's surface
+    // Down component of the gravitation on earth's surface (i.e. NOT gravity! See Groves (2013) Chapter 2.4.7 - eq. 2.136)
     auto gravitation_down = (2.0 * centrifAcc_dS + std::sqrt(4.0 * centrifAcc_dS * centrifAcc_dS - 4.0 * (centrifAcc_nS * centrifAcc_nS + centrifAcc_dS * centrifAcc_dS - gravityMagnitude * gravityMagnitude))) / 2.0;
 
     // Altitude compensation (see Groves (2013) Chapter 2.4.7 - eq. 2.138)
