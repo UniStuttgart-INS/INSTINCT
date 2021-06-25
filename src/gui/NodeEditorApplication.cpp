@@ -218,6 +218,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
         {
             globalAction = GlobalActions::None;
             igfd::ImGuiFileDialog::Instance()->CloseDialog();
+            std::filesystem::current_path(flow::GetProgramRootPath());
             return;
         }
     }
@@ -232,6 +233,7 @@ void NAV::gui::NodeEditorApplication::ShowSaveAsRequested()
 
         globalAction = GlobalActions::None;
         igfd::ImGuiFileDialog::Instance()->CloseDialog();
+        std::filesystem::current_path(flow::GetProgramRootPath());
     }
 }
 
@@ -293,6 +295,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             globalAction = GlobalActions::None;
 
             ImGui::CloseCurrentPopup();
+            std::filesystem::current_path(flow::GetProgramRootPath());
         }
         ImGui::SameLine();
         if (ImGui::Button("Discard"))
@@ -354,6 +357,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
                 flow::DiscardChanges();
                 igfd::ImGuiFileDialog::Instance()->CloseDialog();
                 ImGui::CloseCurrentPopup();
+                std::filesystem::current_path(flow::GetProgramRootPath());
             }
             ImGui::SameLine();
             if (ImGui::Button("Discard"))
@@ -391,6 +395,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
                 globalAction = GlobalActions::None;
                 loadSuccessful = true;
                 igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                std::filesystem::current_path(flow::GetProgramRootPath());
                 return;
             }
         }
@@ -405,12 +410,14 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
                     globalAction = GlobalActions::None;
                     frameCountNavigate = ImGui::GetFrameCount();
                     igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                    std::filesystem::current_path(flow::GetProgramRootPath());
                 }
             }
             else
             {
                 globalAction = GlobalActions::None;
                 igfd::ImGuiFileDialog::Instance()->CloseDialog();
+                std::filesystem::current_path(flow::GetProgramRootPath());
             }
         }
         if (!loadSuccessful)
