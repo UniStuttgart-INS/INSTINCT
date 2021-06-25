@@ -53,6 +53,26 @@ void NAV::ImuIntegrator::guiConfig()
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame ? "NED" : "ECEF");
         flow::ApplyChanges();
     }
+    if (ImGui::Combo("Gravity Model", reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
+    {
+        if (gravityModel == WGS84)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84");
+        }
+        else if (gravityModel == WGS84_Skydel)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84_Skydel");
+        }
+        else if (gravityModel == Somigliana)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "Somigliana");
+        }
+        else if (gravityModel == EGM96)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "EGM96");
+        }
+        flow::ApplyChanges();
+    }
 }
 
 [[nodiscard]] json NAV::ImuIntegrator::save() const
@@ -62,6 +82,7 @@ void NAV::ImuIntegrator::guiConfig()
     json j;
 
     j["integrationFrame"] = integrationFrame;
+    j["gravityModel"] = gravityModel;
 
     return j;
 }
@@ -73,6 +94,10 @@ void NAV::ImuIntegrator::restore(json const& j)
     if (j.contains("integrationFrame"))
     {
         integrationFrame = static_cast<IntegrationFrame>(j.at("integrationFrame").get<int>());
+    }
+    if (j.contains("gravityModel"))
+    {
+        gravityModel = static_cast<GravityModel>(j.at("gravityModel").get<int>());
     }
 }
 
@@ -143,6 +168,18 @@ bool NAV::ImuIntegrator::initialize()
     posVelAtt__t2 = nullptr;
     posVelAtt__init = nullptr;
 
+    try
+    {
+        NAV::gravity::readEGM96Coeffs();
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
+    }
+
+    LOG_DEBUG("ImuIntegrator initialized");
+
     return true;
 }
 
@@ -160,6 +197,7 @@ bool NAV::ImuIntegrator::getCurrentPosition(Eigen::Vector3d& position)
             if (auto* currentPosition = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
             {
                 position = *currentPosition;
+                // LOG_DEBUG("getCurrentPosition:\nposition =\n{}", position);
                 return true;
             }
         }
@@ -168,6 +206,7 @@ bool NAV::ImuIntegrator::getCurrentPosition(Eigen::Vector3d& position)
             if (auto* currentPosition = getInputValue<BlockMatrix>(InputPortIndex_Position))
             {
                 position = (*currentPosition)();
+                // LOG_DEBUG("getCurrentPosition - BlockMatrix:\nposition =\n{}", position);
                 return true;
             }
         }
@@ -185,6 +224,8 @@ void NAV::ImuIntegrator::setCurrentPosition(const Eigen::Vector3d& position)
             if (auto* currentPosition = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
             {
                 *currentPosition = position;
+                // LOG_DEBUG("setCurrentPosition:\ncurrentPosition =\n{}", position);
+
                 notifyInputValueChanged(InputPortIndex_Position);
             }
         }
@@ -193,6 +234,7 @@ void NAV::ImuIntegrator::setCurrentPosition(const Eigen::Vector3d& position)
             if (auto* currentPosition = getInputValue<BlockMatrix>(InputPortIndex_Position))
             {
                 (*currentPosition)() = position;
+                // LOG_DEBUG("setCurrentPosition - BlockMatrix:\ncurrentPosition =\n{}", position);
                 notifyInputValueChanged(InputPortIndex_Position);
             }
         }
@@ -208,6 +250,7 @@ bool NAV::ImuIntegrator::getCurrentVelocity(Eigen::Vector3d& velocity)
             if (auto* currentVelocity = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
             {
                 velocity = *currentVelocity;
+                // LOG_DEBUG("getCurrentVelocity:\nvelocity =\n{}", velocity);
                 return true;
             }
         }
@@ -216,6 +259,7 @@ bool NAV::ImuIntegrator::getCurrentVelocity(Eigen::Vector3d& velocity)
             if (auto* currentVelocity = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
             {
                 velocity = (*currentVelocity)();
+                // LOG_DEBUG("getCurrentVelocity - BlockMatrix:\nvelocity =\n{}", velocity);
                 return true;
             }
         }
@@ -233,6 +277,7 @@ void NAV::ImuIntegrator::setCurrentVelocity(const Eigen::Vector3d& velocity)
             if (auto* currentVelocity = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
             {
                 *currentVelocity = velocity;
+                // LOG_DEBUG("setCurrentVelocity:\ncurrentVelocity =\n{}", velocity);
                 notifyInputValueChanged(InputPortIndex_Velocity);
             }
         }
@@ -241,6 +286,7 @@ void NAV::ImuIntegrator::setCurrentVelocity(const Eigen::Vector3d& velocity)
             if (auto* currentVelocity = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
             {
                 (*currentVelocity)() = velocity;
+                // LOG_DEBUG("setCurrentVelocity - BlockMatrix:\ncurrentVelocity =\n{}", velocity);
                 notifyInputValueChanged(InputPortIndex_Velocity);
             }
         }
@@ -259,6 +305,7 @@ bool NAV::ImuIntegrator::getCurrentQuaternion_nb(Eigen::Quaterniond& quaternion_
                                                    (*currentQuaternionCoeffs)(1, 0),  // x
                                                    (*currentQuaternionCoeffs)(2, 0),  // y
                                                    (*currentQuaternionCoeffs)(3, 0)); // z
+                // LOG_DEBUG("getCurrentQuaternion_nb:\nquaternion_nb =\n{}", quaternion_nb.vec());
                 return true;
             }
         }
@@ -271,6 +318,7 @@ bool NAV::ImuIntegrator::getCurrentQuaternion_nb(Eigen::Quaterniond& quaternion_
                                                    block(1, 0),  // x
                                                    block(2, 0),  // y
                                                    block(3, 0)); // z
+                // LOG_DEBUG("getCurrentQuaternion_nb - BlockMatrix:\nquaternion_nb =\n{}", quaternion_nb.vec());
                 return true;
             }
         }
@@ -291,6 +339,7 @@ void NAV::ImuIntegrator::setCurrentQuaternion_nb(const Eigen::Quaterniond& quate
                 (*currentQuaternionCoeffs)(1, 0) = quaternion_nb.x();
                 (*currentQuaternionCoeffs)(2, 0) = quaternion_nb.y();
                 (*currentQuaternionCoeffs)(3, 0) = quaternion_nb.z();
+                // LOG_DEBUG("setCurrentQuaternion_nb:\nquaternion_nb =\n{}", quaternion_nb.vec());
                 notifyInputValueChanged(InputPortIndex_Quaternion);
             }
         }
@@ -304,6 +353,7 @@ void NAV::ImuIntegrator::setCurrentQuaternion_nb(const Eigen::Quaterniond& quate
                 block(1, 0) = quaternion_nb.x();
                 block(2, 0) = quaternion_nb.y();
                 block(3, 0) = quaternion_nb.z();
+                // LOG_DEBUG("setCurrentQuaternion_nb - BlockMatrix:\nquaternion_nb =\n{}", quaternion_nb.vec());
                 notifyInputValueChanged(InputPortIndex_Quaternion);
             }
         }
@@ -368,36 +418,75 @@ void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeDat
     const Eigen::Vector3d& angularVelocity_ip_p__t1 = imuObs__t1->gyroCompXYZ.has_value()
                                                           ? imuObs__t1->gyroCompXYZ.value()
                                                           : imuObs__t1->gyroUncompXYZ.value();
+    // LOG_DEBUG("angularVelocity_ip_p__t1 =\n{}", angularVelocity_ip_p__t1);
     /// ω_ip_p (tₖ) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ
     const Eigen::Vector3d& angularVelocity_ip_p__t0 = imuObs__t0->gyroCompXYZ.has_value()
                                                           ? imuObs__t0->gyroCompXYZ.value()
                                                           : imuObs__t0->gyroUncompXYZ.value();
+    // LOG_DEBUG("angularVelocity_ip_p__t0 =\n{}", angularVelocity_ip_p__t0);
 
     /// a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& acceleration_p__t1 = imuObs__t1->accelCompXYZ.has_value()
                                                     ? imuObs__t1->accelCompXYZ.value()
                                                     : imuObs__t1->accelUncompXYZ.value();
+    // LOG_DEBUG("acceleration_p__t1 =\n{}", acceleration_p__t1);
     /// a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
     const Eigen::Vector3d& acceleration_p__t0 = imuObs__t0->accelCompXYZ.has_value()
                                                     ? imuObs__t0->accelCompXYZ.value()
                                                     : imuObs__t0->accelUncompXYZ.value();
+    // LOG_DEBUG("acceleration_p__t0 =\n{}", acceleration_p__t0);
 
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& velocity_n__t1 = posVelAtt__t1->velocity_n();
+    // LOG_DEBUG("velocity_n__t1 =\n{}", velocity_n__t1);
     /// v_n (tₖ₋₂) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₂
     const Eigen::Vector3d& velocity_n__t2 = posVelAtt__t2->velocity_n();
+    // LOG_DEBUG("velocity_n__t2 =\n{}", velocity_n__t2);
     /// v_e (tₖ₋₂) Velocity in [m/s], in earth coordinates, at the time tₖ₋₂
     const Eigen::Vector3d velocity_e__t2 = posVelAtt__t2->quaternion_en() * velocity_n__t2;
+    // LOG_DEBUG("velocity_e__t2 =\n{}", velocity_e__t2);
     /// v_e (tₖ₋₁) Velocity in [m/s], in earth coordinates, at the time tₖ₋₁
     const Eigen::Vector3d velocity_e__t1 = posVelAtt__t1->quaternion_en() * velocity_n__t1;
+    // LOG_DEBUG("velocity_e__t1 =\n{}", velocity_e__t1);
     /// x_e (tₖ₋₂) Position in [m], in ECEF coordinates, at the time tₖ₋₂
     const Eigen::Vector3d position_e__t2 = posVelAtt__t2->position_ecef();
+    // LOG_DEBUG("position_e__t2 =\n{}", position_e__t2);
     /// x_e (tₖ₋₁) Position in [m], in ECEF coordinates, at the time tₖ₋₁
     const Eigen::Vector3d position_e__t1 = posVelAtt__t1->position_ecef();
+    // LOG_DEBUG("position_e__t1 =\n{}", position_e__t1);
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
-    const Eigen::Vector3d gravity_n__t1(0, 0, gravity::gravityMagnitude_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude()));
+    Eigen::Vector3d gravity_n__t1;
+
+    /// Gravity vector determination
+    if (gravityModel == GravityModel::Somigliana)
+    {
+        LOG_DATA("Gravity calculated with Somigliana model");
+        gravity_n__t1 = gravity::gravity_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+    }
+    else if (gravityModel == GravityModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
+    {
+        LOG_DATA("Gravity calculated with WGS84 model as in the Skydel Simulator plug-in");
+        double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        // Gravity vector NED
+        const Eigen::Vector3d gravityVector(0.0, 0.0, gravityMagnitude);
+        gravity_n__t1 = gravityVector;
+    }
+    else if (gravityModel == GravityModel::EGM96)
+    {
+        LOG_DATA("Gravity calculated with EGM96");
+        int egm96degree = 10;
+        gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
+    }
+    else
+    {
+        LOG_DATA("Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')");
+        gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+    }
+
+    LOG_DATA("Gravity vector in NED:\n{}", gravity_n__t1);
+
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;
 

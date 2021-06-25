@@ -14,6 +14,7 @@ namespace NAV::InsConst
 /// @note D. D. McCarthy, G. Petit (Hrsg.): IERS Conventions (2003) (IERS Technical Note No. 32), Kap. 1: General Definitions and Numerical Standards.
 ///         ftp://tai.bipm.org/iers/conv2003/chapter1/tn32_c1.pdf
 constexpr double angularVelocity_ie = 7.2921151467e-05;
+constexpr double angularVelocity_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibility with Skydel's IMU plugin)
 
 /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
 const static Eigen::Vector3d angularVelocity_ie_e{ 0.0, 0.0, angularVelocity_ie };
@@ -34,6 +35,8 @@ constexpr double WGS84_b = WGS84_a - WGS84_f * WGS84_a;
 constexpr double WGS84_e_squared = 2 * WGS84_f - WGS84_f * WGS84_f;
 /// Gravitational constant (mass of Earth’s atmosphere included) [m³/s²] (World Geodetic System 1984)
 constexpr double WGS84_MU = 3.986004418e14;
+/// Dynamic form factor, derived (World Geodetic System 1984)
+constexpr double WGS84_J = 1.081874e-3;
 
 /// Semi-major axis = equatorial radius (Geodetic Reference System 1980)
 constexpr double GRS80_a = 6378137;
