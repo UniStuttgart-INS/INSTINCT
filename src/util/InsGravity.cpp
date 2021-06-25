@@ -13,6 +13,9 @@
 #include <fstream>
 #include <streambuf>
 
+// Coeffs of the EGM96 (gravity model)
+static Eigen::MatrixXd coeffsEGM96;
+
 double NAV::gravity::gravityMagnitude_SomiglianaAltitude(const double& latitude, const double& altitude)
 {
     // eq 6.16 has a fault in the denominator, it should be a sin^2(latitude)
@@ -137,7 +140,7 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration_WGS84(const double& latitu
     return gravity_n;
 }
 
-Eigen::MatrixXd NAV::gravity::readCoeffs()
+Eigen::MatrixXd NAV::gravity::readEGM96Coeffs()
 {
     LOG_TRACE("Reading in EGM96 coefficients");
 
@@ -152,7 +155,7 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
     if (coeffsEGM96.size() == 0) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {
         LOG_WARN("Coefficients of the EGM96 were not loaded --> reloading now");
-        readCoeffs();
+        readEGM96Coeffs();
     }
 
     // Geocentric latitude determination from geographic latitude and elevation and azimuth

@@ -167,7 +167,7 @@ bool NAV::ImuIntegrator::initialize()
     posVelAtt__t2 = nullptr;
     posVelAtt__init = nullptr;
 
-    NAV::gravity::readCoeffs();
+    NAV::gravity::readEGM96Coeffs();
 
     LOG_DEBUG("ImuIntegrator initialized");
 

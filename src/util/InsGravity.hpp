@@ -78,8 +78,5 @@ namespace NAV::gravity
 
 /// @brief Reads in EGM96 coeffs before runtime, e.g. at initialization of the ImuIntegrator
 /// @return Matrix 'coeffsEGM96'
-Eigen::MatrixXd readCoeffs();
-
-// Coeffs of the EGM96 (gravity model)
-static Eigen::MatrixXd coeffsEGM96;
+Eigen::MatrixXd readEGM96Coeffs();
 } // namespace NAV::gravity
