@@ -17,7 +17,7 @@ NAV::ImuIntegrator::ImuIntegrator()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 255, 65 };
+    guiConfigDefaultWindowSize = { 347, 92 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::integrateObservation);
     nm::CreateInputPin(this, "Position ECEF", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
@@ -172,9 +172,8 @@ bool NAV::ImuIntegrator::initialize()
     {
         NAV::gravity::readEGM96Coeffs();
     }
-    catch (const std::exception& e)
+    catch (...)
     {
-        std::cerr << e.what() << '\n';
         return false;
     }
 
