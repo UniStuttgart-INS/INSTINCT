@@ -1,16 +1,20 @@
 #include "readAscii2Matrix.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <Eigen/Dense>
-#include "util/Logger.hpp"
 #include <filesystem>
+
+#include "util/Logger.hpp"
+#include "util/StringUtil.hpp"
 
 Eigen::MatrixXd NAV::util::gravity::readAscii2Matrix()
 {
     std::string line;
     std::ifstream myfileN("resources/data/egm96_to360.ascii");
     std::ifstream myfile("resources/data/egm96_to360.ascii");
+
     char delimiter = ' ';
     size_t pos = 0;
     std::string token;
@@ -30,7 +34,7 @@ Eigen::MatrixXd NAV::util::gravity::readAscii2Matrix()
             {
                 if (line.substr(0, 1) == " ")
                 {
-                    line.erase(0, 1);
+                    NAV::str::ltrim(line);
                 }
                 else
                 {
@@ -55,8 +59,8 @@ Eigen::MatrixXd NAV::util::gravity::readAscii2Matrix()
     }
     else
     {
-        LOG_CRITICAL("Unable to open file 'egm96_to360.ascii'");
+        LOG_CRITICAL("Unable to open file 'egm96_to360.ascii' --> gravity vector compensation not trustworthy");
+        coeffs = Eigen::MatrixXd::Zero(1, 6);
     }
-
     return coeffs;
 }

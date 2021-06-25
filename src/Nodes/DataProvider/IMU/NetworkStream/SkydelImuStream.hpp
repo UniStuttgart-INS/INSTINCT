@@ -50,12 +50,6 @@ class SkydelImuStream : public Imu
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     bool resetNode() override;
 
-    /// @brief Receive Skydel network stream data
-    void do_receive();
-
-    // Asynchronous receive fct
-    boost::asio::io_context ioservice;
-
   private:
     // Number of the output port of the SkydelImuStream node
     constexpr static size_t OutputPortIndex_ImuObs = 1; ///< @brief Flow (ImuObs)
@@ -65,6 +59,12 @@ class SkydelImuStream : public Imu
 
     /// @brief Deinitialize the node
     void deinitialize() override;
+
+    // Asynchronous receive fct
+    boost::asio::io_context ioservice;
+
+    /// @brief Receive Skydel network stream data
+    void do_receive();
 
     // Thread for receiver fct
     std::thread TestThread;
