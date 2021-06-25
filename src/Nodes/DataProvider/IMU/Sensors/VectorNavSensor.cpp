@@ -10,6 +10,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include <imgui_internal.h>
+
 #include "NodeData/IMU/VectorNavObs.hpp"
 
 #include "util/Time/TimeBase.hpp"
@@ -72,6 +74,26 @@ std::string NAV::VectorNavSensor::category()
 
 void NAV::VectorNavSensor::guiConfig()
 {
+    if (ImGui::Combo("Sensor", reinterpret_cast<int*>(&sensorModel), "VN-100\0VN-110\0VN-310\0\0"))
+    {
+        LOG_DEBUG("{}: Sensor changed to {}", nameId(), sensorModel);
+        flow::ApplyChanges();
+        deinitializeNode();
+
+        if (sensorModel == VectorNavModel::VN310)
+        {
+            config.attitudeField &= ~vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS;
+        }
+        else if (sensorModel == VectorNavModel::VN100 || sensorModel == VectorNavModel::VN110)
+        {
+            config.commonField &= ~vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS;
+            config.timeField &= ~vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS;
+            config.gnss1Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
+            config.insField = vn::protocol::uart::InsGroup::INSGROUP_NONE;
+            config.gnss2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
+        }
+    }
+
     if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &sensorPort))
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), sensorPort);
@@ -102,6 +124,63 @@ void NAV::VectorNavSensor::guiConfig()
         LOG_DEBUG("{}: Frequency changed to {}", nameId(), dividerFrequency.second.at(static_cast<size_t>(selectedFrequency)));
         flow::ApplyChanges();
         deinitializeNode();
+    }
+    if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", id.AsPointer()).c_str(), 7,
+                          ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+    {
+        ImGui::TableSetupColumn("Common", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("INS", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableHeadersRow();
+
+        auto CheckboxFlags = [](int index, const char* label, int* flags, int flags_value, bool enabled = true) {
+            ImGui::TableSetColumnIndex(index);
+
+            if (!enabled)
+            {
+                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+            }
+
+            ImGui::CheckboxFlags(label, flags, flags_value);
+
+            if (!enabled)
+            {
+                ImGui::PopItemFlag();
+                ImGui::PopStyleVar();
+            }
+        };
+
+        ImGui::TableNextRow();
+        CheckboxFlags(0, ("TimeStartup##Common" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.commonField), vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP);
+        CheckboxFlags(1, ("TimeStartup##Time" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.timeField), vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP);
+        CheckboxFlags(2, ("ImuStatus##IMU" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.imuField), vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS);
+        CheckboxFlags(3, ("UTC##GNSS1" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss1Field), vn::protocol::uart::GpsGroup::GPSGROUP_UTC, sensorModel == VectorNavModel::VN310);
+        CheckboxFlags(4, ("VpeStatus##Attitude" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.attitudeField), vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS, sensorModel == VectorNavModel::VN100 || sensorModel == VectorNavModel::VN110);
+        CheckboxFlags(5, ("InsStatus##INS" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.insField), vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS, sensorModel == VectorNavModel::VN310);
+        CheckboxFlags(6, ("UTC##GNSS2" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss2Field), vn::protocol::uart::GpsGroup::GPSGROUP_UTC, sensorModel == VectorNavModel::VN310);
+        ImGui::TableNextRow();
+        CheckboxFlags(0, ("TimeGps##Common" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.commonField), vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, sensorModel == VectorNavModel::VN310);
+        CheckboxFlags(1, ("TimeGps##Time" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.timeField), vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS, sensorModel == VectorNavModel::VN310);
+        CheckboxFlags(2, ("UncompMag##IMU" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.imuField), vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG);
+        CheckboxFlags(3, ("Tow##GNSS1" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss1Field), vn::protocol::uart::GpsGroup::GPSGROUP_TOW, sensorModel == VectorNavModel::VN310);
+        CheckboxFlags(4, ("YawPitchRoll##Attitude" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.attitudeField), vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL);
+        CheckboxFlags(5, ("PosLla##INS" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.insField), vn::protocol::uart::InsGroup::INSGROUP_POSLLA, sensorModel == VectorNavModel::VN310);
+        CheckboxFlags(6, ("Tow##GNSS2" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss2Field), vn::protocol::uart::GpsGroup::GPSGROUP_TOW, sensorModel == VectorNavModel::VN310);
+        // ImGui::TableNextRow();
+        // CheckboxFlags(0, ("##Common" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.commonField), vn::protocol::uart::CommonGroup::COMMONGROUP_);
+        // CheckboxFlags(1, ("##Time" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.timeField), vn::protocol::uart::TimeGroup::TIMEGROUP_);
+        // CheckboxFlags(2, ("##IMU" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.imuField), vn::protocol::uart::ImuGroup::IMUGROUP_);
+        // CheckboxFlags(3, ("##GNSS1" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss1Field), vn::protocol::uart::GpsGroup::GPSGROUP_, sensorModel == VectorNavModel::VN310);
+        // CheckboxFlags(4, ("##Attitude" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.attitudeField), vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_);
+        // CheckboxFlags(5, ("##INS" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.insField), vn::protocol::uart::InsGroup::INSGROUP_, sensorModel == VectorNavModel::VN310);
+        // CheckboxFlags(6, ("##GNSS2" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss2Field), vn::protocol::uart::GpsGroup::GPSGROUP_, sensorModel == VectorNavModel::VN310);
+
+        ImGui::EndTable();
     }
 }
 

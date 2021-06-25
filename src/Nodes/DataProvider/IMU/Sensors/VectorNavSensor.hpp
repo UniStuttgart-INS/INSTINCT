@@ -17,55 +17,6 @@ namespace NAV
 class VectorNavSensor : public Imu, public UartSensor
 {
   public:
-    /// Config Structure for the sensor
-    struct Config
-    {
-        /// The asyncMode field
-        vn::protocol::uart::AsyncMode asyncMode = vn::protocol::uart::AsyncMode::ASYNCMODE_PORT1;
-
-        /// Controls how the VPE interprets the magnetic measurements to estimate the heading angle
-        vn::protocol::uart::HeadingMode headingMode = vn::protocol::uart::HeadingMode::HEADINGMODE_RELATIVE;
-
-        /// Delta Theta and Delta Velocity Configuration - The integrationFrame field
-        vn::protocol::uart::IntegrationFrame delThetaDelVeloIntegrationFrame = vn::protocol::uart::IntegrationFrame::INTEGRATIONFRAME_BODY;
-        /// Delta Theta and Delta Velocity Configuration - The gyroCompensation field
-        vn::protocol::uart::CompensationMode delThetaDelVeloGyroCompensation = vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE;
-        /// Delta Theta and Delta Velocity Configuration - The accelCompensation field
-        vn::protocol::uart::CompensationMode delThetaDelVeloAccelCompensation = vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE;
-
-        /// Group 1 (Common)
-        vn::protocol::uart::CommonGroup commonField = vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP
-                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN
-                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA
-                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT;
-        /// Group 2 (Time)
-        vn::protocol::uart::TimeGroup timeField = vn::protocol::uart::TimeGroup::TIMEGROUP_NONE;
-        /// Group 3 (IMU)
-        vn::protocol::uart::ImuGroup imuField = vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_TEMP
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_PRES
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_MAG
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
-        /// Group 5 (Attitude)
-        vn::protocol::uart::AttitudeGroup attitudeField = vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU;
-        // Group 4 (GPS)
-        // vn::protocol::uart::GpsGroup gpsField = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
-        // Group 6 (INS)
-        // vn::protocol::uart::InsGroup insField = vn::protocol::uart::InsGroup::INSGROUP_NONE;
-        // Group 7 (GPS2)
-        // vn::protocol::uart::GpsGroup gps2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
-    };
-
     /// @brief Default constructor
     VectorNavSensor();
     /// @brief Destructor
@@ -105,6 +56,67 @@ class VectorNavSensor : public Imu, public UartSensor
   private:
     constexpr static size_t OutputPortIndex_VectorNavObs = 1; ///< @brief Flow (VectorNavObs)
 
+    /// Config Structure for the sensor
+    struct Config
+    {
+        /// The asyncMode field
+        vn::protocol::uart::AsyncMode asyncMode = vn::protocol::uart::AsyncMode::ASYNCMODE_PORT1;
+
+        /// Controls how the VPE interprets the magnetic measurements to estimate the heading angle
+        vn::protocol::uart::HeadingMode headingMode = vn::protocol::uart::HeadingMode::HEADINGMODE_RELATIVE;
+
+        /// Delta Theta and Delta Velocity Configuration - The integrationFrame field
+        vn::protocol::uart::IntegrationFrame delThetaDelVeloIntegrationFrame = vn::protocol::uart::IntegrationFrame::INTEGRATIONFRAME_BODY;
+        /// Delta Theta and Delta Velocity Configuration - The gyroCompensation field
+        vn::protocol::uart::CompensationMode delThetaDelVeloGyroCompensation = vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE;
+        /// Delta Theta and Delta Velocity Configuration - The accelCompensation field
+        vn::protocol::uart::CompensationMode delThetaDelVeloAccelCompensation = vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE;
+
+        /// Group 1 (Common)
+        vn::protocol::uart::CommonGroup commonField = vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP
+                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN
+                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA
+                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT;
+        /// Group 2 (Time)
+        vn::protocol::uart::TimeGroup timeField = vn::protocol::uart::TimeGroup::TIMEGROUP_NONE;
+        /// Group 3 (IMU)
+        vn::protocol::uart::ImuGroup imuField = vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_TEMP
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_PRES
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_MAG
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL
+                                                | vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
+        // Group 4 (GNSS1)
+        vn::protocol::uart::GpsGroup gnss1Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
+
+        /// Group 5 (Attitude)
+        vn::protocol::uart::AttitudeGroup attitudeField = vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED
+                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU;
+        // Group 6 (INS)
+        vn::protocol::uart::InsGroup insField = vn::protocol::uart::InsGroup::INSGROUP_NONE;
+        // Group 7 (GNSS2)
+        vn::protocol::uart::GpsGroup gnss2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
+    };
+
+    /// @brief VectorNav Model enumeration
+    enum class VectorNavModel : int
+    {
+        VN100, ///< VN-100/SMD (Miniature, lightweight and high-performance IMU & AHRS)
+        VN110, ///< VN-110/E (Rugged and Miniature Tactical-Grade IMU and AHRS)
+        VN310, ///< VN-310/E (Tactical-Grade GNSS/INS with Integrated GNSS-Compass)
+    };
+
+    /// @brief The sensor model which is selected in the GUI
+    VectorNavModel sensorModel = VectorNavModel::VN100;
+
     /// @brief Initialize the node
     bool initialize() override;
 
@@ -126,7 +138,7 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Internal Frequency of the Sensor
     constexpr static double IMU_DEFAULT_FREQUENCY = 800;
 
-    /// The in the GUI selected Frequency
+    /// The selected Frequency in the GUI
     int selectedFrequency = 0;
     /// First: List of dividers, Second: List of Matching Frequencies
     std::pair<std::vector<uint16_t>, std::vector<std::string>> dividerFrequency;
