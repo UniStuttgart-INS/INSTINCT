@@ -17,9 +17,4 @@ namespace NAV::util::gravity
 /// @note See https://github.com/lukasbystricky/SpaceSimulator/blob/master/Utilities/Math/associated_legendre.m (last accessed on June 24th, 2021)
 [[nodiscard]] std::pair<Eigen::MatrixXd, Eigen::MatrixXd> associatedLegendre(int degreeN, double x);
 
-/// @brief Calculates the factorial of an unsigned integer
-/// @param[in] n Unsigned integer
-/// @return The factorial of 'n'
-uint64_t factorial(uint64_t n);
-
 } // namespace NAV::util::gravity
