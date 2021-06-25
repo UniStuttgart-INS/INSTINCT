@@ -70,10 +70,6 @@ class SkydelImuStream : public Imu
     std::thread TestThread;
 
     // Network data stream buffer size (boost::asio)
-    // enum
-    // {
-    //     max_length = 1024
-    // };
     constexpr static unsigned int max_length = 1024;
 
     // Network data stream array

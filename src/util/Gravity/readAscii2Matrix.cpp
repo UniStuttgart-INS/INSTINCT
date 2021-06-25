@@ -22,7 +22,7 @@ Eigen::MatrixXd NAV::util::gravity::readAscii2Matrix()
     int j = 0;
     Eigen::MatrixXd coeffs(nmbrOfLines, 6);
 
-    if (myfile.is_open())
+    if (myfile.good())
     {
         while (getline(myfile, line))
         {
@@ -52,11 +52,10 @@ Eigen::MatrixXd NAV::util::gravity::readAscii2Matrix()
                 i++;
             }
         }
-        myfile.close();
     }
     else
     {
-        LOG_DEBUG("Unable to open file 'egm96_to360.ascii'");
+        LOG_CRITICAL("Unable to open file 'egm96_to360.ascii'");
     }
 
     return coeffs;

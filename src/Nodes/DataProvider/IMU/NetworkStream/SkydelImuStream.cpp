@@ -109,12 +109,6 @@ void NAV::SkydelImuStream::do_receive()
                             LOG_ERROR("Error in network stream: Cell index is out of bounds");
                             break;
                         }
-
-                        InsTime currentTime = util::time::GetCurrentTime();
-                        if (!currentTime.empty())
-                        {
-                            obs->insTime = currentTime;
-                        }
                     }
                     else
                     {
@@ -126,6 +120,12 @@ void NAV::SkydelImuStream::do_receive()
                 // Arranging the network stream data into output format
                 obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
                 obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
+
+                InsTime currentTime = util::time::GetCurrentTime();
+                if (!currentTime.empty())
+                {
+                    obs->insTime = currentTime;
+                }
 
                 this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
             }

@@ -55,7 +55,7 @@ Eigen::Vector3d NAV::gravity::gravity_SomiglianaAltitude(const double& latitude,
 Eigen::Vector3d NAV::gravity::centrifugalAcceleration_Somigliana(const double& latitude, const double& altitude, double gravityMagnitude)
 {
     // Geocentric latitude determination from geographic latitude
-    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * tan(latitude));
+    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
     // Radius of spheroid determination
     double radiusSpheroid = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0)) + altitude;
 
@@ -79,26 +79,26 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration_Somigliana(const double& l
 double NAV::gravity::gravityMagnitude_WGS84_Skydel(const double& latitude, const double& altitude)
 {
     // geocentric latitude determination from geographic latitude
-    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * tan(latitude));
+    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
     // effective radius determination, i.e. earth radius on WGS84 spheroid plus local altitude --> possible error!! altitude in lla should be added rather than subtracted!
     double radiusSpheroid = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0)) - altitude;
 
     // Derivation of gravity, i.e. gravitational potential derived after effective radius
     return InsConst::WGS84_MU * std::pow(radiusSpheroid, -2.0)
-           - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(sin(latitudeGeocentric), 2.0) - 1)
+           - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
            - std::pow(InsConst::angularVelocity_ie_Skydel, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 }
 
 Eigen::Vector3d NAV::gravity::gravity_WGS84(const double& latitude, const double& altitude)
 {
     // Geocentric latitude determination from geographic latitude
-    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * tan(latitude));
+    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
     // Radius of spheroid determination
     double radiusSpheroid = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0));
 
     // Magnitude of the gravity, i.e. without orientation
     double gravityMagnitude = InsConst::WGS84_MU * std::pow(radiusSpheroid, -2.0)
-                              - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(sin(latitudeGeocentric), 2.0) - 1)
+                              - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
                               - std::pow(InsConst::angularVelocity_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 
     Eigen::Vector3d gravity_n = centrifugalAcceleration_WGS84(latitude, altitude, gravityMagnitude);
@@ -109,7 +109,7 @@ Eigen::Vector3d NAV::gravity::gravity_WGS84(const double& latitude, const double
 Eigen::Vector3d NAV::gravity::centrifugalAcceleration_WGS84(const double& latitude, const double& altitude, double gravityMagnitude)
 {
     // Geocentric latitude determination from geographic latitude
-    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * tan(latitude));
+    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
     // Radius of spheroid determination
     double radiusSpheroid = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0));
     double radiusEarthBody = radiusSpheroid + std::abs(altitude);
@@ -151,7 +151,7 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
 {
     if (coeffsEGM96.size() == 0) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {
-        LOG_INFO("Coefficients of the EGM96 were not loaded --> reloading now");
+        LOG_WARN("Coefficients of the EGM96 were not loaded --> reloading now");
         readCoeffs();
     }
 
@@ -197,7 +197,7 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
             auto md = static_cast<double>(m);
 
             // Setting the gravity vector dependent on Position(spherical) and EGM96 coefficients
-            gravity_sph(0) = gravity_sph(0) - std::pow(InsConst::WGS84_a, nd) * (nd + 1.0) * InsConst::WGS84_MU * Pnm * (C * cos(md * azimuth) + S * sin(md * azimuth)) / (std::pow(radius, (nd + 2.0)));
+            gravity_sph(0) = gravity_sph(0) - std::pow(InsConst::WGS84_a, nd) * (nd + 1.0) * InsConst::WGS84_MU * Pnm * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) / (std::pow(radius, (nd + 2.0)));
             gravity_sph(1) = gravity_sph(1) + std::pow(InsConst::WGS84_a, nd) * InsConst::WGS84_MU * Pnmd * std::cos(elevation) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) / (std::pow(radius, (nd + 2.0)));
             gravity_sph(2) = gravity_sph(2) + std::pow(InsConst::WGS84_a, nd) * InsConst::WGS84_MU * md * Pnm * (S * std::cos(md * azimuth) - C * std::sin(md * azimuth)) / (std::pow(radius, (nd + 2.0)) * std::sin(elevation));
         }

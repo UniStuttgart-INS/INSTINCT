@@ -639,7 +639,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
     if (!(obs->magUncompXYZ.has_value()))
     {
         obs->magUncompXYZ.emplace(0.0, 0.0, 0.0);
-        LOG_INFO("No magnetometer data available. Taking a vector of zeros instead.");
+        LOG_INFO("No magnetometer data available. Taking a vector of zeros instead."); // TODO: Rework this, so it in general checks if the magnetometer has a value and then does not calculate the heading without it
     }
     const Eigen::Vector3d& mag_p = obs->magCompXYZ.has_value() ? obs->magCompXYZ.value() : obs->magUncompXYZ.value();
     const Eigen::Vector3d& accel_p = obs->accelCompXYZ.has_value() ? obs->accelCompXYZ.value() : obs->accelUncompXYZ.value();
