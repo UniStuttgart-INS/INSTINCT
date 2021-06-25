@@ -6,7 +6,7 @@
 #pragma once
 
 #include "Eigen/Dense"
-#include "Gravity/readAscii2Matrix.hpp"
+#include "util/Gravity/readAscii2Matrix.hpp"
 
 namespace NAV::gravity
 {
