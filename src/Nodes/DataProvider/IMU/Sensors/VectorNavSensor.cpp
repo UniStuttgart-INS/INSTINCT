@@ -18,6 +18,492 @@ namespace nm = NAV::NodeManager;
 
 #include <map>
 
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::binaryGroupCommon = { {
+    /*  0 */ { "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C). This field is\nequivalent to the TimeStartup field in group 2."); } },
+    /*  1 */ { "TimeGps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds. This field is equivalent to\nthe TimeGps field in group 2."); } },
+    /*  2 */ { "TimeSyncIn", vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn trigger event expressed in nano seconds. This field is equivalent to the\nTimeSyncIn field in group 2."); } },
+    /*  3 */ { "YawPitchRoll", vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Estimated attitude as yaw pitch and roll angles.\n\nThe estimated attitude Yaw, Pitch, and Roll angles measured in degrees. The attitude is given as a 3,2,1 Euler\nangle sequence describing the body frame with respect to the local North East Down (NED) frame. This field\nis equivalent to the YawPitchRoll field in group 5.\n\nYaw [+/- 180°]\nPitch [+/- 90°]\nRoll [+/- 180°]"); } },
+    /*  4 */ { "Quaternion", vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Estimated attitude as a quaternion.\n\nThe estimated attitude quaternion. The last term is the scalar value. The attitude is given as the body frame\nwith respect to the local North East Down (NED) frame. This field is equivalent to the Quaternion field in\ngroup 5."); } },
+    /*  5 */ { "AngularRate", vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Compensated angular rate.\n\nThe estimated angular rate measured in rad/s. The angular rates are compensated by the onboard filter bias\nestimates. The angular rate is expressed in the body frame. This field is equivalent to the AngularRate field\nin group 3."); } },
+    /*  6 */ { "Position", vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Estimated position. (LLA)\n\nThe estimated position given as latitude, longitude, and altitude given in [deg, deg, m] respectively. This field\nis equivalent to the PosLla field in group 6."); } },
+    /*  7 */ { "Velocity", vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Estimated velocity. (NED)\n\nThe estimated velocity in the North East Down (NED) frame, given in m/s. This field is equivalent to the\nVelNed field in group 6."); } },
+    /*  8 */ { "Accel", vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Estimated acceleration (compensated). (Body)\n\nThe estimated acceleration in the body frame, given in m/s^2. This acceleration includes gravity and has\nbeen bias compensated by the onboard INS Kalman filter. This field is equivalent to the Accel field in group 3."); } },
+    /*  9 */ { "Imu", vn::protocol::uart::CommonGroup::COMMONGROUP_IMU, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Calibrated uncompensated gyro and accelerometer measurements.\n\nThe uncompensated IMU acceleration and angular rate measurements. The acceleration is given in m/s^2,\nand the angular rate is given in rad/s. These measurements correspond to the calibrated angular rate and\nacceleration measurements straight from the IMU. The measurements have not been corrected for bias\noffset by the onboard Kalman filter. These are equivalent to the UncompAccel and UncompGyro fields in\ngroup 3."); } },
+    /* 10 */ { "MagPres", vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Calibrated magnetic (compensated), temperature, and pressure measurements.\n\nThe compensated magnetic, temperature, and pressure measurements from the IMU. The magnetic\nmeasurement is given in Gauss, and has been corrected for hard/soft iron corrections (if enabled). The\ntemperature measurement is given in Celsius. The pressure measurement is given in kPa. This field is\nequivalent to the Mag, Temp, and Pres fields in group 3.\n\nThe IP-68 enclosure on the tactical series forms an airtight (hermetic) seal isolating the internal\nsensors from the external environment. The pressure sensor is internal to this seal, and as such\nwill not measure the outside environment atmospheric pressure. It will instead read the pressure\ninside the sealed enclosure. The purpose of this sensor is to provide a means of ensuring the\nseal integrity over the lifetime of the product. Based on the Ideal Gas Law the ratio of pressure\ndivided by temperature should remain constant over both time and environmental temperature.\nWhen this is no longer the case, it can be assumed that the seal integrity has been compromised."); } },
+    /* 11 */ { "DeltaTheta", vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Delta time, theta, and velocity.\n\nThe delta time, angle, and velocity measurements. The delta time (dtime) is the time interval that the delta\nangle and velocities are integrated over. The delta theta (dtheta) is the delta rotation angles incurred due to\nrotation, by the local body reference frame, since the last time the values were outputted by the device. The\ndelta velocity (dvel) is the delta velocity incurred due to motion, by the local body reference frame, since the\nlast time the values were outputted by the device. The frame of reference of these delta measurements are\ndetermined by the IntegrationFrame field in the Delta Theta and Delta Velocity Configuration Register\n(Register 82). These delta angles and delta velocities are calculated based upon the onboard coning and\nsculling integration performed onboard the sensor at the full IMU rate (default 800Hz). The integration for\nboth the delta angles and velocities are reset each time either of the values are either polled or sent out due\nto a scheduled asynchronous ASCII or binary output. Delta Theta and Delta Velocity values correctly capture\nthe nonlinearities involved in measuring motion from a rotating strapdown platform (as opposed to the older\nmechanically inertial navigation systems), thus providing you with the ability to integrate velocity and angular\nrate at much lower speeds (say for example 10 Hz, reducing bandwidth and computational complexity), while\nstill maintaining the same numeric precision as if you had performed the integration at the full IMU\nmeasurement rate of 800Hz. This field is equivalent to the DeltaTheta and DeltaVel fields in group 3 with the\ninclusion of the additional delta time parameter."); } },
+    /* 12 */ { "InsStatus", vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("INS status.\n\nThe INS status bitfield. This field is equivalent to the InsSatus field in group 6. See INS Solution LLA Register\nfor more information on the individual bits in this field."); } },
+    /* 13 */ { "SyncInCnt", vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("SyncIn count.\n\nThe number of SyncIn trigger events that have occurred. This field is equivalent to the SyncInCnt field in\ngroup 2."); } },
+    /* 14 */ { "TimeGpsPps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Time since last GNSS PPS trigger.\n\nThe time since the last GPS PPS trigger event expressed in nano seconds. This field is equivalent to the\nTimePPS field in group 2."); } },
+} };
+
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor::binaryGroupTime = { {
+    /*  0 */ { "TimeStartup", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C)."); } },
+    /*  1 */ { "TimeGps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Absolute GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds."); } },
+    /*  2 */ { "GpsTow", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Time since start of GPS week.\n\nThe time since the start of the current GPS time week expressed in nano seconds."); } },
+    /*  3 */ { "GpsWeek", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GPS week.\n\nThe current GPS week."); } },
+    /*  4 */ { "TimeSyncIn", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn event trigger expressed in nano seconds."); } },
+    /*  5 */ { "TimeGpsPps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Time since last GPS PPS trigger.\n\nThe time since the last GPS PPS trigger event expressed in nano seconds."); } },
+    /*  6 */ { "TimeUTC", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("UTC time.\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); } },
+    /*  7 */ { "SyncInCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("SyncIn trigger count.\n\nThe number of SyncIn trigger events that have occurred."); } },
+    /*  8 */ { "SyncOutCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("SyncOut trigger count.\n\nThe number of SyncOut trigger events that have occurred."); } },
+    /*  9 */ { "TimeStatus", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time valid status flags.");
+                                                                                                                                                if (ImGui::BeginTable("VectorNavTimeStatusTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                {
+                                                                                                                                                    ImGui::TableSetupColumn("Bit Offset");
+                                                                                                                                                    ImGui::TableSetupColumn("Field");
+                                                                                                                                                    ImGui::TableSetupColumn("Description");
+                                                                                                                                                    ImGui::TableHeadersRow();
+
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("timeOk");
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("1 - GpsTow is valid");
+
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("dateOk");
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("1 - TimeGps and GpsWeek are valid");
+
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("utcTimeValid");
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("1 - UTC time is valid");
+
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("3 - 7");
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("resv");
+                                                                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved for future use");
+
+                                                                                                                                                    ImGui::EndTable();
+                                                                                                                                                } } },
+} };
+
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor::binaryGroupIMU{ {
+    /*  0 */ { "ImuStatus", vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Status is reserved for future use. Not currently used in the current code, as such will always report 0."); } },
+    /*  1 */ { "UncompMag", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Uncompensated magnetic measurement.\n\nThe IMU magnetic field measured in units of Gauss, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), and the user\ncompensation, however it is not compensated by the onboard Hard/Soft Iron estimator."); } },
+    /*  2 */ { "UncompAccel", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Uncompensated acceleration measurement.\n\nThe IMU acceleration measured in units of m/s^2, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), however it is not\ncompensated by any dynamic calibration such as bias compensation from the onboard INS Kalman filter."); } },
+    /*  3 */ { "UncompGyro", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Uncompensated angular rate measurement.\n\nThe IMU angular rate measured in units of rad/s, given in the body frame. This measurement is compensated\nby the static calibration (individual factory calibration stored in flash), however it is not compensated by any\ndynamic calibration such as the bias compensation from the onboard AHRS/INS Kalman filters."); } },
+    /*  4 */ { "Temp", vn::protocol::uart::ImuGroup::IMUGROUP_TEMP, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Temperature measurement.\n\nThe IMU temperature measured in units of Celsius."); } },
+    /*  5 */ { "Pres", vn::protocol::uart::ImuGroup::IMUGROUP_PRES, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Pressure measurement.\n\nThe IMU pressure measured in kilopascals. This is an absolute pressure measurement. Typical pressure at sea level would be around 100 kPa."); } },
+    /*  6 */ { "DeltaTheta", vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Delta theta angles.\n\nThe delta time (dtime) is the time interval that the delta angle and velocities are integrated over. The delta\ntheta (dtheta) is the delta rotation angles incurred due to rotation, by the local body reference frame, since\nthe last time the values were outputted by the device. The delta velocity (dvel) is the delta velocity incurred\ndue to motion, by the local body reference frame, since the last time the values were outputted by the device.\nThe frame of reference of these delta measurements are determined by the IntegrationFrame field in the\nDelta Theta and Delta Velocity Configuration Register (Register 82). These delta angles and delta velocities\nare calculated based upon the onboard coning and sculling integration performed onboard the sensor at the\nfull IMU rate (default 800Hz). The integration for both the delta angles and velocities are reset each time\neither of the values are either polled or sent out due to a scheduled asynchronous ASCII or binary output.\nDelta Theta and Delta Velocity values correctly capture the nonlinearities involved in measuring motion from\na rotating strapdown platform (as opposed to the older mechanically inertial navigation systems), thus\nproviding you with the ability to integrate velocity and angular rate at much lower speeds (say for example\n10 Hz, reducing bandwidth and computational complexity), while still maintaining the same numeric\nprecision as if you had performed the integration at the full IMU measurement rate of 800Hz. Time is given\nin seconds. Delta angles are given in degrees."); } },
+    /*  7 */ { "DeltaVel", vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Delta velocity.\n\nThe delta velocity (dvel) is the delta velocity incurred due to motion, since the last time the values were output\nby the device. The delta velocities are calculated based upon the onboard conning and sculling integration\nperformed onboard the sensor at the IMU sampling rate (nominally 800Hz). The integration for the delta\nvelocities are reset each time the values are either polled or sent out due to a scheduled asynchronous ASCII\nor binary output. Delta velocity is given in meters per second."); } },
+    /*  8 */ { "Mag", vn::protocol::uart::ImuGroup::IMUGROUP_MAG, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Compensated magnetic measurement.\n\nThe IMU compensated magnetic field measured units of Gauss, and given in the body frame. This\nmeasurement is compensated by the static calibration (individual factory calibration stored in flash), the user\ncompensation, and the dynamic calibration from the onboard Hard/Soft Iron estimator."); } },
+    /*  9 */ { "Accel", vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Compensated acceleration measurement.\n\nThe compensated acceleration measured in units of m/s^2, and given in the body frame. This measurement\nis compensated by the static calibration (individual factory calibration stored in flash), the user\ncompensation, and the dynamic bias compensation from the onboard INS Kalman filter."); } },
+    /* 10 */ { "AngularRate", vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Compensated angular rate measurement.\n\nThe compensated angular rate measured in units of rad/s, and given in the body frame. This measurement\nis compensated by the static calibration (individual factor calibration stored in flash), the user compensation,\nand the dynamic bias compensation from the onboard INS Kalman filter."); } },
+} };
+
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor::binaryGroupGNSS{ {
+    /*  0 */ { "UTC", vn::protocol::uart::GpsGroup::GPSGROUP_UTC, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GPS UTC Time\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); } },
+    /*  1 */ { "Tow", vn::protocol::uart::GpsGroup::GPSGROUP_TOW, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GPS time of week\n\nThe GPS time of week given in nano seconds."); } },
+    /*  2 */ { "Week", vn::protocol::uart::GpsGroup::GPSGROUP_WEEK, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GPS week\n\nThe current GPS week."); } },
+    /*  3 */ { "NumSats", vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Number of tracked satellites\n\nThe number of tracked GNSS satellites."); } },
+    /*  4 */ { "Fix", vn::protocol::uart::GpsGroup::GPSGROUP_FIX, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS fix\n\nThe current GNSS fix.");
+                                                                                                                                                          if (ImGui::BeginTable("VectorNavFixTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                          {
+                                                                                                                                                              ImGui::TableSetupColumn("Value");
+                                                                                                                                                              ImGui::TableSetupColumn("Description");
+                                                                                                                                                              ImGui::TableHeadersRow();
+
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("No fix");
+
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("Time only");
+
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("2D");
+
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("3D");
+
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("4");
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("SBAS");
+
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("7");
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("RTK Float");
+
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("8");
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("RTK Fixed");
+
+                                                                                                                                                              ImGui::EndTable();
+                                                                                                                                                          } } },
+    /*  5 */ { "PosLla", vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS position (latitude, longitude, altitude)\n\nThe current GNSS position measurement given as the geodetic latitude, longitude and altitude above the\nellipsoid. The units are in [deg, deg, m] respectively."); } },
+    /*  6 */ { "PosEcef", vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS position (ECEF)\n\nThe current GNSS position given in the Earth centered Earth fixed (ECEF) coordinate frame, given in meters."); } },
+    /*  7 */ { "VelNed", vn::protocol::uart::GpsGroup::GPSGROUP_VELNED, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS velocity (NED)\n\nThe current GNSS velocity in the North East Down (NED) coordinate frame, given in m/s."); } },
+    /*  8 */ { "VelEcef", vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS velocity (ECEF)\n\nThe current GNSS velocity in the Earth centered Earth fixed (ECEF) coordinate frame, given in m/s."); } },
+    /*  9 */ { "PosU", vn::protocol::uart::GpsGroup::GPSGROUP_POSU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS position uncertainty (NED)\n\nThe current GNSS position uncertainty in the North East Down (NED) coordinate frame, given in meters (1 Sigma)."); } },
+    /* 10 */ { "VelU", vn::protocol::uart::GpsGroup::GPSGROUP_VELU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS velocity uncertainty\n\nThe current GNSS velocity uncertainty, given in m/s (1 Sigma)."); } },
+    /* 11 */ { "TimeU", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS time uncertainty\n\nThe current GPS time uncertainty, given in seconds (1 Sigma)."); } },
+    /* 12 */ { "TimeInfo", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS time status and leap seconds\n\nFlags for valid GPS TOW, week number and UTC and current leap seconds.");
+                                                                                                                                                                    if (ImGui::BeginTable("VectorNavTimeInfoTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                    {
+                                                                                                                                                                        ImGui::TableSetupColumn("Bit Offset");
+                                                                                                                                                                        ImGui::TableSetupColumn("Field");
+                                                                                                                                                                        ImGui::TableSetupColumn("Description");
+                                                                                                                                                                        ImGui::TableHeadersRow();
+
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("timeOk");
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("1 - GpsTow is valid");
+
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("dateOk");
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("1 - TimeGps and GpsWeek are valid");
+
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("utcTimeValid");
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("1 - UTC time is valid");
+
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("3 - 7");
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("resv");
+                                                                                                                                                                        ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved for future use");
+
+                                                                                                                                                                        ImGui::EndTable();
+                                                                                                                                                                    } } },
+    /* 13 */ { "DOP", vn::protocol::uart::GpsGroup::GPSGROUP_DOP, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Dilution of precision"); } },
+    /* 14 */ { "SatInfo", vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Satellite Information\n\nInformation and measurements pertaining to each GNSS satellite in view.\n\nSatInfo Element:");
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  {
+                                                                                                                                                                      ImGui::TableSetupColumn("Name");
+                                                                                                                                                                      ImGui::TableSetupColumn("Description");
+                                                                                                                                                                      ImGui::TableHeadersRow();
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("sys");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("GNSS constellation indicator. See table below for details.");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("svId");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Space vehicle Id");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("flags");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Tracking info flags. See table below for details.");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("cno");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Carrier-to-noise density ratio (signal strength) [dB-Hz]");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("qi");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Quality Indicator. See table below for details.");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("el");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Elevation in degrees");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("az");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Azimuth angle in degrees");
+
+                                                                                                                                                                      ImGui::EndTable();
+                                                                                                                                                                  }
+                                                                                                                                                                  ImGui::BeginChild("VectorNavSatInfoTooltipGNSSConstelationChild", ImVec2(230, 217));
+                                                                                                                                                                  ImGui::TextUnformatted("\nGNSS constellation indicator:");
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  {
+                                                                                                                                                                      ImGui::TableSetupColumn("Value");
+                                                                                                                                                                      ImGui::TableSetupColumn("Description");
+                                                                                                                                                                      ImGui::TableHeadersRow();
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("GPS");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("SBAS");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Galileo");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("BeiDou");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("4");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("IMES");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("5");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("QZSS");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("6");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("GLONASS");
+
+                                                                                                                                                                      ImGui::EndTable();
+                                                                                                                                                                  }
+                                                                                                                                                                  ImGui::EndChild();
+                                                                                                                                                                  ImGui::SameLine();
+                                                                                                                                                                  ImGui::BeginChild("VectorNavSatInfoTooltipFlagsChild", ImVec2(260, 217));
+                                                                                                                                                                  ImGui::TextUnformatted("\nTracking info flags:");
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  {
+                                                                                                                                                                      ImGui::TableSetupColumn("Bit Offset");
+                                                                                                                                                                      ImGui::TableSetupColumn("Description");
+                                                                                                                                                                      ImGui::TableHeadersRow();
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Healthy");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Almanac");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Ephemeris");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Differential Correction");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("4");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Used for Navigation");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("5");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Azimuth / Elevation Valid");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("6");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Used for RTK");
+
+                                                                                                                                                                      ImGui::EndTable();
+                                                                                                                                                                  }
+                                                                                                                                                                  ImGui::EndChild();
+                                                                                                                                                                  ImGui::TextUnformatted("\nQuality Indicators:");
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltipQuality", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  {
+                                                                                                                                                                      ImGui::TableSetupColumn("Value");
+                                                                                                                                                                      ImGui::TableSetupColumn("Description");
+                                                                                                                                                                      ImGui::TableHeadersRow();
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("No signal");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Searching signal");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Signal acquired");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Signal detected but unstable");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("4");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Code locked and time synchronized");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("5, 6, 7");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Code and carrier locked and time synchronized");
+
+                                                                                                                                                                      ImGui::EndTable();
+                                                                                                                                                                  } } },
+    /* 15 */ { "RawMeas", vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS Raw Measurements.\n\nSatRaw Element:");
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  {
+                                                                                                                                                                      ImGui::TableSetupColumn("Name");
+                                                                                                                                                                      ImGui::TableSetupColumn("Description");
+                                                                                                                                                                      ImGui::TableHeadersRow();
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("sys");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("GNSS constellation indicator. See table below for details.");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("svId");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Space vehicle Id");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("freq");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Frequency indicator. See table below for details.");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("chan");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Channel Indicator. See table below for details.");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("slot");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Slot Id");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("cno");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Carrier-to-noise density ratio (signal strength) [dB-Hz]");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("flags");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Tracking info flags. See table below for details.");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("pr");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Pseudorange measurement in meters.");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("cp");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Carrier phase measurement in cycles.");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("dp");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Doppler measurement in Hz. Positive sign for approaching satellites.");
+
+                                                                                                                                                                      ImGui::EndTable();
+                                                                                                                                                                  }
+                                                                                                                                                                  ImGui::BeginChild("VectorNavSatRawTooltipGNSSConstelationChild", ImVec2(180, 217));
+                                                                                                                                                                  ImGui::TextUnformatted("\nConstellation indicator:");
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  {
+                                                                                                                                                                      ImGui::TableSetupColumn("Value");
+                                                                                                                                                                      ImGui::TableSetupColumn("Description");
+                                                                                                                                                                      ImGui::TableHeadersRow();
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("GPS");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("SBAS");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Galileo");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("BeiDou");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("4");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("IMES");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("5");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("QZSS");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("6");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("GLONASS");
+
+                                                                                                                                                                      ImGui::EndTable();
+                                                                                                                                                                  }
+                                                                                                                                                                  ImGui::EndChild();
+                                                                                                                                                                  ImGui::SameLine();
+                                                                                                                                                                  ImGui::BeginChild("VectorNavSatRawTooltipFreqChild", ImVec2(270, 235));
+                                                                                                                                                                  ImGui::TextUnformatted("\nFrequency indicator:");
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipFreq", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  {
+                                                                                                                                                                      ImGui::TableSetupColumn("Value");
+                                                                                                                                                                      ImGui::TableSetupColumn("Description");
+                                                                                                                                                                      ImGui::TableHeadersRow();
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Rx Channel");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("L1(GPS,QZSS,SBAS), G1(GLO),\nE2-L1-E1(GAL), B1(BDS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("L2(GPS,QZSS), G2(GLO)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("L5(GPS,QZSS,SBAS), E5a(GAL)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("4");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("E6(GAL), LEX(QZSS), B3(BDS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("5");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("E5b(GAL), B2(BDS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("6");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("E5a+b(GAL)");
+
+                                                                                                                                                                      ImGui::EndTable();
+                                                                                                                                                                  }
+                                                                                                                                                                  ImGui::EndChild();
+                                                                                                                                                                  ImGui::SameLine();
+                                                                                                                                                                  ImGui::BeginChild("VectorNavSatRawTooltipFlagChild", ImVec2(255, 260));
+                                                                                                                                                                  ImGui::TextUnformatted("\nTracking info flags:");
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  {
+                                                                                                                                                                      ImGui::TableSetupColumn("Bit Offset");
+                                                                                                                                                                      ImGui::TableSetupColumn("Description");
+                                                                                                                                                                      ImGui::TableHeadersRow();
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Searching");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Tracking");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Time Valid");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Code Lock");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("4");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Phase Lock");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("5");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Phase Half Ambiguity");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("6");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Phase Half Sub");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("7");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Phase Slip");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("8");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Pseudorange Smoothed");
+
+                                                                                                                                                                      ImGui::EndTable();
+                                                                                                                                                                  }
+                                                                                                                                                                  ImGui::EndChild();
+                                                                                                                                                                  ImGui::TextUnformatted("\nChannel indicator:");
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipChan", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  {
+                                                                                                                                                                      ImGui::TableSetupColumn("Value");
+                                                                                                                                                                      ImGui::TableSetupColumn("Description");
+                                                                                                                                                                      ImGui::TableHeadersRow();
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("P-code (GPS,GLO)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("1");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("C/A-code (GPS,GLO,SBAS,QZSS), C chan (GAL)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("semi-codeless (GPS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Y-code (GPS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("4");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("M-code (GPS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("5");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("codeless (GPS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("6");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("A chan (GAL)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("7");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("B chan (GAL)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("8");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("I chan (GPS,GAL,QZSS,BDS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("9");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("Q chan (GPS,GAL,QZSS,BDS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("10");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("M chan (L2CGPS, L2CQZSS), D chan (GPS,QZSS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("11");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("L chan (L2CGPS, L2CQZSS), P chan (GPS,QZSS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("12");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("B+C chan (GAL), I+Q chan (GPS,GAL,QZSS,BDS),\nM+L chan (GPS,QZSS), D+P chan (GPS,QZSS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("13");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("based on Z-tracking (GPS)");
+
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("14");
+                                                                                                                                                                      ImGui::TableNextColumn(); ImGui::TextUnformatted("A+B+C (GAL)");
+
+                                                                                                                                                                      ImGui::EndTable();
+                                                                                                                                                                  } } },
+} };
+
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 9> NAV::VectorNavSensor::binaryGroupAttitude{ {
+    /*  0 */ { "VpeStatus", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN100_VN110; }, []() { ImGui::TextUnformatted(""); } },
+    /*  1 */ { "YawPitchRoll", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
+    /*  2 */ { "Quaternion", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
+    /*  3 */ { "DCM", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
+    /*  4 */ { "MagNed", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
+    /*  5 */ { "AccelNed", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
+    /*  6 */ { "LinearAccelBody", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
+    /*  7 */ { "LinearAccelNed", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
+    /*  8 */ { "YprU", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
+} };
+
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor::binaryGroupINS{ {
+    /*  0 */ { "InsStatus", vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  1 */ { "PosLla", vn::protocol::uart::InsGroup::INSGROUP_POSLLA, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  2 */ { "PosEcef", vn::protocol::uart::InsGroup::INSGROUP_POSECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  3 */ { "VelBody", vn::protocol::uart::InsGroup::INSGROUP_VELBODY, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  4 */ { "VelNed", vn::protocol::uart::InsGroup::INSGROUP_VELNED, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  5 */ { "VelEcef", vn::protocol::uart::InsGroup::INSGROUP_VELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  6 */ { "MagEcef", vn::protocol::uart::InsGroup::INSGROUP_MAGECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  7 */ { "AccelEcef", vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  8 */ { "LinearAccelEcef", vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  9 */ { "PosU", vn::protocol::uart::InsGroup::INSGROUP_POSU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /* 10 */ { "VelU", vn::protocol::uart::InsGroup::INSGROUP_VELU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+} };
+
 NAV::VectorNavSensor::VectorNavSensor()
 {
     name = typeStatic();
@@ -25,7 +511,7 @@ NAV::VectorNavSensor::VectorNavSensor()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 345, 120 };
+    guiConfigDefaultWindowSize = { 917, 623 };
 
     nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type());
 
@@ -74,23 +560,54 @@ std::string NAV::VectorNavSensor::category()
 
 void NAV::VectorNavSensor::guiConfig()
 {
-    if (ImGui::Combo("Sensor", reinterpret_cast<int*>(&sensorModel), "VN-100\0VN-110\0VN-310\0\0"))
+    if (ImGui::Combo("Sensor", reinterpret_cast<int*>(&sensorModel), "VN-100 / VN-110\0VN-310\0\0"))
     {
         LOG_DEBUG("{}: Sensor changed to {}", nameId(), sensorModel);
         flow::ApplyChanges();
         deinitializeNode();
 
-        if (sensorModel == VectorNavModel::VN310)
+        for (auto& item : binaryGroupCommon)
         {
-            config.attitudeField &= ~vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS;
+            if (!item.isEnabled(sensorModel))
+            {
+                config.commonField &= ~vn::protocol::uart::CommonGroup(item.flagsValue);
+            }
         }
-        else if (sensorModel == VectorNavModel::VN100 || sensorModel == VectorNavModel::VN110)
+        for (auto& item : binaryGroupTime)
         {
-            config.commonField &= ~vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS;
-            config.timeField &= ~vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS;
-            config.gnss1Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
-            config.insField = vn::protocol::uart::InsGroup::INSGROUP_NONE;
-            config.gnss2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
+            if (!item.isEnabled(sensorModel))
+            {
+                config.timeField &= ~vn::protocol::uart::TimeGroup(item.flagsValue);
+            }
+        }
+        for (auto& item : binaryGroupIMU)
+        {
+            if (!item.isEnabled(sensorModel))
+            {
+                config.imuField &= ~vn::protocol::uart::ImuGroup(item.flagsValue);
+            }
+        }
+        for (auto& item : binaryGroupGNSS)
+        {
+            if (!item.isEnabled(sensorModel))
+            {
+                config.gnss1Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
+                config.gnss2Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
+            }
+        }
+        for (auto& item : binaryGroupAttitude)
+        {
+            if (!item.isEnabled(sensorModel))
+            {
+                config.attitudeField &= ~vn::protocol::uart::AttitudeGroup(item.flagsValue);
+            }
+        }
+        for (auto& item : binaryGroupINS)
+        {
+            if (!item.isEnabled(sensorModel))
+            {
+                config.insField &= ~vn::protocol::uart::InsGroup(item.flagsValue);
+            }
         }
     }
 
@@ -125,6 +642,7 @@ void NAV::VectorNavSensor::guiConfig()
         flow::ApplyChanges();
         deinitializeNode();
     }
+
     if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", id.AsPointer()).c_str(), 7,
                           ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
     {
@@ -155,30 +673,92 @@ void NAV::VectorNavSensor::guiConfig()
             }
         };
 
-        ImGui::TableNextRow();
-        CheckboxFlags(0, ("TimeStartup##Common" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.commonField), vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP);
-        CheckboxFlags(1, ("TimeStartup##Time" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.timeField), vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP);
-        CheckboxFlags(2, ("ImuStatus##IMU" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.imuField), vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS);
-        CheckboxFlags(3, ("UTC##GNSS1" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss1Field), vn::protocol::uart::GpsGroup::GPSGROUP_UTC, sensorModel == VectorNavModel::VN310);
-        CheckboxFlags(4, ("VpeStatus##Attitude" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.attitudeField), vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS, sensorModel == VectorNavModel::VN100 || sensorModel == VectorNavModel::VN110);
-        CheckboxFlags(5, ("InsStatus##INS" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.insField), vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS, sensorModel == VectorNavModel::VN310);
-        CheckboxFlags(6, ("UTC##GNSS2" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss2Field), vn::protocol::uart::GpsGroup::GPSGROUP_UTC, sensorModel == VectorNavModel::VN310);
-        ImGui::TableNextRow();
-        CheckboxFlags(0, ("TimeGps##Common" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.commonField), vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, sensorModel == VectorNavModel::VN310);
-        CheckboxFlags(1, ("TimeGps##Time" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.timeField), vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS, sensorModel == VectorNavModel::VN310);
-        CheckboxFlags(2, ("UncompMag##IMU" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.imuField), vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG);
-        CheckboxFlags(3, ("Tow##GNSS1" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss1Field), vn::protocol::uart::GpsGroup::GPSGROUP_TOW, sensorModel == VectorNavModel::VN310);
-        CheckboxFlags(4, ("YawPitchRoll##Attitude" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.attitudeField), vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL);
-        CheckboxFlags(5, ("PosLla##INS" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.insField), vn::protocol::uart::InsGroup::INSGROUP_POSLLA, sensorModel == VectorNavModel::VN310);
-        CheckboxFlags(6, ("Tow##GNSS2" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss2Field), vn::protocol::uart::GpsGroup::GPSGROUP_TOW, sensorModel == VectorNavModel::VN310);
-        // ImGui::TableNextRow();
-        // CheckboxFlags(0, ("##Common" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.commonField), vn::protocol::uart::CommonGroup::COMMONGROUP_);
-        // CheckboxFlags(1, ("##Time" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.timeField), vn::protocol::uart::TimeGroup::TIMEGROUP_);
-        // CheckboxFlags(2, ("##IMU" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.imuField), vn::protocol::uart::ImuGroup::IMUGROUP_);
-        // CheckboxFlags(3, ("##GNSS1" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss1Field), vn::protocol::uart::GpsGroup::GPSGROUP_, sensorModel == VectorNavModel::VN310);
-        // CheckboxFlags(4, ("##Attitude" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.attitudeField), vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_);
-        // CheckboxFlags(5, ("##INS" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.insField), vn::protocol::uart::InsGroup::INSGROUP_, sensorModel == VectorNavModel::VN310);
-        // CheckboxFlags(6, ("##GNSS2" + std::to_string(size_t(id))).c_str(), reinterpret_cast<int*>(&config.gnss2Field), vn::protocol::uart::GpsGroup::GPSGROUP_, sensorModel == VectorNavModel::VN310);
+        // --------------------------------------------- Common Group ------------------------------------------------
+        for (size_t i = 0; i < 16; i++)
+        {
+            if (i < binaryGroupCommon.size() || i < binaryGroupTime.size() || i < binaryGroupIMU.size()
+                || i < binaryGroupGNSS.size() || i < binaryGroupAttitude.size() || i < binaryGroupINS.size())
+            {
+                ImGui::TableNextRow();
+            }
+            if (i < binaryGroupCommon.size())
+            {
+                auto& binaryGroupItem = binaryGroupCommon.at(i);
+                CheckboxFlags(0, (binaryGroupItem.name + ("##Common" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.commonField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                {
+                    ImGui::BeginTooltip();
+                    binaryGroupItem.tooltip();
+                    ImGui::EndTooltip();
+                }
+            }
+            if (i < binaryGroupTime.size())
+            {
+                auto& binaryGroupItem = binaryGroupTime.at(i);
+                CheckboxFlags(1, (binaryGroupItem.name + ("##Time" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.timeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                {
+                    ImGui::BeginTooltip();
+                    binaryGroupItem.tooltip();
+                    ImGui::EndTooltip();
+                }
+            }
+            if (i < binaryGroupIMU.size())
+            {
+                auto& binaryGroupItem = binaryGroupIMU.at(i);
+                CheckboxFlags(2, (binaryGroupItem.name + ("##IMU" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.imuField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                {
+                    ImGui::BeginTooltip();
+                    binaryGroupItem.tooltip();
+                    ImGui::EndTooltip();
+                }
+            }
+            if (i < binaryGroupGNSS.size())
+            {
+                auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                CheckboxFlags(3, (binaryGroupItem.name + ("##GNSS1" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.gnss1Field), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                {
+                    ImGui::BeginTooltip();
+                    binaryGroupItem.tooltip();
+                    ImGui::EndTooltip();
+                }
+            }
+            if (i < binaryGroupAttitude.size())
+            {
+                auto& binaryGroupItem = binaryGroupAttitude.at(i);
+                CheckboxFlags(4, (binaryGroupItem.name + ("##Attitude" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.attitudeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                {
+                    ImGui::BeginTooltip();
+                    binaryGroupItem.tooltip();
+                    ImGui::EndTooltip();
+                }
+            }
+            if (i < binaryGroupINS.size())
+            {
+                auto& binaryGroupItem = binaryGroupINS.at(i);
+                CheckboxFlags(5, (binaryGroupItem.name + ("##INS" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.insField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                {
+                    ImGui::BeginTooltip();
+                    binaryGroupItem.tooltip();
+                    ImGui::EndTooltip();
+                }
+            }
+            if (i < binaryGroupGNSS.size())
+            {
+                auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                CheckboxFlags(6, (binaryGroupItem.name + ("##GNSS2" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.gnss2Field), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                {
+                    ImGui::BeginTooltip();
+                    binaryGroupItem.tooltip();
+                    ImGui::EndTooltip();
+                }
+            }
+        }
 
         ImGui::EndTable();
     }
