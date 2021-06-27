@@ -11,6 +11,7 @@
 #include "internal/FlowManager.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "util/Time/TimeBase.hpp"
+#include "NodeData/GNSS/SkydelObs.hpp"
 
 namespace nm = NAV::NodeManager;
 using boost::asio::ip::udp;
@@ -23,6 +24,7 @@ NAV::SkydelImuStream::SkydelImuStream()
     hasConfig = false;
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
+    nm::CreateOutputPin(this, "SkydelObs", Pin::Type::Flow, NAV::SkydelObs::type());
 }
 
 NAV::SkydelImuStream::~SkydelImuStream()
@@ -65,9 +67,17 @@ void NAV::SkydelImuStream::do_receive()
                 // Splitting the incoming string analogous to 'ImuFile.cpp'
                 std::stringstream lineStream(std::string(m_data.begin(), m_data.end()));
                 std::string cell;
+                auto obsG = std::make_shared<SkydelObs>();
                 auto obs = std::make_shared<ImuObs>(this->imuPos);
 
                 //  Inits for simulated measurement variables
+                double posX = 0.0;
+                double posY = 0.0;
+                double posZ = 0.0;
+                double attRoll = 0.0;
+                double attPitch = 0.0;
+                double attYaw = 0.0;
+
                 double accelX = 0.0;
                 double accelY = 0.0;
                 double accelZ = 0.0;
@@ -86,21 +96,39 @@ void NAV::SkydelImuStream::do_receive()
                             obs->timeSinceStartup = std::stod(cell) * 1e6;
                             break;
                         case 1:
-                            accelX = std::stod(cell);
+                            posX = std::stod(cell);
                             break;
                         case 2:
-                            accelY = std::stod(cell);
+                            posY = std::stod(cell);
                             break;
                         case 3:
-                            accelZ = std::stod(cell);
+                            posZ = std::stod(cell);
                             break;
                         case 4:
-                            gyroX = std::stod(cell);
+                            attRoll = std::stod(cell);
                             break;
                         case 5:
-                            gyroY = std::stod(cell);
+                            attPitch = std::stod(cell);
                             break;
                         case 6:
+                            attYaw = std::stod(cell);
+                            break;
+                        case 7:
+                            accelX = std::stod(cell);
+                            break;
+                        case 8:
+                            accelY = std::stod(cell);
+                            break;
+                        case 9:
+                            accelZ = std::stod(cell);
+                            break;
+                        case 10:
+                            gyroX = std::stod(cell);
+                            break;
+                        case 11:
+                            gyroY = std::stod(cell);
+                            break;
+                        case 12:
                             gyroZ = std::stod(cell);
                             break;
 
@@ -117,6 +145,9 @@ void NAV::SkydelImuStream::do_receive()
                 }
 
                 // Arranging the network stream data into output format
+                obsG->posXYZ.emplace(posX, posY, posZ);
+                obsG->attRPY.emplace(attRoll, attPitch, attYaw);
+
                 obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
                 obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
 
@@ -126,6 +157,7 @@ void NAV::SkydelImuStream::do_receive()
                     obs->insTime = currentTime;
                 }
 
+                this->invokeCallbacks(OutputPortIndex_GnssObs, obsG);
                 this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
             }
             else

@@ -51,8 +51,9 @@ class SkydelImuStream : public Imu
     bool resetNode() override;
 
   private:
-    // Number of the output port of the SkydelImuStream node
-    constexpr static size_t OutputPortIndex_ImuObs = 1; ///< @brief Flow (ImuObs)
+    /// @brief Port number of the Skydel-ImuObs output and GnssObs output
+    constexpr static size_t OutputPortIndex_ImuObs = 1;
+    constexpr static size_t OutputPortIndex_GnssObs = 2;
 
     /// @brief Initialize the node
     bool initialize() override;
