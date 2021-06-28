@@ -71,7 +71,7 @@ class VectorNavSensor : public Imu, public UartSensor
         /// Delta Theta and Delta Velocity Configuration - The gyroCompensation field
         vn::protocol::uart::CompensationMode delThetaDelVeloGyroCompensation = vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE;
         /// Delta Theta and Delta Velocity Configuration - The accelCompensation field
-        vn::protocol::uart::CompensationMode delThetaDelVeloAccelCompensation = vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE;
+        vn::protocol::uart::AccCompensationMode delThetaDelVeloAccelCompensation = vn::protocol::uart::AccCompensationMode::ACCCOMPENSATIONMODE_NONE;
 
         /// Group 1 (Common)
         vn::protocol::uart::CommonGroup commonField = vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP

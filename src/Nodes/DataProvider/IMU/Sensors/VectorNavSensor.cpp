@@ -94,10 +94,10 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
     /*  2 */ { "Week", vn::protocol::uart::GpsGroup::GPSGROUP_WEEK, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GPS week\n\nThe current GPS week."); } },
     /*  3 */ { "NumSats", vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Number of tracked satellites\n\nThe number of tracked GNSS satellites."); } },
     /*  4 */ { "Fix", vn::protocol::uart::GpsGroup::GPSGROUP_FIX, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS fix\n\nThe current GNSS fix.");
-                                                                                                                                                          if (ImGui::BeginTable("VectorNavFixTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                          if (ImGui::BeginTable("VectorNavFixTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                                                                                                                                                           {
-                                                                                                                                                              ImGui::TableSetupColumn("Value");
-                                                                                                                                                              ImGui::TableSetupColumn("Description");
+                                                                                                                                                              ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                              ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthAutoResize);
                                                                                                                                                               ImGui::TableHeadersRow();
 
                                                                                                                                                               ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
@@ -116,10 +116,10 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                               ImGui::TableNextColumn(); ImGui::TextUnformatted("SBAS");
 
                                                                                                                                                               ImGui::TableNextColumn(); ImGui::TextUnformatted("7");
-                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("RTK Float");
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("RTK Float (only GNSS1)");
 
                                                                                                                                                               ImGui::TableNextColumn(); ImGui::TextUnformatted("8");
-                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("RTK Fixed");
+                                                                                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("RTK Fixed (only GNSS1)");
 
                                                                                                                                                               ImGui::EndTable();
                                                                                                                                                           } } },
@@ -479,29 +479,160 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
 } };
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 9> NAV::VectorNavSensor::binaryGroupAttitude{ {
-    /*  0 */ { "VpeStatus", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN100_VN110; }, []() { ImGui::TextUnformatted(""); } },
-    /*  1 */ { "YawPitchRoll", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
-    /*  2 */ { "Quaternion", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
-    /*  3 */ { "DCM", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
-    /*  4 */ { "MagNed", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
-    /*  5 */ { "AccelNed", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
-    /*  6 */ { "LinearAccelBody", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
-    /*  7 */ { "LinearAccelNed", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
-    /*  8 */ { "YprU", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted(""); } },
+    /*  0 */ { "VpeStatus", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN100_VN110; }, []() { ImGui::TextUnformatted("VPE Status bitfield\n\n");
+                                                                                                                                                                                      if (ImGui::BeginTable("VectorNavSatRawTooltipChan", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+                                                                                                                                                                                      {
+                                                                                                                                                                                          ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                                                          ImGui::TableSetupColumn("Bit Offset", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                                                          ImGui::TableSetupColumn("Format", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                                                          ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                                                          ImGui::TableHeadersRow();
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("AttitudeQuality");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("2 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Provides an indication of the quality of the attitude solution.\n0 - Excellent\n1 - Good\n2 - Bad\n3 - Not tracking");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("GyroSaturation");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("At least one gyro axis is currently saturated.");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("GyroSaturationRecovery");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Filter is in the process of recovering from a gyro\nsaturation event.");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("MagDisturbance");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("4");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("2 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("A magnetic DC disturbance has been detected.\n0 - No magnetic disturbance\n1 to 3 - Magnetic disturbance is present.");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("MagSaturation");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("6");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("At least one magnetometer axis is currently saturated.");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("AccDisturbance");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("7");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("2 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("A strong acceleration disturbance has been detected.\n0 - No acceleration disturbance.\n1 to 3 - Acceleration disturbance has been detected.");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("AccSaturation");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("9");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("At least one accelerometer axis is currently saturated.");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("10");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved for internal use. May change state at run- time.");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("KnownMagDisturbance");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("11");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("A known magnetic disturbance has been reported by\nthe user and the magnetometer is currently tuned out.");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("KnownAccelDisturbance");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("12");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("A known acceleration disturbance has been reported by\nthe user and the accelerometer is currently tuned out.");
+
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("13");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("3 bits");
+                                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved for future use.");
+
+                                                                                                                                                                                          ImGui::EndTable();
+                                                                                                                                                                                      } } },
+    /*  1 */ { "YawPitchRoll", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Yaw Pitch Roll\n\nThe estimated attitude Yaw, Pitch, and Roll angles measured in degrees. The attitude is given as a 3,2,1\nEuler angle sequence describing the body frame with respect to the local North East Down (NED) frame.\n\nYaw [+/- 180°]\nPitch [+/- 90°]\nRoll [+/- 180°]"); } },
+    /*  2 */ { "Quaternion", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Quaternion\n\nThe estimated attitude quaternion. The last term is the scalar value. The attitude is given as the body\nframe with respect to the local North East Down (NED) frame."); } },
+    /*  3 */ { "DCM", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Directional Cosine Matrix\n\nThe estimated attitude directional cosine matrix given in column major order. The DCM maps vectors\nfrom the North East Down (NED) frame into the body frame."); } },
+    /*  4 */ { "MagNed", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Compensated magnetic (NED)\n\nThe current estimated magnetic field (Gauss), given in the North East Down (NED) frame. The current\nattitude solution is used to map the measurement from the measured body frame to the inertial (NED)\nframe. This measurement is compensated by both the static calibration (individual factory calibration\nstored in flash), and the dynamic calibration such as the user or onboard Hard/Soft Iron compensation\nregisters."); } },
+    /*  5 */ { "AccelNed", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Compensated acceleration (NED)\n\nThe estimated acceleration (with gravity) reported in m/s^2, given in the North East Down (NED) frame.\nThe acceleration measurement has been bias compensated by the onboard INS filter. This measurement\nis attitude dependent, since the attitude is used to map the measurement from the body frame into the\ninertial (NED) frame. If the device is stationary and the INS filter is tracking, the measurement should be\nnominally equivalent to the gravity reference vector in the inertial frame (NED)."); } },
+    /*  6 */ { "LinearAccelBody", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Compensated linear acceleration (no gravity)\n\nThe estimated linear acceleration (without gravity) reported in m/s^2, and given in the body frame. The\nacceleration measurement has been bias compensated by the onboard INS filter, and the gravity\ncomponent has been removed using the current gravity reference vector model. This measurement is\nattitude dependent, since the attitude solution is required to map the gravity reference vector (known in\nthe inertial NED frame), into the body frame so that it can be removed from the measurement. If the\ndevice is stationary and the onboard INS filter is tracking, the measurement nominally will read 0 in all\nthree axes."); } },
+    /*  7 */ { "LinearAccelNed", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Compensated linear acceleration (no gravity) (NED)\n\nThe estimated linear acceleration (without gravity) reported in m/s^2, and given in the North East Down\n(NED) frame. This measurement is attitude dependent as the attitude solution is used to map the\nmeasurement from the body frame into the inertial (NED) frame. This acceleration measurement has\nbeen bias compensated by the onboard INS filter, and the gravity component has been removed using the\ncurrent gravity reference vector estimate. If the device is stationary and the onboard INS filter is tracking,\nthe measurement nominally will read 0 in all three axes."); } },
+    /*  8 */ { "YprU", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Yaw Pitch Roll uncertainty\n\nThe estimated attitude (Yaw, Pitch, Roll) uncertainty (1 Sigma), reported in degrees.\n\nThe estimated attitude (YprU) field is not valid when the INS Scenario mode in the INS Basic\nConfiguration register is set to AHRS mode. See the INS Basic Configuration Register in the INS\nsection for more details."); } },
 } };
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor::binaryGroupINS{ {
-    /*  0 */ { "InsStatus", vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /*  1 */ { "PosLla", vn::protocol::uart::InsGroup::INSGROUP_POSLLA, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /*  2 */ { "PosEcef", vn::protocol::uart::InsGroup::INSGROUP_POSECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /*  3 */ { "VelBody", vn::protocol::uart::InsGroup::INSGROUP_VELBODY, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /*  4 */ { "VelNed", vn::protocol::uart::InsGroup::INSGROUP_VELNED, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /*  5 */ { "VelEcef", vn::protocol::uart::InsGroup::INSGROUP_VELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /*  6 */ { "MagEcef", vn::protocol::uart::InsGroup::INSGROUP_MAGECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /*  7 */ { "AccelEcef", vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /*  8 */ { "LinearAccelEcef", vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /*  9 */ { "PosU", vn::protocol::uart::InsGroup::INSGROUP_POSU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
-    /* 10 */ { "VelU", vn::protocol::uart::InsGroup::INSGROUP_VELU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted(""); } },
+    /*  0 */ { "InsStatus", vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Ins Status bitfield:");
+                                                                                                                                                                      if (ImGui::BeginTable("VectorNavInsStatusTooltip", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+                                                                                                                                                                      {
+                                                                                                                                                                          ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                                          ImGui::TableSetupColumn("Bit Offset", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                                          ImGui::TableSetupColumn("Format", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                                          ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                                          ImGui::TableHeadersRow();
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Mode");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("2 bits");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Indicates the current mode of the INS filter.\n\n0 = Not tracking. GNSS Compass is initializing. Output heading is based on\nmagnetometer measurements.\n1 = Aligning.\nINS Filter is dynamically aligning.\nFor a stationary startup: GNSS Compass has initialized and INS Filter is\naligning from the magnetic heading to the GNSS Compass heading.\nFor a dynamic startup: INS Filter has initialized and is dynamically aligning to\nTrue North heading.\nIn operation, if the INS Filter drops from INS Mode 2 back down to 1, the\nattitude uncertainty has increased above 2 degrees.\n2 = Tracking. The INS Filter is tracking and operating within specification.\n3 = Loss of GNSS. A GNSS outage has lasted more than 45 seconds. The INS\nFilter will no longer update the position and velocity outputs, but the attitude\nremains valid.");
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("GpsFix");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("2");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Indicates whether the GNSS has a proper fix.");
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Error");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("3");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("4 bits");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Sensor measurement error code. See table below.\n0 = No errors detected.");
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("7");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved for internal use. May toggle state during runtime and should be ignored.");
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("GpsHeadingIns");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("8");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("In stationary operation, if set the INS Filter has fully aligned to the GNSS\nCompass solution.\nIn dynamic operation, the GNSS Compass solution is currently aiding the INS\nFilter heading solution.");
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("GpsCompass");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("9");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("1 bits");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Indicates if the GNSS compass is operational and reporting a heading\nsolution.");
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("10");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("6 bits");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved for internal use. These bits will toggle state and should be ignored.");
+
+                                                                                                                                                                          ImGui::EndTable();
+                                                                                                                                                                      }
+                                                                                                                                                                      ImGui::TextUnformatted("\nError Bitfield:");
+                                                                                                                                                                      if (ImGui::BeginTable("VectorNavInsStatusTooltipError", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                      {
+                                                                                                                                                                          ImGui::TableSetupColumn("Name");
+                                                                                                                                                                          ImGui::TableSetupColumn("Description");
+                                                                                                                                                                          ImGui::TableHeadersRow();
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Reserved for future use and not currently used.");
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("IMU Error");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("High if IMU communication error is detected.");
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Mag/Pres Error");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("High if Magnetometer or Pressure sensor error is detected.");
+
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("GNSS Error");
+                                                                                                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("High if GNSS communication error is detected.");
+
+                                                                                                                                                                          ImGui::EndTable();
+                                                                                                                                                                      } } },
+    /*  1 */ { "PosLla", vn::protocol::uart::InsGroup::INSGROUP_POSLLA, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Ins Position (latitude, longitude, altitude)\n\nThe estimated position given as latitude, longitude, and altitude given in [deg, deg, m] respectively."); } },
+    /*  2 */ { "PosEcef", vn::protocol::uart::InsGroup::INSGROUP_POSECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Ins Position (ECEF)\n\nThe estimated position given in the Earth centered Earth fixed (ECEF) frame, reported in meters."); } },
+    /*  3 */ { "VelBody", vn::protocol::uart::InsGroup::INSGROUP_VELBODY, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Ins Velocity (Body)\n\nThe estimated velocity in the body frame, given in m/s."); } },
+    /*  4 */ { "VelNed", vn::protocol::uart::InsGroup::INSGROUP_VELNED, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Ins Velocity (NED)\n\nThe estimated velocity in the North East Down (NED) frame, given in m/s."); } },
+    /*  5 */ { "VelEcef", vn::protocol::uart::InsGroup::INSGROUP_VELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Ins Velocity (ECEF)\n\nThe estimated velocity in the Earth centered Earth fixed (ECEF) frame, given in m/s."); } },
+    /*  6 */ { "MagEcef", vn::protocol::uart::InsGroup::INSGROUP_MAGECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Compensated magnetic (ECEF)\n\nThe compensated magnetic measurement in the Earth centered Earth fixed (ECEF) frame, given in Gauss."); } },
+    /*  7 */ { "AccelEcef", vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Compensated acceleration (ECEF)\n\nThe estimated acceleration (with gravity) reported in m/s^2, given in the Earth centered Earth fixed (ECEF)\nframe. The acceleration measurement has been bias compensated by the onboard INS filter. This\nmeasurement is attitude dependent, since the attitude is used to map the measurement from the body frame\ninto the inertial (ECEF) frame. If the device is stationary and the INS filter is tracking, the measurement\nshould be nominally equivalent to the gravity reference vector in the inertial frame (ECEF)."); } },
+    /*  8 */ { "LinearAccelEcef", vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Compensated linear acceleration (no gravity) (ECEF)\n\nThe estimated linear acceleration (without gravity) reported in m/s^2, and given in the Earth centered Earth\nfixed (ECEF) frame. This measurement is attitude dependent as the attitude solution is used to map the\nmeasurement from the body frame into the inertial (ECEF) frame. This acceleration measurement has been\nbias compensated by the onboard INS filter, and the gravity component has been removed using the current\ngravity reference vector estimate. If the device is stationary and the onboard INS filter is tracking, the\nmeasurement will nominally read 0 in all three axes."); } },
+    /*  9 */ { "PosU", vn::protocol::uart::InsGroup::INSGROUP_POSU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Ins Position Uncertainty\n\nThe estimated uncertainty (1 Sigma) in the current position estimate, given in meters."); } },
+    /* 10 */ { "VelU", vn::protocol::uart::InsGroup::INSGROUP_VELU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Ins Velocity Uncertainty\n\nThe estimated uncertainty (1 Sigma) in the current velocity estimate, given in m/s."); } },
 } };
 
 NAV::VectorNavSensor::VectorNavSensor()
@@ -683,7 +814,7 @@ void NAV::VectorNavSensor::guiConfig()
             }
             if (i < binaryGroupCommon.size())
             {
-                auto& binaryGroupItem = binaryGroupCommon.at(i);
+                const auto& binaryGroupItem = binaryGroupCommon.at(i);
                 CheckboxFlags(0, (binaryGroupItem.name + ("##Common" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.commonField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
@@ -694,7 +825,7 @@ void NAV::VectorNavSensor::guiConfig()
             }
             if (i < binaryGroupTime.size())
             {
-                auto& binaryGroupItem = binaryGroupTime.at(i);
+                const auto& binaryGroupItem = binaryGroupTime.at(i);
                 CheckboxFlags(1, (binaryGroupItem.name + ("##Time" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.timeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
@@ -705,7 +836,7 @@ void NAV::VectorNavSensor::guiConfig()
             }
             if (i < binaryGroupIMU.size())
             {
-                auto& binaryGroupItem = binaryGroupIMU.at(i);
+                const auto& binaryGroupItem = binaryGroupIMU.at(i);
                 CheckboxFlags(2, (binaryGroupItem.name + ("##IMU" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.imuField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
@@ -716,7 +847,7 @@ void NAV::VectorNavSensor::guiConfig()
             }
             if (i < binaryGroupGNSS.size())
             {
-                auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                const auto& binaryGroupItem = binaryGroupGNSS.at(i);
                 CheckboxFlags(3, (binaryGroupItem.name + ("##GNSS1" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.gnss1Field), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
@@ -727,7 +858,7 @@ void NAV::VectorNavSensor::guiConfig()
             }
             if (i < binaryGroupAttitude.size())
             {
-                auto& binaryGroupItem = binaryGroupAttitude.at(i);
+                const auto& binaryGroupItem = binaryGroupAttitude.at(i);
                 CheckboxFlags(4, (binaryGroupItem.name + ("##Attitude" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.attitudeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
@@ -738,7 +869,7 @@ void NAV::VectorNavSensor::guiConfig()
             }
             if (i < binaryGroupINS.size())
             {
-                auto& binaryGroupItem = binaryGroupINS.at(i);
+                const auto& binaryGroupItem = binaryGroupINS.at(i);
                 CheckboxFlags(5, (binaryGroupItem.name + ("##INS" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.insField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
@@ -749,7 +880,7 @@ void NAV::VectorNavSensor::guiConfig()
             }
             if (i < binaryGroupGNSS.size())
             {
-                auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                const auto& binaryGroupItem = binaryGroupGNSS.at(i);
                 CheckboxFlags(6, (binaryGroupItem.name + ("##GNSS2" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.gnss2Field), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
