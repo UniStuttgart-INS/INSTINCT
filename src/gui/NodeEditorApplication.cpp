@@ -46,6 +46,15 @@ namespace nm = NAV::NodeManager;
 
 ax::NodeEditor::EditorContext* m_Editor = nullptr;
 
+NAV::gui::NodeEditorApplication::~NodeEditorApplication()
+{
+    if (initThread.joinable())
+    {
+        // initThread_stopRequested = true;
+        initThread.join();
+    }
+}
+
 void NAV::gui::NodeEditorApplication::OnStart()
 {
     LOG_TRACE("called");
@@ -540,7 +549,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             if (initThread.joinable())
             {
                 // initThread.request_stop();
-                initThread_stopRequested = true;
+                // initThread_stopRequested = true;
                 initThread.join();
             }
             // initThread = std::jthread([node, init]() {

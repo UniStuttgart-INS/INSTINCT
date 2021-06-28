@@ -26,7 +26,7 @@ class NodeEditorApplication : public Application
     /// @brief Default constructor
     NodeEditorApplication() = delete;
     /// @brief Destructor
-    ~NodeEditorApplication() override = default;
+    ~NodeEditorApplication() override;
     /// @brief Copy constructor
     NodeEditorApplication(const NodeEditorApplication&) = delete;
     /// @brief Move constructor
@@ -68,7 +68,7 @@ class NodeEditorApplication : public Application
 
     GlobalActions globalAction = GlobalActions::None;
 
-    bool initThread_stopRequested = false;
+    // bool initThread_stopRequested = false;
     std::thread initThread;
     size_t currentInitNodeId = 0;
     /// List of Node* & flag (init=true, deinit=false)
