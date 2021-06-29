@@ -6,8 +6,6 @@
 #pragma once
 
 #include "NodeData/InsObs.hpp"
-
-// #include "NodeData/IMU/ImuPos.hpp"
 #include "util/Eigen.hpp"
 
 namespace NAV
@@ -16,9 +14,6 @@ namespace NAV
 class SkydelObs : public InsObs
 {
   public:
-    // explicit SkydelObs();
-    // : skydelObs(nullptr) {}
-
     /// @brief Default constructor
     SkydelObs() = default;
     /// @brief Destructor
@@ -47,29 +42,12 @@ class SkydelObs : public InsObs
     }
 
     /// The system time since startup measured in [nano seconds].
-    // std::optional<uint64_t> timeSinceStartup;
+    std::optional<uint64_t> timeSinceStartup;
 
-    /// The Skydel simulated position
+    /// The Skydel simulated position ('PositionObserver Plug-in')
     std::optional<Eigen::Vector3d> posXYZ;
-    /// The Skydel simulated attitude
+    /// The Skydel simulated attitude ('PositionObserver Plug-in')
     std::optional<Eigen::Vector3d> attRPY;
-
-    // /// The IMU magnetic field measured in units of [Gauss], given in the platform frame.
-    // std::optional<Eigen::Vector3d> magUncompXYZ;
-    // /// The IMU acceleration measured in units of [m/s^2], given in the platform frame.
-    // std::optional<Eigen::Vector3d> accelUncompXYZ;
-    // /// The IMU angular rate measured in units of [rad/s], given in the platform frame.
-    // std::optional<Eigen::Vector3d> gyroUncompXYZ;
-
-    // /// The compensated magnetic field measured in units of [Gauss], and given in the platform frame.
-    // std::optional<Eigen::Vector3d> magCompXYZ;
-    // /// The compensated acceleration measured in units of [m/s^2], and given in the platform frame.
-    // std::optional<Eigen::Vector3d> accelCompXYZ;
-    // /// The compensated angular rate measured in units of [rad/s], and given in the platform frame.
-    // std::optional<Eigen::Vector3d> gyroCompXYZ;
-
-    // /// The IMU temperature measured in units of [Celsius].
-    // std::optional<double> temperature = 0.0;
 };
 
 } // namespace NAV

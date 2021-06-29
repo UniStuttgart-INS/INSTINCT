@@ -155,6 +155,7 @@ void NAV::SkydelImuStream::do_receive()
                 if (!currentTime.empty())
                 {
                     obs->insTime = currentTime;
+                    obsG->insTime = currentTime;
                 }
 
                 this->invokeCallbacks(OutputPortIndex_GnssObs, obsG);
