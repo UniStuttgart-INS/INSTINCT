@@ -3,6 +3,7 @@
 #include "util/Debug.hpp"
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
+#include "vn/util.h"
 
 #include "gui/widgets/HelpMarker.hpp"
 
@@ -698,6 +699,19 @@ void NAV::VectorNavSensor::guiConfig()
         flow::ApplyChanges();
         deinitializeNode();
 
+        if (sensorModel != VectorNavModel::VN310
+            && (asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPS
+                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPE
+                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNINS
+                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNINE
+                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNISL
+                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNISE
+                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNG2S
+                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNG2E))
+        {
+            asyncDataOutputType = vn::protocol::uart::AsciiAsync::VNOFF;
+        }
+
         // TODO:
         // for (const auto& item : binaryGroupCommon)
         // {
@@ -758,149 +772,300 @@ void NAV::VectorNavSensor::guiConfig()
                              "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
                              "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)");
 
-    std::array<const char*, 10> items = { "Fastest", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" };
-    if (ImGui::Combo("Baudrate", &selectedBaudrate, items.data(), items.size()))
+    // ###########################################################################################################
+    //                                               SYSTEM MODULE
+    // ###########################################################################################################
+
+    if (ImGui::CollapsingHeader(fmt::format("System Module##{}", size_t(id)).c_str()))
     {
-        LOG_DEBUG("{}: Baudrate changed to {}", nameId(), sensorBaudrate());
-        flow::ApplyChanges();
-        deinitializeNode();
-    }
+        // ------------------------------------------- Serial Baud Rate ----------------------------------------------
 
-    auto CheckboxFlags = [](int index, const char* label, int* flags, int flags_value, bool enabled = true) {
-        ImGui::TableSetColumnIndex(index);
-
-        if (!enabled)
+        std::array<const char*, 10> items = { "Fastest", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" };
+        if (ImGui::Combo("Baudrate", &selectedBaudrate, items.data(), items.size()))
         {
-            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+            LOG_DEBUG("{}: Baudrate changed to {}", nameId(), sensorBaudrate());
+            flow::ApplyChanges();
+            deinitializeNode();
         }
 
-        ImGui::CheckboxFlags(label, flags, flags_value);
+        // ---------------------------------------- Async Data Output Type -------------------------------------------
 
-        if (!enabled)
+        std::vector<std::pair<vn::protocol::uart::AsciiAsync, const char*>> asciiAsyncItems{
+            { vn::protocol::uart::AsciiAsync::VNOFF, "Asynchronous output turned off" },
+            { vn::protocol::uart::AsciiAsync::VNYPR, "Yaw, Pitch, Roll" },
+            { vn::protocol::uart::AsciiAsync::VNQTN, "Quaternion" },
+            { vn::protocol::uart::AsciiAsync::VNQMR, "Quaternion, Magnetic, Acceleration and Angular Rates" },
+            { vn::protocol::uart::AsciiAsync::VNDCM, "Directional Cosine Orientation Matrix" },
+            { vn::protocol::uart::AsciiAsync::VNMAG, "Magnetic Measurements" },
+            { vn::protocol::uart::AsciiAsync::VNACC, "Acceleration Measurements" },
+            { vn::protocol::uart::AsciiAsync::VNGYR, "Angular Rate Measurements" },
+            { vn::protocol::uart::AsciiAsync::VNMAR, "Magnetic, Acceleration, and Angular Rate Measurements" },
+            { vn::protocol::uart::AsciiAsync::VNYMR, "Yaw, Pitch, Roll, Magnetic, Acceleration, and Angular Rate Measurements" },
+            { vn::protocol::uart::AsciiAsync::VNYBA, "Yaw, Pitch, Roll, Body True Acceleration, and Angular Rates" },
+            { vn::protocol::uart::AsciiAsync::VNYIA, "Yaw, Pitch, Roll, Inertial True Acceleration, and Angular Rates" },
+            { vn::protocol::uart::AsciiAsync::VNIMU, "IMU Measurements" }
+        };
+        if (sensorModel == VectorNavModel::VN310)
         {
-            ImGui::PopItemFlag();
-            ImGui::PopStyleVar();
+            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNGPS, "GNSS LLA");
+            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNGPE, "GNSS ECEF");
+            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNINS, "INS LLA");
+            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNINE, "INS ECEF");
+            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNISL, "INS LLA 2");
+            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNISE, "INS ECEF 2");
         }
-    };
-
-    for (size_t b = 0; b < binaryOutputRegister.size(); b++)
-    {
-        if (ImGui::CollapsingHeader(fmt::format("Binary Output {}##{}", b + 1, size_t(id)).c_str()))
+        asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNDTV, "Delta theta and delta velocity");
+        if (sensorModel == VectorNavModel::VN310)
         {
-            const char* frequencyText = binaryOutputSelectedFrequency.at(b) < dividerFrequency.first.size()
-                                            ? dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)).c_str()
-                                            : "Unknown";
-            if (ImGui::SliderInt(fmt::format("Frequency##{} {}", size_t(id), b).c_str(),
-                                 reinterpret_cast<int*>(&binaryOutputSelectedFrequency.at(b)),
-                                 0, static_cast<int>(dividerFrequency.second.size()) - 1,
-                                 frequencyText))
-            {
-                LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)));
-                binaryOutputRegister.at(b).rateDivisor = dividerFrequency.first.at(binaryOutputSelectedFrequency.at(b));
-                flow::ApplyChanges();
-                deinitializeNode();
-            }
+            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNG2S, "GNSS2 LLA");
+            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNG2E, "GNSS2 ECEF");
+        }
 
-            if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 7,
-                                  ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+        if (ImGui::BeginCombo(fmt::format("Async Ascii Output Type##{}", size_t(id)).c_str(), vn::protocol::uart::str(asyncDataOutputType).c_str()))
+        {
+            for (const auto& asciiAsyncItem : asciiAsyncItems)
             {
-                ImGui::TableSetupColumn("Common", ImGuiTableColumnFlags_WidthAutoResize);
-                ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
-                ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
-                ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthAutoResize);
-                ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthAutoResize);
-                ImGui::TableSetupColumn("INS", ImGuiTableColumnFlags_WidthAutoResize);
-                ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthAutoResize);
-                ImGui::TableHeadersRow();
-
-                for (size_t i = 0; i < 16; i++)
+                const bool isSelected = (asyncDataOutputType == asciiAsyncItem.first);
+                if (ImGui::Selectable(vn::protocol::uart::str(asciiAsyncItem.first).c_str(), isSelected))
                 {
-                    if (i < binaryGroupCommon.size() || i < binaryGroupTime.size() || i < binaryGroupIMU.size()
-                        || i < binaryGroupGNSS.size() || i < binaryGroupAttitude.size() || i < binaryGroupINS.size())
-                    {
-                        ImGui::TableNextRow();
-                    }
-                    if (i < binaryGroupCommon.size())
-                    {
-                        const auto& binaryGroupItem = binaryGroupCommon.at(i);
-                        CheckboxFlags(0, fmt::format("{}##Common {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).commonField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                        {
-                            ImGui::BeginTooltip();
-                            binaryGroupItem.tooltip();
-                            ImGui::EndTooltip();
-                        }
-                    }
-                    if (i < binaryGroupTime.size())
-                    {
-                        const auto& binaryGroupItem = binaryGroupTime.at(i);
-                        CheckboxFlags(1, fmt::format("{}##Time {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).timeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                        {
-                            ImGui::BeginTooltip();
-                            binaryGroupItem.tooltip();
-                            ImGui::EndTooltip();
-                        }
-                    }
-                    if (i < binaryGroupIMU.size())
-                    {
-                        const auto& binaryGroupItem = binaryGroupIMU.at(i);
-                        CheckboxFlags(2, fmt::format("{}##IMU {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).imuField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                        {
-                            ImGui::BeginTooltip();
-                            binaryGroupItem.tooltip();
-                            ImGui::EndTooltip();
-                        }
-                    }
-                    if (i < binaryGroupGNSS.size())
-                    {
-                        const auto& binaryGroupItem = binaryGroupGNSS.at(i);
-                        CheckboxFlags(3, fmt::format("{}##GNSS1 {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).gpsField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                        {
-                            ImGui::BeginTooltip();
-                            binaryGroupItem.tooltip();
-                            ImGui::EndTooltip();
-                        }
-                    }
-                    if (i < binaryGroupAttitude.size())
-                    {
-                        const auto& binaryGroupItem = binaryGroupAttitude.at(i);
-                        CheckboxFlags(4, fmt::format("{}##Attitude {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).attitudeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                        {
-                            ImGui::BeginTooltip();
-                            binaryGroupItem.tooltip();
-                            ImGui::EndTooltip();
-                        }
-                    }
-                    if (i < binaryGroupINS.size())
-                    {
-                        const auto& binaryGroupItem = binaryGroupINS.at(i);
-                        CheckboxFlags(5, fmt::format("{}##INS {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).insField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                        {
-                            ImGui::BeginTooltip();
-                            binaryGroupItem.tooltip();
-                            ImGui::EndTooltip();
-                        }
-                    }
-                    if (i < binaryGroupGNSS.size())
-                    {
-                        const auto& binaryGroupItem = binaryGroupGNSS.at(i);
-                        CheckboxFlags(6, fmt::format("{}##GNSS2 {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).gps2Field), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                        {
-                            ImGui::BeginTooltip();
-                            binaryGroupItem.tooltip();
-                            ImGui::EndTooltip();
-                        }
-                    }
+                    asyncDataOutputType = asciiAsyncItem.first;
+                    LOG_DEBUG("{}: asyncDataOutputType changed to {}", nameId(), vn::protocol::uart::str(asyncDataOutputType));
+                }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::BeginTooltip();
+                    ImGui::TextUnformatted(asciiAsyncItem.second);
+                    ImGui::EndTooltip();
                 }
 
-                ImGui::EndTable();
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (isSelected)
+                {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("This register controls the type of data that will be asynchronously outputted by the module. With this "
+                                 "register, the user can specify which data register will be automatically outputted when it gets updated "
+                                 "with a new reading. The table below lists which registers can be set to asynchronously output, the value "
+                                 "to specify which register to output, and the header of the asynchronous data packet. Asynchronous data "
+                                 "output can be disabled by setting this register to zero. The asynchronous data output will be sent out "
+                                 "automatically at a frequency specified by the Async Data Output Frequency Register.");
+
+        // --------------------------------- Async Data Output Frequency Register ------------------------------------
+
+        if (asyncDataOutputType != vn::protocol::uart::AsciiAsync::VNOFF)
+        {
+            if (ImGui::SliderInt(fmt::format("Async Ascii Output Frequency##{}", size_t(id)).c_str(),
+                                 &asyncDataOutputFrequencySelected,
+                                 0, possibleAsyncDataOutputFrequency.size() - 1,
+                                 fmt::format("{} Hz", possibleAsyncDataOutputFrequency.at(static_cast<size_t>(asyncDataOutputFrequencySelected))).c_str()))
+            {
+                asyncDataOutputFrequency = static_cast<uint32_t>(possibleAsyncDataOutputFrequency.at(static_cast<size_t>(asyncDataOutputFrequencySelected)));
+                LOG_DEBUG("{}: asyncDataOutputType changed to {} Hz", nameId(), asyncDataOutputFrequency);
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("Asynchronous data output frequency.\nThe ADOF will be changed for the active serial port.");
+        }
+
+        // ---------------------------------------- Synchronization Control ------------------------------------------
+
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::TreeNode(fmt::format("Synchronization Control##{}", size_t(id)).c_str()))
+        {
+            static constexpr std::array<std::pair<vn::protocol::uart::SyncInMode, const char*>, 4> synchronizationControlSyncInModes = {
+                { { vn::protocol::uart::SyncInMode::SYNCINMODE_COUNT, "Count number of trigger events on SYNC_IN" },
+                  { vn::protocol::uart::SyncInMode::SYNCINMODE_IMU, "Start IMU sampling on trigger of SYNC_IN" },
+                  { vn::protocol::uart::SyncInMode::SYNCINMODE_ASYNC, "Output asynchronous message on trigger of SYNC_IN" },
+                  { vn::protocol::uart::SyncInMode::SYNCINMODE_ASYNC3, "Output asynchronous or binary messages configured with a rate of 0 to output on trigger of SYNC_IN\n\n"
+                                                                       "In ASYNC3 mode messages configured with an output rate = 0 are output each time the appropriate\n"
+                                                                       "transistion edge of the SyncIn pin is captured according to the edge settings in the SyncInEdge field.\n"
+                                                                       "Messages configured with output rate > 0 are not affected by the SyncIn pulse. This applies to the ASCII\n"
+                                                                       "Async message set by the Async Data Output Register, the user configurate binary output messages set\n"
+                                                                       "by the Binary Output Registers, as well as the NMEA messages configured by the NMEA Output Registers." } }
+            };
+            if (ImGui::BeginCombo(fmt::format("SyncInMode##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncInMode).c_str()))
+            {
+                for (const auto& synchronizationControlSyncInMode : synchronizationControlSyncInModes)
+                {
+                    const bool isSelected = (synchronizationControlRegister.syncInMode == synchronizationControlSyncInMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(synchronizationControlSyncInMode.first).c_str(), isSelected))
+                    {
+                        synchronizationControlRegister.syncInMode = synchronizationControlSyncInMode.first;
+                        LOG_DEBUG("{}: synchronizationControlRegister.syncInMode changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncInMode));
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(synchronizationControlSyncInMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The SyncInMode register controls the behavior of the SyncIn event. If the mode is set to COUNT then the "
+                                     "internal clock will be used to control the IMU sampling. If SyncInMode is set to IMU then the IMU sampling "
+                                     "loop will run on a SyncIn event. The relationship between the SyncIn event and a SyncIn trigger is defined "
+                                     "by the SyncInEdge and SyncInSkipFactor parameters. If set to ASYNC then the VN-100 will output "
+                                     "asynchronous serial messages upon each trigger event.");
+
+            // synchronizationControlRegister.syncInEdge
+            // synchronizationControlRegister.syncInSkipFactor
+            // synchronizationControlRegister.syncOutMode
+            // synchronizationControlRegister.syncOutPolarity
+            // synchronizationControlRegister.syncOutSkipFactor
+            // synchronizationControlRegister.syncOutPulseWidth
+
+            ImGui::TreePop();
+        }
+
+        // ------------------------------------- Binary Output Register 1 - 2 ----------------------------------------
+        for (size_t b = 0; b < binaryOutputRegister.size(); b++)
+        {
+            if (ImGui::TreeNode(fmt::format("Binary Output {}##{}", b + 1, size_t(id)).c_str()))
+            {
+                const char* frequencyText = binaryOutputSelectedFrequency.at(b) < dividerFrequency.first.size()
+                                                ? dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)).c_str()
+                                                : "Unknown";
+                if (ImGui::SliderInt(fmt::format("Frequency##{} {}", size_t(id), b).c_str(),
+                                     reinterpret_cast<int*>(&binaryOutputSelectedFrequency.at(b)),
+                                     0, static_cast<int>(dividerFrequency.second.size()) - 1,
+                                     frequencyText))
+                {
+                    LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)));
+                    binaryOutputRegister.at(b).rateDivisor = dividerFrequency.first.at(binaryOutputSelectedFrequency.at(b));
+                    flow::ApplyChanges();
+                    deinitializeNode();
+                }
+
+                if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 7,
+                                      ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+                {
+                    ImGui::TableSetupColumn("Common", ImGuiTableColumnFlags_WidthAutoResize);
+                    ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
+                    ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
+                    ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthAutoResize);
+                    ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthAutoResize);
+                    ImGui::TableSetupColumn("INS", ImGuiTableColumnFlags_WidthAutoResize);
+                    ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthAutoResize);
+                    ImGui::TableHeadersRow();
+
+                    auto CheckboxFlags = [](int index, const char* label, int* flags, int flags_value, bool enabled = true) {
+                        ImGui::TableSetColumnIndex(index);
+
+                        if (!enabled)
+                        {
+                            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+                        }
+
+                        ImGui::CheckboxFlags(label, flags, flags_value);
+
+                        if (!enabled)
+                        {
+                            ImGui::PopItemFlag();
+                            ImGui::PopStyleVar();
+                        }
+                    };
+
+                    for (size_t i = 0; i < 16; i++)
+                    {
+                        if (i < std::max({ binaryGroupCommon.size(), binaryGroupTime.size(), binaryGroupIMU.size(),
+                                           binaryGroupGNSS.size(), binaryGroupAttitude.size(), binaryGroupINS.size() }))
+                        {
+                            ImGui::TableNextRow();
+                        }
+                        if (i < binaryGroupCommon.size())
+                        {
+                            const auto& binaryGroupItem = binaryGroupCommon.at(i);
+                            CheckboxFlags(0, fmt::format("{}##Common {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).commonField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            {
+                                ImGui::BeginTooltip();
+                                binaryGroupItem.tooltip();
+                                ImGui::EndTooltip();
+                            }
+                        }
+                        if (i < binaryGroupTime.size())
+                        {
+                            const auto& binaryGroupItem = binaryGroupTime.at(i);
+                            CheckboxFlags(1, fmt::format("{}##Time {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).timeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            {
+                                ImGui::BeginTooltip();
+                                binaryGroupItem.tooltip();
+                                ImGui::EndTooltip();
+                            }
+                        }
+                        if (i < binaryGroupIMU.size())
+                        {
+                            const auto& binaryGroupItem = binaryGroupIMU.at(i);
+                            CheckboxFlags(2, fmt::format("{}##IMU {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).imuField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            {
+                                ImGui::BeginTooltip();
+                                binaryGroupItem.tooltip();
+                                ImGui::EndTooltip();
+                            }
+                        }
+                        if (i < binaryGroupGNSS.size())
+                        {
+                            const auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                            CheckboxFlags(3, fmt::format("{}##GNSS1 {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).gpsField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            {
+                                ImGui::BeginTooltip();
+                                binaryGroupItem.tooltip();
+                                ImGui::EndTooltip();
+                            }
+                        }
+                        if (i < binaryGroupAttitude.size())
+                        {
+                            const auto& binaryGroupItem = binaryGroupAttitude.at(i);
+                            CheckboxFlags(4, fmt::format("{}##Attitude {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).attitudeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            {
+                                ImGui::BeginTooltip();
+                                binaryGroupItem.tooltip();
+                                ImGui::EndTooltip();
+                            }
+                        }
+                        if (i < binaryGroupINS.size())
+                        {
+                            const auto& binaryGroupItem = binaryGroupINS.at(i);
+                            CheckboxFlags(5, fmt::format("{}##INS {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).insField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            {
+                                ImGui::BeginTooltip();
+                                binaryGroupItem.tooltip();
+                                ImGui::EndTooltip();
+                            }
+                        }
+                        if (i < binaryGroupGNSS.size())
+                        {
+                            const auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                            CheckboxFlags(6, fmt::format("{}##GNSS2 {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).gps2Field), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                            if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                            {
+                                ImGui::BeginTooltip();
+                                binaryGroupItem.tooltip();
+                                ImGui::EndTooltip();
+                            }
+                        }
+                    }
+
+                    ImGui::EndTable();
+                }
+
+                ImGui::TreePop();
             }
         }
     }

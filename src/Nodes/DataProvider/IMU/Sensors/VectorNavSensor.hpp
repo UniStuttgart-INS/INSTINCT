@@ -100,9 +100,6 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @note See User manual VN-310 - 8.2.7 (p 92f) / VN-100 - 5.2.7 (p 65)
     vn::protocol::uart::AsciiAsync asyncDataOutputType = vn::protocol::uart::AsciiAsync::VNOFF;
 
-    /// @brief Async Data Output selected in the GUI
-    int asyncDataOutputTypeSelected = 0;
-
     /// @brief Possible values for the Async Data Output Frequency Register
     /// @note See User manual VN-310 - 8.2.8 (p 94) / VN-100 - 5.2.8 (p 66)
     static constexpr std::array possibleAsyncDataOutputFrequency = { 1, 2, 4, 5, 10, 20, 25, 40, 50, 100, 200 };
@@ -110,6 +107,8 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @brief Async Data Output Frequency Register
     /// @note See User manual VN-310 - 8.2.8 (p 94) / VN-100 - 5.2.8 (p 66)
     uint32_t asyncDataOutputFrequency = 40;
+    /// @brief Selected Frequency of the Async Ascii Output in the GUI
+    int asyncDataOutputFrequencySelected = 7;
 
     /// @brief Synchronization Control.
     ///
