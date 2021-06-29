@@ -2,6 +2,7 @@
 Checks:          '*,
                   -abseil-string-find-str-contains,
                   -altera*,
+                  -bugprone-lambda-function-name,
                   -bugprone-reserved-identifier,
                   -bugprone-macro-parentheses,
                   -bugprone-branch-clone,

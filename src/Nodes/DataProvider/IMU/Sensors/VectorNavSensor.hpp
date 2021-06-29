@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <array>
+#include <cstdint>
 
 namespace NAV
 {
@@ -57,55 +58,17 @@ class VectorNavSensor : public Imu, public UartSensor
   private:
     constexpr static size_t OutputPortIndex_VectorNavObs = 1; ///< @brief Flow (VectorNavObs)
 
-    /// Config Structure for the sensor
-    struct Config
-    {
-        /// The asyncMode field
-        vn::protocol::uart::AsyncMode asyncMode = vn::protocol::uart::AsyncMode::ASYNCMODE_PORT1;
+    /// @brief Initialize the node
+    bool initialize() override;
 
-        /// Controls how the VPE interprets the magnetic measurements to estimate the heading angle
-        vn::protocol::uart::HeadingMode headingMode = vn::protocol::uart::HeadingMode::HEADINGMODE_RELATIVE;
+    /// @brief Deinitialize the node
+    void deinitialize() override;
 
-        /// Delta Theta and Delta Velocity Configuration - The integrationFrame field
-        vn::protocol::uart::IntegrationFrame delThetaDelVeloIntegrationFrame = vn::protocol::uart::IntegrationFrame::INTEGRATIONFRAME_BODY;
-        /// Delta Theta and Delta Velocity Configuration - The gyroCompensation field
-        vn::protocol::uart::CompensationMode delThetaDelVeloGyroCompensation = vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE;
-        /// Delta Theta and Delta Velocity Configuration - The accelCompensation field
-        vn::protocol::uart::AccCompensationMode delThetaDelVeloAccelCompensation = vn::protocol::uart::AccCompensationMode::ACCCOMPENSATIONMODE_NONE;
-
-        /// Group 1 (Common)
-        vn::protocol::uart::CommonGroup commonField = vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP
-                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN
-                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA
-                                                      | vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT;
-        /// Group 2 (Time)
-        vn::protocol::uart::TimeGroup timeField = vn::protocol::uart::TimeGroup::TIMEGROUP_NONE;
-        /// Group 3 (IMU)
-        vn::protocol::uart::ImuGroup imuField = vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_TEMP
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_PRES
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_MAG
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL
-                                                | vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
-        // Group 4 (GNSS1)
-        vn::protocol::uart::GpsGroup gnss1Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
-
-        /// Group 5 (Attitude)
-        vn::protocol::uart::AttitudeGroup attitudeField = vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED
-                                                          | vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU;
-        // Group 6 (INS)
-        vn::protocol::uart::InsGroup insField = vn::protocol::uart::InsGroup::INSGROUP_NONE;
-        // Group 7 (GNSS2)
-        vn::protocol::uart::GpsGroup gnss2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
-    };
+    /// @brief Callback handler for notifications of new asynchronous data packets received
+    /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
+    /// @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
+    /// @param[in] index Advanced usage item and can be safely ignored for now
+    static void asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t index);
 
     /// @brief VectorNav Model enumeration
     enum class VectorNavModel : int
@@ -120,31 +83,305 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @brief The sensor model which is selected in the GUI
     VectorNavModel sensorModel = VectorNavModel::VN100_VN110;
 
-    /// @brief Initialize the node
-    bool initialize() override;
-
-    /// @brief Deinitialize the node
-    void deinitialize() override;
-
-    /// @brief Callback handler for notifications of new asynchronous data packets received
-    /// @param[in, out] userData Pointer to the data we supplied when we called registerAsyncPacketReceivedHandler
-    /// @param[in] p Encapsulation of the data packet. At this state, it has already been validated and identified as an asynchronous data message
-    /// @param[in] index Advanced usage item and can be safely ignored for now
-    static void asciiOrBinaryAsyncMessageReceived(void* userData, vn::protocol::uart::Packet& p, size_t index);
-
     /// VnSensor Object
     vn::sensors::VnSensor vs;
-
-    /// Config Object
-    VectorNavSensor::Config config;
 
     /// Internal Frequency of the Sensor
     static constexpr double IMU_DEFAULT_FREQUENCY = 800;
 
-    /// The selected Frequency in the GUI
-    int selectedFrequency = 0;
-    /// First: List of dividers, Second: List of Matching Frequencies
+    /// First: List of RateDividers, Second: List of Matching Frequencies
     std::pair<std::vector<uint16_t>, std::vector<std::string>> dividerFrequency;
+
+    // ###########################################################################################################
+    //                                               SYSTEM MODULE
+    // ###########################################################################################################
+
+    /// @brief Async Data Output Type Register
+    /// @note See User manual VN-310 - 8.2.7 (p 92f) / VN-100 - 5.2.7 (p 65)
+    vn::protocol::uart::AsciiAsync asyncDataOutputType = vn::protocol::uart::AsciiAsync::VNOFF;
+
+    /// @brief Async Data Output selected in the GUI
+    int asyncDataOutputTypeSelected = 0;
+
+    /// @brief Possible values for the Async Data Output Frequency Register
+    /// @note See User manual VN-310 - 8.2.8 (p 94) / VN-100 - 5.2.8 (p 66)
+    static constexpr std::array possibleAsyncDataOutputFrequency = { 1, 2, 4, 5, 10, 20, 25, 40, 50, 100, 200 };
+
+    /// @brief Async Data Output Frequency Register
+    /// @note See User manual VN-310 - 8.2.8 (p 94) / VN-100 - 5.2.8 (p 66)
+    uint32_t asyncDataOutputFrequency = 40;
+
+    /// @brief Synchronization Control.
+    ///
+    /// Contains parameters which allow the timing of the VN-310E to be synchronized with external devices.
+    /// @note See User manual VN-310 - 8.2.9 (p 95f) / VN-100 - 5.2.9 (p 67f)
+    vn::sensors::SynchronizationControlRegister synchronizationControlRegister{
+        vn::protocol::uart::SyncInMode::SYNCINMODE_COUNT,              // SyncInMode
+        vn::protocol::uart::SyncInEdge::SYNCINEDGE_RISING,             // SyncInEdge
+        0,                                                             // SyncInSkipFactor
+        vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS,           // SyncOutMode
+        vn::protocol::uart::SyncOutPolarity::SYNCOUTPOLARITY_POSITIVE, // SyncOutPolarity
+        0,                                                             // SyncOutSkipFactor
+        100000000                                                      // SyncOutPulseWidth
+    };
+
+    /// @brief Communication Protocol Control.
+    ///
+    /// Contains parameters that controls the communication protocol used by the sensor.
+    /// @note See User manual VN-310 - 8.2.10 (p 97ff) / VN-100 - 5.2.10 (p 69ff)
+    vn::sensors::CommunicationProtocolControlRegister communicationProtocolControlRegister{
+        vn::protocol::uart::CountMode::COUNTMODE_NONE,           // SerialCount
+        vn::protocol::uart::StatusMode::STATUSMODE_OFF,          // SerialStatus
+        vn::protocol::uart::CountMode::COUNTMODE_NONE,           // SPICount
+        vn::protocol::uart::StatusMode::STATUSMODE_OFF,          // SPIStatus
+        vn::protocol::uart::ChecksumMode::CHECKSUMMODE_CHECKSUM, // SerialChecksum
+        vn::protocol::uart::ChecksumMode::CHECKSUMMODE_OFF,      // SPIChecksum
+        vn::protocol::uart::ErrorMode::ERRORMODE_SEND            // ErrorMode
+    };
+
+    /// @brief Binary Output Register 1 - 3.
+    ///
+    /// This register allows the user to construct a custom binary output message that
+    /// contains a collection of desired estimated states and sensor measurements.
+    /// @note See User manual VN-310 - 8.2.11-13 (p 100ff) / VN-100 - 5.2.11-13 (p 73ff)
+    std::array<vn::sensors::BinaryOutputRegister, 3> binaryOutputRegister = { vn::sensors::BinaryOutputRegister{
+                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
+                                                                                  0,                                                     // RateDivisor
+                                                                                  vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
+                                                                                  vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
+                                                                                  vn::protocol::uart::ImuGroup::IMUGROUP_NONE,           // IMUGroup
+                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE,           // GNSS1Group
+                                                                                  vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE, // AttitudeGroup
+                                                                                  vn::protocol::uart::InsGroup::INSGROUP_NONE,           // INSGroup
+                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE            // GNSS2Group
+                                                                              },
+                                                                              vn::sensors::BinaryOutputRegister{
+                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
+                                                                                  0,                                                     // RateDivisor
+                                                                                  vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
+                                                                                  vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
+                                                                                  vn::protocol::uart::ImuGroup::IMUGROUP_NONE,           // IMUGroup
+                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE,           // GNSS1Group
+                                                                                  vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE, // AttitudeGroup
+                                                                                  vn::protocol::uart::InsGroup::INSGROUP_NONE,           // INSGroup
+                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE            // GNSS2Group
+                                                                              },
+                                                                              vn::sensors::BinaryOutputRegister{
+                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
+                                                                                  0,                                                     // RateDivisor
+                                                                                  vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
+                                                                                  vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
+                                                                                  vn::protocol::uart::ImuGroup::IMUGROUP_NONE,           // IMUGroup
+                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE,           // GNSS1Group
+                                                                                  vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE, // AttitudeGroup
+                                                                                  vn::protocol::uart::InsGroup::INSGROUP_NONE,           // INSGroup
+                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE            // GNSS2Group
+                                                                              } };
+    /// @brief Selected Frequency of the Binary Outputs in the GUI
+    std::array<size_t, 3> binaryOutputSelectedFrequency{};
+
+    // ###########################################################################################################
+    //                                               IMU SUBSYSTEM
+    // ###########################################################################################################
+
+    /// @brief Reference Frame Rotation.
+    ///
+    /// Allows the measurements of the VN-310E to be rotated into a different reference frame.
+    /// @note See User manual VN-310 - 9.2.4 (p 114) / VN-100 - 6.2.4 (p 85)
+    vn::math::mat3f referenceFrameRotationMatrix{ { 1, 0, 0 },
+                                                  { 0, 1, 0 },
+                                                  { 0, 0, 1 } };
+
+    /// @brief IMU Filtering Configuration.
+    ///
+    /// Controls the level of filtering performed on the raw IMU measurements.
+    /// @note See User manual VN-310 - 9.2.5 (p 115) / VN-100 - 6.2.5 (p 86)
+    vn::sensors::ImuFilteringConfigurationRegister imuFilteringConfigurationRegister{
+        0,                                                      // MagWindowSize
+        4,                                                      // AccelWindowSize
+        4,                                                      // GyroWindowSize
+        4,                                                      // TempWindowSize
+        0,                                                      // PresWindowSize
+        vn::protocol::uart::FilterMode::FILTERMODE_NOFILTERING, // MagFilterMode
+        vn::protocol::uart::FilterMode::FILTERMODE_BOTH,        // AccelFilterMode
+        vn::protocol::uart::FilterMode::FILTERMODE_BOTH,        // GyroFilterMode
+        vn::protocol::uart::FilterMode::FILTERMODE_BOTH,        // TempFilterMode
+        vn::protocol::uart::FilterMode::FILTERMODE_NOFILTERING  // PresFilterMode
+    };
+
+    /// @brief Delta Theta and Delta Velocity Configuration.
+    ///
+    /// This register contains configuration options for the internal coning/sculling calculations.
+    /// @note See User manual VN-310 - 9.2.6 (p 116) / VN-100 - 6.2.6 (p 87)
+    vn::sensors::DeltaThetaAndDeltaVelocityConfigurationRegister deltaThetaAndDeltaVelocityConfigurationRegister{
+        vn::protocol::uart::IntegrationFrame::INTEGRATIONFRAME_BODY,       // IntegrationFrame
+        vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE,       // GyroCompensation
+        vn::protocol::uart::AccCompensationMode::ACCCOMPENSATIONMODE_NONE, // AccelCompensation
+        vn::protocol::uart::EarthRateCorrection::EARTHRATECORR_NONE        // EarthRateCorrection
+    };
+
+    // ###########################################################################################################
+    //                                              GNSS SUBSYSTEM
+    // ###########################################################################################################
+
+    /// @brief  GNSS Configuration.
+    /// @note See User manual VN-310 - 10.2.1 (p 124)
+    vn::sensors::GpsConfigurationRegister gpsConfigurationRegister{
+        vn::protocol::uart::GpsMode::GPSMODE_ONBOARDGPS,       // Mode
+        vn::protocol::uart::PpsSource::PPSSOURCE_GPSPPSRISING, // PpsSource
+        vn::protocol::uart::GpsRate::GPSRATE_5HZ,              // Rate
+        vn::protocol::uart::AntPower::ANTPOWER_INTERNAL        // AntPower
+    };
+
+    /// @brief GNSS Antenna A Offset.
+    ///
+    /// Configures the position offset of GNSS antenna A from the VN-310E in the vehicle reference frame.
+    /// @note See User manual VN-310 - 10.2.2 (p 125)
+    vn::math::vec3f gpsAntennaOffset{
+        0, 0, 0 // [m]
+    };
+
+    /// @brief GNSS Compass Baseline.
+    ///
+    /// Configures the position offset and measurement uncertainty of the second GNSS
+    /// antenna relative to the first GNSS antenna in the vehicle reference frame.
+    /// @note See User manual VN-310 - 10.2.3 (p 126f)
+    vn::sensors::GpsCompassBaselineRegister gpsCompassBaselineRegister{
+        vn::math::vec3f{ 1.0F, 0.0F, 0.0F },      // Position [m]
+        vn::math::vec3f{ 0.254F, 0.254F, 0.254F } // Uncertainty [m]
+    };
+
+    // ###########################################################################################################
+    //                                            ATTITUDE SUBSYSTEM
+    // ###########################################################################################################
+
+    /// @brief VPE Basic Control.
+    ///
+    /// Provides control over various features relating to the onboard attitude filtering algorithm.
+    /// @note See User manual VN-310 - 11.3.1 (p 158) / VN-100 - 7.3.1 (p 104)
+    vn::sensors::VpeBasicControlRegister vpeBasicControlRegister{
+        vn::protocol::uart::VpeEnable::VPEENABLE_ENABLE,       // Enable
+        vn::protocol::uart::HeadingMode::HEADINGMODE_RELATIVE, // HeadingMode
+        vn::protocol::uart::VpeMode::VPEMODE_MODE1,            // FilteringMode
+        vn::protocol::uart::VpeMode::VPEMODE_MODE1             // TuningMode
+    };
+
+    /// @brief VPE Magnetometer Basic Tuning.
+    ///
+    /// Provides basic control of the adaptive filtering and tuning for the magnetometer..
+    /// @note See User manual VN-100 - 7.3.2 (p 105)
+    vn::sensors::VpeMagnetometerBasicTuningRegister vpeMagnetometerBasicTuningRegister{
+        vn::math::vec3f{ 4.0F, 4.0F, 4.0F }, // BaseTuning [0 - 10]
+        vn::math::vec3f{ 5.0F, 5.0F, 5.0F }, // AdaptiveTuning [0 - 10]
+        vn::math::vec3f{ 5.5F, 5.5F, 5.5F }  // AdaptiveFiltering [0 - 10]
+    };
+
+    /// @brief VPE Accelerometer Basic Tuning.
+    ///
+    /// Provides basic control of the adaptive filtering and tuning for the accelerometer.
+    /// @note See User manual VN-100 - 7.3.3 (p 106)
+    vn::sensors::VpeAccelerometerBasicTuningRegister vpeAccelerometerBasicTuningRegister{
+        vn::math::vec3f{ 6.0F, 6.0F, 6.0F }, // BaseTuning [0 - 10]
+        vn::math::vec3f{ 3.0F, 3.0F, 3.0F }, // AdaptiveTuning [0 - 10]
+        vn::math::vec3f{ 5.0F, 5.0F, 5.0F }  // AdaptiveFiltering [0 - 10]
+    };
+
+    /// @brief VPE Gyro Basic Tuning.
+    ///
+    /// Provides basic control of the adaptive filtering and tuning for the gyro.
+    /// @note See User manual VN-100 - 7.3.5 (p 108)
+    vn::sensors::VpeGyroBasicTuningRegister vpeGyroBasicTuningRegister{
+        vn::math::vec3f{ 8.0F, 8.0F, 8.0F }, // BaseTuning [0 - 10]
+        vn::math::vec3f{ 4.0F, 4.0F, 4.0F }, // AdaptiveTuning [0 - 10]
+        vn::math::vec3f{ 0.0F, 0.0F, 0.0F }  // AdaptiveFiltering [0 - 10]
+    };
+
+    /// @brief Filter Startup Gyro Bias.
+    ///
+    /// The filter gyro bias estimate used at startup.
+    /// @note See User manual VN-100 - 7.3.4 (p 107)
+    vn::math::vec3f filterStartupGyroBias{
+        0, 0, 0 // [rad/s]
+    };
+
+    // ###########################################################################################################
+    //                                               INS SUBSYSTEM
+    // ###########################################################################################################
+
+    /// @brief  INS Basic Configuration.
+    /// @note See User manual VN-310 - 12.3.1 (p 166)
+    vn::sensors::InsBasicConfigurationRegisterVn300 insBasicConfigurationRegisterVn300{
+        vn::protocol::uart::Scenario::SCENARIO_GPSMOVINGBASELINEDYNAMIC, // Scenario
+        true,                                                            // AhrsAiding
+        true                                                             // EstBaseline
+    };
+
+    /// @brief Startup Filter Bias Estimate.
+    ///
+    /// Sets the initial estimate for the filter bias states.
+    /// @note See User manual VN-310 - 12.3.2 (p 167)
+    vn::sensors::StartupFilterBiasEstimateRegister startupFilterBiasEstimateRegister{
+        vn::math::vec3f{ 0, 0, 0 }, // GyroBias [rad/s]
+        vn::math::vec3f{ 0, 0, 0 }, // AccelBias [m/s^2]
+        0.0F                        // PressureBiasIn [m]
+    };
+
+    // ###########################################################################################################
+    //                                    HARD/SOFT IRON ESTIMATOR SUBSYSTEM
+    // ###########################################################################################################
+
+    /// @brief Magnetometer Calibration Control.
+    ///
+    /// Controls the magnetometer real-time calibration algorithm.
+    /// @note See User manual VN-310 - 13.1.1 (p 169) / VN-100 - 8.1.1 (p 110)
+    vn::sensors::MagnetometerCalibrationControlRegister magnetometerCalibrationControlRegister{
+        vn::protocol::uart::HsiMode::HSIMODE_RUN,            // HSIMode
+        vn::protocol::uart::HsiOutput::HSIOUTPUT_USEONBOARD, // HSIOutput
+        5                                                    // ConvergeRate
+    };
+
+    // ###########################################################################################################
+    //                                      WORLD MAGNETIC & GRAVITY MODULE
+    // ###########################################################################################################
+
+    /// @brief Magnetic and Gravity Reference Vectors.
+    ///
+    /// Magnetic and gravity reference vectors.
+    /// @note See User manual VN-310 - 14.1.1 (p 175) / VN-100 - 9.1.1 (p 115)
+    vn::sensors::MagneticAndGravityReferenceVectorsRegister magneticAndGravityReferenceVectorsRegister{
+        vn::math::vec3f{ 1.0F, 0.0F, 1.8F },      // MagRef [Gauss]
+        vn::math::vec3f{ 0.0F, 0.0F, -9.793746F } // AccRef [m/s^2]
+    };
+
+    /// @brief Reference Vector Configuration.
+    ///
+    /// Control register for both the onboard world magnetic and gravity model corrections.
+    /// @note See User manual VN-310 - 14.1.2 (p 176) / VN-100 - 9.1.2 (p 116)
+    vn::sensors::ReferenceVectorConfigurationRegister referenceVectorConfigurationRegister{
+        true,                      // UseMagModel
+        true,                      // UseGravityModel
+        1000,                      // RecalcThreshold [m]
+        0.0F,                      // Year [years]
+        vn::math::vec3d{ 0, 0, 0 } // Position (Lat Lon Alt [deg deg m])
+    };
+
+    // ###########################################################################################################
+    //                                              Velocity Aiding
+    // ###########################################################################################################
+
+    /// @brief Velocity Compensation Control.
+    ///
+    /// Provides control over the velocity compensation feature for the attitude filter.
+    /// @note See User manual VN-100 - 10.2.1 (p 123)
+    vn::sensors::VelocityCompensationControlRegister velocityCompensationControlRegister{
+        vn::protocol::uart::VelocityCompensationMode::VELOCITYCOMPENSATIONMODE_BODYMEASUREMENT, // Mode
+        0.1F,                                                                                   // VelocityTuning
+        0.01F                                                                                   // RateTuning
+    };
+
+    // ###########################################################################################################
+    //                                       Binary Group GUI Definitions
+    // ###########################################################################################################
 
     /// @brief Needed data to display a binary group in the GUI
     struct BinaryGroupData

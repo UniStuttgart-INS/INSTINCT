@@ -664,6 +664,7 @@ NAV::VectorNavSensor::VectorNavSensor()
         {
             divs.push_back(static_cast<uint16_t>(divider));
             freqs.push_back(std::to_string(freq) + " Hz");
+            LOG_DEBUG("VectorNavSensor: RateDivisor {} = {}", divs.back(), freqs.back());
         }
         return std::make_pair(divs, freqs);
     }();
@@ -697,49 +698,50 @@ void NAV::VectorNavSensor::guiConfig()
         flow::ApplyChanges();
         deinitializeNode();
 
-        for (auto& item : binaryGroupCommon)
-        {
-            if (!item.isEnabled(sensorModel))
-            {
-                config.commonField &= ~vn::protocol::uart::CommonGroup(item.flagsValue);
-            }
-        }
-        for (auto& item : binaryGroupTime)
-        {
-            if (!item.isEnabled(sensorModel))
-            {
-                config.timeField &= ~vn::protocol::uart::TimeGroup(item.flagsValue);
-            }
-        }
-        for (auto& item : binaryGroupIMU)
-        {
-            if (!item.isEnabled(sensorModel))
-            {
-                config.imuField &= ~vn::protocol::uart::ImuGroup(item.flagsValue);
-            }
-        }
-        for (auto& item : binaryGroupGNSS)
-        {
-            if (!item.isEnabled(sensorModel))
-            {
-                config.gnss1Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
-                config.gnss2Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
-            }
-        }
-        for (auto& item : binaryGroupAttitude)
-        {
-            if (!item.isEnabled(sensorModel))
-            {
-                config.attitudeField &= ~vn::protocol::uart::AttitudeGroup(item.flagsValue);
-            }
-        }
-        for (auto& item : binaryGroupINS)
-        {
-            if (!item.isEnabled(sensorModel))
-            {
-                config.insField &= ~vn::protocol::uart::InsGroup(item.flagsValue);
-            }
-        }
+        // TODO:
+        // for (const auto& item : binaryGroupCommon)
+        // {
+        //     if (!item.isEnabled(sensorModel))
+        //     {
+        //         config.commonField &= ~vn::protocol::uart::CommonGroup(item.flagsValue);
+        //     }
+        // }
+        // for (const auto& item : binaryGroupTime)
+        // {
+        //     if (!item.isEnabled(sensorModel))
+        //     {
+        //         config.timeField &= ~vn::protocol::uart::TimeGroup(item.flagsValue);
+        //     }
+        // }
+        // for (const auto& item : binaryGroupIMU)
+        // {
+        //     if (!item.isEnabled(sensorModel))
+        //     {
+        //         config.imuField &= ~vn::protocol::uart::ImuGroup(item.flagsValue);
+        //     }
+        // }
+        // for (const auto& item : binaryGroupGNSS)
+        // {
+        //     if (!item.isEnabled(sensorModel))
+        //     {
+        //         config.gnss1Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
+        //         config.gnss2Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
+        //     }
+        // }
+        // for (const auto& item : binaryGroupAttitude)
+        // {
+        //     if (!item.isEnabled(sensorModel))
+        //     {
+        //         config.attitudeField &= ~vn::protocol::uart::AttitudeGroup(item.flagsValue);
+        //     }
+        // }
+        // for (const auto& item : binaryGroupINS)
+        // {
+        //     if (!item.isEnabled(sensorModel))
+        //     {
+        //         config.insField &= ~vn::protocol::uart::InsGroup(item.flagsValue);
+        //     }
+        // }
     }
 
     if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &sensorPort))
@@ -764,134 +766,143 @@ void NAV::VectorNavSensor::guiConfig()
         deinitializeNode();
     }
 
-    const char* currentFrequency = (selectedFrequency >= 0 && static_cast<size_t>(selectedFrequency) < dividerFrequency.second.size())
-                                       ? dividerFrequency.second.at(static_cast<size_t>(selectedFrequency)).c_str()
-                                       : "Unknown";
-    if (ImGui::SliderInt("Frequency", &selectedFrequency, 0, static_cast<int>(dividerFrequency.second.size()) - 1, currentFrequency))
-    {
-        LOG_DEBUG("{}: Frequency changed to {}", nameId(), dividerFrequency.second.at(static_cast<size_t>(selectedFrequency)));
-        flow::ApplyChanges();
-        deinitializeNode();
-    }
+    auto CheckboxFlags = [](int index, const char* label, int* flags, int flags_value, bool enabled = true) {
+        ImGui::TableSetColumnIndex(index);
 
-    if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", id.AsPointer()).c_str(), 7,
-                          ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
-    {
-        ImGui::TableSetupColumn("Common", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("INS", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableHeadersRow();
-
-        auto CheckboxFlags = [](int index, const char* label, int* flags, int flags_value, bool enabled = true) {
-            ImGui::TableSetColumnIndex(index);
-
-            if (!enabled)
-            {
-                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
-            }
-
-            ImGui::CheckboxFlags(label, flags, flags_value);
-
-            if (!enabled)
-            {
-                ImGui::PopItemFlag();
-                ImGui::PopStyleVar();
-            }
-        };
-
-        // --------------------------------------------- Common Group ------------------------------------------------
-        for (size_t i = 0; i < 16; i++)
+        if (!enabled)
         {
-            if (i < binaryGroupCommon.size() || i < binaryGroupTime.size() || i < binaryGroupIMU.size()
-                || i < binaryGroupGNSS.size() || i < binaryGroupAttitude.size() || i < binaryGroupINS.size())
-            {
-                ImGui::TableNextRow();
-            }
-            if (i < binaryGroupCommon.size())
-            {
-                const auto& binaryGroupItem = binaryGroupCommon.at(i);
-                CheckboxFlags(0, (binaryGroupItem.name + ("##Common" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.commonField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                {
-                    ImGui::BeginTooltip();
-                    binaryGroupItem.tooltip();
-                    ImGui::EndTooltip();
-                }
-            }
-            if (i < binaryGroupTime.size())
-            {
-                const auto& binaryGroupItem = binaryGroupTime.at(i);
-                CheckboxFlags(1, (binaryGroupItem.name + ("##Time" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.timeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                {
-                    ImGui::BeginTooltip();
-                    binaryGroupItem.tooltip();
-                    ImGui::EndTooltip();
-                }
-            }
-            if (i < binaryGroupIMU.size())
-            {
-                const auto& binaryGroupItem = binaryGroupIMU.at(i);
-                CheckboxFlags(2, (binaryGroupItem.name + ("##IMU" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.imuField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                {
-                    ImGui::BeginTooltip();
-                    binaryGroupItem.tooltip();
-                    ImGui::EndTooltip();
-                }
-            }
-            if (i < binaryGroupGNSS.size())
-            {
-                const auto& binaryGroupItem = binaryGroupGNSS.at(i);
-                CheckboxFlags(3, (binaryGroupItem.name + ("##GNSS1" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.gnss1Field), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                {
-                    ImGui::BeginTooltip();
-                    binaryGroupItem.tooltip();
-                    ImGui::EndTooltip();
-                }
-            }
-            if (i < binaryGroupAttitude.size())
-            {
-                const auto& binaryGroupItem = binaryGroupAttitude.at(i);
-                CheckboxFlags(4, (binaryGroupItem.name + ("##Attitude" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.attitudeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                {
-                    ImGui::BeginTooltip();
-                    binaryGroupItem.tooltip();
-                    ImGui::EndTooltip();
-                }
-            }
-            if (i < binaryGroupINS.size())
-            {
-                const auto& binaryGroupItem = binaryGroupINS.at(i);
-                CheckboxFlags(5, (binaryGroupItem.name + ("##INS" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.insField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                {
-                    ImGui::BeginTooltip();
-                    binaryGroupItem.tooltip();
-                    ImGui::EndTooltip();
-                }
-            }
-            if (i < binaryGroupGNSS.size())
-            {
-                const auto& binaryGroupItem = binaryGroupGNSS.at(i);
-                CheckboxFlags(6, (binaryGroupItem.name + ("##GNSS2" + std::to_string(size_t(id)))).c_str(), reinterpret_cast<int*>(&config.gnss2Field), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
-                if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
-                {
-                    ImGui::BeginTooltip();
-                    binaryGroupItem.tooltip();
-                    ImGui::EndTooltip();
-                }
-            }
+            ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
         }
 
-        ImGui::EndTable();
+        ImGui::CheckboxFlags(label, flags, flags_value);
+
+        if (!enabled)
+        {
+            ImGui::PopItemFlag();
+            ImGui::PopStyleVar();
+        }
+    };
+
+    for (size_t b = 0; b < binaryOutputRegister.size(); b++)
+    {
+        if (ImGui::CollapsingHeader(fmt::format("Binary Output {}##{}", b + 1, size_t(id)).c_str()))
+        {
+            const char* frequencyText = binaryOutputSelectedFrequency.at(b) < dividerFrequency.first.size()
+                                            ? dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)).c_str()
+                                            : "Unknown";
+            if (ImGui::SliderInt(fmt::format("Frequency##{} {}", size_t(id), b).c_str(),
+                                 reinterpret_cast<int*>(&binaryOutputSelectedFrequency.at(b)),
+                                 0, static_cast<int>(dividerFrequency.second.size()) - 1,
+                                 frequencyText))
+            {
+                LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)));
+                binaryOutputRegister.at(b).rateDivisor = dividerFrequency.first.at(binaryOutputSelectedFrequency.at(b));
+                flow::ApplyChanges();
+                deinitializeNode();
+            }
+
+            if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 7,
+                                  ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+            {
+                ImGui::TableSetupColumn("Common", ImGuiTableColumnFlags_WidthAutoResize);
+                ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
+                ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
+                ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthAutoResize);
+                ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthAutoResize);
+                ImGui::TableSetupColumn("INS", ImGuiTableColumnFlags_WidthAutoResize);
+                ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthAutoResize);
+                ImGui::TableHeadersRow();
+
+                for (size_t i = 0; i < 16; i++)
+                {
+                    if (i < binaryGroupCommon.size() || i < binaryGroupTime.size() || i < binaryGroupIMU.size()
+                        || i < binaryGroupGNSS.size() || i < binaryGroupAttitude.size() || i < binaryGroupINS.size())
+                    {
+                        ImGui::TableNextRow();
+                    }
+                    if (i < binaryGroupCommon.size())
+                    {
+                        const auto& binaryGroupItem = binaryGroupCommon.at(i);
+                        CheckboxFlags(0, fmt::format("{}##Common {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).commonField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                        {
+                            ImGui::BeginTooltip();
+                            binaryGroupItem.tooltip();
+                            ImGui::EndTooltip();
+                        }
+                    }
+                    if (i < binaryGroupTime.size())
+                    {
+                        const auto& binaryGroupItem = binaryGroupTime.at(i);
+                        CheckboxFlags(1, fmt::format("{}##Time {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).timeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                        {
+                            ImGui::BeginTooltip();
+                            binaryGroupItem.tooltip();
+                            ImGui::EndTooltip();
+                        }
+                    }
+                    if (i < binaryGroupIMU.size())
+                    {
+                        const auto& binaryGroupItem = binaryGroupIMU.at(i);
+                        CheckboxFlags(2, fmt::format("{}##IMU {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).imuField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                        {
+                            ImGui::BeginTooltip();
+                            binaryGroupItem.tooltip();
+                            ImGui::EndTooltip();
+                        }
+                    }
+                    if (i < binaryGroupGNSS.size())
+                    {
+                        const auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                        CheckboxFlags(3, fmt::format("{}##GNSS1 {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).gpsField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                        {
+                            ImGui::BeginTooltip();
+                            binaryGroupItem.tooltip();
+                            ImGui::EndTooltip();
+                        }
+                    }
+                    if (i < binaryGroupAttitude.size())
+                    {
+                        const auto& binaryGroupItem = binaryGroupAttitude.at(i);
+                        CheckboxFlags(4, fmt::format("{}##Attitude {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).attitudeField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                        {
+                            ImGui::BeginTooltip();
+                            binaryGroupItem.tooltip();
+                            ImGui::EndTooltip();
+                        }
+                    }
+                    if (i < binaryGroupINS.size())
+                    {
+                        const auto& binaryGroupItem = binaryGroupINS.at(i);
+                        CheckboxFlags(5, fmt::format("{}##INS {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).insField), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                        {
+                            ImGui::BeginTooltip();
+                            binaryGroupItem.tooltip();
+                            ImGui::EndTooltip();
+                        }
+                    }
+                    if (i < binaryGroupGNSS.size())
+                    {
+                        const auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                        CheckboxFlags(6, fmt::format("{}##GNSS2 {} {}", binaryGroupItem.name, size_t(id), b).c_str(), reinterpret_cast<int*>(&binaryOutputRegister.at(b).gps2Field), binaryGroupItem.flagsValue, binaryGroupItem.isEnabled(sensorModel));
+                        if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
+                        {
+                            ImGui::BeginTooltip();
+                            binaryGroupItem.tooltip();
+                            ImGui::EndTooltip();
+                        }
+                    }
+                }
+
+                ImGui::EndTable();
+            }
+        }
     }
 }
 
@@ -902,7 +913,7 @@ void NAV::VectorNavSensor::guiConfig()
     json j;
 
     j["UartSensor"] = UartSensor::save();
-    j["Frequency"] = dividerFrequency.second.at(static_cast<size_t>(selectedFrequency));
+    // j["Frequency"] = dividerFrequency.second.at(static_cast<size_t>(selectedFrequency));
 
     return j;
 }
@@ -915,19 +926,19 @@ void NAV::VectorNavSensor::restore(json const& j)
     {
         UartSensor::restore(j.at("UartSensor"));
     }
-    if (j.contains("Frequency"))
-    {
-        std::string frequency;
-        j.at("Frequency").get_to(frequency);
-        for (size_t i = 0; i < dividerFrequency.second.size(); i++)
-        {
-            if (dividerFrequency.second.at(i) == frequency)
-            {
-                selectedFrequency = static_cast<int>(i);
-                break;
-            }
-        }
-    }
+    // if (j.contains("Frequency"))
+    // {
+    //     std::string frequency;
+    //     j.at("Frequency").get_to(frequency);
+    //     for (size_t i = 0; i < dividerFrequency.second.size(); i++)
+    //     {
+    //         if (dividerFrequency.second.at(i) == frequency)
+    //         {
+    //             selectedFrequency = static_cast<int>(i);
+    //             break;
+    //         }
+    //     }
+    // }
 }
 
 bool NAV::VectorNavSensor::resetNode()
@@ -938,6 +949,10 @@ bool NAV::VectorNavSensor::resetNode()
 bool NAV::VectorNavSensor::initialize()
 {
     LOG_TRACE("{}: called", nameId());
+
+    // ###########################################################################################################
+    //                                                Connecting
+    // ###########################################################################################################
 
     // Choose baudrate
     Baudrate targetBaudrate = sensorBaudrate() == BAUDRATE_FASTEST
@@ -970,7 +985,7 @@ bool NAV::VectorNavSensor::initialize()
                 std::string modelNumber = vs.readModelNumber();
                 vs.disconnect();
 
-                LOG_DEBUG("{} found VectorNav Sensor {} on port {} with baudrate {}", nameId(), modelNumber, port, baudrate);
+                LOG_DEBUG("{}: Found VectorNav Sensor {} on port {} with baudrate {}", nameId(), modelNumber, port, baudrate);
 
                 // Regex search may be better, but simple find is used here
                 if (modelNumber.find(name) != std::string::npos)
@@ -984,14 +999,14 @@ bool NAV::VectorNavSensor::initialize()
             if (sensorPort.empty())
             {
                 // This point is also reached if a sensor is connected with USB but external power is off
-                LOG_ERROR("{} could not connect", nameId());
+                LOG_ERROR("{}: Could not connect", nameId());
                 return false;
             }
         }
     }
     else
     {
-        LOG_ERROR("{} could not connect. Is the sensor connected and do you have read permissions?", nameId());
+        LOG_ERROR("{}: Could not connect. Is the sensor connected and do you have read permissions?", nameId());
         return false;
     }
 
@@ -1014,7 +1029,11 @@ bool NAV::VectorNavSensor::initialize()
         return false;
     }
     // Query the sensor's model number
-    LOG_DEBUG("{} connected on port {} with baudrate {}", vs.readModelNumber(), sensorPort, connectedBaudrate);
+    LOG_DEBUG("{}: {} connected on port {} with baudrate {}", nameId(), vs.readModelNumber(), sensorPort, connectedBaudrate);
+
+    // ###########################################################################################################
+    //                                               SYSTEM MODULE
+    // ###########################################################################################################
 
     // Change Connection Baudrate
     if (targetBaudrate != connectedBaudrate)
@@ -1023,53 +1042,134 @@ bool NAV::VectorNavSensor::initialize()
         if (std::find(suppBaud.begin(), suppBaud.end(), targetBaudrate) != suppBaud.end())
         {
             vs.changeBaudRate(targetBaudrate);
-            LOG_DEBUG("{} baudrate changed to {}", nameId(), static_cast<size_t>(targetBaudrate));
+            LOG_DEBUG("{}: Baudrate changed to {}", nameId(), static_cast<size_t>(targetBaudrate));
         }
         else
         {
-            LOG_ERROR("{} does not support baudrate {}", nameId(), static_cast<size_t>(targetBaudrate));
+            LOG_ERROR("{}: Does not support baudrate {}", nameId(), static_cast<size_t>(targetBaudrate));
             return false;
         }
     }
-    ASSERT(vs.readSerialBaudRate() == targetBaudrate, "Baudrate was not changed");
-
-    // Change Heading Mode (and enable Filtering Mode, Tuning Mode)
-    vn::sensors::VpeBasicControlRegister vpeReg = vs.readVpeBasicControl();
-    vpeReg.headingMode = config.headingMode;
-    vs.writeVpeBasicControl(vpeReg);
-    ASSERT(vs.readVpeBasicControl().headingMode == config.headingMode, "Heading Mode was not changed");
-
-    vn::sensors::DeltaThetaAndDeltaVelocityConfigurationRegister dtdvConfReg(config.delThetaDelVeloIntegrationFrame,
-                                                                             config.delThetaDelVeloGyroCompensation,
-                                                                             config.delThetaDelVeloAccelCompensation);
-    vs.writeDeltaThetaAndDeltaVelocityConfiguration(dtdvConfReg);
-    ASSERT(vs.readDeltaThetaAndDeltaVelocityConfiguration().integrationFrame == config.delThetaDelVeloIntegrationFrame, "Integration Frame was not changed");
-    ASSERT(vs.readDeltaThetaAndDeltaVelocityConfiguration().gyroCompensation == config.delThetaDelVeloGyroCompensation, "Gyro Compensation was not changed");
-    ASSERT(vs.readDeltaThetaAndDeltaVelocityConfiguration().accelCompensation == config.delThetaDelVeloAccelCompensation, "Acceleration Compensation was not changed");
-
-    // Stop the AsciiAsync messages
-    vs.writeAsyncDataOutputType(vn::protocol::uart::AsciiAsync::VNOFF);
-
-    // Configure Binary Output 1
-    vn::sensors::BinaryOutputRegister bor(config.asyncMode,
-                                          dividerFrequency.first.at(static_cast<size_t>(selectedFrequency)),
-                                          config.commonField,
-                                          config.timeField,
-                                          config.imuField,
-                                          vn::protocol::uart::GpsGroup::GPSGROUP_NONE,
-                                          config.attitudeField,
-                                          vn::protocol::uart::InsGroup::INSGROUP_NONE,
-                                          vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
-    try
+    if (vs.readSerialBaudRate() != targetBaudrate)
     {
-        vs.writeBinaryOutput1(bor);
-    }
-    catch (const std::exception& e)
-    {
-        LOG_ERROR("{} could not configure binary output register ({})", nameId(), e.what());
+        LOG_ERROR("{}: Changing the baudrate from {} to {} was not successfull", nameId(), vs.readSerialBaudRate(), targetBaudrate);
         deinitializeNode();
         return false;
     }
+
+    vs.writeSynchronizationControl(synchronizationControlRegister);
+    vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+
+    // vs.writeSynchronizationStatus(vn::sensors::SynchronizationStatusRegister); // User manual VN-310 - 8.3.1 (p 105) / VN-100 - 5.3.1 (p 76)
+
+    // ###########################################################################################################
+    //                                               IMU SUBSYSTEM
+    // ###########################################################################################################
+
+    // vs.writeMagnetometerCompensation(vn::sensors::MagnetometerCompensationRegister()); // User manual VN-310 - 9.2.1 (p 111) / VN-100 - 6.2.1 (p 82)
+    // vs.writeAccelerationCompensation(vn::sensors::AccelerationCompensationRegister()); // User manual VN-310 - 9.2.2 (p 112) / VN-100 - 6.2.2 (p 83)
+    // vs.writeGyroCompensation(vn::sensors::GyroCompensationRegister());                 // User manual VN-310 - 9.2.3 (p 113) / VN-100 - 6.2.3 (p 84)
+
+    vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+    vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+    vs.writeDeltaThetaAndDeltaVelocityConfiguration(deltaThetaAndDeltaVelocityConfigurationRegister);
+
+    // ###########################################################################################################
+    //                                               GNSS SUBSYSTEM
+    // ###########################################################################################################
+
+    if (sensorModel == VectorNavModel::VN310)
+    {
+        vs.writeGpsConfiguration(gpsConfigurationRegister);
+        vs.writeGpsAntennaOffset(gpsAntennaOffset);
+        vs.writeGpsCompassBaseline(gpsCompassBaselineRegister);
+    }
+
+    // ###########################################################################################################
+    //                                             ATTITUDE SUBSYSTEM
+    // ###########################################################################################################
+    if (sensorModel == VectorNavModel::VN100_VN110)
+    {
+        // vs.tare(); // User manual VN-100 - 7.1.1 (p 92)
+        // vs.magneticDisturbancePresent(bool); // User manual VN-100 - 7.1.2 (p 92)
+        // vs.accelerationDisturbancePresent(true); // User manual VN-100 - 7.1.3 (p 92f)
+    }
+    // vs.setGyroBias(); // User manual VN-310 - 11.1.1 (p 148) / VN-100 - 7.1.4 (p 93)
+
+    // TODO: Implement in vnproglib: vs.setInitialHeading() - User manual VN-310 - 11.1.2 (p 148)
+
+    vs.writeVpeBasicControl(vpeBasicControlRegister);
+
+    if (sensorModel == VectorNavModel::VN100_VN110)
+    {
+        vs.writeVpeMagnetometerBasicTuning(vpeMagnetometerBasicTuningRegister);
+        vs.writeVpeAccelerometerBasicTuning(vpeAccelerometerBasicTuningRegister);
+        vs.writeFilterStartupGyroBias(filterStartupGyroBias);
+        vs.writeVpeGyroBasicTuning(vpeGyroBasicTuningRegister);
+    }
+
+    // ###########################################################################################################
+    //                                               INS SUBSYSTEM
+    // ###########################################################################################################
+
+    if (sensorModel == VectorNavModel::VN310)
+    {
+        vs.writeInsBasicConfigurationVn300(insBasicConfigurationRegisterVn300);
+        vs.writeStartupFilterBiasEstimate(startupFilterBiasEstimateRegister);
+    }
+
+    // ###########################################################################################################
+    //                                     HARD/SOFT IRON ESTIMATOR SUBSYSTEM
+    // ###########################################################################################################
+
+    vs.writeMagnetometerCalibrationControl(magnetometerCalibrationControlRegister);
+
+    // ###########################################################################################################
+    //                                      WORLD MAGNETIC & GRAVITY MODULE
+    // ###########################################################################################################
+
+    vs.writeMagneticAndGravityReferenceVectors(magneticAndGravityReferenceVectorsRegister);
+    vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+
+    // ###########################################################################################################
+    //                                              Velocity Aiding
+    // ###########################################################################################################
+
+    if (sensorModel == VectorNavModel::VN100_VN110)
+    {
+        vs.writeVelocityCompensationControl(velocityCompensationControlRegister);
+
+        // vs.writeVelocityCompensationMeasurement(vn::math::vec3f); // User manual VN-100 - 10.3.1 (p 124)
+    }
+
+    // ###########################################################################################################
+    //                                                  Outputs
+    // ###########################################################################################################
+
+    vs.writeAsyncDataOutputType(asyncDataOutputType);
+    if (asyncDataOutputType != vn::protocol::uart::AsciiAsync::VNOFF)
+    {
+        vs.writeAsyncDataOutputFrequency(asyncDataOutputFrequency);
+    }
+
+    size_t binaryOutputRegisterCounter = 1; // To give a proper error message
+    try
+    {
+        vs.writeBinaryOutput1(binaryOutputRegister.at(0));
+        binaryOutputRegisterCounter++;
+        vs.writeBinaryOutput2(binaryOutputRegister.at(1));
+        binaryOutputRegisterCounter++;
+        vs.writeBinaryOutput3(binaryOutputRegister.at(2));
+    }
+    catch (const std::exception& e)
+    {
+        LOG_ERROR("{}: Could not configure binary output register {}: {}", nameId(), binaryOutputRegisterCounter, e.what());
+        deinitializeNode();
+        return false;
+    }
+
+    // TODO: Implement in vnproglib: vs.writeNmeaOutput1(...) - User manual VN-310 - 8.2.14 (p 103)
+    // TODO: Implement in vnproglib: vs.writeNmeaOutput2(...) - User manual VN-310 - 8.2.15 (p 104)
 
     vs.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
@@ -1117,13 +1217,13 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
     if (p.type() == vn::protocol::uart::Packet::TYPE_BINARY)
     {
         // Make sure that the binary packet is from the type we expect
-        if (p.isCompatible(vnSensor->config.commonField,
-                           vnSensor->config.timeField,
-                           vnSensor->config.imuField,
-                           vn::protocol::uart::GpsGroup::GPSGROUP_NONE,
-                           vnSensor->config.attitudeField,
-                           vn::protocol::uart::InsGroup::INSGROUP_NONE,
-                           vn::protocol::uart::GpsGroup::GPSGROUP_NONE))
+        if (p.isCompatible(vnSensor->binaryOutputRegister.at(0).commonField,
+                           vnSensor->binaryOutputRegister.at(0).timeField,
+                           vnSensor->binaryOutputRegister.at(0).imuField,
+                           vnSensor->binaryOutputRegister.at(0).gpsField,
+                           vnSensor->binaryOutputRegister.at(0).attitudeField,
+                           vnSensor->binaryOutputRegister.at(0).insField,
+                           vnSensor->binaryOutputRegister.at(0).gps2Field))
         {
             auto obs = std::make_shared<VectorNavObs>(vnSensor->imuPos);
 
