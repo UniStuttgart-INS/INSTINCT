@@ -19,6 +19,306 @@ namespace nm = NAV::NodeManager;
 
 #include <map>
 
+namespace vn::sensors
+{
+void to_json(json& j, const SynchronizationControlRegister& synchronizationControlRegister)
+{
+    j = json{
+        { "syncInMode", synchronizationControlRegister.syncInMode },
+        { "syncInEdge", synchronizationControlRegister.syncInEdge },
+        { "syncInSkipFactor", synchronizationControlRegister.syncInSkipFactor },
+        { "syncOutMode", synchronizationControlRegister.syncOutMode },
+        { "syncOutPolarity", synchronizationControlRegister.syncOutPolarity },
+        { "syncOutSkipFactor", synchronizationControlRegister.syncOutSkipFactor },
+        { "syncOutPulseWidth", synchronizationControlRegister.syncOutPulseWidth },
+    };
+}
+void from_json(const json& j, SynchronizationControlRegister& synchronizationControlRegister)
+{
+    if (j.contains("syncInMode"))
+    {
+        j.at("syncInMode").get_to(synchronizationControlRegister.syncInMode);
+    }
+    if (j.contains("syncInEdge"))
+    {
+        j.at("syncInEdge").get_to(synchronizationControlRegister.syncInEdge);
+    }
+    if (j.contains("syncInSkipFactor"))
+    {
+        j.at("syncInSkipFactor").get_to(synchronizationControlRegister.syncInSkipFactor);
+    }
+    if (j.contains("syncOutMode"))
+    {
+        j.at("syncOutMode").get_to(synchronizationControlRegister.syncOutMode);
+    }
+    if (j.contains("syncOutPolarity"))
+    {
+        j.at("syncOutPolarity").get_to(synchronizationControlRegister.syncOutPolarity);
+    }
+    if (j.contains("syncOutSkipFactor"))
+    {
+        j.at("syncOutSkipFactor").get_to(synchronizationControlRegister.syncOutSkipFactor);
+    }
+    if (j.contains("syncOutPulseWidth"))
+    {
+        j.at("syncOutPulseWidth").get_to(synchronizationControlRegister.syncOutPulseWidth);
+    }
+}
+
+void to_json(json& j, const CommunicationProtocolControlRegister& communicationProtocolControlRegister)
+{
+    j = json{
+        { "serialCount", communicationProtocolControlRegister.serialCount },
+        { "serialStatus", communicationProtocolControlRegister.serialStatus },
+        { "spiCount", communicationProtocolControlRegister.spiCount },
+        { "spiStatus", communicationProtocolControlRegister.spiStatus },
+        { "serialChecksum", communicationProtocolControlRegister.serialChecksum },
+        { "spiChecksum", communicationProtocolControlRegister.spiChecksum },
+        { "errorMode", communicationProtocolControlRegister.errorMode },
+    };
+}
+void from_json(const json& j, CommunicationProtocolControlRegister& communicationProtocolControlRegister)
+{
+    if (j.contains("serialCount"))
+    {
+        j.at("serialCount").get_to(communicationProtocolControlRegister.serialCount);
+    }
+    if (j.contains("serialStatus"))
+    {
+        j.at("serialStatus").get_to(communicationProtocolControlRegister.serialStatus);
+    }
+    if (j.contains("spiCount"))
+    {
+        j.at("spiCount").get_to(communicationProtocolControlRegister.spiCount);
+    }
+    if (j.contains("spiStatus"))
+    {
+        j.at("spiStatus").get_to(communicationProtocolControlRegister.spiStatus);
+    }
+    if (j.contains("serialChecksum"))
+    {
+        j.at("serialChecksum").get_to(communicationProtocolControlRegister.serialChecksum);
+    }
+    if (j.contains("spiChecksum"))
+    {
+        j.at("spiChecksum").get_to(communicationProtocolControlRegister.spiChecksum);
+    }
+    if (j.contains("errorMode"))
+    {
+        j.at("errorMode").get_to(communicationProtocolControlRegister.errorMode);
+    }
+}
+
+void to_json(json& j, const BinaryOutputRegister& binaryOutputRegister)
+{
+    j = json{
+        { "asyncMode", binaryOutputRegister.asyncMode },
+        { "rateDivisor", binaryOutputRegister.rateDivisor },
+        { "commonField", binaryOutputRegister.commonField },
+        { "timeField", binaryOutputRegister.timeField },
+        { "imuField", binaryOutputRegister.imuField },
+        { "gpsField", binaryOutputRegister.gpsField },
+        { "attitudeField", binaryOutputRegister.attitudeField },
+        { "insField", binaryOutputRegister.insField },
+        { "gps2Field", binaryOutputRegister.gps2Field },
+    };
+}
+void from_json(const json& j, BinaryOutputRegister& binaryOutputRegister)
+{
+    if (j.contains("asyncMode"))
+    {
+        j.at("asyncMode").get_to(binaryOutputRegister.asyncMode);
+    }
+    if (j.contains("rateDivisor"))
+    {
+        j.at("rateDivisor").get_to(binaryOutputRegister.rateDivisor);
+    }
+    if (j.contains("commonField"))
+    {
+        j.at("commonField").get_to(binaryOutputRegister.commonField);
+    }
+    if (j.contains("timeField"))
+    {
+        j.at("timeField").get_to(binaryOutputRegister.timeField);
+    }
+    if (j.contains("imuField"))
+    {
+        j.at("imuField").get_to(binaryOutputRegister.imuField);
+    }
+    if (j.contains("gpsField"))
+    {
+        j.at("gpsField").get_to(binaryOutputRegister.gpsField);
+    }
+    if (j.contains("attitudeField"))
+    {
+        j.at("attitudeField").get_to(binaryOutputRegister.attitudeField);
+    }
+    if (j.contains("insField"))
+    {
+        j.at("insField").get_to(binaryOutputRegister.insField);
+    }
+    if (j.contains("gps2Field"))
+    {
+        j.at("gps2Field").get_to(binaryOutputRegister.gps2Field);
+    }
+}
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+// void to_json(json& j, const & )
+// {
+//     j = json{
+//         { "",  },
+//     };
+// }
+// void from_json(const json& j, & )
+// {
+//     if (j.contains(""))
+//     {
+//         j.at("").get_to();
+//     }
+// }
+
+} // namespace vn::sensors
+
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::binaryGroupCommon = { {
     /*  0 */ { "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C). This field is\nequivalent to the TimeStartup field in group 2."); } },
     /*  1 */ { "TimeGps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds. This field is equivalent to\nthe TimeGps field in group 2."); } },
@@ -4021,7 +4321,28 @@ void NAV::VectorNavSensor::guiConfig()
     json j;
 
     j["UartSensor"] = UartSensor::save();
-    // j["Frequency"] = dividerFrequency.second.at(static_cast<size_t>(selectedFrequency));
+
+    // ###########################################################################################################
+    //                                               SYSTEM MODULE
+    // ###########################################################################################################
+
+    j["asyncDataOutputType"] = asyncDataOutputType;
+    j["asyncDataOutputFrequency"] = asyncDataOutputFrequency;
+    j["synchronizationControlRegister"] = synchronizationControlRegister;
+    j["communicationProtocolControlRegister"] = communicationProtocolControlRegister;
+    for (size_t b = 0; b < 3; b++)
+    {
+        j[fmt::format("binaryOutputRegister{}", b + 1)] = binaryOutputRegister.at(b);
+        j[fmt::format("binaryOutputRegister{}-Frequency", b + 1)] = dividerFrequency.second.at(static_cast<size_t>(binaryOutputSelectedFrequency.at(b)));
+    }
+
+    // ###########################################################################################################
+    //                                               IMU SUBSYSTEM
+    // ###########################################################################################################
+
+    //  j[""] = ;
+    //  j[""] = ;
+    //  j[""] = ;
 
     return j;
 }
@@ -4034,19 +4355,53 @@ void NAV::VectorNavSensor::restore(json const& j)
     {
         UartSensor::restore(j.at("UartSensor"));
     }
-    // if (j.contains("Frequency"))
-    // {
-    //     std::string frequency;
-    //     j.at("Frequency").get_to(frequency);
-    //     for (size_t i = 0; i < dividerFrequency.second.size(); i++)
-    //     {
-    //         if (dividerFrequency.second.at(i) == frequency)
-    //         {
-    //             selectedFrequency = static_cast<int>(i);
-    //             break;
-    //         }
-    //     }
-    // }
+
+    // ###########################################################################################################
+    //                                               SYSTEM MODULE
+    // ###########################################################################################################
+
+    if (j.contains("asyncDataOutputType"))
+    {
+        j.at("asyncDataOutputType").get_to(asyncDataOutputType);
+    }
+    if (j.contains("asyncDataOutputFrequency"))
+    {
+        j.at("asyncDataOutputFrequency").get_to(asyncDataOutputFrequency);
+        asyncDataOutputFrequencySelected = static_cast<int>(std::find(possibleAsyncDataOutputFrequency.begin(), possibleAsyncDataOutputFrequency.end(), static_cast<int>(asyncDataOutputFrequency))
+                                                            - possibleAsyncDataOutputFrequency.begin());
+    }
+    if (j.contains("synchronizationControlRegister"))
+    {
+        j.at("synchronizationControlRegister").get_to(synchronizationControlRegister);
+    }
+    if (j.contains("communicationProtocolControlRegister"))
+    {
+        j.at("communicationProtocolControlRegister").get_to(communicationProtocolControlRegister);
+    }
+    for (size_t b = 0; b < 3; b++)
+    {
+        if (j.contains(fmt::format("binaryOutputRegister{}", b + 1)))
+        {
+            j.at(fmt::format("binaryOutputRegister{}", b + 1)).get_to(binaryOutputRegister.at(b));
+        }
+        if (j.contains(fmt::format("binaryOutputRegister{}-Frequency", b + 1)))
+        {
+            std::string frequency;
+            j.at(fmt::format("binaryOutputRegister{}-Frequency", b + 1)).get_to(frequency);
+            for (size_t i = 0; i < dividerFrequency.second.size(); i++)
+            {
+                if (dividerFrequency.second.at(i) == frequency)
+                {
+                    binaryOutputSelectedFrequency.at(b) = i;
+                    break;
+                }
+            }
+        }
+    }
+
+    // ###########################################################################################################
+    //                                               IMU SUBSYSTEM
+    // ###########################################################################################################
 }
 
 bool NAV::VectorNavSensor::resetNode()
