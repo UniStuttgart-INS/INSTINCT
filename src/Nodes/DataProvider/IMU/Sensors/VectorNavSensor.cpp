@@ -19,8 +19,42 @@ namespace nm = NAV::NodeManager;
 
 #include <map>
 
-namespace vn::sensors
+namespace vn
 {
+namespace math
+{
+void to_json(json& j, const vn::math::vec3f& vec)
+{
+    j = vec.c;
+}
+void from_json(const json& j, vn::math::vec3f& vec)
+{
+    j.get_to(vec.c);
+}
+void to_json(json& j, const vn::math::vec3d& vec)
+{
+    j = vec.c;
+}
+void from_json(const json& j, vn::math::vec3d& vec)
+{
+    j.get_to(vec.c);
+}
+void to_json(json& j, const vn::math::mat3f& mat)
+{
+    j = mat.e;
+}
+void from_json(const json& j, vn::math::mat3f& mat)
+{
+    j.get_to(mat.e);
+}
+} // namespace math
+
+namespace sensors
+{
+// ###########################################################################################################
+//                                               SYSTEM MODULE
+// ###########################################################################################################
+
 void to_json(json& j, const SynchronizationControlRegister& synchronizationControlRegister)
 {
     j = json{
@@ -163,161 +197,422 @@ void from_json(const json& j, BinaryOutputRegister& binaryOutputRegister)
     }
 }
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+// ###########################################################################################################
+//                                               IMU SUBSYSTEM
+// ###########################################################################################################
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+void to_json(json& j, const ImuFilteringConfigurationRegister& imuFilteringConfigurationRegister)
+{
+    j = json{
+        { "magWindowSize", imuFilteringConfigurationRegister.magWindowSize },
+        { "accelWindowSize", imuFilteringConfigurationRegister.accelWindowSize },
+        { "gyroWindowSize", imuFilteringConfigurationRegister.gyroWindowSize },
+        { "tempWindowSize", imuFilteringConfigurationRegister.tempWindowSize },
+        { "presWindowSize", imuFilteringConfigurationRegister.presWindowSize },
+        { "magFilterMode", imuFilteringConfigurationRegister.magFilterMode },
+        { "accelFilterMode", imuFilteringConfigurationRegister.accelFilterMode },
+        { "gyroFilterMode", imuFilteringConfigurationRegister.gyroFilterMode },
+        { "tempFilterMode", imuFilteringConfigurationRegister.tempFilterMode },
+        { "presFilterMode", imuFilteringConfigurationRegister.presFilterMode },
+    };
+}
+void from_json(const json& j, ImuFilteringConfigurationRegister& imuFilteringConfigurationRegister)
+{
+    if (j.contains("magWindowSize"))
+    {
+        j.at("magWindowSize").get_to(imuFilteringConfigurationRegister.magWindowSize);
+    }
+    if (j.contains("accelWindowSize"))
+    {
+        j.at("accelWindowSize").get_to(imuFilteringConfigurationRegister.accelWindowSize);
+    }
+    if (j.contains("gyroWindowSize"))
+    {
+        j.at("gyroWindowSize").get_to(imuFilteringConfigurationRegister.gyroWindowSize);
+    }
+    if (j.contains("tempWindowSize"))
+    {
+        j.at("tempWindowSize").get_to(imuFilteringConfigurationRegister.tempWindowSize);
+    }
+    if (j.contains("presWindowSize"))
+    {
+        j.at("presWindowSize").get_to(imuFilteringConfigurationRegister.presWindowSize);
+    }
+    if (j.contains("magFilterMode"))
+    {
+        j.at("magFilterMode").get_to(imuFilteringConfigurationRegister.magFilterMode);
+    }
+    if (j.contains("accelFilterMode"))
+    {
+        j.at("accelFilterMode").get_to(imuFilteringConfigurationRegister.accelFilterMode);
+    }
+    if (j.contains("gyroFilterMode"))
+    {
+        j.at("gyroFilterMode").get_to(imuFilteringConfigurationRegister.gyroFilterMode);
+    }
+    if (j.contains("tempFilterMode"))
+    {
+        j.at("tempFilterMode").get_to(imuFilteringConfigurationRegister.tempFilterMode);
+    }
+    if (j.contains("presFilterMode"))
+    {
+        j.at("presFilterMode").get_to(imuFilteringConfigurationRegister.presFilterMode);
+    }
+}
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+void to_json(json& j, const DeltaThetaAndDeltaVelocityConfigurationRegister& deltaThetaAndDeltaVelocityConfigurationRegister)
+{
+    j = json{
+        { "integrationFrame", deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame },
+        { "gyroCompensation", deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation },
+        { "accelCompensation", deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation },
+        { "earthRateCorrection", deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection },
+    };
+}
+void from_json(const json& j, DeltaThetaAndDeltaVelocityConfigurationRegister& deltaThetaAndDeltaVelocityConfigurationRegister)
+{
+    if (j.contains("integrationFrame"))
+    {
+        j.at("integrationFrame").get_to(deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame);
+    }
+    if (j.contains("gyroCompensation"))
+    {
+        j.at("gyroCompensation").get_to(deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation);
+    }
+    if (j.contains("accelCompensation"))
+    {
+        j.at("accelCompensation").get_to(deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation);
+    }
+    if (j.contains("earthRateCorrection"))
+    {
+        j.at("earthRateCorrection").get_to(deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection);
+    }
+}
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+// ###########################################################################################################
+//                                              GNSS SUBSYSTEM
+// ###########################################################################################################
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+void to_json(json& j, const GpsConfigurationRegister& gpsConfigurationRegister)
+{
+    j = json{
+        { "mode", gpsConfigurationRegister.mode },
+        { "ppsSource", gpsConfigurationRegister.ppsSource },
+        { "rate", gpsConfigurationRegister.rate },
+        { "antPow", gpsConfigurationRegister.antPow },
+    };
+}
+void from_json(const json& j, GpsConfigurationRegister& gpsConfigurationRegister)
+{
+    if (j.contains("mode"))
+    {
+        j.at("mode").get_to(gpsConfigurationRegister.mode);
+    }
+    if (j.contains("ppsSource"))
+    {
+        j.at("ppsSource").get_to(gpsConfigurationRegister.ppsSource);
+    }
+    if (j.contains("rate"))
+    {
+        j.at("rate").get_to(gpsConfigurationRegister.rate);
+    }
+    if (j.contains("antPow"))
+    {
+        j.at("antPow").get_to(gpsConfigurationRegister.antPow);
+    }
+}
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+void to_json(json& j, const GpsCompassBaselineRegister& gpsCompassBaselineRegister)
+{
+    j = json{
+        { "position", gpsCompassBaselineRegister.position },
+        { "uncertainty", gpsCompassBaselineRegister.uncertainty },
+    };
+}
+void from_json(const json& j, GpsCompassBaselineRegister& gpsCompassBaselineRegister)
+{
+    if (j.contains("position"))
+    {
+        j.at("position").get_to(gpsCompassBaselineRegister.position);
+    }
+    if (j.contains("uncertainty"))
+    {
+        j.at("uncertainty").get_to(gpsCompassBaselineRegister.uncertainty);
+    }
+}
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+// ###########################################################################################################
+//                                            ATTITUDE SUBSYSTEM
+// ###########################################################################################################
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+void to_json(json& j, const VpeBasicControlRegister& vpeBasicControlRegister)
+{
+    j = json{
+        { "enable", vpeBasicControlRegister.enable },
+        { "headingMode", vpeBasicControlRegister.headingMode },
+        { "filteringMode", vpeBasicControlRegister.filteringMode },
+        { "tuningMode", vpeBasicControlRegister.tuningMode },
+    };
+}
+void from_json(const json& j, VpeBasicControlRegister& vpeBasicControlRegister)
+{
+    if (j.contains("enable"))
+    {
+        j.at("enable").get_to(vpeBasicControlRegister.enable);
+    }
+    if (j.contains("headingMode"))
+    {
+        j.at("headingMode").get_to(vpeBasicControlRegister.headingMode);
+    }
+    if (j.contains("filteringMode"))
+    {
+        j.at("filteringMode").get_to(vpeBasicControlRegister.filteringMode);
+    }
+    if (j.contains("tuningMode"))
+    {
+        j.at("tuningMode").get_to(vpeBasicControlRegister.tuningMode);
+    }
+}
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+void to_json(json& j, const VpeMagnetometerBasicTuningRegister& vpeMagnetometerBasicTuningRegister)
+{
+    j = json{
+        { "baseTuning", vpeMagnetometerBasicTuningRegister.baseTuning },
+        { "adaptiveTuning", vpeMagnetometerBasicTuningRegister.adaptiveTuning },
+        { "adaptiveFiltering", vpeMagnetometerBasicTuningRegister.adaptiveFiltering },
+    };
+}
+void from_json(const json& j, VpeMagnetometerBasicTuningRegister& vpeMagnetometerBasicTuningRegister)
+{
+    if (j.contains("baseTuning"))
+    {
+        j.at("baseTuning").get_to(vpeMagnetometerBasicTuningRegister.baseTuning);
+    }
+    if (j.contains("adaptiveTuning"))
+    {
+        j.at("adaptiveTuning").get_to(vpeMagnetometerBasicTuningRegister.adaptiveTuning);
+    }
+    if (j.contains("adaptiveFiltering"))
+    {
+        j.at("adaptiveFiltering").get_to(vpeMagnetometerBasicTuningRegister.adaptiveFiltering);
+    }
+}
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+void to_json(json& j, const VpeAccelerometerBasicTuningRegister& vpeAccelerometerBasicTuningRegister)
+{
+    j = json{
+        { "baseTuning", vpeAccelerometerBasicTuningRegister.baseTuning },
+        { "adaptiveTuning", vpeAccelerometerBasicTuningRegister.adaptiveTuning },
+        { "adaptiveFiltering", vpeAccelerometerBasicTuningRegister.adaptiveFiltering },
+    };
+}
+void from_json(const json& j, VpeAccelerometerBasicTuningRegister& vpeAccelerometerBasicTuningRegister)
+{
+    if (j.contains("baseTuning"))
+    {
+        j.at("baseTuning").get_to(vpeAccelerometerBasicTuningRegister.baseTuning);
+    }
+    if (j.contains("adaptiveTuning"))
+    {
+        j.at("adaptiveTuning").get_to(vpeAccelerometerBasicTuningRegister.adaptiveTuning);
+    }
+    if (j.contains("adaptiveFiltering"))
+    {
+        j.at("adaptiveFiltering").get_to(vpeAccelerometerBasicTuningRegister.adaptiveFiltering);
+    }
+}
 
-// void to_json(json& j, const & )
-// {
-//     j = json{
-//         { "",  },
-//     };
-// }
-// void from_json(const json& j, & )
-// {
-//     if (j.contains(""))
-//     {
-//         j.at("").get_to();
-//     }
-// }
+void to_json(json& j, const VpeGyroBasicTuningRegister& vpeGyroBasicTuningRegister)
+{
+    j = json{
+        { "angularWalkVariance", vpeGyroBasicTuningRegister.angularWalkVariance },
+        { "baseTuning", vpeGyroBasicTuningRegister.baseTuning },
+        { "adaptiveTuning", vpeGyroBasicTuningRegister.adaptiveTuning },
+    };
+}
+void from_json(const json& j, VpeGyroBasicTuningRegister& vpeGyroBasicTuningRegister)
+{
+    if (j.contains("angularWalkVariance"))
+    {
+        j.at("angularWalkVariance").get_to(vpeGyroBasicTuningRegister.angularWalkVariance);
+    }
+    if (j.contains("baseTuning"))
+    {
+        j.at("baseTuning").get_to(vpeGyroBasicTuningRegister.baseTuning);
+    }
+    if (j.contains("adaptiveTuning"))
+    {
+        j.at("adaptiveTuning").get_to(vpeGyroBasicTuningRegister.adaptiveTuning);
+    }
+}
 
-} // namespace vn::sensors
+// ###########################################################################################################
+//                                               INS SUBSYSTEM
+// ###########################################################################################################
+
+void to_json(json& j, const InsBasicConfigurationRegisterVn300& insBasicConfigurationRegisterVn300)
+{
+    j = json{
+        { "scenario", insBasicConfigurationRegisterVn300.scenario },
+        { "ahrsAiding", insBasicConfigurationRegisterVn300.ahrsAiding },
+        { "estBaseline", insBasicConfigurationRegisterVn300.estBaseline },
+    };
+}
+void from_json(const json& j, InsBasicConfigurationRegisterVn300& insBasicConfigurationRegisterVn300)
+{
+    if (j.contains("scenario"))
+    {
+        j.at("scenario").get_to(insBasicConfigurationRegisterVn300.scenario);
+    }
+    if (j.contains("ahrsAiding"))
+    {
+        j.at("ahrsAiding").get_to(insBasicConfigurationRegisterVn300.ahrsAiding);
+    }
+    if (j.contains("estBaseline"))
+    {
+        j.at("estBaseline").get_to(insBasicConfigurationRegisterVn300.estBaseline);
+    }
+}
+
+void to_json(json& j, const StartupFilterBiasEstimateRegister& startupFilterBiasEstimateRegister)
+{
+    j = json{
+        { "gyroBias", startupFilterBiasEstimateRegister.gyroBias },
+        { "accelBias", startupFilterBiasEstimateRegister.accelBias },
+        { "pressureBias", startupFilterBiasEstimateRegister.pressureBias },
+    };
+}
+void from_json(const json& j, StartupFilterBiasEstimateRegister& startupFilterBiasEstimateRegister)
+{
+    if (j.contains("gyroBias"))
+    {
+        j.at("gyroBias").get_to(startupFilterBiasEstimateRegister.gyroBias);
+    }
+    if (j.contains("accelBias"))
+    {
+        j.at("accelBias").get_to(startupFilterBiasEstimateRegister.accelBias);
+    }
+    if (j.contains("pressureBias"))
+    {
+        j.at("pressureBias").get_to(startupFilterBiasEstimateRegister.pressureBias);
+    }
+}
+
+// ###########################################################################################################
+//                                    HARD/SOFT IRON ESTIMATOR SUBSYSTEM
+// ###########################################################################################################
+
+void to_json(json& j, const MagnetometerCalibrationControlRegister& magnetometerCalibrationControlRegister)
+{
+    j = json{
+        { "hsiMode", magnetometerCalibrationControlRegister.hsiMode },
+        { "hsiOutput", magnetometerCalibrationControlRegister.hsiOutput },
+        { "convergeRate", magnetometerCalibrationControlRegister.convergeRate },
+    };
+}
+void from_json(const json& j, MagnetometerCalibrationControlRegister& magnetometerCalibrationControlRegister)
+{
+    if (j.contains("hsiMode"))
+    {
+        j.at("hsiMode").get_to(magnetometerCalibrationControlRegister.hsiMode);
+    }
+    if (j.contains("hsiOutput"))
+    {
+        j.at("hsiOutput").get_to(magnetometerCalibrationControlRegister.hsiOutput);
+    }
+    if (j.contains("convergeRate"))
+    {
+        j.at("convergeRate").get_to(magnetometerCalibrationControlRegister.convergeRate);
+    }
+}
+
+// ###########################################################################################################
+//                                      WORLD MAGNETIC & GRAVITY MODULE
+// ###########################################################################################################
+
+void to_json(json& j, const MagneticAndGravityReferenceVectorsRegister& magneticAndGravityReferenceVectorsRegister)
+{
+    j = json{
+        { "magRef", magneticAndGravityReferenceVectorsRegister.magRef },
+        { "accRef", magneticAndGravityReferenceVectorsRegister.accRef },
+    };
+}
+void from_json(const json& j, MagneticAndGravityReferenceVectorsRegister& magneticAndGravityReferenceVectorsRegister)
+{
+    if (j.contains("magRef"))
+    {
+        j.at("magRef").get_to(magneticAndGravityReferenceVectorsRegister.magRef);
+    }
+    if (j.contains("accRef"))
+    {
+        j.at("accRef").get_to(magneticAndGravityReferenceVectorsRegister.accRef);
+    }
+}
+
+void to_json(json& j, const ReferenceVectorConfigurationRegister& referenceVectorConfigurationRegister)
+{
+    j = json{
+        { "useMagModel", referenceVectorConfigurationRegister.useMagModel },
+        { "useGravityModel", referenceVectorConfigurationRegister.useGravityModel },
+        { "recalcThreshold", referenceVectorConfigurationRegister.recalcThreshold },
+        { "year", referenceVectorConfigurationRegister.year },
+        { "position", referenceVectorConfigurationRegister.position },
+    };
+}
+void from_json(const json& j, ReferenceVectorConfigurationRegister& referenceVectorConfigurationRegister)
+{
+    if (j.contains("useMagModel"))
+    {
+        j.at("useMagModel").get_to(referenceVectorConfigurationRegister.useMagModel);
+    }
+    if (j.contains("useGravityModel"))
+    {
+        j.at("useGravityModel").get_to(referenceVectorConfigurationRegister.useGravityModel);
+    }
+    if (j.contains("recalcThreshold"))
+    {
+        j.at("recalcThreshold").get_to(referenceVectorConfigurationRegister.recalcThreshold);
+    }
+    if (j.contains("year"))
+    {
+        j.at("year").get_to(referenceVectorConfigurationRegister.year);
+    }
+    if (j.contains("position"))
+    {
+        j.at("position").get_to(referenceVectorConfigurationRegister.position);
+    }
+}
+
+// ###########################################################################################################
+//                                              VELOCITY AIDING
+// ###########################################################################################################
+
+void to_json(json& j, const VelocityCompensationControlRegister& velocityCompensationControlRegister)
+{
+    j = json{
+        { "mode", velocityCompensationControlRegister.mode },
+        { "velocityTuning", velocityCompensationControlRegister.velocityTuning },
+        { "rateTuning", velocityCompensationControlRegister.rateTuning },
+    };
+}
+void from_json(const json& j, VelocityCompensationControlRegister& velocityCompensationControlRegister)
+{
+    if (j.contains("mode"))
+    {
+        j.at("mode").get_to(velocityCompensationControlRegister.mode);
+    }
+    if (j.contains("velocityTuning"))
+    {
+        j.at("velocityTuning").get_to(velocityCompensationControlRegister.velocityTuning);
+    }
+    if (j.contains("rateTuning"))
+    {
+        j.at("rateTuning").get_to(velocityCompensationControlRegister.rateTuning);
+    }
+}
+
+} // namespace sensors
+} // namespace vn
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::binaryGroupCommon = { {
     /*  0 */ { "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C). This field is\nequivalent to the TimeStartup field in group 2."); } },
@@ -998,10 +1293,6 @@ void NAV::VectorNavSensor::guiConfig()
         LOG_DEBUG("{}: Sensor changed to {}", nameId(), sensorModel);
         flow::ApplyChanges();
         deinitializeNode();
-
-        // ###########################################################################################################
-        //                                               SYSTEM MODULE
-        // ###########################################################################################################
 
         if (sensorModel != VectorNavModel::VN310
             && (asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPS
@@ -2197,7 +2488,7 @@ void NAV::VectorNavSensor::guiConfig()
                                      "(!)");
 
             std::array<float, 3> row = { referenceFrameRotationMatrix.e00, referenceFrameRotationMatrix.e01, referenceFrameRotationMatrix.e02 };
-            if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), row.data(), "%.2f"))
+            if (ImGui::InputFloat3(fmt::format("##referenceFrameRotationMatrix row 0 {}", size_t(id)).c_str(), row.data(), "%.2f"))
             {
                 referenceFrameRotationMatrix.e00 = row.at(0);
                 referenceFrameRotationMatrix.e01 = row.at(1);
@@ -2222,7 +2513,7 @@ void NAV::VectorNavSensor::guiConfig()
                 }
             }
             row = { referenceFrameRotationMatrix.e10, referenceFrameRotationMatrix.e11, referenceFrameRotationMatrix.e12 };
-            if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), row.data(), "%.2f"))
+            if (ImGui::InputFloat3(fmt::format("##referenceFrameRotationMatrix row 1 {}", size_t(id)).c_str(), row.data(), "%.2f"))
             {
                 referenceFrameRotationMatrix.e10 = row.at(0);
                 referenceFrameRotationMatrix.e11 = row.at(1);
@@ -2247,7 +2538,7 @@ void NAV::VectorNavSensor::guiConfig()
                 }
             }
             row = { referenceFrameRotationMatrix.e20, referenceFrameRotationMatrix.e21, referenceFrameRotationMatrix.e22 };
-            if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), row.data(), "%.2f"))
+            if (ImGui::InputFloat3(fmt::format("##referenceFrameRotationMatrix row 2 {}", size_t(id)).c_str(), row.data(), "%.2f"))
             {
                 referenceFrameRotationMatrix.e20 = row.at(0);
                 referenceFrameRotationMatrix.e21 = row.at(1);
@@ -3062,7 +3353,7 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::TextUnformatted("The position of the GNSS antenna A relative to the sensor in the vehicle coordinate frame\n"
                                        "also referred to as the GNSS antenna lever arm.");
 
-                if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), gpsAntennaOffset.c, "%.2f"))
+                if (ImGui::InputFloat3(fmt::format("##gpsAntennaOffset {}", size_t(id)).c_str(), gpsAntennaOffset.c, "%.2f"))
                 {
                     LOG_DEBUG("{}: gpsAntennaOffset changed to {}", nameId(), gpsAntennaOffset);
                     flow::ApplyChanges();
@@ -4340,9 +4631,53 @@ void NAV::VectorNavSensor::guiConfig()
     //                                               IMU SUBSYSTEM
     // ###########################################################################################################
 
-    //  j[""] = ;
-    //  j[""] = ;
-    //  j[""] = ;
+    j["referenceFrameRotationMatrix"] = referenceFrameRotationMatrix;
+    j["imuFilteringConfigurationRegister"] = imuFilteringConfigurationRegister;
+    j["deltaThetaAndDeltaVelocityConfigurationRegister"] = deltaThetaAndDeltaVelocityConfigurationRegister;
+
+    // ###########################################################################################################
+    //                                              GNSS SUBSYSTEM
+    // ###########################################################################################################
+
+    j["gpsConfigurationRegister"] = gpsConfigurationRegister;
+    j["gpsAntennaOffset"] = gpsAntennaOffset;
+    j["gpsCompassBaselineRegister"] = gpsCompassBaselineRegister;
+
+    // ###########################################################################################################
+    //                                            ATTITUDE SUBSYSTEM
+    // ###########################################################################################################
+
+    j["vpeBasicControlRegister"] = vpeBasicControlRegister;
+    j["vpeMagnetometerBasicTuningRegister"] = vpeMagnetometerBasicTuningRegister;
+    j["vpeAccelerometerBasicTuningRegister"] = vpeAccelerometerBasicTuningRegister;
+    j["vpeGyroBasicTuningRegister"] = vpeGyroBasicTuningRegister;
+    j["filterStartupGyroBias"] = filterStartupGyroBias;
+
+    // ###########################################################################################################
+    //                                               INS SUBSYSTEM
+    // ###########################################################################################################
+
+    j["insBasicConfigurationRegisterVn300"] = insBasicConfigurationRegisterVn300;
+    j["startupFilterBiasEstimateRegister"] = startupFilterBiasEstimateRegister;
+
+    // ###########################################################################################################
+    //                                    HARD/SOFT IRON ESTIMATOR SUBSYSTEM
+    // ###########################################################################################################
+
+    j["magnetometerCalibrationControlRegister"] = magnetometerCalibrationControlRegister;
+
+    // ###########################################################################################################
+    //                                      WORLD MAGNETIC & GRAVITY MODULE
+    // ###########################################################################################################
+
+    j["magneticAndGravityReferenceVectorsRegister"] = magneticAndGravityReferenceVectorsRegister;
+    j["referenceVectorConfigurationRegister"] = referenceVectorConfigurationRegister;
+
+    // ###########################################################################################################
+    //                                              VELOCITY AIDING
+    // ###########################################################################################################
+
+    j["velocityCompensationControlRegister"] = velocityCompensationControlRegister;
 
     return j;
 }
@@ -4402,6 +4737,105 @@ void NAV::VectorNavSensor::restore(json const& j)
     // ###########################################################################################################
     //                                               IMU SUBSYSTEM
     // ###########################################################################################################
+
+    if (j.contains("referenceFrameRotationMatrix"))
+    {
+        j.at("referenceFrameRotationMatrix").get_to(referenceFrameRotationMatrix);
+    }
+    if (j.contains("imuFilteringConfigurationRegister"))
+    {
+        j.at("imuFilteringConfigurationRegister").get_to(imuFilteringConfigurationRegister);
+    }
+    if (j.contains("deltaThetaAndDeltaVelocityConfigurationRegister"))
+    {
+        j.at("deltaThetaAndDeltaVelocityConfigurationRegister").get_to(deltaThetaAndDeltaVelocityConfigurationRegister);
+    }
+
+    // ###########################################################################################################
+    //                                              GNSS SUBSYSTEM
+    // ###########################################################################################################
+
+    if (j.contains("gpsConfigurationRegister"))
+    {
+        j.at("gpsConfigurationRegister").get_to(gpsConfigurationRegister);
+    }
+    if (j.contains("gpsAntennaOffset"))
+    {
+        j.at("gpsAntennaOffset").get_to(gpsAntennaOffset);
+    }
+    if (j.contains("gpsCompassBaselineRegister"))
+    {
+        j.at("gpsCompassBaselineRegister").get_to(gpsCompassBaselineRegister);
+    }
+
+    // ###########################################################################################################
+    //                                            ATTITUDE SUBSYSTEM
+    // ###########################################################################################################
+
+    if (j.contains("vpeBasicControlRegister"))
+    {
+        j.at("vpeBasicControlRegister").get_to(vpeBasicControlRegister);
+    }
+    if (j.contains("vpeMagnetometerBasicTuningRegister"))
+    {
+        j.at("vpeMagnetometerBasicTuningRegister").get_to(vpeMagnetometerBasicTuningRegister);
+    }
+    if (j.contains("vpeAccelerometerBasicTuningRegister"))
+    {
+        j.at("vpeAccelerometerBasicTuningRegister").get_to(vpeAccelerometerBasicTuningRegister);
+    }
+    if (j.contains("vpeGyroBasicTuningRegister"))
+    {
+        j.at("vpeGyroBasicTuningRegister").get_to(vpeGyroBasicTuningRegister);
+    }
+    if (j.contains("filterStartupGyroBias"))
+    {
+        j.at("filterStartupGyroBias").get_to(filterStartupGyroBias);
+    }
+
+    // ###########################################################################################################
+    //                                               INS SUBSYSTEM
+    // ###########################################################################################################
+
+    if (j.contains("insBasicConfigurationRegisterVn300"))
+    {
+        j.at("insBasicConfigurationRegisterVn300").get_to(insBasicConfigurationRegisterVn300);
+    }
+    if (j.contains("startupFilterBiasEstimateRegister"))
+    {
+        j.at("startupFilterBiasEstimateRegister").get_to(startupFilterBiasEstimateRegister);
+    }
+
+    // ###########################################################################################################
+    //                                    HARD/SOFT IRON ESTIMATOR SUBSYSTEM
+    // ###########################################################################################################
+
+    if (j.contains("magnetometerCalibrationControlRegister"))
+    {
+        j.at("magnetometerCalibrationControlRegister").get_to(magnetometerCalibrationControlRegister);
+    }
+
+    // ###########################################################################################################
+    //                                      WORLD MAGNETIC & GRAVITY MODULE
+    // ###########################################################################################################
+
+    if (j.contains("magneticAndGravityReferenceVectorsRegister"))
+    {
+        j.at("magneticAndGravityReferenceVectorsRegister").get_to(magneticAndGravityReferenceVectorsRegister);
+    }
+    if (j.contains("referenceVectorConfigurationRegister"))
+    {
+        j.at("referenceVectorConfigurationRegister").get_to(referenceVectorConfigurationRegister);
+    }
+
+    // ###########################################################################################################
+    //                                              VELOCITY AIDING
+    // ###########################################################################################################
+
+    if (j.contains("velocityCompensationControlRegister"))
+    {
+        j.at("velocityCompensationControlRegister").get_to(velocityCompensationControlRegister);
+    }
 }
 
 bool NAV::VectorNavSensor::resetNode()
