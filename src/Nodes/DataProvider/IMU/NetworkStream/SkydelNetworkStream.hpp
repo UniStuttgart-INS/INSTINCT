@@ -1,4 +1,4 @@
-/// @file SkydelImuStream.hpp
+/// @file SkydelNetworkStream.hpp
 /// @brief
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-04-19
@@ -17,22 +17,22 @@
 
 namespace NAV
 {
-/// SkydelImuStream Sensor Class
-class SkydelImuStream : public Imu
+/// SkydelNetworkStream Sensor Class
+class SkydelNetworkStream : public Imu
 {
   public:
     /// @brief Default constructor
-    SkydelImuStream();
+    SkydelNetworkStream();
     /// @brief Destructor
-    ~SkydelImuStream() override;
+    ~SkydelNetworkStream() override;
     /// @brief Copy constructor
-    SkydelImuStream(const SkydelImuStream&) = delete;
+    SkydelNetworkStream(const SkydelNetworkStream&) = delete;
     /// @brief Move constructor
-    SkydelImuStream(SkydelImuStream&&) = delete;
+    SkydelNetworkStream(SkydelNetworkStream&&) = delete;
     /// @brief Copy assignment operator
-    SkydelImuStream& operator=(const SkydelImuStream&) = delete;
+    SkydelNetworkStream& operator=(const SkydelNetworkStream&) = delete;
     /// @brief Move assignment operator
-    SkydelImuStream& operator=(SkydelImuStream&&) = delete;
+    SkydelNetworkStream& operator=(SkydelNetworkStream&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();

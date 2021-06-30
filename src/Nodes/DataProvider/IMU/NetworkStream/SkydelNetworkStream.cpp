@@ -1,4 +1,4 @@
-#include "SkydelImuStream.hpp"
+#include "SkydelNetworkStream.hpp"
 
 #include <boost/asio.hpp>
 #include <thread>
@@ -16,7 +16,7 @@
 namespace nm = NAV::NodeManager;
 using boost::asio::ip::udp;
 
-NAV::SkydelImuStream::SkydelImuStream()
+NAV::SkydelNetworkStream::SkydelNetworkStream()
     : m_senderEndpoint(udp::v4(), 4444), m_socket(ioservice, m_senderEndpoint)
 {
     name = typeStatic();
@@ -27,37 +27,37 @@ NAV::SkydelImuStream::SkydelImuStream()
     nm::CreateOutputPin(this, "SkydelObs", Pin::Type::Flow, NAV::SkydelObs::type());
 }
 
-NAV::SkydelImuStream::~SkydelImuStream()
+NAV::SkydelNetworkStream::~SkydelNetworkStream()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-std::string NAV::SkydelImuStream::typeStatic()
+std::string NAV::SkydelNetworkStream::typeStatic()
 {
-    return "SkydelImuStream";
+    return "SkydelNetworkStream";
 }
 
-std::string NAV::SkydelImuStream::type() const
+std::string NAV::SkydelNetworkStream::type() const
 {
     return typeStatic();
 }
 
-std::string NAV::SkydelImuStream::category()
+std::string NAV::SkydelNetworkStream::category()
 {
     return "Data Provider";
 }
 
-void NAV::SkydelImuStream::guiConfig()
+void NAV::SkydelNetworkStream::guiConfig()
 {
     //TODO: Configure slider to enable custom data rate setting
 }
 
-bool NAV::SkydelImuStream::resetNode()
+bool NAV::SkydelNetworkStream::resetNode()
 {
     return true;
 }
 
-void NAV::SkydelImuStream::do_receive()
+void NAV::SkydelNetworkStream::do_receive()
 {
     m_socket.async_receive_from(
         boost::asio::buffer(m_data, max_length), m_senderEndpoint,
@@ -173,7 +173,7 @@ void NAV::SkydelImuStream::do_receive()
         });
 }
 
-bool NAV::SkydelImuStream::initialize()
+bool NAV::SkydelNetworkStream::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -200,7 +200,7 @@ bool NAV::SkydelImuStream::initialize()
     return true;
 }
 
-void NAV::SkydelImuStream::deinitialize()
+void NAV::SkydelNetworkStream::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
