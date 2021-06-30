@@ -140,7 +140,7 @@ NAV::Plot::Plot()
     guiConfigDefaultWindowSize = { 750, 650 };
 
     dataIdentifier = { RtklibPosObs::type(), UbloxObs::type(),
-                       ImuObs::type(), KvhObs::type(), VectorNavObs::type() };
+                       ImuObs::type(), KvhObs::type(), VectorNavImuObs::type() };
 
     updateNumberOfInputPins();
 
@@ -769,7 +769,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Status [bits]");
             data.at(pinIndex).addPlotDataItem("Sequence Number [.]");
         }
-        else if (startPin->dataIdentifier.front() == VectorNavObs::type())
+        else if (startPin->dataIdentifier.front() == VectorNavImuObs::type())
         {
             // InsObs
             data.at(pinIndex).addPlotDataItem("Time [s]");
@@ -795,7 +795,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Gyro Comp Y [rad/s]");
             data.at(pinIndex).addPlotDataItem("Gyro Comp Z [rad/s]");
             data.at(pinIndex).addPlotDataItem("Temperature [°C]");
-            // VectorNavObs
+            // VectorNavImuObs
             data.at(pinIndex).addPlotDataItem("Quaternion W []");
             data.at(pinIndex).addPlotDataItem("Quaternion X []");
             data.at(pinIndex).addPlotDataItem("Quaternion Y []");
@@ -1159,9 +1159,9 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
             {
                 plotKvhObs(std::static_pointer_cast<KvhObs>(nodeData), pinIndex);
             }
-            else if (sourcePin->dataIdentifier.front() == VectorNavObs::type())
+            else if (sourcePin->dataIdentifier.front() == VectorNavImuObs::type())
             {
-                plotVectorNavObs(std::static_pointer_cast<VectorNavObs>(nodeData), pinIndex);
+                plotVectorNavObs(std::static_pointer_cast<VectorNavImuObs>(nodeData), pinIndex);
             }
         }
     }
@@ -1412,7 +1412,7 @@ void NAV::Plot::plotKvhObs(const std::shared_ptr<KvhObs>& obs, size_t pinIndex)
     addData(pinIndex, i++, obs->sequenceNumber < 128 ? obs->sequenceNumber : std::nan(""));
 }
 
-void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex)
+void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavImuObs>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -1447,7 +1447,7 @@ void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_
     addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->y() : std::nan(""));
     addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
     addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
-    // VectorNavObs
+    // VectorNavImuObs
     addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->w() : std::nan(""));
     addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->x() : std::nan(""));
     addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->y() : std::nan(""));

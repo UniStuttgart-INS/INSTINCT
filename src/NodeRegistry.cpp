@@ -232,5 +232,5 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     // IMU
     registerNodeDataType<ImuObs>();
     registerNodeDataType<KvhObs>();
-    registerNodeDataType<VectorNavObs>();
+    registerNodeDataType<VectorNavImuObs>();
 }

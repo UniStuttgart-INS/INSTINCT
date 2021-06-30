@@ -1,4 +1,4 @@
-/// @file VectorNavObs.hpp
+/// @file VectorNavImuObs.hpp
 /// @brief Data storage class for one VectorNav observation
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-12
@@ -10,32 +10,32 @@
 namespace NAV
 {
 /// VectorNav Observation storage Class
-class VectorNavObs final : public ImuObs
+class VectorNavImuObs final : public ImuObs
 {
   public:
     /// @brief Constructor
     /// @param[in] imuPos Reference to the position and rotation info of the Imu
-    explicit VectorNavObs(const ImuPos& imuPos)
+    explicit VectorNavImuObs(const ImuPos& imuPos)
         : ImuObs(imuPos) {}
 
     /// @brief Default constructor
-    VectorNavObs() = delete;
+    VectorNavImuObs() = delete;
     /// @brief Destructor
-    ~VectorNavObs() final = default;
+    ~VectorNavImuObs() final = default;
     /// @brief Copy constructor
-    VectorNavObs(const VectorNavObs&) = delete;
+    VectorNavImuObs(const VectorNavImuObs&) = delete;
     /// @brief Move constructor
-    VectorNavObs(VectorNavObs&&) = delete;
+    VectorNavImuObs(VectorNavImuObs&&) = delete;
     /// @brief Copy assignment operator
-    VectorNavObs& operator=(const VectorNavObs&) = delete;
+    VectorNavImuObs& operator=(const VectorNavImuObs&) = delete;
     /// @brief Move assignment operator
-    VectorNavObs& operator=(VectorNavObs&&) = delete;
+    VectorNavImuObs& operator=(VectorNavImuObs&&) = delete;
 
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("VectorNavObs");
+        return std::string("VectorNavImuObs");
     }
 
     /// @brief Returns the parent types of the data class

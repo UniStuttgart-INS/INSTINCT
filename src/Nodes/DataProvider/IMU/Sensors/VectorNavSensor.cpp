@@ -19,6 +19,7 @@ namespace nm = NAV::NodeManager;
 
 #include <map>
 
+// to_json / from_json
 namespace vn
 {
 namespace math
@@ -1240,7 +1241,7 @@ NAV::VectorNavSensor::VectorNavSensor()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 917, 623 };
 
-    nm::CreateOutputPin(this, "VectorNavObs", Pin::Type::Flow, NAV::VectorNavObs::type());
+    nm::CreateOutputPin(this, "VectorNavImuObs", Pin::Type::Flow, NAV::VectorNavImuObs::type());
 
     dividerFrequency = []() {
         std::map<int, int, std::greater<>> divFreq;
@@ -5113,75 +5114,78 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
     if (p.type() == vn::protocol::uart::Packet::TYPE_BINARY)
     {
-        // Make sure that the binary packet is from the type we expect
-        if (p.isCompatible(vnSensor->binaryOutputRegister.at(0).commonField,
-                           vnSensor->binaryOutputRegister.at(0).timeField,
-                           vnSensor->binaryOutputRegister.at(0).imuField,
-                           vnSensor->binaryOutputRegister.at(0).gpsField,
-                           vnSensor->binaryOutputRegister.at(0).attitudeField,
-                           vnSensor->binaryOutputRegister.at(0).insField,
-                           vnSensor->binaryOutputRegister.at(0).gps2Field))
+        for (size_t b = 0; b < 3; b++)
         {
-            auto obs = std::make_shared<VectorNavObs>(vnSensor->imuPos);
-
-            // Group 1 (Common)
-            obs->timeSinceStartup.emplace(p.extractUint64());
-            obs->timeSinceSyncIn.emplace(p.extractUint64());
-            obs->dtime.emplace(p.extractFloat());
-            auto dtheta = p.extractVec3f();
-            obs->dtheta.emplace(dtheta.x, dtheta.y, dtheta.z);
-            auto dvel = p.extractVec3f();
-            obs->dvel.emplace(dvel.x, dvel.y, dvel.z);
-            obs->syncInCnt.emplace(p.extractUint32());
-            // Group 2 (Time)
-            // Group 3 (IMU)
-            auto magUncompXYZ = p.extractVec3f();
-            obs->magUncompXYZ.emplace(magUncompXYZ.x, magUncompXYZ.y, magUncompXYZ.z);
-            auto accelUncompXYZ = p.extractVec3f();
-            obs->accelUncompXYZ.emplace(accelUncompXYZ.x, accelUncompXYZ.y, accelUncompXYZ.z);
-            auto gyroUncompXYZ = p.extractVec3f();
-            obs->gyroUncompXYZ.emplace(gyroUncompXYZ.x, gyroUncompXYZ.y, gyroUncompXYZ.z);
-            obs->temperature.emplace(p.extractFloat());
-            obs->pressure.emplace(p.extractFloat());
-            auto magCompXYZ = p.extractVec3f();
-            obs->magCompXYZ.emplace(magCompXYZ.x, magCompXYZ.y, magCompXYZ.z);
-            auto accelCompXYZ = p.extractVec3f();
-            obs->accelCompXYZ.emplace(accelCompXYZ.x, accelCompXYZ.y, accelCompXYZ.z);
-            auto gyroCompXYZ = p.extractVec3f();
-            obs->gyroCompXYZ.emplace(gyroCompXYZ.x, gyroCompXYZ.y, gyroCompXYZ.z);
-            // Group 4 (GPS)
-            // Group 5 (Attitude)
-            obs->vpeStatus.emplace(p.extractUint16());
-            auto yawPitchRoll = p.extractVec3f();
-            obs->yawPitchRoll.emplace(yawPitchRoll.x, yawPitchRoll.y, yawPitchRoll.z);
-            auto quaternion = p.extractVec4f();
-            obs->quaternion.emplace(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
-            auto magCompNED = p.extractVec3f();
-            obs->magCompNED.emplace(magCompNED.x, magCompNED.y, magCompNED.z);
-            auto accelCompNED = p.extractVec3f();
-            obs->accelCompNED.emplace(accelCompNED.x, accelCompNED.y, accelCompNED.z);
-            auto linearAccelXYZ = p.extractVec3f();
-            obs->linearAccelXYZ.emplace(linearAccelXYZ.x, linearAccelXYZ.y, linearAccelXYZ.z);
-            auto linearAccelNED = p.extractVec3f();
-            obs->linearAccelNED.emplace(linearAccelNED.x, linearAccelNED.y, linearAccelNED.z);
-            auto yawPitchRollUncertainty = p.extractVec3f();
-            obs->yawPitchRollUncertainty.emplace(yawPitchRollUncertainty.x, yawPitchRollUncertainty.y, yawPitchRollUncertainty.z);
-
-            LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-                     vnSensor->nameId(), obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
-                     obs->vpeStatus.value().status, obs->temperature.value());
-
-            // Calls all the callbacks
-            if (InsTime currentTime = util::time::GetCurrentTime();
-                !currentTime.empty())
+            // Make sure that the binary packet is from the type we expect
+            if (p.isCompatible(vnSensor->binaryOutputRegister.at(b).commonField,
+                               vnSensor->binaryOutputRegister.at(b).timeField,
+                               vnSensor->binaryOutputRegister.at(b).imuField,
+                               vnSensor->binaryOutputRegister.at(b).gpsField,
+                               vnSensor->binaryOutputRegister.at(b).attitudeField,
+                               vnSensor->binaryOutputRegister.at(b).insField,
+                               vnSensor->binaryOutputRegister.at(b).gps2Field))
             {
-                obs->insTime = currentTime;
+                auto obs = std::make_shared<VectorNavImuObs>(vnSensor->imuPos);
+
+                // Group 1 (Common)
+                obs->timeSinceStartup.emplace(p.extractUint64());
+                obs->timeSinceSyncIn.emplace(p.extractUint64());
+                obs->dtime.emplace(p.extractFloat());
+                auto dtheta = p.extractVec3f();
+                obs->dtheta.emplace(dtheta.x, dtheta.y, dtheta.z);
+                auto dvel = p.extractVec3f();
+                obs->dvel.emplace(dvel.x, dvel.y, dvel.z);
+                obs->syncInCnt.emplace(p.extractUint32());
+                // Group 2 (Time)
+                // Group 3 (IMU)
+                auto magUncompXYZ = p.extractVec3f();
+                obs->magUncompXYZ.emplace(magUncompXYZ.x, magUncompXYZ.y, magUncompXYZ.z);
+                auto accelUncompXYZ = p.extractVec3f();
+                obs->accelUncompXYZ.emplace(accelUncompXYZ.x, accelUncompXYZ.y, accelUncompXYZ.z);
+                auto gyroUncompXYZ = p.extractVec3f();
+                obs->gyroUncompXYZ.emplace(gyroUncompXYZ.x, gyroUncompXYZ.y, gyroUncompXYZ.z);
+                obs->temperature.emplace(p.extractFloat());
+                obs->pressure.emplace(p.extractFloat());
+                auto magCompXYZ = p.extractVec3f();
+                obs->magCompXYZ.emplace(magCompXYZ.x, magCompXYZ.y, magCompXYZ.z);
+                auto accelCompXYZ = p.extractVec3f();
+                obs->accelCompXYZ.emplace(accelCompXYZ.x, accelCompXYZ.y, accelCompXYZ.z);
+                auto gyroCompXYZ = p.extractVec3f();
+                obs->gyroCompXYZ.emplace(gyroCompXYZ.x, gyroCompXYZ.y, gyroCompXYZ.z);
+                // Group 4 (GPS)
+                // Group 5 (Attitude)
+                obs->vpeStatus.emplace(p.extractUint16());
+                auto yawPitchRoll = p.extractVec3f();
+                obs->yawPitchRoll.emplace(yawPitchRoll.x, yawPitchRoll.y, yawPitchRoll.z);
+                auto quaternion = p.extractVec4f();
+                obs->quaternion.emplace(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+                auto magCompNED = p.extractVec3f();
+                obs->magCompNED.emplace(magCompNED.x, magCompNED.y, magCompNED.z);
+                auto accelCompNED = p.extractVec3f();
+                obs->accelCompNED.emplace(accelCompNED.x, accelCompNED.y, accelCompNED.z);
+                auto linearAccelXYZ = p.extractVec3f();
+                obs->linearAccelXYZ.emplace(linearAccelXYZ.x, linearAccelXYZ.y, linearAccelXYZ.z);
+                auto linearAccelNED = p.extractVec3f();
+                obs->linearAccelNED.emplace(linearAccelNED.x, linearAccelNED.y, linearAccelNED.z);
+                auto yawPitchRollUncertainty = p.extractVec3f();
+                obs->yawPitchRollUncertainty.emplace(yawPitchRollUncertainty.x, yawPitchRollUncertainty.y, yawPitchRollUncertainty.z);
+
+                LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
+                         vnSensor->nameId(), obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
+                         obs->vpeStatus.value().status, obs->temperature.value());
+
+                // Calls all the callbacks
+                if (InsTime currentTime = util::time::GetCurrentTime();
+                    !currentTime.empty())
+                {
+                    obs->insTime = currentTime;
+                }
+                vnSensor->invokeCallbacks(VectorNavSensor::OutputPortIndex_VectorNavObs, obs);
             }
-            vnSensor->invokeCallbacks(VectorNavSensor::OutputPortIndex_VectorNavObs, obs);
         }
-        else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)
-        {
-            LOG_WARN("{} received an ASCII Async message: {}", vnSensor->nameId(), p.datastr());
-        }
+    }
+    else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)
+    {
+        LOG_WARN("{} received an ASCII Async message: {}", vnSensor->nameId(), p.datastr());
     }
 }

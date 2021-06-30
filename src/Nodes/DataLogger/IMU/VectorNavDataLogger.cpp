@@ -23,7 +23,7 @@ NAV::VectorNavDataLogger::VectorNavDataLogger()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::VectorNavObs::type() }, &VectorNavDataLogger::writeObservation);
+    nm::CreateInputPin(this, "writeObservation", Pin::Type::Flow, { NAV::VectorNavImuObs::type() }, &VectorNavDataLogger::writeObservation);
 }
 
 NAV::VectorNavDataLogger::~VectorNavDataLogger()
@@ -104,7 +104,7 @@ void NAV::VectorNavDataLogger::deinitialize()
 
 void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::static_pointer_cast<VectorNavObs>(nodeData);
+    auto obs = std::static_pointer_cast<VectorNavImuObs>(nodeData);
 
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;

@@ -222,7 +222,7 @@ class Plot : public Node
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex);
+    void plotVectorNavObs(const std::shared_ptr<VectorNavImuObs>& obs, size_t pinIndex);
 
     /// Data storage for each pin
     std::vector<PinData> data;
