@@ -1505,6 +1505,29 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("Asynchronous data output frequency.\nThe ADOF will be changed for the active serial port.");
 
+            if (ImGui::DragInt(fmt::format("Async Ascii Output buffer size##{}", size_t(id)).c_str(), &asciiOutputBufferSize, 1.0F, 0, INT32_MAX / 2))
+            {
+                asciiOutputBuffer.resize(static_cast<size_t>(asciiOutputBufferSize));
+                LOG_DEBUG("{}: asciiOutputBufferSize changed to {}", nameId(), asciiOutputBufferSize);
+                flow::ApplyChanges();
+            }
+
+            std::string messages;
+            for (size_t i = 0; i < asciiOutputBuffer.size(); i++)
+            {
+                messages.append(asciiOutputBuffer.at(i));
+                if (i < asciiOutputBuffer.size() - 1)
+                {
+                    messages.append("\n");
+                }
+            }
+            ImGui::TextUnformatted("Async Ascii Messages:");
+            ImGui::BeginChild(fmt::format("##Ascii Mesages {}", size_t(id)).c_str(), ImVec2(0, 300), true);
+            ImGui::PushTextWrapPos();
+            ImGui::TextUnformatted(messages.c_str());
+            ImGui::PopTextWrapPos();
+            ImGui::EndChild();
+
             ImGui::TreePop();
         }
 
@@ -4620,6 +4643,7 @@ void NAV::VectorNavSensor::guiConfig()
 
     j["asyncDataOutputType"] = asyncDataOutputType;
     j["asyncDataOutputFrequency"] = asyncDataOutputFrequency;
+    j["asciiOutputBufferSize"] = asciiOutputBufferSize;
     j["synchronizationControlRegister"] = synchronizationControlRegister;
     j["communicationProtocolControlRegister"] = communicationProtocolControlRegister;
     for (size_t b = 0; b < 3; b++)
@@ -4705,6 +4729,11 @@ void NAV::VectorNavSensor::restore(json const& j)
         j.at("asyncDataOutputFrequency").get_to(asyncDataOutputFrequency);
         asyncDataOutputFrequencySelected = static_cast<int>(std::find(possibleAsyncDataOutputFrequency.begin(), possibleAsyncDataOutputFrequency.end(), static_cast<int>(asyncDataOutputFrequency))
                                                             - possibleAsyncDataOutputFrequency.begin());
+    }
+    if (j.contains("asciiOutputBufferSize"))
+    {
+        j.at("asciiOutputBufferSize").get_to(asciiOutputBufferSize);
+        asciiOutputBuffer.resize(static_cast<size_t>(asciiOutputBufferSize));
     }
     if (j.contains("synchronizationControlRegister"))
     {
@@ -5186,6 +5215,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
     }
     else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)
     {
-        LOG_WARN("{} received an ASCII Async message: {}", vnSensor->nameId(), p.datastr());
+        LOG_DATA("{} received an ASCII Async message: {}", vnSensor->nameId(), p.datastr());
+        vnSensor->asciiOutputBuffer.push_back(p.datastr());
+        // TODO: Send out on another port to be able to log it
     }
 }

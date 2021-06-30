@@ -9,6 +9,8 @@
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
 #include "vn/sensors.h"
 
+#include "util/ScrollingBuffer.hpp"
+
 #include <vector>
 #include <array>
 #include <cstdint>
@@ -109,6 +111,12 @@ class VectorNavSensor : public Imu, public UartSensor
     uint32_t asyncDataOutputFrequency = 40;
     /// @brief Selected Frequency of the Async Ascii Output in the GUI
     int asyncDataOutputFrequencySelected = 7;
+
+    /// @brief Max size of the Ascii Output
+    int asciiOutputBufferSize = 10;
+
+    /// @brief Buffer to store Ascii Output Messages
+    ScrollingBuffer<std::string> asciiOutputBuffer{ static_cast<size_t>(asciiOutputBufferSize) };
 
     /// @brief Synchronization Control.
     ///
