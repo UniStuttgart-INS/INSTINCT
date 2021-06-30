@@ -844,6 +844,23 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     asyncDataOutputType = asciiAsyncItem.first;
                     LOG_DEBUG("{}: asyncDataOutputType changed to {}", nameId(), vn::protocol::uart::str(asyncDataOutputType));
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeAsyncDataOutputType(asyncDataOutputType);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the asyncDataOutputType: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
                 }
                 if (ImGui::IsItemHovered())
                 {
@@ -879,6 +896,23 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 asyncDataOutputFrequency = static_cast<uint32_t>(possibleAsyncDataOutputFrequency.at(static_cast<size_t>(asyncDataOutputFrequencySelected)));
                 LOG_DEBUG("{}: asyncDataOutputType changed to {} Hz", nameId(), asyncDataOutputFrequency);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeAsyncDataOutputFrequency(asyncDataOutputFrequency);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the asyncDataOutputFrequency: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
             }
             ImGui::SameLine();
             gui::widgets::HelpMarker("Asynchronous data output frequency.\nThe ADOF will be changed for the active serial port.");
@@ -888,6 +922,9 @@ void NAV::VectorNavSensor::guiConfig()
 
         if (ImGui::TreeNode(fmt::format("Synchronization Control##{}", size_t(id)).c_str()))
         {
+            ImGui::TextUnformatted("Contains parameters which allow the timing of the VN-310E to be\n"
+                                   "synchronized with external devices.");
+
             static constexpr std::array<std::pair<vn::protocol::uart::SyncInMode, const char*>, 4> synchronizationControlSyncInModes = {
                 { { vn::protocol::uart::SyncInMode::SYNCINMODE_COUNT, "Count number of trigger events on SYNC_IN" },
                   { vn::protocol::uart::SyncInMode::SYNCINMODE_IMU, "Start IMU sampling on trigger of SYNC_IN" },
@@ -908,6 +945,23 @@ void NAV::VectorNavSensor::guiConfig()
                     {
                         synchronizationControlRegister.syncInMode = synchronizationControlSyncInMode.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncInMode changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncInMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeSynchronizationControl(synchronizationControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
                     }
                     if (ImGui::IsItemHovered())
                     {
@@ -943,6 +997,23 @@ void NAV::VectorNavSensor::guiConfig()
                     {
                         synchronizationControlRegister.syncInEdge = synchronizationControlSyncInEdge.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncInEdge changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncInEdge));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeSynchronizationControl(synchronizationControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
                     }
                     if (ImGui::IsItemHovered())
                     {
@@ -975,6 +1046,23 @@ void NAV::VectorNavSensor::guiConfig()
                 }
                 synchronizationControlRegister.syncInSkipFactor = static_cast<uint16_t>(syncInSkipFactor);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncInSkipFactor changed to {}", nameId(), synchronizationControlRegister.syncInSkipFactor);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeSynchronizationControl(synchronizationControlRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
             }
             ImGui::SameLine();
             gui::widgets::HelpMarker("The SyncInSkipFactor defines how many times trigger edges defined by SyncInEdge should occur prior to "
@@ -998,6 +1086,23 @@ void NAV::VectorNavSensor::guiConfig()
                     {
                         synchronizationControlRegister.syncOutMode = synchronizationControlSyncOutMode.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncOutMode changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncOutMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeSynchronizationControl(synchronizationControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
                     }
                     if (ImGui::IsItemHovered())
                     {
@@ -1033,6 +1138,23 @@ void NAV::VectorNavSensor::guiConfig()
                     {
                         synchronizationControlRegister.syncOutPolarity = synchronizationControlSyncOutPolarity.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncOutPolarity changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncOutPolarity));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeSynchronizationControl(synchronizationControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
                     }
                     if (ImGui::IsItemHovered())
                     {
@@ -1065,6 +1187,23 @@ void NAV::VectorNavSensor::guiConfig()
                 }
                 synchronizationControlRegister.syncOutSkipFactor = static_cast<uint16_t>(syncOutSkipFactor);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncOutSkipFactor changed to {}", nameId(), synchronizationControlRegister.syncOutSkipFactor);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeSynchronizationControl(synchronizationControlRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
             }
             ImGui::SameLine();
             gui::widgets::HelpMarker("The SyncOutSkipFactor defines how many times the sync out event should be skipped before actually triggering the SyncOut pin.");
@@ -1078,6 +1217,23 @@ void NAV::VectorNavSensor::guiConfig()
                 }
                 synchronizationControlRegister.syncOutPulseWidth = static_cast<uint32_t>(syncOutPulseWidth);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncOutPulseWidth changed to {}", nameId(), synchronizationControlRegister.syncOutPulseWidth);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeSynchronizationControl(synchronizationControlRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the synchronizationControlRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
             }
             ImGui::SameLine();
             gui::widgets::HelpMarker("The SyncOutPulseWidth field controls the desired width of the SyncOut pulse.\n"
@@ -1090,6 +1246,8 @@ void NAV::VectorNavSensor::guiConfig()
 
         if (ImGui::TreeNode(fmt::format("Communication Protocol Control##{}", size_t(id)).c_str()))
         {
+            ImGui::TextUnformatted("Contains parameters that controls the communication protocol used by the sensor.");
+
             static constexpr std::array<std::pair<vn::protocol::uart::CountMode, const char*>, 5> communicationProtocolControlSerialCounts = {
                 { { vn::protocol::uart::CountMode::COUNTMODE_NONE, "OFF" },
                   { vn::protocol::uart::CountMode::COUNTMODE_SYNCINCOUNT, "SyncIn Counter" },
@@ -1106,6 +1264,23 @@ void NAV::VectorNavSensor::guiConfig()
                     {
                         communicationProtocolControlRegister.serialCount = communicationProtocolControlSerialCount.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.serialCount changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialCount));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
                     }
                     if (ImGui::IsItemHovered())
                     {
@@ -1147,6 +1322,23 @@ void NAV::VectorNavSensor::guiConfig()
                     {
                         communicationProtocolControlRegister.serialStatus = communicationProtocolControlSerialStatus.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.serialStatus changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialStatus));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
                     }
                     if (ImGui::IsItemHovered())
                     {
@@ -1186,6 +1378,23 @@ void NAV::VectorNavSensor::guiConfig()
                         {
                             communicationProtocolControlRegister.spiCount = communicationProtocolControlSpiCount.first;
                             LOG_DEBUG("{}: communicationProtocolControlRegister.spiCount changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiCount));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
                         }
                         if (ImGui::IsItemHovered())
                         {
@@ -1217,6 +1426,23 @@ void NAV::VectorNavSensor::guiConfig()
                         {
                             communicationProtocolControlRegister.spiStatus = communicationProtocolControlSpiStatus.first;
                             LOG_DEBUG("{}: communicationProtocolControlRegister.spiStatus changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiStatus));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
                         }
                         if (ImGui::IsItemHovered())
                         {
@@ -1252,6 +1478,23 @@ void NAV::VectorNavSensor::guiConfig()
                     {
                         communicationProtocolControlRegister.serialChecksum = communicationProtocolControlSerialChecksum.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.serialChecksum changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialChecksum));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
                     }
                     if (ImGui::IsItemHovered())
                     {
@@ -1289,6 +1532,23 @@ void NAV::VectorNavSensor::guiConfig()
                         {
                             communicationProtocolControlRegister.spiChecksum = communicationProtocolControlSpiChecksum.first;
                             LOG_DEBUG("{}: communicationProtocolControlRegister.spiChecksum changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiChecksum));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
                         }
                         if (ImGui::IsItemHovered())
                         {
@@ -1324,6 +1584,23 @@ void NAV::VectorNavSensor::guiConfig()
                     {
                         communicationProtocolControlRegister.errorMode = communicationProtocolControlErrorMode.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.errorMode changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.errorMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the communicationProtocolControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
                     }
                     if (ImGui::IsItemHovered())
                     {
@@ -1395,10 +1672,38 @@ void NAV::VectorNavSensor::guiConfig()
                                      0, static_cast<int>(dividerFrequency.second.size()) - 1,
                                      frequencyText))
                 {
-                    LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)));
                     binaryOutputRegister.at(b).rateDivisor = dividerFrequency.first.at(binaryOutputSelectedFrequency.at(b));
+                    LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)));
                     flow::ApplyChanges();
-                    deinitializeNode();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            switch (b)
+                            {
+                            case 0:
+                                vs.writeBinaryOutput1(binaryOutputRegister.at(0));
+                                break;
+                            case 1:
+                                vs.writeBinaryOutput2(binaryOutputRegister.at(1));
+                                break;
+                            case 2:
+                                vs.writeBinaryOutput3(binaryOutputRegister.at(2));
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), b + 1, e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
                 }
 
                 if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 7,
@@ -1413,7 +1718,7 @@ void NAV::VectorNavSensor::guiConfig()
                     ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthAutoResize);
                     ImGui::TableHeadersRow();
 
-                    auto CheckboxFlags = [](int index, const char* label, int* flags, int flags_value, bool enabled = true) {
+                    auto CheckboxFlags = [&, this](int index, const char* label, int* flags, int flags_value, bool enabled = true) {
                         ImGui::TableSetColumnIndex(index);
 
                         if (!enabled)
@@ -1422,7 +1727,40 @@ void NAV::VectorNavSensor::guiConfig()
                             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                         }
 
-                        ImGui::CheckboxFlags(label, flags, flags_value);
+                        if (ImGui::CheckboxFlags(label, flags, flags_value))
+                        {
+                            LOG_DEBUG("{}: Field '{}' of Binary Group {} is now {}", nameId(), std::string(label).substr(0, std::string(label).find('#')), b + 1, (*flags & flags_value) ? "checked" : "unchecked");
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    switch (b)
+                                    {
+                                    case 0:
+                                        vs.writeBinaryOutput1(binaryOutputRegister.at(0));
+                                        break;
+                                    case 1:
+                                        vs.writeBinaryOutput2(binaryOutputRegister.at(1));
+                                        break;
+                                    case 2:
+                                        vs.writeBinaryOutput3(binaryOutputRegister.at(2));
+                                        break;
+                                    default:
+                                        break;
+                                    }
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), b + 1, e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
+                        }
 
                         if (!enabled)
                         {
@@ -1541,8 +1879,8 @@ void NAV::VectorNavSensor::guiConfig()
             gui::widgets::HelpMarker("This register contains a transformation matrix that allows for the transformation of measured acceleration, "
                                      "magnetic, and angular rates from the body frame of the VN-310E to any other arbitrary frame of reference. "
                                      "The use of this register allows for the sensor to be placed in any arbitrary orientation with respect to the "
-                                     "user’s desired body coordinate frame. This register can also be used to correct for any orientation errors due "
-                                     "to mounting the VN-310E on the user’s vehicle or platform.\n\n"
+                                     "user's desired body coordinate frame. This register can also be used to correct for any orientation errors due "
+                                     "to mounting the VN-310E on the user's vehicle or platform.\n\n"
                                      "(X Y Z)_U = C * (X Y Z)_B\n\n"
                                      "The variables (X Y Z)_B are a measured parameter such as acceleration in the body reference frame with "
                                      "respect to the VectorNav. The variables (X Y Z)_U are a measured parameter such as acceleration in the user's "
@@ -1573,6 +1911,23 @@ void NAV::VectorNavSensor::guiConfig()
                 referenceFrameRotationMatrix.e01 = row.at(1);
                 referenceFrameRotationMatrix.e02 = row.at(2);
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
             }
             row = { referenceFrameRotationMatrix.e10, referenceFrameRotationMatrix.e11, referenceFrameRotationMatrix.e12 };
             if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), row.data(), "%.2f"))
@@ -1581,6 +1936,23 @@ void NAV::VectorNavSensor::guiConfig()
                 referenceFrameRotationMatrix.e11 = row.at(1);
                 referenceFrameRotationMatrix.e12 = row.at(2);
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
             }
             row = { referenceFrameRotationMatrix.e20, referenceFrameRotationMatrix.e21, referenceFrameRotationMatrix.e22 };
             if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), row.data(), "%.2f"))
@@ -1589,6 +1961,23 @@ void NAV::VectorNavSensor::guiConfig()
                 referenceFrameRotationMatrix.e21 = row.at(1);
                 referenceFrameRotationMatrix.e22 = row.at(2);
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
             }
 
             ImGui::TreePop();
@@ -1596,8 +1985,908 @@ void NAV::VectorNavSensor::guiConfig()
 
         if (ImGui::TreeNode(fmt::format("IMU Filtering Configuration##{}", size_t(id)).c_str()))
         {
+            ImGui::TextUnformatted("This register allows the user to configure the FIR filtering what is applied to the IMU measurements. The\n"
+                                   "filter is a uniformly-weighted moving window (boxcar) filter of configurable size. The filtering does not affect\n"
+                                   "the values used by the internal filter, but only the output values.");
+
+            int magWindowSize = imuFilteringConfigurationRegister.magWindowSize;
+            if (ImGui::InputInt(fmt::format("Mag Window Size##{}", size_t(id)).c_str(), &magWindowSize))
+            {
+                if (magWindowSize < 0)
+                {
+                    magWindowSize = 0;
+                }
+                else if (magWindowSize > std::numeric_limits<uint16_t>::max())
+                {
+                    magWindowSize = std::numeric_limits<uint16_t>::max();
+                }
+                imuFilteringConfigurationRegister.magWindowSize = static_cast<uint16_t>(magWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.magWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.magWindowSize);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
+                                     "which will be averaged for each output measurement.");
+
+            int accelWindowSize = imuFilteringConfigurationRegister.accelWindowSize;
+            if (ImGui::InputInt(fmt::format("Accel Window Size##{}", size_t(id)).c_str(), &accelWindowSize))
+            {
+                if (accelWindowSize < 0)
+                {
+                    accelWindowSize = 0;
+                }
+                else if (accelWindowSize > std::numeric_limits<uint16_t>::max())
+                {
+                    accelWindowSize = std::numeric_limits<uint16_t>::max();
+                }
+                imuFilteringConfigurationRegister.accelWindowSize = static_cast<uint16_t>(accelWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.accelWindowSize);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
+                                     "which will be averaged for each output measurement.");
+
+            int gyroWindowSize = imuFilteringConfigurationRegister.gyroWindowSize;
+            if (ImGui::InputInt(fmt::format("Gyro Window Size##{}", size_t(id)).c_str(), &gyroWindowSize))
+            {
+                if (gyroWindowSize < 0)
+                {
+                    gyroWindowSize = 0;
+                }
+                else if (gyroWindowSize > std::numeric_limits<uint16_t>::max())
+                {
+                    gyroWindowSize = std::numeric_limits<uint16_t>::max();
+                }
+                imuFilteringConfigurationRegister.gyroWindowSize = static_cast<uint16_t>(gyroWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.gyroWindowSize);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
+                                     "which will be averaged for each output measurement.");
+
+            int tempWindowSize = imuFilteringConfigurationRegister.tempWindowSize;
+            if (ImGui::InputInt(fmt::format("Temp Window Size##{}", size_t(id)).c_str(), &tempWindowSize))
+            {
+                if (tempWindowSize < 0)
+                {
+                    tempWindowSize = 0;
+                }
+                else if (tempWindowSize > std::numeric_limits<uint16_t>::max())
+                {
+                    tempWindowSize = std::numeric_limits<uint16_t>::max();
+                }
+                imuFilteringConfigurationRegister.tempWindowSize = static_cast<uint16_t>(tempWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.tempWindowSize);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
+                                     "which will be averaged for each output measurement.");
+
+            int presWindowSize = imuFilteringConfigurationRegister.presWindowSize;
+            if (ImGui::InputInt(fmt::format("Pres Window Size##{}", size_t(id)).c_str(), &presWindowSize))
+            {
+                if (presWindowSize < 0)
+                {
+                    presWindowSize = 0;
+                }
+                else if (presWindowSize > std::numeric_limits<uint16_t>::max())
+                {
+                    presWindowSize = std::numeric_limits<uint16_t>::max();
+                }
+                imuFilteringConfigurationRegister.presWindowSize = static_cast<uint16_t>(presWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.presWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.presWindowSize);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
+                                     "which will be averaged for each output measurement.");
+
+            static constexpr std::array<std::pair<vn::protocol::uart::FilterMode, const char*>, 4> imuFilteringConfigurationFilterModes = {
+                { { vn::protocol::uart::FilterMode::FILTERMODE_NOFILTERING, "No Filtering" },
+                  { vn::protocol::uart::FilterMode::FILTERMODE_ONLYRAW, "Filtering performed only on raw uncompensated IMU measurements." },
+                  { vn::protocol::uart::FilterMode::FILTERMODE_ONLYCOMPENSATED, "Filtering performed only on compensated IMU measurements." },
+                  { vn::protocol::uart::FilterMode::FILTERMODE_BOTH, "Filtering performed on both uncompensated and compensated IMU measurements." } }
+            };
+            if (ImGui::BeginCombo(fmt::format("Mag Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.magFilterMode).c_str()))
+            {
+                for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
+                {
+                    const bool isSelected = (imuFilteringConfigurationRegister.magFilterMode == imuFilteringConfigurationFilterMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
+                    {
+                        imuFilteringConfigurationRegister.magFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.magFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.magFilterMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(imuFilteringConfigurationFilterMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The FilterMode parameters for each sensor select which output quantities the filtering should be applied to. "
+                                     "Filtering can be applied to either the uncompensated IMU measurements, compensated (HSI and biases "
+                                     "compensated by onboard filters, if applicable), or both.");
+
+            if (ImGui::BeginCombo(fmt::format("Accel Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.accelFilterMode).c_str()))
+            {
+                for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
+                {
+                    const bool isSelected = (imuFilteringConfigurationRegister.accelFilterMode == imuFilteringConfigurationFilterMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
+                    {
+                        imuFilteringConfigurationRegister.accelFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.accelFilterMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(imuFilteringConfigurationFilterMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The FilterMode parameters for each sensor select which output quantities the filtering should be applied to. "
+                                     "Filtering can be applied to either the uncompensated IMU measurements, compensated (HSI and biases "
+                                     "compensated by onboard filters, if applicable), or both.");
+
+            if (ImGui::BeginCombo(fmt::format("Gyro Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.gyroFilterMode).c_str()))
+            {
+                for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
+                {
+                    const bool isSelected = (imuFilteringConfigurationRegister.gyroFilterMode == imuFilteringConfigurationFilterMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
+                    {
+                        imuFilteringConfigurationRegister.gyroFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.gyroFilterMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(imuFilteringConfigurationFilterMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The FilterMode parameters for each sensor select which output quantities the filtering should be applied to. "
+                                     "Filtering can be applied to either the uncompensated IMU measurements, compensated (HSI and biases "
+                                     "compensated by onboard filters, if applicable), or both.");
+
+            if (ImGui::BeginCombo(fmt::format("Temp Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.tempFilterMode).c_str()))
+            {
+                for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
+                {
+                    const bool isSelected = (imuFilteringConfigurationRegister.tempFilterMode == imuFilteringConfigurationFilterMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
+                    {
+                        imuFilteringConfigurationRegister.tempFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.tempFilterMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(imuFilteringConfigurationFilterMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The FilterMode parameters for each sensor select which output quantities the filtering should be applied to. "
+                                     "Filtering can be applied to either the uncompensated IMU measurements, compensated (HSI and biases "
+                                     "compensated by onboard filters, if applicable), or both.");
+
+            if (ImGui::BeginCombo(fmt::format("Pres Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.presFilterMode).c_str()))
+            {
+                for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
+                {
+                    const bool isSelected = (imuFilteringConfigurationRegister.presFilterMode == imuFilteringConfigurationFilterMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
+                    {
+                        imuFilteringConfigurationRegister.presFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.presFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.presFilterMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the imuFilteringConfigurationRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(imuFilteringConfigurationFilterMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The FilterMode parameters for each sensor select which output quantities the filtering should be applied to. "
+                                     "Filtering can be applied to either the uncompensated IMU measurements, compensated (HSI and biases "
+                                     "compensated by onboard filters, if applicable), or both.");
+
             ImGui::TreePop();
         }
+
+        if (ImGui::TreeNode(fmt::format("Delta Theta and Delta Velocity Configuration##{}", size_t(id)).c_str()))
+        {
+            ImGui::TextUnformatted("The Delta Theta and Delta Velocity Configuration register allows configuration of the onboard coning and\n"
+                                   "sculling used to generate integrated motion values from the angular rate and acceleration IMU quantities.\n"
+                                   "The fully-coupled coning and sculling integrals are computed at the IMU sample rate (nominal 400 Hz).");
+
+            static constexpr std::array<std::pair<vn::protocol::uart::IntegrationFrame, const char*>, 2> deltaThetaAndDeltaVelocityConfigurationIntegrationFrames = {
+                { { vn::protocol::uart::IntegrationFrame::INTEGRATIONFRAME_BODY, "Body frame" },
+                  { vn::protocol::uart::IntegrationFrame::INTEGRATIONFRAME_NED, "NED frame" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame).c_str()))
+            {
+                for (const auto& deltaThetaAndDeltaVelocityConfigurationIntegrationFrame : deltaThetaAndDeltaVelocityConfigurationIntegrationFrames)
+                {
+                    const bool isSelected = (deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame == deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first).c_str(), isSelected))
+                    {
+                        deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame = deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first;
+                        LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame changed to {}", nameId(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeDeltaThetaAndDeltaVelocityConfiguration(deltaThetaAndDeltaVelocityConfigurationRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the deltaThetaAndDeltaVelocityConfigurationRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The IntegrationFrame register setting selects the reference frame used for coning and sculling. Note that "
+                                     "using any frame other than the body frame will rely on the onboard Kalman filter's attitude estimate. The "
+                                     "factory default state is to integrate in the sensor body frame.");
+
+            static constexpr std::array<std::pair<vn::protocol::uart::CompensationMode, const char*>, 2> deltaThetaAndDeltaVelocityConfigurationGyroCompensationModes = {
+                { { vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE, "None" },
+                  { vn::protocol::uart::CompensationMode::COMPENSATIONMODE_BIAS, "Bias" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("Gyro Compensation##{}", size_t(id)).c_str(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation).c_str()))
+            {
+                for (const auto& deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode : deltaThetaAndDeltaVelocityConfigurationGyroCompensationModes)
+                {
+                    const bool isSelected = (deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation == deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first).c_str(), isSelected))
+                    {
+                        deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation = deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first;
+                        LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation changed to {}", nameId(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeDeltaThetaAndDeltaVelocityConfiguration(deltaThetaAndDeltaVelocityConfigurationRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the deltaThetaAndDeltaVelocityConfigurationRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The GyroCompensation register setting selects the compensation to be applied to the angular rate "
+                                     "measurements before integration. If bias compensation is selected, the onboard Kalman filter’s real-time "
+                                     "estimate of the gyro biases will be used to compensate the IMU measurements before integration. The "
+                                     "factory default state is to integrate the uncompensated angular rates from the IMU.");
+
+            static constexpr std::array<std::pair<vn::protocol::uart::AccCompensationMode, const char*>, 2> deltaThetaAndDeltaVelocityConfigurationAccelCompensationModes = {
+                { { vn::protocol::uart::AccCompensationMode::ACCCOMPENSATIONMODE_NONE, "None" },
+                  { vn::protocol::uart::AccCompensationMode::ACCCOMPENSATIONMODE_BIAS, "Bias" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("Accel Compensation##{}", size_t(id)).c_str(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation).c_str()))
+            {
+                for (const auto& deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode : deltaThetaAndDeltaVelocityConfigurationAccelCompensationModes)
+                {
+                    const bool isSelected = (deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation == deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first).c_str(), isSelected))
+                    {
+                        deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation = deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first;
+                        LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation changed to {}", nameId(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeDeltaThetaAndDeltaVelocityConfiguration(deltaThetaAndDeltaVelocityConfigurationRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the deltaThetaAndDeltaVelocityConfigurationRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The AccelCompensation register setting selects the compensation to be applied to the acceleration "
+                                     "measurements before integration. If bias compensation is selected, the onboard Kalman filter’s real-time "
+                                     "estimate of the accel biases will be used to compensate the IMU measurements before integration. The "
+                                     "factory default state is to integrate the uncompensated acceleration from the IMU.");
+
+            ImGui::TreePop();
+        }
+    }
+
+    // ###########################################################################################################
+    //                                              GNSS SUBSYSTEM
+    // ###########################################################################################################
+
+    if (sensorModel == VectorNavModel::VN310)
+    {
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::CollapsingHeader(fmt::format("GNSS Subsystem##{}", size_t(id)).c_str()))
+        {
+            if (ImGui::TreeNode(fmt::format("GNSS Configuration##{}", size_t(id)).c_str()))
+            {
+                static constexpr std::array<std::pair<vn::protocol::uart::GpsMode, const char*>, 3> gpsConfigurationModes = {
+                    { { vn::protocol::uart::GpsMode::GPSMODE_ONBOARDGPS, "Use onboard GNSS" },
+                      { vn::protocol::uart::GpsMode::GPSMODE_EXTERNALGPS, "Use external GNSS" },
+                      { vn::protocol::uart::GpsMode::GPSMODE_EXTERNALVN200GPS, "Use external VectorNav sensor as the GNSS" } }
+                };
+                if (ImGui::BeginCombo(fmt::format("Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(gpsConfigurationRegister.mode).c_str()))
+                {
+                    for (const auto& gpsConfigurationMode : gpsConfigurationModes)
+                    {
+                        const bool isSelected = (gpsConfigurationRegister.mode == gpsConfigurationMode.first);
+                        if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationMode.first).c_str(), isSelected))
+                        {
+                            gpsConfigurationRegister.mode = gpsConfigurationMode.first;
+                            LOG_DEBUG("{}: gpsConfigurationRegister.mode changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.mode));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    vs.writeGpsConfiguration(gpsConfigurationRegister);
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::BeginTooltip();
+                            ImGui::TextUnformatted(gpsConfigurationMode.second);
+                            ImGui::EndTooltip();
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                static constexpr std::array<std::pair<vn::protocol::uart::PpsSource, const char*>, 4> gpsConfigurationPpsSources = {
+                    { { vn::protocol::uart::PpsSource::PPSSOURCE_GPSPPSRISING, "GNSS PPS signal is present on the GNSS_PPS pin (pin 24) and should trigger on a rising edge." },
+                      { vn::protocol::uart::PpsSource::PPSSOURCE_GPSPPSFALLING, "GNSS PPS signal is present on the GNSS_PPS pin (pin 24) and should trigger on a falling edge" },
+                      { vn::protocol::uart::PpsSource::PPSSOURCE_SYNCINRISING, "GNSS PPS signal is present on the SyncIn pin (pin 22) and should trigger on a rising edge" },
+                      { vn::protocol::uart::PpsSource::PPSSOURCE_SYNCINFALLING, "GNSS PPS signal is present on the SyncIn pin (pin 22) and should trigger on a falling edge" } }
+                };
+                if (ImGui::BeginCombo(fmt::format("PPS Source##{}", size_t(id)).c_str(), vn::protocol::uart::str(gpsConfigurationRegister.ppsSource).c_str()))
+                {
+                    for (const auto& gpsConfigurationPpsSource : gpsConfigurationPpsSources)
+                    {
+                        const bool isSelected = (gpsConfigurationRegister.ppsSource == gpsConfigurationPpsSource.first);
+                        if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationPpsSource.first).c_str(), isSelected))
+                        {
+                            gpsConfigurationRegister.ppsSource = gpsConfigurationPpsSource.first;
+                            LOG_DEBUG("{}: gpsConfigurationRegister.ppsSource changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.ppsSource));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    vs.writeGpsConfiguration(gpsConfigurationRegister);
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::BeginTooltip();
+                            ImGui::TextUnformatted(gpsConfigurationPpsSource.second);
+                            ImGui::EndTooltip();
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                static constexpr std::array<std::pair<vn::protocol::uart::GpsRate, const char*>, 1> gpsConfigurationRates = {
+                    { /* { vn::protocol::uart::GpsRate::GPSRATE_1HZ, "GNSS update rate : 1 Hz" }, */
+                      { vn::protocol::uart::GpsRate::GPSRATE_5HZ, "GNSS update rate : 5 Hz" } }
+                };
+                if (ImGui::BeginCombo(fmt::format("Rate##{}", size_t(id)).c_str(), vn::protocol::uart::str(gpsConfigurationRegister.rate).c_str()))
+                {
+                    for (const auto& gpsConfigurationRate : gpsConfigurationRates)
+                    {
+                        const bool isSelected = (gpsConfigurationRegister.rate == gpsConfigurationRate.first);
+                        if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationRate.first).c_str(), isSelected))
+                        {
+                            gpsConfigurationRegister.rate = gpsConfigurationRate.first;
+                            LOG_DEBUG("{}: gpsConfigurationRegister.rate changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.rate));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    vs.writeGpsConfiguration(gpsConfigurationRegister);
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::BeginTooltip();
+                            ImGui::TextUnformatted(gpsConfigurationRate.second);
+                            ImGui::EndTooltip();
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("GNSS navigation rate. Value must be set to 5.");
+
+                static constexpr std::array<std::pair<vn::protocol::uart::AntPower, const char*>, 3> gpsConfigurationAntPowers = {
+                    { { vn::protocol::uart::AntPower::ANTPOWER_OFFRESV, "Disable antenna power supply." },
+                      { vn::protocol::uart::AntPower::ANTPOWER_INTERNAL, "Use internal antenna power supply (3V, 50mA combined)." },
+                      { vn::protocol::uart::AntPower::ANTPOWER_EXTERNAL, "Use external antenna power supply (VANT pin, up to 5V and 100mA combined)" } }
+                };
+                if (ImGui::BeginCombo(fmt::format("Ant Power##{}", size_t(id)).c_str(), vn::protocol::uart::str(gpsConfigurationRegister.antPow).c_str()))
+                {
+                    for (const auto& gpsConfigurationAntPower : gpsConfigurationAntPowers)
+                    {
+                        const bool isSelected = (gpsConfigurationRegister.antPow == gpsConfigurationAntPower.first);
+                        if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationAntPower.first).c_str(), isSelected))
+                        {
+                            gpsConfigurationRegister.antPow = gpsConfigurationAntPower.first;
+                            LOG_DEBUG("{}: gpsConfigurationRegister.antPow changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.antPow));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    vs.writeGpsConfiguration(gpsConfigurationRegister);
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the gpsConfigurationRegister: {}", nameId(), e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::BeginTooltip();
+                            ImGui::TextUnformatted(gpsConfigurationAntPower.second);
+                            ImGui::EndTooltip();
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("GNSS navigation rate. Value must be set to 5.");
+
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode(fmt::format("GNSS Antenna A Offset##{}", size_t(id)).c_str()))
+            {
+                ImGui::TextUnformatted("The position of the GNSS antenna A relative to the sensor in the vehicle coordinate frame\n"
+                                       "also referred to as the GNSS antenna lever arm.");
+
+                if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), gpsAntennaOffset.c, "%.2f"))
+                {
+                    LOG_DEBUG("{}: gpsAntennaOffset changed to {}", nameId(), gpsAntennaOffset);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeGpsAntennaOffset(gpsAntennaOffset);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the gpsAntennaOffset: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode(fmt::format("GNSS Compass Baseline##{}", size_t(id)).c_str()))
+            {
+                ImGui::TextUnformatted("Configures the position offset and measurement uncertainty of the second GNSS\n"
+                                       "antenna relative to the first GNSS antenna in the vehicle reference frame.");
+
+                if (ImGui::InputFloat3(fmt::format("Position [m]##{}", size_t(id)).c_str(), gpsCompassBaselineRegister.position.c, "%.3f"))
+                {
+                    LOG_DEBUG("{}: gpsCompassBaselineRegister.position changed to {}", nameId(), gpsCompassBaselineRegister.position);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeGpsCompassBaseline(gpsCompassBaselineRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the gpsCompassBaselineRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("HEADING ACCURACY\n\n"
+                                         "The accuracy of the estimated heading is dependent upon the accuracy of the measured baseline "
+                                         "between the two GNSS antennas. The factory default baseline is {1.0m, 0.0m, 0.0m}. If any other "
+                                         "baseline is used, it is extremely important that the user acurately measures this baseline to ensure "
+                                         "accurate heading estimates.\n"
+                                         "The heading accuracy is linearly proportional to the measurement accuracy of the position of "
+                                         "GNSS antenna B with respect to GNSS antenna A, and inversely proportional to the baseline "
+                                         "length.\n\n"
+                                         "Heading Error [deg] ~= 0.57 * (Baseline Error [cm]) / (Baseline Length [m])\n\n"
+                                         "On a 1 meter baseline, a 1 cm measurement error equates to heading error of 0.6 degrees.",
+                                         "(!)");
+
+                if (ImGui::InputFloat3(fmt::format("Uncertainty [m]##{}", size_t(id)).c_str(), gpsCompassBaselineRegister.uncertainty.c, "%.3f"))
+                {
+                    LOG_DEBUG("{}: gpsCompassBaselineRegister.uncertainty changed to {}", nameId(), gpsCompassBaselineRegister.uncertainty);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeGpsCompassBaseline(gpsCompassBaselineRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the gpsCompassBaselineRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("MEASUREMENT UNCERTAINTY\n\n"
+                                         "For the VN-310E to function properly it is very important that the user supplies a reasonable "
+                                         "measurement uncertainty that is greater than the actual uncertainty in the baseline measurement. "
+                                         "The VN-310E uses the uncertainty supplied by the user to validate measurements that it receives "
+                                         "from the GNSS receivers. If the user inputs an uncertainty that is lower than the actual error in "
+                                         "the baseline measurement between the two antennas, the VN-310E will no longer be able to derive "
+                                         "heading estimates from the GNSS.\n\n"
+                                         "It is recommended that you set the uncertainty equal to twice what you expect the worst case "
+                                         "error to be in your baseline measurements. In many applications it is easier to measure more "
+                                         "accurately in one direction than another. It is recommended that you set each of the X, Y, & Z "
+                                         "uncertainties seperately to reflect this, as opposed to using a single large value.",
+                                         "(!)");
+
+                ImGui::TreePop();
+            }
+        }
+    }
+
+    // ###########################################################################################################
+    //                                            ATTITUDE SUBSYSTEM
+    // ###########################################################################################################
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::CollapsingHeader(fmt::format("Attitude Subsystem##{}", size_t(id)).c_str()))
+    {
     }
 }
 
