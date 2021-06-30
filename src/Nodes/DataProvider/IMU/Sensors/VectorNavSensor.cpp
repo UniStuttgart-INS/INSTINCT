@@ -699,6 +699,10 @@ void NAV::VectorNavSensor::guiConfig()
         flow::ApplyChanges();
         deinitializeNode();
 
+        // ###########################################################################################################
+        //                                               SYSTEM MODULE
+        // ###########################################################################################################
+
         if (sensorModel != VectorNavModel::VN310
             && (asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPS
                 || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPE
@@ -712,50 +716,59 @@ void NAV::VectorNavSensor::guiConfig()
             asyncDataOutputType = vn::protocol::uart::AsciiAsync::VNOFF;
         }
 
-        // TODO:
-        // for (const auto& item : binaryGroupCommon)
-        // {
-        //     if (!item.isEnabled(sensorModel))
-        //     {
-        //         config.commonField &= ~vn::protocol::uart::CommonGroup(item.flagsValue);
-        //     }
-        // }
-        // for (const auto& item : binaryGroupTime)
-        // {
-        //     if (!item.isEnabled(sensorModel))
-        //     {
-        //         config.timeField &= ~vn::protocol::uart::TimeGroup(item.flagsValue);
-        //     }
-        // }
-        // for (const auto& item : binaryGroupIMU)
-        // {
-        //     if (!item.isEnabled(sensorModel))
-        //     {
-        //         config.imuField &= ~vn::protocol::uart::ImuGroup(item.flagsValue);
-        //     }
-        // }
-        // for (const auto& item : binaryGroupGNSS)
-        // {
-        //     if (!item.isEnabled(sensorModel))
-        //     {
-        //         config.gnss1Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
-        //         config.gnss2Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
-        //     }
-        // }
-        // for (const auto& item : binaryGroupAttitude)
-        // {
-        //     if (!item.isEnabled(sensorModel))
-        //     {
-        //         config.attitudeField &= ~vn::protocol::uart::AttitudeGroup(item.flagsValue);
-        //     }
-        // }
-        // for (const auto& item : binaryGroupINS)
-        // {
-        //     if (!item.isEnabled(sensorModel))
-        //     {
-        //         config.insField &= ~vn::protocol::uart::InsGroup(item.flagsValue);
-        //     }
-        // }
+        if (sensorModel == VectorNavModel::VN310)
+        {
+            communicationProtocolControlRegister.spiCount = vn::protocol::uart::CountMode::COUNTMODE_NONE;
+            communicationProtocolControlRegister.spiStatus = vn::protocol::uart::StatusMode::STATUSMODE_OFF;
+            communicationProtocolControlRegister.spiChecksum = vn::protocol::uart::ChecksumMode::CHECKSUMMODE_OFF;
+        }
+
+        for (auto& binaryOutput : binaryOutputRegister)
+        {
+            for (const auto& item : binaryGroupCommon)
+            {
+                if (!item.isEnabled(sensorModel))
+                {
+                    binaryOutput.commonField &= ~vn::protocol::uart::CommonGroup(item.flagsValue);
+                }
+            }
+            for (const auto& item : binaryGroupTime)
+            {
+                if (!item.isEnabled(sensorModel))
+                {
+                    binaryOutput.timeField &= ~vn::protocol::uart::TimeGroup(item.flagsValue);
+                }
+            }
+            for (const auto& item : binaryGroupIMU)
+            {
+                if (!item.isEnabled(sensorModel))
+                {
+                    binaryOutput.imuField &= ~vn::protocol::uart::ImuGroup(item.flagsValue);
+                }
+            }
+            for (const auto& item : binaryGroupGNSS)
+            {
+                if (!item.isEnabled(sensorModel))
+                {
+                    binaryOutput.gpsField &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
+                    binaryOutput.gps2Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
+                }
+            }
+            for (const auto& item : binaryGroupAttitude)
+            {
+                if (!item.isEnabled(sensorModel))
+                {
+                    binaryOutput.attitudeField &= ~vn::protocol::uart::AttitudeGroup(item.flagsValue);
+                }
+            }
+            for (const auto& item : binaryGroupINS)
+            {
+                if (!item.isEnabled(sensorModel))
+                {
+                    binaryOutput.insField &= ~vn::protocol::uart::InsGroup(item.flagsValue);
+                }
+            }
+        }
     }
 
     if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &sensorPort))
@@ -776,6 +789,7 @@ void NAV::VectorNavSensor::guiConfig()
     //                                               SYSTEM MODULE
     // ###########################################################################################################
 
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(fmt::format("System Module##{}", size_t(id)).c_str()))
     {
         // ------------------------------------------- Serial Baud Rate ----------------------------------------------
@@ -872,7 +886,6 @@ void NAV::VectorNavSensor::guiConfig()
 
         // ---------------------------------------- Synchronization Control ------------------------------------------
 
-        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::TreeNode(fmt::format("Synchronization Control##{}", size_t(id)).c_str()))
         {
             static constexpr std::array<std::pair<vn::protocol::uart::SyncInMode, const char*>, 4> synchronizationControlSyncInModes = {
@@ -886,7 +899,7 @@ void NAV::VectorNavSensor::guiConfig()
                                                                        "Async message set by the Async Data Output Register, the user configurate binary output messages set\n"
                                                                        "by the Binary Output Registers, as well as the NMEA messages configured by the NMEA Output Registers." } }
             };
-            if (ImGui::BeginCombo(fmt::format("SyncInMode##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncInMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("SyncIn Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncInMode).c_str()))
             {
                 for (const auto& synchronizationControlSyncInMode : synchronizationControlSyncInModes)
                 {
@@ -917,17 +930,459 @@ void NAV::VectorNavSensor::guiConfig()
                                      "by the SyncInEdge and SyncInSkipFactor parameters. If set to ASYNC then the VN-100 will output "
                                      "asynchronous serial messages upon each trigger event.");
 
-            // synchronizationControlRegister.syncInEdge
-            // synchronizationControlRegister.syncInSkipFactor
-            // synchronizationControlRegister.syncOutMode
-            // synchronizationControlRegister.syncOutPolarity
-            // synchronizationControlRegister.syncOutSkipFactor
-            // synchronizationControlRegister.syncOutPulseWidth
+            static constexpr std::array<std::pair<vn::protocol::uart::SyncInEdge, const char*>, 2> synchronizationControlSyncInEdges = {
+                { { vn::protocol::uart::SyncInEdge::SYNCINEDGE_RISING, "Trigger on rising edge" },
+                  { vn::protocol::uart::SyncInEdge::SYNCINEDGE_FALLING, "Trigger on falling edge" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("SyncIn Edge##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncInEdge).c_str()))
+            {
+                for (const auto& synchronizationControlSyncInEdge : synchronizationControlSyncInEdges)
+                {
+                    const bool isSelected = (synchronizationControlRegister.syncInEdge == synchronizationControlSyncInEdge.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(synchronizationControlSyncInEdge.first).c_str(), isSelected))
+                    {
+                        synchronizationControlRegister.syncInEdge = synchronizationControlSyncInEdge.first;
+                        LOG_DEBUG("{}: synchronizationControlRegister.syncInEdge changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncInEdge));
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(synchronizationControlSyncInEdge.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The SyncInEdge register controls the type of edge the signal is set to trigger on.\n"
+                                     "The factory default state is to trigger on a rising edge.");
+
+            int syncInSkipFactor = synchronizationControlRegister.syncInSkipFactor;
+            if (ImGui::InputInt(fmt::format("SyncIn Skip Factor##{}", size_t(id)).c_str(), &syncInSkipFactor))
+            {
+                if (syncInSkipFactor < 0)
+                {
+                    syncInSkipFactor = 0;
+                }
+                else if (syncInSkipFactor > std::numeric_limits<uint16_t>::max())
+                {
+                    syncInSkipFactor = std::numeric_limits<uint16_t>::max();
+                }
+                synchronizationControlRegister.syncInSkipFactor = static_cast<uint16_t>(syncInSkipFactor);
+                LOG_DEBUG("{}: synchronizationControlRegister.syncInSkipFactor changed to {}", nameId(), synchronizationControlRegister.syncInSkipFactor);
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The SyncInSkipFactor defines how many times trigger edges defined by SyncInEdge should occur prior to "
+                                     "triggering a SyncIn event. The action performed on a SyncIn event is determined by the SyncIn mode. As an "
+                                     "example if the SyncInSkipFactor was set to 4 and a 1 kHz signal was attached to the SyncIn pin, then the "
+                                     "SyncIn event would only occur at 200 Hz.");
+
+            static constexpr std::array<std::pair<vn::protocol::uart::SyncOutMode, const char*>, 5> synchronizationControlSyncOutModes = {
+                { { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_NONE, "None" },
+                  { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_ITEMSTART, "Trigger at start of IMU sampling" },
+                  { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_IMUREADY, "Trigger when IMU measurements are available" },
+                  { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_INS, "Trigger when attitude measurements are available" },
+                  { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS, "Trigger on a GPS PPS event (1 Hz) when a 3D fix is valid." } }
+            };
+            if (ImGui::BeginCombo(fmt::format("SyncOut Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncOutMode).c_str()))
+            {
+                for (const auto& synchronizationControlSyncOutMode : synchronizationControlSyncOutModes)
+                {
+                    const bool isSelected = (synchronizationControlRegister.syncOutMode == synchronizationControlSyncOutMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(synchronizationControlSyncOutMode.first).c_str(), isSelected))
+                    {
+                        synchronizationControlRegister.syncOutMode = synchronizationControlSyncOutMode.first;
+                        LOG_DEBUG("{}: synchronizationControlRegister.syncOutMode changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncOutMode));
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(synchronizationControlSyncOutMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The SyncOutMode register controls the behavior of the SyncOut pin. If this is set to IMU then the SyncOut "
+                                     "will start the pulse when the internal IMU sample loop starts. This mode is used to make a sensor the Master "
+                                     "in a multi-sensor network array. If this is set to IMU_READY mode then the pulse will start when IMU "
+                                     "measurements become available. If this is set to INS mode then the pulse will start when attitude "
+                                     "measurements are made available. Changes to this register take effect immediately.");
+
+            static constexpr std::array<std::pair<vn::protocol::uart::SyncOutPolarity, const char*>, 2> synchronizationControlSyncOutPolarities = {
+                { { vn::protocol::uart::SyncOutPolarity::SYNCOUTPOLARITY_NEGATIVE, "Negative Pulse" },
+                  { vn::protocol::uart::SyncOutPolarity::SYNCOUTPOLARITY_POSITIVE, "Positive Pulse" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("SyncOut Polarity##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncOutPolarity).c_str()))
+            {
+                for (const auto& synchronizationControlSyncOutPolarity : synchronizationControlSyncOutPolarities)
+                {
+                    const bool isSelected = (synchronizationControlRegister.syncOutPolarity == synchronizationControlSyncOutPolarity.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(synchronizationControlSyncOutPolarity.first).c_str(), isSelected))
+                    {
+                        synchronizationControlRegister.syncOutPolarity = synchronizationControlSyncOutPolarity.first;
+                        LOG_DEBUG("{}: synchronizationControlRegister.syncOutPolarity changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncOutPolarity));
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(synchronizationControlSyncOutPolarity.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The SyncOutPolarity register controls the polarity of the output pulse on the SyncOut pin.\n"
+                                     "Changes to this register take effect immediately.");
+
+            int syncOutSkipFactor = synchronizationControlRegister.syncOutSkipFactor;
+            if (ImGui::InputInt(fmt::format("SyncOut Skip Factor##{}", size_t(id)).c_str(), &syncOutSkipFactor))
+            {
+                if (syncOutSkipFactor < 0)
+                {
+                    syncOutSkipFactor = 0;
+                }
+                else if (syncOutSkipFactor > std::numeric_limits<uint16_t>::max())
+                {
+                    syncOutSkipFactor = std::numeric_limits<uint16_t>::max();
+                }
+                synchronizationControlRegister.syncOutSkipFactor = static_cast<uint16_t>(syncOutSkipFactor);
+                LOG_DEBUG("{}: synchronizationControlRegister.syncOutSkipFactor changed to {}", nameId(), synchronizationControlRegister.syncOutSkipFactor);
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The SyncOutSkipFactor defines how many times the sync out event should be skipped before actually triggering the SyncOut pin.");
+
+            int syncOutPulseWidth = static_cast<int>(synchronizationControlRegister.syncOutPulseWidth);
+            if (ImGui::InputInt(fmt::format("SyncOut Pulse Width##{}", size_t(id)).c_str(), &syncOutPulseWidth))
+            {
+                if (syncOutPulseWidth < 0)
+                {
+                    syncOutPulseWidth = 0;
+                }
+                synchronizationControlRegister.syncOutPulseWidth = static_cast<uint32_t>(syncOutPulseWidth);
+                LOG_DEBUG("{}: synchronizationControlRegister.syncOutPulseWidth changed to {}", nameId(), synchronizationControlRegister.syncOutPulseWidth);
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The SyncOutPulseWidth field controls the desired width of the SyncOut pulse.\n"
+                                     "The default value is 100,000,000 (100 ms).");
+
+            ImGui::TreePop();
+        }
+
+        // ------------------------------------ Communication Protocol Control ---------------------------------------
+
+        if (ImGui::TreeNode(fmt::format("Communication Protocol Control##{}", size_t(id)).c_str()))
+        {
+            static constexpr std::array<std::pair<vn::protocol::uart::CountMode, const char*>, 5> communicationProtocolControlSerialCounts = {
+                { { vn::protocol::uart::CountMode::COUNTMODE_NONE, "OFF" },
+                  { vn::protocol::uart::CountMode::COUNTMODE_SYNCINCOUNT, "SyncIn Counter" },
+                  { vn::protocol::uart::CountMode::COUNTMODE_SYNCINTIME, "SyncIn Time" },
+                  { vn::protocol::uart::CountMode::COUNTMODE_SYNCOUTCOUNTER, "SyncOut Counter" },
+                  { vn::protocol::uart::CountMode::COUNTMODE_GPSPPS, "Gps Pps Time" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("Serial Count Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.serialCount).c_str()))
+            {
+                for (const auto& communicationProtocolControlSerialCount : communicationProtocolControlSerialCounts)
+                {
+                    const bool isSelected = (communicationProtocolControlRegister.serialCount == communicationProtocolControlSerialCount.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSerialCount.first).c_str(), isSelected))
+                    {
+                        communicationProtocolControlRegister.serialCount = communicationProtocolControlSerialCount.first;
+                        LOG_DEBUG("{}: communicationProtocolControlRegister.serialCount changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialCount));
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(communicationProtocolControlSerialCount.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The SerialCount field provides a means of appending a time or counter to the end of all asynchronous "
+                                     "communication messages transmitted on the serial interface. The values for each of these counters come "
+                                     "directly from the Synchronization Status Register in the System subsystem.\n\n"
+                                     "With the SerialCount field set to OFF a typical serial asynchronous message would appear as the following:\n"
+                                     "$VNYPR,+010.071,+000.278,-002.026*60\n\n"
+                                     "With the SerialCount field set to one of the non-zero values the same asynchronous message would appear "
+                                     "instead as:\n"
+                                     "$VNYPR,+010.071,+000.278,-002.026,T1162704*2F\n\n"
+                                     "When the SerialCount field is enabled the counter will always be appended to the end of the message just "
+                                     "prior to the checksum. The counter will be preceded by the T character to distinguish it from the status field.");
+
+            static constexpr std::array<std::pair<vn::protocol::uart::StatusMode, const char*>, 3> communicationProtocolControlSerialStatuses = {
+                { { vn::protocol::uart::StatusMode::STATUSMODE_OFF, "OFF" },
+                  { vn::protocol::uart::StatusMode::STATUSMODE_VPESTATUS, "VPE Status" },
+                  { vn::protocol::uart::StatusMode::STATUSMODE_INSSTATUS, "INS Status" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("Serial Status##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.serialStatus).c_str()))
+            {
+                for (const auto& communicationProtocolControlSerialStatus : communicationProtocolControlSerialStatuses)
+                {
+                    const bool isSelected = (communicationProtocolControlRegister.serialStatus == communicationProtocolControlSerialStatus.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSerialStatus.first).c_str(), isSelected))
+                    {
+                        communicationProtocolControlRegister.serialStatus = communicationProtocolControlSerialStatus.first;
+                        LOG_DEBUG("{}: communicationProtocolControlRegister.serialStatus changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialStatus));
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(communicationProtocolControlSerialStatus.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The SerialStatus field provides a means of tracking real-time status information pertain to the overall state "
+                                     "of the sensor measurements and onboard filtering algorithm. As with the SerialCount, a typical serial "
+                                     "asynchronous message would appear as the following:\n"
+                                     "$VNYPR,+010.071,+000.278,-002.026*60\n\n"
+                                     "With the SerialStatus field set to one of the non-zero values, the same asynchronous message would appear "
+                                     "instead as:\n"
+                                     "$VNYPR,+010.071,+000.278,-002.026,S0000*1F\n\n"
+                                     "When the SerialStatus field is enabled the status will always be appended to the end of the message just "
+                                     "prior to the checksum. If both the SerialCount and SerialStatus are enabled then the SerialStatus will be "
+                                     "displayed first. The counter will be preceded by the S character to distinguish it from the counter field. The "
+                                     "status consists of 4 hexadecimal characters.");
+
+            if (sensorModel == VectorNavModel::VN100_VN110)
+            {
+                if (ImGui::BeginCombo(fmt::format("SPI Count##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.spiCount).c_str()))
+                {
+                    for (const auto& communicationProtocolControlSpiCount : communicationProtocolControlSerialCounts)
+                    {
+                        const bool isSelected = (communicationProtocolControlRegister.spiCount == communicationProtocolControlSpiCount.first);
+                        if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSpiCount.first).c_str(), isSelected))
+                        {
+                            communicationProtocolControlRegister.spiCount = communicationProtocolControlSpiCount.first;
+                            LOG_DEBUG("{}: communicationProtocolControlRegister.spiCount changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiCount));
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::BeginTooltip();
+                            ImGui::TextUnformatted(communicationProtocolControlSpiCount.second);
+                            ImGui::EndTooltip();
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("The SPICount field provides a means of appending a time or counter to the end of all SPI packets. The "
+                                         "values for each of these counters come directly from the Synchronization Status Register.");
+            }
+
+            if (sensorModel == VectorNavModel::VN100_VN110)
+            {
+                if (ImGui::BeginCombo(fmt::format("SPI Status##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.spiStatus).c_str()))
+                {
+                    for (const auto& communicationProtocolControlSpiStatus : communicationProtocolControlSerialStatuses)
+                    {
+                        const bool isSelected = (communicationProtocolControlRegister.spiStatus == communicationProtocolControlSpiStatus.first);
+                        if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSpiStatus.first).c_str(), isSelected))
+                        {
+                            communicationProtocolControlRegister.spiStatus = communicationProtocolControlSpiStatus.first;
+                            LOG_DEBUG("{}: communicationProtocolControlRegister.spiStatus changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiStatus));
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::BeginTooltip();
+                            ImGui::TextUnformatted(communicationProtocolControlSpiStatus.second);
+                            ImGui::EndTooltip();
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("The AsyncStatus field provides a means of tracking real-time status information pertaining to the overall "
+                                         "state of the sensor measurements and onboard filtering algorithm. This information is very useful in "
+                                         "situations where action must be taken when certain crucial events happen such as the detection of gyro "
+                                         "saturation or magnetic interference.");
+            }
+
+            static constexpr std::array<std::pair<vn::protocol::uart::ChecksumMode, const char*>, 2> communicationProtocolControlSerialChecksums = {
+                { { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_CHECKSUM, "8-Bit Checksum" },
+                  { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_CRC, "16-Bit CRC" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("Serial Checksum##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.serialChecksum).c_str()))
+            {
+                for (const auto& communicationProtocolControlSerialChecksum : communicationProtocolControlSerialChecksums)
+                {
+                    const bool isSelected = (communicationProtocolControlRegister.serialChecksum == communicationProtocolControlSerialChecksum.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSerialChecksum.first).c_str(), isSelected))
+                    {
+                        communicationProtocolControlRegister.serialChecksum = communicationProtocolControlSerialChecksum.first;
+                        LOG_DEBUG("{}: communicationProtocolControlRegister.serialChecksum changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialChecksum));
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(communicationProtocolControlSerialChecksum.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("This field controls the type of checksum used for the serial communications. Normally the VN-310E uses an "
+                                     "8-bit checksum identical to the type used for normal GPS NMEA packets. This form of checksum however "
+                                     "offers only a limited means of error checking. As an alternative a full 16-bit CRC (CRC16-CCITT with "
+                                     "polynomial = 0x07) is also offered. The 2-byte CRC value is printed using 4 hexadecimal digits.");
+
+            if (sensorModel == VectorNavModel::VN100_VN110)
+            {
+                static constexpr std::array<std::pair<vn::protocol::uart::ChecksumMode, const char*>, 3> communicationProtocolControlSpiChecksums = {
+                    { { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_OFF, "OFF" },
+                      { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_CHECKSUM, "8-Bit Checksum" },
+                      { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_CRC, "16-Bit CRC" } }
+                };
+                if (ImGui::BeginCombo(fmt::format("SPI Checksum##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.spiChecksum).c_str()))
+                {
+                    for (const auto& communicationProtocolControlSpiChecksum : communicationProtocolControlSpiChecksums)
+                    {
+                        const bool isSelected = (communicationProtocolControlRegister.spiChecksum == communicationProtocolControlSpiChecksum.first);
+                        if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSpiChecksum.first).c_str(), isSelected))
+                        {
+                            communicationProtocolControlRegister.spiChecksum = communicationProtocolControlSpiChecksum.first;
+                            LOG_DEBUG("{}: communicationProtocolControlRegister.spiChecksum changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiChecksum));
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::BeginTooltip();
+                            ImGui::TextUnformatted(communicationProtocolControlSpiChecksum.second);
+                            ImGui::EndTooltip();
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("This field controls the type of checksum used for the SPI communications. The checksum is appended to "
+                                         "the end of the binary data packet. The 16-bit CRC is identical to the one described above for the "
+                                         "SerialChecksum.");
+            }
+
+            static constexpr std::array<std::pair<vn::protocol::uart::ErrorMode, const char*>, 3> communicationProtocolControlErrorModes = {
+                { { vn::protocol::uart::ErrorMode::ERRORMODE_IGNORE, "Ignore Error" },
+                  { vn::protocol::uart::ErrorMode::ERRORMODE_SEND, "Send Error" },
+                  { vn::protocol::uart::ErrorMode::ERRORMODE_SENDANDOFF, "Send Error and set ADOR register to OFF" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("Error Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.errorMode).c_str()))
+            {
+                for (const auto& communicationProtocolControlErrorMode : communicationProtocolControlErrorModes)
+                {
+                    const bool isSelected = (communicationProtocolControlRegister.errorMode == communicationProtocolControlErrorMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlErrorMode.first).c_str(), isSelected))
+                    {
+                        communicationProtocolControlRegister.errorMode = communicationProtocolControlErrorMode.first;
+                        LOG_DEBUG("{}: communicationProtocolControlRegister.errorMode changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.errorMode));
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(communicationProtocolControlErrorMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("This field controls the type of action taken by the VectorNav when an error event occurs. If the send error "
+                                     "mode is enabled then a message similar to the one shown below will be sent on the serial bus when an error "
+                                     "event occurs.\n\n"
+                                     "$VNERR,03*72\n\n"
+                                     "Regardless of the state of the ErrorMode, the number of error events is always recorded and is made available "
+                                     "in the SysErrors field of the Communication Protocol Status Register in the System subsystem.");
+
+            if (ImGui::TreeNode(fmt::format("Example Async Messages##{}", size_t(id)).c_str()))
+            {
+                ImGui::TextUnformatted("The following table shows example asynchronous messages with the\nAsyncCount and the AsyncStatus values appended to the end.");
+
+                if (ImGui::BeginTable("Example Async Messages Table", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                {
+                    ImGui::TableSetupColumn("Example Type");
+                    ImGui::TableSetupColumn("Message");
+                    ImGui::TableHeadersRow();
+
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted("Async Message with\nAsyncCount Enabled");
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted("$VNYPR,+010.071,+000.278,-002.026,T1162704*2F");
+
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted("Async Message with\nAsyncStatus Enabled");
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted("$VNYPR,+010.071,+000.278,-002.026,S0000*1F");
+
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted("Async Message with\nAsyncCount and\nAsyncStatus Enabled");
+                    ImGui::TableNextColumn();
+                    ImGui::TextUnformatted("$VNYPR,+010.071,+000.278,-002.026,T1162704,S0000*50");
+
+                    ImGui::EndTable();
+                }
+
+                ImGui::TreePop();
+            }
 
             ImGui::TreePop();
         }
 
         // ------------------------------------- Binary Output Register 1 - 2 ----------------------------------------
+
         for (size_t b = 0; b < binaryOutputRegister.size(); b++)
         {
             if (ImGui::TreeNode(fmt::format("Binary Output {}##{}", b + 1, size_t(id)).c_str()))
@@ -1067,6 +1522,81 @@ void NAV::VectorNavSensor::guiConfig()
 
                 ImGui::TreePop();
             }
+        }
+
+        // TODO: Add Gui Config for NMEA output - User manual VN-310 - 8.2.14 (p 103)
+    }
+
+    // ###########################################################################################################
+    //                                               IMU SUBSYSTEM
+    // ###########################################################################################################
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::CollapsingHeader(fmt::format("IMU Subsystem##{}", size_t(id)).c_str()))
+    {
+        if (ImGui::TreeNode(fmt::format("Reference Frame Rotation##{}", size_t(id)).c_str()))
+        {
+            ImGui::TextUnformatted("Allows the measurements of the VN-310E to be rotated into a different reference frame.");
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("This register contains a transformation matrix that allows for the transformation of measured acceleration, "
+                                     "magnetic, and angular rates from the body frame of the VN-310E to any other arbitrary frame of reference. "
+                                     "The use of this register allows for the sensor to be placed in any arbitrary orientation with respect to the "
+                                     "user’s desired body coordinate frame. This register can also be used to correct for any orientation errors due "
+                                     "to mounting the VN-310E on the user’s vehicle or platform.\n\n"
+                                     "(X Y Z)_U = C * (X Y Z)_B\n\n"
+                                     "The variables (X Y Z)_B are a measured parameter such as acceleration in the body reference frame with "
+                                     "respect to the VectorNav. The variables (X Y Z)_U are a measured parameter such as acceleration in the user's "
+                                     "frame of reference. The reference frame rotation register Thus needs to be loaded with the transformation "
+                                     "matrix that will transform measurements from the body reference frame of the VectorNav to the desired user "
+                                     "frame of reference.");
+            if (sensorModel == VectorNavModel::VN310)
+            {
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("The reference frame rotation is performed on all vector measurements prior to entering the INS "
+                                         "filter. As such, changing this register while the attitude filter is running will lead to unexpected "
+                                         "behavior in the INS output. To prevent this, the register is cached on startup and changes will "
+                                         "not take effect during runtime. After setting the reference frame rotation register to its new value, "
+                                         "send a write settings command and then reset the VN-310E. This will allow the INS filter to "
+                                         "startup with the newly set reference frame rotation.",
+                                         "(!)");
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The matrix C in the Reference Frame Rotation Register must be an orthonormal, right-handed"
+                                     " matrix. The sensor will output an error if the tolerance is not within 1e-5. The sensor will also"
+                                     " report an error if any of the parameters are greater than 1 or less than -1.",
+                                     "(!)");
+
+            std::array<float, 3> row = { referenceFrameRotationMatrix.e00, referenceFrameRotationMatrix.e01, referenceFrameRotationMatrix.e02 };
+            if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), row.data(), "%.2f"))
+            {
+                referenceFrameRotationMatrix.e00 = row.at(0);
+                referenceFrameRotationMatrix.e01 = row.at(1);
+                referenceFrameRotationMatrix.e02 = row.at(2);
+                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+            }
+            row = { referenceFrameRotationMatrix.e10, referenceFrameRotationMatrix.e11, referenceFrameRotationMatrix.e12 };
+            if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), row.data(), "%.2f"))
+            {
+                referenceFrameRotationMatrix.e10 = row.at(0);
+                referenceFrameRotationMatrix.e11 = row.at(1);
+                referenceFrameRotationMatrix.e12 = row.at(2);
+                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+            }
+            row = { referenceFrameRotationMatrix.e20, referenceFrameRotationMatrix.e21, referenceFrameRotationMatrix.e22 };
+            if (ImGui::InputFloat3(fmt::format("##{}", size_t(id)).c_str(), row.data(), "%.2f"))
+            {
+                referenceFrameRotationMatrix.e20 = row.at(0);
+                referenceFrameRotationMatrix.e21 = row.at(1);
+                referenceFrameRotationMatrix.e22 = row.at(2);
+                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode(fmt::format("IMU Filtering Configuration##{}", size_t(id)).c_str()))
+        {
+            ImGui::TreePop();
         }
     }
 }
