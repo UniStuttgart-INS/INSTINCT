@@ -48,7 +48,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
     /*  7 */ { "SyncInCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("SyncIn trigger count.\n\nThe number of SyncIn trigger events that have occurred."); } },
     /*  8 */ { "SyncOutCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("SyncOut trigger count.\n\nThe number of SyncOut trigger events that have occurred."); } },
     /*  9 */ { "TimeStatus", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time valid status flags.");
-                                                                                                                                                if (ImGui::BeginTable("VectorNavTimeStatusTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                if (ImGui::BeginTable("VectorNavTimeStatusTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                 {
                                                                                                                                                     ImGui::TableSetupColumn("Bit Offset");
                                                                                                                                                     ImGui::TableSetupColumn("Field");
@@ -132,7 +132,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
     /* 10 */ { "VelU", vn::protocol::uart::GpsGroup::GPSGROUP_VELU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS velocity uncertainty\n\nThe current GNSS velocity uncertainty, given in m/s (1 Sigma)."); } },
     /* 11 */ { "TimeU", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS time uncertainty\n\nThe current GPS time uncertainty, given in seconds (1 Sigma)."); } },
     /* 12 */ { "TimeInfo", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS time status and leap seconds\n\nFlags for valid GPS TOW, week number and UTC and current leap seconds.");
-                                                                                                                                                                    if (ImGui::BeginTable("VectorNavTimeInfoTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                    if (ImGui::BeginTable("VectorNavTimeInfoTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                     {
                                                                                                                                                                         ImGui::TableSetupColumn("Bit Offset");
                                                                                                                                                                         ImGui::TableSetupColumn("Field");
@@ -159,7 +159,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                     } } },
     /* 13 */ { "DOP", vn::protocol::uart::GpsGroup::GPSGROUP_DOP, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Dilution of precision"); } },
     /* 14 */ { "SatInfo", vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("Satellite Information\n\nInformation and measurements pertaining to each GNSS satellite in view.\n\nSatInfo Element:");
-                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                   {
                                                                                                                                                                       ImGui::TableSetupColumn("Name");
                                                                                                                                                                       ImGui::TableSetupColumn("Description");
@@ -190,7 +190,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                   }
                                                                                                                                                                   ImGui::BeginChild("VectorNavSatInfoTooltipGNSSConstelationChild", ImVec2(230, 217));
                                                                                                                                                                   ImGui::TextUnformatted("\nGNSS constellation indicator:");
-                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                   {
                                                                                                                                                                       ImGui::TableSetupColumn("Value");
                                                                                                                                                                       ImGui::TableSetupColumn("Description");
@@ -223,7 +223,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                   ImGui::SameLine();
                                                                                                                                                                   ImGui::BeginChild("VectorNavSatInfoTooltipFlagsChild", ImVec2(260, 217));
                                                                                                                                                                   ImGui::TextUnformatted("\nTracking info flags:");
-                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                   {
                                                                                                                                                                       ImGui::TableSetupColumn("Bit Offset");
                                                                                                                                                                       ImGui::TableSetupColumn("Description");
@@ -254,7 +254,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                   }
                                                                                                                                                                   ImGui::EndChild();
                                                                                                                                                                   ImGui::TextUnformatted("\nQuality Indicators:");
-                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltipQuality", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatInfoTooltipQuality", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                   {
                                                                                                                                                                       ImGui::TableSetupColumn("Value");
                                                                                                                                                                       ImGui::TableSetupColumn("Description");
@@ -281,7 +281,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                       ImGui::EndTable();
                                                                                                                                                                   } } },
     /* 15 */ { "RawMeas", vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GNSS Raw Measurements.\n\nSatRaw Element:");
-                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                   {
                                                                                                                                                                       ImGui::TableSetupColumn("Name");
                                                                                                                                                                       ImGui::TableSetupColumn("Description");
@@ -321,7 +321,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                   }
                                                                                                                                                                   ImGui::BeginChild("VectorNavSatRawTooltipGNSSConstelationChild", ImVec2(180, 217));
                                                                                                                                                                   ImGui::TextUnformatted("\nConstellation indicator:");
-                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                   {
                                                                                                                                                                       ImGui::TableSetupColumn("Value");
                                                                                                                                                                       ImGui::TableSetupColumn("Description");
@@ -354,7 +354,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                   ImGui::SameLine();
                                                                                                                                                                   ImGui::BeginChild("VectorNavSatRawTooltipFreqChild", ImVec2(270, 235));
                                                                                                                                                                   ImGui::TextUnformatted("\nFrequency indicator:");
-                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipFreq", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipFreq", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                   {
                                                                                                                                                                       ImGui::TableSetupColumn("Value");
                                                                                                                                                                       ImGui::TableSetupColumn("Description");
@@ -387,7 +387,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                   ImGui::SameLine();
                                                                                                                                                                   ImGui::BeginChild("VectorNavSatRawTooltipFlagChild", ImVec2(255, 260));
                                                                                                                                                                   ImGui::TextUnformatted("\nTracking info flags:");
-                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                   {
                                                                                                                                                                       ImGui::TableSetupColumn("Bit Offset");
                                                                                                                                                                       ImGui::TableSetupColumn("Description");
@@ -424,7 +424,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                   }
                                                                                                                                                                   ImGui::EndChild();
                                                                                                                                                                   ImGui::TextUnformatted("\nChannel indicator:");
-                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipChan", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                  if (ImGui::BeginTable("VectorNavSatRawTooltipChan", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                   {
                                                                                                                                                                       ImGui::TableSetupColumn("Value");
                                                                                                                                                                       ImGui::TableSetupColumn("Description");
@@ -604,7 +604,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor
                                                                                                                                                                           ImGui::EndTable();
                                                                                                                                                                       }
                                                                                                                                                                       ImGui::TextUnformatted("\nError Bitfield:");
-                                                                                                                                                                      if (ImGui::BeginTable("VectorNavInsStatusTooltipError", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                                                                                                                                                                      if (ImGui::BeginTable("VectorNavInsStatusTooltipError", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                                                                                                                                                                       {
                                                                                                                                                                           ImGui::TableSetupColumn("Name");
                                                                                                                                                                           ImGui::TableSetupColumn("Description");
@@ -802,93 +802,89 @@ void NAV::VectorNavSensor::guiConfig()
             deinitializeNode();
         }
 
-        // ---------------------------------------- Async Data Output Type -------------------------------------------
-
-        std::vector<std::pair<vn::protocol::uart::AsciiAsync, const char*>> asciiAsyncItems{
-            { vn::protocol::uart::AsciiAsync::VNOFF, "Asynchronous output turned off" },
-            { vn::protocol::uart::AsciiAsync::VNYPR, "Yaw, Pitch, Roll" },
-            { vn::protocol::uart::AsciiAsync::VNQTN, "Quaternion" },
-            { vn::protocol::uart::AsciiAsync::VNQMR, "Quaternion, Magnetic, Acceleration and Angular Rates" },
-            { vn::protocol::uart::AsciiAsync::VNDCM, "Directional Cosine Orientation Matrix" },
-            { vn::protocol::uart::AsciiAsync::VNMAG, "Magnetic Measurements" },
-            { vn::protocol::uart::AsciiAsync::VNACC, "Acceleration Measurements" },
-            { vn::protocol::uart::AsciiAsync::VNGYR, "Angular Rate Measurements" },
-            { vn::protocol::uart::AsciiAsync::VNMAR, "Magnetic, Acceleration, and Angular Rate Measurements" },
-            { vn::protocol::uart::AsciiAsync::VNYMR, "Yaw, Pitch, Roll, Magnetic, Acceleration, and Angular Rate Measurements" },
-            { vn::protocol::uart::AsciiAsync::VNYBA, "Yaw, Pitch, Roll, Body True Acceleration, and Angular Rates" },
-            { vn::protocol::uart::AsciiAsync::VNYIA, "Yaw, Pitch, Roll, Inertial True Acceleration, and Angular Rates" },
-            { vn::protocol::uart::AsciiAsync::VNIMU, "IMU Measurements" }
-        };
-        if (sensorModel == VectorNavModel::VN310)
+        if (ImGui::TreeNode(fmt::format("Async Ascii Output##{}", size_t(id)).c_str()))
         {
-            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNGPS, "GNSS LLA");
-            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNGPE, "GNSS ECEF");
-            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNINS, "INS LLA");
-            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNINE, "INS ECEF");
-            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNISL, "INS LLA 2");
-            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNISE, "INS ECEF 2");
-        }
-        asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNDTV, "Delta theta and delta velocity");
-        if (sensorModel == VectorNavModel::VN310)
-        {
-            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNG2S, "GNSS2 LLA");
-            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNG2E, "GNSS2 ECEF");
-        }
-
-        if (ImGui::BeginCombo(fmt::format("Async Ascii Output Type##{}", size_t(id)).c_str(), vn::protocol::uart::str(asyncDataOutputType).c_str()))
-        {
-            for (const auto& asciiAsyncItem : asciiAsyncItems)
+            std::vector<std::pair<vn::protocol::uart::AsciiAsync, const char*>> asciiAsyncItems{
+                { vn::protocol::uart::AsciiAsync::VNOFF, "Asynchronous output turned off" },
+                { vn::protocol::uart::AsciiAsync::VNYPR, "Yaw, Pitch, Roll" },
+                { vn::protocol::uart::AsciiAsync::VNQTN, "Quaternion" },
+                { vn::protocol::uart::AsciiAsync::VNQMR, "Quaternion, Magnetic, Acceleration and Angular Rates" },
+                { vn::protocol::uart::AsciiAsync::VNDCM, "Directional Cosine Orientation Matrix" },
+                { vn::protocol::uart::AsciiAsync::VNMAG, "Magnetic Measurements" },
+                { vn::protocol::uart::AsciiAsync::VNACC, "Acceleration Measurements" },
+                { vn::protocol::uart::AsciiAsync::VNGYR, "Angular Rate Measurements" },
+                { vn::protocol::uart::AsciiAsync::VNMAR, "Magnetic, Acceleration, and Angular Rate Measurements" },
+                { vn::protocol::uart::AsciiAsync::VNYMR, "Yaw, Pitch, Roll, Magnetic, Acceleration, and Angular Rate Measurements" },
+                { vn::protocol::uart::AsciiAsync::VNYBA, "Yaw, Pitch, Roll, Body True Acceleration, and Angular Rates" },
+                { vn::protocol::uart::AsciiAsync::VNYIA, "Yaw, Pitch, Roll, Inertial True Acceleration, and Angular Rates" },
+                { vn::protocol::uart::AsciiAsync::VNIMU, "IMU Measurements" }
+            };
+            if (sensorModel == VectorNavModel::VN310)
             {
-                const bool isSelected = (asyncDataOutputType == asciiAsyncItem.first);
-                if (ImGui::Selectable(vn::protocol::uart::str(asciiAsyncItem.first).c_str(), isSelected))
+                asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNGPS, "GNSS LLA");
+                asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNGPE, "GNSS ECEF");
+                asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNINS, "INS LLA");
+                asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNINE, "INS ECEF");
+                asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNISL, "INS LLA 2");
+                asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNISE, "INS ECEF 2");
+            }
+            asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNDTV, "Delta theta and delta velocity");
+            if (sensorModel == VectorNavModel::VN310)
+            {
+                asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNG2S, "GNSS2 LLA");
+                asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNG2E, "GNSS2 ECEF");
+            }
+
+            if (ImGui::BeginCombo(fmt::format("Async Ascii Output Type##{}", size_t(id)).c_str(), vn::protocol::uart::str(asyncDataOutputType).c_str()))
+            {
+                for (const auto& asciiAsyncItem : asciiAsyncItems)
                 {
-                    asyncDataOutputType = asciiAsyncItem.first;
-                    LOG_DEBUG("{}: asyncDataOutputType changed to {}", nameId(), vn::protocol::uart::str(asyncDataOutputType));
-                    flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    const bool isSelected = (asyncDataOutputType == asciiAsyncItem.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(asciiAsyncItem.first).c_str(), isSelected))
                     {
-                        try
+                        asyncDataOutputType = asciiAsyncItem.first;
+                        LOG_DEBUG("{}: asyncDataOutputType changed to {}", nameId(), vn::protocol::uart::str(asyncDataOutputType));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
                         {
-                            vs.writeAsyncDataOutputType(asyncDataOutputType);
+                            try
+                            {
+                                vs.writeAsyncDataOutputType(asyncDataOutputType);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the asyncDataOutputType: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
                         }
-                        catch (const std::exception& e)
+                        else
                         {
-                            LOG_ERROR("{}: Could not configure the asyncDataOutputType: {}", nameId(), e.what());
                             deinitializeNode();
                         }
                     }
-                    else
+                    if (ImGui::IsItemHovered())
                     {
-                        deinitializeNode();
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(asciiAsyncItem.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (isSelected)
+                    {
+                        ImGui::SetItemDefaultFocus();
                     }
                 }
-                if (ImGui::IsItemHovered())
-                {
-                    ImGui::BeginTooltip();
-                    ImGui::TextUnformatted(asciiAsyncItem.second);
-                    ImGui::EndTooltip();
-                }
-
-                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                if (isSelected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
+                ImGui::EndCombo();
             }
-            ImGui::EndCombo();
-        }
-        ImGui::SameLine();
-        gui::widgets::HelpMarker("This register controls the type of data that will be asynchronously outputted by the module. With this "
-                                 "register, the user can specify which data register will be automatically outputted when it gets updated "
-                                 "with a new reading. The table below lists which registers can be set to asynchronously output, the value "
-                                 "to specify which register to output, and the header of the asynchronous data packet. Asynchronous data "
-                                 "output can be disabled by setting this register to zero. The asynchronous data output will be sent out "
-                                 "automatically at a frequency specified by the Async Data Output Frequency Register.");
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("This register controls the type of data that will be asynchronously outputted by the module. With this "
+                                     "register, the user can specify which data register will be automatically outputted when it gets updated "
+                                     "with a new reading. The table below lists which registers can be set to asynchronously output, the value "
+                                     "to specify which register to output, and the header of the asynchronous data packet. Asynchronous data "
+                                     "output can be disabled by setting this register to zero. The asynchronous data output will be sent out "
+                                     "automatically at a frequency specified by the Async Data Output Frequency Register.");
 
-        // --------------------------------- Async Data Output Frequency Register ------------------------------------
-
-        if (asyncDataOutputType != vn::protocol::uart::AsciiAsync::VNOFF)
-        {
             if (ImGui::SliderInt(fmt::format("Async Ascii Output Frequency##{}", size_t(id)).c_str(),
                                  &asyncDataOutputFrequencySelected,
                                  0, possibleAsyncDataOutputFrequency.size() - 1,
@@ -916,9 +912,9 @@ void NAV::VectorNavSensor::guiConfig()
             }
             ImGui::SameLine();
             gui::widgets::HelpMarker("Asynchronous data output frequency.\nThe ADOF will be changed for the active serial port.");
-        }
 
-        // ---------------------------------------- Synchronization Control ------------------------------------------
+            ImGui::TreePop();
+        }
 
         if (ImGui::TreeNode(fmt::format("Synchronization Control##{}", size_t(id)).c_str()))
         {
@@ -1241,8 +1237,6 @@ void NAV::VectorNavSensor::guiConfig()
 
             ImGui::TreePop();
         }
-
-        // ------------------------------------ Communication Protocol Control ---------------------------------------
 
         if (ImGui::TreeNode(fmt::format("Communication Protocol Control##{}", size_t(id)).c_str()))
         {
@@ -1628,7 +1622,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 ImGui::TextUnformatted("The following table shows example asynchronous messages with the\nAsyncCount and the AsyncStatus values appended to the end.");
 
-                if (ImGui::BeginTable("Example Async Messages Table", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0f, 0.0f)))
+                if (ImGui::BeginTable("Example Async Messages Table", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
                 {
                     ImGui::TableSetupColumn("Example Type");
                     ImGui::TableSetupColumn("Message");
@@ -1657,8 +1651,6 @@ void NAV::VectorNavSensor::guiConfig()
 
             ImGui::TreePop();
         }
-
-        // ------------------------------------- Binary Output Register 1 - 2 ----------------------------------------
 
         for (size_t b = 0; b < binaryOutputRegister.size(); b++)
         {
@@ -2671,18 +2663,18 @@ void NAV::VectorNavSensor::guiConfig()
                     ImGui::EndCombo();
                 }
 
-                static constexpr std::array<std::pair<vn::protocol::uart::GpsRate, const char*>, 1> gpsConfigurationRates = {
-                    { /* { vn::protocol::uart::GpsRate::GPSRATE_1HZ, "GNSS update rate : 1 Hz" }, */
-                      { vn::protocol::uart::GpsRate::GPSRATE_5HZ, "GNSS update rate : 5 Hz" } }
+                static constexpr std::array<vn::protocol::uart::GpsRate, 1> gpsConfigurationRates = {
+                    { /* vn::protocol::uart::GpsRate::GPSRATE_1HZ, */
+                      vn::protocol::uart::GpsRate::GPSRATE_5HZ }
                 };
                 if (ImGui::BeginCombo(fmt::format("Rate##{}", size_t(id)).c_str(), vn::protocol::uart::str(gpsConfigurationRegister.rate).c_str()))
                 {
                     for (const auto& gpsConfigurationRate : gpsConfigurationRates)
                     {
-                        const bool isSelected = (gpsConfigurationRegister.rate == gpsConfigurationRate.first);
-                        if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationRate.first).c_str(), isSelected))
+                        const bool isSelected = (gpsConfigurationRegister.rate == gpsConfigurationRate);
+                        if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationRate).c_str(), isSelected))
                         {
-                            gpsConfigurationRegister.rate = gpsConfigurationRate.first;
+                            gpsConfigurationRegister.rate = gpsConfigurationRate;
                             LOG_DEBUG("{}: gpsConfigurationRegister.rate changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.rate));
                             flow::ApplyChanges();
                             if (vs.isConnected() && vs.verifySensorConnectivity())
@@ -2701,12 +2693,6 @@ void NAV::VectorNavSensor::guiConfig()
                             {
                                 deinitializeNode();
                             }
-                        }
-                        if (ImGui::IsItemHovered())
-                        {
-                            ImGui::BeginTooltip();
-                            ImGui::TextUnformatted(gpsConfigurationRate.second);
-                            ImGui::EndTooltip();
                         }
 
                         if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -2887,6 +2873,1144 @@ void NAV::VectorNavSensor::guiConfig()
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(fmt::format("Attitude Subsystem##{}", size_t(id)).c_str()))
     {
+        if (ImGui::TreeNode(fmt::format("VPE Basic Control##{}", size_t(id)).c_str()))
+        {
+            ImGui::TextUnformatted("Provides control over various features relating to the onboard attitude filtering algorithm.");
+
+            static constexpr std::array<vn::protocol::uart::VpeEnable, 2> vpeBasicControlEnables = {
+                { vn::protocol::uart::VpeEnable::VPEENABLE_DISABLE,
+                  vn::protocol::uart::VpeEnable::VPEENABLE_ENABLE }
+            };
+            if (ImGui::BeginCombo(fmt::format("Enable##{}", size_t(id)).c_str(), vn::protocol::uart::str(vpeBasicControlRegister.enable).c_str()))
+            {
+                for (const auto& vpeBasicControlEnable : vpeBasicControlEnables)
+                {
+                    const bool isSelected = (vpeBasicControlRegister.enable == vpeBasicControlEnable);
+                    if (ImGui::Selectable(vn::protocol::uart::str(vpeBasicControlEnable).c_str(), isSelected))
+                    {
+                        vpeBasicControlRegister.enable = vpeBasicControlEnable;
+                        LOG_DEBUG("{}: vpeBasicControlRegister.enable changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.enable));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeVpeBasicControl(vpeBasicControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
+            static constexpr std::array<vn::protocol::uart::HeadingMode, 3> vpeBasicControlHeadingModes = {
+                { vn::protocol::uart::HeadingMode::HEADINGMODE_ABSOLUTE,
+                  vn::protocol::uart::HeadingMode::HEADINGMODE_RELATIVE,
+                  vn::protocol::uart::HeadingMode::HEADINGMODE_INDOOR }
+            };
+            if (ImGui::BeginCombo(fmt::format("Heading Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(vpeBasicControlRegister.headingMode).c_str()))
+            {
+                for (const auto& vpeBasicControlHeadingMode : vpeBasicControlHeadingModes)
+                {
+                    const bool isSelected = (vpeBasicControlRegister.headingMode == vpeBasicControlHeadingMode);
+                    if (ImGui::Selectable(vn::protocol::uart::str(vpeBasicControlHeadingMode).c_str(), isSelected))
+                    {
+                        vpeBasicControlRegister.headingMode = vpeBasicControlHeadingMode;
+                        LOG_DEBUG("{}: vpeBasicControlRegister.headingMode changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.headingMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeVpeBasicControl(vpeBasicControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
+            static constexpr std::array<vn::protocol::uart::VpeMode, 2> vpeBasicControlModes = {
+                { vn::protocol::uart::VpeMode::VPEMODE_OFF,
+                  vn::protocol::uart::VpeMode::VPEMODE_MODE1 }
+            };
+            if (ImGui::BeginCombo(fmt::format("Filtering Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(vpeBasicControlRegister.filteringMode).c_str()))
+            {
+                for (const auto& vpeBasicControlMode : vpeBasicControlModes)
+                {
+                    const bool isSelected = (vpeBasicControlRegister.filteringMode == vpeBasicControlMode);
+                    if (ImGui::Selectable(vn::protocol::uart::str(vpeBasicControlMode).c_str(), isSelected))
+                    {
+                        vpeBasicControlRegister.filteringMode = vpeBasicControlMode;
+                        LOG_DEBUG("{}: vpeBasicControlRegister.filteringMode changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.filteringMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeVpeBasicControl(vpeBasicControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
+            if (ImGui::BeginCombo(fmt::format("Tuning Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(vpeBasicControlRegister.tuningMode).c_str()))
+            {
+                for (const auto& vpeBasicControlMode : vpeBasicControlModes)
+                {
+                    const bool isSelected = (vpeBasicControlRegister.tuningMode == vpeBasicControlMode);
+                    if (ImGui::Selectable(vn::protocol::uart::str(vpeBasicControlMode).c_str(), isSelected))
+                    {
+                        vpeBasicControlRegister.tuningMode = vpeBasicControlMode;
+                        LOG_DEBUG("{}: vpeBasicControlRegister.tuningMode changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.tuningMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeVpeBasicControl(vpeBasicControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the vpeBasicControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (sensorModel == VectorNavModel::VN100_VN110)
+        {
+            if (ImGui::TreeNode(fmt::format("VPE Magnetometer Basic Tuning##{}", size_t(id)).c_str()))
+            {
+                ImGui::TextUnformatted("Provides basic control of the adaptive filtering and tuning for the magnetometer.");
+
+                if (ImGui::DragFloat3(fmt::format("Base Tuning Level##{}", size_t(id)).c_str(), vpeMagnetometerBasicTuningRegister.baseTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                {
+                    LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.baseTuning changed to {}", nameId(), vpeMagnetometerBasicTuningRegister.baseTuning);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVpeMagnetometerBasicTuning(vpeMagnetometerBasicTuningRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the vpeMagnetometerBasicTuningRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("This sets the level of confidence placed in the magnetometer when no disturbances are present. "
+                                         "A larger number provides better heading accuracy, but with more sensitivity to magnetic interference.");
+
+                if (ImGui::DragFloat3(fmt::format("Adaptive Tuning Level##{}", size_t(id)).c_str(), vpeMagnetometerBasicTuningRegister.adaptiveTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                {
+                    LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), vpeMagnetometerBasicTuningRegister.adaptiveTuning);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVpeMagnetometerBasicTuning(vpeMagnetometerBasicTuningRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the vpeMagnetometerBasicTuningRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                if (ImGui::DragFloat3(fmt::format("Adaptive Filtering Level##{}", size_t(id)).c_str(), vpeMagnetometerBasicTuningRegister.adaptiveFiltering.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                {
+                    LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), vpeMagnetometerBasicTuningRegister.adaptiveFiltering);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVpeMagnetometerBasicTuning(vpeMagnetometerBasicTuningRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the vpeMagnetometerBasicTuningRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode(fmt::format("VPE Accelerometer Basic Tuning##{}", size_t(id)).c_str()))
+            {
+                ImGui::TextUnformatted("Provides basic control of the adaptive filtering and tuning for the accelerometer.");
+
+                if (ImGui::DragFloat3(fmt::format("Base Tuning Level##{}", size_t(id)).c_str(), vpeAccelerometerBasicTuningRegister.baseTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                {
+                    LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.baseTuning changed to {}", nameId(), vpeAccelerometerBasicTuningRegister.baseTuning);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVpeAccelerometerBasicTuning(vpeAccelerometerBasicTuningRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the vpeAccelerometerBasicTuningRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("This sets the level of confidence placed in the accelerometer when no disturbances are present. "
+                                         "A larger number provides better pitch/roll heading accuracy, but with more sensitivity to acceleration interference.");
+
+                if (ImGui::DragFloat3(fmt::format("Adaptive Tuning Level##{}", size_t(id)).c_str(), vpeAccelerometerBasicTuningRegister.adaptiveTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                {
+                    LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), vpeAccelerometerBasicTuningRegister.adaptiveTuning);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVpeAccelerometerBasicTuning(vpeAccelerometerBasicTuningRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the vpeAccelerometerBasicTuningRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                if (ImGui::DragFloat3(fmt::format("Adaptive Filtering Level##{}", size_t(id)).c_str(), vpeAccelerometerBasicTuningRegister.adaptiveFiltering.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                {
+                    LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), vpeAccelerometerBasicTuningRegister.adaptiveFiltering);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVpeAccelerometerBasicTuning(vpeAccelerometerBasicTuningRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the vpeAccelerometerBasicTuningRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode(fmt::format("VPE Gyro Basic Tuning##{}", size_t(id)).c_str()))
+            {
+                ImGui::TextUnformatted("Provides basic control of the adaptive filtering and tuning for the gyroscope.");
+
+                if (ImGui::DragFloat3(fmt::format("Base Tuning Level##{}", size_t(id)).c_str(), vpeGyroBasicTuningRegister.baseTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                {
+                    LOG_DEBUG("{}: vpeGyroBasicTuningRegister.baseTuning changed to {}", nameId(), vpeGyroBasicTuningRegister.baseTuning);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVpeGyroBasicTuning(vpeGyroBasicTuningRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the vpeGyroBasicTuningRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("This sets the level of confidence placed in the gyro axes.");
+
+                if (ImGui::DragFloat3(fmt::format("Adaptive Tuning Level##{}", size_t(id)).c_str(), vpeGyroBasicTuningRegister.adaptiveTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                {
+                    LOG_DEBUG("{}: vpeGyroBasicTuningRegister.adaptiveTuning changed to {}", nameId(), vpeGyroBasicTuningRegister.adaptiveTuning);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVpeGyroBasicTuning(vpeGyroBasicTuningRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the vpeGyroBasicTuningRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                if (ImGui::DragFloat3(fmt::format("Variance - Angular Walk##{}", size_t(id)).c_str(), vpeGyroBasicTuningRegister.angularWalkVariance.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                {
+                    LOG_DEBUG("{}: vpeGyroBasicTuningRegister.angularWalkVariance changed to {}", nameId(), vpeGyroBasicTuningRegister.angularWalkVariance);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVpeGyroBasicTuning(vpeGyroBasicTuningRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the vpeGyroBasicTuningRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode(fmt::format("Filter Startup Gyro Bias##{}", size_t(id)).c_str()))
+            {
+                ImGui::TextUnformatted("The filter gyro bias estimate used at startup [rad/s].");
+
+                if (ImGui::InputFloat3(fmt::format("## FilterStartupGyroBias {}", size_t(id)).c_str(), filterStartupGyroBias.c, "%.1f"))
+                {
+                    LOG_DEBUG("{}: filterStartupGyroBias changed to {}", nameId(), filterStartupGyroBias);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeFilterStartupGyroBias(filterStartupGyroBias);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the filterStartupGyroBias: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                ImGui::TreePop();
+            }
+        }
+    }
+
+    // ###########################################################################################################
+    //                                               INS SUBSYSTEM
+    // ###########################################################################################################
+
+    if (sensorModel == VectorNavModel::VN310)
+    {
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::CollapsingHeader(fmt::format("INS Subsystem##{}", size_t(id)).c_str()))
+        {
+            if (ImGui::TreeNode(fmt::format("INS Basic Configuration##{}", size_t(id)).c_str()))
+            {
+                static constexpr std::array<std::pair<vn::protocol::uart::Scenario, const char*>, 3> insBasicConfigurationRegisterVn300Scenarios = {
+                    { { vn::protocol::uart::Scenario::SCENARIO_INSWITHPRESSURE, "General purpose INS with barometric pressure sensor" },
+                      { vn::protocol::uart::Scenario::SCENARIO_INSWITHOUTPRESSURE, "General purpose INS without barometric pressure sensor" },
+                      { vn::protocol::uart::Scenario::SCENARIO_GPSMOVINGBASELINEDYNAMIC, "GNSS moving baseline for dynamic applications" } }
+                };
+                if (ImGui::BeginCombo(fmt::format("Scenario##{}", size_t(id)).c_str(), vn::protocol::uart::str(insBasicConfigurationRegisterVn300.scenario).c_str()))
+                {
+                    for (const auto& insBasicConfigurationRegisterVn300Scenario : insBasicConfigurationRegisterVn300Scenarios)
+                    {
+                        const bool isSelected = (insBasicConfigurationRegisterVn300.scenario == insBasicConfigurationRegisterVn300Scenario.first);
+                        if (ImGui::Selectable(vn::protocol::uart::str(insBasicConfigurationRegisterVn300Scenario.first).c_str(), isSelected))
+                        {
+                            insBasicConfigurationRegisterVn300.scenario = insBasicConfigurationRegisterVn300Scenario.first;
+                            LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.scenario changed to {}", nameId(), vn::protocol::uart::str(insBasicConfigurationRegisterVn300.scenario));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    vs.writeInsBasicConfigurationVn300(insBasicConfigurationRegisterVn300);
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the insBasicConfigurationRegisterVn300: {}", nameId(), e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::BeginTooltip();
+                            ImGui::TextUnformatted(insBasicConfigurationRegisterVn300Scenario.second);
+                            ImGui::EndTooltip();
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                if (ImGui::Checkbox(fmt::format("Ahrs Aiding##{}", size_t(id)).c_str(), &insBasicConfigurationRegisterVn300.ahrsAiding))
+                {
+                    LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.ahrsAiding changed to {}", nameId(), insBasicConfigurationRegisterVn300.ahrsAiding);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeInsBasicConfigurationVn300(insBasicConfigurationRegisterVn300);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the insBasicConfigurationRegisterVn300: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Enables AHRS attitude aiding. AHRS aiding provides "
+                                         "the ability to switch to using the magnetometer to "
+                                         "stabilize heading during times when the device is "
+                                         "stationary and the GNSS compass is not available. "
+                                         "AHRS aiding also helps to eliminate large updates in "
+                                         "the attitude solution during times when heading is "
+                                         "weakly observable, such as at startup.");
+
+                if (ImGui::Checkbox(fmt::format("Estimate Baseline##{}", size_t(id)).c_str(), &insBasicConfigurationRegisterVn300.estBaseline))
+                {
+                    LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.estBaseline changed to {}", nameId(), insBasicConfigurationRegisterVn300.estBaseline);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeInsBasicConfigurationVn300(insBasicConfigurationRegisterVn300);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the insBasicConfigurationRegisterVn300: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Enables GNSS compass baseline estimation by INS");
+
+                ImGui::TreePop();
+            }
+
+            if (ImGui::TreeNode(fmt::format("Startup Filter Bias Estimate##{}", size_t(id)).c_str()))
+            {
+                ImGui::TextUnformatted("Sets the initial estimate for the filter bias states");
+
+                if (ImGui::InputFloat3(fmt::format("Gyro Bias [rad/s]##{}", size_t(id)).c_str(), startupFilterBiasEstimateRegister.gyroBias.c, "%.1f"))
+                {
+                    LOG_DEBUG("{}: startupFilterBiasEstimateRegister.gyroBias changed to {}", nameId(), startupFilterBiasEstimateRegister.gyroBias);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeStartupFilterBiasEstimate(startupFilterBiasEstimateRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the startupFilterBiasEstimateRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                if (ImGui::InputFloat3(fmt::format("Accel Bias [m/s^2]##{}", size_t(id)).c_str(), startupFilterBiasEstimateRegister.accelBias.c, "%.1f"))
+                {
+                    LOG_DEBUG("{}: startupFilterBiasEstimateRegister.accelBias changed to {}", nameId(), startupFilterBiasEstimateRegister.accelBias);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeStartupFilterBiasEstimate(startupFilterBiasEstimateRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the startupFilterBiasEstimateRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                if (ImGui::InputFloat(fmt::format("Pressure Bias [m]##{}", size_t(id)).c_str(), &startupFilterBiasEstimateRegister.pressureBias))
+                {
+                    LOG_DEBUG("{}: startupFilterBiasEstimateRegister.pressureBias changed to {}", nameId(), startupFilterBiasEstimateRegister.pressureBias);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeStartupFilterBiasEstimate(startupFilterBiasEstimateRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the startupFilterBiasEstimateRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+
+                ImGui::TreePop();
+            }
+        }
+    }
+
+    // ###########################################################################################################
+    //                                    HARD/SOFT IRON ESTIMATOR SUBSYSTEM
+    // ###########################################################################################################
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::CollapsingHeader(fmt::format("Hard/Soft Iron Estimator Subsystem##{}", size_t(id)).c_str()))
+    {
+        if (ImGui::TreeNode(fmt::format("Magnetometer Calibration Control##{}", size_t(id)).c_str()))
+        {
+            ImGui::TextUnformatted("Controls the magnetometer real-time calibration algorithm.");
+            if (sensorModel == VectorNavModel::VN310)
+            {
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("On the PRODUCT the magnetometer is only used to provide a coarse heading estimate at startup "
+                                         "and is completely tuned out of the INS filter during normal operation. A Hard/Soft Iron calibration "
+                                         "may be performed to try and improve the startup magnetic heading, but is not required for nominal "
+                                         "operaiton.",
+                                         "(!)");
+            }
+
+            static constexpr std::array<std::pair<vn::protocol::uart::HsiMode, const char*>, 3> magnetometerCalibrationControlHsiModes = {
+                { { vn::protocol::uart::HsiMode::HSIMODE_OFF, "Real-time hard/soft iron calibration algorithm is turned off" },
+                  { vn::protocol::uart::HsiMode::HSIMODE_RUN, "Runs the real-time hard/soft iron calibration. The algorithm will continue using its existing solution.\n"
+                                                              "The algorithm can be started and stopped at any time by switching between the HSI_OFF and HSI_RUN state." },
+                  { vn::protocol::uart::HsiMode::HSIMODE_RESET, "Resets the real-time hard/soft iron solution" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("HSI Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiMode).c_str()))
+            {
+                for (const auto& magnetometerCalibrationControlHsiMode : magnetometerCalibrationControlHsiModes)
+                {
+                    const bool isSelected = (magnetometerCalibrationControlRegister.hsiMode == magnetometerCalibrationControlHsiMode.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(magnetometerCalibrationControlHsiMode.first).c_str(), isSelected))
+                    {
+                        magnetometerCalibrationControlRegister.hsiMode = magnetometerCalibrationControlHsiMode.first;
+                        LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiMode changed to {}", nameId(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiMode));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeMagnetometerCalibrationControl(magnetometerCalibrationControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the magnetometerCalibrationControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(magnetometerCalibrationControlHsiMode.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("Controls the mode of operation for the onboard real-time magnetometer hard/soft iron compensation algorithm.");
+
+            static constexpr std::array<std::pair<vn::protocol::uart::HsiOutput, const char*>, 3> magnetometerCalibrationControlHsiOutputs = {
+                { { vn::protocol::uart::HsiOutput::HSIOUTPUT_NOONBOARD, "Onboard HSI is not applied to the magnetic measurements" },
+                  { vn::protocol::uart::HsiOutput::HSIOUTPUT_USEONBOARD, "Onboard HSI is applied to the magnetic measurements" } }
+            };
+            if (ImGui::BeginCombo(fmt::format("HSI Output##{}", size_t(id)).c_str(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiOutput).c_str()))
+            {
+                for (const auto& magnetometerCalibrationControlHsiOutput : magnetometerCalibrationControlHsiOutputs)
+                {
+                    const bool isSelected = (magnetometerCalibrationControlRegister.hsiOutput == magnetometerCalibrationControlHsiOutput.first);
+                    if (ImGui::Selectable(vn::protocol::uart::str(magnetometerCalibrationControlHsiOutput.first).c_str(), isSelected))
+                    {
+                        magnetometerCalibrationControlRegister.hsiOutput = magnetometerCalibrationControlHsiOutput.first;
+                        LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiOutput changed to {}", nameId(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiOutput));
+                        flow::ApplyChanges();
+                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        {
+                            try
+                            {
+                                vs.writeMagnetometerCalibrationControl(magnetometerCalibrationControlRegister);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                LOG_ERROR("{}: Could not configure the magnetometerCalibrationControlRegister: {}", nameId(), e.what());
+                                deinitializeNode();
+                            }
+                        }
+                        else
+                        {
+                            deinitializeNode();
+                        }
+                    }
+                    if (ImGui::IsItemHovered())
+                    {
+                        ImGui::BeginTooltip();
+                        ImGui::TextUnformatted(magnetometerCalibrationControlHsiOutput.second);
+                        ImGui::EndTooltip();
+                    }
+
+                    if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("Controls the type of measurements that are provided as "
+                                     "outputs from the magnetometer sensor and also "
+                                     "subsequently used in the attitude filter.");
+
+            int convergeRate = magnetometerCalibrationControlRegister.convergeRate;
+            if (ImGui::SliderInt(fmt::format("Converge Rate##{}", size_t(id)).c_str(), &convergeRate, 0, 5))
+            {
+                magnetometerCalibrationControlRegister.convergeRate = static_cast<uint8_t>(convergeRate);
+                LOG_DEBUG("{}: magnetometerCalibrationControlRegister.convergeRate changed to {}", nameId(), magnetometerCalibrationControlRegister.convergeRate);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeMagnetometerCalibrationControl(magnetometerCalibrationControlRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the magnetometerCalibrationControlRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("Controls how quickly the hard/soft iron solution is allowed "
+                                     "to converge onto a new solution. The slower the "
+                                     "convergence the more accurate the estimate of the "
+                                     "hard/soft iron solution. A quicker convergence will provide "
+                                     "a less accurate estimate of the hard/soft iron parameters, "
+                                     "but for applications where the hard/soft iron changes "
+                                     "rapidly may provide a more accurate attitude estimate.\n\n"
+                                     "Range: 1 to 5\n"
+                                     "1 = Solution converges slowly over approximately 60-90 seconds.\n"
+                                     "5 = Solution converges rapidly over approximately 15-20 seconds.");
+
+            ImGui::TreePop();
+        }
+    }
+
+    // ###########################################################################################################
+    //                                      WORLD MAGNETIC & GRAVITY MODULE
+    // ###########################################################################################################
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::CollapsingHeader(fmt::format("World Magnetic & Gravity Module##{}", size_t(id)).c_str()))
+    {
+        if (ImGui::TreeNode(fmt::format("Magnetic and Gravity Reference Vectors##{}", size_t(id)).c_str()))
+        {
+            ImGui::TextUnformatted("Magnetic and gravity reference vectors");
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("This register contains the reference vectors for the magnetic and gravitational fields as used by the "
+                                     "onboard filter. The values map to either the user-set values or the results of calculations of the onboard "
+                                     "reference models (see the Reference Vector Configuration Register in the IMU subsystem). When the "
+                                     "reference values come from the onboard model(s), those values are read-only. When the reference models "
+                                     "are disabled, the values reflect the user reference vectors and will be writable. For example, if the onboard "
+                                     "World Magnetic Model is enabled and the onboard Gravitational Model is disabled, only the gravity "
+                                     "reference values will be modified on a register write. Note that the user reference vectors will not be "
+                                     "overwritten by the onboard models, but will retain their previous values for when the onboard models are "
+                                     "disabled.");
+
+            if (ImGui::InputFloat3(fmt::format("Magnetic Reference [Gauss]##{}", size_t(id)).c_str(), magneticAndGravityReferenceVectorsRegister.magRef.c, "%.3f"))
+            {
+                LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.magRef changed to {}", nameId(), magneticAndGravityReferenceVectorsRegister.magRef);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeMagneticAndGravityReferenceVectors(magneticAndGravityReferenceVectorsRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the magneticAndGravityReferenceVectorsRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+
+            if (ImGui::InputFloat3(fmt::format("Gravity Reference [m/s^2]##{}", size_t(id)).c_str(), magneticAndGravityReferenceVectorsRegister.accRef.c, "%.6f"))
+            {
+                LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.accRef changed to {}", nameId(), magneticAndGravityReferenceVectorsRegister.accRef);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeMagneticAndGravityReferenceVectors(magneticAndGravityReferenceVectorsRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the magneticAndGravityReferenceVectorsRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode(fmt::format("Reference Vector Configuration##{}", size_t(id)).c_str()))
+        {
+            ImGui::TextUnformatted("Control register for both the onboard world magnetic and gravity model corrections");
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("This register allows configuration of the onboard spherical harmonic models used to calculate the local "
+                                     "magnetic and gravitational reference values. Having accurate magnetic reference values improves the "
+                                     "accuracy of heading when using the magnetometer and accounts for magnetic declination. Having accurate "
+                                     "gravitational reference values improves accuracy by allowing the INS filter to more accurately estimate the "
+                                     "accelerometer biases. The VectorNav currently includes the EGM96 gravitational model and the WMM2010 "
+                                     "magnetic model. The models are upgradable to allow updating to future models when available.\n\n"
+                                     "The magnetic and gravity models can be individually enabled or disabled using the UseMagModel and "
+                                     "UseGravityModel parameters, respectively. When disabled, the corresponding values set by the user in the "
+                                     "Reference Vector Register in the IMU subsystem will be used instead of values calculated by the onboard "
+                                     "model.\n\n"
+                                     "The VectorNav starts up with the user configured reference vector values. Shortly after startup (and if the "
+                                     "models are enabled), the location and time set in this register will be used to update the reference vectors. "
+                                     "When a 3D GNSS fix is available, the location and time reported by the GNSS will be used to update the model. "
+                                     "If GNSS is lost, the reference vectors will hold their last valid values. The model values will be recalculated "
+                                     "whenever the current position has changed by the RecaclThreshold or the date has changed by more than "
+                                     "approximately 8 hours, whichever comes first.");
+
+            if (ImGui::Checkbox(fmt::format("Use Mag Model##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.useMagModel))
+            {
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.useMagModel changed to {}", nameId(), referenceVectorConfigurationRegister.useMagModel);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+
+            if (ImGui::Checkbox(fmt::format("Use Gravity Model##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.useGravityModel))
+            {
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.useGravityModel changed to {}", nameId(), referenceVectorConfigurationRegister.useGravityModel);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+
+            auto recalcThreshold = static_cast<int>(referenceVectorConfigurationRegister.recalcThreshold);
+            if (ImGui::InputInt(fmt::format("Recalc Threshold [m]##{}", size_t(id)).c_str(), &recalcThreshold))
+            {
+                referenceVectorConfigurationRegister.recalcThreshold = static_cast<uint32_t>(recalcThreshold);
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.recalcThreshold changed to {}", nameId(), referenceVectorConfigurationRegister.recalcThreshold);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("Maximum distance traveled before magnetic and gravity models are recalculated for the new position.");
+
+            if (ImGui::InputFloat(fmt::format("Year##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.year))
+            {
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.year changed to {}", nameId(), referenceVectorConfigurationRegister.year);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The reference date expressed as a decimal year. Used for both the magnetic and gravity models.");
+
+            if (ImGui::InputDouble(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.position[0]))
+            {
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.latitude changed to {}", nameId(), referenceVectorConfigurationRegister.position[0]);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The reference latitude position in degrees.");
+
+            if (ImGui::InputDouble(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.position[1]))
+            {
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.longitude changed to {}", nameId(), referenceVectorConfigurationRegister.position[1]);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The reference longitude position in degrees.");
+
+            if (ImGui::InputDouble(fmt::format("Altitude [m]##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.position[2]))
+            {
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.altitude changed to {}", nameId(), referenceVectorConfigurationRegister.position[2]);
+                flow::ApplyChanges();
+                if (vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceVectorConfigurationRegister: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The reference altitude above the reference ellipsoid in meters.");
+
+            ImGui::TreePop();
+        }
+    }
+
+    // ###########################################################################################################
+    //                                              VELOCITY AIDING
+    // ###########################################################################################################
+
+    if (sensorModel == VectorNavModel::VN100_VN110)
+    {
+        ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+        if (ImGui::CollapsingHeader(fmt::format("Velocity Aiding##{}", size_t(id)).c_str()))
+        {
+            if (ImGui::TreeNode(fmt::format("Velocity Compensation Control##{}", size_t(id)).c_str()))
+            {
+                ImGui::TextUnformatted("Provides control over the velocity compensation feature for the attitude filter.");
+
+                static constexpr std::array<vn::protocol::uart::VelocityCompensationMode, 2> velocityCompensationControlModes = {
+                    { vn::protocol::uart::VelocityCompensationMode::VELOCITYCOMPENSATIONMODE_DISABLED,
+                      vn::protocol::uart::VelocityCompensationMode::VELOCITYCOMPENSATIONMODE_BODYMEASUREMENT }
+                };
+                if (ImGui::BeginCombo(fmt::format("Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(velocityCompensationControlRegister.mode).c_str()))
+                {
+                    for (const auto& velocityCompensationControlMode : velocityCompensationControlModes)
+                    {
+                        const bool isSelected = (velocityCompensationControlRegister.mode == velocityCompensationControlMode);
+                        if (ImGui::Selectable(vn::protocol::uart::str(velocityCompensationControlMode).c_str(), isSelected))
+                        {
+                            velocityCompensationControlRegister.mode = velocityCompensationControlMode;
+                            LOG_DEBUG("{}: velocityCompensationControlRegister.mode changed to {}", nameId(), vn::protocol::uart::str(velocityCompensationControlRegister.mode));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    vs.writeVelocityCompensationControl(velocityCompensationControlRegister);
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the velocityCompensationControlRegister: {}", nameId(), e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Selects the type of velocity compensation performed by the VPE");
+
+                if (ImGui::InputFloat(fmt::format("Velocity Tuning##{}", size_t(id)).c_str(), &velocityCompensationControlRegister.velocityTuning))
+                {
+                    LOG_DEBUG("{}: velocityCompensationControlRegister.velocityTuning changed to {}", nameId(), velocityCompensationControlRegister.velocityTuning);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVelocityCompensationControl(velocityCompensationControlRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the velocityCompensationControlRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Tuning parameter for the velocity measurement");
+
+                if (ImGui::InputFloat(fmt::format("Rate Tuning##{}", size_t(id)).c_str(), &velocityCompensationControlRegister.rateTuning))
+                {
+                    LOG_DEBUG("{}: velocityCompensationControlRegister.rateTuning changed to {}", nameId(), velocityCompensationControlRegister.rateTuning);
+                    flow::ApplyChanges();
+                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    {
+                        try
+                        {
+                            vs.writeVelocityCompensationControl(velocityCompensationControlRegister);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            LOG_ERROR("{}: Could not configure the velocityCompensationControlRegister: {}", nameId(), e.what());
+                            deinitializeNode();
+                        }
+                    }
+                    else
+                    {
+                        deinitializeNode();
+                    }
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Tuning parameter for the angular rate measurement");
+
+                ImGui::TreePop();
+            }
+        }
     }
 }
 

@@ -290,9 +290,9 @@ class VectorNavSensor : public Imu, public UartSensor
     /// Provides basic control of the adaptive filtering and tuning for the gyro.
     /// @note See User manual VN-100 - 7.3.5 (p 108)
     vn::sensors::VpeGyroBasicTuningRegister vpeGyroBasicTuningRegister{
-        vn::math::vec3f{ 8.0F, 8.0F, 8.0F }, // BaseTuning [0 - 10]
-        vn::math::vec3f{ 4.0F, 4.0F, 4.0F }, // AdaptiveTuning [0 - 10]
-        vn::math::vec3f{ 0.0F, 0.0F, 0.0F }  // AdaptiveFiltering [0 - 10]
+        vn::math::vec3f{ 8.0F, 8.0F, 8.0F }, // VarianceAngularWalk [0 - 10]
+        vn::math::vec3f{ 4.0F, 4.0F, 4.0F }, // BaseTuning [0 - 10]
+        vn::math::vec3f{ 0.0F, 0.0F, 0.0F }  // AdaptiveTuning [0 - 10]
     };
 
     /// @brief Filter Startup Gyro Bias.
@@ -365,7 +365,7 @@ class VectorNavSensor : public Imu, public UartSensor
     };
 
     // ###########################################################################################################
-    //                                              Velocity Aiding
+    //                                              VELOCITY AIDING
     // ###########################################################################################################
 
     /// @brief Velocity Compensation Control.
