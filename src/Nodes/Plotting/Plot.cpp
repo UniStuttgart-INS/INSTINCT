@@ -796,15 +796,6 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Gyro Comp Z [rad/s]");
             data.at(pinIndex).addPlotDataItem("Temperature [°C]");
             // VectorNavImuObs
-            data.at(pinIndex).addPlotDataItem("Quaternion W []");
-            data.at(pinIndex).addPlotDataItem("Quaternion X []");
-            data.at(pinIndex).addPlotDataItem("Quaternion Y []");
-            data.at(pinIndex).addPlotDataItem("Quaternion Z []");
-            data.at(pinIndex).addPlotDataItem("Yaw [deg]");
-            data.at(pinIndex).addPlotDataItem("Pitch [deg]");
-            data.at(pinIndex).addPlotDataItem("Roll [deg]");
-            data.at(pinIndex).addPlotDataItem("Time since syncIn [ns]");
-            data.at(pinIndex).addPlotDataItem("SyncIn Count []");
             data.at(pinIndex).addPlotDataItem("dTime [s]");
             data.at(pinIndex).addPlotDataItem("dTheta X [deg]");
             data.at(pinIndex).addPlotDataItem("dTheta Y [deg]");
@@ -812,23 +803,6 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("dVelocity X [m/s]");
             data.at(pinIndex).addPlotDataItem("dVelocity Y [m/s]");
             data.at(pinIndex).addPlotDataItem("dVelocity Z [m/s]");
-            data.at(pinIndex).addPlotDataItem("VPE Status [bits]");
-            data.at(pinIndex).addPlotDataItem("Pressure [kPa]");
-            data.at(pinIndex).addPlotDataItem("Mag comp N [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag comp E [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag comp D [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Accel comp N [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel comp E [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel comp D [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Gyro comp N [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro comp E [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro comp D [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel N [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel E [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel D [m/s^2]");
         }
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Bool)
@@ -1448,15 +1422,6 @@ void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavImuObs>& obs, si
     addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
     addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
     // VectorNavImuObs
-    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->w() : std::nan(""));
-    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->x() : std::nan(""));
-    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->y() : std::nan(""));
-    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->z() : std::nan(""));
-    addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->x() : std::nan(""));
-    addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->y() : std::nan(""));
-    addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->z() : std::nan(""));
-    addData(pinIndex, i++, obs->timeSinceSyncIn.has_value() ? static_cast<double>(obs->timeSinceSyncIn.value()) : std::nan(""));
-    addData(pinIndex, i++, obs->syncInCnt.has_value() ? obs->syncInCnt.value() : std::nan(""));
     addData(pinIndex, i++, obs->dtime.has_value() ? obs->dtime.value() : std::nan(""));
     addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->x() : std::nan(""));
     addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->y() : std::nan(""));
@@ -1464,21 +1429,4 @@ void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavImuObs>& obs, si
     addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->x() : std::nan(""));
     addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->y() : std::nan(""));
     addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->z() : std::nan(""));
-    addData(pinIndex, i++, obs->vpeStatus.has_value() ? obs->vpeStatus->status : std::nan(""));
-    addData(pinIndex, i++, obs->pressure.has_value() ? obs->pressure.value() : std::nan(""));
-    addData(pinIndex, i++, obs->magCompNED.has_value() ? obs->magCompNED->x() : std::nan(""));
-    addData(pinIndex, i++, obs->magCompNED.has_value() ? obs->magCompNED->y() : std::nan(""));
-    addData(pinIndex, i++, obs->magCompNED.has_value() ? obs->magCompNED->z() : std::nan(""));
-    addData(pinIndex, i++, obs->accelCompNED.has_value() ? obs->accelCompNED->x() : std::nan(""));
-    addData(pinIndex, i++, obs->accelCompNED.has_value() ? obs->accelCompNED->y() : std::nan(""));
-    addData(pinIndex, i++, obs->accelCompNED.has_value() ? obs->accelCompNED->z() : std::nan(""));
-    addData(pinIndex, i++, obs->gyroCompNED.has_value() ? obs->gyroCompNED->x() : std::nan(""));
-    addData(pinIndex, i++, obs->gyroCompNED.has_value() ? obs->gyroCompNED->y() : std::nan(""));
-    addData(pinIndex, i++, obs->gyroCompNED.has_value() ? obs->gyroCompNED->z() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelXYZ.has_value() ? obs->linearAccelXYZ->x() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelXYZ.has_value() ? obs->linearAccelXYZ->y() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelXYZ.has_value() ? obs->linearAccelXYZ->z() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelNED.has_value() ? obs->linearAccelNED->x() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelNED.has_value() ? obs->linearAccelNED->y() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelNED.has_value() ? obs->linearAccelNED->z() : std::nan(""));
 }

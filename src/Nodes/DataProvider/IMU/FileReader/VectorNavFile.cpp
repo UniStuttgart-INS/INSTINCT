@@ -9,7 +9,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/IMU/VectorNavObs.hpp"
+#include "NodeData/IMU/VectorNavImuObs.hpp"
 
 NAV::VectorNavFile::VectorNavFile()
 {
@@ -190,8 +190,6 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
     std::stringstream lineStream(line);
     std::string cell;
 
-    Eigen::Matrix3d dcm_np = Eigen::Matrix3d::Zero();
-
     std::optional<uint16_t> gpsCycle = 0;
     std::optional<uint16_t> gpsWeek;
     std::optional<long double> gpsToW;
@@ -219,31 +217,6 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
     std::optional<double> gyroCompX;
     std::optional<double> gyroCompY;
     std::optional<double> gyroCompZ;
-    std::optional<double> yaw;
-    std::optional<double> pitch;
-    std::optional<double> roll;
-    std::optional<double> quatX;
-    std::optional<double> quatY;
-    std::optional<double> quatZ;
-    std::optional<double> quatW;
-    std::optional<double> magCompN;
-    std::optional<double> magCompE;
-    std::optional<double> magCompD;
-    std::optional<double> accelCompN;
-    std::optional<double> accelCompE;
-    std::optional<double> accelCompD;
-    std::optional<double> linearAccelX;
-    std::optional<double> linearAccelY;
-    std::optional<double> linearAccelZ;
-    std::optional<double> linearAccelN;
-    std::optional<double> linearAccelE;
-    std::optional<double> linearAccelD;
-    std::optional<double> yawUncertainty;
-    std::optional<double> pitchUncertainty;
-    std::optional<double> rollUncertainty;
-    std::optional<double> gyroCompN;
-    std::optional<double> gyroCompE;
-    std::optional<double> gyroCompD;
 
     // Split line at comma
     for (const auto& column : headerColumns)
@@ -272,14 +245,6 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             else if (column == "TimeStartup")
             {
                 obs->timeSinceStartup.emplace(std::stoull(cell));
-            }
-            else if (column == "TimeSyncIn")
-            {
-                obs->timeSinceSyncIn.emplace(std::stoull(cell));
-            }
-            else if (column == "SyncInCnt")
-            {
-                obs->syncInCnt.emplace(std::stoul(cell));
             }
             else if (column == "UnCompMagX")
             {
@@ -320,10 +285,6 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             else if (column == "Temperature")
             {
                 obs->temperature.emplace(std::stod(cell));
-            }
-            else if (column == "Pressure")
-            {
-                obs->pressure.emplace(std::stod(cell));
             }
             else if (column == "DeltaTime")
             {
@@ -389,146 +350,6 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             {
                 gyroCompZ = std::stod(cell);
             }
-            else if (column == "AhrsStatus")
-            {
-                obs->vpeStatus.emplace(std::stoul(cell));
-            }
-            else if (column == "Yaw")
-            {
-                yaw = std::stod(cell);
-            }
-            else if (column == "Pitch")
-            {
-                pitch = std::stod(cell);
-            }
-            else if (column == "Roll")
-            {
-                roll = std::stod(cell);
-            }
-            else if (column == "Quat[0]")
-            {
-                quatW = std::stod(cell);
-            }
-            else if (column == "Quat[1]")
-            {
-                quatX = std::stod(cell);
-            }
-            else if (column == "Quat[2]")
-            {
-                quatY = std::stod(cell);
-            }
-            else if (column == "Quat[3]")
-            {
-                quatZ = std::stod(cell);
-            }
-            else if (column == "C[0.0]")
-            {
-                dcm_np(0, 0) = std::stod(cell);
-            }
-            else if (column == "C[0.1]")
-            {
-                dcm_np(0, 1) = std::stod(cell);
-            }
-            else if (column == "C[0.2]")
-            {
-                dcm_np(0, 2) = std::stod(cell);
-            }
-            else if (column == "C[1.0]")
-            {
-                dcm_np(1, 0) = std::stod(cell);
-            }
-            else if (column == "C[1.1]")
-            {
-                dcm_np(1, 1) = std::stod(cell);
-            }
-            else if (column == "C[1.2]")
-            {
-                dcm_np(1, 2) = std::stod(cell);
-            }
-            else if (column == "C[2.0]")
-            {
-                dcm_np(2, 0) = std::stod(cell);
-            }
-            else if (column == "C[2.1]")
-            {
-                dcm_np(2, 1) = std::stod(cell);
-            }
-            else if (column == "C[2.2]")
-            {
-                dcm_np(2, 2) = std::stod(cell);
-            }
-            else if (column == "MagN")
-            {
-                magCompN = std::stod(cell);
-            }
-            else if (column == "MagE")
-            {
-                magCompE = std::stod(cell);
-            }
-            else if (column == "MagD")
-            {
-                magCompD = std::stod(cell);
-            }
-            else if (column == "AccN")
-            {
-                accelCompN = std::stod(cell);
-            }
-            else if (column == "AccE")
-            {
-                accelCompE = std::stod(cell);
-            }
-            else if (column == "AccD")
-            {
-                accelCompD = std::stod(cell);
-            }
-            else if (column == "LinAccX")
-            {
-                linearAccelX = std::stod(cell);
-            }
-            else if (column == "LinAccY")
-            {
-                linearAccelY = std::stod(cell);
-            }
-            else if (column == "LinAccZ")
-            {
-                linearAccelZ = std::stod(cell);
-            }
-            else if (column == "LinAccN")
-            {
-                linearAccelN = std::stod(cell);
-            }
-            else if (column == "LinAccE")
-            {
-                linearAccelE = std::stod(cell);
-            }
-            else if (column == "LinAccD")
-            {
-                linearAccelD = std::stod(cell);
-            }
-            else if (column == "YawU")
-            {
-                yawUncertainty = std::stod(cell);
-            }
-            else if (column == "PitchU")
-            {
-                pitchUncertainty = std::stod(cell);
-            }
-            else if (column == "RollU")
-            {
-                rollUncertainty = std::stod(cell);
-            }
-            else if (column == "YawRate")
-            {
-                gyroCompN = std::stod(cell);
-            }
-            else if (column == "PitchRate")
-            {
-                gyroCompE = std::stod(cell);
-            }
-            else if (column == "RollRate")
-            {
-                gyroCompD = std::stod(cell);
-            }
         }
     }
 
@@ -568,60 +389,10 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
     {
         obs->gyroCompXYZ.emplace(gyroCompX.value(), gyroCompY.value(), gyroCompZ.value());
     }
-    if (yaw.has_value() && pitch.has_value() && roll.has_value())
-    {
-        obs->yawPitchRoll.emplace(yaw.value(), pitch.value(), roll.value());
-    }
-    if (quatW.has_value() && quatX.has_value() && quatY.has_value() && quatZ.has_value())
-    {
-        obs->quaternion.emplace(quatW.value(), quatX.value(), quatY.value(), quatZ.value());
-    }
-    if (magCompN.has_value() && magCompE.has_value() && magCompD.has_value())
-    {
-        obs->magCompNED.emplace(magCompN.value(), magCompE.value(), magCompD.value());
-    }
-    if (accelCompN.has_value() && accelCompE.has_value() && accelCompD.has_value())
-    {
-        obs->accelCompNED.emplace(accelCompN.value(), accelCompE.value(), accelCompD.value());
-    }
-    if (linearAccelX.has_value() && linearAccelY.has_value() && linearAccelZ.has_value())
-    {
-        obs->linearAccelXYZ.emplace(linearAccelX.value(), linearAccelY.value(), linearAccelZ.value());
-    }
-    if (linearAccelN.has_value() && linearAccelE.has_value() && linearAccelD.has_value())
-    {
-        obs->linearAccelNED.emplace(linearAccelN.value(), linearAccelE.value(), linearAccelD.value());
-    }
-    if (yawUncertainty.has_value() && pitchUncertainty.has_value() && rollUncertainty.has_value())
-    {
-        obs->yawPitchRollUncertainty.emplace(yawUncertainty.value(), pitchUncertainty.value(), rollUncertainty.value());
-    }
-    if (gyroCompN.has_value() && gyroCompE.has_value() && gyroCompD.has_value())
-    {
-        obs->gyroCompNED.emplace(gyroCompN.value(), gyroCompE.value(), gyroCompD.value());
-    }
 
-    if (!obs->quaternion.has_value())
-    {
-        if (!dcm_np.isZero())
-        {
-            obs->quaternion.emplace(dcm_np);
-        }
-        else if (obs->yawPitchRoll.has_value() && !obs->yawPitchRoll.value().isZero())
-        {
-            obs->quaternion = trafo::quat_nb(trafo::deg2rad(obs->yawPitchRoll.value()(2)),
-                                             trafo::deg2rad(obs->yawPitchRoll.value()(1)),
-                                             trafo::deg2rad(obs->yawPitchRoll.value()(0)))
-                              * Eigen::Quaterniond::Identity();
-        }
-    }
-
-    LOG_DATA("DATA({}): {}, {}, {}, {}, {}", nameId(),
-             obs->timeSinceStartup.has_value() ? std::to_string(obs->timeSinceStartup.value()) : "N/A",
-             obs->syncInCnt.has_value() ? std::to_string(obs->syncInCnt.value()) : "N/A",
-             obs->timeSinceSyncIn.has_value() ? std::to_string(obs->timeSinceSyncIn.value()) : "N/A",
-             obs->vpeStatus.has_value() ? std::to_string(obs->vpeStatus.value().status) : "N/A",
-             obs->temperature.has_value() ? std::to_string(obs->temperature.value()) : "N/A");
+    LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
+             name, obs->timeSinceStartup.value(), obs->temperature.value(),
+             obs->accelUncompXYZ.value().x(), obs->accelUncompXYZ.value().y(), obs->accelUncompXYZ.value().z());
 
     if (obs->insTime.has_value())
     {

@@ -15,7 +15,7 @@
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
-#include "NodeData/IMU/VectorNavObs.hpp"
+#include "NodeData/IMU/VectorNavImuObs.hpp"
 
 namespace NAV
 {

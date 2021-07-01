@@ -13,7 +13,8 @@ namespace nm = NAV::NodeManager;
 
 #include <imgui_internal.h>
 
-#include "NodeData/IMU/VectorNavObs.hpp"
+#include "NodeData/VectorNavBinaryOutput.hpp"
+#include "NodeData/StringObs.hpp"
 
 #include "util/Time/TimeBase.hpp"
 
@@ -1241,7 +1242,10 @@ NAV::VectorNavSensor::VectorNavSensor()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 917, 623 };
 
-    nm::CreateOutputPin(this, "VectorNavImuObs", Pin::Type::Flow, NAV::VectorNavImuObs::type());
+    nm::CreateOutputPin(this, "Binary Output 1", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
+    nm::CreateOutputPin(this, "Binary Output 2", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
+    nm::CreateOutputPin(this, "Binary Output 3", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
+    nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, NAV::StringObs::type());
 
     dividerFrequency = []() {
         std::map<int, int, std::greater<>> divFreq;
@@ -1516,10 +1520,6 @@ void NAV::VectorNavSensor::guiConfig()
             for (size_t i = 0; i < asciiOutputBuffer.size(); i++)
             {
                 messages.append(asciiOutputBuffer.at(i));
-                if (i < asciiOutputBuffer.size() - 1)
-                {
-                    messages.append("\n");
-                }
             }
             ImGui::TextUnformatted("Async Ascii Messages:");
             ImGui::BeginChild(fmt::format("##Ascii Mesages {}", size_t(id)).c_str(), ImVec2(0, 300), true);
@@ -5154,62 +5154,506 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                                vnSensor->binaryOutputRegister.at(b).insField,
                                vnSensor->binaryOutputRegister.at(b).gps2Field))
             {
-                auto obs = std::make_shared<VectorNavImuObs>(vnSensor->imuPos);
+                auto obs = std::make_shared<VectorNavBinaryOutput>();
 
                 // Group 1 (Common)
-                obs->timeSinceStartup.emplace(p.extractUint64());
-                obs->timeSinceSyncIn.emplace(p.extractUint64());
-                obs->dtime.emplace(p.extractFloat());
-                auto dtheta = p.extractVec3f();
-                obs->dtheta.emplace(dtheta.x, dtheta.y, dtheta.z);
-                auto dvel = p.extractVec3f();
-                obs->dvel.emplace(dvel.x, dvel.y, dvel.z);
-                obs->syncInCnt.emplace(p.extractUint32());
-                // Group 2 (Time)
-                // Group 3 (IMU)
-                auto magUncompXYZ = p.extractVec3f();
-                obs->magUncompXYZ.emplace(magUncompXYZ.x, magUncompXYZ.y, magUncompXYZ.z);
-                auto accelUncompXYZ = p.extractVec3f();
-                obs->accelUncompXYZ.emplace(accelUncompXYZ.x, accelUncompXYZ.y, accelUncompXYZ.z);
-                auto gyroUncompXYZ = p.extractVec3f();
-                obs->gyroUncompXYZ.emplace(gyroUncompXYZ.x, gyroUncompXYZ.y, gyroUncompXYZ.z);
-                obs->temperature.emplace(p.extractFloat());
-                obs->pressure.emplace(p.extractFloat());
-                auto magCompXYZ = p.extractVec3f();
-                obs->magCompXYZ.emplace(magCompXYZ.x, magCompXYZ.y, magCompXYZ.z);
-                auto accelCompXYZ = p.extractVec3f();
-                obs->accelCompXYZ.emplace(accelCompXYZ.x, accelCompXYZ.y, accelCompXYZ.z);
-                auto gyroCompXYZ = p.extractVec3f();
-                obs->gyroCompXYZ.emplace(gyroCompXYZ.x, gyroCompXYZ.y, gyroCompXYZ.z);
-                // Group 4 (GPS)
-                // Group 5 (Attitude)
-                obs->vpeStatus.emplace(p.extractUint16());
-                auto yawPitchRoll = p.extractVec3f();
-                obs->yawPitchRoll.emplace(yawPitchRoll.x, yawPitchRoll.y, yawPitchRoll.z);
-                auto quaternion = p.extractVec4f();
-                obs->quaternion.emplace(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
-                auto magCompNED = p.extractVec3f();
-                obs->magCompNED.emplace(magCompNED.x, magCompNED.y, magCompNED.z);
-                auto accelCompNED = p.extractVec3f();
-                obs->accelCompNED.emplace(accelCompNED.x, accelCompNED.y, accelCompNED.z);
-                auto linearAccelXYZ = p.extractVec3f();
-                obs->linearAccelXYZ.emplace(linearAccelXYZ.x, linearAccelXYZ.y, linearAccelXYZ.z);
-                auto linearAccelNED = p.extractVec3f();
-                obs->linearAccelNED.emplace(linearAccelNED.x, linearAccelNED.y, linearAccelNED.z);
-                auto yawPitchRollUncertainty = p.extractVec3f();
-                obs->yawPitchRollUncertainty.emplace(yawPitchRollUncertainty.x, yawPitchRollUncertainty.y, yawPitchRollUncertainty.z);
-
-                LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-                         vnSensor->nameId(), obs->timeSinceStartup.value(), obs->syncInCnt.value(), obs->timeSinceSyncIn.value(),
-                         obs->vpeStatus.value().status, obs->temperature.value());
-
-                // Calls all the callbacks
-                if (InsTime currentTime = util::time::GetCurrentTime();
-                    !currentTime.empty())
+                if (vnSensor->binaryOutputRegister.at(b).commonField != vn::protocol::uart::CommonGroup::COMMONGROUP_NONE)
                 {
-                    obs->insTime = currentTime;
                 }
-                vnSensor->invokeCallbacks(VectorNavSensor::OutputPortIndex_VectorNavObs, obs);
+                // Group 2 (Time)
+                if (vnSensor->binaryOutputRegister.at(b).timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
+                {
+                    if (!obs->timeOutputs)
+                    {
+                        obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                        obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                    }
+
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
+                    {
+                        obs->timeOutputs->timeStartup = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
+                    {
+                        obs->timeOutputs->timeGps = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+                    {
+                        obs->timeOutputs->gpsTow = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
+                    {
+                        obs->timeOutputs->gpsWeek = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN)
+                    {
+                        obs->timeOutputs->timeSyncIn = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS)
+                    {
+                        obs->timeOutputs->timePPS = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
+                    {
+                        obs->timeOutputs->timeUtc.year = p.extractInt8();
+                        obs->timeOutputs->timeUtc.month = p.extractUint8();
+                        obs->timeOutputs->timeUtc.day = p.extractUint8();
+                        obs->timeOutputs->timeUtc.hour = p.extractUint8();
+                        obs->timeOutputs->timeUtc.min = p.extractUint8();
+                        obs->timeOutputs->timeUtc.sec = p.extractUint8();
+                        obs->timeOutputs->timeUtc.ms = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT)
+                    {
+                        obs->timeOutputs->syncInCnt = p.extractUint32();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT)
+                    {
+                        obs->timeOutputs->syncOutCnt = p.extractUint32();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
+                    {
+                        obs->timeOutputs->timeStatus = p.extractUint8();
+                    }
+                }
+                // Group 3 (IMU)
+                if (vnSensor->binaryOutputRegister.at(b).imuField != vn::protocol::uart::ImuGroup::IMUGROUP_NONE)
+                {
+                    if (!obs->imuOutputs)
+                    {
+                        obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                        obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                    }
+
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS)
+                    {
+                        obs->imuOutputs->imuStatus = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->uncompMag = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->uncompAccel = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->uncompGyro = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
+                    {
+                        obs->imuOutputs->temp = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES)
+                    {
+                        obs->imuOutputs->pres = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
+                    {
+                        obs->imuOutputs->deltaTime = p.extractFloat();
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->deltaTheta = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->deltaV = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->mag = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->accel = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->angularRate = { vec.x, vec.y, vec.z };
+                    }
+                }
+                // Group 4 (GNSS1)
+                if (vnSensor->binaryOutputRegister.at(b).gpsField != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
+                {
+                    if (!obs->gnss1Outputs)
+                    {
+                        obs->gnss1Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
+                        obs->gnss1Outputs->gnssField |= vnSensor->binaryOutputRegister.at(b).gpsField;
+                    }
+
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    {
+                        obs->gnss1Outputs->timeUtc.year = p.extractInt8();
+                        obs->gnss1Outputs->timeUtc.month = p.extractUint8();
+                        obs->gnss1Outputs->timeUtc.day = p.extractUint8();
+                        obs->gnss1Outputs->timeUtc.hour = p.extractUint8();
+                        obs->gnss1Outputs->timeUtc.min = p.extractUint8();
+                        obs->gnss1Outputs->timeUtc.sec = p.extractUint8();
+                        obs->gnss1Outputs->timeUtc.ms = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                    {
+                        obs->gnss1Outputs->tow = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+                    {
+                        obs->gnss1Outputs->week = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
+                    {
+                        obs->gnss1Outputs->numSats = p.extractUint8();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+                    {
+                        obs->gnss1Outputs->fix = p.extractUint8();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
+                    {
+                        auto vec = p.extractVec3d();
+                        obs->gnss1Outputs->posLla = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+                    {
+                        auto vec = p.extractVec3d();
+                        obs->gnss1Outputs->posEcef = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->gnss1Outputs->velNed = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->gnss1Outputs->velEcef = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->gnss1Outputs->posU = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
+                    {
+                        obs->gnss1Outputs->velU = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
+                    {
+                        obs->gnss1Outputs->timeU = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                    {
+                        obs->gnss1Outputs->timeInfo.status = p.extractUint8();
+                        obs->gnss1Outputs->timeInfo.leapSeconds = p.extractInt8();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
+                    {
+                        obs->gnss1Outputs->dop.gDop = p.extractFloat();
+                        obs->gnss1Outputs->dop.pDop = p.extractFloat();
+                        obs->gnss1Outputs->dop.tDop = p.extractFloat();
+                        obs->gnss1Outputs->dop.vDop = p.extractFloat();
+                        obs->gnss1Outputs->dop.hDop = p.extractFloat();
+                        obs->gnss1Outputs->dop.nDop = p.extractFloat();
+                        obs->gnss1Outputs->dop.eDop = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
+                    {
+                        obs->gnss1Outputs->satInfo.numSats = p.extractUint8();
+                        p.extractUint8(); // Reserved for future use
+                        for (size_t i = 0; i < obs->gnss1Outputs->satInfo.numSats; i++)
+                        {
+                            auto sys = p.extractInt8();
+                            auto svId = p.extractUint8();
+                            auto flags = p.extractUint8();
+                            auto cno = p.extractUint8();
+                            auto qi = p.extractUint8();
+                            auto el = p.extractInt8();
+                            auto az = p.extractInt16();
+                            obs->gnss1Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
+                        }
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+                    {
+                        obs->gnss1Outputs->raw.tow = p.extractDouble();
+                        obs->gnss1Outputs->raw.week = p.extractUint16();
+                        obs->gnss1Outputs->raw.numSats = p.extractUint8();
+                        p.extractUint8(); // Reserved for future use
+                        for (size_t i = 0; i < obs->gnss1Outputs->raw.numSats; i++)
+                        {
+                            auto sys = p.extractUint8();
+                            auto svId = p.extractUint8();
+                            auto freq = p.extractUint8();
+                            auto chan = p.extractUint8();
+                            auto slot = p.extractInt8();
+                            auto cno = p.extractUint8();
+                            auto flags = p.extractUint16();
+                            auto pr = p.extractDouble();
+                            auto cp = p.extractDouble();
+                            auto dp = p.extractFloat();
+                            obs->gnss1Outputs->raw.satellites.emplace_back(sys, svId, freq, chan, slot, cno, flags, pr, cp, dp);
+                        }
+                    }
+                }
+                // Group 5 (Attitude)
+                if (vnSensor->binaryOutputRegister.at(b).attitudeField != vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE)
+                {
+                    if (!obs->attitudeOutputs)
+                    {
+                        obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
+                        obs->attitudeOutputs->attitudeField |= vnSensor->binaryOutputRegister.at(b).attitudeField;
+                    }
+
+                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS)
+                    {
+                        obs->attitudeOutputs->vpeStatus = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->attitudeOutputs->ypr = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
+                    {
+                        auto vec = p.extractVec4f();
+                        obs->attitudeOutputs->qtn = { vec.w, vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
+                    {
+                        auto col0 = p.extractVec3f();
+                        auto col1 = p.extractVec3f();
+                        auto col2 = p.extractVec3f();
+                        obs->attitudeOutputs->dcm << col0.x, col1.x, col2.x,
+                            col0.y, col1.y, col2.y,
+                            col0.z, col1.z, col2.z;
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->attitudeOutputs->magNed = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->attitudeOutputs->accelNed = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->attitudeOutputs->linearAccelBody = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->attitudeOutputs->linearAccelNed = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->attitudeOutputs->yprU = { vec.x, vec.y, vec.z };
+                    }
+                }
+                // Group 6 (INS)
+                if (vnSensor->binaryOutputRegister.at(b).insField != vn::protocol::uart::InsGroup::INSGROUP_NONE)
+                {
+                    if (!obs->insOutputs)
+                    {
+                        obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                        obs->insOutputs->insField |= vnSensor->binaryOutputRegister.at(b).insField;
+                    }
+
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
+                    {
+                        obs->insOutputs->insStatus = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
+                    {
+                        auto vec = p.extractVec3d();
+                        obs->insOutputs->posLla = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
+                    {
+                        auto vec = p.extractVec3d();
+                        obs->insOutputs->posEcef = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->insOutputs->velBody = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->insOutputs->velNed = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->insOutputs->velEcef = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->insOutputs->magEcef = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->insOutputs->accelEcef = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->insOutputs->linearAccelEcef = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_POSU)
+                    {
+                        obs->insOutputs->posU = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELU)
+                    {
+                        obs->insOutputs->velU = p.extractFloat();
+                    }
+                }
+                // Group 7 (GNSS2)
+                if (vnSensor->binaryOutputRegister.at(b).gps2Field != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
+                {
+                    if (!obs->gnss2Outputs)
+                    {
+                        obs->gnss2Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
+                        obs->gnss2Outputs->gnssField |= vnSensor->binaryOutputRegister.at(b).gps2Field;
+                    }
+
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    {
+                        obs->gnss2Outputs->timeUtc.year = p.extractInt8();
+                        obs->gnss2Outputs->timeUtc.month = p.extractUint8();
+                        obs->gnss2Outputs->timeUtc.day = p.extractUint8();
+                        obs->gnss2Outputs->timeUtc.hour = p.extractUint8();
+                        obs->gnss2Outputs->timeUtc.min = p.extractUint8();
+                        obs->gnss2Outputs->timeUtc.sec = p.extractUint8();
+                        obs->gnss2Outputs->timeUtc.ms = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                    {
+                        obs->gnss2Outputs->tow = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+                    {
+                        obs->gnss2Outputs->week = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
+                    {
+                        obs->gnss2Outputs->numSats = p.extractUint8();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+                    {
+                        obs->gnss2Outputs->fix = p.extractUint8();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
+                    {
+                        auto vec = p.extractVec3d();
+                        obs->gnss2Outputs->posLla = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+                    {
+                        auto vec = p.extractVec3d();
+                        obs->gnss2Outputs->posEcef = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->gnss2Outputs->velNed = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->gnss2Outputs->velEcef = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
+                    {
+                        auto vec = p.extractVec3f();
+                        obs->gnss2Outputs->posU = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
+                    {
+                        obs->gnss2Outputs->velU = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
+                    {
+                        obs->gnss2Outputs->timeU = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                    {
+                        obs->gnss2Outputs->timeInfo.status = p.extractUint8();
+                        obs->gnss2Outputs->timeInfo.leapSeconds = p.extractInt8();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
+                    {
+                        obs->gnss2Outputs->dop.gDop = p.extractFloat();
+                        obs->gnss2Outputs->dop.pDop = p.extractFloat();
+                        obs->gnss2Outputs->dop.tDop = p.extractFloat();
+                        obs->gnss2Outputs->dop.vDop = p.extractFloat();
+                        obs->gnss2Outputs->dop.hDop = p.extractFloat();
+                        obs->gnss2Outputs->dop.nDop = p.extractFloat();
+                        obs->gnss2Outputs->dop.eDop = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
+                    {
+                        obs->gnss2Outputs->satInfo.numSats = p.extractUint8();
+                        p.extractUint8(); // Reserved for future use
+                        for (size_t i = 0; i < obs->gnss2Outputs->satInfo.numSats; i++)
+                        {
+                            auto sys = p.extractInt8();
+                            auto svId = p.extractUint8();
+                            auto flags = p.extractUint8();
+                            auto cno = p.extractUint8();
+                            auto qi = p.extractUint8();
+                            auto el = p.extractInt8();
+                            auto az = p.extractInt16();
+                            obs->gnss2Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
+                        }
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+                    {
+                        obs->gnss2Outputs->raw.tow = p.extractDouble();
+                        obs->gnss2Outputs->raw.week = p.extractUint16();
+                        obs->gnss2Outputs->raw.numSats = p.extractUint8();
+                        p.extractUint8(); // Reserved for future use
+                        for (size_t i = 0; i < obs->gnss2Outputs->raw.numSats; i++)
+                        {
+                            auto sys = p.extractUint8();
+                            auto svId = p.extractUint8();
+                            auto freq = p.extractUint8();
+                            auto chan = p.extractUint8();
+                            auto slot = p.extractInt8();
+                            auto cno = p.extractUint8();
+                            auto flags = p.extractUint16();
+                            auto pr = p.extractDouble();
+                            auto cp = p.extractDouble();
+                            auto dp = p.extractFloat();
+                            obs->gnss2Outputs->raw.satellites.emplace_back(sys, svId, freq, chan, slot, cno, flags, pr, cp, dp);
+                        }
+                    }
+                }
+
+                LOG_DATA("DATA({}): ", vnSensor->nameId());
+
+                if (obs->insTime->empty())
+                {
+                    if (InsTime currentTime = util::time::GetCurrentTime();
+                        !currentTime.empty())
+                    {
+                        obs->insTime = currentTime;
+                    }
+                }
+                // Calls all the callbacks
+                vnSensor->invokeCallbacks(b + 2, obs);
             }
         }
     }
@@ -5217,6 +5661,15 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
     {
         LOG_DATA("{} received an ASCII Async message: {}", vnSensor->nameId(), p.datastr());
         vnSensor->asciiOutputBuffer.push_back(p.datastr());
-        // TODO: Send out on another port to be able to log it
+
+        auto obs = std::make_shared<StringObs>(p.datastr());
+
+        if (InsTime currentTime = util::time::GetCurrentTime();
+            !currentTime.empty())
+        {
+            obs->insTime = currentTime;
+        }
+        // Calls all the callbacks
+        vnSensor->invokeCallbacks(VectorNavSensor::OutputPortIndex_AsciiOutput, obs);
     }
 }

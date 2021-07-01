@@ -214,17 +214,22 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 
 #include "NodeData/NodeData.hpp"
 #include "NodeData/InsObs.hpp"
+#include "NodeData/VectorNavBinaryOutput.hpp"
+#include "NodeData/StringObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
-#include "NodeData/IMU/VectorNavObs.hpp"
+#include "NodeData/IMU/VectorNavImuObs.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
     registerNodeDataType<NodeData>();
     registerNodeDataType<InsObs>();
+    // General
+    registerNodeDataType<VectorNavBinaryOutput>();
+    registerNodeDataType<StringObs>();
     // GNSS
     registerNodeDataType<EmlidObs>();
     registerNodeDataType<RtklibPosObs>();
