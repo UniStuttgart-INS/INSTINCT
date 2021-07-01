@@ -60,6 +60,9 @@ class VectorNavDataLogger : public Node, public FileWriter
     /// @param[in] nodeData The received observation
     /// @param[in] linkId Id of the link over which the data is received
     void writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    /// @brief Flag to write the header once
+    bool headerWritten = false;
 };
 
 } // namespace NAV

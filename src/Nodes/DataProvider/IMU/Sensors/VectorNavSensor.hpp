@@ -152,8 +152,19 @@ class VectorNavSensor : public Imu, public UartSensor
     /// contains a collection of desired estimated states and sensor measurements.
     /// @note See User manual VN-310 - 8.2.11-13 (p 100ff) / VN-100 - 5.2.11-13 (p 73ff)
     std::array<vn::sensors::BinaryOutputRegister, 3> binaryOutputRegister = { vn::sensors::BinaryOutputRegister{
-                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
-                                                                                  0,                                                     // RateDivisor
+                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_PORT1,        // AsyncMode
+                                                                                  800,                                                   // RateDivisor
+                                                                                  vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
+                                                                                  vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
+                                                                                  vn::protocol::uart::ImuGroup::IMUGROUP_NONE,           // IMUGroup
+                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE,           // GNSS1Group
+                                                                                  vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE, // AttitudeGroup
+                                                                                  vn::protocol::uart::InsGroup::INSGROUP_NONE,           // INSGroup
+                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE            // GNSS2Group
+                                                                              },
+                                                                              vn::sensors::BinaryOutputRegister{
+                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_PORT2,        // AsyncMode
+                                                                                  800,                                                   // RateDivisor
                                                                                   vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
                                                                                   vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
                                                                                   vn::protocol::uart::ImuGroup::IMUGROUP_NONE,           // IMUGroup
@@ -164,18 +175,7 @@ class VectorNavSensor : public Imu, public UartSensor
                                                                               },
                                                                               vn::sensors::BinaryOutputRegister{
                                                                                   vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
-                                                                                  0,                                                     // RateDivisor
-                                                                                  vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
-                                                                                  vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
-                                                                                  vn::protocol::uart::ImuGroup::IMUGROUP_NONE,           // IMUGroup
-                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE,           // GNSS1Group
-                                                                                  vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE, // AttitudeGroup
-                                                                                  vn::protocol::uart::InsGroup::INSGROUP_NONE,           // INSGroup
-                                                                                  vn::protocol::uart::GpsGroup::GPSGROUP_NONE            // GNSS2Group
-                                                                              },
-                                                                              vn::sensors::BinaryOutputRegister{
-                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
-                                                                                  0,                                                     // RateDivisor
+                                                                                  800,                                                   // RateDivisor
                                                                                   vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
                                                                                   vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
                                                                                   vn::protocol::uart::ImuGroup::IMUGROUP_NONE,           // IMUGroup

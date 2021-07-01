@@ -645,11 +645,11 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
     /*  7 */ { "SyncInCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("SyncIn trigger count.\n\nThe number of SyncIn trigger events that have occurred."); } },
     /*  8 */ { "SyncOutCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("SyncOut trigger count.\n\nThe number of SyncOut trigger events that have occurred."); } },
     /*  9 */ { "TimeStatus", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time valid status flags.");
-                                                                                                                                                if (ImGui::BeginTable("VectorNavTimeStatusTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                                                                                if (ImGui::BeginTable("VectorNavTimeStatusTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                                                                                                                                                 {
-                                                                                                                                                    ImGui::TableSetupColumn("Bit Offset");
-                                                                                                                                                    ImGui::TableSetupColumn("Field");
-                                                                                                                                                    ImGui::TableSetupColumn("Description");
+                                                                                                                                                    ImGui::TableSetupColumn("Bit Offset", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                    ImGui::TableSetupColumn("Field", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                                                                    ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthAutoResize);
                                                                                                                                                     ImGui::TableHeadersRow();
 
                                                                                                                                                     ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
@@ -1242,10 +1242,10 @@ NAV::VectorNavSensor::VectorNavSensor()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 917, 623 };
 
+    nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, NAV::StringObs::type());
     nm::CreateOutputPin(this, "Binary Output 1", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
     nm::CreateOutputPin(this, "Binary Output 2", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
     nm::CreateOutputPin(this, "Binary Output 3", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
-    nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, NAV::StringObs::type());
 
     dividerFrequency = []() {
         std::map<int, int, std::greater<>> divFreq;
@@ -2271,6 +2271,70 @@ void NAV::VectorNavSensor::guiConfig()
         {
             if (ImGui::TreeNode(fmt::format("Binary Output {}##{}", b + 1, size_t(id)).c_str()))
             {
+                static constexpr std::array<std::pair<vn::protocol::uart::AsyncMode, const char*>, 4> asyncModes = {
+                    { { vn::protocol::uart::AsyncMode::ASYNCMODE_NONE, " User message is not automatically sent out either serial port" },
+                      { vn::protocol::uart::AsyncMode::ASYNCMODE_PORT1, "Message is sent out serial port 1 at a fixed rate" },
+                      { vn::protocol::uart::AsyncMode::ASYNCMODE_PORT2, "Message is sent out serial port 2 at a fixed rate" },
+                      { vn::protocol::uart::AsyncMode::ASYNCMODE_BOTH, "Message is sent out both serial ports at a fixed rate" } }
+                };
+                if (ImGui::BeginCombo(fmt::format("Async Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(binaryOutputRegister.at(b).asyncMode).c_str()))
+                {
+                    for (const auto& asyncMode : asyncModes)
+                    {
+                        const bool isSelected = (binaryOutputRegister.at(b).asyncMode == asyncMode.first);
+                        if (ImGui::Selectable(vn::protocol::uart::str(asyncMode.first).c_str(), isSelected))
+                        {
+                            binaryOutputRegister.at(b).asyncMode = asyncMode.first;
+                            LOG_DEBUG("{}: binaryOutputRegister.at(b).asyncMode changed to {}", nameId(), vn::protocol::uart::str(binaryOutputRegister.at(b).asyncMode));
+                            flow::ApplyChanges();
+                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            {
+                                try
+                                {
+                                    switch (b)
+                                    {
+                                    case 0:
+                                        vs.writeBinaryOutput1(binaryOutputRegister.at(0));
+                                        break;
+                                    case 1:
+                                        vs.writeBinaryOutput2(binaryOutputRegister.at(1));
+                                        break;
+                                    case 2:
+                                        vs.writeBinaryOutput3(binaryOutputRegister.at(2));
+                                        break;
+                                    default:
+                                        break;
+                                    }
+                                }
+                                catch (const std::exception& e)
+                                {
+                                    LOG_ERROR("{}: Could not configure the binaryOutputRegister {}: {}", nameId(), b + 1, e.what());
+                                    deinitializeNode();
+                                }
+                            }
+                            else
+                            {
+                                deinitializeNode();
+                            }
+                        }
+                        if (ImGui::IsItemHovered())
+                        {
+                            ImGui::BeginTooltip();
+                            ImGui::TextUnformatted(asyncMode.second);
+                            ImGui::EndTooltip();
+                        }
+
+                        if (isSelected) // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+                ImGui::SameLine();
+                gui::widgets::HelpMarker("Selects whether the output message should be sent "
+                                         "out on the serial port(s) at a fixed rate.");
+
                 const char* frequencyText = binaryOutputSelectedFrequency.at(b) < dividerFrequency.first.size()
                                                 ? dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)).c_str()
                                                 : "Unknown";
@@ -5159,6 +5223,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 // Group 1 (Common)
                 if (vnSensor->binaryOutputRegister.at(b).commonField != vn::protocol::uart::CommonGroup::COMMONGROUP_NONE)
                 {
+                    // TODO: Add Common outputs
                 }
                 // Group 2 (Time)
                 if (vnSensor->binaryOutputRegister.at(b).timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
@@ -5641,6 +5706,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         }
                     }
                 }
+
+                // TODO: Set InsTime from data
 
                 LOG_DATA("DATA({}): ", vnSensor->nameId());
 
