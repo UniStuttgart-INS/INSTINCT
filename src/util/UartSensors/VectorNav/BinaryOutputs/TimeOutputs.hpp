@@ -78,7 +78,7 @@ struct TimeOutputs
     /// dateOk       | 1 – TimeGps and GpsWeek are valid.
     /// utcTimeValid | 1 – UTC time is valid.
     /// resv         | Reserved for future use.
-    uint8_t timeStatus{};
+    TimeStatus timeStatus{};
 };
 
 } // namespace NAV::sensors::vectornav

@@ -10,6 +10,59 @@
 
 namespace NAV::sensors::vectornav
 {
+/// @brief The VPE status bitfield
+///
+/// Bit | Name           | Description
+///  0  | timeOk         | GpsTow is valid.
+///  1  | dateOk         | TimeGps and GpsWeek are valid.
+///  2  | utcTimeValid   | UTC time is valid.
+class TimeStatus
+{
+  public:
+    /// Constructor
+    explicit TimeStatus(uint8_t status) : status(status) {}
+
+    /// @brief Assignment operator
+    /// @param[in] status Status to set
+    TimeStatus& operator=(const uint8_t& uintStatus)
+    {
+        status = uintStatus;
+        return *this;
+    }
+
+    /// @brief Default constructor
+    TimeStatus() = default;
+    /// @brief Destructor
+    ~TimeStatus() = default;
+    /// @brief Copy constructor
+    TimeStatus(const TimeStatus&) = delete;
+    /// @brief Move constructor
+    TimeStatus(TimeStatus&&) = delete;
+    /// @brief Copy assignment operator
+    TimeStatus& operator=(const TimeStatus&) = delete;
+    /// @brief Move assignment operator
+    TimeStatus& operator=(TimeStatus&&) = delete;
+
+    /// The storage field
+    uint8_t status;
+
+    /// GpsTow is valid
+    [[nodiscard]] constexpr uint8_t timeOk() const
+    {
+        return ((status & (1U << 0U)) >> 0U);
+    }
+    /// TimeGps and GpsWeek are valid.
+    [[nodiscard]] constexpr uint8_t dateOk() const
+    {
+        return ((status & (1U << 1U)) >> 1U); // NOLINT
+    }
+    /// UTC time is valid.
+    [[nodiscard]] constexpr uint8_t utcTimeValid() const
+    {
+        return ((status & (1U << 2U)) >> 2U); // NOLINT
+    }
+};
+
 /// @brief Storage class for UTC Time
 struct UTC
 {
@@ -47,7 +100,7 @@ struct TimeInfo
     /// dateOk       | 1 – TimeGps and GpsWeek are valid.
     /// utcTimeValid | 1 – UTC time is valid.
     /// resv         | Reserved for future use.
-    uint8_t status{};
+    TimeStatus status{};
     /// @brief Amount of leap seconds
     int8_t leapSeconds{};
 };
@@ -55,13 +108,13 @@ struct TimeInfo
 /// @brief Dilution of precision
 struct DOP
 {
-    float gDop{};
-    float pDop{};
-    float tDop{};
-    float vDop{};
-    float hDop{};
-    float nDop{};
-    float eDop{};
+    float gDop{}; ///< Geometric DOP
+    float pDop{}; ///< Positional DOP
+    float tDop{}; ///< Time DOP
+    float vDop{}; ///< Vertical DOP
+    float hDop{}; ///< Horizontal DOP
+    float nDop{}; ///< North DOP
+    float eDop{}; ///< East DOP
 };
 
 /// @brief Satellite Constellation
@@ -89,13 +142,14 @@ struct SatInfo
         /// @brief Tracking info flags
         enum class Flags : uint8_t
         {
-            Healthy = 0,                ///< Healthy
-            Almanac = 1,                ///< Almanac
-            Ephemeris = 2,              ///< Ephemeris
-            DifferentialCorrection = 3, ///< Differential Correction
-            UsedForNavigation = 4,      ///< Used for Navigation
-            AzimuthElevationValid = 5,  ///< Azimuth / Elevation Valid
-            UsedForRTK = 6,             ///< Used for RTK
+            None = 0,                        ///< No flag set
+            Healthy = 1 << 0,                ///< Healthy
+            Almanac = 1 << 1,                ///< Almanac
+            Ephemeris = 1 << 2,              ///< Ephemeris
+            DifferentialCorrection = 1 << 3, ///< Differential Correction
+            UsedForNavigation = 1 << 4,      ///< Used for Navigation
+            AzimuthElevationValid = 1 << 5,  ///< Azimuth / Elevation Valid
+            UsedForRTK = 1 << 6,             ///< Used for RTK
         };
 
         /// @brief Quality Indicator
@@ -137,6 +191,16 @@ struct SatInfo
     std::vector<SatInfoElement> satellites;
 };
 
+/// @brief Allows combining flags of the SatInfo::SatInfoElement::Flags enum.
+///
+/// @param[in] lhs Left-hand side enum value.
+/// @param[in] rhs Right-hand side enum value.
+/// @return The binary ANDed value.
+constexpr SatInfo::SatInfoElement::Flags operator&(SatInfo::SatInfoElement::Flags lhs, SatInfo::SatInfoElement::Flags rhs)
+{
+    return SatInfo::SatInfoElement::Flags(int(lhs) & int(rhs));
+}
+
 /// @brief Raw measurements pertaining to each GNSS satellite in view.
 struct RawMeas
 {
@@ -145,15 +209,16 @@ struct RawMeas
         /// @brief Tracking info flags
         enum class Flags : uint16_t
         {
-            Searching = 0,           ///< Searching
-            Tracking = 1,            ///< Tracking
-            TimeValid = 2,           ///< Time Valid
-            CodeLock = 3,            ///< Code Lock
-            PhaseLock = 4,           ///< Phase Lock
-            PhaseHalfAmbiguity = 5,  ///< Phase Half Ambiguity
-            PhaseHalfSub = 6,        ///< Phase Half Sub
-            PhaseSlip = 7,           ///< Phase Slip
-            PseudorangeSmoothed = 8, ///< Pseudorange Smoothed
+            None = 0,                     ///< No flag set
+            Searching = 1 << 0,           ///< Searching
+            Tracking = 1 << 1,            ///< Tracking
+            TimeValid = 1 << 2,           ///< Time Valid
+            CodeLock = 1 << 3,            ///< Code Lock
+            PhaseLock = 1 << 4,           ///< Phase Lock
+            PhaseHalfAmbiguity = 1 << 5,  ///< Phase Half Ambiguity
+            PhaseHalfSub = 1 << 6,        ///< Phase Half Sub
+            PhaseSlip = 1 << 7,           ///< Phase Slip
+            PseudorangeSmoothed = 1 << 8, ///< Pseudorange Smoothed
         };
 
         /// @brief Channel Indicator
@@ -223,6 +288,16 @@ struct RawMeas
     /// @brief SatRaw container
     std::vector<SatRawElement> satellites;
 };
+
+/// @brief Allows combining flags of the RawMeas::SatRawElement::Flags enum.
+///
+/// @param[in] lhs Left-hand side enum value.
+/// @param[in] rhs Right-hand side enum value.
+/// @return The binary ANDed value.
+constexpr RawMeas::SatRawElement::Flags operator&(RawMeas::SatRawElement::Flags lhs, RawMeas::SatRawElement::Flags rhs)
+{
+    return RawMeas::SatRawElement::Flags(int(lhs) & int(rhs));
+}
 
 /// @brief The VPE status bitfield
 ///

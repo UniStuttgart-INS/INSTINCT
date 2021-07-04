@@ -152,7 +152,7 @@ class VectorNavSensor : public Imu, public UartSensor
     /// contains a collection of desired estimated states and sensor measurements.
     /// @note See User manual VN-310 - 8.2.11-13 (p 100ff) / VN-100 - 5.2.11-13 (p 73ff)
     std::array<vn::sensors::BinaryOutputRegister, 3> binaryOutputRegister = { vn::sensors::BinaryOutputRegister{
-                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_PORT1,        // AsyncMode
+                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
                                                                                   800,                                                   // RateDivisor
                                                                                   vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
                                                                                   vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup
@@ -163,7 +163,7 @@ class VectorNavSensor : public Imu, public UartSensor
                                                                                   vn::protocol::uart::GpsGroup::GPSGROUP_NONE            // GNSS2Group
                                                                               },
                                                                               vn::sensors::BinaryOutputRegister{
-                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_PORT2,        // AsyncMode
+                                                                                  vn::protocol::uart::AsyncMode::ASYNCMODE_NONE,         // AsyncMode
                                                                                   800,                                                   // RateDivisor
                                                                                   vn::protocol::uart::CommonGroup::COMMONGROUP_NONE,     // CommonGroup
                                                                                   vn::protocol::uart::TimeGroup::TIMEGROUP_NONE,         // TimeGroup

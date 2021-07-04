@@ -49,7 +49,7 @@ struct GnssOutputs
     /// 4 - SBAS
     /// 7 - RTK Float (only GNSS1)
     /// 8 - RTK Fixed (only GNSS1)
-    int fix{};
+    uint8_t fix{};
 
     /// @brief GNSS position (latitude, longitude, altitude)
     ///

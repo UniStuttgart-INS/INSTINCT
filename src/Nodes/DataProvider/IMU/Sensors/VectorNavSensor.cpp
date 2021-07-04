@@ -673,7 +673,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
 } };
 
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor::binaryGroupIMU{ {
-    /*  0 */ { "ImuStatus", vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Status is reserved for future use. Not currently used in the current code, as such will always report 0."); } },
+    /*  0 */ { "ImuStatus", vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS, [](VectorNavModel /* sensorModel */) { return false; }, []() { ImGui::TextUnformatted("Status is reserved for future use. Not currently used in the current code, as such will always report 0."); } },
     /*  1 */ { "UncompMag", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Uncompensated magnetic measurement.\n\nThe IMU magnetic field measured in units of Gauss, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), and the user\ncompensation, however it is not compensated by the onboard Hard/Soft Iron estimator."); } },
     /*  2 */ { "UncompAccel", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Uncompensated acceleration measurement.\n\nThe IMU acceleration measured in units of m/s^2, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), however it is not\ncompensated by any dynamic calibration such as bias compensation from the onboard INS Kalman filter."); } },
     /*  3 */ { "UncompGyro", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Uncompensated angular rate measurement.\n\nThe IMU angular rate measured in units of rad/s, given in the body frame. This measurement is compensated\nby the static calibration (individual factory calibration stored in flash), however it is not compensated by any\ndynamic calibration such as the bias compensation from the onboard AHRS/INS Kalman filters."); } },
@@ -1441,7 +1441,7 @@ void NAV::VectorNavSensor::guiConfig()
                         asyncDataOutputType = asciiAsyncItem.first;
                         LOG_DEBUG("{}: asyncDataOutputType changed to {}", nameId(), vn::protocol::uart::str(asyncDataOutputType));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1489,7 +1489,7 @@ void NAV::VectorNavSensor::guiConfig()
                 asyncDataOutputFrequency = static_cast<uint32_t>(possibleAsyncDataOutputFrequency.at(static_cast<size_t>(asyncDataOutputFrequencySelected)));
                 LOG_DEBUG("{}: asyncDataOutputType changed to {} Hz", nameId(), asyncDataOutputFrequency);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -1557,7 +1557,7 @@ void NAV::VectorNavSensor::guiConfig()
                         synchronizationControlRegister.syncInMode = synchronizationControlSyncInMode.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncInMode changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncInMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1609,7 +1609,7 @@ void NAV::VectorNavSensor::guiConfig()
                         synchronizationControlRegister.syncInEdge = synchronizationControlSyncInEdge.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncInEdge changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncInEdge));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1658,7 +1658,7 @@ void NAV::VectorNavSensor::guiConfig()
                 synchronizationControlRegister.syncInSkipFactor = static_cast<uint16_t>(syncInSkipFactor);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncInSkipFactor changed to {}", nameId(), synchronizationControlRegister.syncInSkipFactor);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -1698,7 +1698,7 @@ void NAV::VectorNavSensor::guiConfig()
                         synchronizationControlRegister.syncOutMode = synchronizationControlSyncOutMode.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncOutMode changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncOutMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1750,7 +1750,7 @@ void NAV::VectorNavSensor::guiConfig()
                         synchronizationControlRegister.syncOutPolarity = synchronizationControlSyncOutPolarity.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncOutPolarity changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncOutPolarity));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1799,7 +1799,7 @@ void NAV::VectorNavSensor::guiConfig()
                 synchronizationControlRegister.syncOutSkipFactor = static_cast<uint16_t>(syncOutSkipFactor);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncOutSkipFactor changed to {}", nameId(), synchronizationControlRegister.syncOutSkipFactor);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -1829,7 +1829,7 @@ void NAV::VectorNavSensor::guiConfig()
                 synchronizationControlRegister.syncOutPulseWidth = static_cast<uint32_t>(syncOutPulseWidth);
                 LOG_DEBUG("{}: synchronizationControlRegister.syncOutPulseWidth changed to {}", nameId(), synchronizationControlRegister.syncOutPulseWidth);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -1874,7 +1874,7 @@ void NAV::VectorNavSensor::guiConfig()
                         communicationProtocolControlRegister.serialCount = communicationProtocolControlSerialCount.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.serialCount changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialCount));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1932,7 +1932,7 @@ void NAV::VectorNavSensor::guiConfig()
                         communicationProtocolControlRegister.serialStatus = communicationProtocolControlSerialStatus.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.serialStatus changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialStatus));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -1988,7 +1988,7 @@ void NAV::VectorNavSensor::guiConfig()
                             communicationProtocolControlRegister.spiCount = communicationProtocolControlSpiCount.first;
                             LOG_DEBUG("{}: communicationProtocolControlRegister.spiCount changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiCount));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -2036,7 +2036,7 @@ void NAV::VectorNavSensor::guiConfig()
                             communicationProtocolControlRegister.spiStatus = communicationProtocolControlSpiStatus.first;
                             LOG_DEBUG("{}: communicationProtocolControlRegister.spiStatus changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiStatus));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -2088,7 +2088,7 @@ void NAV::VectorNavSensor::guiConfig()
                         communicationProtocolControlRegister.serialChecksum = communicationProtocolControlSerialChecksum.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.serialChecksum changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialChecksum));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -2142,7 +2142,7 @@ void NAV::VectorNavSensor::guiConfig()
                             communicationProtocolControlRegister.spiChecksum = communicationProtocolControlSpiChecksum.first;
                             LOG_DEBUG("{}: communicationProtocolControlRegister.spiChecksum changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiChecksum));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -2194,7 +2194,7 @@ void NAV::VectorNavSensor::guiConfig()
                         communicationProtocolControlRegister.errorMode = communicationProtocolControlErrorMode.first;
                         LOG_DEBUG("{}: communicationProtocolControlRegister.errorMode changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.errorMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -2287,7 +2287,7 @@ void NAV::VectorNavSensor::guiConfig()
                             binaryOutputRegister.at(b).asyncMode = asyncMode.first;
                             LOG_DEBUG("{}: binaryOutputRegister.at(b).asyncMode changed to {}", nameId(), vn::protocol::uart::str(binaryOutputRegister.at(b).asyncMode));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -2346,20 +2346,20 @@ void NAV::VectorNavSensor::guiConfig()
                     binaryOutputRegister.at(b).rateDivisor = dividerFrequency.first.at(binaryOutputSelectedFrequency.at(b));
                     LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)));
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
                             switch (b)
                             {
                             case 0:
-                                vs.writeBinaryOutput1(binaryOutputRegister.at(0));
+                                vs.writeBinaryOutput1(binaryOutputRegister.at(b));
                                 break;
                             case 1:
-                                vs.writeBinaryOutput2(binaryOutputRegister.at(1));
+                                vs.writeBinaryOutput2(binaryOutputRegister.at(b));
                                 break;
                             case 2:
-                                vs.writeBinaryOutput3(binaryOutputRegister.at(2));
+                                vs.writeBinaryOutput3(binaryOutputRegister.at(b));
                                 break;
                             default:
                                 break;
@@ -2402,23 +2402,36 @@ void NAV::VectorNavSensor::guiConfig()
                         {
                             LOG_DEBUG("{}: Field '{}' of Binary Group {} is now {}", nameId(), std::string(label).substr(0, std::string(label).find('#')), b + 1, (*flags & flags_value) ? "checked" : "unchecked");
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    switch (b)
+                                    if (b == 0)
                                     {
-                                    case 0:
-                                        vs.writeBinaryOutput1(binaryOutputRegister.at(0));
-                                        break;
-                                    case 1:
-                                        vs.writeBinaryOutput2(binaryOutputRegister.at(1));
-                                        break;
-                                    case 2:
-                                        vs.writeBinaryOutput3(binaryOutputRegister.at(2));
-                                        break;
-                                    default:
-                                        break;
+                                        vs.writeBinaryOutput1(binaryOutputRegister.at(b));
+                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2).id);
+                                        for (auto& connectedLink : connectedLinks)
+                                        {
+                                            nm::RefreshLink(connectedLink->id);
+                                        }
+                                    }
+                                    else if (b == 1)
+                                    {
+                                        vs.writeBinaryOutput2(binaryOutputRegister.at(b));
+                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2).id);
+                                        for (auto& connectedLink : connectedLinks)
+                                        {
+                                            nm::RefreshLink(connectedLink->id);
+                                        }
+                                    }
+                                    else if (b == 2)
+                                    {
+                                        vs.writeBinaryOutput3(binaryOutputRegister.at(b));
+                                        auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2).id);
+                                        for (auto& connectedLink : connectedLinks)
+                                        {
+                                            nm::RefreshLink(connectedLink->id);
+                                        }
                                     }
                                 }
                                 catch (const std::exception& e)
@@ -2583,7 +2596,7 @@ void NAV::VectorNavSensor::guiConfig()
                 referenceFrameRotationMatrix.e02 = row.at(2);
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2608,7 +2621,7 @@ void NAV::VectorNavSensor::guiConfig()
                 referenceFrameRotationMatrix.e12 = row.at(2);
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2633,7 +2646,7 @@ void NAV::VectorNavSensor::guiConfig()
                 referenceFrameRotationMatrix.e22 = row.at(2);
                 LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2674,7 +2687,7 @@ void NAV::VectorNavSensor::guiConfig()
                 imuFilteringConfigurationRegister.magWindowSize = static_cast<uint16_t>(magWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.magWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.magWindowSize);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2709,7 +2722,7 @@ void NAV::VectorNavSensor::guiConfig()
                 imuFilteringConfigurationRegister.accelWindowSize = static_cast<uint16_t>(accelWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.accelWindowSize);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2744,7 +2757,7 @@ void NAV::VectorNavSensor::guiConfig()
                 imuFilteringConfigurationRegister.gyroWindowSize = static_cast<uint16_t>(gyroWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.gyroWindowSize);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2779,7 +2792,7 @@ void NAV::VectorNavSensor::guiConfig()
                 imuFilteringConfigurationRegister.tempWindowSize = static_cast<uint16_t>(tempWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.tempWindowSize);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2814,7 +2827,7 @@ void NAV::VectorNavSensor::guiConfig()
                 imuFilteringConfigurationRegister.presWindowSize = static_cast<uint16_t>(presWindowSize);
                 LOG_DEBUG("{}: imuFilteringConfigurationRegister.presWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.presWindowSize);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -2851,7 +2864,7 @@ void NAV::VectorNavSensor::guiConfig()
                         imuFilteringConfigurationRegister.magFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.magFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.magFilterMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -2897,7 +2910,7 @@ void NAV::VectorNavSensor::guiConfig()
                         imuFilteringConfigurationRegister.accelFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.accelFilterMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -2943,7 +2956,7 @@ void NAV::VectorNavSensor::guiConfig()
                         imuFilteringConfigurationRegister.gyroFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.gyroFilterMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -2989,7 +3002,7 @@ void NAV::VectorNavSensor::guiConfig()
                         imuFilteringConfigurationRegister.tempFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.tempFilterMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3035,7 +3048,7 @@ void NAV::VectorNavSensor::guiConfig()
                         imuFilteringConfigurationRegister.presFilterMode = imuFilteringConfigurationFilterMode.first;
                         LOG_DEBUG("{}: imuFilteringConfigurationRegister.presFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.presFilterMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3094,7 +3107,7 @@ void NAV::VectorNavSensor::guiConfig()
                         deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame = deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first;
                         LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame changed to {}", nameId(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3144,7 +3157,7 @@ void NAV::VectorNavSensor::guiConfig()
                         deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation = deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first;
                         LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation changed to {}", nameId(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3195,7 +3208,7 @@ void NAV::VectorNavSensor::guiConfig()
                         deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation = deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first;
                         LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation changed to {}", nameId(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3262,7 +3275,7 @@ void NAV::VectorNavSensor::guiConfig()
                             gpsConfigurationRegister.mode = gpsConfigurationMode.first;
                             LOG_DEBUG("{}: gpsConfigurationRegister.mode changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.mode));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -3310,7 +3323,7 @@ void NAV::VectorNavSensor::guiConfig()
                             gpsConfigurationRegister.ppsSource = gpsConfigurationPpsSource.first;
                             LOG_DEBUG("{}: gpsConfigurationRegister.ppsSource changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.ppsSource));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -3356,7 +3369,7 @@ void NAV::VectorNavSensor::guiConfig()
                             gpsConfigurationRegister.rate = gpsConfigurationRate;
                             LOG_DEBUG("{}: gpsConfigurationRegister.rate changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.rate));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -3399,7 +3412,7 @@ void NAV::VectorNavSensor::guiConfig()
                             gpsConfigurationRegister.antPow = gpsConfigurationAntPower.first;
                             LOG_DEBUG("{}: gpsConfigurationRegister.antPow changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.antPow));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -3445,7 +3458,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: gpsAntennaOffset changed to {}", nameId(), gpsAntennaOffset);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3475,7 +3488,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: gpsCompassBaselineRegister.position changed to {}", nameId(), gpsCompassBaselineRegister.position);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3509,7 +3522,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: gpsCompassBaselineRegister.uncertainty changed to {}", nameId(), gpsCompassBaselineRegister.uncertainty);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3570,7 +3583,7 @@ void NAV::VectorNavSensor::guiConfig()
                         vpeBasicControlRegister.enable = vpeBasicControlEnable;
                         LOG_DEBUG("{}: vpeBasicControlRegister.enable changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.enable));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3611,7 +3624,7 @@ void NAV::VectorNavSensor::guiConfig()
                         vpeBasicControlRegister.headingMode = vpeBasicControlHeadingMode;
                         LOG_DEBUG("{}: vpeBasicControlRegister.headingMode changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.headingMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3651,7 +3664,7 @@ void NAV::VectorNavSensor::guiConfig()
                         vpeBasicControlRegister.filteringMode = vpeBasicControlMode;
                         LOG_DEBUG("{}: vpeBasicControlRegister.filteringMode changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.filteringMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3687,7 +3700,7 @@ void NAV::VectorNavSensor::guiConfig()
                         vpeBasicControlRegister.tuningMode = vpeBasicControlMode;
                         LOG_DEBUG("{}: vpeBasicControlRegister.tuningMode changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.tuningMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -3726,7 +3739,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.baseTuning changed to {}", nameId(), vpeMagnetometerBasicTuningRegister.baseTuning);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3751,7 +3764,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), vpeMagnetometerBasicTuningRegister.adaptiveTuning);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3773,7 +3786,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), vpeMagnetometerBasicTuningRegister.adaptiveFiltering);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3802,7 +3815,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.baseTuning changed to {}", nameId(), vpeAccelerometerBasicTuningRegister.baseTuning);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3827,7 +3840,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), vpeAccelerometerBasicTuningRegister.adaptiveTuning);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3849,7 +3862,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), vpeAccelerometerBasicTuningRegister.adaptiveFiltering);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3878,7 +3891,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeGyroBasicTuningRegister.baseTuning changed to {}", nameId(), vpeGyroBasicTuningRegister.baseTuning);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3902,7 +3915,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeGyroBasicTuningRegister.adaptiveTuning changed to {}", nameId(), vpeGyroBasicTuningRegister.adaptiveTuning);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3924,7 +3937,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: vpeGyroBasicTuningRegister.angularWalkVariance changed to {}", nameId(), vpeGyroBasicTuningRegister.angularWalkVariance);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -3953,7 +3966,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: filterStartupGyroBias changed to {}", nameId(), filterStartupGyroBias);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4002,7 +4015,7 @@ void NAV::VectorNavSensor::guiConfig()
                             insBasicConfigurationRegisterVn300.scenario = insBasicConfigurationRegisterVn300Scenario.first;
                             LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.scenario changed to {}", nameId(), vn::protocol::uart::str(insBasicConfigurationRegisterVn300.scenario));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -4038,7 +4051,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.ahrsAiding changed to {}", nameId(), insBasicConfigurationRegisterVn300.ahrsAiding);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4068,7 +4081,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.estBaseline changed to {}", nameId(), insBasicConfigurationRegisterVn300.estBaseline);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4099,7 +4112,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: startupFilterBiasEstimateRegister.gyroBias changed to {}", nameId(), startupFilterBiasEstimateRegister.gyroBias);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4121,7 +4134,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: startupFilterBiasEstimateRegister.accelBias changed to {}", nameId(), startupFilterBiasEstimateRegister.accelBias);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4143,7 +4156,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: startupFilterBiasEstimateRegister.pressureBias changed to {}", nameId(), startupFilterBiasEstimateRegister.pressureBias);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4202,7 +4215,7 @@ void NAV::VectorNavSensor::guiConfig()
                         magnetometerCalibrationControlRegister.hsiMode = magnetometerCalibrationControlHsiMode.first;
                         LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiMode changed to {}", nameId(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiMode));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -4250,7 +4263,7 @@ void NAV::VectorNavSensor::guiConfig()
                         magnetometerCalibrationControlRegister.hsiOutput = magnetometerCalibrationControlHsiOutput.first;
                         LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiOutput changed to {}", nameId(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiOutput));
                         flow::ApplyChanges();
-                        if (vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                         {
                             try
                             {
@@ -4292,7 +4305,7 @@ void NAV::VectorNavSensor::guiConfig()
                 magnetometerCalibrationControlRegister.convergeRate = static_cast<uint8_t>(convergeRate);
                 LOG_DEBUG("{}: magnetometerCalibrationControlRegister.convergeRate changed to {}", nameId(), magnetometerCalibrationControlRegister.convergeRate);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4350,7 +4363,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.magRef changed to {}", nameId(), magneticAndGravityReferenceVectorsRegister.magRef);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4372,7 +4385,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.accRef changed to {}", nameId(), magneticAndGravityReferenceVectorsRegister.accRef);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4418,7 +4431,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.useMagModel changed to {}", nameId(), referenceVectorConfigurationRegister.useMagModel);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4440,7 +4453,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.useGravityModel changed to {}", nameId(), referenceVectorConfigurationRegister.useGravityModel);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4464,7 +4477,7 @@ void NAV::VectorNavSensor::guiConfig()
                 referenceVectorConfigurationRegister.recalcThreshold = static_cast<uint32_t>(recalcThreshold);
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.recalcThreshold changed to {}", nameId(), referenceVectorConfigurationRegister.recalcThreshold);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4488,7 +4501,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.year changed to {}", nameId(), referenceVectorConfigurationRegister.year);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4512,7 +4525,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.latitude changed to {}", nameId(), referenceVectorConfigurationRegister.position[0]);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4536,7 +4549,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.longitude changed to {}", nameId(), referenceVectorConfigurationRegister.position[1]);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4560,7 +4573,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.altitude changed to {}", nameId(), referenceVectorConfigurationRegister.position[2]);
                 flow::ApplyChanges();
-                if (vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                 {
                     try
                     {
@@ -4611,7 +4624,7 @@ void NAV::VectorNavSensor::guiConfig()
                             velocityCompensationControlRegister.mode = velocityCompensationControlMode;
                             LOG_DEBUG("{}: velocityCompensationControlRegister.mode changed to {}", nameId(), vn::protocol::uart::str(velocityCompensationControlRegister.mode));
                             flow::ApplyChanges();
-                            if (vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                             {
                                 try
                                 {
@@ -4643,7 +4656,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: velocityCompensationControlRegister.velocityTuning changed to {}", nameId(), velocityCompensationControlRegister.velocityTuning);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4667,7 +4680,7 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     LOG_DEBUG("{}: velocityCompensationControlRegister.rateTuning changed to {}", nameId(), velocityCompensationControlRegister.rateTuning);
                     flow::ApplyChanges();
-                    if (vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
                     {
                         try
                         {
@@ -4700,6 +4713,7 @@ void NAV::VectorNavSensor::guiConfig()
     json j;
 
     j["UartSensor"] = UartSensor::save();
+    j["sensorModel"] = sensorModel;
 
     // ###########################################################################################################
     //                                               SYSTEM MODULE
@@ -4778,6 +4792,10 @@ void NAV::VectorNavSensor::restore(json const& j)
     if (j.contains("UartSensor"))
     {
         UartSensor::restore(j.at("UartSensor"));
+    }
+    if (j.contains("sensorModel"))
+    {
+        j.at("sensorModel").get_to(sensorModel);
     }
 
     // ###########################################################################################################
@@ -5185,19 +5203,25 @@ void NAV::VectorNavSensor::deinitialize()
             vs.unregisterAsyncPacketReceivedHandler();
         }
         catch (...)
-        {}
+        {
+            LOG_TRACE("{}: Could not unregisterAsyncPacketReceivedHandler", nameId());
+        }
         try
         {
             vs.reset(true);
         }
         catch (...)
-        {}
+        {
+            LOG_TRACE("{}: Could not reset", nameId());
+        }
         try
         {
             vs.disconnect();
         }
         catch (...)
-        {}
+        {
+            LOG_TRACE("{}: Could not disconnect", nameId());
+        }
     }
 }
 
@@ -5705,6 +5729,11 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             obs->gnss2Outputs->raw.satellites.emplace_back(sys, svId, freq, chan, slot, cno, flags, pr, cp, dp);
                         }
                     }
+                }
+
+                if (p.getCurExtractLoc() != p.getPacketLength() - 2) // 2 Bytes CRC should be left
+                {
+                    LOG_DEBUG("{}: Only {} of {} bytes were extracted from the Binary Output {}", vnSensor->nameId(), p.getCurExtractLoc(), p.getPacketLength(), b + 1);
                 }
 
                 // TODO: Set InsTime from data
