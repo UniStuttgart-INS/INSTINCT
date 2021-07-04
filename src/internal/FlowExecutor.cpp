@@ -122,7 +122,10 @@ void NAV::FlowExecutor::deinitialize()
 
     _execute.store(false, std::memory_order_release);
 
-    nm::DisableAllCallbacks();
+    if (!ConfigManager::Get<bool>("nogui", false))
+    {
+        nm::DisableAllCallbacks();
+    }
 
     util::time::SetMode(util::time::Mode::REAL_TIME);
 }
