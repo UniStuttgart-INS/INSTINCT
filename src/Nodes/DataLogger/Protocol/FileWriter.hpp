@@ -33,6 +33,8 @@ class FileWriter
     /// @brief Move assignment operator
     FileWriter& operator=(FileWriter&&) = delete;
 
+    std::string str(FileType type);
+
   protected:
     /// @brief Default constructor
     FileWriter() = default;
