@@ -21,7 +21,7 @@ class FileWriter
     {
         NONE,   ///< Not specified
         BINARY, ///< Binary data
-        ASCII,  ///< Ascii text data
+        CSV,    ///< Ascii text data
     };
 
     /// @brief Copy constructor
@@ -33,7 +33,7 @@ class FileWriter
     /// @brief Move assignment operator
     FileWriter& operator=(FileWriter&&) = delete;
 
-    std::string str(FileType type);
+    static std::string str(FileType type);
 
   protected:
     /// @brief Default constructor

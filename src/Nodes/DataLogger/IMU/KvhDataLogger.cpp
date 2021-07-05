@@ -18,7 +18,7 @@ NAV::KvhDataLogger::KvhDataLogger()
 
     LOG_TRACE("{}: called", name);
 
-    fileType = FileType::ASCII;
+    fileType = FileType::CSV;
 
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };

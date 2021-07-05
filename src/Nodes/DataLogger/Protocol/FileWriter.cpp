@@ -48,7 +48,7 @@ bool NAV::FileWriter::initialize()
         filepath = flow::GetProgramRootPath() + '/' + path;
     }
 
-    if (fileType == FileType::ASCII || fileType == FileType::BINARY)
+    if (fileType == FileType::CSV || fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         filestream.open(filepath, std::ios_base::trunc | std::ios_base::binary);
@@ -88,9 +88,11 @@ std::string NAV::FileWriter::str(NAV::FileWriter::FileType type)
     {
     case FileType::NONE:
         return "None";
-    case FileType::ASCII:
-        return "Csv";
+    case FileType::CSV:
+        return "CSV";
     case FileType::BINARY:
         return "Binary";
+    default:
+        return "Unkown";
     }
 }

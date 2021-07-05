@@ -619,7 +619,7 @@ void from_json(const json& j, VelocityCompensationControlRegister& velocityCompe
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::binaryGroupCommon = { {
     /*  0 */ { "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C). This field is\nequivalent to the TimeStartup field in group 2."); } },
     /*  1 */ { "TimeGps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, [](VectorNavModel sensorModel) { return sensorModel == VectorNavModel::VN310; }, []() { ImGui::TextUnformatted("GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds. This field is equivalent to\nthe TimeGps field in group 2."); } },
-    /*  2 */ { "TimeSyncIn", vn::protocol::uart::CommonGroup::COMMONGROUP_SYNCINCNT, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn trigger event expressed in nano seconds. This field is equivalent to the\nTimeSyncIn field in group 2."); } },
+    /*  2 */ { "TimeSyncIn", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn trigger event expressed in nano seconds. This field is equivalent to the\nTimeSyncIn field in group 2."); } },
     /*  3 */ { "YawPitchRoll", vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Estimated attitude as yaw pitch and roll angles.\n\nThe estimated attitude Yaw, Pitch, and Roll angles measured in degrees. The attitude is given as a 3,2,1 Euler\nangle sequence describing the body frame with respect to the local North East Down (NED) frame. This field\nis equivalent to the YawPitchRoll field in group 5.\n\nYaw [+/- 180°]\nPitch [+/- 90°]\nRoll [+/- 180°]"); } },
     /*  4 */ { "Quaternion", vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Estimated attitude as a quaternion.\n\nThe estimated attitude quaternion. The last term is the scalar value. The attitude is given as the body frame\nwith respect to the local North East Down (NED) frame. This field is equivalent to the Quaternion field in\ngroup 5."); } },
     /*  5 */ { "AngularRate", vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE, [](VectorNavModel /* sensorModel */) { return true; }, []() { ImGui::TextUnformatted("Compensated angular rate.\n\nThe estimated angular rate measured in rad/s. The angular rates are compensated by the onboard filter bias\nestimates. The angular rate is expressed in the body frame. This field is equivalent to the AngularRate field\nin group 3."); } },
@@ -1240,7 +1240,7 @@ NAV::VectorNavSensor::VectorNavSensor()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 917, 623 };
+    guiConfigDefaultWindowSize = { 954, 783 };
 
     nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, NAV::StringObs::type());
     nm::CreateOutputPin(this, "Binary Output 1", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
@@ -5247,7 +5247,176 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 // Group 1 (Common)
                 if (vnSensor->binaryOutputRegister.at(b).commonField != vn::protocol::uart::CommonGroup::COMMONGROUP_NONE)
                 {
-                    // TODO: Add Common outputs
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP)
+                    {
+                        if (!obs->timeOutputs)
+                        {
+                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                        }
+                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
+                        obs->timeOutputs->timeStartup = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS)
+                    {
+                        if (!obs->timeOutputs)
+                        {
+                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                        }
+                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS;
+                        obs->timeOutputs->timeStartup = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
+                    {
+                        if (!obs->timeOutputs)
+                        {
+                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                        }
+                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN;
+                        obs->timeOutputs->timeSyncIn = p.extractUint64();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL)
+                    {
+                        if (!obs->attitudeOutputs)
+                        {
+                            obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
+                            obs->attitudeOutputs->attitudeField |= vnSensor->binaryOutputRegister.at(b).attitudeField;
+                        }
+                        obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL;
+                        auto vec = p.extractVec3f();
+                        obs->attitudeOutputs->ypr = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION)
+                    {
+                        if (!obs->attitudeOutputs)
+                        {
+                            obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
+                            obs->attitudeOutputs->attitudeField |= vnSensor->binaryOutputRegister.at(b).attitudeField;
+                        }
+                        obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION;
+                        auto vec = p.extractVec4f();
+                        obs->attitudeOutputs->qtn = { vec.w, vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE)
+                    {
+                        if (!obs->imuOutputs)
+                        {
+                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                        }
+                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->angularRate = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION)
+                    {
+                        if (!obs->insOutputs)
+                        {
+                            obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                            obs->insOutputs->insField |= vnSensor->binaryOutputRegister.at(b).insField;
+                        }
+                        obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_POSLLA;
+                        auto vec = p.extractVec3d();
+                        obs->insOutputs->posLla = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY)
+                    {
+                        if (!obs->insOutputs)
+                        {
+                            obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                            obs->insOutputs->insField |= vnSensor->binaryOutputRegister.at(b).insField;
+                        }
+                        obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_VELNED;
+                        auto vec = p.extractVec3f();
+                        obs->insOutputs->velNed = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL)
+                    {
+                        if (!obs->imuOutputs)
+                        {
+                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                        }
+                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL;
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->accel = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_IMU)
+                    {
+                        if (!obs->imuOutputs)
+                        {
+                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                        }
+                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL;
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->uncompAccel = { vec.x, vec.y, vec.z };
+                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO;
+                        vec = p.extractVec3f();
+                        obs->imuOutputs->uncompGyro = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES)
+                    {
+                        if (!obs->imuOutputs)
+                        {
+                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                        }
+                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_MAG;
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->mag = { vec.x, vec.y, vec.z };
+                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_TEMP;
+                        obs->imuOutputs->temp = p.extractFloat();
+                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_PRES;
+                        obs->imuOutputs->pres = p.extractFloat();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA)
+                    {
+                        if (!obs->imuOutputs)
+                        {
+                            obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
+                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                        }
+                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA;
+                        obs->imuOutputs->deltaTime = p.extractFloat();
+                        auto vec = p.extractVec3f();
+                        obs->imuOutputs->deltaTheta = { vec.x, vec.y, vec.z };
+                        obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL;
+                        vec = p.extractVec3f();
+                        obs->imuOutputs->deltaV = { vec.x, vec.y, vec.z };
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS)
+                    {
+                        if (!obs->insOutputs)
+                        {
+                            obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
+                            obs->insOutputs->insField |= vnSensor->binaryOutputRegister.at(b).insField;
+                        }
+                        obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS;
+                        obs->insOutputs->insStatus = p.extractUint16();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
+                    {
+                        if (!obs->timeOutputs)
+                        {
+                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                        }
+                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT;
+                        obs->timeOutputs->syncInCnt = p.extractUint32();
+                    }
+                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS)
+                    {
+                        if (!obs->timeOutputs)
+                        {
+                            obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
+                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                        }
+                        obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS;
+                        obs->timeOutputs->timePPS = p.extractUint64();
+                    }
                 }
                 // Group 2 (Time)
                 if (vnSensor->binaryOutputRegister.at(b).timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
@@ -5736,9 +5905,95 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     LOG_DEBUG("{}: Only {} of {} bytes were extracted from the Binary Output {}", vnSensor->nameId(), p.getCurExtractLoc(), p.getPacketLength(), b + 1);
                 }
 
-                // TODO: Set InsTime from data
+                // --------------------------------------------- Fetch InsTime -----------------------------------------------
+                // Group 2 (Time)
+                if (obs->timeOutputs)
+                {
+                    if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
+                    {
+                        if (obs->timeOutputs->timeStatus.dateOk())
+                        {
+                            if (obs->timeOutputs->timeStatus.timeOk()
+                                && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+                                && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
+                            {
+                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
+                            }
+                            else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
+                            {
+                                auto secondsSinceEpoche = static_cast<long double>(obs->timeOutputs->timeGps) * 1e-9L;
+                                auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
+                                auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
 
-                LOG_DATA("DATA({}): ", vnSensor->nameId());
+                                obs->insTime.emplace(InsTime_GPSweekTow(0, week, tow));
+                            }
+                        }
+                    }
+                }
+                // Group 4 (GNSS1)
+                if (obs->insTime->empty() && obs->gnss1Outputs)
+                {
+                    if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                    {
+                        if (obs->gnss1Outputs->timeInfo.status.dateOk() && obs->gnss1Outputs->timeInfo.status.timeOk()
+                            && (((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                                 && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                                || obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS))
+                        {
+                            if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                                && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                            {
+                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
+                            }
+                            else // obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS
+                            {
+                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.tow * 1e-9L));
+                            }
+                        }
+                        else if (obs->gnss1Outputs->timeInfo.status.utcTimeValid()
+                                 && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                        {
+                            obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
+                                                                obs->gnss1Outputs->timeUtc.month,
+                                                                obs->gnss1Outputs->timeUtc.day,
+                                                                obs->gnss1Outputs->timeUtc.hour,
+                                                                obs->gnss1Outputs->timeUtc.min,
+                                                                obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
+                        }
+                    }
+                }
+                // Group 7 (GNSS2)
+                if (obs->insTime->empty() && obs->gnss2Outputs)
+                {
+                    if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                    {
+                        if (obs->gnss2Outputs->timeInfo.status.dateOk() && obs->gnss2Outputs->timeInfo.status.timeOk()
+                            && (((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                                 && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                                || obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS))
+                        {
+                            if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                                && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                            {
+                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
+                            }
+                            else // obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS
+                            {
+                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->raw.week, obs->gnss2Outputs->raw.tow * 1e-9L));
+                            }
+                        }
+                        else if (obs->gnss2Outputs->timeInfo.status.utcTimeValid()
+                                 && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                        {
+                            obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
+                                                                obs->gnss2Outputs->timeUtc.month,
+                                                                obs->gnss2Outputs->timeUtc.day,
+                                                                obs->gnss2Outputs->timeUtc.hour,
+                                                                obs->gnss2Outputs->timeUtc.min,
+                                                                obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
+                        }
+                    }
+                }
 
                 if (obs->insTime->empty())
                 {

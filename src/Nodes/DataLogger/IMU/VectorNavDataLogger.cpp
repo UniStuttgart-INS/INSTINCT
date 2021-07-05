@@ -56,7 +56,7 @@ void NAV::VectorNavDataLogger::guiConfig()
     }
 
     static constexpr std::array<FileType, 2> fileTypes = {
-        { FileType::ASCII,
+        { FileType::CSV,
           FileType::BINARY }
     };
     if (ImGui::BeginCombo(fmt::format("Mode##{}", size_t(id)).c_str(), FileWriter::str(fileType).c_str()))
@@ -144,7 +144,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>&
 {
     auto obs = std::static_pointer_cast<VectorNavBinaryOutput>(nodeData);
 
-    if (fileType == FileType::ASCII)
+    if (fileType == FileType::CSV)
     {
         if (!headerWritten)
         {
