@@ -3466,7 +3466,7 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::TextUnformatted("The position of the GNSS antenna A relative to the sensor in the vehicle coordinate frame\n"
                                        "also referred to as the GNSS antenna lever arm.");
 
-                if (ImGui::InputFloat3(fmt::format("##gpsAntennaOffset {}", size_t(id)).c_str(), gpsAntennaOffset.c, "%.2f"))
+                if (ImGui::InputFloat3(fmt::format("##gpsAntennaOffset {}", size_t(id)).c_str(), gpsAntennaOffset.c, "%.6f"))
                 {
                     LOG_DEBUG("{}: gpsAntennaOffset changed to {}", nameId(), gpsAntennaOffset);
                     flow::ApplyChanges();
@@ -3496,7 +3496,7 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::TextUnformatted("Configures the position offset and measurement uncertainty of the second GNSS\n"
                                        "antenna relative to the first GNSS antenna in the vehicle reference frame.");
 
-                if (ImGui::InputFloat3(fmt::format("Position [m]##{}", size_t(id)).c_str(), gpsCompassBaselineRegister.position.c, "%.3f"))
+                if (ImGui::InputFloat3(fmt::format("Position [m]##{}", size_t(id)).c_str(), gpsCompassBaselineRegister.position.c, "%.6f"))
                 {
                     LOG_DEBUG("{}: gpsCompassBaselineRegister.position changed to {}", nameId(), gpsCompassBaselineRegister.position);
                     flow::ApplyChanges();
