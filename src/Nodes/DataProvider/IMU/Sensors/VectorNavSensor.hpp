@@ -393,11 +393,13 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @brief Needed data to display a binary group in the GUI
     struct BinaryGroupData
     {
-        const char* name;                                                    ///< Name of the output
-        int flagsValue;                                                      ///< Enum value of the output
-        bool (*isEnabled)(VectorNavModel sensorModel, uint32_t binaryField); ///< Function which checks if the ouput is enabled (e.g. for a sensorModel)
-        void (*tooltip)();                                                   ///< Function providing a tooltip
-        void (*toggleFields)(uint32_t& binaryField) = nullptr;               ///< Function to toggle other bits depending on the status
+        const char* name;            ///< Name of the output
+        int flagsValue;              ///< Enum value of the output
+        void (*tooltip)() = nullptr; ///< Function providing a tooltip
+        /// Function which checks if the ouput is enabled (e.g. for a sensorModel)
+        bool (*isEnabled)(VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& bor, uint32_t binaryField) =
+            [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return true; };
+        void (*toggleFields)(vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) = nullptr; ///< Function to toggle other bits depending on the status
     };
 
     /// @brief Binary group 1 contains a wide assortment of commonly used data required for most applications.
