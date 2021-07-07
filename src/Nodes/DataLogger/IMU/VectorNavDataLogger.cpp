@@ -3,6 +3,7 @@
 #include "NodeData/VectorNavBinaryOutput.hpp"
 
 #include "util/Logger.hpp"
+#include "util/StringUtil.hpp"
 
 #include "gui/widgets/FileDialog.hpp"
 
@@ -49,7 +50,7 @@ std::string NAV::VectorNavDataLogger::category()
 
 void NAV::VectorNavDataLogger::guiConfig()
 {
-    if (gui::widgets::FileDialogSave(path, "Save File", ".csv", { ".csv" }, size_t(id), nameId()))
+    if (gui::widgets::FileDialogSave(path, "Save File", fileType == FileType::CSV ? ".csv" : ".vnb", { fileType == FileType::CSV ? ".csv" : ".vnb" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         deinitializeNode();
@@ -68,6 +69,7 @@ void NAV::VectorNavDataLogger::guiConfig()
             {
                 fileType = type;
                 LOG_DEBUG("{}: fileType changed to {}", nameId(), FileWriter::str(fileType));
+                str::replace(path, fileType == FileType::CSV ? ".vnb" : ".csv", fileType == FileType::CSV ? ".csv" : ".vnb");
                 flow::ApplyChanges();
                 if (isInitialized())
                 {
