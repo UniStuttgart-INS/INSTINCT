@@ -9,6 +9,7 @@
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
 #include "vn/sensors.h"
 
+#include "util/InsTime.hpp"
 #include "util/ScrollingBuffer.hpp"
 
 #include <vector>
@@ -93,6 +94,9 @@ class VectorNavSensor : public Imu, public UartSensor
 
     /// First: List of RateDividers, Second: List of Matching Frequencies
     std::pair<std::vector<uint16_t>, std::vector<std::string>> dividerFrequency;
+
+    /// @brief Stores the time of the last received message
+    std::array<InsTime, 3> lastMessageTime{};
 
     // ###########################################################################################################
     //                                               SYSTEM MODULE

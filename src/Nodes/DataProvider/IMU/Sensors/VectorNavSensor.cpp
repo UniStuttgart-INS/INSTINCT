@@ -616,8 +616,6 @@ void from_json(const json& j, VelocityCompensationControlRegister& velocityCompe
 } // namespace sensors
 } // namespace vn
 
-// TODO: Add Toggle function
-// TODO: Toggle the Time Fields from here?
 const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::binaryGroupCommon = { {
     /*  0 */ { "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C). This field is\nequivalent to the TimeStartup field in group 2."); } },
     /*  1 */ { "TimeGps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, []() { ImGui::TextUnformatted("GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds. This field is equivalent to\nthe TimeGps field in group 2."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
@@ -5274,6 +5272,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 {
     auto* vnSensor = static_cast<VectorNavSensor*>(userData);
 
+    LOG_DATA("{}: Received message", vnSensor->nameId());
+
     if (p.type() == vn::protocol::uart::Packet::TYPE_BINARY)
     {
         for (size_t b = 0; b < 3; b++)
@@ -6048,6 +6048,20 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->insTime = currentTime;
                     }
                 }
+
+                if (!obs->insTime->empty())
+                {
+                    if (!vnSensor->lastMessageTime.at(b).empty())
+                    {
+                        if (obs->insTime.value() - vnSensor->lastMessageTime.at(b) >= std::chrono::milliseconds(static_cast<int>(1.5 / IMU_DEFAULT_FREQUENCY * vnSensor->binaryOutputRegister.at(b).rateDivisor)))
+                        {
+                            LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", vnSensor->nameId(),
+                                     vnSensor->lastMessageTime.at(b), obs->insTime.value(), (obs->insTime.value() - vnSensor->lastMessageTime.at(b)).count());
+                        }
+                    }
+                    vnSensor->lastMessageTime.at(b) = obs->insTime.value();
+                }
+
                 // Calls all the callbacks
                 vnSensor->invokeCallbacks(b + 2, obs);
             }

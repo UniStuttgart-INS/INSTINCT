@@ -1079,7 +1079,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>&
 
         filestream << '\n';
     }
-    else
+    else // if (fileType == FileType::BINARY)
     {
         std::array<const char, 8> zeroData{};
         if (!headerWritten)
@@ -1518,4 +1518,6 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>&
             }
         }
     }
+
+    LOG_DATA("{}: Message logged", nameId());
 }
