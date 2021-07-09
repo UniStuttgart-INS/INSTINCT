@@ -121,6 +121,11 @@ bool NAV::VectorNavDataLogger::onCreateLink([[maybe_unused]] Pin* startPin, [[ma
     return true;
 }
 
+void NAV::VectorNavDataLogger::flush()
+{
+    filestream.flush();
+}
+
 bool NAV::VectorNavDataLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());
@@ -181,7 +186,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>&
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
                 {
-                    filestream << ",Time::TimeUtc::year,Time::TimeUtc::month,Time::TimeUtc::day,Time::TimeUtc::hour,Time::TimeUtc::min,Time::TimeUtc::sec,Time::TimeUtc::ms";
+                    filestream << ",Time::TimeUTC::year,Time::TimeUTC::month,Time::TimeUTC::day,Time::TimeUTC::hour,Time::TimeUTC::min,Time::TimeUTC::sec,Time::TimeUTC::ms";
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT)
                 {
@@ -301,7 +306,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>&
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                 {
-                    filestream << ",GNSS1::gDOP,GNSS1::pDOP,GNSS1::tDOP,GNSS1::vDOP,GNSS1::hDOP,GNSS1::nDOP,GNSS1::eDOP";
+                    filestream << ",GNSS1::DOP::g,GNSS1::DOP::p,GNSS1::DOP::t,GNSS1::DOP::v,GNSS1::DOP::h,GNSS1::DOP::n,GNSS1::DOP::e";
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {
@@ -337,9 +342,9 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>&
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
                 {
-                    filestream << ",Att::DCM(0;0),Att::DCM(0;1),Att::DCM(0;2)"
-                                  ",Att::DCM(1;0),Att::DCM(1;1),Att::DCM(1;2)"
-                                  ",Att::DCM(2;0),Att::DCM(2;1),Att::DCM(2;2)";
+                    filestream << ",Att::DCM::0-0,Att::DCM::0-1,Att::DCM::0-2"
+                                  ",Att::DCM::1-0,Att::DCM::1-1,Att::DCM::1-2"
+                                  ",Att::DCM::2-0,Att::DCM::2-1,Att::DCM::2-2";
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
                 {
@@ -1360,13 +1365,6 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>&
             if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
             {
                 filestream.write(reinterpret_cast<const char*>(&obs->insOutputs->insStatus.status), sizeof(obs->insOutputs->insStatus.status));
-                filestream << "," << static_cast<unsigned int>(obs->insOutputs->insStatus.mode())
-                           << "," << static_cast<unsigned int>(obs->insOutputs->insStatus.gpsFix())
-                           << "," << static_cast<unsigned int>(obs->insOutputs->insStatus.errorIMU())
-                           << "," << static_cast<unsigned int>(obs->insOutputs->insStatus.errorMagPres())
-                           << "," << static_cast<unsigned int>(obs->insOutputs->insStatus.errorGnss())
-                           << "," << static_cast<unsigned int>(obs->insOutputs->insStatus.gpsHeadingIns())
-                           << "," << static_cast<unsigned int>(obs->insOutputs->insStatus.gpsCompass());
             }
             if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
             {

@@ -76,6 +76,11 @@ void NAV::ImuDataLogger::restore(json const& j)
     }
 }
 
+void NAV::ImuDataLogger::flush()
+{
+    filestream.flush();
+}
+
 bool NAV::ImuDataLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());

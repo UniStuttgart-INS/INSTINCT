@@ -76,6 +76,11 @@ void NAV::KvhDataLogger::restore(json const& j)
     }
 }
 
+void NAV::KvhDataLogger::flush()
+{
+    filestream.flush();
+}
+
 bool NAV::KvhDataLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());

@@ -165,6 +165,9 @@ struct SatInfo
             CodeAndCarrierLockedAndTimeSynchronized3 = 7, ///< Code and carrier locked and time synchronized
         };
 
+        /// @brief Default Constructor
+        SatInfoElement() = default;
+
         /// @brief Constructor
         /// @param[in] sys GNSS constellation indicator
         /// @param[in] svId Space vehicle Id
@@ -252,6 +255,9 @@ struct RawMeas
             E5b = 5,       ///< E5b(GAL), B2(BDS)
             E5a = 6,       ///< E5a+b(GAL)
         };
+
+        /// @brief Default Constructor
+        SatRawElement() = default;
 
         /// @brief Constructor
         /// @param[in] sys GNSS constellation indicator

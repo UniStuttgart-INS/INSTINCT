@@ -100,6 +100,8 @@ bool NAV::Node::initialize()
 
 void NAV::Node::deinitialize() {}
 
+void NAV::Node::flush() {}
+
 bool NAV::Node::resetNode()
 {
     LOG_TRACE("{}: called", nameId());

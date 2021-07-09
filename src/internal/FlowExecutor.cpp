@@ -127,6 +127,11 @@ void NAV::FlowExecutor::deinitialize()
         nm::DisableAllCallbacks();
     }
 
+    for (Node* node : nm::m_Nodes())
+    {
+        node->flush();
+    }
+
     util::time::SetMode(util::time::Mode::REAL_TIME);
 }
 

@@ -147,21 +147,6 @@ std::shared_ptr<NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
         filestream.seekg(pos, std::ios_base::beg);
     }
 
-    if (obs->insTime.has_value())
-    {
-        // Has time value, but value should not be displayed
-        if (obs->insTime.value() < lowerLimit)
-        {
-            // Resetting the value will make the read loop skip the message
-            obs->insTime.reset();
-            return obs;
-        }
-        if (obs->insTime.value() > upperLimit)
-        {
-            return nullptr;
-        }
-    }
-
     // Calls all the callbacks
     if (!peek)
     {

@@ -18,6 +18,8 @@
 
 namespace NAV
 {
+class VectorNavFile;
+
 /// Vector Nav Sensor Class
 class VectorNavSensor : public Imu, public UartSensor
 {
@@ -446,6 +448,8 @@ class VectorNavSensor : public Imu, public UartSensor
     ///
     /// All of the fields in this group will only be valid if the INS filter is currently enabled and tracking.
     static const std::array<BinaryGroupData, 11> binaryGroupINS;
+
+    friend class NAV::VectorNavFile;
 };
 
 } // namespace NAV
