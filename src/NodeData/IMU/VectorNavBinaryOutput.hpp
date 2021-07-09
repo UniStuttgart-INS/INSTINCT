@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "NodeData/InsObs.hpp"
+#include "NodeData/IMU/ImuPos.hpp"
 #include "util/Eigen.hpp"
 
 #include "util/UartSensors/VectorNav/BinaryOutputs/TimeOutputs.hpp"
@@ -22,8 +23,13 @@ namespace NAV
 class VectorNavBinaryOutput : public InsObs
 {
   public:
+    /// @brief Constructor
+    /// @param[in] imuPos Reference to the position and rotation info of the Imu
+    explicit VectorNavBinaryOutput(const ImuPos& imuPos)
+        : imuPos(imuPos) {}
+
     /// @brief Default constructor
-    VectorNavBinaryOutput() = default;
+    VectorNavBinaryOutput() = delete;
     /// @brief Destructor
     ~VectorNavBinaryOutput() override = default;
     /// @brief Copy constructor
@@ -66,6 +72,9 @@ class VectorNavBinaryOutput : public InsObs
 
     /// @brief Binary Group 7 – GNSS2 Outputs
     std::shared_ptr<sensors::vectornav::GnssOutputs> gnss2Outputs = nullptr;
+
+    /// Position and rotation information for conversion from platform to body frame
+    const ImuPos& imuPos;
 };
 
 } // namespace NAV

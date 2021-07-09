@@ -1,4 +1,4 @@
-/// @file VectorNavImuObs.hpp
+/// @file ImuObsWDelta.hpp
 /// @brief Data storage class for one VectorNavImu observation
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-03-12
@@ -10,32 +10,32 @@
 namespace NAV
 {
 /// VectorNav Observation storage Class
-class VectorNavImuObs final : public ImuObs
+class ImuObsWDelta final : public ImuObs
 {
   public:
     /// @brief Constructor
     /// @param[in] imuPos Reference to the position and rotation info of the Imu
-    explicit VectorNavImuObs(const ImuPos& imuPos)
+    explicit ImuObsWDelta(const ImuPos& imuPos)
         : ImuObs(imuPos) {}
 
     /// @brief Default constructor
-    VectorNavImuObs() = delete;
+    ImuObsWDelta() = delete;
     /// @brief Destructor
-    ~VectorNavImuObs() final = default;
+    ~ImuObsWDelta() final = default;
     /// @brief Copy constructor
-    VectorNavImuObs(const VectorNavImuObs&) = delete;
+    ImuObsWDelta(const ImuObsWDelta&) = delete;
     /// @brief Move constructor
-    VectorNavImuObs(VectorNavImuObs&&) = delete;
+    ImuObsWDelta(ImuObsWDelta&&) = delete;
     /// @brief Copy assignment operator
-    VectorNavImuObs& operator=(const VectorNavImuObs&) = delete;
+    ImuObsWDelta& operator=(const ImuObsWDelta&) = delete;
     /// @brief Move assignment operator
-    VectorNavImuObs& operator=(VectorNavImuObs&&) = delete;
+    ImuObsWDelta& operator=(ImuObsWDelta&&) = delete;
 
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("VectorNavImuObs");
+        return std::string("ImuObsWDelta");
     }
 
     /// @brief Returns the parent types of the data class
@@ -46,7 +46,7 @@ class VectorNavImuObs final : public ImuObs
     }
 
     /// The time interval that the delta angle and velocities are integrated over in [seconds].
-    std::optional<double> dtime;
+    double dtime{ std::nan("") };
     /// The delta rotation angles in [degree] incurred due to rotation, by the local platform reference frame,
     /// since the last time the values were outputted by the device.
     std::optional<Eigen::Vector3d> dtheta;

@@ -13,8 +13,8 @@ namespace nm = NAV::NodeManager;
 
 #include <imgui_internal.h>
 
-#include "NodeData/VectorNavBinaryOutput.hpp"
-#include "NodeData/StringObs.hpp"
+#include "NodeData/General/StringObs.hpp"
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
 #include "util/Time/TimeBase.hpp"
 
@@ -5287,7 +5287,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                                vnSensor->binaryOutputRegister.at(b).insField,
                                vnSensor->binaryOutputRegister.at(b).gps2Field))
             {
-                auto obs = std::make_shared<VectorNavBinaryOutput>();
+                auto obs = std::make_shared<VectorNavBinaryOutput>(vnSensor->imuPos);
 
                 // Group 1 (Common)
                 if (vnSensor->binaryOutputRegister.at(b).commonField != vn::protocol::uart::CommonGroup::COMMONGROUP_NONE)

@@ -11,7 +11,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "NodeData/VectorNavBinaryOutput.hpp"
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
 
 NAV::VectorNavFile::VectorNavFile()
@@ -375,7 +375,7 @@ void NAV::VectorNavFile::readHeader()
 
 std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 {
-    auto obs = std::make_shared<VectorNavBinaryOutput>();
+    auto obs = std::make_shared<VectorNavBinaryOutput>(imuPos);
 
     // Get current position
     auto len = filestream.tellg();

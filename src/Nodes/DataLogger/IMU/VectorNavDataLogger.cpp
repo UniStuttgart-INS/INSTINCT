@@ -1,6 +1,6 @@
 #include "VectorNavDataLogger.hpp"
 
-#include "NodeData/VectorNavBinaryOutput.hpp"
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
