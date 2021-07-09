@@ -144,6 +144,8 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 // Simple
 #include "Nodes/Simple/Matrix.hpp"
 #include "Nodes/Simple/Transformation.hpp"
+// Converter
+#include "Nodes/Converter/IMU/VectorNavBinary2ImuObsConverter.hpp"
 // Data Logger
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
@@ -182,6 +184,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Simple
     registerNodeType<Matrix>();
     registerNodeType<Transformation>();
+    // Converter
+    registerNodeType<VectorNavBinary2ImuObsConverter>();
     // Data Logger
     registerNodeType<EmlidDataLogger>();
     registerNodeType<UbloxDataLogger>();
