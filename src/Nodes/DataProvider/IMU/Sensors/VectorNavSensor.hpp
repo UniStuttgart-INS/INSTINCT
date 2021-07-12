@@ -399,8 +399,8 @@ class VectorNavSensor : public Imu, public UartSensor
     /// @brief Needed data to display a binary group in the GUI
     struct BinaryGroupData
     {
-        const char* name;            ///< Name of the output
-        int flagsValue;              ///< Enum value of the output
+        const char* name = nullptr;  ///< Name of the output
+        int flagsValue = 0;          ///< Enum value of the output
         void (*tooltip)() = nullptr; ///< Function providing a tooltip
         /// Function which checks if the ouput is enabled (e.g. for a sensorModel)
         bool (*isEnabled)(VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& bor, uint32_t binaryField) =
