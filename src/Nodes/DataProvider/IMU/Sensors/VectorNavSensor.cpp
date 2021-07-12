@@ -6053,6 +6053,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 {
                     if (!vnSensor->lastMessageTime.at(b).empty())
                     {
+                        // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
+                        // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
                         if (obs->insTime.value() - vnSensor->lastMessageTime.at(b) >= std::chrono::milliseconds(static_cast<int>(1.5 / IMU_DEFAULT_FREQUENCY * vnSensor->binaryOutputRegister.at(b).rateDivisor)))
                         {
                             LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", vnSensor->nameId(),

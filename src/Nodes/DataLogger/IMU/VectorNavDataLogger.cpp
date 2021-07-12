@@ -410,7 +410,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>&
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF)
                 {
-                    filestream << ",INS::LinearAccelEcef::,INS::LinearAccelEcef::Y,INS::LinearAccelEcef::Z";
+                    filestream << ",INS::LinearAccelEcef::X,INS::LinearAccelEcef::Y,INS::LinearAccelEcef::Z";
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSU)
                 {
