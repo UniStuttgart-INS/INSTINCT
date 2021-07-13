@@ -98,6 +98,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
                         }
                     }
 
+                    nm::DisableAllCallbacks();
                     nm::DeleteAllNodes();
                 }
             }

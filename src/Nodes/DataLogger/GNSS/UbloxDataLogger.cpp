@@ -76,6 +76,11 @@ void NAV::UbloxDataLogger::restore(json const& j)
     }
 }
 
+void NAV::UbloxDataLogger::flush()
+{
+    filestream.flush();
+}
+
 bool NAV::UbloxDataLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());

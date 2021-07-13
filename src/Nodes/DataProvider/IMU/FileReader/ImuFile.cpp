@@ -263,21 +263,6 @@ std::shared_ptr<NAV::NodeData> NAV::ImuFile::pollData(bool peek)
              name, obs->timeSinceStartup.value(), obs->temperature.value(),
              obs->accelUncompXYZ.value().x(), obs->accelUncompXYZ.value().y(), obs->accelUncompXYZ.value().z());
 
-    if (obs->insTime.has_value())
-    {
-        // Has time value, but value should not be displayed
-        if (obs->insTime.value() < lowerLimit)
-        {
-            // Resetting the value will make the read loop skip the message
-            obs->insTime.reset();
-            return obs;
-        }
-        if (obs->insTime.value() > upperLimit)
-        {
-            return nullptr;
-        }
-    }
-
     // Calls all the callbacks
     if (!peek)
     {

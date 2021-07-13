@@ -25,7 +25,7 @@ class FileReader
     {
         NONE,   ///< Not specified
         BINARY, ///< Binary data
-        ASCII,  ///< Ascii text data
+        CSV,    ///< Ascii text data
     };
 
     /// @brief Copy constructor
@@ -77,11 +77,6 @@ class FileReader
 
     /// Header Columns of a CSV file
     std::vector<std::string> headerColumns;
-
-    /// Lower Time Limit of data to read
-    InsTime lowerLimit{ InsTime_MJD(0, 0) };
-    /// Upper Time Limit of data to read
-    InsTime upperLimit{ InsTime_MJD(InsTimeUtil::END_OF_THE_CENTURY_MJD, 0) };
 };
 
 } // namespace NAV

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include <iostream>
 
 namespace NAV
@@ -14,6 +15,10 @@ template<class T>
 class ScrollingBuffer
 {
   public:
+    // ###########################################################################################################
+    //                                               Constructors
+    // ###########################################################################################################
+
     /// @brief Reserves space for the buffer but does not fill the buffer with values
     /// @param[in] maxSize The maximum size of the scrolling buffer
     explicit ScrollingBuffer(size_t maxSize = 2000)
@@ -24,9 +29,130 @@ class ScrollingBuffer
         resize(maxSize); // In case 0 was provided to make the buffer infinite
     }
 
-    /// @brief Adds a value to the end of the buffer
-    /// @param[in] value The value to add to the buffer
-    void addValue(const T& value)
+    /// @brief Constructs a new container with the contents of the initializer list init.
+    /// @param[in] init initializer list to initialize the elements of the container with
+    ScrollingBuffer(std::initializer_list<T> init)
+        : m_maxSize(init.size())
+    {
+        m_data.reserve(m_maxSize);
+        resize(m_maxSize); // In case 0 was provided to make the buffer infinite
+
+        for (auto& val : init)
+        {
+            push_back(val);
+        }
+    }
+
+    // ###########################################################################################################
+    //                                              Element access
+    // ###########################################################################################################
+
+    /// @brief Returns a reference to the element at specified location pos, with bounds checking.
+    ///        If pos is not within the range of the container, an exception of type std::out_of_range is thrown.
+    /// @param[in] pos position of the element to return
+    /// @return Reference to the requested element.
+    T& at(size_t pos)
+    {
+        // Cast the const away and reuse the implementation below
+        return const_cast<T&>(static_cast<const ScrollingBuffer&>(*this).at(pos)); // NOLINT(cppcoreguidelines-pro-type-const-cast)
+    }
+
+    /// @brief Returns a reference to the element at specified location pos, with bounds checking.
+    ///        If pos is not within the range of the container, an exception of type std::out_of_range is thrown.
+    /// @param[in] pos position of the element to return
+    /// @return Reference to the requested element.
+    [[nodiscard]] const T& at(size_t pos) const
+    {
+        if (!(pos < size()))
+        {
+            throw std::out_of_range("ScrollingBuffer::at: pos (which is "
+                                    + std::to_string(pos) + ") >= this->size() (which is " + std::to_string(size()) + ")");
+        }
+
+        // 8 9 3 4 5 6 7
+        // at(0) = 3, at(4) = 7, at(5) = 8
+        if (m_dataStart + pos >= size())
+        {
+            return m_data.at(pos - (size() - m_dataStart));
+        }
+
+        return m_data.at(m_dataStart + pos);
+    }
+
+    /// @brief Returns a reference to the first element in the container.
+    ///        Calling front on an empty container is undefined.
+    /// @return reference to the first element
+    T& front()
+    {
+        // Cast the const away and reuse the implementation below (don't repeat yourself)
+        return const_cast<T&>(static_cast<const ScrollingBuffer&>(*this).front()); // NOLINT(cppcoreguidelines-pro-type-const-cast)
+    }
+
+    /// @brief Returns a reference to the first element in the container.
+    ///        Calling front on an empty container is undefined.
+    /// @return Reference to the first element
+    [[nodiscard]] const T& front() const
+    {
+        if (m_data.size() < m_maxSize)
+        {
+            return m_data.front();
+        }
+
+        return m_data.at(m_dataStart);
+    }
+
+    /// @brief Returns a reference to the last element in the container.
+    ///        Calling back on an empty container causes undefined behavior.
+    /// @return Reference to the last element.
+    T& back()
+    {
+        return const_cast<T&>(static_cast<const ScrollingBuffer&>(*this).back()); // NOLINT(cppcoreguidelines-pro-type-const-cast)
+    }
+
+    /// @brief Returns a reference to the last element in the container.
+    ///        Calling back on an empty container causes undefined behavior.Reference to the last element.
+    /// @return Reference to the last element.
+    [[nodiscard]] const T& back() const
+    {
+        if (m_data.size() < m_maxSize || m_dataEnd == 0)
+        {
+            return m_data.back();
+        }
+
+        return m_data.at(m_dataEnd - 1);
+    }
+
+    // ###########################################################################################################
+    //                                                 Capacity
+    // ###########################################################################################################
+
+    /// @brief Checks if the container has no elements
+    [[nodiscard]] bool empty() const
+    {
+        return m_data.empty();
+    }
+
+    /// @brief Returns the number of elements in the container
+    [[nodiscard]] size_t size() const
+    {
+        return m_data.size() - (m_dataStart - m_dataEnd);
+    }
+
+    // ###########################################################################################################
+    //                                                 Modifiers
+    // ###########################################################################################################
+
+    /// @brief Erases all elements from the container. After this call, size() returns zero.
+    void clear()
+    {
+        m_data.clear();
+        m_dataStart = 0;
+        m_dataEnd = 0;
+    }
+
+    /// @brief Appends the given element value to the end of the container.
+    /// @param[in] value the value of the element to append
+    void push_back(const T& value)
     {
         if (m_infiniteBuffer) // The buffer should grow when adding new values
         {
@@ -46,26 +172,6 @@ class ScrollingBuffer
             }
             m_dataEnd = (m_dataEnd + 1) % m_maxSize;
         }
-    }
-
-    /// @brief Empties the buffer
-    void clear()
-    {
-        m_data.clear();
-        m_dataStart = 0;
-        m_dataEnd = 0;
-    }
-
-    /// @brief Checks if the buffer is currently empty
-    [[nodiscard]] bool empty() const
-    {
-        return m_data.empty();
-    }
-
-    /// @brief Returns the amount of elements currently stored in the buffer
-    [[nodiscard]] size_t size() const
-    {
-        return m_data.size() - (m_dataStart - m_dataEnd);
     }
 
     /// @brief Resizes the buffer to the specified size
@@ -177,27 +283,9 @@ class ScrollingBuffer
         }
     }
 
-    /// @brief Returns the data at the first element of the buffer
-    [[nodiscard]] T front() const
-    {
-        if (m_data.size() < m_maxSize)
-        {
-            return m_data.front();
-        }
-
-        return m_data.at(m_dataStart);
-    }
-
-    /// @brief Returns the data at the last element of the buffer
-    [[nodiscard]] T back() const
-    {
-        if (m_data.size() < m_maxSize || m_dataEnd == 0)
-        {
-            return m_data.back();
-        }
-
-        return m_data.at(m_dataEnd - 1);
-    }
+    // ###########################################################################################################
+    //                                                   Other
+    // ###########################################################################################################
 
     /// @brief Returns the largest value in the buffer
     [[nodiscard]] T max() const

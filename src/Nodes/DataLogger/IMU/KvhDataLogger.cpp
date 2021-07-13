@@ -18,7 +18,7 @@ NAV::KvhDataLogger::KvhDataLogger()
 
     LOG_TRACE("{}: called", name);
 
-    fileType = FileType::ASCII;
+    fileType = FileType::CSV;
 
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };
@@ -74,6 +74,11 @@ void NAV::KvhDataLogger::restore(json const& j)
     {
         FileWriter::restore(j.at("FileWriter"));
     }
+}
+
+void NAV::KvhDataLogger::flush()
+{
+    filestream.flush();
 }
 
 bool NAV::KvhDataLogger::initialize()

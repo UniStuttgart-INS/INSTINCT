@@ -140,7 +140,8 @@ NAV::Plot::Plot()
     guiConfigDefaultWindowSize = { 750, 650 };
 
     dataIdentifier = { RtklibPosObs::type(), UbloxObs::type(),
-                       ImuObs::type(), KvhObs::type(), VectorNavObs::type() };
+                       ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(),
+                       VectorNavBinaryOutput::type() };
 
     updateNumberOfInputPins();
 
@@ -769,7 +770,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Status [bits]");
             data.at(pinIndex).addPlotDataItem("Sequence Number [.]");
         }
-        else if (startPin->dataIdentifier.front() == VectorNavObs::type())
+        else if (startPin->dataIdentifier.front() == ImuObsWDelta::type())
         {
             // InsObs
             data.at(pinIndex).addPlotDataItem("Time [s]");
@@ -795,16 +796,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Gyro Comp Y [rad/s]");
             data.at(pinIndex).addPlotDataItem("Gyro Comp Z [rad/s]");
             data.at(pinIndex).addPlotDataItem("Temperature [°C]");
-            // VectorNavObs
-            data.at(pinIndex).addPlotDataItem("Quaternion W []");
-            data.at(pinIndex).addPlotDataItem("Quaternion X []");
-            data.at(pinIndex).addPlotDataItem("Quaternion Y []");
-            data.at(pinIndex).addPlotDataItem("Quaternion Z []");
-            data.at(pinIndex).addPlotDataItem("Yaw [deg]");
-            data.at(pinIndex).addPlotDataItem("Pitch [deg]");
-            data.at(pinIndex).addPlotDataItem("Roll [deg]");
-            data.at(pinIndex).addPlotDataItem("Time since syncIn [ns]");
-            data.at(pinIndex).addPlotDataItem("SyncIn Count []");
+            // ImuObsWDelta
             data.at(pinIndex).addPlotDataItem("dTime [s]");
             data.at(pinIndex).addPlotDataItem("dTheta X [deg]");
             data.at(pinIndex).addPlotDataItem("dTheta Y [deg]");
@@ -812,23 +804,224 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("dVelocity X [m/s]");
             data.at(pinIndex).addPlotDataItem("dVelocity Y [m/s]");
             data.at(pinIndex).addPlotDataItem("dVelocity Z [m/s]");
-            data.at(pinIndex).addPlotDataItem("VPE Status [bits]");
-            data.at(pinIndex).addPlotDataItem("Pressure [kPa]");
-            data.at(pinIndex).addPlotDataItem("Mag comp N [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag comp E [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag comp D [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Accel comp N [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel comp E [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel comp D [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Gyro comp N [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro comp E [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro comp D [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel N [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel E [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Linear Accel D [m/s^2]");
+        }
+        else if (startPin->dataIdentifier.front() == VectorNavBinaryOutput::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // VectorNavBinaryOutput
+            // Group 2 (Time)
+            data.at(pinIndex).addPlotDataItem("Time::TimeStartup [ns]");
+            data.at(pinIndex).addPlotDataItem("Time::TimeGps [ns]");
+            data.at(pinIndex).addPlotDataItem("Time::GpsTow [ns]");
+            data.at(pinIndex).addPlotDataItem("Time::GpsWeek");
+            data.at(pinIndex).addPlotDataItem("Time::TimeSyncIn [ns]");
+            data.at(pinIndex).addPlotDataItem("Time::TimeGpsPps [ns]");
+            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::year");
+            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::month");
+            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::day");
+            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::hour");
+            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::min");
+            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::sec");
+            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::ms");
+            data.at(pinIndex).addPlotDataItem("Time::SyncInCnt");
+            data.at(pinIndex).addPlotDataItem("Time::SyncOutCnt");
+            data.at(pinIndex).addPlotDataItem("Time::TimeStatus::timeOk");
+            data.at(pinIndex).addPlotDataItem("Time::TimeStatus::dateOk");
+            data.at(pinIndex).addPlotDataItem("Time::TimeStatus::utcTimeValid");
+            // Group 3 (IMU)
+            data.at(pinIndex).addPlotDataItem("IMU::ImuStatus");
+            data.at(pinIndex).addPlotDataItem("IMU::UncompMag::X [Gauss]");
+            data.at(pinIndex).addPlotDataItem("IMU::UncompMag::Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem("IMU::UncompMag::Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem("IMU::UncompAccel::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("IMU::UncompAccel::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("IMU::UncompAccel::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("IMU::UncompGyro::X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("IMU::UncompGyro::Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("IMU::UncompGyro::Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem("IMU::Temp [Celsius]");
+            data.at(pinIndex).addPlotDataItem("IMU::Pres [kPa]");
+            data.at(pinIndex).addPlotDataItem("IMU::DeltaTime [s]");
+            data.at(pinIndex).addPlotDataItem("IMU::DeltaTheta::X [deg]");
+            data.at(pinIndex).addPlotDataItem("IMU::DeltaTheta::Y [deg]");
+            data.at(pinIndex).addPlotDataItem("IMU::DeltaTheta::Z [deg]");
+            data.at(pinIndex).addPlotDataItem("IMU::DeltaVel::X [m/s]");
+            data.at(pinIndex).addPlotDataItem("IMU::DeltaVel::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem("IMU::DeltaVel::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem("IMU::Mag::X [Gauss]");
+            data.at(pinIndex).addPlotDataItem("IMU::Mag::Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem("IMU::Mag::Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem("IMU::Accel::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("IMU::Accel::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("IMU::Accel::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("IMU::AngularRate::X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("IMU::AngularRate::Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("IMU::AngularRate::Z [rad/s]");
+            // Group 4 (GNSS1)
+            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::year");
+            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::month");
+            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::day");
+            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::hour");
+            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::min");
+            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::sec");
+            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::ms");
+            data.at(pinIndex).addPlotDataItem("GNSS1::Tow [ns]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::Week");
+            data.at(pinIndex).addPlotDataItem("GNSS1::NumSats");
+            data.at(pinIndex).addPlotDataItem("GNSS1::Fix");
+            data.at(pinIndex).addPlotDataItem("GNSS1::PosLla::latitude [deg]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::PosLla::longitude [deg]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::PosLla::altitude [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::PosEcef::X [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::PosEcef::Y [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::PosEcef::Z [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::VelNed::N [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::VelNed::E [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::VelNed::D [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::VelEcef::X [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::VelEcef::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::VelEcef::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::PosU::N [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::PosU::E [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::PosU::D [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::VelU [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::TimeU [s]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::TimeInfo::Status::timeOk");
+            data.at(pinIndex).addPlotDataItem("GNSS1::TimeInfo::Status::dateOk");
+            data.at(pinIndex).addPlotDataItem("GNSS1::TimeInfo::Status::utcTimeValid");
+            data.at(pinIndex).addPlotDataItem("GNSS1::TimeInfo::LeapSeconds");
+            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::g");
+            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::p");
+            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::t");
+            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::v");
+            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::h");
+            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::n");
+            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::e");
+            data.at(pinIndex).addPlotDataItem("GNSS1::SatInfo::NumSats");
+            data.at(pinIndex).addPlotDataItem("GNSS1::RawMeas::Tow [s]");
+            data.at(pinIndex).addPlotDataItem("GNSS1::RawMeas::Week");
+            data.at(pinIndex).addPlotDataItem("GNSS1::RawMeas::NumSats");
+            // Group 5 (Attitude)
+            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::AttitudeQuality");
+            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::GyroSaturation");
+            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::GyroSaturationRecovery");
+            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::MagDisturbance");
+            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::MagSaturation");
+            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::AccDisturbance");
+            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::AccSaturation");
+            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::KnownMagDisturbance");
+            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::KnownAccelDisturbance");
+            data.at(pinIndex).addPlotDataItem("Att::YawPitchRoll::Y [deg]");
+            data.at(pinIndex).addPlotDataItem("Att::YawPitchRoll::P [deg]");
+            data.at(pinIndex).addPlotDataItem("Att::YawPitchRoll::R [deg]");
+            data.at(pinIndex).addPlotDataItem("Att::Quaternion::w");
+            data.at(pinIndex).addPlotDataItem("Att::Quaternion::x");
+            data.at(pinIndex).addPlotDataItem("Att::Quaternion::y");
+            data.at(pinIndex).addPlotDataItem("Att::Quaternion::z");
+            data.at(pinIndex).addPlotDataItem("Att::DCM::0-0");
+            data.at(pinIndex).addPlotDataItem("Att::DCM::0-1");
+            data.at(pinIndex).addPlotDataItem("Att::DCM::0-2");
+            data.at(pinIndex).addPlotDataItem("Att::DCM::1-0");
+            data.at(pinIndex).addPlotDataItem("Att::DCM::1-1");
+            data.at(pinIndex).addPlotDataItem("Att::DCM::1-2");
+            data.at(pinIndex).addPlotDataItem("Att::DCM::2-0");
+            data.at(pinIndex).addPlotDataItem("Att::DCM::2-1");
+            data.at(pinIndex).addPlotDataItem("Att::DCM::2-2");
+            data.at(pinIndex).addPlotDataItem("Att::MagNed::N [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Att::MagNed::E [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Att::MagNed::D [Gauss]");
+            data.at(pinIndex).addPlotDataItem("Att::AccelNed::N [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Att::AccelNed::E [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Att::AccelNed::D [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Att::LinearAccelBody::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Att::LinearAccelBody::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Att::LinearAccelBody::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Att::LinearAccelNed::N [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Att::LinearAccelNed::E [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Att::LinearAccelNed::D [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Att::YprU::Y [deg]");
+            data.at(pinIndex).addPlotDataItem("Att::YprU::P [deg]");
+            data.at(pinIndex).addPlotDataItem("Att::YprU::R [deg]");
+            // Group 6 (INS)
+            data.at(pinIndex).addPlotDataItem("INS::InsStatus::Mode");
+            data.at(pinIndex).addPlotDataItem("INS::InsStatus::GpsFix");
+            data.at(pinIndex).addPlotDataItem("INS::InsStatus::Error::IMU");
+            data.at(pinIndex).addPlotDataItem("INS::InsStatus::Error::MagPres");
+            data.at(pinIndex).addPlotDataItem("INS::InsStatus::Error::GNSS");
+            data.at(pinIndex).addPlotDataItem("INS::InsStatus::GpsHeadingIns");
+            data.at(pinIndex).addPlotDataItem("INS::InsStatus::GpsCompass");
+            data.at(pinIndex).addPlotDataItem("INS::PosLla::latitude [deg]");
+            data.at(pinIndex).addPlotDataItem("INS::PosLla::longitude [deg]");
+            data.at(pinIndex).addPlotDataItem("INS::PosLla::altitude [m]");
+            data.at(pinIndex).addPlotDataItem("INS::PosEcef::X [m]");
+            data.at(pinIndex).addPlotDataItem("INS::PosEcef::Y [m]");
+            data.at(pinIndex).addPlotDataItem("INS::PosEcef::Z [m]");
+            data.at(pinIndex).addPlotDataItem("INS::VelBody::X [m/s]");
+            data.at(pinIndex).addPlotDataItem("INS::VelBody::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem("INS::VelBody::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem("INS::VelNed::N [m/s]");
+            data.at(pinIndex).addPlotDataItem("INS::VelNed::E [m/s]");
+            data.at(pinIndex).addPlotDataItem("INS::VelNed::D [m/s]");
+            data.at(pinIndex).addPlotDataItem("INS::VelEcef::X [m/s]");
+            data.at(pinIndex).addPlotDataItem("INS::VelEcef::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem("INS::VelEcef::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem("INS::MagEcef::X [Gauss}");
+            data.at(pinIndex).addPlotDataItem("INS::MagEcef::Y [Gauss}");
+            data.at(pinIndex).addPlotDataItem("INS::MagEcef::Z [Gauss}");
+            data.at(pinIndex).addPlotDataItem("INS::AccelEcef::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("INS::AccelEcef::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("INS::AccelEcef::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("INS::LinearAccelEcef::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("INS::LinearAccelEcef::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("INS::LinearAccelEcef::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("INS::PosU [m]");
+            data.at(pinIndex).addPlotDataItem("INS::VelU [m/s]");
+            // Group 7 (GNSS2)
+            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::year");
+            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::month");
+            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::day");
+            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::hour");
+            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::min");
+            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::sec");
+            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::ms");
+            data.at(pinIndex).addPlotDataItem("GNSS2::Tow [ns]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::Week");
+            data.at(pinIndex).addPlotDataItem("GNSS2::NumSats");
+            data.at(pinIndex).addPlotDataItem("GNSS2::Fix");
+            data.at(pinIndex).addPlotDataItem("GNSS2::PosLla::latitude [deg]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::PosLla::longitude [deg]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::PosLla::altitude [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::PosEcef::X [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::PosEcef::Y [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::PosEcef::Z [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::VelNed::N [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::VelNed::E [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::VelNed::D [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::VelEcef::X [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::VelEcef::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::VelEcef::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::PosU::N [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::PosU::E [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::PosU::D [m]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::VelU [m/s]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::TimeU [s]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::TimeInfo::Status::timeOk");
+            data.at(pinIndex).addPlotDataItem("GNSS2::TimeInfo::Status::dateOk");
+            data.at(pinIndex).addPlotDataItem("GNSS2::TimeInfo::Status::utcTimeValid");
+            data.at(pinIndex).addPlotDataItem("GNSS2::TimeInfo::LeapSeconds");
+            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::g");
+            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::p");
+            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::t");
+            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::v");
+            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::h");
+            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::n");
+            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::e");
+            data.at(pinIndex).addPlotDataItem("GNSS2::SatInfo::NumSats");
+            data.at(pinIndex).addPlotDataItem("GNSS2::RawMeas::Tow [s]");
+            data.at(pinIndex).addPlotDataItem("GNSS2::RawMeas::Week");
+            data.at(pinIndex).addPlotDataItem("GNSS2::RawMeas::NumSats");
         }
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Bool)
@@ -972,7 +1165,7 @@ void NAV::Plot::addData(size_t pinIndex, size_t dataIndex, double value)
 {
     auto& pinData = data.at(pinIndex);
 
-    pinData.plotData.at(dataIndex).buffer.addValue(value);
+    pinData.plotData.at(dataIndex).buffer.push_back(value);
     if (!std::isnan(value))
     {
         pinData.plotData.at(dataIndex).hasData = true;
@@ -1159,9 +1352,13 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
             {
                 plotKvhObs(std::static_pointer_cast<KvhObs>(nodeData), pinIndex);
             }
-            else if (sourcePin->dataIdentifier.front() == VectorNavObs::type())
+            else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type())
             {
-                plotVectorNavObs(std::static_pointer_cast<VectorNavObs>(nodeData), pinIndex);
+                plotImuObsWDeltaObs(std::static_pointer_cast<ImuObsWDelta>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type())
+            {
+                plotVectorNavBinaryObs(std::static_pointer_cast<VectorNavBinaryOutput>(nodeData), pinIndex);
             }
         }
     }
@@ -1412,7 +1609,7 @@ void NAV::Plot::plotKvhObs(const std::shared_ptr<KvhObs>& obs, size_t pinIndex)
     addData(pinIndex, i++, obs->sequenceNumber < 128 ? obs->sequenceNumber : std::nan(""));
 }
 
-void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex)
+void NAV::Plot::plotImuObsWDeltaObs(const std::shared_ptr<ImuObsWDelta>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -1447,38 +1644,240 @@ void NAV::Plot::plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_
     addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->y() : std::nan(""));
     addData(pinIndex, i++, obs->gyroCompXYZ.has_value() ? obs->gyroCompXYZ->z() : std::nan(""));
     addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
-    // VectorNavObs
-    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->w() : std::nan(""));
-    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->x() : std::nan(""));
-    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->y() : std::nan(""));
-    addData(pinIndex, i++, obs->quaternion.has_value() ? obs->quaternion->z() : std::nan(""));
-    addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->x() : std::nan(""));
-    addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->y() : std::nan(""));
-    addData(pinIndex, i++, obs->yawPitchRoll.has_value() ? obs->yawPitchRoll->z() : std::nan(""));
-    addData(pinIndex, i++, obs->timeSinceSyncIn.has_value() ? static_cast<double>(obs->timeSinceSyncIn.value()) : std::nan(""));
-    addData(pinIndex, i++, obs->syncInCnt.has_value() ? obs->syncInCnt.value() : std::nan(""));
-    addData(pinIndex, i++, obs->dtime.has_value() ? obs->dtime.value() : std::nan(""));
+    // ImuObsWDelta
+    addData(pinIndex, i++, obs->dtime);
     addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->x() : std::nan(""));
     addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->y() : std::nan(""));
     addData(pinIndex, i++, obs->dtheta.has_value() ? obs->dtheta->z() : std::nan(""));
     addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->x() : std::nan(""));
     addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->y() : std::nan(""));
     addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->z() : std::nan(""));
-    addData(pinIndex, i++, obs->vpeStatus.has_value() ? obs->vpeStatus->status : std::nan(""));
-    addData(pinIndex, i++, obs->pressure.has_value() ? obs->pressure.value() : std::nan(""));
-    addData(pinIndex, i++, obs->magCompNED.has_value() ? obs->magCompNED->x() : std::nan(""));
-    addData(pinIndex, i++, obs->magCompNED.has_value() ? obs->magCompNED->y() : std::nan(""));
-    addData(pinIndex, i++, obs->magCompNED.has_value() ? obs->magCompNED->z() : std::nan(""));
-    addData(pinIndex, i++, obs->accelCompNED.has_value() ? obs->accelCompNED->x() : std::nan(""));
-    addData(pinIndex, i++, obs->accelCompNED.has_value() ? obs->accelCompNED->y() : std::nan(""));
-    addData(pinIndex, i++, obs->accelCompNED.has_value() ? obs->accelCompNED->z() : std::nan(""));
-    addData(pinIndex, i++, obs->gyroCompNED.has_value() ? obs->gyroCompNED->x() : std::nan(""));
-    addData(pinIndex, i++, obs->gyroCompNED.has_value() ? obs->gyroCompNED->y() : std::nan(""));
-    addData(pinIndex, i++, obs->gyroCompNED.has_value() ? obs->gyroCompNED->z() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelXYZ.has_value() ? obs->linearAccelXYZ->x() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelXYZ.has_value() ? obs->linearAccelXYZ->y() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelXYZ.has_value() ? obs->linearAccelXYZ->z() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelNED.has_value() ? obs->linearAccelNED->x() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelNED.has_value() ? obs->linearAccelNED->y() : std::nan(""));
-    addData(pinIndex, i++, obs->linearAccelNED.has_value() ? obs->linearAccelNED->z() : std::nan(""));
+}
+
+void NAV::Plot::plotVectorNavBinaryObs(const std::shared_ptr<VectorNavBinaryOutput>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(startValue_Time))
+        {
+            startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // VectorNavBinaryOutput
+    // Group 2 (Time)
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP) ? static_cast<double>(obs->timeOutputs->timeStartup) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS) ? static_cast<double>(obs->timeOutputs->timeGps) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW) ? static_cast<double>(obs->timeOutputs->gpsTow) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK) ? static_cast<double>(obs->timeOutputs->gpsWeek) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN) ? static_cast<double>(obs->timeOutputs->timeSyncIn) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS) ? static_cast<double>(obs->timeOutputs->timePPS) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) ? static_cast<double>(obs->timeOutputs->timeUtc.year) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) ? static_cast<double>(obs->timeOutputs->timeUtc.month) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) ? static_cast<double>(obs->timeOutputs->timeUtc.day) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) ? static_cast<double>(obs->timeOutputs->timeUtc.hour) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) ? static_cast<double>(obs->timeOutputs->timeUtc.min) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) ? static_cast<double>(obs->timeOutputs->timeUtc.sec) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) ? static_cast<double>(obs->timeOutputs->timeUtc.ms) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT) ? static_cast<double>(obs->timeOutputs->syncInCnt) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT) ? static_cast<double>(obs->timeOutputs->syncOutCnt) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS) ? static_cast<double>(obs->timeOutputs->timeStatus.timeOk()) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS) ? static_cast<double>(obs->timeOutputs->timeStatus.dateOk()) : std::nan(""));
+    addData(pinIndex, i++, obs->timeOutputs && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS) ? static_cast<double>(obs->timeOutputs->timeStatus.utcTimeValid()) : std::nan(""));
+    // Group 3 (IMU)
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS) ? static_cast<double>(obs->imuOutputs->imuStatus) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG) ? static_cast<double>(obs->imuOutputs->uncompMag(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG) ? static_cast<double>(obs->imuOutputs->uncompMag(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG) ? static_cast<double>(obs->imuOutputs->uncompMag(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL) ? static_cast<double>(obs->imuOutputs->uncompAccel(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL) ? static_cast<double>(obs->imuOutputs->uncompAccel(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL) ? static_cast<double>(obs->imuOutputs->uncompAccel(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO) ? static_cast<double>(obs->imuOutputs->uncompGyro(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO) ? static_cast<double>(obs->imuOutputs->uncompGyro(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO) ? static_cast<double>(obs->imuOutputs->uncompGyro(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP) ? static_cast<double>(obs->imuOutputs->temp) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES) ? static_cast<double>(obs->imuOutputs->pres) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA) ? static_cast<double>(obs->imuOutputs->deltaTime) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA) ? static_cast<double>(obs->imuOutputs->deltaTheta(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA) ? static_cast<double>(obs->imuOutputs->deltaTheta(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA) ? static_cast<double>(obs->imuOutputs->deltaTheta(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL) ? static_cast<double>(obs->imuOutputs->deltaV(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL) ? static_cast<double>(obs->imuOutputs->deltaV(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL) ? static_cast<double>(obs->imuOutputs->deltaV(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG) ? static_cast<double>(obs->imuOutputs->mag(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG) ? static_cast<double>(obs->imuOutputs->mag(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG) ? static_cast<double>(obs->imuOutputs->mag(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL) ? static_cast<double>(obs->imuOutputs->accel(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL) ? static_cast<double>(obs->imuOutputs->accel(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL) ? static_cast<double>(obs->imuOutputs->accel(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE) ? static_cast<double>(obs->imuOutputs->angularRate(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE) ? static_cast<double>(obs->imuOutputs->angularRate(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->imuOutputs && (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE) ? static_cast<double>(obs->imuOutputs->angularRate(2)) : std::nan(""));
+    // Group 4 (GNSS1)
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss1Outputs->timeUtc.year) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss1Outputs->timeUtc.month) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss1Outputs->timeUtc.day) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss1Outputs->timeUtc.hour) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss1Outputs->timeUtc.min) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss1Outputs->timeUtc.sec) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss1Outputs->timeUtc.ms) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) ? static_cast<double>(obs->gnss1Outputs->tow) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) ? static_cast<double>(obs->gnss1Outputs->week) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS) ? static_cast<double>(obs->gnss1Outputs->numSats) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX) ? static_cast<double>(obs->gnss1Outputs->fix) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) ? obs->gnss1Outputs->posLla(0) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) ? obs->gnss1Outputs->posLla(1) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) ? obs->gnss1Outputs->posLla(2) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) ? obs->gnss1Outputs->posEcef(0) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) ? obs->gnss1Outputs->posEcef(1) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) ? obs->gnss1Outputs->posEcef(2) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) ? static_cast<double>(obs->gnss1Outputs->velNed(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) ? static_cast<double>(obs->gnss1Outputs->velNed(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) ? static_cast<double>(obs->gnss1Outputs->velNed(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) ? static_cast<double>(obs->gnss1Outputs->velEcef(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) ? static_cast<double>(obs->gnss1Outputs->velEcef(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) ? static_cast<double>(obs->gnss1Outputs->velEcef(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) ? static_cast<double>(obs->gnss1Outputs->posU(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) ? static_cast<double>(obs->gnss1Outputs->posU(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) ? static_cast<double>(obs->gnss1Outputs->posU(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU) ? static_cast<double>(obs->gnss1Outputs->velU) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU) ? static_cast<double>(obs->gnss1Outputs->timeU) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) ? static_cast<double>(obs->gnss1Outputs->timeInfo.status.timeOk()) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) ? static_cast<double>(obs->gnss1Outputs->timeInfo.status.dateOk()) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) ? static_cast<double>(obs->gnss1Outputs->timeInfo.status.utcTimeValid()) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) ? static_cast<double>(obs->gnss1Outputs->timeInfo.leapSeconds) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss1Outputs->dop.gDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss1Outputs->dop.pDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss1Outputs->dop.tDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss1Outputs->dop.vDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss1Outputs->dop.hDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss1Outputs->dop.nDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss1Outputs->dop.eDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO) ? static_cast<double>(obs->gnss1Outputs->satInfo.numSats) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? obs->gnss1Outputs->raw.tow : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? static_cast<double>(obs->gnss1Outputs->raw.week) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss1Outputs && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? static_cast<double>(obs->gnss1Outputs->raw.numSats) : std::nan(""));
+    // Group 5 (Attitude)
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS) ? static_cast<double>(obs->attitudeOutputs->vpeStatus.attitudeQuality()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS) ? static_cast<double>(obs->attitudeOutputs->vpeStatus.gyroSaturation()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS) ? static_cast<double>(obs->attitudeOutputs->vpeStatus.gyroSaturationRecovery()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS) ? static_cast<double>(obs->attitudeOutputs->vpeStatus.magDisturbance()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS) ? static_cast<double>(obs->attitudeOutputs->vpeStatus.magSaturation()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS) ? static_cast<double>(obs->attitudeOutputs->vpeStatus.accDisturbance()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS) ? static_cast<double>(obs->attitudeOutputs->vpeStatus.accSaturation()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS) ? static_cast<double>(obs->attitudeOutputs->vpeStatus.knownMagDisturbance()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS) ? static_cast<double>(obs->attitudeOutputs->vpeStatus.knownAccelDisturbance()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL) ? static_cast<double>(obs->attitudeOutputs->ypr(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL) ? static_cast<double>(obs->attitudeOutputs->ypr(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL) ? static_cast<double>(obs->attitudeOutputs->ypr(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION) ? static_cast<double>(obs->attitudeOutputs->qtn.w()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION) ? static_cast<double>(obs->attitudeOutputs->qtn.x()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION) ? static_cast<double>(obs->attitudeOutputs->qtn.y()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION) ? static_cast<double>(obs->attitudeOutputs->qtn.z()) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM) ? static_cast<double>(obs->attitudeOutputs->dcm(0, 0)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM) ? static_cast<double>(obs->attitudeOutputs->dcm(0, 1)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM) ? static_cast<double>(obs->attitudeOutputs->dcm(0, 2)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM) ? static_cast<double>(obs->attitudeOutputs->dcm(1, 0)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM) ? static_cast<double>(obs->attitudeOutputs->dcm(1, 1)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM) ? static_cast<double>(obs->attitudeOutputs->dcm(1, 2)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM) ? static_cast<double>(obs->attitudeOutputs->dcm(2, 0)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM) ? static_cast<double>(obs->attitudeOutputs->dcm(2, 1)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM) ? static_cast<double>(obs->attitudeOutputs->dcm(2, 2)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED) ? static_cast<double>(obs->attitudeOutputs->magNed(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED) ? static_cast<double>(obs->attitudeOutputs->magNed(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED) ? static_cast<double>(obs->attitudeOutputs->magNed(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED) ? static_cast<double>(obs->attitudeOutputs->accelNed(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED) ? static_cast<double>(obs->attitudeOutputs->accelNed(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED) ? static_cast<double>(obs->attitudeOutputs->accelNed(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY) ? static_cast<double>(obs->attitudeOutputs->linearAccelBody(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY) ? static_cast<double>(obs->attitudeOutputs->linearAccelBody(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY) ? static_cast<double>(obs->attitudeOutputs->linearAccelBody(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED) ? static_cast<double>(obs->attitudeOutputs->linearAccelNed(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED) ? static_cast<double>(obs->attitudeOutputs->linearAccelNed(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED) ? static_cast<double>(obs->attitudeOutputs->linearAccelNed(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU) ? static_cast<double>(obs->attitudeOutputs->yprU(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU) ? static_cast<double>(obs->attitudeOutputs->yprU(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->attitudeOutputs && (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU) ? static_cast<double>(obs->attitudeOutputs->yprU(2)) : std::nan(""));
+    // Group 6 (INS)
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS) ? static_cast<double>(obs->insOutputs->insStatus.mode()) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS) ? static_cast<double>(obs->insOutputs->insStatus.gpsFix()) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS) ? static_cast<double>(obs->insOutputs->insStatus.errorIMU()) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS) ? static_cast<double>(obs->insOutputs->insStatus.errorMagPres()) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS) ? static_cast<double>(obs->insOutputs->insStatus.errorGnss()) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS) ? static_cast<double>(obs->insOutputs->insStatus.gpsHeadingIns()) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS) ? static_cast<double>(obs->insOutputs->insStatus.gpsCompass()) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA) ? obs->insOutputs->posLla(0) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA) ? obs->insOutputs->posLla(1) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA) ? obs->insOutputs->posLla(2) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF) ? obs->insOutputs->posEcef(0) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF) ? obs->insOutputs->posEcef(1) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF) ? obs->insOutputs->posEcef(2) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY) ? static_cast<double>(obs->insOutputs->velBody(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY) ? static_cast<double>(obs->insOutputs->velBody(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY) ? static_cast<double>(obs->insOutputs->velBody(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED) ? static_cast<double>(obs->insOutputs->velNed(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED) ? static_cast<double>(obs->insOutputs->velNed(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED) ? static_cast<double>(obs->insOutputs->velNed(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF) ? static_cast<double>(obs->insOutputs->velEcef(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF) ? static_cast<double>(obs->insOutputs->velEcef(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF) ? static_cast<double>(obs->insOutputs->velEcef(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF) ? static_cast<double>(obs->insOutputs->magEcef(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF) ? static_cast<double>(obs->insOutputs->magEcef(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF) ? static_cast<double>(obs->insOutputs->magEcef(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF) ? static_cast<double>(obs->insOutputs->accelEcef(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF) ? static_cast<double>(obs->insOutputs->accelEcef(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF) ? static_cast<double>(obs->insOutputs->accelEcef(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF) ? static_cast<double>(obs->insOutputs->linearAccelEcef(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF) ? static_cast<double>(obs->insOutputs->linearAccelEcef(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF) ? static_cast<double>(obs->insOutputs->linearAccelEcef(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSU) ? static_cast<double>(obs->insOutputs->posU) : std::nan(""));
+    addData(pinIndex, i++, obs->insOutputs && (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELU) ? static_cast<double>(obs->insOutputs->velU) : std::nan(""));
+    // Group 7 (GNSS2)
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss2Outputs->timeUtc.year) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss2Outputs->timeUtc.month) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss2Outputs->timeUtc.day) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss2Outputs->timeUtc.hour) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss2Outputs->timeUtc.min) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss2Outputs->timeUtc.sec) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) ? static_cast<double>(obs->gnss2Outputs->timeUtc.ms) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) ? static_cast<double>(obs->gnss2Outputs->tow) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) ? static_cast<double>(obs->gnss2Outputs->week) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS) ? static_cast<double>(obs->gnss2Outputs->numSats) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX) ? static_cast<double>(obs->gnss2Outputs->fix) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) ? obs->gnss2Outputs->posLla(0) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) ? obs->gnss2Outputs->posLla(1) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA) ? obs->gnss2Outputs->posLla(2) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) ? obs->gnss2Outputs->posEcef(0) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) ? obs->gnss2Outputs->posEcef(1) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF) ? obs->gnss2Outputs->posEcef(2) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) ? static_cast<double>(obs->gnss2Outputs->velNed(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) ? static_cast<double>(obs->gnss2Outputs->velNed(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED) ? static_cast<double>(obs->gnss2Outputs->velNed(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) ? static_cast<double>(obs->gnss2Outputs->velEcef(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) ? static_cast<double>(obs->gnss2Outputs->velEcef(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF) ? static_cast<double>(obs->gnss2Outputs->velEcef(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) ? static_cast<double>(obs->gnss2Outputs->posU(0)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) ? static_cast<double>(obs->gnss2Outputs->posU(1)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU) ? static_cast<double>(obs->gnss2Outputs->posU(2)) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU) ? static_cast<double>(obs->gnss2Outputs->velU) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU) ? static_cast<double>(obs->gnss2Outputs->timeU) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) ? static_cast<double>(obs->gnss2Outputs->timeInfo.status.timeOk()) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) ? static_cast<double>(obs->gnss2Outputs->timeInfo.status.dateOk()) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) ? static_cast<double>(obs->gnss2Outputs->timeInfo.status.utcTimeValid()) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO) ? static_cast<double>(obs->gnss2Outputs->timeInfo.leapSeconds) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss2Outputs->dop.gDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss2Outputs->dop.pDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss2Outputs->dop.tDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss2Outputs->dop.vDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss2Outputs->dop.hDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss2Outputs->dop.nDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP) ? static_cast<double>(obs->gnss2Outputs->dop.eDop) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO) ? static_cast<double>(obs->gnss2Outputs->satInfo.numSats) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? obs->gnss2Outputs->raw.tow : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? static_cast<double>(obs->gnss2Outputs->raw.week) : std::nan(""));
+    addData(pinIndex, i++, obs->gnss2Outputs && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS) ? static_cast<double>(obs->gnss2Outputs->raw.numSats) : std::nan(""));
 }

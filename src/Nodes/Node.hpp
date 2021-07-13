@@ -238,6 +238,9 @@ class Node
     /// @brief Flag, if the node is currently deinitializing
     [[nodiscard]] bool isDeinitializing() const;
 
+    /// @brief Function called by the flow executer after finishing to flush out remaining data
+    virtual void flush();
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                             Member variables                                             */
     /* -------------------------------------------------------------------------------------------------------- */

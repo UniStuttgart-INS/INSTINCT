@@ -76,6 +76,11 @@ void NAV::EmlidDataLogger::restore(json const& j)
     }
 }
 
+void NAV::EmlidDataLogger::flush()
+{
+    filestream.flush();
+}
+
 bool NAV::EmlidDataLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());
