@@ -142,6 +142,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/util/Demo.hpp"
 #include "Nodes/util/GroupBox.hpp"
 // Simple
+#include "Nodes/Simple/Delay.hpp"
 #include "Nodes/Simple/Matrix.hpp"
 #include "Nodes/Simple/Transformation.hpp"
 // Converter
@@ -183,6 +184,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
     // Simple
+    registerNodeType<Delay>();
     registerNodeType<Matrix>();
     registerNodeType<Transformation>();
     // Converter
