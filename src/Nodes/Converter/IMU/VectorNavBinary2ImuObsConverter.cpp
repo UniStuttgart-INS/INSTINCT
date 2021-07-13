@@ -43,7 +43,7 @@ std::string NAV::VectorNavBinary2ImuObsConverter::category()
 
 void NAV::VectorNavBinary2ImuObsConverter::convertObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto vnObs = std::static_pointer_cast<VectorNavBinaryOutput>(nodeData);
+    auto vnObs = std::dynamic_pointer_cast<VectorNavBinaryOutput>(nodeData);
 
     auto imuObs = std::make_shared<ImuObsWDelta>(vnObs->imuPos);
 

@@ -174,7 +174,7 @@ void NAV::FlowExecutor::execute()
                     while (true)
                     {
                         // Check if data available (peek = true)
-                        if (auto obs = std::static_pointer_cast<NAV::InsObs>((node->**callback)(true)))
+                        if (auto obs = std::dynamic_pointer_cast<NAV::InsObs>((node->**callback)(true)))
                         {
                             // Check if data has a time
                             if (obs->insTime.has_value())
@@ -227,7 +227,7 @@ void NAV::FlowExecutor::execute()
             while (true)
             {
                 // Check if data available (peek = true)
-                if (auto obs = std::static_pointer_cast<NAV::InsObs>((node->**callback)(true)))
+                if (auto obs = std::dynamic_pointer_cast<NAV::InsObs>((node->**callback)(true)))
                 {
                     // Check if data has a time
                     if (obs->insTime.has_value())
