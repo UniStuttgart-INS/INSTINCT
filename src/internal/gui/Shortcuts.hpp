@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "gui/GlobalActions.hpp"
+#include "internal/gui/GlobalActions.hpp"
 
 namespace NAV::gui
 {

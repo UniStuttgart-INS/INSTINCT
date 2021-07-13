@@ -2,7 +2,7 @@
 
 #include "util/Logger.hpp"
 
-#include "gui/widgets/HelpMarker.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

@@ -4,7 +4,7 @@
 #include "util/InsTransformations.hpp"
 #include "util/Time/TimeBase.hpp"
 
-#include "gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

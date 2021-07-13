@@ -1,4 +1,4 @@
-#include "gui/NodeEditorApplication.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include <iostream>
 #include <chrono>

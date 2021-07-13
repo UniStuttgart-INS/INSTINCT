@@ -8,9 +8,9 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
-#include "gui/TouchTracker.hpp"
-#include "gui/windows/StyleEditor.hpp"
-#include "gui/NodeEditorApplication.hpp"
+#include "internal/gui/TouchTracker.hpp"
+#include "internal/gui/windows/StyleEditor.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include <string>
 #include <algorithm>
