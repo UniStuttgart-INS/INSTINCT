@@ -637,7 +637,10 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
                 if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
-                    obs->gnss1Outputs->timeInfo.status = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto timeOk = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto dateOk = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto utcTimeValid = static_cast<uint8_t>(std::stoul(extractCell()));
+                    obs->gnss1Outputs->timeInfo.status = static_cast<uint8_t>(timeOk << 0U | dateOk << 1U | utcTimeValid << 2U);
                     obs->gnss1Outputs->timeInfo.leapSeconds = static_cast<int8_t>(std::stoi(extractCell()));
                 }
                 if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
@@ -776,7 +779,16 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 
                 if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
                 {
-                    obs->insOutputs->insStatus = static_cast<uint16_t>(std::stoul(extractCell()));
+                    auto mode = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto gpsFix = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto errorImu = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto errorMagPres = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto errorGnss = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto gpsHeadingIns = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto gpsCompass = static_cast<uint8_t>(std::stoul(extractCell()));
+                    obs->insOutputs->insStatus.status = static_cast<uint16_t>(mode << 0U | gpsFix << 2U
+                                                                              | errorImu << 4U | errorMagPres << 5U | errorGnss << 6U
+                                                                              | gpsHeadingIns << 8U | gpsCompass << 9U);
                 }
                 if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
                 {
@@ -923,7 +935,10 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
                 if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
-                    obs->gnss2Outputs->timeInfo.status = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto timeOk = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto dateOk = static_cast<uint8_t>(std::stoul(extractCell()));
+                    auto utcTimeValid = static_cast<uint8_t>(std::stoul(extractCell()));
+                    obs->gnss2Outputs->timeInfo.status = static_cast<uint8_t>(timeOk << 0U | dateOk << 1U | utcTimeValid << 2U);
                     obs->gnss2Outputs->timeInfo.leapSeconds = static_cast<int8_t>(std::stoi(extractCell()));
                 }
                 if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
