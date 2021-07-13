@@ -106,7 +106,7 @@ void NAV::KvhDataLogger::deinitialize()
 
 void NAV::KvhDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::static_pointer_cast<KvhObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<KvhObs>(nodeData);
 
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;

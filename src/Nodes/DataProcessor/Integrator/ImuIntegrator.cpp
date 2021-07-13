@@ -362,7 +362,7 @@ void NAV::ImuIntegrator::setCurrentQuaternion_nb(const Eigen::Quaterniond& quate
 void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     /// IMU Observation at the time tₖ
-    auto imuObs__t0 = std::static_pointer_cast<ImuObs>(nodeData);
+    auto imuObs__t0 = std::dynamic_pointer_cast<ImuObs>(nodeData);
 
     if (!imuObs__t0->insTime.has_value())
     {

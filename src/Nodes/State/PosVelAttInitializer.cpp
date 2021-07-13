@@ -619,7 +619,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
         return;
     }
 
-    auto obs = std::static_pointer_cast<ImuObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<ImuObs>(nodeData);
 
     if (!obs->timeSinceStartup.has_value())
     {
@@ -724,11 +724,11 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<NodeData>& 
         {
             if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
-                receiveRtklibPosObs(std::static_pointer_cast<RtklibPosObs>(nodeData));
+                receiveRtklibPosObs(std::dynamic_pointer_cast<RtklibPosObs>(nodeData));
             }
             else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
             {
-                receiveUbloxObs(std::static_pointer_cast<UbloxObs>(nodeData));
+                receiveUbloxObs(std::dynamic_pointer_cast<UbloxObs>(nodeData));
             }
         }
     }
