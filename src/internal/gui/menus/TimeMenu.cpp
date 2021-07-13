@@ -9,7 +9,7 @@
 
 void NAV::gui::menus::ShowTimeMenu()
 {
-    InsTime currentTime = util::time::GetCurrentTime();
+    InsTime currentTime = util::time::GetCurrentInsTime();
     if (currentTime.empty())
     {
         ImGui::Text("Time N/A");
@@ -89,7 +89,7 @@ void NAV::gui::menus::ShowTimeMenu()
     {
         util::time::ClearCurrentTime();
 
-        currentTime = util::time::GetCurrentTime();
+        currentTime = util::time::GetCurrentInsTime();
         year = currentTime.toYMDHMS().year;
         month = currentTime.toYMDHMS().month;
         day = currentTime.toYMDHMS().day;

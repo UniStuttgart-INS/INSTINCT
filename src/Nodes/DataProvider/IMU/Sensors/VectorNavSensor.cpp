@@ -6042,7 +6042,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
                 if (obs->insTime->empty())
                 {
-                    if (InsTime currentTime = util::time::GetCurrentTime();
+                    if (InsTime currentTime = util::time::GetCurrentInsTime();
                         !currentTime.empty())
                     {
                         obs->insTime = currentTime;
@@ -6076,7 +6076,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
         auto obs = std::make_shared<StringObs>(p.datastr());
 
-        if (InsTime currentTime = util::time::GetCurrentTime();
+        if (InsTime currentTime = util::time::GetCurrentInsTime();
             !currentTime.empty())
         {
             obs->insTime = currentTime;

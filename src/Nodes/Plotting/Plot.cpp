@@ -1180,7 +1180,7 @@ void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
 
         LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
-        auto currentTime = util::time::GetCurrentTime();
+        auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<bool>(pinIndex);
 
         if (value != nullptr && !currentTime.empty())
@@ -1209,7 +1209,7 @@ void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
 
         LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
-        auto currentTime = util::time::GetCurrentTime();
+        auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<int>(pinIndex);
 
         if (value != nullptr && !currentTime.empty())
@@ -1238,7 +1238,7 @@ void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
 
         LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
-        auto currentTime = util::time::GetCurrentTime();
+        auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<double>(pinIndex);
 
         if (value != nullptr && !currentTime.empty())
@@ -1269,7 +1269,7 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
 
             LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
-            auto currentTime = util::time::GetCurrentTime();
+            auto currentTime = util::time::GetCurrentInsTime();
             if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
             {
                 auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);

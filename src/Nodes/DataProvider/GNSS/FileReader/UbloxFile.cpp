@@ -135,7 +135,7 @@ std::shared_ptr<NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
             util::time::SetCurrentTime(obs->insTime.value());
         }
     }
-    else if (auto currentTime = util::time::GetCurrentTime();
+    else if (auto currentTime = util::time::GetCurrentInsTime();
              !currentTime.empty())
     {
         obs->insTime = currentTime;

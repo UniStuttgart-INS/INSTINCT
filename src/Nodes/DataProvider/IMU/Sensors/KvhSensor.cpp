@@ -159,7 +159,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
         kvhSensor->prevSequenceNumber = obs->sequenceNumber;
 
         // Calls all the callbacks
-        if (InsTime currentTime = util::time::GetCurrentTime();
+        if (InsTime currentTime = util::time::GetCurrentInsTime();
             !currentTime.empty())
         {
             obs->insTime = currentTime;

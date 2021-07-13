@@ -330,7 +330,7 @@ std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
             util::time::SetCurrentTime(obs->insTime.value());
         }
     }
-    else if (auto currentTime = util::time::GetCurrentTime();
+    else if (auto currentTime = util::time::GetCurrentInsTime();
              !currentTime.empty())
     {
         obs->insTime = currentTime;

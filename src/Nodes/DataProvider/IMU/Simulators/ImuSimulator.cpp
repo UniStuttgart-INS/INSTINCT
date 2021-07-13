@@ -213,7 +213,7 @@ bool NAV::ImuSimulator::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    startTime = util::time::GetCurrentTime();
+    startTime = util::time::GetCurrentInsTime();
 
     return !startTime.empty();
 }

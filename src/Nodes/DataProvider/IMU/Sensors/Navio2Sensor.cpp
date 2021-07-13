@@ -171,7 +171,7 @@ void NAV::Navio2Sensor::readImuThread(void* userData)
     LOG_DATA("DATA({}): {}, {}°C, a=({}, {}, {})", navio->name, obs->timeSinceStartup.value(), obs->temperature.value(),
              navio->ax, navio->ay, navio->az);
 
-    if (InsTime currentTime = util::time::GetCurrentTime();
+    if (InsTime currentTime = util::time::GetCurrentInsTime();
         !currentTime.empty())
     {
         obs->insTime = currentTime;
