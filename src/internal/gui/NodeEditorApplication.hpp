@@ -9,7 +9,7 @@
 
 #include <imgui.h>
 
-#include "gui/GlobalActions.hpp"
+#include "internal/gui/GlobalActions.hpp"
 
 #include <thread>
 #include <deque>

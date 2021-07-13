@@ -11,19 +11,19 @@ namespace ed = ax::NodeEditor;
 
 #include "implot.h"
 
-#include "gui/Shortcuts.hpp"
-#include "gui/TouchTracker.hpp"
+#include "internal/gui/Shortcuts.hpp"
+#include "internal/gui/TouchTracker.hpp"
 
-#include "gui/panels/BlueprintNodeBuilder.hpp"
+#include "internal/gui/panels/BlueprintNodeBuilder.hpp"
 namespace util = ax::NodeEditor::Utilities;
 
-#include "gui/panels/LeftPane.hpp"
+#include "internal/gui/panels/LeftPane.hpp"
 
-#include "gui/menus/MainMenuBar.hpp"
+#include "internal/gui/menus/MainMenuBar.hpp"
 
-#include "gui/widgets/Splitter.hpp"
-#include "gui/widgets/HelpMarker.hpp"
-#include "gui/widgets/Spinner.hpp"
+#include "internal/gui/widgets/Splitter.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/widgets/Spinner.hpp"
 
 #include "internal/Pin.hpp"
 #include "Nodes/Node.hpp"

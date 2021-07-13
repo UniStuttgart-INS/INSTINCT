@@ -5,7 +5,7 @@
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
 
-#include "gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
 
 #include <iomanip> // std::setprecision
 #include <limits>

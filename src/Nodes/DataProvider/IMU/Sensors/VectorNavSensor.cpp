@@ -5,7 +5,7 @@
 #include "vn/searcher.h"
 #include "vn/util.h"
 
-#include "gui/widgets/HelpMarker.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

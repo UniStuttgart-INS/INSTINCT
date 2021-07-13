@@ -6,7 +6,7 @@
 #pragma once
 
 #include <string>
-#include "gui/GlobalActions.hpp"
+#include "internal/gui/GlobalActions.hpp"
 
 namespace NAV::flow
 {
