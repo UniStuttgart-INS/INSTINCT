@@ -96,7 +96,34 @@ void NAV::Delay::deinitialize()
 
 bool NAV::Delay::onCreateLink(Pin* startPin, Pin* endPin)
 {
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+    if (startPin && endPin)
+    {
+        LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
+
+        if (endPin->parentNode->id != id)
+        {
+            return true; // Link on Output Port
+        }
+
+        // New Link on the Input port, but the previously connected dataIdentifier is different from the new one.
+        // Then remove all links.
+        if (outputPins.at(OutputPortIndex_Flow).dataIdentifier != startPin->dataIdentifier)
+        {
+            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_Flow).id))
+            {
+                nm::DeleteLink(link->id);
+            }
+        }
+
+        // Update the dataIdentifier of the output pin to the same as input pin
+        outputPins.at(OutputPortIndex_Flow).dataIdentifier = startPin->dataIdentifier;
+
+        // Refresh all links connected to the output pin
+        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_Flow).id))
+        {
+            nm::RefreshLink(link->id);
+        }
+    }
 
     return true;
 }
