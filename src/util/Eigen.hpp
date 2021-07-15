@@ -71,7 +71,7 @@ namespace NAV
 namespace experimental
 {
 class Matrix;
-}; // namespace experimental
+} // namespace experimental
 
 /// Wrapper for Eigen::Block<Eigen::MatrixXd>
 class BlockMatrix
