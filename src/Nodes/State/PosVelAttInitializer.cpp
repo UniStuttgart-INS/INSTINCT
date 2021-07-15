@@ -257,12 +257,12 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::Indent();
 
         ImGui::SetNextItemWidth(100);
-        if (ImGui::DragFloat(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &overrideValuesPosition_lla.at(0), 1.0F, -90.0F, 90.0F))
+        if (ImGui::DragFloat(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &overrideValuesPosition_lla.at(0), 1.0F, -90.0F, 90.0F, "%.6f"))
         {
             flow::ApplyChanges();
         }
         ImGui::SetNextItemWidth(100);
-        if (ImGui::DragFloat(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &overrideValuesPosition_lla.at(1), 1.0F, -180.0F, 180.0F))
+        if (ImGui::DragFloat(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &overrideValuesPosition_lla.at(1), 1.0F, -180.0F, 180.0F, "%.6f"))
         {
             flow::ApplyChanges();
         }

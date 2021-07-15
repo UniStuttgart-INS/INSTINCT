@@ -145,7 +145,7 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeDat
         return;
     }
 
-    if (imuObs__t0 != nullptr)
+    if (imuObs__t0 != nullptr && posVelAtt__t1 && posVelAtt__t2)
     {
         LOG_DEBUG("{}: Overwriting imuObs__t0 ({}) with new value at {}", nameId(), imuObs__t0->insTime->toGPSweekTow(), imuObs->insTime->toGPSweekTow());
     }
@@ -165,7 +165,7 @@ void NAV::ImuIntegrator::recvImuObs__t1(const std::shared_ptr<NodeData>& nodeDat
         return;
     }
 
-    if (imuObs__t1 != nullptr)
+    if (imuObs__t1 != nullptr && posVelAtt__t1 && posVelAtt__t2)
     {
         LOG_DEBUG("{}: Overwriting imuObs__t1 ({}) with new value at {}", nameId(), imuObs__t1->insTime->toGPSweekTow(), imuObs->insTime->toGPSweekTow());
     }
@@ -185,7 +185,7 @@ void NAV::ImuIntegrator::recvImuObs__t2(const std::shared_ptr<NodeData>& nodeDat
         return;
     }
 
-    if (imuObs__t2 != nullptr)
+    if (imuObs__t2 != nullptr && posVelAtt__t1 && posVelAtt__t2)
     {
         LOG_DEBUG("{}: Overwriting imuObs__t2 ({}) with new value at {}", nameId(), imuObs__t2->insTime->toGPSweekTow(), imuObs->insTime->toGPSweekTow());
     }
@@ -199,7 +199,7 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
 {
     auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
 
-    if (posVelAtt__t1 != nullptr)
+    if (posVelAtt__t1 != nullptr && posVelAtt__t2)
     {
         LOG_DEBUG("{}: Overwriting posVelAtt__t1 ({}) with new value at {}", nameId(), posVelAtt__t1->insTime->toGPSweekTow(), posVelAtt->insTime->toGPSweekTow());
     }
