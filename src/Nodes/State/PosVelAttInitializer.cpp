@@ -6,9 +6,13 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/widgets/HelpMarker.hpp"
+
 #include "util/UartSensors/Ublox/UbloxTypes.hpp"
 #include "util/InsTransformations.hpp"
 #include "util/InsMath.hpp"
+
+#include "NodeData/State/PosVelAtt.hpp"
 
 #include <limits>
 
@@ -19,16 +23,12 @@ NAV::PosVelAttInitializer::PosVelAttInitializer()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 255, 230 };
+    guiConfigDefaultWindowSize = { 345, 342 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &PosVelAttInitializer::receiveImuObs);
     nm::CreateInputPin(this, "GnssObs", Pin::Type::Flow, { NAV::UbloxObs::type(), NAV::RtklibPosObs::type() }, &PosVelAttInitializer::receiveGnssObs);
-    nm::CreateInputPin(this, "Position ECEF", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
-    nm::CreateInputPin(this, "Velocity NED", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
-    nm::CreateInputPin(this, "Quaternion nb", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow);
-    nm::CreateOutputPin(this, "GnssObs", Pin::Type::Flow);
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
 NAV::PosVelAttInitializer::~PosVelAttInitializer()
@@ -57,13 +57,26 @@ void NAV::PosVelAttInitializer::guiConfig()
         && !(overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2)))
     {
         ImGui::SetNextItemWidth(100);
-        if (ImGui::InputDouble("Initialization Duration Attitude", &initDuration, 0.0, 0.0, "%.3f s"))
+        if (ImGui::InputDouble(fmt::format("Initialization Duration Attitude##{}", size_t(id)).c_str(), &initDuration, 0.0, 0.0, "%.3f s"))
         {
             flow::ApplyChanges();
         }
     }
 
-    if (ImGui::BeginTable(("Initialized State##" + std::to_string(size_t(id))).c_str(),
+    ImGui::SetNextItemWidth(100);
+    if (ImGui::InputInt(fmt::format("Messages to send##{}", size_t(id)).c_str(), &messagesToSend))
+    {
+        if (messagesToSend < 1)
+        {
+            messagesToSend = 1;
+        }
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("The amount of messages to send out after an initialization state was found.\n"
+                             "Afterwards no more messages are sent.");
+
+    if (ImGui::BeginTable(fmt::format("Initialized State##{}", size_t(id)).c_str(),
                           4, ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
     {
         ImGui::TableSetupColumn("");
@@ -83,20 +96,16 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size / 1.2F,
                                                            ImGui::GetCursorScreenPos().y + size * 1.8F),
                                                     size,
-                                                    determinePosition == InitFlag::NOT_CONNECTED
-                                                        ? ImColor(255.0F, 255.0F, 0.0F)
-                                                        : (determinePosition == InitFlag::CONNECTED
-                                                               ? ImColor(255.0F, 0.0F, 0.0F)
-                                                               : ImColor(0.0F, 255.0F, 0.0F)));
+                                                    posVelAttInitialized.at(0) || overridePosition
+                                                        ? ImColor(0.0F, 255.0F, 0.0F)
+                                                        : ImColor(255.0F, 0.0F, 0.0F));
         ImGui::Selectable(("##determinePosition" + std::to_string(size_t(id))).c_str(),
                           false, ImGuiSelectableFlags_Disabled, ImVec2(1.6F * size, 0.0F));
         if (ImGui::IsItemHovered())
         {
-            ImGui::SetTooltip("%s", determinePosition == InitFlag::NOT_CONNECTED
-                                        ? "Not connected, so won't be initialized"
-                                        : (determinePosition == InitFlag::CONNECTED
-                                               ? "To be initialized"
-                                               : "Successfully Initialized"));
+            ImGui::SetTooltip("%s", posVelAttInitialized.at(0) || overridePosition
+                                        ? "Successfully Initialized"
+                                        : "To be initialized");
         }
         ImGui::TableNextColumn();
         ImGui::SetNextItemWidth(-FLT_MIN);
@@ -155,20 +164,16 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size / 1.2F,
                                                            ImGui::GetCursorScreenPos().y + size * 1.8F),
                                                     size,
-                                                    determineVelocity == InitFlag::NOT_CONNECTED
-                                                        ? ImColor(255.0F, 255.0F, 0.0F)
-                                                        : (determineVelocity == InitFlag::CONNECTED
-                                                               ? ImColor(255.0F, 0.0F, 0.0F)
-                                                               : ImColor(0.0F, 255.0F, 0.0F)));
+                                                    posVelAttInitialized.at(1) || overrideVelocity
+                                                        ? ImColor(0.0F, 255.0F, 0.0F)
+                                                        : ImColor(255.0F, 0.0F, 0.0F));
         ImGui::Selectable(("##determineVelocity" + std::to_string(size_t(id))).c_str(),
                           false, ImGuiSelectableFlags_Disabled, ImVec2(1.6F * size, 0.0F));
         if (ImGui::IsItemHovered())
         {
-            ImGui::SetTooltip("%s", determineVelocity == InitFlag::NOT_CONNECTED
-                                        ? "Not connected, so won't be initialized"
-                                        : (determineVelocity == InitFlag::CONNECTED
-                                               ? "To be initialized"
-                                               : "Successfully Initialized"));
+            ImGui::SetTooltip("%s", posVelAttInitialized.at(1) || overrideVelocity
+                                        ? "Successfully Initialized"
+                                        : "To be initialized");
         }
         ImGui::TableNextColumn();
         ImGui::SetNextItemWidth(-FLT_MIN);
@@ -227,24 +232,74 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(ImGui::GetCursorScreenPos().x + size / 1.2F,
                                                            ImGui::GetCursorScreenPos().y + size * 1.4F),
                                                     size,
-                                                    determineAttitude == InitFlag::NOT_CONNECTED
-                                                        ? ImColor(255.0F, 255.0F, 0.0F)
-                                                        : (determineAttitude == InitFlag::CONNECTED
-                                                               ? ImColor(255.0F, 0.0F, 0.0F)
-                                                               : ImColor(0.0F, 255.0F, 0.0F)));
+                                                    posVelAttInitialized.at(2) || (overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2))
+                                                        ? ImColor(0.0F, 255.0F, 0.0F)
+                                                        : ImColor(255.0F, 0.0F, 0.0F));
         ImGui::Selectable(("##determineAttitude" + std::to_string(size_t(id))).c_str(),
                           false, ImGuiSelectableFlags_Disabled, ImVec2(1.6F * size, 0.0F));
         if (ImGui::IsItemHovered())
         {
-            ImGui::SetTooltip("%s", determineAttitude == InitFlag::NOT_CONNECTED
-                                        ? "Not connected, so won't be initialized"
-                                        : (determineAttitude == InitFlag::CONNECTED
-                                               ? "To be initialized"
-                                               : "Successfully Initialized"));
+            ImGui::SetTooltip("%s", posVelAttInitialized.at(2) || (overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2))
+                                        ? "Successfully Initialized"
+                                        : "To be initialized");
         }
         ImGui::TableNextColumn();
 
         ImGui::EndTable();
+    }
+
+    if (ImGui::Checkbox(fmt::format("Override Position##{}", size_t(id)).c_str(), &overridePosition))
+    {
+        flow::ApplyChanges();
+    }
+    if (overridePosition)
+    {
+        ImGui::Indent();
+
+        ImGui::SetNextItemWidth(100);
+        if (ImGui::DragFloat(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &overrideValuesPosition_lla.at(0), 1.0F, -90.0F, 90.0F))
+        {
+            flow::ApplyChanges();
+        }
+        ImGui::SetNextItemWidth(100);
+        if (ImGui::DragFloat(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &overrideValuesPosition_lla.at(1), 1.0F, -180.0F, 180.0F))
+        {
+            flow::ApplyChanges();
+        }
+        ImGui::SetNextItemWidth(100);
+        if (ImGui::DragFloat(fmt::format("Altitude [m]##{}", size_t(id)).c_str(), &overrideValuesPosition_lla.at(2)))
+        {
+            flow::ApplyChanges();
+        }
+
+        ImGui::Unindent();
+    }
+
+    if (ImGui::Checkbox(fmt::format("Override Velocity##{}", size_t(id)).c_str(), &overrideVelocity))
+    {
+        flow::ApplyChanges();
+    }
+    if (overrideVelocity)
+    {
+        ImGui::Indent();
+
+        ImGui::SetNextItemWidth(100);
+        if (ImGui::DragFloat(fmt::format("Velocity N [m/s]##{}", size_t(id)).c_str(), &overrideValuesVelocity_n.at(0)))
+        {
+            flow::ApplyChanges();
+        }
+        ImGui::SetNextItemWidth(100);
+        if (ImGui::DragFloat(fmt::format("Velocity E [m/s]##{}", size_t(id)).c_str(), &overrideValuesVelocity_n.at(1)))
+        {
+            flow::ApplyChanges();
+        }
+        ImGui::SetNextItemWidth(100);
+        if (ImGui::DragFloat(fmt::format("Velocity D [m/s]##{}", size_t(id)).c_str(), &overrideValuesVelocity_n.at(2)))
+        {
+            flow::ApplyChanges();
+        }
+
+        ImGui::Unindent();
     }
 
     if (ImGui::BeginTable(("Overrides##" + std::to_string(size_t(id))).c_str(),
@@ -309,8 +364,13 @@ void NAV::PosVelAttInitializer::guiConfig()
     json j;
 
     j["initDuration"] = initDuration;
+    j["messagesToSend"] = messagesToSend;
     j["positionAccuracyThreshold"] = positionAccuracyThreshold;
     j["velocityAccuracyThreshold"] = velocityAccuracyThreshold;
+    j["overridePosition"] = overridePosition;
+    j["overrideValuesPosition_lla"] = overrideValuesPosition_lla;
+    j["overrideVelocity"] = overrideVelocity;
+    j["overrideValuesVelocity_n"] = overrideValuesVelocity_n;
     j["overrideRollPitchYaw"] = overrideRollPitchYaw;
     j["overrideValuesRollPitchYaw"] = overrideValuesRollPitchYaw;
 
@@ -325,6 +385,10 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     {
         j.at("initDuration").get_to(initDuration);
     }
+    if (j.contains("messagesToSend"))
+    {
+        j.at("messagesToSend").get_to(messagesToSend);
+    }
     if (j.contains("positionAccuracyThreshold"))
     {
         j.at("positionAccuracyThreshold").get_to(positionAccuracyThreshold);
@@ -332,6 +396,22 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     if (j.contains("velocityAccuracyThreshold"))
     {
         j.at("velocityAccuracyThreshold").get_to(velocityAccuracyThreshold);
+    }
+    if (j.contains("overridePosition"))
+    {
+        j.at("overridePosition").get_to(overridePosition);
+    }
+    if (j.contains("overrideValuesPosition_lla"))
+    {
+        j.at("overrideValuesPosition_lla").get_to(overrideValuesPosition_lla);
+    }
+    if (j.contains("overrideVelocity"))
+    {
+        j.at("overrideVelocity").get_to(overrideVelocity);
+    }
+    if (j.contains("overrideValuesVelocity_n"))
+    {
+        j.at("overrideValuesVelocity_n").get_to(overrideValuesVelocity_n);
     }
     if (j.contains("overrideRollPitchYaw"))
     {
@@ -343,140 +423,6 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     }
 }
 
-bool NAV::PosVelAttInitializer::onCreateLink(Pin* startPin, Pin* endPin)
-{
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
-
-    bool canConnect = false;
-    if (startPin && endPin)
-    {
-        if (endPin->parentNode->id != id) // Link on Output Port
-        {
-            return true;
-        }
-        size_t endPinIndex = pinIndexFromId(endPin->id);
-
-        int64_t rows = 3;
-        int64_t cols = 1;
-
-        if (endPinIndex == InputPortIndex_Attitude)
-        {
-            rows = 4;
-        }
-
-        if (endPinIndex == InputPortIndex_Position
-            || endPinIndex == InputPortIndex_Velocity
-            || endPinIndex == InputPortIndex_Attitude)
-        {
-            if (startPin->dataIdentifier.front() == "Eigen::MatrixXd")
-            {
-                if (const auto* pval = std::get_if<void*>(&startPin->data))
-                {
-                    if (auto* mat = static_cast<Eigen::MatrixXd*>(*pval))
-                    {
-                        if (mat->rows() == rows && mat->cols() == cols)
-                        {
-                            canConnect = true;
-                        }
-                        else
-                        {
-                            LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
-                        }
-                    }
-                }
-            }
-            else if (startPin->dataIdentifier.front() == "BlockMatrix")
-            {
-                if (const auto* pval = std::get_if<void*>(&startPin->data))
-                {
-                    if (auto* block = static_cast<BlockMatrix*>(*pval))
-                    {
-                        auto mat = (*block)();
-                        if (mat.rows() == rows && mat.cols() == cols)
-                        {
-                            canConnect = true;
-                        }
-                        else
-                        {
-                            LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            canConnect = true;
-            if (endPinIndex == InputPortIndex_ImuObs)
-            {
-                outputPins.at(OutputPortIndex_ImuObs).dataIdentifier = startPin->dataIdentifier;
-            }
-            else if (endPinIndex == InputPortIndex_GnssObs)
-            {
-                outputPins.at(OutputPortIndex_GnssObs).dataIdentifier = startPin->dataIdentifier;
-            }
-        }
-    }
-
-    if (canConnect)
-    {
-        if (endPin->id == inputPins.at(InputPortIndex_Position).id)
-        {
-            determinePosition = InitFlag::CONNECTED;
-        }
-        else if (endPin->id == inputPins.at(InputPortIndex_Velocity).id)
-        {
-            determineVelocity = InitFlag::CONNECTED;
-        }
-        else if (endPin->id == inputPins.at(InputPortIndex_Attitude).id)
-        {
-            determineAttitude = InitFlag::CONNECTED;
-        }
-    }
-
-    return canConnect;
-}
-
-void NAV::PosVelAttInitializer::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
-{
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
-
-    if (endPin)
-    {
-        if (endPin->id == inputPins.at(InputPortIndex_Position).id)
-        {
-            determinePosition = InitFlag::NOT_CONNECTED;
-        }
-        else if (endPin->id == inputPins.at(InputPortIndex_Velocity).id)
-        {
-            determineVelocity = InitFlag::NOT_CONNECTED;
-        }
-        else if (endPin->id == inputPins.at(InputPortIndex_Attitude).id)
-        {
-            determineAttitude = InitFlag::NOT_CONNECTED;
-        }
-        else if (endPin->id == inputPins.at(InputPortIndex_ImuObs).id)
-        {
-            outputPins.at(OutputPortIndex_ImuObs).dataIdentifier.clear();
-            auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_ImuObs).id);
-            for (auto& connectedLink : connectedLinks)
-            {
-                nm::DeleteLink(connectedLink->id);
-            }
-        }
-        else if (endPin->id == inputPins.at(InputPortIndex_GnssObs).id)
-        {
-            outputPins.at(OutputPortIndex_GnssObs).dataIdentifier.clear();
-            auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_GnssObs).id);
-            for (auto& connectedLink : connectedLinks)
-            {
-                nm::DeleteLink(connectedLink->id);
-            }
-        }
-        deinitializeNode();
-    }
-}
-
 bool NAV::PosVelAttInitializer::initialize()
 {
     LOG_TRACE("{}: called", nameId());
@@ -485,25 +431,14 @@ bool NAV::PosVelAttInitializer::initialize()
 
     countAveragedAttitude = 0.0;
 
-    if (determinePosition == InitFlag::INITIALIZED)
-    {
-        determinePosition = InitFlag::CONNECTED;
-    }
-    if (determineVelocity == InitFlag::INITIALIZED)
-    {
-        determineVelocity = InitFlag::CONNECTED;
-    }
-    if (determineAttitude == InitFlag::INITIALIZED)
-    {
-        determineAttitude = InitFlag::CONNECTED;
-    }
-
     lastPositionAccuracy = { std::numeric_limits<float>::infinity(),
                              std::numeric_limits<float>::infinity(),
                              std::numeric_limits<float>::infinity() };
     lastVelocityAccuracy = { std::numeric_limits<float>::infinity(),
                              std::numeric_limits<float>::infinity(),
                              std::numeric_limits<float>::infinity() };
+
+    posVelAttInitialized = { false, false, false, false };
 
     return true;
 }
@@ -515,107 +450,60 @@ void NAV::PosVelAttInitializer::deinitialize()
 
 void NAV::PosVelAttInitializer::finalizeInit()
 {
-    LOG_TRACE("{}: called", nameId());
-
-    if (determinePosition != InitFlag::CONNECTED
-        && determineVelocity != InitFlag::CONNECTED
-        && determineAttitude != InitFlag::CONNECTED)
+    if (!posVelAttInitialized.at(3)
+        && (posVelAttInitialized.at(0) || overridePosition)
+        && (posVelAttInitialized.at(1) || overrideVelocity)
+        && (posVelAttInitialized.at(2) || (overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2))))
     {
-        if (determinePosition == InitFlag::INITIALIZED)
-        {
-            if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
-            {
-                if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-                {
-                    if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
-                    {
-                        [[maybe_unused]] auto latLonAlt = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(matrix->data(), 3));
-                        LOG_INFO("{}: Position initialized to Lat {:3.4f} [°], Lon {:3.4f} [°], Alt {:4.4f} [m]", nameId(),
-                                 trafo::rad2deg(latLonAlt.x()),
-                                 trafo::rad2deg(latLonAlt.y()),
-                                 latLonAlt.z());
-                    }
-                }
-                else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-                {
-                    if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Position))
-                    {
-                        auto matrix = (*value)();
+        posVelAttInitialized.at(3) = true;
 
-                        [[maybe_unused]] auto latLonAlt = trafo::ecef2lla_WGS84(Eigen::Map<Eigen::Vector3d>(matrix.data(), 3));
-                        LOG_INFO("{}: Position initialized to Lat {:3.4f} [°], Lon {:3.4f} [°], Alt {:4.4f} [m]", nameId(),
-                                 trafo::rad2deg(latLonAlt.x()), trafo::rad2deg(latLonAlt.y()), latLonAlt.z());
-                    }
-                }
-                notifyInputValueChanged(InputPortIndex_Position);
-            }
-        }
-        if (determineVelocity == InitFlag::INITIALIZED)
+        if (overridePosition)
         {
-            if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Velocity).id))
-            {
-                if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-                {
-                    if ([[maybe_unused]] auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
-                    {
-                        LOG_INFO("{}: Velocity initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
-                                 (*matrix)(0, 0), (*matrix)(1, 0), (*matrix)(2, 0));
-                    }
-                }
-                else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-                {
-                    if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
-                    {
-                        [[maybe_unused]] auto matrix = (*value)();
-                        LOG_INFO("{}: Velocity initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
-                                 matrix(0, 0), matrix(1, 0), matrix(2, 0));
-                    }
-                }
-                notifyInputValueChanged(InputPortIndex_Velocity);
-            }
+            p_ecef_init = trafo::lla2ecef_WGS84(Eigen::Vector3d(trafo::deg2rad(overrideValuesPosition_lla.at(0)),
+                                                                trafo::deg2rad(overrideValuesPosition_lla.at(1)),
+                                                                overrideValuesPosition_lla.at(2)));
         }
-        if (determineAttitude == InitFlag::INITIALIZED)
+        if (overrideVelocity)
         {
-            if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Attitude).id))
-            {
-                if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-                {
-                    if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Attitude))
-                    {
-                        auto quat_nb = Eigen::Quaterniond((*matrix)(0, 0), (*matrix)(1, 0), (*matrix)(2, 0), (*matrix)(3, 0));
-                        [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
-                        LOG_INFO("{}: Attitude initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
-                                 trafo::rad2deg(rollPitchYaw.x()),
-                                 trafo::rad2deg(rollPitchYaw.y()),
-                                 trafo::rad2deg(rollPitchYaw.z()));
-                    }
-                }
-                else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-                {
-                    if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Attitude))
-                    {
-                        auto matrix = (*value)();
-                        auto quat_nb = Eigen::Quaterniond(matrix(0, 0), matrix(1, 0), matrix(2, 0), matrix(3, 0));
-                        [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(quat_nb);
-                        LOG_INFO("{}: Attitude initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
-                                 trafo::rad2deg(rollPitchYaw.x()),
-                                 trafo::rad2deg(rollPitchYaw.y()),
-                                 trafo::rad2deg(rollPitchYaw.z()));
-                    }
-                }
-                notifyInputValueChanged(InputPortIndex_Attitude);
-            }
+            v_n_init = Eigen::Vector3d(overrideValuesVelocity_n.at(0), overrideValuesVelocity_n.at(1), overrideValuesVelocity_n.at(2));
+        }
+
+        if (overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2))
+        {
+            q_nb_init = trafo::quat_nb(trafo::deg2rad(overrideValuesRollPitchYaw.at(0)),
+                                       trafo::deg2rad(overrideValuesRollPitchYaw.at(1)),
+                                       trafo::deg2rad(overrideValuesRollPitchYaw.at(2)));
+        }
+
+        [[maybe_unused]] auto latLonAlt = trafo::ecef2lla_WGS84(p_ecef_init);
+        LOG_INFO("{}: Position initialized to Lat {:3.4f} [°], Lon {:3.4f} [°], Alt {:4.4f} [m]", nameId(),
+                 trafo::rad2deg(latLonAlt.x()),
+                 trafo::rad2deg(latLonAlt.y()),
+                 latLonAlt.z());
+        LOG_INFO("{}: Velocity initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
+                 v_n_init(0), v_n_init(1), v_n_init(2));
+
+        [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(q_nb_init);
+        LOG_INFO("{}: Attitude initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
+                 trafo::rad2deg(rollPitchYaw.x()),
+                 trafo::rad2deg(rollPitchYaw.y()),
+                 trafo::rad2deg(rollPitchYaw.z()));
+
+        for (int i = 0; i < messagesToSend; i++)
+        {
+            auto posVelAtt = std::make_shared<PosVelAtt>();
+            posVelAtt->position_ecef() = p_ecef_init;
+            posVelAtt->velocity_n() = v_n_init;
+            posVelAtt->quaternion_nb() = q_nb_init;
+            invokeCallbacks(OutputPortIndex_PosVelAtt, posVelAtt);
         }
     }
 }
 
 void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    if (determinePosition != InitFlag::CONNECTED
-        && determineVelocity != InitFlag::CONNECTED
-        && determineAttitude != InitFlag::CONNECTED)
+    if (posVelAttInitialized.at(3))
     {
-        invokeCallbacks(OutputPortIndex_ImuObs, nodeData);
         return;
     }
 
@@ -671,50 +559,22 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
     }
 
     if (static_cast<double>(obs->timeSinceStartup.value() - startTime) * 1e-9 >= initDuration
-        || (determineAttitude == InitFlag::CONNECTED
-            && overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(0)))
+        || (overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2)))
     {
-        if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Attitude).id))
-        {
-            auto quat_nb = trafo::quat_nb(overrideRollPitchYaw.at(0) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(0)) : averagedAttitude.at(0),
-                                          overrideRollPitchYaw.at(1) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(1)) : averagedAttitude.at(1),
-                                          overrideRollPitchYaw.at(2) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(2)) : averagedAttitude.at(2));
-            if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-            {
-                if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Attitude))
-                {
-                    (*matrix)(0, 0) = quat_nb.coeffs().w();
-                    (*matrix)(1, 0) = quat_nb.coeffs().x();
-                    (*matrix)(2, 0) = quat_nb.coeffs().y();
-                    (*matrix)(3, 0) = quat_nb.coeffs().z();
-                    determineAttitude = InitFlag::INITIALIZED;
-                    finalizeInit();
-                }
-            }
-            else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-            {
-                if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Attitude))
-                {
-                    auto matrix = (*value)();
-                    matrix(0, 0) = quat_nb.coeffs().w();
-                    matrix(1, 0) = quat_nb.coeffs().x();
-                    matrix(2, 0) = quat_nb.coeffs().y();
-                    matrix(3, 0) = quat_nb.coeffs().z();
-                    determineAttitude = InitFlag::INITIALIZED;
-                    finalizeInit();
-                }
-            }
-        }
+        q_nb_init = trafo::quat_nb(overrideRollPitchYaw.at(0) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(0)) : averagedAttitude.at(0),
+                                   overrideRollPitchYaw.at(1) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(1)) : averagedAttitude.at(1),
+                                   overrideRollPitchYaw.at(2) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(2)) : averagedAttitude.at(2));
+
+        posVelAttInitialized.at(2) = true;
     }
+
+    finalizeInit();
 }
 
 void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
-    if (determinePosition != InitFlag::CONNECTED
-        && determineVelocity != InitFlag::CONNECTED
-        && determineAttitude != InitFlag::CONNECTED)
+    if (posVelAttInitialized.at(3))
     {
-        invokeCallbacks(OutputPortIndex_GnssObs, nodeData);
         return;
     }
 
@@ -732,6 +592,8 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<NodeData>& 
             }
         }
     }
+
+    finalizeInit();
 }
 
 void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>& obs)
@@ -740,15 +602,13 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
     {
         auto msgId = static_cast<sensors::ublox::UbxNavMessages>(obs->msgId);
         if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_ATT)
-        // && determineAttitude != InitFlag::NOT_CONNECTED)
         {
-            // LOG_DATA("{}: UBX_NAV_ATT: Roll {}, Pitch {}, Heading {} [deg]", nameId(),
-            //           std::get<sensors::ublox::UbxNavAtt>(obs->data).roll * 1e-5,
-            //           std::get<sensors::ublox::UbxNavAtt>(obs->data).pitch * 1e-5,
-            //           std::get<sensors::ublox::UbxNavAtt>(obs->data).heading * 1e-5);
+            LOG_DATA("{}: UBX_NAV_ATT: Roll {}, Pitch {}, Heading {} [deg]", nameId(),
+                     std::get<sensors::ublox::UbxNavAtt>(obs->data).roll * 1e-5,
+                     std::get<sensors::ublox::UbxNavAtt>(obs->data).pitch * 1e-5,
+                     std::get<sensors::ublox::UbxNavAtt>(obs->data).heading * 1e-5);
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSECEF
-                 && determinePosition != InitFlag::NOT_CONNECTED)
+        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSECEF)
         {
             lastPositionAccuracy.at(0) = static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc);
             lastPositionAccuracy.at(1) = static_cast<float>(std::get<sensors::ublox::UbxNavPosecef>(obs->data).pAcc);
@@ -758,40 +618,14 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
                 && lastPositionAccuracy.at(1) <= positionAccuracyThreshold
                 && lastPositionAccuracy.at(2) <= positionAccuracyThreshold)
             {
-                if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
-                {
-                    Eigen::Vector3d position_ecef(std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
-                                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
-                                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
+                p_ecef_init = Eigen::Vector3d(std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
+                                              std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
+                                              std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
 
-                    if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-                    {
-                        if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
-                        {
-                            (*matrix)(0, 0) = position_ecef.x();
-                            (*matrix)(1, 0) = position_ecef.y();
-                            (*matrix)(2, 0) = position_ecef.z();
-                            determinePosition = InitFlag::INITIALIZED;
-                            finalizeInit();
-                        }
-                    }
-                    else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-                    {
-                        if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Position))
-                        {
-                            auto matrix = (*value)();
-                            matrix(0, 0) = position_ecef.x();
-                            matrix(1, 0) = position_ecef.y();
-                            matrix(2, 0) = position_ecef.z();
-                            determinePosition = InitFlag::INITIALIZED;
-                            finalizeInit();
-                        }
-                    }
-                }
+                posVelAttInitialized.at(0) = true;
             }
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSLLH
-                 && determinePosition != InitFlag::NOT_CONNECTED)
+        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_POSLLH)
         {
             lastPositionAccuracy.at(0) = static_cast<float>(std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1);
             lastPositionAccuracy.at(1) = static_cast<float>(std::get<sensors::ublox::UbxNavPosllh>(obs->data).hAcc * 1e-1);
@@ -801,42 +635,16 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
                 && lastPositionAccuracy.at(1) <= positionAccuracyThreshold
                 && lastPositionAccuracy.at(2) <= positionAccuracyThreshold)
             {
-                if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
-                {
-                    Eigen::Vector3d latLonAlt(trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
-                                              trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
-                                              std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
+                Eigen::Vector3d latLonAlt(trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
+                                          trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
+                                          std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
 
-                    auto position_ecef = trafo::lla2ecef_WGS84(latLonAlt);
+                p_ecef_init = trafo::lla2ecef_WGS84(latLonAlt);
 
-                    if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-                    {
-                        if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
-                        {
-                            (*matrix)(0, 0) = position_ecef.x();
-                            (*matrix)(1, 0) = position_ecef.y();
-                            (*matrix)(2, 0) = position_ecef.z();
-                            determinePosition = InitFlag::INITIALIZED;
-                            finalizeInit();
-                        }
-                    }
-                    else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-                    {
-                        if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Position))
-                        {
-                            auto matrix = (*value)();
-                            matrix(0, 0) = position_ecef.x();
-                            matrix(1, 0) = position_ecef.y();
-                            matrix(2, 0) = position_ecef.z();
-                            determinePosition = InitFlag::INITIALIZED;
-                            finalizeInit();
-                        }
-                    }
-                }
+                posVelAttInitialized.at(0) = true;
             }
         }
-        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_VELNED
-                 && determineVelocity != InitFlag::NOT_CONNECTED)
+        else if (msgId == sensors::ublox::UbxNavMessages::UBX_NAV_VELNED)
         {
             lastVelocityAccuracy.at(0) = static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc);
             lastVelocityAccuracy.at(1) = static_cast<float>(std::get<sensors::ublox::UbxNavVelned>(obs->data).sAcc);
@@ -846,40 +654,11 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
                 && lastVelocityAccuracy.at(1) <= velocityAccuracyThreshold
                 && lastVelocityAccuracy.at(2) <= velocityAccuracyThreshold)
             {
-                if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Velocity).id))
-                {
-                    Eigen::Vector3d velocity_n(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
-                                               std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
-                                               std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
+                v_n_init = Eigen::Vector3d(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
+                                           std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
+                                           std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
 
-                    LOG_DATA("{}: UBX_NAV_VELNED: {}, {}, {} [m/s], {} [deg]", nameId(),
-                             velocity_n.x(), velocity_n.y(), velocity_n.z(),
-                             std::get<sensors::ublox::UbxNavVelned>(obs->data).heading * 1e-5);
-
-                    if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-                    {
-                        if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
-                        {
-                            (*matrix)(0, 0) = velocity_n.x();
-                            (*matrix)(1, 0) = velocity_n.y();
-                            (*matrix)(2, 0) = velocity_n.z();
-                            determineVelocity = InitFlag::INITIALIZED;
-                            finalizeInit();
-                        }
-                    }
-                    else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-                    {
-                        if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
-                        {
-                            auto matrix = (*value)();
-                            matrix(0, 0) = velocity_n.x();
-                            matrix(1, 0) = velocity_n.y();
-                            matrix(2, 0) = velocity_n.z();
-                            determineVelocity = InitFlag::INITIALIZED;
-                            finalizeInit();
-                        }
-                    }
-                }
+                posVelAttInitialized.at(1) = true;
             }
         }
     }
@@ -887,7 +666,7 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
 
 void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs)
 {
-    if (determinePosition != InitFlag::NOT_CONNECTED && obs->position_ecef.has_value())
+    if (obs->position_ecef.has_value())
     {
         if (obs->sdXYZ.has_value())
         {
@@ -906,32 +685,9 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<Rtklib
             && lastPositionAccuracy.at(1) <= positionAccuracyThreshold
             && lastPositionAccuracy.at(2) <= positionAccuracyThreshold)
         {
-            if (Pin* sourcePin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
-            {
-                if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
-                {
-                    if (auto* matrix = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
-                    {
-                        (*matrix)(0, 0) = obs->position_ecef->x();
-                        (*matrix)(1, 0) = obs->position_ecef->y();
-                        (*matrix)(2, 0) = obs->position_ecef->z();
-                        determinePosition = InitFlag::INITIALIZED;
-                        finalizeInit();
-                    }
-                }
-                else if (sourcePin->dataIdentifier.front() == "BlockMatrix")
-                {
-                    if (auto* value = getInputValue<BlockMatrix>(InputPortIndex_Position))
-                    {
-                        auto matrix = (*value)();
-                        matrix(0, 0) = obs->position_ecef->x();
-                        matrix(1, 0) = obs->position_ecef->y();
-                        matrix(2, 0) = obs->position_ecef->z();
-                        determinePosition = InitFlag::INITIALIZED;
-                        finalizeInit();
-                    }
-                }
-            }
+            p_ecef_init = obs->position_ecef.value();
+
+            posVelAttInitialized.at(0) = true;
         }
     }
 }

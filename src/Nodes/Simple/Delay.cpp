@@ -86,6 +86,8 @@ bool NAV::Delay::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    buffer.clear();
+
     return true;
 }
 
@@ -126,11 +128,6 @@ bool NAV::Delay::onCreateLink(Pin* startPin, Pin* endPin)
     }
 
     return true;
-}
-
-void NAV::Delay::onDeleteLink(Pin* startPin, Pin* endPin)
-{
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 }
 
 void NAV::Delay::delayObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)

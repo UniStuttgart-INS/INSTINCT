@@ -55,11 +55,6 @@ class Delay : public Node
     /// @return True if link is allowed, false if link is rejected
     bool onCreateLink(Pin* startPin, Pin* endPin) override;
 
-    /// @brief Called when a link is to be deleted
-    /// @param[in] startPin Pin where the link starts
-    /// @param[in] endPin Pin where the link ends
-    void onDeleteLink(Pin* startPin, Pin* endPin) override;
-
   private:
     constexpr static size_t OutputPortIndex_Flow = 0; ///< @brief Flow
     constexpr static size_t InputPortIndex_Flow = 0;  ///< @brief Flow

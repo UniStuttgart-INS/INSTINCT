@@ -19,10 +19,13 @@ NAV::ImuIntegrator::ImuIntegrator()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 347, 92 };
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::integrateObservation);
-    nm::CreateInputPin(this, "Position ECEF", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
-    nm::CreateInputPin(this, "Velocity NED", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
-    nm::CreateInputPin(this, "Quaternion nb", Pin::Type::Matrix, { "Eigen::MatrixXd", "BlockMatrix" });
+    nm::CreateInputPin(this, "ImuObs (t0)", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
+    nm::CreateInputPin(this, "ImuObs (t1)", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t1);
+    nm::CreateInputPin(this, "ImuObs (t2)", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t2);
+    nm::CreateInputPin(this, "PosVelAtt (t1)", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
+    nm::CreateInputPin(this, "PosVelAtt (t2)", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t2);
+
+    nm::CreateOutputPin(this, "PosVelAtt (t0)", Pin::Type::Flow, NAV::PosVelAtt::type());
 }
 
 NAV::ImuIntegrator::~ImuIntegrator()
@@ -99,63 +102,6 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         gravityModel = static_cast<GravityModel>(j.at("gravityModel").get<int>());
     }
-}
-
-bool NAV::ImuIntegrator::onCreateLink(Pin* startPin, Pin* endPin)
-{
-    if (startPin && endPin)
-    {
-        size_t endPinIndex = pinIndexFromId(endPin->id);
-
-        int64_t rows = 3;
-        int64_t cols = 1;
-
-        if (endPinIndex == InputPortIndex_Quaternion)
-        {
-            rows = 4;
-        }
-
-        if (endPinIndex == InputPortIndex_Position
-            || endPinIndex == InputPortIndex_Velocity
-            || endPinIndex == InputPortIndex_Quaternion)
-        {
-            if (startPin->dataIdentifier.front() == "Eigen::MatrixXd")
-            {
-                if (const auto* pval = std::get_if<void*>(&startPin->data))
-                {
-                    if (auto* mat = static_cast<Eigen::MatrixXd*>(*pval))
-                    {
-                        if (mat->rows() == rows && mat->cols() == cols)
-                        {
-                            return true;
-                        }
-
-                        LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
-                    }
-                }
-            }
-            else if (startPin->dataIdentifier.front() == "BlockMatrix")
-            {
-                if (const auto* pval = std::get_if<void*>(&startPin->data))
-                {
-                    if (auto* block = static_cast<BlockMatrix*>(*pval))
-                    {
-                        auto mat = (*block)();
-                        if (mat.rows() == rows && mat.cols() == cols)
-                        {
-                            return true;
-                        }
-
-                        LOG_ERROR("{}: The Matrix needs to have the size {}x{}", nameId(), rows, cols);
-                    }
-                }
-            }
-
-            return false;
-        }
-    }
-
-    return true;
 }
 
 bool NAV::ImuIntegrator::initialize()
@@ -260,6 +206,12 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
 
     posVelAtt__t1 = posVelAtt;
 
+    // Messages from the delay block could come before the other port was updated with a new value. This way we ensure the messages are different.
+    if (posVelAtt__t1.get() == posVelAtt__t2.get())
+    {
+        posVelAtt__t2.reset();
+    }
+
     integrateObservation();
 }
 
@@ -278,6 +230,12 @@ void NAV::ImuIntegrator::recvState__t2(const std::shared_ptr<NodeData>& nodeData
     if (posVelAtt__init == nullptr)
     {
         posVelAtt__init = posVelAtt__t2;
+    }
+
+    // Messages from the delay block could come before the other port was updated with a new value. This way we ensure the messages are different.
+    if (posVelAtt__t1.get() == posVelAtt__t2.get())
+    {
+        posVelAtt__t1.reset();
     }
 
     integrateObservation();
@@ -407,6 +365,9 @@ void NAV::ImuIntegrator::integrateObservation()
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;
 
+    /// Result State Data at the time tₖ
+    auto posVelAtt__t0 = std::make_shared<PosVelAtt>();
+
     if (integrationFrame == IntegrationFrame::ECEF)
     {
         /// q (tₖ₋₂) Quaternion, from gyro platform to earth coordinates, at the time tₖ₋₂
@@ -464,20 +425,14 @@ void NAV::ImuIntegrator::integrateObservation()
         /*                                               Store Results                                              */
         /* -------------------------------------------------------------------------------------------------------- */
 
-        /// Result State Data at the time tₖ
-        PosVelAtt posVelAtt__t0;
         // Store position in the state. Important to do before using the quaternion_en.
-        posVelAtt__t0.position_ecef() = position_e__t0;
-        /// Quaternion for rotation from earth to navigation frame. Depends on position which was updated before
-        Eigen::Quaterniond quaternion_ne__t0 = posVelAtt__t0.quaternion_ne();
+        posVelAtt__t0->position_ecef() = position_e__t0;
+        // Quaternion for rotation from earth to navigation frame. Depends on position which was updated before
+        Eigen::Quaterniond quaternion_ne__t0 = posVelAtt__t0->quaternion_ne();
         // Store velocity in the state
-        posVelAtt__t0.velocity_n() = quaternion_ne__t0 * velocity_e__t0;
+        posVelAtt__t0->velocity_n() = quaternion_ne__t0 * velocity_e__t0;
         // Store body to navigation frame quaternion in the state
-        posVelAtt__t0.quaternion_nb() = quaternion_ne__t0 * quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb();
-
-        setCurrentPosition(posVelAtt__t0.position_ecef());
-        setCurrentVelocity(posVelAtt__t0.velocity_n());
-        setCurrentQuaternion_nb(posVelAtt__t0.quaternion_nb());
+        posVelAtt__t0->quaternion_nb() = quaternion_ne__t0 * quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb();
     }
     else if (integrationFrame == IntegrationFrame::NED)
     {
@@ -557,24 +512,24 @@ void NAV::ImuIntegrator::integrateObservation()
         /*                                               Store Results                                              */
         /* -------------------------------------------------------------------------------------------------------- */
 
-        /// Result State Data at the time tₖ
-        PosVelAtt posVelAtt__t0;
         // Store position in the state
-        posVelAtt__t0.position_ecef() = position_e__t0;
+        posVelAtt__t0->position_ecef() = position_e__t0;
         // Store velocity in the state
-        posVelAtt__t0.velocity_n() = velocity_n__t0;
+        posVelAtt__t0->velocity_n() = velocity_n__t0;
         // Store body to navigation frame quaternion in the state
-        posVelAtt__t0.quaternion_nb() = quaternion_nb__t0;
-
-        setCurrentPosition(posVelAtt__t0.position_ecef());
-        setCurrentVelocity(posVelAtt__t0.velocity_n());
-        setCurrentQuaternion_nb(posVelAtt__t0.quaternion_nb());
+        posVelAtt__t0->quaternion_nb() = quaternion_nb__t0;
     }
 
-    // Rotate StateData
-    posVelAtt__t2 = posVelAtt__t1;
+    // Update time
+    posVelAtt__t0->insTime = imuObs__t0->insTime;
 
-    // Rotate Observation
-    imuObs__t2 = imuObs__t1;
-    imuObs__t1 = imuObs__t0;
+    // Reset the data ports
+    imuObs__t0.reset();
+    imuObs__t1.reset();
+    imuObs__t2.reset();
+    posVelAtt__t1.reset();
+    posVelAtt__t2.reset();
+
+    // Push out new data
+    invokeCallbacks(OutputPortIndex_PosVelAtt__t0, posVelAtt__t0);
 }

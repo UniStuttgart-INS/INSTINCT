@@ -48,17 +48,8 @@ class ImuIntegrator : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Called when a new link is to be established
-    /// @param[in] startPin Pin where the link starts
-    /// @param[in] endPin Pin where the link ends
-    /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
-
   private:
-    constexpr static size_t InputPortIndex_ImuObs = 0;     ///< @brief Flow (ImuObs)
-    constexpr static size_t InputPortIndex_Position = 1;   ///< @brief Matrix
-    constexpr static size_t InputPortIndex_Velocity = 2;   ///< @brief Matrix
-    constexpr static size_t InputPortIndex_Quaternion = 3; ///< @brief Matrix
+    constexpr static size_t OutputPortIndex_PosVelAtt__t0 = 1; ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;

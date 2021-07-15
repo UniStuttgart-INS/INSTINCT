@@ -16,6 +16,33 @@ namespace NAV
 class PosVelAtt : public InsObs
 {
   public:
+    /// @brief Default constructor
+    PosVelAtt() = default;
+    /// @brief Destructor
+    ~PosVelAtt() override = default;
+    /// @brief Copy constructor
+    PosVelAtt(const PosVelAtt&) = delete;
+    /// @brief Move constructor
+    PosVelAtt(PosVelAtt&&) = delete;
+    /// @brief Copy assignment operator
+    PosVelAtt& operator=(const PosVelAtt&) = delete;
+    /// @brief Move assignment operator
+    PosVelAtt& operator=(PosVelAtt&&) = delete;
+
+    /// @brief Returns the type of the data class
+    /// @return The data type
+    [[nodiscard]] static std::string type()
+    {
+        return std::string("PosVelAtt");
+    }
+
+    /// @brief Returns the parent types of the data class
+    /// @return The parent data types
+    [[nodiscard]] static std::vector<std::string> parentTypes()
+    {
+        return { InsObs::type() };
+    }
+
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                           Rotation Quaternions                                           */
     /* -------------------------------------------------------------------------------------------------------- */

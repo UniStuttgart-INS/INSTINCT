@@ -142,6 +142,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/util/Demo.hpp"
 #include "Nodes/util/GroupBox.hpp"
 // Simple
+#include "Nodes/Simple/Combiner.hpp"
 #include "Nodes/Simple/Delay.hpp"
 #include "Nodes/Simple/Matrix.hpp"
 #include "Nodes/Simple/Transformation.hpp"
@@ -184,6 +185,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
     // Simple
+    registerNodeType<Combiner>();
     registerNodeType<Delay>();
     registerNodeType<Matrix>();
     registerNodeType<Transformation>();
@@ -230,6 +232,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
@@ -246,4 +249,6 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<KvhObs>();
     registerNodeDataType<ImuObsWDelta>();
     registerNodeDataType<VectorNavBinaryOutput>();
+    // State
+    registerNodeDataType<PosVelAtt>();
 }
