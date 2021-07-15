@@ -144,7 +144,6 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 // Simple
 #include "Nodes/Simple/Combiner.hpp"
 #include "Nodes/Simple/Delay.hpp"
-#include "Nodes/Simple/Matrix.hpp"
 #include "Nodes/Simple/Transformation.hpp"
 // Converter
 #include "Nodes/Converter/IMU/VectorNavBinary2ImuObsConverter.hpp"
@@ -156,7 +155,6 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
-#include "Nodes/Experimental/DataProcessor/ARMA.hpp"
 // Data Provider
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -176,6 +174,9 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/Plotting/Plot.hpp"
 // State
 #include "Nodes/State/PosVelAttInitializer.hpp"
+// Experimental
+#include "Nodes/Experimental/Simple/Matrix.hpp"
+#include "Nodes/Experimental/DataProcessor/ARMA.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
 {
@@ -187,7 +188,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Simple
     registerNodeType<Combiner>();
     registerNodeType<Delay>();
-    registerNodeType<Matrix>();
+    registerNodeType<NAV::experimental::Matrix>();
     registerNodeType<Transformation>();
     // Converter
     registerNodeType<VectorNavBinary2ImuObsConverter>();

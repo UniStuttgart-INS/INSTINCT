@@ -68,6 +68,11 @@ void from_json(const json& j, Matrix<_Scalar, _Rows, _Cols>& matrix)
 
 namespace NAV
 {
+namespace experimental
+{
+class Matrix;
+}; // namespace experimental
+
 /// Wrapper for Eigen::Block<Eigen::MatrixXd>
 class BlockMatrix
 {
@@ -90,7 +95,7 @@ class BlockMatrix
     [[nodiscard]] json to_json() const;
     void from_json(const json& j);
 
-    friend class Matrix;
+    friend class NAV::experimental::Matrix;
 
   private:
     Eigen::MatrixXd* matrix = nullptr;

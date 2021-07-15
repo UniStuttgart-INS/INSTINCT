@@ -4,7 +4,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-NAV::Matrix::Matrix()
+NAV::experimental::Matrix::Matrix()
 {
     name = typeStatic();
 
@@ -22,27 +22,27 @@ NAV::Matrix::Matrix()
     updateNumberOfOutputPins();
 }
 
-NAV::Matrix::~Matrix()
+NAV::experimental::Matrix::~Matrix()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-std::string NAV::Matrix::typeStatic()
+std::string NAV::experimental::Matrix::typeStatic()
 {
     return "Matrix";
 }
 
-std::string NAV::Matrix::type() const
+std::string NAV::experimental::Matrix::type() const
 {
     return typeStatic();
 }
 
-std::string NAV::Matrix::category()
+std::string NAV::experimental::Matrix::category()
 {
-    return "Simple";
+    return "Experimental/Simple";
 }
 
-void NAV::Matrix::guiConfig()
+void NAV::experimental::Matrix::guiConfig()
 {
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::CollapsingHeader(("Options##" + std::to_string(size_t(id))).c_str()))
@@ -394,7 +394,7 @@ void NAV::Matrix::guiConfig()
     }
 }
 
-[[nodiscard]] json NAV::Matrix::save() const
+[[nodiscard]] json NAV::experimental::Matrix::save() const
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -409,7 +409,7 @@ void NAV::Matrix::guiConfig()
     return j;
 }
 
-void NAV::Matrix::restore(json const& j)
+void NAV::experimental::Matrix::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -443,7 +443,7 @@ void NAV::Matrix::restore(json const& j)
     }
 }
 
-bool NAV::Matrix::initialize()
+bool NAV::experimental::Matrix::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
@@ -456,12 +456,12 @@ bool NAV::Matrix::initialize()
     return true;
 }
 
-void NAV::Matrix::deinitialize()
+void NAV::experimental::Matrix::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::Matrix::updateNumberOfOutputPins()
+void NAV::experimental::Matrix::updateNumberOfOutputPins()
 {
     while (outputPins.size() - 1 < static_cast<size_t>(nBlocks))
     {
@@ -494,19 +494,19 @@ void NAV::Matrix::updateNumberOfOutputPins()
     }
 }
 
-bool NAV::Matrix::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+bool NAV::experimental::Matrix::onCreateLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 
     return true;
 }
 
-void NAV::Matrix::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
+void NAV::experimental::Matrix::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pin* endPin)
 {
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 }
 
-void NAV::Matrix::notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId)
+void NAV::experimental::Matrix::notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId)
 {
     if (Link* link = nm::FindLink(linkId))
     {
