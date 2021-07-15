@@ -63,6 +63,9 @@ class NodeEditorApplication : public Application
 
     static inline ImTextureID m_InstinctLogo = nullptr;
 
+    static inline bool showImGuiDemoWindow = false;
+    static inline bool showImPlotDemoWindow = false;
+
   private:
     ImTextureID m_HeaderBackground = nullptr;
 

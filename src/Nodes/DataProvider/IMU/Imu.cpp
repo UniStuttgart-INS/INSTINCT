@@ -1,7 +1,5 @@
 #include "Imu.hpp"
 
-#include "internal/NodeManager.hpp"
-namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "util/InsTransformations.hpp"
