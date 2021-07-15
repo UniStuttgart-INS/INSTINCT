@@ -64,6 +64,8 @@ void NAV::Navio2Sensor::guiConfig()
         flow::ApplyChanges();
         deinitializeNode();
     }
+
+    Imu::guiConfig();
 }
 
 [[nodiscard]] json NAV::Navio2Sensor::save() const
@@ -73,6 +75,7 @@ void NAV::Navio2Sensor::guiConfig()
     json j;
 
     j["Frequency"] = outputFrequency;
+    j["Imu"] = Imu::save();
 
     return j;
 }
@@ -84,6 +87,10 @@ void NAV::Navio2Sensor::restore(json const& j)
     if (j.contains("Frequency"))
     {
         j.at("Frequency").get_to(outputFrequency);
+    }
+    if (j.contains("Imu"))
+    {
+        Imu::restore(j.at("Imu"));
     }
 }
 

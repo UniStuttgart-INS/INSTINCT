@@ -21,7 +21,7 @@ NAV::VectorNavFile::VectorNavFile()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 619, 444 };
+    guiConfigDefaultWindowSize = { 630, 466 };
 
     nm::CreateOutputPin(this, "Binary Output", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type(), &VectorNavFile::pollData);
 }
@@ -53,6 +53,8 @@ void NAV::VectorNavFile::guiConfig()
         flow::ApplyChanges();
         initializeNode();
     }
+
+    Imu::guiConfig();
 
     // Header info
     if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 6,
@@ -164,6 +166,7 @@ void NAV::VectorNavFile::guiConfig()
     json j;
 
     j["FileReader"] = FileReader::save();
+    j["Imu"] = Imu::save();
 
     return j;
 }
@@ -175,6 +178,10 @@ void NAV::VectorNavFile::restore(json const& j)
     if (j.contains("FileReader"))
     {
         FileReader::restore(j.at("FileReader"));
+    }
+    if (j.contains("Imu"))
+    {
+        Imu::restore(j.at("Imu"));
     }
 }
 

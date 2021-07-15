@@ -54,6 +54,8 @@ void NAV::KvhFile::guiConfig()
         initializeNode();
     }
 
+    Imu::guiConfig();
+
     if (fileType == FileType::CSV)
     {
         // Header info
@@ -106,6 +108,7 @@ void NAV::KvhFile::guiConfig()
     json j;
 
     j["FileReader"] = FileReader::save();
+    j["Imu"] = Imu::save();
 
     return j;
 }
@@ -117,6 +120,10 @@ void NAV::KvhFile::restore(json const& j)
     if (j.contains("FileReader"))
     {
         FileReader::restore(j.at("FileReader"));
+    }
+    if (j.contains("Imu"))
+    {
+        Imu::restore(j.at("Imu"));
     }
 }
 

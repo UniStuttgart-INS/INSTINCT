@@ -123,16 +123,16 @@ class trafo
     [[nodiscard]] static Eigen::Quaterniond quat_bn(double roll, double pitch, double yaw);
 
     /// @brief Quaternion for rotations from platform to body frame
-    /// @param[in] mountingAngleX Mounting angle to x axis in [rad]
-    /// @param[in] mountingAngleY Mounting angle to y axis in [rad]
-    /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]
+    /// @param[in] mountingAngleX Mounting angle to x axis in [rad]. First rotation. (-pi:pi]
+    /// @param[in] mountingAngleY Mounting angle to y axis in [rad]. Second rotation. (-pi/2:pi/2]
+    /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]. Third rotation. (-pi:pi]
     /// @return The rotation Quaternion representation
     [[nodiscard]] static Eigen::Quaterniond quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ);
 
     /// @brief Quaternion for rotations from body to platform frame
-    /// @param[in] mountingAngleX Mounting angle to x axis in [rad]
-    /// @param[in] mountingAngleY Mounting angle to y axis in [rad]
-    /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]
+    /// @param[in] mountingAngleX Mounting angle to x axis in [rad]. First rotation. (-pi:pi]
+    /// @param[in] mountingAngleY Mounting angle to y axis in [rad]. Second rotation. (-pi/2:pi/2]
+    /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]. Third rotation. (-pi:pi]
     /// @return The rotation Quaternion representation
     [[nodiscard]] static Eigen::Quaterniond quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ);
 

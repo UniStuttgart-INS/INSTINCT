@@ -53,6 +53,8 @@ void NAV::ImuFile::guiConfig()
         initializeNode();
     }
 
+    Imu::guiConfig();
+
     // Header info
     if (ImGui::BeginTable(fmt::format("##ImuHeaders ({})", id.AsPointer()).c_str(), 2,
                           ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
@@ -97,6 +99,7 @@ void NAV::ImuFile::guiConfig()
     json j;
 
     j["FileReader"] = FileReader::save();
+    j["Imu"] = Imu::save();
 
     return j;
 }
@@ -108,6 +111,10 @@ void NAV::ImuFile::restore(json const& j)
     if (j.contains("FileReader"))
     {
         FileReader::restore(j.at("FileReader"));
+    }
+    if (j.contains("Imu"))
+    {
+        Imu::restore(j.at("Imu"));
     }
 }
 

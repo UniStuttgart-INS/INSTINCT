@@ -249,8 +249,6 @@ void NAV::ImuIntegrator::integrateObservation()
         return;
     }
 
-    LOG_DATA("{}: Integrating Imu data", nameId());
-
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = imuObs__t0->imuPos;
 
@@ -311,7 +309,6 @@ void NAV::ImuIntegrator::integrateObservation()
                                                     ? imuObs__t0->accelCompXYZ.value()
                                                     : imuObs__t0->accelUncompXYZ.value();
     // LOG_DEBUG("acceleration_p__t0 =\n{}", acceleration_p__t0);
-
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& velocity_n__t1 = posVelAtt__t1->velocity_n();
     // LOG_DEBUG("velocity_n__t1 =\n{}", velocity_n__t1);
@@ -330,6 +327,10 @@ void NAV::ImuIntegrator::integrateObservation()
     /// x_e (tₖ₋₁) Position in [m], in ECEF coordinates, at the time tₖ₋₁
     const Eigen::Vector3d position_e__t1 = posVelAtt__t1->position_ecef();
     // LOG_DEBUG("position_e__t1 =\n{}", position_e__t1);
+
+    LOG_DATA("{}: Integrating Imu data with accel_p {}, {}, {}", nameId(), acceleration_p__t0.x(), acceleration_p__t0.y(), acceleration_p__t0.z());
+    [[maybe_unused]] auto acceleration_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
+    LOG_DATA("{}: Integrating Imu data with accel_b {}, {}, {}", nameId(), acceleration_b__t0.x(), acceleration_b__t0.y(), acceleration_b__t0.z());
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
     Eigen::Vector3d gravity_n__t1;
