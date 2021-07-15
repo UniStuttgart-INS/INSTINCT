@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include "util/StringUtil.hpp"
+
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
@@ -215,7 +217,7 @@ size_t NAV::Node::pinIndexFromId(ax::NodeEditor::PinId pinId) const
 
 std::string NAV::Node::nameId() const
 {
-    return fmt::format("{} ({})", name, size_t(id));
+    return fmt::format("{} ({})", str::replaceAll_copy(name, "\n", ""), size_t(id));
 }
 
 bool NAV::Node::isInitialized() const

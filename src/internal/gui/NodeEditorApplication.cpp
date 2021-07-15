@@ -476,7 +476,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
             }
         }
 
-        if (ImGui::InputTextWithHint("", "Enter the title here", &renameNode->name, ImGuiInputTextFlags_EnterReturnsTrue))
+        if (ImGui::InputTextMultiline(fmt::format("##{}", size_t(renameNode->id)).c_str(), &renameNode->name, ImVec2(0, 65), ImGuiInputTextFlags_CtrlEnterForNewLine | ImGuiInputTextFlags_EnterReturnsTrue))
         {
             nameBackup.clear();
             renameNode = nullptr;

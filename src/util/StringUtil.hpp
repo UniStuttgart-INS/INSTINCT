@@ -80,4 +80,10 @@ static inline void replaceAll(std::string& str, const std::string& from, const s
         start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
     }
 }
+
+static inline std::string replaceAll_copy(std::string str, const std::string& from, const std::string& to)
+{
+    replaceAll(str, from, to);
+    return str;
+}
 } // namespace NAV::str
