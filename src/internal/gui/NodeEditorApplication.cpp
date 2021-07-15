@@ -991,19 +991,27 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 if (ed::QueryNewNode(&pinId))
                 {
                     newLinkPin = nm::FindPin(pinId);
-                    if (newLinkPin)
+                    if (newLinkPin->kind == Pin::Kind::Input && nm::IsPinLinked(newLinkPin->id))
                     {
-                        showLabel("+ Create Node", ImColor(32, 45, 32, 180));
+                        showLabel("End Pin already linked", ImColor(45, 32, 32, 180));
+                        ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                     }
-
-                    if (ed::AcceptNewItem())
+                    else
                     {
-                        createNewNode = true;
-                        newNodeLinkPin = nm::FindPin(pinId);
-                        newLinkPin = nullptr;
-                        ed::Suspend();
-                        ImGui::OpenPopup("Create New Node");
-                        ed::Resume();
+                        if (newLinkPin)
+                        {
+                            showLabel("+ Create Node", ImColor(32, 45, 32, 180));
+                        }
+
+                        if (ed::AcceptNewItem())
+                        {
+                            createNewNode = true;
+                            newNodeLinkPin = nm::FindPin(pinId);
+                            newLinkPin = nullptr;
+                            ed::Suspend();
+                            ImGui::OpenPopup("Create New Node");
+                            ed::Resume();
+                        }
                     }
                 }
             }
