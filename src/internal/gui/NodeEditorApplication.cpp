@@ -1340,9 +1340,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::SetTooltip("%s", tooltipText.c_str());
     }
 
-    ImGui::ShowDemoWindow();
-    ImPlot::ShowDemoWindow();
-    //ImGui::ShowMetricsWindow();
+    if (showImGuiDemoWindow)
+    {
+        ImGui::ShowDemoWindow();
+    }
+    if (showImPlotDemoWindow)
+    {
+        ImPlot::ShowDemoWindow();
+    }
 
     std::string title = (flow::HasUnsavedChanges() ? "● " : "")
                         + (flow::GetCurrentFilename().empty() ? "" : flow::GetCurrentFilename() + " - ")
