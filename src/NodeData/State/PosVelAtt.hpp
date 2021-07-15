@@ -8,11 +8,12 @@
 #include "util/InsTransformations.hpp"
 
 #include "util/Eigen.hpp"
+#include "NodeData/InsObs.hpp"
 
 namespace NAV
 {
 /// Position, Velocity and Attitude Storage Class
-class PosVelAtt
+class PosVelAtt : public InsObs
 {
   public:
     /* -------------------------------------------------------------------------------------------------------- */

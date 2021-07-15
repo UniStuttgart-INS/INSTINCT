@@ -162,9 +162,11 @@ bool NAV::ImuIntegrator::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    imuObs__t0 = nullptr;
     imuObs__t1 = nullptr;
     imuObs__t2 = nullptr;
 
+    posVelAtt__t1 = nullptr;
     posVelAtt__t2 = nullptr;
     posVelAtt__init = nullptr;
 
@@ -187,230 +189,146 @@ void NAV::ImuIntegrator::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-bool NAV::ImuIntegrator::getCurrentPosition(Eigen::Vector3d& position)
+void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    if (Pin* connectedPin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
+    auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
+
+    if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
     {
-        if (connectedPin->dataIdentifier.front() == "Eigen::MatrixXd")
-        {
-            if (auto* currentPosition = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
-            {
-                position = *currentPosition;
-                // LOG_DEBUG("getCurrentPosition:\nposition =\n{}", position);
-                return true;
-            }
-        }
-        else // (connectedPin->dataIdentifier.front() == "BlockMatrix")
-        {
-            if (auto* currentPosition = getInputValue<BlockMatrix>(InputPortIndex_Position))
-            {
-                position = (*currentPosition)();
-                // LOG_DEBUG("getCurrentPosition - BlockMatrix:\nposition =\n{}", position);
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-void NAV::ImuIntegrator::setCurrentPosition(const Eigen::Vector3d& position)
-{
-    if (Pin* connectedPin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Position).id))
-    {
-        if (connectedPin->dataIdentifier.front() == "Eigen::MatrixXd")
-        {
-            if (auto* currentPosition = getInputValue<Eigen::MatrixXd>(InputPortIndex_Position))
-            {
-                *currentPosition = position;
-                // LOG_DEBUG("setCurrentPosition:\ncurrentPosition =\n{}", position);
-
-                notifyInputValueChanged(InputPortIndex_Position);
-            }
-        }
-        else // (connectedPin->dataIdentifier.front() == "BlockMatrix")
-        {
-            if (auto* currentPosition = getInputValue<BlockMatrix>(InputPortIndex_Position))
-            {
-                (*currentPosition)() = position;
-                // LOG_DEBUG("setCurrentPosition - BlockMatrix:\ncurrentPosition =\n{}", position);
-                notifyInputValueChanged(InputPortIndex_Position);
-            }
-        }
-    }
-}
-
-bool NAV::ImuIntegrator::getCurrentVelocity(Eigen::Vector3d& velocity)
-{
-    if (Pin* connectedPin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Velocity).id))
-    {
-        if (connectedPin->dataIdentifier.front() == "Eigen::MatrixXd")
-        {
-            if (auto* currentVelocity = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
-            {
-                velocity = *currentVelocity;
-                // LOG_DEBUG("getCurrentVelocity:\nvelocity =\n{}", velocity);
-                return true;
-            }
-        }
-        else // (connectedPin->dataIdentifier.front() == "BlockMatrix")
-        {
-            if (auto* currentVelocity = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
-            {
-                velocity = (*currentVelocity)();
-                // LOG_DEBUG("getCurrentVelocity - BlockMatrix:\nvelocity =\n{}", velocity);
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-void NAV::ImuIntegrator::setCurrentVelocity(const Eigen::Vector3d& velocity)
-{
-    if (Pin* connectedPin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Velocity).id))
-    {
-        if (connectedPin->dataIdentifier.front() == "Eigen::MatrixXd")
-        {
-            if (auto* currentVelocity = getInputValue<Eigen::MatrixXd>(InputPortIndex_Velocity))
-            {
-                *currentVelocity = velocity;
-                // LOG_DEBUG("setCurrentVelocity:\ncurrentVelocity =\n{}", velocity);
-                notifyInputValueChanged(InputPortIndex_Velocity);
-            }
-        }
-        else // (connectedPin->dataIdentifier.front() == "BlockMatrix")
-        {
-            if (auto* currentVelocity = getInputValue<BlockMatrix>(InputPortIndex_Velocity))
-            {
-                (*currentVelocity)() = velocity;
-                // LOG_DEBUG("setCurrentVelocity - BlockMatrix:\ncurrentVelocity =\n{}", velocity);
-                notifyInputValueChanged(InputPortIndex_Velocity);
-            }
-        }
-    }
-}
-
-bool NAV::ImuIntegrator::getCurrentQuaternion_nb(Eigen::Quaterniond& quaternion_nb)
-{
-    if (Pin* connectedPin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Quaternion).id))
-    {
-        if (connectedPin->dataIdentifier.front() == "Eigen::MatrixXd")
-        {
-            if (auto* currentQuaternionCoeffs = getInputValue<Eigen::MatrixXd>(InputPortIndex_Quaternion))
-            {
-                quaternion_nb = Eigen::Quaterniond((*currentQuaternionCoeffs)(0, 0),  // w
-                                                   (*currentQuaternionCoeffs)(1, 0),  // x
-                                                   (*currentQuaternionCoeffs)(2, 0),  // y
-                                                   (*currentQuaternionCoeffs)(3, 0)); // z
-                // LOG_DEBUG("getCurrentQuaternion_nb:\nquaternion_nb =\n{}", quaternion_nb.vec());
-                return true;
-            }
-        }
-        else // (connectedPin->dataIdentifier.front() == "BlockMatrix")
-        {
-            if (auto* currentQuaternionCoeffs = getInputValue<BlockMatrix>(InputPortIndex_Quaternion))
-            {
-                auto block = (*currentQuaternionCoeffs)();
-                quaternion_nb = Eigen::Quaterniond(block(0, 0),  // w
-                                                   block(1, 0),  // x
-                                                   block(2, 0),  // y
-                                                   block(3, 0)); // z
-                // LOG_DEBUG("getCurrentQuaternion_nb - BlockMatrix:\nquaternion_nb =\n{}", quaternion_nb.vec());
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-void NAV::ImuIntegrator::setCurrentQuaternion_nb(const Eigen::Quaterniond& quaternion_nb)
-{
-    if (Pin* connectedPin = nm::FindConnectedPinToInputPin(inputPins.at(InputPortIndex_Quaternion).id))
-    {
-        if (connectedPin->dataIdentifier.front() == "Eigen::MatrixXd")
-        {
-            if (auto* currentQuaternionCoeffs = getInputValue<Eigen::MatrixXd>(InputPortIndex_Quaternion))
-            {
-                (*currentQuaternionCoeffs)(0, 0) = quaternion_nb.w();
-                (*currentQuaternionCoeffs)(1, 0) = quaternion_nb.x();
-                (*currentQuaternionCoeffs)(2, 0) = quaternion_nb.y();
-                (*currentQuaternionCoeffs)(3, 0) = quaternion_nb.z();
-                // LOG_DEBUG("setCurrentQuaternion_nb:\nquaternion_nb =\n{}", quaternion_nb.vec());
-                notifyInputValueChanged(InputPortIndex_Quaternion);
-            }
-        }
-        else // (connectedPin->dataIdentifier.front() == "BlockMatrix")
-        {
-            if (auto* currentQuaternionCoeffs = getInputValue<BlockMatrix>(InputPortIndex_Quaternion))
-            {
-                auto block = (*currentQuaternionCoeffs)();
-
-                block(0, 0) = quaternion_nb.w();
-                block(1, 0) = quaternion_nb.x();
-                block(2, 0) = quaternion_nb.y();
-                block(3, 0) = quaternion_nb.z();
-                // LOG_DEBUG("setCurrentQuaternion_nb - BlockMatrix:\nquaternion_nb =\n{}", quaternion_nb.vec());
-                notifyInputValueChanged(InputPortIndex_Quaternion);
-            }
-        }
-    }
-}
-
-void NAV::ImuIntegrator::integrateObservation(const std::shared_ptr<NAV::NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
-{
-    /// IMU Observation at the time tₖ
-    auto imuObs__t0 = std::dynamic_pointer_cast<ImuObs>(nodeData);
-
-    if (!imuObs__t0->insTime.has_value())
-    {
+        LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
         return;
     }
 
-    // Position and rotation information for conversion of IMU data from platform to body frame
-    const auto& imuPosition = imuObs__t0->imuPos;
-
-    /// State Data at the time tₖ₋₁
-    auto posVelAtt__t1 = std::make_shared<PosVelAtt>();
-    if (!getCurrentPosition(posVelAtt__t1->position_ecef())
-        || !getCurrentVelocity(posVelAtt__t1->velocity_n())
-        || !getCurrentQuaternion_nb(posVelAtt__t1->quaternion_nb()))
+    if (imuObs__t0 != nullptr)
     {
+        LOG_DEBUG("{}: Overwriting imuObs__t0 ({}) with new value at {}", nameId(), imuObs__t0->insTime->toGPSweekTow(), imuObs->insTime->toGPSweekTow());
+    }
+
+    imuObs__t0 = imuObs;
+
+    integrateObservation();
+}
+
+void NAV::ImuIntegrator::recvImuObs__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+{
+    auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
+
+    if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
+    {
+        LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
         return;
     }
+
+    if (imuObs__t1 != nullptr)
+    {
+        LOG_DEBUG("{}: Overwriting imuObs__t1 ({}) with new value at {}", nameId(), imuObs__t1->insTime->toGPSweekTow(), imuObs->insTime->toGPSweekTow());
+    }
+
+    imuObs__t1 = imuObs;
+
+    integrateObservation();
+}
+
+void NAV::ImuIntegrator::recvImuObs__t2(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+{
+    auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
+
+    if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
+    {
+        LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
+        return;
+    }
+
+    if (imuObs__t2 != nullptr)
+    {
+        LOG_DEBUG("{}: Overwriting imuObs__t2 ({}) with new value at {}", nameId(), imuObs__t2->insTime->toGPSweekTow(), imuObs->insTime->toGPSweekTow());
+    }
+
+    imuObs__t2 = imuObs;
+
+    integrateObservation();
+}
+
+void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+{
+    auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
+
+    if (posVelAtt__t1 != nullptr)
+    {
+        LOG_DEBUG("{}: Overwriting posVelAtt__t1 ({}) with new value at {}", nameId(), posVelAtt__t1->insTime->toGPSweekTow(), posVelAtt->insTime->toGPSweekTow());
+    }
+
+    posVelAtt__t1 = posVelAtt;
+
+    integrateObservation();
+}
+
+void NAV::ImuIntegrator::recvState__t2(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+{
+    auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
+
+    if (posVelAtt__t2 != nullptr)
+    {
+        LOG_DEBUG("{}: Overwriting posVelAtt__t2 ({}) with new value at {}", nameId(), posVelAtt__t2->insTime->toGPSweekTow(), posVelAtt->insTime->toGPSweekTow());
+    }
+
+    posVelAtt__t2 = posVelAtt;
 
     /// Initial State
     if (posVelAtt__init == nullptr)
     {
-        posVelAtt__init = posVelAtt__t1;
+        posVelAtt__init = posVelAtt__t2;
     }
 
-    // First state available
-    if (imuObs__t2 == nullptr)
+    integrateObservation();
+}
+
+void NAV::ImuIntegrator::integrateObservation()
+{
+    if (posVelAtt__t1 == nullptr || posVelAtt__t2 == nullptr
+        || imuObs__t0 == nullptr || imuObs__t1 == nullptr || imuObs__t2 == nullptr)
     {
-        // Rotate StateData
-        posVelAtt__t2 = posVelAtt__t1;
-
-        // Rotate Observation
-        imuObs__t2 = imuObs__t1;
-        imuObs__t1 = imuObs__t0;
-
         return;
     }
 
-    /// tₖ₋₂ Time at prior to previous epoch
-    const InsTime& time__t2 = imuObs__t2->insTime.value();
-    /// tₖ₋₁ Time at previous epoch
-    const InsTime& time__t1 = imuObs__t1->insTime.value();
-    /// tₖ Current Time
-    const InsTime& time__t0 = imuObs__t0->insTime.value();
+    LOG_DATA("{}: Integrating Imu data", nameId());
+
+    // Position and rotation information for conversion of IMU data from platform to body frame
+    const auto& imuPosition = imuObs__t0->imuPos;
 
     // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
-    const long double timeDifferenceSec__t1 = (time__t1 - time__t2).count();
+    long double timeDifferenceSec__t1 = 0;
     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
-    const long double timeDifferenceSec__t0 = (time__t0 - time__t1).count();
+    long double timeDifferenceSec__t0 = 0;
+
+    if (imuObs__t0->insTime.has_value())
+    {
+        /// tₖ₋₂ Time at prior to previous epoch
+        const InsTime& time__t2 = imuObs__t2->insTime.value();
+        /// tₖ₋₁ Time at previous epoch
+        const InsTime& time__t1 = imuObs__t1->insTime.value();
+        /// tₖ Current Time
+        const InsTime& time__t0 = imuObs__t0->insTime.value();
+
+        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
+        timeDifferenceSec__t1 = (time__t1 - time__t2).count();
+        // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+        timeDifferenceSec__t0 = (time__t0 - time__t1).count();
+    }
+    else
+    {
+        /// tₖ₋₂ Time at prior to previous epoch
+        const auto& time__t2 = imuObs__t2->timeSinceStartup.value();
+        /// tₖ₋₁ Time at previous epoch
+        const auto& time__t1 = imuObs__t1->timeSinceStartup.value();
+        /// tₖ Current Time
+        const auto& time__t0 = imuObs__t0->timeSinceStartup.value();
+
+        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
+        timeDifferenceSec__t1 = static_cast<long double>(time__t1 - time__t2) * 1e-9L;
+        // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+        timeDifferenceSec__t0 = static_cast<long double>(time__t0 - time__t1) * 1e-9L;
+    }
 
     /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
