@@ -100,6 +100,11 @@ class ImuIntegrator : public Node
     /// Position, Velocity and Attitude at initialization (needed to transform the ECEF position into NED)
     std::shared_ptr<PosVelAtt> posVelAtt__init = nullptr;
 
+    /// Time at initialization (needed to set time tag when TimeSinceStartup is used)
+    InsTime time__init;
+    /// TimeSinceStartup at initialization (needed to set time tag when TimeSinceStartup is used)
+    uint64_t timeSinceStartup__init = 0;
+
     enum IntegrationFrame : int
     {
         ECEF,
@@ -117,6 +122,9 @@ class ImuIntegrator : public Node
         EGM96
     };
     GravityModel gravityModel = GravityModel::WGS84;
+
+    /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
+    bool prefereTimeSinceStartupOverInsTime = false;
 };
 
 } // namespace NAV

@@ -6,6 +6,8 @@
 #include "util/InsConstants.hpp"
 #include "util/InsGravity.hpp"
 
+#include "internal/gui/widgets/HelpMarker.hpp"
+
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
@@ -17,7 +19,7 @@ NAV::ImuIntegrator::ImuIntegrator()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 347, 92 };
+    guiConfigDefaultWindowSize = { 350, 123 };
 
     nm::CreateInputPin(this, "ImuObs (t0)", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
     nm::CreateInputPin(this, "ImuObs (t1)", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t1);
@@ -51,12 +53,12 @@ std::string NAV::ImuIntegrator::category()
 void NAV::ImuIntegrator::guiConfig()
 {
     ImGui::SetNextItemWidth(100);
-    if (ImGui::Combo("Integration Frame", reinterpret_cast<int*>(&integrationFrame), "ECEF\0NED\0\0"))
+    if (ImGui::Combo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationFrame), "ECEF\0NED\0\0"))
     {
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame ? "NED" : "ECEF");
         flow::ApplyChanges();
     }
-    if (ImGui::Combo("Gravity Model", reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
+    if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
     {
         if (gravityModel == WGS84)
         {
@@ -76,6 +78,14 @@ void NAV::ImuIntegrator::guiConfig()
         }
         flow::ApplyChanges();
     }
+
+    if (ImGui::Checkbox(fmt::format("Prefere TimeSinceStartup over InsTime##{}", size_t(id)).c_str(), &prefereTimeSinceStartupOverInsTime))
+    {
+        LOG_DEBUG("{}: prefereTimeSinceStartupOverInsTime changed to {}", nameId(), prefereTimeSinceStartupOverInsTime);
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
 }
 
 [[nodiscard]] json NAV::ImuIntegrator::save() const
@@ -86,6 +96,7 @@ void NAV::ImuIntegrator::guiConfig()
 
     j["integrationFrame"] = integrationFrame;
     j["gravityModel"] = gravityModel;
+    j["prefereTimeSinceStartupOverInsTime"] = prefereTimeSinceStartupOverInsTime;
 
     return j;
 }
@@ -102,6 +113,10 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         gravityModel = static_cast<GravityModel>(j.at("gravityModel").get<int>());
     }
+    if (j.contains("prefereTimeSinceStartupOverInsTime"))
+    {
+        prefereTimeSinceStartupOverInsTime = j.at("prefereTimeSinceStartupOverInsTime");
+    }
 }
 
 bool NAV::ImuIntegrator::initialize()
@@ -115,6 +130,9 @@ bool NAV::ImuIntegrator::initialize()
     posVelAtt__t1 = nullptr;
     posVelAtt__t2 = nullptr;
     posVelAtt__init = nullptr;
+
+    time__init = InsTime();
+    timeSinceStartup__init = 0;
 
     try
     {
@@ -145,11 +163,6 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeDat
         return;
     }
 
-    if (imuObs__t0 != nullptr && posVelAtt__t1 && posVelAtt__t2)
-    {
-        LOG_DEBUG("{}: Overwriting imuObs__t0 ({}) with new value at {}", nameId(), imuObs__t0->insTime->toGPSweekTow(), imuObs->insTime->toGPSweekTow());
-    }
-
     imuObs__t0 = imuObs;
 
     integrateObservation();
@@ -165,12 +178,22 @@ void NAV::ImuIntegrator::recvImuObs__t1(const std::shared_ptr<NodeData>& nodeDat
         return;
     }
 
-    if (imuObs__t1 != nullptr && posVelAtt__t1 && posVelAtt__t2)
-    {
-        LOG_DEBUG("{}: Overwriting imuObs__t1 ({}) with new value at {}", nameId(), imuObs__t1->insTime->toGPSweekTow(), imuObs->insTime->toGPSweekTow());
-    }
-
     imuObs__t1 = imuObs;
+
+    // Messages can come in in different order
+    if (imuObs__t0)
+    {
+        if ((imuObs__t1->insTime.has_value() && imuObs__t0->insTime.has_value()
+             && imuObs__t1->insTime.value() >= imuObs__t0->insTime.value())
+            || (imuObs__t1->timeSinceStartup.has_value() && imuObs__t0->timeSinceStartup.has_value()
+                && imuObs__t1->timeSinceStartup.value() >= imuObs__t0->timeSinceStartup.value()))
+        {
+            LOG_DEBUG("{}: imuObs__t1 {} is same or newer than imuObs__t0 {}", nameId(),
+                      imuObs__t1->insTime.has_value() ? fmt::format("{}", imuObs__t1->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t1->timeSinceStartup.value()),
+                      imuObs__t0->insTime.has_value() ? fmt::format("{}", imuObs__t0->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t0->timeSinceStartup.value()));
+            imuObs__t0.reset();
+        }
+    }
 
     integrateObservation();
 }
@@ -185,12 +208,35 @@ void NAV::ImuIntegrator::recvImuObs__t2(const std::shared_ptr<NodeData>& nodeDat
         return;
     }
 
-    if (imuObs__t2 != nullptr && posVelAtt__t1 && posVelAtt__t2)
-    {
-        LOG_DEBUG("{}: Overwriting imuObs__t2 ({}) with new value at {}", nameId(), imuObs__t2->insTime->toGPSweekTow(), imuObs->insTime->toGPSweekTow());
-    }
-
     imuObs__t2 = imuObs;
+
+    // Messages can come in in different order
+    if (imuObs__t0)
+    {
+        if ((imuObs__t2->insTime.has_value() && imuObs__t0->insTime.has_value()
+             && imuObs__t2->insTime.value() >= imuObs__t0->insTime.value())
+            || (imuObs__t2->timeSinceStartup.has_value() && imuObs__t0->timeSinceStartup.has_value()
+                && imuObs__t2->timeSinceStartup.value() >= imuObs__t0->timeSinceStartup.value()))
+        {
+            LOG_DEBUG("{}: imuObs__t2 {} is same or newer than imuObs__t0 {}", nameId(),
+                      imuObs__t2->insTime.has_value() ? fmt::format("{}", imuObs__t2->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t2->timeSinceStartup.value()),
+                      imuObs__t0->insTime.has_value() ? fmt::format("{}", imuObs__t0->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t0->timeSinceStartup.value()));
+            imuObs__t0.reset();
+        }
+    }
+    if (imuObs__t1)
+    {
+        if ((imuObs__t2->insTime.has_value() && imuObs__t1->insTime.has_value()
+             && imuObs__t2->insTime.value() >= imuObs__t1->insTime.value())
+            || (imuObs__t2->timeSinceStartup.has_value() && imuObs__t1->timeSinceStartup.has_value()
+                && imuObs__t2->timeSinceStartup.value() >= imuObs__t1->timeSinceStartup.value()))
+        {
+            LOG_DEBUG("{}: imuObs__t2 {} is same or newer than imuObs__t1 {}", nameId(),
+                      imuObs__t2->insTime.has_value() ? fmt::format("{}", imuObs__t2->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t2->timeSinceStartup.value()),
+                      imuObs__t1->insTime.has_value() ? fmt::format("{}", imuObs__t1->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t1->timeSinceStartup.value()));
+            imuObs__t1.reset();
+        }
+    }
 
     integrateObservation();
 }
@@ -252,12 +298,15 @@ void NAV::ImuIntegrator::integrateObservation()
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = imuObs__t0->imuPos;
 
+    /// Result State Data at the time tₖ
+    auto posVelAtt__t0 = std::make_shared<PosVelAtt>();
+
     // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
     long double timeDifferenceSec__t1 = 0;
     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec__t0 = 0;
 
-    if (imuObs__t0->insTime.has_value())
+    if (imuObs__t0->insTime.has_value() && !(prefereTimeSinceStartupOverInsTime && imuObs__t0->timeSinceStartup.has_value()))
     {
         /// tₖ₋₂ Time at prior to previous epoch
         const InsTime& time__t2 = imuObs__t2->insTime.value();
@@ -270,6 +319,13 @@ void NAV::ImuIntegrator::integrateObservation()
         timeDifferenceSec__t1 = (time__t1 - time__t2).count();
         // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
         timeDifferenceSec__t0 = (time__t0 - time__t1).count();
+
+        // Update time
+        posVelAtt__t0->insTime = imuObs__t0->insTime;
+
+        LOG_DATA("{}: time__t2 {}", nameId(), time__t2.toGPSweekTow());
+        LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1.toGPSweekTow(), timeDifferenceSec__t1);
+        LOG_DATA("{}: time__t0 {}: DiffSec__t1 {}", nameId(), time__t0.toGPSweekTow(), timeDifferenceSec__t0);
     }
     else
     {
@@ -284,6 +340,19 @@ void NAV::ImuIntegrator::integrateObservation()
         timeDifferenceSec__t1 = static_cast<long double>(time__t1 - time__t2) * 1e-9L;
         // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
         timeDifferenceSec__t0 = static_cast<long double>(time__t0 - time__t1) * 1e-9L;
+
+        if (timeSinceStartup__init == 0)
+        {
+            timeSinceStartup__init = imuObs__t0->timeSinceStartup.value();
+            time__init = imuObs__t0->insTime.has_value() ? imuObs__t0->insTime.value() : InsTime(2000, 1, 1, 1, 1, 1);
+        }
+
+        // Update time
+        posVelAtt__t0->insTime = time__init + std::chrono::nanoseconds(imuObs__t0->timeSinceStartup.value() - timeSinceStartup__init);
+
+        LOG_DATA("{}: time__t2 {}", nameId(), time__t2);
+        LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1, timeDifferenceSec__t1);
+        LOG_DATA("{}: time__t0 {}: DiffSec__t1 {}", nameId(), time__t0, timeDifferenceSec__t0);
     }
 
     /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
@@ -365,9 +434,6 @@ void NAV::ImuIntegrator::integrateObservation()
 
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;
-
-    /// Result State Data at the time tₖ
-    auto posVelAtt__t0 = std::make_shared<PosVelAtt>();
 
     if (integrationFrame == IntegrationFrame::ECEF)
     {
@@ -520,9 +586,6 @@ void NAV::ImuIntegrator::integrateObservation()
         // Store body to navigation frame quaternion in the state
         posVelAtt__t0->quaternion_nb() = quaternion_nb__t0;
     }
-
-    // Update time
-    posVelAtt__t0->insTime = imuObs__t0->insTime;
 
     // Reset the data ports
     imuObs__t0.reset();
