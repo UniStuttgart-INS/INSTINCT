@@ -11,19 +11,19 @@ namespace ed = ax::NodeEditor;
 
 #include "implot.h"
 
-#include "gui/Shortcuts.hpp"
-#include "gui/TouchTracker.hpp"
+#include "internal/gui/Shortcuts.hpp"
+#include "internal/gui/TouchTracker.hpp"
 
-#include "gui/panels/BlueprintNodeBuilder.hpp"
+#include "internal/gui/panels/BlueprintNodeBuilder.hpp"
 namespace util = ax::NodeEditor::Utilities;
 
-#include "gui/panels/LeftPane.hpp"
+#include "internal/gui/panels/LeftPane.hpp"
 
-#include "gui/menus/MainMenuBar.hpp"
+#include "internal/gui/menus/MainMenuBar.hpp"
 
-#include "gui/widgets/Splitter.hpp"
-#include "gui/widgets/HelpMarker.hpp"
-#include "gui/widgets/Spinner.hpp"
+#include "internal/gui/widgets/Splitter.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
+#include "internal/gui/widgets/Spinner.hpp"
 
 #include "internal/Pin.hpp"
 #include "Nodes/Node.hpp"
@@ -45,6 +45,15 @@ namespace nm = NAV::NodeManager;
 #include <filesystem>
 
 ax::NodeEditor::EditorContext* m_Editor = nullptr;
+
+NAV::gui::NodeEditorApplication::~NodeEditorApplication()
+{
+    if (initThread.joinable())
+    {
+        // initThread_stopRequested = true;
+        initThread.join();
+    }
+}
 
 void NAV::gui::NodeEditorApplication::OnStart()
 {
@@ -404,6 +413,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
         {
             if (igfd::ImGuiFileDialog::Instance()->IsOk)
             {
+                std::filesystem::current_path(flow::GetProgramRootPath());
                 loadSuccessful = flow::LoadFlow(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
                 if (loadSuccessful)
                 {
@@ -467,7 +477,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
             }
         }
 
-        if (ImGui::InputTextWithHint("", "Enter the title here", &renameNode->name, ImGuiInputTextFlags_EnterReturnsTrue))
+        if (ImGui::InputTextMultiline(fmt::format("##{}", size_t(renameNode->id)).c_str(), &renameNode->name, ImVec2(0, 65), ImGuiInputTextFlags_CtrlEnterForNewLine | ImGuiInputTextFlags_EnterReturnsTrue))
         {
             nameBackup.clear();
             renameNode = nullptr;
@@ -547,7 +557,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             if (initThread.joinable())
             {
                 // initThread.request_stop();
-                initThread_stopRequested = true;
+                // initThread_stopRequested = true;
                 initThread.join();
             }
             // initThread = std::jthread([node, init]() {
@@ -982,19 +992,27 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 if (ed::QueryNewNode(&pinId))
                 {
                     newLinkPin = nm::FindPin(pinId);
-                    if (newLinkPin)
+                    if (newLinkPin->kind == Pin::Kind::Input && nm::IsPinLinked(newLinkPin->id))
                     {
-                        showLabel("+ Create Node", ImColor(32, 45, 32, 180));
+                        showLabel("End Pin already linked", ImColor(45, 32, 32, 180));
+                        ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                     }
-
-                    if (ed::AcceptNewItem())
+                    else
                     {
-                        createNewNode = true;
-                        newNodeLinkPin = nm::FindPin(pinId);
-                        newLinkPin = nullptr;
-                        ed::Suspend();
-                        ImGui::OpenPopup("Create New Node");
-                        ed::Resume();
+                        if (newLinkPin)
+                        {
+                            showLabel("+ Create Node", ImColor(32, 45, 32, 180));
+                        }
+
+                        if (ed::AcceptNewItem())
+                        {
+                            createNewNode = true;
+                            newNodeLinkPin = nm::FindPin(pinId);
+                            newLinkPin = nullptr;
+                            ed::Suspend();
+                            ImGui::OpenPopup("Create New Node");
+                            ed::Resume();
+                        }
                     }
                 }
             }
@@ -1323,9 +1341,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::SetTooltip("%s", tooltipText.c_str());
     }
 
-    ImGui::ShowDemoWindow();
-    ImPlot::ShowDemoWindow();
-    //ImGui::ShowMetricsWindow();
+    if (showImGuiDemoWindow)
+    {
+        ImGui::ShowDemoWindow();
+    }
+    if (showImPlotDemoWindow)
+    {
+        ImPlot::ShowDemoWindow();
+    }
 
     std::string title = (flow::HasUnsavedChanges() ? "● " : "")
                         + (flow::GetCurrentFilename().empty() ? "" : flow::GetCurrentFilename() + " - ")

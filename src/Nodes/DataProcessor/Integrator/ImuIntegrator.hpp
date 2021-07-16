@@ -48,17 +48,8 @@ class ImuIntegrator : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Called when a new link is to be established
-    /// @param[in] startPin Pin where the link starts
-    /// @param[in] endPin Pin where the link ends
-    /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
-
   private:
-    constexpr static size_t InputPortIndex_ImuObs = 0;     ///< @brief Flow (ImuObs)
-    constexpr static size_t InputPortIndex_Position = 1;   ///< @brief Matrix
-    constexpr static size_t InputPortIndex_Velocity = 2;   ///< @brief Matrix
-    constexpr static size_t InputPortIndex_Quaternion = 3; ///< @brief Matrix
+    constexpr static size_t OutputPortIndex_PosVelAtt__t0 = 1; ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -66,48 +57,53 @@ class ImuIntegrator : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Get the current Position
-    /// @param[out] position The Vector to return the result in
-    /// @return True, if the position was successfully returned, otherwise false (Pin not connected, ...)
-    bool getCurrentPosition(Eigen::Vector3d& position);
-
-    /// @brief Set the current Position on the input pin
-    /// @param[in] position The position to set
-    void setCurrentPosition(const Eigen::Vector3d& position);
-
-    /// @brief Get the current Velocity
-    /// @param[out] velocity The Vector to return the result in
-    /// @return True, if the velocity was successfully returned, otherwise false (Pin not connected, ...)
-    bool getCurrentVelocity(Eigen::Vector3d& velocity);
-
-    /// @brief Set the current Velocity on the input pin
-    /// @param[in] velocity The velocity to set
-    void setCurrentVelocity(const Eigen::Vector3d& velocity);
-
-    /// @brief Get the current Attitude Quaternion
-    /// @param[out] quaternion_nb The Quaternion to return the result in
-    /// @return True, if the attitude was successfully returned, otherwise false (Pin not connected, ...)
-    bool getCurrentQuaternion_nb(Eigen::Quaterniond& quaternion_nb);
-
-    /// @brief Set the current Attitude Quaternion on the input pin
-    /// @param[in] quaternion_nb The Attitude Quaternion to set
-    void setCurrentQuaternion_nb(const Eigen::Quaterniond& quaternion_nb);
-
-    /// @brief Integrates the Imu Observation data
+    /// @brief Receive Function for the ImuObs at the time tₖ
     /// @param[in] nodeData ImuObs to process
     /// @param[in] linkId Id of the link over which the data is received
-    void integrateObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvImuObs__t0(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
+    /// @brief Receive Function for the ImuObs at the time tₖ₋₁
+    /// @param[in] nodeData ImuObs to process
+    /// @param[in] linkId Id of the link over which the data is received
+    void recvImuObs__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    /// @brief Receive Function for the ImuObs at the time tₖ₋₂
+    /// @param[in] nodeData ImuObs to process
+    /// @param[in] linkId Id of the link over which the data is received
+    void recvImuObs__t2(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    /// @brief Receive Function for the PosVelAtt at the time tₖ₋₁
+    /// @param[in] nodeData PosVelAtt to process
+    /// @param[in] linkId Id of the link over which the data is received
+    void recvState__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    /// @brief Receive Function for the PosVelAtt at the time tₖ₋₂
+    /// @param[in] nodeData PosVelAtt to process
+    /// @param[in] linkId Id of the link over which the data is received
+    void recvState__t2(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    /// @brief Integrates the Imu Observation data
+    void integrateObservation();
+
+    /// IMU Observation at the time tₖ
+    std::shared_ptr<ImuObs> imuObs__t0 = nullptr;
     /// IMU Observation at the time tₖ₋₁
     std::shared_ptr<ImuObs> imuObs__t1 = nullptr;
     /// IMU Observation at the time tₖ₋₂
     std::shared_ptr<ImuObs> imuObs__t2 = nullptr;
 
+    /// Position, Velocity and Attitude at the time tₖ₋₁
+    std::shared_ptr<PosVelAtt> posVelAtt__t1 = nullptr;
     /// Position, Velocity and Attitude at the time tₖ₋₂
     std::shared_ptr<PosVelAtt> posVelAtt__t2 = nullptr;
 
-    /// Position, Velocity and Attitude at initialization
+    /// Position, Velocity and Attitude at initialization (needed to transform the ECEF position into NED)
     std::shared_ptr<PosVelAtt> posVelAtt__init = nullptr;
+
+    /// Time at initialization (needed to set time tag when TimeSinceStartup is used)
+    InsTime time__init;
+    /// TimeSinceStartup at initialization (needed to set time tag when TimeSinceStartup is used)
+    uint64_t timeSinceStartup__init = 0;
 
     enum IntegrationFrame : int
     {
@@ -126,6 +122,9 @@ class ImuIntegrator : public Node
         EGM96
     };
     GravityModel gravityModel = GravityModel::WGS84;
+
+    /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
+    bool prefereTimeSinceStartupOverInsTime = false;
 };
 
 } // namespace NAV

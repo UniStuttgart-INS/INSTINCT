@@ -49,6 +49,9 @@ class UbloxDataLogger : public Node, public FileWriter
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Function called by the flow executer after finishing to flush out remaining data
+    void flush() override;
+
   private:
     /// @brief Initialize the node
     bool initialize() override;

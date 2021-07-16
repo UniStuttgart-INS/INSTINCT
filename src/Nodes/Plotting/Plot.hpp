@@ -11,11 +11,13 @@
 
 #include "util/ScrollingBuffer.hpp"
 
+#include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
-#include "NodeData/IMU/VectorNavObs.hpp"
+#include "NodeData/IMU/ImuObsWDelta.hpp"
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
 namespace NAV
 {
@@ -202,6 +204,11 @@ class Plot : public Node
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotPosVelAtt(const std::shared_ptr<PosVelAtt>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
     void plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
@@ -222,7 +229,12 @@ class Plot : public Node
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotVectorNavObs(const std::shared_ptr<VectorNavObs>& obs, size_t pinIndex);
+    void plotImuObsWDeltaObs(const std::shared_ptr<ImuObsWDelta>& obs, size_t pinIndex);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotVectorNavBinaryObs(const std::shared_ptr<VectorNavBinaryOutput>& obs, size_t pinIndex);
 
     /// Data storage for each pin
     std::vector<PinData> data;

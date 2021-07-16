@@ -9,7 +9,7 @@
 
 #include "util/Eigen.hpp"
 
-namespace NAV
+namespace NAV::experimental
 {
 class Matrix : public Node
 {
@@ -91,4 +91,4 @@ class Matrix : public Node
     Eigen::MatrixXd initMatrix;
 };
 
-} // namespace NAV
+} // namespace NAV::experimental

@@ -246,12 +246,12 @@ struct InsTime_GPSweekTow
 {
     int32_t gpsCycle{}; ///< Contains GPS cycle in GPS standard time [GPST]
     int32_t gpsWeek{};  ///< Contains GPS week in GPS standard time [GPST]
-    long double tow{};  ///< Contains GPS time of week in GPS standard time [GPST]
+    long double tow{};  ///< Contains GPS time of week in seconds in GPS standard time [GPST]
 
     /// @brief Constructor
     /// @param[in] gpsCycle GPS cycle in GPS standard time [GPST]
     /// @param[in] gpsWeek GPS week in GPS standard time [GPST]
-    /// @param[in] tow GPS time of week in GPS standard time [GPST]
+    /// @param[in] tow GPS time of week in seconds in GPS standard time [GPST]
     constexpr InsTime_GPSweekTow(int32_t gpsCycle, int32_t gpsWeek, long double tow)
         : gpsCycle(gpsCycle), gpsWeek(gpsWeek), tow(tow)
     {

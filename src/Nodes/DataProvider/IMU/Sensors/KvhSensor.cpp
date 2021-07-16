@@ -2,7 +2,7 @@
 
 #include "util/Logger.hpp"
 
-#include "gui/widgets/HelpMarker.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -63,6 +63,8 @@ void NAV::KvhSensor::guiConfig()
                              "- \"/dev/ttyUSB0\" (Linux format for virtual (USB) serial port)\n"
                              "- \"/dev/tty.usbserial-FTXXXXXX\" (Mac OS X format for virtual (USB) serial port)\n"
                              "- \"/dev/ttyS0\" (CYGWIN format. Usually the Windows COM port number minus 1. This would connect to COM1)");
+
+    Imu::guiConfig();
 }
 
 [[nodiscard]] json NAV::KvhSensor::save() const
@@ -72,6 +74,7 @@ void NAV::KvhSensor::guiConfig()
     json j;
 
     j["UartSensor"] = UartSensor::save();
+    j["Imu"] = Imu::save();
 
     return j;
 }
@@ -83,6 +86,10 @@ void NAV::KvhSensor::restore(json const& j)
     if (j.contains("UartSensor"))
     {
         UartSensor::restore(j.at("UartSensor"));
+    }
+    if (j.contains("Imu"))
+    {
+        Imu::restore(j.at("Imu"));
     }
 }
 
@@ -159,7 +166,7 @@ void NAV::KvhSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::pro
         kvhSensor->prevSequenceNumber = obs->sequenceNumber;
 
         // Calls all the callbacks
-        if (InsTime currentTime = util::time::GetCurrentTime();
+        if (InsTime currentTime = util::time::GetCurrentInsTime();
             !currentTime.empty())
         {
             obs->insTime = currentTime;

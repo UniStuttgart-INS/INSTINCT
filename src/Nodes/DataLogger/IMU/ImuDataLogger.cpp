@@ -4,7 +4,7 @@
 
 #include "util/Logger.hpp"
 
-#include "gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
 
 #include <iomanip> // std::setprecision
 
@@ -18,7 +18,7 @@ NAV::ImuDataLogger::ImuDataLogger()
 
     LOG_TRACE("{}: called", name);
 
-    fileType = FileType::ASCII;
+    fileType = FileType::CSV;
 
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };
@@ -76,6 +76,11 @@ void NAV::ImuDataLogger::restore(json const& j)
     }
 }
 
+void NAV::ImuDataLogger::flush()
+{
+    filestream.flush();
+}
+
 bool NAV::ImuDataLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());
@@ -101,7 +106,7 @@ void NAV::ImuDataLogger::deinitialize()
 
 void NAV::ImuDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::static_pointer_cast<ImuObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<ImuObs>(nodeData);
 
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;

@@ -385,12 +385,26 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     /* -------------------------------------------------------------------------------------------------------- */
 
     roll = 0.0;
-    pitch = 0.0;
-    yaw = trafo::deg2rad(-45);
+    pitch = trafo::deg2rad(90);
+    yaw = trafo::deg2rad(90);
     auto q_bn = trafo::quat_bn(roll, pitch, yaw);
 
-    Eigen::Vector3d x_n{ 1.0, 1.0, 0.0 };
+    Eigen::Vector3d x_n{ 1.0, 0.0, 0.0 };
     Eigen::Vector3d x_b = q_bn * x_n;
+
+    CHECK(x_b.x() == Approx(0.0).margin(EPSILON));
+    CHECK(x_b.y() == Approx(-1.0).margin(EPSILON));
+    CHECK(x_b.z() == Approx(0.0).margin(EPSILON));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    roll = 0.0;
+    pitch = 0.0;
+    yaw = trafo::deg2rad(-45);
+    q_bn = trafo::quat_bn(roll, pitch, yaw);
+
+    x_n = Eigen::Vector3d{ 1.0, 1.0, 0.0 };
+    x_b = q_bn * x_n;
 
     CHECK(x_b.x() == Approx(0.0).margin(EPSILON));
     CHECK(x_b.y() == Approx(std::sqrt(2)).margin(EPSILON));
@@ -441,18 +455,18 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
 TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransformations]")
 {
-    double mountingAngleX = 0.0;
-    double mountingAngleY = trafo::deg2rad(180);
-    double mountingAngleZ = trafo::deg2rad(45);
+    double mountingAngleX = trafo::deg2rad(90);
+    double mountingAngleY = 0.0;
+    double mountingAngleZ = trafo::deg2rad(-90);
 
     auto q_bp = trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ);
 
     Eigen::Vector3d x_p{ 2.0, 0.0, 9.81 };
     Eigen::Vector3d x_b = q_bp * x_p;
 
-    CHECK(x_b.x() == Approx(-std::sqrt(2)));
-    CHECK(x_b.y() == Approx(-std::sqrt(2)));
-    CHECK(x_b.z() == Approx(-9.81));
+    CHECK(x_b.x() == Approx(0.0).margin(EPSILON));
+    CHECK(x_b.y() == Approx(9.81).margin(EPSILON));
+    CHECK(x_b.z() == Approx(-2.0).margin(EPSILON));
 }
 
 TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]")

@@ -5,7 +5,7 @@
 #include "util/Time/TimeBase.hpp"
 #include "util/UartSensors/Emlid/EmlidUtilities.hpp"
 
-#include "gui/widgets/HelpMarker.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -151,7 +151,7 @@ void NAV::EmlidSensor::asciiOrBinaryAsyncMessageReceived(void* userData, uart::p
             util::time::SetCurrentTime(obs->insTime.value());
         }
     }
-    else if (auto currentTime = util::time::GetCurrentTime();
+    else if (auto currentTime = util::time::GetCurrentInsTime();
              !currentTime.empty())
     {
         obs->insTime = currentTime;

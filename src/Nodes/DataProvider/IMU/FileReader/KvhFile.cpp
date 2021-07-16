@@ -2,7 +2,7 @@
 
 #include "util/Logger.hpp"
 
-#include "gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -54,7 +54,9 @@ void NAV::KvhFile::guiConfig()
         initializeNode();
     }
 
-    if (fileType == FileType::ASCII)
+    Imu::guiConfig();
+
+    if (fileType == FileType::CSV)
     {
         // Header info
         if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 2,
@@ -106,6 +108,7 @@ void NAV::KvhFile::guiConfig()
     json j;
 
     j["FileReader"] = FileReader::save();
+    j["Imu"] = Imu::save();
 
     return j;
 }
@@ -117,6 +120,10 @@ void NAV::KvhFile::restore(json const& j)
     if (j.contains("FileReader"))
     {
         FileReader::restore(j.at("FileReader"));
+    }
+    if (j.contains("Imu"))
+    {
+        Imu::restore(j.at("Imu"));
     }
 }
 
@@ -177,7 +184,7 @@ std::shared_ptr<NAV::NodeData> NAV::KvhFile::pollData(bool peek)
 
         sensors::kvh::decryptKvhObs(obs);
     }
-    else if (fileType == FileType::ASCII)
+    else if (fileType == FileType::CSV)
     {
         obs = std::make_shared<KvhObs>(imuPos);
 
@@ -330,21 +337,6 @@ std::shared_ptr<NAV::NodeData> NAV::KvhFile::pollData(bool peek)
         filestream.seekg(pos, std::ios_base::beg);
     }
 
-    if (obs->insTime.has_value())
-    {
-        // Has time value, but value should not be displayed
-        if (obs->insTime.value() < lowerLimit)
-        {
-            // Resetting the value will make the read loop skip the message
-            obs->insTime.reset();
-            return obs;
-        }
-        if (obs->insTime.value() > upperLimit)
-        {
-            return nullptr;
-        }
-    }
-
     // Calls all the callbacks
     if (!peek)
     {
@@ -389,7 +381,7 @@ NAV::FileReader::FileType NAV::KvhFile::determineFileType()
 
         if (n >= 3)
         {
-            return FileType::ASCII;
+            return FileType::CSV;
         }
 
         LOG_ERROR("{} could not determine file type", name);

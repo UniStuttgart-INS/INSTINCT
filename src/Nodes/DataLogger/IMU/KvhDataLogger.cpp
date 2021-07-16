@@ -4,7 +4,7 @@
 
 #include "util/Logger.hpp"
 
-#include "gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
 
 #include <iomanip> // std::setprecision
 
@@ -18,7 +18,7 @@ NAV::KvhDataLogger::KvhDataLogger()
 
     LOG_TRACE("{}: called", name);
 
-    fileType = FileType::ASCII;
+    fileType = FileType::CSV;
 
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };
@@ -76,6 +76,11 @@ void NAV::KvhDataLogger::restore(json const& j)
     }
 }
 
+void NAV::KvhDataLogger::flush()
+{
+    filestream.flush();
+}
+
 bool NAV::KvhDataLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());
@@ -101,7 +106,7 @@ void NAV::KvhDataLogger::deinitialize()
 
 void NAV::KvhDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::static_pointer_cast<KvhObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<KvhObs>(nodeData);
 
     constexpr int gpsCyclePrecision = 3;
     constexpr int gpsTimePrecision = 12;

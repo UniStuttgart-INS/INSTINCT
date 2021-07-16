@@ -142,8 +142,11 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/util/Demo.hpp"
 #include "Nodes/util/GroupBox.hpp"
 // Simple
-#include "Nodes/Simple/Matrix.hpp"
+#include "Nodes/Simple/Combiner.hpp"
+#include "Nodes/Simple/Delay.hpp"
 #include "Nodes/Simple/Transformation.hpp"
+// Converter
+#include "Nodes/Converter/IMU/VectorNavBinary2ImuObsConverter.hpp"
 // Data Logger
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
@@ -152,7 +155,6 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
-#include "Nodes/Experimental/DataProcessor/ARMA.hpp"
 // Data Provider
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -172,6 +174,9 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/Plotting/Plot.hpp"
 // State
 #include "Nodes/State/PosVelAttInitializer.hpp"
+// Experimental
+#include "Nodes/Experimental/Simple/Matrix.hpp"
+#include "Nodes/Experimental/DataProcessor/ARMA.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
 {
@@ -181,8 +186,12 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
     // Simple
-    registerNodeType<Matrix>();
+    registerNodeType<Combiner>();
+    registerNodeType<Delay>();
+    registerNodeType<NAV::experimental::Matrix>();
     registerNodeType<Transformation>();
+    // Converter
+    registerNodeType<VectorNavBinary2ImuObsConverter>();
     // Data Logger
     registerNodeType<EmlidDataLogger>();
     registerNodeType<UbloxDataLogger>();
@@ -216,17 +225,22 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 
 #include "NodeData/NodeData.hpp"
 #include "NodeData/InsObs.hpp"
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+#include "NodeData/General/StringObs.hpp"
 #include "NodeData/GNSS/EmlidObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
-#include "NodeData/IMU/VectorNavObs.hpp"
+#include "NodeData/IMU/ImuObsWDelta.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
     registerNodeDataType<NodeData>();
     registerNodeDataType<InsObs>();
+    // General
+    registerNodeDataType<StringObs>();
     // GNSS
     registerNodeDataType<EmlidObs>();
     registerNodeDataType<RtklibPosObs>();
@@ -234,5 +248,8 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     // IMU
     registerNodeDataType<ImuObs>();
     registerNodeDataType<KvhObs>();
-    registerNodeDataType<VectorNavObs>();
+    registerNodeDataType<ImuObsWDelta>();
+    registerNodeDataType<VectorNavBinaryOutput>();
+    // State
+    registerNodeDataType<PosVelAtt>();
 }

@@ -23,7 +23,7 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, b
             std::get<ErbVer>(obs->data).verL = obs->raw.extractUint8();
 
             // Calculate the insTime with the iTOW
-            auto currentTime = util::time::GetCurrentTime();
+            auto currentTime = util::time::GetCurrentInsTime();
             if (!currentTime.empty())
             {
                 auto gpst = currentTime.toGPSweekTow();
@@ -55,7 +55,7 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, b
             std::get<ErbPos>(obs->data).vAcc = obs->raw.extractUint32();
 
             // Calculate the insTime with the iTOW
-            auto currentTime = util::time::GetCurrentTime();
+            auto currentTime = util::time::GetCurrentInsTime();
             if (!currentTime.empty())
             {
                 auto gpst = currentTime.toGPSweekTow();
@@ -83,7 +83,7 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, b
             std::get<ErbStat>(obs->data).numSV = obs->raw.extractUint8();
 
             // Calculate the insTime with the iTOW
-            auto currentTime = util::time::GetCurrentTime();
+            auto currentTime = util::time::GetCurrentInsTime();
             if (!currentTime.empty())
             {
                 auto gpst = currentTime.toGPSweekTow();
@@ -112,7 +112,7 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, b
             std::get<ErbDops>(obs->data).dopHor = obs->raw.extractUint16();
 
             // Calculate the insTime with the iTOW
-            auto currentTime = util::time::GetCurrentTime();
+            auto currentTime = util::time::GetCurrentInsTime();
             if (!currentTime.empty())
             {
                 auto gpst = currentTime.toGPSweekTow();
@@ -144,7 +144,7 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, b
             std::get<ErbVel>(obs->data).sAcc = obs->raw.extractUint32();
 
             // Calculate the insTime with the iTOW
-            auto currentTime = util::time::GetCurrentTime();
+            auto currentTime = util::time::GetCurrentInsTime();
             if (!currentTime.empty())
             {
                 auto gpst = currentTime.toGPSweekTow();
@@ -177,7 +177,7 @@ void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, b
             std::get<ErbSvi>(obs->data).elev = obs->raw.extractUint16();
 
             // Calculate the insTime with the iTOW
-            auto currentTime = util::time::GetCurrentTime();
+            auto currentTime = util::time::GetCurrentInsTime();
             if (!currentTime.empty())
             {
                 auto gpst = currentTime.toGPSweekTow();
