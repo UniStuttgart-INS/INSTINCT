@@ -19,7 +19,7 @@ NAV::ImuFile::ImuFile()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 370, 180 };
+    guiConfigDefaultWindowSize = { 377, 201 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuFile::pollData);
     nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
@@ -56,10 +56,11 @@ void NAV::ImuFile::guiConfig()
     Imu::guiConfig();
 
     // Header info
-    if (ImGui::BeginTable(fmt::format("##ImuHeaders ({})", id.AsPointer()).c_str(), 2,
+    if (ImGui::BeginTable(fmt::format("##ImuHeaders ({})", id.AsPointer()).c_str(), 3,
                           ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
     {
         ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
         ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
         ImGui::TableHeadersRow();
 
@@ -78,12 +79,15 @@ void NAV::ImuFile::guiConfig()
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsCycle", "GpsCycle");
         TextColoredIfExists(1, "UnCompMag", "UnCompMagX");
+        TextColoredIfExists(2, "CompMag", "MagX");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsWeek", "GpsWeek");
         TextColoredIfExists(1, "UnCompAcc", "UnCompAccX");
+        TextColoredIfExists(2, "CompAcc", "AccX");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "GpsToW", "GpsToW");
         TextColoredIfExists(1, "UnCompGyro", "UnCompGyroX");
+        TextColoredIfExists(2, "CompGyro", "GyroX");
         ImGui::TableNextRow();
         TextColoredIfExists(0, "TimeStartup", "TimeStartup");
         TextColoredIfExists(1, "Temperature", "Temperature");
@@ -177,6 +181,15 @@ std::shared_ptr<NAV::NodeData> NAV::ImuFile::pollData(bool peek)
     std::optional<double> gyroUncompX;
     std::optional<double> gyroUncompY;
     std::optional<double> gyroUncompZ;
+    std::optional<double> magCompX;
+    std::optional<double> magCompY;
+    std::optional<double> magCompZ;
+    std::optional<double> accelCompX;
+    std::optional<double> accelCompY;
+    std::optional<double> accelCompZ;
+    std::optional<double> gyroCompX;
+    std::optional<double> gyroCompY;
+    std::optional<double> gyroCompZ;
 
     // Split line at comma
     for (const auto& column : headerColumns)
@@ -246,6 +259,42 @@ std::shared_ptr<NAV::NodeData> NAV::ImuFile::pollData(bool peek)
             {
                 obs->temperature.emplace(std::stod(cell));
             }
+            else if (column == "MagX")
+            {
+                magCompX = std::stod(cell);
+            }
+            else if (column == "MagY")
+            {
+                magCompY = std::stod(cell);
+            }
+            else if (column == "MagZ")
+            {
+                magCompZ = std::stod(cell);
+            }
+            else if (column == "AccX")
+            {
+                accelCompX = std::stod(cell);
+            }
+            else if (column == "AccY")
+            {
+                accelCompY = std::stod(cell);
+            }
+            else if (column == "AccZ")
+            {
+                accelCompZ = std::stod(cell);
+            }
+            else if (column == "GyroX")
+            {
+                gyroCompX = std::stod(cell);
+            }
+            else if (column == "GyroY")
+            {
+                gyroCompY = std::stod(cell);
+            }
+            else if (column == "GyroZ")
+            {
+                gyroCompZ = std::stod(cell);
+            }
         }
     }
 
@@ -264,6 +313,18 @@ std::shared_ptr<NAV::NodeData> NAV::ImuFile::pollData(bool peek)
     if (gyroUncompX.has_value() && gyroUncompY.has_value() && gyroUncompZ.has_value())
     {
         obs->gyroUncompXYZ.emplace(gyroUncompX.value(), gyroUncompY.value(), gyroUncompZ.value());
+    }
+    if (magCompX.has_value() && magCompY.has_value() && magCompZ.has_value())
+    {
+        obs->magCompXYZ.emplace(magCompX.value(), magCompY.value(), magCompZ.value());
+    }
+    if (accelCompX.has_value() && accelCompY.has_value() && accelCompZ.has_value())
+    {
+        obs->accelCompXYZ.emplace(accelCompX.value(), accelCompY.value(), accelCompZ.value());
+    }
+    if (gyroCompX.has_value() && gyroCompY.has_value() && gyroCompZ.has_value())
+    {
+        obs->gyroCompXYZ.emplace(gyroCompX.value(), gyroCompY.value(), gyroCompZ.value());
     }
 
     LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
