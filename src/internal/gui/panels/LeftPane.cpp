@@ -12,6 +12,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/windows/StyleEditor.hpp"
 #include "internal/gui/NodeEditorApplication.hpp"
 
+#include "util/StringUtil.hpp"
+
 #include <string>
 #include <algorithm>
 
@@ -129,7 +131,7 @@ bool NAV::gui::panels::ShowLeftPane(float paneWidth)
                                                         5.0F, circleCol);
 
             bool isSelected = std::find(selectedNodes.begin(), selectedNodes.end(), node->id) != selectedNodes.end();
-            if (ImGui::Selectable((node->name + "##" + std::to_string(size_t(node->id))).c_str(), &isSelected))
+            if (ImGui::Selectable((str::replaceAll_copy(node->name, "\n", "") + "##" + std::to_string(size_t(node->id))).c_str(), &isSelected))
             {
                 if (io.KeyCtrl)
                 {

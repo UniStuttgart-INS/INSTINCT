@@ -21,7 +21,7 @@ NAV::VectorNavFile::VectorNavFile()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 619, 444 };
+    guiConfigDefaultWindowSize = { 630, 466 };
 
     nm::CreateOutputPin(this, "Binary Output", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type(), &VectorNavFile::pollData);
 }
@@ -53,6 +53,8 @@ void NAV::VectorNavFile::guiConfig()
         flow::ApplyChanges();
         initializeNode();
     }
+
+    Imu::guiConfig();
 
     // Header info
     if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 6,
@@ -164,6 +166,7 @@ void NAV::VectorNavFile::guiConfig()
     json j;
 
     j["FileReader"] = FileReader::save();
+    j["Imu"] = Imu::save();
 
     return j;
 }
@@ -175,6 +178,10 @@ void NAV::VectorNavFile::restore(json const& j)
     if (j.contains("FileReader"))
     {
         FileReader::restore(j.at("FileReader"));
+    }
+    if (j.contains("Imu"))
+    {
+        Imu::restore(j.at("Imu"));
     }
 }
 
@@ -430,15 +437,15 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 
                 if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
                 {
-                    obs->timeOutputs->timeStartup = std::stoul(extractCell());
+                    obs->timeOutputs->timeStartup = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
                 if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
                 {
-                    obs->timeOutputs->timeGps = std::stoul(extractCell());
+                    obs->timeOutputs->timeGps = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
                 if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
                 {
-                    obs->timeOutputs->gpsTow = std::stoul(extractCell());
+                    obs->timeOutputs->gpsTow = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
                 if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
                 {
@@ -446,11 +453,11 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
                 if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN)
                 {
-                    obs->timeOutputs->timeSyncIn = std::stoul(extractCell());
+                    obs->timeOutputs->timeSyncIn = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
                 if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS)
                 {
-                    obs->timeOutputs->timePPS = std::stoul(extractCell());
+                    obs->timeOutputs->timePPS = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
                 if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
                 {
@@ -578,7 +585,7 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
                 if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
-                    obs->gnss1Outputs->tow = std::stoul(extractCell());
+                    obs->gnss1Outputs->tow = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
                 if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {
@@ -876,7 +883,7 @@ std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
                 if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
-                    obs->gnss2Outputs->tow = std::stoul(extractCell());
+                    obs->gnss2Outputs->tow = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
                 if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {

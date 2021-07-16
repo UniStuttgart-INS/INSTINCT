@@ -24,7 +24,7 @@ Mode GetMode();
 
 /// @brief Get the current time.
 /// @return Pointer to the current time or nullptr if it is not known yet.
-InsTime GetCurrentTime();
+InsTime GetCurrentInsTime();
 
 /// @brief Set the current time object
 /// @param[in] insTime The new current time

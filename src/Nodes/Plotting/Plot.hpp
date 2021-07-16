@@ -11,6 +11,7 @@
 
 #include "util/ScrollingBuffer.hpp"
 
+#include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
@@ -199,6 +200,11 @@ class Plot : public Node
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received
     void plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    /// @brief Plot the data
+    /// @param[in] obs Observation to plot
+    /// @param[in] pinIndex Index of the input pin where the data was received
+    void plotPosVelAtt(const std::shared_ptr<PosVelAtt>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot

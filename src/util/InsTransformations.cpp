@@ -73,30 +73,30 @@ Eigen::Quaterniond trafo::quat_ne(const double latitude, const double longitude)
     return quat_en(latitude, longitude).conjugate();
 }
 
-Eigen::Quaterniond trafo::quat_nb(const double roll, const double pitch, const double yaw)
+Eigen::Quaterniond trafo::quat_bn(const double roll, const double pitch, const double yaw)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
-    Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitX());
-    Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd rollAngle(-roll, Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd pitchAngle(-pitch, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd yawAngle(-yaw, Eigen::Vector3d::UnitZ());
 
-    return yawAngle * pitchAngle * rollAngle;
+    return rollAngle * pitchAngle * yawAngle;
 }
 
-Eigen::Quaterniond trafo::quat_bn(const double roll, const double pitch, const double yaw)
+Eigen::Quaterniond trafo::quat_nb(const double roll, const double pitch, const double yaw)
 {
-    return quat_nb(roll, pitch, yaw).conjugate();
+    return quat_bn(roll, pitch, yaw).conjugate();
 }
 
 Eigen::Quaterniond trafo::quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
-    Eigen::AngleAxisd xAngle(mountingAngleX, Eigen::Vector3d::UnitX());
-    Eigen::AngleAxisd yAngle(mountingAngleY, Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd zAngle(mountingAngleZ, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd xAngle(-mountingAngleX, Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd yAngle(-mountingAngleY, Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd zAngle(-mountingAngleZ, Eigen::Vector3d::UnitZ());
 
-    return zAngle * yAngle * xAngle;
+    return xAngle * yAngle * zAngle;
 }
 
 Eigen::Quaterniond trafo::quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
@@ -217,7 +217,6 @@ Eigen::Vector3d trafo::ecef2lla_GRS80(const Eigen::Vector3d& ecef)
 
 Eigen::Vector3d trafo::sph2ecef(const Eigen::Vector3d& position_s, const double& elevation, const double& azimuth)
 {
-
     Eigen::Matrix3d R_se;
     R_se << std::sin(elevation) * std::cos(azimuth), std::cos(elevation) * std::cos(azimuth), -std::sin(azimuth),
         std::sin(elevation) * std::sin(azimuth), std::cos(elevation) * std::sin(azimuth), std::cos(azimuth),

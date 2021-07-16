@@ -130,7 +130,7 @@ std::shared_ptr<NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
 
     if (!obs->insTime.has_value())
     {
-        if (auto currentTime = util::time::GetCurrentTime();
+        if (auto currentTime = util::time::GetCurrentInsTime();
             !currentTime.empty())
         {
             obs->insTime = currentTime;

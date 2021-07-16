@@ -142,7 +142,8 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/util/Demo.hpp"
 #include "Nodes/util/GroupBox.hpp"
 // Simple
-#include "Nodes/Simple/Matrix.hpp"
+#include "Nodes/Simple/Combiner.hpp"
+#include "Nodes/Simple/Delay.hpp"
 #include "Nodes/Simple/Transformation.hpp"
 // Converter
 #include "Nodes/Converter/IMU/VectorNavBinary2ImuObsConverter.hpp"
@@ -154,7 +155,6 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
-#include "Nodes/Experimental/DataProcessor/ARMA.hpp"
 // Data Provider
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -174,6 +174,9 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/Plotting/Plot.hpp"
 // State
 #include "Nodes/State/PosVelAttInitializer.hpp"
+// Experimental
+#include "Nodes/Experimental/Simple/Matrix.hpp"
+#include "Nodes/Experimental/DataProcessor/ARMA.hpp"
 
 void NAV::NodeRegistry::RegisterNodeTypes()
 {
@@ -183,7 +186,9 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<Demo>();
     registerNodeType<GroupBox>();
     // Simple
-    registerNodeType<Matrix>();
+    registerNodeType<Combiner>();
+    registerNodeType<Delay>();
+    registerNodeType<NAV::experimental::Matrix>();
     registerNodeType<Transformation>();
     // Converter
     registerNodeType<VectorNavBinary2ImuObsConverter>();
@@ -228,6 +233,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
@@ -244,4 +250,6 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<KvhObs>();
     registerNodeDataType<ImuObsWDelta>();
     registerNodeDataType<VectorNavBinaryOutput>();
+    // State
+    registerNodeDataType<PosVelAtt>();
 }

@@ -54,25 +54,10 @@ class PosVelAttInitializer : public Node
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
-    /// @brief Called when a new link is to be established
-    /// @param[in] startPin Pin where the link starts
-    /// @param[in] endPin Pin where the link ends
-    /// @return True if link is allowed, false if link is rejected
-    bool onCreateLink(Pin* startPin, Pin* endPin) override;
-
-    /// @brief Called when a link is to be deleted
-    /// @param[in] startPin Pin where the link starts
-    /// @param[in] endPin Pin where the link ends
-    void onDeleteLink(Pin* startPin, Pin* endPin) override;
-
   private:
-    constexpr static size_t OutputPortIndex_ImuObs = 1;  ///< @brief Flow (ImuObs)
-    constexpr static size_t OutputPortIndex_GnssObs = 2; ///< @brief Flow (GnssObs)
-    constexpr static size_t InputPortIndex_ImuObs = 0;   ///< @brief Flow (ImuObs)
-    constexpr static size_t InputPortIndex_GnssObs = 1;  ///< @brief Flow (GnssObs)
-    constexpr static size_t InputPortIndex_Position = 2; ///< @brief Matrix
-    constexpr static size_t InputPortIndex_Velocity = 3; ///< @brief Matrix
-    constexpr static size_t InputPortIndex_Attitude = 4; ///< @brief Matrix
+    constexpr static size_t OutputPortIndex_PosVelAtt = 1; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t InputPortIndex_ImuObs = 0;     ///< @brief Flow (ImuObs)
+    constexpr static size_t InputPortIndex_GnssObs = 1;    ///< @brief Flow (GnssObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -101,26 +86,16 @@ class PosVelAttInitializer : public Node
     /// @param[in] obs RtklibPos Data
     void receiveRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs);
 
-    enum class InitFlag
-    {
-        NOT_CONNECTED,
-        CONNECTED,
-        INITIALIZED,
-    };
-
-    /// Position Flag
-    InitFlag determinePosition = InitFlag::NOT_CONNECTED;
-    /// Velocity Flag
-    InitFlag determineVelocity = InitFlag::NOT_CONNECTED;
-    /// Attitude Flag
-    InitFlag determineAttitude = InitFlag::NOT_CONNECTED;
-
     /// Time in [s] to initialize the state
     double initDuration = 5.0;
 
     /// Start time of the averageing process
     uint64_t startTime = 0;
 
+    /// Whether the GNSS values should be used or we want to override the values manually
+    bool overridePosition = false;
+    /// Values to override the Position in [deg, deg, m]
+    std::array<float, 3> overrideValuesPosition_lla = {};
     /// Position Accuracy to achieve in [cm]
     float positionAccuracyThreshold = 10;
     /// Last position accuracy in [cm] for XYZ or NED
@@ -128,6 +103,10 @@ class PosVelAttInitializer : public Node
                                                   std::numeric_limits<float>::infinity(),
                                                   std::numeric_limits<float>::infinity() };
 
+    /// Whether the GNSS values should be used or we want to override the values manually
+    bool overrideVelocity = false;
+    /// Values to override the Velocity in [m/s]
+    std::array<float, 3> overrideValuesVelocity_n = {};
     /// Velocity Accuracy to achieve in [cm/s]
     float velocityAccuracyThreshold = 10;
     /// Last velocity accuracy in [cm/s] for XYZ or NED
@@ -143,6 +122,19 @@ class PosVelAttInitializer : public Node
     std::array<bool, 3> overrideRollPitchYaw = { false, false, false };
     /// Values to override Roll, Pitch and Yaw with in [deg]
     std::array<float, 3> overrideValuesRollPitchYaw = {};
+
+    /// Whether the states are initialized (pos, vel, att, messages send)
+    std::array<bool, 4> posVelAttInitialized = { false, false, false, false };
+
+    /// Amount of Messages to send out on successful initialization
+    int messagesToSend = 1;
+
+    /// Initialized Quaternion body to navigation frame (roll, pitch, yaw)
+    Eigen::Quaterniond q_nb_init;
+    /// Position in ECEF coordinates
+    Eigen::Vector3d p_ecef_init;
+    /// Velocity in navigation coordinates
+    Eigen::Vector3d v_n_init;
 };
 
 } // namespace NAV

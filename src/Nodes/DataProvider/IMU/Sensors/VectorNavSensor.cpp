@@ -17,6 +17,7 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
 #include "util/Time/TimeBase.hpp"
+#include "util/InsTransformations.hpp"
 
 #include <map>
 
@@ -2631,6 +2632,74 @@ void NAV::VectorNavSensor::guiConfig()
                                      " report an error if any of the parameters are greater than 1 or less than -1.",
                                      "(!)");
 
+            ImGui::TextUnformatted("Rotation Angles [deg]");
+            ImGui::SameLine();
+            gui::widgets::HelpMarker("The rotation happens in ZYX Order");
+            ImGui::Indent();
+
+            // TODO: Angles to define this
+            Eigen::Matrix3d dcm;
+            dcm << referenceFrameRotationMatrix.e00, referenceFrameRotationMatrix.e01, referenceFrameRotationMatrix.e02,
+                referenceFrameRotationMatrix.e10, referenceFrameRotationMatrix.e11, referenceFrameRotationMatrix.e12,
+                referenceFrameRotationMatrix.e20, referenceFrameRotationMatrix.e21, referenceFrameRotationMatrix.e22;
+
+            Eigen::Vector3d eulerRot = trafo::rad2deg3(trafo::quat2eulerZYX(Eigen::Quaterniond(dcm)));
+            std::array<float, 3> imuRot = { static_cast<float>(eulerRot.x()), static_cast<float>(eulerRot.y()), static_cast<float>(eulerRot.z()) };
+            if (ImGui::InputFloat3(fmt::format("##rotationAngles{}", size_t(id)).c_str(), imuRot.data()))
+            {
+                // (-180:180] x (-90:90] x (-180:180]
+                if (imuRot.at(0) < -180)
+                {
+                    imuRot.at(0) = -180;
+                }
+                if (imuRot.at(0) > 180)
+                {
+                    imuRot.at(0) = 180;
+                }
+                if (imuRot.at(1) < -90)
+                {
+                    imuRot.at(1) = -90;
+                }
+                if (imuRot.at(1) > 90)
+                {
+                    imuRot.at(1) = 90;
+                }
+                if (imuRot.at(2) < -180)
+                {
+                    imuRot.at(2) = -180;
+                }
+                if (imuRot.at(2) > 180)
+                {
+                    imuRot.at(2) = 180;
+                }
+                auto dcmf = trafo::quat_bp(trafo::deg2rad(imuRot.at(0)), trafo::deg2rad(imuRot.at(1)), trafo::deg2rad(imuRot.at(2))).toRotationMatrix().cast<float>();
+                referenceFrameRotationMatrix = vn::math::mat3f(dcmf(0, 0), dcmf(0, 1), dcmf(0, 2),
+                                                               dcmf(1, 0), dcmf(1, 1), dcmf(1, 2),
+                                                               dcmf(2, 0), dcmf(2, 1), dcmf(2, 2));
+                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+                flow::ApplyChanges();
+                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                {
+                    try
+                    {
+                        vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        LOG_ERROR("{}: Could not configure the referenceFrameRotationMatrix: {}", nameId(), e.what());
+                        deinitializeNode();
+                    }
+                }
+                else
+                {
+                    deinitializeNode();
+                }
+            }
+
+            ImGui::Unindent();
+            ImGui::TextUnformatted("Rotation Matrix C");
+            ImGui::Indent();
+
             std::array<float, 3> row = { referenceFrameRotationMatrix.e00, referenceFrameRotationMatrix.e01, referenceFrameRotationMatrix.e02 };
             if (ImGui::InputFloat3(fmt::format("##referenceFrameRotationMatrix row 0 {}", size_t(id)).c_str(), row.data(), "%.2f"))
             {
@@ -2707,6 +2776,7 @@ void NAV::VectorNavSensor::guiConfig()
                 }
             }
 
+            ImGui::Unindent();
             ImGui::TreePop();
         }
 
@@ -6042,7 +6112,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
                 if (obs->insTime->empty())
                 {
-                    if (InsTime currentTime = util::time::GetCurrentTime();
+                    if (InsTime currentTime = util::time::GetCurrentInsTime();
                         !currentTime.empty())
                     {
                         obs->insTime = currentTime;
@@ -6076,7 +6146,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
         auto obs = std::make_shared<StringObs>(p.datastr());
 
-        if (InsTime currentTime = util::time::GetCurrentTime();
+        if (InsTime currentTime = util::time::GetCurrentInsTime();
             !currentTime.empty())
         {
             obs->insTime = currentTime;

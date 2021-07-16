@@ -413,6 +413,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
         {
             if (igfd::ImGuiFileDialog::Instance()->IsOk)
             {
+                std::filesystem::current_path(flow::GetProgramRootPath());
                 loadSuccessful = flow::LoadFlow(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
                 if (loadSuccessful)
                 {
@@ -476,7 +477,7 @@ void NAV::gui::NodeEditorApplication::ShowRenameNodeRequest(Node*& renameNode)
             }
         }
 
-        if (ImGui::InputTextWithHint("", "Enter the title here", &renameNode->name, ImGuiInputTextFlags_EnterReturnsTrue))
+        if (ImGui::InputTextMultiline(fmt::format("##{}", size_t(renameNode->id)).c_str(), &renameNode->name, ImVec2(0, 65), ImGuiInputTextFlags_CtrlEnterForNewLine | ImGuiInputTextFlags_EnterReturnsTrue))
         {
             nameBackup.clear();
             renameNode = nullptr;
@@ -991,19 +992,27 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                 if (ed::QueryNewNode(&pinId))
                 {
                     newLinkPin = nm::FindPin(pinId);
-                    if (newLinkPin)
+                    if (newLinkPin->kind == Pin::Kind::Input && nm::IsPinLinked(newLinkPin->id))
                     {
-                        showLabel("+ Create Node", ImColor(32, 45, 32, 180));
+                        showLabel("End Pin already linked", ImColor(45, 32, 32, 180));
+                        ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                     }
-
-                    if (ed::AcceptNewItem())
+                    else
                     {
-                        createNewNode = true;
-                        newNodeLinkPin = nm::FindPin(pinId);
-                        newLinkPin = nullptr;
-                        ed::Suspend();
-                        ImGui::OpenPopup("Create New Node");
-                        ed::Resume();
+                        if (newLinkPin)
+                        {
+                            showLabel("+ Create Node", ImColor(32, 45, 32, 180));
+                        }
+
+                        if (ed::AcceptNewItem())
+                        {
+                            createNewNode = true;
+                            newNodeLinkPin = nm::FindPin(pinId);
+                            newLinkPin = nullptr;
+                            ed::Suspend();
+                            ImGui::OpenPopup("Create New Node");
+                            ed::Resume();
+                        }
                     }
                 }
             }
@@ -1332,9 +1341,14 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         ImGui::SetTooltip("%s", tooltipText.c_str());
     }
 
-    ImGui::ShowDemoWindow();
-    ImPlot::ShowDemoWindow();
-    //ImGui::ShowMetricsWindow();
+    if (showImGuiDemoWindow)
+    {
+        ImGui::ShowDemoWindow();
+    }
+    if (showImPlotDemoWindow)
+    {
+        ImPlot::ShowDemoWindow();
+    }
 
     std::string title = (flow::HasUnsavedChanges() ? "● " : "")
                         + (flow::GetCurrentFilename().empty() ? "" : flow::GetCurrentFilename() + " - ")

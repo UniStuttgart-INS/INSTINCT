@@ -139,7 +139,8 @@ NAV::Plot::Plot()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 750, 650 };
 
-    dataIdentifier = { RtklibPosObs::type(), UbloxObs::type(),
+    dataIdentifier = { PosVelAtt::type(),
+                       RtklibPosObs::type(), UbloxObs::type(),
                        ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(),
                        VectorNavBinaryOutput::type() };
 
@@ -664,7 +665,29 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
     {
         data.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
 
-        if (startPin->dataIdentifier.front() == RtklibPosObs::type())
+        if (startPin->dataIdentifier.front() == PosVelAtt::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // PosVelAtt
+            data.at(pinIndex).addPlotDataItem("Latitude [deg]");
+            data.at(pinIndex).addPlotDataItem("Longitude [deg]");
+            data.at(pinIndex).addPlotDataItem("Altitude [m]");
+            data.at(pinIndex).addPlotDataItem("North/South [m]");
+            data.at(pinIndex).addPlotDataItem("East/West [m]");
+            data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Roll [deg]");
+            data.at(pinIndex).addPlotDataItem("Pitch [deg]");
+            data.at(pinIndex).addPlotDataItem("Yaw [deg]");
+            data.at(pinIndex).addPlotDataItem("Quaternion::w");
+            data.at(pinIndex).addPlotDataItem("Quaternion::x");
+            data.at(pinIndex).addPlotDataItem("Quaternion::y");
+            data.at(pinIndex).addPlotDataItem("Quaternion::z");
+        }
+        else if (startPin->dataIdentifier.front() == RtklibPosObs::type())
         {
             // InsObs
             data.at(pinIndex).addPlotDataItem("Time [s]");
@@ -1180,7 +1203,7 @@ void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
 
         LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
-        auto currentTime = util::time::GetCurrentTime();
+        auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<bool>(pinIndex);
 
         if (value != nullptr && !currentTime.empty())
@@ -1209,7 +1232,7 @@ void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
 
         LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
-        auto currentTime = util::time::GetCurrentTime();
+        auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<int>(pinIndex);
 
         if (value != nullptr && !currentTime.empty())
@@ -1238,7 +1261,7 @@ void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
 
         LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
-        auto currentTime = util::time::GetCurrentTime();
+        auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<double>(pinIndex);
 
         if (value != nullptr && !currentTime.empty())
@@ -1269,7 +1292,7 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
 
             LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
-            auto currentTime = util::time::GetCurrentTime();
+            auto currentTime = util::time::GetCurrentInsTime();
             if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
             {
                 auto* value = getInputValue<Eigen::MatrixXd>(pinIndex);
@@ -1336,7 +1359,11 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
 
-            if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
+            if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
+            {
+                plotPosVelAtt(std::dynamic_pointer_cast<PosVelAtt>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
                 plotRtklibPosObs(std::dynamic_pointer_cast<RtklibPosObs>(nodeData), pinIndex);
             }
@@ -1362,6 +1389,61 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
             }
         }
     }
+}
+
+void NAV::Plot::plotPosVelAtt(const std::shared_ptr<PosVelAtt>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(startValue_Time))
+        {
+            startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    /// [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
+    Eigen::Vector3d position_lla = obs->latLonAlt();
+
+    if (std::isnan(startValue_North))
+    {
+        startValue_North = position_lla.x();
+    }
+    int sign = position_lla.x() > startValue_North ? 1 : -1;
+    /// North/South deviation [m]
+    double northSouth = measureDistance(position_lla.x(), position_lla.y(),
+                                        startValue_North, position_lla.y())
+                        * sign;
+
+    if (std::isnan(startValue_East))
+    {
+        startValue_East = position_lla.y();
+    }
+    sign = position_lla.y() > startValue_East ? 1 : -1;
+    /// East/West deviation [m]
+    double eastWest = measureDistance(position_lla.x(), position_lla.y(),
+                                      position_lla.x(), startValue_East)
+                      * sign;
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // PosVelAtt
+    addData(pinIndex, i++, trafo::rad2deg(position_lla(0)));
+    addData(pinIndex, i++, trafo::rad2deg(position_lla(1)));
+    addData(pinIndex, i++, position_lla(2));
+    addData(pinIndex, i++, northSouth);
+    addData(pinIndex, i++, eastWest);
+    addData(pinIndex, i++, obs->position_ecef().x());
+    addData(pinIndex, i++, obs->position_ecef().y());
+    addData(pinIndex, i++, obs->position_ecef().z());
+    addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().x()));
+    addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().y()));
+    addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().z()));
+    addData(pinIndex, i++, obs->quaternion_nb().w());
+    addData(pinIndex, i++, obs->quaternion_nb().x());
+    addData(pinIndex, i++, obs->quaternion_nb().y());
+    addData(pinIndex, i++, obs->quaternion_nb().z());
 }
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex)
