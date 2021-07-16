@@ -480,6 +480,12 @@ void NAV::PosVelAttInitializer::finalizeInit()
                  trafo::rad2deg(latLonAlt.x()),
                  trafo::rad2deg(latLonAlt.y()),
                  latLonAlt.z());
+
+        if (latLonAlt.z() < 0)
+        {
+            LOG_WARN("{}: Altitude has a value of {} which is below the ellipsoid height.", nameId(), latLonAlt.z());
+        }
+
         LOG_INFO("{}: Velocity initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
                  v_n_init(0), v_n_init(1), v_n_init(2));
 

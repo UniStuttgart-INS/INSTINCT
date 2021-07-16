@@ -138,6 +138,15 @@ void NAV::Delay::delayObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdi
         buffer.pop_front();
         buffer.push_back(nodeData);
 
+        if (auto obs = std::dynamic_pointer_cast<InsObs>(nodeData))
+        {
+            LOG_DATA("{}: Delay pushing out message: {}", nameId(), obs->insTime->toGPSweekTow());
+        }
+        else
+        {
+            LOG_DATA("{}: Delay pushing out message", nameId());
+        }
+
         invokeCallbacks(OutputPortIndex_Flow, oldest);
     }
     else
