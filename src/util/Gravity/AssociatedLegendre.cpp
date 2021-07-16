@@ -6,86 +6,60 @@
 #include <cmath>
 #include <array>
 
-std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::util::gravity::associatedLegendre(int N, double x)
+std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::util::gravity::associatedLegendre(int ndegree, double theta)
 {
+    // Index needed for the calculation of all necessary 'Pd' entries up to 'ndegree' (--> Pd(n = ndegree, m = ndegree) is dependent on P(n = ndegree, m = ndegree + 1))
+    int N = ndegree + 2;
+
     Eigen::MatrixXd P = Eigen::MatrixXd::Zero(N, N);
     Eigen::MatrixXd Pd = Eigen::MatrixXd::Zero(N, N);
-    Eigen::MatrixXd full_derivs = Eigen::MatrixXd::Zero(N + 1, N);
 
-    // Compute P^n_0^M
-    Eigen::VectorXd L = Eigen::VectorXd::Zero(N).transpose();
-    Eigen::VectorXd Ld = Eigen::VectorXd::Zero(N).transpose();
+    // Recurrence relations for the normalized associated Legendre functions (see 'GUT User Guide' eq. 4.2.2 and eq. 4.2.3)
+    P(0, 0) = 1.0;
+    P(1, 0) = std::sqrt(3.0) * std::cos(theta);
+    P(1, 1) = std::sqrt(3.0) * std::sin(theta);
 
-    L(0) = 1.0;
-    L(1) = x;
-    Ld(0) = 0.0;
-    Ld(1) = 1.0;
-
-    for (int i = 2; i <= N - 1; i++)
+    for (int n = 2; n <= N - 1; n++)
     {
-        auto n = static_cast<double>(i - 1);
-        L(i) = ((2.0 * n + 1.0) * x * L(i - 1) - n * L(i - 2)) / (n + 1.0);
-        Ld(i) = ((2.0 * n + 1.0) * (L(i - 1) + x * Ld(i - 1)) - n * Ld(i - 2)) / (n + 1.0);
-    }
-    LOG_DATA("First rows of the Associated Legendre Polynomial Coefficient Matrix and its derivative:\nL =\n{}\nLd =\n{}", L.transpose(), Ld.transpose());
+        auto nd = static_cast<double>(n);
+        P(n, n) = std::sqrt((2.0 * nd + 1.0) / (2.0 * nd)) * std::sin(theta) * P(n - 1, n - 1);
 
-    P.row(0) = L.transpose();
-    Pd.row(0) = Ld.transpose();
-
-    full_derivs.row(0) = Pd.row(0);
-
-    for (int j = 1; j <= N; j++)
-    {
-        double jj = static_cast<double>(j) + 1.0;
-        for (int k = 2; k <= N - 1; k++)
+        for (int m = 0; m <= n; m++)
         {
-            auto m = static_cast<double>(k - 1);
-            full_derivs(j, k) = ((2.0 * m + 1.0) * (jj * full_derivs(j - 1, k - 1) + x * full_derivs(j, k - 1)) - m * full_derivs(j, k - 2)) / (m + 1.0);
-        }
-    }
-    LOG_DATA("Derivative matrix 'full_derivs' of the Associated Legendre Polynomials =\n{}", full_derivs);
+            auto md = static_cast<double>(m);
 
-    for (int m = 1; m <= N - 1; m++)
-    {
-        double mm = static_cast<double>(m) + 1.0;
-        for (int n = m; n <= N - 1; n++)
-        {
-            P(m, n) = std::pow((1.0 - std::pow(x, 2.0)), ((mm - 1.0) / 2.0)) * full_derivs(m - 1, n);
-
-            Pd(m, n) = -((mm - 1.0) / 2.0) * std::pow((1.0 - std::pow(x, 2.0)), (((mm - 1.0) / 2.0) - 1.0)) * 2.0 * x
-                       + std::pow((1.0 - std::pow(x, 2.0)), (mm - 1.0) / 2.0) * full_derivs(m, n);
-        }
-    }
-    LOG_DATA("Associated Legendre Polynomial coefficients:\nP =\n{}\nPd =\n{}", P, Pd);
-
-    // Normalize values
-    auto Nlong = static_cast<uint64_t>(N);
-
-    for (uint64_t n = 0; n <= Nlong - 1; n++)
-    {
-        for (uint64_t m = 0; m <= Nlong - 1; m++)
-        {
-            if (n >= m)
+            if (n == m + 1)
             {
-                auto nn = static_cast<double>(n);
-
-                // Normalization factor, consistent with equation (4.1.6) from "GUT User Guide" (https://earth.esa.int/documents/10174/1500266/GUT_UserGuide)
-                double factor = (2.0 * nn + 1.0) * static_cast<double>(NAV::factorial(n - m)) / static_cast<double>(NAV::factorial(n + m));
-
-                if (m != 0)
-                {
-                    factor *= 2.0;
-                }
-
-                auto mi = static_cast<int>(m);
-                auto ni = static_cast<int>(n);
-
-                P(mi, ni) *= std::sqrt(factor);
-                Pd(mi, ni) *= std::sqrt(factor);
+                P(n, m) = std::sqrt(((2.0 * nd + 1.0) * (2.0 * nd - 1.0)) / ((nd + md) * (nd - md))) * std::cos(theta) * P(n - 1, m);
+            }
+            else if (n > m + 1)
+            {
+                P(n, m) = std::sqrt(((2.0 * nd + 1.0) * (2.0 * nd - 1.0)) / ((nd + md) * (nd - md))) * std::cos(theta) * P(n - 1, m) 
+                - sqrt(((2.0 * nd + 1.0) * (nd + md - 1.0) * (nd - md - 1.0)) / ((2.0 * nd - 3.0) * (nd + md) * (nd - md))) * std::cos(theta) * P(n - 2, m);
             }
         }
     }
-    LOG_DATA("Associated Legendre Polynomial coefficients NORMALIZED:\nP =\n{}\nPd =\n{}", P, Pd);
 
-    return std::make_pair(P, Pd);
+    // Recurrence relations for the derivative of the normalized associated Legendre functions (see 'GUT User Guide' eq. 4.2.6)
+    Pd(0, 0) = 0.0;
+    Pd(1, 0) = - std::sqrt(3.0) * std::sin(theta);
+    Pd(1, 1) = std::sqrt(3.0) * std::cos(theta);
+
+    for (int n = 2; n <= N - 1; n++) // 2nd for-loop is necessary, because for the calculation of 'Pd', all coefficients of 'P' must be available
+    {
+        auto nd = static_cast<double>(n);
+
+        Pd(n, 0) = -0.5 * std::sqrt(2.0 * nd * (nd + 1.0)) * P(n, 1);
+        Pd(n, 1) = 0.5 * (std::sqrt(2.0 * nd * (nd + 1.0)) * P(n, 0) - std::sqrt((nd - 1.0) * (nd + 2.0)) * std::pow(P(n, 2), 2.0));
+
+        for (int m = 2; m <= n - 1; m++)
+        {
+            auto md = static_cast<double>(m);
+
+            // else if ((m > 1) && (m < N - 1))
+            Pd(n, m) = 0.5 * (std::sqrt((nd + md) * (nd - md + 1.0)) * P(n, m - 1) - std::sqrt((nd - md) * (nd + md + 1.0)) * P(n, m + 1));
+        }
+    }
+
+    return std::make_pair(P, Pd);;
 }
