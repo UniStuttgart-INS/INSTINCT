@@ -413,6 +413,7 @@ void NAV::gui::NodeEditorApplication::ShowLoadRequested()
         {
             if (igfd::ImGuiFileDialog::Instance()->IsOk)
             {
+                std::filesystem::current_path(flow::GetProgramRootPath());
                 loadSuccessful = flow::LoadFlow(igfd::ImGuiFileDialog::Instance()->GetFilePathName());
                 if (loadSuccessful)
                 {
