@@ -186,7 +186,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, b
                 std::get<UbxNavAtt>(obs->data).accHeading = obs->raw.extractUint32();
 
                 // Calculate the insTime with the iTOW
-                auto currentTime = util::time::GetCurrentTime();
+                auto currentTime = util::time::GetCurrentInsTime();
                 if (!currentTime.empty())
                 {
                     auto gpst = currentTime.toGPSweekTow();
@@ -212,7 +212,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, b
                 std::get<UbxNavPosecef>(obs->data).pAcc = obs->raw.extractUint32();
 
                 // Calculate the insTime with the iTOW
-                auto currentTime = util::time::GetCurrentTime();
+                auto currentTime = util::time::GetCurrentInsTime();
                 if (!currentTime.empty())
                 {
                     auto gpst = currentTime.toGPSweekTow();
@@ -240,7 +240,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, b
                 std::get<UbxNavPosllh>(obs->data).vAcc = obs->raw.extractUint32();
 
                 // Calculate the insTime with the iTOW
-                auto currentTime = util::time::GetCurrentTime();
+                auto currentTime = util::time::GetCurrentInsTime();
                 if (!currentTime.empty())
                 {
                     auto gpst = currentTime.toGPSweekTow();
@@ -270,7 +270,7 @@ void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, b
                 std::get<UbxNavVelned>(obs->data).cAcc = obs->raw.extractUint32();
 
                 // Calculate the insTime with the iTOW
-                auto currentTime = util::time::GetCurrentTime();
+                auto currentTime = util::time::GetCurrentInsTime();
                 if (!currentTime.empty())
                 {
                     auto gpst = currentTime.toGPSweekTow();

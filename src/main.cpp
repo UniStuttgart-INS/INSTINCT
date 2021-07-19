@@ -1,4 +1,4 @@
-#include "gui/NodeEditorApplication.hpp"
+#include "internal/gui/NodeEditorApplication.hpp"
 
 #include <iostream>
 #include <chrono>
@@ -98,6 +98,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
                         }
                     }
 
+                    nm::DisableAllCallbacks();
                     nm::DeleteAllNodes();
                 }
             }

@@ -42,7 +42,7 @@ bool NAV::FileReader::initialize()
         filepath = flow::GetProgramRootPath() + '/' + path;
     }
 
-    if (fileType == FileType::ASCII || fileType == FileType::BINARY)
+    if (fileType == FileType::CSV || fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         filestream = std::ifstream(filepath, std::ios_base::in | std::ios_base::binary);
@@ -62,9 +62,9 @@ bool NAV::FileReader::initialize()
 
     dataStart = filestream.tellg();
 
-    if (fileType == FileType::ASCII)
+    if (fileType == FileType::CSV)
     {
-        LOG_DEBUG("ASCII-File successfully initialized");
+        LOG_DEBUG("CSV-File successfully initialized");
     }
     else if (fileType == FileType::BINARY)
     {
@@ -109,7 +109,7 @@ NAV::FileReader::FileType NAV::FileReader::determineFileType()
 
         if (n >= 3)
         {
-            return FileType::ASCII;
+            return FileType::CSV;
         }
 
         return FileType::BINARY;
@@ -123,7 +123,7 @@ void NAV::FileReader::readHeader()
 {
     LOG_TRACE("called");
 
-    if (fileType == FileType::ASCII)
+    if (fileType == FileType::CSV)
     {
         headerColumns.clear();
 

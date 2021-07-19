@@ -151,7 +151,7 @@ void NAV::SkydelNetworkStream::do_receive()
                 obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
                 obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
 
-                InsTime currentTime = util::time::GetCurrentTime();
+                InsTime currentTime = util::time::GetCurrentInsTime();
                 if (!currentTime.empty())
                 {
                     obs->insTime = currentTime;

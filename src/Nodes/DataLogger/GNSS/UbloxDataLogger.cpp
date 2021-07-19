@@ -4,7 +4,7 @@
 
 #include "util/Logger.hpp"
 
-#include "gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
 
 #include <iomanip> // std::setprecision
 
@@ -76,6 +76,11 @@ void NAV::UbloxDataLogger::restore(json const& j)
     }
 }
 
+void NAV::UbloxDataLogger::flush()
+{
+    filestream.flush();
+}
+
 bool NAV::UbloxDataLogger::initialize()
 {
     LOG_TRACE("{}: called", nameId());
@@ -92,7 +97,7 @@ void NAV::UbloxDataLogger::deinitialize()
 
 void NAV::UbloxDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::static_pointer_cast<UbloxObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<UbloxObs>(nodeData);
 
     if (obs->raw.getRawDataLength() > 0)
     {

@@ -24,6 +24,17 @@ class Imu : public Node
     /// @brief Move assignment operator
     Imu& operator=(Imu&&) = delete;
 
+    /// @brief ImGui config window which is shown on double click
+    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    void guiConfig() override;
+
+    /// @brief Saves the node into a json object
+    [[nodiscard]] json save() const override;
+
+    /// @brief Restores the node from a json object
+    /// @param[in] j Json object with the node state
+    void restore(const json& j) override;
+
     /// Position and rotation information for conversion from platform to body frame
     [[nodiscard]] const ImuPos& imuPosition() const { return imuPos; }
 

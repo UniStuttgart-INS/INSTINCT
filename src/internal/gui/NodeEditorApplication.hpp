@@ -9,7 +9,7 @@
 
 #include <imgui.h>
 
-#include "gui/GlobalActions.hpp"
+#include "internal/gui/GlobalActions.hpp"
 
 #include <thread>
 #include <deque>
@@ -26,7 +26,7 @@ class NodeEditorApplication : public Application
     /// @brief Default constructor
     NodeEditorApplication() = delete;
     /// @brief Destructor
-    ~NodeEditorApplication() override = default;
+    ~NodeEditorApplication() override;
     /// @brief Copy constructor
     NodeEditorApplication(const NodeEditorApplication&) = delete;
     /// @brief Move constructor
@@ -63,12 +63,15 @@ class NodeEditorApplication : public Application
 
     static inline ImTextureID m_InstinctLogo = nullptr;
 
+    static inline bool showImGuiDemoWindow = false;
+    static inline bool showImPlotDemoWindow = false;
+
   private:
     ImTextureID m_HeaderBackground = nullptr;
 
     GlobalActions globalAction = GlobalActions::None;
 
-    bool initThread_stopRequested = false;
+    // bool initThread_stopRequested = false;
     std::thread initThread;
     size_t currentInitNodeId = 0;
     /// List of Node* & flag (init=true, deinit=false)

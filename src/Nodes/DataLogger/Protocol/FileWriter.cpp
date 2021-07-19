@@ -11,6 +11,7 @@
     json j;
 
     j["path"] = path;
+    j["fileType"] = fileType;
 
     return j;
 }
@@ -22,6 +23,10 @@ void NAV::FileWriter::restore(json const& j)
     if (j.contains("path"))
     {
         j.at("path").get_to(path);
+    }
+    if (j.contains("fileType"))
+    {
+        j.at("fileType").get_to(fileType);
     }
 }
 
@@ -43,11 +48,7 @@ bool NAV::FileWriter::initialize()
         filepath = flow::GetProgramRootPath() + '/' + path;
     }
 
-    if (fileType == FileType::ASCII)
-    {
-        filestream.open(filepath, std::ios_base::trunc);
-    }
-    else if (fileType == FileType::BINARY)
+    if (fileType == FileType::CSV || fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
         filestream.open(filepath, std::ios_base::trunc | std::ios_base::binary);
@@ -79,4 +80,19 @@ void NAV::FileWriter::deinitialize()
     }
 
     filestream.clear();
+}
+
+std::string NAV::FileWriter::str(NAV::FileWriter::FileType type)
+{
+    switch (type)
+    {
+    case FileType::NONE:
+        return "None";
+    case FileType::CSV:
+        return "CSV";
+    case FileType::BINARY:
+        return "Binary";
+    default:
+        return "Unkown";
+    }
 }

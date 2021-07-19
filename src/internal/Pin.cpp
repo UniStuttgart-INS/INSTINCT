@@ -4,7 +4,7 @@
 
 #include "NodeRegistry.hpp"
 
-#include "gui/widgets/PinIcon.hpp"
+#include "internal/gui/widgets/PinIcon.hpp"
 
 bool NAV::Pin::canCreateLink(const Pin& b) const
 {

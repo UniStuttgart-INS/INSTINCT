@@ -416,7 +416,7 @@ void NAV::Demo::receiveSensorData(const std::shared_ptr<NodeData>& /*nodeData*/,
 
 void NAV::Demo::receiveFileReaderData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::static_pointer_cast<InsObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<InsObs>(nodeData);
     LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime->GetStringOfDate());
 
     receivedDataFromFileReaderCnt++;

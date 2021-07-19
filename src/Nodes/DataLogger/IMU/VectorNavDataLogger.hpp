@@ -49,6 +49,15 @@ class VectorNavDataLogger : public Node, public FileWriter
     /// @param[in] j Json object with the node state
     void restore(const json& j) override;
 
+    /// @brief Called when a new link is to be established
+    /// @param[in] startPin Pin where the link starts
+    /// @param[in] endPin Pin where the link ends
+    /// @return True if link is allowed, false if link is rejected
+    bool onCreateLink(Pin* startPin, Pin* endPin) override;
+
+    /// @brief Function called by the flow executer after finishing to flush out remaining data
+    void flush() override;
+
   private:
     /// @brief Initialize the node
     bool initialize() override;
@@ -60,6 +69,9 @@ class VectorNavDataLogger : public Node, public FileWriter
     /// @param[in] nodeData The received observation
     /// @param[in] linkId Id of the link over which the data is received
     void writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    /// @brief Flag to write the header once
+    bool headerWritten = false;
 };
 
 } // namespace NAV

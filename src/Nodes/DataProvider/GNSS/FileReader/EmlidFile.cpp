@@ -2,7 +2,7 @@
 
 #include "util/Logger.hpp"
 
-#include "gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -130,7 +130,7 @@ std::shared_ptr<NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
 
     if (!obs->insTime.has_value())
     {
-        if (auto currentTime = util::time::GetCurrentTime();
+        if (auto currentTime = util::time::GetCurrentInsTime();
             !currentTime.empty())
         {
             obs->insTime = currentTime;
@@ -141,21 +141,6 @@ std::shared_ptr<NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
     {
         // Return to position before "Read line".
         filestream.seekg(pos, std::ios_base::beg);
-    }
-
-    if (obs->insTime.has_value())
-    {
-        // Has time value, but value should not be displayed
-        if (obs->insTime.value() < lowerLimit)
-        {
-            // Resetting the value will make the read loop skip the message
-            obs->insTime.reset();
-            return obs;
-        }
-        if (obs->insTime.value() > upperLimit)
-        {
-            return nullptr;
-        }
     }
 
     // Calls all the callbacks

@@ -43,7 +43,7 @@ void NAV::util::time::SetMode(NAV::util::time::Mode mode)
     timeMode = mode;
 }
 
-NAV::InsTime NAV::util::time::GetCurrentTime()
+NAV::InsTime NAV::util::time::GetCurrentInsTime()
 {
     if (timeMode == Mode::POST_PROCESSING || currentTime.empty())
     {
@@ -56,7 +56,7 @@ NAV::InsTime NAV::util::time::GetCurrentTime()
 
 void NAV::util::time::SetCurrentTime(const NAV::InsTime& insTime)
 {
-    if (auto currentExactTime = GetCurrentTime();
+    if (auto currentExactTime = GetCurrentInsTime();
         insTime < currentExactTime)
     {
         LOG_DATA("Not updating current Time [{} {:.6f}] to [{} {:.6f}], because the new time is earlier.",

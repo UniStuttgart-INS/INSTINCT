@@ -94,6 +94,10 @@ class ImuPos
     Eigen::Quaterniond quaternionMag_bp = { 1, 0, 0, 0 };
 
     friend class Imu;
+    friend void from_json(const json& j, ImuPos& pos);
 };
+
+void to_json(json& j, const ImuPos& pos);
+void from_json(const json& j, ImuPos& pos);
 
 } // namespace NAV

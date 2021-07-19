@@ -127,6 +127,8 @@ void NAV::ImuSimulator::guiConfig()
         LOG_DEBUG("{}: Temperature changed to {}", nameId(), temperature);
         flow::ApplyChanges();
     }
+
+    Imu::guiConfig();
 }
 
 [[nodiscard]] json NAV::ImuSimulator::save() const
@@ -149,6 +151,8 @@ void NAV::ImuSimulator::guiConfig()
     j["mag_p"] = mag_p;
 
     j["temperature"] = temperature;
+
+    j["Imu"] = Imu::save();
 
     return j;
 }
@@ -207,13 +211,18 @@ void NAV::ImuSimulator::restore(json const& j)
     {
         j.at("temperature").get_to(temperature);
     }
+
+    if (j.contains("Imu"))
+    {
+        Imu::restore(j.at("Imu"));
+    }
 }
 
 bool NAV::ImuSimulator::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    startTime = util::time::GetCurrentTime();
+    startTime = util::time::GetCurrentInsTime();
 
     return !startTime.empty();
 }

@@ -4,7 +4,7 @@
 #include "util/InsTransformations.hpp"
 #include "util/Time/TimeBase.hpp"
 
-#include "gui/widgets/FileDialog.hpp"
+#include "internal/gui/widgets/FileDialog.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -330,7 +330,7 @@ std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
             util::time::SetCurrentTime(obs->insTime.value());
         }
     }
-    else if (auto currentTime = util::time::GetCurrentTime();
+    else if (auto currentTime = util::time::GetCurrentInsTime();
              !currentTime.empty())
     {
         obs->insTime = currentTime;
@@ -340,21 +340,6 @@ std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
     {
         // Return to position before "Read line".
         filestream.seekg(pos, std::ios_base::beg);
-    }
-
-    if (obs->insTime.has_value())
-    {
-        // Has time value, but value should not be displayed
-        if (obs->insTime.value() < lowerLimit)
-        {
-            // Resetting the value will make the read loop skip the message
-            obs->insTime.reset();
-            return obs;
-        }
-        if (obs->insTime.value() > upperLimit)
-        {
-            return nullptr;
-        }
     }
 
     // Calls all the callbacks
@@ -368,7 +353,7 @@ std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
 
 NAV::FileReader::FileType NAV::RtklibPosFile::determineFileType()
 {
-    return FileReader::FileType::ASCII;
+    return FileReader::FileType::CSV;
 }
 
 void NAV::RtklibPosFile::readHeader()
