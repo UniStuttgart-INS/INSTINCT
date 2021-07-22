@@ -35,7 +35,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::util::gravity::associatedLegend
             else if (n > m + 1)
             {
                 P(n, m) = std::sqrt(((2.0 * nd + 1.0) * (2.0 * nd - 1.0)) / ((nd + md) * (nd - md))) * std::cos(theta) * P(n - 1, m) 
-                - sqrt(((2.0 * nd + 1.0) * (nd + md - 1.0) * (nd - md - 1.0)) / ((2.0 * nd - 3.0) * (nd + md) * (nd - md))) * std::cos(theta) * P(n - 2, m);
+                - std::sqrt(((2.0 * nd + 1.0) * (nd + md - 1.0) * (nd - md - 1.0)) / ((2.0 * nd - 3.0) * (nd + md) * (nd - md))) * std::cos(theta) * P(n - 2, m);
             }
         }
     }
@@ -61,5 +61,5 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::util::gravity::associatedLegend
         }
     }
 
-    return std::make_pair(P, Pd);;
+    return std::make_pair(P, Pd);
 }
