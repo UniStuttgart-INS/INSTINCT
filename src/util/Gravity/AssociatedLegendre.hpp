@@ -1,6 +1,6 @@
 /// @file AssociatedLegendre.hpp
-/// @brief Legendre Polynomials for EGM
-/// @author M. Maier (maier@ins.uni-stuttgart.de)
+/// @brief Associated Legendre Polynomials for EGM96
+/// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @date 2021-05-21
 
 #pragma once
@@ -9,12 +9,12 @@
 
 namespace NAV::util::gravity
 {
-/// @brief Calculates the associated Legendre Polynomials necessary for the EGM96
-/// @param[in] degreeN of Legendre polynomial
-/// @param[in] x sampling points of the polynomials
-/// @return Associated Legendre Polynomial Parameters as P2 << P, Pd (derivative)
+/// @brief Calculates the associated Legendre Polynomial coefficients necessary for the EGM96
+/// @param[in] ndegree Degree of associated Legendre polynomials
+/// @param[in] theta Elevation angle (spherical coordinates) [rad]
+/// @return Matrix of associated Legendre polynomial coefficients P and its derivative Pd
 ///
-/// @note See https://github.com/lukasbystricky/SpaceSimulator/blob/master/Utilities/Math/associated_legendre.m (last accessed on June 24th, 2021)
-[[nodiscard]] std::pair<Eigen::MatrixXd, Eigen::MatrixXd> associatedLegendre(int degreeN, double x);
+/// @note See 'GUT User Guide' (2018) chapter 4.2, equations (4.2.2), (4.2.3) and (4.2.6)
+[[nodiscard]] std::pair<Eigen::MatrixXd, Eigen::MatrixXd> associatedLegendre(int ndegree, double theta);
 
 } // namespace NAV::util::gravity
