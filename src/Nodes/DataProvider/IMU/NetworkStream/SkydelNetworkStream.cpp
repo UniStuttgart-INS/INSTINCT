@@ -4,6 +4,9 @@
 #include <thread>
 #include <string>
 #include <vector>
+#include <chrono>
+#include <cmath>
+#include <sstream>
 
 #include "util/Debug.hpp"
 #include "util/Logger.hpp"
@@ -21,7 +24,11 @@ NAV::SkydelNetworkStream::SkydelNetworkStream()
 {
     name = typeStatic();
 
-    hasConfig = false;
+    hasConfig = true;
+    guiConfigDefaultWindowSize = { 345, 642 };
+
+    packageCount = 0;
+    dataRate = 0.0;
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
     nm::CreateOutputPin(this, "SkydelObs", Pin::Type::Flow, NAV::SkydelObs::type());
@@ -49,7 +56,10 @@ std::string NAV::SkydelNetworkStream::category()
 
 void NAV::SkydelNetworkStream::guiConfig()
 {
-    //TODO: Configure slider to enable custom data rate setting
+    std::ostringstream strs;
+    strs << dataRate;
+    std::string str = strs.str();
+    ImGui::LabelText(str.c_str(), "data rate [Hz]");
 }
 
 bool NAV::SkydelNetworkStream::resetNode()
@@ -160,6 +170,22 @@ void NAV::SkydelNetworkStream::do_receive()
 
                 this->invokeCallbacks(OutputPortIndex_GnssObs, obsG);
                 this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
+
+                packageCount++;
+
+                switch (packageCount)
+                {
+                case 1: // at receipt of first package
+                    startPoint = std::chrono::steady_clock::now();
+                    break;
+                case packagesNumber: // at receipt of last package
+                    std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - startPoint;
+                    dataRate = static_cast<double>(packagesNumber - 1) / elapsed_seconds.count();
+                    packageCount = 0;
+                    LOG_DATA("Elapsed Seconds = {}", elapsed_seconds.count());
+                    LOG_DATA("SkydelNetworkStream: dataRate = {}", dataRate);
+                    break;
+                }
             }
             else
             {
@@ -178,6 +204,7 @@ bool NAV::SkydelNetworkStream::initialize()
     LOG_TRACE("{}: called", nameId());
 
     stop = false;
+    packageCount = 0;
 
     do_receive();
 

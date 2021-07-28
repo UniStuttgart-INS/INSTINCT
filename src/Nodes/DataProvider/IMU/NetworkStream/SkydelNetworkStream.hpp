@@ -84,6 +84,18 @@ class SkydelNetworkStream : public Imu
     bool stop = false;
     // Startup handler: used in 'initialize()' to differentiate between startup and re-initialization
     bool isStartup = true;
+
+    // Time point where the first package has been received
+    std::chrono::steady_clock::time_point startPoint;
+
+    // Counter for received packages
+    int packageCount;
+
+    // # of packages for averaging dataRate (minimum is '2', since two time points are required to calculate a dataRate)
+    constexpr static unsigned int packagesNumber = 1000;
+
+    // DataRate of the incoming stream [Hz]
+    double dataRate;
 };
 
 } // namespace NAV
