@@ -85,7 +85,7 @@ void NAV::SkydelNetworkStream::do_receive()
                 double gyroY = 0.0;
                 double gyroZ = 0.0;
 
-                for (size_t i = 0; i < 7; i++)
+                for (size_t i = 0; i < 13; i++)
                 {
                     // Reading string from csv
                     if (std::getline(lineStream, cell, ','))
@@ -93,7 +93,7 @@ void NAV::SkydelNetworkStream::do_receive()
                         switch (i)
                         {
                         case 0:
-                            obs->timeSinceStartup = std::stod(cell) * 1e6;
+                            obs->timeSinceStartup = std::stod(cell) * 1e6; // [ns] = [ms] * 1e6
                             break;
                         case 1:
                             posX = std::stod(cell);
