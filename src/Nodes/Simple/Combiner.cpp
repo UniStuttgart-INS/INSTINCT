@@ -102,5 +102,10 @@ void NAV::Combiner::onDeleteLink(Pin* startPin, Pin* endPin)
 
 void NAV::Combiner::receiveData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
+    if (!(NAV::Node::callbacksEnabled))
+    {
+        NAV::Node::callbacksEnabled = true;
+    }
+
     invokeCallbacks(OutputPortIndex_Flow, nodeData);
 }
