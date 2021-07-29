@@ -146,16 +146,19 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
         readEGM96Coeffs();
     }
 
-    // Geocentric latitude determination from geographic latitude and elevation and azimuth
-    double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
+    Eigen::Vector3d pos_lla(latitude, longitude, altitude);
+    Eigen::Vector3d pos_ecef = trafo::lla2ecef_WGS84(pos_lla);
+
+    // Geocentric latitude determination from Groves (2013) - eq. (2.114)
+    double latitudeGeocentric = std::atan(pos_ecef(2) / std::sqrt(pos_ecef(0) * pos_ecef(0) + pos_ecef(1) * pos_ecef(1)));
+
+    // Spherical coordinates
+    double radius = std::sqrt(pos_ecef(0) * pos_ecef(0) + pos_ecef(1) * pos_ecef(1) + pos_ecef(2) * pos_ecef(2));
     double elevation = M_PI_2 - latitudeGeocentric; // [rad]
     double azimuth = longitude;
 
-    // Radius determination (Spheroid)
-    double radius = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0)) + altitude;
-
-    /// g_n Gravity vector in [m/s^2], in spherical coordinates
-    Eigen::Vector3d gravity_sph = { -InsConst::WGS84_MU / (radius * radius), 0.0, 0.0 };
+    /// Gravity vector in [m/s^2], in n-system
+    Eigen::Vector3d gravity_n = { 0.0, 0.0, 0.0 };
 
     double Pnm = 0;
     double Pnmd = 0;
@@ -163,7 +166,8 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
     auto coeffsRows = coeffsEGM96.rows();
 
     // Associated Legendre Polynomial Coefficients 'P' and their derivatives 'Pd'
-    auto [P, Pd] = NAV::util::gravity::associatedLegendre(ndegree + 1, std::sin(elevation));
+    auto [P, Pd] = NAV::util::gravity::associatedLegendre(ndegree, elevation);
+    LOG_DATA("NEW Associated Legendre Polynomial coefficients: P_new =\n{}\nPd_new =\n{}", P,Pd);
 
     for (int i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {
@@ -180,30 +184,27 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
         }
         else
         {
-            // Retrieving the parameters of the Associated Legendre Polynomials
-            Pnm = P(m, n);
-            Pnmd = Pd(m, n);
+            // Retrieving the parameters of the associated Legendre Polynomials
+            Pnm = P(n, m);
+            Pnmd = Pd(n, m);
 
             auto nd = static_cast<double>(n);
             auto md = static_cast<double>(m);
 
-            // Setting the gravity vector dependent on Position(spherical) and EGM96 coefficients
-            gravity_sph(0) = gravity_sph(0) - std::pow(InsConst::WGS84_a, nd) * (nd + 1.0) * InsConst::WGS84_MU * Pnm * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) / (std::pow(radius, (nd + 2.0)));
-            gravity_sph(1) = gravity_sph(1) + std::pow(InsConst::WGS84_a, nd) * InsConst::WGS84_MU * Pnmd * std::cos(elevation) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) / (std::pow(radius, (nd + 2.0)));
-            gravity_sph(2) = gravity_sph(2) + std::pow(InsConst::WGS84_a, nd) * InsConst::WGS84_MU * md * Pnm * (S * std::cos(md * azimuth) - C * std::sin(md * azimuth)) / (std::pow(radius, (nd + 2.0)) * std::sin(elevation));
+            // Gravity vector from differentiation of the gravity potential in spherical coordinates (see 'GUT User Guide' eq. 7.4.2) - centrifugal acceleration added below
+            gravity_n(0) += std::pow((InsConst::WGS84_a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnmd;
+            gravity_n(1) += std::pow((InsConst::WGS84_a / radius), nd) * md * (C * std::sin(md * azimuth) - S * std::cos(md * azimuth)) * Pnm;
+            gravity_n(2) += (nd + 1.0) * std::pow((InsConst::WGS84_a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnm;
         }
     }
 
-    // Rotation of the spherical gravity vector to ECEF coordinates
-    Eigen::Vector3d gravity_ecef = NAV::trafo::sph2ecef(gravity_sph, elevation, azimuth);
+    // Centrifugal acceleration - components North and Down (see 'GUT User Guide' eq. 7.4.2)
+    double centrifugalN = InsConst::angularVelocity_ie * InsConst::angularVelocity_ie * radius * std::sin(elevation) * std::cos(elevation);
+    double centrifugalD = InsConst::angularVelocity_ie * InsConst::angularVelocity_ie * radius * std::sin(elevation) * std::sin(elevation);
 
-    // Rotation of the ECEF gravity vector to NED     //TODO: Make rotation of EGM96 gravity vector via quaternions instead of a rotation matrix // trafo::quat_ne(latitude, azimuth);
-    Eigen::Matrix3d R_ne;
-    R_ne << -std::sin(latitude) * std::cos(azimuth), -std::sin(latitude) * std::sin(azimuth), std::cos(latitude),
-        -std::sin(azimuth), std::cos(azimuth), 0.0,
-        -std::cos(latitude) * std::cos(azimuth), -std::cos(latitude) * std::sin(azimuth), -std::sin(latitude);
-
-    Eigen::Vector3d gravity_n = R_ne * gravity_ecef;
+    gravity_n(0) = -InsConst::WGS84_MU / (radius * radius) * gravity_n(0) - centrifugalN;
+    gravity_n(1) = (1.0 / std::sin(elevation)) * (-InsConst::WGS84_MU / (radius * radius)) * gravity_n(1);
+    gravity_n(2) = InsConst::WGS84_MU / (radius * radius) * (1.0 + gravity_n(2)) - centrifugalD;
 
     return gravity_n;
 }

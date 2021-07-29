@@ -66,14 +66,14 @@ namespace NAV::gravity
 [[nodiscard]] Eigen::Vector3d centrifugalAcceleration_WGS84(const double& latitude, const double& altitude, double gravityMagnitude);
 
 /// @brief Calculates the local gravity vector at the WGS84 reference ellipsoid using the EGM96 spherical harmonic
-///        model (up to order 10) with correctly oriented centrifugal acceleration
+///        model (up to order 10) including the centrifugal acceleration
 /// @param[in] latitude Latitude in [rad]
 /// @param[in] longitude Longitude in [rad]
 /// @param[in] altitude Altitude in [m]
 /// @param[in] ndegree Degree of the EGM96 (1 <= ndegree <= 10)
 /// @return Gravity vector in [m/s^2] in NED frame
 ///
-/// @note See https://github.com/lukasbystricky/SpaceSimulator/blob/master/Environment/Geopoential/geopotential.m (last accessed on June 24th, 2021)
+/// @note See Groves (2013) Chapter 2.4.3 and 'GUT User Guide' (2018) Chapter 7.4
 [[nodiscard]] Eigen::Vector3d gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree);
 
 /// @brief Reads in EGM96 coeffs before runtime, e.g. at initialization of the ImuIntegrator
