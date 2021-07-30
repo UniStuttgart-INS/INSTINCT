@@ -15,6 +15,7 @@
 #include "NodeData/IMU/ImuObs.hpp"
 #include "util/Time/TimeBase.hpp"
 #include "NodeData/GNSS/SkydelObs.hpp"
+#include "internal/gui/widgets/HelpMarker.hpp"
 
 namespace nm = NAV::NodeManager;
 using boost::asio::ip::udp;
@@ -28,6 +29,7 @@ NAV::SkydelNetworkStream::SkydelNetworkStream()
     guiConfigDefaultWindowSize = { 345, 642 };
 
     packageCount = 0;
+    packagesNumber = 2;
     dataRate = 0.0;
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
@@ -60,6 +62,8 @@ void NAV::SkydelNetworkStream::guiConfig()
     strs << dataRate;
     std::string str = strs.str();
     ImGui::LabelText(str.c_str(), "data rate [Hz]");
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("The data rate can be adjusted in Skydel: Settings/Plug-ins/<Plug-in-name>/Plug-in UI");
 }
 
 bool NAV::SkydelNetworkStream::resetNode()
@@ -171,20 +175,32 @@ void NAV::SkydelNetworkStream::do_receive()
                 this->invokeCallbacks(OutputPortIndex_GnssObs, obsG);
                 this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
 
+                // Data rate (for visualization in GUI)
                 packageCount++;
 
-                switch (packageCount)
+                if (packageCount == 1)
                 {
-                case 1: // at receipt of first package
                     startPoint = std::chrono::steady_clock::now();
-                    break;
-                case packagesNumber: // at receipt of last package
+                }
+                else if (packageCount == packagesNumber)
+                {
                     std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - startPoint;
                     dataRate = static_cast<double>(packagesNumber - 1) / elapsed_seconds.count();
+                    
+                    // Dynamic adaptation of data rate to a human-readable display update rate in GUI
+                    if ((dataRate > 2) && (dataRate < 1001)) // restriction on 'reasonable' sensor data rates
+                    {
+                        packagesNumber = static_cast<int>(dataRate);
+                    }
+                    else if (dataRate >= 1001)
+                    {
+                        packagesNumber = 1000;
+                    }
+
                     packageCount = 0;
+
                     LOG_DATA("Elapsed Seconds = {}", elapsed_seconds.count());
                     LOG_DATA("SkydelNetworkStream: dataRate = {}", dataRate);
-                    break;
                 }
             }
             else
@@ -205,6 +221,7 @@ bool NAV::SkydelNetworkStream::initialize()
 
     stop = false;
     packageCount = 0;
+    packagesNumber = 2;
 
     do_receive();
 

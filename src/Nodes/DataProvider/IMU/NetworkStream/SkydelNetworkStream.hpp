@@ -91,10 +91,10 @@ class SkydelNetworkStream : public Imu
     // Counter for received packages
     int packageCount;
 
-    // # of packages for averaging dataRate (minimum is '2', since two time points are required to calculate a dataRate)
-    constexpr static unsigned int packagesNumber = 1000;
+    // # of packages for averaging dataRate (minimum is '2', since two time points are required to calculate a data rate)
+    int packagesNumber;
 
-    // DataRate of the incoming stream [Hz]
+    // Data rate of the received network stream [Hz]
     double dataRate;
 };
 
