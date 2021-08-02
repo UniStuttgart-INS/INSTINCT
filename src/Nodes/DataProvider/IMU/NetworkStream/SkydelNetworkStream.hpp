@@ -96,6 +96,12 @@ class SkydelNetworkStream : public Imu
 
     // Data rate of the received network stream [Hz]
     double dataRate;
+
+    // Counter for packages that are skipped until data rate is shown
+    int startCounter;
+
+    // # of packages that are skipped until data rate is shown
+    int startNow = 20;
 };
 
 } // namespace NAV

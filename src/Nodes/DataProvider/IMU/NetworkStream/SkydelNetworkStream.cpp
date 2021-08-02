@@ -29,6 +29,7 @@ NAV::SkydelNetworkStream::SkydelNetworkStream()
     guiConfigDefaultWindowSize = { 345, 642 };
 
     packageCount = 0;
+    startCounter = 0;
     packagesNumber = 2;
     dataRate = 0.0;
 
@@ -58,9 +59,19 @@ std::string NAV::SkydelNetworkStream::category()
 
 void NAV::SkydelNetworkStream::guiConfig()
 {
-    std::ostringstream strs;
-    strs << dataRate;
-    std::string str = strs.str();
+    std::string str;
+
+    if (startCounter < startNow)
+    {
+        str = "(loading)";
+    }
+    else
+    {
+        std::ostringstream strs;
+        strs << dataRate;
+        str = strs.str();
+    }
+    
     ImGui::LabelText(str.c_str(), "data rate [Hz]");
     ImGui::SameLine();
     gui::widgets::HelpMarker("The data rate can be adjusted in Skydel: Settings/Plug-ins/<Plug-in-name>/Plug-in UI");
@@ -178,6 +189,12 @@ void NAV::SkydelNetworkStream::do_receive()
                 // Data rate (for visualization in GUI)
                 packageCount++;
 
+                if (startCounter < startNow)
+                {
+                    packageCount = 0;
+                    startCounter++;
+                }
+
                 if (packageCount == 1)
                 {
                     startPoint = std::chrono::steady_clock::now();
@@ -187,8 +204,8 @@ void NAV::SkydelNetworkStream::do_receive()
                     std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - startPoint;
                     dataRate = static_cast<double>(packagesNumber - 1) / elapsed_seconds.count();
                     
-                    // Dynamic adaptation of data rate to a human-readable display update rate in GUI
-                    if ((dataRate > 2) && (dataRate < 1001)) // restriction on 'reasonable' sensor data rates
+                    // Dynamic adaptation of data rate to a human-readable display update rate in GUI (~ 1 Hz)
+                    if ((dataRate > 2) && (dataRate < 1001)) // restriction on 'reasonable' sensor data rates (Skydel max. is 1000 Hz)
                     {
                         packagesNumber = static_cast<int>(dataRate);
                     }
@@ -221,6 +238,7 @@ bool NAV::SkydelNetworkStream::initialize()
 
     stop = false;
     packageCount = 0;
+    startCounter = 0;
     packagesNumber = 2;
 
     do_receive();
