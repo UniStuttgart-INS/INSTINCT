@@ -155,6 +155,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 // Data Processor
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
+#include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 // Data Provider
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -200,6 +201,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<VectorNavDataLogger>();
     // Data Processor
     registerNodeType<ImuIntegrator>();
+    registerNodeType<LooselyCoupledKF>();
     // Data Provider
     registerNodeType<EmlidFile>();
     registerNodeType<RtklibPosFile>();
