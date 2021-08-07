@@ -174,7 +174,7 @@ void NAV::experimental::Matrix::guiConfig()
         ImGui::SameLine();
         ImGui::TextUnformatted("Init Matrix:");
         if (ImGui::BeginTable("Init Matrix", static_cast<int>(initMatrix.cols() + 1),
-                              ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("");
             for (int64_t col = 0; col < initMatrix.cols(); col++)
@@ -207,7 +207,7 @@ void NAV::experimental::Matrix::guiConfig()
     if (ImGui::CollapsingHeader(("Current Matrix##" + std::to_string(size_t(id))).c_str()))
     {
         if (ImGui::BeginTable("Current Matrix", static_cast<int>(matrix.cols() + 1),
-                              ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("");
             for (int64_t col = 0; col < matrix.cols(); col++)
@@ -358,7 +358,7 @@ void NAV::experimental::Matrix::guiConfig()
             }
 
             if (ImGui::BeginTable(("Current Block Matrix##" + std::to_string(size_t(id)) + " - " + std::to_string(blockIndex)).c_str(),
-                                  static_cast<int>(matrix.cols() + 1), ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                  static_cast<int>(matrix.cols() + 1), ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
             {
                 ImGui::TableSetupColumn("");
                 for (int64_t col = 0; col < matrix.cols(); col++)

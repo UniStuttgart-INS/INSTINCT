@@ -130,7 +130,7 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
     {
         if (nm::showFlowWhenNotifyingValueChange)
         {
-            ax::NodeEditor::Flow(connectedLink->id, true);
+            ax::NodeEditor::Flow(connectedLink->id, ax::NodeEditor::FlowDirection::Backward);
         }
 
         if (Pin* startPin = nm::FindPin(connectedLink->startPinId))

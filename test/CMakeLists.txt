@@ -72,6 +72,6 @@ catch_discover_tests(
   REPORTER
   junit
   OUTPUT_DIR
-  ${CMAKE_SOURCE_DIR}/build
+  ${CMAKE_SOURCE_DIR}/build/Debug/test
   OUTPUT_SUFFIX
   .xml)
