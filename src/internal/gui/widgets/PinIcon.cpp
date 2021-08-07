@@ -132,7 +132,7 @@ void DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, PinIcon::T
                 const auto p0 = rect_center - ImVec2(r, r);
                 const auto p1 = rect_center + ImVec2(r, r);
 
-                drawList->AddRectFilled(p0, p1, color, 0, 15 + extra_segments);
+                drawList->AddRectFilled(p0, p1, color, 0, ImDrawFlags_RoundCornersAll);
             }
             else
             {
@@ -142,10 +142,10 @@ void DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, PinIcon::T
 
                 if (innerColor & 0xFF000000)
                 {
-                    drawList->AddRectFilled(p0, p1, innerColor, 0, 15 + extra_segments);
+                    drawList->AddRectFilled(p0, p1, innerColor, 0, ImDrawFlags_RoundCornersAll);
                 }
 
-                drawList->AddRect(p0, p1, color, 0, 15 + extra_segments, 2.0F * outline_scale);
+                drawList->AddRect(p0, p1, color, 0, ImDrawFlags_RoundCornersAll, 2.0F * outline_scale);
             }
         }
 
@@ -190,7 +190,7 @@ void DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, PinIcon::T
                 const auto p0 = rect_center - ImVec2(r, r);
                 const auto p1 = rect_center + ImVec2(r, r);
 
-                drawList->AddRectFilled(p0, p1, color, cr, 15);
+                drawList->AddRectFilled(p0, p1, color, cr, ImDrawFlags_RoundCornersAll);
             }
             else
             {
@@ -201,10 +201,10 @@ void DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, PinIcon::T
 
                 if (innerColor & 0xFF000000)
                 {
-                    drawList->AddRectFilled(p0, p1, innerColor, cr, 15);
+                    drawList->AddRectFilled(p0, p1, innerColor, cr, ImDrawFlags_RoundCornersAll);
                 }
 
-                drawList->AddRect(p0, p1, color, cr, 15, 2.0F * outline_scale);
+                drawList->AddRect(p0, p1, color, cr, ImDrawFlags_RoundCornersAll, 2.0F * outline_scale);
             }
         }
         else if (type == PinIcon::Type::Diamond)

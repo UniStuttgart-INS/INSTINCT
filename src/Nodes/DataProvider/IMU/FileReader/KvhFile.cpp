@@ -62,8 +62,8 @@ void NAV::KvhFile::guiConfig()
         if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 2,
                               ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
         {
-            ImGui::TableSetupColumn("Basic", ImGuiTableColumnFlags_WidthAutoResize);
-            ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
+            ImGui::TableSetupColumn("Basic", ImGuiTableColumnFlags_WidthFixed);
+            ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthFixed);
             ImGui::TableHeadersRow();
 
             auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {

@@ -77,7 +77,7 @@ void NAV::PosVelAttInitializer::guiConfig()
                              "Afterwards no more messages are sent.");
 
     if (ImGui::BeginTable(fmt::format("Initialized State##{}", size_t(id)).c_str(),
-                          4, ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                          4, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
     {
         ImGui::TableSetupColumn("");
         ImGui::TableSetupColumn("");
@@ -303,7 +303,7 @@ void NAV::PosVelAttInitializer::guiConfig()
     }
 
     if (ImGui::BeginTable(("Overrides##" + std::to_string(size_t(id))).c_str(),
-                          2, ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                          2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
     {
         ImGui::TableNextColumn();
         if (ImGui::Checkbox(("Override Roll##" + std::to_string(size_t(id))).c_str(), &overrideRollPitchYaw.at(0)))
