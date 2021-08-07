@@ -6135,7 +6135,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 }
 
                 // Calls all the callbacks
-                vnSensor->invokeCallbacks(b + 2, obs);
+                vnSensor->invokeCallbacks(b + 1, obs);
             }
         }
     }

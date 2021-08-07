@@ -38,7 +38,7 @@ class VectorNavBinary2ImuObsConverter : public Node
     [[nodiscard]] static std::string category();
 
   private:
-    constexpr static size_t OutputPortIndex_ImuObsWDelta = 1;         ///< @brief Flow (ImuObsWDelta)
+    constexpr static size_t OutputPortIndex_ImuObsWDelta = 0;         ///< @brief Flow (ImuObsWDelta)
     constexpr static size_t InputPortIndex_VectorNavBinaryOutput = 0; ///< @brief Flow (VectorNavBinaryOutput)
 
     /// @brief Converts the VectorNavBinaryOutput observation to the ImuObsWDelta observation

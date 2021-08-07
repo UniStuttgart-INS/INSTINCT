@@ -53,7 +53,7 @@ class EmlidFile : public Node, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_EmlidObs = 1; ///< @brief Flow (EmlidObs)
+    constexpr static size_t OutputPortIndex_EmlidObs = 0; ///< @brief Flow (EmlidObs)
 
     /// @brief Initialize the node
     bool initialize() override;

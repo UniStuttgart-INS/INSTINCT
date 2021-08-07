@@ -51,7 +51,7 @@ class RtklibPosFile : public Node, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_RtklibPosObs = 1; ///< @brief Flow (RtklibPosObs)
+    constexpr static size_t OutputPortIndex_RtklibPosObs = 0; ///< @brief Flow (RtklibPosObs)
 
     /// @brief Initialize the node
     bool initialize() override;
