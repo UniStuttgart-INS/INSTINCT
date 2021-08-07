@@ -53,7 +53,7 @@ class ARMA : public Node
 
   private:
     constexpr static size_t InputPortIndex_ImuObs = 0;  ///< @brief Flow (ImuObs)
-    constexpr static size_t OutputPortIndex_ImuObs = 1; ///< @brief Flow (ImuObs)
+    constexpr static size_t OutputPortIndex_ImuObs = 0; ///< @brief Flow (ImuObs)
 
     /// @brief Initialize the node
     bool initialize() override;

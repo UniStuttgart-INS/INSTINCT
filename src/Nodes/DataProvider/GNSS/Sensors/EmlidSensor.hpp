@@ -52,7 +52,7 @@ class EmlidSensor : public Node, public UartSensor
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_EmlidObs = 1; ///< @brief Flow (EmlidObs)
+    constexpr static size_t OutputPortIndex_EmlidObs = 0; ///< @brief Flow (EmlidObs)
 
     /// @brief Initialize the node
     bool initialize() override;

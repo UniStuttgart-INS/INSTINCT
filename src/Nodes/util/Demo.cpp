@@ -44,6 +44,7 @@ NAV::Demo::Demo()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 630, 410 };
 
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, { typeStatic() }, this);
     nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::ImuObs::type());
     nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, NAV::InsObs::type(), &Demo::pollData);
     nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, "", &valueBool);

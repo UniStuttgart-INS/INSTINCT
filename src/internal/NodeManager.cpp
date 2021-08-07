@@ -77,32 +77,6 @@ void NAV::NodeManager::AddNode(NAV::Node* node)
     m_nodes.push_back(node);
     LOG_DEBUG("Creating node: {}", node->nameId());
 
-    // Create Delegate output pin
-    if (node->kind == Node::Kind::Blueprint && (node->outputPins.empty() || node->outputPins.front().type != Pin::Type::Delegate))
-    {
-        Pin pin = Pin(GetNextPinId(), "", Pin::Type::Delegate, Pin::Kind::Output, node);
-
-        for ([[maybe_unused]] const auto& [category, nodeInfoList] : NodeRegistry::RegisteredNodes())
-        {
-            for (const auto& nodeInfo : nodeInfoList)
-            {
-                if (nodeInfo.type == node->type())
-                {
-                    pin.data = reinterpret_cast<void*>(reinterpret_cast<char*>(node) - nodeInfo.addressOffsetNode);
-                    break;
-                }
-            }
-            if (std::get<void*>(pin.data) != nullptr)
-            {
-                break;
-            }
-        }
-
-        pin.dataIdentifier.push_back(node->type());
-
-        node->outputPins.insert(node->outputPins.begin(), pin);
-    }
-
     for (auto& pin : node->inputPins)
     {
         pin.parentNode = node;

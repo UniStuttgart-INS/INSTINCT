@@ -686,14 +686,15 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         ImGui::PopItemFlag();
                         ImGui::PopStyleVar();
                     }
+                    ImGui::Dummy(ImVec2(0, 26));
                 }
                 else
                 {
-                    ImGui::Dummy(ImVec2(0, 28));
+                    ImGui::Dummy(ImVec2(0, 26));
                 }
                 if (hasOutputDelegates)
                 {
-                    ImGui::BeginVertical("delegates", ImVec2(0, 28));
+                    ImGui::BeginVertical("delegates", ImVec2(0, 26));
                     ImGui::Spring(1, 0);
                     for (const auto& output : node->outputPins)
                     {
