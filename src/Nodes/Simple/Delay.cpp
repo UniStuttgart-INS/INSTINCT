@@ -147,6 +147,11 @@ void NAV::Delay::delayObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdi
             LOG_DATA("{}: Delay pushing out message", nameId());
         }
 
+        if (!(NAV::Node::callbacksEnabled))
+        {
+            NAV::Node::callbacksEnabled = true;
+        }
+
         invokeCallbacks(OutputPortIndex_Flow, oldest);
     }
     else
