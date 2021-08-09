@@ -332,14 +332,6 @@
             "outputPins": [
                 {
                     "dataIdentifier": [
-                        "PosVelAttInitializer"
-                    ],
-                    "id": 199,
-                    "name": "",
-                    "type": "Delegate"
-                },
-                {
-                    "dataIdentifier": [
                         "PosVelAtt"
                     ],
                     "id": 197,
@@ -1604,16 +1596,7 @@
             ],
             "kind": "Blueprint",
             "name": "Plot",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "Plot"
-                    ],
-                    "id": 315,
-                    "name": "",
-                    "type": "Delegate"
-                }
-            ],
+            "outputPins": [],
             "pos": {
                 "x": 1688.0,
                 "y": -140.0
@@ -1717,14 +1700,6 @@
             "outputPins": [
                 {
                     "dataIdentifier": [
-                        "VectorNavFile"
-                    ],
-                    "id": 357,
-                    "name": "",
-                    "type": "Delegate"
-                },
-                {
-                    "dataIdentifier": [
                         "VectorNavBinaryOutput"
                     ],
                     "id": 355,
@@ -1759,14 +1734,6 @@
             "kind": "Blueprint",
             "name": "VN-Binary 2 ImuObs Converter",
             "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "VectorNavBinary2ImuObsConverter"
-                    ],
-                    "id": 361,
-                    "name": "",
-                    "type": "Delegate"
-                },
                 {
                     "dataIdentifier": [
                         "ImuObsWDelta"
@@ -1839,14 +1806,6 @@
             "kind": "Blueprint",
             "name": "ImuIntegrator",
             "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "ImuIntegrator"
-                    ],
-                    "id": 400,
-                    "name": "",
-                    "type": "Delegate"
-                },
                 {
                     "dataIdentifier": [
                         "PosVelAtt"
@@ -2153,14 +2112,6 @@
             "kind": "Blueprint",
             "name": "ImuIntegrator",
             "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "ImuIntegrator"
-                    ],
-                    "id": 99,
-                    "name": "",
-                    "type": "Delegate"
-                },
                 {
                     "dataIdentifier": [
                         "PosVelAtt"

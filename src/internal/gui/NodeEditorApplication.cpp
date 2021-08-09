@@ -1,6 +1,7 @@
 #include "NodeEditorApplication.hpp"
 
 #include <imgui_node_editor.h>
+#include <imgui_node_editor_internal.h>
 namespace ed = ax::NodeEditor;
 
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -582,6 +583,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     }
 
     gui::menus::ShowMainMenuBar(globalAction, initList);
+    auto menuBarHeight = ImGui::GetCursorPosY();
 
     ed::SetCurrentEditor(m_Editor);
 
@@ -593,9 +595,10 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     static float leftPaneWidth = 350.0F;
     static float rightPaneWidth = 850.0F;
-    gui::widgets::Splitter("Main Splitter", true, 4.0F, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
+    constexpr float SPLITTER_THICKNESS = 4.0F;
+    gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
 
-    bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - 4.0F);
+    bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - SPLITTER_THICKNESS);
 
     ImGui::SameLine(0.0F, 12.0F);
 
@@ -683,14 +686,15 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         ImGui::PopItemFlag();
                         ImGui::PopStyleVar();
                     }
+                    ImGui::Dummy(ImVec2(0, 26));
                 }
                 else
                 {
-                    ImGui::Dummy(ImVec2(0, 28));
+                    ImGui::Dummy(ImVec2(0, 26));
                 }
                 if (hasOutputDelegates)
                 {
-                    ImGui::BeginVertical("delegates", ImVec2(0, 28));
+                    ImGui::BeginVertical("delegates", ImVec2(0, 26));
                     ImGui::Spring(1, 0);
                     for (const auto& output : node->outputPins)
                     {
@@ -1059,7 +1063,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     // Shortcut enable/disable
     ax::NodeEditor::EnableShortcuts(ed::IsActive() || leftPaneActive);
 
-    auto openPopupPosition = ImGui::GetMousePos();
+    // auto openPopupPosition = ImGui::GetMousePos();
     ed::Suspend();
     if (ed::ShowNodeContextMenu(&contextNodeId))
     {
@@ -1217,9 +1221,22 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     }
 
     static bool setKeyboardFocus = true;
+    static ImVec2 newNodeSpawnPos{ -1, -1 };
     if (ImGui::BeginPopup("Create New Node"))
     {
-        auto newNodePostion = openPopupPosition;
+        if (newNodeSpawnPos.x == -1 || newNodeSpawnPos.y == -1)
+        {
+            auto viewRect = reinterpret_cast<ax::NodeEditor::Detail::EditorContext*>(ed::GetCurrentEditor())->GetViewRect();
+            newNodeSpawnPos = ImGui::GetMousePos();
+            newNodeSpawnPos.x -= leftPaneWidth + SPLITTER_THICKNESS + 10.0F;
+            newNodeSpawnPos.y -= menuBarHeight;
+
+            newNodeSpawnPos *= ed::GetCurrentZoom();
+
+            newNodeSpawnPos += viewRect.GetTL();
+
+            LOG_DEBUG("New Node will spawn at {}x{} - Zoom {}", newNodeSpawnPos.x, newNodeSpawnPos.y, ed::GetCurrentZoom());
+        }
 
         static ImGuiTextFilter filter;
 
@@ -1275,7 +1292,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         {
             createNewNode = false;
 
-            ed::SetNodePosition(node->id, newNodePostion);
+            ed::SetNodePosition(node->id, newNodeSpawnPos);
+            newNodeSpawnPos = { -1, -1 };
 
             if (auto* startPin = newNodeLinkPin)
             {
@@ -1305,6 +1323,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     {
         setKeyboardFocus = true;
         createNewNode = false;
+        newNodeSpawnPos = { -1, -1 };
     }
     ImGui::PopStyleVar();
 

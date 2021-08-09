@@ -41,9 +41,6 @@ struct NodeInfo
     /// List of port data types
     std::vector<PinInfo> pinInfoList;
 
-    /// Class to Node address offset
-    int64_t addressOffsetNode = 0;
-
     /// @brief Checks if the node has a pin which can be linked
     /// @param[in] pin Pin to link to
     [[nodiscard]] bool hasCompatiblePin(const Pin* pin) const;

@@ -44,6 +44,7 @@ NAV::Demo::Demo()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 630, 410 };
 
+    nm::CreateOutputPin(this, "", Pin::Type::Delegate, { typeStatic() }, this);
     nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::ImuObs::type());
     nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, NAV::InsObs::type(), &Demo::pollData);
     nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, "", &valueBool);
@@ -235,7 +236,7 @@ void NAV::Demo::guiConfig()
         else
         {
             if (ImGui::BeginTable("Init Matrix", static_cast<int>(connectedMatrix->cols() + 1),
-                                  ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                  ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
             {
                 ImGui::TableSetupColumn("");
                 for (int64_t col = 0; col < connectedMatrix->cols(); col++)
@@ -266,7 +267,7 @@ void NAV::Demo::guiConfig()
         }
         ImGui::TableNextColumn();
         if (ImGui::BeginTable("Current Matrix", static_cast<int>(valueMatrix.cols() + 1),
-                              ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("");
             for (int64_t col = 0; col < valueMatrix.cols(); col++)

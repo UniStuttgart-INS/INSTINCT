@@ -59,9 +59,9 @@ void NAV::ImuFile::guiConfig()
     if (ImGui::BeginTable(fmt::format("##ImuHeaders ({})", id.AsPointer()).c_str(), 3,
                           ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
     {
-        ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableHeadersRow();
 
         auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {

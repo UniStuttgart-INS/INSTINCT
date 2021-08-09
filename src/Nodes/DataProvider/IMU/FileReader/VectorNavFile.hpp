@@ -53,7 +53,7 @@ class VectorNavFile : public Imu, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_VectorNavBinaryOutput = 1; ///< @brief Flow (VectorNavBinaryOutput)
+    constexpr static size_t OutputPortIndex_VectorNavBinaryOutput = 0; ///< @brief Flow (VectorNavBinaryOutput)
 
     /// @brief Initialize the node
     bool initialize() override;

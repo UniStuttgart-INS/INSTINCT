@@ -648,9 +648,9 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
     /*  9 */ { "TimeStatus", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS, []() { ImGui::TextUnformatted("Time valid status flags.");
                                                                                          if (ImGui::BeginTable("VectorNavTimeStatusTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                                                                                          {
-                                                                                             ImGui::TableSetupColumn("Bit Offset", ImGuiTableColumnFlags_WidthAutoResize);
-                                                                                             ImGui::TableSetupColumn("Field", ImGuiTableColumnFlags_WidthAutoResize);
-                                                                                             ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                             ImGui::TableSetupColumn("Bit Offset", ImGuiTableColumnFlags_WidthFixed);
+                                                                                             ImGui::TableSetupColumn("Field", ImGuiTableColumnFlags_WidthFixed);
+                                                                                             ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthFixed);
                                                                                              ImGui::TableHeadersRow();
 
                                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
@@ -699,8 +699,8 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
     /*  4 */ { "Fix", vn::protocol::uart::GpsGroup::GPSGROUP_FIX, []() { ImGui::TextUnformatted("GNSS fix\n\nThe current GNSS fix.");
                                                                          if (ImGui::BeginTable("VectorNavFixTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                                                                          {
-                                                                             ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthAutoResize);
-                                                                             ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                             ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthFixed);
+                                                                             ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthFixed);
                                                                              ImGui::TableHeadersRow();
 
                                                                              ImGui::TableNextColumn(); ImGui::TextUnformatted("0");
@@ -734,7 +734,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
     /* 10 */ { "VelU", vn::protocol::uart::GpsGroup::GPSGROUP_VELU, []() { ImGui::TextUnformatted("GNSS velocity uncertainty\n\nThe current GNSS velocity uncertainty, given in m/s (1 Sigma)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
     /* 11 */ { "TimeU", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU, []() { ImGui::TextUnformatted("GNSS time uncertainty\n\nThe current GPS time uncertainty, given in seconds (1 Sigma)."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
     /* 12 */ { "TimeInfo", vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO, []() { ImGui::TextUnformatted("GNSS time status and leap seconds\n\nFlags for valid GPS TOW, week number and UTC and current leap seconds.");
-                                                                                   if (ImGui::BeginTable("VectorNavTimeInfoTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                   if (ImGui::BeginTable("VectorNavTimeInfoTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                    {
                                                                                        ImGui::TableSetupColumn("Bit Offset");
                                                                                        ImGui::TableSetupColumn("Field");
@@ -765,7 +765,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                                                                                                                                         && !(static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS); } },
     /* 13 */ { "DOP", vn::protocol::uart::GpsGroup::GPSGROUP_DOP, []() { ImGui::TextUnformatted("Dilution of precision"); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
     /* 14 */ { "SatInfo", vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO, []() { ImGui::TextUnformatted("Satellite Information\n\nInformation and measurements pertaining to each GNSS satellite in view.\n\nSatInfo Element:");
-                                                                                 if (ImGui::BeginTable("VectorNavSatInfoTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                 if (ImGui::BeginTable("VectorNavSatInfoTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                  {
                                                                                      ImGui::TableSetupColumn("Name");
                                                                                      ImGui::TableSetupColumn("Description");
@@ -796,7 +796,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                  }
                                                                                  ImGui::BeginChild("VectorNavSatInfoTooltipGNSSConstelationChild", ImVec2(230, 217));
                                                                                  ImGui::TextUnformatted("\nGNSS constellation indicator:");
-                                                                                 if (ImGui::BeginTable("VectorNavSatInfoTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                 if (ImGui::BeginTable("VectorNavSatInfoTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                  {
                                                                                      ImGui::TableSetupColumn("Value");
                                                                                      ImGui::TableSetupColumn("Description");
@@ -829,7 +829,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                  ImGui::SameLine();
                                                                                  ImGui::BeginChild("VectorNavSatInfoTooltipFlagsChild", ImVec2(260, 217));
                                                                                  ImGui::TextUnformatted("\nTracking info flags:");
-                                                                                 if (ImGui::BeginTable("VectorNavSatInfoTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                 if (ImGui::BeginTable("VectorNavSatInfoTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                  {
                                                                                      ImGui::TableSetupColumn("Bit Offset");
                                                                                      ImGui::TableSetupColumn("Description");
@@ -860,7 +860,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                  }
                                                                                  ImGui::EndChild();
                                                                                  ImGui::TextUnformatted("\nQuality Indicators:");
-                                                                                 if (ImGui::BeginTable("VectorNavSatInfoTooltipQuality", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                 if (ImGui::BeginTable("VectorNavSatInfoTooltipQuality", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                  {
                                                                                      ImGui::TableSetupColumn("Value");
                                                                                      ImGui::TableSetupColumn("Description");
@@ -887,7 +887,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                      ImGui::EndTable();
                                                                                  } }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
     /* 15 */ { "RawMeas", vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS, []() { ImGui::TextUnformatted("GNSS Raw Measurements.\n\nSatRaw Element:");
-                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltip", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                  {
                                                                                      ImGui::TableSetupColumn("Name");
                                                                                      ImGui::TableSetupColumn("Description");
@@ -927,7 +927,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                  }
                                                                                  ImGui::BeginChild("VectorNavSatRawTooltipGNSSConstelationChild", ImVec2(180, 217));
                                                                                  ImGui::TextUnformatted("\nConstellation indicator:");
-                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltipGNSSConstelation", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                  {
                                                                                      ImGui::TableSetupColumn("Value");
                                                                                      ImGui::TableSetupColumn("Description");
@@ -960,7 +960,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                  ImGui::SameLine();
                                                                                  ImGui::BeginChild("VectorNavSatRawTooltipFreqChild", ImVec2(270, 235));
                                                                                  ImGui::TextUnformatted("\nFrequency indicator:");
-                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltipFreq", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltipFreq", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                  {
                                                                                      ImGui::TableSetupColumn("Value");
                                                                                      ImGui::TableSetupColumn("Description");
@@ -993,7 +993,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                  ImGui::SameLine();
                                                                                  ImGui::BeginChild("VectorNavSatRawTooltipFlagChild", ImVec2(255, 260));
                                                                                  ImGui::TextUnformatted("\nTracking info flags:");
-                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltipFlags", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                  {
                                                                                      ImGui::TableSetupColumn("Bit Offset");
                                                                                      ImGui::TableSetupColumn("Description");
@@ -1030,7 +1030,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                  }
                                                                                  ImGui::EndChild();
                                                                                  ImGui::TextUnformatted("\nChannel indicator:");
-                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltipChan", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                 if (ImGui::BeginTable("VectorNavSatRawTooltipChan", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                  {
                                                                                      ImGui::TableSetupColumn("Value");
                                                                                      ImGui::TableSetupColumn("Description");
@@ -1089,10 +1089,10 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 9> NAV::VectorNavSensor:
     /*  0 */ { "VpeStatus", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS, []() { ImGui::TextUnformatted("VPE Status bitfield\n\n");
                                                                                                if (ImGui::BeginTable("VectorNavSatRawTooltipChan", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                                                                                                {
-                                                                                                   ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthAutoResize);
-                                                                                                   ImGui::TableSetupColumn("Bit Offset", ImGuiTableColumnFlags_WidthAutoResize);
-                                                                                                   ImGui::TableSetupColumn("Format", ImGuiTableColumnFlags_WidthAutoResize);
-                                                                                                   ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                                   ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
+                                                                                                   ImGui::TableSetupColumn("Bit Offset", ImGuiTableColumnFlags_WidthFixed);
+                                                                                                   ImGui::TableSetupColumn("Format", ImGuiTableColumnFlags_WidthFixed);
+                                                                                                   ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthFixed);
                                                                                                    ImGui::TableHeadersRow();
 
                                                                                                    ImGui::TableNextColumn(); ImGui::TextUnformatted("AttitudeQuality");
@@ -1166,10 +1166,10 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor
     /*  0 */ { "InsStatus", vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS, []() { ImGui::TextUnformatted("Ins Status bitfield:");
                                                                                      if (ImGui::BeginTable("VectorNavInsStatusTooltip", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                                                                                      {
-                                                                                         ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthAutoResize);
-                                                                                         ImGui::TableSetupColumn("Bit Offset", ImGuiTableColumnFlags_WidthAutoResize);
-                                                                                         ImGui::TableSetupColumn("Format", ImGuiTableColumnFlags_WidthAutoResize);
-                                                                                         ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthAutoResize);
+                                                                                         ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
+                                                                                         ImGui::TableSetupColumn("Bit Offset", ImGuiTableColumnFlags_WidthFixed);
+                                                                                         ImGui::TableSetupColumn("Format", ImGuiTableColumnFlags_WidthFixed);
+                                                                                         ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthFixed);
                                                                                          ImGui::TableHeadersRow();
 
                                                                                          ImGui::TableNextColumn(); ImGui::TextUnformatted("Mode");
@@ -1210,7 +1210,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor
                                                                                          ImGui::EndTable();
                                                                                      }
                                                                                      ImGui::TextUnformatted("\nError Bitfield:");
-                                                                                     if (ImGui::BeginTable("VectorNavInsStatusTooltipError", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                                                                     if (ImGui::BeginTable("VectorNavInsStatusTooltipError", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                                                                                      {
                                                                                          ImGui::TableSetupColumn("Name");
                                                                                          ImGui::TableSetupColumn("Description");
@@ -2249,7 +2249,7 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 ImGui::TextUnformatted("The following table shows example asynchronous messages with the\nAsyncCount and the AsyncStatus values appended to the end.");
 
-                if (ImGui::BeginTable("Example Async Messages Table", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                if (ImGui::BeginTable("Example Async Messages Table", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                 {
                     ImGui::TableSetupColumn("Example Type");
                     ImGui::TableSetupColumn("Message");
@@ -2392,13 +2392,13 @@ void NAV::VectorNavSensor::guiConfig()
                 if (ImGui::BeginTable(fmt::format("##VectorNavSensorConfig ({})", size_t(id)).c_str(), 7,
                                       ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                 {
-                    ImGui::TableSetupColumn("Common", ImGuiTableColumnFlags_WidthAutoResize);
-                    ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
-                    ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
-                    ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthAutoResize);
-                    ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthAutoResize);
-                    ImGui::TableSetupColumn("INS", ImGuiTableColumnFlags_WidthAutoResize);
-                    ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthAutoResize);
+                    ImGui::TableSetupColumn("Common", ImGuiTableColumnFlags_WidthFixed);
+                    ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed);
+                    ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthFixed);
+                    ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthFixed);
+                    ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthFixed);
+                    ImGui::TableSetupColumn("INS", ImGuiTableColumnFlags_WidthFixed);
+                    ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthFixed);
                     ImGui::TableHeadersRow();
 
                     auto CheckboxFlags = [&, this](int index, const char* label, int* flags, int flags_value, bool enabled, void (*toggleFields)(vn::sensors::BinaryOutputRegister & bor, uint32_t & binaryField)) {
@@ -6135,7 +6135,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 }
 
                 // Calls all the callbacks
-                vnSensor->invokeCallbacks(b + 2, obs);
+                vnSensor->invokeCallbacks(b + 1, obs);
             }
         }
     }

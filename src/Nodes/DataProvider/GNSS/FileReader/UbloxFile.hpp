@@ -53,7 +53,7 @@ class UbloxFile : public Node, public FileReader
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_UbloxObs = 1; ///< @brief Flow (UbloxObs)
+    constexpr static size_t OutputPortIndex_UbloxObs = 0; ///< @brief Flow (UbloxObs)
 
     /// @brief Initialize the node
     bool initialize() override;

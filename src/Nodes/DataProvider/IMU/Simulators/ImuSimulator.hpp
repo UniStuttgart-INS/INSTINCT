@@ -53,7 +53,7 @@ class ImuSimulator : public Imu
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_ImuObs = 1;   ///< @brief Flow (ImuObs)
+    constexpr static size_t OutputPortIndex_ImuObs = 0;   ///< @brief Flow (ImuObs)
     constexpr static size_t InputPortIndex_StateData = 0; ///< @brief Object (StateData)
 
     /// @brief Initialize the node

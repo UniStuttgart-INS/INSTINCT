@@ -58,14 +58,14 @@ void NAV::VectorNavFile::guiConfig()
 
     // Header info
     if (ImGui::BeginTable(fmt::format("##VectorNavHeaders ({})", id.AsPointer()).c_str(), 6,
-                          ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+                          ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit))
     {
-        ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("INS", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("IMU", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("GNSS1", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("Attitude", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("INS", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("GNSS2", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableHeadersRow();
 
         auto TextColored = [](int index, const char* label, bool enabled) {

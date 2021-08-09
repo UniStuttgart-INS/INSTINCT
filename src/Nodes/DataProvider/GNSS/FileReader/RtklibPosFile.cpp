@@ -57,9 +57,9 @@ void NAV::RtklibPosFile::guiConfig()
     if (ImGui::BeginTable(fmt::format("##RtklibPos ({})", id.AsPointer()).c_str(), 3,
                           ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
     {
-        ImGui::TableSetupColumn("Basic", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("LLA", ImGuiTableColumnFlags_WidthAutoResize);
-        ImGui::TableSetupColumn("XYZ", ImGuiTableColumnFlags_WidthAutoResize);
+        ImGui::TableSetupColumn("Basic", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("LLA", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("XYZ", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableHeadersRow();
 
         auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
