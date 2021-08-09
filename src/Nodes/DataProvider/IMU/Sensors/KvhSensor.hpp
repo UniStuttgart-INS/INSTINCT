@@ -52,7 +52,7 @@ class KvhSensor : public Imu, public UartSensor
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_KvhObs = 1; ///< @brief Flow (KvhObs)
+    constexpr static size_t OutputPortIndex_KvhObs = 0; ///< @brief Flow (KvhObs)
 
     /// @brief Initialize the node
     bool initialize() override;

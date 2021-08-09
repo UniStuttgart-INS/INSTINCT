@@ -52,8 +52,8 @@ class SkydelNetworkStream : public Imu
 
   private:
     /// @brief Port number of the Skydel-ImuObs output and GnssObs output
-    constexpr static size_t OutputPortIndex_ImuObs = 1;
-    constexpr static size_t OutputPortIndex_GnssObs = 2;
+    constexpr static size_t OutputPortIndex_ImuObs = 0;
+    constexpr static size_t OutputPortIndex_GnssObs = 1;
 
     /// @brief Initialize the node
     bool initialize() override;

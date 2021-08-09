@@ -112,6 +112,12 @@ void Application::RecreateFontAtlas()
     config.PixelSnapH = false;
 
     m_DefaultFont = io.Fonts->AddFontFromFileTTF("resources/fonts/Play-Regular.ttf", 18.0f, &config);
+    config.MergeMode = true;
+    static const ImWchar icons_ranges[] = { 0x20, 0xFFFF, 0 };
+    io.Fonts->AddFontFromFileTTF("resources/fonts/Inconsolata-Nerd-Font-Complete.otf", 18.0f, &config, icons_ranges);
+    io.Fonts->AddFontFromFileTTF("resources/fonts/NotoSans-Regular.ttf", 18.0f, &config, icons_ranges);
+
+    config.MergeMode = false;
     m_HeaderFont = io.Fonts->AddFontFromFileTTF("resources/fonts/Cuprum-Bold.ttf", 20.0f, &config);
 
     io.Fonts->Build();

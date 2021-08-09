@@ -219,7 +219,7 @@ void NAV::Plot::guiConfig()
             updateNumberOfPlots();
         }
         if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id))).c_str(), 4,
-                              ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("Pin");
             ImGui::TableSetupColumn("Pin Type");
@@ -327,7 +327,7 @@ void NAV::Plot::guiConfig()
                     LOG_DEBUG("{}: # Header changed to {}", nameId(), plotInfo.headerText);
                 }
                 if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), 2,
-                                      ImGuiTableFlags_Borders | ImGuiTableFlags_ColumnsWidthFixed, ImVec2(0.0F, 0.0F)))
+                                      ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                 {
                     ImGui::TableSetupColumn("Pin");
                     ImGui::TableSetupColumn("X Data");

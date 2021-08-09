@@ -55,7 +55,7 @@ class PosVelAttInitializer : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OutputPortIndex_PosVelAtt = 1; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OutputPortIndex_PosVelAtt = 0; ///< @brief Flow (PosVelAtt)
     constexpr static size_t InputPortIndex_ImuObs = 0;     ///< @brief Flow (ImuObs)
     constexpr static size_t InputPortIndex_GnssObs = 1;    ///< @brief Flow (GnssObs)
 

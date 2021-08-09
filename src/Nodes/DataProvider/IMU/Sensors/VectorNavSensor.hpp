@@ -61,7 +61,7 @@ class VectorNavSensor : public Imu, public UartSensor
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_AsciiOutput = 1; ///< @brief Flow (StringObs)
+    constexpr static size_t OutputPortIndex_AsciiOutput = 0; ///< @brief Flow (StringObs)
 
     /// @brief Initialize the node
     bool initialize() override;
