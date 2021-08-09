@@ -40,4 +40,29 @@ double pitchFromStaticAccelerationObs(const Eigen::Vector3d& accel_b);
 /// @return The factorial of 'n'
 uint64_t factorial(uint64_t n);
 
+/// @brief Calculates the skew symmetric matrix of the given vector.
+///        This is needed to perform the cross product with a scalar product operation
+/// @tparam _System The coordinate system
+/// @param[in] a The vector
+/// @return Skew symmetric matrix
+template<typename _Scalar,
+         typename = std::enable_if_t<std::is_arithmetic_v<_Scalar>>>
+Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrix(const Eigen::Matrix<_Scalar, 3, 1>& a)
+{
+    Eigen::Matrix<_Scalar, 3, 3> skewMat;
+    skewMat << 0, -a(2), a(1),
+        a(2), 0, -a(0),
+        -a(1), a(0), 0;
+
+    return skewMat;
+}
+
+/// @brief Calculates the secant of a value (1 / cos(x))
+template<typename T,
+         typename = std::enable_if_t<std::is_floating_point_v<T>>>
+T secant(const T& x)
+{
+    return 1.0 / std::cos(x);
+}
+
 } // namespace NAV

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "util/Eigen.hpp"
+#include "util/InsConstants.hpp"
 
 namespace NAV
 {
@@ -162,6 +163,18 @@ namespace NAV
 /// @param[in] latitude 𝜙 Latitude in [rad]
 /// @return East/West (prime vertical) earth radius [m]
 [[nodiscard]] double earthRadius_E(const double& a, const double& e_squared, const double& latitude);
+
+/// @brief r_eS^e The distance of a point on the Earth's surface from the center of the Earth
+/// @param[in] latitude 𝜙 Latitude in [rad]
+/// @param[in] R_E Prime vertical radius of curvature (East/West) in [m]
+/// @param[in] e_squared Square of the first eccentricity of the ellipsoid
+/// @return Geocentric Radius in [m]
+/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 2.137)
+template<typename T>
+[[nodiscard]] T geocentricRadius(const T& latitude, const T& R_E, const T& e_squared = InsConst::WGS84_e_squared)
+{
+    return R_E * std::sqrt(std::pow(std::cos(latitude), 2) + std::pow((1.0 - e_squared) * std::sin(latitude), 2));
+}
 
 /// @brief Calculates the transport rate ω_en_n
 /// @param[in] latLonAlt__t1 [𝜙, λ, h] (tₖ₋₁) Latitude, Longitude and altitude in [rad, rad, m] at the time tₖ₋₁
