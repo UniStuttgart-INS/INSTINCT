@@ -44,9 +44,9 @@ class SkydelObs : public InsObs
     /// The system time since startup measured in [nano seconds].
     std::optional<uint64_t> timeSinceStartup;
 
-    /// The Skydel simulated position ('PositionObserver Plug-in')
+    /// The Skydel simulated position in ECEF coordinates in [m] ('PositionObserver Plug-in')
     std::optional<Eigen::Vector3d> posXYZ;
-    /// The Skydel simulated attitude ('PositionObserver Plug-in')
+    /// The Skydel simulated attitude (roll, pitch, yaw) in [rad] ('PositionObserver Plug-in')
     std::optional<Eigen::Vector3d> attRPY;
 };
 

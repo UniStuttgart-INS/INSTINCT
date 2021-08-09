@@ -51,9 +51,8 @@ class SkydelNetworkStream : public Imu
     bool resetNode() override;
 
   private:
-    /// @brief Port number of the Skydel-ImuObs output and GnssObs output
-    constexpr static size_t OutputPortIndex_ImuObs = 0;
-    constexpr static size_t OutputPortIndex_GnssObs = 1;
+    constexpr static size_t OutputPortIndex_ImuObs = 0;  ///< @brief Port number of the Skydel-ImuObs output
+    constexpr static size_t OutputPortIndex_GnssObs = 1; ///< @brief Port number of the Skydel-GnssObs output
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -89,16 +88,16 @@ class SkydelNetworkStream : public Imu
     std::chrono::steady_clock::time_point startPoint;
 
     // Counter for received packages
-    int packageCount;
+    int packageCount = 0;
 
     // # of packages for averaging dataRate (minimum is '2', since two time points are required to calculate a data rate)
-    int packagesNumber;
+    int packagesNumber = 2;
 
     // Data rate of the received network stream [Hz]
-    double dataRate;
+    double dataRate = 0.0;
 
     // Counter for packages that are skipped until data rate is shown
-    int startCounter;
+    int startCounter = 0;
 
     // # of packages that are skipped until data rate is shown
     int startNow = 20;

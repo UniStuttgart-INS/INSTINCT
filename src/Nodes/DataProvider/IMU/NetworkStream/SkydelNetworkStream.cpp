@@ -28,11 +28,6 @@ NAV::SkydelNetworkStream::SkydelNetworkStream()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 345, 642 };
 
-    packageCount = 0;
-    startCounter = 0;
-    packagesNumber = 2;
-    dataRate = 0.0;
-
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
     nm::CreateOutputPin(this, "SkydelObs", Pin::Type::Flow, NAV::SkydelObs::type());
 }
