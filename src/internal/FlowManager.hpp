@@ -8,6 +8,9 @@
 #include <string>
 #include "internal/gui/GlobalActions.hpp"
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 namespace NAV::flow
 {
 void SaveFlow(GlobalActions& globalAction);
@@ -15,6 +18,8 @@ void SaveFlow(GlobalActions& globalAction);
 void SaveFlowAs(const std::string& filepath);
 
 bool LoadFlow(const std::string& filepath);
+
+bool LoadJson(const json& j, bool requestNewIds = false);
 
 bool HasUnsavedChanges();
 

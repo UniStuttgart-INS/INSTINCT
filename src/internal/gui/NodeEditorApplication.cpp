@@ -583,7 +583,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     }
 
     gui::menus::ShowMainMenuBar(globalAction, initList);
-    auto menuBarHeight = ImGui::GetCursorPosY();
+    menuBarHeight = ImGui::GetCursorPosY();
 
     ed::SetCurrentEditor(m_Editor);
 
@@ -593,9 +593,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     static bool createNewNode = false;
     static Pin* newNodeLinkPin = nullptr;
 
-    static float leftPaneWidth = 350.0F;
-    static float rightPaneWidth = 850.0F;
-    constexpr float SPLITTER_THICKNESS = 4.0F;
     gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
 
     bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - SPLITTER_THICKNESS);

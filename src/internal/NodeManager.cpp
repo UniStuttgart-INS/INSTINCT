@@ -30,12 +30,6 @@ namespace NAV::NodeManager
 {
 size_t GetNextId();
 
-ed::NodeId GetNextNodeId();
-
-ed::LinkId GetNextLinkId();
-
-ed::PinId GetNextPinId();
-
 } // namespace NAV::NodeManager
 
 /* -------------------------------------------------------------------------------------------------------- */

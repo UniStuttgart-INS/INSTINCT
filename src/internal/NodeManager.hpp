@@ -212,4 +212,13 @@ void InitializeAllNodesAsync();
 /// @brief Stops all active threads
 void Stop();
 
+/// @brief Generates a new node id
+ax::NodeEditor::NodeId GetNextNodeId();
+
+/// @brief Generates a new link id
+ax::NodeEditor::LinkId GetNextLinkId();
+
+/// @brief Generates a new pin id
+ax::NodeEditor::PinId GetNextPinId();
+
 } // namespace NAV::NodeManager
