@@ -66,30 +66,73 @@ class LooselyCoupledKF : public Node
     /*                                          Propagation                                                     */
     /* -------------------------------------------------------------------------------------------------------- */
 
-    /// @brief Updates the transition matrix to predict x_k(-) from x_k-1(+)
-    /// @param[in] quaternion_nb Attitude of the body with respect to n-sys.
-    /// @param[in] acceleration_ib_b Specific force of body with respect to inertial frame, in body coord.
-    /// @param[in] position_lla Position as Lat Lon Alt
-    /// @param[in] tau_s time interval
-    void updatePhi(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& acceleration_ib_b, const Eigen::Vector3d& position_lla, double tau_s);
+    /// @brief Updates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ
+    /// @param[in] quaternion_nb Attitude of the body with respect to n-system
+    /// @param[in] specForce_ib_b Specific force of the body with respect to inertial frame in [m / s^2], resolved in body coord.
+    /// @param[in] velocity_n Velocity in n-system in [m / s]
+    /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
+    /// @param[in] tau_s time interval in [s]
+    /// @note See Groves (2013) chapter 14.2.4, equations (14.63) and (14.72)
+    static Eigen::MatrixXd transitionMatrix(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, double tau_s);
 
-    // State transition matrix
-    Eigen::MatrixXd Phi;
-
-    // System matrix
-    Eigen::MatrixXd F;
-
-    static void systemMatrix(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& acceleration_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla);
-    // omega (Drehrate), PosLLA, radiusEarth, trafo_b_n, angularRate_ie, vel_be_n, acceleration (specForce_ib_b), gravity_0, r_eS_e
-
+    /// @brief Submatrix 𝐅_11 of the system matrix 𝐅
+    /// @param[in] angularRate_in_n Angular rate vector of the n-system with respect to the i-system in [rad / s], resolved in the n-system
+    /// @return The 3x3 matrix 𝐅_11
+    /// @note See Groves (2013) equation (14.64)
     static Eigen::Matrix3d systemMatrixF_11_n(const Eigen::Vector3d& angularRate_in_n);
+
+    /// @brief Submatrix 𝐅_12 of the system matrix 𝐅
+    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
+    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @return The 3x3 matrix 𝐅_12
+    /// @note See Groves (2013) equation (14.65)
     static Eigen::Matrix3d systemMatrixF_12_n(double latitude_b, double height_b);
+
+    /// @brief Submatrix 𝐅_13 of the system matrix 𝐅
+    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
+    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
+    /// @return The 3x3 matrix 𝐅_13
+    /// @note See Groves (2013) equation (14.66)
     static Eigen::Matrix3d systemMatrixF_13_n(double latitude_b, double height_b, const Eigen::Vector3d& v_eb_n);
+
+    /// @brief Submatrix 𝐅_21 of the system matrix 𝐅
+    /// @param[in] quaternion_nb Attitude of the body with respect to n-system
+    /// @param[in] specForce_ib_b Specific force of the body with respect to inertial frame in [m / s^2], resolved in body coord.
+    /// @return The 3x3 matrix 𝐅_21
+    /// @note See Groves (2013) equation (14.67)
     static Eigen::Matrix3d systemMatrixF_21_n(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b);
+
+    /// @brief Submatrix 𝐅_22 of the system matrix 𝐅
+    /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
+    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
+    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @return The 3x3 matrix 𝐅_22
+    /// @note See Groves (2013) equation (14.68)
     static Eigen::Matrix3d systemMatrixF_22_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
+
+    /// @brief Submatrix 𝐅_23 of the system matrix 𝐅
+    /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
+    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
+    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @return The 3x3 matrix 𝐅_23
+    /// @note See Groves (2013) equation (14.69)
     static Eigen::Matrix3d systemMatrixF_23_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
+
+    /// @brief Submatrix 𝐅_32 of the system matrix 𝐅
+    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
+    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @return The 3x3 matrix 𝐅_32
+    /// @note See Groves (2013) equation (14.70)
     static Eigen::Matrix3d systemMatrixF_32_n(double latitude_b, double height_b);
-    static Eigen::Matrix3d systemMatrixF_33_n(double latitude_b, double height_b, const Eigen::Vector3d& v_eb_n);
+
+    /// @brief Submatrix 𝐅_33 of the system matrix 𝐅
+    /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
+    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
+    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @return The 3x3 matrix 𝐅_33
+    /// @note See Groves (2013) equation (14.71)
+    static Eigen::Matrix3d systemMatrixF_33_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
 
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                          Correction                                                      */

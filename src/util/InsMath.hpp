@@ -45,6 +45,7 @@ uint64_t factorial(uint64_t n);
 /// @tparam _System The coordinate system
 /// @param[in] a The vector
 /// @return Skew symmetric matrix
+/// @note See Groves (2013) equation (2.50)
 template<typename _Scalar,
          typename = std::enable_if_t<std::is_arithmetic_v<_Scalar>>>
 Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrix(const Eigen::Matrix<_Scalar, 3, 1>& a)
