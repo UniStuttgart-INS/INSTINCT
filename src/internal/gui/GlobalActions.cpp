@@ -39,6 +39,11 @@ void NAV::gui::cutFlowElements()
     auto selectedNodesCount = ed::GetSelectedNodes(selectedNodeIds.data(), ed::GetSelectedObjectCount());
     selectedNodeIds.resize(static_cast<size_t>(selectedNodesCount));
 
+    for (const auto& link : nm::m_Links())
+    {
+        clipboard["links"]["link-" + std::to_string(size_t(link.id))] = link;
+    }
+
     for (const auto& nodeId : selectedNodeIds)
     {
         const NAV::Node* node = nm::FindNode(nodeId);
@@ -59,6 +64,11 @@ void NAV::gui::copyFlowElements()
 
     auto selectedNodesCount = ed::GetSelectedNodes(selectedNodeIds.data(), ed::GetSelectedObjectCount());
     selectedNodeIds.resize(static_cast<size_t>(selectedNodesCount));
+
+    for (const auto& link : nm::m_Links())
+    {
+        clipboard["links"]["link-" + std::to_string(size_t(link.id))] = link;
+    }
 
     for (const auto& nodeId : selectedNodeIds)
     {
@@ -109,10 +119,90 @@ void NAV::gui::pasteFlowElements()
     mousePos *= ed::GetCurrentZoom();
     mousePos += viewRect.GetTL();
 
+    // Move the Nodes relative to the current mouse position
     for (size_t i = nodeCountBeforeLoad; i < nm::m_Nodes().size(); i++)
     {
         auto* node = nm::m_Nodes().at(i);
         ed::SetNodePosition(node->id, mousePos + (ed::GetNodePosition(node->id) - leftTopMostPos));
+    }
+
+    // Recreate links
+    if (clipboard.contains("links"))
+    {
+        for (const auto& linkJson : clipboard.at("links"))
+        {
+            size_t startPinId = linkJson.at("startPinId").get<size_t>();
+            size_t endPinId = linkJson.at("endPinId").get<size_t>();
+
+            size_t startPinParentNodeIndex = 0;
+            size_t startPinIndex = 0;
+            bool startPinIsInputPin = false;
+
+            size_t endPinParentNodeIndex = 0;
+            size_t endPinIndex = 0;
+            bool endPinIsInputPin = false;
+
+            // Search for the nodes and pins which where connected by the old link
+            if (clipboard.contains("nodes"))
+            {
+                for (size_t nodeIndex = 0; nodeIndex < clipboard.at("nodes").size(); nodeIndex++)
+                {
+                    LOG_DEBUG("Clipboard has {} nodes", clipboard.at("nodes").size());
+                    const auto& nodeJson = clipboard.at("nodes").at(nodeIndex);
+
+                    if (nodeJson.contains("inputPins"))
+                    {
+                        for (size_t pinIndex = 0; pinIndex < clipboard.at("inputPins").size(); pinIndex++)
+                        {
+                            const auto& pinJson = clipboard.at("inputPins").at(pinIndex);
+
+                            if (pinJson.at("id").get<size_t>() == startPinId)
+                            {
+                                startPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
+                                startPinIndex = pinIndex;
+                                startPinIsInputPin = true;
+                            }
+                            if (pinJson.at("id").get<size_t>() == endPinId)
+                            {
+                                endPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
+                                endPinIndex = pinIndex;
+                                endPinIsInputPin = true;
+                            }
+                        }
+                    }
+                    if (nodeJson.contains("outputPins"))
+                    {
+                        for (size_t pinIndex = 0; pinIndex < clipboard.at("outputPins").size(); pinIndex++)
+                        {
+                            const auto& pinJson = clipboard.at("outputPins").at(pinIndex);
+
+                            if (pinJson.at("id").get<size_t>() == startPinId)
+                            {
+                                startPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
+                                startPinIndex = pinIndex;
+                                startPinIsInputPin = false;
+                            }
+                            if (pinJson.at("id").get<size_t>() == endPinId)
+                            {
+                                endPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
+                                endPinIndex = pinIndex;
+                                endPinIsInputPin = false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (startPinIndex && endPinIndex)
+            {
+                Pin* startPin = startPinIsInputPin ? &nm::m_Nodes().at(startPinParentNodeIndex)->inputPins.at(startPinIndex)
+                                                   : &nm::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
+                Pin* endPin = endPinIsInputPin ? &nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex)
+                                               : &nm::m_Nodes().at(endPinParentNodeIndex)->outputPins.at(endPinIndex);
+
+                nm::CreateLink(startPin, endPin);
+            }
+        }
     }
 
     elementsCutted = false;
