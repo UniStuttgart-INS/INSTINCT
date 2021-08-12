@@ -46,16 +46,6 @@ class KalmanFilter
 
     /// @brief Default constructor
     KalmanFilter() = delete;
-    /// @brief Destructor
-    ~KalmanFilter() = default;
-    /// @brief Copy constructor
-    KalmanFilter(const KalmanFilter&) = delete;
-    /// @brief Move constructor
-    KalmanFilter(KalmanFilter&&) = delete;
-    /// @brief Copy assignment operator
-    KalmanFilter& operator=(const KalmanFilter&) = delete;
-    /// @brief Move assignment operator
-    KalmanFilter& operator=(KalmanFilter&&) = delete;
 
     /// @brief Do a Time Update
     /// @attention Update the State transition matrix (𝚽) and the Process noise covariance matrix (𝐐) before calling this
@@ -85,7 +75,6 @@ class KalmanFilter
         P = P - K * H * P;
     }
 
-  protected:
     /// x̂ State vector
     Eigen::VectorXd x;
 

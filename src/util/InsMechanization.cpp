@@ -308,7 +308,7 @@ Eigen::Vector3d updatePosition_n(const long double& timeDifferenceSec__t0, // Δ
     return position_n__t0;
 }
 
-double earthRadius_N(const double& a, const double& e_squared, const double& latitude)
+double earthRadius_N(const double& latitude, const double& a, const double& e_squared)
 {
     double k = std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
 
@@ -318,7 +318,7 @@ double earthRadius_N(const double& a, const double& e_squared, const double& lat
     return R_N;
 }
 
-double earthRadius_E(const double& a, const double& e_squared, const double& latitude)
+double earthRadius_E(const double& latitude, const double& a, const double& e_squared)
 {
     /// East/West (prime vertical) earth radius [m]
     double R_E = a / std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));

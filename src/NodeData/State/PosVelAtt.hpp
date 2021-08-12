@@ -21,13 +21,13 @@ class PosVelAtt : public InsObs
     /// @brief Destructor
     ~PosVelAtt() override = default;
     /// @brief Copy constructor
-    PosVelAtt(const PosVelAtt&) = delete;
+    PosVelAtt(const PosVelAtt&) = default;
     /// @brief Move constructor
-    PosVelAtt(PosVelAtt&&) = delete;
+    PosVelAtt(PosVelAtt&&) = default;
     /// @brief Copy assignment operator
-    PosVelAtt& operator=(const PosVelAtt&) = delete;
+    PosVelAtt& operator=(const PosVelAtt&) = default;
     /// @brief Move assignment operator
-    PosVelAtt& operator=(PosVelAtt&&) = delete;
+    PosVelAtt& operator=(PosVelAtt&&) = default;
 
     /// @brief Returns the type of the data class
     /// @return The data type
