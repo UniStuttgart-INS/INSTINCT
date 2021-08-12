@@ -17,6 +17,7 @@ using json = nlohmann::json;
 
 #include <vector>
 #include <limits>
+#include <iterator>
 
 bool elementsCutted = false;
 json clipboard;
@@ -38,6 +39,8 @@ void NAV::gui::cutFlowElements()
 
     auto selectedNodesCount = ed::GetSelectedNodes(selectedNodeIds.data(), ed::GetSelectedObjectCount());
     selectedNodeIds.resize(static_cast<size_t>(selectedNodesCount));
+
+    clipboard.clear();
 
     for (const auto& link : nm::m_Links())
     {
@@ -64,6 +67,8 @@ void NAV::gui::copyFlowElements()
 
     auto selectedNodesCount = ed::GetSelectedNodes(selectedNodeIds.data(), ed::GetSelectedObjectCount());
     selectedNodeIds.resize(static_cast<size_t>(selectedNodesCount));
+
+    clipboard.clear();
 
     for (const auto& link : nm::m_Links())
     {
@@ -131,74 +136,75 @@ void NAV::gui::pasteFlowElements()
     {
         for (const auto& linkJson : clipboard.at("links"))
         {
-            size_t startPinId = linkJson.at("startPinId").get<size_t>();
-            size_t endPinId = linkJson.at("endPinId").get<size_t>();
+            auto startPinId = linkJson.at("startPinId").get<size_t>();
+            auto endPinId = linkJson.at("endPinId").get<size_t>();
 
             size_t startPinParentNodeIndex = 0;
             size_t startPinIndex = 0;
-            bool startPinIsInputPin = false;
+            Pin::Kind startPinKind = Pin::Kind::None;
 
             size_t endPinParentNodeIndex = 0;
             size_t endPinIndex = 0;
-            bool endPinIsInputPin = false;
+            Pin::Kind endPinKind = Pin::Kind::None;
 
             // Search for the nodes and pins which where connected by the old link
             if (clipboard.contains("nodes"))
             {
-                for (size_t nodeIndex = 0; nodeIndex < clipboard.at("nodes").size(); nodeIndex++)
+                size_t nodeIndex = 0;
+                for (const auto& nodeJson : clipboard.at("nodes"))
                 {
-                    LOG_DEBUG("Clipboard has {} nodes", clipboard.at("nodes").size());
-                    const auto& nodeJson = clipboard.at("nodes").at(nodeIndex);
+                    LOG_DEBUG("{}", nodeJson);
 
                     if (nodeJson.contains("inputPins"))
                     {
-                        for (size_t pinIndex = 0; pinIndex < clipboard.at("inputPins").size(); pinIndex++)
+                        size_t pinIndex = 0;
+                        for (const auto& pinJson : nodeJson.at("inputPins"))
                         {
-                            const auto& pinJson = clipboard.at("inputPins").at(pinIndex);
-
                             if (pinJson.at("id").get<size_t>() == startPinId)
                             {
                                 startPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
                                 startPinIndex = pinIndex;
-                                startPinIsInputPin = true;
+                                startPinKind = Pin::Kind::Input;
                             }
                             if (pinJson.at("id").get<size_t>() == endPinId)
                             {
                                 endPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
                                 endPinIndex = pinIndex;
-                                endPinIsInputPin = true;
+                                endPinKind = Pin::Kind::Input;
                             }
+                            pinIndex++;
                         }
                     }
                     if (nodeJson.contains("outputPins"))
                     {
-                        for (size_t pinIndex = 0; pinIndex < clipboard.at("outputPins").size(); pinIndex++)
+                        size_t pinIndex = 0;
+                        for (const auto& pinJson : nodeJson.at("outputPins"))
                         {
-                            const auto& pinJson = clipboard.at("outputPins").at(pinIndex);
-
                             if (pinJson.at("id").get<size_t>() == startPinId)
                             {
                                 startPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
                                 startPinIndex = pinIndex;
-                                startPinIsInputPin = false;
+                                startPinKind = Pin::Kind::Output;
                             }
                             if (pinJson.at("id").get<size_t>() == endPinId)
                             {
                                 endPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
                                 endPinIndex = pinIndex;
-                                endPinIsInputPin = false;
+                                endPinKind = Pin::Kind::Output;
                             }
+                            pinIndex++;
                         }
                     }
+                    nodeIndex++;
                 }
             }
 
-            if (startPinIndex && endPinIndex)
+            if (startPinKind != Pin::Kind::None && endPinKind != Pin::Kind::None)
             {
-                Pin* startPin = startPinIsInputPin ? &nm::m_Nodes().at(startPinParentNodeIndex)->inputPins.at(startPinIndex)
-                                                   : &nm::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
-                Pin* endPin = endPinIsInputPin ? &nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex)
-                                               : &nm::m_Nodes().at(endPinParentNodeIndex)->outputPins.at(endPinIndex);
+                Pin* startPin = startPinKind == Pin::Kind::Input ? &nm::m_Nodes().at(startPinParentNodeIndex)->inputPins.at(startPinIndex)
+                                                                 : &nm::m_Nodes().at(startPinParentNodeIndex)->outputPins.at(startPinIndex);
+                Pin* endPin = endPinKind == Pin::Kind::Input ? &nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex)
+                                                             : &nm::m_Nodes().at(endPinParentNodeIndex)->outputPins.at(endPinIndex);
 
                 nm::CreateLink(startPin, endPin);
             }
