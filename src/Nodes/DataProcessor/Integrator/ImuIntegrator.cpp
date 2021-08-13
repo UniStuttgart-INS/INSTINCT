@@ -397,10 +397,6 @@ void NAV::ImuIntegrator::integrateObservation()
     const Eigen::Vector3d position_e__t1 = posVelAtt__t1->position_ecef();
     // LOG_DEBUG("position_e__t1 =\n{}", position_e__t1);
 
-    LOG_DATA("{}: Integrating Imu data with accel_p {}, {}, {}", nameId(), acceleration_p__t0.x(), acceleration_p__t0.y(), acceleration_p__t0.z());
-    [[maybe_unused]] auto acceleration_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
-    LOG_DATA("{}: Integrating Imu data with accel_b {}, {}, {}", nameId(), acceleration_b__t0.x(), acceleration_b__t0.y(), acceleration_b__t0.z());
-
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
     Eigen::Vector3d gravity_n__t1;
 
@@ -512,8 +508,12 @@ void NAV::ImuIntegrator::integrateObservation()
 
         /// a_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
         const Eigen::Vector3d acceleration_b__t1 = imuPosition.quatAccel_bp() * acceleration_p__t1;
+
         /// a_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
         const Eigen::Vector3d acceleration_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
+
+        // LOG_DATA("{}: Integrating Imu data with accel_p {}, {}, {}", nameId(), acceleration_p__t0.x(), acceleration_p__t0.y(), acceleration_p__t0.z());
+        // LOG_DATA("{}: Integrating Imu data with accel_b {}, {}, {}", nameId(), acceleration_b__t0.x(), acceleration_b__t0.y(), acceleration_b__t0.z());
 
         /// q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
         const Eigen::Quaterniond quaternion_nb__t1 = posVelAtt__t1->quaternion_nb();
