@@ -39,6 +39,9 @@ bool canUndoLastAction();
 /// @brief Checks if an action can be redone
 bool canRedoLastAction();
 
+/// @brief Clears the list of last actions
+void clearLastActionList();
+
 /// @brief Undo the last action
 void undoLastAction();
 

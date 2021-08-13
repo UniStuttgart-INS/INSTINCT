@@ -236,6 +236,12 @@ bool NAV::gui::canRedoLastAction()
     return currentAction + 1 < actionList.size();
 }
 
+void NAV::gui::clearLastActionList()
+{
+    actionList.clear();
+    currentAction = 0;
+}
+
 void restoreAction(const json& target)
 {
     // TODO: Compare against current config and only load the nodes/links which were changed

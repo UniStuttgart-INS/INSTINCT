@@ -84,6 +84,8 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     json j;
     filestream >> j;
 
+    saveLastActions = false;
+
     nm::DeleteAllLinks();
     nm::DeleteAllNodes();
 
@@ -106,8 +108,10 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         loadingFrameCount = ImGui::GetFrameCount();
     }
     unsavedChanges = false;
+    saveLastActions = true;
     currentFilename = filepath;
 
+    gui::clearLastActionList();
     gui::saveLastAction();
 
     return loadSuccessful;
