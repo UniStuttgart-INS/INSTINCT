@@ -7,6 +7,7 @@
 
 #include "Nodes/Node.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/IMU/ImuObs.hpp"
 
 #include "KalmanFilter.hpp"
 
@@ -56,6 +57,11 @@ class LooselyCoupledKF : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Receive Function for IMU observations
+    /// @param[in] nodeData State vector (ImuObs)
+    /// @param[in] linkId Id of the link over which the data is received
+    void recvImuObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
     /// @brief Receive Function for the intertial navigation solution
     /// @param[in] nodeData State vector (PosVelAtt)
     /// @param[in] linkId Id of the link over which the data is received
@@ -72,12 +78,13 @@ class LooselyCoupledKF : public Node
     /// Current Position, Velocity and Attitude at the time tₖ₋₁
     std::optional<PosVelAtt> posVelAtt;
 
+    /// Latest IMU observation that includes specific force and angular rate measurements
+    std::shared_ptr<ImuObs> latestImuObs = nullptr;
+
     /// Timestamp of the KF
     double tau_KF = 0.01;
 
-    /// Specific force of the body with respect to inertial frame in [m / s^2], resolved in body coord.
-    Eigen::Vector3d specForce_ib_b{ 0, 0, 9.81 }; // FIXME: Is this really the acceleration measurement value? And if yes, this needs to be set from measurements.
-
+    // TODO: Make Variance choosable from the GUI and adapt default values
     /// 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements
     double variance_ra = 1e-6;
     /// 𝜎²_rg Variance of the noise on the gyro angular-rate measurements
@@ -87,12 +94,20 @@ class LooselyCoupledKF : public Node
     /// 𝜎²_bgd Variance of the gyro dynamic bias
     double variance_bgd = 1e-5;
 
+    /// Lever arm between INS and GNSS in [m, m, m]
+    Eigen::Vector3d leverArm_InsGnss{ 0.0, 0.0, 0.0 };
+
     /// Kalman Filter representation
     KalmanFilter kalmanFilter{ 15, 6 };
 
-    /* -------------------------------------------------------------------------------------------------------- */
-    /*                                          Propagation                                                     */
-    /* -------------------------------------------------------------------------------------------------------- */
+    /// σ² Standard deviation of the GPS LatLonAlt position [rad^2, rad^2, m^2]
+    Eigen::Vector3d gnssSigmaSquaredLatLonAlt;
+    /// σ² Standard deviation of the GPS NED velocity [m^2/s^2]
+    Eigen::Vector3d gnssSigmaSquaredVelocity;
+
+    // ###########################################################################################################
+    //                                                Prediction
+    // ###########################################################################################################
 
     // ###########################################################################################################
     //                                           Transition matrix 𝚽
@@ -106,7 +121,8 @@ class LooselyCoupledKF : public Node
     /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
     /// @param[in] tau_s time interval in [s]
     /// @note See Groves (2013) chapter 14.2.4, equations (14.63) and (14.72)
-    static Eigen::MatrixXd transitionMatrix(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, double tau_s);
+    static Eigen::MatrixXd
+        transitionMatrix(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, double tau_s);
 
     /// @brief Submatrix 𝐅_11 of the system matrix 𝐅
     /// @param[in] angularRate_in_n Angular rate vector of the n-system with respect to the i-system in [rad / s], resolved in the n-system
@@ -212,7 +228,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] R_N Meridian radius of curvature in [m]
     /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
     /// @return A 3x3 matrix
-    static Eigen::Matrix3d T_rn_p(const Eigen::Vector3d& position_lla, const double& R_N, const double& R_E);
+    static Eigen::Matrix3d conversionMatrixCartesianCurvilinear(const Eigen::Vector3d& position_lla, const double& R_N, const double& R_E);
 
     /// @brief Submatrix 𝐐_11 of the system noise covariance matrix 𝐐
     /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
@@ -334,8 +350,44 @@ class LooselyCoupledKF : public Node
     /// @note See Groves (2013) equation (14.80)
     static Eigen::Matrix3d systemNoiseCovariance_55(const double& S_bgd, const double& tau_s);
 
-    /* -------------------------------------------------------------------------------------------------------- */
-    /*                                          Correction                                                      */
-    /* -------------------------------------------------------------------------------------------------------- */
+    // ###########################################################################################################
+    //                                                Correction
+    // ###########################################################################################################
+
+    /// @brief Measurement matrix for GNSS measurements at timestep k, represented in navigation coordinates
+    /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
+    /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
+    /// @param[in] angularRate_ib_b Angular rate of body with respect to inertial system in body coordinates in [rad/s]
+    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
+    /// @return The 6x15 measurement matrix 𝐇
+    static Eigen::Matrix<double, 6, 15> measurementMatrix(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Vector3d& position_lla);
+
+    /// @brief Submatrix 𝐇_r1 of the measurement sensitivity matrix 𝐇
+    /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
+    /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
+    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @return The 3x3 matrix 𝐇_r1
+    static Eigen::Matrix3d measurementMatrix_r1_n(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss);
+
+    /// @brief Submatrix 𝐇_v1 of the measurement sensitivity matrix 𝐇
+    /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
+    /// @param[in] angularRate_ib_b Angular rate of body with respect to inertial system in body coordinates in [rad/s]
+    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
+    /// @return The 3x3 matrix 𝐇_v1
+    static Eigen::Matrix3d measurementMatrix_v1_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Vector3d& position_lla);
+
+    /// @brief Submatrix 𝐇_v5 of the measurement sensitivity matrix 𝐇
+    /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
+    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @return The 3x3 matrix 𝐇_v5
+    static Eigen::Matrix3d measurementMatrix_v5_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss);
+
+    /// @brief Measurement noise covariance matrix 𝐑
+    /// @param[in] gnssVarianceLatLonAlt Variances of the position LLA in [rad² rad² m²]
+    /// @param[in] gnssVarianceVelocity Variances of the velocity in [m² m² m²]
+    /// @return The 6x6 measurement covariance matrix 𝐑
+    static Eigen::Matrix<double, 6, 6> measurementNoiseCovariance(const Eigen::Vector3d& gnssVarianceLatLonAlt, const Eigen::Vector3d& gnssVarianceVelocity);
 };
 } // namespace NAV

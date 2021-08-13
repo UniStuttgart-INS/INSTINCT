@@ -7,6 +7,7 @@
 #pragma once
 
 #include "util/Eigen.hpp"
+#include "NodeData/InsObs.hpp"
 
 namespace NAV
 {
