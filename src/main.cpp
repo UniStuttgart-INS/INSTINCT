@@ -126,8 +126,7 @@ int Main(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-array
                     }
                     catch (...)
                     {
-                        nm::DeleteAllLinks();
-                        nm::DeleteAllNodes();
+                        nm::DeleteAllLinksAndNodes();
                         NAV::flow::DiscardChanges();
                         NAV::flow::SetCurrentFilename("");
                         LOG_ERROR("Loading flow file failed");

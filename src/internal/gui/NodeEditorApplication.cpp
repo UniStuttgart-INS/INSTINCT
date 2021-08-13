@@ -280,8 +280,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             {
                 flow::SaveFlowAs(flow::GetCurrentFilename());
                 globalAction = GlobalActions::None;
-                nm::DeleteAllLinks();
-                nm::DeleteAllNodes();
+                nm::DeleteAllLinksAndNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
                 ImGui::CloseCurrentPopup();
@@ -296,8 +295,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
                 flow::SaveFlowAs(flow::GetCurrentFilename());
 
                 igfd::ImGuiFileDialog::Instance()->CloseDialog();
-                nm::DeleteAllLinks();
-                nm::DeleteAllNodes();
+                nm::DeleteAllLinksAndNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
             }
@@ -311,8 +309,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         if (ImGui::Button("Discard"))
         {
             globalAction = GlobalActions::None;
-            nm::DeleteAllLinks();
-            nm::DeleteAllNodes();
+            nm::DeleteAllLinksAndNodes();
             flow::DiscardChanges();
             flow::SetCurrentFilename("");
             ImGui::CloseCurrentPopup();

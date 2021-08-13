@@ -29,6 +29,9 @@ const std::vector<Node*>& m_Nodes();
 /// @brief List of all registered Links
 const std::vector<Link>& m_Links();
 
+/// @brief Delete all links and nodes
+void DeleteAllLinksAndNodes();
+
 /// @brief Add the provided node object to the list of nodes
 /// @param[in] node Node object to add to the list
 void AddNode(Node* node);

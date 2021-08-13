@@ -56,8 +56,7 @@ void NAV::gui::checkShortcuts(GlobalActions& globalAction)
             }
             else
             {
-                nm::DeleteAllLinks();
-                nm::DeleteAllNodes();
+                nm::DeleteAllLinksAndNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
             }
