@@ -5,6 +5,8 @@ namespace nm = NAV::NodeManager;
 
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/NodeEditorApplication.hpp"
+
 #include <imgui_node_editor.h>
 #include <imgui_node_editor_internal.h>
 namespace ed = ax::NodeEditor;
@@ -13,14 +15,24 @@ namespace ed = ax::NodeEditor;
 using json = nlohmann::json;
 #include "internal/Json.hpp"
 
-#include "internal/gui/NodeEditorApplication.hpp"
+#include "util/ConfigManager.hpp"
 
 #include <vector>
+#include <deque>
 #include <limits>
 #include <iterator>
 
+/// @brief Specifies if the elements in the clipboard are cutted or copied
 bool elementsCutted = false;
+/// @brief Clipboard storage
 json clipboard;
+
+/// @brief Maximum size of the action list
+constexpr size_t ACTION_LIST_MAX_SIZE = 20;
+/// @brief Current action in the action list
+size_t currentAction = 0;
+/// @brief List of actions performed by the user
+std::deque<json> actionList;
 
 bool NAV::gui::canCutOrCopyFlowElements()
 {
@@ -216,18 +228,98 @@ void NAV::gui::pasteFlowElements()
 
 bool NAV::gui::canUndoLastAction()
 {
-    return true;
+    return currentAction > 0;
 }
 
 bool NAV::gui::canRedoLastAction()
 {
-    return true;
+    return currentAction + 1 < actionList.size();
+}
+
+void restoreAction(const json& target)
+{
+    // TODO: Compare against current config and only load the nodes/links which were changed
+    // json current;
+    // for (const auto& node : nm::m_Nodes())
+    // {
+    //     current["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
+    //     current["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+    // }
+    // for (const auto& link : nm::m_Links())
+    // {
+    //     current["links"]["link-" + std::to_string(size_t(link.id))] = link;
+    // }
+
+    NAV::flow::saveLastActions = false;
+    nm::DeleteAllLinks();
+    nm::DeleteAllNodes();
+
+    NAV::flow::LoadJson(target);
+    if (!target["unsavedChanges"].get<bool>())
+    {
+        NAV::flow::DiscardChanges();
+    }
+    else
+    {
+        NAV::flow::ApplyChanges();
+    }
+
+    NAV::flow::loadingFrameCount = ImGui::GetFrameCount();
+    NAV::flow::saveLastActions = true;
+
+    nm::InitializeAllNodesAsync();
 }
 
 void NAV::gui::undoLastAction()
 {
+    LOG_DEBUG("Undoing last action");
+
+    restoreAction(actionList.at(--currentAction));
 }
 
 void NAV::gui::redoLastAction()
 {
+    LOG_DEBUG("Redoing last action");
+
+    restoreAction(actionList.at(++currentAction));
+}
+
+void NAV::gui::saveLastAction()
+{
+    LOG_DEBUG("Saving last action to action list");
+
+    // TODO: Check if event was triggered by a slider and discard the save, because it triggers it every step
+
+    if (actionList.size() > ACTION_LIST_MAX_SIZE) // List is full
+    {
+        LOG_TRACE("Action list full, therefore discarding first element.");
+        actionList.pop_front();
+        if (currentAction)
+        {
+            currentAction--;
+        }
+    }
+    while (currentAction + 1 < actionList.size())
+    {
+        LOG_TRACE("Discarding element which is past the current action");
+        actionList.pop_back();
+    }
+
+    json j;
+    for (const auto& node : nm::m_Nodes())
+    {
+        j["nodes"]["node-" + std::to_string(size_t(node->id))] = *node;
+        j["nodes"]["node-" + std::to_string(size_t(node->id))]["data"] = node->save();
+    }
+    for (const auto& link : nm::m_Links())
+    {
+        j["links"]["link-" + std::to_string(size_t(link.id))] = link;
+    }
+    j["unsavedChanges"] = NAV::flow::HasUnsavedChanges();
+
+    if (!actionList.empty())
+    {
+        currentAction++;
+    }
+    actionList.push_back(j);
 }

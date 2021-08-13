@@ -45,4 +45,7 @@ void undoLastAction();
 /// @brief Redo the last action
 void redoLastAction();
 
+/// @brief Saves the last action to the action list
+void saveLastAction();
+
 } // namespace NAV::gui

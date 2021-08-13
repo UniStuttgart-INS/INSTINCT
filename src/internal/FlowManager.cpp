@@ -23,9 +23,10 @@ namespace ed = ax::NodeEditor;
 #include <iostream>
 
 bool unsavedChanges = false;
+bool NAV::flow::saveLastActions = true;
 
 constexpr int loadingFramesToWait = 2;
-int loadingFrameCount = 0;
+int NAV::flow::loadingFrameCount = 0;
 
 std::string currentFilename;
 std::string programRootPath;
@@ -106,6 +107,8 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     }
     unsavedChanges = false;
     currentFilename = filepath;
+
+    gui::saveLastAction();
 
     return loadSuccessful;
 }
@@ -225,6 +228,10 @@ void NAV::flow::ApplyChanges()
     if (ImGui::GetCurrentContext() && ImGui::GetFrameCount() - loadingFrameCount >= loadingFramesToWait)
     {
         unsavedChanges = true;
+        if (saveLastActions)
+        {
+            gui::saveLastAction();
+        }
     }
 }
 

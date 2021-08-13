@@ -35,4 +35,10 @@ std::string GetProgramRootPath();
 
 void SetProgramRootPath(const std::string& newRootPath);
 
+/// @brief Whether actions should be saved to the last actions list
+extern bool saveLastActions;
+
+/// @brief Frame Count when changes were loaded to prevent nodes moving from triggering unsaved changes
+extern int loadingFrameCount;
+
 } // namespace NAV::flow
