@@ -53,6 +53,7 @@ void NAV::gui::cutFlowElements()
     selectedNodeIds.resize(static_cast<size_t>(selectedNodesCount));
 
     clipboard.clear();
+    NAV::flow::saveLastActions = false;
 
     for (const auto& link : nm::m_Links())
     {
@@ -70,6 +71,9 @@ void NAV::gui::cutFlowElements()
     }
 
     elementsCutted = true;
+
+    NAV::flow::saveLastActions = true;
+    saveLastAction();
 }
 
 void NAV::gui::copyFlowElements()
@@ -102,6 +106,8 @@ void NAV::gui::pasteFlowElements()
 {
     // Store the node count to later iterate over the new nodes
     auto nodeCountBeforeLoad = nm::m_Nodes().size();
+
+    NAV::flow::saveLastActions = false;
 
     flow::LoadJson(clipboard, !elementsCutted);
 
@@ -224,6 +230,10 @@ void NAV::gui::pasteFlowElements()
     }
 
     elementsCutted = false;
+
+    NAV::flow::loadingFrameCount = ImGui::GetFrameCount();
+    NAV::flow::saveLastActions = true;
+    saveLastAction();
 }
 
 bool NAV::gui::canUndoLastAction()
