@@ -29,6 +29,9 @@ const std::vector<Node*>& m_Nodes();
 /// @brief List of all registered Links
 const std::vector<Link>& m_Links();
 
+/// @brief Delete all links and nodes
+void DeleteAllLinksAndNodes();
+
 /// @brief Add the provided node object to the list of nodes
 /// @param[in] node Node object to add to the list
 void AddNode(Node* node);
@@ -211,5 +214,14 @@ void InitializeAllNodesAsync();
 
 /// @brief Stops all active threads
 void Stop();
+
+/// @brief Generates a new node id
+ax::NodeEditor::NodeId GetNextNodeId();
+
+/// @brief Generates a new link id
+ax::NodeEditor::LinkId GetNextLinkId();
+
+/// @brief Generates a new pin id
+ax::NodeEditor::PinId GetNextPinId();
 
 } // namespace NAV::NodeManager

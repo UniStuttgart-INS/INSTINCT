@@ -30,12 +30,6 @@ namespace NAV::NodeManager
 {
 size_t GetNextId();
 
-ed::NodeId GetNextNodeId();
-
-ed::LinkId GetNextLinkId();
-
-ed::PinId GetNextPinId();
-
 } // namespace NAV::NodeManager
 
 /* -------------------------------------------------------------------------------------------------------- */
@@ -66,6 +60,20 @@ const std::vector<NAV::Node*>& NAV::NodeManager::m_Nodes()
 const std::vector<NAV::Link>& NAV::NodeManager::m_Links()
 {
     return m_links;
+}
+
+void NAV::NodeManager::DeleteAllLinksAndNodes()
+{
+    LOG_TRACE("called");
+
+    bool saveLastActionsValue = NAV::flow::saveLastActions;
+    NAV::flow::saveLastActions = false;
+
+    DeleteAllLinks();
+    DeleteAllNodes();
+
+    NAV::flow::saveLastActions = saveLastActionsValue;
+    flow::ApplyChanges();
 }
 
 void NAV::NodeManager::AddNode(NAV::Node* node)
@@ -180,6 +188,10 @@ bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
 void NAV::NodeManager::DeleteAllNodes()
 {
     LOG_TRACE("called");
+
+    bool saveLastActionsValue = NAV::flow::saveLastActions;
+    NAV::flow::saveLastActions = false;
+
     if (nodeInitThread.joinable())
     {
         // nodeInitThread.request_stop();
@@ -199,6 +211,7 @@ void NAV::NodeManager::DeleteAllNodes()
         m_NextId = std::max(m_NextId, size_t(link.id) + 1);
     }
 
+    NAV::flow::saveLastActions = saveLastActionsValue;
     flow::ApplyChanges();
 }
 
@@ -547,6 +560,9 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
 void NAV::NodeManager::DeleteAllLinks()
 {
     LOG_TRACE("called");
+
+    bool saveLastActionsValue = NAV::flow::saveLastActions;
+    NAV::flow::saveLastActions = false;
     while (!m_links.empty())
     {
         NodeManager::DeleteLink(m_links.back().id);
@@ -559,6 +575,7 @@ void NAV::NodeManager::DeleteAllLinks()
         m_NextId = std::max(m_NextId, size_t(node->id) + 1);
     }
 
+    NAV::flow::saveLastActions = saveLastActionsValue;
     flow::ApplyChanges();
 }
 

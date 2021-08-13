@@ -105,3 +105,36 @@ void NAV::Pin::drawPinIcon(bool connected, int alpha) const
     gui::widgets::PinIcon::Draw(ImVec2(static_cast<float>(m_PinIconSize), static_cast<float>(m_PinIconSize)),
                                 iconType, connected, color, ImColor(32, 32, 32, alpha));
 }
+
+void NAV::to_json(json& j, const Pin& pin)
+{
+    j = json{
+        { "id", size_t(pin.id) },
+        { "type", std::string(pin.type) },
+        { "name", pin.name },
+        { "dataIdentifier", pin.dataIdentifier },
+    };
+}
+void NAV::from_json(const json& j, Pin& pin)
+{
+    size_t id = 0;
+    j.at("id").get_to(id);
+    pin.id = id;
+
+    if (j.contains("type"))
+    {
+        std::string typeString;
+        j.at("type").get_to(typeString);
+        pin.type = Pin::Type(typeString);
+    }
+
+    if (j.contains("name"))
+    {
+        j.at("name").get_to(pin.name);
+    }
+
+    if (j.contains("dataIdentifier"))
+    {
+        j.at("dataIdentifier").get_to(pin.dataIdentifier);
+    }
+}

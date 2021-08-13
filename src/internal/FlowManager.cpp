@@ -1,7 +1,6 @@
 #include "internal/FlowManager.hpp"
 
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
+#include "internal/Json.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -24,200 +23,13 @@ namespace ed = ax::NodeEditor;
 #include <iostream>
 
 bool unsavedChanges = false;
+bool NAV::flow::saveLastActions = true;
 
 constexpr int loadingFramesToWait = 2;
-int loadingFrameCount = 0;
+int NAV::flow::loadingFrameCount = 0;
 
 std::string currentFilename;
 std::string programRootPath;
-
-void to_json(json& j, const ImColor& color)
-{
-    j = json{
-        { "r", static_cast<int>(color.Value.x * 255.0F) },
-        { "g", static_cast<int>(color.Value.y * 255.0F) },
-        { "b", static_cast<int>(color.Value.z * 255.0F) },
-        { "a", static_cast<int>(color.Value.w * 255.0F) },
-    };
-}
-void from_json(const json& j, ImColor& color)
-{
-    int r = 0;
-    int g = 0;
-    int b = 0;
-    int a = 255;
-    if (j.contains("r"))
-    {
-        j.at("r").get_to(r);
-    }
-    if (j.contains("g"))
-    {
-        j.at("g").get_to(g);
-    }
-    if (j.contains("b"))
-    {
-        j.at("b").get_to(b);
-    }
-    if (j.contains("a"))
-    {
-        j.at("a").get_to(a);
-    }
-
-    color = ImColor(r, g, b, a);
-}
-
-void to_json(json& j, const ImVec2& vec2)
-{
-    j = json{
-        { "x", vec2.x },
-        { "y", vec2.y },
-    };
-}
-void from_json(const json& j, ImVec2& vec2)
-{
-    if (j.contains("x"))
-    {
-        j.at("x").get_to(vec2.x);
-    }
-    if (j.contains("y"))
-    {
-        j.at("y").get_to(vec2.y);
-    }
-}
-
-namespace NAV
-{
-void to_json(json& j, const Pin& pin)
-{
-    j = json{
-        { "id", size_t(pin.id) },
-        { "type", std::string(pin.type) },
-        { "name", pin.name },
-        { "dataIdentifier", pin.dataIdentifier },
-    };
-}
-void from_json(const json& j, Pin& pin)
-{
-    size_t id = 0;
-    j.at("id").get_to(id);
-    pin.id = id;
-
-    if (j.contains("type"))
-    {
-        std::string typeString;
-        j.at("type").get_to(typeString);
-        pin.type = Pin::Type(typeString);
-    }
-
-    if (j.contains("name"))
-    {
-        j.at("name").get_to(pin.name);
-    }
-
-    if (j.contains("dataIdentifier"))
-    {
-        j.at("dataIdentifier").get_to(pin.dataIdentifier);
-    }
-}
-
-void to_json(json& j, const Node& node)
-{
-    ImVec2 realSize = ed::GetNodeSize(node.id);
-    realSize.x -= 16;
-    realSize.y -= 38;
-    j = json{
-        { "id", size_t(node.id) },
-        { "type", node.type() },
-        { "kind", std::string(node.kind) },
-        { "name", node.name },
-        { "size", node.size.x == 0 && node.size.y == 0 ? node.size : realSize },
-        { "pos", ed::GetNodePosition(node.id) },
-        { "enabled", node.enabled },
-        { "inputPins", node.inputPins },
-        { "outputPins", node.outputPins },
-    };
-}
-void from_json(const json& j, Node& node)
-{
-    node.id = j.at("id").get<size_t>();
-    if (j.contains("kind"))
-    {
-        node.kind = Node::Kind(j.at("kind").get<std::string>());
-    }
-    if (j.contains("name"))
-    {
-        j.at("name").get_to(node.name);
-    }
-    if (j.contains("size"))
-    {
-        j.at("size").get_to(node.size);
-    }
-    if (j.contains("enabled"))
-    {
-        j.at("enabled").get_to(node.enabled);
-    }
-
-    if (j.contains("inputPins"))
-    {
-        auto inputPins = j.at("inputPins").get<std::vector<Pin>>();
-        for (size_t i = 0; i < inputPins.size(); ++i)
-        {
-            if (node.inputPins.size() <= i)
-            {
-                break;
-            }
-            node.inputPins.at(i).id = inputPins.at(i).id;
-            node.inputPins.at(i).type = inputPins.at(i).type;
-            node.inputPins.at(i).name = inputPins.at(i).name;
-            node.inputPins.at(i).dataIdentifier = inputPins.at(i).dataIdentifier;
-        }
-    }
-
-    if (j.contains("outputPins"))
-    {
-        auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
-        for (size_t i = 0; i < outputPins.size(); ++i)
-        {
-            if (node.outputPins.size() <= i)
-            {
-                break;
-            }
-            node.outputPins.at(i).id = outputPins.at(i).id;
-            node.outputPins.at(i).type = outputPins.at(i).type;
-            node.outputPins.at(i).name = outputPins.at(i).name;
-            node.outputPins.at(i).dataIdentifier = outputPins.at(i).dataIdentifier;
-        }
-    }
-}
-
-void to_json(json& j, const Link& link)
-{
-    j = json{
-        { "id", size_t(link.id) },
-        { "startPinId", size_t(link.startPinId) },
-        { "endPinId", size_t(link.endPinId) },
-        { "color", link.color },
-    };
-}
-void from_json(const json& j, Link& link)
-{
-    size_t id = 0;
-    j.at("id").get_to(id);
-    link.id = id;
-
-    j.at("startPinId").get_to(id);
-    link.startPinId = id;
-
-    j.at("endPinId").get_to(id);
-    link.endPinId = id;
-
-    if (j.contains("color"))
-    {
-        j.at("color").get_to(link.color);
-    }
-}
-
-} // namespace NAV
 
 void NAV::flow::SaveFlow(GlobalActions& globalAction)
 {
@@ -272,8 +84,41 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     json j;
     filestream >> j;
 
-    nm::DeleteAllLinks();
-    nm::DeleteAllNodes();
+    saveLastActions = false;
+
+    nm::DeleteAllLinksAndNodes();
+
+    LoadJson(j);
+
+    if (ConfigManager::Get<bool>("nogui", false))
+    {
+        if (!nm::InitializeAllNodes())
+        {
+            loadSuccessful = false;
+        }
+    }
+    else
+    {
+        nm::InitializeAllNodesAsync();
+    }
+
+    if (!ConfigManager::Get<bool>("nogui", false))
+    {
+        loadingFrameCount = ImGui::GetFrameCount();
+    }
+    unsavedChanges = false;
+    saveLastActions = true;
+    currentFilename = filepath;
+
+    gui::clearLastActionList();
+    gui::saveLastAction();
+
+    return loadSuccessful;
+}
+
+bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
+{
+    bool loadSuccessful = true;
 
     if (j.contains("nodes"))
     {
@@ -308,6 +153,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
             }
 
             nm::AddNode(node);
+            auto newNodeId = node->id;
 
             nodeJson.get_to<Node>(*node);
             if (nodeJson.contains("data"))
@@ -316,6 +162,19 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
             }
             // Load second time in case restore changed the amount of pins
             nodeJson.get_to<Node>(*node);
+
+            if (requestNewIds)
+            {
+                node->id = newNodeId;
+                for (auto& pin : node->inputPins)
+                {
+                    pin.id = nm::GetNextPinId();
+                }
+                for (auto& pin : node->outputPins)
+                {
+                    pin.id = nm::GetNextPinId();
+                }
+            }
 
             nm::UpdateNode(node);
 
@@ -358,25 +217,6 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
         }
     }
 
-    if (ConfigManager::Get<bool>("nogui", false))
-    {
-        if (!nm::InitializeAllNodes())
-        {
-            loadSuccessful = false;
-        }
-    }
-    else
-    {
-        nm::InitializeAllNodesAsync();
-    }
-
-    if (!ConfigManager::Get<bool>("nogui", false))
-    {
-        loadingFrameCount = ImGui::GetFrameCount();
-    }
-    unsavedChanges = false;
-    currentFilename = filepath;
-
     return loadSuccessful;
 }
 
@@ -391,6 +231,10 @@ void NAV::flow::ApplyChanges()
     if (ImGui::GetCurrentContext() && ImGui::GetFrameCount() - loadingFrameCount >= loadingFramesToWait)
     {
         unsavedChanges = true;
+        if (saveLastActions)
+        {
+            gui::saveLastAction();
+        }
     }
 }
 

@@ -301,4 +301,7 @@ constexpr bool operator==(const Node::Kind::Value& lhs, const Node::Kind& rhs) {
 constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind::Value& rhs) { return lhs.value != rhs; }
 constexpr bool operator!=(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return lhs != rhs.value; }
 
+void to_json(json& j, const Node& node);
+void from_json(const json& j, Node& node);
+
 } // namespace NAV

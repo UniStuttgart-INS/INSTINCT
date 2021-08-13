@@ -56,8 +56,7 @@ void NAV::gui::checkShortcuts(GlobalActions& globalAction)
             }
             else
             {
-                nm::DeleteAllLinks();
-                nm::DeleteAllNodes();
+                nm::DeleteAllLinksAndNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
             }
@@ -73,6 +72,31 @@ void NAV::gui::checkShortcuts(GlobalActions& globalAction)
         else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Q)))
         {
             globalAction = GlobalActions::Quit;
+        }
+        else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_X)) // Cut
+                 && canCutOrCopyFlowElements())
+        {
+            cutFlowElements();
+        }
+        else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C)) // Copy
+                 && canCutOrCopyFlowElements())
+        {
+            copyFlowElements();
+        }
+        else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_V)) // Paste
+                 && canPasteFlowElements())
+        {
+            pasteFlowElements();
+        }
+        else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z)) // Undo
+                 && canUndoLastAction())
+        {
+            undoLastAction();
+        }
+        else if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Y)) // Redo
+                 && canRedoLastAction())
+        {
+            redoLastAction();
         }
     }
     else if (io.KeyCtrl && !io.KeyAlt && io.KeyShift && !io.KeySuper)

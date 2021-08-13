@@ -7,6 +7,11 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
+#include "internal/Json.hpp"
+
+#include <imgui_node_editor.h>
+namespace ed = ax::NodeEditor;
+
 void NAV::Node::guiConfig() {}
 
 json NAV::Node::save() const { return {}; }
@@ -233,4 +238,74 @@ bool NAV::Node::isInitializing() const
 bool NAV::Node::isDeinitializing() const
 {
     return isDeinitializing_;
+}
+
+void NAV::to_json(json& j, const Node& node)
+{
+    ImVec2 realSize = ed::GetNodeSize(node.id);
+    realSize.x -= 16;
+    realSize.y -= 38;
+    j = json{
+        { "id", size_t(node.id) },
+        { "type", node.type() },
+        { "kind", std::string(node.kind) },
+        { "name", node.name },
+        { "size", node.size.x == 0 && node.size.y == 0 ? node.size : realSize },
+        { "pos", ed::GetNodePosition(node.id) },
+        { "enabled", node.enabled },
+        { "inputPins", node.inputPins },
+        { "outputPins", node.outputPins },
+    };
+}
+void NAV::from_json(const json& j, Node& node)
+{
+    node.id = j.at("id").get<size_t>();
+    if (j.contains("kind"))
+    {
+        node.kind = Node::Kind(j.at("kind").get<std::string>());
+    }
+    if (j.contains("name"))
+    {
+        j.at("name").get_to(node.name);
+    }
+    if (j.contains("size"))
+    {
+        j.at("size").get_to(node.size);
+    }
+    if (j.contains("enabled"))
+    {
+        j.at("enabled").get_to(node.enabled);
+    }
+
+    if (j.contains("inputPins"))
+    {
+        auto inputPins = j.at("inputPins").get<std::vector<Pin>>();
+        for (size_t i = 0; i < inputPins.size(); ++i)
+        {
+            if (node.inputPins.size() <= i)
+            {
+                break;
+            }
+            node.inputPins.at(i).id = inputPins.at(i).id;
+            node.inputPins.at(i).type = inputPins.at(i).type;
+            node.inputPins.at(i).name = inputPins.at(i).name;
+            node.inputPins.at(i).dataIdentifier = inputPins.at(i).dataIdentifier;
+        }
+    }
+
+    if (j.contains("outputPins"))
+    {
+        auto outputPins = j.at("outputPins").get<std::vector<Pin>>();
+        for (size_t i = 0; i < outputPins.size(); ++i)
+        {
+            if (node.outputPins.size() <= i)
+            {
+                break;
+            }
+            node.outputPins.at(i).id = outputPins.at(i).id;
+            node.outputPins.at(i).type = outputPins.at(i).type;
+            node.outputPins.at(i).name = outputPins.at(i).name;
+            node.outputPins.at(i).dataIdentifier = outputPins.at(i).dataIdentifier;
+        }
+    }
 }
