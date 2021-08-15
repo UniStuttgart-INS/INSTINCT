@@ -65,13 +65,17 @@ target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries
 
-catch_discover_tests(
-  tests
-  WORKING_DIRECTORY
-  ${CMAKE_SOURCE_DIR}
-  REPORTER
-  junit
-  OUTPUT_DIR
-  ${CMAKE_SOURCE_DIR}/build/Debug/test
-  OUTPUT_SUFFIX
-  .xml)
+if(NOT WIN32)
+  catch_discover_tests(
+    tests
+    WORKING_DIRECTORY
+    ${CMAKE_SOURCE_DIR}
+    REPORTER
+    junit
+    OUTPUT_DIR
+    ${CMAKE_SOURCE_DIR}/build/Debug/test
+    OUTPUT_SUFFIX
+    .xml)
+else()
+  catch_discover_tests(tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+endif()
