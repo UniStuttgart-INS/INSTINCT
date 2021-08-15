@@ -25,12 +25,20 @@ image: ins-cpp:10
   only:
     - schedules
 
+.windows:
+  tags:
+    - windows
+  before_script:
+    - 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"'
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                      Prepare                                                       ║
+# ║                                              Prepare                                             ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 check-image:
   stage: prepare
+  tags:
+    - linux
   script:
     - g++ --version
     - clang++ --version
@@ -44,12 +52,22 @@ check-image:
     - gcov --version
     - xml_grep --version
 
+check-windows:
+  stage: prepare
+  extends: .windows
+  script:
+    - cl.exe
+    - cmake --version
+    - conan --version
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                       Checks                                                       ║
+# ║                                              Checks                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 clang-tidy:
   stage: checks
+  tags:
+    - linux
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
@@ -57,17 +75,21 @@ clang-tidy:
 
 clang-tidy:tests:
   stage: checks
+  tags:
+    - linux
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
     - ret=0; i=1; cnt=$(find test -type f -name "*.cpp" -printf '.' | wc -c); for f in $(find test -type f -name "*.cpp"); do echo '##### Linting '$i'/'$cnt' '$f; i=$((i+1)); clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                  Build Main & GUI                                                  ║
+# ║                                         Build Main & GUI                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 .build:main:
   stage: build
+  tags:
+    - linux
   needs: ["check-image"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -82,6 +104,36 @@ main:gcc:
   extends:
     - .build:main
     - .gcc
+
+main:win:
+  stage: build
+  extends: .windows
+  needs: ["check-windows"]
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release
+
+main:win:LOG_INFO:
+  extends: main:win
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=INFO -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release
+    - move bin\Release\instinct.exe .
+  artifacts:
+    paths:
+      - instinct.exe
+      - resources/data/egm96_to360.ascii
+      - resources/fonts/Cuprum-Bold.ttf
+      - resources/fonts/Cuprum-OFL.txt
+      - resources/fonts/Inconsolata-Nerd-Font-Complete.otf
+      - resources/fonts/NotoSans-Regular.ttf
+      - resources/fonts/Play-OFL.txt
+      - resources/fonts/Play-Regular.ttf
+      - resources/images/BlueprintBackground.png
+      - resources/images/INSTINCT_Logo_Text_white_small.png
+    expire_in: 1 week
+  only:
+    - master
 
 .build:main:LOG_OFF:
   extends:
@@ -100,12 +152,21 @@ main:gcc:LOG_OFF:
     - .build:main:LOG_OFF
     - .gcc
 
+main:win:LOG_OFF:
+  extends:
+    - main:win
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Release
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                     Build Tests                                                    ║
+# ║                                            Build Tests                                           ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 .build:tests:
   stage: build
+  tags:
+    - linux
   needs: ["check-image"]
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -124,6 +185,17 @@ tests:gcc:
     - .build:tests
     - .gcc
 
+tests:win:
+  stage: build
+  extends: .windows
+  needs: ["check-windows"]
+  script:
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Debug
+  artifacts:
+    untracked: true
+    expire_in: 2h
+
 .build:tests:LOG_OFF:
   extends:
     - .build:tests
@@ -141,12 +213,20 @@ tests:gcc:LOG_OFF:
     - .build:tests:LOG_OFF
     - .gcc
 
+tests:win:LOG_OFF:
+  extends: tests:win
+  script:
+    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+    - cmake --build build/Debug
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                        Test                                                        ║
+# ║                                               Test                                               ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 .run-tests:
   stage: test
+  tags:
+    - linux
   script:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
@@ -171,13 +251,23 @@ run-tests:gcc:
   artifacts:
     untracked: true
 
+run-tests:win:
+  stage: test
+  extends: .windows
+  needs: ["tests:win"]
+  script:
+    - cd build/Debug/test
+    - ctest --output-on-failure
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                      Analyze                                                       ║
+# ║                                             Analyze                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
-    
+
 doxygen:
   extends: .schedule
   stage: analyze
+  tags:
+    - linux
   needs: ["check-image"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
@@ -189,6 +279,8 @@ doxygen:
 
 coverage:
   stage: analyze
+  tags:
+    - linux
   needs: ["run-tests:gcc"]
   script:
     - mkdir -p coverage
@@ -206,12 +298,14 @@ coverage:
     - master
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                       Deploy                                                       ║
+# ║                                              Deploy                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 .pages:
   extends: .schedule
   stage: deploy
+  tags:
+    - linux
   needs: ["doxygen", "coverage"]
   script:
     - mv doc/html/ public/
@@ -227,11 +321,13 @@ coverage:
     - /^(?!master).+@/
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                    Ubuntu 20.04                                                    ║
+# ║                                           Ubuntu 20.04                                           ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 .build:ubuntu:20.04:
   stage: build
+  tags:
+    - linux
   extends: .schedule
   image: ubuntu:20.04
   needs: []
@@ -292,6 +388,8 @@ ubuntu:20.04:gcc:debug:
 
 .run-tests:ubuntu:20.04:
   stage: test
+  tags:
+    - linux
   extends: .schedule
   image: ubuntu:20.04
   variables:
@@ -314,7 +412,7 @@ run-tests:ubuntu:20.04:gcc:
   needs: ["ubuntu:20.04:gcc:debug"]
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
-# ║                                                  Arch Linux Latest                                                 ║
+# ║                                        Arch Linux Latest                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 # GitLab CI Fix for:
@@ -324,6 +422,8 @@ run-tests:ubuntu:20.04:gcc:
 
 .build:archlinux:latest:
   stage: build
+  tags:
+    - linux
   extends: .schedule
   image: archlinux:latest
   needs: []
@@ -378,12 +478,14 @@ archlinux:latest:gcc:debug:
 
 .run-tests:archlinux:latest:
   stage: test
+  tags:
+    - linux
   extends: .schedule
   image: archlinux:latest
   before_script:
     - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
     - pacman -Sy
-    - pacman -S --noconfirm --needed cmake glfw-x11
+    - pacman -S --noconfirm --needed cmake glfw-x11 glibc
     - cmake --version
   script:
     - cd build/Debug/test
