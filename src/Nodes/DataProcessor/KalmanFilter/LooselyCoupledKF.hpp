@@ -258,6 +258,15 @@ class LooselyCoupledKF : public Node
     /// @note See Groves (2013) equation (14.81)
     static Eigen::Matrix3d systemNoiseCovariance_22(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s);
 
+    /// @brief Submatrix 𝐐_25 of the system noise covariance matrix 𝐐
+    /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
+    /// @param[in] F_21_n Submatrix 𝐅_21 of the system matrix 𝐅
+    /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
+    /// @param[in] tau_s Time interval in [s]
+    /// @return The 3x3 matrix 𝐐_25
+    /// @note See Groves (2013) equation (14.80)
+    static Eigen::Matrix3d systemNoiseCovariance_25(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+
     /// @brief Submatrix 𝐐_31 of the system noise covariance matrix 𝐐
     /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
     /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
