@@ -7,9 +7,9 @@
 
 #include <imgui_node_editor.h>
 
-#include "Nodes/Node.hpp"
-#include "internal/Link.hpp"
-#include "internal/Pin.hpp"
+#include "internal/Node/Node.hpp"
+#include "internal/Node/Link.hpp"
+#include "internal/Node/Pin.hpp"
 
 #include "NodeData/NodeData.hpp"
 
@@ -223,5 +223,19 @@ ax::NodeEditor::LinkId GetNextLinkId();
 
 /// @brief Generates a new pin id
 ax::NodeEditor::PinId GetNextPinId();
+
+#ifdef TESTING
+
+/// @brief Registers the callback function to the watcher list
+/// @param[in] id Output pin id to add the callback to
+/// @param[in] callback Callback function
+void RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<NodeData>&));
+
+/// @brief Registers the callback function to the watcher list
+/// @param[in] id Link id to add the callback to
+/// @param[in] callback Callback function
+void RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<NodeData>&));
+
+#endif
 
 } // namespace NAV::NodeManager

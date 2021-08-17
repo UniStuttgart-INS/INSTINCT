@@ -9,7 +9,7 @@
 #include <imgui_node_editor.h>
 #include <imgui_stdlib.h>
 
-#include "internal/Pin.hpp"
+#include "internal/Node/Pin.hpp"
 
 #include "util/Logger.hpp"
 

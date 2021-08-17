@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Nodes/Node.hpp"
+#include "internal/Node/Node.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
 namespace NAV

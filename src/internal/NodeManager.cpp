@@ -1,9 +1,9 @@
 #include "internal/NodeManager.hpp"
 namespace ed = ax::NodeEditor;
 
-#include "Nodes/Node.hpp"
-#include "internal/Link.hpp"
-#include "internal/Pin.hpp"
+#include "internal/Node/Node.hpp"
+#include "internal/Node/Link.hpp"
+#include "internal/Node/Pin.hpp"
 
 #include "internal/FlowManager.hpp"
 
@@ -870,3 +870,26 @@ void NAV::NodeManager::Stop()
         nodeInitThread.join();
     }
 }
+
+#ifdef TESTING
+
+void NAV::NodeManager::RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<NodeData>&))
+{
+    if (Pin* pin = FindPin(id))
+    {
+        if (pin->kind == Pin::Kind::Output)
+        {
+            pin->watcherCallbacks.push_back(callback);
+        }
+    }
+}
+
+void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<NodeData>&))
+{
+    if (Link* link = FindLink(id))
+    {
+        RegisterWatcherCallbackToOutputPin(link->startPinId, callback);
+    }
+}
+
+#endif

@@ -10,9 +10,9 @@ namespace ed = ax::NodeEditor;
 
 #include "NodeRegistry.hpp"
 
-#include "Nodes/Node.hpp"
-#include "internal/Link.hpp"
-#include "internal/Pin.hpp"
+#include "internal/Node/Node.hpp"
+#include "internal/Node/Link.hpp"
+#include "internal/Node/Pin.hpp"
 #include "internal/ConfigManager.hpp"
 
 #include <fstream>

@@ -197,6 +197,13 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<NAV::Nod
                 std::invoke(callback, node, data, linkId);
             }
         }
+
+#ifdef TESTING
+        for (auto& callback : outputPins.at(portIndex).watcherCallbacks)
+        {
+            callback(data);
+        }
+#endif
     }
 }
 

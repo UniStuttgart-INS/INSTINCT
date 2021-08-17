@@ -3,7 +3,7 @@
 #include "util/Logger.hpp"
 #include "util/InsTime.hpp"
 
-#include "Nodes/Node.hpp"
+#include "internal/Node/Node.hpp"
 #include "NodeData/InsObs.hpp"
 
 #include "internal/NodeManager.hpp"

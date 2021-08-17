@@ -1,6 +1,6 @@
-#include "internal/Pin.hpp"
+#include "internal/Node/Pin.hpp"
 
-#include "Nodes/Node.hpp"
+#include "internal/Node/Node.hpp"
 
 #include "NodeRegistry.hpp"
 

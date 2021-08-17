@@ -26,9 +26,9 @@ namespace util = ax::NodeEditor::Utilities;
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/Spinner.hpp"
 
-#include "internal/Pin.hpp"
-#include "Nodes/Node.hpp"
-#include "internal/Link.hpp"
+#include "internal/Node/Pin.hpp"
+#include "internal/Node/Node.hpp"
+#include "internal/Node/Link.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

@@ -6,99 +6,110 @@
 
 #include "Nodes/FlowTester.hpp"
 
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+
 #include "util/Logger.hpp"
 
 namespace NAV
 {
-// TEST_CASE("[VectorNavDataLogger] Read file and pass data to logger. Then compare logged data to original", "[VectorNavDataLogger]")
-// {
-// FIXME: This test is currently disabled till issue 'Flow Testing can assert NodeData' (https://git.nav.uni-stuttgart.de/thomas.topp/instinct/-/issues/76) is resolved
-// Logger logger;
+TEST_CASE("[VectorNavDataLogger] Read file and pass data to logger. Then compare logged data to original", "[VectorNavDataLogger]")
+{
+    // FIXME: This test is currently disabled till issue 'Flow Testing can assert NodeData' (https://git.nav.uni-stuttgart.de/thomas.topp/instinct/-/issues/76) is resolved
+    Logger logger;
 
-// testFlow("test/flow/VectorNavDataLogger.flow");
+    nm::RegisterWatcherCallbackToOutputPin(122, [](const std::shared_ptr<NAV::NodeData>& data) {
+        auto obs = std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data);
+        CHECK(true == false);
+        LOG_INFO("{}", obs->insTime.value());
+    });
 
-// std::ifstream filestream_orig{ "test/data/vectornav.csv", std::ios::binary };
-// std::vector<std::pair<std::string, double>> origData;
-// readCsvHeader(filestream_orig, origData);
+    testFlow("test/flow/VectorNavDataLogger.flow");
 
-// std::ifstream filestream_new{ "test/logs/VectorNavDataLogger.csv", std::ios::binary };
-// std::vector<std::pair<std::string, double>> newData;
-// readCsvHeader(filestream_new, newData);
+    // std::ifstream filestream_orig{ "test/data/vectornav.csv", std::ios::binary };
+    // std::vector<std::pair<std::string, double>> origData;
+    // readCsvHeader(filestream_orig, origData);
 
-// // Read line & Convert into stringstream
-// std::string line_orig;
-// int lineCnt{ 1 };
-// while (std::getline(filestream_orig, line_orig))
-// {
-//     LOG_DATA("Comparing line '{}'", lineCnt);
+    // std::ifstream filestream_new{ "test/logs/VectorNavDataLogger.csv", std::ios::binary };
+    // std::vector<std::pair<std::string, double>> newData;
+    // readCsvHeader(filestream_new, newData);
 
-//     std::stringstream lineStream_orig(line_orig);
-//     // Read line & Convert into stringstream
-//     std::string line_new;
-//     if (!std::getline(filestream_new, line_new))
-//     {
-//         LOG_CRITICAL("The written file has less lines than the original");
-//     }
-//     std::stringstream lineStream_new(line_new);
+    // // Read line & Convert into stringstream
+    // std::string line_orig;
+    // int lineCnt{ 1 };
+    // while (std::getline(filestream_orig, line_orig))
+    // {
+    //     LOG_DATA("Comparing line '{}'", lineCnt);
 
-//     for (auto& data : origData)
-//     {
-//         std::string cell;
-//         if (std::getline(lineStream_orig, cell, ','))
-//         {
-//             // Remove any trailing non text characters
-//             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-//             if (cell.empty())
-//             {
-//                 continue;
-//             }
+    //     std::stringstream lineStream_orig(line_orig);
+    //     // Read line & Convert into stringstream
+    //     std::string line_new;
+    //     if (!std::getline(filestream_new, line_new))
+    //     {
+    //         LOG_CRITICAL("The written file has less lines than the original");
+    //     }
+    //     std::stringstream lineStream_new(line_new);
 
-//             data.second = std::stod(cell);
-//         }
-//         else
-//         {
-//             LOG_CRITICAL("The original data file has less input data than the header specifies");
-//         }
-//     }
-//     for (auto& data : newData)
-//     {
-//         std::string cell;
-//         if (std::getline(lineStream_new, cell, ','))
-//         {
-//             // Remove any trailing non text characters
-//             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-//             if (cell.empty())
-//             {
-//                 continue;
-//             }
+    //     for (auto& data : origData)
+    //     {
+    //         std::string cell;
+    //         if (std::getline(lineStream_orig, cell, ','))
+    //         {
+    //             // Remove any trailing non text characters
+    //             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+    //             if (cell.empty())
+    //             {
+    //                 continue;
+    //             }
 
-//             data.second = std::stod(cell);
-//         }
-//         else
-//         {
-//             LOG_CRITICAL("The new data file has less input data than the header specifies");
-//         }
-//     }
+    //             data.second = std::stod(cell);
+    //         }
+    //         else
+    //         {
+    //             LOG_CRITICAL("The original data file has less input data than the header specifies");
+    //         }
+    //     }
+    //     for (auto& data : newData)
+    //     {
+    //         std::string cell;
+    //         if (std::getline(lineStream_new, cell, ','))
+    //         {
+    //             // Remove any trailing non text characters
+    //             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
+    //             if (cell.empty())
+    //             {
+    //                 continue;
+    //             }
 
-//     for (auto& newElement : newData)
-//     {
-//         std::string key = newElement.first;
+    //             data.second = std::stod(cell);
+    //         }
+    //         else
+    //         {
+    //             LOG_CRITICAL("The new data file has less input data than the header specifies");
+    //         }
+    //     }
 
-//         auto origDataIter = std::find_if(origData.begin(), origData.end(),
-//                                          [&key](const std::pair<std::string, double>& element) {
-//                                              return element.first == key;
-//                                          });
-//         REQUIRE(origDataIter != origData.end());
+    //     for (auto& newElement : newData)
+    //     {
+    //         std::string key = newElement.first;
 
-//         if (!std::isnan(origDataIter->second) || !std::isnan(newElement.second))
-//         {
-//             LOG_DATA("  Comparing key '{}'", key);
-//             REQUIRE(origDataIter->second == newElement.second);
-//         }
-//     }
+    //         auto origDataIter = std::find_if(origData.begin(), origData.end(),
+    //                                          [&key](const std::pair<std::string, double>& element) {
+    //                                              return element.first == key;
+    //                                          });
+    //         REQUIRE(origDataIter != origData.end());
 
-//     lineCnt++;
-// }
-// }
+    //         if (!std::isnan(origDataIter->second) || !std::isnan(newElement.second))
+    //         {
+    //             LOG_DATA("  Comparing key '{}'", key);
+    //             REQUIRE(origDataIter->second == newElement.second);
+    //         }
+    //     }
+
+    //     lineCnt++;
+    // }
+}
 
 } // namespace NAV
