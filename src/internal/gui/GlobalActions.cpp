@@ -15,7 +15,7 @@ namespace ed = ax::NodeEditor;
 using json = nlohmann::json;
 #include "internal/Json.hpp"
 
-#include "util/ConfigManager.hpp"
+#include "internal/ConfigManager.hpp"
 
 #include <vector>
 #include <deque>

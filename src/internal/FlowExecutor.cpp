@@ -8,7 +8,7 @@
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
-#include "util/ConfigManager.hpp"
+#include "internal/ConfigManager.hpp"
 #include "util/Time/TimeBase.hpp"
 
 #include <chrono>

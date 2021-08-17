@@ -5,17 +5,19 @@
 #include <iostream>
 #include <boost/program_options/parsers.hpp>
 
-#include "Logger.hpp"
+#include "util/Logger.hpp"
 
 #include <boost/tokenizer.hpp>
 
 namespace bpo = boost::program_options;
 
-bpo::options_description NAV::ConfigManager::program_options{ "Allowed options" }; // NOLINT
+/// Program option description
+bpo::options_description program_options{ "Allowed options" }; // NOLINT
 
+/// Map which stores all options
 boost::program_options::variables_map NAV::ConfigManager::vm; // NOLINT
 
-NAV::ConfigManager::ConfigManager()
+void NAV::ConfigManager::initialize()
 {
     LOG_TRACE("called");
 
