@@ -1,9 +1,9 @@
 #include "internal/NodeManager.hpp"
 namespace ed = ax::NodeEditor;
 
-#include "Nodes/Node.hpp"
-#include "internal/Link.hpp"
-#include "internal/Pin.hpp"
+#include "internal/Node/Node.hpp"
+#include "internal/Node/Link.hpp"
+#include "internal/Node/Pin.hpp"
 
 #include "internal/FlowManager.hpp"
 
@@ -870,3 +870,49 @@ void NAV::NodeManager::Stop()
         nodeInitThread.join();
     }
 }
+
+#ifdef TESTING
+
+std::vector<std::pair<ax::NodeEditor::PinId, void (*)(const std::shared_ptr<NAV::NodeData>&)>> watcherPinList;
+std::vector<std::pair<ax::NodeEditor::LinkId, void (*)(const std::shared_ptr<NAV::NodeData>&)>> watcherLinkList;
+
+void NAV::NodeManager::RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<NodeData>&))
+{
+    watcherPinList.emplace_back(id, callback);
+}
+
+void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<NodeData>&))
+{
+    watcherLinkList.emplace_back(id, callback);
+}
+
+void NAV::NodeManager::ApplyWatcherCallbacks()
+{
+    for (auto& [id, callback] : watcherLinkList)
+    {
+        if (Link* link = FindLink(id))
+        {
+            RegisterWatcherCallbackToOutputPin(link->startPinId, callback);
+        }
+    }
+
+    for (auto& [id, callback] : watcherPinList)
+    {
+        if (Pin* pin = FindPin(id))
+        {
+            if (pin->kind == Pin::Kind::Output)
+            {
+                LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
+                pin->watcherCallbacks.push_back(callback);
+            }
+        }
+    }
+}
+
+void NAV::NodeManager::ClearRegisteredCallbacks()
+{
+    watcherPinList.clear();
+    watcherLinkList.clear();
+}
+
+#endif

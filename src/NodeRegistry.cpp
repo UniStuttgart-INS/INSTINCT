@@ -2,7 +2,7 @@
 
 #include "util/Logger.hpp"
 
-#include "Nodes/Node.hpp"
+#include "internal/Node/Node.hpp"
 #include "NodeData/NodeData.hpp"
 
 #include <string>

@@ -10,10 +10,10 @@ namespace ed = ax::NodeEditor;
 
 #include "NodeRegistry.hpp"
 
-#include "Nodes/Node.hpp"
-#include "internal/Link.hpp"
-#include "internal/Pin.hpp"
-#include "util/ConfigManager.hpp"
+#include "internal/Node/Node.hpp"
+#include "internal/Node/Link.hpp"
+#include "internal/Node/Pin.hpp"
+#include "internal/ConfigManager.hpp"
 
 #include <fstream>
 #include <iomanip>
@@ -110,8 +110,11 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     saveLastActions = true;
     currentFilename = filepath;
 
-    gui::clearLastActionList();
-    gui::saveLastAction();
+    if (!ConfigManager::Get<bool>("nogui", false))
+    {
+        gui::clearLastActionList();
+        gui::saveLastAction();
+    }
 
     return loadSuccessful;
 }

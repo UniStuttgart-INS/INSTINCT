@@ -250,6 +250,11 @@ class Pin
     /// One or multiple Data Identifiers (Unique name which is used for data flows)
     std::vector<std::string> dataIdentifier;
 
+#ifdef TESTING
+    /// Watcher Callbacks are used in testing to check the transmitted data
+    std::vector<void (*)(const std::shared_ptr<NodeData>&)> watcherCallbacks;
+#endif
+
   private:
     /// Size of the Pin Icons in [px]
     static constexpr int m_PinIconSize = 24;

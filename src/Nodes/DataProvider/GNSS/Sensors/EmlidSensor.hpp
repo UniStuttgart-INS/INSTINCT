@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Nodes/Node.hpp"
+#include "internal/Node/Node.hpp"
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
 #include "util/UartSensors/Emlid/EmlidUartSensor.hpp"
 
