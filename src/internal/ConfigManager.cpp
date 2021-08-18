@@ -21,18 +21,26 @@ void NAV::ConfigManager::initialize()
 {
     LOG_TRACE("called");
 
-    // clang-format off
-    // See https://www.boost.org/doc/libs/1_72_0/doc/html/program_options.html
-    program_options.add_options()
-        ("config,f", bpo::value<std::vector<std::string>>()->multitoken(), "List of configuration files to read parameters from")
-        ("version,v", "Display the version number")
-        ("help,h", "Display this help message")
-        ("sigterm", bpo::bool_switch()->default_value(false), "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM")
-        ("duration", bpo::value<size_t>()->default_value(0), "Program execution duration [sec]")
-        ("nogui", bpo::bool_switch()->default_value(false), "Launch without the gui")
-        ("load,l", bpo::value<std::string>(), "Flow file to load" )
-    ;
-    // clang-format on
+    if (program_options.options().empty())
+    {
+        // clang-format off
+        // See https://www.boost.org/doc/libs/1_72_0/doc/html/program_options.html
+        program_options.add_options()
+            ("config,f",  bpo::value<std::vector<std::string>>()->multitoken(), "List of configuration files to read parameters from")
+            ("version,v",                                                       "Display the version number"                         )
+            ("help,h",                                                          "Display this help message"                          )
+            ("sigterm",   bpo::bool_switch()->default_value(false),             "Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM"   )
+            ("duration",  bpo::value<size_t>()->default_value(0),               "Program execution duration [sec]"                   )
+            ("nogui",     bpo::bool_switch()->default_value(false),             "Launch without the gui"                             )
+            ("load,l",    bpo::value<std::string>(),                            "Flow file to load"                                  )
+        ;
+        // clang-format on
+    }
+}
+
+void NAV::ConfigManager::deinitialize()
+{
+    vm.clear();
 }
 
 const boost::program_options::options_description& NAV::ConfigManager::GetProgramOptions()

@@ -229,12 +229,20 @@ ax::NodeEditor::PinId GetNextPinId();
 /// @brief Registers the callback function to the watcher list
 /// @param[in] id Output pin id to add the callback to
 /// @param[in] callback Callback function
+/// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
 void RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<NodeData>&));
 
 /// @brief Registers the callback function to the watcher list
 /// @param[in] id Link id to add the callback to
 /// @param[in] callback Callback function
+/// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
 void RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<NodeData>&));
+
+/// @brief Applies the watcher lists to the node pins
+void ApplyWatcherCallbacks();
+
+/// @brief Clears the watcher list
+void ClearRegisteredCallbacks();
 
 #endif
 

@@ -20,6 +20,9 @@ extern boost::program_options::variables_map vm;
 /// @brief Initializes the config manager. Call this function before using other functions
 void initialize();
 
+/// @brief Deinitializes the config manager. Call this if you want to Fetch config again
+void deinitialize();
+
 /// @brief Get the Program Options object
 /// @return The object
 [[nodiscard]] const boost::program_options::options_description& GetProgramOptions();

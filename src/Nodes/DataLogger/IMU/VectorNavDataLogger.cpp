@@ -478,7 +478,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<NodeData>&
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                 {
-                    filestream << ",GNSS2::gDOP,GNSS2::pDOP,GNSS2::tDOP,GNSS2::vDOP,GNSS2::hDOP,GNSS2::nDOP,GNSS2::eDOP";
+                    filestream << ",GNSS2::DOP::g,GNSS2::DOP::p,GNSS2::DOP::t,GNSS2::DOP::v,GNSS2::DOP::h,GNSS2::DOP::n,GNSS2::DOP::e";
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {

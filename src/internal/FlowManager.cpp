@@ -110,8 +110,11 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     saveLastActions = true;
     currentFilename = filepath;
 
-    gui::clearLastActionList();
-    gui::saveLastAction();
+    if (!ConfigManager::Get<bool>("nogui", false))
+    {
+        gui::clearLastActionList();
+        gui::saveLastAction();
+    }
 
     return loadSuccessful;
 }

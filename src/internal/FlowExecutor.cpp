@@ -164,12 +164,16 @@ void NAV::FlowExecutor::execute()
                 return;
             }
 
-            if (outputPin.type == Pin::Type::Flow && nm::IsPinLinked(outputPin.id))
+            if (outputPin.type == Pin::Type::Flow
+#ifndef TESTING
+                && nm::IsPinLinked(outputPin.id)
+#endif
+            )
             {
                 auto* callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&outputPin.data);
                 if (callback != nullptr && *callback != nullptr)
                 {
-                    LOG_DEBUG("Searching node {} on output pin {} for data", node->nameId(), size_t(outputPin.id));
+                    LOG_DEBUG("Searching node {} on output pin {} (id {}) for data", node->nameId(), node->pinIndexFromId(outputPin.id), size_t(outputPin.id));
                     bool dataEventCreated = false;
                     while (true)
                     {

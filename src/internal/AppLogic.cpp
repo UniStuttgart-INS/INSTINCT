@@ -51,6 +51,10 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
             }
             if (loadSuccessful)
             {
+#ifdef TESTING
+                nm::ApplyWatcherCallbacks();
+#endif
+
                 auto start = std::chrono::steady_clock::now();
                 NAV::FlowExecutor::start();
 
