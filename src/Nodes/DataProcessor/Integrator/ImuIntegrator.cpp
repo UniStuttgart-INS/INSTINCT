@@ -21,13 +21,10 @@ NAV::ImuIntegrator::ImuIntegrator()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 350, 123 };
 
-    nm::CreateInputPin(this, "ImuObs (t0)", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
-    nm::CreateInputPin(this, "ImuObs (t1)", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t1);
-    nm::CreateInputPin(this, "ImuObs (t2)", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t2);
-    nm::CreateInputPin(this, "PosVelAtt (t1)", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
-    nm::CreateInputPin(this, "PosVelAtt (t2)", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t2);
+    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
+    nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
 
-    nm::CreateOutputPin(this, "PosVelAtt (t0)", Pin::Type::Flow, NAV::PosVelAtt::type());
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, NAV::PosVelAtt::type());
 }
 
 NAV::ImuIntegrator::~ImuIntegrator()
@@ -123,12 +120,13 @@ bool NAV::ImuIntegrator::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    imuObs__t0 = nullptr;
-    imuObs__t1 = nullptr;
-    imuObs__t2 = nullptr;
+    // This should be dependant on the integration algorithm
+    maxSizeImuObservations = 3;
+    maxSizeStates = 2;
 
-    posVelAtt__t1 = nullptr;
-    posVelAtt__t2 = nullptr;
+    imuObservations.clear();
+    posVelAttStates.clear();
+
     posVelAtt__init = nullptr;
 
     time__init = InsTime();
@@ -163,137 +161,66 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeDat
         return;
     }
 
-    imuObs__t0 = imuObs;
+    // Add imuObs tₖ to the start of the list
+    imuObservations.push_front(imuObs);
 
-    integrateObservation();
-}
-
-void NAV::ImuIntegrator::recvImuObs__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
-{
-    auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
-
-    if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
+    // Remove observations at the end of the list till the max size is reached
+    while (imuObservations.size() > maxSizeImuObservations)
     {
-        LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
-        return;
+        imuObservations.pop_back();
     }
 
-    imuObs__t1 = imuObs;
-
-    // Messages can come in in different order
-    if (imuObs__t0)
+    // If enough imu observations and states received, integrate the observation
+    if (imuObservations.size() == maxSizeImuObservations
+        && posVelAttStates.size() == maxSizeStates)
     {
-        if ((imuObs__t1->insTime.has_value() && imuObs__t0->insTime.has_value()
-             && imuObs__t1->insTime.value() >= imuObs__t0->insTime.value())
-            || (imuObs__t1->timeSinceStartup.has_value() && imuObs__t0->timeSinceStartup.has_value()
-                && imuObs__t1->timeSinceStartup.value() >= imuObs__t0->timeSinceStartup.value()))
-        {
-            LOG_DEBUG("{}: imuObs__t1 {} is same or newer than imuObs__t0 {}", nameId(),
-                      imuObs__t1->insTime.has_value() ? fmt::format("{}", imuObs__t1->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t1->timeSinceStartup.value()),
-                      imuObs__t0->insTime.has_value() ? fmt::format("{}", imuObs__t0->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t0->timeSinceStartup.value()));
-            imuObs__t0.reset();
-        }
+        integrateObservation();
     }
-
-    integrateObservation();
-}
-
-void NAV::ImuIntegrator::recvImuObs__t2(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
-{
-    auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
-
-    if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
-    {
-        LOG_ERROR("{}: Can't set new imuObs__t0 because the observation has no time tag (insTime/timeSinceStartup)", nameId());
-        return;
-    }
-
-    imuObs__t2 = imuObs;
-
-    // Messages can come in in different order
-    if (imuObs__t0)
-    {
-        if ((imuObs__t2->insTime.has_value() && imuObs__t0->insTime.has_value()
-             && imuObs__t2->insTime.value() >= imuObs__t0->insTime.value())
-            || (imuObs__t2->timeSinceStartup.has_value() && imuObs__t0->timeSinceStartup.has_value()
-                && imuObs__t2->timeSinceStartup.value() >= imuObs__t0->timeSinceStartup.value()))
-        {
-            LOG_DEBUG("{}: imuObs__t2 {} is same or newer than imuObs__t0 {}", nameId(),
-                      imuObs__t2->insTime.has_value() ? fmt::format("{}", imuObs__t2->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t2->timeSinceStartup.value()),
-                      imuObs__t0->insTime.has_value() ? fmt::format("{}", imuObs__t0->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t0->timeSinceStartup.value()));
-            imuObs__t0.reset();
-        }
-    }
-    if (imuObs__t1)
-    {
-        if ((imuObs__t2->insTime.has_value() && imuObs__t1->insTime.has_value()
-             && imuObs__t2->insTime.value() >= imuObs__t1->insTime.value())
-            || (imuObs__t2->timeSinceStartup.has_value() && imuObs__t1->timeSinceStartup.has_value()
-                && imuObs__t2->timeSinceStartup.value() >= imuObs__t1->timeSinceStartup.value()))
-        {
-            LOG_DEBUG("{}: imuObs__t2 {} is same or newer than imuObs__t1 {}", nameId(),
-                      imuObs__t2->insTime.has_value() ? fmt::format("{}", imuObs__t2->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t2->timeSinceStartup.value()),
-                      imuObs__t1->insTime.has_value() ? fmt::format("{}", imuObs__t1->insTime.value().toGPSweekTow()) : fmt::format("{}", imuObs__t1->timeSinceStartup.value()));
-            imuObs__t1.reset();
-        }
-    }
-
-    integrateObservation();
 }
 
 void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
 
-    if (posVelAtt__t1 != nullptr && posVelAtt__t2)
+    // Add imuObs tₖ₋₁ to the start of the list
+    if (posVelAttStates.empty())
     {
-        LOG_DEBUG("{}: Overwriting posVelAtt__t1 ({}) with new value at {}", nameId(), posVelAtt__t1->insTime->toGPSweekTow(), posVelAtt->insTime->toGPSweekTow());
+        while (posVelAttStates.size() < maxSizeStates)
+        {
+            posVelAttStates.push_front(posVelAtt);
+        }
+    }
+    else
+    {
+        posVelAttStates.push_front(posVelAtt);
     }
 
-    posVelAtt__t1 = posVelAtt;
-
-    // Messages from the delay block could come before the other port was updated with a new value. This way we ensure the messages are different.
-    if (posVelAtt__t1.get() == posVelAtt__t2.get())
+    // Remove states at the end of the list till the max size is reached
+    while (posVelAttStates.size() > maxSizeStates)
     {
-        posVelAtt__t2.reset();
+        posVelAttStates.pop_back();
     }
-
-    integrateObservation();
-}
-
-void NAV::ImuIntegrator::recvState__t2(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
-{
-    auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
-
-    if (posVelAtt__t2 != nullptr)
-    {
-        LOG_DEBUG("{}: Overwriting posVelAtt__t2 ({}) with new value at {}", nameId(), posVelAtt__t2->insTime->toGPSweekTow(), posVelAtt->insTime->toGPSweekTow());
-    }
-
-    posVelAtt__t2 = posVelAtt;
 
     /// Initial State
     if (posVelAtt__init == nullptr)
     {
-        posVelAtt__init = posVelAtt__t2;
+        posVelAtt__init = posVelAtt;
     }
-
-    // Messages from the delay block could come before the other port was updated with a new value. This way we ensure the messages are different.
-    if (posVelAtt__t1.get() == posVelAtt__t2.get())
-    {
-        posVelAtt__t1.reset();
-    }
-
-    integrateObservation();
 }
 
 void NAV::ImuIntegrator::integrateObservation()
 {
-    if (posVelAtt__t1 == nullptr || posVelAtt__t2 == nullptr
-        || imuObs__t0 == nullptr || imuObs__t1 == nullptr || imuObs__t2 == nullptr)
-    {
-        return;
-    }
+    /// IMU Observation at the time tₖ
+    std::shared_ptr<ImuObs> imuObs__t0 = imuObservations.at(0);
+    /// IMU Observation at the time tₖ₋₁
+    std::shared_ptr<ImuObs> imuObs__t1 = imuObservations.at(1);
+    /// IMU Observation at the time tₖ₋₂
+    std::shared_ptr<ImuObs> imuObs__t2 = imuObservations.at(2);
+
+    /// Position, Velocity and Attitude at the time tₖ₋₁
+    std::shared_ptr<PosVelAtt> posVelAtt__t1 = posVelAttStates.at(0);
+    /// Position, Velocity and Attitude at the time tₖ₋₂
+    std::shared_ptr<PosVelAtt> posVelAtt__t2 = posVelAttStates.at(1);
 
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = imuObs__t0->imuPos;
@@ -586,13 +513,6 @@ void NAV::ImuIntegrator::integrateObservation()
         // Store body to navigation frame quaternion in the state
         posVelAtt__t0->quaternion_nb() = quaternion_nb__t0;
     }
-
-    // Reset the data ports
-    imuObs__t0.reset();
-    imuObs__t1.reset();
-    imuObs__t2.reset();
-    posVelAtt__t1.reset();
-    posVelAtt__t2.reset();
 
     // Push out new data
     invokeCallbacks(OutputPortIndex_PosVelAtt__t0, posVelAtt__t0);
