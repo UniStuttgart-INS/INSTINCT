@@ -63,19 +63,6 @@ void NAV::PosVelAttInitializer::guiConfig()
         }
     }
 
-    ImGui::SetNextItemWidth(100);
-    if (ImGui::InputInt(fmt::format("Messages to send##{}", size_t(id)).c_str(), &messagesToSend))
-    {
-        if (messagesToSend < 1)
-        {
-            messagesToSend = 1;
-        }
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    gui::widgets::HelpMarker("The amount of messages to send out after an initialization state was found.\n"
-                             "Afterwards no more messages are sent.");
-
     if (ImGui::BeginTable(fmt::format("Initialized State##{}", size_t(id)).c_str(),
                           4, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
     {
@@ -364,7 +351,6 @@ void NAV::PosVelAttInitializer::guiConfig()
     json j;
 
     j["initDuration"] = initDuration;
-    j["messagesToSend"] = messagesToSend;
     j["positionAccuracyThreshold"] = positionAccuracyThreshold;
     j["velocityAccuracyThreshold"] = velocityAccuracyThreshold;
     j["overridePosition"] = overridePosition;
@@ -384,10 +370,6 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     if (j.contains("initDuration"))
     {
         j.at("initDuration").get_to(initDuration);
-    }
-    if (j.contains("messagesToSend"))
-    {
-        j.at("messagesToSend").get_to(messagesToSend);
     }
     if (j.contains("positionAccuracyThreshold"))
     {
@@ -495,14 +477,11 @@ void NAV::PosVelAttInitializer::finalizeInit()
                  trafo::rad2deg(rollPitchYaw.y()),
                  trafo::rad2deg(rollPitchYaw.z()));
 
-        for (int i = 0; i < messagesToSend; i++)
-        {
-            auto posVelAtt = std::make_shared<PosVelAtt>();
-            posVelAtt->position_ecef() = p_ecef_init;
-            posVelAtt->velocity_n() = v_n_init;
-            posVelAtt->quaternion_nb() = q_nb_init;
-            invokeCallbacks(OutputPortIndex_PosVelAtt, posVelAtt);
-        }
+        auto posVelAtt = std::make_shared<PosVelAtt>();
+        posVelAtt->position_ecef() = p_ecef_init;
+        posVelAtt->velocity_n() = v_n_init;
+        posVelAtt->quaternion_nb() = q_nb_init;
+        invokeCallbacks(OutputPortIndex_PosVelAtt, posVelAtt);
     }
 }
 
