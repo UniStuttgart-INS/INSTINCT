@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Nodes/Node.hpp"
+#include "internal/Node/Node.hpp"
 
 #include "util/InsTime.hpp"
 
@@ -125,9 +125,6 @@ class PosVelAttInitializer : public Node
 
     /// Whether the states are initialized (pos, vel, att, messages send)
     std::array<bool, 4> posVelAttInitialized = { false, false, false, false };
-
-    /// Amount of Messages to send out on successful initialization
-    int messagesToSend = 1;
 
     /// Initialized Quaternion body to navigation frame (roll, pitch, yaw)
     Eigen::Quaterniond q_nb_init;

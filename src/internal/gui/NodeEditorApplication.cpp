@@ -26,9 +26,9 @@ namespace util = ax::NodeEditor::Utilities;
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include "internal/gui/widgets/Spinner.hpp"
 
-#include "internal/Pin.hpp"
-#include "Nodes/Node.hpp"
-#include "internal/Link.hpp"
+#include "internal/Node/Pin.hpp"
+#include "internal/Node/Node.hpp"
+#include "internal/Node/Link.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -280,8 +280,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
             {
                 flow::SaveFlowAs(flow::GetCurrentFilename());
                 globalAction = GlobalActions::None;
-                nm::DeleteAllLinks();
-                nm::DeleteAllNodes();
+                nm::DeleteAllLinksAndNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
                 ImGui::CloseCurrentPopup();
@@ -296,8 +295,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
                 flow::SaveFlowAs(flow::GetCurrentFilename());
 
                 igfd::ImGuiFileDialog::Instance()->CloseDialog();
-                nm::DeleteAllLinks();
-                nm::DeleteAllNodes();
+                nm::DeleteAllLinksAndNodes();
                 flow::DiscardChanges();
                 flow::SetCurrentFilename("");
             }
@@ -311,8 +309,7 @@ void NAV::gui::NodeEditorApplication::ShowClearNodesRequested()
         if (ImGui::Button("Discard"))
         {
             globalAction = GlobalActions::None;
-            nm::DeleteAllLinks();
-            nm::DeleteAllNodes();
+            nm::DeleteAllLinksAndNodes();
             flow::DiscardChanges();
             flow::SetCurrentFilename("");
             ImGui::CloseCurrentPopup();
@@ -583,7 +580,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     }
 
     gui::menus::ShowMainMenuBar(globalAction, initList);
-    auto menuBarHeight = ImGui::GetCursorPosY();
+    menuBarHeight = ImGui::GetCursorPosY();
 
     ed::SetCurrentEditor(m_Editor);
 
@@ -593,9 +590,6 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     static bool createNewNode = false;
     static Pin* newNodeLinkPin = nullptr;
 
-    static float leftPaneWidth = 350.0F;
-    static float rightPaneWidth = 850.0F;
-    constexpr float SPLITTER_THICKNESS = 4.0F;
     gui::widgets::Splitter("Main Splitter", true, SPLITTER_THICKNESS, &leftPaneWidth, &rightPaneWidth, 50.0F, 50.0F);
 
     bool leftPaneActive = gui::panels::ShowLeftPane(leftPaneWidth - SPLITTER_THICKNESS);

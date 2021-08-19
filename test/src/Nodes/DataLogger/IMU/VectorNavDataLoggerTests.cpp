@@ -6,99 +6,130 @@
 
 #include "Nodes/FlowTester.hpp"
 
+#include "NodeData/IMU/VectorNavBinaryOutput.hpp"
+
+#include "internal/NodeManager.hpp"
+namespace nm = NAV::NodeManager;
+
 #include "util/Logger.hpp"
 
 namespace NAV
 {
-// TEST_CASE("[VectorNavDataLogger] Read file and pass data to logger. Then compare logged data to original", "[VectorNavDataLogger]")
+constexpr int MESSAGE_COUNT_IMU = 18;  ///< Amount of messages expected in the Imu files
+constexpr int MESSAGE_COUNT_GNSS = 12; ///< Amount of messages expected in the Gnss files
+
+int messageCounterImuDataCsv = 0;  ///< Message Counter for the Imu data csv file
+int messageCounterImuLogCsv = 0;   ///< Message Counter for the Imu log csv file
+int messageCounterImuLogVnb = 0;   ///< Message Counter for the Imu log vnb file
+int messageCounterGnssDataCsv = 0; ///< Message Counter for the Gnss data csv fil
+int messageCounterGnssLogCsv = 0;  ///< Message Counter for the Gnss log csv file
+int messageCounterGnssLogVnb = 0;  ///< Message Counter for the Gnss log vnb file
+
+// TEST_CASE("[VectorNavDataReader] Read csv file and compare content with hardcoded values", "[VectorNavDataReader]")
 // {
-// FIXME: This test is currently disabled till issue 'Flow Testing can assert NodeData' (https://git.nav.uni-stuttgart.de/thomas.topp/instinct/-/issues/76) is resolved
-// Logger logger;
-
-// testFlow("test/flow/VectorNavDataLogger.flow");
-
-// std::ifstream filestream_orig{ "test/data/vectornav.csv", std::ios::binary };
-// std::vector<std::pair<std::string, double>> origData;
-// readCsvHeader(filestream_orig, origData);
-
-// std::ifstream filestream_new{ "test/logs/VectorNavDataLogger.csv", std::ios::binary };
-// std::vector<std::pair<std::string, double>> newData;
-// readCsvHeader(filestream_new, newData);
-
-// // Read line & Convert into stringstream
-// std::string line_orig;
-// int lineCnt{ 1 };
-// while (std::getline(filestream_orig, line_orig))
-// {
-//     LOG_DATA("Comparing line '{}'", lineCnt);
-
-//     std::stringstream lineStream_orig(line_orig);
-//     // Read line & Convert into stringstream
-//     std::string line_new;
-//     if (!std::getline(filestream_new, line_new))
-//     {
-//         LOG_CRITICAL("The written file has less lines than the original");
-//     }
-//     std::stringstream lineStream_new(line_new);
-
-//     for (auto& data : origData)
-//     {
-//         std::string cell;
-//         if (std::getline(lineStream_orig, cell, ','))
-//         {
-//             // Remove any trailing non text characters
-//             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-//             if (cell.empty())
-//             {
-//                 continue;
-//             }
-
-//             data.second = std::stod(cell);
-//         }
-//         else
-//         {
-//             LOG_CRITICAL("The original data file has less input data than the header specifies");
-//         }
-//     }
-//     for (auto& data : newData)
-//     {
-//         std::string cell;
-//         if (std::getline(lineStream_new, cell, ','))
-//         {
-//             // Remove any trailing non text characters
-//             cell.erase(std::find_if(cell.begin(), cell.end(), [](int ch) { return std::iscntrl(ch); }), cell.end());
-//             if (cell.empty())
-//             {
-//                 continue;
-//             }
-
-//             data.second = std::stod(cell);
-//         }
-//         else
-//         {
-//             LOG_CRITICAL("The new data file has less input data than the header specifies");
-//         }
-//     }
-
-//     for (auto& newElement : newData)
-//     {
-//         std::string key = newElement.first;
-
-//         auto origDataIter = std::find_if(origData.begin(), origData.end(),
-//                                          [&key](const std::pair<std::string, double>& element) {
-//                                              return element.first == key;
-//                                          });
-//         REQUIRE(origDataIter != origData.end());
-
-//         if (!std::isnan(origDataIter->second) || !std::isnan(newElement.second))
-//         {
-//             LOG_DATA("  Comparing key '{}'", key);
-//             REQUIRE(origDataIter->second == newElement.second);
-//         }
-//     }
-
-//     lineCnt++;
+// TODO: Implement this test
 // }
-// }
+
+TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[VectorNavDataLogger]")
+{
+    messageCounterImuDataCsv = 0;
+    messageCounterImuLogCsv = 0;
+    messageCounterImuLogVnb = 0;
+    messageCounterGnssDataCsv = 0;
+    messageCounterGnssLogCsv = 0;
+    messageCounterGnssLogVnb = 0;
+
+    Logger logger;
+
+    // ###########################################################################################################
+    //                                         VectorNavDataLogger.flow
+    // ###########################################################################################################
+    //
+    //                                     / VectorNavDataLogger("logs/vn310-imu.csv")
+    // VectorNavFile("data/vn310-imu.csv")
+    //                                     \ VectorNavDataLogger("logs/vn310-imu.vnb")
+    //
+    //                                     / VectorNavDataLogger("logs/vn310-gnss.csv")
+    // VectorNavFile("data/vn310-gnss.csv")
+    //                                     \ VectorNavDataLogger("logs/vn310-gnss.vnb")
+    //
+    // ###########################################################################################################
+
+    testFlow("test/flow/VectorNavDataLogger.flow");
+
+    // ###########################################################################################################
+    //                                         VectorNavDataReader.flow
+    // ###########################################################################################################
+    //
+    // VectorNavFile("data/vn310-imu.csv")
+    // VectorNavFile("logs/vn310-imu.csv")
+    // VectorNavFile("logs/vn310-imu.vnb")
+    // VectorNavFile("data/vn310-gnss.csv")
+    // VectorNavFile("logs/vn310-gnss.csv")
+    // VectorNavFile("logs/vn310-gnss.vnb")
+    //
+    // ###########################################################################################################
+
+    // -------------------------------------------------- IMU ----------------------------------------------------
+
+    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<NAV::NodeData>& data) mutable { // test/data/vn310-imu.csv
+        messageCounterImuDataCsv++;
+
+        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data);
+
+        // TODO: Compare Data with other files
+    });
+
+    nm::RegisterWatcherCallbackToOutputPin(29, [](const std::shared_ptr<NAV::NodeData>& data) { // test/logs/vn310-imu.csv
+        messageCounterImuLogCsv++;
+
+        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data);
+
+        // TODO: Compare Data with other files
+    });
+
+    nm::RegisterWatcherCallbackToOutputPin(32, [](const std::shared_ptr<NAV::NodeData>& data) { // test/logs/vn310-imu.vnb
+        messageCounterImuLogVnb++;
+
+        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data);
+
+        // TODO: Compare Data with other files
+    });
+
+    // ------------------------------------------------- GNSS ----------------------------------------------------
+
+    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<NAV::NodeData>& data) { // test/data/vn310-gnss.csv
+        messageCounterGnssDataCsv++;
+
+        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data);
+
+        // TODO: Compare Data with other files
+    });
+
+    nm::RegisterWatcherCallbackToOutputPin(35, [](const std::shared_ptr<NAV::NodeData>& data) { // test/logs/vn310-gnss.csv
+        messageCounterGnssLogCsv++;
+
+        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data);
+
+        // TODO: Compare Data with other files
+    });
+
+    nm::RegisterWatcherCallbackToOutputPin(38, [](const std::shared_ptr<NAV::NodeData>& data) { // test/logs/vn310-gnss.vnb
+        messageCounterGnssLogVnb++;
+
+        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data);
+
+        // TODO: Compare Data with other files
+    });
+
+    testFlow("test/flow/VectorNavDataReader.flow");
+
+    CHECK(messageCounterImuDataCsv == MESSAGE_COUNT_IMU);
+    CHECK(messageCounterImuLogCsv == MESSAGE_COUNT_IMU);
+    CHECK(messageCounterImuLogVnb == MESSAGE_COUNT_IMU);
+    CHECK(messageCounterGnssDataCsv == MESSAGE_COUNT_GNSS);
+    CHECK(messageCounterGnssLogCsv == MESSAGE_COUNT_GNSS);
+    CHECK(messageCounterGnssLogVnb == MESSAGE_COUNT_GNSS);
+}
 
 } // namespace NAV

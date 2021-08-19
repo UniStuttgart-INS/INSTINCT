@@ -130,10 +130,13 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration_WGS84(const double& latitu
 
 Eigen::MatrixXd NAV::gravity::readEGM96Coeffs()
 {
-    LOG_TRACE("Reading in EGM96 coefficients");
+    if (coeffsEGM96.size() == 0)
+    {
+        LOG_DEBUG("Reading in EGM96 coefficients");
 
-    // Coefficients of the EGM96 (gravity model)
-    coeffsEGM96 = NAV::util::gravity::readAscii2Matrix();
+        // Coefficients of the EGM96 (gravity model)
+        coeffsEGM96 = NAV::util::gravity::readAscii2Matrix();
+    }
 
     return coeffsEGM96;
 }
@@ -167,7 +170,7 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
 
     // Associated Legendre Polynomial Coefficients 'P' and their derivatives 'Pd'
     auto [P, Pd] = NAV::util::gravity::associatedLegendre(ndegree, elevation);
-    LOG_DATA("NEW Associated Legendre Polynomial coefficients: P_new =\n{}\nPd_new =\n{}", P,Pd);
+    LOG_DATA("NEW Associated Legendre Polynomial coefficients: P_new =\n{}\nPd_new =\n{}", P, Pd);
 
     for (int i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {

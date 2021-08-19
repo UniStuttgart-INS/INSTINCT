@@ -66,6 +66,11 @@ class NodeEditorApplication : public Application
     static inline bool showImGuiDemoWindow = false;
     static inline bool showImPlotDemoWindow = false;
 
+    inline static float leftPaneWidth = 350.0F;
+    inline static float rightPaneWidth = 850.0F;
+    inline static float menuBarHeight = 20;
+    constexpr static float SPLITTER_THICKNESS = 4.0F;
+
   private:
     ImTextureID m_HeaderBackground = nullptr;
 

@@ -20,8 +20,7 @@ void NAV::gui::menus::ShowFileMenu(GlobalActions& globalAction)
         }
         else
         {
-            nm::DeleteAllLinks();
-            nm::DeleteAllNodes();
+            nm::DeleteAllLinksAndNodes();
             flow::DiscardChanges();
             flow::SetCurrentFilename("");
         }

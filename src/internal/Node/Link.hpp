@@ -7,6 +7,9 @@
 
 #include <imgui_node_editor.h>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 namespace NAV
 {
 /// Link between two pins
@@ -43,5 +46,8 @@ class Link
     /// Color of the link
     ImColor color;
 };
+
+void to_json(json& j, const Link& link);
+void from_json(const json& j, Link& link);
 
 } // namespace NAV

@@ -7,9 +7,9 @@
 
 #include <imgui_node_editor.h>
 
-#include "Nodes/Node.hpp"
-#include "internal/Link.hpp"
-#include "internal/Pin.hpp"
+#include "internal/Node/Node.hpp"
+#include "internal/Node/Link.hpp"
+#include "internal/Node/Pin.hpp"
 
 #include "NodeData/NodeData.hpp"
 
@@ -28,6 +28,9 @@ const std::vector<Node*>& m_Nodes();
 
 /// @brief List of all registered Links
 const std::vector<Link>& m_Links();
+
+/// @brief Delete all links and nodes
+void DeleteAllLinksAndNodes();
 
 /// @brief Add the provided node object to the list of nodes
 /// @param[in] node Node object to add to the list
@@ -211,5 +214,36 @@ void InitializeAllNodesAsync();
 
 /// @brief Stops all active threads
 void Stop();
+
+/// @brief Generates a new node id
+ax::NodeEditor::NodeId GetNextNodeId();
+
+/// @brief Generates a new link id
+ax::NodeEditor::LinkId GetNextLinkId();
+
+/// @brief Generates a new pin id
+ax::NodeEditor::PinId GetNextPinId();
+
+#ifdef TESTING
+
+/// @brief Registers the callback function to the watcher list
+/// @param[in] id Output pin id to add the callback to
+/// @param[in] callback Callback function
+/// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
+void RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<NodeData>&));
+
+/// @brief Registers the callback function to the watcher list
+/// @param[in] id Link id to add the callback to
+/// @param[in] callback Callback function
+/// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
+void RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<NodeData>&));
+
+/// @brief Applies the watcher lists to the node pins
+void ApplyWatcherCallbacks();
+
+/// @brief Clears the watcher list
+void ClearRegisteredCallbacks();
+
+#endif
 
 } // namespace NAV::NodeManager

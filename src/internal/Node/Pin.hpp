@@ -7,6 +7,9 @@
 
 #include <imgui_node_editor.h>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 #include <string>
 #include <variant>
 #include <vector>
@@ -247,6 +250,11 @@ class Pin
     /// One or multiple Data Identifiers (Unique name which is used for data flows)
     std::vector<std::string> dataIdentifier;
 
+#ifdef TESTING
+    /// Watcher Callbacks are used in testing to check the transmitted data
+    std::vector<void (*)(const std::shared_ptr<NodeData>&)> watcherCallbacks;
+#endif
+
   private:
     /// Size of the Pin Icons in [px]
     static constexpr int m_PinIconSize = 24;
@@ -267,5 +275,8 @@ constexpr bool operator==(const Pin::Type& lhs, const Pin::Type::Value& rhs) { r
 constexpr bool operator==(const Pin::Type::Value& lhs, const Pin::Type& rhs) { return lhs == rhs.value; }
 constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type::Value& rhs) { return lhs.value != rhs; }
 constexpr bool operator!=(const Pin::Type::Value& lhs, const Pin::Type& rhs) { return lhs != rhs.value; }
+
+void to_json(json& j, const Pin& pin);
+void from_json(const json& j, Pin& pin);
 
 } // namespace NAV

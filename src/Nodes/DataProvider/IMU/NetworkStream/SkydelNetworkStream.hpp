@@ -1,4 +1,4 @@
-/// @file SkydelImuStream.hpp
+/// @file SkydelNetworkStream.hpp
 /// @brief
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-04-19
@@ -17,22 +17,22 @@
 
 namespace NAV
 {
-/// SkydelImuStream Sensor Class
-class SkydelImuStream : public Imu
+/// SkydelNetworkStream Sensor Class
+class SkydelNetworkStream : public Imu
 {
   public:
     /// @brief Default constructor
-    SkydelImuStream();
+    SkydelNetworkStream();
     /// @brief Destructor
-    ~SkydelImuStream() override;
+    ~SkydelNetworkStream() override;
     /// @brief Copy constructor
-    SkydelImuStream(const SkydelImuStream&) = delete;
+    SkydelNetworkStream(const SkydelNetworkStream&) = delete;
     /// @brief Move constructor
-    SkydelImuStream(SkydelImuStream&&) = delete;
+    SkydelNetworkStream(SkydelNetworkStream&&) = delete;
     /// @brief Copy assignment operator
-    SkydelImuStream& operator=(const SkydelImuStream&) = delete;
+    SkydelNetworkStream& operator=(const SkydelNetworkStream&) = delete;
     /// @brief Move assignment operator
-    SkydelImuStream& operator=(SkydelImuStream&&) = delete;
+    SkydelNetworkStream& operator=(SkydelNetworkStream&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -51,8 +51,8 @@ class SkydelImuStream : public Imu
     bool resetNode() override;
 
   private:
-    // Number of the output port of the SkydelImuStream node
-    constexpr static size_t OutputPortIndex_ImuObs = 0; ///< @brief Flow (ImuObs)
+    constexpr static size_t OutputPortIndex_ImuObs = 0;  ///< @brief Port number of the Skydel-ImuObs output
+    constexpr static size_t OutputPortIndex_GnssObs = 1; ///< @brief Port number of the Skydel-GnssObs output
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -83,6 +83,24 @@ class SkydelImuStream : public Imu
     bool stop = false;
     // Startup handler: used in 'initialize()' to differentiate between startup and re-initialization
     bool isStartup = true;
+
+    // Time point where the first package has been received
+    std::chrono::steady_clock::time_point startPoint;
+
+    // Counter for received packages
+    int packageCount = 0;
+
+    // # of packages for averaging dataRate (minimum is '2', since two time points are required to calculate a data rate)
+    int packagesNumber = 2;
+
+    // Data rate of the received network stream [Hz]
+    double dataRate = 0.0;
+
+    // Counter for packages that are skipped until data rate is shown
+    int startCounter = 0;
+
+    // # of packages that are skipped until data rate is shown
+    int startNow = 20;
 };
 
 } // namespace NAV

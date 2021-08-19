@@ -5,10 +5,12 @@
 
 #pragma once
 
-#include "Nodes/Node.hpp"
+#include "internal/Node/Node.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+
+#include <deque>
 
 namespace NAV
 {
@@ -62,40 +64,27 @@ class ImuIntegrator : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void recvImuObs__t0(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
-    /// @brief Receive Function for the ImuObs at the time tₖ₋₁
-    /// @param[in] nodeData ImuObs to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvImuObs__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
-
-    /// @brief Receive Function for the ImuObs at the time tₖ₋₂
-    /// @param[in] nodeData ImuObs to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvImuObs__t2(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
-
     /// @brief Receive Function for the PosVelAtt at the time tₖ₋₁
     /// @param[in] nodeData PosVelAtt to process
     /// @param[in] linkId Id of the link over which the data is received
     void recvState__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
-    /// @brief Receive Function for the PosVelAtt at the time tₖ₋₂
-    /// @param[in] nodeData PosVelAtt to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvState__t2(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
-
     /// @brief Integrates the Imu Observation data
     void integrateObservation();
 
-    /// IMU Observation at the time tₖ
-    std::shared_ptr<ImuObs> imuObs__t0 = nullptr;
-    /// IMU Observation at the time tₖ₋₁
-    std::shared_ptr<ImuObs> imuObs__t1 = nullptr;
-    /// IMU Observation at the time tₖ₋₂
-    std::shared_ptr<ImuObs> imuObs__t2 = nullptr;
+    /// IMU Observation list
+    /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
+    std::deque<std::shared_ptr<ImuObs>> imuObservations;
 
-    /// Position, Velocity and Attitude at the time tₖ₋₁
-    std::shared_ptr<PosVelAtt> posVelAtt__t1 = nullptr;
-    /// Position, Velocity and Attitude at the time tₖ₋₂
-    std::shared_ptr<PosVelAtt> posVelAtt__t2 = nullptr;
+    /// @brief Maximum amount of imu observations to keep
+    size_t maxSizeImuObservations = 0;
+
+    /// Position, Velocity and Attitude states.
+    /// Length depends on the integration algorithm. Newest state first (tₖ, tₖ₋₁, tₖ₋₂, ...)
+    std::deque<std::shared_ptr<PosVelAtt>> posVelAttStates;
+
+    /// @brief Maximum amount of states to keep
+    size_t maxSizeStates = 0;
 
     /// Position, Velocity and Attitude at initialization (needed to transform the ECEF position into NED)
     std::shared_ptr<PosVelAtt> posVelAtt__init = nullptr;

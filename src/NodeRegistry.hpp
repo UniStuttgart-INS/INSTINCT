@@ -11,7 +11,7 @@
 #include <vector>
 #include <map>
 
-#include "internal/Pin.hpp"
+#include "internal/Node/Pin.hpp"
 
 namespace NAV
 {

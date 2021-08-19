@@ -14,11 +14,52 @@ The software consists of one executable ```instinct```
 
 ## Getting Started
 
+### Working with the Repository
+
+##### Git (either clone or update)
+- Clone the repository
+  ```
+  git clone --recurse-submodules https://git.nav.uni-stuttgart.de/thomas.topp/instinct.git INSTINCT
+  ```
+- Update the repository
+  ```
+  git pull --recurse-submodules
+  ```
+
+##### Cmake
+```
+export CC=clang && export CXX=clang++ && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
+```
+##### Build
+```
+cmake --build build/Release -- -j
+```
+
+##### Run the executable
+```
+./bin/Release/instinct -f config.ini -l flow/Default.flow
+```
+
+##### Help message
+
+```
+INSTINCT 0.2.0 - INS Toolkit for Integrated Navigation Concepts and Training
+
+Allowed options:
+  -f [ --config ] arg   List of configuration files to read parameters from
+  -v [ --version ]      Display the version number
+  -h [ --help ]         Display this help message
+  --sigterm             Programm waits for -SIGUSR1 / -SIGINT / -SIGTERM
+  --duration arg (=0)   Program execution duration [sec]
+  --nogui               Launch without the gui
+  -l [ --load ] arg     Flow file to load
+```
+
 ### Development Environment Setup
 
 Most library dependencies are managed by Conan.io, so you just need to install the basics.
 
-#### ArchLinux:
+#### ArchLinux
 ```
 # Needed
 sudo pacman -S base-devel cmake clang glfw-x11
@@ -31,7 +72,7 @@ sudo pacman -S ccache doxygen cppcheck
 sudo pacman -S valgrind kcachegrind
 ```
 
-#### Ubuntu 20.04:
+#### Ubuntu 20.04
 ```
 # Needed
 sudo apt update
@@ -49,31 +90,6 @@ sudo apt install ccache doxygen cppcheck
 sudo apt install valgrind kcachegrind
 ```
 
-#### Raspbian:
-Raspbian has old versions of clang and cmake in its repository, so we need to install them manually.
-```
-# Remove clang and cmake
-sudo apt-get remove clang cmake
-
-# Get Clang 10 (clang-tidy included) and update the path
-wget https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-armv7a-linux-gnueabihf.tar.xz
-tar -xvf clang+llvm-10.0.0-armv7a-linux-gnueabihf.tar.xz
-rm clang+llvm-10.0.0-armv7a-linux-gnueabihf.tar.xz
-mv clang+llvm-10.0.0-armv7a-linux-gnueabihf clang_10.0.0
-sudo mv clang_10.0.0 /usr/local
-echo 'export PATH=/usr/local/clang_10.0.0/bin:$PATH' >> ~/.bashrc
-echo 'export LD_LIBRARY_PATH=/usr/local/clang_10.0.0/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
-source ~/.bashrc
-
-# Install cmake
-sudo apt-get install build-essential python3-pip libglfw3-dev libglfw3
-pip3 install cmake
-
-# Install conan
-pip3 install conan --user
-```
-Optional dependencies, see Ubuntu
-
 #### MacOS
 ```
 # Basic
@@ -90,7 +106,7 @@ ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 brew install ccache doxygen cppcheck
 ```
 
-#### Windows 10 (WSL):
+#### Windows 10 (WSL)
 [Windows Subsystem for Linux Installation Guide for Windows 10](https://docs.microsoft.com/de-de/windows/wsl/install-win10):
 
 PowerShell (Administrator):
@@ -136,6 +152,21 @@ export DISPLAY=192.168.1.3:0.0
 
 ### VSCode Configuration
 
+#### Task overview
+
+|  Hotkey  | Action                                    | Default       |
+| :------: | :---------------------------------------- | ------------- |
+| ```F5``` | Debug the project                         | Default debug |
+| ```F6``` | Run Task: ```MAIN: Build project```       | Default build |
+| ```F7``` | Run Task: ```MAIN: Build & run project``` | Default test  |
+| ```F8``` | Open Task List                            |               |
+
+* To start the GUI, execute the Task ```MAIN: Build & run project```
+* If you have problems with the build, execute the Task ```CLEAN: Remove build files```
+* If you want to provide tests, place them in the ```tests``` directory and execute them with the task ```TEST: Build & run```
+
+#### Extensions
+
 It is strongly recommended to use [Visual Studio Code](https://code.visualstudio.com/) as IDE, as the needed project files are provided in the ```.vscode``` folder.
 
 Recommended plugins for working with this project
@@ -149,6 +180,8 @@ Recommended plugins for working with this project
 * [cmake-format](https://marketplace.visualstudio.com/items?itemName=cheshirekow.cmake-format) Format listfiles so they don't look like crap
 * [mathover](https://marketplace.visualstudio.com/items?itemName=Remisa.mathover) Render LaTeX comments on hover
 * [Status Bar Parameter](https://marketplace.visualstudio.com/items?itemName=mschababerle.status-bar-param) Add selectable parameter to the status bar
+
+#### Settings
 
 Recommended changes to the User's ```settings.json``` (**not** the project .vscode/settings.json)
 ```
@@ -173,48 +206,19 @@ Recommended changes to the User's ```keybindings.json```
     {
         "key": "f8",
         "command": "workbench.action.tasks.runTask"
+    },
+    {
+        "key": "f7",
+        "command": "workbench.action.tasks.test"
     }
 ]
 ```
-
-### Compiling & Executing the program
-
-##### Console
-
-Cmake
-```
-export CC=clang && export CXX=clang++ && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
-```
-Build
-```
-cmake --build build/Release -- -j
-```
-
-Run the executable
-```
-./bin/Release/instinct -f config.ini -l flow/Default.flow
-```
-
-##### VSCode
-
-|  Hotkey  | Action                                    | Default       |
-| :------: | :---------------------------------------- | ------------- |
-| ```F5``` | Debug the project                         | Default debug |
-| ```F6``` | Run Task: ```MAIN: Build project```       | Default build |
-| ```F7``` | Run Task: ```MAIN: Build & run project``` | Default test  |
-| ```F8``` | Open Task List                            |               |
-
-* To start the GUI, execute the Task ```MAIN: Build & run project```
-* To start without GUI, append a ```--nogui``` and a flow file to load with ```-l filepath```
-* If you have problems with the build, execute the Task ```CLEAN: Remove build files```
-* If you want to provide tests, place them in the ```tests``` directory and execute them with the task ```TEST: Build & run```
-
 
 ## Dependencies
 
 * Needed:
     * [cmake](https://cmake.org/) A cross-platform open-source make system
-    * C++ compiler ([clang](https://clang.llvm.org/) is recommended, but others work as well) for compiling the project
+    * C++ compiler ([clang](https://clang.llvm.org/) or [gcc](https://gcc.gnu.org/) is recommended, but others work as well) for compiling the project
 * Optional:
     * [Conan](https://conan.io) A distributed, open source, C/C++ package manager
     * [clang-format](https://clang.llvm.org/docs/ClangFormat.html) Code formatting Tool
@@ -235,17 +239,10 @@ Run the executable
     * [Dear ImGui](https://github.com/ocornut/imgui) Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies
     * [Node Editor in ImGui](https://github.com/thedmd/imgui-node-editor) An implementation of node editor with ImGui-like API.
 
-
-## Help
-
-The help function can be shown by calling the binary with the ```-h | --help``` parameter
-```
-instinct --help
-```
-
 ## Authors
 
 * [M.Sc. Thomas Topp](mailto:topp@ins.uni-stuttgart.de?subject=[GitLab/INSTINCT]%20)
+* [M.Sc. Marcel Maier](mailto:marcel.maier@ins.uni-stuttgart.de?subject=[GitLab/INSTINCT]%20)
 * [M.Sc. Rui Wang](mailto:rui.wang@ins.uni-stuttgart.de?subject=[GitLab/INSTINCT]%20)
 
 ## Version History

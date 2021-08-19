@@ -2,7 +2,7 @@
 
 #include "util/Logger.hpp"
 
-#include "Nodes/Node.hpp"
+#include "internal/Node/Node.hpp"
 #include "NodeData/NodeData.hpp"
 
 #include <string>
@@ -163,7 +163,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/DataProvider/IMU/FileReader/ImuFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/KvhFile.hpp"
 #include "Nodes/DataProvider/IMU/FileReader/VectorNavFile.hpp"
-#include "Nodes/DataProvider/IMU/NetworkStream/SkydelImuStream.hpp"
+#include "Nodes/DataProvider/IMU/NetworkStream/SkydelNetworkStream.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/KvhSensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/Navio2Sensor.hpp"
 #include "Nodes/DataProvider/IMU/Sensors/VectorNavSensor.hpp"
@@ -207,7 +207,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<EmlidSensor>();
     registerNodeType<UbloxSensor>();
     registerNodeType<ImuFile>();
-    registerNodeType<SkydelImuStream>();
+    registerNodeType<SkydelNetworkStream>();
     registerNodeType<KvhFile>();
     registerNodeType<VectorNavFile>();
     registerNodeType<KvhSensor>();
@@ -230,6 +230,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/GNSS/EmlidObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
+#include "NodeData/GNSS/SkydelObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
@@ -245,6 +246,7 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<EmlidObs>();
     registerNodeDataType<RtklibPosObs>();
     registerNodeDataType<UbloxObs>();
+    registerNodeDataType<SkydelObs>();
     // IMU
     registerNodeDataType<ImuObs>();
     registerNodeDataType<KvhObs>();

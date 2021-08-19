@@ -9,7 +9,7 @@
 #include <imgui_node_editor.h>
 #include <imgui_stdlib.h>
 
-#include "internal/Pin.hpp"
+#include "internal/Node/Pin.hpp"
 
 #include "util/Logger.hpp"
 
@@ -300,5 +300,8 @@ constexpr bool operator==(const Node::Kind& lhs, const Node::Kind::Value& rhs) {
 constexpr bool operator==(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return lhs == rhs.value; }
 constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind::Value& rhs) { return lhs.value != rhs; }
 constexpr bool operator!=(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return lhs != rhs.value; }
+
+void to_json(json& j, const Node& node);
+void from_json(const json& j, Node& node);
 
 } // namespace NAV

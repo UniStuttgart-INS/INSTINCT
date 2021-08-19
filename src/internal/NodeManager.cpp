@@ -1,9 +1,9 @@
 #include "internal/NodeManager.hpp"
 namespace ed = ax::NodeEditor;
 
-#include "Nodes/Node.hpp"
-#include "internal/Link.hpp"
-#include "internal/Pin.hpp"
+#include "internal/Node/Node.hpp"
+#include "internal/Node/Link.hpp"
+#include "internal/Node/Pin.hpp"
 
 #include "internal/FlowManager.hpp"
 
@@ -29,12 +29,6 @@ std::thread nodeInitThread;
 namespace NAV::NodeManager
 {
 size_t GetNextId();
-
-ed::NodeId GetNextNodeId();
-
-ed::LinkId GetNextLinkId();
-
-ed::PinId GetNextPinId();
 
 } // namespace NAV::NodeManager
 
@@ -66,6 +60,20 @@ const std::vector<NAV::Node*>& NAV::NodeManager::m_Nodes()
 const std::vector<NAV::Link>& NAV::NodeManager::m_Links()
 {
     return m_links;
+}
+
+void NAV::NodeManager::DeleteAllLinksAndNodes()
+{
+    LOG_TRACE("called");
+
+    bool saveLastActionsValue = NAV::flow::saveLastActions;
+    NAV::flow::saveLastActions = false;
+
+    DeleteAllLinks();
+    DeleteAllNodes();
+
+    NAV::flow::saveLastActions = saveLastActionsValue;
+    flow::ApplyChanges();
 }
 
 void NAV::NodeManager::AddNode(NAV::Node* node)
@@ -180,6 +188,10 @@ bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
 void NAV::NodeManager::DeleteAllNodes()
 {
     LOG_TRACE("called");
+
+    bool saveLastActionsValue = NAV::flow::saveLastActions;
+    NAV::flow::saveLastActions = false;
+
     if (nodeInitThread.joinable())
     {
         // nodeInitThread.request_stop();
@@ -199,6 +211,7 @@ void NAV::NodeManager::DeleteAllNodes()
         m_NextId = std::max(m_NextId, size_t(link.id) + 1);
     }
 
+    NAV::flow::saveLastActions = saveLastActionsValue;
     flow::ApplyChanges();
 }
 
@@ -547,6 +560,9 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
 void NAV::NodeManager::DeleteAllLinks()
 {
     LOG_TRACE("called");
+
+    bool saveLastActionsValue = NAV::flow::saveLastActions;
+    NAV::flow::saveLastActions = false;
     while (!m_links.empty())
     {
         NodeManager::DeleteLink(m_links.back().id);
@@ -559,6 +575,7 @@ void NAV::NodeManager::DeleteAllLinks()
         m_NextId = std::max(m_NextId, size_t(node->id) + 1);
     }
 
+    NAV::flow::saveLastActions = saveLastActionsValue;
     flow::ApplyChanges();
 }
 
@@ -853,3 +870,49 @@ void NAV::NodeManager::Stop()
         nodeInitThread.join();
     }
 }
+
+#ifdef TESTING
+
+std::vector<std::pair<ax::NodeEditor::PinId, void (*)(const std::shared_ptr<NAV::NodeData>&)>> watcherPinList;
+std::vector<std::pair<ax::NodeEditor::LinkId, void (*)(const std::shared_ptr<NAV::NodeData>&)>> watcherLinkList;
+
+void NAV::NodeManager::RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<NodeData>&))
+{
+    watcherPinList.emplace_back(id, callback);
+}
+
+void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<NodeData>&))
+{
+    watcherLinkList.emplace_back(id, callback);
+}
+
+void NAV::NodeManager::ApplyWatcherCallbacks()
+{
+    for (auto& [id, callback] : watcherLinkList)
+    {
+        if (Link* link = FindLink(id))
+        {
+            RegisterWatcherCallbackToOutputPin(link->startPinId, callback);
+        }
+    }
+
+    for (auto& [id, callback] : watcherPinList)
+    {
+        if (Pin* pin = FindPin(id))
+        {
+            if (pin->kind == Pin::Kind::Output)
+            {
+                LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
+                pin->watcherCallbacks.push_back(callback);
+            }
+        }
+    }
+}
+
+void NAV::NodeManager::ClearRegisteredCallbacks()
+{
+    watcherPinList.clear();
+    watcherLinkList.clear();
+}
+
+#endif

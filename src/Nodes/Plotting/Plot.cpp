@@ -142,7 +142,7 @@ NAV::Plot::Plot()
     dataIdentifier = { PosVelAtt::type(),
                        RtklibPosObs::type(), UbloxObs::type(),
                        ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(),
-                       VectorNavBinaryOutput::type() };
+                       VectorNavBinaryOutput::type(), SkydelObs::type() };
 
     updateNumberOfInputPins();
 
@@ -735,6 +735,27 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Velocity N [m/s]");
             data.at(pinIndex).addPlotDataItem("Velocity E [m/s]");
             data.at(pinIndex).addPlotDataItem("Velocity D [m/s]");
+        }
+        else if (startPin->dataIdentifier.front() == SkydelObs::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // SkydelObs
+            data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("Roll [rad]");
+            data.at(pinIndex).addPlotDataItem("Pitch [rad]");
+            data.at(pinIndex).addPlotDataItem("Yaw [rad]");
+            // data.at(pinIndex).addPlotDataItem("Latitude [deg]");
+            // data.at(pinIndex).addPlotDataItem("Longitude [deg]");
+            // data.at(pinIndex).addPlotDataItem("Altitude [m]");
+            // data.at(pinIndex).addPlotDataItem("North/South [m]");
+            // data.at(pinIndex).addPlotDataItem("East/West [m]");
+            // data.at(pinIndex).addPlotDataItem("Velocity N [m/s]");
+            // data.at(pinIndex).addPlotDataItem("Velocity E [m/s]");
+            // data.at(pinIndex).addPlotDataItem("Velocity D [m/s]");
         }
         else if (startPin->dataIdentifier.front() == ImuObs::type())
         {
@@ -1371,6 +1392,10 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
             {
                 plotUbloxObs(std::dynamic_pointer_cast<UbloxObs>(nodeData), pinIndex);
             }
+            else if (sourcePin->dataIdentifier.front() == SkydelObs::type())
+            {
+                plotSkydelObs(std::static_pointer_cast<SkydelObs>(nodeData), pinIndex);
+            }
             else if (sourcePin->dataIdentifier.front() == ImuObs::type())
             {
                 plotImuObs(std::dynamic_pointer_cast<ImuObs>(nodeData), pinIndex);
@@ -1612,6 +1637,29 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<UbloxObs>& obs, size_t pinInd
     addData(pinIndex, i++, velocity_ned.has_value() ? velocity_ned->x() : std::nan(""));
     addData(pinIndex, i++, velocity_ned.has_value() ? velocity_ned->y() : std::nan(""));
     addData(pinIndex, i++, velocity_ned.has_value() ? velocity_ned->z() : std::nan(""));
+}
+
+void NAV::Plot::plotSkydelObs(const std::shared_ptr<SkydelObs>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(startValue_Time))
+        {
+            startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // SkydelObs
+    addData(pinIndex, i++, obs->posXYZ.has_value() ? obs->posXYZ->x() : std::nan(""));
+    addData(pinIndex, i++, obs->posXYZ.has_value() ? obs->posXYZ->y() : std::nan(""));
+    addData(pinIndex, i++, obs->posXYZ.has_value() ? obs->posXYZ->z() : std::nan(""));
+    addData(pinIndex, i++, obs->attRPY.has_value() ? obs->attRPY->x() : std::nan(""));
+    addData(pinIndex, i++, obs->attRPY.has_value() ? obs->attRPY->y() : std::nan(""));
+    addData(pinIndex, i++, obs->attRPY.has_value() ? obs->attRPY->z() : std::nan(""));
 }
 
 void NAV::Plot::plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex)
