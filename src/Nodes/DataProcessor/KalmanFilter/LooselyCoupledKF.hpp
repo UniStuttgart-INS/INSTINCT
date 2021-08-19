@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Nodes/Node.hpp"
+#include "internal/Node/Node.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 
