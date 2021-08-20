@@ -83,6 +83,24 @@ void NAV::ImuIntegrator::guiConfig()
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
+
+    if (ImGui::Checkbox(fmt::format("Apply gravity vector compensation to acceleration##{}", size_t(id)).c_str(), &gravityCompensation))
+    {
+        LOG_DEBUG("{}: gravityCompensation changed to {}", nameId(), gravityCompensation);
+        flow::ApplyChanges();
+    }
+
+    if (ImGui::Checkbox(fmt::format("Apply centrifugal acceleration compensation##{}", size_t(id)).c_str(), &centrifugalAccCompensation))
+    {
+        LOG_DEBUG("{}: centrifugalAccCompensation changed to {}", nameId(), centrifugalAccCompensation);
+        flow::ApplyChanges();
+    }
+
+    if (ImGui::Checkbox(fmt::format("Apply coriolis acceleration compensation##{}", size_t(id)).c_str(), &coriolisCompensation))
+    {
+        LOG_DEBUG("{}: coriolisCompensation changed to {}", nameId(), coriolisCompensation);
+        flow::ApplyChanges();
+    }
 }
 
 [[nodiscard]] json NAV::ImuIntegrator::save() const
@@ -94,6 +112,9 @@ void NAV::ImuIntegrator::guiConfig()
     j["integrationFrame"] = integrationFrame;
     j["gravityModel"] = gravityModel;
     j["prefereTimeSinceStartupOverInsTime"] = prefereTimeSinceStartupOverInsTime;
+    j["gravityCompensation"] = gravityCompensation;
+    j["centrifugalAccCompensation"] = centrifugalAccCompensation;
+    j["coriolisCompensation"] = coriolisCompensation;
 
     return j;
 }
@@ -113,6 +134,18 @@ void NAV::ImuIntegrator::restore(json const& j)
     if (j.contains("prefereTimeSinceStartupOverInsTime"))
     {
         prefereTimeSinceStartupOverInsTime = j.at("prefereTimeSinceStartupOverInsTime");
+    }
+    if (j.contains("gravityCompensation"))
+    {
+        gravityCompensation = j.at("gravityCompensation");
+    }
+    if (j.contains("centrifugalAccCompensation"))
+    {
+        centrifugalAccCompensation = j.at("centrifugalAccCompensation");
+    }
+    if (j.contains("coriolisCompensation"))
+    {
+        coriolisCompensation = j.at("coriolisCompensation");
     }
 }
 
@@ -332,29 +365,36 @@ void NAV::ImuIntegrator::integrateObservation()
     Eigen::Vector3d gravity_n__t1;
 
     /// Gravity vector determination
-    if (gravityModel == GravityModel::Somigliana)
+    if (gravityCompensation)
     {
-        LOG_DATA("Gravity calculated with Somigliana model");
-        gravity_n__t1 = gravity::gravity_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-    }
-    else if (gravityModel == GravityModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
-    {
-        LOG_DATA("Gravity calculated with WGS84 model as in the Skydel Simulator plug-in");
-        double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-        // Gravity vector NED
-        const Eigen::Vector3d gravityVector(0.0, 0.0, gravityMagnitude);
-        gravity_n__t1 = gravityVector;
-    }
-    else if (gravityModel == GravityModel::EGM96)
-    {
-        LOG_DATA("Gravity calculated with EGM96");
-        int egm96degree = 10;
-        gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
+        if (gravityModel == GravityModel::Somigliana)
+        {
+            LOG_DATA("Gravity calculated with Somigliana model");
+            gravity_n__t1 = gravity::gravity_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        }
+        else if (gravityModel == GravityModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
+        {
+            LOG_DATA("Gravity calculated with WGS84 model as in the Skydel Simulator plug-in");
+            double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+            // Gravity vector NED
+            const Eigen::Vector3d gravityVector(0.0, 0.0, gravityMagnitude);
+            gravity_n__t1 = gravityVector;
+        }
+        else if (gravityModel == GravityModel::EGM96)
+        {
+            LOG_DATA("Gravity calculated with EGM96");
+            int egm96degree = 10;
+            gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
+        }
+        else
+        {
+            LOG_DATA("Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')");
+            gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        }
     }
     else
     {
-        LOG_DATA("Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')");
-        gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        gravity_n__t1 = Eigen::Vector3d::Zero();
     }
 
     LOG_DATA("Gravity vector in NED:\n{}", gravity_n__t1);

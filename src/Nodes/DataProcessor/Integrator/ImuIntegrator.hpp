@@ -114,6 +114,15 @@ class ImuIntegrator : public Node
 
     /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
     bool prefereTimeSinceStartupOverInsTime = false;
+
+    /// Flag to toggle gravity vector compensation of the acceleration at the current position
+    bool gravityCompensation = true;
+
+    /// Flag to toggle centrifugal acceleration compensation of the acceleration at the current position
+    bool centrifugalAccCompensation = true;
+
+    /// Flag to toggle coriolis acceleration compensation of the acceleration at the current position
+    bool coriolisCompensation = true;
 };
 
 } // namespace NAV
