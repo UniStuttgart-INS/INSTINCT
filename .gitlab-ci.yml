@@ -35,381 +35,381 @@ image: ins-cpp:10
 # ║                                              Prepare                                             ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-check-image:
-  stage: prepare
-  tags:
-    - linux
-  script:
-    - g++ --version
-    - clang++ --version
-    - clang-tidy --version
-    - cmake --version
-    - conan --version
-    - doxygen --version
-    - cppcheck --version
-    - lcov --version
-    - genhtml --version
-    - gcov --version
-    - xml_grep --version
+# check-image:
+#   stage: prepare
+#   tags:
+#     - linux
+#   script:
+#     - g++ --version
+#     - clang++ --version
+#     - clang-tidy --version
+#     - cmake --version
+#     - conan --version
+#     - doxygen --version
+#     - cppcheck --version
+#     - lcov --version
+#     - genhtml --version
+#     - gcov --version
+#     - xml_grep --version
 
-check-windows:
-  stage: prepare
-  extends: .windows
-  script:
-    - cl.exe
-    - cmake --version
-    - conan --version
+# check-windows:
+#   stage: prepare
+#   extends: .windows
+#   script:
+#     - cl.exe
+#     - cmake --version
+#     - conan --version
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Checks                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-clang-tidy:
-  stage: checks
-  tags:
-    - linux
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release --target copy-compile-commands
-    - ret=0; i=1; cnt=$(find src -type f -name "*.cpp" -printf '.' | wc -c); for f in $(find src -type f -name "*.cpp"); do echo '##### Linting '$i'/'$cnt' '$f; i=$((i+1)); clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
+# clang-tidy:
+#   stage: checks
+#   tags:
+#     - linux
+#   script:
+#     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Release --target copy-compile-commands
+#     - ret=0; i=1; cnt=$(find src -type f -name "*.cpp" -printf '.' | wc -c); for f in $(find src -type f -name "*.cpp"); do echo '##### Linting '$i'/'$cnt' '$f; i=$((i+1)); clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
 
-clang-tidy:tests:
-  stage: checks
-  tags:
-    - linux
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug --target copy-compile-commands
-    - ret=0; i=1; cnt=$(find test -type f -name "*.cpp" -printf '.' | wc -c); for f in $(find test -type f -name "*.cpp"); do echo '##### Linting '$i'/'$cnt' '$f; i=$((i+1)); clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
+# clang-tidy:tests:
+#   stage: checks
+#   tags:
+#     - linux
+#   script:
+#     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Debug --target copy-compile-commands
+#     - ret=0; i=1; cnt=$(find test -type f -name "*.cpp" -printf '.' | wc -c); for f in $(find test -type f -name "*.cpp"); do echo '##### Linting '$i'/'$cnt' '$f; i=$((i+1)); clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                         Build Main & GUI                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.build:main:
-  stage: build
-  tags:
-    - linux
-  needs: ["check-image"]
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
+# .build:main:
+#   stage: build
+#   tags:
+#     - linux
+#   needs: ["check-image"]
+#   script:
+#     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Release -- -j2
 
-main:clang:
-  extends:
-    - .build:main
-    - .clang
+# main:clang:
+#   extends:
+#     - .build:main
+#     - .clang
 
-main:gcc:
-  extends:
-    - .build:main
-    - .gcc
+# main:gcc:
+#   extends:
+#     - .build:main
+#     - .gcc
 
-main:win:
-  stage: build
-  extends: .windows
-  needs: ["check-windows"]
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release
+# main:win:
+#   stage: build
+#   extends: .windows
+#   needs: ["check-windows"]
+#   script:
+#     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Release
 
-main:win:LOG_INFO:
-  extends: main:win
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=INFO -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release
-    - move bin\Release\instinct.exe .
-  artifacts:
-    paths:
-      - instinct.exe
-      - resources/data/egm96_to360.ascii
-      - resources/fonts/Cuprum-Bold.ttf
-      - resources/fonts/Cuprum-OFL.txt
-      - resources/fonts/Inconsolata-Nerd-Font-Complete.otf
-      - resources/fonts/NotoSans-Regular.ttf
-      - resources/fonts/Play-OFL.txt
-      - resources/fonts/Play-Regular.ttf
-      - resources/images/BlueprintBackground.png
-      - resources/images/INSTINCT_Logo_Text_white_small.png
-    expire_in: 1 week
-  only:
-    - master
+# main:win:LOG_INFO:
+#   extends: main:win
+#   script:
+#     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=INFO -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Release
+#     - move bin\Release\instinct.exe .
+#   artifacts:
+#     paths:
+#       - instinct.exe
+#       - resources/data/egm96_to360.ascii
+#       - resources/fonts/Cuprum-Bold.ttf
+#       - resources/fonts/Cuprum-OFL.txt
+#       - resources/fonts/Inconsolata-Nerd-Font-Complete.otf
+#       - resources/fonts/NotoSans-Regular.ttf
+#       - resources/fonts/Play-OFL.txt
+#       - resources/fonts/Play-Regular.ttf
+#       - resources/images/BlueprintBackground.png
+#       - resources/images/INSTINCT_Logo_Text_white_small.png
+#     expire_in: 1 week
+#   only:
+#     - master
 
-.build:main:LOG_OFF:
-  extends:
-    - .build:main
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
+# .build:main:LOG_OFF:
+#   extends:
+#     - .build:main
+#   script:
+#     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Release -- -j2
 
-main:clang:LOG_OFF:
-  extends:
-    - .build:main:LOG_OFF
-    - .clang
+# main:clang:LOG_OFF:
+#   extends:
+#     - .build:main:LOG_OFF
+#     - .clang
 
-main:gcc:LOG_OFF:
-  extends:
-    - .build:main:LOG_OFF
-    - .gcc
+# main:gcc:LOG_OFF:
+#   extends:
+#     - .build:main:LOG_OFF
+#     - .gcc
 
-main:win:LOG_OFF:
-  extends:
-    - main:win
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release
+# main:win:LOG_OFF:
+#   extends:
+#     - main:win
+#   script:
+#     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Release
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                            Build Tests                                           ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.build:tests:
-  stage: build
-  tags:
-    - linux
-  needs: ["check-image"]
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
-  artifacts:
-    untracked: true
-    expire_in: 2h
+# .build:tests:
+#   stage: build
+#   tags:
+#     - linux
+#   needs: ["check-image"]
+#   script:
+#     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Debug -- -j2
+#   artifacts:
+#     untracked: true
+#     expire_in: 2h
 
-tests:clang:
-  extends:
-    - .build:tests
-    - .clang
+# tests:clang:
+#   extends:
+#     - .build:tests
+#     - .clang
 
-tests:gcc:
-  extends:
-    - .build:tests
-    - .gcc
+# tests:gcc:
+#   extends:
+#     - .build:tests
+#     - .gcc
 
-tests:win:
-  stage: build
-  extends: .windows
-  needs: ["check-windows"]
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug
-  artifacts:
-    untracked: true
-    expire_in: 2h
+# tests:win:
+#   stage: build
+#   extends: .windows
+#   needs: ["check-windows"]
+#   script:
+#     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Debug
+#   artifacts:
+#     untracked: true
+#     expire_in: 2h
 
-.build:tests:LOG_OFF:
-  extends:
-    - .build:tests
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
+# .build:tests:LOG_OFF:
+#   extends:
+#     - .build:tests
+#   script:
+#     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_COVERAGE=TRUE -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Debug -- -j2
 
-tests:clang:LOG_OFF:
-  extends:
-    - .build:tests:LOG_OFF
-    - .clang
+# tests:clang:LOG_OFF:
+#   extends:
+#     - .build:tests:LOG_OFF
+#     - .clang
 
-tests:gcc:LOG_OFF:
-  extends:
-    - .build:tests:LOG_OFF
-    - .gcc
+# tests:gcc:LOG_OFF:
+#   extends:
+#     - .build:tests:LOG_OFF
+#     - .gcc
 
-tests:win:LOG_OFF:
-  extends: tests:win
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug
+# tests:win:LOG_OFF:
+#   extends: tests:win
+#   script:
+#     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Debug
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                               Test                                               ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.run-tests:
-  stage: test
-  tags:
-    - linux
-  script:
-    - cd build/Debug/test
-    - ctest -j2 --output-on-failure
-  after_script:
-    - cd build/Debug/test
-    - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
-    - sed -i ':begin;$!N;s/<\/testsuites>\n<testsuites>//;tbegin;P;D' ../../../junit.xml
-  artifacts:
-    when: always
-    reports:
-      junit: junit.xml
-    expire_in: 2h
+# .run-tests:
+#   stage: test
+#   tags:
+#     - linux
+#   script:
+#     - cd build/Debug/test
+#     - ctest -j2 --output-on-failure
+#   after_script:
+#     - cd build/Debug/test
+#     - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
+#     - sed -i ':begin;$!N;s/<\/testsuites>\n<testsuites>//;tbegin;P;D' ../../../junit.xml
+#   artifacts:
+#     when: always
+#     reports:
+#       junit: junit.xml
+#     expire_in: 2h
 
-run-tests:clang:
-  extends: .run-tests
-  needs: ["tests:clang"]
+# run-tests:clang:
+#   extends: .run-tests
+#   needs: ["tests:clang"]
 
 
-run-tests:gcc:
-  extends: .run-tests
-  needs: ["tests:gcc"]
-  artifacts:
-    untracked: true
+# run-tests:gcc:
+#   extends: .run-tests
+#   needs: ["tests:gcc"]
+#   artifacts:
+#     untracked: true
 
-run-tests:win:
-  stage: test
-  extends: .windows
-  needs: ["tests:win"]
-  script:
-    - cd build/Debug/test
-    - ctest --output-on-failure
+# run-tests:win:
+#   stage: test
+#   extends: .windows
+#   needs: ["tests:win"]
+#   script:
+#     - cd build/Debug/test
+#     - ctest --output-on-failure
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                             Analyze                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-doxygen:
-  extends: .schedule
-  stage: analyze
-  tags:
-    - linux
-  needs: ["check-image"]
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release --target doxygen-docs -- -j2
-  artifacts:
-    paths:
-      - doc/html
-    expire_in: 2h
+# doxygen:
+#   extends: .schedule
+#   stage: analyze
+#   tags:
+#     - linux
+#   needs: ["check-image"]
+#   script:
+#     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Release --target doxygen-docs -- -j2
+#   artifacts:
+#     paths:
+#       - doc/html
+#     expire_in: 2h
 
-coverage:
-  stage: analyze
-  tags:
-    - linux
-  needs: ["run-tests:gcc"]
-  script:
-    - mkdir -p coverage
-    - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
-    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' --output-file coverage/coverage.info
-    - genhtml coverage/coverage.info --output-directory coverage
-    - lcov --list coverage/coverage.info
-    - python3 tools/lcov_cobertura.py coverage/coverage.info --output coverage/cobertura-coverage.xml
-  coverage: '/Total:\| ?(\d+\.?\d+\%)/'
-  artifacts:
-    paths:
-      - coverage
-    expire_in: 2h
-  only:
-    - master
+# coverage:
+#   stage: analyze
+#   tags:
+#     - linux
+#   needs: ["run-tests:gcc"]
+#   script:
+#     - mkdir -p coverage
+#     - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
+#     - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' --output-file coverage/coverage.info
+#     - genhtml coverage/coverage.info --output-directory coverage
+#     - lcov --list coverage/coverage.info
+#     - python3 tools/lcov_cobertura.py coverage/coverage.info --output coverage/cobertura-coverage.xml
+#   coverage: '/Total:\| ?(\d+\.?\d+\%)/'
+#   artifacts:
+#     paths:
+#       - coverage
+#     expire_in: 2h
+#   only:
+#     - master
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Deploy                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.pages:
-  extends: .schedule
-  stage: deploy
-  tags:
-    - linux
-  needs: ["doxygen", "coverage"]
-  script:
-    - mv doc/html/ public/
-    - mv coverage/ public/coverage/
-  artifacts:
-    name: "Documentation & Coverage Report"
-    paths:
-      - public
-    expire_in: 2h
-    reports:
-      cobertura: public/coverage/cobertura-coverage.xml
-  except:
-    - /^(?!master).+@/
+# .pages:
+#   extends: .schedule
+#   stage: deploy
+#   tags:
+#     - linux
+#   needs: ["doxygen", "coverage"]
+#   script:
+#     - mv doc/html/ public/
+#     - mv coverage/ public/coverage/
+#   artifacts:
+#     name: "Documentation & Coverage Report"
+#     paths:
+#       - public
+#     expire_in: 2h
+#     reports:
+#       cobertura: public/coverage/cobertura-coverage.xml
+#   except:
+#     - /^(?!master).+@/
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                           Ubuntu 20.04                                           ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.build:ubuntu:20.04:
-  stage: build
-  tags:
-    - linux
-  extends: .schedule
-  image: ubuntu:20.04
-  needs: []
-  variables:
-    DEBIAN_FRONTEND: noninteractive
-    TZ: Europe/Berlin
-  before_script:
-    - apt update
-    - apt upgrade -y
-    - apt install -y build-essential clang clang-tidy cmake python3-pip ccache cppcheck libglfw3-dev libglfw3
-    - apt install -y gcc-10 g++-10
-    - ln -sf /usr/bin/gcc-10 /usr/bin/gcc
-    - ln -sf /usr/bin/g++-10 /usr/bin/g++
-    - pip3 install conan
-    - g++ --version
-    - clang++ --version
-    - clang-tidy --version
-    - cmake --version
-    - conan --version
-    - cppcheck --version
+# .build:ubuntu:20.04:
+#   stage: build
+#   tags:
+#     - linux
+#   extends: .schedule
+#   image: ubuntu:20.04
+#   needs: []
+#   variables:
+#     DEBIAN_FRONTEND: noninteractive
+#     TZ: Europe/Berlin
+#   before_script:
+#     - apt update
+#     - apt upgrade -y
+#     - apt install -y build-essential clang clang-tidy cmake python3-pip ccache cppcheck libglfw3-dev libglfw3
+#     - apt install -y gcc-10 g++-10
+#     - ln -sf /usr/bin/gcc-10 /usr/bin/gcc
+#     - ln -sf /usr/bin/g++-10 /usr/bin/g++
+#     - pip3 install conan
+#     - g++ --version
+#     - clang++ --version
+#     - clang-tidy --version
+#     - cmake --version
+#     - conan --version
+#     - cppcheck --version
 
-.build:ubuntu:20.04:debug:
-  extends:
-    - .build:ubuntu:20.04
-  script:
-    - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug -- -j2
-  artifacts:
-    untracked: true
-    expire_in: 2h
+# .build:ubuntu:20.04:debug:
+#   extends:
+#     - .build:ubuntu:20.04
+#   script:
+#     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Debug -- -j2
+#   artifacts:
+#     untracked: true
+#     expire_in: 2h
 
-.build:ubuntu:20.04:release:
-  extends:
-    - .build:ubuntu:20.04
-  script:
-    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release -- -j2
+# .build:ubuntu:20.04:release:
+#   extends:
+#     - .build:ubuntu:20.04
+#   script:
+#     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
+#     - cmake --build build/Release -- -j2
 
-ubuntu:20.04:clang:release:
-  extends:
-    - .build:ubuntu:20.04:release
-    - .clang
+# ubuntu:20.04:clang:release:
+#   extends:
+#     - .build:ubuntu:20.04:release
+#     - .clang
 
-ubuntu:20.04:clang:debug:
-  extends:
-    - .build:ubuntu:20.04:debug
-    - .clang
+# ubuntu:20.04:clang:debug:
+#   extends:
+#     - .build:ubuntu:20.04:debug
+#     - .clang
 
-ubuntu:20.04:gcc:release:
-  extends:
-    - .build:ubuntu:20.04:release
-    - .gcc
+# ubuntu:20.04:gcc:release:
+#   extends:
+#     - .build:ubuntu:20.04:release
+#     - .gcc
 
-ubuntu:20.04:gcc:debug:
-  extends:
-    - .build:ubuntu:20.04:debug
-    - .gcc
+# ubuntu:20.04:gcc:debug:
+#   extends:
+#     - .build:ubuntu:20.04:debug
+#     - .gcc
 
-.run-tests:ubuntu:20.04:
-  stage: test
-  tags:
-    - linux
-  extends: .schedule
-  image: ubuntu:20.04
-  variables:
-    DEBIAN_FRONTEND: noninteractive
-    TZ: Europe/Berlin
-  before_script:
-    - apt update
-    - apt install -y cmake libglfw3
-    - cmake --version
-  script:
-    - cd build/Debug/test
-    - ctest -j2 --output-on-failure
+# .run-tests:ubuntu:20.04:
+#   stage: test
+#   tags:
+#     - linux
+#   extends: .schedule
+#   image: ubuntu:20.04
+#   variables:
+#     DEBIAN_FRONTEND: noninteractive
+#     TZ: Europe/Berlin
+#   before_script:
+#     - apt update
+#     - apt install -y cmake libglfw3
+#     - cmake --version
+#   script:
+#     - cd build/Debug/test
+#     - ctest -j2 --output-on-failure
 
-run-tests:ubuntu:20.04:clang:
-  extends: .run-tests:ubuntu:20.04
-  needs: ["ubuntu:20.04:clang:debug"]
+# run-tests:ubuntu:20.04:clang:
+#   extends: .run-tests:ubuntu:20.04
+#   needs: ["ubuntu:20.04:clang:debug"]
 
-run-tests:ubuntu:20.04:gcc:
-  extends: .run-tests:ubuntu:20.04
-  needs: ["ubuntu:20.04:gcc:debug"]
+# run-tests:ubuntu:20.04:gcc:
+#   extends: .run-tests:ubuntu:20.04
+#   needs: ["ubuntu:20.04:gcc:debug"]
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                        Arch Linux Latest                                         ║
@@ -424,7 +424,7 @@ run-tests:ubuntu:20.04:gcc:
   stage: build
   tags:
     - linux
-  extends: .schedule
+  # extends: .schedule
   image: archlinux:latest
   needs: []
   before_script:
@@ -480,7 +480,7 @@ archlinux:latest:gcc:debug:
   stage: test
   tags:
     - linux
-  extends: .schedule
+  # extends: .schedule
   image: archlinux:latest
   before_script:
     - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
