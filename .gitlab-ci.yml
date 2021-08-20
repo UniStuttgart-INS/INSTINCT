@@ -485,7 +485,7 @@ archlinux:latest:gcc:debug:
   before_script:
     - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
     - pacman -Sy
-    - pacman -S --noconfirm --needed cmake glfw-x11 glibc
+    - pacman -S --noconfirm --needed base-devel cmake glfw-x11
     - cmake --version
   script:
     - cd build/Debug/test
