@@ -68,19 +68,23 @@ clang-tidy:
   stage: checks
   tags:
     - linux
+  extends:
+    - .clang
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
-    - ret=0; i=1; cnt=$(find src -type f -name "*.cpp" -printf '.' | wc -c); for f in $(find src -type f -name "*.cpp"); do echo '##### Linting '$i'/'$cnt' '$f; i=$((i+1)); clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
+    - python3 ./tools/run-clang-tidy.py $PWD/src
 
 clang-tidy:tests:
   stage: checks
   tags:
     - linux
+  extends:
+    - .clang
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
-    - ret=0; i=1; cnt=$(find test -type f -name "*.cpp" -printf '.' | wc -c); for f in $(find test -type f -name "*.cpp"); do echo '##### Linting '$i'/'$cnt' '$f; i=$((i+1)); clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
+    - python3 ./tools/run-clang-tidy.py $PWD/test
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                         Build Main & GUI                                         ║
