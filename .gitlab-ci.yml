@@ -456,20 +456,20 @@ image: ins-cpp:10
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release -- -j2
 
-archlinux:latest:clang:release:
-  extends:
-    - .build:archlinux:latest:release
-    - .clang
+# archlinux:latest:clang:release:
+#   extends:
+#     - .build:archlinux:latest:release
+#     - .clang
 
 archlinux:latest:clang:debug:
   extends:
     - .build:archlinux:latest:debug
     - .clang
 
-archlinux:latest:gcc:release:
-  extends:
-    - .build:archlinux:latest:release
-    - .gcc
+# archlinux:latest:gcc:release:
+#   extends:
+#     - .build:archlinux:latest:release
+#     - .gcc
 
 archlinux:latest:gcc:debug:
   extends:
@@ -485,7 +485,7 @@ archlinux:latest:gcc:debug:
   before_script:
     - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
     - pacman -Sy
-    - pacman -S --noconfirm --needed cmake glfw-x11 glibc
+    - pacman -S --noconfirm --needed base-devel cmake glfw-x11
     - cmake --version
   script:
     - cd build/Debug/test
