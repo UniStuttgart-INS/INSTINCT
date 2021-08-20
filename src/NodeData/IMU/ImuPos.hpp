@@ -30,7 +30,7 @@ class ImuPos
     ImuPos& operator=(ImuPos&&) = delete;
 
     /// Accelerometer position in body frame coordinates in [m]
-    [[nodiscard]] const Eigen::Vector3d& posAccel_b() const
+    const Eigen::Vector3d& posAccel_b() const
     {
         return positionAccel_b;
     }
