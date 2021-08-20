@@ -187,8 +187,8 @@ def run_tidy(args, tmpdir, build_path, queue, lock, failed_files):
             sys.stdout.write(' '.join(invocation) +
                              '\n' + output.decode('utf-8'))
             if len(err) > 0:
-                sys.stderr.write(err.decode('utf-8'))
-            sys.stdout.flush()
+                sys.stdout.flush()
+                sys.stdout.write(err.decode('utf-8'))
         queue.task_done()
 
 
