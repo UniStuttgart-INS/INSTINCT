@@ -229,6 +229,8 @@
                 "args": [
                     "--build",
                     "build/${input:buildType}",
+                    "--",
+                    "-maxCpuCount",
                 ],
                 "options": {
                     "env": {
@@ -260,6 +262,8 @@
                 "args": [
                     "--build",
                     "build/Debug",
+                    "--",
+                    "-maxCpuCount",
                 ],
                 "options": {
                     "env": {

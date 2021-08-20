@@ -115,13 +115,13 @@ main:win:
   needs: ["check-windows"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release
+    - cmake --build build/Release -- -maxCpuCount
 
 main:win:LOG_INFO:
   extends: main:win
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=INFO -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release
+    - cmake --build build/Release -- -maxCpuCount
     - move bin\Release\instinct.exe .
   artifacts:
     paths:
@@ -161,7 +161,7 @@ main:win:LOG_OFF:
     - main:win
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release
+    - cmake --build build/Release -- -maxCpuCount
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                            Build Tests                                           ║
@@ -195,7 +195,7 @@ tests:win:
   needs: ["check-windows"]
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug
+    - cmake --build build/Debug -- -maxCpuCount
   artifacts:
     untracked: true
     expire_in: 2h
@@ -221,7 +221,7 @@ tests:win:LOG_OFF:
   extends: tests:win
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug
+    - cmake --build build/Debug -- -maxCpuCount
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                               Test                                               ║
