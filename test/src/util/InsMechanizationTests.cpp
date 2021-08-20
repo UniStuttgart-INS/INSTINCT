@@ -201,9 +201,9 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
     Eigen::Vector3d angularVelocity_ie_n = trafo::quat_ne(latitude, longitude) * InsConst::angularVelocity_ie_e;
 
     /// North/South (meridian) earth radius [m]
-    double R_N = earthRadius_N(InsConst::WGS84_a, InsConst::WGS84_e_squared, latitude);
+    double R_N = earthRadius_N(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
     /// East/West (prime vertical) earth radius [m]
-    double R_E = earthRadius_E(InsConst::WGS84_a, InsConst::WGS84_e_squared, latitude);
+    double R_E = earthRadius_E(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
     std::deque<Eigen::Vector3d> velocities;
     velocities.emplace_back(Eigen::Vector3d::Zero());
@@ -296,9 +296,9 @@ TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
     for (size_t i = 0; i < count; i++)
     {
         /// North/South (meridian) earth radius [m]
-        double R_N = earthRadius_N(InsConst::WGS84_a, InsConst::WGS84_e_squared, latLonAlt(0));
+        double R_N = earthRadius_N(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
         /// East/West (prime vertical) earth radius [m]
-        double R_E = earthRadius_E(InsConst::WGS84_a, InsConst::WGS84_e_squared, latLonAlt(0));
+        double R_E = earthRadius_E(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
         latLonAlt = updatePosition_lla(dt, latLonAlt, velocity_n, R_N, R_E);
 
