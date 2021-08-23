@@ -446,7 +446,12 @@ void NAV::ImuIntegrator::integrateObservation()
                                                                             gravity_e__t1,
                                                                             quaternion_accel_ep__t0,
                                                                             quaternion_accel_ep__t1,
-                                                                            quaternion_accel_ep__t2);
+                                                                            quaternion_accel_ep__t2
+#ifndef NDEBUG
+                                                                            ,
+                                                                            coriolisCompensation
+#endif
+        );
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Position update                                             */
@@ -526,7 +531,12 @@ void NAV::ImuIntegrator::integrateObservation()
                                                                       gravity_n__t1,
                                                                       angularVelocity_ie_n__t1,
                                                                       angularVelocity_en_n__t1,
-                                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2);
+                                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2
+#ifndef NDEBUG
+                                                                      ,
+                                                                      coriolisCompensation
+#endif
+        );
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Position update                                             */
