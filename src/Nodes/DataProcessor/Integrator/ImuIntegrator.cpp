@@ -200,6 +200,7 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeDat
     // Remove observations at the end of the list till the max size is reached
     while (imuObservations.size() > maxSizeImuObservations)
     {
+        LOG_WARN("Receive new Imu observation, but list is full --> discarding oldest observation");
         imuObservations.pop_back();
     }
 
@@ -231,6 +232,7 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
     // Remove states at the end of the list till the max size is reached
     while (posVelAttStates.size() > maxSizeStates)
     {
+        LOG_WARN("Receive new state, but list is full --> discarding oldest state");
         posVelAttStates.pop_back();
     }
 
@@ -238,6 +240,13 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
     if (posVelAtt__init == nullptr)
     {
         posVelAtt__init = posVelAtt;
+    }
+
+    // If enough imu observations and states received, integrate the observation
+    if (imuObservations.size() == maxSizeImuObservations
+        && posVelAttStates.size() == maxSizeStates)
+    {
+        integrateObservation();
     }
 }
 
@@ -285,7 +294,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         LOG_DATA("{}: time__t2 {}", nameId(), time__t2.toGPSweekTow());
         LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1.toGPSweekTow(), timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t1 {}", nameId(), time__t0.toGPSweekTow(), timeDifferenceSec__t0);
+        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0.toGPSweekTow(), timeDifferenceSec__t0);
     }
     else
     {
@@ -312,7 +321,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         LOG_DATA("{}: time__t2 {}", nameId(), time__t2);
         LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1, timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t1 {}", nameId(), time__t0, timeDifferenceSec__t0);
+        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0, timeDifferenceSec__t0);
     }
 
     /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
@@ -563,6 +572,10 @@ void NAV::ImuIntegrator::integrateObservation()
         // Store body to navigation frame quaternion in the state
         posVelAtt__t0->quaternion_nb() = quaternion_nb__t0;
     }
+
+    // Cycle lists
+    imuObservations.pop_back();
+    posVelAttStates.pop_back();
 
     // Push out new data
     invokeCallbacks(OutputPortIndex_PosVelAtt__t0, posVelAtt__t0);
