@@ -154,10 +154,10 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
     for (size_t i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {
         // Retrieving EGM96 coefficients
-        auto n = static_cast<int>(egm96Coeffs[i][0]); // Degree of the Associated Legendre Polynomial
-        auto m = static_cast<int>(egm96Coeffs[i][1]); // Order of the Associated Legendre Polynomial
-        auto C = egm96Coeffs[i][2];
-        auto S = egm96Coeffs[i][3];
+        auto n = static_cast<int>(egm96Coeffs.at(i).at(0)); // Degree of the Associated Legendre Polynomial
+        auto m = static_cast<int>(egm96Coeffs.at(i).at(1)); // Order of the Associated Legendre Polynomial
+        auto C = egm96Coeffs.at(i).at(2);
+        auto S = egm96Coeffs.at(i).at(3);
 
         if (n == ndegree + 1)
         {
