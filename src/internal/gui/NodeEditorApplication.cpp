@@ -45,6 +45,8 @@ namespace nm = NAV::NodeManager;
 #include <utility>
 #include <filesystem>
 
+#include "internal/CMakeRC.hpp"
+
 ax::NodeEditor::EditorContext* m_Editor = nullptr;
 
 NAV::gui::NodeEditorApplication::~NodeEditorApplication()
@@ -94,8 +96,55 @@ void NAV::gui::NodeEditorApplication::OnStart()
     ImGui::GetStyle().FrameRounding = 4.0F;
     ed::GetStyle().FlowDuration = 1.0F;
 
-    m_HeaderBackground = LoadTexture("resources/images/BlueprintBackground.png");
-    m_InstinctLogo = LoadTexture("resources/images/INSTINCT_Logo_Text_white_small.png");
+    auto fs = cmrc::instinct::get_filesystem();
+
+    if (fs.is_file("resources/images/BlueprintBackground.png"))
+    {
+        auto fd = fs.open("resources/images/BlueprintBackground.png");
+
+        LOG_DEBUG("Generating Texture for Blueprint Background ({} byte)", fd.size());
+
+        auto is = cmrc::memstream(const_cast<char*>(fd.begin()), // NOLINT(cppcoreguidelines-pro-type-const-cast)
+                                  const_cast<char*>(fd.end()));  // NOLINT(cppcoreguidelines-pro-type-const-cast)
+
+        std::vector<char> buffer;
+        buffer.resize(fd.size(), '\0');
+
+        is.read(buffer.data(),
+                static_cast<std::streamsize>(buffer.size()));
+
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+        m_HeaderBackground = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
+                                         static_cast<int>(fd.size()));
+    }
+    else
+    {
+        m_HeaderBackground = LoadTexture("resources/images/BlueprintBackground.png");
+    }
+
+    if (fs.is_file("resources/images/INSTINCT_Logo_Text_white_small.png"))
+    {
+        auto fd = fs.open("resources/images/INSTINCT_Logo_Text_white_small.png");
+
+        LOG_DEBUG("Generating Texture for INSTINCT Logo ({} byte)", fd.size());
+
+        auto is = cmrc::memstream(const_cast<char*>(fd.begin()), // NOLINT(cppcoreguidelines-pro-type-const-cast)
+                                  const_cast<char*>(fd.end()));  // NOLINT(cppcoreguidelines-pro-type-const-cast)
+
+        std::vector<char> buffer;
+        buffer.resize(fd.size(), '\0');
+
+        is.read(buffer.data(),
+                static_cast<std::streamsize>(buffer.size()));
+
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+        m_InstinctLogo = LoadTexture(reinterpret_cast<const void*>(const_cast<const char*>(buffer.data())),
+                                     static_cast<int>(fd.size()));
+    }
+    else
+    {
+        m_InstinctLogo = LoadTexture("resources/images/INSTINCT_Logo_Text_white_small.png");
+    }
 }
 
 void NAV::gui::NodeEditorApplication::OnStop()

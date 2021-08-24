@@ -12,6 +12,11 @@ extern "C"
 #include "stb_image.h"
 }
 
+#include "../fonts/PlayRegular.cpp"
+#include "../fonts/InconsolataNerdFontComplete.cpp"
+#include "../fonts/NotoSansRegular.cpp"
+#include "../fonts/CuprumBold.cpp"
+
 Application::Application(const char* name, const char* iniFilename)
     : Application(name, iniFilename, 0, nullptr)
 {
@@ -111,14 +116,18 @@ void Application::RecreateFontAtlas()
     config.OversampleV = 4;
     config.PixelSnapH = false;
 
-    m_DefaultFont = io.Fonts->AddFontFromFileTTF("resources/fonts/Play-Regular.ttf", 18.0f, &config);
+    m_DefaultFont = io.Fonts->AddFontFromMemoryCompressedTTF(PlayRegular_compressed_data, PlayRegular_compressed_size, 18.0F, &config);
+    // m_DefaultFont = io.Fonts->AddFontFromFileTTF("resources/fonts/Play-Regular.ttf", 18.0f, &config);
     config.MergeMode = true;
     static const ImWchar icons_ranges[] = { 0x20, 0xFFFF, 0 };
-    io.Fonts->AddFontFromFileTTF("resources/fonts/Inconsolata-Nerd-Font-Complete.otf", 18.0f, &config, icons_ranges);
-    io.Fonts->AddFontFromFileTTF("resources/fonts/NotoSans-Regular.ttf", 18.0f, &config, icons_ranges);
+    io.Fonts->AddFontFromMemoryCompressedTTF(InconsolataNerdFontComplete_compressed_data, InconsolataNerdFontComplete_compressed_size, 18.0F, &config, icons_ranges);
+    io.Fonts->AddFontFromMemoryCompressedTTF(NotoSansRegular_compressed_data, NotoSansRegular_compressed_size, 18.0F, &config, icons_ranges);
+    // io.Fonts->AddFontFromFileTTF("resources/fonts/Inconsolata-Nerd-Font-Complete.otf", 18.0f, &config, icons_ranges);
+    // io.Fonts->AddFontFromFileTTF("resources/fonts/NotoSans-Regular.ttf", 18.0f, &config, icons_ranges);
 
     config.MergeMode = false;
-    m_HeaderFont = io.Fonts->AddFontFromFileTTF("resources/fonts/Cuprum-Bold.ttf", 20.0f, &config);
+    m_HeaderFont = io.Fonts->AddFontFromMemoryCompressedTTF(CuprumBold_compressed_data, CuprumBold_compressed_size, 20.0F, &config);
+    // m_HeaderFont = io.Fonts->AddFontFromFileTTF("resources/fonts/Cuprum-Bold.ttf", 20.0f, &config);
 
     io.Fonts->Build();
 }
@@ -215,6 +224,18 @@ ImFont* Application::DefaultFont() const
 ImFont* Application::HeaderFont() const
 {
     return m_HeaderFont;
+}
+ImTextureID Application::LoadTexture(const void* data, int len)
+{
+    int width = 0, height = 0, component = 0;
+    if (auto stbi_data = stbi_load_from_memory(reinterpret_cast<const stbi_uc*>(data), len, &width, &height, &component, 4))
+    {
+        auto texture = CreateTexture(stbi_data, width, height);
+        stbi_image_free(stbi_data);
+        return texture;
+    }
+    else
+        return nullptr;
 }
 
 ImTextureID Application::LoadTexture(const char* path)

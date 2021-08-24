@@ -126,15 +126,6 @@ main:win:LOG_INFO:
   artifacts:
     paths:
       - instinct.exe
-      - resources/data/egm96_to360.ascii
-      - resources/fonts/Cuprum-Bold.ttf
-      - resources/fonts/Cuprum-OFL.txt
-      - resources/fonts/Inconsolata-Nerd-Font-Complete.otf
-      - resources/fonts/NotoSans-Regular.ttf
-      - resources/fonts/Play-OFL.txt
-      - resources/fonts/Play-Regular.ttf
-      - resources/images/BlueprintBackground.png
-      - resources/images/INSTINCT_Logo_Text_white_small.png
     expire_in: 1 week
   only:
     - master

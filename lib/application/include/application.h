@@ -26,6 +26,7 @@ struct Application
     ImFont* DefaultFont() const;
     ImFont* HeaderFont() const;
 
+    ImTextureID LoadTexture(const void* data, int len);
     ImTextureID LoadTexture(const char* path);
     ImTextureID CreateTexture(const void* data, int width, int height);
     void DestroyTexture(ImTextureID texture);

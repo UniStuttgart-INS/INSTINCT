@@ -1353,8 +1353,8 @@
                 ],
                 "plotInfos": [
                     {
-                        "autoLimitXaxis": false,
-                        "autoLimitYaxis": false,
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
                         "headerText": "LatLon",
                         "leftPaneWidth": 180.0,
                         "plotFlags": 0,

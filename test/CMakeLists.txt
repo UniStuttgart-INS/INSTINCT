@@ -42,6 +42,7 @@ target_link_libraries(
   PRIVATE project_warnings
           project_options
           catch_main
+          instinct::rc
           CONAN_PKG::fmt
           CONAN_PKG::spdlog
           CONAN_PKG::boost
