@@ -31,4 +31,6 @@ macro(run_CMakeRC)
 
   set_target_properties(instinct-resources PROPERTIES CXX_CLANG_TIDY "")
   set_target_properties(instinct-resources PROPERTIES CXX_CPPCHECK "")
+
+  include_directories(SYSTEM ${CMRC_INCLUDE_DIR})
 endmacro()
