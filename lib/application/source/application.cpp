@@ -225,6 +225,18 @@ ImFont* Application::HeaderFont() const
 {
     return m_HeaderFont;
 }
+ImTextureID Application::LoadTexture(const void* data, int len)
+{
+    int width = 0, height = 0, component = 0;
+    if (auto stbi_data = stbi_load_from_memory(reinterpret_cast<const stbi_uc*>(data), len, &width, &height, &component, 4))
+    {
+        auto texture = CreateTexture(stbi_data, width, height);
+        stbi_image_free(stbi_data);
+        return texture;
+    }
+    else
+        return nullptr;
+}
 
 ImTextureID Application::LoadTexture(const char* path)
 {
