@@ -5,8 +5,7 @@
 
 #pragma once
 
-#include "Eigen/Dense"
-#include "util/Gravity/readAscii2Matrix.hpp"
+#include <Eigen/Dense>
 
 namespace NAV::gravity
 {
@@ -76,7 +75,4 @@ namespace NAV::gravity
 /// @note See Groves (2013) Chapter 2.4.3 and 'GUT User Guide' (2018) Chapter 7.4
 [[nodiscard]] Eigen::Vector3d gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree);
 
-/// @brief Reads in EGM96 coeffs before runtime, e.g. at initialization of the ImuIntegrator
-/// @return Matrix 'coeffsEGM96'
-Eigen::MatrixXd readEGM96Coeffs();
 } // namespace NAV::gravity

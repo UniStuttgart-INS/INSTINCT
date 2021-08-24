@@ -245,6 +245,7 @@ endif()
 if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
   set_target_properties(
     ${PROJECT_NAME_LOWERCASE}
+    instinct-resources
     imgui
     imgui_node_editor
     ImGuiFileDialog
