@@ -53,3 +53,32 @@ void from_json(const json& j, ImVec2& vec2)
         j.at("y").get_to(vec2.y);
     }
 }
+
+void to_json(json& j, const ImVec4& vec4)
+{
+    j = json{
+        { "x", vec4.x },
+        { "y", vec4.y },
+        { "z", vec4.z },
+        { "w", vec4.w },
+    };
+}
+void from_json(const json& j, ImVec4& vec4)
+{
+    if (j.contains("x"))
+    {
+        j.at("x").get_to(vec4.x);
+    }
+    if (j.contains("y"))
+    {
+        j.at("y").get_to(vec4.y);
+    }
+    if (j.contains("z"))
+    {
+        j.at("z").get_to(vec4.z);
+    }
+    if (j.contains("w"))
+    {
+        j.at("w").get_to(vec4.w);
+    }
+}

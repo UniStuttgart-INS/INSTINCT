@@ -293,104 +293,277 @@
                         "plotData": [
                             {
                                 "displayName": "Time [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GPS time of week [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Latitude [deg]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "NED - EGM96",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "Longitude [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Altitude [m]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         2,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "NED - EGM96",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "North/South [m]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "NED - EGM96",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "East/West [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "X-ECEF [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Y-ECEF [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Z-ECEF [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Roll [deg]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Roll (NED - EGM96)",
+                                                "lineType": 0,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "Pitch [deg]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Pitch (NED - EGM96)",
+                                                "lineType": 0,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "Yaw [deg]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Yaw (NED - EGM96)",
+                                                "lineType": 0,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.9575290679931641,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.95686274766922,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "Quaternion::w",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Quaternion::x",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Quaternion::y",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Quaternion::z",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "plotStyle": 1,
                         "size": 0
                     },
                     {
@@ -399,104 +572,175 @@
                         "plotData": [
                             {
                                 "displayName": "Time [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GPS time of week [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Latitude [deg]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "NED - Somigliana",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "Longitude [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Altitude [m]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         2,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "NED - Somigliana",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5411764979362488,
+                                                    "y": 0.16862745583057404,
+                                                    "z": 0.886274516582489
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5411764979362488,
+                                                    "y": 0.16862745583057404,
+                                                    "z": 0.886274516582489
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "North/South [m]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "NED - Somigliana",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "East/West [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "X-ECEF [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Y-ECEF [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Z-ECEF [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Roll [deg]",
-                                "plotOnAxis": [
-                                    [
-                                        3,
-                                        0
-                                    ]
-                                ]
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Pitch [deg]",
-                                "plotOnAxis": [
-                                    [
-                                        3,
-                                        0
-                                    ]
-                                ]
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Yaw [deg]",
-                                "plotOnAxis": [
-                                    [
-                                        3,
-                                        0
-                                    ]
-                                ]
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Quaternion::w",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Quaternion::x",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Quaternion::y",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Quaternion::z",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "plotStyle": 1,
                         "size": 0
                     },
                     {
@@ -505,849 +749,935 @@
                         "plotData": [
                             {
                                 "displayName": "Time [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GPS time of week [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeStartup [ns]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeGps [ns]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::GpsTow [ns]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::GpsWeek",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeSyncIn [ns]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeGpsPps [ns]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeUTC::year",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeUTC::month",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeUTC::day",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeUTC::hour",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeUTC::min",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeUTC::sec",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeUTC::ms",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::SyncInCnt",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::SyncOutCnt",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeStatus::timeOk",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeStatus::dateOk",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Time::TimeStatus::utcTimeValid",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::ImuStatus",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::UncompMag::X [Gauss]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::UncompMag::Y [Gauss]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::UncompMag::Z [Gauss]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::UncompAccel::X [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::UncompAccel::Y [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::UncompAccel::Z [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::UncompGyro::X [rad/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::UncompGyro::Y [rad/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::UncompGyro::Z [rad/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::Temp [Celsius]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::Pres [kPa]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::DeltaTime [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::DeltaTheta::X [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::DeltaTheta::Y [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::DeltaTheta::Z [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::DeltaVel::X [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::DeltaVel::Y [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::DeltaVel::Z [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::Mag::X [Gauss]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::Mag::Y [Gauss]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::Mag::Z [Gauss]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::Accel::X [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::Accel::Y [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::Accel::Z [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::AngularRate::X [rad/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::AngularRate::Y [rad/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "IMU::AngularRate::Z [rad/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::UTC::year",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::UTC::month",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::UTC::day",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::UTC::hour",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::UTC::min",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::UTC::sec",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::UTC::ms",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::Tow [ns]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::Week",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::NumSats",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::Fix",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::PosLla::latitude [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::PosLla::longitude [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::PosLla::altitude [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::PosEcef::X [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::PosEcef::Y [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::PosEcef::Z [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::VelNed::N [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::VelNed::E [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::VelNed::D [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::VelEcef::X [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::VelEcef::Y [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::VelEcef::Z [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::PosU::N [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::PosU::E [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::PosU::D [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::VelU [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::TimeU [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::TimeInfo::Status::timeOk",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::TimeInfo::Status::dateOk",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::TimeInfo::Status::utcTimeValid",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::TimeInfo::LeapSeconds",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::DOP::g",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::DOP::p",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::DOP::t",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::DOP::v",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::DOP::h",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::DOP::n",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::DOP::e",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::SatInfo::NumSats",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::RawMeas::Tow [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::RawMeas::Week",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS1::RawMeas::NumSats",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::VpeStatus::AttitudeQuality",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::VpeStatus::GyroSaturation",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::VpeStatus::GyroSaturationRecovery",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::VpeStatus::MagDisturbance",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::VpeStatus::MagSaturation",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::VpeStatus::AccDisturbance",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::VpeStatus::AccSaturation",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::VpeStatus::KnownMagDisturbance",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::VpeStatus::KnownAccelDisturbance",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::YawPitchRoll::Y [deg]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Yaw (VectorNav)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "Att::YawPitchRoll::P [deg]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "legendName": "Pitch (VectorNav)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "Att::YawPitchRoll::R [deg]",
-                                "plotOnAxis": [
+                                "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
-                                        0
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Roll (VectorNav)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
                                     ]
                                 ]
                             },
                             {
                                 "displayName": "Att::Quaternion::w",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::Quaternion::x",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::Quaternion::y",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::Quaternion::z",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::DCM::0-0",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::DCM::0-1",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::DCM::0-2",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::DCM::1-0",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::DCM::1-1",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::DCM::1-2",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::DCM::2-0",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::DCM::2-1",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::DCM::2-2",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::MagNed::N [Gauss]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::MagNed::E [Gauss]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::MagNed::D [Gauss]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::AccelNed::N [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::AccelNed::E [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::AccelNed::D [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::LinearAccelBody::X [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::LinearAccelBody::Y [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::LinearAccelBody::Z [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::LinearAccelNed::N [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::LinearAccelNed::E [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::LinearAccelNed::D [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::YprU::Y [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::YprU::P [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "Att::YprU::R [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::InsStatus::Mode",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::InsStatus::GpsFix",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::InsStatus::Error::IMU",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::InsStatus::Error::MagPres",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::InsStatus::Error::GNSS",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::InsStatus::GpsHeadingIns",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::InsStatus::GpsCompass",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::PosLla::latitude [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::PosLla::longitude [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::PosLla::altitude [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::PosEcef::X [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::PosEcef::Y [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::PosEcef::Z [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelBody::X [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelBody::Y [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelBody::Z [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelNed::N [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelNed::E [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelNed::D [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelEcef::X [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelEcef::Y [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelEcef::Z [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::MagEcef::X [Gauss}",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::MagEcef::Y [Gauss}",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::MagEcef::Z [Gauss}",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::AccelEcef::X [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::AccelEcef::Y [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::AccelEcef::Z [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::LinearAccelEcef::X [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::LinearAccelEcef::Y [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::LinearAccelEcef::Z [m/s^2]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::PosU [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "INS::VelU [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::UTC::year",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::UTC::month",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::UTC::day",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::UTC::hour",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::UTC::min",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::UTC::sec",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::UTC::ms",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::Tow [ns]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::Week",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::NumSats",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::Fix",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::PosLla::latitude [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::PosLla::longitude [deg]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::PosLla::altitude [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::PosEcef::X [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::PosEcef::Y [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::PosEcef::Z [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::VelNed::N [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::VelNed::E [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::VelNed::D [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::VelEcef::X [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::VelEcef::Y [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::VelEcef::Z [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::PosU::N [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::PosU::E [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::PosU::D [m]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::VelU [m/s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::TimeU [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::TimeInfo::Status::timeOk",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::TimeInfo::Status::dateOk",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::TimeInfo::Status::utcTimeValid",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::TimeInfo::LeapSeconds",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::DOP::g",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::DOP::p",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::DOP::t",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::DOP::v",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::DOP::h",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::DOP::n",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::DOP::e",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::SatInfo::NumSats",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::RawMeas::Tow [s]",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::RawMeas::Week",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             },
                             {
                                 "displayName": "GNSS2::RawMeas::NumSats",
-                                "plotOnAxis": []
+                                "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "plotStyle": 1,
                         "size": 0
                     }
                 ],
@@ -1355,8 +1685,9 @@
                     {
                         "autoLimitXaxis": true,
                         "autoLimitYaxis": true,
-                        "headerText": "LatLon",
+                        "headerText": "Position LatLon",
                         "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
                         "selectedPin": 1,
@@ -1365,52 +1696,87 @@
                             3,
                             0
                         ],
-                        "title": "LatLon"
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Position LatLon",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Latitude [deg]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
                     },
                     {
                         "autoLimitXaxis": true,
                         "autoLimitYaxis": true,
-                        "headerText": "North/East",
+                        "headerText": "Position North/East",
                         "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
+                        "selectedPin": 0,
                         "selectedXdata": [
                             6,
                             6,
                             0
                         ],
-                        "title": "North/East"
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Position North/East",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "North/East [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
                     },
                     {
                         "autoLimitXaxis": true,
                         "autoLimitYaxis": true,
                         "headerText": "Altitude",
                         "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
+                        "selectedPin": 2,
                         "selectedXdata": [
                             0,
                             0,
                             0
                         ],
-                        "title": "Altitude"
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Altitude",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Altitude [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
                     },
                     {
                         "autoLimitXaxis": true,
                         "autoLimitYaxis": true,
                         "headerText": "Attitude",
                         "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
+                        "selectedPin": 2,
                         "selectedXdata": [
                             0,
                             0,
                             0
                         ],
-                        "title": "Attitude"
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Attitude",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Euler Angles [deg]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
                     }
                 ]
             },

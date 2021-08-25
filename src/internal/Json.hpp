@@ -15,3 +15,6 @@ void from_json(const json& j, ImColor& color);
 
 void to_json(json& j, const ImVec2& vec2);
 void from_json(const json& j, ImVec2& vec2);
+
+void to_json(json& j, const ImVec4& vec4);
+void from_json(const json& j, ImVec4& vec4);

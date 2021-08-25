@@ -5,9 +5,11 @@
 
 #pragma once
 
-#include "internal/Node/Node.hpp"
+#include <implot.h>
 
 #include <map>
+
+#include "internal/Node/Node.hpp"
 
 #include "util/ScrollingBuffer.hpp"
 
@@ -68,6 +70,39 @@ class Plot : public Node
     /// @param[in] endPin Pin where the link ends
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
+    struct PlotStyle
+    {
+        enum class LineType : int
+        {
+            Scatter,
+            Line,
+        };
+
+        /// Display name in the legend (if not set falls back to PlotData::displayName)
+        std::string legendName;
+        /// Legend name which gets changed in the gui
+        std::string legendNameGui;
+        /// Line type
+        LineType lineType = LineType::Line;
+        /// Line Color
+        ImVec4 color = IMPLOT_AUTO_COL;
+        /// Line thickness
+        float thickness = 1.0F;
+
+        /// Display markers for the line plot (no effect for scatter type)
+        bool markers = false;
+        /// Style of the marker to display
+        ImPlotMarker markerStyle = ImPlotMarker_Cross;
+        /// Size of the markers (makes the marker smaller/bigger)
+        float markerSize = 1.0F;
+        /// Weight of the markers (increases thickness of marker lines)
+        float markerWeight = 1.0F;
+        /// Fill color for markers
+        ImVec4 markerFillColor = IMPLOT_AUTO_COL;
+        /// Outline/Border color for markers
+        ImVec4 markerOutlineColor = IMPLOT_AUTO_COL;
+    };
+
     struct PinData
     {
         struct PlotData
@@ -87,14 +122,8 @@ class Plot : public Node
             ScrollingBuffer<double> buffer;
             /// Flag if data was received, as the buffer contains std::nan("") otherwise
             bool hasData = false;
-            /// Key: PlotIndex; Value: yAxis
-            std::map<size_t, int> plotOnAxis;
-        };
-
-        enum class PlotStyle : int
-        {
-            Scatter,
-            Line,
+            /// Key: PlotIndex; Value: <yAxisIndex, plotStyle>
+            std::map<size_t, std::pair<int, PlotStyle>> plotOnAxis;
         };
 
         enum class PinType : int
@@ -124,8 +153,6 @@ class Plot : public Node
         std::string dataIdentifier;
         /// List with all the data
         std::vector<PlotData> plotData;
-        /// Plot style for all data on the pin
-        PlotStyle plotStyle = PlotStyle::Scatter;
         /// Pin Type
         PinType pinType = PinType::Flow;
     };
@@ -141,10 +168,23 @@ class Plot : public Node
         PlotInfo(const std::string& title, size_t nInputPins)
             : title(title), headerText(title), selectedXdata(nInputPins, 0) {}
 
+        /// Size of the plot
+        ImVec2 size{ -1, 300 };
+
         /// Title of the ImPlot
         std::string title;
         /// Title of the CollapsingHeader
         std::string headerText;
+        /// Flag, whether to override the x axis label
+        bool overrideXAxisLabel = false;
+        /// X axis label
+        std::string xAxisLabel;
+        /// Y1 axis label
+        std::string y1AxisLabel;
+        /// Y2 axis label
+        std::string y2AxisLabel;
+        /// Y3 axis label
+        std::string y3AxisLabel;
         /// Selected pin in the GUI for the Drag & Drop Data
         int selectedPin = 0;
         /// Flags which are passed to the plot
