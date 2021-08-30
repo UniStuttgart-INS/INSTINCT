@@ -55,7 +55,7 @@ void NAV::ImuIntegrator::guiConfig()
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame ? "NED" : "ECEF");
         flow::ApplyChanges();
     }
-    if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
+    if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0OFF\0\0"))
     {
         if (gravityModel == WGS84)
         {
@@ -72,6 +72,10 @@ void NAV::ImuIntegrator::guiConfig()
         else if (gravityModel == EGM96)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "EGM96");
+        }
+        else if (gravityModel == OFF)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "OFF");
         }
         flow::ApplyChanges();
     }
@@ -401,10 +405,17 @@ void NAV::ImuIntegrator::integrateObservation()
             gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
         }
     }
+    else if (gravityModel == GravityModel::OFF)
+    {
+        LOG_DATA("Gravity set to zero");
+        gravity_n__t1 = Eigen::Vector3d::Zero();
+    }
     else
     {
         gravity_n__t1 = Eigen::Vector3d::Zero();
     }
+
+    gravity_n__t1 = gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude(), gravity_n__t1);
 
     LOG_DATA("Gravity vector in NED:\n{}", gravity_n__t1);
 
