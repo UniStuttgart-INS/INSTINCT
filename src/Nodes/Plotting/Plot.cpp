@@ -2,13 +2,12 @@
 
 #include "util/Logger.hpp"
 
-#include "implot.h"
-
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/Splitter.hpp"
+#include "internal/Json.hpp"
 
 #include "util/Time/TimeBase.hpp"
 #include "util/InsTransformations.hpp"
@@ -17,18 +16,77 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV
 {
+void to_json(json& j, const Plot::PlotStyle& style)
+{
+    j = json{
+        { "legendName", style.legendName },
+        { "lineType", style.lineType },
+        { "color", style.color },
+        { "thickness", style.thickness },
+        { "markers", style.markers },
+        { "markerStyle", style.markerStyle },
+        { "markerSize", style.markerSize },
+        { "markerWeight", style.markerWeight },
+        { "markerFillColor", style.markerFillColor },
+        { "markerOutlineColor", style.markerOutlineColor },
+    };
+}
+void from_json(const json& j, Plot::PlotStyle& style)
+{
+    if (j.contains("legendName"))
+    {
+        j.at("legendName").get_to(style.legendName);
+    }
+    if (j.contains("lineType"))
+    {
+        j.at("lineType").get_to(style.lineType);
+    }
+    if (j.contains("color"))
+    {
+        j.at("color").get_to(style.color);
+    }
+    if (j.contains("thickness"))
+    {
+        j.at("thickness").get_to(style.thickness);
+    }
+    if (j.contains("markers"))
+    {
+        j.at("markers").get_to(style.markers);
+    }
+    if (j.contains("markerStyle"))
+    {
+        j.at("markerStyle").get_to(style.markerStyle);
+    }
+    if (j.contains("markerSize"))
+    {
+        j.at("markerSize").get_to(style.markerSize);
+    }
+    if (j.contains("markerWeight"))
+    {
+        j.at("markerWeight").get_to(style.markerWeight);
+    }
+    if (j.contains("markerFillColor"))
+    {
+        j.at("markerFillColor").get_to(style.markerFillColor);
+    }
+    if (j.contains("markerOutlineColor"))
+    {
+        j.at("markerOutlineColor").get_to(style.markerOutlineColor);
+    }
+}
+
 void to_json(json& j, const Plot::PinData::PlotData& data)
 {
     j = json{
-        { "plotOnAxis", data.plotOnAxis },
+        { "plotOnAxisAndPlotStyle", data.plotOnAxis },
         { "displayName", data.displayName },
     };
 }
 void from_json(const json& j, Plot::PinData::PlotData& data)
 {
-    if (j.contains("plotOnAxis"))
+    if (j.contains("plotOnAxisAndPlotStyle"))
     {
-        j.at("plotOnAxis").get_to(data.plotOnAxis);
+        j.at("plotOnAxisAndPlotStyle").get_to(data.plotOnAxis);
     }
     if (j.contains("displayName"))
     {
@@ -42,7 +100,6 @@ void to_json(json& j, const Plot::PinData& data)
         { "dataIdentifier", data.dataIdentifier },
         { "size", data.size },
         { "plotData", data.plotData },
-        { "plotStyle", data.plotStyle },
         { "pinType", data.pinType },
     };
 }
@@ -64,10 +121,6 @@ void from_json(const json& j, Plot::PinData& data)
             plotData.buffer = ScrollingBuffer<double>(static_cast<size_t>(data.size));
         }
     }
-    if (j.contains("plotStyle"))
-    {
-        j.at("plotStyle").get_to(data.plotStyle);
-    }
     if (j.contains("pinType"))
     {
         j.at("pinType").get_to(data.pinType);
@@ -77,6 +130,7 @@ void from_json(const json& j, Plot::PinData& data)
 void to_json(json& j, const Plot::PlotInfo& data)
 {
     j = json{
+        { "size", data.size },
         { "autoLimitXaxis", data.autoLimitXaxis },
         { "autoLimitYaxis", data.autoLimitYaxis },
         { "headerText", data.headerText },
@@ -86,10 +140,19 @@ void to_json(json& j, const Plot::PlotInfo& data)
         { "selectedPin", data.selectedPin },
         { "selectedXdata", data.selectedXdata },
         { "title", data.title },
+        { "overrideXAxisLabel", data.overrideXAxisLabel },
+        { "xAxisLabel", data.xAxisLabel },
+        { "y1AxisLabel", data.y1AxisLabel },
+        { "y2AxisLabel", data.y2AxisLabel },
+        { "y3AxisLabel", data.y3AxisLabel },
     };
 }
 void from_json(const json& j, Plot::PlotInfo& data)
 {
+    if (j.contains("size"))
+    {
+        j.at("size").get_to(data.size);
+    }
     if (j.contains("autoLimitXaxis"))
     {
         j.at("autoLimitXaxis").get_to(data.autoLimitXaxis);
@@ -125,6 +188,26 @@ void from_json(const json& j, Plot::PlotInfo& data)
     if (j.contains("title"))
     {
         j.at("title").get_to(data.title);
+    }
+    if (j.contains("overrideXAxisLabel"))
+    {
+        j.at("overrideXAxisLabel").get_to(data.overrideXAxisLabel);
+    }
+    if (j.contains("xAxisLabel"))
+    {
+        j.at("xAxisLabel").get_to(data.xAxisLabel);
+    }
+    if (j.contains("y1AxisLabel"))
+    {
+        j.at("y1AxisLabel").get_to(data.y1AxisLabel);
+    }
+    if (j.contains("y2AxisLabel"))
+    {
+        j.at("y2AxisLabel").get_to(data.y2AxisLabel);
+    }
+    if (j.contains("y3AxisLabel"))
+    {
+        j.at("y3AxisLabel").get_to(data.y3AxisLabel);
     }
 }
 
@@ -218,13 +301,12 @@ void NAV::Plot::guiConfig()
             flow::ApplyChanges();
             updateNumberOfPlots();
         }
-        if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id))).c_str(), 4,
+        if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id))).c_str(), 3,
                               ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("Pin");
             ImGui::TableSetupColumn("Pin Type");
             ImGui::TableSetupColumn("# Data Points");
-            ImGui::TableSetupColumn("Plot Style");
             ImGui::TableHeadersRow();
 
             for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
@@ -296,14 +378,6 @@ void NAV::Plot::guiConfig()
                 {
                     ImGui::SetTooltip("The amount of data which should be stored before the buffer gets reused.\nEnter 0 to show all data.");
                 }
-
-                ImGui::TableNextColumn(); // Plot Style
-                ImGui::SetNextItemWidth(100.0F);
-                if (ImGui::Combo(("##Plot Style for Pin " + std::to_string(pinIndex + 1) + " - " + std::to_string(size_t(id))).c_str(),
-                                 reinterpret_cast<int*>(&pinData.plotStyle), "Scatter\0Line\0\0"))
-                {
-                    flow::ApplyChanges();
-                }
             }
 
             ImGui::EndTable();
@@ -325,6 +399,39 @@ void NAV::Plot::guiConfig()
                     plotInfo.headerText = plotInfo.title;
                     flow::ApplyChanges();
                     LOG_DEBUG("{}: # Header changed to {}", nameId(), plotInfo.headerText);
+                }
+                if (ImGui::SliderFloat(("Plot Height##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.size.y, 0.0F, 1000, "%.0f"))
+                {
+                    flow::ApplyChanges();
+                }
+                if (ImGui::Checkbox(("Override X Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.overrideXAxisLabel))
+                {
+                    flow::ApplyChanges();
+                }
+                if (plotInfo.overrideXAxisLabel)
+                {
+                    if (ImGui::InputText(("X Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.xAxisLabel))
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                if (ImGui::InputText(("Y1 Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.y1AxisLabel))
+                {
+                    flow::ApplyChanges();
+                }
+                if (plotInfo.plotFlags & ImPlotFlags_YAxis2)
+                {
+                    if (ImGui::InputText(("Y2 Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.y2AxisLabel))
+                    {
+                        flow::ApplyChanges();
+                    }
+                }
+                if (plotInfo.plotFlags & ImPlotFlags_YAxis3)
+                {
+                    if (ImGui::InputText(("Y3 Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.y3AxisLabel))
+                    {
+                        flow::ApplyChanges();
+                    }
                 }
                 if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), 2,
                                       ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
@@ -408,7 +515,7 @@ void NAV::Plot::guiConfig()
             }
 
             gui::widgets::Splitter((std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                   true, 4.0F, &plotInfo.leftPaneWidth, &plotInfo.rightPaneWidth, 150.0F, 80.0F, ImPlot::GetStyle().PlotDefaultSize.y);
+                                   true, 4.0F, &plotInfo.leftPaneWidth, &plotInfo.rightPaneWidth, 150.0F, 80.0F, plotInfo.size.y);
 
             ImGui::SetNextItemWidth(plotInfo.leftPaneWidth - 2.0F);
             ImGui::BeginGroup();
@@ -463,7 +570,7 @@ void NAV::Plot::guiConfig()
             }
             auto buttonSize = ImGui::GetItemRectSize();
             ImGui::BeginChild(("Data Drag" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                              ImVec2(plotInfo.leftPaneWidth - 2.0F, ImPlot::GetStyle().PlotDefaultSize.y - comboBoxSize.y - buttonSize.y - 2 * ImGui::GetStyle().ItemSpacing.y),
+                              ImVec2(plotInfo.leftPaneWidth - 2.0F, plotInfo.size.y - comboBoxSize.y - buttonSize.y - 2 * ImGui::GetStyle().ItemSpacing.y),
                               true);
 
             // Left Data Selectables
@@ -476,7 +583,7 @@ void NAV::Plot::guiConfig()
                 std::string label = plotData.displayName;
                 if (plotData.plotOnAxis.contains(plotNum))
                 {
-                    label += fmt::format(" (Y{})", plotData.plotOnAxis.at(plotNum) + 1);
+                    label += fmt::format(" (Y{})", plotData.plotOnAxis.at(plotNum).first + 1);
                 }
                 ImGui::Selectable(label.c_str(), false, 0);
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
@@ -499,10 +606,17 @@ void NAV::Plot::guiConfig()
 
             ImGui::SameLine();
 
-            std::string xLabel = !data.at(0).plotData.empty() ? data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).displayName : "";
+            const char* xLabel = plotInfo.overrideXAxisLabel ? (!plotInfo.xAxisLabel.empty() ? plotInfo.xAxisLabel.c_str() : nullptr)
+                                                             : (!data.at(0).plotData.empty() ? data.at(0).plotData.at(plotInfo.selectedXdata.at(0)).displayName.c_str() : nullptr);
+
+            const char* y1Label = !plotInfo.y1AxisLabel.empty() ? plotInfo.y1AxisLabel.c_str() : nullptr;
+            const char* y2Label = (plotInfo.plotFlags & ImPlotFlags_YAxis2) && !plotInfo.y2AxisLabel.empty() ? plotInfo.y2AxisLabel.c_str() : nullptr;
+            const char* y3Label = (plotInfo.plotFlags & ImPlotFlags_YAxis3) && !plotInfo.y3AxisLabel.empty() ? plotInfo.y3AxisLabel.c_str() : nullptr;
+
             ImPlot::FitNextPlotAxes(plotInfo.autoLimitXaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis);
             if (ImPlot::BeginPlot((plotInfo.title + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                  xLabel.c_str(), nullptr, ImVec2(-1, 0), plotInfo.plotFlags))
+                                  xLabel, y1Label, plotInfo.size, plotInfo.plotFlags,
+                                  ImPlotAxisFlags_None, ImPlotAxisFlags_None, ImPlotAxisFlags_NoGridLines, ImPlotAxisFlags_NoGridLines, y2Label, y3Label))
             {
                 for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
                 {
@@ -510,36 +624,129 @@ void NAV::Plot::guiConfig()
                     {
                         if (plotData.plotOnAxis.contains(plotNum)
                             && plotData.hasData
-                            && (plotData.plotOnAxis.at(plotNum) == ImPlotYAxis_1
-                                || (plotData.plotOnAxis.at(plotNum) == ImPlotYAxis_2 && (plotInfo.plotFlags & ImPlotFlags_YAxis2))
-                                || (plotData.plotOnAxis.at(plotNum) == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
+                            && (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_1
+                                || (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_2 && (plotInfo.plotFlags & ImPlotFlags_YAxis2))
+                                || (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
                         {
-                            ImPlot::SetPlotYAxis(plotData.plotOnAxis.at(plotNum));
-                            if (data.at(pinIndex).plotStyle == PinData::PlotStyle::Line)
+                            ImPlot::SetPlotYAxis(plotData.plotOnAxis.at(plotNum).first);
+
+                            // Style options
+                            if (plotData.plotOnAxis.at(plotNum).second.legendName.empty())
                             {
-                                ImPlot::PlotLine((plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + data.at(pinIndex).dataIdentifier + ")").c_str(),
+                                plotData.plotOnAxis.at(plotNum).second.legendName = plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + data.at(pinIndex).dataIdentifier + ")";
+                            }
+                            if (plotData.plotOnAxis.at(plotNum).second.color.w == -1)
+                            {
+                                plotData.plotOnAxis.at(plotNum).second.color = ImPlot::NextColormapColor();
+                                plotData.plotOnAxis.at(plotNum).second.markerFillColor = plotData.plotOnAxis.at(plotNum).second.color;
+                                plotData.plotOnAxis.at(plotNum).second.markerOutlineColor = plotData.plotOnAxis.at(plotNum).second.color;
+                            }
+                            if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Line)
+                            {
+                                ImPlot::SetNextLineStyle(plotData.plotOnAxis.at(plotNum).second.color, plotData.plotOnAxis.at(plotNum).second.thickness);
+                            }
+                            if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Scatter || plotData.plotOnAxis.at(plotNum).second.markers)
+                            {
+                                ImPlot::SetNextMarkerStyle(plotData.plotOnAxis.at(plotNum).second.markerStyle,
+                                                           plotData.plotOnAxis.at(plotNum).second.markerSize,
+                                                           plotData.plotOnAxis.at(plotNum).second.markerFillColor,
+                                                           plotData.plotOnAxis.at(plotNum).second.markerWeight,
+                                                           plotData.plotOnAxis.at(plotNum).second.markerOutlineColor);
+                            }
+
+                            std::string plotName = fmt::format("{}##{} - {} - {}", plotData.plotOnAxis.at(plotNum).second.legendName, size_t(id), pinIndex + 1, plotData.displayName);
+
+                            // Plot the data
+                            if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Line)
+                            {
+                                ImPlot::PlotLine(plotName.c_str(),
                                                  data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
                                                  plotData.buffer.data(),
                                                  static_cast<int>(plotData.buffer.size()),
                                                  plotData.buffer.offset(), sizeof(double));
                             }
-                            else if (data.at(pinIndex).plotStyle == PinData::PlotStyle::Scatter)
+                            else if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Scatter)
                             {
-                                ImPlot::SetNextMarkerStyle(ImPlotMarker_Cross, 1, ImVec4(0, 0, 0, -1), IMPLOT_AUTO, ImVec4(0, 0, 0, -1));
-                                ImPlot::PlotScatter((plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + data.at(pinIndex).dataIdentifier + ")").c_str(),
+                                ImPlot::PlotScatter(plotName.c_str(),
                                                     data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
                                                     plotData.buffer.data(),
                                                     static_cast<int>(plotData.buffer.size()),
                                                     plotData.buffer.offset(), sizeof(double));
                             }
+
                             // allow legend labels to be dragged and dropped
-                            if (ImPlot::BeginLegendDragDropSource((plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + data.at(pinIndex).dataIdentifier + ")").c_str()))
+                            if (ImPlot::BeginLegendDragDropSource(plotName.c_str()))
                             {
                                 auto* ptrPlotData = &plotData;
                                 ImGui::SetDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
                                                           &ptrPlotData, sizeof(PinData::PlotData*));
                                 ImGui::TextUnformatted(plotData.displayName.c_str());
                                 ImPlot::EndLegendDragDropSource();
+                            }
+
+                            // Legend item context menu (right click on legend item)
+                            if (ImPlot::BeginLegendPopup(plotName.c_str()))
+                            {
+                                ImGui::TextUnformatted(fmt::format("Pin {} - {}: {}", pinIndex + 1, data.at(pinIndex).dataIdentifier, plotData.displayName).c_str());
+                                ImGui::Separator();
+
+                                if (plotData.plotOnAxis.at(plotNum).second.legendNameGui.empty())
+                                {
+                                    plotData.plotOnAxis.at(plotNum).second.legendNameGui = plotData.plotOnAxis.at(plotNum).second.legendName;
+                                }
+                                ImGui::InputText("Legend name", &plotData.plotOnAxis.at(plotNum).second.legendNameGui);
+                                if (plotData.plotOnAxis.at(plotNum).second.legendNameGui != plotData.plotOnAxis.at(plotNum).second.legendName && !ImGui::IsItemActive())
+                                {
+                                    plotData.plotOnAxis.at(plotNum).second.legendName = plotData.plotOnAxis.at(plotNum).second.legendNameGui;
+                                    flow::ApplyChanges();
+                                    LOG_DEBUG("{}: Legend changed to {}", nameId(), plotData.plotOnAxis.at(plotNum).second.legendName);
+                                }
+
+                                if (ImGui::Combo("Style", reinterpret_cast<int*>(&plotData.plotOnAxis.at(plotNum).second.lineType),
+                                                 "Scatter\0Line\0\0"))
+                                {
+                                    flow::ApplyChanges();
+                                }
+                                if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Line)
+                                {
+                                    if (ImGui::ColorEdit3("Line Color", &plotData.plotOnAxis.at(plotNum).second.color.x))
+                                    {
+                                        flow::ApplyChanges();
+                                    }
+                                    if (ImGui::DragFloat("Line Thickness", &plotData.plotOnAxis.at(plotNum).second.thickness, 0.1F, 0.0F, 8.0F, "%.2f px"))
+                                    {
+                                        flow::ApplyChanges();
+                                    }
+                                    if (ImGui::Checkbox("Markers", &plotData.plotOnAxis.at(plotNum).second.markers))
+                                    {
+                                        flow::ApplyChanges();
+                                    }
+                                }
+                                if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Scatter || plotData.plotOnAxis.at(plotNum).second.markers)
+                                {
+                                    if (ImGui::Combo("Marker Style", &plotData.plotOnAxis.at(plotNum).second.markerStyle,
+                                                     "Circle\0Square\0Diamond\0Up\0Down\0Left\0Right\0Cross\0Plus\0Asterisk\0\0"))
+                                    {
+                                        flow::ApplyChanges();
+                                    }
+                                    if (ImGui::DragFloat("Marker Size", &plotData.plotOnAxis.at(plotNum).second.markerSize, 0.1F, 1.0F, 10.0F, "%.2f px"))
+                                    {
+                                        flow::ApplyChanges();
+                                    }
+                                    if (ImGui::DragFloat("Marker Weight", &plotData.plotOnAxis.at(plotNum).second.markerWeight, 0.05F, 0.5F, 3.0F, "%.2f px"))
+                                    {
+                                        flow::ApplyChanges();
+                                    }
+                                    if (ImGui::ColorEdit4("Marker Fill Color", &plotData.plotOnAxis.at(plotNum).second.markerFillColor.x))
+                                    {
+                                        flow::ApplyChanges();
+                                    }
+                                    if (ImGui::ColorEdit4("Marker Outline Color", &plotData.plotOnAxis.at(plotNum).second.markerOutlineColor.x))
+                                    {
+                                        flow::ApplyChanges();
+                                    }
+                                }
+                                ImPlot::EndLegendPopup();
                             }
                         }
                     }
@@ -552,13 +759,19 @@ void NAV::Plot::guiConfig()
                     {
                         auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
 
-                        plotData->plotOnAxis[plotNum] = 0;
+                        PlotStyle style;
+                        if (plotData->plotOnAxis.contains(plotNum))
+                        {
+                            style = plotData->plotOnAxis.at(plotNum).second;
+                        }
+
+                        plotData->plotOnAxis[plotNum] = { 0, style };
                         // set specific y-axis if hovered
                         for (int y = 0; y < 3; y++)
                         {
                             if (ImPlot::IsPlotYAxisHovered(y))
                             {
-                                plotData->plotOnAxis[plotNum] = y;
+                                plotData->plotOnAxis[plotNum].first = y;
                             }
                         }
                         flow::ApplyChanges();

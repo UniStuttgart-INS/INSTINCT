@@ -8,13 +8,11 @@
 #include "util/Logger.hpp"
 #include "InsConstants.hpp"
 #include "Gravity/AssociatedLegendre.hpp"
+#include "Gravity/egm96Coeffs.hpp"
 
 #include <string>
 #include <fstream>
 #include <streambuf>
-
-// Coeffs of the EGM96 (gravity model)
-static Eigen::MatrixXd coeffsEGM96;
 
 double NAV::gravity::gravityMagnitude_SomiglianaAltitude(const double& latitude, const double& altitude)
 {
@@ -128,27 +126,8 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration_WGS84(const double& latitu
     return gravity_n;
 }
 
-Eigen::MatrixXd NAV::gravity::readEGM96Coeffs()
-{
-    if (coeffsEGM96.size() == 0)
-    {
-        LOG_DEBUG("Reading in EGM96 coefficients");
-
-        // Coefficients of the EGM96 (gravity model)
-        coeffsEGM96 = NAV::util::gravity::readAscii2Matrix();
-    }
-
-    return coeffsEGM96;
-}
-
 Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree)
 {
-    if (coeffsEGM96.size() == 0) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
-    {
-        LOG_WARN("Coefficients of the EGM96 were not loaded --> reloading now");
-        readEGM96Coeffs();
-    }
-
     Eigen::Vector3d pos_lla(latitude, longitude, altitude);
     Eigen::Vector3d pos_ecef = trafo::lla2ecef_WGS84(pos_lla);
 
@@ -166,24 +145,24 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
     double Pnm = 0;
     double Pnmd = 0;
 
-    auto coeffsRows = coeffsEGM96.rows();
+    auto coeffsRows = egm96Coeffs.size();
 
     // Associated Legendre Polynomial Coefficients 'P' and their derivatives 'Pd'
     auto [P, Pd] = NAV::util::gravity::associatedLegendre(ndegree, elevation);
     LOG_DATA("NEW Associated Legendre Polynomial coefficients: P_new =\n{}\nPd_new =\n{}", P, Pd);
 
-    for (int i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
+    for (size_t i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {
         // Retrieving EGM96 coefficients
-        auto n = static_cast<int>(coeffsEGM96(i, 0)); // Degree of the Associated Legendre Polynomial
-        auto m = static_cast<int>(coeffsEGM96(i, 1)); // Order of the Associated Legendre Polynomial
-        auto C = coeffsEGM96(i, 2);
-        auto S = coeffsEGM96(i, 3);
+        auto n = static_cast<int>(egm96Coeffs.at(i).at(0)); // Degree of the Associated Legendre Polynomial
+        auto m = static_cast<int>(egm96Coeffs.at(i).at(1)); // Order of the Associated Legendre Polynomial
+        auto C = egm96Coeffs.at(i).at(2);
+        auto S = egm96Coeffs.at(i).at(3);
 
         if (n == ndegree + 1)
         {
             // Ending of the for-loop once the iterated 'n' becomes larger than the user-defined 'ndegree'
-            i = static_cast<int>(coeffsRows);
+            i = coeffsRows;
         }
         else
         {

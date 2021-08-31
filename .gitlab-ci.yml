@@ -68,19 +68,23 @@ clang-tidy:
   stage: checks
   tags:
     - linux
+  extends:
+    - .clang
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Release --target copy-compile-commands
-    - ret=0; i=1; cnt=$(find src -type f -name "*.cpp" -printf '.' | wc -c); for f in $(find src -type f -name "*.cpp"); do echo '##### Linting '$i'/'$cnt' '$f; i=$((i+1)); clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
+    - python3 ./tools/run-clang-tidy.py $PWD/src
 
 clang-tidy:tests:
   stage: checks
   tags:
     - linux
+  extends:
+    - .clang
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=ON -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=ON -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
     - cmake --build build/Debug --target copy-compile-commands
-    - ret=0; i=1; cnt=$(find test -type f -name "*.cpp" -printf '.' | wc -c); for f in $(find test -type f -name "*.cpp"); do echo '##### Linting '$i'/'$cnt' '$f; i=$((i+1)); clang-tidy --extra-arg=-Wno-unknown-warning-option $f || ret=1; done; exit $ret
+    - python3 ./tools/run-clang-tidy.py $PWD/test
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                         Build Main & GUI                                         ║
@@ -111,26 +115,17 @@ main:win:
   needs: ["check-windows"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release
+    - cmake --build build/Release -- -maxCpuCount
 
 main:win:LOG_INFO:
   extends: main:win
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=INFO -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release
+    - cmake --build build/Release -- -maxCpuCount
     - move bin\Release\instinct.exe .
   artifacts:
     paths:
       - instinct.exe
-      - resources/data/egm96_to360.ascii
-      - resources/fonts/Cuprum-Bold.ttf
-      - resources/fonts/Cuprum-OFL.txt
-      - resources/fonts/Inconsolata-Nerd-Font-Complete.otf
-      - resources/fonts/NotoSans-Regular.ttf
-      - resources/fonts/Play-OFL.txt
-      - resources/fonts/Play-Regular.ttf
-      - resources/images/BlueprintBackground.png
-      - resources/images/INSTINCT_Logo_Text_white_small.png
     expire_in: 1 week
   only:
     - master
@@ -157,7 +152,7 @@ main:win:LOG_OFF:
     - main:win
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release
+    - cmake --build build/Release -- -maxCpuCount
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                            Build Tests                                           ║
@@ -191,7 +186,7 @@ tests:win:
   needs: ["check-windows"]
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=DATA -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug
+    - cmake --build build/Debug -- -maxCpuCount
   artifacts:
     untracked: true
     expire_in: 2h
@@ -217,7 +212,7 @@ tests:win:LOG_OFF:
   extends: tests:win
   script:
     - cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DLOG_LEVEL=OFF -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Debug
+    - cmake --build build/Debug -- -maxCpuCount
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                               Test                                               ║
@@ -485,7 +480,7 @@ archlinux:latest:gcc:debug:
   before_script:
     - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
     - pacman -Sy
-    - pacman -S --noconfirm --needed cmake glfw-x11 glibc
+    - pacman -S --noconfirm --needed base-devel cmake glfw-x11
     - cmake --version
   script:
     - cd build/Debug/test
