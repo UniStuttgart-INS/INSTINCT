@@ -6,8 +6,7 @@
 #pragma once
 
 #include "internal/Node/Node.hpp"
-#include "NodeData/State/PosVelAtt.hpp"
-#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/State/InertialNavSol.hpp"
 
 #include "KalmanFilter.hpp"
 
@@ -49,18 +48,14 @@ class LooselyCoupledKF : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OutputPortIndex_PosVelAtt__t0 = 0; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OutputPortIndex_PVAError = 0;  ///< @brief Flow (PVAError)
+    constexpr static size_t OutputPortIndex_ImuBiases = 0; ///< @brief Flow (ImuBiases)
 
     /// @brief Initialize the node
     bool initialize() override;
 
     /// @brief Deinitialize the node
     void deinitialize() override;
-
-    /// @brief Receive Function for IMU observations
-    /// @param[in] nodeData State vector (ImuObs)
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvImuObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive Function for the intertial navigation solution
     /// @param[in] nodeData State vector (PosVelAtt)
@@ -72,14 +67,14 @@ class LooselyCoupledKF : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void recvGNSSNavigationSolution(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
-    /// @brief Filters the observation data from INS and GNSS
-    void filterObservation();
+    /// @brief Predicts the state from the InertialNavSol
+    void looselyCoupledPrediction(const std::shared_ptr<InertialNavSol>& inertialNavSol);
 
-    /// Current Position, Velocity and Attitude at the time tₖ₋₁
-    std::optional<PosVelAtt> posVelAtt;
+    /// @brief Updates the predicted state from the InertialNavSol with the GNSS measurement
+    void looselyCoupledUpdate(const std::shared_ptr<PosVelAtt>& gnssMeasurement);
 
-    /// Latest IMU observation that includes specific force and angular rate measurements
-    std::shared_ptr<ImuObs> latestImuObs = nullptr;
+    /// Latest Position, Velocity, Attitude and Imu observation
+    std::shared_ptr<InertialNavSol> latestInertialNavSol = nullptr;
 
     /// Timestamp of the KF
     double tau_KF = 0.01;
@@ -121,8 +116,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
     /// @param[in] tau_s time interval in [s]
     /// @note See Groves (2013) chapter 14.2.4, equations (14.63) and (14.72)
-    static Eigen::MatrixXd
-        transitionMatrix(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, double tau_s);
+    static Eigen::MatrixXd transitionMatrix(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, double tau_s);
 
     /// @brief Submatrix 𝐅_11 of the system matrix 𝐅
     /// @param[in] angularRate_in_n Angular rate vector of the n-system with respect to the i-system in [rad / s], resolved in the n-system

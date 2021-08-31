@@ -4,6 +4,9 @@
 #include <Eigen/Dense>
 #include <cmath>
 
+#include "NodeData/State/PVAError.hpp"
+#include "NodeData/State/ImuBiases.hpp"
+
 #include "internal/FlowManager.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
@@ -21,10 +24,10 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
 
     hasConfig = false;
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &LooselyCoupledKF::recvImuObservation);
-    nm::CreateInputPin(this, "InertialNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
+    nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, NAV::PosVelAtt::type());
+    nm::CreateOutputPin(this, "PVAError", Pin::Type::Flow, NAV::PVAError::type());
+    nm::CreateOutputPin(this, "ImuBiases", Pin::Type::Flow, NAV::ImuBiases::type());
 
     gnssSigmaSquaredLatLonAlt = trafo::ecef2lla_WGS84(trafo::ned2ecef({ 20, 20, -20 }, { 0, 0, 0 })).array().pow(2);
     gnssSigmaSquaredVelocity = Eigen::Array3d(0.5, 0.5, 0.5).pow(2);
@@ -83,6 +86,8 @@ bool NAV::LooselyCoupledKF::initialize()
 
     kalmanFilter = KalmanFilter{ 15, 6 };
 
+    latestInertialNavSol = nullptr;
+
     // 𝐏 Error covariance matrix
     kalmanFilter.P.diagonal() << 1e-4, 1e-4, 1e-4, // Flight Angles covariance
         1e0, 1e0, 1e0,                             // Velocity covariance
@@ -100,59 +105,38 @@ void NAV::LooselyCoupledKF::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::LooselyCoupledKF::recvImuObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
-{
-    latestImuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
-}
-
 void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/) // NOLINT(readability-convert-member-functions-to-static)
 {
-    // TODO: cast nodeData as a dynamic pointer to state observation
-    LOG_DATA("NodeData received: {}", nodeData);
+    auto inertialNavSol = std::dynamic_pointer_cast<InertialNavSol>(nodeData);
 
-    auto posVelAttMeasurement = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
+    latestInertialNavSol = inertialNavSol;
 
-    if (!posVelAtt.has_value())
-    {
-        posVelAtt = *posVelAttMeasurement;
-    }
-
-    // TODO: Use posVelAttMeasurement in filterObservation for the Update
-
-    filterObservation();
+    looselyCoupledPrediction(inertialNavSol);
 }
 
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    [[maybe_unused]] auto posVelMeasurement = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
+    [[maybe_unused]] auto gnssMeasurement = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
 
-    // TODO: Can we initialize this from GNSS only (without attitude)?
-    // if (!posVelAtt.has_value())
-    // {
-    //     posVelAtt = posVelMeasurement;
-    // }
-
-    if (posVelAtt.has_value())
+    if (latestInertialNavSol)
     {
-        filterObservation();
+        looselyCoupledUpdate(gnssMeasurement);
     }
-
-    // TODO: Use posVelAttMeasurement in filterObservation for the Update
 }
 
 // ###########################################################################################################
 //                                               Kalman Filter
 // ###########################################################################################################
 
-void NAV::LooselyCoupledKF::filterObservation()
+void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<InertialNavSol>& inertialNavSol)
 {
     // ------------------------------------------- Data preparation ----------------------------------------------
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& velocity_n__t1 = posVelAtt->velocity_n();
+    const Eigen::Vector3d& velocity_n__t1 = inertialNavSol->velocity_n();
     /// Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
-    const Eigen::Vector3d position_lla__t1 = posVelAtt->latLonAlt();
+    const Eigen::Vector3d position_lla__t1 = inertialNavSol->latLonAlt();
     /// q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-    const Eigen::Quaterniond& quaternion_nb__t1 = posVelAtt->quaternion_nb();
+    const Eigen::Quaterniond& quaternion_nb__t1 = inertialNavSol->quaternion_nb();
 
     // Prime vertical radius of curvature (East/West) [m]
     const double R_E = NAV::earthRadius_E(position_lla__t1(0));
@@ -166,19 +150,13 @@ void NAV::LooselyCoupledKF::filterObservation()
     Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(position_lla__t1, R_N, R_E);
 
     // Position and rotation information for conversion of IMU data from platform to body frame
-    const auto& imuPosition = latestImuObs->imuPos;
+    const auto& imuPosition = inertialNavSol->imuObs->imuPos;
 
     // a_p Acceleration in [m/s^2], in platform coordinates
-    const Eigen::Vector3d& acceleration_p = latestImuObs->accelCompXYZ.has_value()
-                                                ? latestImuObs->accelCompXYZ.value()
-                                                : latestImuObs->accelUncompXYZ.value();
+    const Eigen::Vector3d& acceleration_p = inertialNavSol->imuObs->accelCompXYZ.has_value()
+                                                ? inertialNavSol->imuObs->accelCompXYZ.value()
+                                                : inertialNavSol->imuObs->accelUncompXYZ.value();
     auto acceleration_b = imuPosition.quatAccel_bp() * acceleration_p;
-
-    // Angular rate measured in units of [rad/s], and given in the platform frame
-    const Eigen::Vector3d& angularRate_p = latestImuObs->gyroCompXYZ.has_value()
-                                               ? latestImuObs->gyroCompXYZ.value()
-                                               : latestImuObs->gyroUncompXYZ.value();
-    auto angularRate_b = imuPosition.quatGyro_bp() * angularRate_p;
 
     // ---------------------------------------------- Prediction -------------------------------------------------
     // 1. Calculate the transition matrix 𝚽_{k-1}
@@ -194,6 +172,48 @@ void NAV::LooselyCoupledKF::filterObservation()
     // 4. Propagate the error covariance matrix from P(+) and P(-)
     kalmanFilter.predict();
 
+    // Push out the new data
+    auto pvaError = std::make_shared<PVAError>();
+    pvaError->x_positionError_lla() = kalmanFilter.x.segment<3>(6);
+    pvaError->x_velocityError_n() = kalmanFilter.x.segment<3>(3);
+    pvaError->x_attitudeError_n() = kalmanFilter.x.segment<3>(0);
+
+    auto imuBiases = std::make_shared<ImuBiases>();
+    imuBiases->biasAccel = kalmanFilter.x.segment<3>(9);
+    imuBiases->biasGyro = kalmanFilter.x.segment<3>(12);
+
+    invokeCallbacks(OutputPortIndex_PVAError, pvaError);
+    invokeCallbacks(OutputPortIndex_ImuBiases, imuBiases);
+}
+
+void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt>& gnssMeasurement)
+{
+    // ------------------------------------------- Data preparation ----------------------------------------------
+    /// Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
+    const Eigen::Vector3d position_lla__t1 = latestInertialNavSol->latLonAlt();
+    /// q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
+    const Eigen::Quaterniond& quaternion_nb__t1 = latestInertialNavSol->quaternion_nb();
+
+    // Prime vertical radius of curvature (East/West) [m]
+    const double R_E = NAV::earthRadius_E(position_lla__t1(0));
+    // Meridian radius of curvature in [m]
+    const double R_N = NAV::earthRadius_N(position_lla__t1(0));
+
+    // Direction Cosine Matrix from body to navigation coordinates
+    Eigen::Matrix3d DCM_nb = quaternion_nb__t1.toRotationMatrix();
+
+    // Conversion matrix between cartesian and curvilinear perturbations to the position
+    Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(position_lla__t1, R_N, R_E);
+
+    // Position and rotation information for conversion of IMU data from platform to body frame
+    const auto& imuPosition = latestInertialNavSol->imuObs->imuPos;
+
+    // Angular rate measured in units of [rad/s], and given in the platform frame
+    const Eigen::Vector3d& angularRate_p = latestInertialNavSol->imuObs->gyroCompXYZ.has_value()
+                                               ? latestInertialNavSol->imuObs->gyroCompXYZ.value()
+                                               : latestInertialNavSol->imuObs->gyroUncompXYZ.value();
+    auto angularRate_b = imuPosition.quatGyro_bp() * angularRate_p;
+
     // ---------------------------------------------- Correction -------------------------------------------------
     // 5. Calculate the measurement matrix H_k
     kalmanFilter.H = measurementMatrix(T_rn_p, DCM_nb, angularRate_b, leverArm_InsGnss, position_lla__t1);
@@ -202,15 +222,25 @@ void NAV::LooselyCoupledKF::filterObservation()
     kalmanFilter.R = measurementNoiseCovariance(gnssSigmaSquaredLatLonAlt, gnssSigmaSquaredVelocity);
 
     // 8. Formulate the measurement z_k
+    kalmanFilter.z << gnssMeasurement->velocity_n()(0), gnssMeasurement->velocity_n()(1), gnssMeasurement->velocity_n()(2),
+        gnssMeasurement->latitude(), gnssMeasurement->longitude(), gnssMeasurement->altitude();
+
     // 7. Calculate the Kalman gain matrix K_k
     // 9. Update the state vector estimate from x(-) to x(+)
     // 10. Update the error covariance matrix from P(-) to P(+)
     kalmanFilter.correct();
 
-    // TODO: Reset the data ports
-
     // Push out the new data
-    // invokeCallbacks(OutputPortIndex_PosVelAtt__t0, posVelAtt__t1);
+    auto pvaError = std::make_shared<PVAError>();
+    pvaError->x_positionError_lla() = kalmanFilter.x.segment<3>(6);
+    pvaError->x_velocityError_n() = kalmanFilter.x.segment<3>(3);
+    pvaError->x_attitudeError_n() = kalmanFilter.x.segment<3>(0);
+
+    auto imuBiases = std::make_shared<ImuBiases>();
+    imuBiases->biasAccel = kalmanFilter.x.segment<3>(9);
+    imuBiases->biasGyro = kalmanFilter.x.segment<3>(12);
+    invokeCallbacks(OutputPortIndex_PVAError, pvaError);
+    invokeCallbacks(OutputPortIndex_ImuBiases, imuBiases);
 }
 
 // ###########################################################################################################
