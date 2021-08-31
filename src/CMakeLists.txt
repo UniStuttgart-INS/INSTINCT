@@ -14,6 +14,7 @@ if(ENABLE_MAIN)
     ${PROJECT_NAME_LOWERCASE}
     PRIVATE project_options
             project_warnings
+            instinct::rc
             CONAN_PKG::fmt
             CONAN_PKG::spdlog
             CONAN_PKG::boost

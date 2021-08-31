@@ -169,15 +169,6 @@ bool NAV::ImuIntegrator::initialize()
     time__init = InsTime();
     timeSinceStartup__init = 0;
 
-    try
-    {
-        NAV::gravity::readEGM96Coeffs();
-    }
-    catch (...)
-    {
-        return false;
-    }
-
     LOG_DEBUG("ImuIntegrator initialized");
 
     return true;
