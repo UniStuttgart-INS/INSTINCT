@@ -14,6 +14,7 @@
 #include "util/ScrollingBuffer.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"

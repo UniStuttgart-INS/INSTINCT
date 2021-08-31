@@ -235,6 +235,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
 #include "NodeData/IMU/KvhObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/InertialNavSol.hpp"
 
 void NAV::NodeRegistry::RegisterNodeDataTypes()
 {
@@ -254,4 +255,5 @@ void NAV::NodeRegistry::RegisterNodeDataTypes()
     registerNodeDataType<VectorNavBinaryOutput>();
     // State
     registerNodeDataType<PosVelAtt>();
+    registerNodeDataType<InertialNavSol>();
 }

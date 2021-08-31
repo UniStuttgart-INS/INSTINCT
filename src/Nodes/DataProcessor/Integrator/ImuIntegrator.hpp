@@ -51,7 +51,7 @@ class ImuIntegrator : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OutputPortIndex_PosVelAtt__t0 = 0; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OutputPortIndex_InertialNavSol__t0 = 0; ///< @brief Flow (InertialNavSol)
 
     /// @brief Initialize the node
     bool initialize() override;

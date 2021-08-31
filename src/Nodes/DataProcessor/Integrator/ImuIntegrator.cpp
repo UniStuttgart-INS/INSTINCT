@@ -12,6 +12,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "NodeData/State/InertialNavSol.hpp"
+
 NAV::ImuIntegrator::ImuIntegrator()
 {
     name = typeStatic();
@@ -24,7 +26,7 @@ NAV::ImuIntegrator::ImuIntegrator()
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
     nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
 
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, NAV::PosVelAtt::type());
+    nm::CreateOutputPin(this, "InertialNavSol", Pin::Type::Flow, NAV::InertialNavSol::type());
 }
 
 NAV::ImuIntegrator::~ImuIntegrator()
@@ -217,7 +219,9 @@ void NAV::ImuIntegrator::integrateObservation()
     const auto& imuPosition = imuObs__t0->imuPos;
 
     /// Result State Data at the time tₖ
-    auto posVelAtt__t0 = std::make_shared<PosVelAtt>();
+    auto posVelAtt__t0 = std::make_shared<InertialNavSol>();
+
+    posVelAtt__t0->imuObs = imuObs__t0;
 
     // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
     long double timeDifferenceSec__t1 = 0;
@@ -506,5 +510,5 @@ void NAV::ImuIntegrator::integrateObservation()
     }
 
     // Push out new data
-    invokeCallbacks(OutputPortIndex_PosVelAtt__t0, posVelAtt__t0);
+    invokeCallbacks(OutputPortIndex_InertialNavSol__t0, posVelAtt__t0);
 }

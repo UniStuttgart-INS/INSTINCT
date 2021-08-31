@@ -1593,7 +1593,8 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
 
-            if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
+            if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
+                || sourcePin->dataIdentifier.front() == InertialNavSol::type())
             {
                 plotPosVelAtt(std::dynamic_pointer_cast<PosVelAtt>(nodeData), pinIndex);
             }
