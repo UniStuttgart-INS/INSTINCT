@@ -152,11 +152,11 @@ class PosVelAtt : public InsObs
 
   private:
     /// Quaternion body to navigation frame (roll, pitch, yaw)
-    Eigen::Quaterniond q_nb;
+    Eigen::Quaterniond q_nb{ 0, 0, 0, 0 };
     /// Position in ECEF coordinates
-    Eigen::Vector3d p_ecef;
+    Eigen::Vector3d p_ecef{ 0, 0, 0 };
     /// Velocity in navigation coordinates
-    Eigen::Vector3d v_n;
+    Eigen::Vector3d v_n{ std::nan(""), std::nan(""), std::nan("") };
 };
 
 } // namespace NAV

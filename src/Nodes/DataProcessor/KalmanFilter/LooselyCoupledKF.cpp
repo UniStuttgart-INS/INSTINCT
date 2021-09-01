@@ -174,9 +174,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
 
     // Push out the new data
     auto pvaError = std::make_shared<PVAError>();
-    pvaError->x_positionError_lla() = kalmanFilter.x.segment<3>(6);
-    pvaError->x_velocityError_n() = kalmanFilter.x.segment<3>(3);
-    pvaError->x_attitudeError_n() = kalmanFilter.x.segment<3>(0);
+    pvaError->positionError_lla() = kalmanFilter.x.segment<3>(6);
+    pvaError->velocityError_n() = kalmanFilter.x.segment<3>(3);
+    pvaError->attitudeError_n() = kalmanFilter.x.segment<3>(0);
 
     auto imuBiases = std::make_shared<ImuBiases>();
     imuBiases->biasAccel = kalmanFilter.x.segment<3>(9);
@@ -232,9 +232,9 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt
 
     // Push out the new data
     auto pvaError = std::make_shared<PVAError>();
-    pvaError->x_positionError_lla() = kalmanFilter.x.segment<3>(6);
-    pvaError->x_velocityError_n() = kalmanFilter.x.segment<3>(3);
-    pvaError->x_attitudeError_n() = kalmanFilter.x.segment<3>(0);
+    pvaError->positionError_lla() = kalmanFilter.x.segment<3>(6);
+    pvaError->velocityError_n() = kalmanFilter.x.segment<3>(3);
+    pvaError->attitudeError_n() = kalmanFilter.x.segment<3>(0);
 
     auto imuBiases = std::make_shared<ImuBiases>();
     imuBiases->biasAccel = kalmanFilter.x.segment<3>(9);
