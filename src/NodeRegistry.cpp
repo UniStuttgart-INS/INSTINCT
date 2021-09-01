@@ -144,7 +144,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 #include "Nodes/Simple/Delay.hpp"
 #include "Nodes/Simple/Transformation.hpp"
 // Converter
-#include "Nodes/Converter/IMU/VectorNavBinary2ImuObsConverter.hpp"
+#include "Nodes/Converter/IMU/VectorNavBinaryConverter.hpp"
 // Data Logger
 #include "Nodes/DataLogger/GNSS/EmlidDataLogger.hpp"
 #include "Nodes/DataLogger/GNSS/UbloxDataLogger.hpp"
@@ -154,6 +154,8 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
 // Data Processor
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
+#include "Nodes/DataProcessor/KalmanFilter/AddImuBias.hpp"
+#include "Nodes/DataProcessor/KalmanFilter/AddPVAError.hpp"
 // Data Provider
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -190,7 +192,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<NAV::experimental::Matrix>();
     registerNodeType<Transformation>();
     // Converter
-    registerNodeType<VectorNavBinary2ImuObsConverter>();
+    registerNodeType<VectorNavBinaryConverter>();
     // Data Logger
     registerNodeType<EmlidDataLogger>();
     registerNodeType<UbloxDataLogger>();
@@ -200,6 +202,8 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Data Processor
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
+    registerNodeType<AddImuBias>();
+    registerNodeType<AddPVAError>();
     // Data Provider
     registerNodeType<EmlidFile>();
     registerNodeType<RtklibPosFile>();
