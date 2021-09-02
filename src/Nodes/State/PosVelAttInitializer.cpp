@@ -26,7 +26,7 @@ NAV::PosVelAttInitializer::PosVelAttInitializer()
     guiConfigDefaultWindowSize = { 345, 342 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &PosVelAttInitializer::receiveImuObs);
-    nm::CreateInputPin(this, "GnssObs", Pin::Type::Flow, { NAV::UbloxObs::type(), NAV::RtklibPosObs::type() }, &PosVelAttInitializer::receiveGnssObs); // TODO: Add PosVelAtt as message type
+    nm::CreateInputPin(this, "GnssObs", Pin::Type::Flow, { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type() }, &PosVelAttInitializer::receiveGnssObs);
 
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
@@ -59,6 +59,17 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::SetNextItemWidth(100);
         if (ImGui::InputDouble(fmt::format("Initialization Duration Attitude##{}", size_t(id)).c_str(), &initDuration, 0.0, 0.0, "%.3f s"))
         {
+            flow::ApplyChanges();
+        }
+    }
+
+    if (nm::IsPinLinked(inputPins.at(InputPortIndex_ImuObs).id) && nm::IsPinLinked(inputPins.at(InputPortIndex_GnssObs).id)
+        && !(overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2)))
+    {
+        ImGui::SetNextItemWidth(100);
+        if (ImGui::Combo(fmt::format("Attitude Init Source##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&attitudeMode), "Both\0IMU\0GNSS\0\0"))
+        {
+            LOG_DEBUG("{}: Attitude Init Source changed to {}", nameId(), attitudeMode == 0 ? "Both" : (attitudeMode == 1 ? "IMU" : "GNSS"));
             flow::ApplyChanges();
         }
     }
@@ -351,6 +362,7 @@ void NAV::PosVelAttInitializer::guiConfig()
     json j;
 
     j["initDuration"] = initDuration;
+    j["attitudeMode"] = attitudeMode;
     j["positionAccuracyThreshold"] = positionAccuracyThreshold;
     j["velocityAccuracyThreshold"] = velocityAccuracyThreshold;
     j["overridePosition"] = overridePosition;
@@ -370,6 +382,10 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     if (j.contains("initDuration"))
     {
         j.at("initDuration").get_to(initDuration);
+    }
+    if (j.contains("attitudeMode"))
+    {
+        attitudeMode = static_cast<AttitudeMode>(j.at("attitudeMode").get<int>());
     }
     if (j.contains("positionAccuracyThreshold"))
     {
@@ -543,8 +559,9 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
         averagedAttitude.at(2) = magneticHeading;
     }
 
-    if (static_cast<double>(obs->timeSinceStartup.value() - startTime) * 1e-9 >= initDuration
-        || (overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2)))
+    if ((attitudeMode == AttitudeMode_BOTH || attitudeMode == AttitudeMode_IMU || !nm::IsPinLinked(inputPins.at(InputPortIndex_GnssObs).id))
+        && (static_cast<double>(obs->timeSinceStartup.value() - startTime) * 1e-9 >= initDuration
+            || (overrideRollPitchYaw.at(0) && overrideRollPitchYaw.at(1) && overrideRollPitchYaw.at(2))))
     {
         q_nb_init = trafo::quat_nb(overrideRollPitchYaw.at(0) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(0)) : averagedAttitude.at(0),
                                    overrideRollPitchYaw.at(1) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(1)) : averagedAttitude.at(1),
@@ -574,6 +591,10 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<NodeData>& 
             else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
             {
                 receiveUbloxObs(std::dynamic_pointer_cast<UbloxObs>(nodeData));
+            }
+            else if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
+            {
+                receivePosVelAttObs(std::dynamic_pointer_cast<PosVelAtt>(nodeData));
             }
         }
     }
@@ -674,5 +695,27 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<Rtklib
 
             posVelAttInitialized.at(0) = true;
         }
+    }
+}
+
+void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<PosVelAtt>& obs)
+{
+    if (!obs->position_ecef().isZero())
+    {
+        p_ecef_init = obs->position_ecef();
+        posVelAttInitialized.at(0) = true;
+    }
+
+    if (!std::isnan(obs->velocity_n()(0)))
+    {
+        v_n_init = obs->velocity_n();
+        posVelAttInitialized.at(1) = true;
+    }
+
+    if ((attitudeMode == AttitudeMode_BOTH || attitudeMode == AttitudeMode_GNSS || !nm::IsPinLinked(inputPins.at(InputPortIndex_ImuObs).id))
+        && !obs->quaternion_nb().coeffs().isZero())
+    {
+        q_nb_init = obs->quaternion_nb();
+        posVelAttInitialized.at(2) = true;
     }
 }

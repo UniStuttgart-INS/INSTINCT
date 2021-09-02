@@ -247,7 +247,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         LOG_DATA("{}: time__t2 {}", nameId(), time__t2.toGPSweekTow());
         LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1.toGPSweekTow(), timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t1 {}", nameId(), time__t0.toGPSweekTow(), timeDifferenceSec__t0);
+        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0.toGPSweekTow(), timeDifferenceSec__t0);
     }
     else
     {
@@ -274,7 +274,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         LOG_DATA("{}: time__t2 {}", nameId(), time__t2);
         LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1, timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t1 {}", nameId(), time__t0, timeDifferenceSec__t0);
+        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0, timeDifferenceSec__t0);
     }
 
     /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],

@@ -12,6 +12,7 @@
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/GNSS/RtklibPosObs.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 #include <limits>
 
@@ -86,11 +87,26 @@ class PosVelAttInitializer : public Node
     /// @param[in] obs RtklibPos Data
     void receiveRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs);
 
+    /// @brief Receive PosVelAtt Observations
+    /// @param[in] obs PosVelAtt Data
+    void receivePosVelAttObs(const std::shared_ptr<PosVelAtt>& obs);
+
     /// Time in [s] to initialize the state
     double initDuration = 5.0;
 
     /// Start time of the averageing process
     uint64_t startTime = 0;
+
+    /// Initialization source for attitude
+    enum AttitudeMode
+    {
+        AttitudeMode_BOTH, ///< Use IMU and GNSS Observations for attitude initialization
+        AttitudeMode_IMU,  ///< Use IMU Observations for attitude initialization
+        AttitudeMode_GNSS, ///< Use GNSS Observations for attitude initialization
+    };
+
+    /// GUI option to pecify the initialization source for attitude
+    AttitudeMode attitudeMode = AttitudeMode_BOTH;
 
     /// Whether the GNSS values should be used or we want to override the values manually
     bool overridePosition = false;
