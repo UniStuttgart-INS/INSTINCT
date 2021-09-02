@@ -222,7 +222,7 @@ NAV::Plot::Plot()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 750, 650 };
 
-    dataIdentifier = { PosVelAtt::type(),
+    dataIdentifier = { PosVelAtt::type(), PVAError::type(), ImuBiases::type(),
                        RtklibPosObs::type(), UbloxObs::type(),
                        ImuObs::type(), KvhObs::type(), ImuObsWDelta::type(),
                        VectorNavBinaryOutput::type(), SkydelObs::type() };
@@ -878,7 +878,8 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
     {
         data.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
 
-        if (startPin->dataIdentifier.front() == PosVelAtt::type())
+        if (startPin->dataIdentifier.front() == PosVelAtt::type()
+            || startPin->dataIdentifier.front() == InertialNavSol::type())
         {
             // InsObs
             data.at(pinIndex).addPlotDataItem("Time [s]");
@@ -899,6 +900,35 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("Quaternion::x");
             data.at(pinIndex).addPlotDataItem("Quaternion::y");
             data.at(pinIndex).addPlotDataItem("Quaternion::z");
+        }
+        else if (startPin->dataIdentifier.front() == PVAError::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // PVAError
+            data.at(pinIndex).addPlotDataItem("Roll error [deg]");
+            data.at(pinIndex).addPlotDataItem("Pitch error [deg]");
+            data.at(pinIndex).addPlotDataItem("Yaw error [deg]");
+            data.at(pinIndex).addPlotDataItem("North velocity error [m/s]");
+            data.at(pinIndex).addPlotDataItem("East velocity error [m/s]");
+            data.at(pinIndex).addPlotDataItem("Down velocity error [m/s]");
+            data.at(pinIndex).addPlotDataItem("Latitude error [deg]");
+            data.at(pinIndex).addPlotDataItem("Longitude error [deg]");
+            data.at(pinIndex).addPlotDataItem("Altitude error [deg]");
+        }
+        else if (startPin->dataIdentifier.front() == ImuBiases::type())
+        {
+            // InsObs
+            data.at(pinIndex).addPlotDataItem("Time [s]");
+            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            // ImuBiases
+            data.at(pinIndex).addPlotDataItem("Accelerometer bias X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accelerometer bias Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Accelerometer bias Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem("Gyroscope bias X [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyroscope bias Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem("Gyroscope bias Z [rad/s]");
         }
         else if (startPin->dataIdentifier.front() == RtklibPosObs::type())
         {
@@ -1598,6 +1628,14 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
             {
                 plotPosVelAtt(std::dynamic_pointer_cast<PosVelAtt>(nodeData), pinIndex);
             }
+            else if (sourcePin->dataIdentifier.front() == PVAError::type())
+            {
+                plotPVAError(std::dynamic_pointer_cast<PVAError>(nodeData), pinIndex);
+            }
+            else if (sourcePin->dataIdentifier.front() == ImuBiases::type())
+            {
+                plotImuBiases(std::dynamic_pointer_cast<ImuBiases>(nodeData), pinIndex);
+            }
             else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
                 plotRtklibPosObs(std::dynamic_pointer_cast<RtklibPosObs>(nodeData), pinIndex);
@@ -1683,6 +1721,55 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<PosVelAtt>& obs, size_t pinI
     addData(pinIndex, i++, obs->quaternion_nb().x());
     addData(pinIndex, i++, obs->quaternion_nb().y());
     addData(pinIndex, i++, obs->quaternion_nb().z());
+}
+
+void NAV::Plot::plotPVAError(const std::shared_ptr<PVAError>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(startValue_Time))
+        {
+            startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // PVAError
+    addData(pinIndex, i++, trafo::rad2deg(obs->attitudeError_n()(0)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->attitudeError_n()(1)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->attitudeError_n()(2)));
+    addData(pinIndex, i++, obs->velocityError_n()(0));
+    addData(pinIndex, i++, obs->velocityError_n()(1));
+    addData(pinIndex, i++, obs->velocityError_n()(2));
+    addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(0)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(1)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(2)));
+}
+
+void NAV::Plot::plotImuBiases(const std::shared_ptr<ImuBiases>& obs, size_t pinIndex)
+{
+    if (obs->insTime.has_value())
+    {
+        if (std::isnan(startValue_Time))
+        {
+            startValue_Time = static_cast<double>(obs->insTime.value().toGPSweekTow().tow);
+        }
+    }
+    size_t i = 0;
+
+    // InsObs
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
+    addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
+    // PVAError
+    addData(pinIndex, i++, obs->biasAccel(0));
+    addData(pinIndex, i++, obs->biasAccel(1));
+    addData(pinIndex, i++, obs->biasAccel(2));
+    addData(pinIndex, i++, obs->biasGyro(0));
+    addData(pinIndex, i++, obs->biasGyro(1));
+    addData(pinIndex, i++, obs->biasGyro(2));
 }
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex)
