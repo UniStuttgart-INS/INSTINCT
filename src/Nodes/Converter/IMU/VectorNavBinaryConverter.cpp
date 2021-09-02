@@ -199,7 +199,8 @@ std::shared_ptr<NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
         {
-            posVelAttObs->quaternion_nb() = trafo::quat_nb(vnObs->attitudeOutputs->ypr(2), vnObs->attitudeOutputs->ypr(1), vnObs->attitudeOutputs->ypr(0));
+            auto ypr = trafo::deg2rad3(vnObs->attitudeOutputs->ypr.cast<double>());
+            posVelAttObs->quaternion_nb() = trafo::quat_nb(ypr(2), ypr(1), ypr(0));
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
         {
@@ -207,11 +208,13 @@ std::shared_ptr<NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt
         }
     }
 
-    if (vnObs->insOutputs)
+    if (vnObs->insOutputs && (vnObs->insOutputs->insStatus.mode() == 1 || vnObs->insOutputs->insStatus.mode() == 2))
     {
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
         {
-            posVelAttObs->position_ecef() = trafo::lla2ecef_WGS84(vnObs->insOutputs->posLla);
+            posVelAttObs->position_ecef() = trafo::lla2ecef_WGS84({ trafo::deg2rad(vnObs->insOutputs->posLla(0)),
+                                                                    trafo::deg2rad(vnObs->insOutputs->posLla(1)),
+                                                                    vnObs->insOutputs->posLla(2) });
         }
         else if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
         {
@@ -235,13 +238,15 @@ std::shared_ptr<NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt
         }
     }
 
-    if (vnObs->gnss1Outputs)
+    if (vnObs->gnss1Outputs && vnObs->gnss1Outputs->fix >= 2)
     {
         if (posVelAttObs->position_ecef().isZero())
         {
             if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
             {
-                posVelAttObs->position_ecef() = trafo::lla2ecef_WGS84(vnObs->gnss1Outputs->posLla);
+                posVelAttObs->position_ecef() = trafo::lla2ecef_WGS84({ trafo::deg2rad(vnObs->gnss1Outputs->posLla(0)),
+                                                                        trafo::deg2rad(vnObs->gnss1Outputs->posLla(1)),
+                                                                        vnObs->gnss1Outputs->posLla(2) });
             }
             else if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
             {
@@ -263,13 +268,15 @@ std::shared_ptr<NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt
             }
         }
     }
-    if (vnObs->gnss2Outputs)
+    if (vnObs->gnss2Outputs && vnObs->gnss2Outputs->fix >= 2)
     {
         if (posVelAttObs->position_ecef().isZero())
         {
             if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
             {
-                posVelAttObs->position_ecef() = trafo::lla2ecef_WGS84(vnObs->gnss2Outputs->posLla);
+                posVelAttObs->position_ecef() = trafo::lla2ecef_WGS84({ trafo::deg2rad(vnObs->gnss2Outputs->posLla(0)),
+                                                                        trafo::deg2rad(vnObs->gnss2Outputs->posLla(1)),
+                                                                        vnObs->gnss2Outputs->posLla(2) });
             }
             else if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
             {
@@ -294,7 +301,7 @@ std::shared_ptr<NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt
 
     if (!posVelAttObs->position_ecef().isZero() && !std::isnan(posVelAttObs->velocity_n()(0)))
     {
-        if (!posVelAttObs->quaternion_nb().coeffs().isZero())
+        if (posVelAttObs->quaternion_nb().coeffs().isZero())
         {
             LOG_DEBUG("{}: Conversion succeeded but has no attitude info.", nameId());
         }
