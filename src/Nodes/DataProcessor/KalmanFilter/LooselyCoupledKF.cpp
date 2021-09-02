@@ -174,11 +174,13 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
 
     // Push out the new data
     auto pvaError = std::make_shared<PVAError>();
+    pvaError->insTime = inertialNavSol->insTime;
     pvaError->positionError_lla() = kalmanFilter.x.segment<3>(6);
     pvaError->velocityError_n() = kalmanFilter.x.segment<3>(3);
     pvaError->attitudeError_n() = kalmanFilter.x.segment<3>(0);
 
     auto imuBiases = std::make_shared<ImuBiases>();
+    imuBiases->insTime = inertialNavSol->insTime;
     imuBiases->biasAccel = kalmanFilter.x.segment<3>(9);
     imuBiases->biasGyro = kalmanFilter.x.segment<3>(12);
 

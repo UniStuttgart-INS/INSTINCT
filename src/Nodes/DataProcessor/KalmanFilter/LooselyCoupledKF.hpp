@@ -49,7 +49,7 @@ class LooselyCoupledKF : public Node
 
   private:
     constexpr static size_t OutputPortIndex_PVAError = 0;  ///< @brief Flow (PVAError)
-    constexpr static size_t OutputPortIndex_ImuBiases = 0; ///< @brief Flow (ImuBiases)
+    constexpr static size_t OutputPortIndex_ImuBiases = 1; ///< @brief Flow (ImuBiases)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -82,10 +82,15 @@ class LooselyCoupledKF : public Node
     // TODO: Make Variance choosable from the GUI and adapt default values
     /// 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements
     double variance_ra = 1e-6;
-    /// 𝜎²_rg Variance of the noise on the gyro angular-rate measurements
-    double variance_rg = 1e-5;
+
+    /// @brief 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
+    /// @note See Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours.
+    ///       Value from Brown (2012) table 9.3 for 'High quality'
+    double variance_rg = std::pow(1 / 3600.0 * 10e-3 /* [deg/s/√(Hz)] */, 2);
+
     /// 𝜎²_bad Variance of the accelerometer dynamic bias
     double variance_bad = 1e-6;
+
     /// 𝜎²_bgd Variance of the gyro dynamic bias
     double variance_bgd = 1e-5;
 
