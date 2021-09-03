@@ -32,6 +32,7 @@ add_executable(
   src/NodeData/State/StateDataTests.cpp
   src/Nodes/FlowTester.cpp
   src/Nodes/DataLogger/IMU/VectorNavDataLoggerTests.cpp
+  src/Nodes/DataProvider/IMU/VectorNavFileTests.cpp
   ${SRC_FILES})
 
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
