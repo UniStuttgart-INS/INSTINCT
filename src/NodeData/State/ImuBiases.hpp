@@ -42,10 +42,10 @@ class ImuBiases : public InsObs
         return { InsObs::type() };
     }
 
-    /// 𝐛_a The accelerometer bias in [m/s^2]
-    Eigen::Vector3d biasAccel;
-    /// 𝐛_g The gyroscope bias in [rad/s]
-    Eigen::Vector3d biasGyro;
+    /// 𝐛_a The accelerometer bias in body frame in [m/s^2]
+    Eigen::Vector3d biasAccel_b{ 0, 0, 0 };
+    /// 𝐛_g The gyroscope bias in body frame in [rad/s]
+    Eigen::Vector3d biasGyro_b{ 0, 0, 0 };
 };
 
 } // namespace NAV

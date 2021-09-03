@@ -42,6 +42,12 @@ class AddImuBias : public Node
   private:
     constexpr static size_t OutputPortIndex_ImuObs = 0; ///< @brief Flow (ImuObs)
 
+    /// @brief Initialize the node
+    bool initialize() override;
+
+    /// @brief Deinitialize the node
+    void deinitialize() override;
+
     /// @brief Receive function for ImuObs
     /// @param[in] nodeData Observation received
     /// @param[in] linkId Id of the link over which the data is received
@@ -53,7 +59,7 @@ class AddImuBias : public Node
     void recvImuBiases(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// Pointer to the most recent imu biases
-    std::shared_ptr<ImuBiases> imuBiases = nullptr;
+    ImuBiases imuBiases;
 };
 
 } // namespace NAV

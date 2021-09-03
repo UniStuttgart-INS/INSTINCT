@@ -38,28 +38,40 @@ std::string NAV::AddImuBias::category()
     return "Data Processor";
 }
 
+bool NAV::AddImuBias::initialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    imuBiases.biasAccel_b = { 0, 0, 0 };
+    imuBiases.biasGyro_b = { 0, 0, 0 };
+
+    return true;
+}
+
+void NAV::AddImuBias::deinitialize()
+{
+    LOG_TRACE("{}: called", nameId());
+}
+
 void NAV::AddImuBias::recvImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    if (imuBiases)
+    auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
+    if (imuObs->accelUncompXYZ.has_value())
     {
-        auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
-        if (imuObs->accelUncompXYZ.has_value())
-        {
-            imuObs->accelUncompXYZ.value() += imuBiases->biasAccel;
-        }
-        if (imuObs->accelCompXYZ.has_value())
-        {
-            imuObs->accelCompXYZ.value() += imuBiases->biasAccel;
-        }
+        imuObs->accelUncompXYZ.value() -= imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_b;
+    }
+    if (imuObs->accelCompXYZ.has_value())
+    {
+        imuObs->accelCompXYZ.value() -= imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_b;
+    }
 
-        if (imuObs->gyroUncompXYZ.has_value())
-        {
-            imuObs->gyroUncompXYZ.value() += imuBiases->biasGyro;
-        }
-        if (imuObs->gyroCompXYZ.has_value())
-        {
-            imuObs->gyroCompXYZ.value() += imuBiases->biasGyro;
-        }
+    if (imuObs->gyroUncompXYZ.has_value())
+    {
+        imuObs->gyroUncompXYZ.value() -= imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_b;
+    }
+    if (imuObs->gyroCompXYZ.has_value())
+    {
+        imuObs->gyroCompXYZ.value() -= imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_b;
     }
 
     invokeCallbacks(OutputPortIndex_ImuObs, nodeData);
@@ -67,5 +79,8 @@ void NAV::AddImuBias::recvImuObs(const std::shared_ptr<NodeData>& nodeData, ax::
 
 void NAV::AddImuBias::recvImuBiases(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    imuBiases = std::dynamic_pointer_cast<ImuBiases>(nodeData);
+    [[maybe_unused]] auto imuBiasObs = std::dynamic_pointer_cast<ImuBiases>(nodeData);
+
+    // imuBiases.biasAccel_b = imuBiasObs->biasAccel_b;
+    // imuBiases.biasGyro_b = imuBiasObs->biasGyro_b;
 }
