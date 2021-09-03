@@ -66,7 +66,7 @@ class KalmanFilter
     void correct()
     {
         // Math: \mathbf{K}_k = \mathbf{P}_k^- \mathbf{H}_k^T (\mathbf{H}_k \mathbf{P}_k^- \mathbf{H}_k^T + R_k)^{-1} \qquad \text{P. Groves}\,(3.21)
-        K = P * H.transpose() * (R + H * P * H.transpose());
+        K = P * H.transpose() * (R + H * P * H.transpose()).inverse();
 
         // Math: \mathbf{\hat{x}}_k^+ = \mathbf{\hat{x}}_k^- + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \mathbf{\hat{x}}_k^-) \qquad \text{P. Groves}\,(3.24)
         x = x + K * (z - H * x);

@@ -80,19 +80,22 @@ class LooselyCoupledKF : public Node
     double tau_KF = 0.01;
 
     // TODO: Make Variance choosable from the GUI and adapt default values
-    /// 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements
-    double variance_ra = 1e-6;
+
+    /// @brief 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements [m²/s³]
+    double variance_ra = std::pow((0.04 /* [mg/√(Hz)] */) * 1e-3 * InsConst::G_NORM, 2);
 
     /// @brief 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
     /// @note See Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours.
     ///       Value from Brown (2012) table 9.3 for 'High quality'
-    double variance_rg = std::pow(1 / 3600.0 * 10e-3 /* [deg/s/√(Hz)] */, 2);
+    double variance_rg = std::pow(1 / 3600.0 * (10e-3 /* [deg/s/√(Hz)] */), 2);
 
-    /// 𝜎²_bad Variance of the accelerometer dynamic bias
-    double variance_bad = 1e-6;
+    /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
+    /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
+    double variance_bad = std::pow((10 /* [µg] */) * 10e-6 * InsConst::G_NORM, 2);
 
-    /// 𝜎²_bgd Variance of the gyro dynamic bias
-    double variance_bgd = 1e-5;
+    /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
+    /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
+    double variance_bgd = std::pow((1 /* [°/h] */) / 3600.0, 2);
 
     /// Lever arm between INS and GNSS in [m, m, m]
     Eigen::Vector3d leverArm_InsGnss{ 0.0, 0.0, 0.0 };
