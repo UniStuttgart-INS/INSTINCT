@@ -42,6 +42,12 @@ class AddPVAError : public Node
   private:
     constexpr static size_t OutputPortIndex_PosVelAtt = 0; ///< @brief Flow (PosVelAtt)
 
+    /// @brief Initialize the node
+    bool initialize() override;
+
+    /// @brief Deinitialize the node
+    void deinitialize() override;
+
     /// @brief Receive function for PosVelAtt
     /// @param[in] nodeData PosVelAtt received
     /// @param[in] linkId Id of the link over which the data is received

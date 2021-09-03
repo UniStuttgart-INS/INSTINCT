@@ -1764,12 +1764,12 @@ void NAV::Plot::plotImuBiases(const std::shared_ptr<ImuBiases>& obs, size_t pinI
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // PVAError
-    addData(pinIndex, i++, obs->biasAccel(0));
-    addData(pinIndex, i++, obs->biasAccel(1));
-    addData(pinIndex, i++, obs->biasAccel(2));
-    addData(pinIndex, i++, obs->biasGyro(0));
-    addData(pinIndex, i++, obs->biasGyro(1));
-    addData(pinIndex, i++, obs->biasGyro(2));
+    addData(pinIndex, i++, obs->biasAccel_b(0));
+    addData(pinIndex, i++, obs->biasAccel_b(1));
+    addData(pinIndex, i++, obs->biasAccel_b(2));
+    addData(pinIndex, i++, obs->biasGyro_b(0));
+    addData(pinIndex, i++, obs->biasGyro_b(1));
+    addData(pinIndex, i++, obs->biasGyro_b(2));
 }
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex)
