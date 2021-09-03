@@ -50,6 +50,18 @@ class LooselyCoupledKF : public Node
   private:
     constexpr static size_t OutputPortIndex_PVAError = 0;  ///< @brief Flow (PVAError)
     constexpr static size_t OutputPortIndex_ImuBiases = 1; ///< @brief Flow (ImuBiases)
+    constexpr static size_t OutputPortIndex_x = 2;         ///< @brief x̂ State vector
+    constexpr static size_t OutputPortIndex_P = 3;         ///< @brief 𝐏 Error covariance matrix
+    constexpr static size_t OutputPortIndex_Phi = 4;       ///< @brief 𝚽 State transition matrix
+    constexpr static size_t OutputPortIndex_Q = 5;         ///< @brief 𝐐 System/Process noise covariance matrix
+    constexpr static size_t OutputPortIndex_z = 6;         ///< @brief 𝐳 Measurement vector
+    constexpr static size_t OutputPortIndex_H = 7;         ///< @brief 𝐇 Measurement sensitivity Matrix
+    constexpr static size_t OutputPortIndex_R = 8;         ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
+    constexpr static size_t OutputPortIndex_K = 9;         ///< @brief 𝐊 Kalman gain matrix
+    constexpr static size_t OutputPortIndex_Kz = 10;       ///< @brief 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector
+
+    /// 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector
+    Eigen::MatrixXd kalmanFilter_Kz;
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -87,11 +99,11 @@ class LooselyCoupledKF : public Node
     /// @brief 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
     /// @note See Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours.
     ///       Value from Brown (2012) table 9.3 for 'High quality'
-    double variance_rg = std::pow(1 / 3600.0 * (10e-3 /* [deg/s/√(Hz)] */), 2);
+    double variance_rg = std::pow(1 / 3600.0 * (1e-3 /* [deg/s/√(Hz)] */), 2);
 
     /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    double variance_bad = std::pow((10 /* [µg] */) * 10e-6 * InsConst::G_NORM, 2);
+    double variance_bad = std::pow((10 /* [µg] */) * 1e-6 * InsConst::G_NORM, 2);
 
     /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
@@ -344,15 +356,6 @@ class LooselyCoupledKF : public Node
     /// @return The 3x3 matrix 𝐐_51
     /// @note See Groves (2013) equation (14.80)
     static Eigen::Matrix3d systemNoiseCovariance_51(const double& S_bgd, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
-
-    /// @brief Submatrix 𝐐_52 of the system noise covariance matrix 𝐐
-    /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
-    /// @param[in] F_21_n Submatrix 𝐅_21 of the system matrix 𝐅
-    /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
-    /// @param[in] tau_s Time interval in [s]
-    /// @return The 3x3 matrix 𝐐_52
-    /// @note See Groves (2013) equation (14.80)
-    static Eigen::Matrix3d systemNoiseCovariance_52(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     /// @brief Submatrix 𝐐_55 of the system noise covariance matrix 𝐐
     /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation

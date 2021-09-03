@@ -81,6 +81,6 @@ void NAV::AddImuBias::recvImuBiases(const std::shared_ptr<NodeData>& nodeData, a
 {
     [[maybe_unused]] auto imuBiasObs = std::dynamic_pointer_cast<ImuBiases>(nodeData);
 
-    // imuBiases.biasAccel_b = imuBiasObs->biasAccel_b;
-    // imuBiases.biasGyro_b = imuBiasObs->biasGyro_b;
+    imuBiases.biasAccel_b += imuBiasObs->biasAccel_b;
+    imuBiases.biasGyro_b += imuBiasObs->biasGyro_b;
 }

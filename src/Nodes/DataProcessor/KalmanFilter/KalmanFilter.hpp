@@ -20,7 +20,7 @@ class KalmanFilter
     KalmanFilter(int n, int m)
     {
         // x̂ State vector
-        x = Eigen::VectorXd::Zero(n);
+        x = Eigen::MatrixXd::Zero(n, 1);
 
         // 𝐏 Error covariance matrix
         P = Eigen::MatrixXd::Zero(n, n);
@@ -32,7 +32,7 @@ class KalmanFilter
         Q = Eigen::MatrixXd::Zero(n, n);
 
         /// 𝐳 Measurement vector
-        z = Eigen::VectorXd::Zero(m);
+        z = Eigen::MatrixXd::Zero(m, 1);
 
         /// 𝐇 Measurement sensitivity Matrix
         H = Eigen::MatrixXd::Zero(m, n);
@@ -76,7 +76,7 @@ class KalmanFilter
     }
 
     /// x̂ State vector
-    Eigen::VectorXd x;
+    Eigen::MatrixXd x;
 
     /// 𝐏 Error covariance matrix
     Eigen::MatrixXd P;
@@ -88,7 +88,7 @@ class KalmanFilter
     Eigen::MatrixXd Q;
 
     /// 𝐳 Measurement vector
-    Eigen::VectorXd z;
+    Eigen::MatrixXd z;
 
     /// 𝐇 Measurement sensitivity Matrix
     Eigen::MatrixXd H;
