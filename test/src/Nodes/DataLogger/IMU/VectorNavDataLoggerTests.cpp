@@ -2,7 +2,6 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <vector>
 
 #include "Nodes/FlowTester.hpp"
 
@@ -24,11 +23,6 @@ int messageCounterImuLogVnb = 0;   ///< Message Counter for the Imu log vnb file
 int messageCounterGnssDataCsv = 0; ///< Message Counter for the Gnss data csv fil
 int messageCounterGnssLogCsv = 0;  ///< Message Counter for the Gnss log csv file
 int messageCounterGnssLogVnb = 0;  ///< Message Counter for the Gnss log vnb file
-
-// TEST_CASE("[VectorNavDataReader] Read csv file and compare content with hardcoded values", "[VectorNavDataReader]")
-// {
-// TODO: Implement this test
-// }
 
 TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[VectorNavDataLogger]")
 {
@@ -55,10 +49,10 @@ TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[Vect
     //
     // ###########################################################################################################
 
-    testFlow("test/flow/VectorNavDataLogger.flow");
+    testFlow("test/flow/Nodes/DataLogger/IMU/VectorNavDataLogger.flow");
 
     // ###########################################################################################################
-    //                                         VectorNavDataReader.flow
+    //                                       VectorNavDataLoggerCheck.flow
     // ###########################################################################################################
     //
     // VectorNavFile("data/vn310-imu.csv")
@@ -122,7 +116,7 @@ TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[Vect
         // TODO: Compare Data with other files
     });
 
-    testFlow("test/flow/VectorNavDataReader.flow");
+    testFlow("test/flow/Nodes/DataLogger/IMU/VectorNavDataLoggerCheck.flow");
 
     CHECK(messageCounterImuDataCsv == MESSAGE_COUNT_IMU);
     CHECK(messageCounterImuLogCsv == MESSAGE_COUNT_IMU);
