@@ -446,9 +446,9 @@ void NAV::ImuIntegrator::integrateObservation()
         Eigen::Vector3d angularVelocity_ie_n__t1 = posVelAtt__t1->quaternion_ne() * InsConst::angularVelocity_ie_e;
 
         /// North/South (meridian) earth radius [m]
-        double R_N = earthRadius_N(InsConst::WGS84_a, InsConst::WGS84_e_squared, posVelAtt__t1->latitude());
+        double R_N = earthRadius_N(posVelAtt__t1->latitude());
         /// East/West (prime vertical) earth radius [m]
-        double R_E = earthRadius_E(InsConst::WGS84_a, InsConst::WGS84_e_squared, posVelAtt__t1->latitude());
+        double R_E = earthRadius_E(posVelAtt__t1->latitude());
 
         /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
         Eigen::Vector3d angularVelocity_en_n__t1 = transportRate(posVelAtt__t1->latLonAlt(), velocity_n__t1, R_N, R_E);
