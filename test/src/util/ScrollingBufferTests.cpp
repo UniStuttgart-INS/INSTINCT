@@ -3,7 +3,7 @@
 #include "util/ScrollingBuffer.hpp"
 #include <iostream>
 
-namespace NAV
+namespace NAV::TEST
 {
 TEST_CASE("[ScrollingBuffer] InitializerList", "[ScrollingBuffer]")
 {
@@ -340,4 +340,4 @@ TEST_CASE("[ScrollingBuffer] Clear", "[ScrollingBuffer]")
     REQUIRE(buffer1.offset() == 0);
 }
 
-} // namespace NAV
+} // namespace NAV::TEST

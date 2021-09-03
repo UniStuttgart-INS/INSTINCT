@@ -9,7 +9,7 @@
 
 #include <deque>
 
-namespace NAV
+namespace NAV::TEST
 {
 TEST_CASE("[InsMechanization] Update Quaternions ep Runge-Kutta 3. Order", "[InsMechanization]")
 {
@@ -320,4 +320,4 @@ TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
     CHECK(longitude < latLonAlt(1));
 }
 
-} // namespace NAV
+} // namespace NAV::TEST

@@ -3,6 +3,8 @@
 #include "util/UartSensors/Ublox/UbloxTypes.hpp"
 namespace ub = NAV::sensors::ublox;
 
+namespace NAV::TEST
+{
 TEST_CASE("[UbloxTypes] getMsgClassFromString", "[UbloxTypes]")
 {
     REQUIRE(ub::getMsgClassFromString("NAV") == ub::UbxClass::UBX_CLASS_NAV);
@@ -206,3 +208,5 @@ TEST_CASE("[UbloxTypes] getMsgIdFromString(std::string, std::string)", "[UbloxTy
     REQUIRE(ub::getMsgIdFromString("ACK", "NAK") == ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_ACK, "NAK"));
     REQUIRE(ub::getMsgIdFromString("", "") == ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_NONE, ""));
 }
+
+} // namespace NAV::TEST

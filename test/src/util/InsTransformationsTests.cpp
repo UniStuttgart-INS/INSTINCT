@@ -7,7 +7,7 @@
 
 #include <limits>
 
-namespace NAV
+namespace NAV::TEST
 {
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
@@ -673,4 +673,4 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     CHECK(v_e.z() == Approx(v_e_direct.z()));
 }
 
-} // namespace NAV
+} // namespace NAV::TEST

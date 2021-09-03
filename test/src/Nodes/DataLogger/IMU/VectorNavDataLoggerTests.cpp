@@ -13,7 +13,7 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
 
-namespace NAV
+namespace NAV::TEST::VectorNavDataLogger
 {
 constexpr int MESSAGE_COUNT_IMU = 18;  ///< Amount of messages expected in the Imu files
 constexpr int MESSAGE_COUNT_GNSS = 12; ///< Amount of messages expected in the Gnss files
@@ -132,4 +132,4 @@ TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[Vect
     CHECK(messageCounterGnssLogVnb == MESSAGE_COUNT_GNSS);
 }
 
-} // namespace NAV
+} // namespace NAV::TEST::VectorNavDataLogger
