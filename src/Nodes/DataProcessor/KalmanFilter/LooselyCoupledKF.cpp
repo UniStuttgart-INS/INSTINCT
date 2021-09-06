@@ -39,7 +39,7 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     nm::CreateOutputPin(this, "K*z", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter_Kz);
 
     // SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
-    gnssSigmaSquaredLatLonAlt = trafo::ecef2lla_WGS84(trafo::ned2ecef({ 3, 3, 3 * 3 }, { 0, 0, 0 })).array().pow(2);
+    gnssSigmaSquaredLatLonAlt = trafo::ecef2lla_WGS84(trafo::ned2ecef({ 0.03, 0.03, 0.03 * 3 }, { 0, 0, 0 })).array().pow(2);
     gnssSigmaSquaredVelocity = Eigen::Array3d(0.5, 0.5, 0.5).pow(2);
 }
 
@@ -202,6 +202,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     // LOG_DEBUG("x: \n{}", kalmanFilter.x);
     // LOG_DEBUG("P: \n{}", kalmanFilter.P);
 
+    // LOG_DEBUG("P - P^T: \n{}", kalmanFilter.P - kalmanFilter.P.transpose());
+
+    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(kalmanFilter.P);
+    // auto rank = lu_decomp.rank();
+    // LOG_DEBUG("P.rank: {}", rank);
+
     // // Push out the new data
     // auto pvaError = std::make_shared<PVAError>();
     // pvaError->insTime = inertialNavSol->insTime;
@@ -285,6 +291,12 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt
     // LOG_DEBUG("P: \n{}", kalmanFilter.P);
 
     // LOG_DEBUG("K * z: \n{}", kalmanFilter.K * kalmanFilter.z);
+
+    // LOG_DEBUG("P - P^T: \n{}", kalmanFilter.P - kalmanFilter.P.transpose());
+
+    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(kalmanFilter.P);
+    // auto rank = lu_decomp.rank();
+    // LOG_DEBUG("P.rank: {}", rank);
 
     // Push out the new data
     auto pvaError = std::make_shared<PVAError>();

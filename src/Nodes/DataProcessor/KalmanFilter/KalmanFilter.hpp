@@ -91,7 +91,7 @@ class KalmanFilter
         x = x + K * z;
 
         // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{P. Groves}\,(3.25)
-        P = (I - K * H) * P;
+        P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose();
     }
 
     /// x̂ State vector

@@ -59,11 +59,11 @@ void NAV::AddPVAError::recvPosVelAtt(const std::shared_ptr<NodeData>& nodeData, 
     {
         auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
 
-        posVelAtt->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() + pvaError->positionError_lla());
+        posVelAtt->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - pvaError->positionError_lla());
 
-        posVelAtt->velocity_n() += pvaError->velocityError_n();
+        posVelAtt->velocity_n() -= pvaError->velocityError_n();
 
-        auto rollPitchYaw_corrected = posVelAtt->rollPitchYaw() + pvaError->attitudeError_n();
+        auto rollPitchYaw_corrected = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
         posVelAtt->quaternion_nb() = trafo::quat_nb(rollPitchYaw_corrected(0), rollPitchYaw_corrected(1), rollPitchYaw_corrected(2));
 
         // quat_bn is used because the error is also substracted which in quaternions is the conjugated quaternion // TODO check if quaternions possible
