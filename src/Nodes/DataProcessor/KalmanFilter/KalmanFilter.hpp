@@ -82,6 +82,7 @@ class KalmanFilter
     /// @attention Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑)
     ///            and the Measurement vector (𝐳) before calling this
     /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 3.2.2)
+    /// @note See Brown & Hwang (2012) - Introduction to Random Signals and Applied Kalman Filtering (ch. 5.5 - figure 5.5)
     void correctWithMeasurementInnovation()
     {
         // Math: \mathbf{K}_k = \mathbf{P}_k^- \mathbf{H}_k^T (\mathbf{H}_k \mathbf{P}_k^- \mathbf{H}_k^T + R_k)^{-1} \qquad \text{P. Groves}\,(3.21)
@@ -91,6 +92,10 @@ class KalmanFilter
         x = x + K * z;
 
         // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{P. Groves}\,(3.25)
+        // P = (I - K * H) * P;
+
+        // TODO: Fix math comment
+        // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{Brown & Hwang}\,(fig. 5.5)
         P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose();
     }
 
