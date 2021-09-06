@@ -94,7 +94,7 @@ class ImuIntegrator : public Node
     /// TimeSinceStartup at initialization (needed to set time tag when TimeSinceStartup is used)
     uint64_t timeSinceStartup__init = 0;
 
-    enum IntegrationFrame : int
+    enum class IntegrationFrame : int
     {
         ECEF,
         NED
@@ -103,7 +103,7 @@ class ImuIntegrator : public Node
     IntegrationFrame integrationFrame = IntegrationFrame::ECEF;
 
     /// Gravity Model selection
-    enum GravityModel : int
+    enum class GravityModel : int
     {
         WGS84,
         WGS84_Skydel,
@@ -111,6 +111,21 @@ class ImuIntegrator : public Node
         EGM96
     };
     GravityModel gravityModel = GravityModel::WGS84;
+
+    /// Integration Algorithm selection
+    enum class IntegrationAlgorithm
+    {
+        RungeKutta1,
+        RungeKutta3,
+    };
+    IntegrationAlgorithm integrationAlgorithm = IntegrationAlgorithm::RungeKutta3;
+
+    /// Runge Kutta uses intermediate observations but propagates only every other state. Because of this 2 separate state solutions can coexist.
+    /// To avoid this only every seconds state can be output resulting in halving the output frequency. The accuracy of the results is not affected by this.
+    bool rungeKutta3CalculateIntermediateValues = true;
+
+    /// Flag to skip every second calculation
+    bool skipIntermediateCalculation = false;
 
     /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
     bool prefereTimeSinceStartupOverInsTime = false;

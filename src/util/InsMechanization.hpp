@@ -74,16 +74,16 @@ namespace NAV
 ///
 /// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.2.4.1.2)
 ///       See T. Hobiger - Inertialnavigation (Lecture Slides Chapter 8)
-[[nodiscard]] Eigen::Vector3d updateVelocity_e_RungeKutta3(const long double& timeDifferenceSec__t0,
-                                                           const long double& timeDifferenceSec__t1,
-                                                           const Eigen::Vector3d& acceleration_p__t0,
-                                                           const Eigen::Vector3d& acceleration_p__t1,
-                                                           const Eigen::Vector3d& velocity_e__t2,
-                                                           const Eigen::Vector3d& position_e__t2,
-                                                           const Eigen::Vector3d& gravity_e,
-                                                           const Eigen::Quaterniond& quaternion_ep__t0,
-                                                           const Eigen::Quaterniond& quaternion_ep__t1,
-                                                           const Eigen::Quaterniond& quaternion_ep__t2);
+[[nodiscard]] Eigen::Vector3d updateVelocity_e_Simpson(const long double& timeDifferenceSec__t0,
+                                                       const long double& timeDifferenceSec__t1,
+                                                       const Eigen::Vector3d& acceleration_p__t0,
+                                                       const Eigen::Vector3d& acceleration_p__t1,
+                                                       const Eigen::Vector3d& velocity_e__t2,
+                                                       const Eigen::Vector3d& position_e__t2,
+                                                       const Eigen::Vector3d& gravity_e,
+                                                       const Eigen::Quaterniond& quaternion_ep__t0,
+                                                       const Eigen::Quaterniond& quaternion_ep__t1,
+                                                       const Eigen::Quaterniond& quaternion_ep__t2);
 
 /// @brief Integrates the accelerations and calculates the new velocity v_n with Runge Kutta of 3rd Order
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
@@ -101,18 +101,18 @@ namespace NAV
 /// @return The updated velocity v_n
 ///
 /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2)
-[[nodiscard]] Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSec__t0,
-                                                           const long double& timeDifferenceSec__t1,
-                                                           const Eigen::Vector3d& acceleration_b__t0,
-                                                           const Eigen::Vector3d& acceleration_b__t1,
-                                                           const Eigen::Vector3d& velocity_n__t1,
-                                                           const Eigen::Vector3d& velocity_n__t2,
-                                                           const Eigen::Vector3d& gravity_n__t1,
-                                                           const Eigen::Vector3d& angularVelocity_ie_n__t1,
-                                                           const Eigen::Vector3d& angularVelocity_en_n__t1,
-                                                           const Eigen::Quaterniond& quaternion_nb__t0,
-                                                           const Eigen::Quaterniond& quaternion_nb__t1,
-                                                           const Eigen::Quaterniond& quaternion_nb__t2);
+[[nodiscard]] Eigen::Vector3d updateVelocity_n_Simpson(const long double& timeDifferenceSec__t0,
+                                                       const long double& timeDifferenceSec__t1,
+                                                       const Eigen::Vector3d& acceleration_b__t0,
+                                                       const Eigen::Vector3d& acceleration_b__t1,
+                                                       const Eigen::Vector3d& velocity_n__t1,
+                                                       const Eigen::Vector3d& velocity_n__t2,
+                                                       const Eigen::Vector3d& gravity_n__t1,
+                                                       const Eigen::Vector3d& angularVelocity_ie_n__t1,
+                                                       const Eigen::Vector3d& angularVelocity_en_n__t1,
+                                                       const Eigen::Quaterniond& quaternion_nb__t0,
+                                                       const Eigen::Quaterniond& quaternion_nb__t1,
+                                                       const Eigen::Quaterniond& quaternion_nb__t2);
 
 /// @brief Calculates the new position x_e in earth frame
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
@@ -120,8 +120,7 @@ namespace NAV
 /// @param[in] velocity_e__t1 v_e (tₖ₋₁) Velocity in [m/s], in earth coordinates, at the time tₖ₋₁
 /// @return x_e (tₖ) Position in [m/s], in earth coordinates, at the time tₖ
 ///
-/// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.2.4.1.2)
-///       See T. Hobiger - Inertialnavigation (Lecture Slides Chapter 8)
+/// @note See T. Hobiger - Inertialnavigation (Lecture Slides Chapter 9)
 [[nodiscard]] Eigen::Vector3d updatePosition_e(const long double& timeDifferenceSec__t0,
                                                const Eigen::Vector3d& position_e__t1,
                                                const Eigen::Vector3d& velocity_e__t1);

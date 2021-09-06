@@ -51,31 +51,58 @@ std::string NAV::ImuIntegrator::category()
 
 void NAV::ImuIntegrator::guiConfig()
 {
-    ImGui::SetNextItemWidth(100);
+    ImGui::SetNextItemWidth(250);
     if (ImGui::Combo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationFrame), "ECEF\0NED\0\0"))
     {
-        LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame ? "NED" : "ECEF");
+        LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame == IntegrationFrame::NED ? "NED" : "ECEF");
         flow::ApplyChanges();
     }
+    ImGui::SetNextItemWidth(250);
     if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
     {
-        if (gravityModel == WGS84)
+        if (gravityModel == GravityModel::WGS84)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84");
         }
-        else if (gravityModel == WGS84_Skydel)
+        else if (gravityModel == GravityModel::WGS84_Skydel)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84_Skydel");
         }
-        else if (gravityModel == Somigliana)
+        else if (gravityModel == GravityModel::Somigliana)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "Somigliana");
         }
-        else if (gravityModel == EGM96)
+        else if (gravityModel == GravityModel::EGM96)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "EGM96");
         }
         flow::ApplyChanges();
+    }
+    ImGui::SetNextItemWidth(250);
+    if (ImGui::Combo(fmt::format("Integration Algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationAlgorithm), "Runge Kutta 1st Order\0Runge Kutta 3rd Order\0\0"))
+    {
+        integrationAlgorithm = IntegrationAlgorithm::RungeKutta3; // TODO: Remove this to enable 1st Order algorithm
+
+        if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
+        {
+            LOG_DEBUG("{}: Integration Algorithm changed to {}", nameId(), "Runge Kutta 1st Order");
+        }
+        else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
+        {
+            LOG_DEBUG("{}: Integration Algorithm changed to {}", nameId(), "Runge Kutta 3rd Order");
+        }
+        flow::ApplyChanges();
+    }
+    if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
+    {
+        if (ImGui::Checkbox(fmt::format("Calculate intermediate values##{}", size_t(id)).c_str(), &rungeKutta3CalculateIntermediateValues))
+        {
+            LOG_DEBUG("{}: rungeKutta3CalculateIntermediateValues changed to {}", nameId(), rungeKutta3CalculateIntermediateValues);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Runge Kutta uses intermediate observations but propagates only every other state. Because of this 2 separate state solutions can coexist."
+                                 "To avoid this only every seconds state can be output resulting in halving the output frequency. The accuracy of the results is not affected by this.");
     }
 
     if (ImGui::Checkbox(fmt::format("Prefere TimeSinceStartup over InsTime##{}", size_t(id)).c_str(), &prefereTimeSinceStartupOverInsTime))
@@ -95,6 +122,8 @@ void NAV::ImuIntegrator::guiConfig()
 
     j["integrationFrame"] = integrationFrame;
     j["gravityModel"] = gravityModel;
+    j["integrationAlgorithm"] = integrationAlgorithm;
+    j["rungeKutta3CalculateIntermediateValues"] = rungeKutta3CalculateIntermediateValues;
     j["prefereTimeSinceStartupOverInsTime"] = prefereTimeSinceStartupOverInsTime;
 
     return j;
@@ -112,6 +141,14 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         gravityModel = static_cast<GravityModel>(j.at("gravityModel").get<int>());
     }
+    if (j.contains("integrationAlgorithm"))
+    {
+        integrationAlgorithm = static_cast<IntegrationAlgorithm>(j.at("integrationAlgorithm").get<int>());
+    }
+    if (j.contains("rungeKutta3CalculateIntermediateValues"))
+    {
+        rungeKutta3CalculateIntermediateValues = j.at("rungeKutta3CalculateIntermediateValues");
+    }
     if (j.contains("prefereTimeSinceStartupOverInsTime"))
     {
         prefereTimeSinceStartupOverInsTime = j.at("prefereTimeSinceStartupOverInsTime");
@@ -124,12 +161,21 @@ bool NAV::ImuIntegrator::initialize()
 
     // This should be dependant on the integration algorithm
     maxSizeImuObservations = 3;
-    maxSizeStates = 2;
+
+    if (rungeKutta3CalculateIntermediateValues)
+    {
+        maxSizeStates = 2;
+    }
+    else
+    {
+        maxSizeStates = 1;
+    }
 
     imuObservations.clear();
     posVelAttStates.clear();
 
     posVelAtt__init = nullptr;
+    skipIntermediateCalculation = false;
 
     time__init = InsTime();
     timeSinceStartup__init = 0;
@@ -167,7 +213,18 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeDat
     if (imuObservations.size() == maxSizeImuObservations
         && posVelAttStates.size() == maxSizeStates)
     {
-        integrateObservation();
+        if (!skipIntermediateCalculation)
+        {
+            integrateObservation();
+            if (!rungeKutta3CalculateIntermediateValues)
+            {
+                skipIntermediateCalculation = true;
+            }
+        }
+        else
+        {
+            skipIntermediateCalculation = false;
+        }
     }
 }
 
@@ -211,9 +268,22 @@ void NAV::ImuIntegrator::integrateObservation()
     std::shared_ptr<ImuObs> imuObs__t2 = imuObservations.at(2);
 
     /// Position, Velocity and Attitude at the time tₖ₋₁
-    std::shared_ptr<PosVelAtt> posVelAtt__t1 = posVelAttStates.at(0);
+    std::shared_ptr<PosVelAtt> posVelAtt__t1 = nullptr;
     /// Position, Velocity and Attitude at the time tₖ₋₂
-    std::shared_ptr<PosVelAtt> posVelAtt__t2 = posVelAttStates.at(1);
+    std::shared_ptr<PosVelAtt> posVelAtt__t2 = nullptr;
+
+    if (rungeKutta3CalculateIntermediateValues)
+    {
+        posVelAtt__t1 = posVelAttStates.at(0);
+        posVelAtt__t2 = posVelAttStates.at(1);
+    }
+    else
+    {
+        // Because intermediate values are skipped, there is only one previous state available which is at time tₖ₋₂
+        posVelAtt__t2 = posVelAttStates.at(0);
+        // As there is no state at time tₖ₋₁ the state at time tₖ₋₂ is used which is acceptable for small Δtₖ
+        posVelAtt__t1 = posVelAttStates.at(0);
+    }
 
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = imuObs__t0->imuPos;
@@ -373,10 +443,19 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// q (tₖ) Quaternion, from platform to earth coordinates, at the current time tₖ
-        const Eigen::Quaterniond quaternion_gyro_ep__t0 = updateQuaternion_ep_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                                                          angularVelocity_ip_p__t0, angularVelocity_ip_p__t1,
-                                                                                          angularVelocity_ie_e__t0,
-                                                                                          quaternion_gyro_ep__t1, quaternion_gyro_ep__t2);
+        Eigen::Quaterniond quaternion_gyro_ep__t0;
+
+        if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
+        {
+            // TODO: Call Runge Kutta 1
+        }
+        else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
+        {
+            quaternion_gyro_ep__t0 = updateQuaternion_ep_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
+                                                                     angularVelocity_ip_p__t0, angularVelocity_ip_p__t1,
+                                                                     angularVelocity_ie_e__t0,
+                                                                     quaternion_gyro_ep__t1, quaternion_gyro_ep__t2);
+        }
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                    Specific force frame transformation                                   */
@@ -390,14 +469,24 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// v (tₖ), Velocity in [m/s], in earth coordinates, at the current time tₖ
-        const Eigen::Vector3d velocity_e__t0 = updateVelocity_e_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                                            acceleration_p__t0, acceleration_p__t1,
-                                                                            velocity_e__t2,
-                                                                            position_e__t2,
-                                                                            gravity_e__t1,
-                                                                            quaternion_accel_ep__t0,
-                                                                            quaternion_accel_ep__t1,
-                                                                            quaternion_accel_ep__t2);
+        Eigen::Vector3d velocity_e__t0;
+
+        if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
+        {
+            // TODO: Call Runge Kutta 1
+        }
+        else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
+        {
+            // TODO: Runge Kutta instead Simpson
+            velocity_e__t0 = updateVelocity_e_Simpson(timeDifferenceSec__t0, timeDifferenceSec__t1,
+                                                      acceleration_p__t0, acceleration_p__t1,
+                                                      velocity_e__t2,
+                                                      position_e__t2,
+                                                      gravity_e__t1,
+                                                      quaternion_accel_ep__t0,
+                                                      quaternion_accel_ep__t1,
+                                                      quaternion_accel_ep__t2);
+        }
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Position update                                             */
@@ -461,34 +550,60 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// q (tₖ) Quaternion, from body to navigation coordinates, at the current time tₖ
-        Eigen::Quaterniond quaternion_nb__t0 = updateQuaternion_nb_RungeKutta3(timeDifferenceSec__t0,
-                                                                               timeDifferenceSec__t1,
-                                                                               angularVelocity_ip_b__t0,
-                                                                               angularVelocity_ip_b__t1,
-                                                                               angularVelocity_ie_n__t1,
-                                                                               angularVelocity_en_n__t1,
-                                                                               quaternion_nb__t1,
-                                                                               quaternion_nb__t2);
+        Eigen::Quaterniond quaternion_nb__t0;
+
+        if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
+        {
+            // TODO: Call Runge Kutta 1
+        }
+        else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
+        {
+            quaternion_nb__t0 = updateQuaternion_nb_RungeKutta3(timeDifferenceSec__t0,
+                                                                timeDifferenceSec__t1,
+                                                                angularVelocity_ip_b__t0,
+                                                                angularVelocity_ip_b__t1,
+                                                                angularVelocity_ie_n__t1,
+                                                                angularVelocity_en_n__t1,
+                                                                quaternion_nb__t1,
+                                                                quaternion_nb__t2);
+        }
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                           Specific force frame transformation & Velocity update                          */
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// v (tₖ), Velocity in navigation coordinates, at the current time tₖ
-        Eigen::Vector3d velocity_n__t0 = updateVelocity_n_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                                      acceleration_b__t0, acceleration_b__t1,
-                                                                      velocity_n__t1, velocity_n__t2,
-                                                                      gravity_n__t1,
-                                                                      angularVelocity_ie_n__t1,
-                                                                      angularVelocity_en_n__t1,
-                                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2);
+        Eigen::Vector3d velocity_n__t0;
+
+        if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
+        {
+            // TODO: Call Runge Kutta 1
+        }
+        else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
+        {
+            velocity_n__t0 = updateVelocity_n_Simpson(timeDifferenceSec__t0, timeDifferenceSec__t1,
+                                                      acceleration_b__t0, acceleration_b__t1,
+                                                      velocity_n__t1, velocity_n__t2,
+                                                      gravity_n__t1,
+                                                      angularVelocity_ie_n__t1,
+                                                      angularVelocity_en_n__t1,
+                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2);
+        }
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Position update                                             */
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// [x_n, x_e, x_d] (tₖ) Position NED in [m] at the time tₖ
-        Eigen::Vector3d position_n__t0 = updatePosition_n(timeDifferenceSec__t0, position_n__t1, velocity_n__t1);
+        Eigen::Vector3d position_n__t0;
+        if (rungeKutta3CalculateIntermediateValues)
+        {
+            position_n__t0 = updatePosition_n(timeDifferenceSec__t0, position_n__t1, velocity_n__t1);
+        }
+        else
+        {
+            position_n__t0 = updatePosition_n(timeDifferenceSec__t0 + timeDifferenceSec__t1, position_n__t1, velocity_n__t1);
+        }
 
         /// x_e (tₖ) Position in [m], in ECEF coordinates, at the time tₖ
         Eigen::Vector3d position_e__t0 = trafo::ned2ecef(position_n__t0, posVelAtt__init->latLonAlt());

@@ -185,16 +185,16 @@ Eigen::Quaterniond updateQuaternion_nb_RungeKutta3(
     return q_nb__t0;
 }
 
-Eigen::Vector3d updateVelocity_e_RungeKutta3(const long double& timeDifferenceSec__t0,    // Δtₖ Time difference in [seconds]. This epoch to previous epoch
-                                             const long double& timeDifferenceSec__t1,    // Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
-                                             const Eigen::Vector3d& acceleration_p__t0,   // a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
-                                             const Eigen::Vector3d& acceleration_p__t1,   // a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
-                                             const Eigen::Vector3d& velocity_e__t2,       // v_e (tₖ₋₂) Velocity in [m/s], in earth coordinates, at the time tₖ₋₂
-                                             const Eigen::Vector3d& position_e__t2,       // x_e (tₖ₋₂) Position in [m/s], in earth coordinates, at the time tₖ₋₂
-                                             const Eigen::Vector3d& gravity_e,            // g_e Gravity vector in [m/s^2], in earth coordinates
-                                             const Eigen::Quaterniond& quaternion_ep__t0, // q (tₖ) Quaternion, from platform to earth coordinates, at the time tₖ
-                                             const Eigen::Quaterniond& quaternion_ep__t1, // q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
-                                             const Eigen::Quaterniond& quaternion_ep__t2) // q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
+Eigen::Vector3d updateVelocity_e_Simpson(const long double& timeDifferenceSec__t0,    // Δtₖ Time difference in [seconds]. This epoch to previous epoch
+                                         const long double& timeDifferenceSec__t1,    // Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
+                                         const Eigen::Vector3d& acceleration_p__t0,   // a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
+                                         const Eigen::Vector3d& acceleration_p__t1,   // a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
+                                         const Eigen::Vector3d& velocity_e__t2,       // v_e (tₖ₋₂) Velocity in [m/s], in earth coordinates, at the time tₖ₋₂
+                                         const Eigen::Vector3d& position_e__t2,       // x_e (tₖ₋₂) Position in [m/s], in earth coordinates, at the time tₖ₋₂
+                                         const Eigen::Vector3d& gravity_e,            // g_e Gravity vector in [m/s^2], in earth coordinates
+                                         const Eigen::Quaterniond& quaternion_ep__t0, // q (tₖ) Quaternion, from platform to earth coordinates, at the time tₖ
+                                         const Eigen::Quaterniond& quaternion_ep__t1, // q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
+                                         const Eigen::Quaterniond& quaternion_ep__t2) // q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
 {
     /// Δv_p (tₖ) Integrated velocity in [m/s], in platform coordinates, at the time tₖ (eq. 9.3)
     const Eigen::Vector3d deltaVelocity_p__t0 = acceleration_p__t0 * timeDifferenceSec__t0;
@@ -202,37 +202,37 @@ Eigen::Vector3d updateVelocity_e_RungeKutta3(const long double& timeDifferenceSe
     /// Δv_p (tₖ₋₁) Integrated velocity in [m/s], in platform coordinates, at the time tₖ₋₁ (eq. 9.3)
     const Eigen::Vector3d deltaVelocity_p__t1 = acceleration_p__t1 * timeDifferenceSec__t1;
 
-    /// Runge-Kutta integration step [s]
+    /// Integration step [s]
     const long double integrationStep = timeDifferenceSec__t0 + timeDifferenceSec__t1;
 
-    /// Runge Kutta Integration of delta velocities (eq. 9.12)
-    const Eigen::Vector3d rungeKuttaIntegration_e = (quaternion_ep__t2 * (3 * deltaVelocity_p__t1 - deltaVelocity_p__t0)
-                                                     + 4 * (quaternion_ep__t1 * (deltaVelocity_p__t1 + deltaVelocity_p__t0))
-                                                     + quaternion_ep__t0 * (3 * deltaVelocity_p__t0 - deltaVelocity_p__t1))
-                                                    / 6.0;
+    /// Integration of delta velocities (eq. 9.12)
+    const Eigen::Vector3d simpsonIntegration_e = (quaternion_ep__t2 * (3 * deltaVelocity_p__t1 - deltaVelocity_p__t0)
+                                                  + 4 * (quaternion_ep__t1 * (deltaVelocity_p__t1 + deltaVelocity_p__t0))
+                                                  + quaternion_ep__t0 * (3 * deltaVelocity_p__t0 - deltaVelocity_p__t1))
+                                                 / 6.0;
 
     /// The Coriolis force accounts for the fact that the NED frame is noninertial
     const Eigen::Vector3d coriolisAcceleration_e = 2 * InsConst::angularVelocityCrossProduct_ie_e * velocity_e__t2
                                                    + InsConst::angularVelocityCrossProduct_ie_e * InsConst::angularVelocityCrossProduct_ie_e * position_e__t2;
 
     /// v_e (tₖ) Velocity in [m/s], in earth coordinates, at the time tₖ (eq. 9.12)
-    Eigen::Vector3d velocity_e__t0 = velocity_e__t2 + rungeKuttaIntegration_e - (coriolisAcceleration_e - gravity_e) * integrationStep;
+    Eigen::Vector3d velocity_e__t0 = velocity_e__t2 + simpsonIntegration_e - (coriolisAcceleration_e - gravity_e) * integrationStep;
 
     return velocity_e__t0;
 }
 
-Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSec__t0,        // Δtₖ Time difference in [seconds]. This epoch to previous epoch
-                                             const long double& timeDifferenceSec__t1,        // Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
-                                             const Eigen::Vector3d& acceleration_b__t0,       // a_p (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
-                                             const Eigen::Vector3d& acceleration_b__t1,       // a_p (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
-                                             const Eigen::Vector3d& velocity_n__t1,           // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
-                                             const Eigen::Vector3d& velocity_n__t2,           // v_n (tₖ₋₂) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₂
-                                             const Eigen::Vector3d& gravity_n__t1,            // g_n (tₖ₋₁) Gravity vector in [m/s^2], in navigation coordinates, at the time tₖ₋₁
-                                             const Eigen::Vector3d& angularVelocity_ie_n__t1, // ω_ie_n (tₖ₋₁) Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates, at the time tₖ₋₁
-                                             const Eigen::Vector3d& angularVelocity_en_n__t1, // ω_ie_n (tₖ₋₁) Transport Rate in [rad/s], in navigation coordinates, at the time tₖ₋₁
-                                             const Eigen::Quaterniond& quaternion_nb__t0,     // q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
-                                             const Eigen::Quaterniond& quaternion_nb__t1,     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-                                             const Eigen::Quaterniond& quaternion_nb__t2)     // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
+Eigen::Vector3d updateVelocity_n_Simpson(const long double& timeDifferenceSec__t0,        // Δtₖ Time difference in [seconds]. This epoch to previous epoch
+                                         const long double& timeDifferenceSec__t1,        // Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
+                                         const Eigen::Vector3d& acceleration_b__t0,       // a_p (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
+                                         const Eigen::Vector3d& acceleration_b__t1,       // a_p (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
+                                         const Eigen::Vector3d& velocity_n__t1,           // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
+                                         const Eigen::Vector3d& velocity_n__t2,           // v_n (tₖ₋₂) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₂
+                                         const Eigen::Vector3d& gravity_n__t1,            // g_n (tₖ₋₁) Gravity vector in [m/s^2], in navigation coordinates, at the time tₖ₋₁
+                                         const Eigen::Vector3d& angularVelocity_ie_n__t1, // ω_ie_n (tₖ₋₁) Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates, at the time tₖ₋₁
+                                         const Eigen::Vector3d& angularVelocity_en_n__t1, // ω_ie_n (tₖ₋₁) Transport Rate in [rad/s], in navigation coordinates, at the time tₖ₋₁
+                                         const Eigen::Quaterniond& quaternion_nb__t0,     // q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
+                                         const Eigen::Quaterniond& quaternion_nb__t1,     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
+                                         const Eigen::Quaterniond& quaternion_nb__t2)     // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
 {
     /// Δv_p (tₖ) Integrated velocity in [m/s], in body coordinates, at the time tₖ
     const Eigen::Vector3d deltaVelocity_b__t0 = acceleration_b__t0 * timeDifferenceSec__t0;
@@ -240,20 +240,20 @@ Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSe
     /// Δv_p (tₖ₋₁) Integrated velocity in [m/s], in body coordinates, at the time tₖ₋₁
     const Eigen::Vector3d deltaVelocity_b__t1 = acceleration_b__t1 * timeDifferenceSec__t1;
 
-    /// Runge-Kutta integration step [s]
+    /// Integration step [s]
     const long double integrationStep = timeDifferenceSec__t0 + timeDifferenceSec__t1;
 
-    /// Runge Kutta Integration of delta velocities
-    const Eigen::Vector3d rungeKuttaIntegration_n = (quaternion_nb__t2 * (3 * deltaVelocity_b__t1 - deltaVelocity_b__t0)
-                                                     + 4 * (quaternion_nb__t1 * (deltaVelocity_b__t1 + deltaVelocity_b__t0))
-                                                     + quaternion_nb__t0 * (3 * deltaVelocity_b__t0 - deltaVelocity_b__t1))
-                                                    / 6.0;
+    /// Integration of delta velocities
+    const Eigen::Vector3d simpsonIntegration_n = (quaternion_nb__t2 * (3 * deltaVelocity_b__t1 - deltaVelocity_b__t0)
+                                                  + 4 * (quaternion_nb__t1 * (deltaVelocity_b__t1 + deltaVelocity_b__t0))
+                                                  + quaternion_nb__t0 * (3 * deltaVelocity_b__t0 - deltaVelocity_b__t1))
+                                                 / 6.0;
 
     /// The Coriolis force accounts for the fact that the NED frame is noninertial
     const Eigen::Vector3d coriolisAcceleration_n__t1 = (2 * angularVelocity_ie_n__t1 + angularVelocity_en_n__t1).cross(velocity_n__t1);
 
     /// v_e (tₖ) Velocity in [m/s], in navigation coordinates, at the time tₖ (eq. 6.13)
-    Eigen::Vector3d velocity_n__t0 = velocity_n__t2 + rungeKuttaIntegration_n - (coriolisAcceleration_n__t1 - gravity_n__t1) * integrationStep;
+    Eigen::Vector3d velocity_n__t0 = velocity_n__t2 + simpsonIntegration_n - (coriolisAcceleration_n__t1 - gravity_n__t1) * integrationStep;
 
     return velocity_n__t0;
 }

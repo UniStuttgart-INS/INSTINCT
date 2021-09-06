@@ -11,95 +11,84 @@
             "id": 369,
             "startPinId": 355
         },
-        "link-370": {
+        "link-497": {
             "color": {
                 "a": 255,
                 "b": 255,
                 "g": 255,
                 "r": 255
             },
-            "endPinId": 195,
-            "id": 370,
-            "startPinId": 358
-        },
-        "link-432": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 430,
-            "id": 432,
+            "endPinId": 495,
+            "id": 497,
             "startPinId": 355
         },
-        "link-471": {
+        "link-502": {
             "color": {
                 "a": 255,
                 "b": 255,
                 "g": 255,
                 "r": 255
             },
-            "endPinId": 309,
-            "id": 471,
-            "startPinId": 469
+            "endPinId": 498,
+            "id": 502,
+            "startPinId": 494
         },
-        "link-472": {
+        "link-523": {
             "color": {
                 "a": 255,
                 "b": 255,
                 "g": 255,
                 "r": 255
             },
-            "endPinId": 371,
-            "id": 472,
-            "startPinId": 465
+            "endPinId": 520,
+            "id": 523,
+            "startPinId": 494
         },
-        "link-473": {
+        "link-524": {
             "color": {
                 "a": 255,
                 "b": 255,
                 "g": 255,
                 "r": 255
             },
-            "endPinId": 467,
-            "id": 473,
-            "startPinId": 358
+            "endPinId": 513,
+            "id": 524,
+            "startPinId": 494
         },
-        "link-474": {
+        "link-540": {
             "color": {
                 "a": 255,
                 "b": 255,
                 "g": 255,
                 "r": 255
             },
-            "endPinId": 463,
-            "id": 474,
-            "startPinId": 358
+            "endPinId": 537,
+            "id": 540,
+            "startPinId": 515
         },
-        "link-487": {
+        "link-541": {
             "color": {
                 "a": 255,
                 "b": 255,
                 "g": 255,
                 "r": 255
             },
-            "endPinId": 229,
-            "id": 487,
-            "startPinId": 197
+            "endPinId": 538,
+            "id": 541,
+            "startPinId": 522
         },
-        "link-489": {
+        "link-543": {
             "color": {
                 "a": 255,
                 "b": 255,
                 "g": 255,
                 "r": 255
             },
-            "endPinId": 228,
-            "id": 489,
-            "startPinId": 465
+            "endPinId": 539,
+            "id": 543,
+            "startPinId": 355
         },
-        "link-490": {
+        "link-611": {
             "color": {
                 "a": 255,
                 "b": 255,
@@ -107,10 +96,32 @@
                 "r": 255
             },
             "endPinId": 419,
-            "id": 490,
-            "startPinId": 197
+            "id": 611,
+            "startPinId": 500
         },
-        "link-491": {
+        "link-612": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 229,
+            "id": 612,
+            "startPinId": 500
+        },
+        "link-613": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 228,
+            "id": 613,
+            "startPinId": 522
+        },
+        "link-614": {
             "color": {
                 "a": 255,
                 "b": 255,
@@ -118,104 +129,33 @@
                 "r": 255
             },
             "endPinId": 418,
-            "id": 491,
-            "startPinId": 469
+            "id": 614,
+            "startPinId": 515
         },
-        "link-492": {
+        "link-615": {
             "color": {
                 "a": 255,
                 "b": 255,
                 "g": 255,
                 "r": 255
             },
-            "endPinId": 468,
-            "id": 492,
+            "endPinId": 514,
+            "id": 615,
             "startPinId": 420
         },
-        "link-493": {
+        "link-616": {
             "color": {
                 "a": 255,
                 "b": 255,
                 "g": 255,
                 "r": 255
             },
-            "endPinId": 464,
-            "id": 493,
+            "endPinId": 521,
+            "id": 616,
             "startPinId": 230
         }
     },
     "nodes": {
-        "node-198": {
-            "data": {
-                "initDuration": 5.0,
-                "overridePosition": true,
-                "overrideRollPitchYaw": [
-                    true,
-                    true,
-                    true
-                ],
-                "overrideValuesPosition_lla": [
-                    48.780845642089844,
-                    9.172096252441406,
-                    327.0
-                ],
-                "overrideValuesRollPitchYaw": [
-                    -0.6119999885559082,
-                    0.36000001430511475,
-                    45.5
-                ],
-                "overrideValuesVelocity_n": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "overrideVelocity": true,
-                "positionAccuracyThreshold": 10.0,
-                "velocityAccuracyThreshold": 10.0
-            },
-            "enabled": true,
-            "id": 198,
-            "inputPins": [
-                {
-                    "dataIdentifier": [
-                        "ImuObs"
-                    ],
-                    "id": 195,
-                    "name": "ImuObs",
-                    "type": "Flow"
-                },
-                {
-                    "dataIdentifier": [
-                        "UbloxObs",
-                        "RtklibPosObs"
-                    ],
-                    "id": 196,
-                    "name": "GnssObs",
-                    "type": "Flow"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "PosVelAttInitializer",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 197,
-                    "name": "PosVelAtt",
-                    "type": "Flow"
-                }
-            ],
-            "pos": {
-                "x": 831.0,
-                "y": 176.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "PosVelAttInitializer"
-        },
         "node-231": {
             "data": null,
             "enabled": true,
@@ -252,7 +192,7 @@
             ],
             "pos": {
                 "x": 1185.0,
-                "y": 208.0
+                "y": 192.0
             },
             "size": {
                 "x": 0.0,
@@ -260,10 +200,375 @@
             },
             "type": "Combiner"
         },
-        "node-314": {
+        "node-356": {
+            "data": {
+                "FileReader": {
+                    "path": "data/vn100_R+-90_P+-90_Y+-90.csv"
+                },
+                "Imu": {
+                    "imuPos": {
+                        "posAccel_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "posGyro_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "posMag_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "quatAccel_bp": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "quatGyro_bp": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "quatMag_bp": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                }
+            },
+            "enabled": true,
+            "id": 356,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VectorNavFile",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "VectorNavBinaryOutput"
+                    ],
+                    "id": 355,
+                    "name": "Binary Output",
+                    "type": "Flow"
+                }
+            ],
+            "pos": {
+                "x": 262.0,
+                "y": -84.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavFile"
+        },
+        "node-421": {
+            "data": null,
+            "enabled": true,
+            "id": 421,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "InertialNavSol"
+                    ],
+                    "id": 418,
+                    "name": "",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "InertialNavSol"
+                    ],
+                    "id": 419,
+                    "name": "",
+                    "type": "Flow"
+                }
+            ],
+            "kind": "Simple",
+            "name": "\\\n/",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "InertialNavSol"
+                    ],
+                    "id": 420,
+                    "name": "",
+                    "type": "Flow"
+                }
+            ],
+            "pos": {
+                "x": 1201.0,
+                "y": -116.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Combiner"
+        },
+        "node-496": {
+            "data": {
+                "outputType": 0
+            },
+            "enabled": true,
+            "id": 496,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "VectorNavBinaryOutput"
+                    ],
+                    "id": 495,
+                    "name": "VectorNavBinaryOutput",
+                    "type": "Flow"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavBinaryConverter",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "ImuObsWDelta"
+                    ],
+                    "id": 494,
+                    "name": "ImuObs",
+                    "type": "Flow"
+                }
+            ],
+            "pos": {
+                "x": 538.0,
+                "y": -131.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavBinaryConverter"
+        },
+        "node-501": {
+            "data": {
+                "attitudeMode": 0,
+                "initDuration": 5.0,
+                "overridePosition": true,
+                "overrideRollPitchYaw": [
+                    true,
+                    true,
+                    true
+                ],
+                "overrideValuesPosition_lla": [
+                    48.780845642089844,
+                    9.172096252441406,
+                    274.0
+                ],
+                "overrideValuesRollPitchYaw": [
+                    -0.6000000238418579,
+                    0.4000000059604645,
+                    45.5
+                ],
+                "overrideValuesVelocity_n": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideVelocity": true,
+                "positionAccuracyThreshold": 10.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "enabled": true,
+            "id": 501,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "ImuObs"
+                    ],
+                    "id": 498,
+                    "name": "ImuObs",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "UbloxObs",
+                        "RtklibPosObs",
+                        "PosVelAtt"
+                    ],
+                    "id": 499,
+                    "name": "GnssObs",
+                    "type": "Flow"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "PosVelAttInitializer",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "PosVelAtt"
+                    ],
+                    "id": 500,
+                    "name": "PosVelAtt",
+                    "type": "Flow"
+                }
+            ],
+            "pos": {
+                "x": 856.0,
+                "y": 34.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
+        },
+        "node-512": {
+            "data": {
+                "gravityModel": 3,
+                "integrationAlgorithm": 1,
+                "integrationFrame": 1,
+                "prefereTimeSinceStartupOverInsTime": true,
+                "rungeKutta3CalculateIntermediateValues": true
+            },
+            "enabled": true,
+            "id": 512,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "ImuObs"
+                    ],
+                    "id": 513,
+                    "name": "ImuObs",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "PosVelAtt"
+                    ],
+                    "id": 514,
+                    "name": "PosVelAtt",
+                    "type": "Flow"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ImuIntegrator",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "InertialNavSol"
+                    ],
+                    "id": 515,
+                    "name": "InertialNavSol",
+                    "type": "Flow"
+                }
+            ],
+            "pos": {
+                "x": 1367.0,
+                "y": -242.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuIntegrator"
+        },
+        "node-519": {
+            "data": {
+                "gravityModel": 3,
+                "integrationAlgorithm": 1,
+                "integrationFrame": 1,
+                "prefereTimeSinceStartupOverInsTime": true,
+                "rungeKutta3CalculateIntermediateValues": false
+            },
+            "enabled": true,
+            "id": 519,
+            "inputPins": [
+                {
+                    "dataIdentifier": [
+                        "ImuObs"
+                    ],
+                    "id": 520,
+                    "name": "ImuObs",
+                    "type": "Flow"
+                },
+                {
+                    "dataIdentifier": [
+                        "PosVelAtt"
+                    ],
+                    "id": 521,
+                    "name": "PosVelAtt",
+                    "type": "Flow"
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ImuIntegrator",
+            "outputPins": [
+                {
+                    "dataIdentifier": [
+                        "InertialNavSol"
+                    ],
+                    "id": 522,
+                    "name": "InertialNavSol",
+                    "type": "Flow"
+                }
+            ],
+            "pos": {
+                "x": 1336.0,
+                "y": 46.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuIntegrator"
+        },
+        "node-536": {
             "data": {
                 "nInputPins": 3,
-                "nPlots": 4,
+                "nPlots": 6,
                 "pinData": [
                     {
                         "dataIdentifier": "InertialNavSol",
@@ -291,7 +596,7 @@
                                                     "y": 0.7490196228027344,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "NED - EGM96",
+                                                "legendName": "200 Hz",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -317,7 +622,41 @@
                             },
                             {
                                 "displayName": "Longitude [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "200 Hz",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Altitude [m]",
@@ -333,19 +672,19 @@
                                                     "y": 0.7490196228027344,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "NED - EGM96",
-                                                "lineType": 1,
+                                                "legendName": "200 Hz",
+                                                "lineType": 0,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
-                                                    "y": 1.0,
-                                                    "z": 0.0
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
-                                                    "y": 1.0,
-                                                    "z": 0.0
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -367,23 +706,23 @@
                                             {
                                                 "color": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 0.7490196228027344,
-                                                    "z": 1.0
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
                                                 },
-                                                "legendName": "NED - EGM96",
+                                                "legendName": "200 Hz",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 0.7490196228027344,
-                                                    "z": 1.0
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 0.7490196228027344,
-                                                    "z": 1.0
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -412,10 +751,10 @@
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Roll [deg]",
+                                "displayName": "North velocity [m/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
-                                        3,
+                                        5,
                                         [
                                             0,
                                             {
@@ -425,8 +764,8 @@
                                                     "y": 0.7490196228027344,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "Roll (NED - EGM96)",
-                                                "lineType": 0,
+                                                "legendName": "200 Hz",
+                                                "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
                                                     "x": 0.0,
@@ -450,6 +789,52 @@
                                 ]
                             },
                             {
+                                "displayName": "East velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Roll [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Roll (200 Hz)",
+                                                "lineType": 0,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 4.800000190734863
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
                                 "displayName": "Pitch [deg]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
@@ -463,8 +848,8 @@
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "Pitch (NED - EGM96)",
-                                                "lineType": 0,
+                                                "legendName": "Pitch (200 Hz)",
+                                                "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
                                                     "x": 0.49803921580314636,
@@ -501,19 +886,19 @@
                                                     "y": 1.0,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "Yaw (NED - EGM96)",
-                                                "lineType": 0,
+                                                "legendName": "Yaw (200 Hz)",
+                                                "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.9575290679931641,
+                                                    "x": 0.0,
                                                     "y": 1.0,
-                                                    "z": 0.0
+                                                    "z": 1.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.95686274766922,
+                                                    "x": 0.0,
                                                     "y": 1.0,
-                                                    "z": 0.0
+                                                    "z": 1.0
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -570,7 +955,7 @@
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "NED - Somigliana",
+                                                "legendName": "100 Hz",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -596,7 +981,41 @@
                             },
                             {
                                 "displayName": "Longitude [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "100 Hz",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Altitude [m]",
@@ -612,19 +1031,19 @@
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "NED - Somigliana",
-                                                "lineType": 1,
+                                                "legendName": "100 Hz",
+                                                "lineType": 0,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.5411764979362488,
-                                                    "y": 0.16862745583057404,
-                                                    "z": 0.886274516582489
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.5411764979362488,
-                                                    "y": 0.16862745583057404,
-                                                    "z": 0.886274516582489
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -646,21 +1065,21 @@
                                             {
                                                 "color": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
+                                                    "x": 1.0,
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "NED - Somigliana",
+                                                "legendName": "100 Hz",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
+                                                    "x": 1.0,
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
+                                                    "x": 1.0,
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
@@ -691,16 +1110,164 @@
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Roll [deg]",
+                                "displayName": "North velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        5,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "100 Hz",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "East velocity [m/s]",
                                 "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Roll [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Roll (100 Hz)",
+                                                "lineType": 0,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Pitch [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "legendName": "Pitch (100 Hz)",
+                                                "lineType": 0,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Yaw [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Yaw (100 Hz)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Quaternion::w",
@@ -1137,20 +1704,20 @@
                                                     "w": 1.0,
                                                     "x": 1.0,
                                                     "y": 0.0,
-                                                    "z": 0.0
+                                                    "z": 1.0
                                                 },
                                                 "legendName": "Yaw (VectorNav)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 0.7490196228027344,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
                                                     "z": 1.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 0.7490196228027344,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
                                                     "z": 1.0
                                                 },
                                                 "markerSize": 1.0,
@@ -1173,23 +1740,23 @@
                                             {
                                                 "color": {
                                                     "w": 1.0,
-                                                    "x": 0.5,
-                                                    "y": 0.5,
-                                                    "z": 0.5
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
                                                 },
                                                 "legendName": "Pitch (VectorNav)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.5,
-                                                    "y": 0.5,
-                                                    "z": 0.5
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.5,
-                                                    "y": 0.5,
-                                                    "z": 0.5
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -1211,23 +1778,23 @@
                                             {
                                                 "color": {
                                                     "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.0,
-                                                    "z": 1.0
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
                                                 },
                                                 "legendName": "Roll (VectorNav)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.0,
-                                                    "z": 1.0
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 1.0,
-                                                    "y": 0.0,
-                                                    "z": 1.0
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -1662,13 +2229,13 @@
                 "plotInfos": [
                     {
                         "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
+                        "autoLimitYaxis": false,
                         "headerText": "Position LatLon",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 1,
+                        "selectedPin": 0,
                         "selectedXdata": [
                             3,
                             3,
@@ -1685,14 +2252,14 @@
                         "y3AxisLabel": ""
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
+                        "autoLimitXaxis": false,
+                        "autoLimitYaxis": false,
                         "headerText": "Position North/East",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 0,
+                        "selectedPin": 1,
                         "selectedXdata": [
                             6,
                             6,
@@ -1716,7 +2283,7 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 2,
+                        "selectedPin": 1,
                         "selectedXdata": [
                             0,
                             0,
@@ -1733,8 +2300,8 @@
                         "y3AxisLabel": ""
                     },
                     {
-                        "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
+                        "autoLimitXaxis": false,
+                        "autoLimitYaxis": false,
                         "headerText": "Attitude",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -1755,11 +2322,59 @@
                         "y1AxisLabel": "Euler Angles [deg]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Longitude",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Longitude",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Longitude [deg]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "North Velocity",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "North Velocity",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "North velocity [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
                     }
                 ]
             },
             "enabled": true,
-            "id": 314,
+            "id": 536,
             "inputPins": [
                 {
                     "dataIdentifier": [
@@ -1771,7 +2386,7 @@
                         "ImuObsWDelta",
                         "VectorNavBinaryOutput"
                     ],
-                    "id": 309,
+                    "id": 537,
                     "name": "Pin 1",
                     "type": "Flow"
                 },
@@ -1785,7 +2400,7 @@
                         "ImuObsWDelta",
                         "VectorNavBinaryOutput"
                     ],
-                    "id": 371,
+                    "id": 538,
                     "name": "Pin 2",
                     "type": "Flow"
                 },
@@ -1799,7 +2414,7 @@
                         "ImuObsWDelta",
                         "VectorNavBinaryOutput"
                     ],
-                    "id": 430,
+                    "id": 539,
                     "name": "Pin 3",
                     "type": "Flow"
                 }
@@ -1808,300 +2423,14 @@
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 1688.0,
-                "y": -140.0
+                "x": 1704.0,
+                "y": -114.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "Plot"
-        },
-        "node-356": {
-            "data": {
-                "FileReader": {
-                    "path": "data/vn100_R+-90_P+-90_Y+-90.csv"
-                },
-                "Imu": {
-                    "imuPos": {
-                        "posAccel_b": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "posGyro_b": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "posMag_b": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            }
-                        },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatMag_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        }
-                    }
-                }
-            },
-            "enabled": true,
-            "id": 356,
-            "inputPins": [],
-            "kind": "Blueprint",
-            "name": "VectorNavFile",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
-                    "id": 355,
-                    "name": "Binary Output",
-                    "type": "Flow"
-                }
-            ],
-            "pos": {
-                "x": 262.0,
-                "y": -84.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "VectorNavFile"
-        },
-        "node-360": {
-            "data": null,
-            "enabled": true,
-            "id": 360,
-            "inputPins": [
-                {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
-                    "id": 359,
-                    "name": "VectorNavBinaryOutput",
-                    "type": "Flow"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "VN-Binary 2 ImuObs Converter",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "ImuObsWDelta"
-                    ],
-                    "id": 358,
-                    "name": "ImuObs",
-                    "type": "Flow"
-                }
-            ],
-            "pos": {
-                "x": 488.0,
-                "y": -18.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "VectorNavBinary2ImuObsConverter"
-        },
-        "node-421": {
-            "data": null,
-            "enabled": true,
-            "id": 421,
-            "inputPins": [
-                {
-                    "dataIdentifier": [
-                        "InertialNavSol"
-                    ],
-                    "id": 418,
-                    "name": "",
-                    "type": "Flow"
-                },
-                {
-                    "dataIdentifier": [
-                        "InertialNavSol"
-                    ],
-                    "id": 419,
-                    "name": "",
-                    "type": "Flow"
-                }
-            ],
-            "kind": "Simple",
-            "name": "\\\n/",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "InertialNavSol"
-                    ],
-                    "id": 420,
-                    "name": "",
-                    "type": "Flow"
-                }
-            ],
-            "pos": {
-                "x": 1201.0,
-                "y": -116.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Combiner"
-        },
-        "node-466": {
-            "data": {
-                "gravityModel": 2,
-                "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": true
-            },
-            "enabled": true,
-            "id": 466,
-            "inputPins": [
-                {
-                    "dataIdentifier": [
-                        "ImuObs"
-                    ],
-                    "id": 463,
-                    "name": "ImuObs",
-                    "type": "Flow"
-                },
-                {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 464,
-                    "name": "PosVelAtt",
-                    "type": "Flow"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "ImuIntegrator",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "InertialNavSol"
-                    ],
-                    "id": 465,
-                    "name": "InertialNavSol",
-                    "type": "Flow"
-                }
-            ],
-            "pos": {
-                "x": 1362.0,
-                "y": 2.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "ImuIntegrator"
-        },
-        "node-470": {
-            "data": {
-                "gravityModel": 3,
-                "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": true
-            },
-            "enabled": true,
-            "id": 470,
-            "inputPins": [
-                {
-                    "dataIdentifier": [
-                        "ImuObs"
-                    ],
-                    "id": 467,
-                    "name": "ImuObs",
-                    "type": "Flow"
-                },
-                {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 468,
-                    "name": "PosVelAtt",
-                    "type": "Flow"
-                }
-            ],
-            "kind": "Blueprint",
-            "name": "ImuIntegrator",
-            "outputPins": [
-                {
-                    "dataIdentifier": [
-                        "InertialNavSol"
-                    ],
-                    "id": 469,
-                    "name": "InertialNavSol",
-                    "type": "Flow"
-                }
-            ],
-            "pos": {
-                "x": 1362.0,
-                "y": -258.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "ImuIntegrator"
         }
     }
 }

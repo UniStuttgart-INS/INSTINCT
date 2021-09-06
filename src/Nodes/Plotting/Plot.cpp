@@ -893,6 +893,9 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
             data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
             data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem("North velocity [m/s]");
+            data.at(pinIndex).addPlotDataItem("East velocity [m/s]");
+            data.at(pinIndex).addPlotDataItem("Down velocity [m/s]");
             data.at(pinIndex).addPlotDataItem("Roll [deg]");
             data.at(pinIndex).addPlotDataItem("Pitch [deg]");
             data.at(pinIndex).addPlotDataItem("Yaw [deg]");
@@ -1714,6 +1717,9 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<PosVelAtt>& obs, size_t pinI
     addData(pinIndex, i++, obs->position_ecef().x());
     addData(pinIndex, i++, obs->position_ecef().y());
     addData(pinIndex, i++, obs->position_ecef().z());
+    addData(pinIndex, i++, obs->velocity_n().x());
+    addData(pinIndex, i++, obs->velocity_n().y());
+    addData(pinIndex, i++, obs->velocity_n().z());
     addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().x()));
     addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().y()));
     addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().z()));
