@@ -443,7 +443,7 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// q (tₖ) Quaternion, from platform to earth coordinates, at the current time tₖ
-        Eigen::Quaterniond quaternion_gyro_ep__t0;
+        Eigen::Quaterniond quaternion_gyro_ep__t0 = Eigen::Quaterniond::Identity();
 
         if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
         {
@@ -469,7 +469,7 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// v (tₖ), Velocity in [m/s], in earth coordinates, at the current time tₖ
-        Eigen::Vector3d velocity_e__t0;
+        Eigen::Vector3d velocity_e__t0 = Eigen::Vector3d::Zero();
 
         if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
         {
@@ -493,7 +493,16 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// x_e (tₖ) Position in [m], in earth coordinates, at the time tₖ
-        const Eigen::Vector3d position_e__t0 = updatePosition_e(timeDifferenceSec__t0, position_e__t1, velocity_e__t1);
+        Eigen::Vector3d position_e__t0 = Eigen::Vector3d::Zero();
+
+        if (rungeKutta3CalculateIntermediateValues)
+        {
+            position_e__t0 = updatePosition_e(timeDifferenceSec__t0, position_e__t1, velocity_e__t1);
+        }
+        else
+        {
+            position_e__t0 = updatePosition_e(timeDifferenceSec__t0 + timeDifferenceSec__t1, position_e__t1, velocity_e__t1);
+        }
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                               Store Results                                              */
@@ -550,7 +559,7 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// q (tₖ) Quaternion, from body to navigation coordinates, at the current time tₖ
-        Eigen::Quaterniond quaternion_nb__t0;
+        Eigen::Quaterniond quaternion_nb__t0 = Eigen::Quaterniond::Identity();
 
         if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
         {
@@ -573,7 +582,7 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// v (tₖ), Velocity in navigation coordinates, at the current time tₖ
-        Eigen::Vector3d velocity_n__t0;
+        Eigen::Vector3d velocity_n__t0 = Eigen::Vector3d::Zero();
 
         if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
         {
@@ -595,7 +604,8 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         /// [x_n, x_e, x_d] (tₖ) Position NED in [m] at the time tₖ
-        Eigen::Vector3d position_n__t0;
+        Eigen::Vector3d position_n__t0 = Eigen::Vector3d::Zero();
+
         if (rungeKutta3CalculateIntermediateValues)
         {
             position_n__t0 = updatePosition_n(timeDifferenceSec__t0, position_n__t1, velocity_n__t1);

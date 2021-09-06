@@ -151,14 +151,14 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
     size_t count = 10000;
     for (size_t i = 0; i <= count; i++)
     {
-        Eigen::Vector3d v_e = updateVelocity_e_RungeKutta3(timeDifferenceSec, timeDifferenceSec,
-                                                           acceleration_p, acceleration_p,
-                                                           velocities.at(0),
-                                                           position,
-                                                           gravity_e,
-                                                           quaternion_ep,
-                                                           quaternion_ep,
-                                                           quaternion_ep);
+        Eigen::Vector3d v_e = updateVelocity_e_Simpson(timeDifferenceSec, timeDifferenceSec,
+                                                       acceleration_p, acceleration_p,
+                                                       velocities.at(0),
+                                                       position,
+                                                       gravity_e,
+                                                       quaternion_ep,
+                                                       quaternion_ep,
+                                                       quaternion_ep);
         velocities.push_back(v_e);
         velocities.pop_front();
     }
@@ -215,17 +215,17 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
         /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
         Eigen::Vector3d angularVelocity_en_n = transportRate({ latitude, longitude, altitude }, velocities.at(1), R_N, R_E);
 
-        Eigen::Vector3d v_n = updateVelocity_n_RungeKutta3(timeDifferenceSec, timeDifferenceSec,
-                                                           acceleration_b,
-                                                           acceleration_b,
-                                                           velocities.at(1),
-                                                           velocities.at(0),
-                                                           gravity_n,
-                                                           angularVelocity_ie_n,
-                                                           angularVelocity_en_n,
-                                                           quaternion_nb,
-                                                           quaternion_nb,
-                                                           quaternion_nb);
+        Eigen::Vector3d v_n = updateVelocity_n_Simpson(timeDifferenceSec, timeDifferenceSec,
+                                                       acceleration_b,
+                                                       acceleration_b,
+                                                       velocities.at(1),
+                                                       velocities.at(0),
+                                                       gravity_n,
+                                                       angularVelocity_ie_n,
+                                                       angularVelocity_en_n,
+                                                       quaternion_nb,
+                                                       quaternion_nb,
+                                                       quaternion_nb);
         velocities.push_back(v_n);
         velocities.pop_front();
     }
