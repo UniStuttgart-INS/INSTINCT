@@ -373,9 +373,9 @@ class LooselyCoupledKF : public Node
     /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
     /// @param[in] angularRate_ib_b Angular rate of body with respect to inertial system in body coordinates in [rad/s]
     /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
-    /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
+    /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x15 measurement matrix 𝐇
-    static Eigen::Matrix<double, 6, 15> measurementMatrix(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Vector3d& position_lla);
+    static Eigen::Matrix<double, 6, 15> measurementMatrix(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Matrix3d& Omega_ie_n);
 
     /// @brief Submatrix 𝐇_r1 of the measurement sensitivity matrix 𝐇
     /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
@@ -388,9 +388,9 @@ class LooselyCoupledKF : public Node
     /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
     /// @param[in] angularRate_ib_b Angular rate of body with respect to inertial system in body coordinates in [rad/s]
     /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
-    /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
+    /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 3x3 matrix 𝐇_v1
-    static Eigen::Matrix3d measurementMatrix_v1_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Vector3d& position_lla);
+    static Eigen::Matrix3d measurementMatrix_v1_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Matrix3d& Omega_ie_n);
 
     /// @brief Submatrix 𝐇_v5 of the measurement sensitivity matrix 𝐇
     /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
@@ -403,5 +403,21 @@ class LooselyCoupledKF : public Node
     /// @param[in] gnssVarianceVelocity Variances of the velocity in [m² m² m²]
     /// @return The 6x6 measurement covariance matrix 𝐑
     static Eigen::Matrix<double, 6, 6> measurementNoiseCovariance(const Eigen::Vector3d& gnssVarianceLatLonAlt, const Eigen::Vector3d& gnssVarianceVelocity);
+
+    /// @brief Measurement innovation vector 𝜹𝐳
+    /// @param[in] positionMeasurement_lla Position measurement as Lat Lon Alt in [rad rad m]
+    /// @param[in] positionEstimate_n Position estimate as Lat Lon Alt in [rad rad m]
+    /// @param[in] velocityMeasurement_n Velocity measurement in the n frame in [m/s]
+    /// @param[in] velocityEstimate_n Velocity estimate in the n frame in [m/s]
+    /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
+    /// @param[in] q_nb Rotation quaternion from body to navigation coordinates
+    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @param[in] angularRate_ib_b Angular rate of body with respect to inertial system in body coordinates in [rad/s]
+    /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
+    /// @return The 6x1 measurement innovation vector 𝜹𝐳
+    static Eigen::Matrix<double, 6, 1> measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_n,
+                                                             const Eigen::Vector3d& velocityMeasurement_n, const Eigen::Vector3d& velocityEstimate_n,
+                                                             const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss,
+                                                             const Eigen::Vector3d& angularRate_ib_b, const Eigen::Matrix3d& Omega_ie_n);
 };
 } // namespace NAV

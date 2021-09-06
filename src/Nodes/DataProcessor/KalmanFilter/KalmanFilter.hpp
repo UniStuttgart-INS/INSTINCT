@@ -42,6 +42,9 @@ class KalmanFilter
 
         /// 𝐊 Kalman gain matrix
         K = Eigen::MatrixXd::Zero(n, m);
+
+        /// 𝑰 Identity Matrix
+        I = Eigen::MatrixXd::Identity(n, n);
     }
 
     /// @brief Default constructor
@@ -59,20 +62,36 @@ class KalmanFilter
         P = Phi * P * Phi.transpose() + Q;
     }
 
-    /// @brief Do a Measurement Update
+    /// @brief Do a Measurement Update with a Measurement 𝐳
     /// @attention Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑)
     ///            and the Measurement vector (𝐳) before calling this
     /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 3.2.2)
     void correct()
     {
         // Math: \mathbf{K}_k = \mathbf{P}_k^- \mathbf{H}_k^T (\mathbf{H}_k \mathbf{P}_k^- \mathbf{H}_k^T + R_k)^{-1} \qquad \text{P. Groves}\,(3.21)
-        K = P * H.transpose() * (R + H * P * H.transpose()).inverse();
+        K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
 
-        // Math: \mathbf{\hat{x}}_k^+ = \mathbf{\hat{x}}_k^- + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \mathbf{\hat{x}}_k^-) \qquad \text{P. Groves}\,(3.24)
+        // Math: \begin{align*} \mathbf{\hat{x}}_k^+ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \mathbf{\hat{x}}_k^-) \\ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k \mathbf{\delta z}_k^{-} \end{align*} \qquad \text{P. Groves}\,(3.24)
         x = x + K * (z - H * x);
 
         // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{P. Groves}\,(3.25)
-        P = P - K * H * P;
+        P = (I - K * H) * P;
+    }
+
+    /// @brief Do a Measurement Update with a Measurement Innovation 𝜹𝐳
+    /// @attention Update the Measurement sensitivity Matrix (𝐇), the Measurement noise covariance matrix (𝐑)
+    ///            and the Measurement vector (𝐳) before calling this
+    /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 3.2.2)
+    void correctWithMeasurementInnovation()
+    {
+        // Math: \mathbf{K}_k = \mathbf{P}_k^- \mathbf{H}_k^T (\mathbf{H}_k \mathbf{P}_k^- \mathbf{H}_k^T + R_k)^{-1} \qquad \text{P. Groves}\,(3.21)
+        K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
+
+        // Math: \begin{align*} \mathbf{\hat{x}}_k^+ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k (\mathbf{z}_k - \mathbf{H}_k \mathbf{\hat{x}}_k^-) \\ &= \mathbf{\hat{x}}_k^- + \mathbf{K}_k \mathbf{\delta z}_k^{-} \end{align*} \qquad \text{P. Groves}\,(3.24)
+        x = x + K * z;
+
+        // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{P. Groves}\,(3.25)
+        P = (I - K * H) * P;
     }
 
     /// x̂ State vector
@@ -98,6 +117,10 @@ class KalmanFilter
 
     /// 𝐊 Kalman gain matrix
     Eigen::MatrixXd K;
+
+  private:
+    /// 𝑰 Identity Matrix (n x n)
+    Eigen::MatrixXd I;
 };
 
 } // namespace NAV

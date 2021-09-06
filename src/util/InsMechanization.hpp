@@ -187,4 +187,10 @@ template<typename T>
                                             const double& R_N,
                                             const double& R_E);
 
+/// @brief Calculates the skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
+/// @param[in] latitude 𝜙 Latitude in [rad]
+/// @return The skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
+/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 5.41)
+[[nodiscard]] Eigen::Matrix3d AngularVelocityEarthSkew_ie_n(double latitude);
+
 } // namespace NAV
