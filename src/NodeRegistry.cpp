@@ -89,9 +89,7 @@ bool NAV::NodeRegistry::NodeInfo::hasCompatiblePin(const Pin* pin) const
                 || (pinInfo.type == Pin::Type::Delegate
                     && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
                 || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
-                    && (startPinDataIdentifier.empty()
-                        || endPinDataIdentifier.empty()
-                        || std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinDataIdentifier.front()) != endPinDataIdentifier.end()))
+                    && Pin::dataIdentifierHaveCommon(startPinDataIdentifier, endPinDataIdentifier))
                 || pinInfo.type == Pin::Type::Bool || pinInfo.type == Pin::Type::Int || pinInfo.type == Pin::Type::Float || pinInfo.type == Pin::Type::String)
             {
                 return true;

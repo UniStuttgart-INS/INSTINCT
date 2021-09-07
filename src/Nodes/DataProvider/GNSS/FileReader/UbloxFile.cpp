@@ -23,7 +23,7 @@ NAV::UbloxFile::UbloxFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, NAV::UbloxObs::type(), &UbloxFile::pollData);
+    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxFile::pollData);
 }
 
 NAV::UbloxFile::~UbloxFile()

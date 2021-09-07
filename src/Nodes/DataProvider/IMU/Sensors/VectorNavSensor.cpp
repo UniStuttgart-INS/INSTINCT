@@ -1251,10 +1251,10 @@ NAV::VectorNavSensor::VectorNavSensor()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 954, 783 };
 
-    nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, NAV::StringObs::type());
-    nm::CreateOutputPin(this, "Binary Output 1", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
-    nm::CreateOutputPin(this, "Binary Output 2", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
-    nm::CreateOutputPin(this, "Binary Output 3", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
+    nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, { NAV::StringObs::type() });
+    nm::CreateOutputPin(this, "Binary Output 1", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
+    nm::CreateOutputPin(this, "Binary Output 2", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
+    nm::CreateOutputPin(this, "Binary Output 3", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
 
     dividerFrequency = []() {
         std::map<int, int, std::greater<>> divFreq;

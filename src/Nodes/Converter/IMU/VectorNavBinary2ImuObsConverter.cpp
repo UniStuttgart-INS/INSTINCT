@@ -16,7 +16,7 @@ NAV::VectorNavBinary2ImuObsConverter::VectorNavBinary2ImuObsConverter()
     LOG_TRACE("{}: called", name);
     hasConfig = false;
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObsWDelta::type());
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsWDelta::type() });
 
     nm::CreateInputPin(this, "VectorNavBinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavBinary2ImuObsConverter::convertObs);
 }

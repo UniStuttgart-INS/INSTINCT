@@ -26,7 +26,7 @@ NAV::Navio2Sensor::Navio2Sensor()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 295, 92 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
 }
 
 NAV::Navio2Sensor::~Navio2Sensor()
