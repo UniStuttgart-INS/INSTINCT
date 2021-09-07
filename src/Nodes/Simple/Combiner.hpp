@@ -42,15 +42,23 @@ class Combiner : public Node
     /// @return True if link is allowed, false if link is rejected
     bool onCreateLink(Pin* startPin, Pin* endPin) override;
 
-    /// @brief Called when a link is to be deleted
+    /// @brief Called when a link was deleted
     /// @param[in] startPin Pin where the link starts
     /// @param[in] endPin Pin where the link ends
-    void onDeleteLink(Pin* startPin, Pin* endPin) override;
+    void afterDeleteLink(Pin* startPin, Pin* endPin) override;
 
   private:
     constexpr static size_t OutputPortIndex_Flow = 0;       ///< @brief Flow
     constexpr static size_t InputPortIndex_Flow_First = 0;  ///< @brief Flow
     constexpr static size_t InputPortIndex_Flow_Second = 1; ///< @brief Flow
+
+    /// @brief Set the Pin Identifiers for the other pin depending on the connected pin
+    /// @param[in] connectedPinIndex The connected pin
+    /// @param[in] otherPinIndex The unconnected pin which needs the identifiers to be set
+    /// @param[in] dataIdentifiers The data Identifier to be considered
+    void setPinIdentifiers(size_t connectedPinIndex, size_t otherPinIndex, const std::vector<std::string>& dataIdentifiers);
+
+    void updateOutputPin(const std::vector<std::string>& oldDataIdentifiers);
 
     /// @brief Receive data
     /// @param[in] nodeData Observation received

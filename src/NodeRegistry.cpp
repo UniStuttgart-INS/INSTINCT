@@ -15,11 +15,11 @@ namespace NAV::NodeRegistry
 {
 /// List of all registered nodes.
 /// Key: category, Value: Nodes
-std::map<std::string, std::vector<NodeInfo>> registeredNodes_;
+std::map<std::string, std::vector<NodeInfo>> _registeredNodes;
 
 /// List of all registered node data types.
 /// Key: NodeData.type(), Value: parentTypes()
-std::map<std::string, std::vector<std::string>> registeredNodeDataTypes_;
+std::map<std::string, std::vector<std::string>> _registeredNodeDataTypes;
 
 } // namespace NAV::NodeRegistry
 /* -------------------------------------------------------------------------------------------------------- */
@@ -49,7 +49,7 @@ void registerNodeType()
         info.pinInfoList.emplace_back(pin.kind, pin.type, pin.dataIdentifier);
     }
 
-    registeredNodes_[T::category()].push_back(info);
+    _registeredNodes[T::category()].push_back(info);
 }
 
 /// @brief Register a NodeData with the NodeManager
@@ -59,7 +59,7 @@ template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
 void registerNodeDataType()
 {
-    registeredNodeDataTypes_[T::type()] = T::parentTypes();
+    _registeredNodeDataTypes[T::type()] = T::parentTypes();
 }
 
 } // namespace NAV::NodeRegistry
@@ -102,7 +102,7 @@ bool NAV::NodeRegistry::NodeInfo::hasCompatiblePin(const Pin* pin) const
 
 const std::map<std::string, std::vector<NAV::NodeRegistry::NodeInfo>>& NAV::NodeRegistry::RegisteredNodes()
 {
-    return registeredNodes_;
+    return _registeredNodes;
 }
 
 bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes)
@@ -115,7 +115,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
             {
                 return true;
             }
-            for (const auto& [dataType, parentTypes] : registeredNodeDataTypes_)
+            for (const auto& [dataType, parentTypes] : _registeredNodeDataTypes)
             {
                 if (dataType == childType)
                 {
@@ -132,6 +132,27 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
     }
 
     return false;
+}
+
+std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::string& type)
+{
+    std::vector<std::string> returnTypes;
+    if (_registeredNodeDataTypes.contains(type))
+    {
+        const auto& parentTypes = _registeredNodeDataTypes.at(type);
+
+        // Add all the immediate parents
+        returnTypes.insert(returnTypes.end(), parentTypes.begin(), parentTypes.end());
+
+        // Add parents of parents
+        for (const auto& parentType : parentTypes)
+        {
+            const auto& parentParentTypes = GetParentNodeDataTypes(parentType);
+            returnTypes.insert(returnTypes.end(), parentParentTypes.begin(), parentParentTypes.end());
+        }
+    }
+
+    return returnTypes;
 }
 
 // Utility

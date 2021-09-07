@@ -317,6 +317,7 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             // Undo the Link adding on the start node
             startPin->parentNode->onDeleteLink(startPin, endPin);
             m_links.pop_back();
+            startPin->parentNode->afterDeleteLink(startPin, endPin);
             return false;
         }
 
@@ -547,6 +548,18 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
         if (id != m_links.end())
         {
             m_links.erase(id);
+        }
+
+        if (startPin && endPin)
+        {
+            if (startPin->parentNode)
+            {
+                startPin->parentNode->afterDeleteLink(startPin, endPin);
+            }
+            if (endPin->parentNode)
+            {
+                endPin->parentNode->afterDeleteLink(startPin, endPin);
+            }
         }
 
         flow::ApplyChanges();
