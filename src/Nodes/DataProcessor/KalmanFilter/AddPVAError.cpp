@@ -16,7 +16,7 @@ NAV::AddPVAError::AddPVAError()
 
     nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { PosVelAtt::type() }, &AddPVAError::recvPosVelAtt);
     nm::CreateInputPin(this, "PVAError", Pin::Type::Flow, { PVAError::type() }, &AddPVAError::recvPVAError);
-    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, PosVelAtt::type());
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { PosVelAtt::type() });
 }
 
 NAV::AddPVAError::~AddPVAError()

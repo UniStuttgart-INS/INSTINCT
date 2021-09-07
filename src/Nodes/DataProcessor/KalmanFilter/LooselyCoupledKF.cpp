@@ -26,17 +26,17 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
-    nm::CreateOutputPin(this, "PVAError", Pin::Type::Flow, NAV::PVAError::type());
-    nm::CreateOutputPin(this, "ImuBiases", Pin::Type::Flow, NAV::ImuBiases::type());
-    nm::CreateOutputPin(this, "x", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter.x);
-    nm::CreateOutputPin(this, "P", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter.P);
-    nm::CreateOutputPin(this, "Phi", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter.Phi);
-    nm::CreateOutputPin(this, "Q", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter.Q);
-    nm::CreateOutputPin(this, "z", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter.z);
-    nm::CreateOutputPin(this, "H", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter.H);
-    nm::CreateOutputPin(this, "R", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter.R);
-    nm::CreateOutputPin(this, "K", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter.K);
-    nm::CreateOutputPin(this, "K*z", Pin::Type::Matrix, "Eigen::MatrixXd", &kalmanFilter_Kz);
+    nm::CreateOutputPin(this, "PVAError", Pin::Type::Flow, { NAV::PVAError::type() });
+    nm::CreateOutputPin(this, "ImuBiases", Pin::Type::Flow, { NAV::ImuBiases::type() });
+    nm::CreateOutputPin(this, "x", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.x);
+    nm::CreateOutputPin(this, "P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.P);
+    nm::CreateOutputPin(this, "Phi", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.Phi);
+    nm::CreateOutputPin(this, "Q", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.Q);
+    nm::CreateOutputPin(this, "z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.z);
+    nm::CreateOutputPin(this, "H", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.H);
+    nm::CreateOutputPin(this, "R", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.R);
+    nm::CreateOutputPin(this, "K", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.K);
+    nm::CreateOutputPin(this, "K*z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter_Kz);
 
     // SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
     gnssSigmaSquaredLatLonAlt = trafo::ecef2lla_WGS84(trafo::ned2ecef({ 0.03, 0.03, 0.03 * 3 }, { 0, 0, 0 })).array().pow(2);

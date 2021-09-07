@@ -18,7 +18,7 @@ NAV::VectorNavBinaryConverter::VectorNavBinaryConverter()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 350, 123 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObsWDelta::type());
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsWDelta::type() });
 
     nm::CreateInputPin(this, "VectorNavBinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavBinaryConverter::receiveObs);
 }

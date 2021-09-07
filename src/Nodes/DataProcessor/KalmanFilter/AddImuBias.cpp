@@ -15,7 +15,7 @@ NAV::AddImuBias::AddImuBias()
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { ImuObs::type() }, &AddImuBias::recvImuObs);
     nm::CreateInputPin(this, "ImuBiases", Pin::Type::Flow, { ImuBiases::type() }, &AddImuBias::recvImuBiases);
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, ImuObs::type());
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { ImuObs::type() });
 }
 
 NAV::AddImuBias::~AddImuBias()

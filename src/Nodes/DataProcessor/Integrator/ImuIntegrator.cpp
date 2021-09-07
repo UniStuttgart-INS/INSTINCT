@@ -26,7 +26,7 @@ NAV::ImuIntegrator::ImuIntegrator()
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
     nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
 
-    nm::CreateOutputPin(this, "InertialNavSol", Pin::Type::Flow, NAV::InertialNavSol::type());
+    nm::CreateOutputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() });
 }
 
 NAV::ImuIntegrator::~ImuIntegrator()
