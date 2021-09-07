@@ -23,7 +23,7 @@ NAV::VectorNavFile::VectorNavFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 630, 466 };
 
-    nm::CreateOutputPin(this, "Binary Output", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type(), &VectorNavFile::pollData);
+    nm::CreateOutputPin(this, "Binary Output", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavFile::pollData);
 }
 
 NAV::VectorNavFile::~VectorNavFile()

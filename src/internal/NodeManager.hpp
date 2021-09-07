@@ -129,7 +129,7 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 /// @param[in] dataIdentifier Identifier of the data which is represented by the pin
 /// @param[in] data Pointer to data which is represented by the pin
 /// @return Pointer to the created pin
-Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string& dataIdentifier = std::string(""), Pin::PinData data = static_cast<void*>(nullptr));
+Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, Pin::PinData data = static_cast<void*>(nullptr));
 
 /// @brief Create an Output Pin object for Flow Pins
 /// @tparam T Class where the function is member of
@@ -142,7 +142,7 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::string& dataIdentifier = std::string(""), std::shared_ptr<NAV::NodeData> (T::*callback)(bool) = nullptr)
+Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, std::shared_ptr<NAV::NodeData> (T::*callback)(bool) = nullptr)
 {
     assert(pinType == Pin::Type::Flow);
 

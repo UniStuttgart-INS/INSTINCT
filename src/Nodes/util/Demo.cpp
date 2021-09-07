@@ -45,15 +45,15 @@ NAV::Demo::Demo()
     guiConfigDefaultWindowSize = { 630, 410 };
 
     nm::CreateOutputPin(this, "", Pin::Type::Delegate, { typeStatic() }, this);
-    nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::ImuObs::type());
-    nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, NAV::InsObs::type(), &Demo::pollData);
-    nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, "", &valueBool);
-    nm::CreateOutputPin(this, "Int", Pin::Type::Int, "", &valueInt);
-    nm::CreateOutputPin(this, "Float", Pin::Type::Float, "", &valueFloat);
-    nm::CreateOutputPin(this, "Double", Pin::Type::Float, "", &valueDouble);
-    nm::CreateOutputPin(this, "String", Pin::Type::String, "", &valueString);
-    nm::CreateOutputPin(this, "Object", Pin::Type::Object, "Demo::DemoData", &valueObject);
-    nm::CreateOutputPin(this, "Matrix", Pin::Type::Matrix, "Eigen::MatrixXd", &valueMatrix);
+    nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() });
+    nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::InsObs::type() }, &Demo::pollData);
+    nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, { "" }, &valueBool);
+    nm::CreateOutputPin(this, "Int", Pin::Type::Int, { "" }, &valueInt);
+    nm::CreateOutputPin(this, "Float", Pin::Type::Float, { "" }, &valueFloat);
+    nm::CreateOutputPin(this, "Double", Pin::Type::Float, { "" }, &valueDouble);
+    nm::CreateOutputPin(this, "String", Pin::Type::String, { "" }, &valueString);
+    nm::CreateOutputPin(this, "Object", Pin::Type::Object, { "Demo::DemoData" }, &valueObject);
+    nm::CreateOutputPin(this, "Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &valueMatrix);
 
     nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
     nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, &Demo::receiveSensorData);

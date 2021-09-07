@@ -222,6 +222,12 @@ class Pin
     /// @return True if it can create a link
     [[nodiscard]] bool canCreateLink(const Pin& b) const;
 
+    /// @brief Checks if the first list of data identifiers has a common entry with the second
+    /// @param[in] a First list of data identifiers
+    /// @param[in] b Second list of data identifiers
+    /// @return True if they have a common entry
+    [[nodiscard]] static bool dataIdentifierHaveCommon(const std::vector<std::string>& a, const std::vector<std::string>& b);
+
     /// @brief Get the Icon Color object
     /// @return Color struct
     [[nodiscard]] ImColor getIconColor() const;

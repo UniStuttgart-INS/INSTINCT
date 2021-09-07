@@ -21,7 +21,7 @@ NAV::ImuSimulator::ImuSimulator()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 405, 390 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuSimulator::pollData);
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuSimulator::pollData);
     // nm::CreateInputPin(this, "State", Pin::Type::Object, { NAV::StateData::type() });
 }
 

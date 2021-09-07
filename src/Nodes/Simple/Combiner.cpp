@@ -15,7 +15,7 @@ NAV::Combiner::Combiner()
 
     nm::CreateInputPin(this, "", Pin::Type::Flow, { InsObs::type() }, &Combiner::receiveData);
     nm::CreateInputPin(this, "", Pin::Type::Flow, { InsObs::type() }, &Combiner::receiveData);
-    nm::CreateOutputPin(this, "", Pin::Type::Flow, InsObs::type());
+    nm::CreateOutputPin(this, "", Pin::Type::Flow, { InsObs::type() });
 }
 
 NAV::Combiner::~Combiner()

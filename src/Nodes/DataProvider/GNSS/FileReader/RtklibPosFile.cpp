@@ -21,8 +21,8 @@ NAV::RtklibPosFile::RtklibPosFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 290 };
 
-    nm::CreateOutputPin(this, "RtklibPosObs", Pin::Type::Flow, NAV::RtklibPosObs::type(), &RtklibPosFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
+    nm::CreateOutputPin(this, "RtklibPosObs", Pin::Type::Flow, { NAV::RtklibPosObs::type() }, &RtklibPosFile::pollData);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &headerColumns);
 }
 
 NAV::RtklibPosFile::~RtklibPosFile()

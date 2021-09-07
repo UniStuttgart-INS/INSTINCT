@@ -23,7 +23,7 @@ NAV::EmlidFile::EmlidFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, NAV::EmlidObs::type(), &EmlidFile::pollData);
+    nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, { NAV::EmlidObs::type() }, &EmlidFile::pollData);
 }
 
 NAV::EmlidFile::~EmlidFile()
