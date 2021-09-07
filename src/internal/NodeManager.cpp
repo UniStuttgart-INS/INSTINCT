@@ -317,6 +317,7 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             // Undo the Link adding on the start node
             startPin->parentNode->onDeleteLink(startPin, endPin);
             m_links.pop_back();
+            startPin->parentNode->afterDeleteLink(startPin, endPin);
             return false;
         }
 
@@ -549,6 +550,18 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             m_links.erase(id);
         }
 
+        if (startPin && endPin)
+        {
+            if (startPin->parentNode)
+            {
+                startPin->parentNode->afterDeleteLink(startPin, endPin);
+            }
+            if (endPin->parentNode)
+            {
+                endPin->parentNode->afterDeleteLink(startPin, endPin);
+            }
+        }
+
         flow::ApplyChanges();
 
         return true;
@@ -592,13 +605,13 @@ NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NA
     return &node->inputPins.back();
 }
 
-NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::string& dataIdentifier, NAV::Pin::PinData data)
+NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinData data)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     node->outputPins.emplace_back(GetNextPinId(), name, pinType, Pin::Kind::Output, node);
 
     node->outputPins.back().data = data;
-    node->outputPins.back().dataIdentifier = { dataIdentifier };
+    node->outputPins.back().dataIdentifier = dataIdentifier;
 
     flow::ApplyChanges();
 

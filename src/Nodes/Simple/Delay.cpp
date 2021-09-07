@@ -17,7 +17,7 @@ NAV::Delay::Delay()
     kind = Kind::Simple;
 
     nm::CreateInputPin(this, "", Pin::Type::Flow, { InsObs::type() }, &Delay::delayObs);
-    nm::CreateOutputPin(this, "", Pin::Type::Flow, InsObs::type());
+    nm::CreateOutputPin(this, "", Pin::Type::Flow, { InsObs::type() });
 }
 
 NAV::Delay::~Delay()

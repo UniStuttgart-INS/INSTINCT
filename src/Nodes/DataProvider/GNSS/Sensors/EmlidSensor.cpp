@@ -26,7 +26,7 @@ NAV::EmlidSensor::EmlidSensor()
     // TODO: Update the library to handle different baudrates
     selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
 
-    nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, NAV::EmlidObs::type());
+    nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, { NAV::EmlidObs::type() });
 }
 
 NAV::EmlidSensor::~EmlidSensor()

@@ -27,13 +27,25 @@ bool NAV::Pin::canCreateLink(const Pin& b) const
     }
 
     if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
-        && (dataIdentifier.empty() || b.dataIdentifier.empty()
-            || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->dataIdentifier.front()) == endPin->dataIdentifier.end()))
+        && !dataIdentifierHaveCommon(dataIdentifier, b.dataIdentifier))
     {
         dataTypesMatch = false;
     }
 
-    return id != b.id && kind != b.kind && type == b.type && parentNode != b.parentNode && dataTypesMatch;
+    return id != b.id                    // Different Pins
+           && kind != b.kind             // Input <=> Output
+           && type == b.type             // Same Type (Flow, Object, ...)
+           && parentNode != b.parentNode // Different Nodes
+           && dataTypesMatch;            // Data identifier match
+}
+
+bool NAV::Pin::dataIdentifierHaveCommon(const std::vector<std::string>& a, const std::vector<std::string>& b)
+{
+    return !a.empty() && !b.empty()
+           && std::find_if(a.begin(),
+                           a.end(),
+                           [&b](const std::string& str) { return std::find(b.begin(), b.end(), str) != b.end(); })
+                  != a.end();
 }
 
 ImColor NAV::Pin::getIconColor() const
