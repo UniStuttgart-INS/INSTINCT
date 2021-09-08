@@ -59,7 +59,7 @@ namespace NAV
                                                                  const Eigen::Quaterniond& quaternion_nb__t1,
                                                                  const Eigen::Quaterniond& quaternion_nb__t2);
 
-/// @brief Integrates the accelerations and calculates the new velocity v_e with Runge Kutta of 3rd Order
+/// @brief Integrates the accelerations and calculates the new velocity v_e with Simpson rule
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
 /// @param[in] timeDifferenceSec__t1 Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
 /// @param[in] acceleration_p__t0 a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
@@ -85,7 +85,7 @@ namespace NAV
                                                        const Eigen::Quaterniond& quaternion_ep__t1,
                                                        const Eigen::Quaterniond& quaternion_ep__t2);
 
-/// @brief Integrates the accelerations and calculates the new velocity v_n with Runge Kutta of 3rd Order
+/// @brief Integrates the accelerations and calculates the new velocity v_n with Simpson rule
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
 /// @param[in] timeDifferenceSec__t1 Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
 /// @param[in] acceleration_b__t0 a_p (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
@@ -113,6 +113,33 @@ namespace NAV
                                                        const Eigen::Quaterniond& quaternion_nb__t0,
                                                        const Eigen::Quaterniond& quaternion_nb__t1,
                                                        const Eigen::Quaterniond& quaternion_nb__t2);
+
+/// @brief Integrates the accelerations and calculates the new velocity v_n with Runge Kutta of 3rd Order
+/// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
+/// @param[in] timeDifferenceSec__t1 Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
+/// @param[in] acceleration_b__t0 a_p (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
+/// @param[in] acceleration_b__t1 a_p (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
+/// @param[in] velocity_n__t2 v_n (tₖ₋₂) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₂
+/// @param[in] gravity_n__t1 g_n (tₖ₋₁) Gravity vector in [m/s^2], in navigation coordinates, at the time tₖ₋₁
+/// @param[in] angularVelocity_ie_n__t1 ω_ie_n (tₖ₋₁) Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates, at the time tₖ₋₁
+/// @param[in] angularVelocity_en_n__t1 ω_ie_n (tₖ₋₁) Transport Rate in [rad/s], in navigation coordinates, at the time tₖ₋₁
+/// @param[in] quaternion_nb__t0 q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
+/// @param[in] quaternion_nb__t1 q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
+/// @param[in] quaternion_nb__t2 q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
+/// @return The updated velocity v_n
+///
+/// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2) //TODO: Update reference
+[[nodiscard]] Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSec__t0,
+                                                           const long double& timeDifferenceSec__t1,
+                                                           const Eigen::Vector3d& acceleration_b__t0,
+                                                           const Eigen::Vector3d& acceleration_b__t1,
+                                                           const Eigen::Vector3d& velocity_n__t2,
+                                                           const Eigen::Vector3d& gravity_n__t1,
+                                                           const Eigen::Vector3d& angularVelocity_ie_n__t1,
+                                                           const Eigen::Vector3d& angularVelocity_en_n__t1,
+                                                           const Eigen::Quaterniond& quaternion_nb__t0,
+                                                           const Eigen::Quaterniond& quaternion_nb__t1,
+                                                           const Eigen::Quaterniond& quaternion_nb__t2);
 
 /// @brief Calculates the new position x_e in earth frame
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch

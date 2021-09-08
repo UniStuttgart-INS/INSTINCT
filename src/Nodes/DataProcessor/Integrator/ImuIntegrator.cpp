@@ -590,13 +590,20 @@ void NAV::ImuIntegrator::integrateObservation()
         }
         else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
         {
-            velocity_n__t0 = updateVelocity_n_Simpson(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                      acceleration_b__t0, acceleration_b__t1,
-                                                      velocity_n__t1, velocity_n__t2,
-                                                      gravity_n__t1,
-                                                      angularVelocity_ie_n__t1,
-                                                      angularVelocity_en_n__t1,
-                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2);
+            // velocity_n__t0 = updateVelocity_n_Simpson(timeDifferenceSec__t0, timeDifferenceSec__t1,
+            //                                           acceleration_b__t0, acceleration_b__t1,
+            //                                           velocity_n__t1, velocity_n__t2,
+            //                                           gravity_n__t1,
+            //                                           angularVelocity_ie_n__t1,
+            //                                           angularVelocity_en_n__t1,
+            //                                           quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2);
+            velocity_n__t0 = updateVelocity_n_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
+                                                          acceleration_b__t0, acceleration_b__t1,
+                                                          velocity_n__t2,
+                                                          gravity_n__t1,
+                                                          angularVelocity_ie_n__t1,
+                                                          angularVelocity_en_n__t1,
+                                                          quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2);
         }
 
         /* -------------------------------------------------------------------------------------------------------- */

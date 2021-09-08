@@ -2,8 +2,57 @@
 
 #include "InsConstants.hpp"
 
+#include "util/Logger.hpp"
+
+#include <util/NumericalIntegration.hpp>
+
 namespace NAV
 {
+// ###########################################################################################################
+//                                             Private Functions
+// ###########################################################################################################
+
+Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, const Eigen::Vector4d& q)
+{
+    // clang-format off
+
+    /// A Matrix at the time tₖ (eq. 8.1 / 8.16). Reordered because Eigen::Quaternion(x,y,z,w), Skript (w,x,y,z)
+    Eigen::Matrix4d A;
+    A <<         0.0        ,  angularVelocity(2), -angularVelocity(1),  angularVelocity(0),
+         -angularVelocity(2),         0.0        ,  angularVelocity(0),  angularVelocity(1),
+          angularVelocity(1), -angularVelocity(0),         0.0        ,  angularVelocity(2),
+         -angularVelocity(0), -angularVelocity(1), -angularVelocity(2),         0.0        ;
+    // clang-format on
+
+    return 0.5 * A * q;
+};
+
+struct VelocityUpdateState
+{
+    /// a_n Taylor-Approximation of acceleration in [m/s^2]
+    Eigen::Vector3d accel_n;
+    /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
+    Eigen::Vector3d angularVelocity_ie_n;
+    /// ω_ie_n Transport Rate in [rad/s], in navigation coordinates
+    Eigen::Vector3d angularVelocity_en_n;
+    /// g_n (tₖ₋₁) Gravity vector in [m/s^2], in navigation coordinates (including centrifugal acceleration)
+    Eigen::Vector3d gravity_n;
+};
+
+/// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.3.4)
+Eigen::Vector3d velocityUpdateModel(const VelocityUpdateState& x, const Eigen::Vector3d& velocity_n)
+{
+    // The Coriolis force accounts for the fact that the NED frame is noninertial
+    const Eigen::Vector3d coriolisAcceleration_n = (2 * x.angularVelocity_ie_n + x.angularVelocity_en_n).cross(velocity_n);
+
+    // Jekeli (eq. 4.88) - g includes centrifugal acceleration
+    return x.accel_n - coriolisAcceleration_n + x.gravity_n;
+}
+
+// ###########################################################################################################
+//                                             Public Functions
+// ###########################################################################################################
+
 Eigen::Quaterniond updateQuaternion_ep_RungeKutta3(
     const long double& timeDifferenceSec__t0,        // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     const long double& timeDifferenceSec__t1,        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
@@ -46,47 +95,10 @@ Eigen::Quaterniond updateQuaternion_ep_RungeKutta3(
     /// of the earth to platform system, in platform coordinates, at the time tₖ (eq. 8.15)
     const Eigen::Vector3d angularVelocity_ep_p__t0 = (3 * integratedAngularVelocity_ep_p__t0 - integratedAngularVelocity_ep_p__t1) / integrationStep;
 
-    // clang-format off
-
-    /// A Matrix at the time tₖ₋₂ (eq. 8.1 / 8.16). Reordered because Eigen::Quaternion(x,y,z,w), Skript (w,x,y,z)
-    Eigen::Matrix4d A__t2;
-    A__t2 <<             0.0             ,  angularVelocity_ep_p__t2(2), -angularVelocity_ep_p__t2(1),  angularVelocity_ep_p__t2(0),
-             -angularVelocity_ep_p__t2(2),             0.0             ,  angularVelocity_ep_p__t2(0),  angularVelocity_ep_p__t2(1),
-              angularVelocity_ep_p__t2(1), -angularVelocity_ep_p__t2(0),             0.0             ,  angularVelocity_ep_p__t2(2),
-             -angularVelocity_ep_p__t2(0), -angularVelocity_ep_p__t2(1), -angularVelocity_ep_p__t2(2),             0.0             ;
-    /// A Matrix at the time tₖ₋₁ (eq. 8.1 / 8.16). Reordered because Eigen::Quaternion(x,y,z,w), Skript (w,x,y,z)
-    Eigen::Matrix4d A__t1;
-    A__t1 <<             0.0             ,  angularVelocity_ep_p__t1(2), -angularVelocity_ep_p__t1(1),  angularVelocity_ep_p__t1(0),
-             -angularVelocity_ep_p__t1(2),             0.0             ,  angularVelocity_ep_p__t1(0),  angularVelocity_ep_p__t1(1),
-              angularVelocity_ep_p__t1(1), -angularVelocity_ep_p__t1(0),             0.0             ,  angularVelocity_ep_p__t1(2),
-             -angularVelocity_ep_p__t1(0), -angularVelocity_ep_p__t1(1), -angularVelocity_ep_p__t1(2),             0.0             ;
-    /// A Matrix at the time tₖ (eq. 8.1 / 8.16). Reordered because Eigen::Quaternion(x,y,z,w), Skript (w,x,y,z)
-    Eigen::Matrix4d A__t0;
-    A__t0 <<             0.0             ,  angularVelocity_ep_p__t0(2), -angularVelocity_ep_p__t0(1),  angularVelocity_ep_p__t0(0),
-             -angularVelocity_ep_p__t0(2),             0.0             ,  angularVelocity_ep_p__t0(0),  angularVelocity_ep_p__t0(1),
-              angularVelocity_ep_p__t0(1), -angularVelocity_ep_p__t0(0),             0.0             ,  angularVelocity_ep_p__t0(2),
-             -angularVelocity_ep_p__t0(0), -angularVelocity_ep_p__t0(1), -angularVelocity_ep_p__t0(2),             0.0             ;
-
-    // clang-format on
-
-    /// Function calculating the Runge-Kutta coefficients
-    auto f = [](const Eigen::Matrix4d& A, const Eigen::Vector4d& q) {
-        return 0.5 * A * q;
-    };
-
-    /// Runge-Kutta coefficient k₁ (eq. 8.2)
-    const Eigen::Vector4d k1 = f(A__t2, quaternion_ep__t2.coeffs());
-    /// Runge-Kutta coefficient k₂ (eq. 8.2)
-    const Eigen::Vector4d k2 = f(A__t1, quaternion_ep__t2.coeffs()
-                                            + k1 * integrationStep / 2.0);
-    /// Runge-Kutta coefficient k₃ (eq. 8.2)
-    const Eigen::Vector4d k3 = f(A__t0, quaternion_ep__t2.coeffs()
-                                            - k1 * integrationStep
-                                            + k2 * 2.0 * integrationStep);
-
-    /// Updated Quaternion (eq. 8.2)
+    // Updated Quaternion (eq. 8.2)
     Eigen::Quaterniond q_ep__t0;
-    q_ep__t0 = quaternion_ep__t2.coeffs() + integrationStep * (k1 + 4.0 * k2 + k3) / 6.0;
+    q_ep__t0 = Integration::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_ep__t2.coeffs(),
+                                        angularVelocity_ep_p__t2, angularVelocity_ep_p__t1, angularVelocity_ep_p__t0);
 
     // Normalize Quaternion
     q_ep__t0.normalize();
@@ -137,47 +149,10 @@ Eigen::Quaterniond updateQuaternion_nb_RungeKutta3(
     /// of the navigation to body system, in body coordinates, at the time tₖ (eq. 8.15)
     const Eigen::Vector3d angularVelocity_nb_b__t0 = (3 * integratedAngularVelocity_nb_b__t0 - integratedAngularVelocity_nb_b__t1) / integrationStep;
 
-    // clang-format off
-
-    /// A Matrix at the time tₖ₋₂ (eq. 8.1 / 8.16). Reordered because Eigen::Quaternion(x,y,z,w), Skript (w,x,y,z)
-    Eigen::Matrix4d A__t2;
-    A__t2 <<             0.0             ,  angularVelocity_nb_b__t2(2), -angularVelocity_nb_b__t2(1),  angularVelocity_nb_b__t2(0),
-             -angularVelocity_nb_b__t2(2),             0.0             ,  angularVelocity_nb_b__t2(0),  angularVelocity_nb_b__t2(1),
-              angularVelocity_nb_b__t2(1), -angularVelocity_nb_b__t2(0),             0.0             ,  angularVelocity_nb_b__t2(2),
-             -angularVelocity_nb_b__t2(0), -angularVelocity_nb_b__t2(1), -angularVelocity_nb_b__t2(2),             0.0             ;
-    /// A Matrix at the time tₖ₋₁ (eq. 8.1 / 8.16). Reordered because Eigen::Quaternion(x,y,z,w), Skript (w,x,y,z)
-    Eigen::Matrix4d A__t1;
-    A__t1 <<             0.0             ,  angularVelocity_nb_b__t1(2), -angularVelocity_nb_b__t1(1),  angularVelocity_nb_b__t1(0),
-             -angularVelocity_nb_b__t1(2),             0.0             ,  angularVelocity_nb_b__t1(0),  angularVelocity_nb_b__t1(1),
-              angularVelocity_nb_b__t1(1), -angularVelocity_nb_b__t1(0),             0.0             ,  angularVelocity_nb_b__t1(2),
-             -angularVelocity_nb_b__t1(0), -angularVelocity_nb_b__t1(1), -angularVelocity_nb_b__t1(2),             0.0             ;
-    /// A Matrix at the time tₖ (eq. 8.1 / 8.16). Reordered because Eigen::Quaternion(x,y,z,w), Skript (w,x,y,z)
-    Eigen::Matrix4d A__t0;
-    A__t0 <<             0.0             ,  angularVelocity_nb_b__t0(2), -angularVelocity_nb_b__t0(1),  angularVelocity_nb_b__t0(0),
-             -angularVelocity_nb_b__t0(2),             0.0             ,  angularVelocity_nb_b__t0(0),  angularVelocity_nb_b__t0(1),
-              angularVelocity_nb_b__t0(1), -angularVelocity_nb_b__t0(0),             0.0             ,  angularVelocity_nb_b__t0(2),
-             -angularVelocity_nb_b__t0(0), -angularVelocity_nb_b__t0(1), -angularVelocity_nb_b__t0(2),             0.0             ;
-
-    // clang-format on
-
-    /// Function calculating the Runge-Kutta coefficients
-    auto f = [](const Eigen::Matrix4d& A, const Eigen::Vector4d& q) {
-        return 0.5 * A * q;
-    };
-
-    /// Runge-Kutta coefficient k₁ (eq. 8.2)
-    const Eigen::Vector4d k1 = f(A__t2, quaternion_nb__t2.coeffs());
-    /// Runge-Kutta coefficient k₂ (eq. 8.2)
-    const Eigen::Vector4d k2 = f(A__t1, quaternion_nb__t2.coeffs()
-                                            + k1 * integrationStep / 2.0);
-    /// Runge-Kutta coefficient k₃ (eq. 8.2)
-    const Eigen::Vector4d k3 = f(A__t0, quaternion_nb__t2.coeffs()
-                                            - k1 * integrationStep
-                                            + k2 * 2.0 * integrationStep);
-
-    /// Updated Quaternion (eq. 8.2)
+    // Updated Quaternion (eq. 8.2)
     Eigen::Quaterniond q_nb__t0;
-    q_nb__t0 = quaternion_nb__t2.coeffs() + integrationStep * (k1 + 4.0 * k2 + k3) / 6.0;
+    q_nb__t0 = Integration::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_nb__t2.coeffs(),
+                                        angularVelocity_nb_b__t2, angularVelocity_nb_b__t1, angularVelocity_nb_b__t0);
 
     // Normalize Quaternion
     q_nb__t0.normalize();
@@ -229,7 +204,7 @@ Eigen::Vector3d updateVelocity_n_Simpson(const long double& timeDifferenceSec__t
                                          const Eigen::Vector3d& velocity_n__t2,           // v_n (tₖ₋₂) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₂
                                          const Eigen::Vector3d& gravity_n__t1,            // g_n (tₖ₋₁) Gravity vector in [m/s^2], in navigation coordinates, at the time tₖ₋₁
                                          const Eigen::Vector3d& angularVelocity_ie_n__t1, // ω_ie_n (tₖ₋₁) Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates, at the time tₖ₋₁
-                                         const Eigen::Vector3d& angularVelocity_en_n__t1, // ω_ie_n (tₖ₋₁) Transport Rate in [rad/s], in navigation coordinates, at the time tₖ₋₁
+                                         const Eigen::Vector3d& angularVelocity_en_n__t1, // ω_en_n (tₖ₋₁) Transport Rate in [rad/s], in navigation coordinates, at the time tₖ₋₁
                                          const Eigen::Quaterniond& quaternion_nb__t0,     // q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
                                          const Eigen::Quaterniond& quaternion_nb__t1,     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
                                          const Eigen::Quaterniond& quaternion_nb__t2)     // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
@@ -254,6 +229,56 @@ Eigen::Vector3d updateVelocity_n_Simpson(const long double& timeDifferenceSec__t
 
     /// v_e (tₖ) Velocity in [m/s], in navigation coordinates, at the time tₖ (eq. 6.13)
     Eigen::Vector3d velocity_n__t0 = velocity_n__t2 + simpsonIntegration_n - (coriolisAcceleration_n__t1 - gravity_n__t1) * integrationStep;
+
+    return velocity_n__t0;
+}
+
+Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSec__t0,        // Δtₖ Time difference in [seconds]. This epoch to previous epoch
+                                             const long double& timeDifferenceSec__t1,        // Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
+                                             const Eigen::Vector3d& acceleration_b__t0,       // a_p (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
+                                             const Eigen::Vector3d& acceleration_b__t1,       // a_p (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
+                                             const Eigen::Vector3d& velocity_n__t2,           // v_n (tₖ₋₂) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₂
+                                             const Eigen::Vector3d& gravity_n__t1,            // g_n (tₖ₋₁) Gravity vector in [m/s^2], in navigation coordinates, at the time tₖ₋₁
+                                             const Eigen::Vector3d& angularVelocity_ie_n__t1, // ω_ie_n (tₖ₋₁) Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates, at the time tₖ₋₁
+                                             const Eigen::Vector3d& angularVelocity_en_n__t1, // ω_ie_n (tₖ₋₁) Transport Rate in [rad/s], in navigation coordinates, at the time tₖ₋₁
+                                             const Eigen::Quaterniond& quaternion_nb__t0,     // q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
+                                             const Eigen::Quaterniond& quaternion_nb__t1,     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
+                                             const Eigen::Quaterniond& quaternion_nb__t2)     // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
+{
+    /// Δv_p (tₖ) Integrated velocity in [m/s], in body coordinates, at the time tₖ
+    const Eigen::Vector3d deltaVelocity_b__t0 = acceleration_b__t0 * timeDifferenceSec__t0;
+
+    /// Δv_p (tₖ₋₁) Integrated velocity in [m/s], in body coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d deltaVelocity_b__t1 = acceleration_b__t1 * timeDifferenceSec__t1;
+
+    /// Integration step [s]
+    const long double integrationStep = timeDifferenceSec__t0 + timeDifferenceSec__t1;
+
+    VelocityUpdateState state__t2;
+    VelocityUpdateState state__t1;
+    VelocityUpdateState state__t0;
+
+    /// a_n (tₖ₋₂) Taylor-Approximation of acceleration in [m/s^2]
+    state__t2.accel_n = quaternion_nb__t2 * (3 * deltaVelocity_b__t1 - deltaVelocity_b__t0) / integrationStep;
+    /// a_n (tₖ₋₁) Taylor-Approximation of acceleration in [m/s^2]
+    state__t1.accel_n = quaternion_nb__t1 * (deltaVelocity_b__t1 + deltaVelocity_b__t0) / integrationStep;
+    /// a_n (tₖ) Taylor-Approximation of acceleration in [m/s^2]
+    state__t0.accel_n = quaternion_nb__t0 * (3 * deltaVelocity_b__t0 - deltaVelocity_b__t1) / integrationStep;
+
+    state__t0.angularVelocity_ie_n = angularVelocity_ie_n__t1;
+    state__t0.angularVelocity_en_n = angularVelocity_en_n__t1;
+    state__t0.gravity_n = gravity_n__t1;
+
+    state__t1.angularVelocity_ie_n = state__t0.angularVelocity_ie_n;
+    state__t1.angularVelocity_en_n = state__t0.angularVelocity_en_n;
+    state__t1.gravity_n = state__t0.gravity_n;
+
+    state__t2.angularVelocity_ie_n = state__t0.angularVelocity_ie_n;
+    state__t2.angularVelocity_en_n = state__t0.angularVelocity_en_n;
+    state__t2.gravity_n = state__t0.gravity_n;
+
+    /// v_n (tₖ) Velocity in [m/s], in navigation coordinates, at the time tₖ
+    Eigen::Vector3d velocity_n__t0 = Integration::rungeKutta3(velocityUpdateModel, integrationStep, velocity_n__t2, state__t2, state__t1, state__t0);
 
     return velocity_n__t0;
 }

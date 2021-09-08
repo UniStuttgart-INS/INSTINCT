@@ -88,50 +88,6 @@
             "id": 543,
             "startPinId": 355
         },
-        "link-611": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 419,
-            "id": 611,
-            "startPinId": 500
-        },
-        "link-612": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 229,
-            "id": 612,
-            "startPinId": 500
-        },
-        "link-613": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 228,
-            "id": 613,
-            "startPinId": 522
-        },
-        "link-614": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 418,
-            "id": 614,
-            "startPinId": 515
-        },
         "link-615": {
             "color": {
                 "a": 255,
@@ -153,6 +109,50 @@
             "endPinId": 521,
             "id": 616,
             "startPinId": 230
+        },
+        "link-618": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 229,
+            "id": 618,
+            "startPinId": 500
+        },
+        "link-620": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 228,
+            "id": 620,
+            "startPinId": 522
+        },
+        "link-622": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 418,
+            "id": 622,
+            "startPinId": 515
+        },
+        "link-623": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 419,
+            "id": 623,
+            "startPinId": 500
         }
     },
     "nodes": {
@@ -171,7 +171,7 @@
                 },
                 {
                     "dataIdentifier": [
-                        "InertialNavSol"
+                        "PosVelAtt"
                     ],
                     "id": 229,
                     "name": "",
@@ -183,7 +183,7 @@
             "outputPins": [
                 {
                     "dataIdentifier": [
-                        "InertialNavSol"
+                        "PosVelAtt"
                     ],
                     "id": 230,
                     "name": "",
@@ -325,7 +325,7 @@
                 },
                 {
                     "dataIdentifier": [
-                        "InertialNavSol"
+                        "PosVelAtt"
                     ],
                     "id": 419,
                     "name": "",
@@ -337,7 +337,7 @@
             "outputPins": [
                 {
                     "dataIdentifier": [
-                        "InertialNavSol"
+                        "PosVelAtt"
                     ],
                     "id": 420,
                     "name": "",
@@ -2229,7 +2229,7 @@
                 "plotInfos": [
                     {
                         "autoLimitXaxis": true,
-                        "autoLimitYaxis": false,
+                        "autoLimitYaxis": true,
                         "headerText": "Position LatLon",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -2252,8 +2252,8 @@
                         "y3AxisLabel": ""
                     },
                     {
-                        "autoLimitXaxis": false,
-                        "autoLimitYaxis": false,
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
                         "headerText": "Position North/East",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -2300,8 +2300,8 @@
                         "y3AxisLabel": ""
                     },
                     {
-                        "autoLimitXaxis": false,
-                        "autoLimitYaxis": false,
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
                         "headerText": "Attitude",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
