@@ -1,6 +1,7 @@
 /// @file ImuIntegrator.hpp
 /// @brief Integrates ImuObs Data
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @date 2020-05-18
 
 #pragma once

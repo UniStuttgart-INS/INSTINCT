@@ -1,6 +1,7 @@
 /// @file LooselyCoupledKF.hpp
 /// @brief Kalman Filter class for the loosely coupled INS/GNSS integration
-/// @author T. Topp (topp@ins.uni-stuttgart.de) and M. Maier (marcel.maier@ins.uni-stuttgart.de)
+/// @author T. Topp (topp@ins.uni-stuttgart.de)
+/// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @date 2021-08-04
 
 #pragma once
