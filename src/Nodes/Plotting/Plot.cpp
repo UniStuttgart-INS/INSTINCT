@@ -390,7 +390,7 @@ void NAV::Plot::guiConfig()
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader((plotInfo.headerText + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
         {
-            ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+            ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
             if (ImGui::TreeNode(("Options##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
             {
                 ImGui::InputText(("Title##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.title);
