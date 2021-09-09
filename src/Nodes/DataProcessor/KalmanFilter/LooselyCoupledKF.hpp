@@ -133,30 +133,41 @@ class LooselyCoupledKF : public Node
     //                                           Transition matrix 𝚽
     // ###########################################################################################################
 
-    // Transition matrix 𝚽 and system-submatrices 𝐅_ij --------------------------------------------------------
     /// @brief Updates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ
+    /// @param[in] F System Matrix
+    /// @param[in] tau_s time interval in [s]
+    /// @note See Groves (2013) chapter 14.2.4, equation (14.72)
+    static Eigen::MatrixXd transitionMatrix(const Eigen::MatrixXd& F, double tau_s);
+
+    // ###########################################################################################################
+    //                                             System matrix 𝐅
+    // ###########################################################################################################
+
+    /// @brief Calculates the system matrix 𝐅
     /// @param[in] quaternion_nb Attitude of the body with respect to n-system
     /// @param[in] specForce_ib_b Specific force of the body with respect to inertial frame in [m / s^2], resolved in body coord.
     /// @param[in] velocity_n Velocity in n-system in [m / s]
     /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
-    /// @param[in] tau_s time interval in [s]
-    /// @note See Groves (2013) chapter 14.2.4, equations (14.63) and (14.72)
-    static Eigen::MatrixXd transitionMatrix(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, double tau_s);
+    /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @note See Groves (2013) chapter 14.2.4, equation (14.63)
+    static Eigen::Matrix<double, 15, 15> systemMatrixF(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
 
-    /// @brief Submatrix 𝐅_11 of the system matrix 𝐅
+    /// @brief Submatrix 𝐅_𝜓'_𝜓 of the system matrix 𝐅
     /// @param[in] angularRate_in_n Angular rate vector of the n-system with respect to the i-system in [rad / s], resolved in the n-system
     /// @return The 3x3 matrix 𝐅_11
+    /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.22)
     /// @note See Groves (2013) equation (14.64)
     static Eigen::Matrix3d systemMatrixF_11_n(const Eigen::Vector3d& angularRate_in_n);
 
-    /// @brief Submatrix 𝐅_12 of the system matrix 𝐅
+    /// @brief Submatrix 𝐅_𝜓'_𝛿v of the system matrix 𝐅
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_12
     /// @note See Groves (2013) equation (14.65)
     static Eigen::Matrix3d systemMatrixF_12_n(double latitude_b, double height_b);
 
-    /// @brief Submatrix 𝐅_13 of the system matrix 𝐅
+    /// @brief Submatrix 𝐅_𝜓'_𝛿r of the system matrix 𝐅
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
@@ -164,14 +175,14 @@ class LooselyCoupledKF : public Node
     /// @note See Groves (2013) equation (14.66)
     static Eigen::Matrix3d systemMatrixF_13_n(double latitude_b, double height_b, const Eigen::Vector3d& v_eb_n);
 
-    /// @brief Submatrix 𝐅_21 of the system matrix 𝐅
+    /// @brief Submatrix 𝐅_𝛿v'_𝜓 of the system matrix 𝐅
     /// @param[in] quaternion_nb Attitude of the body with respect to n-system
     /// @param[in] specForce_ib_b Specific force of the body with respect to inertial frame in [m / s^2], resolved in body coord.
     /// @return The 3x3 matrix 𝐅_21
     /// @note See Groves (2013) equation (14.67)
     static Eigen::Matrix3d systemMatrixF_21_n(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b);
 
-    /// @brief Submatrix 𝐅_22 of the system matrix 𝐅
+    /// @brief Submatrix 𝐅_𝛿v'_𝛿v of the system matrix 𝐅
     /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
@@ -179,7 +190,7 @@ class LooselyCoupledKF : public Node
     /// @note See Groves (2013) equation (14.68)
     static Eigen::Matrix3d systemMatrixF_22_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
 
-    /// @brief Submatrix 𝐅_23 of the system matrix 𝐅
+    /// @brief Submatrix 𝐅_𝛿v'_𝛿r of the system matrix 𝐅
     /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
@@ -187,20 +198,56 @@ class LooselyCoupledKF : public Node
     /// @note See Groves (2013) equation (14.69)
     static Eigen::Matrix3d systemMatrixF_23_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
 
-    /// @brief Submatrix 𝐅_32 of the system matrix 𝐅
+    /// @brief Submatrix 𝐅_𝛿r'_𝛿v of the system matrix 𝐅
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_32
     /// @note See Groves (2013) equation (14.70)
     static Eigen::Matrix3d systemMatrixF_32_n(double latitude_b, double height_b);
 
-    /// @brief Submatrix 𝐅_33 of the system matrix 𝐅
+    /// @brief Submatrix 𝐅_𝛿r'_𝛿r of the system matrix 𝐅
     /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_33
     /// @note See Groves (2013) equation (14.71)
     static Eigen::Matrix3d systemMatrixF_33_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
+
+    /// @brief Submatrix 𝐅_𝛿a'_𝛿a of the system matrix 𝐅
+    /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @return The 3x3 matrix 𝐅_44
+    /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
+    static Eigen::Matrix3d systemMatrixF_44_n(const Eigen::Vector3d& beta_a);
+
+    /// @brief Submatrix 𝐅_𝛿ω'_𝛿ω of the system matrix 𝐅
+    /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @return The 3x3 matrix 𝐅_44
+    /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
+    static Eigen::Matrix3d systemMatrixF_55_n(const Eigen::Vector3d& beta_omega);
+
+    // ###########################################################################################################
+    //                                           Noise input matrix 𝐆
+    // ###########################################################################################################
+
+    /// @brief Calculates the noise input matrix 𝐆
+    /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
+    /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.5)
+    static Eigen::Matrix<double, 15, 6> noiseInputMatrixG(const double& sigma2_ra, const double& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
+
+    /// @brief Submatrix 𝐆_a of the noise input matrix 𝐆
+    /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
+    static Eigen::Matrix3d noiseInputMatrixG_a(const double& sigma2_ra, const Eigen::Vector3d& beta_a);
+
+    /// @brief Submatrix 𝐆_ω of the noise input matrix 𝐆
+    /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
+    /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
+    static Eigen::Matrix3d noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega);
 
     // ###########################################################################################################
     //                                     System noise covariance matrix 𝐐

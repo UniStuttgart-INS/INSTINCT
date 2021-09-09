@@ -182,6 +182,7 @@ namespace NAV
 /// @param[in] a Semi-major axis
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return North/South (meridian) earth radius [m]
+/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 2.105)
 [[nodiscard]] double earthRadius_N(const double& latitude, const double& a = InsConst::WGS84_a, const double& e_squared = InsConst::WGS84_e_squared);
 
 /// @brief Calculates the East/West (prime vertical) earth radius
@@ -189,6 +190,7 @@ namespace NAV
 /// @param[in] a Semi-major axis
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return East/West (prime vertical) earth radius [m]
+/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 2.106)
 [[nodiscard]] double earthRadius_E(const double& latitude, const double& a = InsConst::WGS84_a, const double& e_squared = InsConst::WGS84_e_squared);
 
 /// @brief r_eS^e The distance of a point on the Earth's surface from the center of the Earth

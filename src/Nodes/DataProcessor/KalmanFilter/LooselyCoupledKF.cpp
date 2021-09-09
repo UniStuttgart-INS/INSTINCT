@@ -16,13 +16,15 @@ namespace nm = NAV::NodeManager;
 #include "util/InsGravity.hpp"
 #include "util/Logger.hpp"
 
+#include <unsupported/Eigen/MatrixFunctions>
+
 NAV::LooselyCoupledKF::LooselyCoupledKF()
 {
     name = typeStatic();
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = false;
+    hasConfig = true;
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
@@ -179,16 +181,55 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
                                                 : inertialNavSol->imuObs->accelUncompXYZ.value();
     auto acceleration_b = imuPosition.quatAccel_bp() * acceleration_p;
 
+    // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
+    Eigen::Vector3d beta_a = 2.0 / tau_KF * Eigen::Vector3d::Identity();
+    // Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
+    Eigen::Vector3d beta_omega = 2.0 / tau_KF * Eigen::Vector3d::Identity();
+
+    // System Matrix
+    Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, velocity_n__t1, position_lla__t1, beta_a, beta_omega);
+
+    // Noise Input Matrix
+    Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(variance_ra, variance_rg, beta_a, beta_omega);
+
+    // Power Spectral Density of u (See Brown & Hwang (2012) chapter 3.9, p. 126 - footnote)
+    Eigen::Matrix<double, 6, 6> W = Eigen::Matrix<double, 6, 6>::Identity();
+
+    // C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential
+    Eigen::Matrix<double, 30, 30> A = Eigen::Matrix<double, 30, 30>::Zero();
+    A.block<15, 15>(0, 0) = -F;
+    A.block<15, 15>(0, 15) = G * W * G.transpose();
+    A.block<15, 15>(15, 15) = F.transpose();
+
+    A *= tau_KF;
+
+    // Exponential Matrix of A (https://eigen.tuxfamily.org/dox/unsupported/group__MatrixFunctions__Module.html#matrixbase_exp)
+    Eigen::Matrix<double, 30, 30> B = A.exp();
+
     // ---------------------------------------------- Prediction -------------------------------------------------
     // 1. Calculate the transition matrix 𝚽_{k-1}
-    kalmanFilter.Phi = transitionMatrix(quaternion_nb__t1, acceleration_b, velocity_n__t1, position_lla__t1, tau_KF);
+    if (true) // TODO
+    {
+        kalmanFilter.Phi = B.block<15, 15>(15, 15).transpose();
+    }
+    else
+    {
+        kalmanFilter.Phi = transitionMatrix(F, tau_KF);
+    }
     notifyOutputValueChanged(OutputPortIndex_Phi);
 
     // 2. Calculate the system noise covariance matrix Q_{k-1}
-    kalmanFilter.Q = systemNoiseCovarianceMatrix(variance_ra, variance_rg, variance_bad, variance_bgd,
-                                                 systemMatrixF_21_n(quaternion_nb__t1, acceleration_b),
-                                                 T_rn_p,
-                                                 DCM_nb, tau_KF);
+    if (true) // TODO
+    {
+        kalmanFilter.Q = kalmanFilter.Phi * B.block<15, 15>(0, 15);
+    }
+    else
+    {
+        kalmanFilter.Q = systemNoiseCovarianceMatrix(variance_ra, variance_rg, variance_bad, variance_bgd,
+                                                     systemMatrixF_21_n(quaternion_nb__t1, acceleration_b),
+                                                     T_rn_p,
+                                                     DCM_nb, tau_KF);
+    }
     notifyOutputValueChanged(OutputPortIndex_Q);
 
     // 3. Propagate the state vector estimate from x(+) and x(-)
@@ -322,7 +363,14 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt
 //                                           Transition matrix 𝚽
 // ###########################################################################################################
 
-Eigen::MatrixXd NAV::LooselyCoupledKF::transitionMatrix(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, double tau_s)
+Eigen::MatrixXd NAV::LooselyCoupledKF::transitionMatrix(const Eigen::MatrixXd& F, double tau_s)
+{
+    // Transition matrix 𝚽
+    // Math: \mathbf{\Phi}_{INS}^n \approx \begin{bmatrix} \mathbf{I}_3 + \mathbf{F}_{11}^n \mathbf{\tau}_s & \mathbf{F}_{12}^n \mathbf{\tau}_s & \mathbf{F}_{13}^n \mathbf{\tau}_s & \mathbf{0}_3 & \mathbf{\hat{C}}_b^n \mathbf{\tau}_s \\ \mathbf{F}_{21}^n \mathbf{\tau}_s & \mathbf{I}_3 + \mathbf{F}_{22}^n \mathbf{\tau}_s & \mathbf{F}_{23}'^n \mathbf{\tau}_s & \mathbf{\hat{C}}_b^n \mathbf{\tau}_s & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{32}^n \mathbf{\tau}_s & \mathbf{I}_3 + \mathbf{F}_{33}^n \mathbf{\tau}_s & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{I}_3 \end{bmatrix} \qquad \text{P. Groves}\,(14.72)
+    return Eigen::MatrixXd::Identity(15, 15) + F * tau_s;
+}
+
+Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega)
 {
     Eigen::Vector3d angularRate_in_n(InsConst::angularVelocity_ie * std::cos(position_lla(0)),
                                      0,
@@ -335,23 +383,17 @@ Eigen::MatrixXd NAV::LooselyCoupledKF::transitionMatrix(const Eigen::Quaterniond
     F.block<3, 3>(0, 0) = systemMatrixF_11_n(angularRate_in_n);
     F.block<3, 3>(0, 3) = systemMatrixF_12_n(position_lla(0), position_lla(2));
     F.block<3, 3>(0, 6) = systemMatrixF_13_n(position_lla(0), position_lla(2), velocity_n);
-    F.block<3, 3>(0, 12) = quaternion_nb.toRotationMatrix();
+    F.block<3, 3>(0, 12) = -quaternion_nb.toRotationMatrix(); // Sign from T. Hobiger (2021) Inertialnavigation V07 - equation (7.22)
     F.block<3, 3>(3, 0) = systemMatrixF_21_n(quaternion_nb, specForce_ib_b);
     F.block<3, 3>(3, 3) = systemMatrixF_22_n(velocity_n, position_lla(0), position_lla(2));
     F.block<3, 3>(3, 6) = systemMatrixF_23_n(velocity_n, position_lla(0), position_lla(2));
     F.block<3, 3>(3, 9) = quaternion_nb.toRotationMatrix();
     F.block<3, 3>(6, 3) = systemMatrixF_32_n(position_lla(0), position_lla(2));
     F.block<3, 3>(6, 6) = systemMatrixF_33_n(velocity_n, position_lla(0), position_lla(2));
+    F.block<3, 3>(9, 9) = systemMatrixF_44_n(beta_a);
+    F.block<3, 3>(12, 12) = systemMatrixF_55_n(beta_omega);
 
-    // LOG_DEBUG("F: \n{}", F);
-
-    // Transition matrix 𝚽
-    // Math: \mathbf{\Phi}_{INS}^n \approx \begin{bmatrix} \mathbf{I}_3 + \mathbf{F}_{11}^n \mathbf{\tau}_s & \mathbf{F}_{12}^n \mathbf{\tau}_s & \mathbf{F}_{13}^n \mathbf{\tau}_s & \mathbf{0}_3 & \mathbf{\hat{C}}_b^n \mathbf{\tau}_s \\ \mathbf{F}_{21}^n \mathbf{\tau}_s & \mathbf{I}_3 + \mathbf{F}_{22}^n \mathbf{\tau}_s & \mathbf{F}_{23}'^n \mathbf{\tau}_s & \mathbf{\hat{C}}_b^n \mathbf{\tau}_s & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{32}^n \mathbf{\tau}_s & \mathbf{I}_3 + \mathbf{F}_{33}^n \mathbf{\tau}_s & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{I}_3 \end{bmatrix} \qquad \text{P. Groves}\,(14.72)
-    Eigen::MatrixXd Phi = Eigen::MatrixXd::Identity(15, 15);
-
-    Phi += F * tau_s;
-
-    return Phi;
+    return F;
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_11_n(const Eigen::Vector3d& angularRate_in_n)
@@ -367,9 +409,9 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_12_n(double latitude_b, dou
     double R_E = NAV::earthRadius_E(latitude_b);
     double R_N = NAV::earthRadius_N(latitude_b);
 
-    F_12_n(0, 1) = -1 / (R_E + height_b);
-    F_12_n(1, 0) = 1 / (R_N + height_b);
-    F_12_n(2, 1) = std::tan(latitude_b) / (R_E + height_b);
+    F_12_n(0, 1) = 1 / (R_E + height_b);
+    F_12_n(1, 0) = -1 / (R_N + height_b);
+    F_12_n(2, 1) = -std::tan(latitude_b) / (R_E + height_b);
 
     return F_12_n;
 }
@@ -381,11 +423,11 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_13_n(double latitude_b, dou
     double R_E = NAV::earthRadius_E(latitude_b);
     double R_N = NAV::earthRadius_N(latitude_b);
 
-    F_13_n(0, 0) = InsConst::angularVelocity_ie * std::sin(latitude_b);
-    F_13_n(0, 2) = v_eb_n(1) / std::pow((R_E + height_b), 2.0);
-    F_13_n(1, 2) = -v_eb_n(0) / std::pow((R_N + height_b), 2.0);
-    F_13_n(2, 0) = InsConst::angularVelocity_ie * std::cos(latitude_b) + v_eb_n(1) / ((R_E + height_b) * cos(latitude_b) * cos(latitude_b));
-    F_13_n(2, 2) = -v_eb_n(1) * std::tan(latitude_b) / std::pow((R_E + height_b), 2.0);
+    F_13_n(0, 0) = -InsConst::angularVelocity_ie * std::sin(latitude_b);
+    F_13_n(0, 2) = -v_eb_n(1) / std::pow((R_E + height_b), 2.0);
+    F_13_n(1, 2) = v_eb_n(0) / std::pow((R_N + height_b), 2.0);
+    F_13_n(2, 0) = -InsConst::angularVelocity_ie * std::cos(latitude_b) + v_eb_n(1) / ((R_E + height_b) * cos(latitude_b) * cos(latitude_b));
+    F_13_n(2, 2) = v_eb_n(1) * std::tan(latitude_b) / std::pow((R_E + height_b), 2.0);
 
     return F_13_n;
 }
@@ -393,7 +435,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_13_n(double latitude_b, dou
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_21_n(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b)
 {
     // Math: \mathbf{F}_{21}^n = -\begin{bmatrix} (\mathbf{\hat{C}}_{b}^n \hat{f}_{ib}^b) \land \end{bmatrix} \qquad \text{P. Groves}\,(14.67)
-    return -skewSymmetricMatrix(quaternion_nb * specForce_ib_b);
+    return skewSymmetricMatrix(quaternion_nb * specForce_ib_b);
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_22_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b)
@@ -459,6 +501,42 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_33_n(const Eigen::Vector3d&
     F_33_n(1, 0) = v_eb_n(1) * std::sin(latitude_b) / ((R_E + height_b) * std::pow(std::cos(latitude_b), 2.0));
     F_33_n(1, 2) = -v_eb_n(1) / (std::pow(R_E + height_b, 2.0) * std::cos(latitude_b));
     return F_33_n;
+}
+
+Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_44_n(const Eigen::Vector3d& beta_a)
+{
+    // TODO: Math
+    return -1 * Eigen::DiagonalMatrix<double, 3>{ beta_a };
+}
+
+Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_55_n(const Eigen::Vector3d& beta_omega)
+{
+    // TODO: Math
+    return -1 * Eigen::DiagonalMatrix<double, 3>{ beta_omega };
+}
+
+// ###########################################################################################################
+//                                           Noise input matrix 𝐆
+// ###########################################################################################################
+
+Eigen::Matrix<double, 15, 6> NAV::LooselyCoupledKF::noiseInputMatrixG(const double& sigma2_ra, const double& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega)
+{
+    Eigen::Matrix<double, 15, 6> G = Eigen::Matrix<double, 15, 6>::Zero();
+
+    G.block<3, 3>(9, 0) = noiseInputMatrixG_a(sigma2_ra, beta_a);
+    G.block<3, 3>(12, 3) = noiseInputMatrixG_omega(sigma2_rg, beta_omega);
+
+    return G;
+}
+
+Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const double& sigma2_ra, const Eigen::Vector3d& beta_a)
+{
+    return Eigen::DiagonalMatrix<double, 3>{ (beta_a.array() * sigma2_ra).sqrt().matrix() };
+}
+
+Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega)
+{
+    return Eigen::DiagonalMatrix<double, 3>{ (beta_omega.array() * sigma2_rg).sqrt().matrix() };
 }
 
 // ###########################################################################################################
