@@ -467,11 +467,13 @@
         },
         "node-512": {
             "data": {
+                "calculateIntermediateValues": true,
                 "gravityModel": 3,
-                "integrationAlgorithm": 1,
+                "integrationAlgorithmAttitude": 3,
+                "integrationAlgorithmPosition": 0,
+                "integrationAlgorithmVelocity": 1,
                 "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": true,
-                "rungeKutta3CalculateIntermediateValues": true
+                "prefereTimeSinceStartupOverInsTime": true
             },
             "enabled": true,
             "id": 512,
@@ -517,11 +519,13 @@
         },
         "node-519": {
             "data": {
+                "calculateIntermediateValues": true,
                 "gravityModel": 3,
-                "integrationAlgorithm": 1,
+                "integrationAlgorithmAttitude": 3,
+                "integrationAlgorithmPosition": 0,
+                "integrationAlgorithmVelocity": 1,
                 "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": true,
-                "rungeKutta3CalculateIntermediateValues": false
+                "prefereTimeSinceStartupOverInsTime": true
             },
             "enabled": true,
             "id": 519,
@@ -706,23 +710,23 @@
                                             {
                                                 "color": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
-                                                    "y": 1.0,
-                                                    "z": 0.0
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
                                                 },
                                                 "legendName": "200 Hz",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
-                                                    "y": 1.0,
-                                                    "z": 0.0
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
-                                                    "y": 1.0,
-                                                    "z": 0.0
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -1065,7 +1069,7 @@
                                             {
                                                 "color": {
                                                     "w": 1.0,
-                                                    "x": 1.0,
+                                                    "x": 0.49803921580314636,
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
@@ -1073,13 +1077,13 @@
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 1.0,
+                                                    "x": 0.49803921580314636,
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 1.0,
+                                                    "x": 0.49803921580314636,
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },

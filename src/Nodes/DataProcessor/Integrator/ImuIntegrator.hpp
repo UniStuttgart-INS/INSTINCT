@@ -126,7 +126,7 @@ class ImuIntegrator : public Node
 
     /// Runge Kutta uses intermediate observations but propagates only every other state. Because of this 2 separate state solutions can coexist.
     /// To avoid this only every seconds state can be output resulting in halving the output frequency. The accuracy of the results is not affected by this.
-    bool rungeKutta3CalculateIntermediateValues = true;
+    bool calculateIntermediateValues = true;
 
     /// Flag to skip every second calculation
     bool skipIntermediateCalculation = false;

@@ -105,9 +105,9 @@ void NAV::ImuIntegrator::guiConfig()
     ImGui::PopItemFlag();
     ImGui::PopStyleVar();
 
-    if (ImGui::Checkbox(fmt::format("Calculate intermediate values##{}", size_t(id)).c_str(), &rungeKutta3CalculateIntermediateValues))
+    if (ImGui::Checkbox(fmt::format("Calculate intermediate values##{}", size_t(id)).c_str(), &calculateIntermediateValues))
     {
-        LOG_DEBUG("{}: rungeKutta3CalculateIntermediateValues changed to {}", nameId(), rungeKutta3CalculateIntermediateValues);
+        LOG_DEBUG("{}: calculateIntermediateValues changed to {}", nameId(), calculateIntermediateValues);
         flow::ApplyChanges();
     }
     ImGui::SameLine();
@@ -134,7 +134,7 @@ void NAV::ImuIntegrator::guiConfig()
     j["integrationAlgorithmAttitude"] = integrationAlgorithmAttitude;
     j["integrationAlgorithmVelocity"] = integrationAlgorithmVelocity;
     j["integrationAlgorithmPosition"] = integrationAlgorithmPosition;
-    j["rungeKutta3CalculateIntermediateValues"] = rungeKutta3CalculateIntermediateValues;
+    j["calculateIntermediateValues"] = calculateIntermediateValues;
     j["prefereTimeSinceStartupOverInsTime"] = prefereTimeSinceStartupOverInsTime;
 
     return j;
@@ -164,9 +164,9 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         integrationAlgorithmPosition = static_cast<IntegrationAlgorithm>(j.at("integrationAlgorithmPosition").get<int>());
     }
-    if (j.contains("rungeKutta3CalculateIntermediateValues"))
+    if (j.contains("calculateIntermediateValues"))
     {
-        rungeKutta3CalculateIntermediateValues = j.at("rungeKutta3CalculateIntermediateValues");
+        calculateIntermediateValues = j.at("calculateIntermediateValues");
     }
     if (j.contains("prefereTimeSinceStartupOverInsTime"))
     {
@@ -180,15 +180,7 @@ bool NAV::ImuIntegrator::initialize()
 
     // This should be dependant on the integration algorithm
     maxSizeImuObservations = 3;
-
-    if (rungeKutta3CalculateIntermediateValues)
-    {
-        maxSizeStates = 2;
-    }
-    else
-    {
-        maxSizeStates = 1;
-    }
+    maxSizeStates = 2;
 
     imuObservations.clear();
     posVelAttStates.clear();
@@ -232,18 +224,7 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeDat
     if (imuObservations.size() == maxSizeImuObservations
         && posVelAttStates.size() == maxSizeStates)
     {
-        if (!skipIntermediateCalculation)
-        {
-            integrateObservation();
-            if (!rungeKutta3CalculateIntermediateValues)
-            {
-                skipIntermediateCalculation = true;
-            }
-        }
-        else
-        {
-            skipIntermediateCalculation = false;
-        }
+        integrateObservation();
     }
 }
 
@@ -287,22 +268,9 @@ void NAV::ImuIntegrator::integrateObservation()
     std::shared_ptr<ImuObs> imuObs__t2 = imuObservations.at(2);
 
     /// Position, Velocity and Attitude at the time tₖ₋₁
-    std::shared_ptr<PosVelAtt> posVelAtt__t1 = nullptr;
+    std::shared_ptr<PosVelAtt> posVelAtt__t1 = posVelAttStates.at(0);
     /// Position, Velocity and Attitude at the time tₖ₋₂
-    std::shared_ptr<PosVelAtt> posVelAtt__t2 = nullptr;
-
-    if (rungeKutta3CalculateIntermediateValues)
-    {
-        posVelAtt__t1 = posVelAttStates.at(0);
-        posVelAtt__t2 = posVelAttStates.at(1);
-    }
-    else
-    {
-        // Because intermediate values are skipped, there is only one previous state available which is at time tₖ₋₂
-        posVelAtt__t2 = posVelAttStates.at(0);
-        // As there is no state at time tₖ₋₁ the state at time tₖ₋₂ is used which is acceptable for small Δtₖ
-        posVelAtt__t1 = posVelAttStates.at(0);
-    }
+    std::shared_ptr<PosVelAtt> posVelAtt__t2 = posVelAttStates.at(1);
 
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = imuObs__t0->imuPos;
@@ -515,14 +483,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         if (integrationAlgorithmPosition == IntegrationAlgorithm::RectangularRule)
         {
-            if (rungeKutta3CalculateIntermediateValues)
-            {
-                position_e__t0 = updatePosition_e(timeDifferenceSec__t0, position_e__t1, velocity_e__t1);
-            }
-            else
-            {
-                position_e__t0 = updatePosition_e(timeDifferenceSec__t0 + timeDifferenceSec__t1, position_e__t1, velocity_e__t1);
-            }
+            position_e__t0 = updatePosition_e(timeDifferenceSec__t0, position_e__t1, velocity_e__t1);
         }
         else
         {
@@ -633,14 +594,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         if (integrationAlgorithmPosition == IntegrationAlgorithm::RectangularRule)
         {
-            if (rungeKutta3CalculateIntermediateValues)
-            {
-                position_n__t0 = updatePosition_n(timeDifferenceSec__t0, position_n__t1, velocity_n__t1);
-            }
-            else
-            {
-                position_n__t0 = updatePosition_n(timeDifferenceSec__t0 + timeDifferenceSec__t1, position_n__t1, velocity_n__t1);
-            }
+            position_n__t0 = updatePosition_n(timeDifferenceSec__t0, position_n__t1, velocity_n__t1);
         }
         else
         {
@@ -666,6 +620,25 @@ void NAV::ImuIntegrator::integrateObservation()
         posVelAtt__t0->quaternion_nb() = quaternion_nb__t0;
     }
 
-    // Push out new data
-    invokeCallbacks(OutputPortIndex_InertialNavSol__t0, posVelAtt__t0);
+    if (!skipIntermediateCalculation)
+    {
+        // Push out new data
+        invokeCallbacks(OutputPortIndex_InertialNavSol__t0, posVelAtt__t0);
+
+        if (!calculateIntermediateValues)
+        {
+            skipIntermediateCalculation = true;
+        }
+    }
+    else
+    {
+        posVelAttStates.push_front(posVelAtt__t0);
+        // Remove states at the end of the list till the max size is reached
+        while (posVelAttStates.size() > maxSizeStates)
+        {
+            posVelAttStates.pop_back();
+        }
+
+        skipIntermediateCalculation = false;
+    }
 }
