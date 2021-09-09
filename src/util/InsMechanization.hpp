@@ -128,7 +128,8 @@ namespace NAV
 /// @param[in] quaternion_nb__t2 q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
 /// @return The updated velocity v_n
 ///
-/// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2) //TODO: Update reference
+/// @note Prefer using Simpson for the velocity update as yields same result but computational more efficient (Jekeli (2001) - Chapter 4.3.6)
+/// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.3.4)
 [[nodiscard]] Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSec__t0,
                                                            const long double& timeDifferenceSec__t1,
                                                            const Eigen::Vector3d& acceleration_b__t0,
