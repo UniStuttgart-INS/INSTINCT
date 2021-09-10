@@ -19,7 +19,7 @@ NAV::ImuIntegrator::ImuIntegrator()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 350, 123 };
+    guiConfigDefaultWindowSize = { 386, 177 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
     nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
@@ -93,12 +93,6 @@ void NAV::ImuIntegrator::guiConfig()
     gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
 
 #ifndef NDEBUG
-    if (ImGui::Checkbox(fmt::format("Apply gravity vector compensation to acceleration##{}", size_t(id)).c_str(), &gravityCompensation))
-    {
-        LOG_DEBUG("{}: gravityCompensation changed to {}", nameId(), gravityCompensation);
-        flow::ApplyChanges();
-    }
-
     if (ImGui::Checkbox(fmt::format("Apply centrifugal acceleration compensation##{}", size_t(id)).c_str(), &centrifugalAccCompensation))
     {
         LOG_DEBUG("{}: centrifugalAccCompensation changed to {}", nameId(), centrifugalAccCompensation);
@@ -122,9 +116,10 @@ void NAV::ImuIntegrator::guiConfig()
     j["integrationFrame"] = integrationFrame;
     j["gravityModel"] = gravityModel;
     j["prefereTimeSinceStartupOverInsTime"] = prefereTimeSinceStartupOverInsTime;
-    j["gravityCompensation"] = gravityCompensation;
+#ifndef NDEBUG
     j["centrifugalAccCompensation"] = centrifugalAccCompensation;
     j["coriolisCompensation"] = coriolisCompensation;
+#endif
 
     return j;
 }
@@ -145,10 +140,7 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         prefereTimeSinceStartupOverInsTime = j.at("prefereTimeSinceStartupOverInsTime");
     }
-    if (j.contains("gravityCompensation"))
-    {
-        gravityCompensation = j.at("gravityCompensation");
-    }
+#ifndef NDEBUG
     if (j.contains("centrifugalAccCompensation"))
     {
         centrifugalAccCompensation = j.at("centrifugalAccCompensation");
@@ -157,6 +149,7 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         coriolisCompensation = j.at("coriolisCompensation");
     }
+#endif
 }
 
 bool NAV::ImuIntegrator::initialize()
@@ -375,32 +368,24 @@ void NAV::ImuIntegrator::integrateObservation()
     Eigen::Vector3d gravity_n__t1;
 
     /// Gravity vector determination
-    if (gravityCompensation)
+    if (gravityModel == GravityModel::Somigliana)
     {
-        if (gravityModel == GravityModel::Somigliana)
-        {
-            LOG_DATA("Gravity calculated with Somigliana model");
-            gravity_n__t1 = gravity::gravity_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-        }
-        else if (gravityModel == GravityModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
-        {
-            LOG_DATA("Gravity calculated with WGS84 model as in the Skydel Simulator plug-in");
-            double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-            // Gravity vector NED
-            const Eigen::Vector3d gravityVector(0.0, 0.0, gravityMagnitude);
-            gravity_n__t1 = gravityVector;
-        }
-        else if (gravityModel == GravityModel::EGM96)
-        {
-            LOG_DATA("Gravity calculated with EGM96");
-            int egm96degree = 10;
-            gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
-        }
-        else
-        {
-            LOG_DATA("Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')");
-            gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-        }
+        LOG_DATA("Gravity calculated with Somigliana model");
+        gravity_n__t1 = gravity::gravity_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+    }
+    else if (gravityModel == GravityModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
+    {
+        LOG_DATA("Gravity calculated with WGS84 model as in the Skydel Simulator plug-in");
+        double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        // Gravity vector NED
+        const Eigen::Vector3d gravityVector(0.0, 0.0, gravityMagnitude);
+        gravity_n__t1 = gravityVector;
+    }
+    else if (gravityModel == GravityModel::EGM96)
+    {
+        LOG_DATA("Gravity calculated with EGM96");
+        int egm96degree = 10;
+        gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
     }
     else if (gravityModel == GravityModel::OFF)
     {
@@ -409,13 +394,18 @@ void NAV::ImuIntegrator::integrateObservation()
     }
     else
     {
-        gravity_n__t1 = Eigen::Vector3d::Zero();
+        LOG_DATA("Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')");
+        gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
     }
 
+#ifndef NDEBUG
     if (centrifugalAccCompensation)
     {
+#endif
         gravity_n__t1 += gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+#ifndef NDEBUG
     }
+#endif
 
     LOG_DATA("Gravity vector in NED:\n{}", gravity_n__t1);
 

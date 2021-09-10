@@ -91,7 +91,6 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
 
     // Associated Legendre Polynomial Coefficients 'P' and their derivatives 'Pd'
     auto [P, Pd] = NAV::util::gravity::associatedLegendre(ndegree, elevation);
-    LOG_DATA("NEW Associated Legendre Polynomial coefficients: P_new =\n{}\nPd_new =\n{}", P, Pd);
 
     for (size_t i = 0; i < coeffsRows; i++) // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult) // FIXME: Wrong error message about Eigen (error: The left operand of '*' is a garbage value)
     {
