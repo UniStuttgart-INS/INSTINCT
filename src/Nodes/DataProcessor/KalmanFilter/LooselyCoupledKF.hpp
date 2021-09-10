@@ -125,6 +125,24 @@ class LooselyCoupledKF : public Node
     /// σ² Standard deviation of the GPS NED velocity [m^2/s^2]
     Eigen::Vector3d gnssSigmaSquaredVelocity;
 
+    /// GUI option for the Phi calculation algorithm
+    enum class PhiCalculation
+    {
+        Taylor1,
+        VanLoan,
+    };
+    /// GUI option for the Phi calculation algorithm
+    PhiCalculation phiCalculation = PhiCalculation::Taylor1;
+
+    /// GUI option for the Phi calculation algorithm
+    enum class QCalculation
+    {
+        Groves,
+        VanLoan,
+    };
+    /// GUI option for the Phi calculation algorithm
+    QCalculation qCalculation = QCalculation::Groves;
+
     // ###########################################################################################################
     //                                                Prediction
     // ###########################################################################################################

@@ -2,7 +2,10 @@
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
+#include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
+
+#include <imgui_internal.h>
 
 #include "NodeData/State/PVAError.hpp"
 #include "NodeData/State/ImuBiases.hpp"
@@ -16,8 +19,6 @@ namespace nm = NAV::NodeManager;
 #include "util/InsGravity.hpp"
 #include "util/Logger.hpp"
 
-#include <unsupported/Eigen/MatrixFunctions>
-
 NAV::LooselyCoupledKF::LooselyCoupledKF()
 {
     name = typeStatic();
@@ -25,6 +26,7 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
+    guiConfigDefaultWindowSize = { 491, 235 };
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
@@ -67,17 +69,46 @@ std::string NAV::LooselyCoupledKF::category()
 
 void NAV::LooselyCoupledKF::guiConfig()
 {
+    ImGui::SetNextItemWidth(250);
+    if (ImGui::Combo(fmt::format("Phi calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&phiCalculation), "Taylor 1st Order\0Van Loan\0\0"))
+    {
+        LOG_DEBUG("{}: Phi calculation algorithm to {}", nameId(), phiCalculation);
+
+        if (phiCalculation != PhiCalculation::VanLoan)
+        {
+            qCalculation = QCalculation::Groves;
+        }
+
+        flow::ApplyChanges();
+    }
+    if (phiCalculation != PhiCalculation::VanLoan)
+    {
+        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+    }
+
+    ImGui::SetNextItemWidth(250);
+    if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&qCalculation), "Groves\0Van Loan\0\0"))
+    {
+        LOG_DEBUG("{}: Q calculation algorithm to {}", nameId(), qCalculation);
+        flow::ApplyChanges();
+    }
+
+    if (phiCalculation != PhiCalculation::VanLoan)
+    {
+        ImGui::PopItemFlag();
+        ImGui::PopStyleVar();
+    }
 }
 
 [[nodiscard]] json NAV::LooselyCoupledKF::save() const
 {
     LOG_TRACE("{}: called", nameId());
 
-    // TODO: save, once there is something to save
-
     json j;
 
-    j["LC KF somthing to save"] = "something to save";
+    j["phiCalculation"] = phiCalculation;
+    j["qCalculation"] = qCalculation;
 
     return j;
 }
@@ -85,10 +116,13 @@ void NAV::LooselyCoupledKF::guiConfig()
 void NAV::LooselyCoupledKF::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
-
-    // TODO: restore, once there is something to restore
-    if (j.contains("something to save"))
+    if (j.contains("phiCalculation"))
     {
+        phiCalculation = static_cast<PhiCalculation>(j.at("phiCalculation").get<int>());
+    }
+    if (j.contains("qCalculation"))
+    {
+        qCalculation = static_cast<QCalculation>(j.at("qCalculation").get<int>());
     }
 }
 
@@ -131,6 +165,11 @@ void NAV::LooselyCoupledKF::deinitialize()
 void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/) // NOLINT(readability-convert-member-functions-to-static)
 {
     auto inertialNavSol = std::dynamic_pointer_cast<InertialNavSol>(nodeData);
+
+    if (latestInertialNavSol)
+    {
+        tau_KF = static_cast<double>((inertialNavSol->insTime.value() - latestInertialNavSol->insTime.value()).count());
+    }
 
     latestInertialNavSol = inertialNavSol;
 
@@ -182,48 +221,61 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     auto acceleration_b = imuPosition.quatAccel_bp() * acceleration_p;
 
     // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_a = 2.0 / tau_KF * Eigen::Vector3d::Identity();
+    Eigen::Vector3d beta_a = 2.0 / tau_KF * Eigen::Vector3d::Ones();
     // Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_omega = 2.0 / tau_KF * Eigen::Vector3d::Identity();
+    Eigen::Vector3d beta_omega = 2.0 / tau_KF * Eigen::Vector3d::Ones();
+
+    // TODO: Jilani/Gleason???
+    // beta_a = 1 / 300.0 * Eigen::Vector3d::Ones();
+    // beta_omega = 1 / 300.0 * Eigen::Vector3d::Ones();
 
     // System Matrix
     Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, velocity_n__t1, position_lla__t1, beta_a, beta_omega);
 
-    // Noise Input Matrix
-    Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(variance_ra, variance_rg, beta_a, beta_omega);
-
-    // Power Spectral Density of u (See Brown & Hwang (2012) chapter 3.9, p. 126 - footnote)
-    Eigen::Matrix<double, 6, 6> W = Eigen::Matrix<double, 6, 6>::Identity();
-
-    // C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential
-    Eigen::Matrix<double, 30, 30> A = Eigen::Matrix<double, 30, 30>::Zero();
-    A.block<15, 15>(0, 0) = -F;
-    A.block<15, 15>(0, 15) = G * W * G.transpose();
-    A.block<15, 15>(15, 15) = F.transpose();
-
-    A *= tau_KF;
-
-    // Exponential Matrix of A (https://eigen.tuxfamily.org/dox/unsupported/group__MatrixFunctions__Module.html#matrixbase_exp)
-    Eigen::Matrix<double, 30, 30> B = A.exp();
-
     // ---------------------------------------------- Prediction -------------------------------------------------
-    // 1. Calculate the transition matrix 𝚽_{k-1}
-    if (true) // TODO
+    if (phiCalculation == PhiCalculation::VanLoan)
     {
+        // Noise Input Matrix
+        Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(variance_ra, variance_rg, beta_a, beta_omega);
+
+        // Power Spectral Density of u (See Brown & Hwang (2012) chapter 3.9, p. 126 - footnote)
+        Eigen::Matrix<double, 6, 6> W = Eigen::Matrix<double, 6, 6>::Identity();
+
+        // C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential
+        Eigen::Matrix<double, 30, 30> A = Eigen::Matrix<double, 30, 30>::Zero();
+        A.block<15, 15>(0, 0) = -F;
+        A.block<15, 15>(0, 15) = G * W * G.transpose();
+        A.block<15, 15>(15, 15) = F.transpose();
+        A *= tau_KF;
+
+        // Exponential Matrix of A (https://eigen.tuxfamily.org/dox/unsupported/group__MatrixFunctions__Module.html#matrixbase_exp)
+        Eigen::Matrix<double, 30, 30> B = A.exp();
+
+        // 1. Calculate the transition matrix 𝚽_{k-1}
         kalmanFilter.Phi = B.block<15, 15>(15, 15).transpose();
+
+        // 2. Calculate the system noise covariance matrix Q_{k-1}
+        if (qCalculation == QCalculation::VanLoan)
+        {
+            kalmanFilter.Q = kalmanFilter.Phi * B.block<15, 15>(0, 15);
+        }
+
+        // LOG_DEBUG("A: \n{}", A);
+        // LOG_DEBUG("B: \n{}", B);
+        // LOG_DEBUG("G: \n{}", G);
+    }
+    else if (phiCalculation == PhiCalculation::Taylor1)
+    {
+        kalmanFilter.Phi = transitionMatrix(F, tau_KF);
     }
     else
     {
-        kalmanFilter.Phi = transitionMatrix(F, tau_KF);
+        LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), phiCalculation);
     }
     notifyOutputValueChanged(OutputPortIndex_Phi);
 
     // 2. Calculate the system noise covariance matrix Q_{k-1}
-    if (true) // TODO
-    {
-        kalmanFilter.Q = kalmanFilter.Phi * B.block<15, 15>(0, 15);
-    }
-    else
+    if (qCalculation == QCalculation::Groves)
     {
         kalmanFilter.Q = systemNoiseCovarianceMatrix(variance_ra, variance_rg, variance_bad, variance_bgd,
                                                      systemMatrixF_21_n(quaternion_nb__t1, acceleration_b),
@@ -238,6 +290,10 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     notifyOutputValueChanged(OutputPortIndex_x);
     notifyOutputValueChanged(OutputPortIndex_P);
 
+    // Averaging of P to avoid numerical problems with symmetry (did not work)
+    // kalmanFilter.P = ((kalmanFilter.P.array() + kalmanFilter.P.transpose().array()) / 2.0);
+
+    // LOG_DEBUG("F: \n{}", F);
     // LOG_DEBUG("Phi: \n{}", kalmanFilter.Phi);
     // LOG_DEBUG("Q: \n{}", kalmanFilter.Q);
     // LOG_DEBUG("x: \n{}", kalmanFilter.x);
@@ -248,21 +304,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(kalmanFilter.P);
     // auto rank = lu_decomp.rank();
     // LOG_DEBUG("P.rank: {}", rank);
-
-    // // Push out the new data
-    // auto pvaError = std::make_shared<PVAError>();
-    // pvaError->insTime = inertialNavSol->insTime;
-    // pvaError->positionError_lla() = kalmanFilter.x.segment<3>(6);
-    // pvaError->velocityError_n() = kalmanFilter.x.segment<3>(3);
-    // pvaError->attitudeError_n() = kalmanFilter.x.segment<3>(0);
-
-    // auto imuBiases = std::make_shared<ImuBiases>();
-    // imuBiases->insTime = inertialNavSol->insTime;
-    // imuBiases->biasAccel_b = kalmanFilter.x.segment<3>(9);
-    // imuBiases->biasGyro_b = kalmanFilter.x.segment<3>(12);
-
-    // invokeCallbacks(OutputPortIndex_PVAError, pvaError);
-    // invokeCallbacks(OutputPortIndex_ImuBiases, imuBiases);
+    // static int counter = 0;
+    // counter++;
+    // if (rank != 15)
+    // {
+    //     LOG_WARN("{}: P has rank {} now after predicting {} times.", nameId(), rank, counter);
+    // }
 }
 
 void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt>& gnssMeasurement)
@@ -383,10 +430,12 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::
     F.block<3, 3>(0, 0) = systemMatrixF_11_n(angularRate_in_n);
     F.block<3, 3>(0, 3) = systemMatrixF_12_n(position_lla(0), position_lla(2));
     F.block<3, 3>(0, 6) = systemMatrixF_13_n(position_lla(0), position_lla(2), velocity_n);
+    // TODO: Jilani???
     F.block<3, 3>(0, 12) = -quaternion_nb.toRotationMatrix(); // Sign from T. Hobiger (2021) Inertialnavigation V07 - equation (7.22)
     F.block<3, 3>(3, 0) = systemMatrixF_21_n(quaternion_nb, specForce_ib_b);
     F.block<3, 3>(3, 3) = systemMatrixF_22_n(velocity_n, position_lla(0), position_lla(2));
     F.block<3, 3>(3, 6) = systemMatrixF_23_n(velocity_n, position_lla(0), position_lla(2));
+    // TODO: Jilani???
     F.block<3, 3>(3, 9) = quaternion_nb.toRotationMatrix();
     F.block<3, 3>(6, 3) = systemMatrixF_32_n(position_lla(0), position_lla(2));
     F.block<3, 3>(6, 6) = systemMatrixF_33_n(velocity_n, position_lla(0), position_lla(2));

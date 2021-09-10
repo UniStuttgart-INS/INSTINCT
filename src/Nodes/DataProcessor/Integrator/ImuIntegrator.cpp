@@ -81,7 +81,7 @@ void NAV::ImuIntegrator::guiConfig()
         flow::ApplyChanges();
     }
     ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
 
     ImGui::SetNextItemWidth(250);
     if (ImGui::Combo(fmt::format("Integration Algorithm Attitude##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationAlgorithmAttitude), "RectangularRule\0Simpson\0Runge Kutta 1st Order\0Runge Kutta 3rd Order\0\0"))

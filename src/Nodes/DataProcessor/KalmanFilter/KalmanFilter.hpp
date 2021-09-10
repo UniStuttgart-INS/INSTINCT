@@ -95,7 +95,7 @@ class KalmanFilter
         // P = (I - K * H) * P;
 
         // TODO: Fix math comment
-        // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{Brown & Hwang}\,(fig. 5.5)
+        // Math: \mathbf{P}_k^+ = (\mathbf{I} - \mathbf{K}_k \mathbf{H}_k) \mathbf{P}_k^- \qquad \text{Brown & Hwang}\,(p. 185, fig. 5.5)
         P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose();
     }
 
