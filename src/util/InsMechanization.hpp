@@ -82,7 +82,12 @@ namespace NAV
                                                            const Eigen::Vector3d& gravity_e,
                                                            const Eigen::Quaterniond& quaternion_ep__t0,
                                                            const Eigen::Quaterniond& quaternion_ep__t1,
-                                                           const Eigen::Quaterniond& quaternion_ep__t2);
+                                                           const Eigen::Quaterniond& quaternion_ep__t2
+#ifndef NDEBUG
+                                                           ,
+                                                           bool suppressCoriolis
+#endif
+);
 
 /// @brief Integrates the accelerations and calculates the new velocity v_n with Runge Kutta of 3rd Order
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
@@ -111,7 +116,12 @@ namespace NAV
                                                            const Eigen::Vector3d& angularVelocity_en_n__t1,
                                                            const Eigen::Quaterniond& quaternion_nb__t0,
                                                            const Eigen::Quaterniond& quaternion_nb__t1,
-                                                           const Eigen::Quaterniond& quaternion_nb__t2);
+                                                           const Eigen::Quaterniond& quaternion_nb__t2
+#ifndef NDEBUG
+                                                           ,
+                                                           bool suppressCoriolis
+#endif
+);
 
 /// @brief Calculates the new position x_e in earth frame
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch

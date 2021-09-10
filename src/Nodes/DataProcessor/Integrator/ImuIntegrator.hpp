@@ -108,12 +108,21 @@ class ImuIntegrator : public Node
         WGS84,
         WGS84_Skydel,
         Somigliana,
-        EGM96
+        EGM96,
+        OFF
     };
     GravityModel gravityModel = GravityModel::WGS84;
 
     /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
     bool prefereTimeSinceStartupOverInsTime = false;
+
+#ifndef NDEBUG
+    /// Flag to toggle centrifugal acceleration compensation of the acceleration at the current position
+    bool centrifugalAccCompensation = true;
+
+    /// Flag to toggle coriolis acceleration compensation of the acceleration at the current position
+    bool coriolisCompensation = true;
+#endif
 };
 
 } // namespace NAV

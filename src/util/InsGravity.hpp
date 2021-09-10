@@ -46,24 +46,6 @@ namespace NAV::gravity
 /// @note See 'INS-Projects/INSTINCT/SpecificLiterature/GravityPotentialWGS84' in NC folder (eq. (3) derived after 'r')
 [[nodiscard]] Eigen::Vector3d gravity_WGS84(const double& latitude, const double& altitude);
 
-/// @brief Calculates a gravity vector that contains the centrifugal acceleration for the Somigliana model (which already has an altitude compensation)
-/// @param[in] latitude Latitude in [rad]
-/// @param[in] altitude Altitude in [m]
-/// @param[in] gravityMagnitude Magnitude of gravity on a body according to Somigliana model
-/// @return Gravity vector in [m/s^2] in NED frame
-///
-/// @note See Groves (2013) Chapter 2.4.7
-[[nodiscard]] Eigen::Vector3d centrifugalAcceleration_Somigliana(const double& latitude, const double& altitude, double gravityMagnitude);
-
-/// @brief Calculates a gravity vector that contains the centrifugal acceleration and an altitude compensation for the WGS84 model
-/// @param[in] latitude Latitude in [rad]
-/// @param[in] altitude Altitude in [m]
-/// @param[in] gravityMagnitude Magnitude of gravity on a body according to Somigliana model
-/// @return Gravity vector in [m/s^2] in NED frame
-///
-/// @note See Groves (2013) Chapter 2.4.7
-[[nodiscard]] Eigen::Vector3d centrifugalAcceleration_WGS84(const double& latitude, const double& altitude, double gravityMagnitude);
-
 /// @brief Calculates the local gravity vector at the WGS84 reference ellipsoid using the EGM96 spherical harmonic
 ///        model (up to order 10) including the centrifugal acceleration
 /// @param[in] latitude Latitude in [rad]
@@ -74,5 +56,13 @@ namespace NAV::gravity
 ///
 /// @note See Groves (2013) Chapter 2.4.3 and 'GUT User Guide' (2018) Chapter 7.4
 [[nodiscard]] Eigen::Vector3d gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree);
+
+/// @brief Calculates the centrifugal acceleration
+/// @param[in] latitude Latitude in [rad]
+/// @param[in] altitude Longitude in [rad]
+/// @return Centrifugal acceleration in NED frame in [m/s^2]
+///
+/// @note See Groves (2013) Chapter 2.4.7
+[[nodiscard]] Eigen::Vector3d centrifugalAcceleration(const double& latitude, const double& altitude);
 
 } // namespace NAV::gravity
