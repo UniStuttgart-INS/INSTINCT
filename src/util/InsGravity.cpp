@@ -129,7 +129,7 @@ Eigen::Vector3d NAV::gravity::gravity_EGM96(const double& latitude, const double
     return gravity_n;
 }
 
-Eigen::Vector3d NAV::gravity::centrifugalAcceleration(const double& latitude, const double& altitude, Eigen::Vector3d& acceleration)
+Eigen::Vector3d NAV::gravity::centrifugalAcceleration(const double& latitude, const double& altitude)
 {
     // Geocentric latitude determination from geographic latitude
     double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
@@ -140,8 +140,5 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration(const double& latitude, co
     double centrifugalN = InsConst::angularVelocity_ie * InsConst::angularVelocity_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::cos(M_PI_2 - latitudeGeocentric);
     double centrifugalD = InsConst::angularVelocity_ie * InsConst::angularVelocity_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::sin(M_PI_2 - latitudeGeocentric);
 
-    // Acceleration vector in NED
-    Eigen::Vector3d acceleration_n(acceleration(0) - centrifugalN, acceleration(1), acceleration(2) - centrifugalD);
-
-    return acceleration_n;
+    return Eigen::Vector3d(-centrifugalN, 0, -centrifugalD);
 }

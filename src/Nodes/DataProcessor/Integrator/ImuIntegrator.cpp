@@ -55,7 +55,11 @@ void NAV::ImuIntegrator::guiConfig()
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame ? "NED" : "ECEF");
         flow::ApplyChanges();
     }
+#ifndef NDEBUG
     if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0OFF\0\0"))
+#else
+    if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
+#endif
     {
         if (gravityModel == WGS84)
         {
@@ -88,6 +92,7 @@ void NAV::ImuIntegrator::guiConfig()
     ImGui::SameLine();
     gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
 
+#ifndef NDEBUG
     if (ImGui::Checkbox(fmt::format("Apply gravity vector compensation to acceleration##{}", size_t(id)).c_str(), &gravityCompensation))
     {
         LOG_DEBUG("{}: gravityCompensation changed to {}", nameId(), gravityCompensation);
@@ -105,6 +110,7 @@ void NAV::ImuIntegrator::guiConfig()
         LOG_DEBUG("{}: coriolisCompensation changed to {}", nameId(), coriolisCompensation);
         flow::ApplyChanges();
     }
+#endif
 }
 
 [[nodiscard]] json NAV::ImuIntegrator::save() const
@@ -406,7 +412,10 @@ void NAV::ImuIntegrator::integrateObservation()
         gravity_n__t1 = Eigen::Vector3d::Zero();
     }
 
-    gravity_n__t1 = gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude(), gravity_n__t1);
+    if (centrifugalAccCompensation)
+    {
+        gravity_n__t1 += gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+    }
 
     LOG_DATA("Gravity vector in NED:\n{}", gravity_n__t1);
 
@@ -460,7 +469,7 @@ void NAV::ImuIntegrator::integrateObservation()
                                                                             quaternion_accel_ep__t2
 #ifndef NDEBUG
                                                                             ,
-                                                                            coriolisCompensation
+                                                                            !coriolisCompensation
 #endif
         );
 
@@ -545,7 +554,7 @@ void NAV::ImuIntegrator::integrateObservation()
                                                                       quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2
 #ifndef NDEBUG
                                                                       ,
-                                                                      coriolisCompensation
+                                                                      !coriolisCompensation
 #endif
         );
 
