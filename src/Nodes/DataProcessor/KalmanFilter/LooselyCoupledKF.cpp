@@ -44,6 +44,8 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
 
     // SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
     gnssSigmaSquaredLatLonAlt = trafo::ecef2lla_WGS84(trafo::ned2ecef({ 0.03, 0.03, 0.03 * 3 }, { 0, 0, 0 })).array().pow(2);
+    gnssSigmaSquaredLatLonAlt(0) *= 1e6;
+    gnssSigmaSquaredLatLonAlt(1) *= 1e6;
     gnssSigmaSquaredVelocity = Eigen::Array3d(0.5, 0.5, 0.5).pow(2);
 }
 
@@ -146,7 +148,7 @@ bool NAV::LooselyCoupledKF::initialize()
     // 𝐏 Error covariance matrix
     kalmanFilter.P.diagonal() << variance_angles, variance_angles, variance_angles, // Flight Angles covariance
         variance_vel, variance_vel, variance_vel,                                   // Velocity covariance
-        variance_LatLon, variance_LatLon, std::pow(std_pos, 2),                     // Position (Lat, Lon, Alt) covariance
+        variance_LatLon * 1e6, variance_LatLon * 1e6, std::pow(std_pos, 2),         // Position (Lat, Lon, Alt) covariance
         1e0, 1e0, 1e0,                                                              // Accelerometer Bias covariance
         1e-4, 1e-4, 1e-4;                                                           // Gyroscope Bias covariance
 
@@ -732,11 +734,14 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_55(const double& S_
 
 Eigen::Matrix<double, 6, 15> NAV::LooselyCoupledKF::measurementMatrix(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Matrix3d& Omega_ie_n)
 {
+    // Scale factor to scale rad to milliradians
+    Eigen::Matrix3d S_p = Eigen::DiagonalMatrix<double, 3>{ 1e3, 1e3, 1 };
+
     // Math: \mathbf{H}_{G,k}^n = \begin{pmatrix} \mathbf{H}_{r1}^n & \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{H}_{v1}^n & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v5}^n \end{pmatrix}_k \qquad \text{P. Groves}\,(14.113)
     // G denotes GNSS indicated
     Eigen::Matrix<double, 6, 15> H = Eigen::Matrix<double, 6, 15>::Zero();
-    H.block<3, 3>(0, 0) = measurementMatrix_r1_n(T_rn_p, DCM_nb, leverArm_InsGnss);
-    H.block<3, 3>(0, 6) = -Eigen::Matrix3d::Identity();
+    H.block<3, 3>(0, 0) = S_p * measurementMatrix_r1_n(T_rn_p, DCM_nb, leverArm_InsGnss);
+    H.block<3, 3>(0, 6) = S_p * -Eigen::Matrix3d::Identity();
     H.block<3, 3>(3, 0) = measurementMatrix_v1_n(DCM_nb, angularRate_ib_b, leverArm_InsGnss, Omega_ie_n);
     H.block<3, 3>(3, 3) = -Eigen::Matrix3d::Identity();
     H.block<3, 3>(3, 12) = measurementMatrix_v5_n(DCM_nb, leverArm_InsGnss);
@@ -779,7 +784,10 @@ Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation(const E
                                                                          const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss,
                                                                          const Eigen::Vector3d& angularRate_ib_b, const Eigen::Matrix3d& Omega_ie_n)
 {
-    Eigen::Vector3d deltaLLA = positionMeasurement_lla - positionEstimate_n - T_rn_p * (q_nb * leverArm_InsGnss);
+    // Scale factor to scale rad to milliradians
+    Eigen::Matrix3d S_p = Eigen::DiagonalMatrix<double, 3>{ 1e3, 1e3, 1 };
+
+    Eigen::Vector3d deltaLLA = S_p * (positionMeasurement_lla - positionEstimate_n - T_rn_p * (q_nb * leverArm_InsGnss));
     Eigen::Vector3d deltaVel = velocityMeasurement_n - velocityEstimate_n - q_nb * (angularRate_ib_b.cross(leverArm_InsGnss)) + Omega_ie_n * (q_nb * leverArm_InsGnss);
 
     Eigen::Matrix<double, 6, 1> innovation;

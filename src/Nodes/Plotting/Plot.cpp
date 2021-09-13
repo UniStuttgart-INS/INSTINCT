@@ -1750,8 +1750,8 @@ void NAV::Plot::plotPVAError(const std::shared_ptr<PVAError>& obs, size_t pinInd
     addData(pinIndex, i++, obs->velocityError_n()(0));
     addData(pinIndex, i++, obs->velocityError_n()(1));
     addData(pinIndex, i++, obs->velocityError_n()(2));
-    addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(0)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(1)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(0)) * 1e-3);
+    addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(1)) * 1e-3);
     addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(2)));
 }
 

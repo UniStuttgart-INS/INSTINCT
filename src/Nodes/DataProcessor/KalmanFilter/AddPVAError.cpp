@@ -59,21 +59,30 @@ void NAV::AddPVAError::recvPosVelAtt(const std::shared_ptr<NodeData>& nodeData, 
     {
         auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
 
-        posVelAtt->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - pvaError->positionError_lla());
+        auto posVelAttCorr = std::make_shared<PosVelAtt>();
+        posVelAttCorr->insTime = posVelAtt->insTime;
 
-        posVelAtt->velocity_n() -= pvaError->velocityError_n();
+        Eigen::Vector3d positionError_lla = pvaError->positionError_lla().array() * Eigen::Array3d(1e-3, 1e-3, 1);
 
-        auto rollPitchYaw_corrected = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
-        posVelAtt->quaternion_nb() = trafo::quat_nb(rollPitchYaw_corrected(0), rollPitchYaw_corrected(1), rollPitchYaw_corrected(2));
+        posVelAttCorr->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - positionError_lla);
+
+        posVelAttCorr->velocity_n() = posVelAtt->velocity_n() - pvaError->velocityError_n();
+
+        Eigen::Vector3d rollPitchYaw_corrected = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
+        posVelAttCorr->quaternion_nb() = trafo::quat_nb(rollPitchYaw_corrected(0), rollPitchYaw_corrected(1), rollPitchYaw_corrected(2));
 
         // quat_bn is used because the error is also substracted which in quaternions is the conjugated quaternion // TODO check if quaternions possible
         // auto q_nb_error = trafo::quat_nb(pvaError->attitudeError_n()(0), pvaError->attitudeError_n()(1), pvaError->attitudeError_n()(2));
         // posVelAtt->quaternion_nb() = posVelAtt->quaternion_nb() * q_nb_error;
 
         pvaError.reset();
-    }
 
-    invokeCallbacks(OutputPortIndex_PosVelAtt, nodeData);
+        invokeCallbacks(OutputPortIndex_PosVelAtt, posVelAttCorr);
+    }
+    else
+    {
+        invokeCallbacks(OutputPortIndex_PosVelAtt, nodeData);
+    }
 }
 
 void NAV::AddPVAError::recvPVAError(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)

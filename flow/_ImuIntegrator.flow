@@ -468,6 +468,8 @@
         "node-512": {
             "data": {
                 "calculateIntermediateValues": true,
+                "centrifugalAccCompensation": true,
+                "coriolisCompensation": true,
                 "gravityModel": 3,
                 "integrationAlgorithmAttitude": 3,
                 "integrationAlgorithmPosition": 0,
@@ -519,7 +521,9 @@
         },
         "node-519": {
             "data": {
-                "calculateIntermediateValues": true,
+                "calculateIntermediateValues": false,
+                "centrifugalAccCompensation": true,
+                "coriolisCompensation": true,
                 "gravityModel": 3,
                 "integrationAlgorithmAttitude": 3,
                 "integrationAlgorithmPosition": 0,

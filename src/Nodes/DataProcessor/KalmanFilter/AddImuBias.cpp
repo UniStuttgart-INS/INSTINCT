@@ -56,25 +56,41 @@ void NAV::AddImuBias::deinitialize()
 void NAV::AddImuBias::recvImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
+
+    auto imuObsCorr = std::make_shared<ImuObs>(imuObs->imuPos);
+
     if (imuObs->accelUncompXYZ.has_value())
     {
-        imuObs->accelUncompXYZ.value() -= imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_b;
+        imuObsCorr->accelUncompXYZ = imuObs->accelUncompXYZ.value() - imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_b;
     }
     if (imuObs->accelCompXYZ.has_value())
     {
-        imuObs->accelCompXYZ.value() -= imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_b;
+        imuObsCorr->accelCompXYZ = imuObs->accelCompXYZ.value() - imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_b;
     }
 
     if (imuObs->gyroUncompXYZ.has_value())
     {
-        imuObs->gyroUncompXYZ.value() -= imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_b;
+        imuObsCorr->gyroUncompXYZ = imuObs->gyroUncompXYZ.value() - imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_b;
     }
     if (imuObs->gyroCompXYZ.has_value())
     {
-        imuObs->gyroCompXYZ.value() -= imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_b;
+        imuObsCorr->gyroCompXYZ = imuObs->gyroCompXYZ.value() - imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_b;
     }
 
-    invokeCallbacks(OutputPortIndex_ImuObs, nodeData);
+    imuObsCorr->insTime = imuObs->insTime;
+    imuObsCorr->timeSinceStartup = imuObs->timeSinceStartup;
+
+    imuObsCorr->magUncompXYZ = imuObs->magUncompXYZ;
+    // imuObsCorr->accelUncompXYZ = imuObs->accelUncompXYZ;
+    // imuObsCorr->gyroUncompXYZ = imuObs->gyroUncompXYZ;
+
+    imuObsCorr->magCompXYZ = imuObs->magCompXYZ;
+    // imuObsCorr->accelCompXYZ = imuObs->accelCompXYZ;
+    // imuObsCorr->gyroCompXYZ = imuObs->gyroCompXYZ;
+
+    imuObsCorr->temperature = imuObs->temperature;
+
+    invokeCallbacks(OutputPortIndex_ImuObs, imuObsCorr);
 }
 
 void NAV::AddImuBias::recvImuBiases(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
