@@ -255,7 +255,7 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeDat
     {
         if (!posVelAttStates.empty())
         {
-            LOG_WARN("Receive new Imu observation, but list is full --> discarding oldest observation");
+            LOG_WARN("{}: Receive new Imu observation, but list is full --> discarding oldest observation", nameId());
         }
         imuObservations.pop_back();
     }
@@ -288,7 +288,7 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
     // Remove states at the end of the list till the max size is reached
     while (posVelAttStates.size() > maxSizeStates)
     {
-        LOG_WARN("Receive new state, but list is full --> discarding oldest state");
+        LOG_WARN("{}: Receive new state, but list is full --> discarding oldest state", nameId());
         posVelAttStates.pop_back();
     }
 
