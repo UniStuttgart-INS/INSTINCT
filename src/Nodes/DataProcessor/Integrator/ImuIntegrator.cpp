@@ -22,7 +22,7 @@ NAV::ImuIntegrator::ImuIntegrator()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 491, 235 };
+    guiConfigDefaultWindowSize = { 481, 288 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
     nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
@@ -60,7 +60,11 @@ void NAV::ImuIntegrator::guiConfig()
     }
 
     ImGui::SetNextItemWidth(250);
+#ifndef NDEBUG
+    if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0OFF\0\0"))
+#else
     if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
+#endif
     {
         if (gravityModel == GravityModel::WGS84)
         {
@@ -77,6 +81,10 @@ void NAV::ImuIntegrator::guiConfig()
         else if (gravityModel == GravityModel::EGM96)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "EGM96");
+        }
+        else if (gravityModel == GravityModel::OFF)
+        {
+            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "OFF");
         }
         flow::ApplyChanges();
     }
@@ -121,6 +129,20 @@ void NAV::ImuIntegrator::guiConfig()
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
+
+#ifndef NDEBUG
+    if (ImGui::Checkbox(fmt::format("Apply centrifugal acceleration compensation##{}", size_t(id)).c_str(), &centrifugalAccCompensation))
+    {
+        LOG_DEBUG("{}: centrifugalAccCompensation changed to {}", nameId(), centrifugalAccCompensation);
+        flow::ApplyChanges();
+    }
+
+    if (ImGui::Checkbox(fmt::format("Apply coriolis acceleration compensation##{}", size_t(id)).c_str(), &coriolisCompensation))
+    {
+        LOG_DEBUG("{}: coriolisCompensation changed to {}", nameId(), coriolisCompensation);
+        flow::ApplyChanges();
+    }
+#endif
 }
 
 [[nodiscard]] json NAV::ImuIntegrator::save() const
@@ -136,6 +158,10 @@ void NAV::ImuIntegrator::guiConfig()
     j["integrationAlgorithmPosition"] = integrationAlgorithmPosition;
     j["calculateIntermediateValues"] = calculateIntermediateValues;
     j["prefereTimeSinceStartupOverInsTime"] = prefereTimeSinceStartupOverInsTime;
+#ifndef NDEBUG
+    j["centrifugalAccCompensation"] = centrifugalAccCompensation;
+    j["coriolisCompensation"] = coriolisCompensation;
+#endif
 
     return j;
 }
@@ -172,6 +198,16 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         prefereTimeSinceStartupOverInsTime = j.at("prefereTimeSinceStartupOverInsTime");
     }
+#ifndef NDEBUG
+    if (j.contains("centrifugalAccCompensation"))
+    {
+        centrifugalAccCompensation = j.at("centrifugalAccCompensation");
+    }
+    if (j.contains("coriolisCompensation"))
+    {
+        coriolisCompensation = j.at("coriolisCompensation");
+    }
+#endif
 }
 
 bool NAV::ImuIntegrator::initialize()
@@ -217,6 +253,10 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeDat
     // Remove observations at the end of the list till the max size is reached
     while (imuObservations.size() > maxSizeImuObservations)
     {
+        if (!posVelAttStates.empty())
+        {
+            LOG_WARN("Receive new Imu observation, but list is full --> discarding oldest observation");
+        }
         imuObservations.pop_back();
     }
 
@@ -248,6 +288,7 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
     // Remove states at the end of the list till the max size is reached
     while (posVelAttStates.size() > maxSizeStates)
     {
+        LOG_WARN("Receive new state, but list is full --> discarding oldest state");
         posVelAttStates.pop_back();
     }
 
@@ -255,6 +296,13 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
     if (posVelAtt__init == nullptr)
     {
         posVelAtt__init = posVelAtt;
+    }
+
+    // If enough imu observations and states received, integrate the observation
+    if (imuObservations.size() == maxSizeImuObservations
+        && posVelAttStates.size() == maxSizeStates)
+    {
+        integrateObservation();
     }
 }
 
@@ -399,12 +447,25 @@ void NAV::ImuIntegrator::integrateObservation()
         int egm96degree = 10;
         gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
     }
+    else if (gravityModel == GravityModel::OFF)
+    {
+        LOG_DATA("Gravity set to zero");
+        gravity_n__t1 = Eigen::Vector3d::Zero();
+    }
     else
     {
         LOG_DATA("Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')");
         gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
     }
 
+#ifndef NDEBUG
+    if (centrifugalAccCompensation)
+    {
+#endif
+        gravity_n__t1 += gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+#ifndef NDEBUG
+    }
+#endif
     // LOG_DATA("Gravity vector in NED:\n{}", gravity_n__t1);
 
     /// g_e Gravity vector in [m/s^2], in earth coordinates
@@ -467,7 +528,12 @@ void NAV::ImuIntegrator::integrateObservation()
                                                       gravity_e__t1,
                                                       quaternion_accel_ep__t0,
                                                       quaternion_accel_ep__t1,
-                                                      quaternion_accel_ep__t2);
+                                                      quaternion_accel_ep__t2
+#ifndef NDEBUG
+                                                      ,
+                                                      !coriolisCompensation
+#endif
+            );
         }
         else
         {
@@ -578,7 +644,27 @@ void NAV::ImuIntegrator::integrateObservation()
                                                       gravity_n__t1,
                                                       angularVelocity_ie_n__t1,
                                                       angularVelocity_en_n__t1,
-                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2);
+                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2
+#ifndef NDEBUG
+                                                      ,
+                                                      !coriolisCompensation
+#endif
+            );
+        }
+        else if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta3)
+        {
+            velocity_n__t0 = updateVelocity_n_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
+                                                          acceleration_b__t0, acceleration_b__t1,
+                                                          velocity_n__t2,
+                                                          gravity_n__t1,
+                                                          angularVelocity_ie_n__t1,
+                                                          angularVelocity_en_n__t1,
+                                                          quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2
+#ifndef NDEBUG
+                                                          ,
+                                                          !coriolisCompensation
+#endif
+            );
         }
         else
         {
@@ -619,6 +705,10 @@ void NAV::ImuIntegrator::integrateObservation()
         // Store body to navigation frame quaternion in the state
         posVelAtt__t0->quaternion_nb() = quaternion_nb__t0;
     }
+
+    // Cycle lists
+    imuObservations.pop_back();
+    posVelAttStates.pop_back();
 
     if (!skipIntermediateCalculation)
     {

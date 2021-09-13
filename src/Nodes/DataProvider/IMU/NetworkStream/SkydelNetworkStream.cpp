@@ -26,7 +26,7 @@ NAV::SkydelNetworkStream::SkydelNetworkStream()
     name = typeStatic();
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 345, 642 };
+    guiConfigDefaultWindowSize = { 305, 70 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
     nm::CreateOutputPin(this, "SkydelObs", Pin::Type::Flow, { NAV::SkydelObs::type() });
@@ -69,7 +69,7 @@ void NAV::SkydelNetworkStream::guiConfig()
 
     ImGui::LabelText(str.c_str(), "data rate [Hz]");
     ImGui::SameLine();
-    gui::widgets::HelpMarker("The data rate can be adjusted in Skydel: Settings/Plug-ins/<Plug-in-name>/Plug-in UI");
+    gui::widgets::HelpMarker("The data rate can be adjusted in Skydel: Settings/Plug-ins/<Plug-in-name>/Plug-in UI. Make sure to enable either WiFi or a LAN connection. Enabling both can lead to loss of data, because Skydel only knows one ip address.");
 }
 
 bool NAV::SkydelNetworkStream::resetNode()
