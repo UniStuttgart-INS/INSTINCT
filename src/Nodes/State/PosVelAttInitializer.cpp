@@ -700,20 +700,13 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<Rtklib
 
 void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<PosVelAtt>& obs)
 {
-    if (!obs->position_ecef().isZero())
-    {
-        p_ecef_init = obs->position_ecef();
-        posVelAttInitialized.at(0) = true;
-    }
+    p_ecef_init = obs->position_ecef();
+    posVelAttInitialized.at(0) = true;
 
-    if (!std::isnan(obs->velocity_n()(0)))
-    {
-        v_n_init = obs->velocity_n();
-        posVelAttInitialized.at(1) = true;
-    }
+    v_n_init = obs->velocity_n();
+    posVelAttInitialized.at(1) = true;
 
-    if ((attitudeMode == AttitudeMode_BOTH || attitudeMode == AttitudeMode_GNSS || !nm::IsPinLinked(inputPins.at(InputPortIndex_ImuObs).id))
-        && !obs->quaternion_nb().coeffs().isZero())
+    if (attitudeMode == AttitudeMode_BOTH || attitudeMode == AttitudeMode_GNSS || !nm::IsPinLinked(inputPins.at(InputPortIndex_ImuObs).id))
     {
         q_nb_init = obs->quaternion_nb();
         posVelAttInitialized.at(2) = true;
