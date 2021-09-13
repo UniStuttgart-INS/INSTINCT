@@ -293,14 +293,17 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     notifyOutputValueChanged(OutputPortIndex_P);
 
     // Averaging of P to avoid numerical problems with symmetry (did not work)
-    // kalmanFilter.P = ((kalmanFilter.P.array() + kalmanFilter.P.transpose().array()) / 2.0);
+    kalmanFilter.P = ((kalmanFilter.P + kalmanFilter.P.transpose()) / 2.0);
 
     // LOG_DEBUG("F: \n{}", F);
     // LOG_DEBUG("Phi: \n{}", kalmanFilter.Phi);
-    // LOG_DEBUG("Q: \n{}", kalmanFilter.Q);
-    // LOG_DEBUG("x: \n{}", kalmanFilter.x);
-    // LOG_DEBUG("P: \n{}", kalmanFilter.P);
 
+    // LOG_DEBUG("Q: \n{}", kalmanFilter.Q);
+    // LOG_DEBUG("Q - Q^T: \n{}", kalmanFilter.Q - kalmanFilter.Q.transpose());
+
+    // LOG_DEBUG("x: \n{}", kalmanFilter.x);
+
+    // LOG_DEBUG("P: \n{}", kalmanFilter.P);
     // LOG_DEBUG("P - P^T: \n{}", kalmanFilter.P - kalmanFilter.P.transpose());
 
     // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(kalmanFilter.P);
@@ -361,6 +364,10 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt
                                            T_rn_p, quaternion_nb__t1, leverArm_InsGnss, angularRate_b, Omega_ie_n);
     notifyOutputValueChanged(OutputPortIndex_z);
 
+    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp3(kalmanFilter.H * kalmanFilter.P * kalmanFilter.H.transpose() + kalmanFilter.R);
+    // auto rank3 = lu_decomp3.rank();
+    // LOG_DEBUG("HPH^T + R.rank: {}", rank3);
+
     // 7. Calculate the Kalman gain matrix K_k
     // 9. Update the state vector estimate from x(-) to x(+)
     // 10. Update the error covariance matrix from P(-) to P(+)
@@ -371,6 +378,17 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt
 
     kalmanFilter_Kz = kalmanFilter.K * kalmanFilter.z;
     notifyOutputValueChanged(OutputPortIndex_Kz);
+
+    // Averaging of P to avoid numerical problems with symmetry (did not work)
+    kalmanFilter.P = ((kalmanFilter.P + kalmanFilter.P.transpose()) / 2.0);
+
+    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp1(kalmanFilter.H * kalmanFilter.P * kalmanFilter.H.transpose() + kalmanFilter.R);
+    // auto rank1 = lu_decomp1.rank();
+    // LOG_DEBUG("HPH^T + R.rank: {}", rank1);
+
+    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp2(kalmanFilter.K);
+    // auto rank2 = lu_decomp2.rank();
+    // LOG_DEBUG("K.rank: {}", rank2);
 
     // LOG_DEBUG("H: \n{}", kalmanFilter.H);
     // LOG_DEBUG("R: \n{}", kalmanFilter.R);
@@ -384,8 +402,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt
 
     // LOG_DEBUG("P - P^T: \n{}", kalmanFilter.P - kalmanFilter.P.transpose());
 
-    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(kalmanFilter.P);
-    // auto rank = lu_decomp.rank();
+    // Eigen::FullPivLU<Eigen::MatrixXd> decomp(kalmanFilter.P);
+    // auto rank = decomp.rank();
     // LOG_DEBUG("P.rank: {}", rank);
 
     // Push out the new data
