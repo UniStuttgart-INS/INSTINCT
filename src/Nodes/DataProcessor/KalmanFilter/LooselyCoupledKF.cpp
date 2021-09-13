@@ -223,9 +223,11 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     auto acceleration_b = imuPosition.quatAccel_bp() * acceleration_p;
 
     // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_a = 2.0 / tau_KF * Eigen::Vector3d::Ones();
+    // beta = 0 for random walk
+    Eigen::Vector3d beta_a = 0.0 / tau_KF * Eigen::Vector3d::Ones();
     // Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_omega = 2.0 / tau_KF * Eigen::Vector3d::Ones();
+    // beta = 0 for random walk
+    Eigen::Vector3d beta_omega = 0.0 / tau_KF * Eigen::Vector3d::Ones();
 
     // TODO: Jilani/Gleason???
     // beta_a = 1 / 300.0 * Eigen::Vector3d::Ones();
@@ -598,14 +600,22 @@ Eigen::Matrix<double, 15, 6> NAV::LooselyCoupledKF::noiseInputMatrixG(const doub
     return G;
 }
 
-Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const double& sigma2_ra, const Eigen::Vector3d& beta_a)
+Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const double& sigma2_ra, const Eigen::Vector3d& /*beta_a*/)
 {
-    return Eigen::DiagonalMatrix<double, 3>{ (beta_a.array() * sigma2_ra).sqrt().matrix() };
+    // Random walk (beta = 0)
+    return Eigen::DiagonalMatrix<double, 3>{ std::sqrt(sigma2_ra), std::sqrt(sigma2_ra), std::sqrt(sigma2_ra) };
+
+    // Gauss-Markov
+    // return Eigen::DiagonalMatrix<double, 3>{ (beta_a.array() * sigma2_ra).sqrt().matrix() };
 }
 
-Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega)
+Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& /*beta_omega*/)
 {
-    return Eigen::DiagonalMatrix<double, 3>{ (beta_omega.array() * sigma2_rg).sqrt().matrix() };
+    // Random walk (beta = 0)
+    return Eigen::DiagonalMatrix<double, 3>{ std::sqrt(sigma2_rg), std::sqrt(sigma2_rg), std::sqrt(sigma2_rg) };
+
+    // Gauss-Markov
+    // return Eigen::DiagonalMatrix<double, 3>{ (beta_omega.array() * sigma2_rg).sqrt().matrix() };
 }
 
 // ###########################################################################################################

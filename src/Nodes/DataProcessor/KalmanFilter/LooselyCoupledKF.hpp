@@ -95,14 +95,13 @@ class LooselyCoupledKF : public Node
     // TODO: Make Variance choosable from the GUI and adapt default values
 
     /// @brief 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements [m²/s³]
-    // double variance_ra = std::pow((0.04 /* [mg/√(Hz)] */) * 1e-3 * InsConst::G_NORM, 2);
-    double variance_ra = std::pow((0.4 /* [mg/√(Hz)] */) * 1e-3 * InsConst::G_NORM, 2);
+    /// VectorNav values
+    double variance_ra = 1e-12 * std::pow((0.04 /* [mg/√(Hz)] */) * 1e-3 * InsConst::G_NORM, 2);
 
     /// @brief 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
     /// @note See Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours.
-    ///       Value from Brown (2012) table 9.3 for 'High quality'
-    // double variance_rg = std::pow(1 / 3600.0 * (1e-3 /* [deg/s/√(Hz)] */), 2);
-    double variance_rg = std::pow(10 / 3600.0 * (1e-3 /* [deg/s/√(Hz)] */), 2);
+    /// VectorNav Values here but verify with values from Brown (2012) table 9.3 for 'High quality'
+    double variance_rg = 1e-12 * std::pow(1 / 3600.0 * (trafo::deg2rad(5) /* [deg/hr/√(Hz)] */), 2);
 
     /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
