@@ -458,9 +458,13 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
                                                 : inertialNavSol->imuObs->accelUncompXYZ.value();
     Eigen::Vector3d acceleration_b = imuPosition.quatAccel_bp() * acceleration_p;
 
+    // ω_p Angular rate in [rad/s], in platform coordinates
+    const Eigen::Vector3d& gyro_p = inertialNavSol->imuObs->gyroCompXYZ.has_value()
+                                        ? inertialNavSol->imuObs->gyroCompXYZ.value()
+                                        : inertialNavSol->imuObs->gyroUncompXYZ.value();
     // omega_in^n = omega_ie^n + omega_en^n
-    Eigen::Vector3d angularRate_in_n = trafo::quat_ne(position_lla__t1(0), position_lla__t1(1)) * InsConst::angularVelocity_ie_e
-                                       + transportRate(position_lla__t1, velocity_n__t1, R_N, R_E);
+    // Transport rate is F_12, Earth rotation is in F13. Therefore this is only the measured angular rate
+    Eigen::Vector3d angularRate_in_n = inertialNavSol->quaternion_nb() * imuPosition.quatGyro_bp() * gyro_p;
 
     // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
     Eigen::Vector3d beta_a;
