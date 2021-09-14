@@ -22,7 +22,7 @@ NAV::ImuIntegrator::ImuIntegrator()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 481, 288 };
+    guiConfigDefaultWindowSize = { 481, 322 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
     nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
@@ -143,6 +143,27 @@ void NAV::ImuIntegrator::guiConfig()
         flow::ApplyChanges();
     }
 #endif
+
+    ImGui::Separator();
+    if (ImGui::Checkbox(fmt::format("Show PVACorrections input pin##{}", size_t(id)).c_str(), &showPVACorrectionsInputPin))
+    {
+        LOG_DEBUG("{}: showPVACorrectionsInputPin changed to {}", nameId(), showPVACorrectionsInputPin);
+
+        if (showPVACorrectionsInputPin && inputPins.size() < 3)
+        {
+            nm::CreateInputPin(this, "PVAError", Pin::Type::Flow, { PVAError::type() }, &ImuIntegrator::recvPVAError);
+        }
+        else if (!showPVACorrectionsInputPin && inputPins.size() >= 3)
+        {
+            if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
+            {
+                nm::DeleteLink(connectedLink->id);
+            }
+            inputPins.pop_back();
+        }
+
+        flow::ApplyChanges();
+    }
 }
 
 [[nodiscard]] json NAV::ImuIntegrator::save() const
@@ -162,6 +183,7 @@ void NAV::ImuIntegrator::guiConfig()
     j["centrifugalAccCompensation"] = centrifugalAccCompensation;
     j["coriolisCompensation"] = coriolisCompensation;
 #endif
+    j["showPVACorrectionsInputPin"] = showPVACorrectionsInputPin;
 
     return j;
 }
@@ -208,6 +230,22 @@ void NAV::ImuIntegrator::restore(json const& j)
         coriolisCompensation = j.at("coriolisCompensation");
     }
 #endif
+    if (j.contains("showPVACorrectionsInputPin"))
+    {
+        showPVACorrectionsInputPin = j.at("showPVACorrectionsInputPin");
+        if (showPVACorrectionsInputPin && inputPins.size() < 3)
+        {
+            nm::CreateInputPin(this, "PVAError", Pin::Type::Flow, { PVAError::type() }, &ImuIntegrator::recvPVAError);
+        }
+        else if (!showPVACorrectionsInputPin && inputPins.size() >= 3)
+        {
+            if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
+            {
+                nm::DeleteLink(connectedLink->id);
+            }
+            inputPins.pop_back();
+        }
+    }
 }
 
 bool NAV::ImuIntegrator::initialize()
@@ -272,6 +310,11 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
 {
     auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
 
+    if (showPVACorrectionsInputPin) // Make a copy, as we going to alter it
+    {
+        posVelAtt = std::make_shared<PosVelAtt>(*posVelAtt);
+    }
+
     // Add imuObs tₖ₋₁ to the start of the list
     if (posVelAttStates.empty())
     {
@@ -306,8 +349,35 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
     }
 }
 
+void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+{
+    pvaError = std::dynamic_pointer_cast<PVAError>(nodeData);
+}
+
 void NAV::ImuIntegrator::integrateObservation()
 {
+    if (pvaError)
+    {
+        // LOG_DEBUG("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value(), posVelAttStates.at(1)->insTime.value());
+        Eigen::Vector3d positionError_lla = pvaError->positionError_lla().array() * Eigen::Array3d(1e-3, 1e-3, 1);
+
+        for (auto& posVelAtt : posVelAttStates)
+        {
+            posVelAtt->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - positionError_lla);
+
+            posVelAtt->velocity_n() -= pvaError->velocityError_n();
+
+            Eigen::Vector3d rollPitchYaw_corrected = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
+            posVelAtt->quaternion_nb() = trafo::quat_nb(rollPitchYaw_corrected(0), rollPitchYaw_corrected(1), rollPitchYaw_corrected(2));
+
+            // quat_bn is used because the error is also substracted which in quaternions is the conjugated quaternion // TODO check if quaternions possible
+            // auto q_nb_error = trafo::quat_nb(pvaError->attitudeError_n()(0), pvaError->attitudeError_n()(1), pvaError->attitudeError_n()(2));
+            // posVelAtt->quaternion_nb() = posVelAtt->quaternion_nb() * q_nb_error;
+        }
+
+        pvaError.reset();
+    }
+
     /// IMU Observation at the time tₖ
     std::shared_ptr<ImuObs> imuObs__t0 = imuObservations.at(0);
     /// IMU Observation at the time tₖ₋₁

@@ -10,6 +10,7 @@
 
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/PVAError.hpp"
 
 #include <deque>
 
@@ -70,6 +71,11 @@ class ImuIntegrator : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void recvState__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
+    /// @brief Receive function for PVAError
+    /// @param[in] nodeData PVAError received
+    /// @param[in] linkId Id of the link over which the data is received
+    void recvPVAError(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
     /// @brief Integrates the Imu Observation data
     void integrateObservation();
 
@@ -125,6 +131,12 @@ class ImuIntegrator : public Node
     IntegrationAlgorithm integrationAlgorithmAttitude = IntegrationAlgorithm::RungeKutta3;
     IntegrationAlgorithm integrationAlgorithmVelocity = IntegrationAlgorithm::Simpson;
     IntegrationAlgorithm integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
+
+    /// GUI flag, whether to show the input pin for PVA Corrections
+    bool showPVACorrectionsInputPin = false;
+
+    /// Pointer to the most recent PVA error
+    std::shared_ptr<PVAError> pvaError = nullptr;
 
     /// Runge Kutta uses intermediate observations but propagates only every other state. Because of this 2 separate state solutions can coexist.
     /// To avoid this only every seconds state can be output resulting in halving the output frequency. The accuracy of the results is not affected by this.
