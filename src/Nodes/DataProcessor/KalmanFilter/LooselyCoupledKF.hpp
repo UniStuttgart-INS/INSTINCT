@@ -89,29 +89,78 @@ class LooselyCoupledKF : public Node
     /// Latest Position, Velocity, Attitude and Imu observation
     std::shared_ptr<InertialNavSol> latestInertialNavSol = nullptr;
 
+    // ###########################################################################################################
+    //                                                Parameters
+    // ###########################################################################################################
+
     /// Timestamp of the KF
     double tau_KF = 0.01;
 
-    // TODO: Make Variance choosable from the GUI and adapt default values
+    /// Possible Units for the Variance of the noise on the accelerometer specific-force measurements
+    enum class VarianceAccelNoiseUnits
+    {
+        mg_sqrtHz, ///< [mg/√(Hz)]
+    };
+    /// Gui selection for the Unit of the input variance_ra parameter
+    VarianceAccelNoiseUnits varianceAccelNoiseUnits = VarianceAccelNoiseUnits::mg_sqrtHz;
 
-    /// @brief 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements [m²/s³]
-    /// VectorNav values
-    double variance_ra = 1e-12 * std::pow((0.04 /* [mg/√(Hz)] */) * 1e-3 * InsConst::G_NORM, 2);
+    /// Possible Units for the Variance of the noise on the gyro angular-rate measurements
+    enum class VarianceGyroNoiseUnits
+    {
+        deg_hr_sqrtHz, ///< [deg/hr/√(Hz)]
+    };
+    /// Gui selection for the Unit of the input variance_rg parameter
+    VarianceGyroNoiseUnits varianceGyroNoiseUnits = VarianceGyroNoiseUnits::deg_hr_sqrtHz;
+
+    /// Possible Units for the Variance of the accelerometer dynamic bias
+    enum class VarianceAccelBiasUnits
+    {
+        microg, ///< [µg]
+    };
+    /// Gui selection for the Unit of the input variance_bad parameter
+    VarianceAccelBiasUnits varianceAccelBiasUnits = VarianceAccelBiasUnits::microg;
+
+    /// Possible Units for the Variance of the accelerometer dynamic bias
+    enum class VarianceGyroBiasUnits
+    {
+        deg_h, ///< [°/h]
+    };
+    /// Gui selection for the Unit of the input variance_bad parameter
+    VarianceGyroBiasUnits varianceGyroBiasUnits = VarianceGyroBiasUnits::deg_h;
+
+    /// @brief 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
+    double variance_ra = 0.04 /* [mg/√(Hz)] */;
 
     /// @brief 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
-    /// @note See Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours.
-    /// VectorNav Values here but verify with values from Brown (2012) table 9.3 for 'High quality'
-    double variance_rg = 1e-12 * std::pow(1 / 3600.0 * (trafo::deg2rad(5) /* [deg/hr/√(Hz)] */), 2);
+    /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
+    double variance_rg = 5 /* [deg/hr/√(Hz)] */;
 
     /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    // double variance_bad = std::pow((10 /* [µg] */) * 1e-6 * InsConst::G_NORM, 2);
-    double variance_bad = std::pow((100 /* [µg] */) * 1e-6 * InsConst::G_NORM, 2);
+    double variance_bad = 10 /* [µg] */;
 
     /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    // double variance_bgd = std::pow((1 /* [°/h] */) / 3600.0, 2);
-    double variance_bgd = std::pow((10 /* [°/h] */) / 3600.0, 2);
+    double variance_bgd = 1 /* [°/h] */;
+
+    enum class RandomProcess
+    {
+        WhiteNoise,
+        RandomConstant,
+        RandomWalk,
+        GaussMarkov1,
+        GaussMarkov2,
+        GaussMarkov3,
+    };
+
+    RandomProcess randomProcessAccel = RandomProcess::RandomWalk;
+    RandomProcess randomProcessGyro = RandomProcess::RandomWalk;
+
+    /// GUI Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
+    Eigen::Vector3d beta_accel = 2.0 / tau_KF * Eigen::Vector3d::Ones();
+    /// GUI Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
+    Eigen::Vector3d beta_gyro = 2.0 / tau_KF * Eigen::Vector3d::Ones();
 
     /// Lever arm between INS and GNSS in [m, m, m]
     Eigen::Vector3d leverArm_InsGnss{ 0.0, 0.0, 0.0 };
@@ -163,12 +212,13 @@ class LooselyCoupledKF : public Node
     /// @brief Calculates the system matrix 𝐅
     /// @param[in] quaternion_nb Attitude of the body with respect to n-system
     /// @param[in] specForce_ib_b Specific force of the body with respect to inertial frame in [m / s^2], resolved in body coord.
+    /// @param[in] angularRate_in_n Angular rate of navigation system with respect to the inertial system [rad / s], resolved in navigation coordinates.
     /// @param[in] velocity_n Velocity in n-system in [m / s]
     /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @note See Groves (2013) chapter 14.2.4, equation (14.63)
-    static Eigen::Matrix<double, 15, 15> systemMatrixF(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
+    static Eigen::Matrix<double, 15, 15> systemMatrixF(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& angularRate_in_n, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
 
     /// @brief Submatrix 𝐅_𝜓'_𝜓 of the system matrix 𝐅
     /// @param[in] angularRate_in_n Angular rate vector of the n-system with respect to the i-system in [rad / s], resolved in the n-system
@@ -252,19 +302,19 @@ class LooselyCoupledKF : public Node
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.5)
-    static Eigen::Matrix<double, 15, 6> noiseInputMatrixG(const double& sigma2_ra, const double& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
+    Eigen::Matrix<double, 15, 6> noiseInputMatrixG(const double& sigma2_ra, const double& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
 
     /// @brief Submatrix 𝐆_a of the noise input matrix 𝐆
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
-    static Eigen::Matrix3d noiseInputMatrixG_a(const double& sigma2_ra, const Eigen::Vector3d& beta_a);
+    Eigen::Matrix3d noiseInputMatrixG_a(const double& sigma2_ra, const Eigen::Vector3d& beta_a);
 
     /// @brief Submatrix 𝐆_ω of the noise input matrix 𝐆
     /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
-    static Eigen::Matrix3d noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega);
+    Eigen::Matrix3d noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega);
 
     // ###########################################################################################################
     //                                     System noise covariance matrix 𝐐
