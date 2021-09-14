@@ -424,7 +424,7 @@ Eigen::Vector3d transportRate(const Eigen::Vector3d& latLonAlt__t1,  // [𝜙, �
     const auto& v_E = velocity_n__t1(1);
 
     /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame,
-    /// in navigation coordinates (eq. 6.15)
+    /// in navigation coordinates see Gleason (eq. 6.15)
     Eigen::Vector3d angularVelocity_en_n__t1;
     angularVelocity_en_n__t1(0) = v_E / (R_E + altitude);
     angularVelocity_en_n__t1(1) = -v_N / (R_N + altitude);

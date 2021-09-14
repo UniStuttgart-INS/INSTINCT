@@ -220,7 +220,11 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     const Eigen::Vector3d& acceleration_p = inertialNavSol->imuObs->accelCompXYZ.has_value()
                                                 ? inertialNavSol->imuObs->accelCompXYZ.value()
                                                 : inertialNavSol->imuObs->accelUncompXYZ.value();
-    auto acceleration_b = imuPosition.quatAccel_bp() * acceleration_p;
+    Eigen::Vector3d acceleration_b = imuPosition.quatAccel_bp() * acceleration_p;
+
+    // omega_in^n = omega_ie^n + omega_en^n
+    Eigen::Vector3d angularRate_in_n = trafo::quat_ne(position_lla__t1(0), position_lla__t1(1)) * InsConst::angularVelocity_ie_e
+                                       + transportRate(position_lla__t1, velocity_n__t1, R_N, R_E);
 
     // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
     // beta = 0 for random walk
@@ -229,14 +233,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     // beta = 0 for random walk
     Eigen::Vector3d beta_omega = 0.0 / tau_KF * Eigen::Vector3d::Ones();
 
-    // TODO: Jilani/Gleason???
-    // beta_a = 1 / 300.0 * Eigen::Vector3d::Ones();
-    // beta_omega = 1 / 300.0 * Eigen::Vector3d::Ones();
-
-    // System Matrix
-    Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, velocity_n__t1, position_lla__t1, beta_a, beta_omega);
 
     // ---------------------------------------------- Prediction -------------------------------------------------
+
+    // System Matrix
+    Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, beta_a, beta_omega);
+
     if (phiCalculation == PhiCalculation::VanLoan)
     {
         // Noise Input Matrix
@@ -439,12 +441,8 @@ Eigen::MatrixXd NAV::LooselyCoupledKF::transitionMatrix(const Eigen::MatrixXd& F
     return Eigen::MatrixXd::Identity(15, 15) + F * tau_s;
 }
 
-Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega)
+Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& angularRate_in_n, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega)
 {
-    Eigen::Vector3d angularRate_in_n(InsConst::angularVelocity_ie * std::cos(position_lla(0)),
-                                     0,
-                                     -InsConst::angularVelocity_ie * std::sin(position_lla(0)));
-
     // System matrix 𝐅
     // Math: \mathbf{F}_{INS}^n = \begin{pmatrix} \mathbf{F}_{11}^n & \mathbf{F}_{12}^n & \mathbf{F}_{13}^n & \mathbf{0}_3 & \mathbf{\hat{C}}_b^n \\ \mathbf{F}_{21}^n & \mathbf{F}_{22}^n & \mathbf{F}_{23}^n & \mathbf{\hat{C}}_b^n & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{32}^n & \mathbf{F}_{33}^n & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \end{pmatrix} \qquad \text{P. Groves}\,(14.63)
     Eigen::MatrixXd F = Eigen::MatrixXd::Zero(15, 15);
@@ -452,12 +450,10 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::
     F.block<3, 3>(0, 0) = systemMatrixF_11_n(angularRate_in_n);
     F.block<3, 3>(0, 3) = systemMatrixF_12_n(position_lla(0), position_lla(2));
     F.block<3, 3>(0, 6) = systemMatrixF_13_n(position_lla(0), position_lla(2), velocity_n);
-    // TODO: Jilani???
     F.block<3, 3>(0, 12) = -quaternion_nb.toRotationMatrix(); // Sign from T. Hobiger (2021) Inertialnavigation V07 - equation (7.22)
     F.block<3, 3>(3, 0) = systemMatrixF_21_n(quaternion_nb, specForce_ib_b);
     F.block<3, 3>(3, 3) = systemMatrixF_22_n(velocity_n, position_lla(0), position_lla(2));
     F.block<3, 3>(3, 6) = systemMatrixF_23_n(velocity_n, position_lla(0), position_lla(2));
-    // TODO: Jilani???
     F.block<3, 3>(3, 9) = quaternion_nb.toRotationMatrix();
     F.block<3, 3>(6, 3) = systemMatrixF_32_n(position_lla(0), position_lla(2));
     F.block<3, 3>(6, 6) = systemMatrixF_33_n(velocity_n, position_lla(0), position_lla(2));
@@ -551,12 +547,15 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_23_n(const Eigen::Vector3d&
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_32_n(double latitude_b, double height_b)
 {
+    // Conversion because state vector has milliradians for latitude and longitude
+    constexpr double rad2mrad = 1e3;
+
     // Math: \mathbf{F}_{32}^n = \begin{bmatrix} \frac{1}{R_N(\hat{L}_b) + \hat{h}_b} & 0 & 0 \\ 0 & \frac{1}{(R_E(\hat{L}_b) + \hat{h}_b)\cos{\hat{L}_b}} & 0 \\ 0 & 0 & -1 \end{bmatrix} \quad \text{P. Groves}\,(14.70)
     double R_E = NAV::earthRadius_E(latitude_b);
     double R_N = NAV::earthRadius_N(latitude_b);
 
-    Eigen::DiagonalMatrix<double, 3> m(1.0 / (R_N + height_b),
-                                       1.0 / ((R_E + height_b) * std::cos(latitude_b)),
+    Eigen::DiagonalMatrix<double, 3> m(rad2mrad * 1.0 / (R_N + height_b),
+                                       rad2mrad * 1.0 / ((R_E + height_b) * std::cos(latitude_b)),
                                        -1);
     return m;
 }
