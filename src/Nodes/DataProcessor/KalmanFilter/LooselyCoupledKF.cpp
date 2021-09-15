@@ -908,10 +908,8 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const double& sigma2_
     {
         return Eigen::DiagonalMatrix<double, 3>{ std::sqrt(sigma2_ra), std::sqrt(sigma2_ra), std::sqrt(sigma2_ra) };
     }
-    else // if (randomProcessAccel == RandomProcess::GaussMarkov1)
-    {
-        return Eigen::DiagonalMatrix<double, 3>{ (beta_a.array() * sigma2_ra).sqrt().matrix() };
-    }
+    // else if (randomProcessAccel == RandomProcess::GaussMarkov1)
+    return Eigen::DiagonalMatrix<double, 3>{ (beta_a.array() * sigma2_ra).sqrt().matrix() };
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega)
@@ -920,10 +918,9 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sig
     {
         return Eigen::DiagonalMatrix<double, 3>{ std::sqrt(sigma2_rg), std::sqrt(sigma2_rg), std::sqrt(sigma2_rg) };
     }
-    else // if (randomProcessGyro == RandomProcess::GaussMarkov1)
-    {
-        return Eigen::DiagonalMatrix<double, 3>{ (beta_omega.array() * sigma2_rg).sqrt().matrix() };
-    }
+    // else if (randomProcessGyro == RandomProcess::GaussMarkov1)
+
+    return Eigen::DiagonalMatrix<double, 3>{ (beta_omega.array() * sigma2_rg).sqrt().matrix() };
 }
 
 // ###########################################################################################################
