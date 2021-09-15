@@ -458,13 +458,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
                                                 : inertialNavSol->imuObs->accelUncompXYZ.value();
     Eigen::Vector3d acceleration_b = imuPosition.quatAccel_bp() * acceleration_p;
 
-    // ω_p Angular rate in [rad/s], in platform coordinates
-    const Eigen::Vector3d& gyro_p = inertialNavSol->imuObs->gyroCompXYZ.has_value()
-                                        ? inertialNavSol->imuObs->gyroCompXYZ.value()
-                                        : inertialNavSol->imuObs->gyroUncompXYZ.value();
     // omega_in^n = omega_ie^n + omega_en^n
-    // Transport rate is F_12, Earth rotation is in F13. Therefore this is only the measured angular rate
-    Eigen::Vector3d angularRate_in_n = inertialNavSol->quaternion_nb() * imuPosition.quatGyro_bp() * gyro_p;
+    Eigen::Vector3d angularRate_in_n = inertialNavSol->quaternion_ne() * InsConst::angularVelocity_ie_e
+                                       + transportRate(position_lla__t1, velocity_n__t1, R_N, R_E);
 
     // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
     Eigen::Vector3d beta_a;
@@ -767,6 +763,9 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_12_n(double latitude_b, dou
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_13_n(double latitude_b, double height_b, const Eigen::Vector3d& v_eb_n)
 {
+    // Conversion because state vector has milliradians for latitude and longitude
+    constexpr double mrad2rad = 1e-3;
+
     // Math: \mathbf{F}_{13}^n = \begin{bmatrix} \omega_{ie}\sin{\hat{L}_b} & 0 & \frac{\hat{v}_{eb,E}^n}{(R_E(\hat{L}_b) + \hat{h}_b)^2} \\ 0 & 0 & \frac{-\hat{v}_{eb,N}^n}{(R_N(\hat{L}_b) + \hat{h}_b)^2} \\ \omega_{ie}\cos{\hat{L}_b} + \frac{\hat{v}_{eb,E}^n}{(R_E(\hat{L}_b) + \hat{h}_b)\cos^2{\hat{L}_b}} & 0 & \frac{-\hat{v}_{eb,E}^n\tan{\hat{L}_b}}{(R_E(\hat{L}_b) + \hat{h}_b)^2} \end{bmatrix} \qquad \text{P. Groves}\,(14.66)
     Eigen::Matrix3d F_13_n = Eigen::Matrix3d::Zero(3, 3);
     double R_E = NAV::earthRadius_E(latitude_b);
@@ -775,8 +774,11 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_13_n(double latitude_b, dou
     F_13_n(0, 0) = -InsConst::angularVelocity_ie * std::sin(latitude_b);
     F_13_n(0, 2) = -v_eb_n(1) / std::pow((R_E + height_b), 2.0);
     F_13_n(1, 2) = v_eb_n(0) / std::pow((R_N + height_b), 2.0);
-    F_13_n(2, 0) = -InsConst::angularVelocity_ie * std::cos(latitude_b) + v_eb_n(1) / ((R_E + height_b) * cos(latitude_b) * cos(latitude_b));
+    F_13_n(2, 0) = -InsConst::angularVelocity_ie * std::cos(latitude_b) - v_eb_n(1) / ((R_E + height_b) * std::cos(latitude_b) * std::cos(latitude_b));
     F_13_n(2, 2) = v_eb_n(1) * std::tan(latitude_b) / std::pow((R_E + height_b), 2.0);
+
+    F_13_n.block<3, 1>(0, 0) *= mrad2rad;
+    // F_13_n.block<3, 1>(0, 1) *= mrad2rad;
 
     return F_13_n;
 }
@@ -808,6 +810,9 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_22_n(const Eigen::Vector3d&
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_23_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b)
 {
+    // Conversion because state vector has milliradians for latitude and longitude
+    constexpr double mrad2rad = 1e-3;
+
     // Math: \mathbf{F}_{23}^n = \begin{bmatrix} -\frac{(\hat{v}_{eb,E}^n)^2\sec^2{\hat{L}_b}}{R_E(\hat{L}_b)+\hat{h}_b}-2\hat{v}_{eb,E}^n\omega_{ie}\cos{\hat{L}_b} & 0 & \frac{(\hat{v}_{eb,E}^n)^2\tan{\hat{L}_b}}{(R_E(\hat{L}_b)+\hat{h}_b)^2}-\frac{\hat{v}_{eb,N}^n\hat{v}_{eb,D}^n}{(R_N(\hat{L}_b)+\hat{h}_b)^2} \\ \frac{\hat{v}_{eb,N}^n\hat{v}_{eb,E}^n\sec^2{\hat{L}_b}}{R_E(\hat{L}_b)+\hat{h}_b}+2\hat{v}_{eb,N}^n\omega_{ie}\cos{\hat{L}_b}-2\hat{v}_{eb,D}^n\omega_{ie}\sin{\hat{L}_b} & 0 & -\frac{\hat{v}_{eb,N}^n\hat{v}_{eb,E}^n\tan{\hat{L}_b}+\hat{v}_{eb,E}^n\hat{v}_{eb,D}^n}{(R_E(\hat{L}_b)+\hat{h}_b)^2} \\ 2\hat{v}_{eb,E}^n\omega_{ie}\sin{\hat{L}_b} & 0 & \frac{(\hat{v}_{eb,E}^n)^2}{(R_E(\hat{L}_b)+\hat{h}_b)^2}+\frac{(\hat{v}_{eb,N}^n)^2}{(R_N(\hat{L}_b)+\hat{h}_b)^2}-\frac{2g_0(\hat{L}_b)}{r_{eS}^e(\hat{L}_b)} \end{bmatrix} \qquad \text{P. Groves}\,(14.69)
     Eigen::Matrix3d F_23_n = Eigen::Matrix3d::Zero(3, 3);
     double R_E = NAV::earthRadius_E(latitude_b);
@@ -817,12 +822,26 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_23_n(const Eigen::Vector3d&
     // Geocentric Radius in [m]
     double r_eS_e = geocentricRadius(latitude_b, R_E, InsConst::WGS84_e_squared);
 
-    F_23_n(0, 0) = -(v_eb_n(0) * v_eb_n(0) * std::pow(secant(latitude_b), 2.0) / (R_E + height_b)) - 2.0 * v_eb_n(1) * InsConst::angularVelocity_ie * std::cos(latitude_b);
-    F_23_n(0, 2) = (v_eb_n(1) * v_eb_n(1) * std::tan(latitude_b)) / std::pow(R_E + height_b, 2.0) - (v_eb_n(0) * v_eb_n(2)) / std::pow(R_N + height_b, 2.0);
-    F_23_n(1, 0) = (v_eb_n(0) * v_eb_n(1) * std::pow(secant(latitude_b), 2.0) / (R_E + height_b)) + 2.0 * v_eb_n(0) * InsConst::angularVelocity_ie * std::cos(latitude_b) - 2.0 * v_eb_n(2) * InsConst::angularVelocity_ie * std::sin(latitude_b);
+    F_23_n(0, 0) = -(v_eb_n(1) * v_eb_n(1) * std::pow(secant(latitude_b), 2.0) / (R_E + height_b))
+                   - 2.0 * v_eb_n(1) * InsConst::angularVelocity_ie * std::cos(latitude_b);
+
+    F_23_n(0, 2) = (v_eb_n(1) * v_eb_n(1) * std::tan(latitude_b)) / std::pow(R_E + height_b, 2.0)
+                   - (v_eb_n(0) * v_eb_n(2)) / std::pow(R_N + height_b, 2.0);
+
+    F_23_n(1, 0) = v_eb_n(0) * v_eb_n(1) * std::pow(secant(latitude_b), 2.0) / (R_E + height_b)
+                   + 2.0 * v_eb_n(0) * InsConst::angularVelocity_ie * std::cos(latitude_b)
+                   - 2.0 * v_eb_n(2) * InsConst::angularVelocity_ie * std::sin(latitude_b);
+
     F_23_n(1, 2) = -(v_eb_n(0) * v_eb_n(1) * std::tan(latitude_b) + v_eb_n(1) * v_eb_n(2)) / std::pow(R_E + height_b, 2.0);
+
     F_23_n(2, 0) = 2.0 * v_eb_n(1) * InsConst::angularVelocity_ie * std::sin(latitude_b);
-    F_23_n(2, 2) = (v_eb_n(1) * v_eb_n(1)) / std::pow(R_E + height_b, 2.0) + (v_eb_n(0) * v_eb_n(0)) / std::pow(R_N + height_b, 2.0) - 2.0 * g_0 / r_eS_e;
+
+    F_23_n(2, 2) = (v_eb_n(1) * v_eb_n(1)) / std::pow(R_E + height_b, 2.0)
+                   + (v_eb_n(0) * v_eb_n(0)) / std::pow(R_N + height_b, 2.0)
+                   - 2.0 * g_0 / r_eS_e;
+
+    F_23_n.block<3, 1>(0, 0) *= mrad2rad;
+    // F_23_n.block<3, 1>(0, 1) *= mrad2rad;
 
     return F_23_n;
 }
@@ -844,6 +863,9 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_32_n(double latitude_b, dou
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_33_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b)
 {
+    // Conversion because state vector has milliradians for latitude and longitude
+    constexpr double rad2mrad = 1e3;
+
     // Math: \mathbf{F}_{33}^n = \begin{bmatrix} 0 & 0 & -\frac{\hat{v}_{eb,N}^n}{(R_N(\hat{L}_b) + \hat{h}_b)^2} \\ \frac{\hat{v}_{eb,E}^n \sin{\hat{L}_b}}{(R_E(\hat{L}_b) + \hat{h}_b) \cos^2{\hat{L}_b}} & 0 & -\frac{\hat{v}_{eb,E}^n}{(R_N(\hat{L}_b) + \hat{h}_b)^2 \cos^2{\hat{L}_b}} \\ 0 & 0 & 0 \end{bmatrix} \quad \text{P. Groves}\,(14.71)
     Eigen::Matrix3d F_33_n = Eigen::Matrix3d::Zero(3, 3);
     double R_E = NAV::earthRadius_E(latitude_b);
@@ -852,6 +874,8 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_33_n(const Eigen::Vector3d&
     F_33_n(0, 2) = -v_eb_n(0) / std::pow(R_N + height_b, 2.0);
     F_33_n(1, 0) = v_eb_n(1) * std::sin(latitude_b) / ((R_E + height_b) * std::pow(std::cos(latitude_b), 2.0));
     F_33_n(1, 2) = -v_eb_n(1) / (std::pow(R_E + height_b, 2.0) * std::cos(latitude_b));
+
+    F_33_n.block<3, 1>(0, 2) *= rad2mrad;
     return F_33_n;
 }
 
