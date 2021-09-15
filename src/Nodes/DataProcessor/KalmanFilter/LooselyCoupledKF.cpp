@@ -463,7 +463,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
                                        + transportRate(position_lla__t1, velocity_n__t1, R_N, R_E);
 
     // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_a;
+    Eigen::Vector3d beta_a = Eigen::Vector3d::Zero();
     if (randomProcessAccel == RandomProcess::RandomWalk)
     {
         beta_a = Eigen::Vector3d::Zero();
@@ -473,7 +473,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
         beta_a = beta_accel;
     }
     // Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_omega;
+    Eigen::Vector3d beta_omega = Eigen::Vector3d::Zero();
     if (randomProcessGyro == RandomProcess::RandomWalk)
     {
         beta_omega = Eigen::Vector3d::Zero();
