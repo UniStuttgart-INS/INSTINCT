@@ -44,7 +44,7 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     nm::CreateOutputPin(this, "K*z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter_Kz);
 
     // SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
-    gnssSigmaSquaredLatLonAlt = trafo::ecef2lla_WGS84(trafo::ned2ecef({ 0.03, 0.03, 0.03 * 3 }, { 0, 0, 0 })).array().pow(2);
+    gnssSigmaSquaredLatLonAlt = trafo::ecef2lla_WGS84(trafo::ned2ecef({ 0.3, 0.3, 0.3 * 3 }, { 0, 0, 0 })).array().pow(2);
     gnssSigmaSquaredLatLonAlt(0) *= 1e6;
     gnssSigmaSquaredLatLonAlt(1) *= 1e6;
     gnssSigmaSquaredVelocity = Eigen::Array3d(0.5, 0.5, 0.5).pow(2);
@@ -575,7 +575,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     notifyOutputValueChanged(OutputPortIndex_P);
 
     // Averaging of P to avoid numerical problems with symmetry (did not work)
-    kalmanFilter.P = ((kalmanFilter.P + kalmanFilter.P.transpose()) / 2.0);
+    // kalmanFilter.P = ((kalmanFilter.P + kalmanFilter.P.transpose()) / 2.0);
 
     // LOG_DEBUG("F: \n{}", F);
     // LOG_DEBUG("Phi: \n{}", kalmanFilter.Phi);
@@ -662,7 +662,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt
     notifyOutputValueChanged(OutputPortIndex_Kz);
 
     // Averaging of P to avoid numerical problems with symmetry (did not work)
-    kalmanFilter.P = ((kalmanFilter.P + kalmanFilter.P.transpose()) / 2.0);
+    // kalmanFilter.P = ((kalmanFilter.P + kalmanFilter.P.transpose()) / 2.0);
 
     // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp1(kalmanFilter.H * kalmanFilter.P * kalmanFilter.H.transpose() + kalmanFilter.R);
     // auto rank1 = lu_decomp1.rank();
@@ -1071,13 +1071,13 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_55(const double& S_
 Eigen::Matrix<double, 6, 15> NAV::LooselyCoupledKF::measurementMatrix(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Matrix3d& Omega_ie_n)
 {
     // Scale factor to scale rad to milliradians
-    Eigen::Matrix3d S_p = Eigen::DiagonalMatrix<double, 3>{ 1e3, 1e3, 1 };
+    // Eigen::Matrix3d S_p = Eigen::DiagonalMatrix<double, 3>{ 1e3, 1e3, 1 };
 
     // Math: \mathbf{H}_{G,k}^n = \begin{pmatrix} \mathbf{H}_{r1}^n & \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{H}_{v1}^n & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v5}^n \end{pmatrix}_k \qquad \text{P. Groves}\,(14.113)
     // G denotes GNSS indicated
     Eigen::Matrix<double, 6, 15> H = Eigen::Matrix<double, 6, 15>::Zero();
-    H.block<3, 3>(0, 0) = S_p * measurementMatrix_r1_n(T_rn_p, DCM_nb, leverArm_InsGnss);
-    H.block<3, 3>(0, 6) = S_p * -Eigen::Matrix3d::Identity();
+    H.block<3, 3>(0, 0) = measurementMatrix_r1_n(T_rn_p, DCM_nb, leverArm_InsGnss);
+    H.block<3, 3>(0, 6) = -Eigen::Matrix3d::Identity();
     H.block<3, 3>(3, 0) = measurementMatrix_v1_n(DCM_nb, angularRate_ib_b, leverArm_InsGnss, Omega_ie_n);
     H.block<3, 3>(3, 3) = -Eigen::Matrix3d::Identity();
     H.block<3, 3>(3, 12) = measurementMatrix_v5_n(DCM_nb, leverArm_InsGnss);
