@@ -25,7 +25,7 @@ Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, co
     // clang-format on
 
     return 0.5 * A * q;
-};
+}
 
 struct VelocityUpdateState
 {

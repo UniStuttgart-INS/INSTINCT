@@ -34,6 +34,6 @@ Y rungeKutta3(Y (*f)(const X&, const Y&), const Scalar& h, const Y& y__t2, const
                                  + 2.0 * h * k2);
 
     return y__t2 + h / 6.0 * (k1 + 4.0 * k2 + k3);
-};
+}
 
 } // namespace NAV::Integration
