@@ -168,10 +168,32 @@ class LooselyCoupledKF : public Node
     /// Kalman Filter representation
     KalmanFilter kalmanFilter{ 15, 6 };
 
-    /// σ² Standard deviation of the GPS LatLonAlt position [rad^2, rad^2, m^2]
-    Eigen::Vector3d gnssSigmaSquaredLatLonAlt;
-    /// σ² Standard deviation of the GPS NED velocity [m^2/s^2]
-    Eigen::Vector3d gnssSigmaSquaredVelocity;
+    /// Possible Units for the GNSS measurement uncertainty for the position (standard deviation σ or Variance σ²)
+    enum class GnssMeasurementUncertaintyPositionUnit
+    {
+        rad2_rad2_m2, ///< Variance LatLonAlt^2 [rad^2, rad^2, m^2]
+        rad_rad_m,    ///< Standard deviation LatLonAlt [rad, rad, m]
+        meter2,       ///< Variance NED [m^2, m^2, m^2]
+        meter,        ///< Standard deviation NED [m, m, m]
+    };
+    /// Gui selection for the Unit of the GNSS measurement uncertainty for the position
+    GnssMeasurementUncertaintyPositionUnit gnssMeasurementUncertaintyPositionUnit = GnssMeasurementUncertaintyPositionUnit::meter;
+
+    /// Possible Units for the GNSS measurement uncertainty for the velocity (standard deviation σ or Variance σ²)
+    enum class GnssMeasurementUncertaintyVelocityUnit
+    {
+        m2_s2, ///< Variance [m^2/s^2]
+        m_s,   ///< Standard deviation [m/s]
+    };
+    /// Gui selection for the Unit of the GNSS measurement uncertainty for the velocity
+    GnssMeasurementUncertaintyVelocityUnit gnssMeasurementUncertaintyVelocityUnit = GnssMeasurementUncertaintyVelocityUnit::m_s;
+
+    /// @brief GUI selection of the GNSS position measurement uncertainty (standard deviation σ or Variance σ²).
+    /// SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
+    Eigen::Vector3d gnssMeasurementUncertaintyPosition{ 0.3, 0.3, 0.3 * 3 };
+
+    /// GUI selection of the GNSS NED velocity measurement uncertainty (standard deviation σ or Variance σ²)
+    Eigen::Vector3d gnssMeasurementUncertaintyVelocity{ 0.5, 0.5, 0.5 };
 
     /// GUI option for the Phi calculation algorithm
     enum class PhiCalculation

@@ -42,12 +42,6 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     nm::CreateOutputPin(this, "R", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.R);
     nm::CreateOutputPin(this, "K", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter.K);
     nm::CreateOutputPin(this, "K*z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &kalmanFilter_Kz);
-
-    // SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
-    gnssSigmaSquaredLatLonAlt = trafo::ecef2lla_WGS84(trafo::ned2ecef({ 0.3, 0.3, 0.3 * 3 }, { 0, 0, 0 })).array().pow(2);
-    gnssSigmaSquaredLatLonAlt(0) *= 1e6;
-    gnssSigmaSquaredLatLonAlt(1) *= 1e6;
-    gnssSigmaSquaredVelocity = Eigen::Array3d(0.5, 0.5, 0.5).pow(2);
 }
 
 NAV::LooselyCoupledKF::~LooselyCoupledKF()
@@ -72,7 +66,10 @@ std::string NAV::LooselyCoupledKF::category()
 
 void NAV::LooselyCoupledKF::guiConfig()
 {
-    ImGui::SetNextItemWidth(300 + ImGui::GetStyle().ItemSpacing.x);
+    constexpr float configWidth = 370.0F;
+    constexpr float unitWidth = 150.0F;
+
+    ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
     if (ImGui::Combo(fmt::format("Phi calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&phiCalculation), "Taylor 1st Order\0Van Loan\0\0"))
     {
         LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), phiCalculation);
@@ -90,7 +87,7 @@ void NAV::LooselyCoupledKF::guiConfig()
         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
     }
 
-    ImGui::SetNextItemWidth(300 + ImGui::GetStyle().ItemSpacing.x);
+    ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
     if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&qCalculation), "Groves\0Van Loan\0\0"))
     {
         LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), qCalculation);
@@ -103,179 +100,245 @@ void NAV::LooselyCoupledKF::guiConfig()
         ImGui::PopStyleVar();
     }
 
+    ImGui::Separator();
+
     // ###########################################################################################################
     //                                       Random Process Accelerometer
     // ###########################################################################################################
 
-    if (randomProcessAccel == RandomProcess::GaussMarkov1)
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("Random Process Accelerometer (Q - System/Process noise covariance matrix)##{}", size_t(id)).c_str()))
     {
-        ImGui::Separator();
-    }
-    ImGui::SetNextItemWidth(300 + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&randomProcessAccel), "White Noise\0"
-                                                                                                                                       "Random Constant\0"
-                                                                                                                                       "Random Walk\0"
-                                                                                                                                       "Gauss-Markov 1st Order\0"
-                                                                                                                                       "Gauss-Markov 2nd Order\0"
-                                                                                                                                       "Gauss-Markov 3rd Order\0\0"))
-    {
-        if (randomProcessAccel != RandomProcess::RandomWalk && randomProcessAccel != RandomProcess::GaussMarkov1)
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&randomProcessAccel), "White Noise\0"
+                                                                                                                                           "Random Constant\0"
+                                                                                                                                           "Random Walk\0"
+                                                                                                                                           "Gauss-Markov 1st Order\0"
+                                                                                                                                           "Gauss-Markov 2nd Order\0"
+                                                                                                                                           "Gauss-Markov 3rd Order\0\0"))
         {
-            LOG_ERROR("Currently only 'Random Walk' and 'Gauss-Markov 1st Order' is supported");
-            randomProcessAccel = RandomProcess::RandomWalk;
-        }
+            if (randomProcessAccel != RandomProcess::RandomWalk && randomProcessAccel != RandomProcess::GaussMarkov1)
+            {
+                LOG_ERROR("Currently only 'Random Walk' and 'Gauss-Markov 1st Order' is supported");
+                randomProcessAccel = RandomProcess::RandomWalk;
+            }
 
-        LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), randomProcessAccel);
-        flow::ApplyChanges();
-    }
-    if (randomProcessAccel == RandomProcess::GaussMarkov1)
-    {
-        ImGui::SetNextItemWidth(300 + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputDouble3(fmt::format("Gauss-Markov β Accelerometer##{}", size_t(id)).c_str(), beta_accel.data(), "%.3e"))
-        {
-            LOG_DEBUG("{}: beta_accel changed to {}", nameId(), beta_accel.transpose());
+            LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), randomProcessAccel);
             flow::ApplyChanges();
         }
-        ImGui::Separator();
+
+        if (randomProcessAccel == RandomProcess::GaussMarkov1)
+        {
+            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+            if (ImGui::InputDouble3(fmt::format("Gauss-Markov β Accelerometer##{}", size_t(id)).c_str(), beta_accel.data(), "%.4e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: beta_accel changed to {}", nameId(), beta_accel.transpose());
+                flow::ApplyChanges();
+            }
+        }
+
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble(fmt::format("##variance_ra {}", size_t(id)).c_str(), &variance_ra, 0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: variance_ra changed to {}", nameId(), variance_ra);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(unitWidth);
+        if (ImGui::Combo(fmt::format("##varianceAccelNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceAccelNoiseUnits), "mg/√(Hz)\0\0"))
+        {
+            LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), varianceAccelNoiseUnits);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        if (varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz)
+        {
+            ImGui::TextUnformatted("Standard deviation of the noise on the\n"
+                                   "accelerometer specific-force measurements");
+        }
+        else
+        {
+            ImGui::TextUnformatted("Variance of the noise on the\n"
+                                   "accelerometer specific-force measurements");
+        }
+
+        if (qCalculation == QCalculation::Groves)
+        {
+            ImGui::SetNextItemWidth(configWidth - unitWidth);
+            if (ImGui::InputDouble(fmt::format("##variance_bad {}", size_t(id)).c_str(), &variance_bad, 0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: variance_bad changed to {}", nameId(), variance_bad);
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(unitWidth);
+            if (ImGui::Combo(fmt::format("##varianceAccelNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceAccelNoiseUnits), "µg\0\0"))
+            {
+                LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), varianceAccelNoiseUnits);
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            if (varianceAccelBiasUnits == VarianceAccelBiasUnits::microg)
+            {
+                ImGui::TextUnformatted("Variance of the accelerometer dynamic bias");
+            }
+            else
+            {
+                ImGui::TextUnformatted("Standard deviation of the accelerometer dynamic bias");
+            }
+        }
+
+        ImGui::TreePop();
     }
 
     // ###########################################################################################################
     //                                         Random Process Gyroscope
     // ###########################################################################################################
 
-    if (randomProcessAccel != RandomProcess::GaussMarkov1 && randomProcessGyro == RandomProcess::GaussMarkov1)
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("Random Process Gyroscope (Q - System/Process noise covariance matrix)##{}", size_t(id)).c_str()))
     {
-        ImGui::Separator();
-    }
-    ImGui::SetNextItemWidth(300 + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&randomProcessGyro), "White Noise\0"
-                                                                                                                                  "Random Constant\0"
-                                                                                                                                  "Random Walk\0"
-                                                                                                                                  "Gauss-Markov 1st Order\0"
-                                                                                                                                  "Gauss-Markov 2nd Order\0"
-                                                                                                                                  "Gauss-Markov 3rd Order\0\0"))
-    {
-        if (randomProcessGyro != RandomProcess::RandomWalk && randomProcessGyro != RandomProcess::GaussMarkov1)
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&randomProcessGyro), "White Noise\0"
+                                                                                                                                      "Random Constant\0"
+                                                                                                                                      "Random Walk\0"
+                                                                                                                                      "Gauss-Markov 1st Order\0"
+                                                                                                                                      "Gauss-Markov 2nd Order\0"
+                                                                                                                                      "Gauss-Markov 3rd Order\0\0"))
         {
-            LOG_ERROR("Currently only 'Random Walk' and 'Gauss-Markov 1st Order' is supported");
-            randomProcessGyro = RandomProcess::RandomWalk;
-        }
+            // TODO: Implement different Random processes
+            if (randomProcessGyro != RandomProcess::RandomWalk && randomProcessGyro != RandomProcess::GaussMarkov1)
+            {
+                LOG_ERROR("Currently only 'Random Walk' and 'Gauss-Markov 1st Order' is supported");
+                randomProcessGyro = RandomProcess::RandomWalk;
+            }
 
-        LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), randomProcessGyro);
-        flow::ApplyChanges();
-    }
-    if (randomProcessGyro == RandomProcess::GaussMarkov1)
-    {
-        ImGui::SetNextItemWidth(300 + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::InputDouble3(fmt::format("Gauss-Markov β Gyroscope##{}", size_t(id)).c_str(), beta_gyro.data(), "%.3e"))
-        {
-            LOG_DEBUG("{}: beta_gyro changed to {}", nameId(), beta_gyro.transpose());
+            LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), randomProcessGyro);
             flow::ApplyChanges();
         }
-        ImGui::Separator();
-    }
-
-    // ###########################################################################################################
-    //                                          Process Noise Variances
-    // ###########################################################################################################
-
-    ImGui::SetNextItemWidth(160);
-    if (ImGui::InputDouble(fmt::format("##variance_ra {}", size_t(id)).c_str(), &variance_ra, 0.0, 0.0, "%.10e"))
-    {
-        LOG_DEBUG("{}: variance_ra changed to {}", nameId(), variance_ra);
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    ImGui::SetNextItemWidth(140);
-    if (ImGui::Combo(fmt::format("##varianceAccelNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceAccelNoiseUnits), "mg/√(Hz)\0\0"))
-    {
-        LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), varianceAccelNoiseUnits);
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    if (varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz)
-    {
-        ImGui::TextUnformatted("Standard deviation of the noise on the\n"
-                               "accelerometer specific-force measurements");
-    }
-    else
-    {
-        ImGui::TextUnformatted("Variance of the noise on the\n"
-                               "accelerometer specific-force measurements");
-    }
-
-    ImGui::SetNextItemWidth(160);
-    if (ImGui::InputDouble(fmt::format("##variance_rg {}", size_t(id)).c_str(), &variance_rg, 0.0, 0.0, "%.10e"))
-    {
-        LOG_DEBUG("{}: variance_rg changed to {}", nameId(), variance_rg);
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    ImGui::SetNextItemWidth(140);
-    if (ImGui::Combo(fmt::format("##varianceGyroNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceGyroNoiseUnits), "deg/hr/√(Hz)\0\0"))
-    {
-        LOG_DEBUG("{}: varianceGyroNoiseUnits changed to {}", nameId(), varianceGyroNoiseUnits);
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    if (varianceGyroNoiseUnits == VarianceGyroNoiseUnits::deg_hr_sqrtHz)
-    {
-        ImGui::TextUnformatted("Standard deviation of the noise on\n"
-                               "the gyro angular-rate measurements");
-    }
-    else
-    {
-        ImGui::TextUnformatted("Variance of the noise on\n"
-                               "the gyro angular-rate measurements");
-    }
-
-    if (qCalculation == QCalculation::Groves)
-    {
-        ImGui::SetNextItemWidth(160);
-        if (ImGui::InputDouble(fmt::format("##variance_bad {}", size_t(id)).c_str(), &variance_bad, 0.0, 0.0, "%.10e"))
+        if (randomProcessGyro == RandomProcess::GaussMarkov1)
         {
-            LOG_DEBUG("{}: variance_bad changed to {}", nameId(), variance_bad);
+            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+            if (ImGui::InputDouble3(fmt::format("Gauss-Markov β Gyroscope##{}", size_t(id)).c_str(), beta_gyro.data(), "%.4e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: beta_gyro changed to {}", nameId(), beta_gyro.transpose());
+                flow::ApplyChanges();
+            }
+        }
+
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble(fmt::format("##variance_rg {}", size_t(id)).c_str(), &variance_rg, 0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: variance_rg changed to {}", nameId(), variance_rg);
             flow::ApplyChanges();
         }
         ImGui::SameLine();
-        ImGui::SetNextItemWidth(140);
-        if (ImGui::Combo(fmt::format("##varianceAccelNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceAccelNoiseUnits), "µg\0\0"))
-        {
-            LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), varianceAccelNoiseUnits);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        if (varianceAccelBiasUnits == VarianceAccelBiasUnits::microg)
-        {
-            ImGui::TextUnformatted("Variance of the accelerometer dynamic bias");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Standard deviation of the accelerometer dynamic bias");
-        }
-
-        ImGui::SetNextItemWidth(160);
-        if (ImGui::InputDouble(fmt::format("##variance_bgd {}", size_t(id)).c_str(), &variance_bgd, 0.0, 0.0, "%.10e"))
-        {
-            LOG_DEBUG("{}: variance_rg changed to {}", nameId(), variance_bgd);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(140);
-        if (ImGui::Combo(fmt::format("##varianceGyroNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceGyroNoiseUnits), "°/h\0\0"))
+        ImGui::SetNextItemWidth(unitWidth);
+        if (ImGui::Combo(fmt::format("##varianceGyroNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceGyroNoiseUnits), "deg/hr/√(Hz)\0\0"))
         {
             LOG_DEBUG("{}: varianceGyroNoiseUnits changed to {}", nameId(), varianceGyroNoiseUnits);
             flow::ApplyChanges();
         }
         ImGui::SameLine();
-        if (varianceGyroBiasUnits == VarianceGyroBiasUnits::deg_h)
+        if (varianceGyroNoiseUnits == VarianceGyroNoiseUnits::deg_hr_sqrtHz)
         {
-            ImGui::TextUnformatted("Variance of the gyro dynamic bias");
+            ImGui::TextUnformatted("Standard deviation of the noise on\n"
+                                   "the gyro angular-rate measurements");
         }
         else
         {
-            ImGui::TextUnformatted("Standard deviation of the gyro dynamic bias");
+            ImGui::TextUnformatted("Variance of the noise on\n"
+                                   "the gyro angular-rate measurements");
         }
+
+        if (qCalculation == QCalculation::Groves)
+        {
+            ImGui::SetNextItemWidth(configWidth - unitWidth);
+            if (ImGui::InputDouble(fmt::format("##variance_bgd {}", size_t(id)).c_str(), &variance_bgd, 0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+            {
+                LOG_DEBUG("{}: variance_rg changed to {}", nameId(), variance_bgd);
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(unitWidth);
+            if (ImGui::Combo(fmt::format("##varianceGyroNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceGyroNoiseUnits), "°/h\0\0"))
+            {
+                LOG_DEBUG("{}: varianceGyroNoiseUnits changed to {}", nameId(), varianceGyroNoiseUnits);
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            if (varianceGyroBiasUnits == VarianceGyroBiasUnits::deg_h)
+            {
+                ImGui::TextUnformatted("Variance of the gyro dynamic bias");
+            }
+            else
+            {
+                ImGui::TextUnformatted("Standard deviation of the gyro dynamic bias");
+            }
+        }
+
+        ImGui::TreePop();
+    }
+
+    // ###########################################################################################################
+    //                                        Measurement Uncertainties 𝐑
+    // ###########################################################################################################
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
+    {
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble3(fmt::format("##gnssMeasurementUncertaintyPosition {}", size_t(id)).c_str(), gnssMeasurementUncertaintyPosition.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyPosition changed to {}", nameId(), gnssMeasurementUncertaintyPosition);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(unitWidth);
+        if (ImGui::Combo(fmt::format("##gnssMeasurementUncertaintyPositionUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&gnssMeasurementUncertaintyPositionUnit), "rad^2, rad^2, m^2\0"
+                                                                                                                                                                          "rad, rad, m\0"
+                                                                                                                                                                          "m^2, m^2, m^2\0"
+                                                                                                                                                                          "m, m, m\0\0"))
+        {
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyPositionUnit changed to {}", nameId(), gnssMeasurementUncertaintyPositionUnit);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        if (gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2
+            || gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::meter2)
+        {
+            ImGui::TextUnformatted("Variance of the GNSS position measurements");
+        }
+        else
+        {
+            ImGui::TextUnformatted("Standard deviation of the GNSS position measurements");
+        }
+
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble3(fmt::format("##gnssMeasurementUncertaintyVelocity {}", size_t(id)).c_str(), gnssMeasurementUncertaintyVelocity.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocity changed to {}", nameId(), gnssMeasurementUncertaintyVelocity);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(unitWidth);
+        if (ImGui::Combo(fmt::format("##gnssMeasurementUncertaintyVelocityUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&gnssMeasurementUncertaintyVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                                          "m/s\0\0"))
+        {
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocityUnit changed to {}", nameId(), gnssMeasurementUncertaintyVelocityUnit);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        if (gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m2_s2)
+        {
+            ImGui::TextUnformatted("Variance of the GNSS velocity measurements");
+        }
+        else
+        {
+            ImGui::TextUnformatted("Standard deviation of the GNSS velocity measurements");
+        }
+
+        ImGui::TreePop();
     }
 }
 
@@ -287,6 +350,7 @@ void NAV::LooselyCoupledKF::guiConfig()
 
     j["phiCalculation"] = phiCalculation;
     j["qCalculation"] = qCalculation;
+
     j["randomProcessAccel"] = randomProcessAccel;
     j["beta_accel"] = beta_accel;
     j["randomProcessGyro"] = randomProcessGyro;
@@ -299,6 +363,11 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["varianceAccelBiasUnits"] = varianceAccelBiasUnits;
     j["variance_bgd"] = variance_bgd;
     j["varianceGyroBiasUnits"] = varianceGyroBiasUnits;
+
+    j["gnssMeasurementUncertaintyPositionUnit"] = gnssMeasurementUncertaintyPositionUnit;
+    j["gnssMeasurementUncertaintyPosition"] = gnssMeasurementUncertaintyPosition;
+    j["gnssMeasurementUncertaintyVelocityUnit"] = gnssMeasurementUncertaintyVelocityUnit;
+    j["gnssMeasurementUncertaintyVelocity"] = gnssMeasurementUncertaintyVelocity;
 
     return j;
 }
@@ -314,6 +383,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         qCalculation = static_cast<QCalculation>(j.at("qCalculation").get<int>());
     }
+
     if (j.contains("randomProcessAccel"))
     {
         randomProcessAccel = static_cast<RandomProcess>(j.at("randomProcessAccel").get<int>());
@@ -361,6 +431,23 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     if (j.contains("varianceGyroBiasUnits"))
     {
         varianceGyroBiasUnits = static_cast<VarianceGyroBiasUnits>(j.at("varianceGyroBiasUnits").get<int>());
+    }
+
+    if (j.contains("gnssMeasurementUncertaintyPositionUnit"))
+    {
+        gnssMeasurementUncertaintyPositionUnit = static_cast<GnssMeasurementUncertaintyPositionUnit>(j.at("gnssMeasurementUncertaintyPositionUnit").get<int>());
+    }
+    if (j.contains("gnssMeasurementUncertaintyPosition"))
+    {
+        gnssMeasurementUncertaintyPosition = j.at("gnssMeasurementUncertaintyPosition");
+    }
+    if (j.contains("gnssMeasurementUncertaintyVelocityUnit"))
+    {
+        gnssMeasurementUncertaintyVelocityUnit = static_cast<GnssMeasurementUncertaintyVelocityUnit>(j.at("gnssMeasurementUncertaintyVelocityUnit").get<int>());
+    }
+    if (j.contains("gnssMeasurementUncertaintyVelocity"))
+    {
+        gnssMeasurementUncertaintyVelocity = j.at("gnssMeasurementUncertaintyVelocity");
     }
 }
 
@@ -630,6 +717,41 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt
 
     // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     Eigen::Matrix3d Omega_ie_n = AngularVelocityEarthSkew_ie_n(latestInertialNavSol->latitude());
+
+    // -------------------------------------------- GUI Parameters -----------------------------------------------
+
+    // GNSS measurement uncertainty for the position (Variance σ²) in [rad^2, rad^2, m^2]
+    Eigen::Vector3d gnssSigmaSquaredLatLonAlt = Eigen::Vector3d::Zero();
+    if (gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::meter)
+    {
+        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(gnssMeasurementUncertaintyPosition, position_lla__t1)) - position_lla__t1).array().pow(2);
+    }
+    else if (gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::meter2)
+    {
+        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(gnssMeasurementUncertaintyPosition.array().sqrt(), position_lla__t1)) - position_lla__t1).array().pow(2);
+    }
+    else if (gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::rad_rad_m)
+    {
+        gnssSigmaSquaredLatLonAlt = gnssMeasurementUncertaintyPosition.array().pow(2);
+    }
+    else if (gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2)
+    {
+        gnssSigmaSquaredLatLonAlt = gnssMeasurementUncertaintyPosition;
+    }
+    // Conversion rad to mrad
+    gnssSigmaSquaredLatLonAlt(0) *= 1e6;
+    gnssSigmaSquaredLatLonAlt(1) *= 1e6;
+
+    // GNSS measurement uncertainty for the velocity (Variance σ²) in [m^2/s^2]
+    Eigen::Vector3d gnssSigmaSquaredVelocity = Eigen::Vector3d::Zero();
+    if (gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m_s)
+    {
+        gnssSigmaSquaredVelocity = gnssMeasurementUncertaintyVelocity.array().pow(2);
+    }
+    else if (gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m2_s2)
+    {
+        gnssSigmaSquaredVelocity = gnssMeasurementUncertaintyVelocity;
+    }
 
     // ---------------------------------------------- Correction -------------------------------------------------
     // 5. Calculate the measurement matrix H_k
