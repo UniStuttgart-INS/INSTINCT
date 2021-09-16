@@ -174,19 +174,19 @@ void NAV::LooselyCoupledKF::guiConfig()
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(unitWidth);
-            if (ImGui::Combo(fmt::format("##varianceAccelNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceAccelNoiseUnits), "µg\0\0"))
+            if (ImGui::Combo(fmt::format("##varianceAccelBiasUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceAccelBiasUnits), "µg\0\0"))
             {
-                LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), varianceAccelNoiseUnits);
+                LOG_DEBUG("{}: varianceAccelBiasUnits changed to {}", nameId(), varianceAccelBiasUnits);
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
             if (varianceAccelBiasUnits == VarianceAccelBiasUnits::microg)
             {
-                ImGui::TextUnformatted("Variance of the accelerometer dynamic bias");
+                ImGui::TextUnformatted("Standard deviation of the accelerometer dynamic bias");
             }
             else
             {
-                ImGui::TextUnformatted("Standard deviation of the accelerometer dynamic bias");
+                ImGui::TextUnformatted("Variance of the accelerometer dynamic bias");
             }
         }
 
@@ -255,19 +255,19 @@ void NAV::LooselyCoupledKF::guiConfig()
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(unitWidth);
-            if (ImGui::Combo(fmt::format("##varianceGyroNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceGyroNoiseUnits), "°/h\0\0"))
+            if (ImGui::Combo(fmt::format("##varianceGyroBiasUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceGyroBiasUnits), "°/h\0\0"))
             {
-                LOG_DEBUG("{}: varianceGyroNoiseUnits changed to {}", nameId(), varianceGyroNoiseUnits);
+                LOG_DEBUG("{}: varianceGyroBiasUnits changed to {}", nameId(), varianceGyroBiasUnits);
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
             if (varianceGyroBiasUnits == VarianceGyroBiasUnits::deg_h)
             {
-                ImGui::TextUnformatted("Variance of the gyro dynamic bias");
+                ImGui::TextUnformatted("Standard deviation of the gyro dynamic bias");
             }
             else
             {
-                ImGui::TextUnformatted("Standard deviation of the gyro dynamic bias");
+                ImGui::TextUnformatted("Variance of the gyro dynamic bias");
             }
         }
 
