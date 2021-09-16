@@ -55,7 +55,7 @@ namespace NAV::gravity
 /// @return Gravity vector in [m/s^2] in NED frame
 ///
 /// @note See Groves (2013) Chapter 2.4.3 and 'GUT User Guide' (2018) Chapter 7.4
-[[nodiscard]] Eigen::Vector3d gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree);
+[[nodiscard]] Eigen::Vector3d gravity_EGM96(const double& latitude, const double& longitude, const double& altitude, int ndegree = 10);
 
 /// @brief Calculates the centrifugal acceleration
 /// @param[in] latitude Latitude in [rad]

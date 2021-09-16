@@ -5,6 +5,7 @@
 #include "util/InsMechanization.hpp"
 #include "util/InsConstants.hpp"
 #include "util/InsGravity.hpp"
+#include "util/InsMath.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include <imgui_internal.h>
@@ -367,12 +368,13 @@ void NAV::ImuIntegrator::integrateObservation()
 
             posVelAtt->velocity_n() -= pvaError->velocityError_n();
 
-            Eigen::Vector3d rollPitchYaw_corrected = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
-            posVelAtt->quaternion_nb() = trafo::quat_nb(rollPitchYaw_corrected(0), rollPitchYaw_corrected(1), rollPitchYaw_corrected(2));
+            // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
+            Eigen::Vector3d attError = pvaError->attitudeError_n();
+            Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
+            posVelAtt->quaternion_nb() = Eigen::Quaterniond(dcm_c);
 
-            // quat_bn is used because the error is also substracted which in quaternions is the conjugated quaternion // TODO check if quaternions possible
-            // auto q_nb_error = trafo::quat_nb(pvaError->attitudeError_n()(0), pvaError->attitudeError_n()(1), pvaError->attitudeError_n()(2));
-            // posVelAtt->quaternion_nb() = posVelAtt->quaternion_nb() * q_nb_error;
+            // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
+            // TODO: Use quaternions for caluclation
         }
 
         pvaError.reset();
