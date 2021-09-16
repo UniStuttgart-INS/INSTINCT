@@ -907,7 +907,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
         }
 
         kalmanFilter.Q = systemNoiseCovarianceMatrix(sigma2_ra, sigma2_rg, sigma2_bad, sigma2_bgd,
-                                                     systemMatrixF_21_n(quaternion_nb__t1, acceleration_b),
+                                                     F.block<3, 3>(3, 0),
                                                      T_rn_p,
                                                      DCM_nb, tau_KF);
     }
