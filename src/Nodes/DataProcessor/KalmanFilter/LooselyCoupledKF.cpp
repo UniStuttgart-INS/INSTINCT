@@ -27,7 +27,7 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 650, 360 };
+    guiConfigDefaultWindowSize = { 822, 556 };
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
@@ -66,7 +66,7 @@ std::string NAV::LooselyCoupledKF::category()
 
 void NAV::LooselyCoupledKF::guiConfig()
 {
-    constexpr float configWidth = 370.0F;
+    constexpr float configWidth = 380.0F;
     constexpr float unitWidth = 150.0F;
 
     ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
@@ -103,12 +103,14 @@ void NAV::LooselyCoupledKF::guiConfig()
     ImGui::Separator();
 
     // ###########################################################################################################
-    //                                       Random Process Accelerometer
+    //                                Q - System/Process noise covariance matrix
     // ###########################################################################################################
 
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("Random Process Accelerometer (Q - System/Process noise covariance matrix)##{}", size_t(id)).c_str()))
+    if (ImGui::TreeNode(fmt::format("Q - System/Process noise covariance matrix##{}", size_t(id)).c_str()))
     {
+        // --------------------------------------------- Accelerometer -----------------------------------------------
+
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
         if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&randomProcessAccel), "White Noise\0"
                                                                                                                                            "Random Constant\0"
@@ -188,16 +190,8 @@ void NAV::LooselyCoupledKF::guiConfig()
             }
         }
 
-        ImGui::TreePop();
-    }
+        // ----------------------------------------------- Gyroscope -------------------------------------------------
 
-    // ###########################################################################################################
-    //                                         Random Process Gyroscope
-    // ###########################################################################################################
-
-    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-    if (ImGui::TreeNode(fmt::format("Random Process Gyroscope (Q - System/Process noise covariance matrix)##{}", size_t(id)).c_str()))
-    {
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
         if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&randomProcessGyro), "White Noise\0"
                                                                                                                                       "Random Constant\0"
@@ -340,6 +334,145 @@ void NAV::LooselyCoupledKF::guiConfig()
 
         ImGui::TreePop();
     }
+
+    // ###########################################################################################################
+    //                                        𝐏 Error covariance matrix
+    // ###########################################################################################################
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
+    {
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble3(fmt::format("##initCovariancePosition {}", size_t(id)).c_str(), initCovariancePosition.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovariancePosition changed to {}", nameId(), initCovariancePosition);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(unitWidth);
+        if (ImGui::Combo(fmt::format("##initCovariancePositionUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovariancePositionUnit), "rad^2, rad^2, m^2\0"
+                                                                                                                                                  "rad, rad, m\0"
+                                                                                                                                                  "m^2, m^2, m^2\0"
+                                                                                                                                                  "m, m, m\0\0"))
+        {
+            LOG_DEBUG("{}: initCovariancePositionUnit changed to {}", nameId(), initCovariancePositionUnit);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        if (initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2
+            || initCovariancePositionUnit == InitCovariancePositionUnit::meter2)
+        {
+            ImGui::TextUnformatted("Position covariance (Variance σ²)");
+        }
+        else
+        {
+            ImGui::TextUnformatted("Position covariance (Standard deviation σ)");
+        }
+        // ###########################################################################################################
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble3(fmt::format("##initCovarianceVelocity {}", size_t(id)).c_str(), initCovarianceVelocity.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceVelocity changed to {}", nameId(), initCovarianceVelocity);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(unitWidth);
+        if (ImGui::Combo(fmt::format("##initCovarianceVelocityUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovarianceVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                  "m/s\0\0"))
+        {
+            LOG_DEBUG("{}: initCovarianceVelocityUnit changed to {}", nameId(), initCovarianceVelocityUnit);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        if (initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2)
+        {
+            ImGui::TextUnformatted("Velocity covariance (Variance σ²)");
+        }
+        else
+        {
+            ImGui::TextUnformatted("Velocity covariance (Standard deviation σ)");
+        }
+        // ###########################################################################################################
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble3(fmt::format("##initCovarianceAttitudeAngles {}", size_t(id)).c_str(), initCovarianceAttitudeAngles.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceAttitudeAngles changed to {}", nameId(), initCovarianceAttitudeAngles);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(unitWidth);
+        if (ImGui::Combo(fmt::format("##initCovarianceAttitudeAnglesUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovarianceAttitudeAnglesUnit), "rad^2\0"
+                                                                                                                                                              "deg^2\0"
+                                                                                                                                                              "rad\0"
+                                                                                                                                                              "deg\0\0"))
+        {
+            LOG_DEBUG("{}: initCovarianceAttitudeAnglesUnit changed to {}", nameId(), initCovarianceAttitudeAnglesUnit);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        if (initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2
+            || initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2)
+        {
+            ImGui::TextUnformatted("Flight Angles covariance (Variance σ²)");
+        }
+        else
+        {
+            ImGui::TextUnformatted("Flight Angles covariance (Standard deviation σ)");
+        }
+        // ###########################################################################################################
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble3(fmt::format("##initCovarianceBiasAccel {}", size_t(id)).c_str(), initCovarianceBiasAccel.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceBiasAccel changed to {}", nameId(), initCovarianceBiasAccel);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(unitWidth);
+        if (ImGui::Combo(fmt::format("##initCovarianceBiasAccelUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovarianceBiasAccelUnit), "m^2/s^4\0"
+                                                                                                                                                    "m/s^2\0\0"))
+        {
+            LOG_DEBUG("{}: initCovarianceBiasAccelUnit changed to {}", nameId(), initCovarianceBiasAccelUnit);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        if (initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m2_s4)
+        {
+            ImGui::TextUnformatted("Accelerometer Bias covariance (Variance σ²)");
+        }
+        else
+        {
+            ImGui::TextUnformatted("Accelerometer Bias covariance (Standard deviation σ)");
+        }
+        // ###########################################################################################################
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble3(fmt::format("##initCovarianceBiasGyro {}", size_t(id)).c_str(), initCovarianceBiasGyro.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: initCovarianceBiasGyro changed to {}", nameId(), initCovarianceBiasGyro);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(unitWidth);
+        if (ImGui::Combo(fmt::format("##initCovarianceBiasGyroUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovarianceBiasGyroUnit), "rad^2/s^2\0"
+                                                                                                                                                  "deg^2/s^2\0"
+                                                                                                                                                  "rad/s\0"
+                                                                                                                                                  "deg/s\0\0"))
+        {
+            LOG_DEBUG("{}: initCovarianceBiasGyroUnit changed to {}", nameId(), initCovarianceBiasGyroUnit);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        if (initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad2_s2
+            || initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2)
+        {
+            ImGui::TextUnformatted("Gyroscope Bias covariance (Variance σ²)");
+        }
+        else
+        {
+            ImGui::TextUnformatted("Gyroscope Bias covariance (Standard deviation σ)");
+        }
+
+        ImGui::TreePop();
+    }
 }
 
 [[nodiscard]] json NAV::LooselyCoupledKF::save() const
@@ -369,6 +502,17 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["gnssMeasurementUncertaintyVelocityUnit"] = gnssMeasurementUncertaintyVelocityUnit;
     j["gnssMeasurementUncertaintyVelocity"] = gnssMeasurementUncertaintyVelocity;
 
+    j["initCovariancePositionUnit"] = initCovariancePositionUnit;
+    j["initCovariancePosition"] = initCovariancePosition;
+    j["initCovarianceVelocityUnit"] = initCovarianceVelocityUnit;
+    j["initCovarianceVelocity"] = initCovarianceVelocity;
+    j["initCovarianceAttitudeAnglesUnit"] = initCovarianceAttitudeAnglesUnit;
+    j["initCovarianceAttitudeAngles"] = initCovarianceAttitudeAngles;
+    j["initCovarianceBiasAccelUnit"] = initCovarianceBiasAccelUnit;
+    j["initCovarianceBiasAccel"] = initCovarianceBiasAccel;
+    j["initCovarianceBiasGyroUnit"] = initCovarianceBiasGyroUnit;
+    j["initCovarianceBiasGyro"] = initCovarianceBiasGyro;
+
     return j;
 }
 
@@ -383,7 +527,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         qCalculation = static_cast<QCalculation>(j.at("qCalculation").get<int>());
     }
-
+    // ------------------------------- 𝐐 System/Process noise covariance matrix ---------------------------------
     if (j.contains("randomProcessAccel"))
     {
         randomProcessAccel = static_cast<RandomProcess>(j.at("randomProcessAccel").get<int>());
@@ -432,7 +576,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         varianceGyroBiasUnits = static_cast<VarianceGyroBiasUnits>(j.at("varianceGyroBiasUnits").get<int>());
     }
-
+    // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
     if (j.contains("gnssMeasurementUncertaintyPositionUnit"))
     {
         gnssMeasurementUncertaintyPositionUnit = static_cast<GnssMeasurementUncertaintyPositionUnit>(j.at("gnssMeasurementUncertaintyPositionUnit").get<int>());
@@ -449,6 +593,47 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         gnssMeasurementUncertaintyVelocity = j.at("gnssMeasurementUncertaintyVelocity");
     }
+    // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
+    if (j.contains("initCovariancePositionUnit"))
+    {
+        initCovariancePositionUnit = static_cast<InitCovariancePositionUnit>(j.at("initCovariancePositionUnit").get<int>());
+    }
+    if (j.contains("initCovariancePosition"))
+    {
+        initCovariancePosition = j.at("initCovariancePosition");
+    }
+    if (j.contains("initCovarianceVelocityUnit"))
+    {
+        initCovarianceVelocityUnit = static_cast<InitCovarianceVelocityUnit>(j.at("initCovarianceVelocityUnit").get<int>());
+    }
+    if (j.contains("initCovarianceVelocity"))
+    {
+        initCovarianceVelocity = j.at("initCovarianceVelocity");
+    }
+    if (j.contains("initCovarianceAttitudeAnglesUnit"))
+    {
+        initCovarianceAttitudeAnglesUnit = static_cast<InitCovarianceAttitudeAnglesUnit>(j.at("initCovarianceAttitudeAnglesUnit").get<int>());
+    }
+    if (j.contains("initCovarianceAttitudeAngles"))
+    {
+        initCovarianceAttitudeAngles = j.at("initCovarianceAttitudeAngles");
+    }
+    if (j.contains("initCovarianceBiasAccelUnit"))
+    {
+        initCovarianceBiasAccelUnit = static_cast<InitCovarianceBiasAccelUnit>(j.at("initCovarianceBiasAccelUnit").get<int>());
+    }
+    if (j.contains("initCovarianceBiasAccel"))
+    {
+        initCovarianceBiasAccel = j.at("initCovarianceBiasAccel");
+    }
+    if (j.contains("initCovarianceBiasGyroUnit"))
+    {
+        initCovarianceBiasGyroUnit = static_cast<InitCovarianceBiasGyroUnit>(j.at("initCovarianceBiasGyroUnit").get<int>());
+    }
+    if (j.contains("initCovarianceBiasGyro"))
+    {
+        initCovarianceBiasGyro = j.at("initCovarianceBiasGyro");
+    }
 }
 
 bool NAV::LooselyCoupledKF::initialize()
@@ -461,21 +646,94 @@ bool NAV::LooselyCoupledKF::initialize()
 
     latestInertialNavSol = nullptr;
 
-    double variance_angles = std::pow(trafo::deg2rad(10), 2); // [rad²]
-    double variance_vel = std::pow(10, 2);                    // [m²/s²]
+    // Initial Covariance of the attitude angles in [rad²]
+    Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
+    if (initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2)
+    {
+        variance_angles = initCovarianceAttitudeAngles;
+    }
+    else if (initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2)
+    {
+        variance_angles = trafo::deg2rad3(initCovarianceAttitudeAngles);
+    }
+    else if (initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad)
+    {
+        variance_angles = initCovarianceAttitudeAngles.array().pow(2);
+    }
+    else if (initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg)
+    {
+        variance_angles = trafo::deg2rad3(initCovarianceAttitudeAngles).array().pow(2);
+    }
 
-    double std_pos = 100;                                        // [m]
-    double earthRadius = 6371e3;                                 // [m]
-    double variance_LatLon = std::pow(std_pos / earthRadius, 2); // [rad²]
+    // Initial Covariance of the velocity in [m²/s²]
+    Eigen::Vector3d variance_vel = Eigen::Vector3d::Zero();
+    if (initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2)
+    {
+        variance_vel = initCovarianceVelocity;
+    }
+    else if (initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m_s)
+    {
+        variance_vel = initCovarianceVelocity.array().pow(2);
+    }
+
+    // Initial Covariance of the position in [rad² rad² m²]
+    Eigen::Vector3d variance_lla = Eigen::Vector3d::Zero();
+    if (initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2)
+    {
+        variance_lla = initCovariancePosition;
+    }
+    else if (initCovariancePositionUnit == InitCovariancePositionUnit::rad_rad_m)
+    {
+        variance_lla = initCovariancePosition.array().pow(2);
+    }
+    else if (initCovariancePositionUnit == InitCovariancePositionUnit::meter)
+    {
+        variance_lla = (trafo::ecef2lla_WGS84(trafo::ned2ecef(initCovariancePosition, { 0, 0, 0 }))).array().pow(2);
+    }
+    else if (initCovariancePositionUnit == InitCovariancePositionUnit::meter2)
+    {
+        variance_lla = (trafo::ecef2lla_WGS84(trafo::ned2ecef(initCovariancePosition.array().sqrt(), { 0, 0, 0 }))).array().pow(2);
+    }
+    // Conversion rad to mrad
+    variance_lla(0) *= 1e6;
+    variance_lla(1) *= 1e6;
+
+    // Initial Covariance of the accelerometer biases in [m^2/s^4]
+    Eigen::Vector3d variance_accelBias = Eigen::Vector3d::Zero();
+    if (initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m2_s4)
+    {
+        variance_accelBias = initCovarianceBiasAccel;
+    }
+    else if (initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m_s2)
+    {
+        variance_accelBias = initCovarianceBiasAccel.array().pow(2);
+    }
+
+    // Initial Covariance of the gyroscope biases in [rad^2/s^2]
+    Eigen::Vector3d variance_gyroBias = Eigen::Vector3d::Zero();
+    if (initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad2_s2)
+    {
+        variance_gyroBias = initCovarianceBiasGyro;
+    }
+    else if (initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2)
+    {
+        variance_gyroBias = trafo::deg2rad3(initCovarianceBiasGyro.array().sqrt()).array().pow(2);
+    }
+    else if (initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad_s)
+    {
+        variance_gyroBias = initCovarianceBiasGyro.array().pow(2);
+    }
+    else if (initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg_s)
+    {
+        variance_gyroBias = trafo::deg2rad3(initCovarianceBiasGyro).array().pow(2);
+    }
 
     // 𝐏 Error covariance matrix
-    kalmanFilter.P.diagonal() << variance_angles, variance_angles, variance_angles, // Flight Angles covariance
-        variance_vel, variance_vel, variance_vel,                                   // Velocity covariance
-        variance_LatLon * 1e6, variance_LatLon * 1e6, std::pow(std_pos, 2),         // Position (Lat, Lon, Alt) covariance
-        1e0, 1e0, 1e0,                                                              // Accelerometer Bias covariance
-        1e-4, 1e-4, 1e-4;                                                           // Gyroscope Bias covariance
-
-    LOG_DEBUG("P: \n{}", kalmanFilter.P);
+    kalmanFilter.P.diagonal() << variance_angles, // Flight Angles covariance
+        variance_vel,                             // Velocity covariance
+        variance_lla,                             // Position (Lat, Lon, Alt) covariance
+        variance_accelBias,                       // Accelerometer Bias covariance
+        variance_gyroBias;                        // Gyroscope Bias covariance
 
     LOG_DEBUG("LooselyCoupledKF initialized");
 
@@ -503,7 +761,7 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
 
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    [[maybe_unused]] auto gnssMeasurement = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
+    auto gnssMeasurement = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
 
     if (latestInertialNavSol)
     {

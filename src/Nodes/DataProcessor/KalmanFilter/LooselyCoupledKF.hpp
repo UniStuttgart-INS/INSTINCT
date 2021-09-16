@@ -89,12 +89,25 @@ class LooselyCoupledKF : public Node
     /// Latest Position, Velocity, Attitude and Imu observation
     std::shared_ptr<InertialNavSol> latestInertialNavSol = nullptr;
 
+    /// Kalman Filter representation
+    KalmanFilter kalmanFilter{ 15, 6 };
+
     // ###########################################################################################################
     //                                                Parameters
     // ###########################################################################################################
 
     /// Timestamp of the KF
     double tau_KF = 0.01;
+
+    /// GUI Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
+    Eigen::Vector3d beta_accel = 2.0 / tau_KF * Eigen::Vector3d::Ones();
+    /// GUI Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
+    Eigen::Vector3d beta_gyro = 2.0 / tau_KF * Eigen::Vector3d::Ones();
+
+    /// Lever arm between INS and GNSS in [m, m, m]
+    Eigen::Vector3d leverArm_InsGnss{ 0.0, 0.0, 0.0 };
+
+    // ###########################################################################################################
 
     /// Possible Units for the Variance of the noise on the accelerometer specific-force measurements
     enum class VarianceAccelNoiseUnits
@@ -104,6 +117,12 @@ class LooselyCoupledKF : public Node
     /// Gui selection for the Unit of the input variance_ra parameter
     VarianceAccelNoiseUnits varianceAccelNoiseUnits = VarianceAccelNoiseUnits::mg_sqrtHz;
 
+    /// @brief 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
+    double variance_ra = 0.04 /* [mg/√(Hz)] */;
+
+    // ###########################################################################################################
+
     /// Possible Units for the Variance of the noise on the gyro angular-rate measurements
     enum class VarianceGyroNoiseUnits
     {
@@ -111,6 +130,12 @@ class LooselyCoupledKF : public Node
     };
     /// Gui selection for the Unit of the input variance_rg parameter
     VarianceGyroNoiseUnits varianceGyroNoiseUnits = VarianceGyroNoiseUnits::deg_hr_sqrtHz;
+
+    /// @brief 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
+    /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
+    double variance_rg = 5 /* [deg/hr/√(Hz)] */;
+
+    // ###########################################################################################################
 
     /// Possible Units for the Variance of the accelerometer dynamic bias
     enum class VarianceAccelBiasUnits
@@ -120,6 +145,12 @@ class LooselyCoupledKF : public Node
     /// Gui selection for the Unit of the input variance_bad parameter
     VarianceAccelBiasUnits varianceAccelBiasUnits = VarianceAccelBiasUnits::microg;
 
+    /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
+    /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
+    double variance_bad = 10 /* [µg] */;
+
+    // ###########################################################################################################
+
     /// Possible Units for the Variance of the accelerometer dynamic bias
     enum class VarianceGyroBiasUnits
     {
@@ -128,21 +159,11 @@ class LooselyCoupledKF : public Node
     /// Gui selection for the Unit of the input variance_bad parameter
     VarianceGyroBiasUnits varianceGyroBiasUnits = VarianceGyroBiasUnits::deg_h;
 
-    /// @brief 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements
-    /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    double variance_ra = 0.04 /* [mg/√(Hz)] */;
-
-    /// @brief 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
-    /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    double variance_rg = 5 /* [deg/hr/√(Hz)] */;
-
-    /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
-    /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    double variance_bad = 10 /* [µg] */;
-
     /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
     double variance_bgd = 1 /* [°/h] */;
+
+    // ###########################################################################################################
 
     enum class RandomProcess
     {
@@ -157,16 +178,7 @@ class LooselyCoupledKF : public Node
     RandomProcess randomProcessAccel = RandomProcess::RandomWalk;
     RandomProcess randomProcessGyro = RandomProcess::RandomWalk;
 
-    /// GUI Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_accel = 2.0 / tau_KF * Eigen::Vector3d::Ones();
-    /// GUI Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_gyro = 2.0 / tau_KF * Eigen::Vector3d::Ones();
-
-    /// Lever arm between INS and GNSS in [m, m, m]
-    Eigen::Vector3d leverArm_InsGnss{ 0.0, 0.0, 0.0 };
-
-    /// Kalman Filter representation
-    KalmanFilter kalmanFilter{ 15, 6 };
+    // ###########################################################################################################
 
     /// Possible Units for the GNSS measurement uncertainty for the position (standard deviation σ or Variance σ²)
     enum class GnssMeasurementUncertaintyPositionUnit
@@ -179,6 +191,12 @@ class LooselyCoupledKF : public Node
     /// Gui selection for the Unit of the GNSS measurement uncertainty for the position
     GnssMeasurementUncertaintyPositionUnit gnssMeasurementUncertaintyPositionUnit = GnssMeasurementUncertaintyPositionUnit::meter;
 
+    /// @brief GUI selection of the GNSS position measurement uncertainty (standard deviation σ or Variance σ²).
+    /// SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
+    Eigen::Vector3d gnssMeasurementUncertaintyPosition{ 0.3, 0.3, 0.3 * 3 };
+
+    // ###########################################################################################################
+
     /// Possible Units for the GNSS measurement uncertainty for the velocity (standard deviation σ or Variance σ²)
     enum class GnssMeasurementUncertaintyVelocityUnit
     {
@@ -188,12 +206,86 @@ class LooselyCoupledKF : public Node
     /// Gui selection for the Unit of the GNSS measurement uncertainty for the velocity
     GnssMeasurementUncertaintyVelocityUnit gnssMeasurementUncertaintyVelocityUnit = GnssMeasurementUncertaintyVelocityUnit::m_s;
 
-    /// @brief GUI selection of the GNSS position measurement uncertainty (standard deviation σ or Variance σ²).
-    /// SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
-    Eigen::Vector3d gnssMeasurementUncertaintyPosition{ 0.3, 0.3, 0.3 * 3 };
-
     /// GUI selection of the GNSS NED velocity measurement uncertainty (standard deviation σ or Variance σ²)
     Eigen::Vector3d gnssMeasurementUncertaintyVelocity{ 0.5, 0.5, 0.5 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the position (standard deviation σ or Variance σ²)
+    enum class InitCovariancePositionUnit
+    {
+        rad2_rad2_m2, ///< Variance LatLonAlt^2 [rad^2, rad^2, m^2]
+        rad_rad_m,    ///< Standard deviation LatLonAlt [rad, rad, m]
+        meter2,       ///< Variance NED [m^2, m^2, m^2]
+        meter,        ///< Standard deviation NED [m, m, m]
+    };
+    /// Gui selection for the Unit of the initial covariance for the position
+    InitCovariancePositionUnit initCovariancePositionUnit = InitCovariancePositionUnit::meter;
+
+    /// GUI selection of the initial covariance diagonal values for position (standard deviation σ or Variance σ²)
+    Eigen::Vector3d initCovariancePosition{ 100, 100, 100 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the velocity (standard deviation σ or Variance σ²)
+    enum class InitCovarianceVelocityUnit
+    {
+        m2_s2, ///< Variance [m^2/s^2]
+        m_s,   ///< Standard deviation [m/s]
+    };
+    /// Gui selection for the Unit of the initial covariance for the velocity
+    InitCovarianceVelocityUnit initCovarianceVelocityUnit = InitCovarianceVelocityUnit::m_s;
+
+    /// GUI selection of the initial covariance diagonal values for velocity (standard deviation σ or Variance σ²)
+    Eigen::Vector3d initCovarianceVelocity{ 10, 10, 10 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the attitude angles (standard deviation σ or Variance σ²)
+    enum class InitCovarianceAttitudeAnglesUnit
+    {
+        rad2, ///< Variance [rad^2]
+        deg2, ///< Variance [deg^2]
+        rad,  ///< Standard deviation [rad]
+        deg,  ///< Standard deviation [deg]
+    };
+    /// Gui selection for the Unit of the initial covariance for the attitude angles
+    InitCovarianceAttitudeAnglesUnit initCovarianceAttitudeAnglesUnit = InitCovarianceAttitudeAnglesUnit::deg;
+
+    /// GUI selection of the initial covariance diagonal values for attitude angles (standard deviation σ or Variance σ²)
+    Eigen::Vector3d initCovarianceAttitudeAngles{ 10, 10, 10 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the accelerometer biases (standard deviation σ or Variance σ²)
+    enum class InitCovarianceBiasAccelUnit
+    {
+        m2_s4, ///< Variance [m^2/s^4]
+        m_s2,  ///< Standard deviation [m/s^2]
+    };
+    /// Gui selection for the Unit of the initial covariance for the accelerometer biases
+    InitCovarianceBiasAccelUnit initCovarianceBiasAccelUnit = InitCovarianceBiasAccelUnit::m_s2;
+
+    /// GUI selection of the initial covariance diagonal values for accelerometer biases (standard deviation σ or Variance σ²)
+    Eigen::Vector3d initCovarianceBiasAccel{ 1, 1, 1 };
+
+    // ###########################################################################################################
+
+    /// Possible Units for the initial covariance for the gyroscope biases (standard deviation σ or Variance σ²)
+    enum class InitCovarianceBiasGyroUnit
+    {
+        rad2_s2, ///< Variance [rad²/s²]
+        deg2_s2, ///< Variance [deg²/s²]
+        rad_s,   ///< Standard deviation [rad/s]
+        deg_s,   ///< Standard deviation [deg/s]
+    };
+    /// Gui selection for the Unit of the initial covariance for the gyroscope biases
+    InitCovarianceBiasGyroUnit initCovarianceBiasGyroUnit = InitCovarianceBiasGyroUnit::deg_s;
+
+    /// GUI selection of the initial covariance diagonal values for gyroscope biases (standard deviation σ or Variance σ²)
+    Eigen::Vector3d initCovarianceBiasGyro{ 0.5, 0.5, 0.5 };
+
+    // ###########################################################################################################
 
     /// GUI option for the Phi calculation algorithm
     enum class PhiCalculation
