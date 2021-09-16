@@ -855,12 +855,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
         Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(sigma2_ra, sigma2_rg, beta_a, beta_omega);
 
         // Power Spectral Density of u (See Brown & Hwang (2012) chapter 3.9, p. 126 - footnote)
-        Eigen::Matrix<double, 6, 6> W = Eigen::Matrix<double, 6, 6>::Identity();
+        // Eigen::Matrix<double, 6, 6> W = Eigen::Matrix<double, 6, 6>::Identity();
 
         // C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential
         Eigen::Matrix<double, 30, 30> A = Eigen::Matrix<double, 30, 30>::Zero();
         A.block<15, 15>(0, 0) = -F;
-        A.block<15, 15>(0, 15) = G * W * G.transpose();
+        A.block<15, 15>(0, 15) = G /* * W */ * G.transpose();
         A.block<15, 15>(15, 15) = F.transpose();
         A *= tau_KF;
 
@@ -1492,7 +1492,7 @@ Eigen::Matrix<double, 6, 6> NAV::LooselyCoupledKF::measurementNoiseCovariance(co
     return R;
 }
 
-Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_n,
+Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_lla,
                                                                          const Eigen::Vector3d& velocityMeasurement_n, const Eigen::Vector3d& velocityEstimate_n,
                                                                          const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss,
                                                                          const Eigen::Vector3d& angularRate_ib_b, const Eigen::Matrix3d& Omega_ie_n)
@@ -1500,7 +1500,7 @@ Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation(const E
     // Scale factor to scale rad to milliradians
     Eigen::Matrix3d S_p = Eigen::DiagonalMatrix<double, 3>{ 1e3, 1e3, 1 };
 
-    Eigen::Vector3d deltaLLA = S_p * (positionMeasurement_lla - positionEstimate_n - T_rn_p * (q_nb * leverArm_InsGnss));
+    Eigen::Vector3d deltaLLA = S_p * (positionMeasurement_lla - positionEstimate_lla - T_rn_p * (q_nb * leverArm_InsGnss));
     Eigen::Vector3d deltaVel = velocityMeasurement_n - velocityEstimate_n - q_nb * (angularRate_ib_b.cross(leverArm_InsGnss)) + Omega_ie_n * (q_nb * leverArm_InsGnss);
 
     Eigen::Matrix<double, 6, 1> innovation;

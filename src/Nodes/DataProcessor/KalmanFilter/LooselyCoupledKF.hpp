@@ -639,7 +639,7 @@ class LooselyCoupledKF : public Node
 
     /// @brief Measurement innovation vector 𝜹𝐳
     /// @param[in] positionMeasurement_lla Position measurement as Lat Lon Alt in [rad rad m]
-    /// @param[in] positionEstimate_n Position estimate as Lat Lon Alt in [rad rad m]
+    /// @param[in] positionEstimate_lla Position estimate as Lat Lon Alt in [rad rad m]
     /// @param[in] velocityMeasurement_n Velocity measurement in the n frame in [m/s]
     /// @param[in] velocityEstimate_n Velocity estimate in the n frame in [m/s]
     /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
@@ -648,7 +648,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] angularRate_ib_b Angular rate of body with respect to inertial system in body coordinates in [rad/s]
     /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x1 measurement innovation vector 𝜹𝐳
-    static Eigen::Matrix<double, 6, 1> measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_n,
+    static Eigen::Matrix<double, 6, 1> measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_lla,
                                                              const Eigen::Vector3d& velocityMeasurement_n, const Eigen::Vector3d& velocityEstimate_n,
                                                              const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss,
                                                              const Eigen::Vector3d& angularRate_ib_b, const Eigen::Matrix3d& Omega_ie_n);
