@@ -23,9 +23,6 @@ auto extractBit(auto& group, auto value)
     return ret;
 }
 
-constexpr size_t MESSAGE_COUNT_IMU = 18; ///< Amount of messages expected in the Imu files
-size_t messageCounterImuDataCsv = 0;     ///< Message Counter for the Imu data csv file
-
 enum ImuRef : size_t
 {
     ImuRef_GpsCycle,
@@ -82,7 +79,7 @@ enum ImuRef : size_t
     ImuRef_Att_YprU_R,
 };
 
-[[maybe_unused]] constexpr std::array<std::array<long double, 52>, 18> IMU_REFERENCE_DATA = { {
+constexpr std::array<std::array<long double, 52>, 18> IMU_REFERENCE_DATA = { {
     { 2, 117, 200579.516417L, 102910005000, 200579516417027, 2165, 1, 1, 1, -1.6342114, 0.41082269, -0.20590797, 9.7877541, 0.17773567, -0.55388463, 0.0013062661, -0.0099795656, 9.1388283e-05, 51.77, 95.317001, 0.0099999998, 0.0009811091, -0.0054370081, 9.4789139e-05, 0.09788689, 0.0017379548, -0.0053900857, -1.6342114, 0.41082269, -0.20590797, 9.7884798, 0.17774901, -0.55392307, 0.0020963906, -0.0096838931, -0.00041343208, 200579399583719, 2165, 1, 1, 1, 18, -145.66151, 86.864487, -19.587507, -0.32297635, -0.6108216, -0.31800929, 0.64919448, 19.99695, 0.024105821, 0.0247557 },
     { 2, 117, 200579.526417L, 102920005000, 200579526417017, 2165, 1, 1, 1, -1.6342114, 0.41082269, -0.20590797, 9.753089, 0.17925365, -0.55523938, -0.0011826784, -0.002124392, -0.0001852288, 51.77, 95.317001, 0.0099999998, -5.4759294e-05, -0.0015981552, -6.803798e-06, 0.097731493, 0.0015991499, -0.0055417381, -1.6342114, 0.41082269, -0.20590797, 9.7538147, 0.17926699, -0.55527782, -0.00039623992, -0.001830076, -0.0006893687, 200579399583719, 2165, 1, 1, 1, 18, -145.63219, 86.861496, -19.561306, -0.32300499, -0.61079603, -0.31801477, 0.64920151, 19.998583, 0.024259934, 0.024831882 },
     { 2, 117, 200579.536417L, 102930005000, 200579536417007, 2165, 1, 1, 1, -1.6473478, 0.40199661, -0.18811163, 9.7726021, 0.18083979, -0.54314888, -0.0010655901, 0.0018558895, 8.1041944e-06, 51.77, 95.317001, 0.0099999998, -0.00018287641, 0.00084728131, 0.00015959112, 0.097662091, 0.0016707397, -0.0055513987, -1.6473478, 0.40199661, -0.18811163, 9.7733278, 0.18085313, -0.54318732, -0.00028429303, 0.0021487402, -0.00049543241, 200579399583719, 2165, 1, 1, 1, 18, -145.62079, 86.861061, -19.553539, -0.32302842, -0.61078316, -0.31803095, 0.64919406, 20.000216, 0.024287194, 0.024773514 },
@@ -103,6 +100,9 @@ enum ImuRef : size_t
     { 2, 117, 200579.686418L, 103080006000, 200579686417818, 2165, 1, 1, 1, -1.6832764, 0.39868858, -0.19648349, 9.7813892, 0.17352287, -0.44804251, 0.00076052221, -0.01025579, 0.00084225507, 51.77, 95.364006, 0.010001, 0.00068908563, -0.0053813723, 0.00031916826, 0.09781041, 0.0016853331, -0.0045879013, -0.91999936, 0.2277509, -0.11368577, 9.7821188, 0.17353629, -0.4480812, 0.0014908176, -0.0099614272, 0.0003409441, 200579599583725, 2165, 1, 1, 1, 18, -145.96375, 86.917007, -19.94018, -0.32310826, -0.61099583, -0.31844005, 0.64875358, 19.898867, 0.024279552, 0.024780776 },
 } };
 
+constexpr size_t MESSAGE_COUNT_IMU = 18; ///< Amount of messages expected in the Imu files
+size_t messageCounterImuDataCsv = 0;     ///< Message Counter for the Imu data csv file
+
 TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.csv' and compare content with hardcoded values", "[VectorNavFile]")
 {
     messageCounterImuDataCsv = 0;
@@ -117,31 +117,31 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.csv' and compare content with ha
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<NAV::NodeData>& data) mutable {
+    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<NAV::NodeData>& data) {
         auto obs = std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data);
 
         LOG_TRACE("messageCounterImuDataCsv = {}", messageCounterImuDataCsv);
 
         // ------------------------------------------------ InsTime --------------------------------------------------
         REQUIRE(obs->insTime.has_value());
-        CHECK(obs->insTime.value() == InsTime(static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GpsCycle)), static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GpsWeek)), IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GpsTow)));
+        REQUIRE(obs->insTime.value() == InsTime(static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GpsCycle)), static_cast<int32_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GpsWeek)), IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GpsTow)));
 
         // ----------------------------------------------- TimeGroup -------------------------------------------------
         REQUIRE(obs->timeOutputs != nullptr);
 
         REQUIRE(extractBit(obs->timeOutputs->timeField, vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP));
-        CHECK(obs->timeOutputs->timeStartup == static_cast<uint64_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_TimeStartup)));
+        REQUIRE(obs->timeOutputs->timeStartup == static_cast<uint64_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_TimeStartup)));
 
         REQUIRE(extractBit(obs->timeOutputs->timeField, vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW));
-        CHECK(obs->timeOutputs->gpsTow == static_cast<uint64_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_GpsTow)));
+        REQUIRE(obs->timeOutputs->gpsTow == static_cast<uint64_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_GpsTow)));
 
         REQUIRE(extractBit(obs->timeOutputs->timeField, vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK));
-        CHECK(obs->timeOutputs->gpsWeek == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_GpsWeek)));
+        REQUIRE(obs->timeOutputs->gpsWeek == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_GpsWeek)));
 
         REQUIRE(extractBit(obs->timeOutputs->timeField, vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS));
-        CHECK(obs->timeOutputs->timeStatus.timeOk() == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_TimeStatus_timeOk)));
-        CHECK(obs->timeOutputs->timeStatus.dateOk() == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_TimeStatus_dateOk)));
-        CHECK(obs->timeOutputs->timeStatus.utcTimeValid() == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_TimeStatus_utcTimeValid)));
+        REQUIRE(obs->timeOutputs->timeStatus.timeOk() == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_TimeStatus_timeOk)));
+        REQUIRE(obs->timeOutputs->timeStatus.dateOk() == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_TimeStatus_dateOk)));
+        REQUIRE(obs->timeOutputs->timeStatus.utcTimeValid() == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Time_TimeStatus_utcTimeValid)));
 
         REQUIRE(obs->timeOutputs->timeField == vn::protocol::uart::TimeGroup::TIMEGROUP_NONE);
 
@@ -149,51 +149,51 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.csv' and compare content with ha
         REQUIRE(obs->imuOutputs != nullptr);
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG));
-        CHECK(obs->imuOutputs->uncompMag(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompMag_X)));
-        CHECK(obs->imuOutputs->uncompMag(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompMag_Y)));
-        CHECK(obs->imuOutputs->uncompMag(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompMag_Z)));
+        REQUIRE(obs->imuOutputs->uncompMag(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompMag_X)));
+        REQUIRE(obs->imuOutputs->uncompMag(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompMag_Y)));
+        REQUIRE(obs->imuOutputs->uncompMag(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompMag_Z)));
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL));
-        CHECK(obs->imuOutputs->uncompAccel(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompAccel_X)));
-        CHECK(obs->imuOutputs->uncompAccel(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompAccel_Y)));
-        CHECK(obs->imuOutputs->uncompAccel(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompAccel_Z)));
+        REQUIRE(obs->imuOutputs->uncompAccel(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompAccel_X)));
+        REQUIRE(obs->imuOutputs->uncompAccel(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompAccel_Y)));
+        REQUIRE(obs->imuOutputs->uncompAccel(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompAccel_Z)));
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO));
-        CHECK(obs->imuOutputs->uncompGyro(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompGyro_X)));
-        CHECK(obs->imuOutputs->uncompGyro(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompGyro_Y)));
-        CHECK(obs->imuOutputs->uncompGyro(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompGyro_Z)));
+        REQUIRE(obs->imuOutputs->uncompGyro(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompGyro_X)));
+        REQUIRE(obs->imuOutputs->uncompGyro(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompGyro_Y)));
+        REQUIRE(obs->imuOutputs->uncompGyro(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_UncompGyro_Z)));
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_TEMP));
-        CHECK(obs->imuOutputs->temp == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Temp)));
+        REQUIRE(obs->imuOutputs->temp == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Temp)));
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_PRES));
-        CHECK(obs->imuOutputs->pres == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Pres)));
+        REQUIRE(obs->imuOutputs->pres == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Pres)));
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA));
-        CHECK(obs->imuOutputs->deltaTime == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaTime)));
-        CHECK(obs->imuOutputs->deltaTheta(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaTheta_X)));
-        CHECK(obs->imuOutputs->deltaTheta(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaTheta_Y)));
-        CHECK(obs->imuOutputs->deltaTheta(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaTheta_Z)));
+        REQUIRE(obs->imuOutputs->deltaTime == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaTime)));
+        REQUIRE(obs->imuOutputs->deltaTheta(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaTheta_X)));
+        REQUIRE(obs->imuOutputs->deltaTheta(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaTheta_Y)));
+        REQUIRE(obs->imuOutputs->deltaTheta(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaTheta_Z)));
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL));
-        CHECK(obs->imuOutputs->deltaV(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaVel_X)));
-        CHECK(obs->imuOutputs->deltaV(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaVel_Y)));
-        CHECK(obs->imuOutputs->deltaV(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaVel_Z)));
+        REQUIRE(obs->imuOutputs->deltaV(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaVel_X)));
+        REQUIRE(obs->imuOutputs->deltaV(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaVel_Y)));
+        REQUIRE(obs->imuOutputs->deltaV(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_DeltaVel_Z)));
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_MAG));
-        CHECK(obs->imuOutputs->mag(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Mag_X)));
-        CHECK(obs->imuOutputs->mag(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Mag_Y)));
-        CHECK(obs->imuOutputs->mag(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Mag_Z)));
+        REQUIRE(obs->imuOutputs->mag(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Mag_X)));
+        REQUIRE(obs->imuOutputs->mag(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Mag_Y)));
+        REQUIRE(obs->imuOutputs->mag(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Mag_Z)));
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL));
-        CHECK(obs->imuOutputs->accel(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Accel_X)));
-        CHECK(obs->imuOutputs->accel(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Accel_Y)));
-        CHECK(obs->imuOutputs->accel(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Accel_Z)));
+        REQUIRE(obs->imuOutputs->accel(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Accel_X)));
+        REQUIRE(obs->imuOutputs->accel(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Accel_Y)));
+        REQUIRE(obs->imuOutputs->accel(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_Accel_Z)));
 
         REQUIRE(extractBit(obs->imuOutputs->imuField, vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE));
-        CHECK(obs->imuOutputs->angularRate(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_AngularRate_X)));
-        CHECK(obs->imuOutputs->angularRate(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_AngularRate_Y)));
-        CHECK(obs->imuOutputs->angularRate(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_AngularRate_Z)));
+        REQUIRE(obs->imuOutputs->angularRate(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_AngularRate_X)));
+        REQUIRE(obs->imuOutputs->angularRate(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_AngularRate_Y)));
+        REQUIRE(obs->imuOutputs->angularRate(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_IMU_AngularRate_Z)));
 
         REQUIRE(obs->imuOutputs->imuField == vn::protocol::uart::ImuGroup::IMUGROUP_NONE);
 
@@ -201,16 +201,16 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.csv' and compare content with ha
         REQUIRE(obs->gnss1Outputs != nullptr);
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_TOW));
-        CHECK(obs->gnss1Outputs->tow == static_cast<uint64_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_Tow)));
+        REQUIRE(obs->gnss1Outputs->tow == static_cast<uint64_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_Tow)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_WEEK));
-        CHECK(obs->gnss1Outputs->week == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_Week)));
+        REQUIRE(obs->gnss1Outputs->week == static_cast<uint16_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_Week)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO));
-        CHECK(obs->gnss1Outputs->timeInfo.status.timeOk() == static_cast<uint8_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_TimeInfo_Status_timeOk)));
-        CHECK(obs->gnss1Outputs->timeInfo.status.dateOk() == static_cast<uint8_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_TimeInfo_Status_dateOk)));
-        CHECK(obs->gnss1Outputs->timeInfo.status.utcTimeValid() == static_cast<uint8_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_TimeInfo_Status_utcTimeValid)));
-        CHECK(obs->gnss1Outputs->timeInfo.leapSeconds == static_cast<int8_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_TimeInfo_LeapSeconds)));
+        REQUIRE(obs->gnss1Outputs->timeInfo.status.timeOk() == static_cast<uint8_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_TimeInfo_Status_timeOk)));
+        REQUIRE(obs->gnss1Outputs->timeInfo.status.dateOk() == static_cast<uint8_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_TimeInfo_Status_dateOk)));
+        REQUIRE(obs->gnss1Outputs->timeInfo.status.utcTimeValid() == static_cast<uint8_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_TimeInfo_Status_utcTimeValid)));
+        REQUIRE(obs->gnss1Outputs->timeInfo.leapSeconds == static_cast<int8_t>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_GNSS1_TimeInfo_LeapSeconds)));
 
         REQUIRE(obs->gnss1Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 
@@ -218,20 +218,20 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.csv' and compare content with ha
         REQUIRE(obs->attitudeOutputs != nullptr);
 
         REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL));
-        CHECK(obs->attitudeOutputs->ypr(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YawPitchRoll_Y)));
-        CHECK(obs->attitudeOutputs->ypr(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YawPitchRoll_P)));
-        CHECK(obs->attitudeOutputs->ypr(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YawPitchRoll_R)));
+        REQUIRE(obs->attitudeOutputs->ypr(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YawPitchRoll_Y)));
+        REQUIRE(obs->attitudeOutputs->ypr(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YawPitchRoll_P)));
+        REQUIRE(obs->attitudeOutputs->ypr(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YawPitchRoll_R)));
 
         REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION));
-        CHECK(obs->attitudeOutputs->qtn.w() == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_Quaternion_w)));
-        CHECK(obs->attitudeOutputs->qtn.x() == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_Quaternion_x)));
-        CHECK(obs->attitudeOutputs->qtn.y() == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_Quaternion_y)));
-        CHECK(obs->attitudeOutputs->qtn.z() == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_Quaternion_z)));
+        REQUIRE(obs->attitudeOutputs->qtn.w() == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_Quaternion_w)));
+        REQUIRE(obs->attitudeOutputs->qtn.x() == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_Quaternion_x)));
+        REQUIRE(obs->attitudeOutputs->qtn.y() == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_Quaternion_y)));
+        REQUIRE(obs->attitudeOutputs->qtn.z() == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_Quaternion_z)));
 
         REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU));
-        CHECK(obs->attitudeOutputs->yprU(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YprU_Y)));
-        CHECK(obs->attitudeOutputs->yprU(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YprU_P)));
-        CHECK(obs->attitudeOutputs->yprU(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YprU_R)));
+        REQUIRE(obs->attitudeOutputs->yprU(0) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YprU_Y)));
+        REQUIRE(obs->attitudeOutputs->yprU(1) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YprU_P)));
+        REQUIRE(obs->attitudeOutputs->yprU(2) == static_cast<float>(IMU_REFERENCE_DATA.at(messageCounterImuDataCsv).at(ImuRef_Att_YprU_R)));
 
         REQUIRE(obs->attitudeOutputs->attitudeField == vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE);
 
@@ -395,7 +395,7 @@ enum GnssRef : size_t
     GnssRef_GNSS2_DOP_e,
 };
 
-[[maybe_unused]] constexpr std::array<std::array<long double, 137>, 13> GNSS_REFERENCE_DATA = { {
+constexpr std::array<std::array<long double, 137>, 13> GNSS_REFERENCE_DATA = { {
     { 2, 117, 200632.654227L, 156047505000, 200632654226542, 2165, 21, 7, 6, 7, 43, 34, 654, 1, 1, 1, 21, 7, 6, 7, 43, 34, 599, 200632599585647, 2165, 11, 4, 48.739926652999998, 8.9212790529999992, 576.90600000000006, 4163613.193, 653588.76470000006, 4771968.3865, 1.636, -3.615, -1.285, 0.18284202, -3.6305671, 2.0448713, 3.2110248, 2.3637588, 6.0670466, 0.23040001, 9.9999997e-10, 1, 1, 1, 18, 1.99, 1.73, 0.97999996, 1.38, 1.04, 0.89999998, 0.52999997, -72.441338, 60.264, 5.6273508, -0.68233031, -0.33051941, -0.37940753, 0.53031325, 3.6171904, 0.080585025, 0.029943381, 1, 1, 0, 0, 0, 0, 1, 48.739926429256371, 8.9212791980329609, 576.48458818765357, 4163612.9360300242, 653588.73065747682, 4771968.0532969283, 2.8397217, 0.79355043, 3.0365357, 1.7059624, -3.7606137, -0.92831612, -0.078914225, -3.8190532, 1.8228822, 0.91181087, -1.1165178, 2.0382035, 3.9981194, -2.4473009, 6.8266401, -2.3918548, -3.4504488, -0.54642379, 0.97786552, 0.24471769, 21, 7, 6, 7, 43, 34, 400, 200632400334915, 2165, 13, 4, 48.739921922937519, 8.9212949596775353, 576.44097259175032, 4163613.1000000001, 653589.93000000005, 4771967.6900000004, 1.2, -3.0369999, -1.572, 0.59999996, -2.98, 1.9699999, 2.4870515, 1.855933, 4.7202625, 0.24160002, 1.9999999e-09, 1, 1, 1, 18, 1.8099999, 1.5699999, 0.89999998, 1.3, 0.88, 0.71999997, 0.5 },
     { 2, 117, 200632.854227L, 156247505000, 200632854226589, 2165, 21, 7, 6, 7, 43, 34, 854, 1, 1, 1, 21, 7, 6, 7, 43, 34, 799, 200632799585655, 2165, 11, 4, 48.739929918000001, 8.9212687180000003, 577.05369999999994, 4163613.1384000001, 653587.98100000003, 4771968.7370000007, 2.0139999, -4.125, -0.625, -0.44877204, -4.2459612, 1.7980163, 3.2105498, 2.3692949, 6.0962605, 0.20400001, 9.9999997e-10, 1, 1, 1, 18, 1.99, 1.73, 0.97999996, 1.38, 1.04, 0.89999998, 0.52999997, -72.089249, 58.288464, 0.60221648, -0.70467687, -0.29027125, -0.39106983, 0.51598215, 2.6393163, 0.090866663, 0.029609242, 1, 1, 0, 0, 0, 0, 1, 48.739929589791643, 8.9212677923454873, 576.64558293484151, 4163612.9099927954, 653587.87730932352, 4771968.4061258258, 2.9048371, 0.59321302, 3.841846, 2.0022736, -4.397665, -0.44855493, -0.51273644, -4.5320053, 1.6576447, 0.8744458, -1.1064771, 2.0071206, 3.9114001, -2.3339632, 6.4705634, -2.4785743, -3.3371103, -0.90250087, 0.97536945, 0.20687258, 21, 7, 6, 7, 43, 34, 600, 200632600334998, 2165, 13, 4, 48.739924341344832, 8.9212859482156848, 576.69721707049757, 4163613.1699999999, 653589.27000000002, 4771968.0600000005, 1.562, -3.651, -1.074, 0.11, -3.6799998, 1.8399999, 2.4905741, 1.8530722, 4.7176619, 0.21920002, 1.9999999e-09, 1, 1, 1, 18, 1.8099999, 1.5699999, 0.89999998, 1.3, 0.88, 0.71999997, 0.5 },
     { 2, 117, 200633.059232L, 156452505000, 200633059232473, 2165, 21, 7, 6, 7, 43, 35, 59, 1, 1, 1, 21, 7, 6, 7, 43, 35, 0, 200632999585664, 2165, 11, 4, 48.739933895, 8.9212566950000003, 577.11800000000005, 4163612.9884000001, 653587.06600000011, 4771969.0770000005, 2.4070001, -4.7010002, -0.139, -0.9679296, -4.910511, 1.6918536, 3.2108896, 2.3769212, 6.1271887, 0.18960002, 9.9999997e-10, 1, 1, 1, 18, 1.99, 1.73, 0.97999996, 1.38, 1.04, 0.89999998, 0.52999997, -67.229294, 58.452045, -1.6226697, -0.73052174, -0.25998268, -0.41341016, 0.47732484, 1.989002, 0.10328811, 0.025578482, 1, 1, 0, 0, 0, 0, 1, 48.739933636390518, 8.9212547737700039, 576.69879550533369, 4163612.7589526665, 653586.8842440953, 4771968.7429194394, 2.9073873, 0.12139747, 4.7327442, 2.3835154, -5.0184999, -0.0042469501, -0.989048, -5.2352123, 1.5750684, 0.77528417, -1.0719707, 2.0715151, 4.0705152, -2.1790543, 7.1313729, -2.3194587, -3.1822, -0.24169147, 0.9724443, 0.17651017, 21, 7, 6, 7, 43, 34, 800, 200632800335081, 2165, 13, 4, 48.739927440694274, 8.9212752251921525, 576.88702383637428, 4163613.1600000001, 653588.46999999997, 4771968.4299999997, 1.855, -4.2410002, -0.66100001, -0.28999999, -4.3399997, 1.7199999, 2.4949515, 1.8512576, 4.7151251, 0.20640002, 1.9999999e-09, 1, 1, 1, 18, 1.8099999, 1.5699999, 0.89999998, 1.3, 0.88, 0.71999997, 0.5 },
@@ -434,33 +434,33 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.csv' and compare content with h
 
         // ------------------------------------------------ InsTime --------------------------------------------------
         REQUIRE(obs->insTime.has_value());
-        CHECK(obs->insTime.value() == InsTime(static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GpsCycle)), static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GpsWeek)), GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GpsTow)));
+        REQUIRE(obs->insTime.value() == InsTime(static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GpsCycle)), static_cast<int32_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GpsWeek)), GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GpsTow)));
 
         // ----------------------------------------------- TimeGroup -------------------------------------------------
         REQUIRE(obs->timeOutputs != nullptr);
 
         REQUIRE(extractBit(obs->timeOutputs->timeField, vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP));
-        CHECK(obs->timeOutputs->timeStartup == static_cast<uint64_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeStartup)));
+        REQUIRE(obs->timeOutputs->timeStartup == static_cast<uint64_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeStartup)));
 
         REQUIRE(extractBit(obs->timeOutputs->timeField, vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW));
-        CHECK(obs->timeOutputs->gpsTow == static_cast<uint64_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_GpsTow)));
+        REQUIRE(obs->timeOutputs->gpsTow == static_cast<uint64_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_GpsTow)));
 
         REQUIRE(extractBit(obs->timeOutputs->timeField, vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK));
-        CHECK(obs->timeOutputs->gpsWeek == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_GpsWeek)));
+        REQUIRE(obs->timeOutputs->gpsWeek == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_GpsWeek)));
 
         REQUIRE(extractBit(obs->timeOutputs->timeField, vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC));
-        CHECK(obs->timeOutputs->timeUtc.year == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_year)));
-        CHECK(obs->timeOutputs->timeUtc.month == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_month)));
-        CHECK(obs->timeOutputs->timeUtc.day == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_day)));
-        CHECK(obs->timeOutputs->timeUtc.hour == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_hour)));
-        CHECK(obs->timeOutputs->timeUtc.min == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_min)));
-        CHECK(obs->timeOutputs->timeUtc.sec == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_sec)));
-        CHECK(obs->timeOutputs->timeUtc.ms == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_ms)));
+        REQUIRE(obs->timeOutputs->timeUtc.year == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_year)));
+        REQUIRE(obs->timeOutputs->timeUtc.month == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_month)));
+        REQUIRE(obs->timeOutputs->timeUtc.day == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_day)));
+        REQUIRE(obs->timeOutputs->timeUtc.hour == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_hour)));
+        REQUIRE(obs->timeOutputs->timeUtc.min == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_min)));
+        REQUIRE(obs->timeOutputs->timeUtc.sec == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_sec)));
+        REQUIRE(obs->timeOutputs->timeUtc.ms == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeUTC_ms)));
 
         REQUIRE(extractBit(obs->timeOutputs->timeField, vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS));
-        CHECK(obs->timeOutputs->timeStatus.timeOk() == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeStatus_timeOk)));
-        CHECK(obs->timeOutputs->timeStatus.dateOk() == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeStatus_dateOk)));
-        CHECK(obs->timeOutputs->timeStatus.utcTimeValid() == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeStatus_utcTimeValid)));
+        REQUIRE(obs->timeOutputs->timeStatus.timeOk() == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeStatus_timeOk)));
+        REQUIRE(obs->timeOutputs->timeStatus.dateOk() == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeStatus_dateOk)));
+        REQUIRE(obs->timeOutputs->timeStatus.utcTimeValid() == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Time_TimeStatus_utcTimeValid)));
 
         REQUIRE(obs->timeOutputs->timeField == vn::protocol::uart::TimeGroup::TIMEGROUP_NONE);
 
@@ -471,71 +471,71 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.csv' and compare content with h
         REQUIRE(obs->gnss1Outputs != nullptr);
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_UTC));
-        CHECK(obs->gnss1Outputs->timeUtc.year == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_year)));
-        CHECK(obs->gnss1Outputs->timeUtc.month == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_month)));
-        CHECK(obs->gnss1Outputs->timeUtc.day == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_day)));
-        CHECK(obs->gnss1Outputs->timeUtc.hour == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_hour)));
-        CHECK(obs->gnss1Outputs->timeUtc.min == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_min)));
-        CHECK(obs->gnss1Outputs->timeUtc.sec == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_sec)));
-        CHECK(obs->gnss1Outputs->timeUtc.ms == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_ms)));
+        REQUIRE(obs->gnss1Outputs->timeUtc.year == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_year)));
+        REQUIRE(obs->gnss1Outputs->timeUtc.month == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_month)));
+        REQUIRE(obs->gnss1Outputs->timeUtc.day == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_day)));
+        REQUIRE(obs->gnss1Outputs->timeUtc.hour == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_hour)));
+        REQUIRE(obs->gnss1Outputs->timeUtc.min == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_min)));
+        REQUIRE(obs->gnss1Outputs->timeUtc.sec == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_sec)));
+        REQUIRE(obs->gnss1Outputs->timeUtc.ms == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_UTC_ms)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_TOW));
-        CHECK(obs->gnss1Outputs->tow == static_cast<uint64_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_Tow)));
+        REQUIRE(obs->gnss1Outputs->tow == static_cast<uint64_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_Tow)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_WEEK));
-        CHECK(obs->gnss1Outputs->week == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_Week)));
+        REQUIRE(obs->gnss1Outputs->week == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_Week)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS));
-        CHECK(obs->gnss1Outputs->numSats == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_NumSats)));
+        REQUIRE(obs->gnss1Outputs->numSats == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_NumSats)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_FIX));
-        CHECK(obs->gnss1Outputs->fix == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_Fix)));
+        REQUIRE(obs->gnss1Outputs->fix == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_Fix)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA));
-        CHECK(obs->gnss1Outputs->posLla(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosLla_latitude)));
-        CHECK(obs->gnss1Outputs->posLla(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosLla_longitude)));
-        CHECK(obs->gnss1Outputs->posLla(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosLla_altitude)));
+        REQUIRE(obs->gnss1Outputs->posLla(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosLla_latitude)));
+        REQUIRE(obs->gnss1Outputs->posLla(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosLla_longitude)));
+        REQUIRE(obs->gnss1Outputs->posLla(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosLla_altitude)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF));
-        CHECK(obs->gnss1Outputs->posEcef(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosEcef_X)));
-        CHECK(obs->gnss1Outputs->posEcef(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosEcef_Y)));
-        CHECK(obs->gnss1Outputs->posEcef(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosEcef_Z)));
+        REQUIRE(obs->gnss1Outputs->posEcef(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosEcef_X)));
+        REQUIRE(obs->gnss1Outputs->posEcef(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosEcef_Y)));
+        REQUIRE(obs->gnss1Outputs->posEcef(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosEcef_Z)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_VELNED));
-        CHECK(obs->gnss1Outputs->velNed(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelNed_N)));
-        CHECK(obs->gnss1Outputs->velNed(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelNed_E)));
-        CHECK(obs->gnss1Outputs->velNed(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelNed_D)));
+        REQUIRE(obs->gnss1Outputs->velNed(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelNed_N)));
+        REQUIRE(obs->gnss1Outputs->velNed(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelNed_E)));
+        REQUIRE(obs->gnss1Outputs->velNed(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelNed_D)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF));
-        CHECK(obs->gnss1Outputs->velEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelEcef_X)));
-        CHECK(obs->gnss1Outputs->velEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelEcef_Y)));
-        CHECK(obs->gnss1Outputs->velEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelEcef_Z)));
+        REQUIRE(obs->gnss1Outputs->velEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelEcef_X)));
+        REQUIRE(obs->gnss1Outputs->velEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelEcef_Y)));
+        REQUIRE(obs->gnss1Outputs->velEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelEcef_Z)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_POSU));
-        CHECK(obs->gnss1Outputs->posU(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosU_N)));
-        CHECK(obs->gnss1Outputs->posU(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosU_E)));
-        CHECK(obs->gnss1Outputs->posU(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosU_D)));
+        REQUIRE(obs->gnss1Outputs->posU(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosU_N)));
+        REQUIRE(obs->gnss1Outputs->posU(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosU_E)));
+        REQUIRE(obs->gnss1Outputs->posU(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_PosU_D)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_VELU));
-        CHECK(obs->gnss1Outputs->velU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelU)));
+        REQUIRE(obs->gnss1Outputs->velU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_VelU)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU));
-        CHECK(obs->gnss1Outputs->timeU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeU)));
+        REQUIRE(obs->gnss1Outputs->timeU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeU)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO));
-        CHECK(obs->gnss1Outputs->timeInfo.status.timeOk() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeInfo_Status_timeOk)));
-        CHECK(obs->gnss1Outputs->timeInfo.status.dateOk() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeInfo_Status_dateOk)));
-        CHECK(obs->gnss1Outputs->timeInfo.status.utcTimeValid() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeInfo_Status_utcTimeValid)));
-        CHECK(obs->gnss1Outputs->timeInfo.leapSeconds == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeInfo_LeapSeconds)));
+        REQUIRE(obs->gnss1Outputs->timeInfo.status.timeOk() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeInfo_Status_timeOk)));
+        REQUIRE(obs->gnss1Outputs->timeInfo.status.dateOk() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeInfo_Status_dateOk)));
+        REQUIRE(obs->gnss1Outputs->timeInfo.status.utcTimeValid() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeInfo_Status_utcTimeValid)));
+        REQUIRE(obs->gnss1Outputs->timeInfo.leapSeconds == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_TimeInfo_LeapSeconds)));
 
         REQUIRE(extractBit(obs->gnss1Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_DOP));
-        CHECK(obs->gnss1Outputs->dop.gDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_g)));
-        CHECK(obs->gnss1Outputs->dop.pDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_p)));
-        CHECK(obs->gnss1Outputs->dop.tDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_t)));
-        CHECK(obs->gnss1Outputs->dop.vDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_v)));
-        CHECK(obs->gnss1Outputs->dop.hDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_h)));
-        CHECK(obs->gnss1Outputs->dop.nDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_n)));
-        CHECK(obs->gnss1Outputs->dop.eDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_e)));
+        REQUIRE(obs->gnss1Outputs->dop.gDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_g)));
+        REQUIRE(obs->gnss1Outputs->dop.pDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_p)));
+        REQUIRE(obs->gnss1Outputs->dop.tDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_t)));
+        REQUIRE(obs->gnss1Outputs->dop.vDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_v)));
+        REQUIRE(obs->gnss1Outputs->dop.hDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_h)));
+        REQUIRE(obs->gnss1Outputs->dop.nDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_n)));
+        REQUIRE(obs->gnss1Outputs->dop.eDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS1_DOP_e)));
 
         REQUIRE(obs->gnss1Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 
@@ -543,20 +543,20 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.csv' and compare content with h
         REQUIRE(obs->attitudeOutputs != nullptr);
 
         REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL));
-        CHECK(obs->attitudeOutputs->ypr(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YawPitchRoll_Y)));
-        CHECK(obs->attitudeOutputs->ypr(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YawPitchRoll_P)));
-        CHECK(obs->attitudeOutputs->ypr(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YawPitchRoll_R)));
+        REQUIRE(obs->attitudeOutputs->ypr(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YawPitchRoll_Y)));
+        REQUIRE(obs->attitudeOutputs->ypr(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YawPitchRoll_P)));
+        REQUIRE(obs->attitudeOutputs->ypr(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YawPitchRoll_R)));
 
         REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION));
-        CHECK(obs->attitudeOutputs->qtn.w() == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_Quaternion_w)));
-        CHECK(obs->attitudeOutputs->qtn.x() == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_Quaternion_x)));
-        CHECK(obs->attitudeOutputs->qtn.y() == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_Quaternion_y)));
-        CHECK(obs->attitudeOutputs->qtn.z() == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_Quaternion_z)));
+        REQUIRE(obs->attitudeOutputs->qtn.w() == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_Quaternion_w)));
+        REQUIRE(obs->attitudeOutputs->qtn.x() == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_Quaternion_x)));
+        REQUIRE(obs->attitudeOutputs->qtn.y() == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_Quaternion_y)));
+        REQUIRE(obs->attitudeOutputs->qtn.z() == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_Quaternion_z)));
 
         REQUIRE(extractBit(obs->attitudeOutputs->attitudeField, vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU));
-        CHECK(obs->attitudeOutputs->yprU(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YprU_Y)));
-        CHECK(obs->attitudeOutputs->yprU(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YprU_P)));
-        CHECK(obs->attitudeOutputs->yprU(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YprU_R)));
+        REQUIRE(obs->attitudeOutputs->yprU(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YprU_Y)));
+        REQUIRE(obs->attitudeOutputs->yprU(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YprU_P)));
+        REQUIRE(obs->attitudeOutputs->yprU(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_Att_YprU_R)));
 
         REQUIRE(obs->attitudeOutputs->attitudeField == vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE);
 
@@ -564,59 +564,59 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.csv' and compare content with h
         REQUIRE(obs->insOutputs != nullptr);
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS));
-        CHECK(obs->insOutputs->insStatus.mode() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_Mode)));
-        CHECK(obs->insOutputs->insStatus.gpsFix() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_GpsFix)));
-        CHECK(obs->insOutputs->insStatus.errorIMU() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_Error_IMU)));
-        CHECK(obs->insOutputs->insStatus.errorMagPres() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_Error_MagPres)));
-        CHECK(obs->insOutputs->insStatus.errorGnss() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_Error_GNSS)));
-        CHECK(obs->insOutputs->insStatus.gpsHeadingIns() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_GpsHeadingIns)));
-        CHECK(obs->insOutputs->insStatus.gpsCompass() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_GpsCompass)));
+        REQUIRE(obs->insOutputs->insStatus.mode() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_Mode)));
+        REQUIRE(obs->insOutputs->insStatus.gpsFix() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_GpsFix)));
+        REQUIRE(obs->insOutputs->insStatus.errorIMU() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_Error_IMU)));
+        REQUIRE(obs->insOutputs->insStatus.errorMagPres() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_Error_MagPres)));
+        REQUIRE(obs->insOutputs->insStatus.errorGnss() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_Error_GNSS)));
+        REQUIRE(obs->insOutputs->insStatus.gpsHeadingIns() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_GpsHeadingIns)));
+        REQUIRE(obs->insOutputs->insStatus.gpsCompass() == static_cast<bool>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_InsStatus_GpsCompass)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_POSLLA));
-        CHECK(obs->insOutputs->posLla(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosLla_latitude)));
-        CHECK(obs->insOutputs->posLla(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosLla_longitude)));
-        CHECK(obs->insOutputs->posLla(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosLla_altitude)));
+        REQUIRE(obs->insOutputs->posLla(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosLla_latitude)));
+        REQUIRE(obs->insOutputs->posLla(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosLla_longitude)));
+        REQUIRE(obs->insOutputs->posLla(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosLla_altitude)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_POSECEF));
-        CHECK(obs->insOutputs->posEcef(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosEcef_X)));
-        CHECK(obs->insOutputs->posEcef(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosEcef_Y)));
-        CHECK(obs->insOutputs->posEcef(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosEcef_Z)));
+        REQUIRE(obs->insOutputs->posEcef(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosEcef_X)));
+        REQUIRE(obs->insOutputs->posEcef(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosEcef_Y)));
+        REQUIRE(obs->insOutputs->posEcef(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosEcef_Z)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_VELBODY));
-        CHECK(obs->insOutputs->velBody(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelBody_X)));
-        CHECK(obs->insOutputs->velBody(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelBody_Y)));
-        CHECK(obs->insOutputs->velBody(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelBody_Z)));
+        REQUIRE(obs->insOutputs->velBody(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelBody_X)));
+        REQUIRE(obs->insOutputs->velBody(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelBody_Y)));
+        REQUIRE(obs->insOutputs->velBody(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelBody_Z)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_VELNED));
-        CHECK(obs->insOutputs->velNed(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelNed_N)));
-        CHECK(obs->insOutputs->velNed(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelNed_E)));
-        CHECK(obs->insOutputs->velNed(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelNed_D)));
+        REQUIRE(obs->insOutputs->velNed(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelNed_N)));
+        REQUIRE(obs->insOutputs->velNed(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelNed_E)));
+        REQUIRE(obs->insOutputs->velNed(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelNed_D)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_VELECEF));
-        CHECK(obs->insOutputs->velEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelEcef_X)));
-        CHECK(obs->insOutputs->velEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelEcef_Y)));
-        CHECK(obs->insOutputs->velEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelEcef_Z)));
+        REQUIRE(obs->insOutputs->velEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelEcef_X)));
+        REQUIRE(obs->insOutputs->velEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelEcef_Y)));
+        REQUIRE(obs->insOutputs->velEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelEcef_Z)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_MAGECEF));
-        CHECK(obs->insOutputs->magEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_MagEcef_X)));
-        CHECK(obs->insOutputs->magEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_MagEcef_Y)));
-        CHECK(obs->insOutputs->magEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_MagEcef_Z)));
+        REQUIRE(obs->insOutputs->magEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_MagEcef_X)));
+        REQUIRE(obs->insOutputs->magEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_MagEcef_Y)));
+        REQUIRE(obs->insOutputs->magEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_MagEcef_Z)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF));
-        CHECK(obs->insOutputs->accelEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_AccelEcef_X)));
-        CHECK(obs->insOutputs->accelEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_AccelEcef_Y)));
-        CHECK(obs->insOutputs->accelEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_AccelEcef_Z)));
+        REQUIRE(obs->insOutputs->accelEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_AccelEcef_X)));
+        REQUIRE(obs->insOutputs->accelEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_AccelEcef_Y)));
+        REQUIRE(obs->insOutputs->accelEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_AccelEcef_Z)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF));
-        CHECK(obs->insOutputs->linearAccelEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_LinearAccelEcef_X)));
-        CHECK(obs->insOutputs->linearAccelEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_LinearAccelEcef_Y)));
-        CHECK(obs->insOutputs->linearAccelEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_LinearAccelEcef_Z)));
+        REQUIRE(obs->insOutputs->linearAccelEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_LinearAccelEcef_X)));
+        REQUIRE(obs->insOutputs->linearAccelEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_LinearAccelEcef_Y)));
+        REQUIRE(obs->insOutputs->linearAccelEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_LinearAccelEcef_Z)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_POSU));
-        CHECK(obs->insOutputs->posU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosU)));
+        REQUIRE(obs->insOutputs->posU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_PosU)));
 
         REQUIRE(extractBit(obs->insOutputs->insField, vn::protocol::uart::InsGroup::INSGROUP_VELU));
-        CHECK(obs->insOutputs->velU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelU)));
+        REQUIRE(obs->insOutputs->velU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_INS_VelU)));
 
         REQUIRE(obs->insOutputs->insField == vn::protocol::uart::InsGroup::INSGROUP_NONE);
 
@@ -624,71 +624,71 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.csv' and compare content with h
         REQUIRE(obs->gnss2Outputs != nullptr);
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_UTC));
-        CHECK(obs->gnss2Outputs->timeUtc.year == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_year)));
-        CHECK(obs->gnss2Outputs->timeUtc.month == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_month)));
-        CHECK(obs->gnss2Outputs->timeUtc.day == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_day)));
-        CHECK(obs->gnss2Outputs->timeUtc.hour == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_hour)));
-        CHECK(obs->gnss2Outputs->timeUtc.min == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_min)));
-        CHECK(obs->gnss2Outputs->timeUtc.sec == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_sec)));
-        CHECK(obs->gnss2Outputs->timeUtc.ms == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_ms)));
+        REQUIRE(obs->gnss2Outputs->timeUtc.year == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_year)));
+        REQUIRE(obs->gnss2Outputs->timeUtc.month == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_month)));
+        REQUIRE(obs->gnss2Outputs->timeUtc.day == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_day)));
+        REQUIRE(obs->gnss2Outputs->timeUtc.hour == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_hour)));
+        REQUIRE(obs->gnss2Outputs->timeUtc.min == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_min)));
+        REQUIRE(obs->gnss2Outputs->timeUtc.sec == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_sec)));
+        REQUIRE(obs->gnss2Outputs->timeUtc.ms == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_UTC_ms)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_TOW));
-        CHECK(obs->gnss2Outputs->tow == static_cast<uint64_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_Tow)));
+        REQUIRE(obs->gnss2Outputs->tow == static_cast<uint64_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_Tow)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_WEEK));
-        CHECK(obs->gnss2Outputs->week == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_Week)));
+        REQUIRE(obs->gnss2Outputs->week == static_cast<uint16_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_Week)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS));
-        CHECK(obs->gnss2Outputs->numSats == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_NumSats)));
+        REQUIRE(obs->gnss2Outputs->numSats == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_NumSats)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_FIX));
-        CHECK(obs->gnss2Outputs->fix == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_Fix)));
+        REQUIRE(obs->gnss2Outputs->fix == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_Fix)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA));
-        CHECK(obs->gnss2Outputs->posLla(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosLla_latitude)));
-        CHECK(obs->gnss2Outputs->posLla(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosLla_longitude)));
-        CHECK(obs->gnss2Outputs->posLla(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosLla_altitude)));
+        REQUIRE(obs->gnss2Outputs->posLla(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosLla_latitude)));
+        REQUIRE(obs->gnss2Outputs->posLla(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosLla_longitude)));
+        REQUIRE(obs->gnss2Outputs->posLla(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosLla_altitude)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF));
-        CHECK(obs->gnss2Outputs->posEcef(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosEcef_X)));
-        CHECK(obs->gnss2Outputs->posEcef(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosEcef_Y)));
-        CHECK(obs->gnss2Outputs->posEcef(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosEcef_Z)));
+        REQUIRE(obs->gnss2Outputs->posEcef(0) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosEcef_X)));
+        REQUIRE(obs->gnss2Outputs->posEcef(1) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosEcef_Y)));
+        REQUIRE(obs->gnss2Outputs->posEcef(2) == static_cast<double>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosEcef_Z)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_VELNED));
-        CHECK(obs->gnss2Outputs->velNed(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelNed_N)));
-        CHECK(obs->gnss2Outputs->velNed(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelNed_E)));
-        CHECK(obs->gnss2Outputs->velNed(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelNed_D)));
+        REQUIRE(obs->gnss2Outputs->velNed(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelNed_N)));
+        REQUIRE(obs->gnss2Outputs->velNed(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelNed_E)));
+        REQUIRE(obs->gnss2Outputs->velNed(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelNed_D)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF));
-        CHECK(obs->gnss2Outputs->velEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelEcef_X)));
-        CHECK(obs->gnss2Outputs->velEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelEcef_Y)));
-        CHECK(obs->gnss2Outputs->velEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelEcef_Z)));
+        REQUIRE(obs->gnss2Outputs->velEcef(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelEcef_X)));
+        REQUIRE(obs->gnss2Outputs->velEcef(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelEcef_Y)));
+        REQUIRE(obs->gnss2Outputs->velEcef(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelEcef_Z)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_POSU));
-        CHECK(obs->gnss2Outputs->posU(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosU_N)));
-        CHECK(obs->gnss2Outputs->posU(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosU_E)));
-        CHECK(obs->gnss2Outputs->posU(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosU_D)));
+        REQUIRE(obs->gnss2Outputs->posU(0) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosU_N)));
+        REQUIRE(obs->gnss2Outputs->posU(1) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosU_E)));
+        REQUIRE(obs->gnss2Outputs->posU(2) == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_PosU_D)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_VELU));
-        CHECK(obs->gnss2Outputs->velU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelU)));
+        REQUIRE(obs->gnss2Outputs->velU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_VelU)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU));
-        CHECK(obs->gnss2Outputs->timeU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeU)));
+        REQUIRE(obs->gnss2Outputs->timeU == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeU)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO));
-        CHECK(obs->gnss2Outputs->timeInfo.status.timeOk() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeInfo_Status_timeOk)));
-        CHECK(obs->gnss2Outputs->timeInfo.status.dateOk() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeInfo_Status_dateOk)));
-        CHECK(obs->gnss2Outputs->timeInfo.status.utcTimeValid() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeInfo_Status_utcTimeValid)));
-        CHECK(obs->gnss2Outputs->timeInfo.leapSeconds == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeInfo_LeapSeconds)));
+        REQUIRE(obs->gnss2Outputs->timeInfo.status.timeOk() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeInfo_Status_timeOk)));
+        REQUIRE(obs->gnss2Outputs->timeInfo.status.dateOk() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeInfo_Status_dateOk)));
+        REQUIRE(obs->gnss2Outputs->timeInfo.status.utcTimeValid() == static_cast<uint8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeInfo_Status_utcTimeValid)));
+        REQUIRE(obs->gnss2Outputs->timeInfo.leapSeconds == static_cast<int8_t>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_TimeInfo_LeapSeconds)));
 
         REQUIRE(extractBit(obs->gnss2Outputs->gnssField, vn::protocol::uart::GpsGroup::GPSGROUP_DOP));
-        CHECK(obs->gnss2Outputs->dop.gDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_g)));
-        CHECK(obs->gnss2Outputs->dop.pDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_p)));
-        CHECK(obs->gnss2Outputs->dop.tDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_t)));
-        CHECK(obs->gnss2Outputs->dop.vDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_v)));
-        CHECK(obs->gnss2Outputs->dop.hDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_h)));
-        CHECK(obs->gnss2Outputs->dop.nDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_n)));
-        CHECK(obs->gnss2Outputs->dop.eDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_e)));
+        REQUIRE(obs->gnss2Outputs->dop.gDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_g)));
+        REQUIRE(obs->gnss2Outputs->dop.pDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_p)));
+        REQUIRE(obs->gnss2Outputs->dop.tDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_t)));
+        REQUIRE(obs->gnss2Outputs->dop.vDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_v)));
+        REQUIRE(obs->gnss2Outputs->dop.hDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_h)));
+        REQUIRE(obs->gnss2Outputs->dop.nDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_n)));
+        REQUIRE(obs->gnss2Outputs->dop.eDop == static_cast<float>(GNSS_REFERENCE_DATA.at(messageCounterGnssDataCsv).at(GnssRef_GNSS2_DOP_e)));
 
         REQUIRE(obs->gnss2Outputs->gnssField == vn::protocol::uart::GpsGroup::GPSGROUP_NONE);
 
