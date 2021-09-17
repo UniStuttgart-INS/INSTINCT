@@ -69,7 +69,9 @@ target_compile_definitions(tests PUBLIC TESTING=1)
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries
 
-if(NOT WIN32)
+option(CATCH2_JUNIT_OUTPUT "Generate Junit output from tests instead of command-line output" FALSE)
+
+if(NOT WIN32 AND CATCH2_JUNIT_OUTPUT)
   catch_discover_tests(
     tests
     WORKING_DIRECTORY
@@ -77,7 +79,7 @@ if(NOT WIN32)
     REPORTER
     junit
     OUTPUT_DIR
-    ${CMAKE_SOURCE_DIR}/build/Debug/test
+    ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE}/test
     OUTPUT_SUFFIX
     .xml)
 else()
