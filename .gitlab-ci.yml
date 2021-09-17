@@ -398,11 +398,19 @@ ubuntu:20.04:gcc:debug:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
 
-run-tests:ubuntu:20.04:clang:
+run-tests:ubuntu:20.04:clang:release:
+  extends: .run-tests:ubuntu:20.04
+  needs: ["ubuntu:20.04:clang:release"]
+
+run-tests:ubuntu:20.04:clang:debug:
   extends: .run-tests:ubuntu:20.04
   needs: ["ubuntu:20.04:clang:debug"]
 
-run-tests:ubuntu:20.04:gcc:
+run-tests:ubuntu:20.04:gcc:release:
+  extends: .run-tests:ubuntu:20.04
+  needs: ["ubuntu:20.04:gcc:release"]
+
+run-tests:ubuntu:20.04:gcc:debug:
   extends: .run-tests:ubuntu:20.04
   needs: ["ubuntu:20.04:gcc:debug"]
 
@@ -486,10 +494,18 @@ archlinux:latest:gcc:debug:
     - cd build/Debug/test
     - ctest -j2 --output-on-failure
 
-run-tests:archlinux:latest:clang:
+run-tests:archlinux:latest:clang:release:
+  extends: .run-tests:archlinux:latest
+  needs: ["archlinux:latest:clang:release"]
+
+run-tests:archlinux:latest:clang:debug:
   extends: .run-tests:archlinux:latest
   needs: ["archlinux:latest:clang:debug"]
 
-run-tests:archlinux:latest:gcc:
+run-tests:archlinux:latest:gcc:release:
+  extends: .run-tests:archlinux:latest
+  needs: ["archlinux:latest:gcc:release"]
+
+run-tests:archlinux:latest:gcc:debug:
   extends: .run-tests:archlinux:latest
   needs: ["archlinux:latest:gcc:debug"]
