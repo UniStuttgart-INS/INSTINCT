@@ -232,7 +232,7 @@ tests:win:LOG_OFF:
     - linux
   script:
     - cd build/Debug/test
-    - ctest -j2 --output-on-failure
+    - ctest --output-on-failure # -j2
   after_script:
     - cd build/Debug/test
     - xml_grep --pretty_print indented --wrap '' --descr '' --cond "testsuites" *.xml > ../../../junit.xml
@@ -397,7 +397,7 @@ ubuntu:20.04:gcc:debug:
     - cmake --version
   script:
     - cd build/$BUILD_TYPE/test
-    - ctest -j2 --output-on-failure
+    - ctest --output-on-failure # -j2
 
 run-tests:ubuntu:20.04:clang:release:
   needs: ["ubuntu:20.04:clang:release"]
@@ -494,7 +494,7 @@ archlinux:latest:gcc:debug:
     - cmake --version
   script:
     - cd build/$BUILD_TYPE/test
-    - ctest -j2 --output-on-failure
+    - ctest --output-on-failure # -j2
 
 run-tests:archlinux:latest:clang:release:
   needs: ["archlinux:latest:clang:release"]

@@ -343,7 +343,7 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j2",
+                // "-j2",
                 "--output-on-failure",
                 // "--verbose",
             ],
