@@ -60,7 +60,21 @@ void NAV::VectorNavBinaryConverter::guiConfig()
             outputPins.at(OutputPortIndex_Converted).name = NAV::PosVelAtt::type();
         }
 
+        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front().id))
+        {
+            nm::RefreshLink(link->id);
+        }
+
         flow::ApplyChanges();
+    }
+
+    if (outputType == OutputType_PosVelAtt)
+    {
+        if (ImGui::Combo(fmt::format("Data Source##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&posVelSource), "Best\0INS\0GNSS 1\0GNSS 2\0\0"))
+        {
+            LOG_DEBUG("{}: posVelSource changed to {}", nameId(), posVelSource);
+            flow::ApplyChanges();
+        }
     }
 }
 
@@ -71,6 +85,7 @@ void NAV::VectorNavBinaryConverter::guiConfig()
     json j;
 
     j["outputType"] = outputType;
+    j["posVelSource"] = posVelSource;
 
     return j;
 }
@@ -96,6 +111,10 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
                 outputPins.at(OutputPortIndex_Converted).name = NAV::PosVelAtt::type();
             }
         }
+    }
+    if (j.contains("posVelSource"))
+    {
+        posVelSource = static_cast<PosVelSource>(j.at("posVelSource").get<int>());
     }
 }
 
@@ -208,7 +227,8 @@ std::shared_ptr<NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt
         }
     }
 
-    if (vnObs->insOutputs && (vnObs->insOutputs->insStatus.mode() == 1 || vnObs->insOutputs->insStatus.mode() == 2))
+    if ((posVelSource == PosVelSource_Best || posVelSource == PosVelSource_Ins)
+        && vnObs->insOutputs && (vnObs->insOutputs->insStatus.mode() == 1 || vnObs->insOutputs->insStatus.mode() == 2))
     {
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
         {
@@ -238,7 +258,8 @@ std::shared_ptr<NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt
         }
     }
 
-    if (vnObs->gnss1Outputs && vnObs->gnss1Outputs->fix >= 2)
+    if ((posVelSource == PosVelSource_Best || posVelSource == PosVelSource_Gnss1)
+        && vnObs->gnss1Outputs && vnObs->gnss1Outputs->fix >= 2)
     {
         if (posVelAttObs->position_ecef().isZero())
         {
@@ -268,7 +289,8 @@ std::shared_ptr<NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt
             }
         }
     }
-    if (vnObs->gnss2Outputs && vnObs->gnss2Outputs->fix >= 2)
+    if ((posVelSource == PosVelSource_Best || posVelSource == PosVelSource_Gnss2)
+        && vnObs->gnss2Outputs && vnObs->gnss2Outputs->fix >= 2)
     {
         if (posVelAttObs->position_ecef().isZero())
         {

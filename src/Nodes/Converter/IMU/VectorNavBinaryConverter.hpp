@@ -67,6 +67,18 @@ class VectorNavBinaryConverter : public Node
     /// The selected output type in the GUI
     OutputType outputType = OutputType_ImuObsWDelta;
 
+    /// Enum specifying the source for the PosVelAtt conversion
+    enum PosVelSource
+    {
+        PosVelSource_Best,  ///< INS > GNSS1 > GNSS2
+        PosVelSource_Ins,   ///< Take only INS values into account
+        PosVelSource_Gnss1, ///< Take only GNSS1 values into account
+        PosVelSource_Gnss2, ///< Take only GNSS2 values into account
+    };
+
+    /// The selected PosVel source in the GUI
+    PosVelSource posVelSource = PosVelSource_Best;
+
     /// @brief Converts the VectorNavBinaryOutput observation to the selected message type
     /// @param[in] nodeData VectorNavBinaryOutput to process
     /// @param[in] linkId Id of the link over which the data is received
