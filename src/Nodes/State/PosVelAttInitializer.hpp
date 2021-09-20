@@ -89,7 +89,7 @@ class PosVelAttInitializer : public Node
 
     /// @brief Receive PosVelAtt Observations
     /// @param[in] obs PosVelAtt Data
-    void receivePosVelAttObs(const std::shared_ptr<PosVelAtt>& obs);
+    void receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs);
 
     /// Time in [s] to initialize the state
     double initDuration = 5.0;

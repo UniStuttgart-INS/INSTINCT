@@ -361,14 +361,14 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& no
     }
 }
 
-void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    pvaError = std::dynamic_pointer_cast<PVAError>(nodeData);
+    pvaError = std::dynamic_pointer_cast<const PVAError>(nodeData);
 }
 
-void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto imuBiasObs = std::dynamic_pointer_cast<ImuBiases>(nodeData);
+    auto imuBiasObs = std::dynamic_pointer_cast<const ImuBiases>(nodeData);
 
     imuBiases.biasAccel_p += imuBiasObs->biasAccel_p;
     imuBiases.biasGyro_p += imuBiasObs->biasGyro_p;
@@ -383,17 +383,20 @@ void NAV::ImuIntegrator::integrateObservation()
 
         for (auto& posVelAtt : posVelAttStates)
         {
-            posVelAtt->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - positionError_lla);
+            auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
+            posVelAttCorrected->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - positionError_lla);
 
-            posVelAtt->velocity_n() -= pvaError->velocityError_n();
+            posVelAttCorrected->velocity_n() = posVelAtt->velocity_n() - pvaError->velocityError_n();
 
             // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
             Eigen::Vector3d attError = pvaError->attitudeError_n();
             Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
-            posVelAtt->quaternion_nb() = Eigen::Quaterniond(dcm_c);
+            posVelAttCorrected->quaternion_nb() = Eigen::Quaterniond(dcm_c);
 
             // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
             // TODO: Use quaternions for caluclation
+
+            posVelAtt = posVelAttCorrected;
         }
 
         pvaError.reset();

@@ -1639,11 +1639,11 @@ void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::No
             }
             else if (sourcePin->dataIdentifier.front() == PVAError::type())
             {
-                plotPVAError(std::dynamic_pointer_cast<PVAError>(nodeData), pinIndex);
+                plotPVAError(std::dynamic_pointer_cast<const PVAError>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuBiases::type())
             {
-                plotImuBiases(std::dynamic_pointer_cast<ImuBiases>(nodeData), pinIndex);
+                plotImuBiases(std::dynamic_pointer_cast<const ImuBiases>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {

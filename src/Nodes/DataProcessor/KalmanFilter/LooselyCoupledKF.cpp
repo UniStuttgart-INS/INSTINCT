@@ -745,9 +745,9 @@ void NAV::LooselyCoupledKF::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/) // NOLINT(readability-convert-member-functions-to-static)
+void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/) // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto inertialNavSol = std::dynamic_pointer_cast<InertialNavSol>(nodeData);
+    auto inertialNavSol = std::dynamic_pointer_cast<const InertialNavSol>(nodeData);
 
     if (latestInertialNavSol)
     {
@@ -759,9 +759,9 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
     looselyCoupledPrediction(inertialNavSol);
 }
 
-void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto gnssMeasurement = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
+    auto gnssMeasurement = std::dynamic_pointer_cast<const PosVelAtt>(nodeData);
 
     if (latestInertialNavSol)
     {
@@ -773,7 +773,7 @@ void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<Nod
 //                                               Kalman Filter
 // ###########################################################################################################
 
-void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<InertialNavSol>& inertialNavSol)
+void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol)
 {
     // ------------------------------------------- Data preparation ----------------------------------------------
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
@@ -946,7 +946,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<Inert
     // }
 }
 
-void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<PosVelAtt>& gnssMeasurement)
+void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVelAtt>& gnssMeasurement)
 {
     // ------------------------------------------- Data preparation ----------------------------------------------
     // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁

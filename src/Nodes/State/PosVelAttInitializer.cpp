@@ -594,7 +594,7 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<const NodeD
             }
             else if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
             {
-                receivePosVelAttObs(std::dynamic_pointer_cast<PosVelAtt>(nodeData));
+                receivePosVelAttObs(std::dynamic_pointer_cast<const PosVelAtt>(nodeData));
             }
         }
     }
@@ -698,7 +698,7 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<const 
     }
 }
 
-void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<PosVelAtt>& obs)
+void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs)
 {
     p_ecef_init = obs->position_ecef();
     posVelAttInitialized.at(0) = true;

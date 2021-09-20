@@ -51,15 +51,15 @@ class AddPVAError : public Node
     /// @brief Receive function for PosVelAtt
     /// @param[in] nodeData PosVelAtt received
     /// @param[in] linkId Id of the link over which the data is received
-    void recvPosVelAtt(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvPosVelAtt(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive function for PVAError
     /// @param[in] nodeData PVAError received
     /// @param[in] linkId Id of the link over which the data is received
-    void recvPVAError(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvPVAError(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// Pointer to the most recent PVA error
-    std::shared_ptr<PVAError> pvaError = nullptr;
+    std::shared_ptr<const PVAError> pvaError = nullptr;
 };
 
 } // namespace NAV

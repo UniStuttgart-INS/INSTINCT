@@ -118,11 +118,11 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
     }
 }
 
-void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto vnObs = std::dynamic_pointer_cast<VectorNavBinaryOutput>(nodeData);
+    auto vnObs = std::dynamic_pointer_cast<const VectorNavBinaryOutput>(nodeData);
 
-    std::shared_ptr<NodeData> convertedData = nullptr;
+    std::shared_ptr<const NodeData> convertedData = nullptr;
 
     if (outputType == OutputType_ImuObsWDelta)
     {
@@ -139,7 +139,7 @@ void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<NodeData>& 
     }
 }
 
-std::shared_ptr<NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObsWDelta(const std::shared_ptr<VectorNavBinaryOutput>& vnObs)
+std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
 {
     auto imuObs = std::make_shared<ImuObsWDelta>(vnObs->imuPos);
 
@@ -204,7 +204,7 @@ std::shared_ptr<NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2ImuObs
     return nullptr;
 }
 
-std::shared_ptr<NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt(const std::shared_ptr<VectorNavBinaryOutput>& vnObs)
+std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
 {
     auto posVelAttObs = std::make_shared<PosVelAtt>();
 

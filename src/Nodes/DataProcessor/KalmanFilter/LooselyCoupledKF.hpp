@@ -73,21 +73,21 @@ class LooselyCoupledKF : public Node
     /// @brief Receive Function for the intertial navigation solution
     /// @param[in] nodeData State vector (PosVelAtt)
     /// @param[in] linkId Id of the link over which the data is received
-    void recvInertialNavigationSolution(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvInertialNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive Function for the GNSS navigation solution
     /// @param[in] nodeData State vector (PosVel)
     /// @param[in] linkId Id of the link over which the data is received
-    void recvGNSSNavigationSolution(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Predicts the state from the InertialNavSol
-    void looselyCoupledPrediction(const std::shared_ptr<InertialNavSol>& inertialNavSol);
+    void looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol);
 
     /// @brief Updates the predicted state from the InertialNavSol with the GNSS measurement
-    void looselyCoupledUpdate(const std::shared_ptr<PosVelAtt>& gnssMeasurement);
+    void looselyCoupledUpdate(const std::shared_ptr<const PosVelAtt>& gnssMeasurement);
 
     /// Latest Position, Velocity, Attitude and Imu observation
-    std::shared_ptr<InertialNavSol> latestInertialNavSol = nullptr;
+    std::shared_ptr<const InertialNavSol> latestInertialNavSol = nullptr;
 
     /// Kalman Filter representation
     KalmanFilter kalmanFilter{ 15, 6 };

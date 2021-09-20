@@ -53,11 +53,11 @@ void NAV::AddPVAError::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::AddPVAError::recvPosVelAtt(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::AddPVAError::recvPosVelAtt(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     if (pvaError)
     {
-        auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
+        auto posVelAtt = std::dynamic_pointer_cast<const PosVelAtt>(nodeData);
 
         auto posVelAttCorr = std::make_shared<PosVelAtt>();
         posVelAttCorr->insTime = posVelAtt->insTime;
@@ -85,7 +85,7 @@ void NAV::AddPVAError::recvPosVelAtt(const std::shared_ptr<NodeData>& nodeData, 
     }
 }
 
-void NAV::AddPVAError::recvPVAError(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::AddPVAError::recvPVAError(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    pvaError = std::dynamic_pointer_cast<PVAError>(nodeData);
+    pvaError = std::dynamic_pointer_cast<const PVAError>(nodeData);
 }
