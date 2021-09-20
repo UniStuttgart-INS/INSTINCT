@@ -243,7 +243,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
         }
 
         startPin->callbacks.emplace_back(endPin->parentNode,
-                                         std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                         std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                          m_links.back().id);
     }
     else
@@ -331,7 +331,7 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             }
 
             startPin->callbacks.emplace_back(endPin->parentNode,
-                                             std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                             std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                              link.id);
         }
         else
@@ -416,7 +416,7 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
         {
             auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
                                   std::make_tuple(endPin->parentNode,
-                                                  std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                                  std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                                   linkId));
             if (iter != startPin->callbacks.end())
             {
@@ -428,7 +428,7 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
             }
 
             startPin->callbacks.emplace_back(endPin->parentNode,
-                                             std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                             std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                              link->id);
         }
         else
@@ -527,7 +527,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             {
                 auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
                                       std::make_tuple(endPin->parentNode,
-                                                      std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                                      std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                                       linkId));
                 if (iter != startPin->callbacks.end())
                 {
@@ -886,15 +886,15 @@ void NAV::NodeManager::Stop()
 
 #ifdef TESTING
 
-std::vector<std::pair<ax::NodeEditor::PinId, void (*)(const std::shared_ptr<NAV::NodeData>&)>> watcherPinList;
-std::vector<std::pair<ax::NodeEditor::LinkId, void (*)(const std::shared_ptr<NAV::NodeData>&)>> watcherLinkList;
+std::vector<std::pair<ax::NodeEditor::PinId, void (*)(const std::shared_ptr<const NAV::NodeData>&)>> watcherPinList;
+std::vector<std::pair<ax::NodeEditor::LinkId, void (*)(const std::shared_ptr<const NAV::NodeData>&)>> watcherLinkList;
 
-void NAV::NodeManager::RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<NodeData>&))
+void NAV::NodeManager::RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<const NodeData>&))
 {
     watcherPinList.emplace_back(id, callback);
 }
 
-void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<NodeData>&))
+void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<const NodeData>&))
 {
     watcherLinkList.emplace_back(id, callback);
 }

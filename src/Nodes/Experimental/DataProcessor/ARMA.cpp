@@ -297,9 +297,9 @@ void NAV::experimental::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, 
     }
 }
 
-void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::dynamic_pointer_cast<ImuObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<const ImuObs>(nodeData);
     auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
     buffer.push_back(obs); // push latest IMU epoch to deque
 
@@ -376,7 +376,6 @@ void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<NodeData>& nod
     }
     else // output = input while filling deque
     {
-        newImuObs = obs;
-        invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
+        invokeCallbacks(OutputPortIndex_ImuObs, obs);
     }
 }

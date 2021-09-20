@@ -97,7 +97,7 @@ bool NAV::EmlidFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
 {
     // Get current position
     auto pos = filestream.tellg();

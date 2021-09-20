@@ -97,17 +97,17 @@ class Demo : public Node
     /// @brief Receive Sensor Data
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received
-    void receiveSensorData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void receiveSensorData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive File Reader Data
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received
-    void receiveFileReaderData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
 
     /// Timer object to handle async data requests
     CallbackTimer timer;

@@ -16,7 +16,7 @@ namespace NAV::sensors::ublox
 /// @brief Decrypts the provided Ublox observation
 /// @param[in, out] obs Ublox Observation to decrypt
 /// @param[in] peek Specifies if the data should be peeked or read
-void decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, bool peek = false);
+void decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& obs, bool peek = false);
 
 /// @brief Calculates the two UBX checksums for the provided data vector
 /// @param[in] data Data Vector for which the checksum should be calculated

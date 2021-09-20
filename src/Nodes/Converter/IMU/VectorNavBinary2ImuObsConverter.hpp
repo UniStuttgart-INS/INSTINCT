@@ -44,7 +44,7 @@ class VectorNavBinary2ImuObsConverter : public Node
     /// @brief Converts the VectorNavBinaryOutput observation to the ImuObsWDelta observation
     /// @param[in] nodeData VectorNavBinaryOutput to process
     /// @param[in] linkId Id of the link over which the data is received
-    void convertObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void convertObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 };
 
 } // namespace NAV

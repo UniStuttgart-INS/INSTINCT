@@ -143,7 +143,7 @@ bool NAV::ImuFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::ImuFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
 {
     auto obs = std::make_shared<ImuObs>(imuPos);
 
