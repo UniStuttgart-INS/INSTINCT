@@ -177,7 +177,7 @@ void NAV::Combiner::afterDeleteLink(Pin* startPin, Pin* endPin)
     }
 }
 
-void NAV::Combiner::receiveData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::Combiner::receiveData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     if (!(NAV::Node::callbacksEnabled))
     {

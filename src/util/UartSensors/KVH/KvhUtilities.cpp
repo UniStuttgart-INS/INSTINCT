@@ -86,7 +86,7 @@ uint32_t NAV::sensors::kvh::ui32CalcImuCRC(const std::vector<uint8_t>& rawData)
     return ui32CRCVal;
 }
 
-void NAV::sensors::kvh::decryptKvhObs(std::shared_ptr<NAV::KvhObs>& obs)
+void NAV::sensors::kvh::decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs)
 {
     auto headerType = obs->raw.extractUint32();
 

@@ -178,9 +178,9 @@ void NAV::ImuIntegrator::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
+    auto imuObs = std::dynamic_pointer_cast<const ImuObs>(nodeData);
 
     if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
     {
@@ -206,9 +206,9 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<NodeData>& nodeDat
     }
 }
 
-void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
+    auto posVelAtt = std::dynamic_pointer_cast<const PosVelAtt>(nodeData);
 
     // Add imuObs tₖ₋₁ to the start of the list
     if (posVelAttStates.empty())
@@ -247,16 +247,16 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
 void NAV::ImuIntegrator::integrateObservation()
 {
     /// IMU Observation at the time tₖ
-    std::shared_ptr<ImuObs> imuObs__t0 = imuObservations.at(0);
+    std::shared_ptr<const ImuObs> imuObs__t0 = imuObservations.at(0);
     /// IMU Observation at the time tₖ₋₁
-    std::shared_ptr<ImuObs> imuObs__t1 = imuObservations.at(1);
+    std::shared_ptr<const ImuObs> imuObs__t1 = imuObservations.at(1);
     /// IMU Observation at the time tₖ₋₂
-    std::shared_ptr<ImuObs> imuObs__t2 = imuObservations.at(2);
+    std::shared_ptr<const ImuObs> imuObs__t2 = imuObservations.at(2);
 
     /// Position, Velocity and Attitude at the time tₖ₋₁
-    std::shared_ptr<PosVelAtt> posVelAtt__t1 = posVelAttStates.at(0);
+    std::shared_ptr<const PosVelAtt> posVelAtt__t1 = posVelAttStates.at(0);
     /// Position, Velocity and Attitude at the time tₖ₋₂
-    std::shared_ptr<PosVelAtt> posVelAtt__t2 = posVelAttStates.at(1);
+    std::shared_ptr<const PosVelAtt> posVelAtt__t2 = posVelAttStates.at(1);
 
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = imuObs__t0->imuPos;

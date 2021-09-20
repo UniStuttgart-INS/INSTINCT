@@ -408,16 +408,16 @@ void NAV::Demo::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 }
 
-void NAV::Demo::receiveSensorData(const std::shared_ptr<NodeData>& /*nodeData*/, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::Demo::receiveSensorData(const std::shared_ptr<const NodeData>& /*nodeData*/, ax::NodeEditor::LinkId /*linkId*/)
 {
     LOG_INFO("{}: received Sensor Data", nameId());
 
     receivedDataFromSensorCnt++;
 }
 
-void NAV::Demo::receiveFileReaderData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::Demo::receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::dynamic_pointer_cast<InsObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<const InsObs>(nodeData);
     LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime->GetStringOfDate());
 
     receivedDataFromFileReaderCnt++;
@@ -458,7 +458,7 @@ void NAV::Demo::readSensorDataThread(void* userData)
     node->invokeCallbacks(OutputPortIndex_NodeData, obs);
 }
 
-std::shared_ptr<NAV::NodeData> NAV::Demo::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
 {
     if (iPollData >= nPollData)
     {

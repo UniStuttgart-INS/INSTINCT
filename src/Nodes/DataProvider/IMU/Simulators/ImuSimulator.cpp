@@ -239,7 +239,7 @@ bool NAV::ImuSimulator::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollData(bool peek)
 {
     if (currentSimTime > duration)
     {

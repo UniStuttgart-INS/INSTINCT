@@ -181,7 +181,7 @@ void NAV::Node::notifyOutputValueChanged(size_t portIndex)
     }
 }
 
-void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<NAV::NodeData>& data)
+void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NAV::NodeData>& data)
 {
     if (callbacksEnabled)
     {

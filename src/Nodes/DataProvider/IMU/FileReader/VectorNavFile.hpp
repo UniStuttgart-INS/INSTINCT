@@ -78,7 +78,7 @@ class VectorNavFile : public Imu, public FileReader
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
-    [[nodiscard]] std::shared_ptr<NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
 
     /// @brief Amount of messages read
     uint32_t messageCount = 0;
