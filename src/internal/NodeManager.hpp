@@ -90,11 +90,11 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {}, void (T::*callback)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId) = nullptr)
+Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier = {}, void (T::*callback)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId) = nullptr)
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId)>(callback)));
+    return CreateInputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(callback)));
 }
 
 /// @brief Create an Input Pin object
@@ -142,11 +142,11 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 /// @return Pointer to the created pin
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
-Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, std::shared_ptr<NAV::NodeData> (T::*callback)(bool) = nullptr)
+Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std::vector<std::string>& dataIdentifier, std::shared_ptr<const NAV::NodeData> (T::*callback)(bool) = nullptr)
 {
     assert(pinType == Pin::Type::Flow);
 
-    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(callback)));
+    return CreateOutputPin(node, name, pinType, dataIdentifier, Pin::PinData(static_cast<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(callback)));
 }
 
 /// @brief Finds the Node for the NodeId
@@ -230,13 +230,13 @@ ax::NodeEditor::PinId GetNextPinId();
 /// @param[in] id Output pin id to add the callback to
 /// @param[in] callback Callback function
 /// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
-void RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<NodeData>&));
+void RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<const NodeData>&));
 
 /// @brief Registers the callback function to the watcher list
 /// @param[in] id Link id to add the callback to
 /// @param[in] callback Callback function
 /// @attention ApplyWatcherCallbacks() needs to be called after loading the flow to apply the list to the pins.
-void RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<NodeData>&));
+void RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<const NodeData>&));
 
 /// @brief Applies the watcher lists to the node pins
 void ApplyWatcherCallbacks();

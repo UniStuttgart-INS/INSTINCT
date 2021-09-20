@@ -64,7 +64,7 @@ class ARMA : public Node
     /// @brief Receive Sensor Data
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received
-    void receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief calculate autocorrelation function (ACF)
     /// @param[in] y vector of data
@@ -93,7 +93,7 @@ class ARMA : public Node
     /// @param[in] q order of MA process
     static void matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, int m, Eigen::MatrixXd& A);
 
-    std::deque<std::shared_ptr<ImuObs>> buffer;
+    std::deque<std::shared_ptr<const ImuObs>> buffer;
 
     /// loop iterator
     int k = 0;

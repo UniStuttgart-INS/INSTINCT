@@ -154,7 +154,7 @@ bool NAV::RtklibPosFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
 {
     auto obs = std::make_shared<RtklibPosObs>();
     // Get current position

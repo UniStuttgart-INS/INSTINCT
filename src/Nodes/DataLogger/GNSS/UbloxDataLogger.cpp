@@ -95,9 +95,9 @@ void NAV::UbloxDataLogger::deinitialize()
     FileWriter::deinitialize();
 }
 
-void NAV::UbloxDataLogger::writeObservation(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::UbloxDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::dynamic_pointer_cast<UbloxObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<const UbloxObs>(nodeData);
 
     if (obs->raw.getRawDataLength() > 0)
     {

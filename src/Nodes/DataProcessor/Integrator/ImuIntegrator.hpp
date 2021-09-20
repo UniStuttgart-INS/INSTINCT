@@ -65,12 +65,12 @@ class ImuIntegrator : public Node
     /// @brief Receive Function for the ImuObs at the time tₖ
     /// @param[in] nodeData ImuObs to process
     /// @param[in] linkId Id of the link over which the data is received
-    void recvImuObs__t0(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvImuObs__t0(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive Function for the PosVelAtt at the time tₖ₋₁
     /// @param[in] nodeData PosVelAtt to process
     /// @param[in] linkId Id of the link over which the data is received
-    void recvState__t1(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvState__t1(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive function for PVAError
     /// @param[in] nodeData PVAError received
@@ -90,20 +90,20 @@ class ImuIntegrator : public Node
 
     /// IMU Observation list
     /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
-    std::deque<std::shared_ptr<ImuObs>> imuObservations;
+    std::deque<std::shared_ptr<const ImuObs>> imuObservations;
 
     /// @brief Maximum amount of imu observations to keep
     size_t maxSizeImuObservations = 0;
 
     /// Position, Velocity and Attitude states.
     /// Length depends on the integration algorithm. Newest state first (tₖ, tₖ₋₁, tₖ₋₂, ...)
-    std::deque<std::shared_ptr<PosVelAtt>> posVelAttStates;
+    std::deque<std::shared_ptr<const PosVelAtt>> posVelAttStates;
 
     /// @brief Maximum amount of states to keep
     size_t maxSizeStates = 0;
 
     /// Position, Velocity and Attitude at initialization (needed to transform the ECEF position into NED)
-    std::shared_ptr<PosVelAtt> posVelAtt__init = nullptr;
+    std::shared_ptr<const PosVelAtt> posVelAtt__init = nullptr;
 
     /// Time at initialization (needed to set time tag when TimeSinceStartup is used)
     InsTime time__init;

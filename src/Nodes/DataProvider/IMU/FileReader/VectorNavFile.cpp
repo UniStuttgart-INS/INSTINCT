@@ -380,7 +380,7 @@ void NAV::VectorNavFile::readHeader()
     }
 }
 
-std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 {
     auto obs = std::make_shared<VectorNavBinaryOutput>(imuPos);
 

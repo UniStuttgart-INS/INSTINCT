@@ -233,7 +233,7 @@ NAV::Plot::Plot()
     data.at(0).pinType = PinData::PinType::Flow;
     inputPins.at(0).type = Pin::Type::Flow;
     inputPins.at(0).dataIdentifier = dataIdentifier;
-    inputPins.at(0).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+    inputPins.at(0).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
     // PinData::PinType::Bool:
     data.at(1).pinType = PinData::PinType::Bool;
     inputPins.at(1).type = Pin::Type::Bool;
@@ -332,7 +332,7 @@ void NAV::Plot::guiConfig()
                     case PinData::PinType::Flow:
                         inputPins.at(pinIndex).type = Pin::Type::Flow;
                         inputPins.at(pinIndex).dataIdentifier = dataIdentifier;
-                        inputPins.at(pinIndex).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+                        inputPins.at(pinIndex).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
                         break;
                     case PinData::PinType::Bool:
                         inputPins.at(pinIndex).type = Pin::Type::Bool;
@@ -1624,7 +1624,7 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
     }
 }
 
-void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
+void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
     if (Link* link = nm::FindLink(linkId))
     {
@@ -1635,7 +1635,7 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
             if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
                 || sourcePin->dataIdentifier.front() == InertialNavSol::type())
             {
-                plotPosVelAtt(std::dynamic_pointer_cast<PosVelAtt>(nodeData), pinIndex);
+                plotPosVelAtt(std::dynamic_pointer_cast<const PosVelAtt>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == PVAError::type())
             {
@@ -1647,37 +1647,37 @@ void NAV::Plot::plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEdit
             }
             else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
-                plotRtklibPosObs(std::dynamic_pointer_cast<RtklibPosObs>(nodeData), pinIndex);
+                plotRtklibPosObs(std::dynamic_pointer_cast<const RtklibPosObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
             {
-                plotUbloxObs(std::dynamic_pointer_cast<UbloxObs>(nodeData), pinIndex);
+                plotUbloxObs(std::dynamic_pointer_cast<const UbloxObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == SkydelObs::type())
             {
-                plotSkydelObs(std::static_pointer_cast<SkydelObs>(nodeData), pinIndex);
+                plotSkydelObs(std::static_pointer_cast<const SkydelObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuObs::type())
             {
-                plotImuObs(std::dynamic_pointer_cast<ImuObs>(nodeData), pinIndex);
+                plotImuObs(std::dynamic_pointer_cast<const ImuObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == KvhObs::type())
             {
-                plotKvhObs(std::dynamic_pointer_cast<KvhObs>(nodeData), pinIndex);
+                plotKvhObs(std::dynamic_pointer_cast<const KvhObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type())
             {
-                plotImuObsWDeltaObs(std::dynamic_pointer_cast<ImuObsWDelta>(nodeData), pinIndex);
+                plotImuObsWDeltaObs(std::dynamic_pointer_cast<const ImuObsWDelta>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type())
             {
-                plotVectorNavBinaryObs(std::dynamic_pointer_cast<VectorNavBinaryOutput>(nodeData), pinIndex);
+                plotVectorNavBinaryObs(std::dynamic_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIndex);
             }
         }
     }
 }
 
-void NAV::Plot::plotPosVelAtt(const std::shared_ptr<PosVelAtt>& obs, size_t pinIndex)
+void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -1735,7 +1735,7 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<PosVelAtt>& obs, size_t pinI
     addData(pinIndex, i++, obs->quaternion_nb().z());
 }
 
-void NAV::Plot::plotPVAError(const std::shared_ptr<PVAError>& obs, size_t pinIndex)
+void NAV::Plot::plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -1761,7 +1761,7 @@ void NAV::Plot::plotPVAError(const std::shared_ptr<PVAError>& obs, size_t pinInd
     addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(2)));
 }
 
-void NAV::Plot::plotImuBiases(const std::shared_ptr<ImuBiases>& obs, size_t pinIndex)
+void NAV::Plot::plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -1798,7 +1798,7 @@ void NAV::Plot::plotImuBiases(const std::shared_ptr<ImuBiases>& obs, size_t pinI
     addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(2));
 }
 
-void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex)
+void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -1871,7 +1871,7 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_
     addData(pinIndex, i++, obs->ratio.has_value() ? obs->ratio.value() : std::nan(""));
 }
 
-void NAV::Plot::plotUbloxObs(const std::shared_ptr<UbloxObs>& obs, size_t pinIndex)
+void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -1966,7 +1966,7 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<UbloxObs>& obs, size_t pinInd
     addData(pinIndex, i++, velocity_ned.has_value() ? velocity_ned->z() : std::nan(""));
 }
 
-void NAV::Plot::plotSkydelObs(const std::shared_ptr<SkydelObs>& obs, size_t pinIndex)
+void NAV::Plot::plotSkydelObs(const std::shared_ptr<const SkydelObs>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -1989,7 +1989,7 @@ void NAV::Plot::plotSkydelObs(const std::shared_ptr<SkydelObs>& obs, size_t pinI
     addData(pinIndex, i++, obs->attRPY.has_value() ? obs->attRPY->z() : std::nan(""));
 }
 
-void NAV::Plot::plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex)
+void NAV::Plot::plotImuObs(const std::shared_ptr<const ImuObs>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -2026,7 +2026,7 @@ void NAV::Plot::plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex)
     addData(pinIndex, i++, obs->temperature.has_value() ? obs->temperature.value() : std::nan(""));
 }
 
-void NAV::Plot::plotKvhObs(const std::shared_ptr<KvhObs>& obs, size_t pinIndex)
+void NAV::Plot::plotKvhObs(const std::shared_ptr<const KvhObs>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -2066,7 +2066,7 @@ void NAV::Plot::plotKvhObs(const std::shared_ptr<KvhObs>& obs, size_t pinIndex)
     addData(pinIndex, i++, obs->sequenceNumber < 128 ? obs->sequenceNumber : std::nan(""));
 }
 
-void NAV::Plot::plotImuObsWDeltaObs(const std::shared_ptr<ImuObsWDelta>& obs, size_t pinIndex)
+void NAV::Plot::plotImuObsWDeltaObs(const std::shared_ptr<const ImuObsWDelta>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {
@@ -2111,7 +2111,7 @@ void NAV::Plot::plotImuObsWDeltaObs(const std::shared_ptr<ImuObsWDelta>& obs, si
     addData(pinIndex, i++, obs->dvel.has_value() ? obs->dvel->z() : std::nan(""));
 }
 
-void NAV::Plot::plotVectorNavBinaryObs(const std::shared_ptr<VectorNavBinaryOutput>& obs, size_t pinIndex)
+void NAV::Plot::plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex)
 {
     if (obs->insTime.has_value())
     {

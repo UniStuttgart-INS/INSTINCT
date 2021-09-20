@@ -219,7 +219,7 @@ class Node
     /// @brief Calls all registered callbacks on the specified output port
     /// @param[in] portIndex Output port where to call the callbacks
     /// @param[in] data The data to pass to the callback targets
-    void invokeCallbacks(size_t portIndex, const std::shared_ptr<NodeData>& data);
+    void invokeCallbacks(size_t portIndex, const std::shared_ptr<const NodeData>& data);
 
     /// @brief Returns the index of the pin
     /// @param[in] pinId Id of the Pin

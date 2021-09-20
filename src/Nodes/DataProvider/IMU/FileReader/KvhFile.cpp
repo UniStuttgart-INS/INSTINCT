@@ -148,7 +148,7 @@ bool NAV::KvhFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::KvhFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
 {
     std::shared_ptr<KvhObs> obs = nullptr;
 

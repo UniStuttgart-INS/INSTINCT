@@ -4,7 +4,7 @@
 #include "util/Logger.hpp"
 #include "util/Time/TimeBase.hpp"
 
-void NAV::sensors::emlid::decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, bool peek)
+void NAV::sensors::emlid::decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, bool peek)
 {
     if (obs->raw.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {

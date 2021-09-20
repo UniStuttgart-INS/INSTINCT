@@ -243,57 +243,57 @@ class Plot : public Node
     /// @brief Plot the data on this port
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received
-    void plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotPosVelAtt(const std::shared_ptr<PosVelAtt>& obs, size_t pinIndex);
+    void plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotPVAError(const std::shared_ptr<PVAError>& obs, size_t pinIndex);
+    void plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuBiases(const std::shared_ptr<ImuBiases>& obs, size_t pinIndex);
+    void plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex);
+    void plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotUbloxObs(const std::shared_ptr<UbloxObs>& obs, size_t pinIndex);
+    void plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex);
+    void plotImuObs(const std::shared_ptr<const ImuObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotKvhObs(const std::shared_ptr<KvhObs>& obs, size_t pinIndex);
+    void plotKvhObs(const std::shared_ptr<const KvhObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuObsWDeltaObs(const std::shared_ptr<ImuObsWDelta>& obs, size_t pinIndex);
+    void plotImuObsWDeltaObs(const std::shared_ptr<const ImuObsWDelta>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotVectorNavBinaryObs(const std::shared_ptr<VectorNavBinaryOutput>& obs, size_t pinIndex);
+    void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotSkydelObs(const std::shared_ptr<SkydelObs>& obs, size_t pinIndex);
+    void plotSkydelObs(const std::shared_ptr<const SkydelObs>& obs, size_t pinIndex);
 
     /// Data storage for each pin
     std::vector<PinData> data;
