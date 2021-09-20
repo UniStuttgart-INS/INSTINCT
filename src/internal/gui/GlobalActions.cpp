@@ -111,7 +111,7 @@ void NAV::gui::pasteFlowElements()
 
     LOG_DEBUG("Pasting clipboard {}", clipboard.dump(4));
 
-    flow::LoadJson(clipboard, !elementsCutted, true);
+    flow::LoadJson(clipboard, !elementsCutted);
 
     // Find Top Left Position of all new nodes to move them to the mouse cursor
     ImVec2 leftTopMostPos{ std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() };
@@ -233,7 +233,10 @@ void NAV::gui::pasteFlowElements()
                 Pin* endPin = endPinKind == Pin::Kind::Input ? &nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex)
                                                              : &nm::m_Nodes().at(endPinParentNodeIndex)->outputPins.at(endPinIndex);
 
-                nm::CreateLink(startPin, endPin);
+                if (!nm::FindConnectedLinkToInputPin(endPin->id))
+                {
+                    nm::CreateLink(startPin, endPin);
+                }
 
                 newlyLinkedNodes[startPinOldParentNodeId] = nm::m_Nodes().at(startPinParentNodeIndex)->id;
                 newlyLinkedNodes[endPinOldParentNodeId] = nm::m_Nodes().at(endPinParentNodeIndex)->id;

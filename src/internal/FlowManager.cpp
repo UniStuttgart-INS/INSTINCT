@@ -119,7 +119,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     return loadSuccessful;
 }
 
-bool NAV::flow::LoadJson(const json& j, bool requestNewIds, bool copyPaste)
+bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
 {
     bool loadSuccessful = true;
 
@@ -193,6 +193,9 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds, bool copyPaste)
         }
     }
 
+    // Collect the node ids which get new links to call the restoreAfterLinks function on them
+    std::set<size_t> newlyLinkedNodes;
+
     if (j.contains("links"))
     {
         for (const auto& linkJson : j.at("links"))
@@ -205,22 +208,31 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds, bool copyPaste)
                 {
                     loadSuccessful = false;
                 }
+
+                if (auto* node = nm::FindConnectedNodeToInputPin(link.endPinId))
+                {
+                    newlyLinkedNodes.insert(size_t(node->id));
+                }
+                for (auto* node : nm::FindConnectedNodesToOutputPin(link.startPinId))
+                {
+                    newlyLinkedNodes.insert(size_t(node->id));
+                }
             }
         }
     }
-    if (!copyPaste)
+    if (j.contains("nodes"))
     {
-        if (j.contains("nodes"))
+        for (auto nodeId : newlyLinkedNodes)
         {
-            for (const auto& node : nm::m_Nodes())
+            auto* node = nm::FindNode(nodeId);
+            if (j.at("nodes").contains("node-" + std::to_string(size_t(node->id))))
             {
-                if (j.at("nodes").contains("node-" + std::to_string(size_t(node->id))))
+                LOG_DEBUG("Calling restoreAtferLink() for new node '{}'", node->nameId());
+
+                const auto& nodeJson = j.at("nodes").at("node-" + std::to_string(size_t(node->id)));
+                if (nodeJson.contains("data"))
                 {
-                    const auto& nodeJson = j.at("nodes").at("node-" + std::to_string(size_t(node->id)));
-                    if (nodeJson.contains("data"))
-                    {
-                        node->restoreAtferLink(nodeJson.at("data"));
-                    }
+                    node->restoreAtferLink(nodeJson.at("data"));
                 }
             }
         }

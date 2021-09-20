@@ -19,7 +19,7 @@ void SaveFlowAs(const std::string& filepath);
 
 bool LoadFlow(const std::string& filepath);
 
-bool LoadJson(const json& j, bool requestNewIds = false, bool copyPaste = false);
+bool LoadJson(const json& j, bool requestNewIds = false);
 
 bool HasUnsavedChanges();
 
