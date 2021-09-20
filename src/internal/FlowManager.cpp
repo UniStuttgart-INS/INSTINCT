@@ -119,7 +119,7 @@ bool NAV::flow::LoadFlow(const std::string& filepath)
     return loadSuccessful;
 }
 
-bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
+bool NAV::flow::LoadJson(const json& j, bool requestNewIds, bool copyPaste)
 {
     bool loadSuccessful = true;
 
@@ -199,22 +199,28 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
         {
             Link link = linkJson.get<Link>();
 
-            if (!nm::AddLink(link))
+            if (!nm::FindLink(link.id))
             {
-                loadSuccessful = false;
+                if (!nm::AddLink(link))
+                {
+                    loadSuccessful = false;
+                }
             }
         }
     }
-    if (j.contains("nodes"))
+    if (!copyPaste)
     {
-        for (const auto& node : nm::m_Nodes())
+        if (j.contains("nodes"))
         {
-            if (j.at("nodes").contains("node-" + std::to_string(size_t(node->id))))
+            for (const auto& node : nm::m_Nodes())
             {
-                const auto& nodeJson = j.at("nodes").at("node-" + std::to_string(size_t(node->id)));
-                if (nodeJson.contains("data"))
+                if (j.at("nodes").contains("node-" + std::to_string(size_t(node->id))))
                 {
-                    node->restoreAtferLink(nodeJson.at("data"));
+                    const auto& nodeJson = j.at("nodes").at("node-" + std::to_string(size_t(node->id)));
+                    if (nodeJson.contains("data"))
+                    {
+                        node->restoreAtferLink(nodeJson.at("data"));
+                    }
                 }
             }
         }
