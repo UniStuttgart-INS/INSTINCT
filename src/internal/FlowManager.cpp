@@ -193,24 +193,42 @@ bool NAV::flow::LoadJson(const json& j, bool requestNewIds)
         }
     }
 
+    // Collect the node ids which get new links to call the restoreAfterLinks function on them
+    std::set<size_t> newlyLinkedNodes;
+
     if (j.contains("links"))
     {
         for (const auto& linkJson : j.at("links"))
         {
             Link link = linkJson.get<Link>();
 
-            if (!nm::AddLink(link))
+            if (!nm::FindLink(link.id))
             {
-                loadSuccessful = false;
+                if (!nm::AddLink(link))
+                {
+                    loadSuccessful = false;
+                }
+
+                if (auto* node = nm::FindConnectedNodeToInputPin(link.endPinId))
+                {
+                    newlyLinkedNodes.insert(size_t(node->id));
+                }
+                for (auto* node : nm::FindConnectedNodesToOutputPin(link.startPinId))
+                {
+                    newlyLinkedNodes.insert(size_t(node->id));
+                }
             }
         }
     }
     if (j.contains("nodes"))
     {
-        for (const auto& node : nm::m_Nodes())
+        for (auto nodeId : newlyLinkedNodes)
         {
+            auto* node = nm::FindNode(nodeId);
             if (j.at("nodes").contains("node-" + std::to_string(size_t(node->id))))
             {
+                LOG_DEBUG("Calling restoreAtferLink() for new node '{}'", node->nameId());
+
                 const auto& nodeJson = j.at("nodes").at("node-" + std::to_string(size_t(node->id)));
                 if (nodeJson.contains("data"))
                 {
