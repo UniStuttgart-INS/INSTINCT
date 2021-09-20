@@ -42,8 +42,8 @@ bool NAV::AddImuBias::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    imuBiases.biasAccel_b = { 0, 0, 0 };
-    imuBiases.biasGyro_b = { 0, 0, 0 };
+    imuBiases.biasAccel_p = { 0, 0, 0 };
+    imuBiases.biasGyro_p = { 0, 0, 0 };
 
     return true;
 }
@@ -61,20 +61,20 @@ void NAV::AddImuBias::recvImuObs(const std::shared_ptr<NodeData>& nodeData, ax::
 
     if (imuObs->accelUncompXYZ.has_value())
     {
-        imuObsCorr->accelUncompXYZ = imuObs->accelUncompXYZ.value() - imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_b;
+        imuObsCorr->accelUncompXYZ = imuObs->accelUncompXYZ.value() - imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_p;
     }
     if (imuObs->accelCompXYZ.has_value())
     {
-        imuObsCorr->accelCompXYZ = imuObs->accelCompXYZ.value() - imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_b;
+        imuObsCorr->accelCompXYZ = imuObs->accelCompXYZ.value() - imuObs->imuPos.quatAccel_pb() * imuBiases.biasAccel_p;
     }
 
     if (imuObs->gyroUncompXYZ.has_value())
     {
-        imuObsCorr->gyroUncompXYZ = imuObs->gyroUncompXYZ.value() - imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_b;
+        imuObsCorr->gyroUncompXYZ = imuObs->gyroUncompXYZ.value() - imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_p;
     }
     if (imuObs->gyroCompXYZ.has_value())
     {
-        imuObsCorr->gyroCompXYZ = imuObs->gyroCompXYZ.value() - imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_b;
+        imuObsCorr->gyroCompXYZ = imuObs->gyroCompXYZ.value() - imuObs->imuPos.quatGyro_pb() * imuBiases.biasGyro_p;
     }
 
     imuObsCorr->insTime = imuObs->insTime;
@@ -97,6 +97,6 @@ void NAV::AddImuBias::recvImuBiases(const std::shared_ptr<NodeData>& nodeData, a
 {
     [[maybe_unused]] auto imuBiasObs = std::dynamic_pointer_cast<ImuBiases>(nodeData);
 
-    imuBiases.biasAccel_b += imuBiasObs->biasAccel_b;
-    imuBiases.biasGyro_b += imuBiasObs->biasGyro_b;
+    imuBiases.biasAccel_p += imuBiasObs->biasAccel_p;
+    imuBiases.biasGyro_p += imuBiasObs->biasGyro_p;
 }

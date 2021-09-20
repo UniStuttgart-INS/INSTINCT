@@ -274,8 +274,8 @@ bool NAV::ImuIntegrator::initialize()
     time__init = InsTime();
     timeSinceStartup__init = 0;
 
-    imuBiases.biasAccel_b.setZero();
-    imuBiases.biasGyro_b.setZero();
+    imuBiases.biasAccel_p.setZero();
+    imuBiases.biasGyro_p.setZero();
 
     LOG_DEBUG("ImuIntegrator initialized");
 
@@ -370,8 +370,8 @@ void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<NodeData>& nodeData
 {
     auto imuBiasObs = std::dynamic_pointer_cast<ImuBiases>(nodeData);
 
-    imuBiases.biasAccel_b += imuBiasObs->biasAccel_b;
-    imuBiases.biasGyro_b += imuBiasObs->biasGyro_b;
+    imuBiases.biasAccel_p += imuBiasObs->biasAccel_p;
+    imuBiases.biasGyro_p += imuBiasObs->biasGyro_p;
 }
 
 void NAV::ImuIntegrator::integrateObservation()
@@ -479,7 +479,7 @@ void NAV::ImuIntegrator::integrateObservation()
                                                    ? imuObs__t1->gyroCompXYZ.value()
                                                    : imuObs__t1->gyroUncompXYZ.value();
 
-    angularVelocity_ip_p__t1 -= imuPosition.quatGyro_pb() * imuBiases.biasGyro_b; //TODO: plus or minus?
+    angularVelocity_ip_p__t1 -= imuBiases.biasGyro_p;
 
     // LOG_DEBUG("angularVelocity_ip_p__t1 =\n{}", angularVelocity_ip_p__t1);
     /// ω_ip_p (tₖ) Angular velocity in [rad/s],
@@ -488,7 +488,7 @@ void NAV::ImuIntegrator::integrateObservation()
                                                    ? imuObs__t0->gyroCompXYZ.value()
                                                    : imuObs__t0->gyroUncompXYZ.value();
 
-    angularVelocity_ip_p__t0 -= imuPosition.quatGyro_pb() * imuBiases.biasGyro_b;
+    angularVelocity_ip_p__t0 -= imuBiases.biasGyro_p;
 
     // LOG_DEBUG("angularVelocity_ip_p__t0 =\n{}", angularVelocity_ip_p__t0);
 
@@ -497,7 +497,7 @@ void NAV::ImuIntegrator::integrateObservation()
                                              ? imuObs__t1->accelCompXYZ.value()
                                              : imuObs__t1->accelUncompXYZ.value();
 
-    acceleration_p__t1 -= imuPosition.quatAccel_pb() * imuBiases.biasAccel_b;
+    acceleration_p__t1 -= imuBiases.biasAccel_p;
 
     // LOG_DEBUG("acceleration_p__t1 =\n{}", acceleration_p__t1);
     /// a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
@@ -505,7 +505,7 @@ void NAV::ImuIntegrator::integrateObservation()
                                              ? imuObs__t0->accelCompXYZ.value()
                                              : imuObs__t0->accelUncompXYZ.value();
 
-    acceleration_p__t0 -= imuPosition.quatAccel_pb() * imuBiases.biasAccel_b;
+    acceleration_p__t0 -= imuBiases.biasAccel_p;
 
     // LOG_DEBUG("acceleration_p__t0 =\n{}", acceleration_p__t0);
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁

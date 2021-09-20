@@ -1776,26 +1776,26 @@ void NAV::Plot::plotImuBiases(const std::shared_ptr<ImuBiases>& obs, size_t pinI
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // ImuBiases
-    addData(pinIndex, i++, obs->biasAccel_b(0));
-    addData(pinIndex, i++, obs->biasAccel_b(1));
-    addData(pinIndex, i++, obs->biasAccel_b(2));
-    addData(pinIndex, i++, obs->biasGyro_b(0));
-    addData(pinIndex, i++, obs->biasGyro_b(1));
-    addData(pinIndex, i++, obs->biasGyro_b(2));
+    addData(pinIndex, i++, obs->biasAccel_p(0));
+    addData(pinIndex, i++, obs->biasAccel_p(1));
+    addData(pinIndex, i++, obs->biasAccel_p(2));
+    addData(pinIndex, i++, obs->biasGyro_p(0));
+    addData(pinIndex, i++, obs->biasGyro_p(1));
+    addData(pinIndex, i++, obs->biasGyro_p(2));
 
     double biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_b(0));
+    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_p(0));
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_b(1));
+    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_p(1));
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_b(2));
+    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_p(2));
 
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_b(0));
+    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(0));
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_b(1));
+    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(1));
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_b(2));
+    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(2));
 }
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex)
