@@ -146,21 +146,25 @@ void NAV::ImuIntegrator::guiConfig()
 #endif
 
     ImGui::Separator();
-    if (ImGui::Checkbox(fmt::format("Show PVACorrections input pin##{}", size_t(id)).c_str(), &showPVACorrectionsInputPin))
+    if (ImGui::Checkbox(fmt::format("Show Corrections input pins##{}", size_t(id)).c_str(), &showCorrectionsInputPin))
     {
-        LOG_DEBUG("{}: showPVACorrectionsInputPin changed to {}", nameId(), showPVACorrectionsInputPin);
+        LOG_DEBUG("{}: showCorrectionsInputPin changed to {}", nameId(), showCorrectionsInputPin);
 
-        if (showPVACorrectionsInputPin && inputPins.size() < 3)
+        if (showCorrectionsInputPin && inputPins.size() < 4)
         {
             nm::CreateInputPin(this, "PVAError", Pin::Type::Flow, { PVAError::type() }, &ImuIntegrator::recvPVAError);
+            nm::CreateInputPin(this, "ImuBiases", Pin::Type::Flow, { ImuBiases::type() }, &ImuIntegrator::recvImuBiases);
         }
-        else if (!showPVACorrectionsInputPin && inputPins.size() >= 3)
+        else if (!showCorrectionsInputPin)
         {
-            if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
+            while (inputPins.size() >= 3)
             {
-                nm::DeleteLink(connectedLink->id);
+                if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
+                {
+                    nm::DeleteLink(connectedLink->id);
+                }
+                inputPins.pop_back();
             }
-            inputPins.pop_back();
         }
 
         flow::ApplyChanges();
@@ -184,7 +188,7 @@ void NAV::ImuIntegrator::guiConfig()
     j["centrifugalAccCompensation"] = centrifugalAccCompensation;
     j["coriolisCompensation"] = coriolisCompensation;
 #endif
-    j["showPVACorrectionsInputPin"] = showPVACorrectionsInputPin;
+    j["showCorrectionsInputPin"] = showCorrectionsInputPin;
 
     return j;
 }
@@ -231,20 +235,24 @@ void NAV::ImuIntegrator::restore(json const& j)
         coriolisCompensation = j.at("coriolisCompensation");
     }
 #endif
-    if (j.contains("showPVACorrectionsInputPin"))
+    if (j.contains("showCorrectionsInputPin"))
     {
-        showPVACorrectionsInputPin = j.at("showPVACorrectionsInputPin");
-        if (showPVACorrectionsInputPin && inputPins.size() < 3)
+        showCorrectionsInputPin = j.at("showCorrectionsInputPin");
+        if (showCorrectionsInputPin && inputPins.size() < 4)
         {
             nm::CreateInputPin(this, "PVAError", Pin::Type::Flow, { PVAError::type() }, &ImuIntegrator::recvPVAError);
+            nm::CreateInputPin(this, "ImuBiases", Pin::Type::Flow, { ImuBiases::type() }, &ImuIntegrator::recvImuBiases);
         }
-        else if (!showPVACorrectionsInputPin && inputPins.size() >= 3)
+        else if (!showCorrectionsInputPin)
         {
-            if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
+            while (inputPins.size() >= 3)
             {
-                nm::DeleteLink(connectedLink->id);
+                if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.back().id))
+                {
+                    nm::DeleteLink(connectedLink->id);
+                }
+                inputPins.pop_back();
             }
-            inputPins.pop_back();
         }
     }
 }
@@ -265,6 +273,9 @@ bool NAV::ImuIntegrator::initialize()
 
     time__init = InsTime();
     timeSinceStartup__init = 0;
+
+    imuBiases.biasAccel_b.setZero();
+    imuBiases.biasGyro_b.setZero();
 
     LOG_DEBUG("ImuIntegrator initialized");
 
@@ -311,7 +322,7 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
 {
     auto posVelAtt = std::dynamic_pointer_cast<PosVelAtt>(nodeData);
 
-    if (showPVACorrectionsInputPin) // Make a copy, as we going to alter it
+    if (showCorrectionsInputPin) // Make a copy, as we going to alter it
     {
         posVelAtt = std::make_shared<PosVelAtt>(*posVelAtt);
     }
@@ -353,6 +364,14 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<NodeData>& nodeData
 void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     pvaError = std::dynamic_pointer_cast<PVAError>(nodeData);
+}
+
+void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+{
+    auto imuBiasObs = std::dynamic_pointer_cast<ImuBiases>(nodeData);
+
+    imuBiases.biasAccel_b += imuBiasObs->biasAccel_b;
+    imuBiases.biasGyro_b += imuBiasObs->biasGyro_b;
 }
 
 void NAV::ImuIntegrator::integrateObservation()
@@ -456,26 +475,38 @@ void NAV::ImuIntegrator::integrateObservation()
 
     /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& angularVelocity_ip_p__t1 = imuObs__t1->gyroCompXYZ.has_value()
-                                                          ? imuObs__t1->gyroCompXYZ.value()
-                                                          : imuObs__t1->gyroUncompXYZ.value();
+    Eigen::Vector3d angularVelocity_ip_p__t1 = imuObs__t1->gyroCompXYZ.has_value()
+                                                   ? imuObs__t1->gyroCompXYZ.value()
+                                                   : imuObs__t1->gyroUncompXYZ.value();
+
+    angularVelocity_ip_p__t1 -= imuPosition.quatGyro_pb() * imuBiases.biasGyro_b; //TODO: plus or minus?
+
     // LOG_DEBUG("angularVelocity_ip_p__t1 =\n{}", angularVelocity_ip_p__t1);
     /// ω_ip_p (tₖ) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ
-    const Eigen::Vector3d& angularVelocity_ip_p__t0 = imuObs__t0->gyroCompXYZ.has_value()
-                                                          ? imuObs__t0->gyroCompXYZ.value()
-                                                          : imuObs__t0->gyroUncompXYZ.value();
+    Eigen::Vector3d angularVelocity_ip_p__t0 = imuObs__t0->gyroCompXYZ.has_value()
+                                                   ? imuObs__t0->gyroCompXYZ.value()
+                                                   : imuObs__t0->gyroUncompXYZ.value();
+
+    angularVelocity_ip_p__t0 -= imuPosition.quatGyro_pb() * imuBiases.biasGyro_b;
+
     // LOG_DEBUG("angularVelocity_ip_p__t0 =\n{}", angularVelocity_ip_p__t0);
 
     /// a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& acceleration_p__t1 = imuObs__t1->accelCompXYZ.has_value()
-                                                    ? imuObs__t1->accelCompXYZ.value()
-                                                    : imuObs__t1->accelUncompXYZ.value();
+    Eigen::Vector3d acceleration_p__t1 = imuObs__t1->accelCompXYZ.has_value()
+                                             ? imuObs__t1->accelCompXYZ.value()
+                                             : imuObs__t1->accelUncompXYZ.value();
+
+    acceleration_p__t1 -= imuPosition.quatAccel_pb() * imuBiases.biasAccel_b;
+
     // LOG_DEBUG("acceleration_p__t1 =\n{}", acceleration_p__t1);
     /// a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
-    const Eigen::Vector3d& acceleration_p__t0 = imuObs__t0->accelCompXYZ.has_value()
-                                                    ? imuObs__t0->accelCompXYZ.value()
-                                                    : imuObs__t0->accelUncompXYZ.value();
+    Eigen::Vector3d acceleration_p__t0 = imuObs__t0->accelCompXYZ.has_value()
+                                             ? imuObs__t0->accelCompXYZ.value()
+                                             : imuObs__t0->accelUncompXYZ.value();
+
+    acceleration_p__t0 -= imuPosition.quatAccel_pb() * imuBiases.biasAccel_b;
+
     // LOG_DEBUG("acceleration_p__t0 =\n{}", acceleration_p__t0);
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& velocity_n__t1 = posVelAtt__t1->velocity_n();

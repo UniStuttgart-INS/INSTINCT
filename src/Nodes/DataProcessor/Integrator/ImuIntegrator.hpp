@@ -11,6 +11,7 @@
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/PVAError.hpp"
+#include "NodeData/State/ImuBiases.hpp"
 
 #include <deque>
 
@@ -76,8 +77,16 @@ class ImuIntegrator : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void recvPVAError(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
+    /// @brief Receive function for ImuBiases
+    /// @param[in] nodeData Observation received
+    /// @param[in] linkId Id of the link over which the data is received
+    void recvImuBiases(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
     /// @brief Integrates the Imu Observation data
     void integrateObservation();
+
+    /// Accumulated IMU biases
+    ImuBiases imuBiases;
 
     /// IMU Observation list
     /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
@@ -133,7 +142,7 @@ class ImuIntegrator : public Node
     IntegrationAlgorithm integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
 
     /// GUI flag, whether to show the input pin for PVA Corrections
-    bool showPVACorrectionsInputPin = false;
+    bool showCorrectionsInputPin = false;
 
     /// Pointer to the most recent PVA error
     std::shared_ptr<PVAError> pvaError = nullptr;
