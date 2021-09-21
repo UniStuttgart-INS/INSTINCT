@@ -345,6 +345,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_12
+    /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21)
     /// @note See Groves (2013) equation (14.65)
     static Eigen::Matrix3d systemMatrixF_12_n(double latitude_b, double height_b);
 
@@ -353,6 +354,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
     /// @return The 3x3 matrix 𝐅_13
+    /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21)
     /// @note See Groves (2013) equation (14.66)
     static Eigen::Matrix3d systemMatrixF_13_n(double latitude_b, double height_b, const Eigen::Vector3d& v_eb_n);
 
@@ -360,6 +362,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] quaternion_np Attitude of the platform with respect to n-system
     /// @param[in] specForce_ib_p Specific force of the body with respect to inertial frame in [m / s^2], resolved in platform coord.
     /// @return The 3x3 matrix 𝐅_21
+    /// @note See T. Hobiger (2021) Inertialnavigation V08 - equation (8.4)
     /// @note See Groves (2013) equation (14.67)
     static Eigen::Matrix3d systemMatrixF_21_n(const Eigen::Quaterniond& quaternion_np, const Eigen::Vector3d& specForce_ib_p);
 
@@ -368,6 +371,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_22
+    /// @note See T. Hobiger (2021) Inertialnavigation V08 - equation (8.6, 8.15)
     /// @note See Groves (2013) equation (14.68)
     static Eigen::Matrix3d systemMatrixF_22_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
 
@@ -376,6 +380,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_23
+    /// @note See T. Hobiger (2021) Inertialnavigation V08 - equation (8.14, 8.16)
     /// @note See Groves (2013) equation (14.69)
     static Eigen::Matrix3d systemMatrixF_23_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
 
@@ -383,6 +388,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_32
+    /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5)
     /// @note See Groves (2013) equation (14.70)
     static Eigen::Matrix3d systemMatrixF_32_n(double latitude_b, double height_b);
 
@@ -391,6 +397,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] latitude_b Geodetic latitude of the body in [rad]
     /// @param[in] height_b Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_33
+    /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5)
     /// @note See Groves (2013) equation (14.71)
     static Eigen::Matrix3d systemMatrixF_33_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
 
@@ -605,7 +612,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
     /// @param[in] DCM_np Direction Cosine Matrix from platform to navigation coordinates
     /// @param[in] angularRate_ib_p Angular rate of body with respect to inertial system in platform coordinates in [rad/s]
-    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @param[in] leverArm_InsGnss l_{ba}^p lever arm from the INS to the GNSS antenna [m]
     /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x15 measurement matrix 𝐇
     static Eigen::Matrix<double, 6, 15> measurementMatrix(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_np, const Eigen::Vector3d& angularRate_ib_p, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Matrix3d& Omega_ie_n);
@@ -613,21 +620,21 @@ class LooselyCoupledKF : public Node
     /// @brief Submatrix 𝐇_r1 of the measurement sensitivity matrix 𝐇
     /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
     /// @param[in] DCM_np Direction Cosine Matrix from platform to navigation coordinates
-    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @param[in] leverArm_InsGnss l_{ba}^p lever arm from the INS to the GNSS antenna [m]
     /// @return The 3x3 matrix 𝐇_r1
     static Eigen::Matrix3d measurementMatrix_r1_n(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_np, const Eigen::Vector3d& leverArm_InsGnss);
 
     /// @brief Submatrix 𝐇_v1 of the measurement sensitivity matrix 𝐇
     /// @param[in] DCM_np Direction Cosine Matrix from platform to navigation coordinates
     /// @param[in] angularRate_ib_p Angular rate of body with respect to inertial system in platform coordinates in [rad/s]
-    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @param[in] leverArm_InsGnss l_{ba}^p lever arm from the INS to the GNSS antenna [m]
     /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 3x3 matrix 𝐇_v1
     static Eigen::Matrix3d measurementMatrix_v1_n(const Eigen::Matrix3d& DCM_np, const Eigen::Vector3d& angularRate_ib_p, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Matrix3d& Omega_ie_n);
 
     /// @brief Submatrix 𝐇_v5 of the measurement sensitivity matrix 𝐇
     /// @param[in] DCM_np Direction Cosine Matrix from platform to navigation coordinates
-    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @param[in] leverArm_InsGnss l_{ba}^p lever arm from the INS to the GNSS antenna [m]
     /// @return The 3x3 matrix 𝐇_v5
     static Eigen::Matrix3d measurementMatrix_v5_n(const Eigen::Matrix3d& DCM_np, const Eigen::Vector3d& leverArm_InsGnss);
 
@@ -643,14 +650,14 @@ class LooselyCoupledKF : public Node
     /// @param[in] velocityMeasurement_n Velocity measurement in the n frame in [m/s]
     /// @param[in] velocityEstimate_n Velocity estimate in the n frame in [m/s]
     /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
-    /// @param[in] q_nb Rotation quaternion from body to navigation coordinates
-    /// @param[in] leverArm_InsGnss l_{ba}^b lever arm from the INS to the GNSS antenna [m]
+    /// @param[in] q_np Rotation quaternion from platform to navigation coordinates
+    /// @param[in] leverArm_InsGnss l_{ba}^p lever arm from the INS to the GNSS antenna [m]
     /// @param[in] angularRate_ib_p Angular rate of body with respect to inertial system in platform coordinates in [rad/s]
     /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x1 measurement innovation vector 𝜹𝐳
     static Eigen::Matrix<double, 6, 1> measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_lla,
                                                              const Eigen::Vector3d& velocityMeasurement_n, const Eigen::Vector3d& velocityEstimate_n,
-                                                             const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss,
+                                                             const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_np, const Eigen::Vector3d& leverArm_InsGnss,
                                                              const Eigen::Vector3d& angularRate_ib_p, const Eigen::Matrix3d& Omega_ie_n);
 };
 } // namespace NAV

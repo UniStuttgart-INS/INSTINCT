@@ -1146,7 +1146,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_11_n(const Eigen::Vector3d&
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_12_n(double latitude_b, double height_b)
 {
-    // Math: \mathbf{F}_{12}^n = \begin{bmatrix} 0 & \frac{-1}{R_E(\hat{L}_b) + \hat{h}_b} & 0 \\ \frac{1}{R_N(\hat{L}_b) + \hat{h}_b} & 0 & 0 \\ 0 & \frac{\tan{\hat{L}_b}}{R_E(\hat{L}_b) + \hat{h}_b} & 0 \end{bmatrix} \qquad \text{P. Groves}\,(14.65)
+    // Math: \mathbf{F}_{12}^n = \begin{bmatrix} 0 & \frac{1}{R_E(\hat{L}_b) + \hat{h}_b} & 0 \\ -\frac{1}{R_N(\hat{L}_b) + \hat{h}_b} & 0 & 0 \\ 0 & -\frac{\tan{\hat{L}_b}}{R_E(\hat{L}_b) + \hat{h}_b} & 0 \end{bmatrix} \qquad \text{P. Groves}\,(14.65) (\text{sign flip})
     Eigen::Matrix3d F_12_n = Eigen::Matrix3d::Zero(3, 3);
     double R_E = NAV::earthRadius_E(latitude_b);
     double R_N = NAV::earthRadius_N(latitude_b);
@@ -1160,23 +1160,27 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_12_n(double latitude_b, dou
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_13_n(double latitude_b, double height_b, const Eigen::Vector3d& v_eb_n)
 {
-    // Math: \mathbf{F}_{13}^n = \begin{bmatrix} -\omega_{ie}\sin{\hat{L}_b} & 0 & \frac{-\hat{v}_{eb,E}^n}{(R_E(\hat{L}_b) + \hat{h}_b)^2} \\ 0 & 0 & \frac{\hat{v}_{eb,N}^n}{(R_N(\hat{L}_b) + \hat{h}_b)^2} \\ -\omega_{ie}\cos{\hat{L}_b} - \frac{\hat{v}_{eb,E}^n}{(R_E(\hat{L}_b) + \hat{h}_b)\cos^2{\hat{L}_b}} & 0 & \frac{\hat{v}_{eb,E}^n\tan{\hat{L}_b}}{(R_E(\hat{L}_b) + \hat{h}_b)^2} \end{bmatrix} \qquad \text{P. Groves}\,(14.66)
+    // Math: \mathbf{F}_{13}^n = \begin{bmatrix} -\omega_{ie}\sin{\hat{L}_b} & 0 & -\frac{\hat{v}_{eb,E}^n}{(R_E(\hat{L}_b) + \hat{h}_b)^2} \\ 0 & 0 & \frac{\hat{v}_{eb,N}^n}{(R_N(\hat{L}_b) + \hat{h}_b)^2} \\ -\omega_{ie}\cos{\hat{L}_b} - \frac{\hat{v}_{eb,E}^n}{(R_E(\hat{L}_b) + \hat{h}_b)\cos^2{\hat{L}_b}} & 0 & \frac{\hat{v}_{eb,E}^n\tan{\hat{L}_b}}{(R_E(\hat{L}_b) + \hat{h}_b)^2} \end{bmatrix} \qquad \text{P. Groves}\,(14.66) (\text{sign flip})
     Eigen::Matrix3d F_13_n = Eigen::Matrix3d::Zero(3, 3);
     double R_E = NAV::earthRadius_E(latitude_b);
     double R_N = NAV::earthRadius_N(latitude_b);
 
+    const double& v_N = v_eb_n(0);
+    const double& v_E = v_eb_n(1);
+
     F_13_n(0, 0) = -InsConst::angularVelocity_ie * std::sin(latitude_b);
-    F_13_n(0, 2) = -v_eb_n(1) / std::pow((R_E + height_b), 2.0);
-    F_13_n(1, 2) = v_eb_n(0) / std::pow((R_N + height_b), 2.0);
-    F_13_n(2, 0) = -InsConst::angularVelocity_ie * std::cos(latitude_b) - v_eb_n(1) / ((R_E + height_b) * std::cos(latitude_b) * std::cos(latitude_b));
-    F_13_n(2, 2) = v_eb_n(1) * std::tan(latitude_b) / std::pow((R_E + height_b), 2.0);
+    F_13_n(0, 2) = -v_E / std::pow(R_E + height_b, 2.0);
+    F_13_n(1, 2) = v_N / std::pow(R_N + height_b, 2.0);
+    F_13_n(2, 0) = -InsConst::angularVelocity_ie * std::cos(latitude_b)
+                   - v_E / ((R_E + height_b) * std::pow(std::cos(latitude_b), 2));
+    F_13_n(2, 2) = v_E * std::tan(latitude_b) / std::pow(R_E + height_b, 2.0);
 
     return F_13_n;
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_21_n(const Eigen::Quaterniond& quaternion_np, const Eigen::Vector3d& specForce_ib_p)
 {
-    // Math: \mathbf{F}_{21}^n = -\begin{bmatrix} (\mathbf{C}_{p}^n \hat{f}_{ib}^p) \land \end{bmatrix} \qquad \text{P. Groves}\,(14.67)\ adapted\ to\ \text{T. Hobiger, Inertialnavigation V06 - V09}
+    // Math: \mathbf{F}_{21}^n = -\begin{bmatrix} (\mathbf{C}_{p}^n \hat{f}_{ib}^p) \land \end{bmatrix} \qquad \text{P. Groves}\,(14.67) (\text{sign flip})
     return skewSymmetricMatrix(quaternion_np * specForce_ib_p);
 }
 
@@ -1187,14 +1191,22 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_22_n(const Eigen::Vector3d&
     double R_E = NAV::earthRadius_E(latitude_b);
     double R_N = NAV::earthRadius_N(latitude_b);
 
-    F_22_n(0, 0) = v_eb_n(2) / (R_N + height_b);
-    F_22_n(0, 1) = -2 * v_eb_n(1) * std::tan(latitude_b) / (R_E + height_b) - 2.0 * InsConst::angularVelocity_ie * std::sin(latitude_b);
-    F_22_n(0, 2) = v_eb_n(0) / (R_N + height_b);
-    F_22_n(1, 0) = v_eb_n(1) * std::tan(latitude_b) / (R_E + height_b) + 2.0 * InsConst::angularVelocity_ie * std::sin(latitude_b);
-    F_22_n(1, 1) = (v_eb_n(0) * std::tan(latitude_b) + v_eb_n(2)) / (R_E + height_b);
-    F_22_n(1, 2) = v_eb_n(1) / (R_E + height_b) + 2.0 * InsConst::angularVelocity_ie * std::cos(latitude_b);
-    F_22_n(2, 0) = -2.0 * v_eb_n(0) / (R_N + height_b);
-    F_22_n(2, 1) = -2.0 * v_eb_n(1) / (R_E + height_b) - 2.0 * InsConst::angularVelocity_ie * std::cos(latitude_b);
+    const double& v_N = v_eb_n(0);
+    const double& v_E = v_eb_n(1);
+    const double& v_D = v_eb_n(2);
+
+    F_22_n(0, 0) = v_D / (R_N + height_b);
+    F_22_n(0, 1) = -2.0 * v_E * std::tan(latitude_b) / (R_E + height_b)
+                   - 2.0 * InsConst::angularVelocity_ie * std::sin(latitude_b);
+    F_22_n(0, 2) = v_N / (R_N + height_b);
+    F_22_n(1, 0) = v_E * std::tan(latitude_b) / (R_E + height_b)
+                   + 2.0 * InsConst::angularVelocity_ie * std::sin(latitude_b);
+    F_22_n(1, 1) = (v_N * std::tan(latitude_b) + v_D) / (R_E + height_b);
+    F_22_n(1, 2) = v_E / (R_E + height_b)
+                   + 2.0 * InsConst::angularVelocity_ie * std::cos(latitude_b);
+    F_22_n(2, 0) = -2.0 * v_N / (R_N + height_b);
+    F_22_n(2, 1) = -2.0 * v_E / (R_E + height_b)
+                   - 2.0 * InsConst::angularVelocity_ie * std::cos(latitude_b);
 
     return F_22_n;
 }
@@ -1210,22 +1222,26 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_23_n(const Eigen::Vector3d&
     // Geocentric Radius in [m]
     double r_eS_e = geocentricRadius(latitude_b, R_E, InsConst::WGS84_e_squared);
 
-    F_23_n(0, 0) = -(v_eb_n(1) * v_eb_n(1) * std::pow(secant(latitude_b), 2.0) / (R_E + height_b))
-                   - 2.0 * v_eb_n(1) * InsConst::angularVelocity_ie * std::cos(latitude_b);
+    const double& v_N = v_eb_n(0);
+    const double& v_E = v_eb_n(1);
+    const double& v_D = v_eb_n(2);
 
-    F_23_n(0, 2) = (v_eb_n(1) * v_eb_n(1) * std::tan(latitude_b)) / std::pow(R_E + height_b, 2.0)
-                   - (v_eb_n(0) * v_eb_n(2)) / std::pow(R_N + height_b, 2.0);
+    F_23_n(0, 0) = -(std::pow(v_E, 2) * std::pow(secant(latitude_b), 2.0) / (R_E + height_b))
+                   - 2.0 * v_E * InsConst::angularVelocity_ie * std::cos(latitude_b);
 
-    F_23_n(1, 0) = v_eb_n(0) * v_eb_n(1) * std::pow(secant(latitude_b), 2.0) / (R_E + height_b)
-                   + 2.0 * v_eb_n(0) * InsConst::angularVelocity_ie * std::cos(latitude_b)
-                   - 2.0 * v_eb_n(2) * InsConst::angularVelocity_ie * std::sin(latitude_b);
+    F_23_n(0, 2) = (std::pow(v_E, 2) * std::tan(latitude_b)) / std::pow(R_E + height_b, 2.0)
+                   - (v_N * v_D) / std::pow(R_N + height_b, 2.0);
 
-    F_23_n(1, 2) = -(v_eb_n(0) * v_eb_n(1) * std::tan(latitude_b) + v_eb_n(1) * v_eb_n(2)) / std::pow(R_E + height_b, 2.0);
+    F_23_n(1, 0) = v_N * v_E * std::pow(secant(latitude_b), 2.0) / (R_E + height_b)
+                   + 2.0 * v_N * InsConst::angularVelocity_ie * std::cos(latitude_b)
+                   - 2.0 * v_D * InsConst::angularVelocity_ie * std::sin(latitude_b);
 
-    F_23_n(2, 0) = 2.0 * v_eb_n(1) * InsConst::angularVelocity_ie * std::sin(latitude_b);
+    F_23_n(1, 2) = -(v_N * v_E * std::tan(latitude_b) + v_E * v_D) / std::pow(R_E + height_b, 2.0);
 
-    F_23_n(2, 2) = (v_eb_n(1) * v_eb_n(1)) / std::pow(R_E + height_b, 2.0)
-                   + (v_eb_n(0) * v_eb_n(0)) / std::pow(R_N + height_b, 2.0)
+    F_23_n(2, 0) = 2.0 * v_E * InsConst::angularVelocity_ie * std::sin(latitude_b);
+
+    F_23_n(2, 2) = std::pow(v_E, 2) / std::pow(R_E + height_b, 2.0)
+                   + std::pow(v_N, 2) / std::pow(R_N + height_b, 2.0)
                    - 2.0 * g_0 / r_eS_e;
 
     return F_23_n;
@@ -1245,28 +1261,31 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_32_n(double latitude_b, dou
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_33_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b)
 {
-    // Math: \mathbf{F}_{33}^n = \begin{bmatrix} 0 & 0 & -\frac{\hat{v}_{eb,N}^n}{(R_N(\hat{L}_b) + \hat{h}_b)^2} \\ \frac{\hat{v}_{eb,E}^n \sin{\hat{L}_b}}{(R_E(\hat{L}_b) + \hat{h}_b) \cos^2{\hat{L}_b}} & 0 & -\frac{\hat{v}_{eb,E}^n}{(R_N(\hat{L}_b) + \hat{h}_b)^2 \cos{\hat{L}_b}} \\ 0 & 0 & 0 \end{bmatrix} \quad \text{P. Groves}\,(14.71)
+    // Math: \mathbf{F}_{33}^n = \begin{bmatrix} 0 & 0 & -\frac{\hat{v}_{eb,N}^n}{(R_N(\hat{L}_b) + \hat{h}_b)^2} \\ \frac{\hat{v}_{eb,E}^n \sin{\hat{L}_b}}{(R_E(\hat{L}_b) + \hat{h}_b) \cos^2{\hat{L}_b}} & 0 & -\frac{\hat{v}_{eb,E}^n}{(R_E(\hat{L}_b) + \hat{h}_b)^2 \cos{\hat{L}_b}} \\ 0 & 0 & 0 \end{bmatrix} \quad \text{P. Groves}\,(14.71)
     Eigen::Matrix3d F_33_n = Eigen::Matrix3d::Zero(3, 3);
     double R_E = NAV::earthRadius_E(latitude_b);
     double R_N = NAV::earthRadius_N(latitude_b);
 
-    F_33_n(0, 2) = -v_eb_n(0) / std::pow(R_N + height_b, 2.0);
-    F_33_n(1, 0) = v_eb_n(1) * std::sin(latitude_b) / ((R_E + height_b) * std::pow(std::cos(latitude_b), 2.0));
-    F_33_n(1, 2) = -v_eb_n(1) / (std::pow(R_E + height_b, 2.0) * std::cos(latitude_b));
+    const double& v_N = v_eb_n(0);
+    const double& v_E = v_eb_n(1);
+
+    F_33_n(0, 2) = -v_N / std::pow(R_N + height_b, 2.0);
+    F_33_n(1, 0) = v_E * std::sin(latitude_b) / ((R_E + height_b) * std::pow(std::cos(latitude_b), 2.0));
+    F_33_n(1, 2) = -v_E / (std::pow(R_E + height_b, 2.0) * std::cos(latitude_b));
 
     return F_33_n;
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_44_n(const Eigen::Vector3d& beta_a)
 {
-    // TODO: Math
-    return -1 * Eigen::DiagonalMatrix<double, 3>{ beta_a };
+    // Math: \mathbf{F}_{a} = - \begin{bmatrix} \beta_{a,1} & 0 & 0 \\ 0 & \beta_{a,2} & 0 \\ 0 & 0 & \beta_{a,2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
+    return -1.0 * Eigen::DiagonalMatrix<double, 3>{ beta_a };
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_55_n(const Eigen::Vector3d& beta_omega)
 {
-    // TODO: Math
-    return -1 * Eigen::DiagonalMatrix<double, 3>{ beta_omega };
+    // Math: \mathbf{F}_{\omega} = - \begin{bmatrix} \beta_{\omega,1} & 0 & 0 \\ 0 & \beta_{\omega,2} & 0 \\ 0 & 0 & \beta_{\omega,2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
+    return -1.0 * Eigen::DiagonalMatrix<double, 3>{ beta_omega };
 }
 
 // ###########################################################################################################
@@ -1275,6 +1294,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_55_n(const Eigen::Vector3d&
 
 Eigen::Matrix<double, 15, 6> NAV::LooselyCoupledKF::noiseInputMatrixG(const double& sigma2_ra, const double& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega)
 {
+    // Math: \mathbf{G}_{a} = \begin{bmatrix} 0 & 0 \\ 0 & 0 \\ 0 & 0 \\ \mathbf{G}_{a} & 0 \\ 0 & \mathbf{G}_{\omega} \end{bmatrix} \quad \text{T. Hobiger}\,(6.5)
     Eigen::Matrix<double, 15, 6> G = Eigen::Matrix<double, 15, 6>::Zero();
 
     G.block<3, 3>(9, 0) = noiseInputMatrixG_a(sigma2_ra, beta_a);
@@ -1287,9 +1307,12 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const double& sigma2_
 {
     if (randomProcessAccel == RandomProcess::RandomWalk) // Random walk (beta = 0)
     {
+        // Math: \mathbf{G}_{a} = \begin{bmatrix} \sqrt{\sigma_{a,1}^2} & 0 & 0 \\ 0 & \sqrt{\sigma_{a,2}^2} & 0 \\ 0 & 0 & \sqrt{\sigma_{a,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
         return Eigen::DiagonalMatrix<double, 3>{ std::sqrt(sigma2_ra), std::sqrt(sigma2_ra), std::sqrt(sigma2_ra) };
     }
     // else if (randomProcessAccel == RandomProcess::GaussMarkov1)
+
+    // Math: \mathbf{G}_{a} = \begin{bmatrix} \sqrt{\beta_{a,1} \sigma_{a,1}^2} & 0 & 0 \\ 0 & \sqrt{\beta_{a,2} \sigma_{a,2}^2} & 0 \\ 0 & 0 & \sqrt{\beta_{a,3} \sigma_{a,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
     return Eigen::DiagonalMatrix<double, 3>{ (beta_a.array() * sigma2_ra).sqrt().matrix() };
 }
 
@@ -1297,10 +1320,13 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sig
 {
     if (randomProcessGyro == RandomProcess::RandomWalk) // Random walk (beta = 0)
     {
+        // Math: \mathbf{G}_{\omega} = \begin{bmatrix} \sqrt{\sigma_{\omega,1}^2} & 0 & 0 \\ 0 & \sqrt{\sigma_{\omega,2}^2} & 0 \\ 0 & 0 & \sqrt{\sigma_{\omega,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
+
         return Eigen::DiagonalMatrix<double, 3>{ std::sqrt(sigma2_rg), std::sqrt(sigma2_rg), std::sqrt(sigma2_rg) };
     }
     // else if (randomProcessGyro == RandomProcess::GaussMarkov1)
 
+    // Math: \mathbf{G}_{\omega} = \begin{bmatrix} \sqrt{\beta_{\omega,1} \sigma_{\omega,1}^2} & 0 & 0 \\ 0 & \sqrt{\beta_{\omega,2} \sigma_{\omega,2}^2} & 0 \\ 0 & 0 & \sqrt{\beta_{\omega,3} \sigma_{\omega,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
     return Eigen::DiagonalMatrix<double, 3>{ (beta_omega.array() * sigma2_rg).sqrt().matrix() };
 }
 
@@ -1472,7 +1498,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_r1_n(const Eigen::Matri
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_v1_n(const Eigen::Matrix3d& DCM_np, const Eigen::Vector3d& angularRate_ib_p, const Eigen::Vector3d& leverArm_InsGnss, const Eigen::Matrix3d& Omega_ie_n)
 {
-    // Math: \mathbf{H}_{v1}^n \approx \begin{bmatrix} \begin{Bmatrix} \mathbf{C}_p^n (\mathbf{\hat{\omega}}_{ib}^p \wedge \mathbf{l}_{ba}^p) - \mathbf{\hat{\Omega}}_{ie}^n\mathbf{C}_p^n \mathbf{l}_{ba}^p \end{Bmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)\text{ adapted to platform system}
+    // Math: \mathbf{H}_{v1}^n \approx \begin{bmatrix} \begin{Bmatrix} \mathbf{C}_p^n (\mathbf{\hat{\omega}}_{ib}^p \wedge \mathbf{l}_{ba}^p) - \mathbf{\hat{\Omega}}_{ie}^n \mathbf{C}_p^n \mathbf{l}_{ba}^p \end{Bmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)\text{ adapted to platform system}
     Eigen::Vector3d product = DCM_np * (angularRate_ib_p.cross(leverArm_InsGnss)) - Omega_ie_n * DCM_np * leverArm_InsGnss;
 
     return skewSymmetricMatrix(product);
@@ -1480,29 +1506,31 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_v1_n(const Eigen::Matri
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_v5_n(const Eigen::Matrix3d& DCM_np, const Eigen::Vector3d& leverArm_InsGnss)
 {
-    // Math: \mathbf{C}_p^n \begin{bmatrix} \mathbf{l}_{ba}^p \wedge \end{bmatrix}
+    // Math: \mathbf{H}_{v5}^n = \mathbf{C}_p^n \begin{bmatrix} \mathbf{l}_{ba}^p \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)\text{ adapted to platform system}
     return DCM_np * skewSymmetricMatrix(leverArm_InsGnss);
 }
 
 Eigen::Matrix<double, 6, 6> NAV::LooselyCoupledKF::measurementNoiseCovariance(const Eigen::Vector3d& gnssVarianceLatLonAlt, const Eigen::Vector3d& gnssVarianceVelocity)
 {
+    // Math: \mathbf{R} = \begin{pmatrix} \sigma^2_\phi & 0 & 0 & 0 & 0 & 0 \\ 0 & \sigma^2_\lambda & 0 & 0 & 0 & 0 \\ 0 & 0 & \sigma^2_h & 0 & 0 & 0 \\ 0 & 0 & 0 & \sigma^2_{v_N} & 0 & 0 \\ 0 & 0 & 0 & 0 & \sigma^2_{v_E} & 0 \\ 0 & 0 & 0 & 0 & 0 & \sigma^2_{v_D} \end{pmatrix}
     Eigen::Matrix<double, 6, 6> R = Eigen::Matrix<double, 6, 6>::Zero();
-    R.diagonal().block<3, 1>(0, 0) = gnssVarianceLatLonAlt;
-    R.diagonal().block<3, 1>(3, 0) = gnssVarianceVelocity;
+    R.block<3, 3>(0, 0).diagonal() = gnssVarianceLatLonAlt;
+    R.block<3, 3>(3, 3).diagonal() = gnssVarianceVelocity;
 
     return R;
 }
 
 Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_lla,
                                                                          const Eigen::Vector3d& velocityMeasurement_n, const Eigen::Vector3d& velocityEstimate_n,
-                                                                         const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss,
+                                                                         const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_np, const Eigen::Vector3d& leverArm_InsGnss,
                                                                          const Eigen::Vector3d& angularRate_ib_p, const Eigen::Matrix3d& Omega_ie_n)
 {
     // Scale factor to scale rad to milliradians
     Eigen::Matrix3d S_p = Eigen::DiagonalMatrix<double, 3>{ 1e3, 1e3, 1 };
 
-    Eigen::Vector3d deltaLLA = S_p * (positionMeasurement_lla - positionEstimate_lla - T_rn_p * (q_nb * leverArm_InsGnss));
-    Eigen::Vector3d deltaVel = velocityMeasurement_n - velocityEstimate_n - q_nb * (angularRate_ib_p.cross(leverArm_InsGnss)) + Omega_ie_n * (q_nb * leverArm_InsGnss);
+    // Math: \delta\mathbf{z}_{G,k}^{n-} = \begin{pmatrix} \mathbf{S}_p (\mathbf{\hat{p}}_{aG} - \mathbf{\hat{p}}_b - \mathbf{\hat{T}}_{r(n)}^p \mathbf{C}_p^n \mathbf{l}_{ba}^p) \\ \mathbf{\hat{v}}_{eaG}^n - \mathbf{\hat{v}}_{eb}^n - \mathbf{C}_p^n (\mathbf{\hat{\omega}}_{ib}^p \wedge \mathbf{l}_{ba}^p) + \mathbf{\hat{\Omega}}_{ie}^n \mathbf{C}_p^n \mathbf{l}_{ba}^p \end{pmatrix} \qquad \text{P. Groves}\,(14.116)\text{ adapted to platform system}
+    Eigen::Vector3d deltaLLA = S_p * (positionMeasurement_lla - positionEstimate_lla - T_rn_p * (q_np * leverArm_InsGnss));
+    Eigen::Vector3d deltaVel = velocityMeasurement_n - velocityEstimate_n - q_np * (angularRate_ib_p.cross(leverArm_InsGnss)) + Omega_ie_n * (q_np * leverArm_InsGnss);
 
     Eigen::Matrix<double, 6, 1> innovation;
     innovation << deltaLLA, deltaVel;
