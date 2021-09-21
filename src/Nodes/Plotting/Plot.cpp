@@ -822,16 +822,29 @@ void NAV::Plot::restore(json const& j)
             inputPins.at(inputPinIndex).notifyFunc.clear();
             switch (data.at(inputPinIndex).pinType)
             {
+            case PinData::PinType::Flow:
+                inputPins.at(inputPinIndex).type = Pin::Type::Flow;
+                inputPins.at(inputPinIndex).dataIdentifier = dataIdentifier;
+                inputPins.at(inputPinIndex).data = Pin::PinData(static_cast<void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId)>(&Plot::plotData));
+                break;
             case Plot::PinData::PinType::Bool:
+                inputPins.at(inputPinIndex).type = Pin::Type::Bool;
+                inputPins.at(inputPinIndex).dataIdentifier.clear();
                 inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotBoolean), 0);
                 break;
             case Plot::PinData::PinType::Int:
+                inputPins.at(inputPinIndex).type = Pin::Type::Int;
+                inputPins.at(inputPinIndex).dataIdentifier.clear();
                 inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotInteger), 0);
                 break;
             case Plot::PinData::PinType::Float:
+                inputPins.at(inputPinIndex).type = Pin::Type::Float;
+                inputPins.at(inputPinIndex).dataIdentifier.clear();
                 inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotFloat), 0);
                 break;
             case Plot::PinData::PinType::Matrix:
+                inputPins.at(inputPinIndex).type = Pin::Type::Matrix;
+                inputPins.at(inputPinIndex).dataIdentifier = { "Eigen::MatrixXd", "BlockMatrix" };
                 inputPins.at(inputPinIndex).notifyFunc.emplace_back(this, static_cast<void (Node::*)(ax::NodeEditor::LinkId)>(&Plot::plotMatrix), 0);
                 break;
             default:
@@ -874,6 +887,8 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
 
     size_t pinIndex = pinIndexFromId(endPin->id);
 
+    size_t i = 0;
+
     if (inputPins.at(pinIndex).type == Pin::Type::Flow)
     {
         data.at(pinIndex).dataIdentifier = startPin->dataIdentifier.front();
@@ -881,404 +896,404 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
         if (startPin->dataIdentifier.front() == PosVelAtt::type())
         {
             // InsObs
-            data.at(pinIndex).addPlotDataItem("Time [s]");
-            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // PosVelAtt
-            data.at(pinIndex).addPlotDataItem("Latitude [deg]");
-            data.at(pinIndex).addPlotDataItem("Longitude [deg]");
-            data.at(pinIndex).addPlotDataItem("Altitude [m]");
-            data.at(pinIndex).addPlotDataItem("North/South [m]");
-            data.at(pinIndex).addPlotDataItem("East/West [m]");
-            data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Roll [deg]");
-            data.at(pinIndex).addPlotDataItem("Pitch [deg]");
-            data.at(pinIndex).addPlotDataItem("Yaw [deg]");
-            data.at(pinIndex).addPlotDataItem("Quaternion::w");
-            data.at(pinIndex).addPlotDataItem("Quaternion::x");
-            data.at(pinIndex).addPlotDataItem("Quaternion::y");
-            data.at(pinIndex).addPlotDataItem("Quaternion::z");
+            data.at(pinIndex).addPlotDataItem(i++, "Latitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Altitude [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "North/South [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "East/West [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Roll [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Pitch [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Yaw [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Quaternion::w");
+            data.at(pinIndex).addPlotDataItem(i++, "Quaternion::x");
+            data.at(pinIndex).addPlotDataItem(i++, "Quaternion::y");
+            data.at(pinIndex).addPlotDataItem(i++, "Quaternion::z");
         }
         else if (startPin->dataIdentifier.front() == RtklibPosObs::type())
         {
             // InsObs
-            data.at(pinIndex).addPlotDataItem("Time [s]");
-            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // RtklibPosObs
-            data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Latitude [deg]");
-            data.at(pinIndex).addPlotDataItem("Longitude [deg]");
-            data.at(pinIndex).addPlotDataItem("Altitude [m]");
-            data.at(pinIndex).addPlotDataItem("North/South [m]");
-            data.at(pinIndex).addPlotDataItem("East/West [m]");
-            data.at(pinIndex).addPlotDataItem("Q [-]");
-            data.at(pinIndex).addPlotDataItem("ns [-]");
-            data.at(pinIndex).addPlotDataItem("sdx [m]");
-            data.at(pinIndex).addPlotDataItem("sdy [m]");
-            data.at(pinIndex).addPlotDataItem("sdz [m]");
-            data.at(pinIndex).addPlotDataItem("sdn [m]");
-            data.at(pinIndex).addPlotDataItem("sde [m]");
-            data.at(pinIndex).addPlotDataItem("sdu [m]");
-            data.at(pinIndex).addPlotDataItem("sdxy [m]");
-            data.at(pinIndex).addPlotDataItem("sdyz [m]");
-            data.at(pinIndex).addPlotDataItem("sdzx [m]");
-            data.at(pinIndex).addPlotDataItem("sdne [m]");
-            data.at(pinIndex).addPlotDataItem("sdeu [m]");
-            data.at(pinIndex).addPlotDataItem("sdun [m]");
-            data.at(pinIndex).addPlotDataItem("age [s]");
-            data.at(pinIndex).addPlotDataItem("ratio [-]");
+            data.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Latitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Altitude [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "North/South [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "East/West [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Q [-]");
+            data.at(pinIndex).addPlotDataItem(i++, "ns [-]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdx [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdy [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdz [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdn [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sde [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdu [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdxy [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdyz [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdzx [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdne [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdeu [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "sdun [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "age [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "ratio [-]");
         }
         else if (startPin->dataIdentifier.front() == UbloxObs::type())
         {
             // InsObs
-            data.at(pinIndex).addPlotDataItem("Time [s]");
-            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // UbloxObs
-            data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Latitude [deg]");
-            data.at(pinIndex).addPlotDataItem("Longitude [deg]");
-            data.at(pinIndex).addPlotDataItem("Altitude [m]");
-            data.at(pinIndex).addPlotDataItem("North/South [m]");
-            data.at(pinIndex).addPlotDataItem("East/West [m]");
-            data.at(pinIndex).addPlotDataItem("Velocity N [m/s]");
-            data.at(pinIndex).addPlotDataItem("Velocity E [m/s]");
-            data.at(pinIndex).addPlotDataItem("Velocity D [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Latitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Altitude [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "North/South [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "East/West [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Velocity N [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Velocity E [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Velocity D [m/s]");
         }
         else if (startPin->dataIdentifier.front() == SkydelObs::type())
         {
             // InsObs
-            data.at(pinIndex).addPlotDataItem("Time [s]");
-            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // SkydelObs
-            data.at(pinIndex).addPlotDataItem("X-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Y-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Z-ECEF [m]");
-            data.at(pinIndex).addPlotDataItem("Roll [rad]");
-            data.at(pinIndex).addPlotDataItem("Pitch [rad]");
-            data.at(pinIndex).addPlotDataItem("Yaw [rad]");
-            // data.at(pinIndex).addPlotDataItem("Latitude [deg]");
-            // data.at(pinIndex).addPlotDataItem("Longitude [deg]");
-            // data.at(pinIndex).addPlotDataItem("Altitude [m]");
-            // data.at(pinIndex).addPlotDataItem("North/South [m]");
-            // data.at(pinIndex).addPlotDataItem("East/West [m]");
-            // data.at(pinIndex).addPlotDataItem("Velocity N [m/s]");
-            // data.at(pinIndex).addPlotDataItem("Velocity E [m/s]");
-            // data.at(pinIndex).addPlotDataItem("Velocity D [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "X-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Y-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Z-ECEF [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "Roll [rad]");
+            data.at(pinIndex).addPlotDataItem(i++, "Pitch [rad]");
+            data.at(pinIndex).addPlotDataItem(i++, "Yaw [rad]");
+            // data.at(pinIndex).addPlotDataItem(i++, "Latitude [deg]");
+            // data.at(pinIndex).addPlotDataItem(i++, "Longitude [deg]");
+            // data.at(pinIndex).addPlotDataItem(i++, "Altitude [m]");
+            // data.at(pinIndex).addPlotDataItem(i++, "North/South [m]");
+            // data.at(pinIndex).addPlotDataItem(i++, "East/West [m]");
+            // data.at(pinIndex).addPlotDataItem(i++, "Velocity N [m/s]");
+            // data.at(pinIndex).addPlotDataItem(i++, "Velocity E [m/s]");
+            // data.at(pinIndex).addPlotDataItem(i++, "Velocity D [m/s]");
         }
         else if (startPin->dataIdentifier.front() == ImuObs::type())
         {
             // InsObs
-            data.at(pinIndex).addPlotDataItem("Time [s]");
-            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // ImuObs
-            data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
-            data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Mag Comp X [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag Comp Y [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag Comp Z [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Accel Comp X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel Comp Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel Comp Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Gyro Comp X [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro Comp Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro Comp Z [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Temperature [°C]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time since startup [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag uncomp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag uncomp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag uncomp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel uncomp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel uncomp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel uncomp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag Comp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag Comp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag Comp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel Comp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel Comp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel Comp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro Comp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Temperature [°C]");
         }
         else if (startPin->dataIdentifier.front() == KvhObs::type())
         {
             // InsObs
-            data.at(pinIndex).addPlotDataItem("Time [s]");
-            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // ImuObs
-            data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
-            data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Mag Comp X [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag Comp Y [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag Comp Z [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Accel Comp X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel Comp Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel Comp Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Gyro Comp X [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro Comp Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro Comp Z [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Temperature [°C]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time since startup [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag uncomp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag uncomp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag uncomp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel uncomp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel uncomp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel uncomp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag Comp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag Comp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag Comp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel Comp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel Comp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel Comp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro Comp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Temperature [°C]");
             // KvhObs
-            data.at(pinIndex).addPlotDataItem("Status [bits]");
-            data.at(pinIndex).addPlotDataItem("Sequence Number [.]");
+            data.at(pinIndex).addPlotDataItem(i++, "Status [bits]");
+            data.at(pinIndex).addPlotDataItem(i++, "Sequence Number [.]");
         }
         else if (startPin->dataIdentifier.front() == ImuObsWDelta::type())
         {
             // InsObs
-            data.at(pinIndex).addPlotDataItem("Time [s]");
-            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // ImuObs
-            data.at(pinIndex).addPlotDataItem("Time since startup [ns]");
-            data.at(pinIndex).addPlotDataItem("Mag uncomp X [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag uncomp Y [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag uncomp Z [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Accel uncomp X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel uncomp Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel uncomp Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Gyro uncomp X [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro uncomp Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro uncomp Z [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Mag Comp X [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag Comp Y [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Mag Comp Z [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Accel Comp X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel Comp Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Accel Comp Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Gyro Comp X [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro Comp Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Gyro Comp Z [rad/s]");
-            data.at(pinIndex).addPlotDataItem("Temperature [°C]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time since startup [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag uncomp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag uncomp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag uncomp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel uncomp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel uncomp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel uncomp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro uncomp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag Comp X [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag Comp Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Mag Comp Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel Comp X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel Comp Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accel Comp Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro Comp X [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyro Comp Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Temperature [°C]");
             // ImuObsWDelta
-            data.at(pinIndex).addPlotDataItem("dTime [s]");
-            data.at(pinIndex).addPlotDataItem("dTheta X [deg]");
-            data.at(pinIndex).addPlotDataItem("dTheta Y [deg]");
-            data.at(pinIndex).addPlotDataItem("dTheta Z [deg]");
-            data.at(pinIndex).addPlotDataItem("dVelocity X [m/s]");
-            data.at(pinIndex).addPlotDataItem("dVelocity Y [m/s]");
-            data.at(pinIndex).addPlotDataItem("dVelocity Z [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "dTime [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "dTheta X [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "dTheta Y [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "dTheta Z [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "dVelocity X [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "dVelocity Y [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "dVelocity Z [m/s]");
         }
         else if (startPin->dataIdentifier.front() == VectorNavBinaryOutput::type())
         {
             // InsObs
-            data.at(pinIndex).addPlotDataItem("Time [s]");
-            data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // VectorNavBinaryOutput
             // Group 2 (Time)
-            data.at(pinIndex).addPlotDataItem("Time::TimeStartup [ns]");
-            data.at(pinIndex).addPlotDataItem("Time::TimeGps [ns]");
-            data.at(pinIndex).addPlotDataItem("Time::GpsTow [ns]");
-            data.at(pinIndex).addPlotDataItem("Time::GpsWeek");
-            data.at(pinIndex).addPlotDataItem("Time::TimeSyncIn [ns]");
-            data.at(pinIndex).addPlotDataItem("Time::TimeGpsPps [ns]");
-            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::year");
-            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::month");
-            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::day");
-            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::hour");
-            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::min");
-            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::sec");
-            data.at(pinIndex).addPlotDataItem("Time::TimeUTC::ms");
-            data.at(pinIndex).addPlotDataItem("Time::SyncInCnt");
-            data.at(pinIndex).addPlotDataItem("Time::SyncOutCnt");
-            data.at(pinIndex).addPlotDataItem("Time::TimeStatus::timeOk");
-            data.at(pinIndex).addPlotDataItem("Time::TimeStatus::dateOk");
-            data.at(pinIndex).addPlotDataItem("Time::TimeStatus::utcTimeValid");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeStartup [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeGps [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::GpsTow [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::GpsWeek");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeSyncIn [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeGpsPps [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeUTC::year");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeUTC::month");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeUTC::day");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeUTC::hour");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeUTC::min");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeUTC::sec");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeUTC::ms");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::SyncInCnt");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::SyncOutCnt");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeStatus::timeOk");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeStatus::dateOk");
+            data.at(pinIndex).addPlotDataItem(i++, "Time::TimeStatus::utcTimeValid");
             // Group 3 (IMU)
-            data.at(pinIndex).addPlotDataItem("IMU::ImuStatus");
-            data.at(pinIndex).addPlotDataItem("IMU::UncompMag::X [Gauss]");
-            data.at(pinIndex).addPlotDataItem("IMU::UncompMag::Y [Gauss]");
-            data.at(pinIndex).addPlotDataItem("IMU::UncompMag::Z [Gauss]");
-            data.at(pinIndex).addPlotDataItem("IMU::UncompAccel::X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("IMU::UncompAccel::Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("IMU::UncompAccel::Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("IMU::UncompGyro::X [rad/s]");
-            data.at(pinIndex).addPlotDataItem("IMU::UncompGyro::Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem("IMU::UncompGyro::Z [rad/s]");
-            data.at(pinIndex).addPlotDataItem("IMU::Temp [Celsius]");
-            data.at(pinIndex).addPlotDataItem("IMU::Pres [kPa]");
-            data.at(pinIndex).addPlotDataItem("IMU::DeltaTime [s]");
-            data.at(pinIndex).addPlotDataItem("IMU::DeltaTheta::X [deg]");
-            data.at(pinIndex).addPlotDataItem("IMU::DeltaTheta::Y [deg]");
-            data.at(pinIndex).addPlotDataItem("IMU::DeltaTheta::Z [deg]");
-            data.at(pinIndex).addPlotDataItem("IMU::DeltaVel::X [m/s]");
-            data.at(pinIndex).addPlotDataItem("IMU::DeltaVel::Y [m/s]");
-            data.at(pinIndex).addPlotDataItem("IMU::DeltaVel::Z [m/s]");
-            data.at(pinIndex).addPlotDataItem("IMU::Mag::X [Gauss]");
-            data.at(pinIndex).addPlotDataItem("IMU::Mag::Y [Gauss]");
-            data.at(pinIndex).addPlotDataItem("IMU::Mag::Z [Gauss]");
-            data.at(pinIndex).addPlotDataItem("IMU::Accel::X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("IMU::Accel::Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("IMU::Accel::Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("IMU::AngularRate::X [rad/s]");
-            data.at(pinIndex).addPlotDataItem("IMU::AngularRate::Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem("IMU::AngularRate::Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::ImuStatus");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::UncompMag::X [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::UncompMag::Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::UncompMag::Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::UncompAccel::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::UncompAccel::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::UncompAccel::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::UncompGyro::X [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::UncompGyro::Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::UncompGyro::Z [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::Temp [Celsius]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::Pres [kPa]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::DeltaTime [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::DeltaTheta::X [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::DeltaTheta::Y [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::DeltaTheta::Z [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::DeltaVel::X [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::DeltaVel::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::DeltaVel::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::Mag::X [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::Mag::Y [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::Mag::Z [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::Accel::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::Accel::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::Accel::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::AngularRate::X [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::AngularRate::Y [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "IMU::AngularRate::Z [rad/s]");
             // Group 4 (GNSS1)
-            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::year");
-            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::month");
-            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::day");
-            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::hour");
-            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::min");
-            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::sec");
-            data.at(pinIndex).addPlotDataItem("GNSS1::UTC::ms");
-            data.at(pinIndex).addPlotDataItem("GNSS1::Tow [ns]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::Week");
-            data.at(pinIndex).addPlotDataItem("GNSS1::NumSats");
-            data.at(pinIndex).addPlotDataItem("GNSS1::Fix");
-            data.at(pinIndex).addPlotDataItem("GNSS1::PosLla::latitude [deg]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::PosLla::longitude [deg]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::PosLla::altitude [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::PosEcef::X [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::PosEcef::Y [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::PosEcef::Z [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::VelNed::N [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::VelNed::E [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::VelNed::D [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::VelEcef::X [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::VelEcef::Y [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::VelEcef::Z [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::PosU::N [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::PosU::E [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::PosU::D [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::VelU [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::TimeU [s]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::TimeInfo::Status::timeOk");
-            data.at(pinIndex).addPlotDataItem("GNSS1::TimeInfo::Status::dateOk");
-            data.at(pinIndex).addPlotDataItem("GNSS1::TimeInfo::Status::utcTimeValid");
-            data.at(pinIndex).addPlotDataItem("GNSS1::TimeInfo::LeapSeconds");
-            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::g");
-            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::p");
-            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::t");
-            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::v");
-            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::h");
-            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::n");
-            data.at(pinIndex).addPlotDataItem("GNSS1::DOP::e");
-            data.at(pinIndex).addPlotDataItem("GNSS1::SatInfo::NumSats");
-            data.at(pinIndex).addPlotDataItem("GNSS1::RawMeas::Tow [s]");
-            data.at(pinIndex).addPlotDataItem("GNSS1::RawMeas::Week");
-            data.at(pinIndex).addPlotDataItem("GNSS1::RawMeas::NumSats");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::UTC::year");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::UTC::month");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::UTC::day");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::UTC::hour");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::UTC::min");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::UTC::sec");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::UTC::ms");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::Tow [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::Week");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::NumSats");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::Fix");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::PosLla::latitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::PosLla::longitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::PosLla::altitude [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::PosEcef::X [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::PosEcef::Y [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::PosEcef::Z [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::VelNed::N [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::VelNed::E [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::VelNed::D [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::VelEcef::X [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::VelEcef::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::VelEcef::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::PosU::N [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::PosU::E [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::PosU::D [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::VelU [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::TimeU [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::TimeInfo::Status::timeOk");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::TimeInfo::Status::dateOk");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::TimeInfo::Status::utcTimeValid");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::TimeInfo::LeapSeconds");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::DOP::g");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::DOP::p");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::DOP::t");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::DOP::v");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::DOP::h");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::DOP::n");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::DOP::e");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::SatInfo::NumSats");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::RawMeas::Tow [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::RawMeas::Week");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS1::RawMeas::NumSats");
             // Group 5 (Attitude)
-            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::AttitudeQuality");
-            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::GyroSaturation");
-            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::GyroSaturationRecovery");
-            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::MagDisturbance");
-            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::MagSaturation");
-            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::AccDisturbance");
-            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::AccSaturation");
-            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::KnownMagDisturbance");
-            data.at(pinIndex).addPlotDataItem("Att::VpeStatus::KnownAccelDisturbance");
-            data.at(pinIndex).addPlotDataItem("Att::YawPitchRoll::Y [deg]");
-            data.at(pinIndex).addPlotDataItem("Att::YawPitchRoll::P [deg]");
-            data.at(pinIndex).addPlotDataItem("Att::YawPitchRoll::R [deg]");
-            data.at(pinIndex).addPlotDataItem("Att::Quaternion::w");
-            data.at(pinIndex).addPlotDataItem("Att::Quaternion::x");
-            data.at(pinIndex).addPlotDataItem("Att::Quaternion::y");
-            data.at(pinIndex).addPlotDataItem("Att::Quaternion::z");
-            data.at(pinIndex).addPlotDataItem("Att::DCM::0-0");
-            data.at(pinIndex).addPlotDataItem("Att::DCM::0-1");
-            data.at(pinIndex).addPlotDataItem("Att::DCM::0-2");
-            data.at(pinIndex).addPlotDataItem("Att::DCM::1-0");
-            data.at(pinIndex).addPlotDataItem("Att::DCM::1-1");
-            data.at(pinIndex).addPlotDataItem("Att::DCM::1-2");
-            data.at(pinIndex).addPlotDataItem("Att::DCM::2-0");
-            data.at(pinIndex).addPlotDataItem("Att::DCM::2-1");
-            data.at(pinIndex).addPlotDataItem("Att::DCM::2-2");
-            data.at(pinIndex).addPlotDataItem("Att::MagNed::N [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Att::MagNed::E [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Att::MagNed::D [Gauss]");
-            data.at(pinIndex).addPlotDataItem("Att::AccelNed::N [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Att::AccelNed::E [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Att::AccelNed::D [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Att::LinearAccelBody::X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Att::LinearAccelBody::Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Att::LinearAccelBody::Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Att::LinearAccelNed::N [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Att::LinearAccelNed::E [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Att::LinearAccelNed::D [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("Att::YprU::Y [deg]");
-            data.at(pinIndex).addPlotDataItem("Att::YprU::P [deg]");
-            data.at(pinIndex).addPlotDataItem("Att::YprU::R [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::VpeStatus::AttitudeQuality");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::VpeStatus::GyroSaturation");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::VpeStatus::GyroSaturationRecovery");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::VpeStatus::MagDisturbance");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::VpeStatus::MagSaturation");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::VpeStatus::AccDisturbance");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::VpeStatus::AccSaturation");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::VpeStatus::KnownMagDisturbance");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::VpeStatus::KnownAccelDisturbance");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::YawPitchRoll::Y [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::YawPitchRoll::P [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::YawPitchRoll::R [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::Quaternion::w");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::Quaternion::x");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::Quaternion::y");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::Quaternion::z");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::DCM::0-0");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::DCM::0-1");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::DCM::0-2");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::DCM::1-0");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::DCM::1-1");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::DCM::1-2");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::DCM::2-0");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::DCM::2-1");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::DCM::2-2");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::MagNed::N [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::MagNed::E [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::MagNed::D [Gauss]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::AccelNed::N [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::AccelNed::E [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::AccelNed::D [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::LinearAccelBody::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::LinearAccelBody::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::LinearAccelBody::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::LinearAccelNed::N [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::LinearAccelNed::E [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::LinearAccelNed::D [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::YprU::Y [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::YprU::P [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "Att::YprU::R [deg]");
             // Group 6 (INS)
-            data.at(pinIndex).addPlotDataItem("INS::InsStatus::Mode");
-            data.at(pinIndex).addPlotDataItem("INS::InsStatus::GpsFix");
-            data.at(pinIndex).addPlotDataItem("INS::InsStatus::Error::IMU");
-            data.at(pinIndex).addPlotDataItem("INS::InsStatus::Error::MagPres");
-            data.at(pinIndex).addPlotDataItem("INS::InsStatus::Error::GNSS");
-            data.at(pinIndex).addPlotDataItem("INS::InsStatus::GpsHeadingIns");
-            data.at(pinIndex).addPlotDataItem("INS::InsStatus::GpsCompass");
-            data.at(pinIndex).addPlotDataItem("INS::PosLla::latitude [deg]");
-            data.at(pinIndex).addPlotDataItem("INS::PosLla::longitude [deg]");
-            data.at(pinIndex).addPlotDataItem("INS::PosLla::altitude [m]");
-            data.at(pinIndex).addPlotDataItem("INS::PosEcef::X [m]");
-            data.at(pinIndex).addPlotDataItem("INS::PosEcef::Y [m]");
-            data.at(pinIndex).addPlotDataItem("INS::PosEcef::Z [m]");
-            data.at(pinIndex).addPlotDataItem("INS::VelBody::X [m/s]");
-            data.at(pinIndex).addPlotDataItem("INS::VelBody::Y [m/s]");
-            data.at(pinIndex).addPlotDataItem("INS::VelBody::Z [m/s]");
-            data.at(pinIndex).addPlotDataItem("INS::VelNed::N [m/s]");
-            data.at(pinIndex).addPlotDataItem("INS::VelNed::E [m/s]");
-            data.at(pinIndex).addPlotDataItem("INS::VelNed::D [m/s]");
-            data.at(pinIndex).addPlotDataItem("INS::VelEcef::X [m/s]");
-            data.at(pinIndex).addPlotDataItem("INS::VelEcef::Y [m/s]");
-            data.at(pinIndex).addPlotDataItem("INS::VelEcef::Z [m/s]");
-            data.at(pinIndex).addPlotDataItem("INS::MagEcef::X [Gauss}");
-            data.at(pinIndex).addPlotDataItem("INS::MagEcef::Y [Gauss}");
-            data.at(pinIndex).addPlotDataItem("INS::MagEcef::Z [Gauss}");
-            data.at(pinIndex).addPlotDataItem("INS::AccelEcef::X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("INS::AccelEcef::Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("INS::AccelEcef::Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("INS::LinearAccelEcef::X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("INS::LinearAccelEcef::Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("INS::LinearAccelEcef::Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem("INS::PosU [m]");
-            data.at(pinIndex).addPlotDataItem("INS::VelU [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::InsStatus::Mode");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::InsStatus::GpsFix");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::InsStatus::Error::IMU");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::InsStatus::Error::MagPres");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::InsStatus::Error::GNSS");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::InsStatus::GpsHeadingIns");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::InsStatus::GpsCompass");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::PosLla::latitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::PosLla::longitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::PosLla::altitude [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::PosEcef::X [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::PosEcef::Y [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::PosEcef::Z [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelBody::X [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelBody::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelBody::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelNed::N [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelNed::E [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelNed::D [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelEcef::X [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelEcef::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelEcef::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::MagEcef::X [Gauss}");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::MagEcef::Y [Gauss}");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::MagEcef::Z [Gauss}");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::AccelEcef::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::AccelEcef::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::AccelEcef::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::LinearAccelEcef::X [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::LinearAccelEcef::Y [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::LinearAccelEcef::Z [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::PosU [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "INS::VelU [m/s]");
             // Group 7 (GNSS2)
-            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::year");
-            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::month");
-            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::day");
-            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::hour");
-            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::min");
-            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::sec");
-            data.at(pinIndex).addPlotDataItem("GNSS2::UTC::ms");
-            data.at(pinIndex).addPlotDataItem("GNSS2::Tow [ns]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::Week");
-            data.at(pinIndex).addPlotDataItem("GNSS2::NumSats");
-            data.at(pinIndex).addPlotDataItem("GNSS2::Fix");
-            data.at(pinIndex).addPlotDataItem("GNSS2::PosLla::latitude [deg]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::PosLla::longitude [deg]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::PosLla::altitude [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::PosEcef::X [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::PosEcef::Y [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::PosEcef::Z [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::VelNed::N [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::VelNed::E [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::VelNed::D [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::VelEcef::X [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::VelEcef::Y [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::VelEcef::Z [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::PosU::N [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::PosU::E [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::PosU::D [m]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::VelU [m/s]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::TimeU [s]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::TimeInfo::Status::timeOk");
-            data.at(pinIndex).addPlotDataItem("GNSS2::TimeInfo::Status::dateOk");
-            data.at(pinIndex).addPlotDataItem("GNSS2::TimeInfo::Status::utcTimeValid");
-            data.at(pinIndex).addPlotDataItem("GNSS2::TimeInfo::LeapSeconds");
-            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::g");
-            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::p");
-            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::t");
-            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::v");
-            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::h");
-            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::n");
-            data.at(pinIndex).addPlotDataItem("GNSS2::DOP::e");
-            data.at(pinIndex).addPlotDataItem("GNSS2::SatInfo::NumSats");
-            data.at(pinIndex).addPlotDataItem("GNSS2::RawMeas::Tow [s]");
-            data.at(pinIndex).addPlotDataItem("GNSS2::RawMeas::Week");
-            data.at(pinIndex).addPlotDataItem("GNSS2::RawMeas::NumSats");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::UTC::year");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::UTC::month");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::UTC::day");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::UTC::hour");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::UTC::min");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::UTC::sec");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::UTC::ms");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::Tow [ns]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::Week");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::NumSats");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::Fix");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::PosLla::latitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::PosLla::longitude [deg]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::PosLla::altitude [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::PosEcef::X [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::PosEcef::Y [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::PosEcef::Z [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::VelNed::N [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::VelNed::E [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::VelNed::D [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::VelEcef::X [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::VelEcef::Y [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::VelEcef::Z [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::PosU::N [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::PosU::E [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::PosU::D [m]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::VelU [m/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::TimeU [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::TimeInfo::Status::timeOk");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::TimeInfo::Status::dateOk");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::TimeInfo::Status::utcTimeValid");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::TimeInfo::LeapSeconds");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::DOP::g");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::DOP::p");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::DOP::t");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::DOP::v");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::DOP::h");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::DOP::n");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::DOP::e");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::SatInfo::NumSats");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::Tow [s]");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::Week");
+            data.at(pinIndex).addPlotDataItem(i++, "GNSS2::RawMeas::NumSats");
         }
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Bool)
@@ -1286,38 +1301,38 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
         data.at(pinIndex).dataIdentifier = startPin->name;
 
         // InsObs
-        data.at(pinIndex).addPlotDataItem("Time [s]");
-        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+        data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
         // Bool
-        data.at(pinIndex).addPlotDataItem("Boolean");
+        data.at(pinIndex).addPlotDataItem(i++, "Boolean");
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Int)
     {
         data.at(pinIndex).dataIdentifier = startPin->name;
 
         // InsObs
-        data.at(pinIndex).addPlotDataItem("Time [s]");
-        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+        data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
         // Int
-        data.at(pinIndex).addPlotDataItem("Integer");
+        data.at(pinIndex).addPlotDataItem(i++, "Integer");
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Float)
     {
         data.at(pinIndex).dataIdentifier = startPin->name;
 
         // InsObs
-        data.at(pinIndex).addPlotDataItem("Time [s]");
-        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+        data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
         // Float
-        data.at(pinIndex).addPlotDataItem("Float");
+        data.at(pinIndex).addPlotDataItem(i++, "Float");
     }
     else if (inputPins.at(pinIndex).type == Pin::Type::Matrix)
     {
         data.at(pinIndex).dataIdentifier = startPin->name;
 
         // InsObs
-        data.at(pinIndex).addPlotDataItem("Time [s]");
-        data.at(pinIndex).addPlotDataItem("GPS time of week [s]");
+        data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
+        data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
         // Matrix
         if (startPin->dataIdentifier.front() == "Eigen::MatrixXd")
         {
@@ -1327,7 +1342,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
                 {
                     for (int col = 0; col < matrix->cols(); col++)
                     {
-                        data.at(pinIndex).addPlotDataItem(std::to_string(row) + ", " + std::to_string(col));
+                        data.at(pinIndex).addPlotDataItem(i++, std::to_string(row) + ", " + std::to_string(col));
                     }
                 }
             }
@@ -1341,7 +1356,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
                 {
                     for (int col = 0; col < matrix.cols(); col++)
                     {
-                        data.at(pinIndex).addPlotDataItem(std::to_string(row) + ", " + std::to_string(col));
+                        data.at(pinIndex).addPlotDataItem(i++, std::to_string(row) + ", " + std::to_string(col));
                     }
                 }
             }
