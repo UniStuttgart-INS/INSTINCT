@@ -1072,7 +1072,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // Push out the new data
     auto pvaError = std::make_shared<PVAError>();
     pvaError->insTime = gnssMeasurement->insTime;
-    pvaError->positionError_lla() = kalmanFilter.x.block<3, 1>(6, 0);
+    pvaError->positionError_lla() = kalmanFilter.x.block<3, 1>(6, 0).array() * Eigen::Array3d(1e-3, 1e-3, 1);
     pvaError->velocityError_n() = kalmanFilter.x.block<3, 1>(3, 0);
     pvaError->attitudeError_n() = kalmanFilter.x.block<3, 1>(0, 0);
 

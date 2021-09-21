@@ -379,12 +379,11 @@ void NAV::ImuIntegrator::integrateObservation()
     if (pvaError)
     {
         // LOG_DEBUG("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value(), posVelAttStates.at(1)->insTime.value());
-        Eigen::Vector3d positionError_lla = pvaError->positionError_lla().array() * Eigen::Array3d(1e-3, 1e-3, 1);
 
         for (auto& posVelAtt : posVelAttStates)
         {
             auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
-            posVelAttCorrected->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - positionError_lla);
+            posVelAttCorrected->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - pvaError->positionError_lla());
 
             posVelAttCorrected->velocity_n() = posVelAtt->velocity_n() - pvaError->velocityError_n();
 
