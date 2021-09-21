@@ -435,7 +435,7 @@ Eigen::Vector3d transportRate(const Eigen::Vector3d& latLonAlt__t1,  // [ùúô, Œ
 
 Eigen::Matrix3d AngularVelocityEarthSkew_ie_n(double latitude)
 {
-    // Math: \mathbf{\Omega}_{ie}^{n} = \begin{pmatrix} 0 & \sin(L_b) & 0 \\ -\sin(L_b) & 0 & -\cos(L_b) \\ 0 & \cos(L_b) & 0 \end{pmatrix} \qquad \text{P. Groves}\,(5.41)
+    // Math: \mathbf{\Omega}_{ie}^{n} = \omega_{ie} \begin{pmatrix} 0 & \sin(L_b) & 0 \\ -\sin(L_b) & 0 & -\cos(L_b) \\ 0 & \cos(L_b) & 0 \end{pmatrix} \qquad \text{P. Groves}\,(5.34)
     Eigen::Matrix3d Omega;
     Omega << 0, std::sin(latitude), 0,
         -std::sin(latitude), 0, -std::cos(latitude),
