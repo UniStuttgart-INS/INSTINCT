@@ -16,7 +16,7 @@ NAV::VectorNavBinary2ImuObsConverter::VectorNavBinary2ImuObsConverter()
     LOG_TRACE("{}: called", name);
     hasConfig = false;
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObsWDelta::type());
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsWDelta::type() });
 
     nm::CreateInputPin(this, "VectorNavBinaryOutput", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavBinary2ImuObsConverter::convertObs);
 }
@@ -41,9 +41,9 @@ std::string NAV::VectorNavBinary2ImuObsConverter::category()
     return "Converter";
 }
 
-void NAV::VectorNavBinary2ImuObsConverter::convertObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::VectorNavBinary2ImuObsConverter::convertObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto vnObs = std::dynamic_pointer_cast<VectorNavBinaryOutput>(nodeData);
+    auto vnObs = std::dynamic_pointer_cast<const VectorNavBinaryOutput>(nodeData);
 
     auto imuObs = std::make_shared<ImuObsWDelta>(vnObs->imuPos);
 

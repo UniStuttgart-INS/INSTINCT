@@ -26,10 +26,10 @@ NAV::SkydelNetworkStream::SkydelNetworkStream()
     name = typeStatic();
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 345, 642 };
+    guiConfigDefaultWindowSize = { 305, 70 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type());
-    nm::CreateOutputPin(this, "SkydelObs", Pin::Type::Flow, NAV::SkydelObs::type());
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
+    nm::CreateOutputPin(this, "SkydelObs", Pin::Type::Flow, { NAV::SkydelObs::type() });
 }
 
 NAV::SkydelNetworkStream::~SkydelNetworkStream()
@@ -66,10 +66,10 @@ void NAV::SkydelNetworkStream::guiConfig()
         strs << dataRate;
         str = strs.str();
     }
-    
+
     ImGui::LabelText(str.c_str(), "data rate [Hz]");
     ImGui::SameLine();
-    gui::widgets::HelpMarker("The data rate can be adjusted in Skydel: Settings/Plug-ins/<Plug-in-name>/Plug-in UI");
+    gui::widgets::HelpMarker("The data rate can be adjusted in Skydel: Settings/Plug-ins/<Plug-in-name>/Plug-in UI. Make sure to enable either WiFi or a LAN connection. Enabling both can lead to loss of data, because Skydel only knows one ip address.");
 }
 
 bool NAV::SkydelNetworkStream::resetNode()
@@ -198,7 +198,7 @@ void NAV::SkydelNetworkStream::do_receive()
                 {
                     std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - startPoint;
                     dataRate = static_cast<double>(packagesNumber - 1) / elapsed_seconds.count();
-                    
+
                     // Dynamic adaptation of data rate to a human-readable display update rate in GUI (~ 1 Hz)
                     if ((dataRate > 2) && (dataRate < 1001)) // restriction on 'reasonable' sensor data rates (Skydel max. is 1000 Hz)
                     {

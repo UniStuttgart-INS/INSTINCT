@@ -27,7 +27,7 @@ NAV::UbloxSensor::UbloxSensor()
     selectedBaudrate = baudrate2Selection(Baudrate::BAUDRATE_9600);
     sensorPort = "/dev/ttyACM0";
 
-    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, NAV::UbloxObs::type());
+    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() });
 }
 
 NAV::UbloxSensor::~UbloxSensor()

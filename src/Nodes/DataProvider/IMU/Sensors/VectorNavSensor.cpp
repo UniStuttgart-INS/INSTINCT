@@ -1251,10 +1251,10 @@ NAV::VectorNavSensor::VectorNavSensor()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 954, 783 };
 
-    nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, NAV::StringObs::type());
-    nm::CreateOutputPin(this, "Binary Output 1", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
-    nm::CreateOutputPin(this, "Binary Output 2", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
-    nm::CreateOutputPin(this, "Binary Output 3", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type());
+    nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, { NAV::StringObs::type() });
+    nm::CreateOutputPin(this, "Binary Output 1", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
+    nm::CreateOutputPin(this, "Binary Output 2", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
+    nm::CreateOutputPin(this, "Binary Output 3", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
 
     dividerFrequency = []() {
         std::map<int, int, std::greater<>> divFreq;
@@ -6046,7 +6046,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
                 // Group 4 (GNSS1)
-                if (obs->insTime->empty() && obs->gnss1Outputs)
+                if ((!obs->insTime.has_value() || obs->insTime->empty()) && obs->gnss1Outputs)
                 {
                     if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                     {
@@ -6078,7 +6078,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
                 // Group 7 (GNSS2)
-                if (obs->insTime->empty() && obs->gnss2Outputs)
+                if ((!obs->insTime.has_value() || obs->insTime->empty()) && obs->gnss2Outputs)
                 {
                     if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                     {
@@ -6110,7 +6110,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
 
-                if (obs->insTime->empty())
+                if (!obs->insTime.has_value() || obs->insTime->empty())
                 {
                     if (InsTime currentTime = util::time::GetCurrentInsTime();
                         !currentTime.empty())
@@ -6119,7 +6119,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
 
-                if (!obs->insTime->empty())
+                if (obs->insTime.has_value() && !obs->insTime->empty())
                 {
                     if (!vnSensor->lastMessageTime.at(b).empty())
                     {

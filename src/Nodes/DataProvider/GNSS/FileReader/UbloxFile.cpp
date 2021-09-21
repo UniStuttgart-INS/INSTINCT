@@ -23,7 +23,7 @@ NAV::UbloxFile::UbloxFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, NAV::UbloxObs::type(), &UbloxFile::pollData);
+    nm::CreateOutputPin(this, "UbloxObs", Pin::Type::Flow, { NAV::UbloxObs::type() }, &UbloxFile::pollData);
 }
 
 NAV::UbloxFile::~UbloxFile()
@@ -97,7 +97,7 @@ bool NAV::UbloxFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
 {
     // Get current position
     auto pos = filestream.tellg();

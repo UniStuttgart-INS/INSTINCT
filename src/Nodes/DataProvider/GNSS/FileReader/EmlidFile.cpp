@@ -23,7 +23,7 @@ NAV::EmlidFile::EmlidFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, NAV::EmlidObs::type(), &EmlidFile::pollData);
+    nm::CreateOutputPin(this, "EmlidObs", Pin::Type::Flow, { NAV::EmlidObs::type() }, &EmlidFile::pollData);
 }
 
 NAV::EmlidFile::~EmlidFile()
@@ -97,7 +97,7 @@ bool NAV::EmlidFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::EmlidFile::pollData(bool peek)
 {
     // Get current position
     auto pos = filestream.tellg();

@@ -21,8 +21,8 @@ NAV::ImuFile::ImuFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 377, 201 };
 
-    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, NAV::ImuObs::type(), &ImuFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuFile::pollData);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &headerColumns);
 }
 
 NAV::ImuFile::~ImuFile()
@@ -143,7 +143,7 @@ bool NAV::ImuFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::ImuFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
 {
     auto obs = std::make_shared<ImuObs>(imuPos);
 

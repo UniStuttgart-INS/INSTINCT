@@ -51,6 +51,10 @@ const std::map<std::string, std::vector<NodeInfo>>& RegisteredNodes();
 
 bool NodeDataTypeIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes);
 
+/// @brief Get the Parent Node Data Types of the specified Node Data Type
+/// @param[in] type The Child Node Data Type
+std::vector<std::string> GetParentNodeDataTypes(const std::string& type);
+
 /// @brief Register all available Node types for the program
 void RegisterNodeTypes();
 

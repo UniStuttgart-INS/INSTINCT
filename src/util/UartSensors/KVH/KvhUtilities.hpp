@@ -21,6 +21,6 @@ uint32_t ui32CalcImuCRC(const std::vector<uint8_t>& rawData);
 /// @brief Decrypts the provided Kvh observation
 ///
 /// @param[in, out] obs Kvh Observation to decrypt
-void decryptKvhObs(std::shared_ptr<NAV::KvhObs>& obs);
+void decryptKvhObs(const std::shared_ptr<NAV::KvhObs>& obs);
 
 } // namespace NAV::sensors::kvh

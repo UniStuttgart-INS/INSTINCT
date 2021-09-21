@@ -68,13 +68,13 @@ class Delay : public Node
     /// @brief Delays the observation
     /// @param[in] nodeData Observation to delay
     /// @param[in] linkId Id of the link over which the data is received
-    void delayObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief The amount to delay messages for
     int delayLength = 1;
 
     /// @brief Buffer to delay data
-    std::deque<std::shared_ptr<NodeData>> buffer;
+    std::deque<std::shared_ptr<const NodeData>> buffer;
 };
 
 } // namespace NAV

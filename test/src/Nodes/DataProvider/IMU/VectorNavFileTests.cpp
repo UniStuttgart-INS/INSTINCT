@@ -103,7 +103,7 @@ constexpr std::array<std::array<long double, 52>, 18> IMU_REFERENCE_DATA = { {
     { 2, 117, 200579.686418L, 103080006000, 200579686417818, 2165, 1, 1, 1, -1.6832764, 0.39868858, -0.19648349, 9.7813892, 0.17352287, -0.44804251, 0.00076052221, -0.01025579, 0.00084225507, 51.77, 95.364006, 0.010001, 0.00068908563, -0.0053813723, 0.00031916826, 0.09781041, 0.0016853331, -0.0045879013, -0.91999936, 0.2277509, -0.11368577, 9.7821188, 0.17353629, -0.4480812, 0.0014908176, -0.0099614272, 0.0003409441, 200579599583725, 2165, 1, 1, 1, 18, -145.96375, 86.917007, -19.94018, -0.32310826, -0.61099583, -0.31844005, 0.64875358, 19.898867, 0.024279552, 0.024780776 },
 } };
 
-void compareImuObservation(const std::shared_ptr<NAV::VectorNavBinaryOutput>& obs, size_t messageCounterImuData)
+void compareImuObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterImuData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
     REQUIRE(obs->insTime.has_value());
@@ -246,10 +246,10 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.csv' and compare content with ha
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<const NAV::NodeData>& data) {
         LOG_TRACE("messageCounterImuDataCsv = {}", messageCounterImuDataCsv);
 
-        compareImuObservation(std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data), messageCounterImuDataCsv);
+        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterImuDataCsv);
 
         messageCounterImuDataCsv++;
     });
@@ -273,10 +273,10 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-imu.vnb' and compare content with ha
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<const NAV::NodeData>& data) {
         LOG_TRACE("messageCounterImuDataVnb = {}", messageCounterImuDataVnb);
 
-        compareImuObservation(std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data), messageCounterImuDataVnb);
+        compareImuObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterImuDataVnb);
 
         messageCounterImuDataVnb++;
     });
@@ -442,7 +442,7 @@ constexpr std::array<std::array<long double, 137>, 13> GNSS_REFERENCE_DATA = { {
     { 2, 117, 200634.854238L, 158247505000, 200634854238272, 2165, 21, 7, 6, 7, 43, 36, 854, 1, 1, 1, 21, 7, 6, 7, 43, 36, 799, 200634799585741, 2165, 11, 4, 48.740001043999996, 8.9210809439999998, 575.77120000000002, 4163608.5703000003, 653573.2831, 4771972.9895000001, 5.631, -10.232, 0.866, -3.1591892, -10.85322, 3.0625291, 3.2097898, 2.3516643, 6.1607552, 0.14400001, 9.9999997e-10, 1, 1, 1, 18, 1.99, 1.73, 0.97999996, 1.38, 1.04, 0.89999998, 0.52999997, -85.775627, 86.490768, -89.902695, -0.70713329, 0.047085691, -0.70550054, -0.0038131834, 0.72052753, 0.14062743, 0.078516088, 1, 1, 0, 0, 0, 0, 1, 48.740001936741955, 8.9210718994832146, 575.21402435656637, 4163608.2366676731, 653572.55766372441, 4771972.6361757834, -0.38170612, -10.832948, 4.9052486, 5.6689453, -10.408255, 1.0445988, -3.2764361, -11.050019, 2.953289, 0.34624436, 0.10685552, 0.5074532, 7.2014899, -3.5411835, 6.982769, 0.81152093, -4.5443106, -0.39030248, 0.93854892, 0.084380798, 21, 7, 6, 7, 43, 36, 600, 200634600335831, 2165, 13, 4, 48.739985217408311, 8.9211079253167185, 575.67972671240568, 4163609.5100000002, 653575.44000000006, 4771971.7599999998, 5.494, -9.448, 0.93599999, -3.22, -10.07, 2.9199998, 2.5030346, 1.8158548, 4.6901588, 0.21920002, 1.9999999e-09, 1, 1, 1, 18, 1.8099999, 1.5699999, 0.89999998, 1.3, 0.88, 0.71999997, 0.5 },
 } };
 
-void compareGnssObservation(const std::shared_ptr<NAV::VectorNavBinaryOutput>& obs, size_t messageCounterGnssData)
+void compareGnssObservation(const std::shared_ptr<const NAV::VectorNavBinaryOutput>& obs, size_t messageCounterGnssData)
 {
     // ------------------------------------------------ InsTime --------------------------------------------------
     REQUIRE(obs->insTime.has_value());
@@ -726,10 +726,10 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.csv' and compare content with h
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
         LOG_TRACE("messageCounterGnssDataCsv = {}", messageCounterGnssDataCsv);
 
-        compareGnssObservation(std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data), messageCounterGnssDataCsv);
+        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterGnssDataCsv);
 
         messageCounterGnssDataCsv++;
     });
@@ -753,10 +753,10 @@ TEST_CASE("[VectorNavFile] Read 'data/vn310-gnss.vnb' and compare content with h
     //
     // ###########################################################################################################
 
-    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<NAV::NodeData>& data) {
+    nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) {
         LOG_TRACE("messageCounterGnssDataVnb = {}", messageCounterGnssDataVnb);
 
-        compareGnssObservation(std::dynamic_pointer_cast<NAV::VectorNavBinaryOutput>(data), messageCounterGnssDataVnb);
+        compareGnssObservation(std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data), messageCounterGnssDataVnb);
 
         messageCounterGnssDataVnb++;
     });

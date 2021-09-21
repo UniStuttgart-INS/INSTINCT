@@ -7,7 +7,7 @@
 
 #include "util/Time/TimeBase.hpp"
 
-void NAV::sensors::ublox::decryptUbloxObs(std::shared_ptr<NAV::UbloxObs>& obs, bool peek)
+void NAV::sensors::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& obs, bool peek)
 {
     if (obs->raw.type() == uart::protocol::Packet::Type::TYPE_BINARY)
     {

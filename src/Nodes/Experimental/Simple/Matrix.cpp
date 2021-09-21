@@ -14,7 +14,7 @@ NAV::experimental::Matrix::Matrix()
     guiConfigDefaultWindowSize = { 330, 420 };
     kind = Kind::Simple;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Matrix, "Eigen::MatrixXd", &matrix);
+    nm::CreateOutputPin(this, "", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &matrix);
 
     initMatrix = Eigen::MatrixXd::Zero(nRows, nCols);
     matrix = initMatrix;
@@ -466,7 +466,7 @@ void NAV::experimental::Matrix::updateNumberOfOutputPins()
     while (outputPins.size() - 1 < static_cast<size_t>(nBlocks))
     {
         blocks.emplace_back(matrix, std::to_string(blocks.size() + 1), 0, 0, initMatrix.rows(), initMatrix.cols());
-        nm::CreateOutputPin(this, std::to_string(blocks.size()).c_str(), Pin::Type::Matrix, "BlockMatrix", &blocks.back());
+        nm::CreateOutputPin(this, std::to_string(blocks.size()).c_str(), Pin::Type::Matrix, { "BlockMatrix" }, &blocks.back());
     }
     while (outputPins.size() - 1 > static_cast<size_t>(nBlocks))
     {

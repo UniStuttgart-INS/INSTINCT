@@ -243,7 +243,7 @@ NAV::Link* NAV::NodeManager::CreateLink(NAV::Pin* startPin, NAV::Pin* endPin)
         }
 
         startPin->callbacks.emplace_back(endPin->parentNode,
-                                         std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                         std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                          m_links.back().id);
     }
     else
@@ -317,6 +317,7 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             // Undo the Link adding on the start node
             startPin->parentNode->onDeleteLink(startPin, endPin);
             m_links.pop_back();
+            startPin->parentNode->afterDeleteLink(startPin, endPin);
             return false;
         }
 
@@ -330,7 +331,7 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             }
 
             startPin->callbacks.emplace_back(endPin->parentNode,
-                                             std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                             std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                              link.id);
         }
         else
@@ -415,7 +416,7 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
         {
             auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
                                   std::make_tuple(endPin->parentNode,
-                                                  std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                                  std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                                   linkId));
             if (iter != startPin->callbacks.end())
             {
@@ -427,7 +428,7 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
             }
 
             startPin->callbacks.emplace_back(endPin->parentNode,
-                                             std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                             std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                              link->id);
         }
         else
@@ -526,7 +527,7 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
             {
                 auto iter = std::find(startPin->callbacks.begin(), startPin->callbacks.end(),
                                       std::make_tuple(endPin->parentNode,
-                                                      std::get<void (NAV::Node::*)(const std::shared_ptr<NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
+                                                      std::get<void (NAV::Node::*)(const std::shared_ptr<const NAV::NodeData>&, ax::NodeEditor::LinkId)>(endPin->data),
                                                       linkId));
                 if (iter != startPin->callbacks.end())
                 {
@@ -547,6 +548,18 @@ bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
         if (id != m_links.end())
         {
             m_links.erase(id);
+        }
+
+        if (startPin && endPin)
+        {
+            if (startPin->parentNode)
+            {
+                startPin->parentNode->afterDeleteLink(startPin, endPin);
+            }
+            if (endPin->parentNode)
+            {
+                endPin->parentNode->afterDeleteLink(startPin, endPin);
+            }
         }
 
         flow::ApplyChanges();
@@ -592,13 +605,13 @@ NAV::Pin* NAV::NodeManager::CreateInputPin(NAV::Node* node, const char* name, NA
     return &node->inputPins.back();
 }
 
-NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::string& dataIdentifier, NAV::Pin::PinData data)
+NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, NAV::Pin::Type pinType, const std::vector<std::string>& dataIdentifier, NAV::Pin::PinData data)
 {
     LOG_TRACE("called for pin ({}) of type ({}) for node [{}]", name, std::string(pinType), node->nameId());
     node->outputPins.emplace_back(GetNextPinId(), name, pinType, Pin::Kind::Output, node);
 
     node->outputPins.back().data = data;
-    node->outputPins.back().dataIdentifier = { dataIdentifier };
+    node->outputPins.back().dataIdentifier = dataIdentifier;
 
     flow::ApplyChanges();
 
@@ -873,15 +886,15 @@ void NAV::NodeManager::Stop()
 
 #ifdef TESTING
 
-std::vector<std::pair<ax::NodeEditor::PinId, void (*)(const std::shared_ptr<NAV::NodeData>&)>> watcherPinList;
-std::vector<std::pair<ax::NodeEditor::LinkId, void (*)(const std::shared_ptr<NAV::NodeData>&)>> watcherLinkList;
+std::vector<std::pair<ax::NodeEditor::PinId, void (*)(const std::shared_ptr<const NAV::NodeData>&)>> watcherPinList;
+std::vector<std::pair<ax::NodeEditor::LinkId, void (*)(const std::shared_ptr<const NAV::NodeData>&)>> watcherLinkList;
 
-void NAV::NodeManager::RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<NodeData>&))
+void NAV::NodeManager::RegisterWatcherCallbackToOutputPin(ax::NodeEditor::PinId id, void (*callback)(const std::shared_ptr<const NodeData>&))
 {
     watcherPinList.emplace_back(id, callback);
 }
 
-void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<NodeData>&))
+void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, void (*callback)(const std::shared_ptr<const NodeData>&))
 {
     watcherLinkList.emplace_back(id, callback);
 }

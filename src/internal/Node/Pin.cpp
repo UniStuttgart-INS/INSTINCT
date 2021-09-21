@@ -27,13 +27,25 @@ bool NAV::Pin::canCreateLink(const Pin& b) const
     }
 
     if ((startPin->type == Pin::Type::Object || startPin->type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
-        && (dataIdentifier.empty() || b.dataIdentifier.empty()
-            || std::find(endPin->dataIdentifier.begin(), endPin->dataIdentifier.end(), startPin->dataIdentifier.front()) == endPin->dataIdentifier.end()))
+        && !dataIdentifierHaveCommon(dataIdentifier, b.dataIdentifier))
     {
         dataTypesMatch = false;
     }
 
-    return id != b.id && kind != b.kind && type == b.type && parentNode != b.parentNode && dataTypesMatch;
+    return id != b.id                    // Different Pins
+           && kind != b.kind             // Input <=> Output
+           && type == b.type             // Same Type (Flow, Object, ...)
+           && parentNode != b.parentNode // Different Nodes
+           && dataTypesMatch;            // Data identifier match
+}
+
+bool NAV::Pin::dataIdentifierHaveCommon(const std::vector<std::string>& a, const std::vector<std::string>& b)
+{
+    return !a.empty() && !b.empty()
+           && std::find_if(a.begin(),
+                           a.end(),
+                           [&b](const std::string& str) { return std::find(b.begin(), b.end(), str) != b.end(); })
+                  != a.end();
 }
 
 ImColor NAV::Pin::getIconColor() const
@@ -110,31 +122,27 @@ void NAV::to_json(json& j, const Pin& pin)
 {
     j = json{
         { "id", size_t(pin.id) },
-        { "type", std::string(pin.type) },
-        { "name", pin.name },
-        { "dataIdentifier", pin.dataIdentifier },
+        // { "type", std::string(pin.type) },
+        // { "name", pin.name },
+        // { "dataIdentifier", pin.dataIdentifier },
     };
 }
 void NAV::from_json(const json& j, Pin& pin)
 {
-    size_t id = 0;
-    j.at("id").get_to(id);
-    pin.id = id;
+    pin.id = j.at("id").get<size_t>();
 
-    if (j.contains("type"))
-    {
-        std::string typeString;
-        j.at("type").get_to(typeString);
-        pin.type = Pin::Type(typeString);
-    }
+    // if (j.contains("type"))
+    // {
+    //     pin.type = Pin::Type(j.at("type").get<std::string>());
+    // }
 
-    if (j.contains("name"))
-    {
-        j.at("name").get_to(pin.name);
-    }
+    // if (j.contains("name"))
+    // {
+    //     j.at("name").get_to(pin.name);
+    // }
 
-    if (j.contains("dataIdentifier"))
-    {
-        j.at("dataIdentifier").get_to(pin.dataIdentifier);
-    }
+    // if (j.contains("dataIdentifier"))
+    // {
+    //     j.at("dataIdentifier").get_to(pin.dataIdentifier);
+    // }
 }

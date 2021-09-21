@@ -45,15 +45,15 @@ NAV::Demo::Demo()
     guiConfigDefaultWindowSize = { 630, 410 };
 
     nm::CreateOutputPin(this, "", Pin::Type::Delegate, { typeStatic() }, this);
-    nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, NAV::ImuObs::type());
-    nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, NAV::InsObs::type(), &Demo::pollData);
-    nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, "", &valueBool);
-    nm::CreateOutputPin(this, "Int", Pin::Type::Int, "", &valueInt);
-    nm::CreateOutputPin(this, "Float", Pin::Type::Float, "", &valueFloat);
-    nm::CreateOutputPin(this, "Double", Pin::Type::Float, "", &valueDouble);
-    nm::CreateOutputPin(this, "String", Pin::Type::String, "", &valueString);
-    nm::CreateOutputPin(this, "Object", Pin::Type::Object, "Demo::DemoData", &valueObject);
-    nm::CreateOutputPin(this, "Matrix", Pin::Type::Matrix, "Eigen::MatrixXd", &valueMatrix);
+    nm::CreateOutputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() });
+    nm::CreateOutputPin(this, "FileReader\n Data", Pin::Type::Flow, { NAV::InsObs::type() }, &Demo::pollData);
+    nm::CreateOutputPin(this, "Bool", Pin::Type::Bool, { "" }, &valueBool);
+    nm::CreateOutputPin(this, "Int", Pin::Type::Int, { "" }, &valueInt);
+    nm::CreateOutputPin(this, "Float", Pin::Type::Float, { "" }, &valueFloat);
+    nm::CreateOutputPin(this, "Double", Pin::Type::Float, { "" }, &valueDouble);
+    nm::CreateOutputPin(this, "String", Pin::Type::String, { "" }, &valueString);
+    nm::CreateOutputPin(this, "Object", Pin::Type::Object, { "Demo::DemoData" }, &valueObject);
+    nm::CreateOutputPin(this, "Matrix", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &valueMatrix);
 
     nm::CreateInputPin(this, "Demo Node", Pin::Type::Delegate, { typeStatic() });
     nm::CreateInputPin(this, "Sensor\nData", Pin::Type::Flow, { NAV::ImuObs::type() }, &Demo::receiveSensorData);
@@ -408,16 +408,16 @@ void NAV::Demo::onDeleteLink([[maybe_unused]] Pin* startPin, [[maybe_unused]] Pi
     LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 }
 
-void NAV::Demo::receiveSensorData(const std::shared_ptr<NodeData>& /*nodeData*/, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::Demo::receiveSensorData(const std::shared_ptr<const NodeData>& /*nodeData*/, ax::NodeEditor::LinkId /*linkId*/)
 {
     LOG_INFO("{}: received Sensor Data", nameId());
 
     receivedDataFromSensorCnt++;
 }
 
-void NAV::Demo::receiveFileReaderData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::Demo::receiveFileReaderData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::dynamic_pointer_cast<InsObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<const InsObs>(nodeData);
     LOG_INFO("{}: received FileReader Data: {}", nameId(), obs->insTime->GetStringOfDate());
 
     receivedDataFromFileReaderCnt++;
@@ -458,7 +458,7 @@ void NAV::Demo::readSensorDataThread(void* userData)
     node->invokeCallbacks(OutputPortIndex_NodeData, obs);
 }
 
-std::shared_ptr<NAV::NodeData> NAV::Demo::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::Demo::pollData(bool peek)
 {
     if (iPollData >= nPollData)
     {

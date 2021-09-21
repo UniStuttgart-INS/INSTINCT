@@ -22,8 +22,8 @@ NAV::KvhFile::KvhFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 70 };
 
-    nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, NAV::KvhObs::type(), &KvhFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
+    nm::CreateOutputPin(this, "KvhObs", Pin::Type::Flow, { NAV::KvhObs::type() }, &KvhFile::pollData);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &headerColumns);
 }
 
 NAV::KvhFile::~KvhFile()
@@ -148,7 +148,7 @@ bool NAV::KvhFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::KvhFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::KvhFile::pollData(bool peek)
 {
     std::shared_ptr<KvhObs> obs = nullptr;
 

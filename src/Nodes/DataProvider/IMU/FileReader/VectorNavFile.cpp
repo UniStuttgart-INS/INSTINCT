@@ -23,7 +23,7 @@ NAV::VectorNavFile::VectorNavFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 630, 466 };
 
-    nm::CreateOutputPin(this, "Binary Output", Pin::Type::Flow, NAV::VectorNavBinaryOutput::type(), &VectorNavFile::pollData);
+    nm::CreateOutputPin(this, "Binary Output", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavFile::pollData);
 }
 
 NAV::VectorNavFile::~VectorNavFile()
@@ -380,7 +380,7 @@ void NAV::VectorNavFile::readHeader()
     }
 }
 
-std::shared_ptr<NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 {
     auto obs = std::make_shared<VectorNavBinaryOutput>(imuPos);
 

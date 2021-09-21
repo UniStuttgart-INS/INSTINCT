@@ -21,8 +21,8 @@ NAV::RtklibPosFile::RtklibPosFile()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 380, 290 };
 
-    nm::CreateOutputPin(this, "RtklibPosObs", Pin::Type::Flow, NAV::RtklibPosObs::type(), &RtklibPosFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, "std::vector<std::string>", &headerColumns);
+    nm::CreateOutputPin(this, "RtklibPosObs", Pin::Type::Flow, { NAV::RtklibPosObs::type() }, &RtklibPosFile::pollData);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &headerColumns);
 }
 
 NAV::RtklibPosFile::~RtklibPosFile()
@@ -154,7 +154,7 @@ bool NAV::RtklibPosFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
 {
     auto obs = std::make_shared<RtklibPosObs>();
     // Get current position

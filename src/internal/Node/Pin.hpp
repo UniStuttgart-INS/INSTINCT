@@ -192,8 +192,8 @@ class Pin
     };
 
     using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*,
-                                 void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId), // Input Flow, receive data
-                                 std::shared_ptr<NAV::NodeData> (Node::*)(bool)>;                          // Output Flow, read data
+                                 void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), // Input Flow, receive data
+                                 std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>;                          // Output Flow, read data
 
     /// @brief Default constructor
     Pin() = default;
@@ -222,6 +222,12 @@ class Pin
     /// @return True if it can create a link
     [[nodiscard]] bool canCreateLink(const Pin& b) const;
 
+    /// @brief Checks if the first list of data identifiers has a common entry with the second
+    /// @param[in] a First list of data identifiers
+    /// @param[in] b Second list of data identifiers
+    /// @return True if they have a common entry
+    [[nodiscard]] static bool dataIdentifierHaveCommon(const std::vector<std::string>& a, const std::vector<std::string>& b);
+
     /// @brief Get the Icon Color object
     /// @return Color struct
     [[nodiscard]] ImColor getIconColor() const;
@@ -246,13 +252,13 @@ class Pin
     /// Notify Function to call when the data is updated
     std::vector<std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> notifyFunc;
     /// Callback List
-    std::vector<std::tuple<Node*, void (Node::*)(const std::shared_ptr<NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> callbacks;
+    std::vector<std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> callbacks;
     /// One or multiple Data Identifiers (Unique name which is used for data flows)
     std::vector<std::string> dataIdentifier;
 
 #ifdef TESTING
     /// Watcher Callbacks are used in testing to check the transmitted data
-    std::vector<void (*)(const std::shared_ptr<NodeData>&)> watcherCallbacks;
+    std::vector<void (*)(const std::shared_ptr<const NodeData>&)> watcherCallbacks;
 #endif
 
   private:
