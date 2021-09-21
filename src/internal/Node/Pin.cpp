@@ -122,31 +122,27 @@ void NAV::to_json(json& j, const Pin& pin)
 {
     j = json{
         { "id", size_t(pin.id) },
-        { "type", std::string(pin.type) },
-        { "name", pin.name },
-        { "dataIdentifier", pin.dataIdentifier },
+        // { "type", std::string(pin.type) },
+        // { "name", pin.name },
+        // { "dataIdentifier", pin.dataIdentifier },
     };
 }
 void NAV::from_json(const json& j, Pin& pin)
 {
-    size_t id = 0;
-    j.at("id").get_to(id);
-    pin.id = id;
+    pin.id = j.at("id").get<size_t>();
 
-    if (j.contains("type"))
-    {
-        std::string typeString;
-        j.at("type").get_to(typeString);
-        pin.type = Pin::Type(typeString);
-    }
+    // if (j.contains("type"))
+    // {
+    //     pin.type = Pin::Type(j.at("type").get<std::string>());
+    // }
 
-    if (j.contains("name"))
-    {
-        j.at("name").get_to(pin.name);
-    }
+    // if (j.contains("name"))
+    // {
+    //     j.at("name").get_to(pin.name);
+    // }
 
-    if (j.contains("dataIdentifier"))
-    {
-        j.at("dataIdentifier").get_to(pin.dataIdentifier);
-    }
+    // if (j.contains("dataIdentifier"))
+    // {
+    //     j.at("dataIdentifier").get_to(pin.dataIdentifier);
+    // }
 }
