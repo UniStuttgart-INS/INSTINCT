@@ -139,13 +139,45 @@ class Plot : public Node
         };
 
         /// @brief Adds a plotData Element to the list
+        /// @param[in] dataIndex Index where to add the data to
         /// @param[in] displayName Display name of the contained data
-        void addPlotDataItem(const std::string& displayName)
+        void addPlotDataItem(size_t dataIndex, const std::string& displayName)
         {
-            if (std::find_if(plotData.begin(),
-                             plotData.end(),
-                             [displayName](const PlotData& plotData) { return plotData.displayName == displayName; })
-                == plotData.end())
+            if (plotData.size() > dataIndex)
+            {
+                if (plotData.at(dataIndex).displayName == displayName) // Item was restored already at this position
+                {
+                    return;
+                }
+
+                // Some other item was restored at this position
+                LOG_WARN("Adding PlotData item '{}' at position {}, but at this position exists already the item '{}'. Reordering the items to match the data. Consider resaving the flow file.",
+                         displayName, dataIndex, plotData.at(dataIndex).displayName);
+                auto searchIter = std::find_if(plotData.begin(),
+                                               plotData.end(),
+                                               [displayName](const PlotData& plotData) { return plotData.displayName == displayName; });
+                auto iter = plotData.begin();
+                std::advance(iter, dataIndex);
+                if (searchIter == plotData.end()) // Item does not exist yet. Developer added a new item to the list
+                {
+                    plotData.insert(iter, PlotData{ displayName, static_cast<size_t>(size) });
+                }
+                else // Item exists already. Developer reordered the items in the list
+                {
+                    auto tmpPlotData = *searchIter;     // Copy the oldelement
+                    plotData.erase(searchIter);         // Delete the old element
+                    plotData.insert(iter, tmpPlotData); // Put the found element at the right position
+                }
+            }
+            else if (std::find_if(plotData.begin(),
+                                  plotData.end(),
+                                  [displayName](const PlotData& plotData) { return plotData.displayName == displayName; })
+                     != plotData.end())
+            {
+                LOG_ERROR("Adding the PlotData item {} at position {}, but this plot item was found at another position already",
+                          displayName, dataIndex);
+            }
+            else // Item not there yet. Add to the end of the list
             {
                 plotData.emplace_back(displayName, static_cast<size_t>(size));
             }
@@ -243,57 +275,57 @@ class Plot : public Node
     /// @brief Plot the data on this port
     /// @param[in] nodeData Data to plot
     /// @param[in] linkId Id of the link over which the data is received
-    void plotData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void plotData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotPosVelAtt(const std::shared_ptr<PosVelAtt>& obs, size_t pinIndex);
+    void plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotPVAError(const std::shared_ptr<PVAError>& obs, size_t pinIndex);
+    void plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuBiases(const std::shared_ptr<ImuBiases>& obs, size_t pinIndex);
+    void plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs, size_t pinIndex);
+    void plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotUbloxObs(const std::shared_ptr<UbloxObs>& obs, size_t pinIndex);
+    void plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuObs(const std::shared_ptr<ImuObs>& obs, size_t pinIndex);
+    void plotImuObs(const std::shared_ptr<const ImuObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotKvhObs(const std::shared_ptr<KvhObs>& obs, size_t pinIndex);
+    void plotKvhObs(const std::shared_ptr<const KvhObs>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotImuObsWDeltaObs(const std::shared_ptr<ImuObsWDelta>& obs, size_t pinIndex);
+    void plotImuObsWDeltaObs(const std::shared_ptr<const ImuObsWDelta>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotVectorNavBinaryObs(const std::shared_ptr<VectorNavBinaryOutput>& obs, size_t pinIndex);
+    void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
 
     /// @brief Plot the data
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotSkydelObs(const std::shared_ptr<SkydelObs>& obs, size_t pinIndex);
+    void plotSkydelObs(const std::shared_ptr<const SkydelObs>& obs, size_t pinIndex);
 
     /// Data storage for each pin
     std::vector<PinData> data;

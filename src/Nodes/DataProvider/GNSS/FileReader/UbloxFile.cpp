@@ -97,7 +97,7 @@ bool NAV::UbloxFile::resetNode()
     return true;
 }
 
-std::shared_ptr<NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::UbloxFile::pollData(bool peek)
 {
     // Get current position
     auto pos = filestream.tellg();

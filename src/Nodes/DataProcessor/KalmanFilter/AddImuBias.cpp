@@ -53,9 +53,9 @@ void NAV::AddImuBias::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::AddImuBias::recvImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::AddImuBias::recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto imuObs = std::dynamic_pointer_cast<ImuObs>(nodeData);
+    auto imuObs = std::dynamic_pointer_cast<const ImuObs>(nodeData);
 
     auto imuObsCorr = std::make_shared<ImuObs>(imuObs->imuPos);
 
@@ -93,9 +93,9 @@ void NAV::AddImuBias::recvImuObs(const std::shared_ptr<NodeData>& nodeData, ax::
     invokeCallbacks(OutputPortIndex_ImuObs, imuObsCorr);
 }
 
-void NAV::AddImuBias::recvImuBiases(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::AddImuBias::recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    [[maybe_unused]] auto imuBiasObs = std::dynamic_pointer_cast<ImuBiases>(nodeData);
+    auto imuBiasObs = std::dynamic_pointer_cast<const ImuBiases>(nodeData);
 
     imuBiases.biasAccel_p += imuBiasObs->biasAccel_p;
     imuBiases.biasGyro_p += imuBiasObs->biasGyro_p;

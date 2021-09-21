@@ -82,17 +82,17 @@ class VectorNavBinaryConverter : public Node
     /// @brief Converts the VectorNavBinaryOutput observation to the selected message type
     /// @param[in] nodeData VectorNavBinaryOutput to process
     /// @param[in] linkId Id of the link over which the data is received
-    void receiveObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Converts the VectorNavBinaryOutput to a ImuObsWDelta observation
     /// @param[in] nodeData VectorNavBinaryOutput to process
     /// @return The converted data
-    std::shared_ptr<ImuObsWDelta> convert2ImuObsWDelta(const std::shared_ptr<VectorNavBinaryOutput>& vnObs);
+    std::shared_ptr<const ImuObsWDelta> convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
 
     /// @brief Converts the VectorNavBinaryOutput to a PosVelAtt observation
     /// @param[in] nodeData VectorNavBinaryOutput to process
     /// @return The converted data
-    std::shared_ptr<PosVelAtt> convert2PosVelAtt(const std::shared_ptr<VectorNavBinaryOutput>& vnObs);
+    std::shared_ptr<const PosVelAtt> convert2PosVelAtt(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
 };
 
 } // namespace NAV

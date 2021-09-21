@@ -109,6 +109,8 @@ void NAV::gui::pasteFlowElements()
 
     NAV::flow::saveLastActions = false;
 
+    LOG_DEBUG("Pasting clipboard {}", clipboard.dump(4));
+
     flow::LoadJson(clipboard, !elementsCutted);
 
     // Find Top Left Position of all new nodes to move them to the mouse cursor
@@ -149,6 +151,9 @@ void NAV::gui::pasteFlowElements()
         ed::SetNodePosition(node->id, mousePos + (ed::GetNodePosition(node->id) - leftTopMostPos));
     }
 
+    // Collect the node ids which get new links to call the restoreAfterLinks function on them
+    std::map<size_t, ed::NodeId> newlyLinkedNodes;
+
     // Recreate links
     if (clipboard.contains("links"))
     {
@@ -157,10 +162,12 @@ void NAV::gui::pasteFlowElements()
             auto startPinId = linkJson.at("startPinId").get<size_t>();
             auto endPinId = linkJson.at("endPinId").get<size_t>();
 
+            size_t startPinOldParentNodeId = 0;
             size_t startPinParentNodeIndex = 0;
             size_t startPinIndex = 0;
             Pin::Kind startPinKind = Pin::Kind::None;
 
+            size_t endPinOldParentNodeId = 0;
             size_t endPinParentNodeIndex = 0;
             size_t endPinIndex = 0;
             Pin::Kind endPinKind = Pin::Kind::None;
@@ -171,8 +178,6 @@ void NAV::gui::pasteFlowElements()
                 size_t nodeIndex = 0;
                 for (const auto& nodeJson : clipboard.at("nodes"))
                 {
-                    LOG_DEBUG("{}", nodeJson);
-
                     if (nodeJson.contains("inputPins"))
                     {
                         size_t pinIndex = 0;
@@ -180,12 +185,14 @@ void NAV::gui::pasteFlowElements()
                         {
                             if (pinJson.at("id").get<size_t>() == startPinId)
                             {
+                                startPinOldParentNodeId = nodeJson.at("id");
                                 startPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
                                 startPinIndex = pinIndex;
                                 startPinKind = Pin::Kind::Input;
                             }
                             if (pinJson.at("id").get<size_t>() == endPinId)
                             {
+                                endPinOldParentNodeId = nodeJson.at("id");
                                 endPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
                                 endPinIndex = pinIndex;
                                 endPinKind = Pin::Kind::Input;
@@ -200,12 +207,14 @@ void NAV::gui::pasteFlowElements()
                         {
                             if (pinJson.at("id").get<size_t>() == startPinId)
                             {
+                                startPinOldParentNodeId = nodeJson.at("id");
                                 startPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
                                 startPinIndex = pinIndex;
                                 startPinKind = Pin::Kind::Output;
                             }
                             if (pinJson.at("id").get<size_t>() == endPinId)
                             {
+                                endPinOldParentNodeId = nodeJson.at("id");
                                 endPinParentNodeIndex = nodeCountBeforeLoad + nodeIndex;
                                 endPinIndex = pinIndex;
                                 endPinKind = Pin::Kind::Output;
@@ -224,7 +233,33 @@ void NAV::gui::pasteFlowElements()
                 Pin* endPin = endPinKind == Pin::Kind::Input ? &nm::m_Nodes().at(endPinParentNodeIndex)->inputPins.at(endPinIndex)
                                                              : &nm::m_Nodes().at(endPinParentNodeIndex)->outputPins.at(endPinIndex);
 
-                nm::CreateLink(startPin, endPin);
+                if (!nm::FindConnectedLinkToInputPin(endPin->id))
+                {
+                    nm::CreateLink(startPin, endPin);
+                }
+
+                newlyLinkedNodes[startPinOldParentNodeId] = nm::m_Nodes().at(startPinParentNodeIndex)->id;
+                newlyLinkedNodes[endPinOldParentNodeId] = nm::m_Nodes().at(endPinParentNodeIndex)->id;
+            }
+        }
+    }
+    if (clipboard.contains("nodes"))
+    {
+        for (auto [oldId, newId] : newlyLinkedNodes)
+        {
+            auto* node = nm::FindNode(newId);
+
+            if (clipboard.at("nodes").contains("node-" + std::to_string(oldId)))
+            {
+                [[maybe_unused]] auto* oldNode = nm::FindNode(oldId);
+
+                LOG_DEBUG("Calling restoreAtferLink() for new node '{}', which was copied from node '{}'", node->nameId(), oldNode->nameId());
+
+                const auto& nodeJson = clipboard.at("nodes").at("node-" + std::to_string(oldId));
+                if (nodeJson.contains("data"))
+                {
+                    node->restoreAtferLink(nodeJson.at("data"));
+                }
             }
         }
     }

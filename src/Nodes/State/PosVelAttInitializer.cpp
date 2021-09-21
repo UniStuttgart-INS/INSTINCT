@@ -501,14 +501,14 @@ void NAV::PosVelAttInitializer::finalizeInit()
     }
 }
 
-void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     if (posVelAttInitialized.at(3))
     {
         return;
     }
 
-    auto obs = std::dynamic_pointer_cast<ImuObs>(nodeData);
+    auto obs = std::dynamic_pointer_cast<const ImuObs>(nodeData);
 
     if (!obs->timeSinceStartup.has_value())
     {
@@ -525,10 +525,10 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
     const auto& imuPosition = obs->imuPos;
 
     // Choose compenated data if available, otherwise uncompensated
-    if (!(obs->magUncompXYZ.has_value()))
+    if (!overrideRollPitchYaw.at(2) && !obs->magUncompXYZ.has_value())
     {
-        obs->magUncompXYZ.emplace(0.0, 0.0, 0.0);
-        LOG_INFO("No magnetometer data available. Taking a vector of zeros instead."); // TODO: Rework this, so it in general checks if the magnetometer has a value and then does not calculate the heading without it
+        LOG_ERROR("No magnetometer data available. Please override the Yaw angle.");
+        return;
     }
     const Eigen::Vector3d& mag_p = obs->magCompXYZ.has_value() ? obs->magCompXYZ.value() : obs->magUncompXYZ.value();
     const Eigen::Vector3d& accel_p = obs->accelCompXYZ.has_value() ? obs->accelCompXYZ.value() : obs->accelUncompXYZ.value();
@@ -573,7 +573,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<NodeData>& n
     finalizeInit();
 }
 
-void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
+void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId)
 {
     if (posVelAttInitialized.at(3))
     {
@@ -586,15 +586,15 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<NodeData>& 
         {
             if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
-                receiveRtklibPosObs(std::dynamic_pointer_cast<RtklibPosObs>(nodeData));
+                receiveRtklibPosObs(std::dynamic_pointer_cast<const RtklibPosObs>(nodeData));
             }
             else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
             {
-                receiveUbloxObs(std::dynamic_pointer_cast<UbloxObs>(nodeData));
+                receiveUbloxObs(std::dynamic_pointer_cast<const UbloxObs>(nodeData));
             }
             else if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
             {
-                receivePosVelAttObs(std::dynamic_pointer_cast<PosVelAtt>(nodeData));
+                receivePosVelAttObs(std::dynamic_pointer_cast<const PosVelAtt>(nodeData));
             }
         }
     }
@@ -602,7 +602,7 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<NodeData>& 
     finalizeInit();
 }
 
-void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>& obs)
+void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const UbloxObs>& obs)
 {
     if (obs->msgClass == sensors::ublox::UbxClass::UBX_CLASS_NAV)
     {
@@ -670,7 +670,7 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<UbloxObs>&
     }
 }
 
-void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs)
+void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs)
 {
     if (obs->position_ecef.has_value())
     {
@@ -698,7 +698,7 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<Rtklib
     }
 }
 
-void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<PosVelAtt>& obs)
+void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs)
 {
     p_ecef_init = obs->position_ecef();
     posVelAttInitialized.at(0) = true;

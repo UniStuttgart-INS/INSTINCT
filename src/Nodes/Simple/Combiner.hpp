@@ -63,7 +63,7 @@ class Combiner : public Node
     /// @brief Receive data
     /// @param[in] nodeData Observation received
     /// @param[in] linkId Id of the link over which the data is received
-    void receiveData(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void receiveData(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 };
 
 } // namespace NAV

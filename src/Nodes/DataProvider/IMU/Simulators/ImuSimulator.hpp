@@ -65,7 +65,7 @@ class ImuSimulator : public Imu
     /// @brief Polls the next simulated data
     /// @param[in] peek Specifies if the data should be peeked or read
     /// @return The simulated observation
-    [[nodiscard]] std::shared_ptr<NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
 
     /// Global starttime
     InsTime startTime;

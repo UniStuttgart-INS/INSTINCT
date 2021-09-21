@@ -170,7 +170,7 @@ void NAV::FlowExecutor::execute()
 #endif
             )
             {
-                auto* callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&outputPin.data);
+                auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&outputPin.data);
                 if (callback != nullptr && *callback != nullptr)
                 {
                     LOG_DEBUG("Searching node {} on output pin {} (id {}) for data", node->nameId(), node->pinIndexFromId(outputPin.id), size_t(outputPin.id));
@@ -178,7 +178,7 @@ void NAV::FlowExecutor::execute()
                     while (true)
                     {
                         // Check if data available (peek = true)
-                        if (auto obs = std::dynamic_pointer_cast<NAV::InsObs>((node->**callback)(true)))
+                        if (auto obs = std::dynamic_pointer_cast<const NAV::InsObs>((node->**callback)(true)))
                         {
                             // Check if data has a time
                             if (obs->insTime.has_value())
@@ -215,7 +215,7 @@ void NAV::FlowExecutor::execute()
     {
         Pin* pin = it->second;
         Node* node = pin->parentNode;
-        auto* callback = std::get_if<std::shared_ptr<NAV::NodeData> (Node::*)(bool)>(&pin->data);
+        auto* callback = std::get_if<std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>(&pin->data);
         if (callback != nullptr && *callback != nullptr)
         {
             // Update the global time
@@ -231,7 +231,7 @@ void NAV::FlowExecutor::execute()
             while (true)
             {
                 // Check if data available (peek = true)
-                if (auto obs = std::dynamic_pointer_cast<NAV::InsObs>((node->**callback)(true)))
+                if (auto obs = std::dynamic_pointer_cast<const NAV::InsObs>((node->**callback)(true)))
                 {
                     // Check if data has a time
                     if (obs->insTime.has_value())

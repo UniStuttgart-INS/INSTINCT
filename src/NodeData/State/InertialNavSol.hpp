@@ -47,7 +47,7 @@ class InertialNavSol : public PosVelAtt
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Imu observation used to calculate the integrated navigation solution
-    std::shared_ptr<ImuObs> imuObs = nullptr;
+    std::shared_ptr<const ImuObs> imuObs = nullptr;
 };
 
 } // namespace NAV

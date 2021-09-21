@@ -17,7 +17,7 @@ namespace NAV::sensors::emlid
 ///
 /// @param[in, out] obs Emlid Observation to decrypt
 /// @param[in] peek Specifies if the data should be peeked or read
-void decryptEmlidObs(std::shared_ptr<NAV::EmlidObs>& obs, bool peek = false);
+void decryptEmlidObs(const std::shared_ptr<NAV::EmlidObs>& obs, bool peek = false);
 
 /// @brief Calculates the two UBX checksums for the provided data vector
 ///

@@ -51,12 +51,12 @@ class AddImuBias : public Node
     /// @brief Receive function for ImuObs
     /// @param[in] nodeData Observation received
     /// @param[in] linkId Id of the link over which the data is received
-    void recvImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive function for ImuBiases
     /// @param[in] nodeData Observation received
     /// @param[in] linkId Id of the link over which the data is received
-    void recvImuBiases(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// Pointer to the most recent imu biases
     ImuBiases imuBiases;

@@ -72,24 +72,24 @@ class PosVelAttInitializer : public Node
     /// @brief Receive Imu Observations
     /// @param[in] nodeData Imu Data
     /// @param[in] linkId Id of the link over which the data is received
-    void receiveImuObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void receiveImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive Gnss Observations
     /// @param[in] nodeData Gnss Data
     /// @param[in] linkId Id of the link over which the data is received
-    void receiveGnssObs(const std::shared_ptr<NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void receiveGnssObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive Ublox Observations
     /// @param[in] obs Ublox Data
-    void receiveUbloxObs(const std::shared_ptr<UbloxObs>& obs);
+    void receiveUbloxObs(const std::shared_ptr<const UbloxObs>& obs);
 
     /// @brief Receive Ublox Observations
     /// @param[in] obs RtklibPos Data
-    void receiveRtklibPosObs(const std::shared_ptr<RtklibPosObs>& obs);
+    void receiveRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs);
 
     /// @brief Receive PosVelAtt Observations
     /// @param[in] obs PosVelAtt Data
-    void receivePosVelAttObs(const std::shared_ptr<PosVelAtt>& obs);
+    void receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs);
 
     /// Time in [s] to initialize the state
     double initDuration = 5.0;
