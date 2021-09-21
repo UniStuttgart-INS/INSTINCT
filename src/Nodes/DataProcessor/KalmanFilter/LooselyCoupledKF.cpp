@@ -735,7 +735,8 @@ bool NAV::LooselyCoupledKF::initialize()
         variance_accelBias,                       // Accelerometer Bias covariance
         variance_gyroBias;                        // Gyroscope Bias covariance
 
-    LOG_DEBUG("LooselyCoupledKF initialized");
+    LOG_DEBUG("{}: initialized", nameId());
+    LOG_DEBUG("{}:\n", kalmanFilter.P);
 
     return true;
 }
@@ -878,9 +879,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
             kalmanFilter.Q = kalmanFilter.Phi * B.block<15, 15>(0, 15);
         }
 
-        // LOG_DEBUG("A: \n{}", A);
-        // LOG_DEBUG("B: \n{}", B);
-        // LOG_DEBUG("G: \n{}", G);
+        // LOG_DEBUG("{}: A \n{}\n", nameId(), A);
+        // LOG_DEBUG("{}: B \n{}\n", nameId(), B);
+        // LOG_DEBUG("{}: G \n{}\n", nameId(), G);
     }
     else if (phiCalculation == PhiCalculation::Taylor1)
     {
@@ -924,26 +925,24 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // Averaging of P to avoid numerical problems with symmetry (did not work)
     // kalmanFilter.P = ((kalmanFilter.P + kalmanFilter.P.transpose()) / 2.0);
 
-    // LOG_DEBUG("F: \n{}", F);
-    // LOG_DEBUG("Phi: \n{}", kalmanFilter.Phi);
+    // LOG_DEBUG("{}: F\n{}\n", nameId(), F);
+    // LOG_DEBUG("{}: Phi\n{}\n", nameId(), kalmanFilter.Phi);
 
-    // LOG_DEBUG("Q: \n{}", kalmanFilter.Q);
-    // LOG_DEBUG("Q - Q^T: \n{}", kalmanFilter.Q - kalmanFilter.Q.transpose());
+    // LOG_DEBUG("{}: Q\n{}\n", nameId(), kalmanFilter.Q);
+    // LOG_DEBUG("{}: Q - Q^T\n{}\n", nameId(), kalmanFilter.Q - kalmanFilter.Q.transpose());
 
-    // LOG_DEBUG("x: \n{}", kalmanFilter.x);
+    // LOG_DEBUG("{}: x\n{}\n", nameId(), kalmanFilter.x);
 
-    // LOG_DEBUG("P: \n{}", kalmanFilter.P);
-    // LOG_DEBUG("P - P^T: \n{}", kalmanFilter.P - kalmanFilter.P.transpose());
+    // LOG_DEBUG("{}: P\n{}\n", nameId(), kalmanFilter.P);
+    // LOG_DEBUG("{}: P - P^T\n{}\n", nameId(), kalmanFilter.P - kalmanFilter.P.transpose());
 
-    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(kalmanFilter.P);
-    // auto rank = lu_decomp.rank();
-    // LOG_DEBUG("P.rank: {}", rank);
-    // static int counter = 0;
-    // counter++;
-    // if (rank != 15)
-    // {
-    //     LOG_WARN("{}: P has rank {} now after predicting {} times.", nameId(), rank, counter);
-    // }
+    Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(kalmanFilter.P);
+    auto rank = lu_decomp.rank();
+    // LOG_DEBUG("{}: P.rank = {}", nameId(), rank);
+    if (rank != 15)
+    {
+        LOG_WARN("{}: P.rank = {}", nameId(), rank);
+    }
 }
 
 void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const PosVelAtt>& gnssMeasurement)
@@ -1027,9 +1026,12 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
                                            T_rn_p, quaternion_np__t1, leverArm_InsGnss, angularRate_p, Omega_ie_n);
     notifyOutputValueChanged(OutputPortIndex_z);
 
-    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp3(kalmanFilter.H * kalmanFilter.P * kalmanFilter.H.transpose() + kalmanFilter.R);
-    // auto rank3 = lu_decomp3.rank();
-    // LOG_DEBUG("HPH^T + R.rank: {}", rank3);
+    Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp3(kalmanFilter.H * kalmanFilter.P * kalmanFilter.H.transpose() + kalmanFilter.R);
+    auto rank3 = lu_decomp3.rank();
+    if (rank3 != 6)
+    {
+        LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank3);
+    }
 
     // 7. Calculate the Kalman gain matrix K_k
     // 9. Update the state vector estimate from x(-) to x(+)
@@ -1045,29 +1047,38 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // Averaging of P to avoid numerical problems with symmetry (did not work)
     // kalmanFilter.P = ((kalmanFilter.P + kalmanFilter.P.transpose()) / 2.0);
 
-    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp1(kalmanFilter.H * kalmanFilter.P * kalmanFilter.H.transpose() + kalmanFilter.R);
-    // auto rank1 = lu_decomp1.rank();
-    // LOG_DEBUG("HPH^T + R.rank: {}", rank1);
+    Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp1(kalmanFilter.H * kalmanFilter.P * kalmanFilter.H.transpose() + kalmanFilter.R);
+    auto rank1 = lu_decomp1.rank();
+    if (rank1 != 6)
+    {
+        LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank1);
+    }
 
-    // Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp2(kalmanFilter.K);
-    // auto rank2 = lu_decomp2.rank();
-    // LOG_DEBUG("K.rank: {}", rank2);
+    Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp2(kalmanFilter.K);
+    auto rank2 = lu_decomp2.rank();
+    if (rank2 != 6)
+    {
+        LOG_WARN("{}: K.rank = {}", nameId(), rank2);
+    }
 
-    // LOG_DEBUG("H: \n{}", kalmanFilter.H);
-    // LOG_DEBUG("R: \n{}", kalmanFilter.R);
-    // LOG_DEBUG("z: \n{}", kalmanFilter.z);
+    // LOG_DEBUG("{}: H\n{}\n", nameId(), kalmanFilter.H);
+    // LOG_DEBUG("{}: R\n{}\n", nameId(), kalmanFilter.R);
+    // LOG_DEBUG("{}: z\n{}\n", nameId(), kalmanFilter.z);
 
-    // LOG_DEBUG("K: \n{}", kalmanFilter.K);
-    // LOG_DEBUG("x: \n{}", kalmanFilter.x);
-    // LOG_DEBUG("P: \n{}", kalmanFilter.P);
+    // LOG_DEBUG("{}: K\n{}\n", nameId(), kalmanFilter.K);
+    // LOG_DEBUG("{}: x\n{}\n", nameId(), kalmanFilter.x);
+    // LOG_DEBUG("{}: P\n{}\n", nameId(), kalmanFilter.P);
 
-    // LOG_DEBUG("K * z: \n{}", kalmanFilter.K * kalmanFilter.z);
+    // LOG_DEBUG("{}: K * z\n{}\n", nameId(), kalmanFilter.K * kalmanFilter.z);
 
-    // LOG_DEBUG("P - P^T: \n{}", kalmanFilter.P - kalmanFilter.P.transpose());
+    // LOG_DEBUG("{}: P - P^T\n{}\n", nameId(), kalmanFilter.P - kalmanFilter.P.transpose());
 
-    // Eigen::FullPivLU<Eigen::MatrixXd> decomp(kalmanFilter.P);
-    // auto rank = decomp.rank();
-    // LOG_DEBUG("P.rank: {}", rank);
+    Eigen::FullPivLU<Eigen::MatrixXd> decomp(kalmanFilter.P);
+    auto rank = decomp.rank();
+    if (rank != 15)
+    {
+        LOG_WARN("{}: P.rank = {}", nameId(), rank);
+    }
 
     // Push out the new data
     auto pvaError = std::make_shared<PVAError>();
