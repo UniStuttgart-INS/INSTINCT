@@ -1,0 +1,341 @@
+{
+    "links": {
+        "link-122": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 118,
+            "id": 122,
+            "startPinId": 114
+        },
+        "link-123": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 120,
+            "id": 123,
+            "startPinId": 115
+        }
+    },
+    "nodes": {
+        "node-117": {
+            "data": {
+                "UartSensor": {
+                    "sensorBaudrate": 0,
+                    "sensorPort": "/dev/ttyUSB0"
+                },
+                "asciiOutputBufferSize": 10,
+                "asyncDataOutputFrequency": 40,
+                "asyncDataOutputType": 0,
+                "binaryOutputRegister1": {
+                    "asyncMode": 1,
+                    "attitudeField": 262,
+                    "commonField": 0,
+                    "gps2Field": 0,
+                    "gpsField": 4102,
+                    "imuField": 2046,
+                    "insField": 0,
+                    "rateDivisor": 8,
+                    "timeField": 525
+                },
+                "binaryOutputRegister1-Frequency": "100 Hz",
+                "binaryOutputRegister2": {
+                    "asyncMode": 1,
+                    "attitudeField": 262,
+                    "commonField": 0,
+                    "gps2Field": 16382,
+                    "gpsField": 16382,
+                    "imuField": 0,
+                    "insField": 2047,
+                    "rateDivisor": 160,
+                    "timeField": 525
+                },
+                "binaryOutputRegister2-Frequency": "5 Hz",
+                "binaryOutputRegister3": {
+                    "asyncMode": 0,
+                    "attitudeField": 0,
+                    "commonField": 0,
+                    "gps2Field": 0,
+                    "gpsField": 0,
+                    "imuField": 0,
+                    "insField": 0,
+                    "rateDivisor": 800,
+                    "timeField": 0
+                },
+                "binaryOutputRegister3-Frequency": "1 Hz",
+                "communicationProtocolControlRegister": {
+                    "errorMode": 1,
+                    "serialChecksum": 1,
+                    "serialCount": 0,
+                    "serialStatus": 0,
+                    "spiChecksum": 0,
+                    "spiCount": 0,
+                    "spiStatus": 0
+                },
+                "deltaThetaAndDeltaVelocityConfigurationRegister": {
+                    "accelCompensation": 0,
+                    "earthRateCorrection": 0,
+                    "gyroCompensation": 0,
+                    "integrationFrame": 0
+                },
+                "filterStartupGyroBias": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "gpsAntennaOffset": [
+                    -0.08799999952316284,
+                    0.2370000034570694,
+                    -0.07020000368356705
+                ],
+                "gpsCompassBaselineRegister": {
+                    "position": [
+                        0.0,
+                        -0.4740000069141388,
+                        0.0
+                    ],
+                    "uncertainty": [
+                        0.009999999776482582,
+                        0.009999999776482582,
+                        0.019999999552965164
+                    ]
+                },
+                "gpsConfigurationRegister": {
+                    "antPow": 1,
+                    "mode": 0,
+                    "ppsSource": 0,
+                    "rate": 5
+                },
+                "imuFilteringConfigurationRegister": {
+                    "accelFilterMode": 3,
+                    "accelWindowSize": 4,
+                    "gyroFilterMode": 3,
+                    "gyroWindowSize": 4,
+                    "magFilterMode": 0,
+                    "magWindowSize": 0,
+                    "presFilterMode": 0,
+                    "presWindowSize": 0,
+                    "tempFilterMode": 3,
+                    "tempWindowSize": 4
+                },
+                "insBasicConfigurationRegisterVn300": {
+                    "ahrsAiding": true,
+                    "estBaseline": true,
+                    "scenario": 3
+                },
+                "magneticAndGravityReferenceVectorsRegister": {
+                    "accRef": [
+                        0.0,
+                        0.0,
+                        -9.793745994567871
+                    ],
+                    "magRef": [
+                        1.0,
+                        0.0,
+                        1.7999999523162842
+                    ]
+                },
+                "magnetometerCalibrationControlRegister": {
+                    "convergeRate": 5,
+                    "hsiMode": 1,
+                    "hsiOutput": 3
+                },
+                "referenceFrameRotationMatrix": [
+                    2.220446049250313e-16,
+                    2.220446049250313e-16,
+                    -1.0,
+                    -1.0,
+                    0.0,
+                    -2.220446049250313e-16,
+                    0.0,
+                    1.0,
+                    2.220446049250313e-16
+                ],
+                "referenceVectorConfigurationRegister": {
+                    "position": [
+                        48.780801,
+                        9.172082,
+                        327.412
+                    ],
+                    "recalcThreshold": 1000,
+                    "useGravityModel": true,
+                    "useMagModel": true,
+                    "year": 0.0
+                },
+                "sensorModel": 1,
+                "startupFilterBiasEstimateRegister": {
+                    "accelBias": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "gyroBias": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "pressureBias": 0.0
+                },
+                "synchronizationControlRegister": {
+                    "syncInEdge": 0,
+                    "syncInMode": 3,
+                    "syncInSkipFactor": 0,
+                    "syncOutMode": 6,
+                    "syncOutPolarity": 1,
+                    "syncOutPulseWidth": 100000000,
+                    "syncOutSkipFactor": 0
+                },
+                "velocityCompensationControlRegister": {
+                    "mode": 1,
+                    "rateTuning": 0.009999999776482582,
+                    "velocityTuning": 0.10000000149011612
+                },
+                "vpeAccelerometerBasicTuningRegister": {
+                    "adaptiveFiltering": [
+                        5.0,
+                        5.0,
+                        5.0
+                    ],
+                    "adaptiveTuning": [
+                        3.0,
+                        3.0,
+                        3.0
+                    ],
+                    "baseTuning": [
+                        6.0,
+                        6.0,
+                        6.0
+                    ]
+                },
+                "vpeBasicControlRegister": {
+                    "enable": 1,
+                    "filteringMode": 1,
+                    "headingMode": 1,
+                    "tuningMode": 1
+                },
+                "vpeGyroBasicTuningRegister": {
+                    "adaptiveTuning": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "angularWalkVariance": [
+                        8.0,
+                        8.0,
+                        8.0
+                    ],
+                    "baseTuning": [
+                        4.0,
+                        4.0,
+                        4.0
+                    ]
+                },
+                "vpeMagnetometerBasicTuningRegister": {
+                    "adaptiveFiltering": [
+                        5.5,
+                        5.5,
+                        5.5
+                    ],
+                    "adaptiveTuning": [
+                        5.0,
+                        5.0,
+                        5.0
+                    ],
+                    "baseTuning": [
+                        4.0,
+                        4.0,
+                        4.0
+                    ]
+                }
+            },
+            "enabled": true,
+            "id": 117,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VectorNavSensor",
+            "outputPins": [
+                {
+                    "id": 113
+                },
+                {
+                    "id": 114
+                },
+                {
+                    "id": 115
+                },
+                {
+                    "id": 116
+                }
+            ],
+            "pos": {
+                "x": 359.0,
+                "y": 58.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavSensor"
+        },
+        "node-119": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 2,
+                    "path": "logs/vn310-imu.csv"
+                }
+            },
+            "enabled": true,
+            "id": 119,
+            "inputPins": [
+                {
+                    "id": 118
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavDataLogger - IMU",
+            "outputPins": [],
+            "pos": {
+                "x": 664.0,
+                "y": 14.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavDataLogger"
+        },
+        "node-121": {
+            "data": {
+                "FileWriter": {
+                    "fileType": 2,
+                    "path": "logs/vn310-gnss.csv"
+                }
+            },
+            "enabled": true,
+            "id": 121,
+            "inputPins": [
+                {
+                    "id": 120
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavDataLogger - GNSS",
+            "outputPins": [],
+            "pos": {
+                "x": 675.0,
+                "y": 127.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavDataLogger"
+        }
+    }
+}

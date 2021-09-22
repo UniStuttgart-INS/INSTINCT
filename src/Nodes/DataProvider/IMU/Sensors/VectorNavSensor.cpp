@@ -2642,31 +2642,32 @@ void NAV::VectorNavSensor::guiConfig()
             dcm << referenceFrameRotationMatrix.e00, referenceFrameRotationMatrix.e01, referenceFrameRotationMatrix.e02,
                 referenceFrameRotationMatrix.e10, referenceFrameRotationMatrix.e11, referenceFrameRotationMatrix.e12,
                 referenceFrameRotationMatrix.e20, referenceFrameRotationMatrix.e21, referenceFrameRotationMatrix.e22;
+            Eigen::Quaterniond q_bp = Eigen::Quaterniond(dcm);
 
-            Eigen::Vector3d eulerRot = trafo::rad2deg3(trafo::quat2eulerZYX(Eigen::Quaterniond(dcm)));
+            Eigen::Vector3d eulerRot = trafo::rad2deg3(trafo::quat2eulerZYX(q_bp.conjugate()));
             std::array<float, 3> imuRot = { static_cast<float>(eulerRot.x()), static_cast<float>(eulerRot.y()), static_cast<float>(eulerRot.z()) };
             if (ImGui::InputFloat3(fmt::format("##rotationAngles{}", size_t(id)).c_str(), imuRot.data()))
             {
                 // (-180:180] x (-90:90] x (-180:180]
-                if (imuRot.at(0) < -180)
+                if (imuRot.at(0) < -179.9999F)
                 {
-                    imuRot.at(0) = -180;
+                    imuRot.at(0) = -179.9999F;
                 }
                 if (imuRot.at(0) > 180)
                 {
                     imuRot.at(0) = 180;
                 }
-                if (imuRot.at(1) < -90)
+                if (imuRot.at(1) < -89.9999F)
                 {
-                    imuRot.at(1) = -90;
+                    imuRot.at(1) = -89.9999F;
                 }
                 if (imuRot.at(1) > 90)
                 {
                     imuRot.at(1) = 90;
                 }
-                if (imuRot.at(2) < -180)
+                if (imuRot.at(2) < -179.9999F)
                 {
-                    imuRot.at(2) = -180;
+                    imuRot.at(2) = -179.9999F;
                 }
                 if (imuRot.at(2) > 180)
                 {
@@ -6033,6 +6034,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                                 && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
                             {
                                 obs->insTime.emplace(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
+                                util::time::SetCurrentTime(obs->insTime.value());
                             }
                             else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
                             {
@@ -6041,74 +6043,76 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                                 auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
 
                                 obs->insTime.emplace(InsTime_GPSweekTow(0, week, tow));
+                                util::time::SetCurrentTime(obs->insTime.value());
                             }
                         }
                     }
                 }
+                // TODO: Calculate time from GNSS. The value only changes with the GNSS update rate. Therefore all IMU messages in between have the same time
                 // Group 4 (GNSS1)
-                if ((!obs->insTime.has_value() || obs->insTime->empty()) && obs->gnss1Outputs)
-                {
-                    if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
-                    {
-                        if (obs->gnss1Outputs->timeInfo.status.dateOk() && obs->gnss1Outputs->timeInfo.status.timeOk()
-                            && (((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                                 && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
-                                || obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS))
-                        {
-                            if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                                && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
-                            {
-                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
-                            }
-                            else // obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS
-                            {
-                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.tow * 1e-9L));
-                            }
-                        }
-                        else if (obs->gnss1Outputs->timeInfo.status.utcTimeValid()
-                                 && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                        {
-                            obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
-                                                                obs->gnss1Outputs->timeUtc.month,
-                                                                obs->gnss1Outputs->timeUtc.day,
-                                                                obs->gnss1Outputs->timeUtc.hour,
-                                                                obs->gnss1Outputs->timeUtc.min,
-                                                                obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
-                        }
-                    }
-                }
-                // Group 7 (GNSS2)
-                if ((!obs->insTime.has_value() || obs->insTime->empty()) && obs->gnss2Outputs)
-                {
-                    if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
-                    {
-                        if (obs->gnss2Outputs->timeInfo.status.dateOk() && obs->gnss2Outputs->timeInfo.status.timeOk()
-                            && (((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                                 && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
-                                || obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS))
-                        {
-                            if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
-                                && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
-                            {
-                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
-                            }
-                            else // obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS
-                            {
-                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->raw.week, obs->gnss2Outputs->raw.tow * 1e-9L));
-                            }
-                        }
-                        else if (obs->gnss2Outputs->timeInfo.status.utcTimeValid()
-                                 && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
-                        {
-                            obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
-                                                                obs->gnss2Outputs->timeUtc.month,
-                                                                obs->gnss2Outputs->timeUtc.day,
-                                                                obs->gnss2Outputs->timeUtc.hour,
-                                                                obs->gnss2Outputs->timeUtc.min,
-                                                                obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
-                        }
-                    }
-                }
+                // if ((!obs->insTime.has_value() || obs->insTime->empty()) && obs->gnss1Outputs)
+                // {
+                //     if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                //     {
+                //         if (obs->gnss1Outputs->timeInfo.status.dateOk() && obs->gnss1Outputs->timeInfo.status.timeOk()
+                //             && (((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                //                  && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                //                 || obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS))
+                //         {
+                //             if ((obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                //                 && (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                //             {
+                //                 obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->week, obs->gnss1Outputs->tow * 1e-9L));
+                //             }
+                //             else // obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS
+                //             {
+                //                 obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.tow * 1e-9L));
+                //             }
+                //         }
+                //         else if (obs->gnss1Outputs->timeInfo.status.utcTimeValid()
+                //                  && obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                //         {
+                //             obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss1Outputs->timeUtc.year,
+                //                                                 obs->gnss1Outputs->timeUtc.month,
+                //                                                 obs->gnss1Outputs->timeUtc.day,
+                //                                                 obs->gnss1Outputs->timeUtc.hour,
+                //                                                 obs->gnss1Outputs->timeUtc.min,
+                //                                                 obs->gnss1Outputs->timeUtc.sec + static_cast<long double>(obs->gnss1Outputs->timeUtc.ms) * 1e-3L));
+                //         }
+                //     }
+                // }
+                // // Group 7 (GNSS2)
+                // if ((!obs->insTime.has_value() || obs->insTime->empty()) && obs->gnss2Outputs)
+                // {
+                //     if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                //     {
+                //         if (obs->gnss2Outputs->timeInfo.status.dateOk() && obs->gnss2Outputs->timeInfo.status.timeOk()
+                //             && (((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                //                  && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                //                 || obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS))
+                //         {
+                //             if ((obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                //                 && (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK))
+                //             {
+                //                 obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->week, obs->gnss2Outputs->tow * 1e-9L));
+                //             }
+                //             else // obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS
+                //             {
+                //                 obs->insTime.emplace(InsTime_GPSweekTow(0, obs->gnss2Outputs->raw.week, obs->gnss2Outputs->raw.tow * 1e-9L));
+                //             }
+                //         }
+                //         else if (obs->gnss2Outputs->timeInfo.status.utcTimeValid()
+                //                  && obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                //         {
+                //             obs->insTime.emplace(InsTime_YMDHMS(2000 + obs->gnss2Outputs->timeUtc.year,
+                //                                                 obs->gnss2Outputs->timeUtc.month,
+                //                                                 obs->gnss2Outputs->timeUtc.day,
+                //                                                 obs->gnss2Outputs->timeUtc.hour,
+                //                                                 obs->gnss2Outputs->timeUtc.min,
+                //                                                 obs->gnss2Outputs->timeUtc.sec + static_cast<long double>(obs->gnss2Outputs->timeUtc.ms) * 1e-3L));
+                //         }
+                //     }
+                // }
 
                 if (!obs->insTime.has_value() || obs->insTime->empty())
                 {
