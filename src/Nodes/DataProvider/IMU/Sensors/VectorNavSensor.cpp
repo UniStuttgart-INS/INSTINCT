@@ -5181,7 +5181,34 @@ bool NAV::VectorNavSensor::initialize()
     }
 
     vs.writeSynchronizationControl(synchronizationControlRegister);
+    if (auto vnSynchronizationControlRegister = vs.readSynchronizationControl();
+        vnSynchronizationControlRegister.syncInMode != synchronizationControlRegister.syncInMode
+        || vnSynchronizationControlRegister.syncInEdge != synchronizationControlRegister.syncInEdge
+        || vnSynchronizationControlRegister.syncInSkipFactor != synchronizationControlRegister.syncInSkipFactor
+        || vnSynchronizationControlRegister.syncOutMode != synchronizationControlRegister.syncOutMode
+        || vnSynchronizationControlRegister.syncOutPolarity != synchronizationControlRegister.syncOutPolarity
+        || vnSynchronizationControlRegister.syncOutSkipFactor != synchronizationControlRegister.syncOutSkipFactor
+        || vnSynchronizationControlRegister.syncOutPulseWidth != synchronizationControlRegister.syncOutPulseWidth)
+    {
+        LOG_ERROR("{}: Writing the synchronizationControlRegister was not successfull", nameId());
+        deinitializeNode();
+        return false;
+    }
+
     vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+    if (auto vnCommunicationProtocolControlRegister = vs.readCommunicationProtocolControl();
+        vnCommunicationProtocolControlRegister.serialCount != communicationProtocolControlRegister.serialCount
+        || vnCommunicationProtocolControlRegister.serialStatus != communicationProtocolControlRegister.serialStatus
+        || vnCommunicationProtocolControlRegister.spiCount != communicationProtocolControlRegister.spiCount
+        || vnCommunicationProtocolControlRegister.spiStatus != communicationProtocolControlRegister.spiStatus
+        || vnCommunicationProtocolControlRegister.serialChecksum != communicationProtocolControlRegister.serialChecksum
+        || vnCommunicationProtocolControlRegister.spiChecksum != communicationProtocolControlRegister.spiChecksum
+        || vnCommunicationProtocolControlRegister.errorMode != communicationProtocolControlRegister.errorMode)
+    {
+        LOG_ERROR("{}: Writing the communicationProtocolControlRegister was not successfull", nameId());
+        deinitializeNode();
+        return false;
+    }
 
     // vs.writeSynchronizationStatus(vn::sensors::SynchronizationStatusRegister); // User manual VN-310 - 8.3.1 (p 105) / VN-100 - 5.3.1 (p 76)
 
@@ -5194,8 +5221,43 @@ bool NAV::VectorNavSensor::initialize()
     // vs.writeGyroCompensation(vn::sensors::GyroCompensationRegister());                 // User manual VN-310 - 9.2.3 (p 113) / VN-100 - 6.2.3 (p 84)
 
     vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+    if (auto vnReferenceFrameRotationMatrix = vs.readReferenceFrameRotation();
+        vnReferenceFrameRotationMatrix != referenceFrameRotationMatrix)
+    {
+        LOG_ERROR("{}: Writing the referenceFrameRotationMatrix was not successfull. Target DCM is {}, but the sensor has {}", nameId(), referenceFrameRotationMatrix, vnReferenceFrameRotationMatrix);
+        deinitializeNode();
+        return false;
+    }
+
     vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+    if (auto vnImuFilteringConfigurationRegister = vs.readImuFilteringConfiguration();
+        vnImuFilteringConfigurationRegister.magWindowSize != imuFilteringConfigurationRegister.magWindowSize
+        || vnImuFilteringConfigurationRegister.accelWindowSize != imuFilteringConfigurationRegister.accelWindowSize
+        || vnImuFilteringConfigurationRegister.gyroWindowSize != imuFilteringConfigurationRegister.gyroWindowSize
+        || vnImuFilteringConfigurationRegister.tempWindowSize != imuFilteringConfigurationRegister.tempWindowSize
+        || vnImuFilteringConfigurationRegister.presWindowSize != imuFilteringConfigurationRegister.presWindowSize
+        || vnImuFilteringConfigurationRegister.magFilterMode != imuFilteringConfigurationRegister.magFilterMode
+        || vnImuFilteringConfigurationRegister.accelFilterMode != imuFilteringConfigurationRegister.accelFilterMode
+        || vnImuFilteringConfigurationRegister.gyroFilterMode != imuFilteringConfigurationRegister.gyroFilterMode
+        || vnImuFilteringConfigurationRegister.tempFilterMode != imuFilteringConfigurationRegister.tempFilterMode
+        || vnImuFilteringConfigurationRegister.presFilterMode != imuFilteringConfigurationRegister.presFilterMode)
+    {
+        LOG_ERROR("{}: Writing the imuFilteringConfigurationRegister was not successfull", nameId());
+        deinitializeNode();
+        return false;
+    }
+
     vs.writeDeltaThetaAndDeltaVelocityConfiguration(deltaThetaAndDeltaVelocityConfigurationRegister);
+    if (auto vnDeltaThetaAndDeltaVelocityConfigurationRegister = vs.readDeltaThetaAndDeltaVelocityConfiguration();
+        vnDeltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame != deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame
+        || vnDeltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation != deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation
+        || vnDeltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation != deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation
+        || vnDeltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection != deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection)
+    {
+        LOG_ERROR("{}: Writing the deltaThetaAndDeltaVelocityConfigurationRegister was not successfull", nameId());
+        deinitializeNode();
+        return false;
+    }
 
     // ###########################################################################################################
     //                                               GNSS SUBSYSTEM
@@ -5204,8 +5266,35 @@ bool NAV::VectorNavSensor::initialize()
     if (sensorModel == VectorNavModel::VN310)
     {
         vs.writeGpsConfiguration(gpsConfigurationRegister);
+        if (auto vnGpsConfigurationRegister = vs.readGpsConfiguration();
+            vnGpsConfigurationRegister.mode != gpsConfigurationRegister.mode
+            || vnGpsConfigurationRegister.ppsSource != gpsConfigurationRegister.ppsSource
+            || vnGpsConfigurationRegister.rate != gpsConfigurationRegister.rate
+            || vnGpsConfigurationRegister.antPow != gpsConfigurationRegister.antPow)
+        {
+            LOG_ERROR("{}: Writing the gpsConfigurationRegister was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
+
         vs.writeGpsAntennaOffset(gpsAntennaOffset);
+        if (auto vnGpsAntennaOffset = vs.readGpsAntennaOffset();
+            vnGpsAntennaOffset != gpsAntennaOffset)
+        {
+            LOG_ERROR("{}: Writing the gpsAntennaOffset was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
+
         vs.writeGpsCompassBaseline(gpsCompassBaselineRegister);
+        if (auto vnGpsCompassBaselineRegister = vs.readGpsCompassBaseline();
+            vnGpsCompassBaselineRegister.position != gpsCompassBaselineRegister.position
+            || vnGpsCompassBaselineRegister.uncertainty != gpsCompassBaselineRegister.uncertainty)
+        {
+            LOG_ERROR("{}: Writing the gpsCompassBaselineRegister was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
     }
 
     // ###########################################################################################################
@@ -5222,13 +5311,60 @@ bool NAV::VectorNavSensor::initialize()
     // TODO: Implement in vnproglib: vs.setInitialHeading() - User manual VN-310 - 11.1.2 (p 148)
 
     vs.writeVpeBasicControl(vpeBasicControlRegister);
+    if (auto vnVpeBasicControlRegister = vs.readVpeBasicControl();
+        vnVpeBasicControlRegister.enable != vpeBasicControlRegister.enable
+        || vnVpeBasicControlRegister.headingMode != vpeBasicControlRegister.headingMode
+        || vnVpeBasicControlRegister.filteringMode != vpeBasicControlRegister.filteringMode
+        || vnVpeBasicControlRegister.tuningMode != vpeBasicControlRegister.tuningMode)
+    {
+        LOG_ERROR("{}: Writing the vpeBasicControlRegister was not successfull", nameId());
+        deinitializeNode();
+        return false;
+    }
 
     if (sensorModel == VectorNavModel::VN100_VN110)
     {
         vs.writeVpeMagnetometerBasicTuning(vpeMagnetometerBasicTuningRegister);
+        if (auto vnVpeMagnetometerBasicTuningRegister = vs.readVpeMagnetometerBasicTuning();
+            vnVpeMagnetometerBasicTuningRegister.baseTuning != vpeMagnetometerBasicTuningRegister.baseTuning
+            || vnVpeMagnetometerBasicTuningRegister.adaptiveTuning != vpeMagnetometerBasicTuningRegister.adaptiveTuning
+            || vnVpeMagnetometerBasicTuningRegister.adaptiveFiltering != vpeMagnetometerBasicTuningRegister.adaptiveFiltering)
+        {
+            LOG_ERROR("{}: Writing the vpeMagnetometerBasicTuningRegister was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
+
         vs.writeVpeAccelerometerBasicTuning(vpeAccelerometerBasicTuningRegister);
+        if (auto vnVpeAccelerometerBasicTuningRegister = vs.readVpeAccelerometerBasicTuning();
+            vnVpeAccelerometerBasicTuningRegister.baseTuning != vpeAccelerometerBasicTuningRegister.baseTuning
+            || vnVpeAccelerometerBasicTuningRegister.adaptiveTuning != vpeAccelerometerBasicTuningRegister.adaptiveTuning
+            || vnVpeAccelerometerBasicTuningRegister.adaptiveFiltering != vpeAccelerometerBasicTuningRegister.adaptiveFiltering)
+        {
+            LOG_ERROR("{}: Writing the vpeAccelerometerBasicTuningRegister was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
+
         vs.writeFilterStartupGyroBias(filterStartupGyroBias);
+        if (auto vnFilterStartupGyroBias = vs.readFilterStartupGyroBias();
+            vnFilterStartupGyroBias != filterStartupGyroBias)
+        {
+            LOG_ERROR("{}: Writing the filterStartupGyroBias was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
+
         vs.writeVpeGyroBasicTuning(vpeGyroBasicTuningRegister);
+        if (auto vnVpeGyroBasicTuningRegister = vs.readVpeGyroBasicTuning();
+            vnVpeGyroBasicTuningRegister.angularWalkVariance != vpeGyroBasicTuningRegister.angularWalkVariance
+            || vnVpeGyroBasicTuningRegister.baseTuning != vpeGyroBasicTuningRegister.baseTuning
+            || vnVpeGyroBasicTuningRegister.adaptiveTuning != vpeGyroBasicTuningRegister.adaptiveTuning)
+        {
+            LOG_ERROR("{}: Writing the vpeGyroBasicTuningRegister was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
     }
 
     // ###########################################################################################################
@@ -5238,7 +5374,26 @@ bool NAV::VectorNavSensor::initialize()
     if (sensorModel == VectorNavModel::VN310)
     {
         vs.writeInsBasicConfigurationVn300(insBasicConfigurationRegisterVn300);
+        if (auto vnInsBasicConfigurationRegisterVn300 = vs.readInsBasicConfigurationVn300();
+            vnInsBasicConfigurationRegisterVn300.scenario != insBasicConfigurationRegisterVn300.scenario
+            || vnInsBasicConfigurationRegisterVn300.ahrsAiding != insBasicConfigurationRegisterVn300.ahrsAiding
+            || vnInsBasicConfigurationRegisterVn300.estBaseline != insBasicConfigurationRegisterVn300.estBaseline)
+        {
+            LOG_ERROR("{}: Writing the insBasicConfigurationRegisterVn300 was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
+
         vs.writeStartupFilterBiasEstimate(startupFilterBiasEstimateRegister);
+        if (auto vnStartupFilterBiasEstimateRegister = vs.readStartupFilterBiasEstimate();
+            vnStartupFilterBiasEstimateRegister.gyroBias != startupFilterBiasEstimateRegister.gyroBias
+            || vnStartupFilterBiasEstimateRegister.accelBias != startupFilterBiasEstimateRegister.accelBias
+            || vnStartupFilterBiasEstimateRegister.pressureBias != startupFilterBiasEstimateRegister.pressureBias)
+        {
+            LOG_ERROR("{}: Writing the startupFilterBiasEstimateRegister was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
     }
 
     // ###########################################################################################################
@@ -5246,13 +5401,42 @@ bool NAV::VectorNavSensor::initialize()
     // ###########################################################################################################
 
     vs.writeMagnetometerCalibrationControl(magnetometerCalibrationControlRegister);
+    if (auto vnMagnetometerCalibrationControlRegister = vs.readMagnetometerCalibrationControl();
+        vnMagnetometerCalibrationControlRegister.hsiMode != magnetometerCalibrationControlRegister.hsiMode
+        || vnMagnetometerCalibrationControlRegister.hsiOutput != magnetometerCalibrationControlRegister.hsiOutput
+        || vnMagnetometerCalibrationControlRegister.convergeRate != magnetometerCalibrationControlRegister.convergeRate)
+    {
+        LOG_ERROR("{}: Writing the magnetometerCalibrationControlRegister was not successfull", nameId());
+        deinitializeNode();
+        return false;
+    }
 
     // ###########################################################################################################
     //                                      WORLD MAGNETIC & GRAVITY MODULE
     // ###########################################################################################################
 
     vs.writeMagneticAndGravityReferenceVectors(magneticAndGravityReferenceVectorsRegister);
+    if (auto vnMagneticAndGravityReferenceVectorsRegister = vs.readMagneticAndGravityReferenceVectors();
+        vnMagneticAndGravityReferenceVectorsRegister.magRef != magneticAndGravityReferenceVectorsRegister.magRef
+        || vnMagneticAndGravityReferenceVectorsRegister.accRef != magneticAndGravityReferenceVectorsRegister.accRef)
+    {
+        LOG_ERROR("{}: Writing the magneticAndGravityReferenceVectorsRegister was not successfull", nameId());
+        deinitializeNode();
+        return false;
+    }
+
     vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+    if (auto vnReferenceVectorConfigurationRegister = vs.readReferenceVectorConfiguration();
+        vnReferenceVectorConfigurationRegister.useMagModel != referenceVectorConfigurationRegister.useMagModel
+        || vnReferenceVectorConfigurationRegister.useGravityModel != referenceVectorConfigurationRegister.useGravityModel
+        || vnReferenceVectorConfigurationRegister.recalcThreshold != referenceVectorConfigurationRegister.recalcThreshold
+        || vnReferenceVectorConfigurationRegister.year != referenceVectorConfigurationRegister.year
+        || vnReferenceVectorConfigurationRegister.position != referenceVectorConfigurationRegister.position)
+    {
+        LOG_ERROR("{}: Writing the referenceVectorConfigurationRegister was not successfull", nameId());
+        deinitializeNode();
+        return false;
+    }
 
     // ###########################################################################################################
     //                                              Velocity Aiding
@@ -5261,6 +5445,15 @@ bool NAV::VectorNavSensor::initialize()
     if (sensorModel == VectorNavModel::VN100_VN110)
     {
         vs.writeVelocityCompensationControl(velocityCompensationControlRegister);
+        if (auto vnVelocityCompensationControlRegister = vs.readVelocityCompensationControl();
+            vnVelocityCompensationControlRegister.mode != velocityCompensationControlRegister.mode
+            || vnVelocityCompensationControlRegister.velocityTuning != velocityCompensationControlRegister.velocityTuning
+            || vnVelocityCompensationControlRegister.rateTuning != velocityCompensationControlRegister.rateTuning)
+        {
+            LOG_ERROR("{}: Writing the velocityCompensationControlRegister was not successfull", nameId());
+            deinitializeNode();
+            return false;
+        }
 
         // vs.writeVelocityCompensationMeasurement(vn::math::vec3f); // User manual VN-100 - 10.3.1 (p 124)
     }
@@ -5278,11 +5471,42 @@ bool NAV::VectorNavSensor::initialize()
     size_t binaryOutputRegisterCounter = 1; // To give a proper error message
     try
     {
+        auto checkBinaryRegister = [&](const vn::sensors::BinaryOutputRegister& current, const vn::sensors::BinaryOutputRegister& target) {
+            if (current.asyncMode != target.asyncMode
+                || current.rateDivisor != target.rateDivisor
+                || current.commonField != target.commonField
+                || current.timeField != target.timeField
+                || current.imuField != target.imuField
+                || current.gpsField != target.gpsField
+                || current.attitudeField != target.attitudeField
+                || current.insField != target.insField
+                || current.gps2Field != target.gps2Field)
+            {
+                LOG_ERROR("{}: Writing the binaryOutputRegister {} was not successfull", nameId(), binaryOutputRegisterCounter);
+                deinitializeNode();
+                return false;
+            }
+        };
+
         vs.writeBinaryOutput1(binaryOutputRegister.at(0));
+        if (!checkBinaryRegister(vs.readBinaryOutput1(), binaryOutputRegister.at(0)))
+        {
+            return false;
+        }
+
         binaryOutputRegisterCounter++;
         vs.writeBinaryOutput2(binaryOutputRegister.at(1));
+        if (!checkBinaryRegister(vs.readBinaryOutput2(), binaryOutputRegister.at(1)))
+        {
+            return false;
+        }
+
         binaryOutputRegisterCounter++;
         vs.writeBinaryOutput3(binaryOutputRegister.at(2));
+        if (!checkBinaryRegister(vs.readBinaryOutput3(), binaryOutputRegister.at(2)))
+        {
+            return false;
+        }
     }
     catch (const std::exception& e)
     {

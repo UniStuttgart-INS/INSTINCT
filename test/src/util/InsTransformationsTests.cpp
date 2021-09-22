@@ -197,7 +197,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
 {
     double time = 86164.099 / 3.0;
     auto q_ei = trafo::quat_ei(time, InsConst::angularVelocity_ie);
-    CHECK(q_ei.norm() == 1.0);
+    CHECK(q_ei.norm() == Approx(1.0).margin(EPSILON));
 
     auto C_ei = q_ei.toRotationMatrix();
     auto C_ei_ref = DCM_ei(time, InsConst::angularVelocity_ie);
@@ -217,7 +217,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     // Sidereal day: 23h 56min 4.099s
     auto siderialDay4 = 86164.099 / 4.0;
     q_ei = trafo::quat_ei(siderialDay4, InsConst::angularVelocity_ie);
-    CHECK(q_ei.norm() == 1.0);
+    CHECK(q_ei.norm() == Approx(1.0).margin(EPSILON));
     // Star day: 23h 56min 4.0905s
     // auto starHalfDay = 86164.0905 / 2.0;
     // auto q_ei = trafo::quat_ei(starHalfDay);
@@ -230,7 +230,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     CHECK(x_e.z() == Approx(22.0).margin(0.000001));
 
     auto q_ie = trafo::quat_ie(siderialDay4, InsConst::angularVelocity_ie);
-    CHECK(q_ie.norm() == 1.0);
+    CHECK(q_ie.norm() == Approx(1.0).margin(EPSILON));
 
     auto q_identity = q_ie * q_ei;
     CHECK(q_identity.coeffs()(0) == Approx(Eigen::Quaterniond::Identity().coeffs()(0)).margin(EPSILON));
@@ -245,7 +245,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     double longitude = trafo::deg2rad(-40);
 
     auto q_en = trafo::quat_en(latitude, longitude);
-    CHECK(q_en.norm() == 1.0);
+    CHECK(q_en.norm() == Approx(1.0).margin(EPSILON));
 
     auto C_en = q_en.toRotationMatrix();
     auto C_en_ref = DCM_en(latitude, longitude);
@@ -266,7 +266,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     longitude = 0.0;
 
     auto q_ne = trafo::quat_ne(latitude, longitude);
-    CHECK(q_ne.norm() == 1.0);
+    CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON));
 
     Eigen::Vector3d x_e{ 1, 2, 3 };
     auto x_n = q_ne * x_e;
@@ -281,7 +281,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     longitude = trafo::deg2rad(0);
 
     q_ne = trafo::quat_ne(latitude, longitude);
-    CHECK(q_ne.norm() == 1.0);
+    CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON));
 
     x_e = { 1, 2, 3 };
     x_n = q_ne * x_e;
@@ -296,7 +296,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     longitude = trafo::deg2rad(0);
 
     q_ne = trafo::quat_ne(latitude, longitude);
-    CHECK(q_ne.norm() == 1.0);
+    CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON));
     //                    (0, 0, 7.2921151467e-05)
     x_n = q_ne * InsConst::angularVelocity_ie_e;
 
@@ -310,7 +310,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     longitude = trafo::deg2rad(90);
 
     q_ne = trafo::quat_ne(latitude, longitude);
-    CHECK(q_ne.norm() == 1.0);
+    CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON));
     //                    (0, 0, 7.2921151467e-05)
     x_n = q_ne * InsConst::angularVelocity_ie_e;
 
@@ -365,7 +365,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     double yaw = trafo::deg2rad(45);
 
     auto q_nb = trafo::quat_nb(roll, pitch, yaw);
-    CHECK(q_nb.norm() == 1.0);
+    CHECK(q_nb.norm() == Approx(1.0).margin(EPSILON));
 
     auto C_nb = q_nb.toRotationMatrix();
     auto C_nb_ref = DCM_nb(roll, pitch, yaw);
@@ -387,7 +387,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     yaw = trafo::deg2rad(170);
 
     q_nb = trafo::quat_nb(roll, pitch, yaw);
-    CHECK(q_nb.norm() == 1.0);
+    CHECK(q_nb.norm() == Approx(1.0).margin(EPSILON));
 
     C_nb = q_nb.toRotationMatrix();
     C_nb_ref = DCM_nb(roll, pitch, yaw);
@@ -408,7 +408,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = trafo::deg2rad(90);
     yaw = trafo::deg2rad(90);
     auto q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == 1.0);
+    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON));
 
     Eigen::Vector3d x_n{ 1.0, 0.0, 0.0 };
     Eigen::Vector3d x_b = q_bn * x_n;
@@ -423,7 +423,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = 0.0;
     yaw = trafo::deg2rad(-45);
     q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == 1.0);
+    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON));
 
     x_n = Eigen::Vector3d{ 1.0, 1.0, 0.0 };
     x_b = q_bn * x_n;
@@ -438,7 +438,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = 0.0;
     yaw = 0.0;
     q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == 1.0);
+    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON));
 
     x_n = { 1.0, 1.0, 1.0 };
     x_b = q_bn * x_n;
@@ -453,7 +453,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = trafo::deg2rad(45);
     yaw = 0.0;
     q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == 1.0);
+    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON));
 
     x_n = { 1.0, 1.0, 1.0 };
     x_b = q_bn * x_n;
@@ -468,7 +468,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     pitch = trafo::deg2rad(180);
     yaw = trafo::deg2rad(90);
     q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == 1.0);
+    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON));
 
     x_n = { 1.0, 2.0, 3.0 };
     x_b = q_bn * x_n;
@@ -485,7 +485,7 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
     double mountingAngleZ = trafo::deg2rad(-90);
 
     auto q_bp = trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ);
-    CHECK(q_bp.norm() == 1.0);
+    CHECK(q_bp.norm() == Approx(1.0).margin(EPSILON));
 
     Eigen::Vector3d x_p{ 2.0, 0.0, 9.81 };
     Eigen::Vector3d x_b = q_bp * x_p;
@@ -678,9 +678,9 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     Eigen::Quaterniond q_nb = trafo::quat_nb(trafo::deg2rad(20), trafo::deg2rad(50), trafo::deg2rad(190));
     Eigen::Quaterniond q_en = trafo::quat_en(trafo::deg2rad(10), trafo::deg2rad(40));
 
-    CHECK(q_bp.norm() == 1.0);
-    CHECK(q_nb.norm() == 1.0);
-    CHECK(q_en.norm() == 1.0);
+    CHECK(q_bp.norm() == Approx(1.0).margin(EPSILON));
+    CHECK(q_nb.norm() == Approx(1.0).margin(EPSILON));
+    CHECK(q_en.norm() == Approx(1.0).margin(EPSILON));
 
     Eigen::Vector3d v_p{ 1, 3, 5 };
 
@@ -689,11 +689,11 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     Eigen::Vector3d v_e = q_en * v_n;
 
     Eigen::Quaterniond q_np = q_nb * q_bp;
-    CHECK(q_np.norm() == 1.0);
+    CHECK(q_np.norm() == Approx(1.0).margin(EPSILON));
     Eigen::Vector3d v_n_direct = q_np * v_p;
 
     Eigen::Quaterniond q_ep = q_en * q_nb * q_bp;
-    CHECK(q_ep.norm() == 1.0);
+    CHECK(q_ep.norm() == Approx(1.0).margin(EPSILON));
     Eigen::Vector3d v_e_direct = q_ep * v_p;
 
     CHECK(v_n.x() == Approx(v_n_direct.x()));
