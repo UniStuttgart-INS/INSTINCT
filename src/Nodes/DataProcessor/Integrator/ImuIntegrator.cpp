@@ -390,7 +390,7 @@ void NAV::ImuIntegrator::integrateObservation()
             // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
             Eigen::Vector3d attError = pvaError->attitudeError_n();
             Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
-            posVelAttCorrected->quaternion_nb() = Eigen::Quaterniond(dcm_c);
+            posVelAttCorrected->quaternion_nb() = Eigen::Quaterniond(dcm_c).normalized();
 
             // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
             // TODO: Use quaternions for caluclation
