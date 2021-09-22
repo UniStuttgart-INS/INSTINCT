@@ -5486,6 +5486,7 @@ bool NAV::VectorNavSensor::initialize()
                 deinitializeNode();
                 return false;
             }
+            return true;
         };
 
         vs.writeBinaryOutput1(binaryOutputRegister.at(0));
