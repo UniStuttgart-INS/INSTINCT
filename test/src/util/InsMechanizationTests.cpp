@@ -292,6 +292,72 @@ TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
     /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double dt = 0.001L;
 
+    double roll = 0;
+    double pitch = 0;
+    double yaw = trafo::deg2rad(45);
+
+    Eigen::Vector3d velocity_b{ 2, 0, 0 };
+
+    Eigen::Vector3d velocity_n = trafo::quat_nb(roll, pitch, yaw) * velocity_b;
+
+    Eigen::Vector3d pos_n{ 0, 0, 0 };
+
+    size_t count = 40000;
+    for (size_t i = 0; i < count; i++)
+    {
+        pos_n = updatePosition_n(dt, pos_n, velocity_n);
+    }
+    double distance = static_cast<double>(count) * static_cast<double>(dt) * velocity_b.norm();
+
+    CHECK(pos_n.norm() == Approx(distance));
+    CHECK(pos_n(0) == Approx(distance * std::cos(yaw)));
+    CHECK(pos_n(1) == Approx(distance * std::sin(yaw)));
+    CHECK(pos_n(2) == 0);
+
+    // ###########################################################################################################
+    //                                                  Yaw = 0
+    // ###########################################################################################################
+
+    // Stuttgart, Breitscheidstraße 2
+    // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
+    double latitude = trafo::deg2rad(48.78081);
+    double longitude = trafo::deg2rad(9.172012);
+    double altitude = 254;
+
+    Eigen::Vector3d latLonAlt_init{ latitude, longitude, altitude };
+
+    roll = 0;
+    pitch = 0;
+    yaw = trafo::deg2rad(90);
+
+    velocity_b = Eigen::Vector3d{ 30, 0, 0 };
+
+    velocity_n = trafo::quat_nb(roll, pitch, yaw) * velocity_b;
+
+    Eigen::Vector3d pos_ecef = trafo::lla2ecef_WGS84(latLonAlt_init);
+
+    count = 10000;
+    for (size_t i = 0; i < count; i++)
+    {
+        Eigen::Vector3d pos_n = trafo::ecef2ned(pos_ecef, latLonAlt_init);
+        pos_n = updatePosition_n(dt, pos_n, velocity_n);
+
+        pos_ecef = trafo::ned2ecef(pos_n, latLonAlt_init);
+    }
+    distance = static_cast<double>(count) * static_cast<double>(dt) * velocity_b.norm();
+
+    pos_n = trafo::ecef2ned(pos_ecef, latLonAlt_init);
+    CHECK(pos_n.norm() == Approx(distance));
+    CHECK(pos_n(0) == Approx(distance * std::cos(yaw)).margin(1e-5));
+    CHECK(pos_n(1) == Approx(distance * std::sin(yaw)).margin(1e-5));
+    CHECK(pos_n(2) == Approx(0).margin(1e-5));
+}
+
+TEST_CASE("[InsMechanization] Update Position lla-frame", "[InsMechanization]")
+{
+    /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+    long double dt = 0.001L;
+
     // Stuttgart, Breitscheidstraße 2
     // https://www.koordinaten-umrechner.de/decimal/48.780810,9.172012?karte=OpenStreetMap&zoom=19
     double latitude = trafo::deg2rad(48.78081);
@@ -308,31 +374,22 @@ TEST_CASE("[InsMechanization] Update Position n-frame", "[InsMechanization]")
 
     Eigen::Vector3d latLonAlt{ latitude, longitude, altitude };
 
-    Eigen::Vector3d pos_n = Eigen::Vector3d::Zero();
-
     size_t count = 4000;
     for (size_t i = 0; i < count; i++)
     {
-        /// North/South (meridian) earth radius [m]
+        // North/South (meridian) earth radius [m]
         double R_N = earthRadius_N(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
-        /// East/West (prime vertical) earth radius [m]
+        // East/West (prime vertical) earth radius [m]
         double R_E = earthRadius_E(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
         latLonAlt = updatePosition_lla(dt, latLonAlt, velocity_n, R_N, R_E);
-
-        pos_n = updatePosition_n(dt, pos_n, velocity_n);
     }
     double distance = static_cast<double>(count) * static_cast<double>(dt) * velocity_b.norm();
 
-    CHECK(pos_n.norm() == Approx(distance));
-    CHECK(pos_n(0) == Approx(distance * std::sin(yaw)));
-    CHECK(pos_n(1) == Approx(distance * std::cos(yaw)));
-    CHECK(pos_n(2) == 0);
-
     // updatePosition_n with lat lon formula shows really bad accuracy
     CHECK(measureDistance(latitude, longitude, latLonAlt(0), latLonAlt(1)) == Approx(distance).margin(0.004));
-    CHECK(measureDistance(latitude, longitude, latLonAlt(0), longitude) == Approx(distance * std::sin(yaw)).margin(0.02));
-    CHECK(measureDistance(latitude, longitude, latitude, latLonAlt(1)) == Approx(distance * std::cos(yaw)).margin(0.02));
+    CHECK(measureDistance(latitude, longitude, latLonAlt(0), longitude) == Approx(distance * std::cos(yaw)).margin(0.02));
+    CHECK(measureDistance(latitude, longitude, latitude, latLonAlt(1)) == Approx(distance * std::sin(yaw)).margin(0.02));
 
     CHECK(latitude < latLonAlt(0));
     CHECK(longitude < latLonAlt(1));

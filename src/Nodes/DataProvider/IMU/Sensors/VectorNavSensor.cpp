@@ -5190,7 +5190,12 @@ bool NAV::VectorNavSensor::initialize()
         || vnSynchronizationControlRegister.syncOutSkipFactor != synchronizationControlRegister.syncOutSkipFactor
         || vnSynchronizationControlRegister.syncOutPulseWidth != synchronizationControlRegister.syncOutPulseWidth)
     {
-        LOG_ERROR("{}: Writing the synchronizationControlRegister was not successfull", nameId());
+        LOG_ERROR("{}: Writing the synchronizationControlRegister was not successfull.\n"
+                  "Target: syncInMode = {}, syncInEdge = {}, syncInSkipFactor = {}, syncOutMode = {}, syncOutPolarity = {}, syncOutSkipFactor = {}, syncOutPulseWidth = {}\n"
+                  "Sensor: syncInMode = {}, syncInEdge = {}, syncInSkipFactor = {}, syncOutMode = {}, syncOutPolarity = {}, syncOutSkipFactor = {}, syncOutPulseWidth = {}",
+                  nameId(),
+                  synchronizationControlRegister.syncInMode, synchronizationControlRegister.syncInEdge, synchronizationControlRegister.syncInSkipFactor, synchronizationControlRegister.syncOutMode, synchronizationControlRegister.syncOutPolarity, synchronizationControlRegister.syncOutSkipFactor, synchronizationControlRegister.syncOutPulseWidth,
+                  vnSynchronizationControlRegister.syncInMode, vnSynchronizationControlRegister.syncInEdge, vnSynchronizationControlRegister.syncInSkipFactor, vnSynchronizationControlRegister.syncOutMode, vnSynchronizationControlRegister.syncOutPolarity, vnSynchronizationControlRegister.syncOutSkipFactor, vnSynchronizationControlRegister.syncOutPulseWidth);
         deinitializeNode();
         return false;
     }
@@ -5205,7 +5210,12 @@ bool NAV::VectorNavSensor::initialize()
         || vnCommunicationProtocolControlRegister.spiChecksum != communicationProtocolControlRegister.spiChecksum
         || vnCommunicationProtocolControlRegister.errorMode != communicationProtocolControlRegister.errorMode)
     {
-        LOG_ERROR("{}: Writing the communicationProtocolControlRegister was not successfull", nameId());
+        LOG_ERROR("{}: Writing the communicationProtocolControlRegister was not successfull.\n"
+                  "Target: serialCount = {}, serialStatus = {}, spiCount = {}, spiStatus = {}, serialChecksum = {}, spiChecksum = {}, errorMode = {}\n"
+                  "Sensor: serialCount = {}, serialStatus = {}, spiCount = {}, spiStatus = {}, serialChecksum = {}, spiChecksum = {}, errorMode = {}",
+                  nameId(),
+                  communicationProtocolControlRegister.serialCount, communicationProtocolControlRegister.serialStatus, communicationProtocolControlRegister.spiCount, communicationProtocolControlRegister.spiStatus, communicationProtocolControlRegister.serialChecksum, communicationProtocolControlRegister.spiChecksum, communicationProtocolControlRegister.errorMode,
+                  vnCommunicationProtocolControlRegister.serialCount, vnCommunicationProtocolControlRegister.serialStatus, vnCommunicationProtocolControlRegister.spiCount, vnCommunicationProtocolControlRegister.spiStatus, vnCommunicationProtocolControlRegister.serialChecksum, vnCommunicationProtocolControlRegister.spiChecksum, vnCommunicationProtocolControlRegister.errorMode);
         deinitializeNode();
         return false;
     }
@@ -5224,7 +5234,10 @@ bool NAV::VectorNavSensor::initialize()
     if (auto vnReferenceFrameRotationMatrix = vs.readReferenceFrameRotation();
         vnReferenceFrameRotationMatrix != referenceFrameRotationMatrix)
     {
-        LOG_ERROR("{}: Writing the referenceFrameRotationMatrix was not successfull. Target DCM is {}, but the sensor has {}", nameId(), referenceFrameRotationMatrix, vnReferenceFrameRotationMatrix);
+        LOG_ERROR("{}: Writing the referenceFrameRotationMatrix was not successfull.\n"
+                  "Target: DCM = {}\n"
+                  "Sensor: DCM = {}",
+                  nameId(), referenceFrameRotationMatrix, vnReferenceFrameRotationMatrix);
         deinitializeNode();
         return false;
     }
@@ -5242,7 +5255,12 @@ bool NAV::VectorNavSensor::initialize()
         || vnImuFilteringConfigurationRegister.tempFilterMode != imuFilteringConfigurationRegister.tempFilterMode
         || vnImuFilteringConfigurationRegister.presFilterMode != imuFilteringConfigurationRegister.presFilterMode)
     {
-        LOG_ERROR("{}: Writing the imuFilteringConfigurationRegister was not successfull", nameId());
+        LOG_ERROR("{}: Writing the imuFilteringConfigurationRegister was not successfull.\n"
+                  "Target: magWindowSize = {}, accelWindowSize = {}, gyroWindowSize = {}, tempWindowSize = {}, presWindowSize = {}, magFilterMode = {}, accelFilterMode = {}, gyroFilterMode = {}, tempFilterMode = {}, presFilterMode = {}\n"
+                  "Sensor: magWindowSize = {}, accelWindowSize = {}, gyroWindowSize = {}, tempWindowSize = {}, presWindowSize = {}, magFilterMode = {}, accelFilterMode = {}, gyroFilterMode = {}, tempFilterMode = {}, presFilterMode = {}",
+                  nameId(),
+                  imuFilteringConfigurationRegister.magWindowSize, imuFilteringConfigurationRegister.accelWindowSize, imuFilteringConfigurationRegister.gyroWindowSize, imuFilteringConfigurationRegister.tempWindowSize, imuFilteringConfigurationRegister.presWindowSize, imuFilteringConfigurationRegister.magFilterMode, imuFilteringConfigurationRegister.accelFilterMode, imuFilteringConfigurationRegister.gyroFilterMode, imuFilteringConfigurationRegister.tempFilterMode, imuFilteringConfigurationRegister.presFilterMode,
+                  vnImuFilteringConfigurationRegister.magWindowSize, vnImuFilteringConfigurationRegister.accelWindowSize, vnImuFilteringConfigurationRegister.gyroWindowSize, vnImuFilteringConfigurationRegister.tempWindowSize, vnImuFilteringConfigurationRegister.presWindowSize, vnImuFilteringConfigurationRegister.magFilterMode, vnImuFilteringConfigurationRegister.accelFilterMode, vnImuFilteringConfigurationRegister.gyroFilterMode, vnImuFilteringConfigurationRegister.tempFilterMode, vnImuFilteringConfigurationRegister.presFilterMode);
         deinitializeNode();
         return false;
     }
