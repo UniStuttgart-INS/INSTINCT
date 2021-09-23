@@ -53,6 +53,34 @@ Eigen::Vector3d velocityUpdateModel(const VelocityUpdateState& x, const Eigen::V
 //                                             Public Functions
 // ###########################################################################################################
 
+Eigen::Quaterniond updateQuaternion_nb_RungeKutta1(const long double& timeDifferenceSec__t0,
+                                                   const Eigen::Vector3d& angularVelocity_ip_b__t0,
+                                                   const Eigen::Vector3d& angularVelocity_ie_n__t1,
+                                                   const Eigen::Vector3d& angularVelocity_en_n__t1,
+                                                   const Eigen::Quaterniond& quaternion_nb__t1)
+{
+    /// q (tₖ₋₁) Quaternion, from earth to platform coordinates, at the time tₖ₋₁
+    const Eigen::Quaterniond quaternion_bn__t1 = quaternion_nb__t1.conjugate();
+
+    /// ῶ_nb_b (tₖ₋₁) Taylor-Approximation of angular velocities in [rad/s],
+    /// of the navigation to body system, in body coordinates, at the time tₖ₋₁ (eq. 8.15)
+    // const Eigen::Vector3d angularVelocity_nb_b__t1 = (integratedAngularVelocity_nb_b__t1 + integratedAngularVelocity_nb_b__t0) / integrationStep;
+
+    /// Δβ⁠_nb_p (tₖ) The integrated angluar velocities in [radian],
+    /// of the navigation to body system, in body coordinates, at the time tₖ (eq. 8.9)
+    const Eigen::Vector3d angularVelocity_nb_b__t0 = angularVelocity_ip_b__t0
+                                                     - quaternion_bn__t1 * (angularVelocity_ie_n__t1 + angularVelocity_en_n__t1);
+
+    // Updated Quaternion (eq. 8.2)
+    Eigen::Quaterniond q_nb__t0;
+    q_nb__t0 = Integration::rungeKutta1(quaternionUpdateModel, timeDifferenceSec__t0, quaternion_nb__t1.coeffs(), angularVelocity_nb_b__t0);
+
+    // Normalize Quaternion
+    q_nb__t0.normalize();
+
+    return q_nb__t0;
+}
+
 Eigen::Quaterniond updateQuaternion_ep_RungeKutta3(
     const long double& timeDifferenceSec__t0,        // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     const long double& timeDifferenceSec__t1,        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]

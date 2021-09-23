@@ -10,6 +10,20 @@
 
 namespace NAV::Integration
 {
+/// @brief Runge-Kutta First Order Algorithm (analogous to Euler Method)
+/// @param[in] f Model function
+/// @param[in] h Integration step in [s] (Time difference Δtₖ = (tₖ - tₖ₋₁))
+/// @param[in] y__t1 State vector at time tₖ₋₁
+/// @param[in] x__t1 Measurement at time tₖ₋₁
+/// @return State vector at time tₖ
+/// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 2.4.1, eq. 2.105)
+template<typename Y, typename Scalar, typename X,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y rungeKutta1(Y (*f)(const X&, const Y&), const Scalar& h, const Y& y__t1, const X& x__t1)
+{
+    return y__t1 + h * f(x__t1, y__t1);
+}
+
 /// @brief Runge-Kutta Third Order Algorithm
 /// @param[in] f Model function
 /// @param[in] h Integration step in [s] (Time difference Δtₖ = (tₖ - tₖ₋₂))

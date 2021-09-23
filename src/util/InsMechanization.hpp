@@ -10,19 +10,39 @@
 
 namespace NAV
 {
+// ###########################################################################################################
+//                                              Attitude Update
+// ###########################################################################################################
+
+/// @brief Integrates the angular velocities and calculates the new Quaternion q_nb with Runge Kutta of 1st Order
+/// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
+/// @param[in] angularVelocity_ip_b__t0 ω_ip_b (tₖ) Angular velocity in [rad/s],
+///                                     of the inertial to platform system, in body coordinates, at the time tₖ
+/// @param[in] angularVelocity_ie_n__t1 ω_ie_n (tₖ₋₁) Angular velocity in [rad/s]
+///                                     of the inertial to earth system, in navigation coordinates, at the time tₖ₋₁
+/// @param[in] angularVelocity_en_n__t1 ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame
+///                                     in navigation coordinates
+/// @param[in] quaternion_nb__t1 q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
+/// @return The updated Quaternion q_nb
+/// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.2.4.1.2)
+[[nodiscard]] Eigen::Quaterniond updateQuaternion_nb_RungeKutta1(const long double& timeDifferenceSec__t0,
+                                                                 const Eigen::Vector3d& angularVelocity_ip_b__t0,
+                                                                 const Eigen::Vector3d& angularVelocity_ie_n__t1,
+                                                                 const Eigen::Vector3d& angularVelocity_en_n__t1,
+                                                                 const Eigen::Quaterniond& quaternion_nb__t1);
+
 /// @brief Integrates the angular velocities and calculates the new Quaternion q_ep with Runge Kutta of 3rd Order
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
 /// @param[in] timeDifferenceSec__t1 Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
-/// @param[in] angularVelocity_ip_p__t0 ω_ip_p (tₖ) Angluar velocity in [rad/s],
+/// @param[in] angularVelocity_ip_p__t0 ω_ip_p (tₖ) Angular velocity in [rad/s],
 ///                                     of the inertial to platform system, in platform coordinates, at the time tₖ
-/// @param[in] angularVelocity_ip_p__t1 ω_ip_p (tₖ₋₁) Angluar velocity in [rad/s],
+/// @param[in] angularVelocity_ip_p__t1 ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
 ///                                     of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
-/// @param[in] angularVelocity_ie_e__t0 ω_ie_e (tₖ) Angluar velocity in [rad/s],
+/// @param[in] angularVelocity_ie_e__t0 ω_ie_e (tₖ) Angular velocity in [rad/s],
 ///                                     of the inertial to earth system, in earth coordinates, at the time tₖ
 /// @param[in] quaternion_ep__t1 q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
 /// @param[in] quaternion_ep__t2 q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
 /// @return The updated Quaternion q_ep
-///
 /// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.2.4.1.2)
 ///       See T. Hobiger - Inertialnavigation (Lecture Slides Chapter 8)
 [[nodiscard]] Eigen::Quaterniond updateQuaternion_ep_RungeKutta3(const long double& timeDifferenceSec__t0,
@@ -36,18 +56,17 @@ namespace NAV
 /// @brief Integrates the angular velocities and calculates the new Quaternion q_nb with Runge Kutta of 3rd Order
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
 /// @param[in] timeDifferenceSec__t1 Δtₖ₋₁ Time difference in [seconds]. Previous epoch to twice previous epoch
-/// @param[in] angularVelocity_ip_b__t0 ω_ip_b (tₖ) Angluar velocity in [rad/s],
+/// @param[in] angularVelocity_ip_b__t0 ω_ip_b (tₖ) Angular velocity in [rad/s],
 ///                                     of the inertial to platform system, in body coordinates, at the time tₖ
-/// @param[in] angularVelocity_ip_b__t1 ω_ip_b (tₖ₋₁) Angluar velocity in [rad/s],
+/// @param[in] angularVelocity_ip_b__t1 ω_ip_b (tₖ₋₁) Angular velocity in [rad/s],
 ///                                     of the inertial to platform system, in body coordinates, at the time tₖ₋₁
-/// @param[in] angularVelocity_ie_n__t1 ω_ie_n (tₖ₋₁) Angluar velocity in [rad/s]
+/// @param[in] angularVelocity_ie_n__t1 ω_ie_n (tₖ₋₁) Angular velocity in [rad/s]
 ///                                     of the inertial to earth system, in navigation coordinates, at the time tₖ₋₁
-/// @param[im] angularVelocity_en_n__t1 ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame
+/// @param[in] angularVelocity_en_n__t1 ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame
 ///                                     in navigation coordinates
 /// @param[in] quaternion_nb__t1 q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
 /// @param[in] quaternion_nb__t2 q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
-/// @return The updated Quaternion q_ep
-///
+/// @return The updated Quaternion q_nb
 /// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.2.4.1.2)
 ///       See T. Hobiger - Inertialnavigation (Lecture Slides Chapter 8)
 [[nodiscard]] Eigen::Quaterniond updateQuaternion_nb_RungeKutta3(const long double& timeDifferenceSec__t0,
@@ -58,6 +77,10 @@ namespace NAV
                                                                  const Eigen::Vector3d& angularVelocity_en_n__t1,
                                                                  const Eigen::Quaterniond& quaternion_nb__t1,
                                                                  const Eigen::Quaterniond& quaternion_nb__t2);
+
+// ###########################################################################################################
+//                                              Velocity Update
+// ###########################################################################################################
 
 /// @brief Integrates the accelerations and calculates the new velocity v_e with Simpson rule
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
@@ -157,6 +180,10 @@ namespace NAV
 #endif
 );
 
+// ###########################################################################################################
+//                                              Position Update
+// ###########################################################################################################
+
 /// @brief Calculates the new position x_e in earth frame
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
 /// @param[in] position_e__t1 x_e (tₖ₋₁) Position in [m/s], in earth coordinates, at the time tₖ₋₁
@@ -191,6 +218,10 @@ namespace NAV
 [[nodiscard]] Eigen::Vector3d updatePosition_n(const long double& timeDifferenceSec__t0,
                                                const Eigen::Vector3d& position_n__t1,
                                                const Eigen::Vector3d& velocity_n__t1);
+
+// ###########################################################################################################
+//                                             Earth Parameters
+// ###########################################################################################################
 
 /// @brief Calculates the North/South (meridian) earth radius
 /// @param[in] latitude 𝜙 Latitude in [rad]
