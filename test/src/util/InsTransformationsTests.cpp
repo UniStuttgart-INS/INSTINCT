@@ -349,13 +349,19 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
 
     /* -------------------------------------------------------------------------------------------------------- */
 
-    position_e_ref = trafo::lla2ecef_WGS84({ -10, 70, 2001 });
-    position_n = trafo::ecef2ned(position_e_ref, { latitude_ref, longitude_ref, altitude_ref });
-    position_e = trafo::ned2ecef(position_n, { latitude_ref, longitude_ref, altitude_ref });
+    position_e_ref = trafo::lla2ecef_WGS84({ trafo::deg2rad(-10), trafo::deg2rad(70), 2001 });
+    position_e = position_e_ref;
+    for (size_t i = 0; i < 10000; i++)
+    {
+        position_n = trafo::ecef2ned(position_e, { latitude_ref, longitude_ref, altitude_ref });
+        position_e = trafo::ned2ecef(position_n, { latitude_ref, longitude_ref, altitude_ref });
+    }
 
     CHECK(position_e(0) == Approx(position_e_ref(0)));
     CHECK(position_e(1) == Approx(position_e_ref(1)));
     CHECK(position_e(2) == Approx(position_e_ref(2)));
+
+    /* -------------------------------------------------------------------------------------------------------- */
 }
 
 TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTransformations]")
@@ -581,7 +587,11 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     latitude = trafo::deg2rad(40);
     longitude = trafo::deg2rad(180);
     altitude = -5097;
-    lla = trafo::ecef2lla_WGS84(trafo::lla2ecef_WGS84({ latitude, longitude, altitude }));
+    lla = { latitude, longitude, altitude };
+    for (size_t i = 0; i < 100000; i++)
+    {
+        lla = trafo::ecef2lla_WGS84(trafo::lla2ecef_WGS84(lla));
+    }
     CHECK(lla.x() == Approx(latitude));
     CHECK(lla.y() == Approx(longitude));
     CHECK(lla.z() == Approx(altitude));

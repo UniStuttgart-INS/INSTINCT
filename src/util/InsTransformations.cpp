@@ -112,9 +112,11 @@ Eigen::Vector3d trafo::ecef2ned(const Eigen::Vector3d& position_e, const Eigen::
     auto position_e_ref = lla2ecef_WGS84(latLonAlt_ref);
 
     Eigen::Matrix3d R_ne;
-    R_ne << -std::sin(latitude_ref) * std::cos(longitude_ref), -std::sin(latitude_ref) * std::sin(longitude_ref), std::cos(latitude_ref),
-        -std::sin(longitude_ref), std::cos(longitude_ref), 0,
-        -std::cos(latitude_ref) * std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref), -std::sin(latitude_ref);
+    // clang-format off
+    R_ne << -std::sin(latitude_ref) * std::cos(longitude_ref), -std::sin(latitude_ref) * std::sin(longitude_ref),  std::cos(latitude_ref),
+                     -std::sin(longitude_ref)                ,              std::cos(longitude_ref)             ,            0           ,
+            -std::cos(latitude_ref) * std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref), -std::sin(latitude_ref);
+    // clang-format on
 
     Eigen::Vector3d position_n = R_ne * (position_e - position_e_ref);
 
@@ -129,9 +131,11 @@ Eigen::Vector3d trafo::ned2ecef(const Eigen::Vector3d& position_n, const Eigen::
     auto position_e_ref = lla2ecef_WGS84(latLonAlt_ref);
 
     Eigen::Matrix3d R_en;
+    // clang-format off
     R_en << -std::sin(latitude_ref) * std::cos(longitude_ref), -std::sin(longitude_ref), -std::cos(latitude_ref) * std::cos(longitude_ref),
-        -std::sin(latitude_ref) * std::sin(longitude_ref), std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref),
-        std::cos(latitude_ref), 0, -std::sin(latitude_ref);
+            -std::sin(latitude_ref) * std::sin(longitude_ref),  std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref),
+                         std::cos(latitude_ref)              ,             0           ,                -std::sin(latitude_ref)           ;
+    // clang-format on
 
     Eigen::Vector3d position_e = position_e_ref + R_en * position_n;
 

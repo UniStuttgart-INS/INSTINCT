@@ -12,19 +12,24 @@ namespace NAV
 //                                             Private Functions
 // ###########################################################################################################
 
-Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, const Eigen::Vector4d& q)
+Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, const Eigen::Vector4d& quat)
 {
+    // Reordered because Skript Quaternion has order (w,x,y,z)
+    Eigen::Vector4d q = { quat(3), quat(0), quat(1), quat(2) };
     // clang-format off
 
-    /// A Matrix at the time tₖ (eq. 8.1 / 8.16). Reordered because Eigen::Quaternion(x,y,z,w), Skript (w,x,y,z)
+    /// A Matrix at the time tₖ (Titterton p 319 e.q. 11.35)
     Eigen::Matrix4d A;
-    A <<         0.0        ,  angularVelocity(2), -angularVelocity(1),  angularVelocity(0),
-         -angularVelocity(2),         0.0        ,  angularVelocity(0),  angularVelocity(1),
-          angularVelocity(1), -angularVelocity(0),         0.0        ,  angularVelocity(2),
-         -angularVelocity(0), -angularVelocity(1), -angularVelocity(2),         0.0        ;
+    A <<         0.0        , -angularVelocity(0), -angularVelocity(1), -angularVelocity(2),
+          angularVelocity(0),         0.0        ,  angularVelocity(2), -angularVelocity(1),
+          angularVelocity(1), -angularVelocity(2),         0.0        ,  angularVelocity(0),
+          angularVelocity(2),  angularVelocity(1), -angularVelocity(0),         0.0        ;
     // clang-format on
 
-    return 0.5 * A * q;
+    q = 0.5 * A * q; // (w,x,y,z)
+
+    // Reordered because Eigen::Quaternion has order (x,y,z,w)
+    return { q(1), q(2), q(3), q(0) };
 }
 
 struct VelocityUpdateState
