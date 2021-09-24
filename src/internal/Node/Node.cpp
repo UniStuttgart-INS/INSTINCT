@@ -185,6 +185,16 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
 {
     if (callbacksEnabled)
     {
+#ifdef TESTING
+        for (auto& [callback, linkId] : outputPins.at(portIndex).watcherCallbacks)
+        {
+            if (!linkId) // Trigger all output pin callbacks
+            {
+                callback(data);
+            }
+        }
+#endif
+
         for (auto& [node, callback, linkId] : outputPins.at(portIndex).callbacks)
         {
             if (node->enabled && node->isInitialized())
@@ -194,16 +204,19 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
                     ax::NodeEditor::Flow(linkId);
                 }
 
+#ifdef TESTING
+                for (auto& [watcherCallback, watcherLinkId] : outputPins.at(portIndex).watcherCallbacks)
+                {
+                    if (linkId == watcherLinkId)
+                    {
+                        watcherCallback(data);
+                    }
+                }
+#endif
+
                 std::invoke(callback, node, data, linkId);
             }
         }
-
-#ifdef TESTING
-        for (auto& callback : outputPins.at(portIndex).watcherCallbacks)
-        {
-            callback(data);
-        }
-#endif
     }
 }
 

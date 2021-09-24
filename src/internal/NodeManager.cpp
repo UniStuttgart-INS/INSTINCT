@@ -901,11 +901,18 @@ void NAV::NodeManager::RegisterWatcherCallbackToLink(ax::NodeEditor::LinkId id, 
 
 void NAV::NodeManager::ApplyWatcherCallbacks()
 {
-    for (auto& [id, callback] : watcherLinkList)
+    for (auto& [linkId, callback] : watcherLinkList)
     {
-        if (Link* link = FindLink(id))
+        if (Link* link = FindLink(linkId))
         {
-            RegisterWatcherCallbackToOutputPin(link->startPinId, callback);
+            if (Pin* pin = FindPin(link->startPinId))
+            {
+                if (pin->kind == Pin::Kind::Output)
+                {
+                    LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
+                    pin->watcherCallbacks.emplace_back(callback, linkId);
+                }
+            }
         }
     }
 
@@ -916,7 +923,7 @@ void NAV::NodeManager::ApplyWatcherCallbacks()
             if (pin->kind == Pin::Kind::Output)
             {
                 LOG_DEBUG("Adding watcher callback on node '{}' on pin {}", pin->parentNode->nameId(), pin->parentNode->pinIndexFromId(pin->id));
-                pin->watcherCallbacks.push_back(callback);
+                pin->watcherCallbacks.emplace_back(callback, 0);
             }
         }
     }

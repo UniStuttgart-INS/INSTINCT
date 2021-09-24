@@ -258,7 +258,7 @@ class Pin
 
 #ifdef TESTING
     /// Watcher Callbacks are used in testing to check the transmitted data
-    std::vector<void (*)(const std::shared_ptr<const NodeData>&)> watcherCallbacks;
+    std::vector<std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>> watcherCallbacks;
 #endif
 
   private:
