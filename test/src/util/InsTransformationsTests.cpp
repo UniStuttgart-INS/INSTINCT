@@ -595,6 +595,29 @@ TEST_CASE("[InsTransformations] LLA <=> ECEF conversion", "[InsTransformations]"
     CHECK(lla.x() == Approx(latitude));
     CHECK(lla.y() == Approx(longitude));
     CHECK(lla.z() == Approx(altitude));
+
+    /* -------------------------------------------------------------------------- */
+
+    for (int lat = -89; lat < 90; lat += 5)
+    {
+        for (int lon = -179; lon < 180; lon += 5)
+        {
+            for (int alt = -10000; alt < 100000; alt += 10000)
+            {
+                latitude = trafo::deg2rad(lat);
+                longitude = trafo::deg2rad(lon);
+                altitude = alt;
+                lla = { latitude, longitude, altitude };
+                for (size_t i = 0; i < 10; i++)
+                {
+                    lla = trafo::ecef2lla_WGS84(trafo::lla2ecef_WGS84(lla));
+                }
+                REQUIRE(lla.x() == Approx(latitude).margin(EPSILON));
+                REQUIRE(lla.y() == Approx(longitude).margin(EPSILON));
+                REQUIRE(lla.z() == Approx(altitude).margin(1e-7));
+            }
+        }
+    }
 }
 
 TEST_CASE("[InsTransformations] ECEF <=> LLH iterative conversion", "[InsTransformations]")
