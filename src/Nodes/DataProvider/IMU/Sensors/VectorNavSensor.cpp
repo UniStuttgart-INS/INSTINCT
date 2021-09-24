@@ -5145,12 +5145,22 @@ bool NAV::VectorNavSensor::initialize()
         return false;
     }
 
-    if (!vs.verifySensorConnectivity())
+    try
     {
-        LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor does not answer", nameId(),
-                  sensorPort, connectedBaudrate);
+        if (!vs.verifySensorConnectivity())
+        {
+            LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor does not answer", nameId(),
+                      sensorPort, connectedBaudrate);
+            return false;
+        }
+    }
+    catch (const std::exception& e)
+    {
+        LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor threw an exception: {}", nameId(),
+                  sensorPort, connectedBaudrate, e.what());
         return false;
     }
+
     // Query the sensor's model number
     LOG_DEBUG("{}: {} connected on port {} with baudrate {}", nameId(), vs.readModelNumber(), sensorPort, connectedBaudrate);
 
@@ -5272,7 +5282,12 @@ bool NAV::VectorNavSensor::initialize()
         || vnDeltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation != deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation
         || vnDeltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection != deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection)
     {
-        LOG_ERROR("{}: Writing the deltaThetaAndDeltaVelocityConfigurationRegister was not successfull", nameId());
+        LOG_ERROR("{}: Writing the deltaThetaAndDeltaVelocityConfigurationRegister was not successfull.\n"
+                  "Target: integrationFrame = {}, gyroCompensation = {}, accelCompensation = {}, earthRateCorrection = {}\n"
+                  "Sensor: integrationFrame = {}, gyroCompensation = {}, accelCompensation = {}, earthRateCorrection = {}",
+                  nameId(),
+                  deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame, deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation, deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation, deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection,
+                  vnDeltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame, vnDeltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation, vnDeltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation, vnDeltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection);
         deinitializeNode();
         return false;
     }
@@ -5290,7 +5305,12 @@ bool NAV::VectorNavSensor::initialize()
             || vnGpsConfigurationRegister.rate != gpsConfigurationRegister.rate
             || vnGpsConfigurationRegister.antPow != gpsConfigurationRegister.antPow)
         {
-            LOG_ERROR("{}: Writing the gpsConfigurationRegister was not successfull", nameId());
+            LOG_ERROR("{}: Writing the gpsConfigurationRegister was not successfull.\n"
+                      "Target: mode = {}, ppsSource = {}, rate = {}, antPow = {}\n"
+                      "Sensor: mode = {}, ppsSource = {}, rate = {}, antPow = {}",
+                      nameId(),
+                      gpsConfigurationRegister.mode, gpsConfigurationRegister.ppsSource, gpsConfigurationRegister.rate, gpsConfigurationRegister.antPow,
+                      vnGpsConfigurationRegister.mode, vnGpsConfigurationRegister.ppsSource, vnGpsConfigurationRegister.rate, vnGpsConfigurationRegister.antPow);
             deinitializeNode();
             return false;
         }
@@ -5299,7 +5319,12 @@ bool NAV::VectorNavSensor::initialize()
         if (auto vnGpsAntennaOffset = vs.readGpsAntennaOffset();
             vnGpsAntennaOffset != gpsAntennaOffset)
         {
-            LOG_ERROR("{}: Writing the gpsAntennaOffset was not successfull", nameId());
+            LOG_ERROR("{}: Writing the gpsAntennaOffset was not successfull.\n"
+                      "Target: {}\n"
+                      "Sensor: {}",
+                      nameId(),
+                      gpsAntennaOffset,
+                      vnGpsAntennaOffset);
             deinitializeNode();
             return false;
         }
@@ -5309,7 +5334,12 @@ bool NAV::VectorNavSensor::initialize()
             vnGpsCompassBaselineRegister.position != gpsCompassBaselineRegister.position
             || vnGpsCompassBaselineRegister.uncertainty != gpsCompassBaselineRegister.uncertainty)
         {
-            LOG_ERROR("{}: Writing the gpsCompassBaselineRegister was not successfull", nameId());
+            LOG_ERROR("{}: Writing the gpsCompassBaselineRegister was not successfull.\n"
+                      "Target: position = {}, uncertainty = {}\n"
+                      "Sensor: position = {}, uncertainty = {}",
+                      nameId(),
+                      gpsCompassBaselineRegister.position, gpsCompassBaselineRegister.uncertainty,
+                      vnGpsCompassBaselineRegister.position, vnGpsCompassBaselineRegister.uncertainty);
             deinitializeNode();
             return false;
         }
@@ -5335,7 +5365,12 @@ bool NAV::VectorNavSensor::initialize()
         || vnVpeBasicControlRegister.filteringMode != vpeBasicControlRegister.filteringMode
         || vnVpeBasicControlRegister.tuningMode != vpeBasicControlRegister.tuningMode)
     {
-        LOG_ERROR("{}: Writing the vpeBasicControlRegister was not successfull", nameId());
+        LOG_ERROR("{}: Writing the vpeBasicControlRegister was not successfull.\n"
+                  "Target: enable = {}, headingMode = {}, filteringMode = {}, tuningMode = {}\n"
+                  "Sensor: enable = {}, headingMode = {}, filteringMode = {}, tuningMode = {}",
+                  nameId(),
+                  vpeBasicControlRegister.enable, vpeBasicControlRegister.headingMode, vpeBasicControlRegister.filteringMode, vpeBasicControlRegister.tuningMode,
+                  vnVpeBasicControlRegister.enable, vnVpeBasicControlRegister.headingMode, vnVpeBasicControlRegister.filteringMode, vnVpeBasicControlRegister.tuningMode);
         deinitializeNode();
         return false;
     }
@@ -5348,7 +5383,12 @@ bool NAV::VectorNavSensor::initialize()
             || vnVpeMagnetometerBasicTuningRegister.adaptiveTuning != vpeMagnetometerBasicTuningRegister.adaptiveTuning
             || vnVpeMagnetometerBasicTuningRegister.adaptiveFiltering != vpeMagnetometerBasicTuningRegister.adaptiveFiltering)
         {
-            LOG_ERROR("{}: Writing the vpeMagnetometerBasicTuningRegister was not successfull", nameId());
+            LOG_ERROR("{}: Writing the vpeMagnetometerBasicTuningRegister was not successfull.\n"
+                      "Target: baseTuning = {}, adaptiveTuning = {}, adaptiveFiltering = {}\n"
+                      "Sensor: baseTuning = {}, adaptiveTuning = {}, adaptiveFiltering = {}",
+                      nameId(),
+                      vpeMagnetometerBasicTuningRegister.baseTuning, vpeMagnetometerBasicTuningRegister.adaptiveTuning, vpeMagnetometerBasicTuningRegister.adaptiveFiltering,
+                      vnVpeMagnetometerBasicTuningRegister.baseTuning, vnVpeMagnetometerBasicTuningRegister.adaptiveTuning, vnVpeMagnetometerBasicTuningRegister.adaptiveFiltering);
             deinitializeNode();
             return false;
         }
@@ -5359,7 +5399,12 @@ bool NAV::VectorNavSensor::initialize()
             || vnVpeAccelerometerBasicTuningRegister.adaptiveTuning != vpeAccelerometerBasicTuningRegister.adaptiveTuning
             || vnVpeAccelerometerBasicTuningRegister.adaptiveFiltering != vpeAccelerometerBasicTuningRegister.adaptiveFiltering)
         {
-            LOG_ERROR("{}: Writing the vpeAccelerometerBasicTuningRegister was not successfull", nameId());
+            LOG_ERROR("{}: Writing the vpeAccelerometerBasicTuningRegister was not successfull.\n"
+                      "Target: baseTuning = {}, adaptiveTuning = {}, adaptiveFiltering = {}\n"
+                      "Sensor: baseTuning = {}, adaptiveTuning = {}, adaptiveFiltering = {}",
+                      nameId(),
+                      vpeAccelerometerBasicTuningRegister.baseTuning, vpeAccelerometerBasicTuningRegister.adaptiveTuning, vpeAccelerometerBasicTuningRegister.adaptiveFiltering,
+                      vnVpeAccelerometerBasicTuningRegister.baseTuning, vnVpeAccelerometerBasicTuningRegister.adaptiveTuning, vnVpeAccelerometerBasicTuningRegister.adaptiveFiltering);
             deinitializeNode();
             return false;
         }
@@ -5368,7 +5413,12 @@ bool NAV::VectorNavSensor::initialize()
         if (auto vnFilterStartupGyroBias = vs.readFilterStartupGyroBias();
             vnFilterStartupGyroBias != filterStartupGyroBias)
         {
-            LOG_ERROR("{}: Writing the filterStartupGyroBias was not successfull", nameId());
+            LOG_ERROR("{}: Writing the filterStartupGyroBias was not successfull.\n"
+                      "Target: {}\n"
+                      "Sensor: {}",
+                      nameId(),
+                      filterStartupGyroBias,
+                      vnFilterStartupGyroBias);
             deinitializeNode();
             return false;
         }
@@ -5379,7 +5429,12 @@ bool NAV::VectorNavSensor::initialize()
             || vnVpeGyroBasicTuningRegister.baseTuning != vpeGyroBasicTuningRegister.baseTuning
             || vnVpeGyroBasicTuningRegister.adaptiveTuning != vpeGyroBasicTuningRegister.adaptiveTuning)
         {
-            LOG_ERROR("{}: Writing the vpeGyroBasicTuningRegister was not successfull", nameId());
+            LOG_ERROR("{}: Writing the vpeGyroBasicTuningRegister was not successfull.\n"
+                      "Target: angularWalkVariance = {}, baseTuning = {}, adaptiveTuning = {}\n"
+                      "Sensor: angularWalkVariance = {}, baseTuning = {}, adaptiveTuning = {}",
+                      nameId(),
+                      vpeGyroBasicTuningRegister.angularWalkVariance, vpeGyroBasicTuningRegister.baseTuning, vpeGyroBasicTuningRegister.adaptiveTuning,
+                      vnVpeGyroBasicTuningRegister.angularWalkVariance, vnVpeGyroBasicTuningRegister.baseTuning, vnVpeGyroBasicTuningRegister.adaptiveTuning);
             deinitializeNode();
             return false;
         }
@@ -5397,7 +5452,12 @@ bool NAV::VectorNavSensor::initialize()
             || vnInsBasicConfigurationRegisterVn300.ahrsAiding != insBasicConfigurationRegisterVn300.ahrsAiding
             || vnInsBasicConfigurationRegisterVn300.estBaseline != insBasicConfigurationRegisterVn300.estBaseline)
         {
-            LOG_ERROR("{}: Writing the insBasicConfigurationRegisterVn300 was not successfull", nameId());
+            LOG_ERROR("{}: Writing the insBasicConfigurationRegisterVn300 was not successfull.\n"
+                      "Target: scenario = {}, ahrsAiding = {}, estBaseline = {}\n"
+                      "Sensor: scenario = {}, ahrsAiding = {}, estBaseline = {}",
+                      nameId(),
+                      insBasicConfigurationRegisterVn300.scenario, insBasicConfigurationRegisterVn300.ahrsAiding, insBasicConfigurationRegisterVn300.estBaseline,
+                      vnInsBasicConfigurationRegisterVn300.scenario, vnInsBasicConfigurationRegisterVn300.ahrsAiding, vnInsBasicConfigurationRegisterVn300.estBaseline);
             deinitializeNode();
             return false;
         }
@@ -5408,7 +5468,12 @@ bool NAV::VectorNavSensor::initialize()
             || vnStartupFilterBiasEstimateRegister.accelBias != startupFilterBiasEstimateRegister.accelBias
             || vnStartupFilterBiasEstimateRegister.pressureBias != startupFilterBiasEstimateRegister.pressureBias)
         {
-            LOG_ERROR("{}: Writing the startupFilterBiasEstimateRegister was not successfull", nameId());
+            LOG_ERROR("{}: Writing the startupFilterBiasEstimateRegister was not successfull.\n"
+                      "Target: gyroBias = {}, accelBias = {}, pressureBias = {}\n"
+                      "Sensor: gyroBias = {}, accelBias = {}, pressureBias = {}",
+                      nameId(),
+                      startupFilterBiasEstimateRegister.gyroBias, startupFilterBiasEstimateRegister.accelBias, startupFilterBiasEstimateRegister.pressureBias,
+                      vnStartupFilterBiasEstimateRegister.gyroBias, vnStartupFilterBiasEstimateRegister.accelBias, vnStartupFilterBiasEstimateRegister.pressureBias);
             deinitializeNode();
             return false;
         }
@@ -5424,7 +5489,12 @@ bool NAV::VectorNavSensor::initialize()
         || vnMagnetometerCalibrationControlRegister.hsiOutput != magnetometerCalibrationControlRegister.hsiOutput
         || vnMagnetometerCalibrationControlRegister.convergeRate != magnetometerCalibrationControlRegister.convergeRate)
     {
-        LOG_ERROR("{}: Writing the magnetometerCalibrationControlRegister was not successfull", nameId());
+        LOG_ERROR("{}: Writing the magnetometerCalibrationControlRegister was not successfull.\n"
+                  "Target: hsiMode = {}, hsiOutput = {}, convergeRate = {}\n"
+                  "Sensor: hsiMode = {}, hsiOutput = {}, convergeRate = {}",
+                  nameId(),
+                  magnetometerCalibrationControlRegister.hsiMode, magnetometerCalibrationControlRegister.hsiOutput, magnetometerCalibrationControlRegister.convergeRate,
+                  vnMagnetometerCalibrationControlRegister.hsiMode, vnMagnetometerCalibrationControlRegister.hsiOutput, vnMagnetometerCalibrationControlRegister.convergeRate);
         deinitializeNode();
         return false;
     }
@@ -5435,10 +5505,15 @@ bool NAV::VectorNavSensor::initialize()
 
     vs.writeMagneticAndGravityReferenceVectors(magneticAndGravityReferenceVectorsRegister);
     if (auto vnMagneticAndGravityReferenceVectorsRegister = vs.readMagneticAndGravityReferenceVectors();
-        vnMagneticAndGravityReferenceVectorsRegister.magRef != magneticAndGravityReferenceVectorsRegister.magRef
-        || vnMagneticAndGravityReferenceVectorsRegister.accRef != magneticAndGravityReferenceVectorsRegister.accRef)
+        (!referenceVectorConfigurationRegister.useMagModel && vnMagneticAndGravityReferenceVectorsRegister.magRef != magneticAndGravityReferenceVectorsRegister.magRef)
+        || (!referenceVectorConfigurationRegister.useGravityModel && vnMagneticAndGravityReferenceVectorsRegister.accRef != magneticAndGravityReferenceVectorsRegister.accRef))
     {
-        LOG_ERROR("{}: Writing the magneticAndGravityReferenceVectorsRegister was not successfull", nameId());
+        LOG_ERROR("{}: Writing the magneticAndGravityReferenceVectorsRegister was not successfull.\n"
+                  "Target: magRef = {}, accRef = {}\n"
+                  "Sensor: magRef = {}, accRef = {}",
+                  nameId(),
+                  magneticAndGravityReferenceVectorsRegister.magRef, magneticAndGravityReferenceVectorsRegister.accRef,
+                  vnMagneticAndGravityReferenceVectorsRegister.magRef, vnMagneticAndGravityReferenceVectorsRegister.accRef);
         deinitializeNode();
         return false;
     }
@@ -5451,7 +5526,12 @@ bool NAV::VectorNavSensor::initialize()
         || vnReferenceVectorConfigurationRegister.year != referenceVectorConfigurationRegister.year
         || vnReferenceVectorConfigurationRegister.position != referenceVectorConfigurationRegister.position)
     {
-        LOG_ERROR("{}: Writing the referenceVectorConfigurationRegister was not successfull", nameId());
+        LOG_ERROR("{}: Writing the referenceVectorConfigurationRegister was not successfull.\n"
+                  "Target: useMagModel = {}, useGravityModel = {}, recalcThreshold = {}, year = {}, position = {}\n"
+                  "Sensor: useMagModel = {}, useGravityModel = {}, recalcThreshold = {}, year = {}, position = {}",
+                  nameId(),
+                  referenceVectorConfigurationRegister.useMagModel, referenceVectorConfigurationRegister.useGravityModel, referenceVectorConfigurationRegister.recalcThreshold, referenceVectorConfigurationRegister.year, referenceVectorConfigurationRegister.position,
+                  vnReferenceVectorConfigurationRegister.useMagModel, vnReferenceVectorConfigurationRegister.useGravityModel, vnReferenceVectorConfigurationRegister.recalcThreshold, vnReferenceVectorConfigurationRegister.year, vnReferenceVectorConfigurationRegister.position);
         deinitializeNode();
         return false;
     }
@@ -5468,7 +5548,12 @@ bool NAV::VectorNavSensor::initialize()
             || vnVelocityCompensationControlRegister.velocityTuning != velocityCompensationControlRegister.velocityTuning
             || vnVelocityCompensationControlRegister.rateTuning != velocityCompensationControlRegister.rateTuning)
         {
-            LOG_ERROR("{}: Writing the velocityCompensationControlRegister was not successfull", nameId());
+            LOG_ERROR("{}: Writing the velocityCompensationControlRegister was not successfull.\n"
+                      "Target: mode = {}, velocityTuning = {}, rateTuning = {}\n"
+                      "Sensor: mode = {}, velocityTuning = {}, rateTuning = {}",
+                      nameId(),
+                      velocityCompensationControlRegister.mode, velocityCompensationControlRegister.velocityTuning, velocityCompensationControlRegister.rateTuning,
+                      vnVelocityCompensationControlRegister.mode, vnVelocityCompensationControlRegister.velocityTuning, vnVelocityCompensationControlRegister.rateTuning);
             deinitializeNode();
             return false;
         }
@@ -5481,51 +5566,83 @@ bool NAV::VectorNavSensor::initialize()
     // ###########################################################################################################
 
     vs.writeAsyncDataOutputType(asyncDataOutputType);
+    if (auto vnAsyncDataOutputType = vs.readAsyncDataOutputType();
+        vnAsyncDataOutputType != asyncDataOutputType)
+    {
+        LOG_ERROR("{}: Writing the asyncDataOutputType was not successfull.\n"
+                  "Target: {}\n"
+                  "Sensor: {}",
+                  nameId(),
+                  asyncDataOutputType,
+                  vnAsyncDataOutputType);
+        deinitializeNode();
+        return false;
+    }
+
     if (asyncDataOutputType != vn::protocol::uart::AsciiAsync::VNOFF)
     {
         vs.writeAsyncDataOutputFrequency(asyncDataOutputFrequency);
+        if (auto vnAsyncDataOutputFrequency = vs.readAsyncDataOutputType();
+            vnAsyncDataOutputFrequency != asyncDataOutputFrequency)
+        {
+            LOG_ERROR("{}: Writing the asyncDataOutputFrequency was not successfull.\n"
+                      "Target: {}\n"
+                      "Sensor: {}",
+                      nameId(),
+                      asyncDataOutputFrequency,
+                      vnAsyncDataOutputFrequency);
+            deinitializeNode();
+            return false;
+        }
     }
 
     size_t binaryOutputRegisterCounter = 1; // To give a proper error message
     try
     {
-        auto checkBinaryRegister = [&](const vn::sensors::BinaryOutputRegister& current, const vn::sensors::BinaryOutputRegister& target) {
-            if (current.asyncMode != target.asyncMode
-                || current.rateDivisor != target.rateDivisor
-                || current.commonField != target.commonField
-                || current.timeField != target.timeField
-                || current.imuField != target.imuField
-                || current.gpsField != target.gpsField
-                || current.attitudeField != target.attitudeField
-                || current.insField != target.insField
-                || current.gps2Field != target.gps2Field)
-            {
-                LOG_ERROR("{}: Writing the binaryOutputRegister {} was not successfull", nameId(), binaryOutputRegisterCounter);
-                deinitializeNode();
-                return false;
-            }
-            return true;
-        };
+        // auto checkBinaryRegister = [&](const vn::sensors::BinaryOutputRegister& current, const vn::sensors::BinaryOutputRegister& target) {
+        //     if (current.asyncMode != target.asyncMode
+        //         || current.rateDivisor != target.rateDivisor
+        //         || current.commonField != target.commonField
+        //         || current.timeField != target.timeField
+        //         || current.imuField != target.imuField
+        //         || current.gpsField != target.gpsField
+        //         || current.attitudeField != target.attitudeField
+        //         || current.insField != target.insField
+        //         || current.gps2Field != target.gps2Field)
+        //     {
+        //         LOG_ERROR("{}: Writing the binaryOutputRegister {} was not successfull.\n"
+        //                   "Target: asyncMode = {}, rateDivisor = {}, commonField = {}, timeField = {}, imuField = {}, gpsField = {}, attitudeField = {}, insField = {}, gps2Field = {}\n"
+        //                   "Sensor: asyncMode = {}, rateDivisor = {}, commonField = {}, timeField = {}, imuField = {}, gpsField = {}, attitudeField = {}, insField = {}, gps2Field = {}",
+        //                   nameId(), binaryOutputRegisterCounter,
+        //                   target.asyncMode, target.rateDivisor, target.commonField, target.timeField, target.imuField, target.gpsField, target.attitudeField, target.insField, target.gps2Field,
+        //                   current.asyncMode, current.rateDivisor, current.commonField, current.timeField, current.imuField, current.gpsField, current.attitudeField, current.insField, current.gps2Field);
+        //         return false;
+        //     }
+        //     return true;
+        // };
 
         vs.writeBinaryOutput1(binaryOutputRegister.at(0));
-        if (!checkBinaryRegister(vs.readBinaryOutput1(), binaryOutputRegister.at(0)))
-        {
-            return false;
-        }
+        // if (!checkBinaryRegister(vs.readBinaryOutput1(), binaryOutputRegister.at(0)))
+        // {
+        //     deinitializeNode();
+        //     return false;
+        // }
 
         binaryOutputRegisterCounter++;
         vs.writeBinaryOutput2(binaryOutputRegister.at(1));
-        if (!checkBinaryRegister(vs.readBinaryOutput2(), binaryOutputRegister.at(1)))
-        {
-            return false;
-        }
+        // if (!checkBinaryRegister(vs.readBinaryOutput2(), binaryOutputRegister.at(1)))
+        // {
+        //     deinitializeNode();
+        //     return false;
+        // }
 
         binaryOutputRegisterCounter++;
         vs.writeBinaryOutput3(binaryOutputRegister.at(2));
-        if (!checkBinaryRegister(vs.readBinaryOutput3(), binaryOutputRegister.at(2)))
-        {
-            return false;
-        }
+        // if (!checkBinaryRegister(vs.readBinaryOutput3(), binaryOutputRegister.at(2)))
+        // {
+        //     deinitializeNode();
+        //     return false;
+        // }
     }
     catch (const std::exception& e)
     {
@@ -5534,12 +5651,17 @@ bool NAV::VectorNavSensor::initialize()
         return false;
     }
 
+    // Some changes need to be set at startup, therefore write the settings and reset the device
+    LOG_DEBUG("{}: writing settings", nameId());
+    vs.writeSettings();
+    vs.reset();
+
     // TODO: Implement in vnproglib: vs.writeNmeaOutput1(...) - User manual VN-310 - 8.2.14 (p 103)
     // TODO: Implement in vnproglib: vs.writeNmeaOutput2(...) - User manual VN-310 - 8.2.15 (p 104)
 
     vs.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
-    LOG_DEBUG("{} successfully initialized", nameId());
+    LOG_DEBUG("{}: successfully initialized", nameId());
 
     return true;
 }
@@ -5547,11 +5669,6 @@ bool NAV::VectorNavSensor::initialize()
 void NAV::VectorNavSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
-
-    if (!isInitialized())
-    {
-        return;
-    }
 
     if (vs.isConnected())
     {
@@ -5561,23 +5678,25 @@ void NAV::VectorNavSensor::deinitialize()
         }
         catch (...)
         {
-            LOG_TRACE("{}: Could not unregisterAsyncPacketReceivedHandler", nameId());
+            LOG_DEBUG("{}: Could not unregisterAsyncPacketReceivedHandler", nameId());
         }
         try
         {
             vs.reset(true);
+            LOG_TRACE("{}: Sensor resettet", nameId());
         }
         catch (...)
         {
-            LOG_TRACE("{}: Could not reset", nameId());
+            LOG_DEBUG("{}: Could not reset", nameId());
         }
         try
         {
             vs.disconnect();
+            LOG_TRACE("{}: Sensor disconnected", nameId());
         }
         catch (...)
         {
-            LOG_TRACE("{}: Could not disconnect", nameId());
+            LOG_DEBUG("{}: Could not disconnect", nameId());
         }
     }
 }
