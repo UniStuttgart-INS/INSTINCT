@@ -89,30 +89,43 @@ void NAV::ImuIntegrator::guiConfig()
         }
         flow::ApplyChanges();
     }
-    ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
 
     ImGui::SetNextItemWidth(250);
     if (ImGui::Combo(fmt::format("Integration Algorithm Attitude##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationAlgorithmAttitude), "RectangularRule\0Simpson\0Runge Kutta 1st Order\0Runge Kutta 3rd Order\0\0"))
     {
+        if (integrationAlgorithmAttitude != IntegrationAlgorithm::RungeKutta1 && integrationAlgorithmAttitude != IntegrationAlgorithm::RungeKutta3)
+        {
+            LOG_ERROR("Currently only 'Runge-Kutta 1' and 'Runge-Kutta 3' are supported for the attitude update");
+            integrationAlgorithmAttitude = IntegrationAlgorithm::RungeKutta3;
+        }
+
         LOG_DEBUG("{}: Integration Algorithm Attitude changed to {}", nameId(), integrationAlgorithmAttitude);
         flow::ApplyChanges();
     }
     ImGui::SetNextItemWidth(250);
     if (ImGui::Combo(fmt::format("Integration Algorithm Velocity##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationAlgorithmVelocity), "RectangularRule\0Simpson\0Runge Kutta 1st Order\0Runge Kutta 3rd Order\0\0"))
     {
+        if (integrationAlgorithmVelocity == IntegrationAlgorithm::RectangularRule)
+        {
+            LOG_ERROR("Currently 'Rectangular Rule' is not supported for the velocity update");
+            integrationAlgorithmVelocity = IntegrationAlgorithm::Simpson;
+        }
+
         LOG_DEBUG("{}: Integration Algorithm Velocity changed to {}", nameId(), integrationAlgorithmVelocity);
         flow::ApplyChanges();
     }
     ImGui::SetNextItemWidth(250);
     if (ImGui::Combo(fmt::format("Integration Algorithm Position##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationAlgorithmPosition), "RectangularRule\0Simpson\0Runge Kutta 1st Order\0Runge Kutta 3rd Order\0\0"))
     {
+        if (integrationAlgorithmPosition != IntegrationAlgorithm::RectangularRule)
+        {
+            LOG_ERROR("Currently only 'Rectangular Rule' is supported for the position update");
+            integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
+        }
+
         LOG_DEBUG("{}: Integration Algorithm Position changed to {}", nameId(), integrationAlgorithmPosition);
         flow::ApplyChanges();
     }
-
-    ImGui::PopItemFlag();
-    ImGui::PopStyleVar();
 
     if (ImGui::Checkbox(fmt::format("Calculate intermediate values##{}", size_t(id)).c_str(), &calculateIntermediateValues))
     {
@@ -729,6 +742,14 @@ void NAV::ImuIntegrator::integrateObservation()
                                                                 quaternion_nb__t1,
                                                                 quaternion_nb__t2);
         }
+        else if (integrationAlgorithmAttitude == IntegrationAlgorithm::RungeKutta1)
+        {
+            quaternion_nb__t0 = updateQuaternion_nb_RungeKutta1(timeDifferenceSec__t0,
+                                                                angularVelocity_ip_b__t0,
+                                                                angularVelocity_ie_n__t1,
+                                                                angularVelocity_en_n__t1,
+                                                                quaternion_nb__t1);
+        }
         else
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
@@ -755,6 +776,16 @@ void NAV::ImuIntegrator::integrateObservation()
                                                       !coriolisCompensation
 #endif
             );
+        }
+        else if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta1)
+        {
+            velocity_n__t0 = updateVelocity_n_RungeKutta1(timeDifferenceSec__t0,
+                                                          acceleration_b__t0,
+                                                          velocity_n__t1,
+                                                          gravity_n__t1,
+                                                          angularVelocity_ie_n__t1,
+                                                          angularVelocity_en_n__t1,
+                                                          quaternion_nb__t1);
         }
         else if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta3)
         {
