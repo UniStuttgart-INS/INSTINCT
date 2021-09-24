@@ -47,6 +47,7 @@ struct VelocityUpdateState
 /// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.3.4)
 Eigen::Vector3d velocityUpdateModel(const VelocityUpdateState& x, const Eigen::Vector3d& velocity_n)
 {
+    // TODO: Consider suppressCoriolis option from the GUI here
     // The Coriolis force accounts for the fact that the NED frame is noninertial
     const Eigen::Vector3d coriolisAcceleration_n = (2 * x.angularVelocity_ie_n + x.angularVelocity_en_n).cross(velocity_n);
 

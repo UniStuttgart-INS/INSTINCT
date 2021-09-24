@@ -389,9 +389,11 @@ void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& no
 
 void NAV::ImuIntegrator::integrateObservation()
 {
+    LOG_DEBUG("{}: imuObservations.at(0) = {}, imuObservations.at(1) = {}, imuObservations.at(2) = {}, ", nameId(), imuObservations.at(0), imuObservations.at(1), imuObservations.at(2));
+
     if (pvaError)
     {
-        // LOG_DEBUG("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value(), posVelAttStates.at(1)->insTime.value());
+        LOG_DATA("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value(), posVelAttStates.at(1)->insTime.value());
 
         for (auto& posVelAtt : posVelAttStates)
         {
@@ -495,8 +497,8 @@ void NAV::ImuIntegrator::integrateObservation()
                                                    : imuObs__t1->gyroUncompXYZ.value();
 
     angularVelocity_ip_p__t1 -= imuBiases.biasGyro_p;
+    LOG_DATA("{}: angularVelocity_ip_p__t1 = {}", nameId(), angularVelocity_ip_p__t1.transpose());
 
-    // LOG_DEBUG("angularVelocity_ip_p__t1 =\n{}", angularVelocity_ip_p__t1);
     /// ω_ip_p (tₖ) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ
     Eigen::Vector3d angularVelocity_ip_p__t0 = imuObs__t0->gyroCompXYZ.has_value()
@@ -504,8 +506,7 @@ void NAV::ImuIntegrator::integrateObservation()
                                                    : imuObs__t0->gyroUncompXYZ.value();
 
     angularVelocity_ip_p__t0 -= imuBiases.biasGyro_p;
-
-    // LOG_DEBUG("angularVelocity_ip_p__t0 =\n{}", angularVelocity_ip_p__t0);
+    LOG_DATA("{}: angularVelocity_ip_p__t0 = {}", nameId(), angularVelocity_ip_p__t0.transpose());
 
     /// a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
     Eigen::Vector3d acceleration_p__t1 = imuObs__t1->accelCompXYZ.has_value()
@@ -513,34 +514,34 @@ void NAV::ImuIntegrator::integrateObservation()
                                              : imuObs__t1->accelUncompXYZ.value();
 
     acceleration_p__t1 -= imuBiases.biasAccel_p;
+    LOG_DATA("{}: acceleration_p__t1 = {}", nameId(), acceleration_p__t1.transpose());
 
-    // LOG_DEBUG("acceleration_p__t1 =\n{}", acceleration_p__t1);
     /// a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
     Eigen::Vector3d acceleration_p__t0 = imuObs__t0->accelCompXYZ.has_value()
                                              ? imuObs__t0->accelCompXYZ.value()
                                              : imuObs__t0->accelUncompXYZ.value();
 
     acceleration_p__t0 -= imuBiases.biasAccel_p;
+    LOG_DATA("{}: acceleration_p__t0 = {}", nameId(), acceleration_p__t0.transpose());
 
-    // LOG_DEBUG("acceleration_p__t0 =\n{}", acceleration_p__t0);
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& velocity_n__t1 = posVelAtt__t1->velocity_n();
-    // LOG_DEBUG("velocity_n__t1 =\n{}", velocity_n__t1);
+    LOG_DATA("{}: velocity_n__t1 = {}", nameId(), velocity_n__t1.transpose());
     /// v_n (tₖ₋₂) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₂
     const Eigen::Vector3d& velocity_n__t2 = posVelAtt__t2->velocity_n();
-    // LOG_DEBUG("velocity_n__t2 =\n{}", velocity_n__t2);
+    LOG_DATA("{}: velocity_n__t2 = {}", nameId(), velocity_n__t2.transpose());
     /// v_e (tₖ₋₂) Velocity in [m/s], in earth coordinates, at the time tₖ₋₂
     const Eigen::Vector3d velocity_e__t2 = posVelAtt__t2->quaternion_en() * velocity_n__t2;
-    // LOG_DEBUG("velocity_e__t2 =\n{}", velocity_e__t2);
+    LOG_DATA("{}: velocity_e__t2 = {}", nameId(), velocity_e__t2.transpose());
     /// v_e (tₖ₋₁) Velocity in [m/s], in earth coordinates, at the time tₖ₋₁
     const Eigen::Vector3d velocity_e__t1 = posVelAtt__t1->quaternion_en() * velocity_n__t1;
-    // LOG_DEBUG("velocity_e__t1 =\n{}", velocity_e__t1);
+    LOG_DATA("{}: velocity_e__t1 = {}", nameId(), velocity_e__t1.transpose());
     /// x_e (tₖ₋₂) Position in [m], in ECEF coordinates, at the time tₖ₋₂
     const Eigen::Vector3d position_e__t2 = posVelAtt__t2->position_ecef();
-    // LOG_DEBUG("position_e__t2 =\n{}", position_e__t2);
+    LOG_DATA("{}: position_e__t2 = {}", nameId(), position_e__t2.transpose());
     /// x_e (tₖ₋₁) Position in [m], in ECEF coordinates, at the time tₖ₋₁
     const Eigen::Vector3d position_e__t1 = posVelAtt__t1->position_ecef();
-    // LOG_DEBUG("position_e__t1 =\n{}", position_e__t1);
+    LOG_DATA("{}: position_e__t1 = {}", nameId(), position_e__t1.transpose());
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
     Eigen::Vector3d gravity_n__t1;
@@ -548,12 +549,12 @@ void NAV::ImuIntegrator::integrateObservation()
     /// Gravity vector determination
     if (gravityModel == GravityModel::Somigliana)
     {
-        LOG_DATA("Gravity calculated with Somigliana model");
+        LOG_DATA("{}: Gravity calculated with Somigliana model", nameId());
         gravity_n__t1 = gravity::gravity_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
     }
     else if (gravityModel == GravityModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
     {
-        LOG_DATA("Gravity calculated with WGS84 model as in the Skydel Simulator plug-in");
+        LOG_DATA("{}: Gravity calculated with WGS84 model as in the Skydel Simulator plug-in", nameId());
         double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
         // Gravity vector NED
         const Eigen::Vector3d gravityVector(0.0, 0.0, gravityMagnitude);
@@ -561,18 +562,18 @@ void NAV::ImuIntegrator::integrateObservation()
     }
     else if (gravityModel == GravityModel::EGM96)
     {
-        LOG_DATA("Gravity calculated with EGM96");
+        LOG_DATA("{}: Gravity calculated with EGM96", nameId());
         int egm96degree = 10;
         gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
     }
     else if (gravityModel == GravityModel::OFF)
     {
-        LOG_DATA("Gravity set to zero");
+        LOG_DATA("{}: Gravity set to zero", nameId());
         gravity_n__t1 = Eigen::Vector3d::Zero();
     }
     else
     {
-        LOG_DATA("Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')");
+        LOG_DATA("{}: Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')", nameId());
         gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
     }
 
@@ -580,29 +581,38 @@ void NAV::ImuIntegrator::integrateObservation()
     if (centrifugalAccCompensation)
     {
 #endif
+        LOG_DATA("{}: Applying centrifugal acceleration", nameId());
         gravity_n__t1 += gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
 #ifndef NDEBUG
     }
 #endif
-    // LOG_DATA("Gravity vector in NED:\n{}", gravity_n__t1);
+    LOG_DATA("{}: gravity_n__t1 = {}", nameId(), gravity_n__t1.transpose());
 
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;
 
     if (integrationFrame == IntegrationFrame::ECEF)
     {
+        LOG_DATA("{}: Integrating in ECEF frame", nameId());
+
         /// q (tₖ₋₂) Quaternion, from gyro platform to earth coordinates, at the time tₖ₋₂
         const Eigen::Quaterniond quaternion_gyro_ep__t2 = posVelAtt__t2->quaternion_eb() * imuPosition.quatGyro_bp();
+        LOG_DATA("{}: quaternion_gyro_ep__t2 = {}", nameId(), quaternion_gyro_ep__t2.coeffs().transpose());
         /// q (tₖ₋₁) Quaternion, from gyro platform to earth coordinates, at the time tₖ₋₁
         const Eigen::Quaterniond quaternion_gyro_ep__t1 = posVelAtt__t1->quaternion_eb() * imuPosition.quatGyro_bp();
+        LOG_DATA("{}: quaternion_gyro_ep__t1 = {}", nameId(), quaternion_gyro_ep__t1.coeffs().transpose());
 
         /// ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
         const Eigen::Vector3d& angularVelocity_ie_e__t0 = InsConst::angularVelocity_ie_e;
+        LOG_DATA("{}: angularVelocity_ie_e__t0 = {}", nameId(), angularVelocity_ie_e__t0.transpose());
 
         /// q (tₖ₋₂) Quaternion, from accel platform to earth coordinates, at the time tₖ₋₂
         const Eigen::Quaterniond quaternion_accel_ep__t2 = posVelAtt__t2->quaternion_eb() * imuPosition.quatAccel_bp();
+        LOG_DATA("{}: quaternion_accel_ep__t2 = {}", nameId(), quaternion_accel_ep__t2.coeffs().transpose());
+
         /// q (tₖ₋₁) Quaternion, from accel platform to earth coordinates, at the time tₖ₋₁
         const Eigen::Quaterniond quaternion_accel_ep__t1 = posVelAtt__t1->quaternion_eb() * imuPosition.quatAccel_bp();
+        LOG_DATA("{}: quaternion_accel_ep__t1 = {}", nameId(), quaternion_accel_ep__t1.coeffs().transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Attitude Update                                             */
@@ -622,6 +632,7 @@ void NAV::ImuIntegrator::integrateObservation()
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
         }
+        LOG_DATA("{}: quaternion_gyro_ep__t0 = {}", nameId(), quaternion_gyro_ep__t0.coeffs().transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                    Specific force frame transformation                                   */
@@ -629,6 +640,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         /// q (tₖ) Quaternion, from accel platform to earth coordinates, at the time tₖ
         const Eigen::Quaterniond quaternion_accel_ep__t0 = quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb() * imuPosition.quatAccel_bp();
+        LOG_DATA("{}: quaternion_accel_ep__t0 = {}", nameId(), quaternion_accel_ep__t0.coeffs().transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Velocity update                                             */
@@ -657,6 +669,7 @@ void NAV::ImuIntegrator::integrateObservation()
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
         }
+        LOG_DATA("{}: velocity_e__t0 = {}", nameId(), velocity_e__t0.transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Position update                                             */
@@ -673,6 +686,7 @@ void NAV::ImuIntegrator::integrateObservation()
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
         }
+        LOG_DATA("{}: position_e__t0 = {}", nameId(), position_e__t0.transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                               Store Results                                              */
@@ -689,40 +703,49 @@ void NAV::ImuIntegrator::integrateObservation()
     }
     else if (integrationFrame == IntegrationFrame::NED)
     {
+        LOG_DATA("{}: Integrating in NED frame", nameId());
         /// ω_ip_b (tₖ₋₁) Angular velocity in [rad/s],
         /// of the inertial to platform system, in body coordinates, at the time tₖ₋₁
         const Eigen::Vector3d angularVelocity_ip_b__t1 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t1;
+        LOG_DATA("{}: angularVelocity_ip_b__t1 = {}", nameId(), angularVelocity_ip_b__t1.transpose());
         /// ω_ip_b (tₖ) Angular velocity in [rad/s],
         /// of the inertial to platform system, in body coordinates, at the time tₖ
         const Eigen::Vector3d angularVelocity_ip_b__t0 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t0;
+        LOG_DATA("{}: angularVelocity_ip_b__t0 = {}", nameId(), angularVelocity_ip_b__t0.transpose());
 
         /// a_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
         const Eigen::Vector3d acceleration_b__t1 = imuPosition.quatAccel_bp() * acceleration_p__t1;
+        LOG_DATA("{}: acceleration_b__t1 = {}", nameId(), acceleration_b__t1.transpose());
 
         /// a_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
         const Eigen::Vector3d acceleration_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
-
-        // LOG_DATA("{}: Integrating Imu data with accel_p {}, {}, {}", nameId(), acceleration_p__t0.x(), acceleration_p__t0.y(), acceleration_p__t0.z());
-        // LOG_DATA("{}: Integrating Imu data with accel_b {}, {}, {}", nameId(), acceleration_b__t0.x(), acceleration_b__t0.y(), acceleration_b__t0.z());
+        LOG_DATA("{}: acceleration_b__t0 = {}", nameId(), acceleration_b__t0.transpose());
 
         /// q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
         const Eigen::Quaterniond quaternion_nb__t1 = posVelAtt__t1->quaternion_nb();
+        LOG_DATA("{}: quaternion_nb__t1 = {}", nameId(), quaternion_nb__t1.coeffs().transpose());
         /// q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
         const Eigen::Quaterniond quaternion_nb__t2 = posVelAtt__t2->quaternion_nb();
+        LOG_DATA("{}: quaternion_nb__t2 = {}", nameId(), quaternion_nb__t2.coeffs().transpose());
 
         /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
         Eigen::Vector3d angularVelocity_ie_n__t1 = posVelAtt__t1->quaternion_ne() * InsConst::angularVelocity_ie_e;
+        LOG_DATA("{}: angularVelocity_ie_n__t1 = {}", nameId(), angularVelocity_ie_n__t1.transpose());
 
         /// North/South (meridian) earth radius [m]
         double R_N = earthRadius_N(posVelAtt__t1->latitude());
+        LOG_DATA("{}: R_N = {}", nameId(), R_N);
         /// East/West (prime vertical) earth radius [m]
         double R_E = earthRadius_E(posVelAtt__t1->latitude());
+        LOG_DATA("{}: R_E = {}", nameId(), R_E);
 
         /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
         Eigen::Vector3d angularVelocity_en_n__t1 = transportRate(posVelAtt__t1->latLonAlt(), velocity_n__t1, R_N, R_E);
+        LOG_DATA("{}: angularVelocity_en_n__t1 = {}", nameId(), angularVelocity_en_n__t1.transpose());
 
         /// [x_n, x_e, x_d] (tₖ₋₁) Position NED in [m] at the time tₖ₋₁
         Eigen::Vector3d position_n__t1 = trafo::ecef2ned(position_e__t1, posVelAtt__init->latLonAlt());
+        LOG_DATA("{}: position_n__t1 = {}", nameId(), position_n__t1.transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Attitude Update                                             */
@@ -754,6 +777,7 @@ void NAV::ImuIntegrator::integrateObservation()
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
         }
+        LOG_DATA("{}: quaternion_nb__t0 = {}", nameId(), quaternion_nb__t0.coeffs().transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                           Specific force frame transformation & Velocity update                          */
@@ -806,6 +830,7 @@ void NAV::ImuIntegrator::integrateObservation()
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
         }
+        LOG_DATA("{}: velocity_n__t0 = {}", nameId(), velocity_n__t0.transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Position update                                             */
@@ -822,9 +847,11 @@ void NAV::ImuIntegrator::integrateObservation()
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
         }
+        LOG_DATA("{}: position_n__t0 = {}", nameId(), position_n__t0.transpose());
 
         /// x_e (tₖ) Position in [m], in ECEF coordinates, at the time tₖ
         Eigen::Vector3d position_e__t0 = trafo::ned2ecef(position_n__t0, posVelAtt__init->latLonAlt());
+        LOG_DATA("{}: position_e__t0 = {}", nameId(), position_e__t0.transpose());
 
         /// Latitude, Longitude and Altitude in [rad, rad, m], at the current time tₖ (see Gleason eq. 6.18 - 6.20)
         // Vector3d<LLA> latLonAlt__t0 = updatePosition_n(timeDifferenceSec__t0, posVelAtt__t1->latLonAlt(),
@@ -841,6 +868,10 @@ void NAV::ImuIntegrator::integrateObservation()
         // Store body to navigation frame quaternion in the state
         posVelAtt__t0->quaternion_nb() = quaternion_nb__t0;
     }
+
+    LOG_DATA("{}: posVelAtt__t0->position_ecef() = {}", nameId(), posVelAtt__t0->position_ecef().transpose());
+    LOG_DATA("{}: posVelAtt__t0->velocity_n() = {}", nameId(), posVelAtt__t0->velocity_n().transpose());
+    LOG_DATA("{}: posVelAtt__t0->quaternion_nb() = {}", nameId(), posVelAtt__t0->quaternion_nb().coeffs().transpose());
 
     // Cycle lists
     imuObservations.pop_back();
