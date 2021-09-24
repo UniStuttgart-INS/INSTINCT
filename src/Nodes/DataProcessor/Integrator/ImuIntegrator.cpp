@@ -389,8 +389,7 @@ void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& no
 
 void NAV::ImuIntegrator::integrateObservation()
 {
-    LOG_DEBUG("{}: imuObservations.at(0) = {}, imuObservations.at(1) = {}, imuObservations.at(2) = {}, ", nameId(), imuObservations.at(0), imuObservations.at(1), imuObservations.at(2));
-
+    LOG_DATA("{}: imuObservations.at(0) = {}, imuObservations.at(1) = {}, imuObservations.at(2) = {}, ", nameId(), imuObservations.at(0), imuObservations.at(1), imuObservations.at(2));
     if (pvaError)
     {
         LOG_DATA("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value(), posVelAttStates.at(1)->insTime.value());
