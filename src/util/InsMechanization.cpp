@@ -14,7 +14,7 @@ namespace NAV
 
 Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, const Eigen::Vector4d& quat)
 {
-    // Reordered because Skript Quaternion has order (w,x,y,z)
+    // Rearranged because Skript Quaternion has order (w,x,y,z)
     Eigen::Vector4d q = { quat(3), quat(0), quat(1), quat(2) };
     // clang-format off
 
@@ -28,7 +28,7 @@ Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, co
 
     q = 0.5 * A * q; // (w,x,y,z)
 
-    // Reordered because Eigen::Quaternion has order (x,y,z,w)
+    // Rearranged because Eigen::Quaternion has order (x,y,z,w)
     return { q(1), q(2), q(3), q(0) };
 }
 
@@ -58,20 +58,20 @@ Eigen::Vector3d velocityUpdateModel(const VelocityUpdateState& x, const Eigen::V
 //                                             Public Functions
 // ###########################################################################################################
 
+// ###########################################################################################################
+//                                              Attitude Update
+// ###########################################################################################################
+
 Eigen::Quaterniond updateQuaternion_nb_RungeKutta1(const long double& timeDifferenceSec__t0,
                                                    const Eigen::Vector3d& angularVelocity_ip_b__t0,
                                                    const Eigen::Vector3d& angularVelocity_ie_n__t1,
                                                    const Eigen::Vector3d& angularVelocity_en_n__t1,
                                                    const Eigen::Quaterniond& quaternion_nb__t1)
 {
-    /// q (tₖ₋₁) Quaternion, from earth to platform coordinates, at the time tₖ₋₁
+    /// q (tₖ₋₁) Quaternion, from n-system to b-system, at the time tₖ₋₁
     const Eigen::Quaterniond quaternion_bn__t1 = quaternion_nb__t1.conjugate();
 
-    /// ῶ_nb_b (tₖ₋₁) Taylor-Approximation of angular velocities in [rad/s],
-    /// of the navigation to body system, in body coordinates, at the time tₖ₋₁ (eq. 8.15)
-    // const Eigen::Vector3d angularVelocity_nb_b__t1 = (integratedAngularVelocity_nb_b__t1 + integratedAngularVelocity_nb_b__t0) / integrationStep;
-
-    /// Δβ⁠_nb_p (tₖ) The integrated angluar velocities in [radian],
+    /// Δβ⁠_nb_p (tₖ) The angular velocities in [rad],
     /// of the navigation to body system, in body coordinates, at the time tₖ (eq. 8.9)
     const Eigen::Vector3d angularVelocity_nb_b__t0 = angularVelocity_ip_b__t0
                                                      - quaternion_bn__t1 * (angularVelocity_ie_n__t1 + angularVelocity_en_n__t1);
@@ -89,9 +89,9 @@ Eigen::Quaterniond updateQuaternion_nb_RungeKutta1(const long double& timeDiffer
 Eigen::Quaterniond updateQuaternion_ep_RungeKutta3(
     const long double& timeDifferenceSec__t0,        // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     const long double& timeDifferenceSec__t1,        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
-    const Eigen::Vector3d& angularVelocity_ip_p__t0, // ω_ip_p (tₖ) Angluar velocity in [rad/s], of the inertial to platform system, in platform coordinates, at the time tₖ
-    const Eigen::Vector3d& angularVelocity_ip_p__t1, // ω_ip_p (tₖ₋₁) Angluar velocity in [rad/s], of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& angularVelocity_ie_e__t0, // ω_ie_e (tₖ) Angluar velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
+    const Eigen::Vector3d& angularVelocity_ip_p__t0, // ω_ip_p (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in platform coordinates, at the time tₖ
+    const Eigen::Vector3d& angularVelocity_ip_p__t1, // ω_ip_p (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d& angularVelocity_ie_e__t0, // ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
     const Eigen::Quaterniond& quaternion_ep__t1,     // q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
     const Eigen::Quaterniond& quaternion_ep__t2)     // q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
 {
@@ -100,17 +100,17 @@ Eigen::Quaterniond updateQuaternion_ep_RungeKutta3(
     /// q (tₖ₋₁) Quaternion, from earth to platform coordinates, at the time tₖ₋₁
     const Eigen::Quaterniond quaternion_pe__t1 = quaternion_ep__t1.conjugate();
 
-    /// Δα_ip_p (tₖ₋₁) The integrated angluar velocities in [radian],
+    /// Δα_ip_p (tₖ₋₁) The integrated angular velocities in [radian],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ₋₁ (eq. 8.4)
     const Eigen::Vector3d integratedAngularVelocity_ip_p__t1 = timeDifferenceSec__t1 * angularVelocity_ip_p__t1;
-    /// Δα_ip_p (tₖ) The integrated angluar velocities in [radian],
+    /// Δα_ip_p (tₖ) The integrated angular velocities in [radian],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ (eq. 8.4)
     const Eigen::Vector3d integratedAngularVelocity_ip_p__t0 = timeDifferenceSec__t0 * angularVelocity_ip_p__t0;
-    /// Δβ⁠_ep_p (tₖ₋₁) The integrated angluar velocities in [radian],
+    /// Δβ⁠_ep_p (tₖ₋₁) The integrated angular velocities in [radian],
     /// of the earth to platform system, in platform coordinates, at the time tₖ₋₁ (eq. 8.9)
     const Eigen::Vector3d integratedAngularVelocity_ep_p__t1 = integratedAngularVelocity_ip_p__t1
                                                                - quaternion_pe__t2 * angularVelocity_ie_e__t0 * timeDifferenceSec__t1;
-    /// Δβ⁠_ep_p (tₖ) The integrated angluar velocities in [radian],
+    /// Δβ⁠_ep_p (tₖ) The integrated angular velocities in [radian],
     /// of the earth to platform system, in platform coordinates, at the time tₖ (eq. 8.9)
     const Eigen::Vector3d integratedAngularVelocity_ep_p__t0 = integratedAngularVelocity_ip_p__t0
                                                                - quaternion_pe__t1 * angularVelocity_ie_e__t0 * timeDifferenceSec__t0;
@@ -142,9 +142,9 @@ Eigen::Quaterniond updateQuaternion_ep_RungeKutta3(
 Eigen::Quaterniond updateQuaternion_nb_RungeKutta3(
     const long double& timeDifferenceSec__t0,        // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     const long double& timeDifferenceSec__t1,        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
-    const Eigen::Vector3d& angularVelocity_ip_b__t0, // ω_ip_b (tₖ) Angluar velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ
-    const Eigen::Vector3d& angularVelocity_ip_b__t1, // ω_ip_b (tₖ₋₁) Angluar velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& angularVelocity_ie_n__t1, // ω_ie_n (tₖ₋₁) Angluar velocity in [rad/s], of the inertial to earth system, in navigation coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d& angularVelocity_ip_b__t0, // ω_ip_b (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ
+    const Eigen::Vector3d& angularVelocity_ip_b__t1, // ω_ip_b (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d& angularVelocity_ie_n__t1, // ω_ie_n (tₖ₋₁) Angular velocity in [rad/s], of the inertial to earth system, in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& angularVelocity_en_n__t1, // ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
     const Eigen::Quaterniond& quaternion_nb__t1,     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
     const Eigen::Quaterniond& quaternion_nb__t2)     // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
@@ -154,17 +154,17 @@ Eigen::Quaterniond updateQuaternion_nb_RungeKutta3(
     /// q (tₖ₋₁) Quaternion, from earth to platform coordinates, at the time tₖ₋₁
     const Eigen::Quaterniond quaternion_bn__t1 = quaternion_nb__t1.conjugate();
 
-    /// Δα_ip_p (tₖ₋₁) The integrated angluar velocities in [radian],
+    /// Δα_ip_p (tₖ₋₁) The integrated angular velocities in [radian],
     /// of the inertial to platform system, in body coordinates, at the time tₖ₋₁ (eq. 8.4)
     const Eigen::Vector3d integratedAngularVelocity_ip_b__t1 = timeDifferenceSec__t1 * angularVelocity_ip_b__t1;
-    /// Δα_ip_p (tₖ) The integrated angluar velocities in [radian],
+    /// Δα_ip_p (tₖ) The integrated angular velocities in [radian],
     /// of the inertial to platform system, in body coordinates, at the time tₖ (eq. 8.4)
     const Eigen::Vector3d integratedAngularVelocity_ip_b__t0 = timeDifferenceSec__t0 * angularVelocity_ip_b__t0;
-    /// Δβ⁠_nb_p (tₖ₋₁) The integrated angluar velocities in [radian],
+    /// Δβ⁠_nb_p (tₖ₋₁) The integrated angular velocities in [radian],
     /// of the navigation to body system, in body coordinates, at the time tₖ₋₁ (eq. 8.9)
     const Eigen::Vector3d integratedAngularVelocity_nb_b__t1 = integratedAngularVelocity_ip_b__t1
                                                                - quaternion_bn__t2 * (angularVelocity_ie_n__t1 + angularVelocity_en_n__t1) * timeDifferenceSec__t1;
-    /// Δβ⁠_nb_p (tₖ) The integrated angluar velocities in [radian],
+    /// Δβ⁠_nb_p (tₖ) The integrated angular velocities in [radian],
     /// of the navigation to body system, in body coordinates, at the time tₖ (eq. 8.9)
     const Eigen::Vector3d integratedAngularVelocity_nb_b__t0 = integratedAngularVelocity_ip_b__t0
                                                                - quaternion_bn__t1 * (angularVelocity_ie_n__t1 + angularVelocity_en_n__t1) * timeDifferenceSec__t0;
@@ -191,6 +191,39 @@ Eigen::Quaterniond updateQuaternion_nb_RungeKutta3(
     q_nb__t0.normalize();
 
     return q_nb__t0;
+}
+
+// ###########################################################################################################
+//                                              Velocity Update
+// ###########################################################################################################
+
+Eigen::Vector3d updateVelocity_n_RungeKutta1(const long double& timeDifferenceSec__t0,
+                                             const Eigen::Vector3d& acceleration_b__t0,
+                                             const Eigen::Vector3d& velocity_n__t1,
+                                             const Eigen::Vector3d& gravity_n__t1,
+                                             const Eigen::Vector3d& angularVelocity_ie_n__t1,
+                                             const Eigen::Vector3d& angularVelocity_en_n__t1,
+                                             const Eigen::Quaterniond& quaternion_nb__t1)
+{
+    /// q (tₖ₋₁) Quaternion, from n-system to b-system, at the time tₖ₋₁
+    // const Eigen::Quaterniond quaternion_bn__t1 = quaternion_nb__t1.conjugate();
+
+    /// The Coriolis force accounts for the fact that the NED frame is noninertial
+    Eigen::Vector3d coriolisAcceleration_n__t1 = (2 * angularVelocity_ie_n__t1 + angularVelocity_en_n__t1).cross(velocity_n__t1);
+
+    VelocityUpdateState state___t1;
+
+    /// The derivative of velocity (see Jekeli (2001), eq. 4.88)
+    state___t1.accel_n = quaternion_nb__t1 * acceleration_b__t0 - coriolisAcceleration_n__t1 + gravity_n__t1;
+
+    state___t1.angularVelocity_ie_n = angularVelocity_ie_n__t1;
+    state___t1.angularVelocity_en_n = angularVelocity_en_n__t1;
+    state___t1.gravity_n = gravity_n__t1;
+
+    /// v_n (tₖ) Velocity in [m/s], in navigation coordinates, at the time tₖ
+    Eigen::Vector3d velocity_n__t0 = Integration::rungeKutta1(velocityUpdateModel, timeDifferenceSec__t0, velocity_n__t1, state___t1);
+
+    return velocity_n__t0;
 }
 
 Eigen::Vector3d updateVelocity_e_Simpson(const long double& timeDifferenceSec__t0,    // Δtₖ Time difference in [seconds]. This epoch to previous epoch
@@ -373,6 +406,10 @@ Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSe
     return velocity_n__t0;
 }
 
+// ###########################################################################################################
+//                                              Position Update
+// ###########################################################################################################
+
 Eigen::Vector3d updatePosition_e(const long double& timeDifferenceSec__t0, // Δtₖ Time difference in [seconds]. This epoch to previous epoch
                                  const Eigen::Vector3d& position_e__t1,    // x_e (tₖ₋₁) Position in [m/s], in earth coordinates, at the time tₖ₋₁
                                  const Eigen::Vector3d& velocity_e__t1)    // v_e (tₖ₋₁) Velocity in [m/s], in earth coordinates, at the time tₖ₋₁
@@ -422,6 +459,10 @@ Eigen::Vector3d updatePosition_n(const long double& timeDifferenceSec__t0, // Δ
 
     return position_n__t0;
 }
+
+// ###########################################################################################################
+//                                             Earth Parameters
+// ###########################################################################################################
 
 double earthRadius_N(const double& latitude, const double& a, const double& e_squared)
 {
