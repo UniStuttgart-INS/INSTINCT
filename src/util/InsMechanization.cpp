@@ -205,16 +205,10 @@ Eigen::Vector3d updateVelocity_n_RungeKutta1(const long double& timeDifferenceSe
                                              const Eigen::Vector3d& angularVelocity_en_n__t1,
                                              const Eigen::Quaterniond& quaternion_nb__t1)
 {
-    /// q (tₖ₋₁) Quaternion, from n-system to b-system, at the time tₖ₋₁
-    // const Eigen::Quaterniond quaternion_bn__t1 = quaternion_nb__t1.conjugate();
-
-    /// The Coriolis force accounts for the fact that the NED frame is noninertial
-    Eigen::Vector3d coriolisAcceleration_n__t1 = (2 * angularVelocity_ie_n__t1 + angularVelocity_en_n__t1).cross(velocity_n__t1);
-
     VelocityUpdateState state___t1;
 
     /// The derivative of velocity (see Jekeli (2001), eq. 4.88)
-    state___t1.accel_n = quaternion_nb__t1 * acceleration_b__t0 - coriolisAcceleration_n__t1 + gravity_n__t1;
+    state___t1.accel_n = quaternion_nb__t1 * acceleration_b__t0;
 
     state___t1.angularVelocity_ie_n = angularVelocity_ie_n__t1;
     state___t1.angularVelocity_en_n = angularVelocity_en_n__t1;
