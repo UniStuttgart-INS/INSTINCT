@@ -21,6 +21,10 @@ namespace NAV
 class Node;
 class NodeData;
 
+using NodeCallback = std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
+using NotifyFunction = std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
+using WatcherCallback = std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>;
+
 class Pin
 {
   public:
@@ -250,15 +254,15 @@ class Pin
     /// Pointer to data which is transferred over this pin
     PinData data = static_cast<void*>(nullptr);
     /// Notify Function to call when the data is updated
-    std::vector<std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> notifyFunc;
+    std::vector<NotifyFunction> notifyFunc;
     /// Callback List
-    std::vector<std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>> callbacks;
+    std::vector<NodeCallback> callbacks;
     /// One or multiple Data Identifiers (Unique name which is used for data flows)
     std::vector<std::string> dataIdentifier;
 
 #ifdef TESTING
     /// Watcher Callbacks are used in testing to check the transmitted data
-    std::vector<std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>> watcherCallbacks;
+    std::vector<WatcherCallback> watcherCallbacks;
 #endif
 
   private:
