@@ -1,0 +1,1690 @@
+{
+    "links": {
+        "link-1200": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 814,
+            "id": 1200,
+            "startPinId": 479
+        },
+        "link-1201": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 552,
+            "id": 1201,
+            "startPinId": 817
+        },
+        "link-1205": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 822,
+            "id": 1205,
+            "startPinId": 496
+        },
+        "link-1206": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 823,
+            "id": 1206,
+            "startPinId": 817
+        },
+        "link-482": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 480,
+            "id": 482,
+            "startPinId": 355
+        },
+        "link-488": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 484,
+            "id": 488,
+            "startPinId": 486
+        },
+        "link-498": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 495,
+            "id": 498,
+            "startPinId": 483
+        },
+        "link-527": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 513,
+            "id": 527,
+            "startPinId": 502
+        },
+        "link-548": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 494,
+            "id": 548,
+            "startPinId": 479
+        },
+        "link-580": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 505,
+            "id": 580,
+            "startPinId": 496
+        },
+        "link-582": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 501,
+            "id": 582,
+            "startPinId": 506
+        },
+        "link-785": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 504,
+            "id": 785,
+            "startPinId": 502
+        },
+        "link-892": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 815,
+            "id": 892,
+            "startPinId": 824
+        },
+        "link-991": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 500,
+            "id": 991,
+            "startPinId": 479
+        }
+    },
+    "nodes": {
+        "node-356": {
+            "data": {
+                "FileReader": {
+                    "path": "test/data/2021-07-06_PWOne_Ihinger-Hof_VN310E-test-1/vn310-imu.csv"
+                },
+                "Imu": {
+                    "imuPos": {
+                        "posAccel_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "posGyro_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "posMag_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "quatAccel_bp": {
+                            "0": {
+                                "0": -0.5
+                            },
+                            "1": {
+                                "0": 0.4999999999999999
+                            },
+                            "2": {
+                                "0": 0.5
+                            },
+                            "3": {
+                                "0": 0.5000000000000001
+                            }
+                        },
+                        "quatGyro_bp": {
+                            "0": {
+                                "0": -0.5
+                            },
+                            "1": {
+                                "0": 0.4999999999999999
+                            },
+                            "2": {
+                                "0": 0.5
+                            },
+                            "3": {
+                                "0": 0.5000000000000001
+                            }
+                        },
+                        "quatMag_bp": {
+                            "0": {
+                                "0": -0.5
+                            },
+                            "1": {
+                                "0": 0.4999999999999999
+                            },
+                            "2": {
+                                "0": 0.5
+                            },
+                            "3": {
+                                "0": 0.5000000000000001
+                            }
+                        }
+                    }
+                }
+            },
+            "enabled": true,
+            "id": 356,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VN310E-test-1/imu.csv",
+            "outputPins": [
+                {
+                    "id": 355
+                }
+            ],
+            "pos": {
+                "x": 218.0,
+                "y": -114.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavFile"
+        },
+        "node-481": {
+            "data": {
+                "outputType": 0,
+                "posVelSource": 0
+            },
+            "enabled": true,
+            "id": 481,
+            "inputPins": [
+                {
+                    "id": 480
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavBinaryConverter - IMU",
+            "outputPins": [
+                {
+                    "id": 479
+                }
+            ],
+            "pos": {
+                "x": 520.0,
+                "y": -114.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavBinaryConverter"
+        },
+        "node-485": {
+            "data": {
+                "outputType": 1,
+                "posVelSource": 2
+            },
+            "enabled": true,
+            "id": 485,
+            "inputPins": [
+                {
+                    "id": 484
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "VectorNavBinaryConverter - GNSS1",
+            "outputPins": [
+                {
+                    "id": 483
+                }
+            ],
+            "pos": {
+                "x": 520.0,
+                "y": 78.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavBinaryConverter"
+        },
+        "node-487": {
+            "data": {
+                "FileReader": {
+                    "path": "test/data/2021-07-06_PWOne_Ihinger-Hof_VN310E-test-1/vn310-gnss.csv"
+                },
+                "Imu": {
+                    "imuPos": {
+                        "posAccel_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "posGyro_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "posMag_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "quatAccel_bp": {
+                            "0": {
+                                "0": -0.5
+                            },
+                            "1": {
+                                "0": 0.4999999999999999
+                            },
+                            "2": {
+                                "0": 0.5
+                            },
+                            "3": {
+                                "0": 0.5000000000000001
+                            }
+                        },
+                        "quatGyro_bp": {
+                            "0": {
+                                "0": -0.5
+                            },
+                            "1": {
+                                "0": 0.4999999999999999
+                            },
+                            "2": {
+                                "0": 0.5
+                            },
+                            "3": {
+                                "0": 0.5000000000000001
+                            }
+                        },
+                        "quatMag_bp": {
+                            "0": {
+                                "0": -0.5
+                            },
+                            "1": {
+                                "0": 0.4999999999999999
+                            },
+                            "2": {
+                                "0": 0.5
+                            },
+                            "3": {
+                                "0": 0.5000000000000001
+                            }
+                        }
+                    }
+                }
+            },
+            "enabled": true,
+            "id": 487,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "VN310E-test-1/gnss.csv",
+            "outputPins": [
+                {
+                    "id": 486
+                }
+            ],
+            "pos": {
+                "x": 212.0,
+                "y": 78.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "VectorNavFile"
+        },
+        "node-497": {
+            "data": {
+                "attitudeMode": 1,
+                "initDuration": 1.0,
+                "overridePosition": false,
+                "overrideRollPitchYaw": [
+                    false,
+                    false,
+                    false
+                ],
+                "overrideValuesPosition_lla": [
+                    48.73991775512695,
+                    8.921311378479004,
+                    536.046875
+                ],
+                "overrideValuesRollPitchYaw": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideValuesVelocity_n": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideVelocity": false,
+                "positionAccuracyThreshold": 10.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "enabled": true,
+            "id": 497,
+            "inputPins": [
+                {
+                    "id": 494
+                },
+                {
+                    "id": 495
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "PosVelAttInitializer",
+            "outputPins": [
+                {
+                    "id": 496
+                }
+            ],
+            "pos": {
+                "x": 984.0,
+                "y": 66.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
+        },
+        "node-503": {
+            "data": {
+                "calculateIntermediateValues": false,
+                "centrifugalAccCompensation": true,
+                "coriolisCompensation": true,
+                "gravityModel": 3,
+                "integrationAlgorithmAttitude": 3,
+                "integrationAlgorithmPosition": 0,
+                "integrationAlgorithmVelocity": 1,
+                "integrationFrame": 1,
+                "prefereTimeSinceStartupOverInsTime": false,
+                "showCorrectionsInputPin": false
+            },
+            "enabled": true,
+            "id": 503,
+            "inputPins": [
+                {
+                    "id": 500
+                },
+                {
+                    "id": 501
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ImuIntegrator",
+            "outputPins": [
+                {
+                    "id": 502
+                }
+            ],
+            "pos": {
+                "x": 1255.0,
+                "y": -146.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuIntegrator"
+        },
+        "node-507": {
+            "data": null,
+            "enabled": true,
+            "id": 507,
+            "inputPins": [
+                {
+                    "id": 504
+                },
+                {
+                    "id": 505
+                }
+            ],
+            "kind": "Simple",
+            "name": "",
+            "outputPins": [
+                {
+                    "id": 506
+                }
+            ],
+            "pos": {
+                "x": 1336.0,
+                "y": -4.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Combiner"
+        },
+        "node-518": {
+            "data": {
+                "nInputPins": 2,
+                "nPlots": 8,
+                "pinData": [
+                    {
+                        "dataIdentifier": "InertialNavSol",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Latitude [deg]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Longitude [deg]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Altitude [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        1,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "LCKF",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "North/South [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        0,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "LCKF",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ],
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "LCKF",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "East/West [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "LCKF",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "X-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "North velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        5,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "LCKF",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "East velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        6,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "LCKF",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        7,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "LCKF",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Roll [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Roll (LCKF)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Pitch [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Pitch (LCKF)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Yaw [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            1,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.239215686917305,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Yaw (LCKF)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Quaternion::w",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::x",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::y",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::z",
+                                "plotOnAxisAndPlotStyle": []
+                            }
+                        ],
+                        "size": 0
+                    },
+                    {
+                        "dataIdentifier": "InertialNavSol",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Latitude [deg]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Longitude [deg]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Altitude [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        1,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "LCKF-Ref",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "North/South [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        0,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "LCKF-Ref",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ],
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "LCKF-Ref",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "East/West [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "LCKF-Ref",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "X-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "North velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        5,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "LCKF-Ref",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "East velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        6,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "LCKF-Ref",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        7,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "LCKF-Ref",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Roll [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7098039388656616,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Roll (LCKF-Ref)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Pitch [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.6705882549285889,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Pitch (LCKF-Ref)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Yaw [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            1,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.501960813999176,
+                                                    "y": 0.501960813999176,
+                                                    "z": 0.501960813999176
+                                                },
+                                                "legendName": "Yaw (LCKF-Ref)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Quaternion::w",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::x",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::y",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::z",
+                                "plotOnAxisAndPlotStyle": []
+                            }
+                        ],
+                        "size": 0
+                    }
+                ],
+                "plotInfos": [
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Position",
+                        "leftPaneWidth": 179.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 401.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            6,
+                            6
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Position",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "North/South [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Altitude",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Altitude",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Altitude [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "North/South",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "North/South",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "North/South [m}",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "East/West",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "East/West",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "East/West [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Flight Angles",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 256,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Flight Angles",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Roll & Pitch [deg]",
+                        "y2AxisLabel": "Yaw [deg]",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Velocity North",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity North",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "North Velocity [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Velocity East",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity East",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "East Velocity [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Velocity Down",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 1,
+                        "selectedXdata": [
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity Down",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Down Velocity [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    }
+                ]
+            },
+            "enabled": true,
+            "id": 518,
+            "inputPins": [
+                {
+                    "id": 513
+                },
+                {
+                    "id": 552
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 1656.0,
+                "y": -22.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        },
+        "node-812": {
+            "data": {
+                "calculateIntermediateValues": false,
+                "centrifugalAccCompensation": true,
+                "coriolisCompensation": true,
+                "gravityModel": 3,
+                "integrationAlgorithmAttitude": 3,
+                "integrationAlgorithmPosition": 0,
+                "integrationAlgorithmVelocity": 1,
+                "integrationFrame": 1,
+                "prefereTimeSinceStartupOverInsTime": false,
+                "showCorrectionsInputPin": false
+            },
+            "enabled": true,
+            "id": 812,
+            "inputPins": [
+                {
+                    "id": 814
+                },
+                {
+                    "id": 815
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ImuIntegrator - Ref",
+            "outputPins": [
+                {
+                    "id": 817
+                }
+            ],
+            "pos": {
+                "x": 1255.0,
+                "y": 286.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuIntegrator"
+        },
+        "node-821": {
+            "data": null,
+            "enabled": true,
+            "id": 821,
+            "inputPins": [
+                {
+                    "id": 822
+                },
+                {
+                    "id": 823
+                }
+            ],
+            "kind": "Simple",
+            "name": "",
+            "outputPins": [
+                {
+                    "id": 824
+                }
+            ],
+            "pos": {
+                "x": 1336.0,
+                "y": 176.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Combiner"
+        }
+    }
+}
