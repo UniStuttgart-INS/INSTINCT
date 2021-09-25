@@ -17,11 +17,11 @@ class NodeData;
 
 namespace CallbackManager
 {
-void registerNodeCallbackForInvocation(const NodeCallback& nodeCallback, const std::shared_ptr<const NAV::NodeData>&);
+void registerNodeCallbackForInvocation(const NodeCallback& nodeCallback, const std::shared_ptr<const NAV::NodeData>& data);
 
 void registerNotifyFunctionForInvocation(const NotifyFunction& notifyFunction);
 
-void registerWatcherCallbackForInvocation(const WatcherCallback& watcherCallback, const std::shared_ptr<const NAV::NodeData>&);
+void registerWatcherCallbackForInvocation(const WatcherCallback& watcherCallback, const std::shared_ptr<const NAV::NodeData>& data);
 
 void processNextCallback();
 
