@@ -7,6 +7,7 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 
+#include "internal/CallbackManager.hpp"
 #include "internal/Json.hpp"
 
 #include <imgui_node_editor.h>
@@ -155,7 +156,7 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
                     {
                         ax::NodeEditor::Flow(linkId);
                     }
-
+                    // TODO: Put this into the Callback Manager
                     std::invoke(callback, node, linkId);
                 }
             }
@@ -177,6 +178,7 @@ void NAV::Node::notifyOutputValueChanged(size_t portIndex)
             ax::NodeEditor::Flow(linkId);
         }
 
+        // TODO: Put this into the Callback Manager
         std::invoke(callback, node, linkId);
     }
 }
@@ -186,36 +188,40 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
     if (callbacksEnabled)
     {
 #ifdef TESTING
-        for (auto& [callback, linkId] : outputPins.at(portIndex).watcherCallbacks)
+        for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacks)
         {
+            const auto& linkId = watcherCallback.second;
             if (!linkId) // Trigger all output pin callbacks
             {
-                callback(data);
+                CallbackManager::registerWatcherCallbackForInvocation(watcherCallback, data);
             }
         }
 #endif
 
-        for (auto& [node, callback, linkId] : outputPins.at(portIndex).callbacks)
+        for (const auto& nodeCallback : outputPins.at(portIndex).callbacks)
         {
+            const auto* node = std::get<0>(nodeCallback);
+
             if (node->enabled && node->isInitialized())
             {
-                if (nm::showFlowWhenInvokingCallbacks)
-                {
-                    ax::NodeEditor::Flow(linkId);
-                }
-
 #ifdef TESTING
-                for (auto& [watcherCallback, watcherLinkId] : outputPins.at(portIndex).watcherCallbacks)
+                const auto& linkId = std::get<2>(nodeCallback);
+                for (const auto& watcherCallback : outputPins.at(portIndex).watcherCallbacks)
                 {
+                    const auto& watcherLinkId = watcherCallback.second;
                     if (linkId == watcherLinkId)
                     {
-                        watcherCallback(data);
+                        CallbackManager::registerWatcherCallbackForInvocation(watcherCallback, data);
                     }
                 }
 #endif
-
-                std::invoke(callback, node, data, linkId);
+                CallbackManager::registerNodeCallbackForInvocation(nodeCallback, data);
             }
+        }
+
+        while (CallbackManager::hasUnprocessedCallbacks())
+        {
+            CallbackManager::processNextCallback();
         }
     }
 }

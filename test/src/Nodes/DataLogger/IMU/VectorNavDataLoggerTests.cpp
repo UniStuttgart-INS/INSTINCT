@@ -55,7 +55,7 @@ TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[Vect
     //
     // ###########################################################################################################
 
-    testFlow("test/flow/VectorNavDataLogger.flow");
+    REQUIRE(testFlow("test/flow/VectorNavDataLogger.flow"));
 
     // ###########################################################################################################
     //                                         VectorNavDataReader.flow
@@ -122,7 +122,7 @@ TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[Vect
         // TODO: Compare Data with other files
     });
 
-    testFlow("test/flow/VectorNavDataReader.flow");
+    REQUIRE(testFlow("test/flow/VectorNavDataReader.flow"));
 
     CHECK(messageCounterImuDataCsv == MESSAGE_COUNT_IMU);
     CHECK(messageCounterImuLogCsv == MESSAGE_COUNT_IMU);

@@ -22,6 +22,7 @@ endforeach(TMP_PATH)
 # Link all files in the Source directory
 add_executable(
   tests
+  src/internal/CallbackManagerTests.cpp
   src/util/UartSensors/Ublox/UbloxTypesTests.cpp
   src/util/UartSensors/Ublox/UbloxUtilitiesTests.cpp
   src/util/InsTimeTests.cpp
@@ -68,17 +69,17 @@ target_compile_definitions(tests PUBLIC TESTING=1)
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
 # whatever you want, or use different for different binaries
 
-if(NOT WIN32)
-  catch_discover_tests(
-    tests
-    WORKING_DIRECTORY
-    ${CMAKE_SOURCE_DIR}
-    REPORTER
-    junit
-    OUTPUT_DIR
-    ${CMAKE_SOURCE_DIR}/build/Debug/test
-    OUTPUT_SUFFIX
-    .xml)
-else()
+# if(NOT WIN32)
+#   catch_discover_tests(
+#     tests
+#     WORKING_DIRECTORY
+#     ${CMAKE_SOURCE_DIR}
+#     REPORTER
+#     junit
+#     OUTPUT_DIR
+#     ${CMAKE_SOURCE_DIR}/build/Debug/test
+#     OUTPUT_SUFFIX
+#     .xml)
+# else()
   catch_discover_tests(tests WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-endif()
+# endif()

@@ -79,6 +79,10 @@ int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // 
                 nm::DisableAllCallbacks();
                 nm::DeleteAllNodes();
             }
+            else
+            {
+                return EXIT_FAILURE;
+            }
         }
         else
         {
