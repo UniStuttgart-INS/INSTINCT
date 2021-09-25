@@ -7,4 +7,5 @@
 
 /// @brief Loads and executes the flow
 /// @param[in] path Path to the flow file
-void testFlow(const char* path);
+/// @return true if the execution was successful
+bool testFlow(const char* path);
