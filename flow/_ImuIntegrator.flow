@@ -88,28 +88,6 @@
             "id": 543,
             "startPinId": 355
         },
-        "link-615": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 514,
-            "id": 615,
-            "startPinId": 420
-        },
-        "link-616": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 521,
-            "id": 616,
-            "startPinId": 230
-        },
         "link-618": {
             "color": {
                 "a": 255,
@@ -153,6 +131,28 @@
             "endPinId": 419,
             "id": 623,
             "startPinId": 500
+        },
+        "link-624": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 514,
+            "id": 624,
+            "startPinId": 420
+        },
+        "link-625": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 521,
+            "id": 625,
+            "startPinId": 230
         }
     },
     "nodes": {
@@ -162,32 +162,17 @@
             "id": 231,
             "inputPins": [
                 {
-                    "dataIdentifier": [
-                        "InertialNavSol"
-                    ],
-                    "id": 228,
-                    "name": "",
-                    "type": "Flow"
+                    "id": 228
                 },
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 229,
-                    "name": "",
-                    "type": "Flow"
+                    "id": 229
                 }
             ],
             "kind": "Simple",
             "name": "\\\n/",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 230,
-                    "name": "",
-                    "type": "Flow"
+                    "id": 230
                 }
             ],
             "pos": {
@@ -292,12 +277,7 @@
             "name": "VectorNavFile",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
-                    "id": 355,
-                    "name": "Binary Output",
-                    "type": "Flow"
+                    "id": 355
                 }
             ],
             "pos": {
@@ -316,32 +296,17 @@
             "id": 421,
             "inputPins": [
                 {
-                    "dataIdentifier": [
-                        "InertialNavSol"
-                    ],
-                    "id": 418,
-                    "name": "",
-                    "type": "Flow"
+                    "id": 418
                 },
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 419,
-                    "name": "",
-                    "type": "Flow"
+                    "id": 419
                 }
             ],
             "kind": "Simple",
             "name": "\\\n/",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 420,
-                    "name": "",
-                    "type": "Flow"
+                    "id": 420
                 }
             ],
             "pos": {
@@ -356,30 +321,21 @@
         },
         "node-496": {
             "data": {
-                "outputType": 0
+                "outputType": 0,
+                "posVelSource": 0
             },
             "enabled": true,
             "id": 496,
             "inputPins": [
                 {
-                    "dataIdentifier": [
-                        "VectorNavBinaryOutput"
-                    ],
-                    "id": 495,
-                    "name": "VectorNavBinaryOutput",
-                    "type": "Flow"
+                    "id": 495
                 }
             ],
             "kind": "Blueprint",
             "name": "VectorNavBinaryConverter",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "ImuObsWDelta"
-                    ],
-                    "id": 494,
-                    "name": "ImuObs",
-                    "type": "Flow"
+                    "id": 494
                 }
             ],
             "pos": {
@@ -425,34 +381,17 @@
             "id": 501,
             "inputPins": [
                 {
-                    "dataIdentifier": [
-                        "ImuObs"
-                    ],
-                    "id": 498,
-                    "name": "ImuObs",
-                    "type": "Flow"
+                    "id": 498
                 },
                 {
-                    "dataIdentifier": [
-                        "UbloxObs",
-                        "RtklibPosObs",
-                        "PosVelAtt"
-                    ],
-                    "id": 499,
-                    "name": "GnssObs",
-                    "type": "Flow"
+                    "id": 499
                 }
             ],
             "kind": "Blueprint",
             "name": "PosVelAttInitializer",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 500,
-                    "name": "PosVelAtt",
-                    "type": "Flow"
+                    "id": 500
                 }
             ],
             "pos": {
@@ -475,38 +414,24 @@
                 "integrationAlgorithmPosition": 0,
                 "integrationAlgorithmVelocity": 1,
                 "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": true
+                "prefereTimeSinceStartupOverInsTime": true,
+                "showCorrectionsInputPin": false
             },
             "enabled": true,
             "id": 512,
             "inputPins": [
                 {
-                    "dataIdentifier": [
-                        "ImuObs"
-                    ],
-                    "id": 513,
-                    "name": "ImuObs",
-                    "type": "Flow"
+                    "id": 513
                 },
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 514,
-                    "name": "PosVelAtt",
-                    "type": "Flow"
+                    "id": 514
                 }
             ],
             "kind": "Blueprint",
             "name": "ImuIntegrator",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "InertialNavSol"
-                    ],
-                    "id": 515,
-                    "name": "InertialNavSol",
-                    "type": "Flow"
+                    "id": 515
                 }
             ],
             "pos": {
@@ -529,38 +454,24 @@
                 "integrationAlgorithmPosition": 0,
                 "integrationAlgorithmVelocity": 1,
                 "integrationFrame": 1,
-                "prefereTimeSinceStartupOverInsTime": true
+                "prefereTimeSinceStartupOverInsTime": true,
+                "showCorrectionsInputPin": false
             },
             "enabled": true,
             "id": 519,
             "inputPins": [
                 {
-                    "dataIdentifier": [
-                        "ImuObs"
-                    ],
-                    "id": 520,
-                    "name": "ImuObs",
-                    "type": "Flow"
+                    "id": 520
                 },
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt"
-                    ],
-                    "id": 521,
-                    "name": "PosVelAtt",
-                    "type": "Flow"
+                    "id": 521
                 }
             ],
             "kind": "Blueprint",
             "name": "ImuIntegrator",
             "outputPins": [
                 {
-                    "dataIdentifier": [
-                        "InertialNavSol"
-                    ],
-                    "id": 522,
-                    "name": "InertialNavSol",
-                    "type": "Flow"
+                    "id": 522
                 }
             ],
             "pos": {
@@ -2385,46 +2296,13 @@
             "id": 536,
             "inputPins": [
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt",
-                        "RtklibPosObs",
-                        "UbloxObs",
-                        "ImuObs",
-                        "KvhObs",
-                        "ImuObsWDelta",
-                        "VectorNavBinaryOutput"
-                    ],
-                    "id": 537,
-                    "name": "Pin 1",
-                    "type": "Flow"
+                    "id": 537
                 },
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt",
-                        "RtklibPosObs",
-                        "UbloxObs",
-                        "ImuObs",
-                        "KvhObs",
-                        "ImuObsWDelta",
-                        "VectorNavBinaryOutput"
-                    ],
-                    "id": 538,
-                    "name": "Pin 2",
-                    "type": "Flow"
+                    "id": 538
                 },
                 {
-                    "dataIdentifier": [
-                        "PosVelAtt",
-                        "RtklibPosObs",
-                        "UbloxObs",
-                        "ImuObs",
-                        "KvhObs",
-                        "ImuObsWDelta",
-                        "VectorNavBinaryOutput"
-                    ],
-                    "id": 539,
-                    "name": "Pin 3",
-                    "type": "Flow"
+                    "id": 539
                 }
             ],
             "kind": "Blueprint",
