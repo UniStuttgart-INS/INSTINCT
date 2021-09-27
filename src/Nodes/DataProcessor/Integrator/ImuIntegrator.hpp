@@ -130,16 +130,20 @@ class ImuIntegrator : public Node
     GravityModel gravityModel = GravityModel::WGS84;
 
     /// Integration Algorithm selection
-    enum class IntegrationAlgorithm
+    enum class IntegrationAlgorithm : size_t
     {
         RectangularRule,
         Simpson,
         RungeKutta1,
         RungeKutta3,
+        COUNT,
     };
     IntegrationAlgorithm integrationAlgorithmAttitude = IntegrationAlgorithm::RungeKutta3;
     IntegrationAlgorithm integrationAlgorithmVelocity = IntegrationAlgorithm::Simpson;
     IntegrationAlgorithm integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
+
+    /// Converts the enum to a string
+    static const char* to_string(IntegrationAlgorithm algorithm);
 
     /// GUI flag, whether to show the input pin for PVA Corrections
     bool showCorrectionsInputPin = false;

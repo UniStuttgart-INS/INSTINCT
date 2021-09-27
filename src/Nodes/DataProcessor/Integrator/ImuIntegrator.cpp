@@ -91,40 +91,108 @@ void NAV::ImuIntegrator::guiConfig()
     }
 
     ImGui::SetNextItemWidth(250);
-    if (ImGui::Combo(fmt::format("Integration Algorithm Attitude##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationAlgorithmAttitude), "RectangularRule\0Simpson\0Runge Kutta 1st Order\0Runge Kutta 3rd Order\0\0"))
+    if (ImGui::BeginCombo(fmt::format("Integration Algorithm Attitude##{}", size_t(id)).c_str(), to_string(integrationAlgorithmAttitude)))
     {
-        if (integrationAlgorithmAttitude != IntegrationAlgorithm::RungeKutta1 && integrationAlgorithmAttitude != IntegrationAlgorithm::RungeKutta3)
+        for (size_t i = 0; i < static_cast<size_t>(IntegrationAlgorithm::COUNT); i++)
         {
-            LOG_ERROR("Currently only 'Runge-Kutta 1' and 'Runge-Kutta 3' are supported for the attitude update");
-            integrationAlgorithmAttitude = IntegrationAlgorithm::RungeKutta3;
+            if (i != static_cast<size_t>(IntegrationAlgorithm::RungeKutta1) && i != static_cast<size_t>(IntegrationAlgorithm::RungeKutta3))
+            {
+                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+            }
+
+            const bool is_selected = (static_cast<size_t>(integrationAlgorithmAttitude) == i);
+            if (ImGui::Selectable(to_string(static_cast<IntegrationAlgorithm>(i)), is_selected))
+            {
+                integrationAlgorithmAttitude = static_cast<IntegrationAlgorithm>(i);
+                LOG_DEBUG("{}: Integration Algorithm Attitude changed to {}", nameId(), integrationAlgorithmAttitude);
+                flow::ApplyChanges();
+            }
+
+            if (i != static_cast<size_t>(IntegrationAlgorithm::RungeKutta1) && i != static_cast<size_t>(IntegrationAlgorithm::RungeKutta3))
+            {
+                ImGui::PopItemFlag();
+                ImGui::PopStyleVar();
+            }
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
         }
 
-        LOG_DEBUG("{}: Integration Algorithm Attitude changed to {}", nameId(), integrationAlgorithmAttitude);
-        flow::ApplyChanges();
+        ImGui::EndCombo();
     }
+
     ImGui::SetNextItemWidth(250);
-    if (ImGui::Combo(fmt::format("Integration Algorithm Velocity##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationAlgorithmVelocity), "RectangularRule\0Simpson\0Runge Kutta 1st Order\0Runge Kutta 3rd Order\0\0"))
+    if (ImGui::BeginCombo(fmt::format("Integration Algorithm Velocity##{}", size_t(id)).c_str(), to_string(integrationAlgorithmVelocity)))
     {
-        if (integrationAlgorithmVelocity == IntegrationAlgorithm::RectangularRule)
+        for (size_t i = 0; i < static_cast<size_t>(IntegrationAlgorithm::COUNT); i++)
         {
-            LOG_ERROR("Currently 'Rectangular Rule' is not supported for the velocity update");
-            integrationAlgorithmVelocity = IntegrationAlgorithm::Simpson;
+            if (i == static_cast<size_t>(IntegrationAlgorithm::RectangularRule))
+            {
+                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+            }
+
+            const bool is_selected = (static_cast<size_t>(integrationAlgorithmVelocity) == i);
+            if (ImGui::Selectable(to_string(static_cast<IntegrationAlgorithm>(i)), is_selected))
+            {
+                integrationAlgorithmVelocity = static_cast<IntegrationAlgorithm>(i);
+                LOG_DEBUG("{}: Integration Algorithm Velocity changed to {}", nameId(), integrationAlgorithmVelocity);
+                flow::ApplyChanges();
+            }
+
+            if (i == static_cast<size_t>(IntegrationAlgorithm::RectangularRule))
+            {
+                ImGui::PopItemFlag();
+                ImGui::PopStyleVar();
+            }
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
         }
 
-        LOG_DEBUG("{}: Integration Algorithm Velocity changed to {}", nameId(), integrationAlgorithmVelocity);
-        flow::ApplyChanges();
+        ImGui::EndCombo();
     }
+
     ImGui::SetNextItemWidth(250);
-    if (ImGui::Combo(fmt::format("Integration Algorithm Position##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationAlgorithmPosition), "RectangularRule\0Simpson\0Runge Kutta 1st Order\0Runge Kutta 3rd Order\0\0"))
+    if (ImGui::BeginCombo(fmt::format("Integration Algorithm Position##{}", size_t(id)).c_str(), to_string(integrationAlgorithmPosition)))
     {
-        if (integrationAlgorithmPosition != IntegrationAlgorithm::RectangularRule)
+        for (size_t i = 0; i < static_cast<size_t>(IntegrationAlgorithm::COUNT); i++)
         {
-            LOG_ERROR("Currently only 'Rectangular Rule' is supported for the position update");
-            integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
+            if (i != static_cast<size_t>(IntegrationAlgorithm::RectangularRule))
+            {
+                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+            }
+
+            const bool is_selected = (static_cast<size_t>(integrationAlgorithmPosition) == i);
+            if (ImGui::Selectable(to_string(static_cast<IntegrationAlgorithm>(i)), is_selected))
+            {
+                integrationAlgorithmPosition = static_cast<IntegrationAlgorithm>(i);
+                LOG_DEBUG("{}: Integration Algorithm Position changed to {}", nameId(), integrationAlgorithmPosition);
+                flow::ApplyChanges();
+            }
+
+            if (i != static_cast<size_t>(IntegrationAlgorithm::RectangularRule))
+            {
+                ImGui::PopItemFlag();
+                ImGui::PopStyleVar();
+            }
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
         }
 
-        LOG_DEBUG("{}: Integration Algorithm Position changed to {}", nameId(), integrationAlgorithmPosition);
-        flow::ApplyChanges();
+        ImGui::EndCombo();
     }
 
     if (ImGui::Checkbox(fmt::format("Calculate intermediate values##{}", size_t(id)).c_str(), &calculateIntermediateValues))
@@ -627,6 +695,7 @@ void NAV::ImuIntegrator::integrateObservation()
                                                                      angularVelocity_ie_e__t0,
                                                                      quaternion_gyro_ep__t1, quaternion_gyro_ep__t2);
         }
+        // TODO: Implement RungeKutta1
         else
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
@@ -664,6 +733,7 @@ void NAV::ImuIntegrator::integrateObservation()
 #endif
             );
         }
+        // TODO: Implement RungeKutta1 & RungeKutta3
         else
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
@@ -897,4 +967,22 @@ void NAV::ImuIntegrator::integrateObservation()
 
         skipIntermediateCalculation = false;
     }
+}
+
+const char* NAV::ImuIntegrator::to_string(IntegrationAlgorithm algorithm)
+{
+    switch (algorithm)
+    {
+    case IntegrationAlgorithm::RectangularRule:
+        return "Rectangular Rule";
+    case IntegrationAlgorithm::Simpson:
+        return "Simpson";
+    case IntegrationAlgorithm::RungeKutta1:
+        return "Runge Kutta 1st Order";
+    case IntegrationAlgorithm::RungeKutta3:
+        return "Runge Kutta 3rd Order";
+    case IntegrationAlgorithm::COUNT:
+        return "";
+    }
+    return "";
 }
