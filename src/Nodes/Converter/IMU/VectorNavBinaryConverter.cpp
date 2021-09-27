@@ -75,6 +75,11 @@ void NAV::VectorNavBinaryConverter::guiConfig()
             LOG_DEBUG("{}: posVelSource changed to {}", nameId(), posVelSource);
             flow::ApplyChanges();
         }
+        if (ImGui::Checkbox(fmt::format("Force static##{}", size_t(id)).c_str(), &forceStatic))
+        {
+            LOG_DEBUG("{}: forceStatic changed to {}", nameId(), forceStatic);
+            flow::ApplyChanges();
+        }
     }
 }
 
@@ -86,6 +91,7 @@ void NAV::VectorNavBinaryConverter::guiConfig()
 
     j["outputType"] = outputType;
     j["posVelSource"] = posVelSource;
+    j["forceStatic"] = forceStatic;
 
     return j;
 }
@@ -116,6 +122,19 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
     {
         posVelSource = static_cast<PosVelSource>(j.at("posVelSource").get<int>());
     }
+    if (j.contains("forceStatic"))
+    {
+        forceStatic = j.at("forceStatic");
+    }
+}
+
+bool NAV::VectorNavBinaryConverter::initialize()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    initPosition = Eigen::Vector3d::Zero();
+
+    return true;
 }
 
 void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
@@ -326,6 +345,17 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         if (posVelAttObs->quaternion_nb().coeffs().isZero())
         {
             LOG_DEBUG("{}: Conversion succeeded but has no attitude info.", nameId());
+        }
+
+        if (initPosition.isZero())
+        {
+            initPosition = posVelAttObs->position_ecef();
+        }
+
+        if (forceStatic)
+        {
+            posVelAttObs->position_ecef() = initPosition;
+            posVelAttObs->velocity_n() = Eigen::Vector3d::Zero();
         }
 
         return posVelAttObs;

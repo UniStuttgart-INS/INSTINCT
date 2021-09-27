@@ -79,6 +79,15 @@ class VectorNavBinaryConverter : public Node
     /// The selected PosVel source in the GUI
     PosVelSource posVelSource = PosVelSource_Best;
 
+    /// GUI option. If checked forces position to a static value and velocity to 0
+    bool forceStatic = false;
+
+    /// Tracker for the initial position in case of static data
+    Eigen::Vector3d initPosition = Eigen::Vector3d::Zero();
+
+    /// @brief Initialize the node
+    bool initialize() override;
+
     /// @brief Converts the VectorNavBinaryOutput observation to the selected message type
     /// @param[in] nodeData VectorNavBinaryOutput to process
     /// @param[in] linkId Id of the link over which the data is received
