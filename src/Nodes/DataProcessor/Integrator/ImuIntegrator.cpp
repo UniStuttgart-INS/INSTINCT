@@ -465,14 +465,14 @@ void NAV::ImuIntegrator::integrateObservation()
         for (auto& posVelAtt : posVelAttStates)
         {
             auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
-            posVelAttCorrected->position_ecef() = trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - pvaError->positionError_lla());
+            posVelAttCorrected->setPosition_e(trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - pvaError->positionError_lla()), posVelAtt__init->latLonAlt());
 
-            posVelAttCorrected->velocity_n() = posVelAtt->velocity_n() - pvaError->velocityError_n();
+            posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() - pvaError->velocityError_n());
 
             // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
             Eigen::Vector3d attError = pvaError->attitudeError_n();
             Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
-            posVelAttCorrected->quaternion_nb() = Eigen::Quaterniond(dcm_c).normalized();
+            posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
 
             // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
             // TODO: Use quaternions for caluclation
@@ -598,10 +598,10 @@ void NAV::ImuIntegrator::integrateObservation()
     const Eigen::Vector3d& velocity_n__t2 = posVelAtt__t2->velocity_n();
     LOG_DATA("{}: velocity_n__t2 = {}", nameId(), velocity_n__t2.transpose());
     /// v_e (tₖ₋₂) Velocity in [m/s], in earth coordinates, at the time tₖ₋₂
-    const Eigen::Vector3d velocity_e__t2 = posVelAtt__t2->quaternion_en() * velocity_n__t2;
+    const Eigen::Vector3d velocity_e__t2 = posVelAtt__t2->velocity_e();
     LOG_DATA("{}: velocity_e__t2 = {}", nameId(), velocity_e__t2.transpose());
     /// v_e (tₖ₋₁) Velocity in [m/s], in earth coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d velocity_e__t1 = posVelAtt__t1->quaternion_en() * velocity_n__t1;
+    const Eigen::Vector3d velocity_e__t1 = posVelAtt__t1->velocity_e();
     LOG_DATA("{}: velocity_e__t1 = {}", nameId(), velocity_e__t1.transpose());
     /// x_e (tₖ₋₂) Position in [m], in ECEF coordinates, at the time tₖ₋₂
     const Eigen::Vector3d position_e__t2 = posVelAtt__t2->position_ecef();
@@ -761,14 +761,7 @@ void NAV::ImuIntegrator::integrateObservation()
         /*                                               Store Results                                              */
         /* -------------------------------------------------------------------------------------------------------- */
 
-        // Store position in the state. Important to do before using the quaternion_en.
-        posVelAtt__t0->position_ecef() = position_e__t0;
-        // Quaternion for rotation from earth to navigation frame. Depends on position which was updated before
-        Eigen::Quaterniond quaternion_ne__t0 = posVelAtt__t0->quaternion_ne();
-        // Store velocity in the state
-        posVelAtt__t0->velocity_n() = quaternion_ne__t0 * velocity_e__t0;
-        // Store body to navigation frame quaternion in the state
-        posVelAtt__t0->quaternion_nb() = quaternion_ne__t0 * quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb();
+        posVelAtt__t0->setState_e(position_e__t0, velocity_e__t0, quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb(), posVelAtt__init->latLonAlt());
     }
     else if (integrationFrame == IntegrationFrame::NED)
     {
@@ -813,7 +806,7 @@ void NAV::ImuIntegrator::integrateObservation()
         LOG_DATA("{}: angularVelocity_en_n__t1 = {}", nameId(), angularVelocity_en_n__t1.transpose());
 
         /// [x_n, x_e, x_d] (tₖ₋₁) Position NED in [m] at the time tₖ₋₁
-        Eigen::Vector3d position_n__t1 = trafo::ecef2ned(position_e__t1, posVelAtt__init->latLonAlt());
+        Eigen::Vector3d position_n__t1 = posVelAtt__t1->position_n();
         LOG_DATA("{}: position_n__t1 = {}", nameId(), position_n__t1.transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
@@ -918,10 +911,6 @@ void NAV::ImuIntegrator::integrateObservation()
         }
         LOG_DATA("{}: position_n__t0 = {}", nameId(), position_n__t0.transpose());
 
-        /// x_e (tₖ) Position in [m], in ECEF coordinates, at the time tₖ
-        Eigen::Vector3d position_e__t0 = trafo::ned2ecef(position_n__t0, posVelAtt__init->latLonAlt());
-        LOG_DATA("{}: position_e__t0 = {}", nameId(), position_e__t0.transpose());
-
         /// Latitude, Longitude and Altitude in [rad, rad, m], at the current time tₖ (see Gleason eq. 6.18 - 6.20)
         // Vector3d<LLA> latLonAlt__t0 = updatePosition_n(timeDifferenceSec__t0, posVelAtt__t1->latLonAlt(),
         //                                                     velocity_n__t1, R_N, R_E);
@@ -930,12 +919,7 @@ void NAV::ImuIntegrator::integrateObservation()
         /*                                               Store Results                                              */
         /* -------------------------------------------------------------------------------------------------------- */
 
-        // Store position in the state
-        posVelAtt__t0->position_ecef() = position_e__t0;
-        // Store velocity in the state
-        posVelAtt__t0->velocity_n() = velocity_n__t0;
-        // Store body to navigation frame quaternion in the state
-        posVelAtt__t0->quaternion_nb() = quaternion_nb__t0;
+        posVelAtt__t0->setState_n(position_n__t0, velocity_n__t0, quaternion_nb__t0, posVelAtt__init->latLonAlt());
     }
 
     LOG_DATA("{}: posVelAtt__t0->position_ecef() = {}", nameId(), posVelAtt__t0->position_ecef().transpose());

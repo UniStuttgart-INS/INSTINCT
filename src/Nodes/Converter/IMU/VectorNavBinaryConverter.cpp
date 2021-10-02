@@ -132,7 +132,7 @@ bool NAV::VectorNavBinaryConverter::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    initPosition = Eigen::Vector3d::Zero();
+    posVelAtt__init = nullptr;
 
     return true;
 }
@@ -225,24 +225,25 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
 
 std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
 {
-    auto posVelAttObs = std::make_shared<PosVelAtt>();
-
-    posVelAttObs->insTime = vnObs->insTime;
+    std::optional<Eigen::Quaterniond> quat_nb;
+    std::optional<Eigen::Vector3d> p_ecef;
+    std::optional<Eigen::Vector3d> p_lla;
+    std::optional<Eigen::Vector3d> v_n;
 
     if (vnObs->attitudeOutputs)
     {
         if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
         {
-            posVelAttObs->quaternion_nb() = vnObs->attitudeOutputs->qtn.cast<double>();
+            quat_nb = vnObs->attitudeOutputs->qtn.cast<double>();
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
         {
             auto ypr = trafo::deg2rad3(vnObs->attitudeOutputs->ypr.cast<double>());
-            posVelAttObs->quaternion_nb() = trafo::quat_nb(ypr(2), ypr(1), ypr(0));
+            quat_nb = trafo::quat_nb(ypr(2), ypr(1), ypr(0));
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
         {
-            posVelAttObs->quaternion_nb() = vnObs->attitudeOutputs->dcm.cast<double>();
+            quat_nb = vnObs->attitudeOutputs->dcm.cast<double>();
         }
     }
 
@@ -251,111 +252,130 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     {
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
         {
-            posVelAttObs->position_ecef() = trafo::lla2ecef_WGS84({ trafo::deg2rad(vnObs->insOutputs->posLla(0)),
-                                                                    trafo::deg2rad(vnObs->insOutputs->posLla(1)),
-                                                                    vnObs->insOutputs->posLla(2) });
+            p_lla = { trafo::deg2rad(vnObs->insOutputs->posLla(0)),
+                      trafo::deg2rad(vnObs->insOutputs->posLla(1)),
+                      vnObs->insOutputs->posLla(2) };
         }
-        else if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
+        if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
         {
-            posVelAttObs->position_ecef() = vnObs->insOutputs->posEcef;
+            p_ecef = vnObs->insOutputs->posEcef;
         }
 
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
         {
-            posVelAttObs->velocity_n() = vnObs->insOutputs->velNed.cast<double>();
+            v_n = vnObs->insOutputs->velNed.cast<double>();
         }
         else if ((vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
-                 && posVelAttObs->position_ecef().isZero())
+                 && (p_ecef.has_value() || p_lla.has_value()))
         {
-            auto lla = trafo::ecef2lla_WGS84(posVelAttObs->position_ecef());
-            posVelAttObs->velocity_n() = trafo::quat_ne(lla(0), lla(1)) * vnObs->insOutputs->velEcef.cast<double>();
+            Eigen::Vector3d lla = p_lla.has_value() ? p_lla.value() : trafo::ecef2lla_WGS84(p_ecef.value());
+            v_n = trafo::quat_ne(lla(0), lla(1)) * vnObs->insOutputs->velEcef.cast<double>();
         }
         else if ((vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
-                 && !posVelAttObs->quaternion_nb().coeffs().isZero())
+                 && quat_nb.has_value())
         {
-            posVelAttObs->velocity_n() = posVelAttObs->quaternion_nb() * vnObs->insOutputs->velBody.cast<double>();
+            v_n = quat_nb.value() * vnObs->insOutputs->velBody.cast<double>();
         }
     }
 
     if ((posVelSource == PosVelSource_Best || posVelSource == PosVelSource_Gnss1)
         && vnObs->gnss1Outputs && vnObs->gnss1Outputs->fix >= 2)
     {
-        if (posVelAttObs->position_ecef().isZero())
+        if (!p_ecef.has_value() && !p_lla.has_value())
         {
             if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
             {
-                posVelAttObs->position_ecef() = trafo::lla2ecef_WGS84({ trafo::deg2rad(vnObs->gnss1Outputs->posLla(0)),
-                                                                        trafo::deg2rad(vnObs->gnss1Outputs->posLla(1)),
-                                                                        vnObs->gnss1Outputs->posLla(2) });
+                p_lla = { trafo::deg2rad(vnObs->gnss1Outputs->posLla(0)),
+                          trafo::deg2rad(vnObs->gnss1Outputs->posLla(1)),
+                          vnObs->gnss1Outputs->posLla(2) };
             }
-            else if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+            if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
             {
-                posVelAttObs->position_ecef() = vnObs->gnss1Outputs->posEcef;
+                p_ecef = vnObs->gnss1Outputs->posEcef;
             }
         }
 
-        if (std::isnan(posVelAttObs->velocity_n()(0)))
+        if (!v_n.has_value())
         {
             if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
             {
-                posVelAttObs->velocity_n() = vnObs->gnss1Outputs->velNed.cast<double>();
+                v_n = vnObs->gnss1Outputs->velNed.cast<double>();
             }
             else if ((vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
-                     && !posVelAttObs->position_ecef().isZero())
+                     && (p_ecef.has_value() || p_lla.has_value()))
             {
-                auto lla = trafo::ecef2lla_WGS84(posVelAttObs->position_ecef());
-                posVelAttObs->velocity_n() = trafo::quat_ne(lla(0), lla(1)) * vnObs->gnss1Outputs->velEcef.cast<double>();
+                Eigen::Vector3d lla = p_lla.has_value() ? p_lla.value() : trafo::ecef2lla_WGS84(p_ecef.value());
+                v_n = trafo::quat_ne(lla(0), lla(1)) * vnObs->gnss1Outputs->velEcef.cast<double>();
             }
         }
     }
     if ((posVelSource == PosVelSource_Best || posVelSource == PosVelSource_Gnss2)
         && vnObs->gnss2Outputs && vnObs->gnss2Outputs->fix >= 2)
     {
-        if (posVelAttObs->position_ecef().isZero())
+        if (!p_ecef.has_value() && !p_lla.has_value())
         {
             if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
             {
-                posVelAttObs->position_ecef() = trafo::lla2ecef_WGS84({ trafo::deg2rad(vnObs->gnss2Outputs->posLla(0)),
-                                                                        trafo::deg2rad(vnObs->gnss2Outputs->posLla(1)),
-                                                                        vnObs->gnss2Outputs->posLla(2) });
+                p_lla = { trafo::deg2rad(vnObs->gnss2Outputs->posLla(0)),
+                          trafo::deg2rad(vnObs->gnss2Outputs->posLla(1)),
+                          vnObs->gnss2Outputs->posLla(2) };
             }
-            else if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+            if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
             {
-                posVelAttObs->position_ecef() = vnObs->gnss2Outputs->posEcef;
+                p_ecef = vnObs->gnss2Outputs->posEcef;
             }
         }
 
-        if (std::isnan(posVelAttObs->velocity_n()(0)))
+        if (!v_n.has_value())
         {
             if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
             {
-                posVelAttObs->velocity_n() = vnObs->gnss2Outputs->velNed.cast<double>();
+                v_n = vnObs->gnss2Outputs->velNed.cast<double>();
             }
             else if ((vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
-                     && !posVelAttObs->position_ecef().isZero())
+                     && (p_ecef.has_value() || p_lla.has_value()))
             {
-                auto lla = trafo::ecef2lla_WGS84(posVelAttObs->position_ecef());
-                posVelAttObs->velocity_n() = trafo::quat_ne(lla(0), lla(1)) * vnObs->gnss2Outputs->velEcef.cast<double>();
+                Eigen::Vector3d lla = p_lla.has_value() ? p_lla.value() : trafo::ecef2lla_WGS84(p_ecef.value());
+                v_n = trafo::quat_ne(lla(0), lla(1)) * vnObs->gnss2Outputs->velEcef.cast<double>();
             }
         }
     }
 
-    if (!posVelAttObs->position_ecef().isZero() && !std::isnan(posVelAttObs->velocity_n()(0)))
+    auto posVelAttObs = std::make_shared<PosVelAtt>();
+
+    posVelAttObs->insTime = vnObs->insTime;
+
+    if ((p_ecef.has_value() || p_lla.has_value()) && v_n.has_value())
     {
-        if (posVelAttObs->quaternion_nb().coeffs().isZero())
+        if (p_ecef.has_value())
+        {
+            posVelAttObs->setPosition_e(p_ecef.value(), posVelAtt__init ? posVelAtt__init->position_n_ref_lla() : trafo::ecef2lla_WGS84(p_ecef.value()));
+        }
+        else
+        {
+            posVelAttObs->setPosition_lla(p_lla.value(), posVelAtt__init ? posVelAtt__init->position_n_ref_lla() : p_lla.value());
+        }
+        posVelAttObs->setVelocity_n(v_n.value());
+
+        if (!quat_nb.has_value())
         {
             LOG_DEBUG("{}: Conversion succeeded but has no attitude info.", nameId());
         }
-
-        if (initPosition.isZero())
+        else
         {
-            initPosition = posVelAttObs->position_ecef();
+            posVelAttObs->setAttitude_nb(quat_nb.value());
+        }
+
+        if (posVelAtt__init == nullptr)
+        {
+            posVelAtt__init = posVelAttObs;
         }
 
         if (forceStatic)
         {
-            posVelAttObs->position_ecef() = initPosition;
-            posVelAttObs->velocity_n() = Eigen::Vector3d::Zero();
+            posVelAttObs->setPosition_e(posVelAtt__init->position_ecef(), posVelAtt__init->position_n_ref_lla());
+            posVelAttObs->setVelocity_n(Eigen::Vector3d::Zero());
+            posVelAttObs->setAttitude_nb(posVelAtt__init->quaternion_nb());
         }
 
         return posVelAttObs;
