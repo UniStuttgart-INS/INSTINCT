@@ -82,8 +82,8 @@ class VectorNavBinaryConverter : public Node
     /// GUI option. If checked forces position to a static value and velocity to 0
     bool forceStatic = false;
 
-    /// Tracker for the initial position in case of static data
-    Eigen::Vector3d initPosition = Eigen::Vector3d::Zero();
+    /// Position, Velocity and Attitude at initialization (needed for static data)
+    std::shared_ptr<const PosVelAtt> posVelAtt__init = nullptr;
 
     /// @brief Initialize the node
     bool initialize() override;

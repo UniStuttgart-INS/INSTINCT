@@ -494,9 +494,9 @@ void NAV::PosVelAttInitializer::finalizeInit()
                  trafo::rad2deg(rollPitchYaw.z()));
 
         auto posVelAtt = std::make_shared<PosVelAtt>();
-        posVelAtt->position_ecef() = p_ecef_init;
-        posVelAtt->velocity_n() = v_n_init;
-        posVelAtt->quaternion_nb() = q_nb_init;
+        posVelAtt->setPosition_e(p_ecef_init, trafo::ecef2lla_WGS84(p_ecef_init));
+        posVelAtt->setVelocity_n(v_n_init);
+        posVelAtt->setAttitude_nb(q_nb_init);
         invokeCallbacks(OutputPortIndex_PosVelAtt, posVelAtt);
     }
 }

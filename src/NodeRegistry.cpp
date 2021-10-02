@@ -173,8 +173,6 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 // Data Processor
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
-#include "Nodes/DataProcessor/KalmanFilter/AddImuBias.hpp"
-#include "Nodes/DataProcessor/KalmanFilter/AddPVAError.hpp"
 // Data Provider
 #include "Nodes/DataProvider/GNSS/FileReader/EmlidFile.hpp"
 #include "Nodes/DataProvider/GNSS/FileReader/RtklibPosFile.hpp"
@@ -221,8 +219,6 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     // Data Processor
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
-    registerNodeType<AddImuBias>();
-    registerNodeType<AddPVAError>();
     // Data Provider
     registerNodeType<EmlidFile>();
     registerNodeType<RtklibPosFile>();

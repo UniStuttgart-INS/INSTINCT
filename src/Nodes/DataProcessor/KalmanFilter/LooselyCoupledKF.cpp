@@ -736,7 +736,7 @@ bool NAV::LooselyCoupledKF::initialize()
         variance_gyroBias;                        // Gyroscope Bias covariance
 
     LOG_DEBUG("{}: initialized", nameId());
-    LOG_DEBUG("{}:\n", kalmanFilter.P);
+    LOG_DATA("{}:\n", kalmanFilter.P);
 
     return true;
 }
