@@ -127,6 +127,7 @@
         "**/.git": true,
         "**/.DS_Store": true,
         "**/tools": true,
+        ".gitlab": true,
         ".clang-format": true,
         ".clang-tidy": true,
         ".cmake-format.yaml": true,
