@@ -6,6 +6,8 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
+#include "internal/gui/widgets/Matrix.hpp"
+
 #include "NodeData/IMU/ImuObs.hpp"
 
 #include <chrono>
@@ -235,61 +237,15 @@ void NAV::Demo::guiConfig()
         }
         else
         {
-            if (ImGui::BeginTable("Init Matrix", static_cast<int>(connectedMatrix->cols() + 1),
-                                  ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+            if (gui::widgets::InputMatrix("Init Matrix", connectedMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, 30.0F, 0.0, 0.0, "%.1f"))
             {
-                ImGui::TableSetupColumn("");
-                for (int64_t col = 0; col < connectedMatrix->cols(); col++)
-                {
-                    ImGui::TableSetupColumn(std::to_string(col).c_str());
-                }
-                ImGui::TableHeadersRow();
-                for (int64_t row = 0; row < connectedMatrix->rows(); row++)
-                {
-                    ImGui::TableNextColumn();
-                    ImGui::TextUnformatted(std::to_string(row).c_str());
-                    ImU32 cell_bg_color = ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_TableHeaderBg]);
-                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
-                    for (int64_t col = 0; col < connectedMatrix->cols(); col++)
-                    {
-                        ImGui::TableNextColumn();
-                        ImGui::SetNextItemWidth(50);
-                        if (ImGui::InputDouble(("##initMatrix(" + std::to_string(row) + ", " + std::to_string(col) + ")").c_str(),
-                                               &(*connectedMatrix)(row, col), 0.0, 0.0, "%.1f"))
-                        {
-                            flow::ApplyChanges();
-                            notifyInputValueChanged(InputPortIndex_Matrix);
-                        }
-                    }
-                }
-                ImGui::EndTable();
+                flow::ApplyChanges();
+                notifyInputValueChanged(InputPortIndex_Matrix);
             }
         }
         ImGui::TableNextColumn();
-        if (ImGui::BeginTable("Current Matrix", static_cast<int>(valueMatrix.cols() + 1),
-                              ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
-        {
-            ImGui::TableSetupColumn("");
-            for (int64_t col = 0; col < valueMatrix.cols(); col++)
-            {
-                ImGui::TableSetupColumn(std::to_string(col).c_str());
-            }
-            ImGui::TableHeadersRow();
-            for (int64_t row = 0; row < valueMatrix.rows(); row++)
-            {
-                ImGui::TableNextColumn();
-                ImGui::TextUnformatted(std::to_string(row).c_str());
-                ImU32 cell_bg_color = ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_TableHeaderBg]);
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
-                for (int64_t col = 0; col < valueMatrix.cols(); col++)
-                {
-                    ImGui::TableNextColumn();
-                    ImGui::Text("%.1f", valueMatrix(row, col));
-                }
-            }
 
-            ImGui::EndTable();
-        }
+        gui::widgets::MatrixView("Current Matrix", &valueMatrix, GuiMatrixViewFlags_Header, ImGuiTableFlags_Borders | ImGuiTableFlags_NoHostExtendX | ImGuiTableFlags_SizingFixedFit, "%.1f");
 
         ImGui::EndTable();
     }
