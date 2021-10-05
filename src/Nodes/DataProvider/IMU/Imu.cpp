@@ -32,7 +32,7 @@ void TrafoHelperMarker(const Eigen::Quaterniond& q)
 
         NAV::gui::widgets::EndHelpMarker();
     }
-};
+}
 
 void NAV::Imu::guiConfig()
 {
