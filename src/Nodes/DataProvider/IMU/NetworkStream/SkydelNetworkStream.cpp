@@ -14,7 +14,8 @@
 #include "internal/FlowManager.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "util/Time/TimeBase.hpp"
-#include "NodeData/GNSS/SkydelObs.hpp"
+#include "util/InsTransformations.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 #include "internal/gui/widgets/HelpMarker.hpp"
 
 namespace nm = NAV::NodeManager;
@@ -29,7 +30,7 @@ NAV::SkydelNetworkStream::SkydelNetworkStream()
     guiConfigDefaultWindowSize = { 305, 70 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
-    nm::CreateOutputPin(this, "SkydelObs", Pin::Type::Flow, { NAV::SkydelObs::type() });
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
 NAV::SkydelNetworkStream::~SkydelNetworkStream()
@@ -87,7 +88,7 @@ void NAV::SkydelNetworkStream::do_receive()
                 // Splitting the incoming string analogous to 'ImuFile.cpp'
                 std::stringstream lineStream(std::string(m_data.begin(), m_data.end()));
                 std::string cell;
-                auto obsG = std::make_shared<SkydelObs>();
+                auto obsG = std::make_shared<PosVelAtt>();
                 auto obs = std::make_shared<ImuObs>(this->imuPos);
 
                 //  Inits for simulated measurement variables
@@ -165,11 +166,28 @@ void NAV::SkydelNetworkStream::do_receive()
                 }
 
                 // Arranging the network stream data into output format
-                obsG->posXYZ.emplace(posX, posY, posZ);
-                obsG->attRPY.emplace(attRoll, attPitch, attYaw);
+                Eigen::Vector3d pos_ecef{ posX, posY, posZ };
+                Eigen::Vector3d posLLA = trafo::ecef2lla_WGS84(pos_ecef);
+                // obsG->setPosition_e(pos_ecef, posLLA);
+
+                Eigen::Quaterniond quat_eb;
+                quat_eb = Eigen::AngleAxisd(attRoll, Eigen::Vector3d::UnitX())
+                          * Eigen::AngleAxisd(attPitch, Eigen::Vector3d::UnitY())
+                          * Eigen::AngleAxisd(attYaw, Eigen::Vector3d::UnitZ());
+
+                LOG_DEBUG("Quaternion q = {}", quat_eb.coeffs());
+
+                Eigen::Vector3d vel_ecef{ 0.0, 0.0, 0.0 };
+
+                obsG->setState_e(pos_ecef, vel_ecef, quat_eb, posLLA);
+
+                // obsG->posXYZ.emplace(posX, posY, posZ);
+                // obsG->attRPY.emplace(attRoll, attPitch, attYaw);
 
                 obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
                 obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
+                obs->magCompXYZ.emplace(0.0, 0.0, 0.0); //TODO: Add magnetometer model to Skydel API 'InstinctDataStream'
+                obs->magUncompXYZ.emplace(0.0, 0.0, 0.0);
 
                 InsTime currentTime = util::time::GetCurrentInsTime();
                 if (!currentTime.empty())
