@@ -165,25 +165,18 @@ void NAV::SkydelNetworkStream::do_receive()
                     }
                 }
 
-                // Arranging the network stream data into output format
+                // Set GNSS values
                 Eigen::Vector3d pos_ecef{ posX, posY, posZ };
                 Eigen::Vector3d posLLA = trafo::ecef2lla_WGS84(pos_ecef);
-                // obsG->setPosition_e(pos_ecef, posLLA);
-
                 Eigen::Quaterniond quat_eb;
-                quat_eb = Eigen::AngleAxisd(attRoll, Eigen::Vector3d::UnitX())
-                          * Eigen::AngleAxisd(attPitch, Eigen::Vector3d::UnitY())
-                          * Eigen::AngleAxisd(attYaw, Eigen::Vector3d::UnitZ());
+                quat_eb = trafo::quat_en(posLLA(0), posLLA(1)) * trafo::quat_nb(attRoll, attPitch, attYaw);
 
-                LOG_DEBUG("Quaternion q = {}", quat_eb.coeffs());
+                obsG->setPosition_e(pos_ecef, posLLA);
+                Eigen::Vector3d velDummy{ 0, 0, 0 }; //TODO: Add velocity output in Skydel API and NetStream
+                obsG->setVelocity_e(velDummy);
+                obsG->setAttitude_eb(quat_eb); // Attitude MUST BE set after Position, because the n- to e-sys trafo depends on posLLA
 
-                Eigen::Vector3d vel_ecef{ 0.0, 0.0, 0.0 };
-
-                obsG->setState_e(pos_ecef, vel_ecef, quat_eb, posLLA);
-
-                // obsG->posXYZ.emplace(posX, posY, posZ);
-                // obsG->attRPY.emplace(attRoll, attPitch, attYaw);
-
+                // Set IMU values
                 obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
                 obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
                 obs->magCompXYZ.emplace(0.0, 0.0, 0.0); //TODO: Add magnetometer model to Skydel API 'InstinctDataStream'
