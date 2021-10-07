@@ -692,7 +692,7 @@ bool NAV::LooselyCoupledKF::initialize()
     }
     else if (initCovariancePositionUnit == InitCovariancePositionUnit::meter2)
     {
-        variance_lla = (trafo::ecef2lla_WGS84(trafo::ned2ecef(initCovariancePosition.array().sqrt(), { 0, 0, 0 }))).array().pow(2);
+        variance_lla = (trafo::ecef2lla_WGS84(trafo::ned2ecef(initCovariancePosition.cwiseSqrt(), { 0, 0, 0 }))).array().pow(2);
     }
     // Conversion rad to mrad
     variance_lla(0) *= 1e6;
@@ -986,7 +986,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     }
     else if (gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::meter2)
     {
-        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(gnssMeasurementUncertaintyPosition.array().sqrt(), position_lla__t1)) - position_lla__t1).array().pow(2);
+        gnssSigmaSquaredLatLonAlt = (trafo::ecef2lla_WGS84(trafo::ned2ecef(gnssMeasurementUncertaintyPosition.cwiseSqrt(), position_lla__t1)) - position_lla__t1).array().pow(2);
     }
     else if (gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::rad_rad_m)
     {
@@ -1324,7 +1324,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const double& sigma2_
     // else if (randomProcessAccel == RandomProcess::GaussMarkov1)
 
     // Math: \mathbf{G}_{a} = \begin{bmatrix} \sqrt{\beta_{a,1} \sigma_{a,1}^2} & 0 & 0 \\ 0 & \sqrt{\beta_{a,2} \sigma_{a,2}^2} & 0 \\ 0 & 0 & \sqrt{\beta_{a,3} \sigma_{a,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return Eigen::DiagonalMatrix<double, 3>{ (beta_a.array() * sigma2_ra).sqrt().matrix() };
+    return Eigen::DiagonalMatrix<double, 3>{ (beta_a * sigma2_ra).cwiseSqrt() };
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega)
@@ -1338,7 +1338,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sig
     // else if (randomProcessGyro == RandomProcess::GaussMarkov1)
 
     // Math: \mathbf{G}_{\omega} = \begin{bmatrix} \sqrt{\beta_{\omega,1} \sigma_{\omega,1}^2} & 0 & 0 \\ 0 & \sqrt{\beta_{\omega,2} \sigma_{\omega,2}^2} & 0 \\ 0 & 0 & \sqrt{\beta_{\omega,3} \sigma_{\omega,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return Eigen::DiagonalMatrix<double, 3>{ (beta_omega.array() * sigma2_rg).sqrt().matrix() };
+    return Eigen::DiagonalMatrix<double, 3>{ (beta_omega * sigma2_rg).cwiseSqrt() };
 }
 
 // ###########################################################################################################
