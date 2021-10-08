@@ -21,7 +21,6 @@
 #include "NodeData/GNSS/UbloxObs.hpp"
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/IMU/KvhObs.hpp"
-#include "NodeData/GNSS/SkydelObs.hpp"
 #include "NodeData/IMU/ImuObsWDelta.hpp"
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
@@ -321,11 +320,6 @@ class Plot : public Node
     /// @param[in] obs Observation to plot
     /// @param[in] pinIndex Index of the input pin where the data was received
     void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
-
-    /// @brief Plot the data
-    /// @param[in] obs Observation to plot
-    /// @param[in] pinIndex Index of the input pin where the data was received
-    void plotSkydelObs(const std::shared_ptr<const SkydelObs>& obs, size_t pinIndex);
 
     /// Data storage for each pin
     std::vector<PinData> data;
