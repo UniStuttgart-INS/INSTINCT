@@ -30,7 +30,6 @@ namespace NAV::NodeRegistry
 {
 /// @brief Registers a Node with the NodeManager
 /// @tparam T Node Class to register
-/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Nodes'
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<Node, T>>>
 void registerNodeType()
@@ -54,7 +53,6 @@ void registerNodeType()
 
 /// @brief Register a NodeData with the NodeManager
 /// @tparam T NodeData Class to register
-/// @tparam std::enable_if_t<std::is_base_of_v<NodeData, T>> Makes sure template only exists for classes with base class 'NodeData'
 template<typename T,
          typename = std::enable_if_t<std::is_base_of_v<NodeData, T>>>
 void registerNodeDataType()

@@ -10,7 +10,6 @@
 namespace NAV::util::gravity
 {
 /// @brief Read function for EGM96 coefficients
-/// @param[in] coeffsFile Ascii file of the EGM96 coefficients
 /// @return 'coeffs' MatrixXd of the EGM96 coefficients
 [[nodiscard]] Eigen::MatrixXd readAscii2Matrix();
 } // namespace NAV::util::gravity

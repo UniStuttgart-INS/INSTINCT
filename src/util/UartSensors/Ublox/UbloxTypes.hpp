@@ -75,21 +75,21 @@ enum NmeaPubxMessages
 /// @brief The available UBX Class IDs
 enum UbxClass
 {
-    UBX_CLASS_NONE = 0x00, ///< No Message Class specified
-    UBX_CLASS_NAV = 0x01,  ///< Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
-    UBX_CLASS_RXM = 0x02,  ///< Receiver Manager Messages: Satellite Status, RTC Status
-    UBX_CLASS_INF = 0x04,  ///< Information Messages: Printf-Style Messages, with IDs such as Error, Warning, Notice
-    UBX_CLASS_ACK = 0x05,  ///< Ack/Nak Messages: Acknowledge or Reject messages to UBX-CFG input messages
-    UBX_CLASS_CFG = 0x06,  ///< Configuration Input Messages: Configure the receiver
-    UBX_CLASS_UPD = 0x09,  ///< Firmware Update Messages: Memory/Flash erase/write, Reboot, Flash identification, etc.
-    UBX_CLASS_MON = 0x0A,  ///< Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
-    UBX_CLASS_AID = 0x0B,  ///< AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
-    UBX_CLASS_TIM = 0x0D,  ///< Timing Messages: Time Pulse Output, Time Mark Results
-    UBX_CLASS_ESF = 0x10,  ///< External Sensor Fusion Messages: External Sensor Measurements and Status Information
-    UBX_CLASS_MGA = 0x13,  ///< Multiple GNSS Assistance Messages: Assistance data for various GNSS
-    UBX_CLASS_LOG = 0x21,  ///< Logging Messages: Log creation, deletion, info and retrieval
-    UBX_CLASS_SEC = 0x27,  ///< Security Feature Messages
-    UBX_CLASS_HNR = 0x28   ///< High Rate Navigation Results Messages: High rate time, position, speed, heading
+    UBX_CLASS_NONE = 0x00,               ///< No Message Class specified
+    UBX_CLASS_NAV = 0x01,                ///< Navigation Results Messages: Position, Speed, Time, Acceleration, Heading, DOP, SVs used
+    UBX_CLASS_RXM = 0x02,                ///< Receiver Manager Messages: Satellite Status, RTC Status
+    UBX_CLASS_INF = 0x04,                ///< Information Messages: Printf-Style Messages, with IDs such as Error, Warning, Notice
+    UBX_CLASS_ACK = 0x05,                ///< Ack/Nak Messages: Acknowledge or Reject messages to UBX-CFG input messages
+    UBX_CLASS_CFG = 0x06,                ///< Configuration Input Messages: Configure the receiver
+    UBX_CLASS_UPD = 0x09,                ///< Firmware Update Messages: Memory/Flash erase/write, Reboot, Flash identification, etc.
+    UBX_CLASS_MON = 0x0A,                ///< Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status
+    UBX_CLASS_AID [[deprecated]] = 0x0B, ///< AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
+    UBX_CLASS_TIM = 0x0D,                ///< Timing Messages: Time Pulse Output, Time Mark Results
+    UBX_CLASS_ESF = 0x10,                ///< External Sensor Fusion Messages: External Sensor Measurements and Status Information
+    UBX_CLASS_MGA = 0x13,                ///< Multiple GNSS Assistance Messages: Assistance data for various GNSS
+    UBX_CLASS_LOG = 0x21,                ///< Logging Messages: Log creation, deletion, info and retrieval
+    UBX_CLASS_SEC = 0x27,                ///< Security Feature Messages
+    UBX_CLASS_HNR = 0x28                 ///< High Rate Navigation Results Messages: High rate time, position, speed, heading
 };
 
 /// @brief The available ACK Messages
@@ -117,240 +117,6 @@ struct UbxAckNak
 {
     uint8_t clsID = 0; ///< Class ID of the Not-Acknowledged Message
     uint8_t msgID = 0; ///< Message ID of the Not-Acknowledged Message
-};
-
-/// @brief The available AID Messages
-enum UbxAidMessages
-{
-    /// - Poll GPS Aiding Almanac Data (Length = 0; Type = Poll Request)
-    /// - Poll GPS Aiding Almanac Data for a SV (Length = 1; Type = Poll Request)
-    /// - GPS Aiding Almanac Input/Output Message (Length = (8) or (40); Type = Input/Output)
-    UBX_AID_ALM = 0x30,
-    /// - Poll AssistNow Autonomous data, all satellites (Length = 0; Type = Poll Request)
-    /// - Poll AssistNow Autonomous data, one satellite (Length = 1; Type = Poll Request)
-    /// - AssistNow Autonomous data (Length = 68; Type = Input/Output)
-    UBX_AID_AOP = 0x33,
-    /// - Poll GPS Aiding Ephemeris Data (Length = 0; Type = Poll Request)
-    /// - Poll GPS Aiding Ephemeris Data for a SV (Length = 1; Type = Poll Request)
-    /// - GPS Aiding Ephemeris Input/Output Message (Length = (8) or (104); Type = Input/Output)
-    UBX_AID_EPH = 0x31,
-    /// - Poll GPS Health, UTC, ionosphere parameters (Length = 0; Type = Poll Request)
-    /// - GPS Health, UTC and ionosphere parameters (Length = 72; Type = Input/Output)
-    UBX_AID_HUI = 0x02,
-    /// - Poll GPS Initial Aiding Data (Length = 0; Type = Poll Request)
-    /// - Aiding position, time, frequency, clock drift (Length = 48; Type = Input/Output)
-    UBX_AID_INI = 0x01
-};
-
-/// @brief Poll GPS Aiding Almanac Data
-///
-/// Poll GPS Aiding Data (Almanac) for all 32 SVs by sending this message to the receiver without any payload.
-/// The receiver will return 32 messages of type AID-ALM as defined below.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidAlm
-{
-};
-
-/// @brief Poll GPS Aiding Almanac Data for a SV
-///
-/// Poll GPS Aiding Data (Almanac) for an SV by sending this message to the receiver.
-/// The receiver will return one message of type AID-ALM as defined below.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidAlmSV
-{
-    uint8_t svid = 0; ///< SV ID for which the receiver shall return its Almanac Data (Valid Range: 1 .. 32 or 51, 56, 63).
-};
-
-/// @brief GPS Aiding Almanac Input/Output Message
-///
-/// • If the WEEK Value is 0, DWRD0 to DWRD7 are not sent as the Almanac is not
-///   available for the given SV. This may happen even if NAV-SVINFO and RXM-
-///   SVSI are indicating almanac availability as the internal data may not represent
-///   the content of an original broadcast almanac (or only parts thereof).
-/// • DWORD0 to DWORD7 contain the 8 words following the Hand-Over Word (
-///   HOW ) from the GPS navigation message, either pages 1 to 24 of sub-frame 5
-///   or pages 2 to 10 of subframe 4. See IS-GPS-200 for a full description of the
-///   contents of the Almanac pages.
-/// • In DWORD0 to DWORD7, the parity bits have been removed, and the 24 bits of
-///   data are located in Bits 0 to 23. Bits 24 to 31 shall be ignored.
-/// • Example: Parameter e (Eccentricity) from Almanac Subframe 4/5, Word 3, Bits
-///   69-84 within the subframe can be found in DWRD0, Bits 15-0 whereas Bit 0 is
-///   the LSB.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidAlmIO
-{
-    uint32_t svid = 0;                           ///< SV ID for which this Almanac Data is (Valid Range: 1 .. 32 or 51, 56, 63).
-    uint32_t week = 0;                           ///< Issue Date of Almanac (GPS week number)
-    std::optional<std::array<uint32_t, 8>> dwrd; ///< Almanac Words
-};
-
-/// @brief Poll AssistNow Autonomous data, all satellites
-///
-/// Poll AssistNow Autonomous aiding data for all GPS satellites by sending this empty message.
-/// The receiver will return an AID-AOP message (see definition below) for each GPS satellite for which data is available.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidAop
-{
-};
-
-/// @brief Poll AssistNow Autonomous data, one GPS satellite
-///
-/// Poll the AssistNow Autonomous data for the specified GPS satellite.
-/// The receiver will return a AID-AOP message (see definition below) if data is available for the requested satellite.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidAopSV
-{
-    uint8_t svid = 0; ///< GPS SV ID for which the data is requested (valid range: 1..32).
-};
-
-/// @brief Poll AssistNow Autonomous data, one GPS satellite
-///
-/// If enabled, this message is output at irregular intervals. It is output whenever
-/// AssistNow Autonomous has produced new data for a satellite. Depending on the
-/// availability of the optional data the receiver will output either version of the
-/// message. If this message is polled using one of the two poll requests described
-/// above the receiver will send this message if AssistNow Autonomous data is
-/// available or the corresponding poll request message if no AssistNow
-/// Autonomous data is available for each satellite (i.e. svid 1..32). At the user's
-/// choice the optional data may be chopped from the payload of a previously polled
-/// message when sending the message back to the receiver. Sending a valid AID-
-/// AOP message to the receiver will automatically enable the AssistNow
-/// Autonomous feature on the receiver. See the section AssistNow Autonomous in
-/// the receiver description for details on this feature.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidAopIO
-{
-    uint8_t gnssId = 0;                 ///< GNSS identifier (see Satellite Numbering)
-    uint8_t svid = 0;                   ///< Satellite identifier (see Satellite Numbering)
-    std::array<uint8_t, 2> reserved1{}; ///< Reserved
-    std::array<uint8_t, 64> data{};     ///< assistance data
-};
-
-/// @brief Poll GPS Aiding Ephemeris Data
-///
-/// Poll GPS Aiding Data (Ephemeris) for all 32 SVs by sending this message to the receiver without any payload.
-/// The receiver will return 32 messages of type AID-EPH as defined below.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidEph
-{
-};
-
-/// @brief Poll GPS Aiding Ephemeris Data for a SV
-///
-/// Poll GPS Constellation Data (Ephemeris) for an SV by sending this message to the receiver.
-/// The receiver will return one message of type AID-EPH as defined below.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidEphSV
-{
-    uint8_t svid = 0; ///< SV ID for which the receiver shall return its Ephemeris Data (Valid Range: 1 .. 32).
-};
-
-/// @brief GPS Aiding Ephemeris Input/Output Message
-///
-/// • SF1D0 to SF3D7 is only sent if ephemeris is available for this SV. If not, the
-///   payload may be reduced to 8 Bytes, or all bytes are set to zero, indicating that
-///   this SV Number does not have valid ephemeris for the moment. This may
-///   happen even if NAV-SVINFO and RXM-SVSI are indicating ephemeris
-///   availability as the internal data may not represent the content of an original
-///   broadcast ephemeris (or only parts thereof).
-/// • SF1D0 to SF3D7 contain the 24 words following the Hand-Over Word ( HOW )
-///   from the GPS navigation message, subframes 1 to 3. The Truncated TOW
-///   Count is not valid and cannot be used. See IS-GPS-200 for a full description of
-///   the contents of the Subframes.
-/// • In SF1D0 to SF3D7, the parity bits have been removed, and the 24 bits of data
-///   are located in Bits 0 to 23. Bits 24 to 31 shall be ignored.
-/// • When polled, the data contained in this message does not represent the full
-///   original ephemeris broadcast. Some fields that are irrelevant to u-blox
-///   receivers may be missing. The week number in Subframe 1 has already been
-///   modified to match the Time Of Ephemeris (TOE).
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidEphIO
-{
-    uint32_t svid = 0;                           ///< SV ID for which this ephemeris data is (Valid Range: 1 .. 32).
-    uint32_t how = 0;                            ///< Hand-Over Word of first Subframe. This is required if data is sent to the receiver. 0 indicates that no Ephemeris Data is following.
-    std::optional<std::array<uint32_t, 8>> sf1d; ///< Subframe 1 Words 3..10 (SF1D0..SF1D7)
-    std::optional<std::array<uint32_t, 8>> sf2d; ///< Subframe 2 Words 3..10 (SF2D0..SF2D7)
-    std::optional<std::array<uint32_t, 8>> sf3d; ///< Subframe 3 Words 3..10 (SF3D0..SF3D7)
-};
-
-/// @brief Poll GPS Health, UTC, ionosphere parameters
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidHui
-{
-};
-
-/// @brief GPS Health, UTC and ionosphere parameters
-///
-/// This message contains a health bit mask, UTC time and Klobuchar parameters.
-/// For more information on these parameters, see the ICD-GPS-200 documentation.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidHuiIO
-{
-    std::bitset<4 * 8> health; ///< Bitmask, every bit represenst a GPS SV (1-32). If the bit is set the SV is healthy.
-    double utcA0 = 0.0;        ///< UTC - parameter A0
-    double utcA1 = 0.0;        ///< UTC - parameter A1
-    int32_t utcTOW = 0;        ///< UTC - reference time of week
-    int16_t utcWNT = 0;        ///< UTC - reference week number
-    int16_t utcLS = 0;         ///< UTC - time difference due to leap seconds before event
-    int16_t utcWNF = 0;        ///< UTC - week number when next leap second event occurs
-    int16_t utcDN = 0;         ///< UTC - day of week when next leap second event occurs
-    int16_t utcLSF = 0;        ///< UTC - time difference due to leap seconds after event
-    int16_t utcSpare = 0;      ///< UTC - Spare to ensure structure is a multiple of 4 bytes
-    float klobA0 = 0.0F;       ///< Klobuchar - alpha 0 [s]
-    float klobA1 = 0.0F;       ///< Klobuchar - alpha 1 [s/semicircle]
-    float klobA2 = 0.0F;       ///< Klobuchar - alpha 2 [s/semicircle^2]
-    float klobA3 = 0.0F;       ///< Klobuchar - alpha 3 [s/semicircle^3]
-    float klobB0 = 0.0F;       ///< Klobuchar - beta 0 [s]
-    float klobB1 = 0.0F;       ///< Klobuchar - beta 1 [s/semicircle]
-    float klobB2 = 0.0F;       ///< Klobuchar - beta 2 [s/semicircle^2]
-    float klobB3 = 0.0F;       ///< Klobuchar - beta 3 [s/semicircle^3]
-    std::bitset<4 * 8> flags;  ///< Flags: healthValid, utcValid, klobValid
-};
-
-/// @brief Poll GPS Initial Aiding Data
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidIni
-{
-};
-
-/// @brief Aiding position, time, frequency, clock drift
-///
-/// This message contains position, time and clock drift information. The position
-/// can be input in either the ECEF X/Y/Z coordinate system or as lat/lon/height. The
-/// time can either be input as inexact value via the standard communication
-/// interface, suffering from latency depending on the baud rate, or using hardware
-/// time synchronization where an accurate time pulse is input on the external
-/// interrupts. It is also possible to supply hardware frequency aiding by connecting
-/// a continuous signal to an external interrupt.
-///
-/// @deprecated All UBX-AID messages are deprecated; use UBX-MGA messages instead
-struct UbxAidIniIO
-{
-    int32_t ecefXOrLat = 0;        ///< WGS84 ECEF X coordinate or latitude, depending on flags below [cm or deg*1e-7]
-    int32_t ecefYOrLon = 0;        ///< WGS84 ECEF X coordinate or longitude, depending on flags below [cm or deg*1e-7]
-    int32_t ecefZOrAlt = 0;        ///< WGS84 ECEF Z coordinate or altitude, depending on flags below [cm]
-    uint32_t posAcc = 0;           ///< Position accuracy (stddev) [cm]
-    std::bitset<2 * 8> tmCfg;      ///< Time mark configuration (fEdge, tm1, f1)
-    uint16_t wnoOrDate = 0;        ///< Actual week number or yearSince2000/Month (YYMM), depending on flags below [week or yearMonth]
-    uint32_t towOrTime = 0;        ///< Actual time of week or DayOfMonth/Hour/Minute/Second (DDHHMMSS), depending on flags below [ms or dayHourMinuteSec]
-    int32_t towNs = 0;             ///< Fractional part of time of week [ns]
-    uint32_t tAccMs = 0;           ///< Milliseconds part of time accuracy [ms]
-    uint32_t tAccNs = 0;           ///< Nanoseconds part of time accuracy [ns]
-    int32_t clkDOrFreq = 0;        ///< Clock drift or frequency, depending on flags below [ns/s or Hz*1e-2]
-    uint32_t clkDAccOrFreqAcc = 0; ///< Accuracy of clock drift or frequency, depending on flags below [ns/s or ppb]
-    std::bitset<4 * 8> flags;      ///< Bitmask with the following flags (pos, time, clockD, tp, clockF, lla, altInv, prevTm, utc)
 };
 
 /// @brief The available CFG Messages

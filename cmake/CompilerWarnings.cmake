@@ -5,6 +5,7 @@
 function(set_project_warnings project_name)
   option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
 
+  # Microsoft Visual Studio Compiler warnings
   set(MSVC_WARNINGS
       /W4 # Baseline reasonable warnings
       /w14242 # 'identifier': conversion from 'type1' to 'type1', possible loss of data
@@ -31,6 +32,7 @@ function(set_project_warnings project_name)
       /permissive- # standards conformance mode for MSVC compiler.
   )
 
+  # Clang/Gcc common warnings
   set(CLANG_WARNINGS
       -Wall
       -Wextra # reasonable and standard
@@ -54,6 +56,7 @@ function(set_project_warnings project_name)
     set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
   endif()
 
+  # Gcc only warnings
   set(GCC_WARNINGS
       ${CLANG_WARNINGS}
       -Wmisleading-indentation # warn if indentation implies blocks where blocks do not exist
@@ -61,6 +64,10 @@ function(set_project_warnings project_name)
       -Wduplicated-branches # warn if if / else branches have duplicated code
       -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
       -Wuseless-cast # warn if you perform a cast to the same type
+  )
+
+  # Clang only warnings
+  set(CLANG_WARNINGS ${CLANG_WARNINGS} -Wdocumentation # warn on wrong documentation
   )
 
   if(MSVC)

@@ -216,7 +216,7 @@ class Pin
     /// @param[in] id Unique Id of the Pin
     /// @param[in] name Name of the Pin
     /// @param[in] type Type of the Pin
-    /// @param[in] pinKind Kind of the Pin (Input/Output)
+    /// @param[in] kind Kind of the Pin (Input/Output)
     /// @param[in] parentNode Reference to the parent node
     Pin(ax::NodeEditor::PinId id, const char* name, Type type, Kind kind, Node* parentNode)
         : id(id), name(name), type(type), kind(kind), parentNode(parentNode) {}

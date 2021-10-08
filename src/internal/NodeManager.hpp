@@ -41,7 +41,7 @@ void AddNode(Node* node);
 void UpdateNode(Node* node);
 
 /// @brief Delete the node provided by id
-/// @param[in] linkId Unique Id of the Node to delete
+/// @param[in] nodeId Unique Id of the Node to delete
 /// @return True if delete was successful, false if NodeId does not exist
 bool DeleteNode(ax::NodeEditor::NodeId nodeId);
 
@@ -81,7 +81,6 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 
 /// @brief Create an Input Pin object
 /// @tparam T Node Class where the function is member of
-/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin
 /// @param[in] pinType Type of the pin
@@ -99,7 +98,6 @@ Pin* CreateInputPin(Node* node, const char* name, Pin::Type pinType, const std::
 
 /// @brief Create an Input Pin object
 /// @tparam T Node Class where the function is member of
-/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin
 /// @param[in] pinType Type of the pin
@@ -133,7 +131,6 @@ Pin* CreateOutputPin(Node* node, const char* name, Pin::Type pinType, const std:
 
 /// @brief Create an Output Pin object for Flow Pins
 /// @tparam T Class where the function is member of
-/// @tparam std::enable_if_t<std::is_base_of_v<Node, T>> Makes sure template only exists for classes with base class 'Node'
 /// @param[in] node Node to register the Pin for
 /// @param[in] name Display name of the Pin
 /// @param[in] pinType Type of the pin

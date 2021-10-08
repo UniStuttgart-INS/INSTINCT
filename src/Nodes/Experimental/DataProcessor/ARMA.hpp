@@ -77,7 +77,7 @@ class ARMA : public Node
     /// @param[in] acf vector of acf
     /// @param[in] p order of AR process
     /// @param[out] pacf vector of pacf values
-    /// @param[out] initial_e_hat vector of initial ê for Hannan-Rissanen
+    /// @param[out] e_hat_initial vector of initial ê for Hannan-Rissanen
     static void pacf_function(Eigen::VectorXd& y, Eigen::VectorXd& acf, int p, Eigen::VectorXd& pacf, Eigen::VectorXd& e_hat_initial);
 
     /// @brief Calculate ARMA parameters through Hannan-Rissanen
