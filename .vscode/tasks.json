@@ -14,7 +14,6 @@
                     "-rf",
                     "bin",
                     "build",
-                    "doc",
                     "coverage",
                     "junit.xml",
                 ],
@@ -25,7 +24,6 @@
                     "-Recurse",
                     "bin,",
                     "build,",
-                    "doc,",
                     "coverage,",
                     "junit.xml",
                 ]
@@ -173,6 +171,30 @@
                 "-DENABLE_CLANG_TIDY=OFF",
                 "-DENABLE_CPPCHECK=OFF",
                 "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
+                "-DDOC_CHECK_CODE_DOCUMENTATION=NO",
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": [],
+        },
+        { // CMAKE: Documentation Check
+            "label": "CMAKE: Documentation Check",
+            "type": "shell",
+            "group": "build",
+            "command": "cmake",
+            "args": [
+                "-Bbuild/Release",
+                "-S.",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DENABLE_MAIN=OFF",
+                "-DENABLE_TESTING=OFF",
+                "-DENABLE_DOXYGEN=ON",
+                "-DLOG_LEVEL=OFF",
+                "-DENABLE_CLANG_TIDY=OFF",
+                "-DENABLE_CPPCHECK=OFF",
+                "-DENABLE_INCLUDE_WHAT_YOU_USE=OFF",
+                "-DDOC_CHECK_CODE_DOCUMENTATION=YES",
             ],
             "presentation": {
                 "clear": true
@@ -302,12 +324,30 @@
                 "--build",
                 "build/Release",
                 "--target",
-                "doxygen-docs",
+                "doc",
                 "--",
                 "-j",
             ],
             "dependsOn": [
                 "CMAKE: Documentation",
+            ],
+            "problemMatcher": [],
+        },
+        { // DOXYGEN: Check for errors
+            "label": "DOXYGEN: Check for errors",
+            "type": "shell",
+            "group": "test",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build/Release",
+                "--target",
+                "doc",
+                "--",
+                "-j",
+            ],
+            "dependsOn": [
+                "CMAKE: Documentation Check",
             ],
             "problemMatcher": [],
         },
@@ -406,7 +446,7 @@
             "group": "build",
             "command": "xdg-open",
             "args": [
-                "doc/html/index.html",
+                "bin/doc/html/index.html",
             ],
             "dependsOn": [
                 "DOXYGEN: Build Documentation",

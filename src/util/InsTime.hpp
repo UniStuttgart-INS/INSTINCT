@@ -42,7 +42,7 @@ constexpr int32_t SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
 constexpr int32_t SECONDS_PER_DAY = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
 constexpr int32_t SECONDS_PER_WEEK = SECONDS_PER_DAY * DAYS_PER_WEEK;
 
-/// Numerical precision for <long double> variables
+/// Numerical precision for 'long double' variables
 constexpr long double EPSILON = 2.0L * std::numeric_limits<long double>::epsilon();
 
 /// Maps GPS leap seconds to a time: array<mjd_day>, index + 1 is amount of leap seconds

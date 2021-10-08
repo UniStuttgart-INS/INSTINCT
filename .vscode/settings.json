@@ -134,7 +134,6 @@
         ".cppcheck-suppressions-list": true,
         ".gitlab-ci.yml": true,
         ".gitmodules": true,
-        "DoxygenLayout.xml": true,
         "INSTINCT.ini": true,
         "compile_commands.json": true,
     },

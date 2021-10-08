@@ -2,22 +2,20 @@
 
 #include <map>
 
-namespace ed = ax::NodeEditor;
-
 struct NodeIdLess
 {
-    bool operator()(const ed::NodeId& lhs, const ed::NodeId& rhs) const
+    bool operator()(const ax::NodeEditor::NodeId& lhs, const ax::NodeEditor::NodeId& rhs) const
     {
         return lhs.AsPointer() < rhs.AsPointer();
     }
 };
 
 const float m_TouchTime = 1.0F;
-std::map<ed::NodeId, float, NodeIdLess> m_NodeTouchTime;
+std::map<ax::NodeEditor::NodeId, float, NodeIdLess> m_NodeTouchTime;
 
 /// @brief  Trigger a touch event on the specified node
 /// @param[in] id Id of the node to trigger the event on
-void NAV::gui::TouchNode(ed::NodeId id)
+void NAV::gui::TouchNode(ax::NodeEditor::NodeId id)
 {
     m_NodeTouchTime[id] = m_TouchTime;
 }
@@ -25,7 +23,7 @@ void NAV::gui::TouchNode(ed::NodeId id)
 /// @brief Get the Touch Progress for the specified node
 /// @param[in] id Id of the Node to check
 /// @return The Touch progress towards the touch time
-float NAV::gui::GetTouchProgress(ed::NodeId id)
+float NAV::gui::GetTouchProgress(ax::NodeEditor::NodeId id)
 {
     auto it = m_NodeTouchTime.find(id);
     if (it != m_NodeTouchTime.end() && it->second > 0.0F)

@@ -12,20 +12,18 @@
 #include <imgui_internal.h>
 
 //------------------------------------------------------------------------------
-namespace ed = ax::NodeEditor;
-namespace util = ax::NodeEditor::Utilities;
 
-util::BlueprintNodeBuilder::BlueprintNodeBuilder(ImTextureID texture, int textureWidth, int textureHeight)
+ax::NodeEditor::Utilities::BlueprintNodeBuilder::BlueprintNodeBuilder(ImTextureID texture, int textureWidth, int textureHeight)
     : HeaderTextureId(texture), HeaderTextureWidth(textureWidth), HeaderTextureHeight(textureHeight) {}
 
-void util::BlueprintNodeBuilder::Begin(ed::NodeId id)
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::Begin(ax::NodeEditor::NodeId id)
 {
     HasHeader = false;
     HeaderMin = HeaderMax = ImVec2();
 
-    ed::PushStyleVar(StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
+    ax::NodeEditor::PushStyleVar(StyleVar_NodePadding, ImVec4(8, 4, 8, 8));
 
-    ed::BeginNode(id);
+    ax::NodeEditor::BeginNode(id);
 
     ImGui::PushID(id.AsPointer());
     CurrentNodeId = id;
@@ -33,19 +31,19 @@ void util::BlueprintNodeBuilder::Begin(ed::NodeId id)
     SetStage(Stage::Begin);
 }
 
-void util::BlueprintNodeBuilder::End()
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::End()
 {
     SetStage(Stage::End);
 
-    ed::EndNode();
+    ax::NodeEditor::EndNode();
 
     if (ImGui::IsItemVisible())
     {
         auto alpha = static_cast<int>(255 * ImGui::GetStyle().Alpha);
 
-        auto* drawList = ed::GetNodeBackgroundDrawList(CurrentNodeId);
+        auto* drawList = ax::NodeEditor::GetNodeBackgroundDrawList(CurrentNodeId);
 
-        const auto halfBorderWidth = ed::GetStyle().NodeBorderWidth * 0.5F;
+        const auto halfBorderWidth = ax::NodeEditor::GetStyle().NodeBorderWidth * 0.5F;
 
         auto headerColor = IM_COL32(0, 0, 0, alpha) | (HeaderColor & IM_COL32(255, 255, 255, 0));
         if ((HeaderMax.x > HeaderMin.x) && (HeaderMax.y > HeaderMin.y) && HeaderTextureId)
@@ -77,23 +75,23 @@ void util::BlueprintNodeBuilder::End()
 
     ImGui::PopID();
 
-    ed::PopStyleVar();
+    ax::NodeEditor::PopStyleVar();
 
     SetStage(Stage::Invalid);
 }
 
-void util::BlueprintNodeBuilder::Header(const ImVec4& color)
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::Header(const ImVec4& color)
 {
     HeaderColor = ImColor(color);
     SetStage(Stage::Header);
 }
 
-void util::BlueprintNodeBuilder::EndHeader()
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::EndHeader()
 {
     SetStage(Stage::Content);
 }
 
-void util::BlueprintNodeBuilder::Input(ed::PinId id)
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::Input(ax::NodeEditor::PinId id)
 {
     if (CurrentStage == Stage::Begin)
     {
@@ -114,14 +112,14 @@ void util::BlueprintNodeBuilder::Input(ed::PinId id)
     ImGui::BeginHorizontal(id.AsPointer());
 }
 
-void util::BlueprintNodeBuilder::EndInput()
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::EndInput()
 {
     ImGui::EndHorizontal();
 
     EndPin();
 }
 
-void util::BlueprintNodeBuilder::Middle()
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::Middle()
 {
     if (CurrentStage == Stage::Begin)
     {
@@ -131,7 +129,7 @@ void util::BlueprintNodeBuilder::Middle()
     SetStage(Stage::Middle);
 }
 
-void util::BlueprintNodeBuilder::Output(ed::PinId id)
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::Output(ax::NodeEditor::PinId id)
 {
     if (CurrentStage == Stage::Begin)
     {
@@ -152,14 +150,14 @@ void util::BlueprintNodeBuilder::Output(ed::PinId id)
     ImGui::BeginHorizontal(id.AsPointer());
 }
 
-void util::BlueprintNodeBuilder::EndOutput()
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::EndOutput()
 {
     ImGui::EndHorizontal();
 
     EndPin();
 }
 
-bool util::BlueprintNodeBuilder::SetStage(Stage stage)
+bool ax::NodeEditor::Utilities::BlueprintNodeBuilder::SetStage(Stage stage)
 {
     if (stage == CurrentStage)
     {
@@ -189,7 +187,7 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
         break;
 
     case Stage::Input:
-        ed::PopStyleVar(2);
+        ax::NodeEditor::PopStyleVar(2);
 
         ImGui::Spring(1, 0);
         ImGui::EndVertical();
@@ -210,7 +208,7 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
         break;
 
     case Stage::Output:
-        ed::PopStyleVar(2);
+        ax::NodeEditor::PopStyleVar(2);
 
         ImGui::Spring(1, 0);
         ImGui::EndVertical();
@@ -253,8 +251,8 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
     case Stage::Input:
         ImGui::BeginVertical("inputs", ImVec2(0, 0), 0.0F);
 
-        ed::PushStyleVar(ed::StyleVar_PivotAlignment, ImVec2(0, 0.5F));
-        ed::PushStyleVar(ed::StyleVar_PivotSize, ImVec2(0, 0));
+        ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_PivotAlignment, ImVec2(0, 0.5F));
+        ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_PivotSize, ImVec2(0, 0));
 
         if (!HasHeader)
         {
@@ -278,8 +276,8 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
         }
         ImGui::BeginVertical("outputs", ImVec2(0, 0), 1.0F);
 
-        ed::PushStyleVar(ed::StyleVar_PivotAlignment, ImVec2(1.0F, 0.5F));
-        ed::PushStyleVar(ed::StyleVar_PivotSize, ImVec2(0, 0));
+        ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_PivotAlignment, ImVec2(1.0F, 0.5F));
+        ax::NodeEditor::PushStyleVar(ax::NodeEditor::StyleVar_PivotSize, ImVec2(0, 0));
 
         if (!HasHeader)
         {
@@ -312,14 +310,14 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
     return true;
 }
 
-void util::BlueprintNodeBuilder::Pin(ed::PinId id, ed::PinKind kind)
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::Pin(ax::NodeEditor::PinId id, ax::NodeEditor::PinKind kind)
 {
-    ed::BeginPin(id, kind);
+    ax::NodeEditor::BeginPin(id, kind);
 }
 
-void util::BlueprintNodeBuilder::EndPin()
+void ax::NodeEditor::Utilities::BlueprintNodeBuilder::EndPin()
 {
-    ed::EndPin();
+    ax::NodeEditor::EndPin();
 
     // #debug
     // ImGui::GetWindowDrawList()->AddRectFilled(

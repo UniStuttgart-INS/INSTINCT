@@ -16,22 +16,26 @@
 namespace ax::NodeEditor::Utilities
 {
 //------------------------------------------------------------------------------
-struct BlueprintNodeBuilder
+class BlueprintNodeBuilder
 {
+  public:
     explicit BlueprintNodeBuilder(ImTextureID texture = nullptr, int textureWidth = 0, int textureHeight = 0);
 
-    void Begin(NodeId id);
+    /// @brief Begins building a node
+    /// @param[in] id Id of the node to build
+    void Begin(ax::NodeEditor::NodeId id);
+
     void End();
 
     void Header(const ImVec4& color = ImVec4(1, 1, 1, 1));
     void EndHeader();
 
-    void Input(PinId id);
+    void Input(ax::NodeEditor::PinId id);
     static void EndInput();
 
     void Middle();
 
-    void Output(PinId id);
+    void Output(ax::NodeEditor::PinId id);
     static void EndOutput();
 
   private:
@@ -49,7 +53,7 @@ struct BlueprintNodeBuilder
 
     bool SetStage(Stage stage);
 
-    static void Pin(PinId id, ax::NodeEditor::PinKind kind);
+    static void Pin(ax::NodeEditor::PinId id, ax::NodeEditor::PinKind kind);
     static void EndPin();
 
     ImTextureID HeaderTextureId;

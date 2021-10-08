@@ -1,4 +1,4 @@
-/// @file imgui_ex.h
+/// @file imgui_ex.hpp
 /// @brief ImGui extensions
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-09-14

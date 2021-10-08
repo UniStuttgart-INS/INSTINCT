@@ -1,4 +1,4 @@
-/// @file NodeManager.cpp
+/// @file NodeManager.hpp
 /// @brief Manages all Nodes
 /// @author T. Topp (thomas@topp.cc)
 /// @date 2020-12-14
