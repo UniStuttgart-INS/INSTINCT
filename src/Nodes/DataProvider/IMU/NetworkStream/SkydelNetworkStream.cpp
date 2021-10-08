@@ -171,7 +171,12 @@ void NAV::SkydelNetworkStream::do_receive()
                 Eigen::Quaterniond quat_eb;
                 quat_eb = trafo::quat_en(posLLA(0), posLLA(1)) * trafo::quat_nb(attRoll, attPitch, attYaw);
 
-                obsG->setPosition_e(pos_ecef, posLLA);
+                if (firstPosLLA.isZero())
+                {
+                    firstPosLLA = posLLA;
+                }
+
+                obsG->setPosition_e(pos_ecef, firstPosLLA);
                 Eigen::Vector3d velDummy{ 0, 0, 0 }; //TODO: Add velocity output in Skydel API and NetStream
                 obsG->setVelocity_e(velDummy);
                 obsG->setAttitude_eb(quat_eb); // Attitude MUST BE set after Position, because the n- to e-sys trafo depends on posLLA

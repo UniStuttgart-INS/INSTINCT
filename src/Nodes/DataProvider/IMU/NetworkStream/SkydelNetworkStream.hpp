@@ -101,6 +101,8 @@ class SkydelNetworkStream : public Imu
 
     // # of packages that are skipped until data rate is shown
     int startNow = 20;
+
+    Eigen::Vector3d firstPosLLA = Eigen::Vector3d::Zero();
 };
 
 } // namespace NAV
