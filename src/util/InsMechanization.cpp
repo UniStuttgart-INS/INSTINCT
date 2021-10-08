@@ -239,11 +239,8 @@ Eigen::Vector3d updateVelocity_e_Simpson(const long double& timeDifferenceSec__t
                                          const Eigen::Vector3d& gravity_e,            // g_e Gravity vector in [m/s^2], in earth coordinates
                                          const Eigen::Quaterniond& quaternion_ep__t0, // q (tₖ) Quaternion, from platform to earth coordinates, at the time tₖ
                                          const Eigen::Quaterniond& quaternion_ep__t1, // q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
-                                         const Eigen::Quaterniond& quaternion_ep__t2  // q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
-#ifndef NDEBUG
-                                         ,
-                                         bool suppressCoriolis
-#endif
+                                         const Eigen::Quaterniond& quaternion_ep__t2, // q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
+                                         bool suppressCoriolis                        // Toggles deactivation of coriolis acceleration
 )
 {
     /// Δv_p (tₖ) Integrated velocity in [m/s], in platform coordinates, at the time tₖ (eq. 9.3)
@@ -263,22 +260,17 @@ Eigen::Vector3d updateVelocity_e_Simpson(const long double& timeDifferenceSec__t
 
     Eigen::Vector3d coriolisAcceleration_e;
 
-#ifndef NDEBUG
-
     if (suppressCoriolis)
     {
+        LOG_DATA("Coriolis acceleration is set to zero");
         coriolisAcceleration_e << 0.0, 0.0, 0.0;
     }
     else
     {
-#endif
         /// The Coriolis force accounts for the fact that the NED frame is noninertial
         coriolisAcceleration_e = 2 * InsConst::angularVelocityCrossProduct_ie_e * velocity_e__t2
                                  + InsConst::angularVelocityCrossProduct_ie_e * InsConst::angularVelocityCrossProduct_ie_e * position_e__t2;
-
-#ifndef NDEBUG
     }
-#endif
 
     /// v_e (tₖ) Velocity in [m/s], in earth coordinates, at the time tₖ (eq. 9.12)
     Eigen::Vector3d velocity_e__t0 = velocity_e__t2 + simpsonIntegration_e - (coriolisAcceleration_e - gravity_e) * integrationStep;
@@ -297,11 +289,8 @@ Eigen::Vector3d updateVelocity_n_Simpson(const long double& timeDifferenceSec__t
                                          const Eigen::Vector3d& angularVelocity_en_n__t1, // ω_en_n (tₖ₋₁) Transport Rate in [rad/s], in navigation coordinates, at the time tₖ₋₁
                                          const Eigen::Quaterniond& quaternion_nb__t0,     // q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
                                          const Eigen::Quaterniond& quaternion_nb__t1,     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-                                         const Eigen::Quaterniond& quaternion_nb__t2      // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
-#ifndef NDEBUG
-                                         ,
-                                         bool suppressCoriolis
-#endif
+                                         const Eigen::Quaterniond& quaternion_nb__t2,     // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
+                                         bool suppressCoriolis                            // Toggles deactivation of coriolis acceleration
 )
 {
     /// Δv_p (tₖ) Integrated velocity in [m/s], in body coordinates, at the time tₖ
@@ -322,19 +311,15 @@ Eigen::Vector3d updateVelocity_n_Simpson(const long double& timeDifferenceSec__t
     /// The Coriolis force accounts for the fact that the NED frame is noninertial
     Eigen::Vector3d coriolisAcceleration_n__t1;
 
-#ifndef NDEBUG
     if (suppressCoriolis)
     {
         coriolisAcceleration_n__t1 << 0.0, 0.0, 0.0;
     }
     else
     {
-#endif
         /// The Coriolis force accounts for the fact that the NED frame is noninertial
         coriolisAcceleration_n__t1 = (2 * angularVelocity_ie_n__t1 + angularVelocity_en_n__t1).cross(velocity_n__t1);
-#ifndef NDEBUG
     }
-#endif
 
     /// v_e (tₖ) Velocity in [m/s], in navigation coordinates, at the time tₖ (eq. 6.13)
     Eigen::Vector3d velocity_n__t0 = velocity_n__t2 + simpsonIntegration_n - (coriolisAcceleration_n__t1 - gravity_n__t1) * integrationStep;
@@ -352,11 +337,8 @@ Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSe
                                              const Eigen::Vector3d& angularVelocity_en_n__t1, // ω_ie_n (tₖ₋₁) Transport Rate in [rad/s], in navigation coordinates, at the time tₖ₋₁
                                              const Eigen::Quaterniond& quaternion_nb__t0,     // q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
                                              const Eigen::Quaterniond& quaternion_nb__t1,     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-                                             const Eigen::Quaterniond& quaternion_nb__t2      // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
-#ifndef NDEBUG
-                                             ,
-                                             bool suppressCoriolis
-#endif
+                                             const Eigen::Quaterniond& quaternion_nb__t2,     // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
+                                             bool suppressCoriolis                            // Toggles deactivation of coriolis acceleration
 )
 {
     /// Δv_p (tₖ) Integrated velocity in [m/s], in body coordinates, at the time tₖ
@@ -379,7 +361,6 @@ Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSe
     /// a_n (tₖ) Taylor-Approximation of acceleration in [m/s^2]
     state__t0.accel_n = quaternion_nb__t0 * (3 * deltaVelocity_b__t0 - deltaVelocity_b__t1) / integrationStep;
 
-#ifndef NDEBUG
     if (suppressCoriolis)
     {
         state__t0.angularVelocity_ie_n = Eigen::Vector3d::Zero();
@@ -387,12 +368,9 @@ Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSe
     }
     else
     {
-#endif
         state__t0.angularVelocity_ie_n = angularVelocity_ie_n__t1;
         state__t0.angularVelocity_en_n = angularVelocity_en_n__t1;
-#ifndef NDEBUG
     }
-#endif
 
     state__t0.gravity_n = gravity_n__t1;
 
