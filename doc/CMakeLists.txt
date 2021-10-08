@@ -64,15 +64,15 @@ if(ENABLE_DOXYGEN)
       ${CMAKE_CURRENT_BINARY_DIR}/DoxygenLayout.xml
     )
 
-    # configure_file(
-    #   ${CMAKE_CURRENT_SOURCE_DIR}/doxy_header.html
-    #   ${CMAKE_CURRENT_BINARY_DIR}/doxy_header.html
-    # )
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/header.html
+      ${CMAKE_CURRENT_BINARY_DIR}/header.html
+    )
 
-    # configure_file(
-    #   ${CMAKE_CURRENT_SOURCE_DIR}/doxy_footer.html
-    #   ${CMAKE_CURRENT_BINARY_DIR}/doxy_footer.html
-    # )
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/footer.html
+      ${CMAKE_CURRENT_BINARY_DIR}/footer.html
+    )
 
     add_custom_target(
         doc-prerequisites
