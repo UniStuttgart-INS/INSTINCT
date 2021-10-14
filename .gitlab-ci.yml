@@ -92,7 +92,7 @@ documentation:
     - linux
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
-    - cmake --build build/Release --target doc
+    - cmake --build build/Release --target doc || exit 1
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                         Build Main & GUI                                         ║
