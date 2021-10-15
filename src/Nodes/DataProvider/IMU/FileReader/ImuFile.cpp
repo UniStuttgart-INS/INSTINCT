@@ -327,10 +327,6 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
         obs->gyroCompXYZ.emplace(gyroCompX.value(), gyroCompY.value(), gyroCompZ.value());
     }
 
-    LOG_DATA("DATA({}): {}, {}, {}, {}, {}",
-             name, obs->timeSinceStartup.value(), obs->temperature.value(),
-             obs->accelUncompXYZ.value().x(), obs->accelUncompXYZ.value().y(), obs->accelUncompXYZ.value().z());
-
     // Calls all the callbacks
     if (!peek)
     {

@@ -510,7 +510,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
 
     auto obs = std::dynamic_pointer_cast<const ImuObs>(nodeData);
 
-    if (!obs->timeSinceStartup.has_value())
+    if (!obs->timeSinceStartup.has_value()) //TODO: Make this work with insTime
     {
         LOG_ERROR("{}: Can only process data with an insTime", nameId());
         return;
