@@ -11,6 +11,7 @@
 
 namespace NAV::sensors::kvh
 {
+/// @brief Class to read out KVH Sensors
 class KvhUartSensor
 {
   public:

@@ -13,6 +13,7 @@
 
 namespace NAV
 {
+/// @brief Loosely-coupled Kalman Filter for INS/GNSS integration
 class LooselyCoupledKF : public Node
 {
   public:

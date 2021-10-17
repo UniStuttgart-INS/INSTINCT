@@ -11,6 +11,7 @@
 
 namespace NAV::experimental
 {
+/// @brief Provides a Matrix Object
 class Matrix : public Node
 {
   public:

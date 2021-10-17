@@ -2,19 +2,44 @@
 
 #include "util/Logger.hpp"
 
-namespace NAV
+namespace NAV::trafo
 {
-Eigen::Vector3d trafo::deg2rad3(const Eigen::Vector3d& deg)
+// ###########################################################################################################
+//                                             Private functions
+// ###########################################################################################################
+
+/// @brief Converts latitude, longitude and altitude into Earth-centered-Earth-fixed coordinates
+/// @param[in] latLonAlt [𝜙 latitude, λ longitude, altitude]^T in [rad, rad, m]
+/// @param[in] a Semi-major axis of the reference ellipsoid
+/// @param[in] e_squared Square of the first eccentricity of the ellipsoid
+/// @return The ECEF coordinates in [m]
+/// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications. pp. 23
+[[nodiscard]] Eigen::Vector3d lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_squared);
+
+/// @brief Converts Earth-centered-Earth-fixed coordinates into latitude, longitude and altitude
+/// @param[in] ecef Vector with coordinates in ECEF frame in [m]
+/// @param[in] a Semi-major axis of the reference ellipsoid
+/// @param[in] b Semi-minor axis of the reference ellipsoid
+/// @param[in] e_squared Square of the first eccentricity of the ellipsoid
+/// @return Vector containing [latitude 𝜙, longitude λ, altitude]^T in [rad, rad, m]
+/// @note See J.A. Farrel and M. Barth, 1999, GPS & Inertal Navigation. McGraw-Hill. pp. 29.
+[[nodiscard]] Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double e_squared);
+
+// ###########################################################################################################
+//                                             Public functions
+// ###########################################################################################################
+
+Eigen::Vector3d deg2rad3(const Eigen::Vector3d& deg)
 {
     return deg * M_PI / 180.0;
 }
 
-Eigen::Vector3d trafo::rad2deg3(const Eigen::Vector3d& rad)
+Eigen::Vector3d rad2deg3(const Eigen::Vector3d& rad)
 {
     return rad * 180.0 / M_PI;
 }
 
-Eigen::Vector3d trafo::quat2eulerZYX(const Eigen::Quaterniond& q)
+Eigen::Vector3d quat2eulerZYX(const Eigen::Quaterniond& q)
 {
     // Given range [-pi:pi] x [-pi:pi] x [0:pi]
     Eigen::Vector3d XYZ = q.toRotationMatrix().eulerAngles(2, 1, 0).reverse();
@@ -45,7 +70,7 @@ Eigen::Vector3d trafo::quat2eulerZYX(const Eigen::Quaterniond& q)
     return XYZ;
 }
 
-Eigen::Quaterniond trafo::quat_ei(const double time, const double angularRate_ie)
+Eigen::Quaterniond quat_ei(const double time, const double angularRate_ie)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxisd zAngle(-angularRate_ie * time, Eigen::Vector3d::UnitZ());
@@ -53,12 +78,12 @@ Eigen::Quaterniond trafo::quat_ei(const double time, const double angularRate_ie
     return Eigen::Quaterniond(zAngle).normalized();
 }
 
-Eigen::Quaterniond trafo::quat_ie(const double time, const double angularRate_ie)
+Eigen::Quaterniond quat_ie(const double time, const double angularRate_ie)
 {
     return quat_ei(time, angularRate_ie).conjugate();
 }
 
-Eigen::Quaterniond trafo::quat_en(const double latitude, const double longitude)
+Eigen::Quaterniond quat_en(const double latitude, const double longitude)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
@@ -68,12 +93,12 @@ Eigen::Quaterniond trafo::quat_en(const double latitude, const double longitude)
     return (longitudeAngle * latitudeAngle).normalized();
 }
 
-Eigen::Quaterniond trafo::quat_ne(const double latitude, const double longitude)
+Eigen::Quaterniond quat_ne(const double latitude, const double longitude)
 {
     return quat_en(latitude, longitude).conjugate();
 }
 
-Eigen::Quaterniond trafo::quat_bn(const double roll, const double pitch, const double yaw)
+Eigen::Quaterniond quat_bn(const double roll, const double pitch, const double yaw)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
@@ -84,12 +109,12 @@ Eigen::Quaterniond trafo::quat_bn(const double roll, const double pitch, const d
     return (rollAngle * pitchAngle * yawAngle).normalized();
 }
 
-Eigen::Quaterniond trafo::quat_nb(const double roll, const double pitch, const double yaw)
+Eigen::Quaterniond quat_nb(const double roll, const double pitch, const double yaw)
 {
     return quat_bn(roll, pitch, yaw).conjugate();
 }
 
-Eigen::Quaterniond trafo::quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
+Eigen::Quaterniond quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxisd xAngle(-mountingAngleX, Eigen::Vector3d::UnitX());
@@ -99,12 +124,12 @@ Eigen::Quaterniond trafo::quat_bp(double mountingAngleX, double mountingAngleY, 
     return (xAngle * yAngle * zAngle).normalized();
 }
 
-Eigen::Quaterniond trafo::quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
+Eigen::Quaterniond quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
     return quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
 }
 
-Eigen::Vector3d trafo::ecef2ned(const Eigen::Vector3d& position_e, const Eigen::Vector3d& latLonAlt_ref)
+Eigen::Vector3d ecef2ned(const Eigen::Vector3d& position_e, const Eigen::Vector3d& latLonAlt_ref)
 {
     const auto& latitude_ref = latLonAlt_ref(0);  // 𝜙 Geodetic latitude
     const auto& longitude_ref = latLonAlt_ref(1); // λ Geodetic longitude
@@ -123,7 +148,7 @@ Eigen::Vector3d trafo::ecef2ned(const Eigen::Vector3d& position_e, const Eigen::
     return position_n;
 }
 
-Eigen::Vector3d trafo::ned2ecef(const Eigen::Vector3d& position_n, const Eigen::Vector3d& latLonAlt_ref)
+Eigen::Vector3d ned2ecef(const Eigen::Vector3d& position_n, const Eigen::Vector3d& latLonAlt_ref)
 {
     const auto& latitude_ref = latLonAlt_ref(0);  // 𝜙 Geodetic latitude
     const auto& longitude_ref = latLonAlt_ref(1); // λ Geodetic longitude
@@ -142,7 +167,7 @@ Eigen::Vector3d trafo::ned2ecef(const Eigen::Vector3d& position_n, const Eigen::
     return position_e;
 }
 
-Eigen::Vector3d trafo::lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_squared)
+Eigen::Vector3d lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_squared)
 {
     const auto& latitude = latLonAlt(0);  // 𝜙 Geodetic latitude
     const auto& longitude = latLonAlt(1); // λ Geodetic longitude
@@ -158,17 +183,17 @@ Eigen::Vector3d trafo::lla2ecef(const Eigen::Vector3d& latLonAlt, double a, doub
                            (N * (1 - e_squared) + altitude) * std::sin(latitude));
 }
 
-Eigen::Vector3d trafo::lla2ecef_WGS84(const Eigen::Vector3d& latLonAlt)
+Eigen::Vector3d lla2ecef_WGS84(const Eigen::Vector3d& latLonAlt)
 {
     return lla2ecef(latLonAlt, InsConst::WGS84_a, InsConst::WGS84_e_squared);
 }
 
-Eigen::Vector3d trafo::lla2ecef_GRS80(const Eigen::Vector3d& latLonAlt)
+Eigen::Vector3d lla2ecef_GRS80(const Eigen::Vector3d& latLonAlt)
 {
     return lla2ecef(latLonAlt, InsConst::GRS80_a, InsConst::GRS80_e_squared);
 }
 
-Eigen::Vector3d trafo::ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double e_squared)
+Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double e_squared)
 {
     auto x = ecef(0);
     auto y = ecef(1);
@@ -209,17 +234,17 @@ Eigen::Vector3d trafo::ecef2lla(const Eigen::Vector3d& ecef, double a, double b,
     return Eigen::Vector3d(lat, lon, alt);
 }
 
-Eigen::Vector3d trafo::ecef2lla_WGS84(const Eigen::Vector3d& ecef)
+Eigen::Vector3d ecef2lla_WGS84(const Eigen::Vector3d& ecef)
 {
     return ecef2lla(ecef, InsConst::WGS84_a, InsConst::WGS84_b, InsConst::WGS84_e_squared);
 }
 
-Eigen::Vector3d trafo::ecef2lla_GRS80(const Eigen::Vector3d& ecef)
+Eigen::Vector3d ecef2lla_GRS80(const Eigen::Vector3d& ecef)
 {
     return ecef2lla(ecef, InsConst::GRS80_a, InsConst::GRS80_b, InsConst::GRS80_e_squared);
 }
 
-Eigen::Vector3d trafo::sph2ecef(const Eigen::Vector3d& position_s, const double& elevation, const double& azimuth)
+Eigen::Vector3d sph2ecef(const Eigen::Vector3d& position_s, const double& elevation, const double& azimuth)
 {
     Eigen::Matrix3d R_se;
     R_se << std::sin(elevation) * std::cos(azimuth), std::cos(elevation) * std::cos(azimuth), -std::sin(azimuth),
@@ -231,4 +256,4 @@ Eigen::Vector3d trafo::sph2ecef(const Eigen::Vector3d& position_s, const double&
     return position_e;
 }
 
-} // namespace NAV
+} // namespace NAV::trafo

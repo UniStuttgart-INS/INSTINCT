@@ -9,6 +9,7 @@
 
 #include <cmrc/cmrc.hpp>
 
+/// @brief Defines the namespace of the filesystem
 CMRC_DECLARE(instinct);
 
 namespace cmrc

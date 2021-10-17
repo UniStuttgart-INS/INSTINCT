@@ -13,6 +13,7 @@
 
 namespace NAV
 {
+/// @brief Demonstrates the basic GUI functionality of nodes
 class Demo : public Node
 {
   public:
@@ -63,6 +64,7 @@ class Demo : public Node
     /// @param[in] endPin Pin where the link ends
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
+    /// @brief Data struct transmitted over an output port
     struct DemoData
     {
         std::array<int, 3> integer = { 12, -2, 2 };

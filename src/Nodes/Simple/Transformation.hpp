@@ -11,6 +11,7 @@
 
 namespace NAV
 {
+/// @brief Applies transformations to incoming NodeData
 class Transformation : public Node
 {
   public:

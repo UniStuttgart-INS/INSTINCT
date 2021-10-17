@@ -36,6 +36,7 @@ void ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
 
 } // namespace gui
 
+/// @brief Abstract parent class for all nodes
 class Node
 {
   public:

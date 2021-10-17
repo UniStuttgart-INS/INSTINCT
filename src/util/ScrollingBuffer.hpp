@@ -11,6 +11,8 @@
 
 namespace NAV
 {
+/// @brief A buffer which is overwriting itself from the start when full
+/// @tparam T Type of data stored in the buffer
 template<class T>
 class ScrollingBuffer
 {

@@ -25,6 +25,7 @@ using NodeCallback = std::tuple<Node*, void (Node::*)(const std::shared_ptr<cons
 using NotifyFunction = std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
 using WatcherCallback = std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>;
 
+/// @brief Pins in the GUI for information exchange
 class Pin
 {
   public:

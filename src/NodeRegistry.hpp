@@ -19,6 +19,7 @@ class Node;
 
 namespace NodeRegistry
 {
+/// @brief Holds info of the pins of registered nodes
 struct PinInfo
 {
     PinInfo(const Pin::Kind& kind, const Pin::Type& type, std::vector<std::string> dataIdentifier)
@@ -32,6 +33,7 @@ struct PinInfo
     std::vector<std::string> dataIdentifier;
 };
 
+/// @brief Holds information for registered nodes
 struct NodeInfo
 {
     /// Constructor

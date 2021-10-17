@@ -17,6 +17,7 @@
 
 namespace NAV
 {
+/// @brief Numerically integrates Imu data
 class ImuIntegrator : public Node
 {
   public:

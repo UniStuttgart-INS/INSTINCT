@@ -11,6 +11,7 @@
 
 namespace NAV
 {
+/// @brief Combines two input ports into a single output port
 class Combiner : public Node
 {
   public:

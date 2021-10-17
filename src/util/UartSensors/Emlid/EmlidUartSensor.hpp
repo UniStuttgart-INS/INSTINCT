@@ -11,6 +11,7 @@
 
 namespace NAV::sensors::emlid
 {
+/// @brief Class to read out Emlid Sensors
 class EmlidUartSensor
 {
   public:

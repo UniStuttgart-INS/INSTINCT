@@ -9,6 +9,7 @@
 #include <thread>
 #include <atomic>
 
+/// @brief Manages a thread which calls a specified function at a specified interval
 class CallbackTimer
 {
   public:

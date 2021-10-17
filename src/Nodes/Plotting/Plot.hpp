@@ -27,6 +27,7 @@
 
 namespace NAV
 {
+/// @brief Plot node which plots all kind of observations
 class Plot : public Node
 {
   public:
@@ -73,6 +74,7 @@ class Plot : public Node
     /// @param[in] endPin Pin where the link ends
     void onDeleteLink(Pin* startPin, Pin* endPin) override;
 
+    /// @brief Specifying the look of a certain line in the plot
     struct PlotStyle
     {
         enum class LineType : int
@@ -106,8 +108,10 @@ class Plot : public Node
         ImVec4 markerOutlineColor = IMPLOT_AUTO_COL;
     };
 
+    /// @brief Information needed to plot the data on a certain pin
     struct PinData
     {
+        /// @brief Stores the actual data coming from a pin
         struct PlotData
         {
             /// @brief Default constructor
@@ -192,6 +196,7 @@ class Plot : public Node
         PinType pinType = PinType::Flow;
     };
 
+    /// @brief Information specifying the look of each plot
     struct PlotInfo
     {
         /// @brief Default constructor

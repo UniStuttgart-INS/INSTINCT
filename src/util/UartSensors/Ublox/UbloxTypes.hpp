@@ -272,6 +272,7 @@ struct UbxEsfMeas
 /// See also Raw Sensor Measurement Data.
 struct UbxEsfRaw
 {
+    /// @brief Repeated data in this message
     struct UbxEsfRawData
     {
         uint32_t data = 0;  ///< data. Same as in UBX-ESF-MEAS (see graphic below)
@@ -285,6 +286,7 @@ struct UbxEsfRaw
 /// @brief  External Sensor Fusion (ESF) status information
 struct UbxEsfStatus
 {
+    /// @brief Repeated data in this message
     struct UbxEsfStatusSensor
     {
         std::bitset<1 * 8> sensStatus1; ///< Sensor status, part 1 (seegraphic below)
@@ -628,6 +630,7 @@ enum UbxRxmMessages
 /// synchronized. This message supports all active GNSS.
 struct UbxRxmRawx
 {
+    /// @brief Repeated data in this message
     struct UbxRxmRawxData
     {
         /// Pseudorange measurement [m].

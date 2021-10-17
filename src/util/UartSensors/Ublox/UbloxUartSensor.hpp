@@ -11,6 +11,7 @@
 
 namespace NAV::sensors::ublox
 {
+/// @brief Class to read out Ublox Sensors
 class UbloxUartSensor
 {
   public:

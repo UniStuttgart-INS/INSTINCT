@@ -145,6 +145,7 @@ enum class SatSys : uint8_t
 /// satellites (numSats).
 struct SatInfo
 {
+    /// @brief Information for a certain satellite
     struct SatInfoElement
     {
         /// @brief Tracking info flags
@@ -215,6 +216,7 @@ constexpr SatInfo::SatInfoElement::Flags operator&(SatInfo::SatInfoElement::Flag
 /// @brief Raw measurements pertaining to each GNSS satellite in view.
 struct RawMeas
 {
+    /// @brief Raw measurements for a certain satellite
     struct SatRawElement
     {
         /// @brief Tracking info flags

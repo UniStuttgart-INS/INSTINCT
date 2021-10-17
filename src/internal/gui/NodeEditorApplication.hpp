@@ -1,5 +1,5 @@
 /// @file NodeEditorApplication.hpp
-/// @brief Gui Callbacks
+/// @brief GUI callbacks
 /// @author T. Topp (thomas@topp.cc)
 /// @date 2020-12-14
 
@@ -20,6 +20,7 @@ class Node;
 
 namespace gui
 {
+/// @brief Application class providing all relevant GUI callbacks
 class NodeEditorApplication : public Application
 {
   public:

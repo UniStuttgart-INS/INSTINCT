@@ -2,8 +2,13 @@
 
 #include <map>
 
+/// @brief Comparison operator for node Ids
 struct NodeIdLess
 {
+    /// @brief Smaller comparison operator for node Ids
+    /// @param[in] lhs Left-hand-side of the operator
+    /// @param[in] rhs Right-hand-side of the operator
+    /// @return Whether lhs < rhs
     bool operator()(const ax::NodeEditor::NodeId& lhs, const ax::NodeEditor::NodeId& rhs) const
     {
         return lhs.AsPointer() < rhs.AsPointer();

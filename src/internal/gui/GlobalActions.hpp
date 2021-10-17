@@ -5,6 +5,7 @@
 
 #pragma once
 
+/// @brief Possible Global Actions to perform in the GUI
 enum GlobalActions
 {
     None,

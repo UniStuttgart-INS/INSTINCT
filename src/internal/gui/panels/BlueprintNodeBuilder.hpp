@@ -16,6 +16,8 @@
 namespace ax::NodeEditor::Utilities
 {
 //------------------------------------------------------------------------------
+
+/// @brief Node Builder class
 class BlueprintNodeBuilder
 {
   public:

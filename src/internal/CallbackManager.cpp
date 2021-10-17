@@ -14,17 +14,17 @@ std::queue<std::variant<std::pair<NodeCallback, std::shared_ptr<const NAV::NodeD
                         std::pair<WatcherCallback, std::shared_ptr<const NAV::NodeData>>>>
     callbacks;
 
-void registerNodeCallbackForInvocation(const NodeCallback& nodeCallback, const std::shared_ptr<const NAV::NodeData>& data)
+void queueNodeCallbackForInvocation(const NodeCallback& nodeCallback, const std::shared_ptr<const NAV::NodeData>& data)
 {
     callbacks.push(std::make_pair(nodeCallback, data));
 }
 
-void registerNotifyFunctionForInvocation(const NotifyFunction& notifyFunction)
+void queueNotifyFunctionForInvocation(const NotifyFunction& notifyFunction)
 {
     callbacks.push(notifyFunction);
 }
 
-void registerWatcherCallbackForInvocation(const WatcherCallback& watcherCallback, const std::shared_ptr<const NAV::NodeData>& data)
+void queueWatcherCallbackForInvocation(const WatcherCallback& watcherCallback, const std::shared_ptr<const NAV::NodeData>& data)
 {
     callbacks.push(std::make_pair(watcherCallback, data));
 }

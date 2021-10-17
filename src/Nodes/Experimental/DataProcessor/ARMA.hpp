@@ -15,6 +15,7 @@
 
 namespace NAV::experimental
 {
+/// @brief Node performing an ARMA filtering of incoming data
 class ARMA : public Node
 {
   public:

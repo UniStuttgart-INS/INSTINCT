@@ -13,6 +13,7 @@ using json = nlohmann::json;
 
 namespace NAV
 {
+/// @brief Parent class for other data loggers which manages the output filestream
 class FileWriter
 {
   public:
