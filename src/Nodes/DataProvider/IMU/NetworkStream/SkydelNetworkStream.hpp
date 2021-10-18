@@ -103,6 +103,7 @@ class SkydelNetworkStream : public Imu
     /// # of packages that are skipped until data rate is shown
     int startNow = 20;
 
+    /// First position received by the network stream to assign a local NED frame
     Eigen::Vector3d firstPosLLA = Eigen::Vector3d::Zero();
 };
 
