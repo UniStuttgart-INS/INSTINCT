@@ -48,7 +48,7 @@ static inline std::string ltrim_copy(std::string s)
 }
 
 /// @brief Trim from end (copying)
-/// @param[in] s
+/// @param[in] s The string to trim
 /// @return The trimmed string
 static inline std::string rtrim_copy(std::string s)
 {
