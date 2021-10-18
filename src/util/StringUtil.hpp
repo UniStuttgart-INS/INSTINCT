@@ -91,8 +91,7 @@ static inline bool replace(std::string& str, const std::string& from, const std:
 /// @param[in] to Replacement string
 static inline void replaceAll(std::string& str, const std::string& from, const std::string& to)
 {
-    while (replace(str, from, to))
-        ;
+    while (replace(str, from, to)) {}
 }
 
 /// @brief Replaces all occurrence of a search pattern with another sequence
