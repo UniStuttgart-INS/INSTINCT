@@ -1,5 +1,5 @@
 /// @file NodeEditorApplication.hpp
-/// @brief Gui Callbacks
+/// @brief GUI callbacks
 /// @author T. Topp (thomas@topp.cc)
 /// @date 2020-12-14
 
@@ -20,6 +20,7 @@ class Node;
 
 namespace gui
 {
+/// @brief Application class providing all relevant GUI callbacks
 class NodeEditorApplication : public Application
 {
   public:
@@ -45,39 +46,62 @@ class NodeEditorApplication : public Application
 
     // static Node* SpawnGroupBox();
 
+    /// @brief Called when the application is started
     void OnStart() override;
 
+    /// @brief Called when the application is stopped
     void OnStop() override;
 
+    /// @brief Called when the user request the application to close
+    ///
+    /// Checks whether there are unsaved changes and then prompts the user to save them before quit
+    /// @return True if no unsaved changes
     bool OnQuitRequest() override;
 
+    /// @brief Called on every frame
+    /// @param[in] deltaTime Time since last frame
     void OnFrame(float deltaTime) override;
 
+    /// @brief Shows a PopupModal asking the user if he wants to quit with unsaved changes
     void ShowQuitRequested();
+    /// @brief Shows a PopupModel where the user can select a path to save his flow to
     void ShowSaveAsRequested();
+    /// @brief Shows a PopupModel to clear the current flow
     void ShowClearNodesRequested();
+    /// @brief Shows a PopupModel loading a new flow
     void ShowLoadRequested();
+    /// @brief Shows a PopupModal where the user can rename the node
+    /// @param[in, out] renameNode Pointer to the node to rename. Pointer gets nulled when finished.
     static void ShowRenameNodeRequest(Node*& renameNode);
 
+    /// @brief Frame counter to block the navigate to content function till nodes are correctly loaded
     int frameCountNavigate = 0;
 
+    /// @brief Pointer to the texture for the instinct logo
     static inline ImTextureID m_InstinctLogo = nullptr;
 
+    /// @brief Flag whether the ImGui Demo window should be displayed
     static inline bool showImGuiDemoWindow = false;
+    /// @brief Flag whether the ImPlot Demo window should be displayed
     static inline bool showImPlotDemoWindow = false;
 
-    inline static float leftPaneWidth = 350.0F;
-    inline static float rightPaneWidth = 850.0F;
-    inline static float menuBarHeight = 20;
-    constexpr static float SPLITTER_THICKNESS = 4.0F;
+    inline static float leftPaneWidth = 350.0F;       ///< Width of the left pane
+    inline static float rightPaneWidth = 850.0F;      ///< Width of the right pane
+    inline static float menuBarHeight = 20;           ///< Height of the menu bar on top
+    constexpr static float SPLITTER_THICKNESS = 4.0F; ///< Thickness of the splitter between left and right pane
 
   private:
+    /// @brief Pointer to the texture for the node headers
     ImTextureID m_HeaderBackground = nullptr;
 
-    GlobalActions globalAction = GlobalActions::None;
+    /// @brief Global action to execute
+    GlobalActions globalAction = GlobalActions::None; // TODO: Move to the GlobalAction.cpp as a global variable
 
-    // bool initThread_stopRequested = false;
+    /// @brief Thread which initializes nodes asynchronously
     std::thread initThread;
+    // bool initThread_stopRequested = false;
+
+    /// @brief Id of the node currently initialized
     size_t currentInitNodeId = 0;
     /// List of Node* & flag (init=true, deinit=false)
     std::deque<std::pair<Node*, bool>> initList;

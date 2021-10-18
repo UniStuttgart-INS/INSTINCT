@@ -8,7 +8,7 @@
 #include <imgui_node_editor.h>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 #include <string>
 #include <variant>
@@ -21,10 +21,14 @@ namespace NAV
 class Node;
 class NodeData;
 
+/// @brief Tuple of types allowed as a node callback
 using NodeCallback = std::tuple<Node*, void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
+/// @brief Tuple of types allowed as notify functions
 using NotifyFunction = std::tuple<Node*, void (Node::*)(ax::NodeEditor::LinkId), ax::NodeEditor::LinkId>;
+/// @brief Tuple of types allowed as watcher callbacks
 using WatcherCallback = std::pair<void (*)(const std::shared_ptr<const NodeData>&), ax::NodeEditor::LinkId>;
 
+/// @brief Pins in the GUI for information exchange
 class Pin
 {
   public:
@@ -45,12 +49,17 @@ class Pin
             Delegate, ///< Reference to the Node object
         };
 
+        /// @brief Default Constructor
         constexpr Type() = default;
 
-        //NOLINTNEXTLINE(hicpp-explicit-conversions, google-explicit-constructor)
-        constexpr Type(Value type)
-            : value(type) {}
+        /// @brief Implicit Constructor from Value type
+        /// @param[in] type Value type to construct from
+        constexpr Type(Value type) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+            : value(type)
+        {}
 
+        /// @brief Constructor from std::string
+        /// @param[in] typeString String representation of the type
         explicit Type(const std::string& typeString)
         {
             if (typeString == "Flow")
@@ -87,8 +96,13 @@ class Pin
             }
         }
 
-        explicit operator Value() const { return value; } // Allow switch(Pin::Value(type)) and comparisons.
-        explicit operator bool() = delete;                // Prevent usage: if(fruit)
+        /// @brief Allow switch(Node::Value(type)) and comparisons
+        explicit operator Value() const { return value; }
+        /// @brief Prevent usage: if(pin)
+        explicit operator bool() = delete;
+        /// @brief Assignment operator from Value type
+        /// @param[in] v Value type to construct from
+        /// @return The Type type from the value type
         Type& operator=(Value v)
         {
             value = v;
@@ -103,6 +117,8 @@ class Pin
         friend constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type::Value& rhs);
         friend constexpr bool operator!=(const Pin::Type::Value& lhs, const Pin::Type& rhs);
 
+        /// @brief std::string conversion operator
+        /// @return A std::string representation of the pin type
         explicit operator std::string() const
         {
             switch (value)
@@ -130,6 +146,7 @@ class Pin
         }
 
       private:
+        /// @brief Value of the pin type
         Value value = Value::None;
     };
 
@@ -144,12 +161,17 @@ class Pin
             Input,
         };
 
+        /// @brief Default Constructor
         Kind() = default;
 
-        //NOLINTNEXTLINE(hicpp-explicit-conversions, google-explicit-constructor)
-        constexpr Kind(Value kind)
-            : value(kind) {}
+        /// @brief Implicit Constructor from Value type
+        /// @param[in] kind Value type to construct from
+        constexpr Kind(Value kind) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+            : value(kind)
+        {}
 
+        /// @brief Constructor from std::string
+        /// @param[in] kindString String representation of the type
         explicit Kind(const std::string& kindString)
         {
             if (kindString == "Input")
@@ -162,8 +184,13 @@ class Pin
             }
         }
 
-        explicit operator Value() const { return value; } // Allow switch(Pin::Value(type)) and comparisons.
-        explicit operator bool() = delete;                // Prevent usage: if(fruit)
+        /// @brief Allow switch(Node::Value(kind)) and comparisons
+        explicit operator Value() const { return value; }
+        /// @brief Prevent usage: if(pin)
+        explicit operator bool() = delete;
+        /// @brief Assignment operator from Value type
+        /// @param[in] v Value type to construct from
+        /// @return The Kind type from the value type
         Kind& operator=(Value v)
         {
             value = v;
@@ -178,6 +205,8 @@ class Pin
         friend constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind::Value& rhs);
         friend constexpr bool operator!=(const Pin::Kind::Value& lhs, const Pin::Kind& rhs);
 
+        /// @brief std::string conversion operator
+        /// @return A std::string representation of the pin kind
         explicit operator std::string() const
         {
             switch (value)
@@ -192,9 +221,11 @@ class Pin
         }
 
       private:
+        /// @brief Value of the pin kind
         Value value = Value::None;
     };
 
+    /// @brief Possible Types represented by a pin
     using PinData = std::variant<void*, bool*, int*, float*, double*, std::string*,
                                  void (Node::*)(const std::shared_ptr<const NodeData>&, ax::NodeEditor::LinkId), // Input Flow, receive data
                                  std::shared_ptr<const NAV::NodeData> (Node::*)(bool)>;                          // Output Flow, read data
@@ -216,7 +247,7 @@ class Pin
     /// @param[in] id Unique Id of the Pin
     /// @param[in] name Name of the Pin
     /// @param[in] type Type of the Pin
-    /// @param[in] pinKind Kind of the Pin (Input/Output)
+    /// @param[in] kind Kind of the Pin (Input/Output)
     /// @param[in] parentNode Reference to the parent node
     Pin(ax::NodeEditor::PinId id, const char* name, Type type, Kind kind, Node* parentNode)
         : id(id), name(name), type(type), kind(kind), parentNode(parentNode) {}
@@ -270,23 +301,77 @@ class Pin
     static constexpr int m_PinIconSize = 24;
 };
 
+/// @brief Equal compares Pin::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
 constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind& rhs) { return lhs.value == rhs.value; }
-constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind& rhs) { return lhs.value != rhs.value; }
+/// @brief Inequal compares Pin::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
+constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind& rhs) { return !(lhs == rhs); }
 
+/// @brief Equal compares Pin::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
 constexpr bool operator==(const Pin::Kind& lhs, const Pin::Kind::Value& rhs) { return lhs.value == rhs; }
+/// @brief Equal compares Pin::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
 constexpr bool operator==(const Pin::Kind::Value& lhs, const Pin::Kind& rhs) { return lhs == rhs.value; }
-constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind::Value& rhs) { return lhs.value != rhs; }
-constexpr bool operator!=(const Pin::Kind::Value& lhs, const Pin::Kind& rhs) { return lhs != rhs.value; }
+/// @brief Inequal compares Pin::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
+constexpr bool operator!=(const Pin::Kind& lhs, const Pin::Kind::Value& rhs) { return !(lhs == rhs); }
+/// @brief Inequal compares Pin::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
+constexpr bool operator!=(const Pin::Kind::Value& lhs, const Pin::Kind& rhs) { return !(lhs == rhs); }
 
+/// @brief Equal compares Pin::Type values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
 constexpr bool operator==(const Pin::Type& lhs, const Pin::Type& rhs) { return lhs.value == rhs.value; }
-constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type& rhs) { return lhs.value != rhs.value; }
+/// @brief Inequal compares Pin::Type values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
+constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type& rhs) { return !(lhs == rhs); }
 
+/// @brief Equal compares Pin::Type values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
 constexpr bool operator==(const Pin::Type& lhs, const Pin::Type::Value& rhs) { return lhs.value == rhs; }
+/// @brief Equal compares Pin::Type values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
 constexpr bool operator==(const Pin::Type::Value& lhs, const Pin::Type& rhs) { return lhs == rhs.value; }
-constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type::Value& rhs) { return lhs.value != rhs; }
-constexpr bool operator!=(const Pin::Type::Value& lhs, const Pin::Type& rhs) { return lhs != rhs.value; }
+/// @brief Inequal compares Pin::Type values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
+constexpr bool operator!=(const Pin::Type& lhs, const Pin::Type::Value& rhs) { return !(lhs == rhs); }
+/// @brief Inequal compares Pin::Type values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
+constexpr bool operator!=(const Pin::Type::Value& lhs, const Pin::Type& rhs) { return !(lhs == rhs); }
 
+/// @brief Converts the provided pin into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] pin Node to convert into json
 void to_json(json& j, const Pin& pin);
+/// @brief Converts the provided json object into a pin object
+/// @param[in] j Json object with the needed values
+/// @param[out] pin Object to fill from the json
 void from_json(const json& j, Pin& pin);
 
 } // namespace NAV

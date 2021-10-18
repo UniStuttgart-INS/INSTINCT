@@ -12,7 +12,6 @@ TEST_CASE("[UbloxTypes] getMsgClassFromString", "[UbloxTypes]")
     REQUIRE(ub::getMsgClassFromString("CFG") == ub::UbxClass::UBX_CLASS_CFG);
     REQUIRE(ub::getMsgClassFromString("UPD") == ub::UbxClass::UBX_CLASS_UPD);
     REQUIRE(ub::getMsgClassFromString("MON") == ub::UbxClass::UBX_CLASS_MON);
-    REQUIRE(ub::getMsgClassFromString("AID") == ub::UbxClass::UBX_CLASS_AID);
     REQUIRE(ub::getMsgClassFromString("TIM") == ub::UbxClass::UBX_CLASS_TIM);
     REQUIRE(ub::getMsgClassFromString("ESF") == ub::UbxClass::UBX_CLASS_ESF);
     REQUIRE(ub::getMsgClassFromString("MGA") == ub::UbxClass::UBX_CLASS_MGA);
@@ -27,12 +26,6 @@ TEST_CASE("[UbloxTypes] getMsgIdFromString(UbxClass, std::string)", "[UbloxTypes
 {
     REQUIRE(ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_ACK, "ACK") == static_cast<uint8_t>(ub::UbxAckMessages::UBX_ACK_ACK));
     REQUIRE(ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_ACK, "NAK") == static_cast<uint8_t>(ub::UbxAckMessages::UBX_ACK_NAK));
-
-    REQUIRE(ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_AID, "ALM") == static_cast<uint8_t>(ub::UbxAidMessages::UBX_AID_ALM));
-    REQUIRE(ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_AID, "AOP") == static_cast<uint8_t>(ub::UbxAidMessages::UBX_AID_AOP));
-    REQUIRE(ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_AID, "EPH") == static_cast<uint8_t>(ub::UbxAidMessages::UBX_AID_EPH));
-    REQUIRE(ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_AID, "HUI") == static_cast<uint8_t>(ub::UbxAidMessages::UBX_AID_HUI));
-    REQUIRE(ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_AID, "INI") == static_cast<uint8_t>(ub::UbxAidMessages::UBX_AID_INI));
 
     REQUIRE(ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_CFG, "ANT") == static_cast<uint8_t>(ub::UbxCfgMessages::UBX_CFG_ANT));
     REQUIRE(ub::getMsgIdFromString(ub::UbxClass::UBX_CLASS_CFG, "BATCH") == static_cast<uint8_t>(ub::UbxCfgMessages::UBX_CFG_BATCH));

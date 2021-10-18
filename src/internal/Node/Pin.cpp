@@ -14,7 +14,7 @@ bool NAV::Pin::canCreateLink(const Pin& b) const
     const Pin* endPin = (kind == Kind::Output ? &b : this);
 
     if (startPin->type == Pin::Type::Flow
-        && !NAV::NodeRegistry::NodeDataTypeIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
+        && !NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
     {
         dataTypesMatch = false;
     }

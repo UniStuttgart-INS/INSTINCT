@@ -1159,7 +1159,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             }
             if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
             {
-                filestream.write(reinterpret_cast<const char*>(&obs->timeOutputs->timeStatus.status), sizeof(obs->timeOutputs->timeStatus.status));
+                filestream.write(reinterpret_cast<const char*>(&obs->timeOutputs->timeStatus.status()), sizeof(obs->timeOutputs->timeStatus.status()));
             }
         }
         // Group 3 (IMU)
@@ -1270,7 +1270,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             }
             if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
             {
-                filestream.write(reinterpret_cast<const char*>(&obs->gnss1Outputs->timeInfo.status.status), sizeof(obs->gnss1Outputs->timeInfo.status.status));
+                filestream.write(reinterpret_cast<const char*>(&obs->gnss1Outputs->timeInfo.status.status()), sizeof(obs->gnss1Outputs->timeInfo.status.status()));
                 filestream.write(reinterpret_cast<const char*>(&obs->gnss1Outputs->timeInfo.leapSeconds), sizeof(obs->gnss1Outputs->timeInfo.leapSeconds));
             }
             if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
@@ -1324,7 +1324,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
         {
             if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS)
             {
-                filestream.write(reinterpret_cast<const char*>(&obs->attitudeOutputs->vpeStatus.status), sizeof(obs->attitudeOutputs->vpeStatus.status));
+                filestream.write(reinterpret_cast<const char*>(&obs->attitudeOutputs->vpeStatus.status()), sizeof(obs->attitudeOutputs->vpeStatus.status()));
             }
             if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
             {
@@ -1364,7 +1364,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
         {
             if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
             {
-                filestream.write(reinterpret_cast<const char*>(&obs->insOutputs->insStatus.status), sizeof(obs->insOutputs->insStatus.status));
+                filestream.write(reinterpret_cast<const char*>(&obs->insOutputs->insStatus.status()), sizeof(obs->insOutputs->insStatus.status()));
             }
             if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
             {
@@ -1466,7 +1466,7 @@ void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const Node
             }
             if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
             {
-                filestream.write(reinterpret_cast<const char*>(&obs->gnss2Outputs->timeInfo.status.status), sizeof(obs->gnss2Outputs->timeInfo.status.status));
+                filestream.write(reinterpret_cast<const char*>(&obs->gnss2Outputs->timeInfo.status.status()), sizeof(obs->gnss2Outputs->timeInfo.status.status()));
                 filestream.write(reinterpret_cast<const char*>(&obs->gnss2Outputs->timeInfo.leapSeconds), sizeof(obs->gnss2Outputs->timeInfo.leapSeconds));
             }
             if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)

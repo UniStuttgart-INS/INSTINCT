@@ -18,7 +18,7 @@
 #include <deque>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 namespace NAV
 {
@@ -36,25 +36,32 @@ void ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
 
 } // namespace gui
 
+/// @brief Abstract parent class for all nodes
 class Node
 {
   public:
     /// Kind information class
     struct Kind
     {
+        /// Possible kinds of Nodes
         enum Value : uint8_t
         {
-            Blueprint,
-            Simple,
-            GroupBox,
+            Blueprint, ///< Node with header
+            Simple,    ///< Node without header, which displays its name in the center of the content
+            GroupBox,  ///< Group box which can group other nodes and drag them together
         };
 
+        /// @brief Default Constructor
         Kind() = default;
 
-        //NOLINTNEXTLINE(hicpp-explicit-conversions, google-explicit-constructor)
-        constexpr Kind(Value kind)
-            : value(kind) {}
+        /// @brief Implicit Constructor from Value type
+        /// @param[in] kind Value type to construct from
+        constexpr Kind(Value kind) // NOLINT(hicpp-explicit-conversions, google-explicit-constructor)
+            : value(kind)
+        {}
 
+        /// @brief Constructor from std::string
+        /// @param[in] string String representation of the type
         explicit Kind(const std::string& string)
         {
             if (string == "Blueprint")
@@ -71,8 +78,13 @@ class Node
             }
         }
 
-        explicit operator Value() const { return value; } // Allow switch(Node::Value(kind)) and comparisons.
-        explicit operator bool() = delete;                // Prevent usage: if(fruit)
+        /// @brief Allow switch(Node::Value(kind)) and comparisons
+        explicit operator Value() const { return value; }
+        /// @brief Prevent usage: if(node)
+        explicit operator bool() = delete;
+        /// @brief Assignment operator from Value type
+        /// @param[in] v Value type to construct from
+        /// @return The Kind type from the value type
         Kind& operator=(Value v)
         {
             value = v;
@@ -87,6 +99,8 @@ class Node
         friend constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind::Value& rhs);
         friend constexpr bool operator!=(const Node::Kind::Value& lhs, const Node::Kind& rhs);
 
+        /// @brief std::string conversion operator
+        /// @return A std::string representation of the node kind
         explicit operator std::string() const
         {
             switch (value)
@@ -102,6 +116,7 @@ class Node
         }
 
       private:
+        /// @brief Value of the node kind
         Value value;
     };
 
@@ -290,18 +305,51 @@ class Node
     bool isDeinitializing_ = false;
 
     friend class gui::NodeEditorApplication;
+
+    /// @brief Show the run menu dropdown
+    /// @param[in, out] initList List of nodes which should be asynchronously initialized
     friend void gui::menus::ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
 };
 
+/// @brief Equal compares Node::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
 constexpr bool operator==(const Node::Kind& lhs, const Node::Kind& rhs) { return lhs.value == rhs.value; }
-constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind& rhs) { return lhs.value != rhs.value; }
+/// @brief Inequal compares Node::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
+constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind& rhs) { return !(lhs == rhs); }
 
+/// @brief Equal compares Node::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
 constexpr bool operator==(const Node::Kind& lhs, const Node::Kind::Value& rhs) { return lhs.value == rhs; }
+/// @brief Equal compares Node::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
 constexpr bool operator==(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return lhs == rhs.value; }
-constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind::Value& rhs) { return lhs.value != rhs; }
-constexpr bool operator!=(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return lhs != rhs.value; }
+/// @brief Inequal compares Node::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
+constexpr bool operator!=(const Node::Kind& lhs, const Node::Kind::Value& rhs) { return !(lhs == rhs); }
+/// @brief Inequal compares Node::Kind values
+/// @param[in] lhs Left-hand side of the operator
+/// @param[in] rhs Right-hand side of the operator
+/// @return Whether the comparison was successful
+constexpr bool operator!=(const Node::Kind::Value& lhs, const Node::Kind& rhs) { return !(lhs == rhs); }
 
+/// @brief Converts the provided node into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] node Node to convert into json
 void to_json(json& j, const Node& node);
+/// @brief Converts the provided json object into a node object
+/// @param[in] j Json object with the needed values
+/// @param[out] node Object to fill from the json
 void from_json(const json& j, Node& node);
 
 } // namespace NAV

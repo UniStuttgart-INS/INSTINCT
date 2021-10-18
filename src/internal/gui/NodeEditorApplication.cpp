@@ -988,7 +988,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                             ed::RejectNewItem(ImColor(255, 128, 128), 1.0F);
                         }
                         else if (startPin->type == Pin::Type::Flow
-                                 && !NAV::NodeRegistry::NodeDataTypeIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
+                                 && !NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPin->dataIdentifier, endPin->dataIdentifier))
                         {
                             showLabel(fmt::format("The data type [{}]\ncan't be linked to [{}]",
                                                   fmt::join(startPin->dataIdentifier, ","),

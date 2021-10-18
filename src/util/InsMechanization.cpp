@@ -12,6 +12,10 @@ namespace NAV
 //                                             Private Functions
 // ###########################################################################################################
 
+/// @brief Equations to perform an update of the attitude quaternion
+/// @param[in] angularVelocity Angular velocity causing the change of the quaternion
+/// @param[in] quat Quaternion to update
+/// @return The derivative of the quaternion
 Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, const Eigen::Vector4d& quat)
 {
     // Rearranged because Skript Quaternion has order (w,x,y,z)
@@ -32,6 +36,7 @@ Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, co
     return { q(1), q(2), q(3), q(0) };
 }
 
+/// @brief Stores information of the state needed for the velocity update
 struct VelocityUpdateState
 {
     /// a_n Taylor-Approximation of acceleration in [m/s^2]
@@ -44,6 +49,10 @@ struct VelocityUpdateState
     Eigen::Vector3d gravity_n;
 };
 
+/// @brief Equations to perform an update of the velocity
+/// @param[in] x State information needed for the update
+/// @param[in] velocity_n Old velocity in navigation coordinates
+/// @return Derivative of the velocity
 /// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.3.4)
 Eigen::Vector3d velocityUpdateModel(const VelocityUpdateState& x, const Eigen::Vector3d& velocity_n)
 {

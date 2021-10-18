@@ -46,15 +46,6 @@ void NAV::sensors::ublox::decryptUbloxObs(const std::shared_ptr<NAV::UbloxObs>& 
                 }
             }
         }
-        // AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
-        else if (obs->msgClass == UbxClass::UBX_CLASS_AID)
-        {
-            [[maybe_unused]] auto msgId = static_cast<UbxAidMessages>(obs->msgId);
-            if (!peek)
-            {
-                LOG_DATA("UBX:  AID-{:x}, Size {}, not implemented yet!", msgId, obs->raw.getRawDataLength());
-            }
-        }
         // Configuration Input Messages: Configure the receiver
         else if (obs->msgClass == UbxClass::UBX_CLASS_CFG)
         {

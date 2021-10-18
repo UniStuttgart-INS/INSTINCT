@@ -60,46 +60,47 @@ class SkydelNetworkStream : public Imu
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    // Asynchronous receive fct
+    /// Asynchronous receive fct
     boost::asio::io_context ioservice;
 
     /// @brief Receive Skydel network stream data
     void do_receive();
 
-    // Thread for receiver fct
+    /// Thread for receiver fct
     std::thread TestThread;
 
-    // Network data stream buffer size (boost::asio)
+    /// Network data stream buffer size (boost::asio)
     constexpr static unsigned int max_length = 1024;
 
-    // Network data stream array
+    /// Network data stream array
     std::array<char, max_length> m_data{};
 
-    // boost setup
+    /// Boost udp endpoint
     boost::asio::ip::udp::endpoint m_senderEndpoint;
+    /// Boost udo socket
     boost::asio::ip::udp::socket m_socket;
 
-    // Stop handler: once true, the asynchronous receive function stops
+    /// Stop handler: once true, the asynchronous receive function stops
     bool stop = false;
-    // Startup handler: used in 'initialize()' to differentiate between startup and re-initialization
+    /// Startup handler: used in 'initialize()' to differentiate between startup and re-initialization
     bool isStartup = true;
 
-    // Time point where the first package has been received
+    /// Time point where the first package has been received
     std::chrono::steady_clock::time_point startPoint;
 
-    // Counter for received packages
+    /// Counter for received packages
     int packageCount = 0;
 
-    // # of packages for averaging dataRate (minimum is '2', since two time points are required to calculate a data rate)
+    /// # of packages for averaging dataRate (minimum is '2', since two time points are required to calculate a data rate)
     int packagesNumber = 2;
 
-    // Data rate of the received network stream [Hz]
+    /// Data rate of the received network stream [Hz]
     double dataRate = 0.0;
 
-    // Counter for packages that are skipped until data rate is shown
+    /// Counter for packages that are skipped until data rate is shown
     int startCounter = 0;
 
-    // # of packages that are skipped until data rate is shown
+    /// # of packages that are skipped until data rate is shown
     int startNow = 20;
 
     Eigen::Vector3d firstPosLLA = Eigen::Vector3d::Zero();

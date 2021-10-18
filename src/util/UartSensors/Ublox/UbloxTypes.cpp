@@ -30,10 +30,6 @@ NAV::sensors::ublox::UbxClass NAV::sensors::ublox::getMsgClassFromString(const s
     {
         return UbxClass::UBX_CLASS_MON;
     }
-    if (className == "AID")
-    {
-        return UbxClass::UBX_CLASS_AID;
-    }
     if (className == "TIM")
     {
         return UbxClass::UBX_CLASS_TIM;
@@ -73,29 +69,6 @@ uint8_t NAV::sensors::ublox::getMsgIdFromString(NAV::sensors::ublox::UbxClass ms
         if (idName == "NAK")
         {
             return UbxAckMessages::UBX_ACK_NAK;
-        }
-    }
-    else if (msgClass == UbxClass::UBX_CLASS_AID)
-    {
-        if (idName == "ALM")
-        {
-            return UbxAidMessages::UBX_AID_ALM;
-        }
-        if (idName == "AOP")
-        {
-            return UbxAidMessages::UBX_AID_AOP;
-        }
-        if (idName == "EPH")
-        {
-            return UbxAidMessages::UBX_AID_EPH;
-        }
-        if (idName == "HUI")
-        {
-            return UbxAidMessages::UBX_AID_HUI;
-        }
-        if (idName == "INI")
-        {
-            return UbxAidMessages::UBX_AID_INI;
         }
     }
     else if (msgClass == UbxClass::UBX_CLASS_CFG)

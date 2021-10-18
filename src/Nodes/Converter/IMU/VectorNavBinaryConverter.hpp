@@ -94,12 +94,12 @@ class VectorNavBinaryConverter : public Node
     void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Converts the VectorNavBinaryOutput to a ImuObsWDelta observation
-    /// @param[in] nodeData VectorNavBinaryOutput to process
+    /// @param[in] vnObs VectorNavBinaryOutput to process
     /// @return The converted data
     std::shared_ptr<const ImuObsWDelta> convert2ImuObsWDelta(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
 
     /// @brief Converts the VectorNavBinaryOutput to a PosVelAtt observation
-    /// @param[in] nodeData VectorNavBinaryOutput to process
+    /// @param[in] vnObs VectorNavBinaryOutput to process
     /// @return The converted data
     std::shared_ptr<const PosVelAtt> convert2PosVelAtt(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs);
 };

@@ -1,10 +1,13 @@
 #include "ImuPos.hpp"
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 namespace NAV
 {
+/// @brief Converts the provided imu position into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] pos Imu position to convert into json
 void to_json(json& j, const ImuPos& pos)
 {
     j = json{
@@ -16,6 +19,9 @@ void to_json(json& j, const ImuPos& pos)
         { "quatMag_bp", pos.quatMag_bp().coeffs() },
     };
 }
+/// @brief Converts the provided json object into a imu position object
+/// @param[in] j Json object with the needed values
+/// @param[out] pos Object to fill from the json
 void from_json(const json& j, ImuPos& pos)
 {
     if (j.contains("posAccel_b"))

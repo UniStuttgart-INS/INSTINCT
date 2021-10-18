@@ -13,6 +13,7 @@
 
 namespace NAV
 {
+/// @brief Loosely-coupled Kalman Filter for INS/GNSS integration
 class LooselyCoupledKF : public Node
 {
   public:
@@ -165,17 +166,20 @@ class LooselyCoupledKF : public Node
 
     // ###########################################################################################################
 
+    /// @brief Available Random processes
     enum class RandomProcess
     {
-        WhiteNoise,
-        RandomConstant,
-        RandomWalk,
-        GaussMarkov1,
-        GaussMarkov2,
-        GaussMarkov3,
+        WhiteNoise,     ///< White noise
+        RandomConstant, ///< Random constant
+        RandomWalk,     ///< Random Walk
+        GaussMarkov1,   ///< Gauss-Markov 1st Order
+        GaussMarkov2,   ///< Gauss-Markov 2nd Order
+        GaussMarkov3,   ///< Gauss-Markov 3rd Order
     };
 
+    /// @brief Random Process used to estimate the accelerometer biases
     RandomProcess randomProcessAccel = RandomProcess::RandomWalk;
+    /// @brief Random Process used to estimate the gyroscope biases
     RandomProcess randomProcessGyro = RandomProcess::RandomWalk;
 
     // ###########################################################################################################

@@ -793,9 +793,9 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     auto errorGnss = static_cast<uint8_t>(std::stoul(extractCell()));
                     auto gpsHeadingIns = static_cast<uint8_t>(std::stoul(extractCell()));
                     auto gpsCompass = static_cast<uint8_t>(std::stoul(extractCell()));
-                    obs->insOutputs->insStatus.status = static_cast<uint16_t>(mode << 0U | gpsFix << 2U
-                                                                              | errorImu << 4U | errorMagPres << 5U | errorGnss << 6U
-                                                                              | gpsHeadingIns << 8U | gpsCompass << 9U);
+                    obs->insOutputs->insStatus.status() = static_cast<uint16_t>(mode << 0U | gpsFix << 2U
+                                                                                | errorImu << 4U | errorMagPres << 5U | errorGnss << 6U
+                                                                                | gpsHeadingIns << 8U | gpsCompass << 9U);
                 }
                 if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
                 {
@@ -1074,7 +1074,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeStatus.status), sizeof(obs->timeOutputs->timeStatus.status));
+                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeStatus.status()), sizeof(obs->timeOutputs->timeStatus.status()));
                 }
             }
             // Group 3 (IMU)
@@ -1197,7 +1197,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.status.status), sizeof(obs->gnss1Outputs->timeInfo.status.status));
+                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.status.status()), sizeof(obs->gnss1Outputs->timeInfo.status.status()));
                     filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.leapSeconds), sizeof(obs->gnss1Outputs->timeInfo.leapSeconds));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
@@ -1259,7 +1259,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->attitudeOutputs->vpeStatus.status), sizeof(obs->attitudeOutputs->vpeStatus.status));
+                    filestream.read(reinterpret_cast<char*>(&obs->attitudeOutputs->vpeStatus.status()), sizeof(obs->attitudeOutputs->vpeStatus.status()));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
                 {
@@ -1305,7 +1305,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->insOutputs->insStatus.status), sizeof(obs->insOutputs->insStatus.status));
+                    filestream.read(reinterpret_cast<char*>(&obs->insOutputs->insStatus.status()), sizeof(obs->insOutputs->insStatus.status()));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
                 {
@@ -1413,7 +1413,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.status.status), sizeof(obs->gnss2Outputs->timeInfo.status.status));
+                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.status.status()), sizeof(obs->gnss2Outputs->timeInfo.status.status()));
                     filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.leapSeconds), sizeof(obs->gnss2Outputs->timeInfo.leapSeconds));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)

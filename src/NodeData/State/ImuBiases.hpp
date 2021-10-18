@@ -1,4 +1,4 @@
-/// @file LCKFState.hpp
+/// @file ImuBiases.hpp
 /// @brief Imu biases estimations to correct IMU observations
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @author T. Topp (topp@ins.uni-stuttgart.de)

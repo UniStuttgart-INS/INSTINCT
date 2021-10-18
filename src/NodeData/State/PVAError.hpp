@@ -1,5 +1,5 @@
-/// @file LCKFState.hpp
-/// @brief State vector for the Loosely Coupled Kalman Filter GNSS/INS Integration
+/// @file PVAError.hpp
+/// @brief State vector errors
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-08-11

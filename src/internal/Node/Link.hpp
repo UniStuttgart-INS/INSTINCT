@@ -8,7 +8,7 @@
 #include <imgui_node_editor.h>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 namespace NAV
 {
@@ -47,7 +47,13 @@ class Link
     ImColor color;
 };
 
+/// @brief Converts the provided link into a json object
+/// @param[out] j Json object which gets filled with the info
+/// @param[in] link Link to convert into json
 void to_json(json& j, const Link& link);
+/// @brief Converts the provided json object into a link object
+/// @param[in] j Json object with the needed values
+/// @param[out] link Object to fill from the json
 void from_json(const json& j, Link& link);
 
 } // namespace NAV
