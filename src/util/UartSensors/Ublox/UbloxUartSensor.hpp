@@ -39,14 +39,15 @@ class UbloxUartSensor
     /// @return nullptr if no packet found yet, otherwise a pointer to the packet
     std::unique_ptr<uart::protocol::Packet> findPacket(uint8_t dataByte);
 
-    static constexpr uint8_t BinarySyncChar1 = 0xB5; // µ
-    static constexpr uint8_t BinarySyncChar2 = 0x62; // b
-    static constexpr uint8_t AsciiStartChar = '$';
+    static constexpr uint8_t BinarySyncChar1 = 0xB5; ///< µ - First sync character which begins a new binary message
+    static constexpr uint8_t BinarySyncChar2 = 0x62; ///< b - Second sync character which begins a new binary message
+    static constexpr uint8_t AsciiStartChar = '$';   ///< Ascii character which begins a new ascii message
 
   private:
     /// Name of the Parent Node
     const std::string name;
 
+    /// UartSensor object which handles the UART interface
     uart::sensors::UartSensor sensor{ endianness,
                                       packetFinderFunction,
                                       this,
@@ -56,13 +57,25 @@ class UbloxUartSensor
                                       isResponseFunction,
                                       packetHeaderLength };
 
+    /// @brief Function which is called to find packets in the provided data buffer
+    /// @param[in] data Raw data buffer which has potential packets inside
+    /// @param[in] timestamp Timestamp then the data in the buffer was received
+    /// @param[in] dispatchPacket Function to call when a complete packet was found
+    /// @param[in] dispatchPacketUserData User data to forward to the dispatchPacket function
+    /// @param[in] userData User data provided when regisering this function. Should contain the sensor object
     static void packetFinderFunction(const std::vector<uint8_t>& data,
                                      const uart::xplat::TimeStamp& timestamp,
                                      uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData,
                                      void* userData);
 
+    /// @brief Function which is called to determine the packet type (ascii/binary)
+    /// @param[in] packet Packet to check the type of
+    /// @return The type of the packet
     static uart::protocol::Packet::Type packetTypeFunction(const uart::protocol::Packet& packet);
 
+    /// @brief Function which is called to verify packet integrity
+    /// @param[in] packet Packet to calculate the checksum for
+    /// @return True if the packet is fault free
     static bool checksumFunction(const uart::protocol::Packet& packet);
 
     /// @brief Function which determines, if the packet is an Error Packet
@@ -73,32 +86,38 @@ class UbloxUartSensor
     /// @param[in] packet The packet to check
     static bool isResponseFunction(const uart::protocol::Packet& packet);
 
-    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_LITTLE;
-    static constexpr size_t packetHeaderLength = 2;
-    static constexpr uint8_t AsciiEndChar1 = '\r';
-    static constexpr uint8_t AsciiEndChar2 = '\n';
-    static constexpr uint8_t AsciiEscapeChar = '\0';
+    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_LITTLE; ///< Endianess of the sensor
+    static constexpr size_t packetHeaderLength = 2;                                 ///< Length of the header of each packet
+    static constexpr uint8_t AsciiEndChar1 = '\r';                                  ///< First Ascii End character
+    static constexpr uint8_t AsciiEndChar2 = '\n';                                  ///< Second Ascii End character
+    static constexpr uint8_t AsciiEscapeChar = '\0';                                ///< Ascii Escape charater
 
-    bool currentlyBuildingAsciiPacket{ false };
-    bool currentlyBuildingBinaryPacket{ false };
+    bool currentlyBuildingAsciiPacket{ false };  ///< Flag if currently a ascii packet is built
+    bool currentlyBuildingBinaryPacket{ false }; ///< Flag if currently a binary packet is built
 
-    bool asciiEndChar1Found{ false };
-    bool binarySyncChar2Found{ false };
-    bool binaryMsgClassFound{ false };
-    bool binaryMsgIdFound{ false };
-    bool binaryPayloadLength1Found{ false };
-    bool binaryPayloadLength2Found{ false };
+    bool asciiEndChar1Found{ false };        ///< Flag if the first ascii end character was found
+    bool binarySyncChar2Found{ false };      ///< Flag if the second binary end character was found
+    bool binaryMsgClassFound{ false };       ///< Flag if the message class was found
+    bool binaryMsgIdFound{ false };          ///< Flag if the message id was found
+    bool binaryPayloadLength1Found{ false }; ///< Flag if the first byte of the payload length was found
+    bool binaryPayloadLength2Found{ false }; ///< Flag if the second byte of the payload length was found
 
+    /// Message class of the current packet
     uint8_t binaryMsgClass{ 0 };
+    /// Message id of the current packet
     uint8_t binaryMsgId{ 0 };
+    /// Payload length of the current packet
     uint16_t binaryPayloadLength{ 0 };
 
+    /// Buffer to collect messages till they are complete
     std::vector<uint8_t> _buffer;
 
     /// Used for correlating raw data with where the packet was found for the end user.
     size_t runningDataIndex{ 0 };
+    /// Amount of bytes remaining for a complete packet
     size_t numOfBytesRemainingForCompletePacket{ 0 };
 
+    /// @brief Resets the current message tracking
     void resetTracking();
 };
 

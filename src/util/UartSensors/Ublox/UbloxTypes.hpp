@@ -13,6 +13,7 @@
 
 namespace NAV::sensors::ublox
 {
+/// @brief Error detection modes available
 enum ErrorDetectionMode
 {
     ERRORDETECTIONMODE_NONE,     ///< No error detection is used

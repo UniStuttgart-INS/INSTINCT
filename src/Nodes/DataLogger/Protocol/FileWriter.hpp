@@ -9,7 +9,7 @@
 #include <fstream>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 namespace NAV
 {
@@ -34,6 +34,9 @@ class FileWriter
     /// @brief Move assignment operator
     FileWriter& operator=(FileWriter&&) = delete;
 
+    /// @brief Converts the provided type into string
+    /// @param[in] type FileType to convert
+    /// @return String representation of the type
     static std::string str(FileType type);
 
   protected:

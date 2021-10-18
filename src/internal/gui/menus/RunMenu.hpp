@@ -12,6 +12,7 @@
 namespace NAV::gui::menus
 {
 /// @brief Show the run menu dropdown
+/// @param[in, out] initList List of nodes which should be asynchronously initialized
 void ShowRunMenu(std::deque<std::pair<Node*, bool>>& initList);
 
 } // namespace NAV::gui::menus

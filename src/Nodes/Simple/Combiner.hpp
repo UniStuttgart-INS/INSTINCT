@@ -59,6 +59,8 @@ class Combiner : public Node
     /// @param[in] dataIdentifiers The data Identifier to be considered
     void setPinIdentifiers(size_t connectedPinIndex, size_t otherPinIndex, const std::vector<std::string>& dataIdentifiers);
 
+    /// @brief Checks if link on the pin is still valid and refreshes if so
+    /// @param[in] oldDataIdentifiers Data identifiers which were previously set
     void updateOutputPin(const std::vector<std::string>& oldDataIdentifiers);
 
     /// @brief Receive data

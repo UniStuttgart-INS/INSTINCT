@@ -83,7 +83,7 @@ bool NAV::NodeRegistry::NodeInfo::hasCompatiblePin(const Pin* pin) const
         if (pinInfo.kind == searchPinKind && pinInfo.type == pin->type)
         {
             if ((pinInfo.type == Pin::Type::Flow
-                 && NAV::NodeRegistry::NodeDataTypeIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
+                 && NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(startPinDataIdentifier, endPinDataIdentifier))
                 || (pinInfo.type == Pin::Type::Delegate
                     && std::find(endPinDataIdentifier.begin(), endPinDataIdentifier.end(), startPinParentNodeType) != endPinDataIdentifier.end())
                 || ((pinInfo.type == Pin::Type::Object || pinInfo.type == Pin::Type::Matrix) // NOLINT(misc-redundant-expression) // FIXME: error: equivalent expression on both sides of logical operator
@@ -103,7 +103,7 @@ const std::map<std::string, std::vector<NAV::NodeRegistry::NodeInfo>>& NAV::Node
     return _registeredNodes;
 }
 
-bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes)
+bool NAV::NodeRegistry::NodeDataTypeAnyIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes)
 {
     for (const auto& childType : childTypes)
     {
@@ -119,7 +119,7 @@ bool NAV::NodeRegistry::NodeDataTypeIsChildOf(const std::vector<std::string>& ch
                 {
                     for (const auto& parentTypeOfChild : parentTypes)
                     {
-                        if (NodeDataTypeIsChildOf({ parentTypeOfChild }, { parentType }))
+                        if (NodeDataTypeAnyIsChildOf({ parentTypeOfChild }, { parentType }))
                         {
                             return true;
                         }

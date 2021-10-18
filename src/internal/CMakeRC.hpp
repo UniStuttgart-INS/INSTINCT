@@ -18,11 +18,15 @@ namespace cmrc
 /// https://stackoverflow.com/questions/13059091/
 struct membuf : std::streambuf
 {
+    /// @brief Constructor
+    /// @param[in] base Pointer to the start of the memory block
+    /// @param[in] size Size of the memory block
     membuf(const char* base, size_t size)
     {
         char* p{ const_cast<char*>(base) }; // NOLINT(cppcoreguidelines-pro-type-const-cast)
         this->setg(p, p, p + size);
     }
+    /// @brief Destructor
     ~membuf() override = default;
     /// @brief Copy constructor
     membuf(const membuf&) = default;
@@ -38,10 +42,16 @@ struct membuf : std::streambuf
 /// https://stackoverflow.com/questions/13059091/
 struct memstream : virtual membuf, std::istream
 {
+    /// @brief Constructor
+    /// @param[in] base Pointer to the start of the memory block
+    /// @param[in] end Pointer to the end of the memory block
     memstream(char const* base, char* const end)
         : membuf(base, reinterpret_cast<uintptr_t>(end) - reinterpret_cast<uintptr_t>(base)),
           std::istream(static_cast<std::streambuf*>(this)) {}
 
+    /// @brief Constructor
+    /// @param[in] base Pointer to the start of the memory block
+    /// @param[in] size Size of the memory block
     memstream(char const* base, size_t size)
         : membuf(base, size),
           std::istream(static_cast<std::streambuf*>(this)) {}

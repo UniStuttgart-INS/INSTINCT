@@ -22,6 +22,10 @@ namespace NodeRegistry
 /// @brief Holds info of the pins of registered nodes
 struct PinInfo
 {
+    /// @brief Constructor
+    /// @param[in] kind Kind of the pin
+    /// @param[in] type Type of the pin
+    /// @param[in] dataIdentifier Identifiers supplied by the pin
     PinInfo(const Pin::Kind& kind, const Pin::Type& type, std::vector<std::string> dataIdentifier)
         : kind(kind), type(type), dataIdentifier(std::move(dataIdentifier)) {}
 
@@ -51,7 +55,11 @@ struct NodeInfo
 /// @brief Reference to List of all registered Nodes
 const std::map<std::string, std::vector<NodeInfo>>& RegisteredNodes();
 
-bool NodeDataTypeIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes);
+/// @brief Checks if any of the provided child types is a child of any of the provided parent types
+/// @param[in] childTypes Child types to check parentship
+/// @param[in] parentTypes Parent types to check parentship
+/// @return True if any of the child types is a child of any of the parent types
+bool NodeDataTypeAnyIsChildOf(const std::vector<std::string>& childTypes, const std::vector<std::string>& parentTypes);
 
 /// @brief Get the Parent Node Data Types of the specified Node Data Type
 /// @param[in] type The Child Node Data Type

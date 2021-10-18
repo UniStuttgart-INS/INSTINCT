@@ -39,10 +39,15 @@ class CallbackTimer
     /// @param[in] interval Interval in [ms] when to trigger the callback
     void setInterval(int interval);
 
+    /// @brief Checks if the timer is currently running
+    /// @return True if the timer is running
     [[nodiscard]] bool is_running() const noexcept;
 
   private:
+    /// @brief Interval in which the timer is triggered
     std::atomic<int> _interval{ 0 };
+    /// @brief Flag whether the timer should execute
     std::atomic<bool> _execute{ false };
+    /// @brief Thread object which triggers the timer
     std::thread _thd;
 };

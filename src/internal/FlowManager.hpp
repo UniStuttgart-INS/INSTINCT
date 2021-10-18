@@ -9,7 +9,7 @@
 #include "internal/gui/GlobalActions.hpp"
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; ///< json namespace
 
 namespace NAV::flow
 {

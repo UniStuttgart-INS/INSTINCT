@@ -77,10 +77,11 @@ class Plot : public Node
     /// @brief Specifying the look of a certain line in the plot
     struct PlotStyle
     {
+        /// @brief Possible line types
         enum class LineType : int
         {
-            Scatter,
-            Line,
+            Scatter, ///< Scatter plot (only markers)
+            Line,    ///< Line plot
         };
 
         /// Display name in the legend (if not set falls back to PlotData::displayName)
@@ -133,6 +134,7 @@ class Plot : public Node
             std::map<size_t, std::pair<int, PlotStyle>> plotOnAxis;
         };
 
+        /// @brief Possible Pin types
         enum class PinType : int
         {
             Flow,   ///< NodeData Trigger

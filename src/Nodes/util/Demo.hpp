@@ -67,8 +67,8 @@ class Demo : public Node
     /// @brief Data struct transmitted over an output port
     struct DemoData
     {
-        std::array<int, 3> integer = { 12, -2, 2 };
-        bool boolean = false;
+        std::array<int, 3> integer = { 12, -2, 2 }; ///< Integer inside the DemoData
+        bool boolean = false;                       ///< Boolean inside the DemoData
     };
 
   private:
@@ -118,8 +118,11 @@ class Demo : public Node
     /// @param[in] userData Pointer to the object
     static void readSensorDataThread(void* userData);
 
+    /// @brief Output frequency for the simulated sensor data
     int outputFrequency = 1;
+    /// @brief Counter how often sensor data was received
     int receivedDataFromSensorCnt = 0;
+    /// @brief Counter how often file reader data was received
     int receivedDataFromFileReaderCnt = 0;
 
     /// Counter for data Reading
@@ -127,15 +130,17 @@ class Demo : public Node
     /// Amount of Observations to be read
     int nPollData = 20;
 
-    bool valueBool = true;
-    int valueInt = -1;
-    float valueFloat = 65.4F;
-    double valueDouble = 1242.342;
-    std::string valueString = "Demo";
-    DemoData valueObject;
-    Eigen::MatrixXd valueMatrix = Eigen::MatrixXd::Identity(3, 3);
+    bool valueBool = true;                                         ///< Value which is represented over the Bool pin
+    int valueInt = -1;                                             ///< Value which is represented over the Int pin
+    float valueFloat = 65.4F;                                      ///< Value which is represented over the Float pin
+    double valueDouble = 1242.342;                                 ///< Value which is represented over the Double pin
+    std::string valueString = "Demo";                              ///< Value which is represented over the String pin
+    DemoData valueObject;                                          ///< Value which is represented over the Object pin
+    Eigen::MatrixXd valueMatrix = Eigen::MatrixXd::Identity(3, 3); ///< Value which is represented over the Matrix pin
+    size_t stringUpdateCounter = 0;                                ///< Counter of how often the string was updated
 
-    size_t stringUpdateCounter = 0;
+    /// @brief Function to call when the string is updated
+    /// @param[in] linkId Id of the Link where the string is connected over
     void stringUpdatedNotifyFunction(ax::NodeEditor::LinkId linkId);
 };
 

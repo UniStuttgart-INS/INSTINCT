@@ -9,6 +9,7 @@
 
 namespace NAV::util::time
 {
+/// @brief Different Modes the Time Base class can work in
 enum class Mode
 {
     REAL_TIME,       ///< Computer clock will be added to last time update

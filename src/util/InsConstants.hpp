@@ -14,6 +14,7 @@ namespace NAV::InsConst
 /// @note D. D. McCarthy, G. Petit (Hrsg.): IERS Conventions (2003) (IERS Technical Note No. 32), Kap. 1: General Definitions and Numerical Standards.
 ///         ftp://tai.bipm.org/iers/conv2003/chapter1/tn32_c1.pdf
 constexpr double angularVelocity_ie = 7.2921151467e-05;
+/// @brief Nominal mean angular velocity of the Earth in [rad/s]. Value implemented by the Skydel GNSS simulator (for compatibility with Skydel's IMU plugin)
 constexpr double angularVelocity_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibility with Skydel's IMU plugin)
 
 /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
@@ -51,10 +52,10 @@ constexpr double C = 299792458.0; ///< speed of light (m/s)
 constexpr double C2 = C * C;      ///< speed of light, squared (m^2/s^2)
 constexpr double C3 = C2 * C;     ///< speed of light, third order (m^3/s^3)
 
-constexpr double GPS_CLOCK_CORRECTION_RELATIVISTIC_CONSTANT_F = -4.442807633e-10;
-constexpr double GPS_RATIO_OF_SQUARED_FREQUENCIES_L1_OVER_L2 = 1.6469444444444444444444444444444;
-constexpr double GPS_UNIVERSAL_GRAVITY_CONSTANT = 3.986005e+14; ///< gravitational constant GPS
-constexpr double GPS_OMG = 7.2921151467e-05;                    ///< earth angular velocity (rad/s) GPS, WGS84 earth rotation rate
+constexpr double GPS_CLOCK_CORRECTION_RELATIVISTIC_CONSTANT_F = -4.442807633e-10;                 ///< Relativistic constant F for GPS clock corrections
+constexpr double GPS_RATIO_OF_SQUARED_FREQUENCIES_L1_OVER_L2 = 1.6469444444444444444444444444444; ///< Ratio of the squared frequencies of f_L1 / f_L2
+constexpr double GPS_UNIVERSAL_GRAVITY_CONSTANT = 3.986005e+14;                                   ///< gravitational constant GPS
+constexpr double GPS_OMG = 7.2921151467e-05;                                                      ///< earth angular velocity (rad/s) GPS, WGS84 earth rotation rate
 
 constexpr double GLO_OMG = 7.292115e-5; ///< earth angular velocity (rad/s) GLONASS
 constexpr double GLO_MU = 3.986005e+14; ///< gravitational constant GLONASS

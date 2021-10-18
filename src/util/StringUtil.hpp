@@ -11,7 +11,8 @@
 
 namespace NAV::str
 {
-// trim from start (in place)
+/// @brief Trim from start (in place)
+/// @param[in, out] s The string to trim
 static inline void ltrim(std::string& s)
 {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
@@ -19,7 +20,8 @@ static inline void ltrim(std::string& s)
             }));
 }
 
-// trim from end (in place)
+/// @brief Trim from end (in place)
+/// @param[in, out] s The string to trim
 static inline void rtrim(std::string& s)
 {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
@@ -28,36 +30,52 @@ static inline void rtrim(std::string& s)
             s.end());
 }
 
-// trim from both ends (in place)
+/// @brief Trim from both ends (in place)
+/// @param[in, out] s The string to trim
 static inline void trim(std::string& s)
 {
     ltrim(s);
     rtrim(s);
 }
 
-// trim from start (copying)
+/// @brief Trim from start (copying)
+/// @param[in] s The string to trim
+/// @return The trimmed string
 static inline std::string ltrim_copy(std::string s)
 {
     ltrim(s);
     return s;
 }
 
-// trim from end (copying)
+/// @brief Trim from end (copying)
+/// @param[in] s
+/// @return The trimmed string
 static inline std::string rtrim_copy(std::string s)
 {
     rtrim(s);
     return s;
 }
 
-// trim from both ends (copying)
+/// @brief Trim from both ends (copying)
+/// @param[in] s The string to trim
+/// @return The trimmed string
 static inline std::string trim_copy(std::string s)
 {
     trim(s);
     return s;
 }
 
+/// @brief Replaces the first occurrence of a search pattern with another sequence
+/// @param[in, out] str String to search in and return value
+/// @param[in] from String pattern to search for
+/// @param[in] to Replacement string
+/// @return True if something was replaced
 static inline bool replace(std::string& str, const std::string& from, const std::string& to)
 {
+    if (from.empty())
+    {
+        return;
+    }
     size_t start_pos = str.find(from);
     if (start_pos == std::string::npos)
     {
@@ -67,20 +85,21 @@ static inline bool replace(std::string& str, const std::string& from, const std:
     return true;
 }
 
+/// @brief Replaces all occurrence of a search pattern with another sequence
+/// @param[in, out] str String to search in and return value
+/// @param[in] from String pattern to search for
+/// @param[in] to Replacement string
 static inline void replaceAll(std::string& str, const std::string& from, const std::string& to)
 {
-    if (from.empty())
-    {
-        return;
-    }
-    size_t start_pos = 0;
-    while ((start_pos = str.find(from, start_pos)) != std::string::npos)
-    {
-        str.replace(start_pos, from.length(), to);
-        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
-    }
+    while (replace(str, from, to))
+        ;
 }
 
+/// @brief Replaces all occurrence of a search pattern with another sequence
+/// @param[in, out] str String to search in and return value
+/// @param[in] from String pattern to search for
+/// @param[in] to Replacement string
+/// @return The string with the replacements
 static inline std::string replaceAll_copy(std::string str, const std::string& from, const std::string& to)
 {
     replaceAll(str, from, to);

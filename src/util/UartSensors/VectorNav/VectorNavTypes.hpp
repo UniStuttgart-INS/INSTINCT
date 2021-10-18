@@ -74,14 +74,13 @@ class TimeStatus
 /// @brief Storage class for UTC Time
 struct UTC
 {
-    /// The year is given as a signed byte year offset from the year 2000. For example the year 2013 would be given as year 13.
-    int8_t year{};
-    uint8_t month{};
-    uint8_t day{};
-    uint8_t hour{};
-    uint8_t min{};
-    uint8_t sec{};
-    uint16_t ms{};
+    int8_t year{};   ///< The year is given as a signed byte year offset from the year 2000. For example the year 2013 would be given as year 13.
+    uint8_t month{}; ///< Months
+    uint8_t day{};   ///< Days
+    uint8_t hour{};  ///< Hours
+    uint8_t min{};   ///< Minutes
+    uint8_t sec{};   ///< Seconds
+    uint16_t ms{};   ///< Milliseconds
 };
 
 /// @brief GNSS fix.

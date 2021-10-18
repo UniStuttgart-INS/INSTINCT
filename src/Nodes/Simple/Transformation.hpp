@@ -62,6 +62,7 @@ class Transformation : public Node
     constexpr static size_t OutputPortIndex_Matrix = 0; ///< @brief Matrix
     constexpr static size_t InputPortIndex_Matrix = 0;  ///< @brief Matrix
 
+    /// @brief Possible Transformation types
     enum class Type : int
     {
         ECEF_2_LLArad,

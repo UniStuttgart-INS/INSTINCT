@@ -85,6 +85,11 @@ class ARMA : public Node
     /// @param[in] y vector of data
     /// @param[in] p order of AR process
     /// @param[in] q order of MA process
+    /// @param[in] m value of superior order (p or q)
+    /// @param[in] deque_size Size of the deque
+    /// @param[out] x ARMA slope parameters
+    /// @param[out] emp_sig Empirical significance (p-Value) of parameters
+    /// @param[out] y_hat Output measurement data
     static void hannan_rissanen(Eigen::VectorXd& y, int p, int q, int m, int deque_size, Eigen::VectorXd& x, Eigen::VectorXd& emp_sig, Eigen::VectorXd& y_hat);
 
     /// @brief fill A matrix for least squares
@@ -92,8 +97,11 @@ class ARMA : public Node
     /// @param[in] e_hat residuals
     /// @param[in] p order of AR process
     /// @param[in] q order of MA process
+    /// @param[in] m value of superior order (p or q)
+    /// @param[out] A Returns the matrix filled with least squares
     static void matrix_function(Eigen::VectorXd& y, Eigen::VectorXd& e_hat, int p, int q, int m, Eigen::MatrixXd& A);
 
+    /// @brief Buffer used to store Imu observations
     std::deque<std::shared_ptr<const ImuObs>> buffer;
 
     /// loop iterator
@@ -117,8 +125,8 @@ class ARMA : public Node
     int p_mem = 0; ///< p memory to reset for each observation
     int q_mem = 0; ///< q memory to reset for each observation
 
-    int m = 0; ///< value of superior order (p or q)
-    double y_mean = 0;
+    int m = 0;         ///< value of superior order (p or q)
+    double y_mean = 0; ///< y-mean
 };
 
 } // namespace NAV::experimental
