@@ -10,6 +10,7 @@
 
 namespace NAV
 {
+/// @brief Parent class for all data transmitted over Flow pins
 class NodeData
 {
   public:

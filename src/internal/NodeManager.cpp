@@ -1,5 +1,4 @@
 #include "internal/NodeManager.hpp"
-namespace ed = ax::NodeEditor;
 
 #include "internal/Node/Node.hpp"
 #include "internal/Node/Link.hpp"
@@ -129,7 +128,7 @@ void NAV::NodeManager::UpdateNode(Node* node)
     }
 }
 
-bool NAV::NodeManager::DeleteNode(ed::NodeId nodeId)
+bool NAV::NodeManager::DeleteNode(ax::NodeEditor::NodeId nodeId)
 {
     LOG_TRACE("called for node with id {}", size_t(nodeId));
     if (nodeInitThread.joinable())
@@ -476,7 +475,7 @@ void NAV::NodeManager::RefreshLink(ax::NodeEditor::LinkId linkId)
     flow::ApplyChanges();
 }
 
-bool NAV::NodeManager::DeleteLink(ed::LinkId linkId)
+bool NAV::NodeManager::DeleteLink(ax::NodeEditor::LinkId linkId)
 {
     LOG_TRACE("called for link with id {}", size_t(linkId));
     auto id = std::find_if(m_links.begin(),
@@ -623,22 +622,22 @@ size_t NAV::NodeManager::GetNextId()
     return m_NextId++;
 }
 
-ed::NodeId NAV::NodeManager::GetNextNodeId()
+ax::NodeEditor::NodeId NAV::NodeManager::GetNextNodeId()
 {
     return { GetNextId() };
 }
 
-ed::LinkId NAV::NodeManager::GetNextLinkId()
+ax::NodeEditor::LinkId NAV::NodeManager::GetNextLinkId()
 {
     return { GetNextId() };
 }
 
-ed::PinId NAV::NodeManager::GetNextPinId()
+ax::NodeEditor::PinId NAV::NodeManager::GetNextPinId()
 {
     return { GetNextId() };
 }
 
-NAV::Node* NAV::NodeManager::FindNode(ed::NodeId id)
+NAV::Node* NAV::NodeManager::FindNode(ax::NodeEditor::NodeId id)
 {
     for (auto& node : m_nodes)
     {
@@ -651,7 +650,7 @@ NAV::Node* NAV::NodeManager::FindNode(ed::NodeId id)
     return nullptr;
 }
 
-NAV::Link* NAV::NodeManager::FindLink(ed::LinkId id)
+NAV::Link* NAV::NodeManager::FindLink(ax::NodeEditor::LinkId id)
 {
     for (auto& link : m_links)
     {
@@ -664,7 +663,7 @@ NAV::Link* NAV::NodeManager::FindLink(ed::LinkId id)
     return nullptr;
 }
 
-NAV::Pin* NAV::NodeManager::FindPin(ed::PinId id)
+NAV::Pin* NAV::NodeManager::FindPin(ax::NodeEditor::PinId id)
 {
     if (!id)
     {
@@ -693,7 +692,7 @@ NAV::Pin* NAV::NodeManager::FindPin(ed::PinId id)
     return nullptr;
 }
 
-bool NAV::NodeManager::IsPinLinked(ed::PinId id)
+bool NAV::NodeManager::IsPinLinked(ax::NodeEditor::PinId id)
 {
     if (!id)
     {

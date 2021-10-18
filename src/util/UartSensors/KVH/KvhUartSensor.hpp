@@ -11,6 +11,7 @@
 
 namespace NAV::sensors::kvh
 {
+/// @brief Class to read out KVH Sensors
 class KvhUartSensor
 {
   public:
@@ -38,18 +39,19 @@ class KvhUartSensor
     /// @return nullptr if no packet found yet, otherwise a pointer to the packet
     std::unique_ptr<uart::protocol::Packet> findPacket(uint8_t dataByte);
 
-    static constexpr uint32_t HEADER_FMT_A = 0xFE81FF55;
-    static constexpr uint32_t HEADER_FMT_B = 0xFE81FF56;
-    static constexpr uint32_t HEADER_FMT_C = 0xFE81FF57;
-    static constexpr uint32_t HEADER_FMT_XBIT = 0xFE8100AA;
-    static constexpr uint32_t HEADER_FMT_XBIT2 = 0xFE8100AB;
+    static constexpr uint32_t HEADER_FMT_A = 0xFE81FF55;     ///< Header Format A
+    static constexpr uint32_t HEADER_FMT_B = 0xFE81FF56;     ///< Header Format B
+    static constexpr uint32_t HEADER_FMT_C = 0xFE81FF57;     ///< Header Format C
+    static constexpr uint32_t HEADER_FMT_XBIT = 0xFE8100AA;  ///< Header Format X Bit
+    static constexpr uint32_t HEADER_FMT_XBIT2 = 0xFE8100AB; ///< Header Format X Bit 2
 
-    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_BIG;
+    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_BIG; ///< Endianess of the sensor
 
   private:
     /// Name of the Parent Node
     const std::string name;
 
+    /// UartSensor object which handles the UART interface
     uart::sensors::UartSensor sensor{ endianness,
                                       packetFinderFunction,
                                       this,
@@ -59,13 +61,25 @@ class KvhUartSensor
                                       isResponseFunction,
                                       packetHeaderLength };
 
+    /// @brief Function which is called to find packets in the provided data buffer
+    /// @param[in] data Raw data buffer which has potential packets inside
+    /// @param[in] timestamp Timestamp then the data in the buffer was received
+    /// @param[in] dispatchPacket Function to call when a complete packet was found
+    /// @param[in] dispatchPacketUserData User data to forward to the dispatchPacket function
+    /// @param[in] userData User data provided when regisering this function. Should contain the sensor object
     static void packetFinderFunction(const std::vector<uint8_t>& data,
                                      const uart::xplat::TimeStamp& timestamp,
                                      uart::sensors::UartSensor::ValidPacketFoundHandler dispatchPacket, void* dispatchPacketUserData,
                                      void* userData);
 
+    /// @brief Function which is called to determine the packet type (ascii/binary)
+    /// @param[in] packet Packet to check the type of
+    /// @return The type of the packet
     static uart::protocol::Packet::Type packetTypeFunction(const uart::protocol::Packet& packet);
 
+    /// @brief Function which is called to verify packet integrity
+    /// @param[in] packet Packet to calculate the checksum for
+    /// @return True if the packet is fault free
     static bool checksumFunction(const uart::protocol::Packet& packet);
 
     /// @brief Function which determines, if the packet is an Error Packet
@@ -76,18 +90,19 @@ class KvhUartSensor
     /// @param[in] packet The packet to check
     static bool isResponseFunction(const uart::protocol::Packet& packet);
 
-    static constexpr size_t packetHeaderLength = 0;
+    static constexpr size_t packetHeaderLength = 0; ///< Length of the packet header
 
-    static constexpr uint8_t AsciiEndChar1 = '\r';
-    static constexpr uint8_t AsciiEndChar2 = '\n';
-    static constexpr uint8_t AsciiEscapeChar = '\0';
-    static constexpr size_t MaximumSizeForAsciiPacket = 256;
+    static constexpr uint8_t AsciiEndChar1 = '\r';           ///< First Ascii End character
+    static constexpr uint8_t AsciiEndChar2 = '\n';           ///< Second Ascii End character
+    static constexpr uint8_t AsciiEscapeChar = '\0';         ///< Ascii Escape charater
+    static constexpr size_t MaximumSizeForAsciiPacket = 256; ///< Maximum size of a ascii packet before resetting it
 
-    bool currentlyBuildingAsciiPacket{ false };
-    bool currentlyBuildingBinaryPacket{ false };
+    bool currentlyBuildingAsciiPacket{ false };  ///< Flag if currently a ascii packet is built
+    bool currentlyBuildingBinaryPacket{ false }; ///< Flag if currently a binary packet is built
 
-    bool asciiEndChar1Found{ false };
+    bool asciiEndChar1Found{ false }; ///< Flag if the first ascii end character was found
 
+    /// @brief Possible states in the header building process
     enum TagState
     {
         SM_H1,
@@ -97,8 +112,10 @@ class KvhUartSensor
         SM_IDLE
     };
 
+    /// Current state of the header building process
     TagState eState = SM_IDLE;
 
+    /// @brief Possible Header Types
     enum HeaderType
     {
         FMT_A,
@@ -109,15 +126,21 @@ class KvhUartSensor
         FMT_UNKNOWN
     };
 
+    /// @brief Current packet type determined by the header
     HeaderType packetType = HeaderType::FMT_UNKNOWN;
 
+    /// @brief Function which finds the header from the provided data
+    /// @param[in] ui8Data Byte to construct the header from
+    /// @return Header type if found or unkown
     HeaderType bFindImuHeader(uint8_t ui8Data);
 
+    /// Buffer to collect messages till they are complete
     std::vector<uint8_t> _buffer;
 
     /// Used for correlating raw data with where the packet was found for the end user.
     size_t runningDataIndex{ 0 };
 
+    /// @brief Resets the current message tracking
     void resetTracking();
 };
 

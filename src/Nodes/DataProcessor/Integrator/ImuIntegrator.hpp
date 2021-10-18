@@ -17,6 +17,7 @@
 
 namespace NAV
 {
+/// @brief Numerically integrates Imu data
 class ImuIntegrator : public Node
 {
   public:
@@ -110,10 +111,11 @@ class ImuIntegrator : public Node
     /// TimeSinceStartup at initialization (needed to set time tag when TimeSinceStartup is used)
     uint64_t timeSinceStartup__init = 0;
 
+    /// @brief Available Integration Frames
     enum class IntegrationFrame : int
     {
-        ECEF,
-        NED,
+        ECEF, ///< Earth-Centered Earth-Fixed frame
+        NED,  ///< Local North-East-Down frame
     };
     /// Frame to integrate the observations in
     IntegrationFrame integrationFrame = IntegrationFrame::ECEF;
@@ -121,25 +123,29 @@ class ImuIntegrator : public Node
     /// Gravity Model selection
     enum class GravityModel : int
     {
-        WGS84,
-        WGS84_Skydel,
-        Somigliana,
-        EGM96,
-        OFF,
+        WGS84,        ///< World Geodetic System 1984
+        WGS84_Skydel, ///< World Geodetic System 1984 implemented by the Skydel Simulator // FIXME: Remove after Skydel uses the same as Instinct
+        Somigliana,   ///< Somigliana gravity model
+        EGM96,        ///< Earth Gravitational Model 1996
+        OFF,          ///< Gravity Model turned off
     };
+    /// @brief Gravity model selected in the GUI
     GravityModel gravityModel = GravityModel::WGS84;
 
     /// Integration Algorithm selection
     enum class IntegrationAlgorithm : size_t
     {
-        RectangularRule,
-        Simpson,
-        RungeKutta1,
-        RungeKutta3,
-        COUNT,
+        RectangularRule, ///< Rectangular rule
+        Simpson,         ///< Simpson
+        RungeKutta1,     ///< Runge-Kutta 1st order
+        RungeKutta3,     ///< Runge-Kutta 3rd order
+        COUNT,           ///< Amount of available integration algorithms
     };
+    /// @brief Integration algorithm used for the attitude update
     IntegrationAlgorithm integrationAlgorithmAttitude = IntegrationAlgorithm::RungeKutta3;
+    /// @brief Integration algorithm used for the velocity update
     IntegrationAlgorithm integrationAlgorithmVelocity = IntegrationAlgorithm::Simpson;
+    /// @brief Integration algorithm used for the position update
     IntegrationAlgorithm integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
 
     /// Converts the enum to a string
@@ -161,13 +167,11 @@ class ImuIntegrator : public Node
     /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
     bool prefereTimeSinceStartupOverInsTime = false;
 
-#ifndef NDEBUG
     /// Flag to toggle centrifugal acceleration compensation of the acceleration at the current position
     bool centrifugalAccCompensation = true;
 
     /// Flag to toggle coriolis acceleration compensation of the acceleration at the current position
     bool coriolisCompensation = true;
-#endif
 };
 
 } // namespace NAV

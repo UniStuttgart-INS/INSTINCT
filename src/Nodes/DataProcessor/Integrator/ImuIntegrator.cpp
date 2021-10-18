@@ -61,11 +61,7 @@ void NAV::ImuIntegrator::guiConfig()
     }
 
     ImGui::SetNextItemWidth(250);
-#ifndef NDEBUG
     if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0OFF\0\0"))
-#else
-    if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0\0"))
-#endif
     {
         if (gravityModel == GravityModel::WGS84)
         {
@@ -212,7 +208,6 @@ void NAV::ImuIntegrator::guiConfig()
     ImGui::SameLine();
     gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
 
-#ifndef NDEBUG
     if (ImGui::Checkbox(fmt::format("Apply centrifugal acceleration compensation##{}", size_t(id)).c_str(), &centrifugalAccCompensation))
     {
         LOG_DEBUG("{}: centrifugalAccCompensation changed to {}", nameId(), centrifugalAccCompensation);
@@ -224,7 +219,6 @@ void NAV::ImuIntegrator::guiConfig()
         LOG_DEBUG("{}: coriolisCompensation changed to {}", nameId(), coriolisCompensation);
         flow::ApplyChanges();
     }
-#endif
 
     ImGui::Separator();
     if (ImGui::Checkbox(fmt::format("Show Corrections input pins##{}", size_t(id)).c_str(), &showCorrectionsInputPin))
@@ -265,10 +259,8 @@ void NAV::ImuIntegrator::guiConfig()
     j["integrationAlgorithmPosition"] = integrationAlgorithmPosition;
     j["calculateIntermediateValues"] = calculateIntermediateValues;
     j["prefereTimeSinceStartupOverInsTime"] = prefereTimeSinceStartupOverInsTime;
-#ifndef NDEBUG
     j["centrifugalAccCompensation"] = centrifugalAccCompensation;
     j["coriolisCompensation"] = coriolisCompensation;
-#endif
     j["showCorrectionsInputPin"] = showCorrectionsInputPin;
 
     return j;
@@ -306,7 +298,6 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         prefereTimeSinceStartupOverInsTime = j.at("prefereTimeSinceStartupOverInsTime");
     }
-#ifndef NDEBUG
     if (j.contains("centrifugalAccCompensation"))
     {
         centrifugalAccCompensation = j.at("centrifugalAccCompensation");
@@ -315,7 +306,6 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         coriolisCompensation = j.at("coriolisCompensation");
     }
-#endif
     if (j.contains("showCorrectionsInputPin"))
     {
         showCorrectionsInputPin = j.at("showCorrectionsInputPin");
@@ -644,15 +634,11 @@ void NAV::ImuIntegrator::integrateObservation()
         gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
     }
 
-#ifndef NDEBUG
     if (centrifugalAccCompensation)
     {
-#endif
         LOG_DATA("{}: Applying centrifugal acceleration", nameId());
         gravity_n__t1 += gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-#ifndef NDEBUG
     }
-#endif
     LOG_DATA("{}: gravity_n__t1 = {}", nameId(), gravity_n__t1.transpose());
 
     /// g_e Gravity vector in [m/s^2], in earth coordinates
@@ -726,12 +712,8 @@ void NAV::ImuIntegrator::integrateObservation()
                                                       gravity_e__t1,
                                                       quaternion_accel_ep__t0,
                                                       quaternion_accel_ep__t1,
-                                                      quaternion_accel_ep__t2
-#ifndef NDEBUG
-                                                      ,
-                                                      !coriolisCompensation
-#endif
-            );
+                                                      quaternion_accel_ep__t2,
+                                                      !coriolisCompensation);
         }
         // TODO: Implement RungeKutta1 & RungeKutta3
         else
@@ -856,12 +838,8 @@ void NAV::ImuIntegrator::integrateObservation()
                                                       gravity_n__t1,
                                                       angularVelocity_ie_n__t1,
                                                       angularVelocity_en_n__t1,
-                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2
-#ifndef NDEBUG
-                                                      ,
-                                                      !coriolisCompensation
-#endif
-            );
+                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2,
+                                                      !coriolisCompensation);
         }
         else if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta1)
         {
@@ -881,12 +859,8 @@ void NAV::ImuIntegrator::integrateObservation()
                                                           gravity_n__t1,
                                                           angularVelocity_ie_n__t1,
                                                           angularVelocity_en_n__t1,
-                                                          quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2
-#ifndef NDEBUG
-                                                          ,
-                                                          !coriolisCompensation
-#endif
-            );
+                                                          quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2,
+                                                          !coriolisCompensation);
         }
         else
         {

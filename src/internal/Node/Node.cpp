@@ -193,7 +193,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
             const auto& linkId = watcherCallback.second;
             if (!linkId) // Trigger all output pin callbacks
             {
-                CallbackManager::registerWatcherCallbackForInvocation(watcherCallback, data);
+                CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
             }
         }
 #endif
@@ -211,11 +211,11 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
                     const auto& watcherLinkId = watcherCallback.second;
                     if (linkId == watcherLinkId)
                     {
-                        CallbackManager::registerWatcherCallbackForInvocation(watcherCallback, data);
+                        CallbackManager::queueWatcherCallbackForInvocation(watcherCallback, data);
                     }
                 }
 #endif
-                CallbackManager::registerNodeCallbackForInvocation(nodeCallback, data);
+                CallbackManager::queueNodeCallbackForInvocation(nodeCallback, data);
             }
         }
 

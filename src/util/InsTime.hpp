@@ -22,27 +22,27 @@ namespace NAV
 /// @brief Utility Namespace for Time related tasks
 namespace InsTimeUtil
 {
-constexpr int32_t END_OF_THE_CENTURY_MJD = 400000;
-constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;
-constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;
+constexpr int32_t END_OF_THE_CENTURY_MJD = 400000; ///< Modified Julian Date of the end of the century (15.01.2954)
+constexpr int32_t WEEKS_PER_GPS_CYCLE = 1024;      ///< Weeks per GPS cycle
+constexpr int32_t DIFF_TO_6_1_1980_MJD = 44244;    ///< 06.01.1980 in Modified Julian Date
 
-constexpr int32_t DIFF_MJD_TO_JD_DAYS = 2400000;
-constexpr long double DIFF_MJD_TO_JD_FRAC = 0.5L;
+constexpr int32_t DIFF_MJD_TO_JD_DAYS = 2400000;  ///< Difference of the days between MJD and JD
+constexpr long double DIFF_MJD_TO_JD_FRAC = 0.5L; ///< Difference of the fraction between MJD and JD
 
-constexpr int32_t MONTHS_PER_YEAR = 12;
-constexpr int32_t DAYS_PER_YEAR = 365;
-constexpr int32_t DAYS_PER_WEEK = 7;
-constexpr int32_t HOURS_PER_DAY = 24;
-constexpr int32_t HOURS_PER_WEEK = HOURS_PER_DAY * DAYS_PER_WEEK;
-constexpr int32_t MINUTES_PER_HOUR = 60;
-constexpr int32_t MINUTES_PER_DAY = MINUTES_PER_HOUR * HOURS_PER_DAY;
-constexpr int32_t MINUTES_PER_WEEK = MINUTES_PER_DAY * DAYS_PER_WEEK;
-constexpr int32_t SECONDS_PER_MINUTE = 60;
-constexpr int32_t SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
-constexpr int32_t SECONDS_PER_DAY = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY;
-constexpr int32_t SECONDS_PER_WEEK = SECONDS_PER_DAY * DAYS_PER_WEEK;
+constexpr int32_t MONTHS_PER_YEAR = 12;                                                    ///< Months / Year
+constexpr int32_t DAYS_PER_YEAR = 365;                                                     ///< Days / Year
+constexpr int32_t DAYS_PER_WEEK = 7;                                                       ///< Days / Week
+constexpr int32_t HOURS_PER_DAY = 24;                                                      ///< Hours / Day
+constexpr int32_t HOURS_PER_WEEK = HOURS_PER_DAY * DAYS_PER_WEEK;                          ///< Hours / Week
+constexpr int32_t MINUTES_PER_HOUR = 60;                                                   ///< Minutes / Hour
+constexpr int32_t MINUTES_PER_DAY = MINUTES_PER_HOUR * HOURS_PER_DAY;                      ///< Minutes / Day
+constexpr int32_t MINUTES_PER_WEEK = MINUTES_PER_DAY * DAYS_PER_WEEK;                      ///< Minutes / Week
+constexpr int32_t SECONDS_PER_MINUTE = 60;                                                 ///< Seconds / Minute
+constexpr int32_t SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;                ///< Seconds / Hour
+constexpr int32_t SECONDS_PER_DAY = SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY; ///< Seconds / Day
+constexpr int32_t SECONDS_PER_WEEK = SECONDS_PER_DAY * DAYS_PER_WEEK;                      ///< Seconds / Week
 
-/// Numerical precision for <long double> variables
+/// Numerical precision for 'long double' variables
 constexpr long double EPSILON = 2.0L * std::numeric_limits<long double>::epsilon();
 
 /// Maps GPS leap seconds to a time: array<mjd_day>, index + 1 is amount of leap seconds
@@ -157,33 +157,49 @@ struct InsTime_MJD
         }
     }
 
+    /// @brief Equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator==(const InsTime_MJD& rhs) const
     {
         return (mjd_day == rhs.mjd_day
                 && gcem::abs(mjd_frac - rhs.mjd_frac) <= InsTimeUtil::EPSILON);
     }
+    /// @brief Inequal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator!=(const InsTime_MJD& rhs) const
     {
-        return (mjd_day != rhs.mjd_day
-                || gcem::abs(mjd_frac - rhs.mjd_frac) > InsTimeUtil::EPSILON);
+        return !(*this == rhs);
     }
+    /// @brief Smaller or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<=(const InsTime_MJD& rhs) const
     {
         return *this < rhs || *this == rhs;
     }
+    /// @brief Greater or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>=(const InsTime_MJD& rhs) const
     {
         return *this > rhs || *this == rhs;
     }
+    /// @brief Smaller comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<(const InsTime_MJD& rhs) const
     {
         return (mjd_day < rhs.mjd_day
                 || (mjd_day == rhs.mjd_day && (mjd_frac < rhs.mjd_frac && *this != rhs)));
     }
+    /// @brief Greater comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>(const InsTime_MJD& rhs) const
     {
-        return (mjd_day > rhs.mjd_day
-                || (mjd_day == rhs.mjd_day && mjd_frac > rhs.mjd_frac && *this != rhs));
+        return !(*this <= rhs);
     }
 };
 
@@ -211,33 +227,49 @@ struct InsTime_JD
         }
     }
 
+    /// @brief Equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator==(const InsTime_JD& rhs) const
     {
         return (jd_day == rhs.jd_day
                 && gcem::abs(jd_frac - rhs.jd_frac) <= InsTimeUtil::EPSILON);
     }
+    /// @brief Inequal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator!=(const InsTime_JD& rhs) const
     {
-        return (jd_day != rhs.jd_day
-                || gcem::abs(jd_frac - rhs.jd_frac) > InsTimeUtil::EPSILON);
+        return !(*this == rhs);
     }
+    /// @brief Smaller or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<=(const InsTime_JD& rhs) const
     {
         return *this < rhs || *this == rhs;
     }
+    /// @brief Greater or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>=(const InsTime_JD& rhs) const
     {
         return *this > rhs || *this == rhs;
     }
+    /// @brief Smaller comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<(const InsTime_JD& rhs) const
     {
         return (jd_day < rhs.jd_day
                 || (jd_day == rhs.jd_day && jd_frac < rhs.jd_frac && *this != rhs));
     }
+    /// @brief Greater comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>(const InsTime_JD& rhs) const
     {
-        return (jd_day > rhs.jd_day
-                || (jd_day == rhs.jd_day && jd_frac > rhs.jd_frac && *this != rhs));
+        return !(*this <= rhs);
     }
 };
 
@@ -277,26 +309,39 @@ struct InsTime_GPSweekTow
         }
     };
 
+    /// @brief Equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator==(const InsTime_GPSweekTow& rhs) const
     {
         return (gpsCycle == rhs.gpsCycle
                 && gpsWeek == rhs.gpsWeek
                 && gcem::abs(tow - rhs.tow) <= InsTimeUtil::EPSILON);
     }
+    /// @brief Inequal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator!=(const InsTime_GPSweekTow& rhs) const
     {
-        return (gpsCycle != rhs.gpsCycle
-                || gpsWeek != rhs.gpsWeek
-                || gcem::abs(tow - rhs.tow) > InsTimeUtil::EPSILON);
+        return !(*this == rhs);
     }
+    /// @brief Smaller or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<=(const InsTime_GPSweekTow& rhs) const
     {
         return *this < rhs || *this == rhs;
     }
+    /// @brief Greater or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>=(const InsTime_GPSweekTow& rhs) const
     {
         return *this > rhs || *this == rhs;
     }
+    /// @brief Smaller comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<(const InsTime_GPSweekTow& rhs) const
     {
         return (gpsCycle < rhs.gpsCycle
@@ -306,14 +351,12 @@ struct InsTime_GPSweekTow
                     && tow < rhs.tow
                     && *this != rhs));
     }
+    /// @brief Greater comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>(const InsTime_GPSweekTow& rhs) const
     {
-        return (gpsCycle > rhs.gpsCycle
-                || gpsWeek > rhs.gpsWeek
-                || (gpsCycle == rhs.gpsCycle
-                    && gpsWeek == rhs.gpsWeek
-                    && tow > rhs.tow
-                    && *this != rhs));
+        return !(*this <= rhs);
     }
 };
 
@@ -393,6 +436,9 @@ struct InsTime_YMDHMS
         }
     }
 
+    /// @brief Equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator==(const InsTime_YMDHMS& rhs) const
     {
         return (year == rhs.year
@@ -402,43 +448,30 @@ struct InsTime_YMDHMS
                 && min == rhs.min
                 && gcem::abs(sec - rhs.sec) <= InsTimeUtil::EPSILON);
     }
+    /// @brief Inequal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator!=(const InsTime_YMDHMS& rhs) const
     {
-        return (year != rhs.year
-                || month != rhs.month
-                || day != rhs.day
-                || hour != rhs.hour
-                || min != rhs.min
-                || gcem::abs(sec - rhs.sec) > InsTimeUtil::EPSILON);
+        return !(*this == rhs);
     }
+    /// @brief Smaller or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<=(const InsTime_YMDHMS& rhs) const
     {
-        return (year < rhs.year
-                || month < rhs.month
-                || day < rhs.day
-                || hour < rhs.hour
-                || min < rhs.min
-                || (year == rhs.year
-                    && month == rhs.month
-                    && day == rhs.day
-                    && hour == rhs.hour
-                    && min == rhs.min
-                    && sec <= rhs.sec));
+        return *this < rhs || *this == rhs;
     }
+    /// @brief Greater or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>=(const InsTime_YMDHMS& rhs) const
     {
-        return (year > rhs.year
-                || month > rhs.month
-                || day > rhs.day
-                || hour > rhs.hour
-                || min > rhs.min
-                || (year == rhs.year
-                    && month == rhs.month
-                    && day == rhs.day
-                    && hour == rhs.hour
-                    && min == rhs.min
-                    && sec >= rhs.sec));
+        return *this > rhs || *this == rhs;
     }
+    /// @brief Smaller comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<(const InsTime_YMDHMS& rhs) const
     {
         return (year < rhs.year
@@ -454,20 +487,12 @@ struct InsTime_YMDHMS
                     && sec < rhs.sec
                     && *this != rhs));
     }
+    /// @brief Greater comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>(const InsTime_YMDHMS& rhs) const
     {
-        return (year > rhs.year
-                || month > rhs.month
-                || day > rhs.day
-                || hour > rhs.hour
-                || min > rhs.min
-                || (year == rhs.year
-                    && month == rhs.month
-                    && day == rhs.day
-                    && hour == rhs.hour
-                    && min == rhs.min
-                    && sec > rhs.sec
-                    && *this != rhs));
+        return !(*this <= rhs);
     }
 };
 
@@ -508,26 +533,39 @@ struct InsTime_YDoySod
         }
     }
 
+    /// @brief Equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator==(const InsTime_YDoySod& rhs) const
     {
         return (year == rhs.year
                 && doy == rhs.doy
                 && gcem::abs(sod - rhs.sod) <= InsTimeUtil::EPSILON);
     }
+    /// @brief Inequal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator!=(const InsTime_YDoySod& rhs) const
     {
-        return (year != rhs.year
-                || doy != rhs.doy
-                || gcem::abs(sod - rhs.sod) > InsTimeUtil::EPSILON);
+        return !(*this == rhs);
     }
+    /// @brief Smaller or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<=(const InsTime_YDoySod& rhs) const
     {
         return *this < rhs || *this == rhs;
     }
+    /// @brief Greater or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>=(const InsTime_YDoySod& rhs) const
     {
         return *this > rhs || *this == rhs;
     }
+    /// @brief Smaller comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<(const InsTime_YDoySod& rhs) const
     {
         return (year < rhs.year
@@ -537,14 +575,12 @@ struct InsTime_YDoySod
                     && sod < rhs.sod
                     && *this != rhs));
     }
+    /// @brief Greater comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator>(const InsTime_YDoySod& rhs) const
     {
-        return (year > rhs.year
-                || doy > rhs.doy
-                || (year == rhs.year
-                    && doy == rhs.doy
-                    && sod > rhs.sod
-                    && *this != rhs));
+        return !(*this <= rhs);
     }
 };
 
@@ -833,6 +869,14 @@ class InsTime
     }
 
     // TODO: Remove with std::upper_bound, as soon as C++20 gets releases
+
+    /// @brief Returns an iterator pointing to the first element in the range [first, last) that is greater than value, or last if no such element is found.
+    /// @tparam ForwardIt Iterator of the type of the elements
+    /// @tparam T Type of the elements
+    /// @param[in] first Iterator to the first element to search
+    /// @param[in] last Iterator to the last element to search
+    /// @param[in] value Value to search for
+    /// @return Iterator pointing to the first element in the range [first, last) that is greater than value, or last if no such element is found.
     template<class ForwardIt, class T>
     static constexpr ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T& value)
     {
@@ -877,12 +921,30 @@ class InsTime
 
     /* --------------------- Comparison operator overloading -------------------- */
 
+    /// @brief Equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator==(const InsTime& rhs) const { return mjd == rhs.mjd; }
-    constexpr bool operator!=(const InsTime& rhs) const { return mjd != rhs.mjd; }
-    constexpr bool operator<=(const InsTime& rhs) const { return mjd <= rhs.mjd; }
-    constexpr bool operator>=(const InsTime& rhs) const { return mjd >= rhs.mjd; }
+    /// @brief Inequal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
+    constexpr bool operator!=(const InsTime& rhs) const { return !(*this == rhs); }
+    /// @brief Smaller or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
+    constexpr bool operator<=(const InsTime& rhs) const { return *this < rhs || *this == rhs; }
+    /// @brief Greater or equal comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
+    constexpr bool operator>=(const InsTime& rhs) const { return *this > rhs || *this == rhs; }
+    /// @brief Smaller comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
     constexpr bool operator<(const InsTime& rhs) const { return mjd < rhs.mjd; }
-    constexpr bool operator>(const InsTime& rhs) const { return mjd > rhs.mjd; }
+    /// @brief Greater comparison operator (takes double precision into account)
+    /// @param[in] rhs Right-hand side to compare with
+    /// @return Comparison result
+    constexpr bool operator>(const InsTime& rhs) const { return !(*this <= rhs); }
 
     /* --------------------- Arithmetic operator overloading -------------------- */
 
@@ -948,7 +1010,7 @@ class InsTime
 
     /// @brief Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time
     /// (Changes time, so that it corresponds to the time of GLONASS ORBIT last element)
-    /// @param[in] UTC_sec
+    /// @param[in] UTC_sec Seconds in UTC time
     void MakeTimeFromGloOrbit(double UTC_sec)
     {
         auto ymdhms = toYMDHMS();
@@ -976,14 +1038,39 @@ class InsTime
     static std::string MakeStringFromTimeSys(InsTime::TIME_SYSTEM sys);
 
   private:
+    /// @brief Modified Julien Date of this InsTime object
     InsTime_MJD mjd{};
 };
 
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] mjd Object to print
+/// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const InsTime_MJD& mjd);
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] jd Object to print
+/// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const InsTime_JD& jd);
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] gpsWeekTow Object to print
+/// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const InsTime_GPSweekTow& gpsWeekTow);
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] ymdhms Object to print
+/// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const InsTime_YMDHMS& ymdhms);
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] yDoySod Object to print
+/// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const InsTime_YDoySod& yDoySod);
+/// @brief Stream insertion operator overload
+/// @param[in, out] os Output stream object to stream the time into
+/// @param[in] insTime Object to print
+/// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const InsTime& insTime);
 
 } // namespace NAV

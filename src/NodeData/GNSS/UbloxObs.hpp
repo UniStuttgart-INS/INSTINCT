@@ -67,12 +67,6 @@ class UbloxObs : public InsObs
     std::variant<
         // ACK: Ack/Nak Messages: Acknowledge or Reject messages to UBX-CFG input messages
         sensors::ublox::UbxAckAck, sensors::ublox::UbxAckNak,
-        // AID: AssistNow Aiding Messages: Ephemeris, Almanac, other A-GPS data input
-        sensors::ublox::UbxAidAlm, sensors::ublox::UbxAidAlmSV, sensors::ublox::UbxAidAlmIO,
-        sensors::ublox::UbxAidAop, sensors::ublox::UbxAidAopSV, sensors::ublox::UbxAidAopIO,
-        sensors::ublox::UbxAidEph, sensors::ublox::UbxAidEphSV, sensors::ublox::UbxAidEphIO,
-        sensors::ublox::UbxAidHui, sensors::ublox::UbxAidHuiIO,
-        sensors::ublox::UbxAidIni, sensors::ublox::UbxAidIniIO,
         // CFG: Configuration Input Messages: Configure the receiver
         // ESF: External Sensor Fusion Messages: External Sensor Measurements and Status Information
         sensors::ublox::UbxEsfIns,

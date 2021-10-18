@@ -13,6 +13,7 @@
 
 namespace NAV
 {
+/// @brief Delays messages by buffering them
 class Delay : public Node
 {
   public:

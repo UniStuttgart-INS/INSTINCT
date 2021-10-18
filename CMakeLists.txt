@@ -7,10 +7,10 @@ extract_project_version()
 # Set the project name, version and language
 project(
   "INSTINCT"
-  VERSION ${PROJECT_VERSION}
+  VERSION ${INSTINCT_PROJECT_VERSION}
   LANGUAGES CXX)
 string(TOLOWER ${CMAKE_PROJECT_NAME} PROJECT_NAME_LOWERCASE)
-message(STATUS "${CMAKE_PROJECT_NAME}: ${PROJECT_VERSION}")
+message(STATUS "${CMAKE_PROJECT_NAME}: ${INSTINCT_PROJECT_VERSION}")
 
 # ######################################################################################################################
 
@@ -69,10 +69,6 @@ set_project_warnings(project_warnings)
 # sanitizer options if supported by compiler
 include(cmake/Sanitizers.cmake)
 enable_sanitizers(project_options)
-
-# enable doxygen
-include(cmake/Doxygen.cmake)
-enable_doxygen()
 
 # allow for static analysis options
 include(cmake/StaticAnalyzers.cmake)
@@ -228,7 +224,12 @@ else()
   set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release)
 endif()
 
+set(INSTINCT_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+set(INSTINCT_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+
 add_subdirectory(src)
+
+add_subdirectory(doc)
 
 if(ENABLE_TESTING)
   enable_testing()

@@ -86,6 +86,14 @@ clang-tidy:tests:
     - cmake --build build/Debug --target copy-compile-commands
     - python3 ./tools/run-clang-tidy.py $PWD/test
 
+documentation:
+  stage: checks
+  tags:
+    - linux
+  script:
+    - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
+    - cmake --build build/Release --target doc
+
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                         Build Main & GUI                                         ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝

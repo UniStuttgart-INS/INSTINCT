@@ -110,6 +110,7 @@ namespace NAV
 /// @param[in] quaternion_ep__t0 q (tₖ) Quaternion, from platform to earth coordinates, at the time tₖ
 /// @param[in] quaternion_ep__t1 q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
 /// @param[in] quaternion_ep__t2 q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
+/// @param[in] suppressCoriolis If true, don't calculate the coriolis force
 /// @return The updated velocity v_e
 ///
 /// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.2.4.1.2)
@@ -123,12 +124,8 @@ namespace NAV
                                                        const Eigen::Vector3d& gravity_e,
                                                        const Eigen::Quaterniond& quaternion_ep__t0,
                                                        const Eigen::Quaterniond& quaternion_ep__t1,
-                                                       const Eigen::Quaterniond& quaternion_ep__t2
-#ifndef NDEBUG
-                                                       ,
-                                                       bool suppressCoriolis
-#endif
-);
+                                                       const Eigen::Quaterniond& quaternion_ep__t2,
+                                                       bool suppressCoriolis);
 
 /// @brief Integrates the accelerations and calculates the new velocity v_n with Simpson rule
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
@@ -143,6 +140,7 @@ namespace NAV
 /// @param[in] quaternion_nb__t0 q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
 /// @param[in] quaternion_nb__t1 q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
 /// @param[in] quaternion_nb__t2 q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
+/// @param[in] suppressCoriolis If true, don't calculate the coriolis force
 /// @return The updated velocity v_n
 ///
 /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2)
@@ -157,12 +155,8 @@ namespace NAV
                                                        const Eigen::Vector3d& angularVelocity_en_n__t1,
                                                        const Eigen::Quaterniond& quaternion_nb__t0,
                                                        const Eigen::Quaterniond& quaternion_nb__t1,
-                                                       const Eigen::Quaterniond& quaternion_nb__t2
-#ifndef NDEBUG
-                                                       ,
-                                                       bool suppressCoriolis
-#endif
-);
+                                                       const Eigen::Quaterniond& quaternion_nb__t2,
+                                                       bool suppressCoriolis);
 
 /// @brief Integrates the accelerations and calculates the new velocity v_n with Runge Kutta of 3rd Order
 /// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
@@ -176,6 +170,7 @@ namespace NAV
 /// @param[in] quaternion_nb__t0 q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
 /// @param[in] quaternion_nb__t1 q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
 /// @param[in] quaternion_nb__t2 q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
+/// @param[in] suppressCoriolis If true, don't calculate the coriolis force
 /// @return The updated velocity v_n
 ///
 /// @note Prefer using Simpson for the velocity update as yields same result but computational more efficient (Jekeli (2001) - Chapter 4.3.6)
@@ -190,12 +185,8 @@ namespace NAV
                                                            const Eigen::Vector3d& angularVelocity_en_n__t1,
                                                            const Eigen::Quaterniond& quaternion_nb__t0,
                                                            const Eigen::Quaterniond& quaternion_nb__t1,
-                                                           const Eigen::Quaterniond& quaternion_nb__t2
-#ifndef NDEBUG
-                                                           ,
-                                                           bool suppressCoriolis
-#endif
-);
+                                                           const Eigen::Quaterniond& quaternion_nb__t2,
+                                                           bool suppressCoriolis);
 
 // ###########################################################################################################
 //                                              Position Update

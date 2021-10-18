@@ -42,7 +42,7 @@ uint64_t factorial(uint64_t n);
 
 /// @brief Calculates the skew symmetric matrix of the given vector.
 ///        This is needed to perform the cross product with a scalar product operation
-/// @tparam _System The coordinate system
+/// @tparam _Scalar Data type of the Matrix
 /// @param[in] a The vector
 /// @return Skew symmetric matrix
 /// @note See Groves (2013) equation (2.50)

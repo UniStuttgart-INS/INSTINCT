@@ -6,34 +6,34 @@
 #pragma once
 
 // Available log levels
-#define LOG_LEVEL_DATA 0
-#define LOG_LEVEL_TRACE 1
-#define LOG_LEVEL_DEBUG 2
-#define LOG_LEVEL_INFO 3
-#define LOG_LEVEL_WARN 4
-#define LOG_LEVEL_ERROR 5
-#define LOG_LEVEL_CRITICAL 6
-#define LOG_LEVEL_OFF 7
+#define LOG_LEVEL_DATA 0     ///< All output which occurs repeatedly every time observations are received
+#define LOG_LEVEL_TRACE 1    ///< Detailled info to trace the execution of the program. Should not be called on functions which receive observations (spamming)
+#define LOG_LEVEL_DEBUG 2    ///< All output needed to debug functions. Should not be called on functions which receive observations (spamming)
+#define LOG_LEVEL_INFO 3     ///< All output informing the user about normal operation.
+#define LOG_LEVEL_WARN 4     ///< All output informing the user about abnormal operation, but the code can still function or can switch to a fallback option.
+#define LOG_LEVEL_ERROR 5    ///< All output informing the user about abnormal operation, which results in the code not working anymore
+#define LOG_LEVEL_CRITICAL 6 ///< A critical event occurred which results in termination of the program
+#define LOG_LEVEL_OFF 7      ///< Logging turned off
 
 // Active log level (passed as definition to cmake)
 #if LOG_LEVEL == LOG_LEVEL_DATA
-    /// Data Logging Macro
+    /// All output which occurs repeatedly every time observations are received
     #define LOG_DATA SPDLOG_TRACE
-    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE ///< Set the active SPDLOG level
 #elif LOG_LEVEL == LOG_LEVEL_TRACE
-    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE ///< Set the active SPDLOG level
 #elif LOG_LEVEL == LOG_LEVEL_DEBUG
-    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG ///< Set the active SPDLOG level
 #elif LOG_LEVEL == LOG_LEVEL_INFO
-    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO ///< Set the active SPDLOG level
 #elif LOG_LEVEL == LOG_LEVEL_WARN
-    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_WARN
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_WARN ///< Set the active SPDLOG level
 #elif LOG_LEVEL == LOG_LEVEL_ERROR
-    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_ERROR
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_ERROR ///< Set the active SPDLOG level
 #elif LOG_LEVEL == LOG_LEVEL_CRITICAL
-    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_CRITICAL
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_CRITICAL ///< Set the active SPDLOG level
 #elif LOG_LEVEL == LOG_LEVEL_OFF
-    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF
+    #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_OFF ///< Set the active SPDLOG level
 #endif
 
 /// External usage of FMT, as the internal one is missing some files
@@ -48,12 +48,12 @@
 // Macros are redefined in case SPDLOG is not available anymore and it needs to be switched to another Logger
 
 #ifndef LOG_DATA
-    /// Data Logging Macro
+    /// All output which occurs repeatedly every time observations are received
     #define LOG_DATA(...) (void)0
 #endif
-/// Detailled info to trace the execution of the program
+/// Detailled info to trace the execution of the program. Should not be called on functions which receive observations (spamming)
 #define LOG_TRACE SPDLOG_TRACE
-/// Debug information
+/// Debug information. Should not be called on functions which receive observations (spamming)
 #define LOG_DEBUG SPDLOG_DEBUG
 /// Info to the user on the state of the program
 #define LOG_INFO SPDLOG_INFO
