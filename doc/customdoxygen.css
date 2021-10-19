@@ -1,3 +1,44 @@
+/**** Table of content in the side-nav ****/
+
+div.toc {
+    margin:0;
+    padding: 0.3em 0 0 0;
+    width:100%;
+    float:none;
+    position:absolute;
+    bottom:0;
+    border-radius:0px;
+    border-style: solid none none none;
+    max-height:50%;
+    overflow-y: scroll;
+  }
+
+  div.toc h3 {
+    margin-left: 0.5em;
+    margin-bottom: 0.2em;
+  }
+
+  div.toc ul {
+    margin: 0.2em 0 0.4em 0.5em;
+  }
+
+  span.cpp11,span.cpp14,span.cpp17 {
+    color: #119911;
+    font-weight: bold;
+  }
+
+  .newin3x {
+    color: #a37c1a;
+    font-weight: bold;
+  }
+
+  div.warningbox {
+    max-width:60em;
+    border-style: solid solid solid solid;
+    border-color: red;
+    border-width: 3px;
+  }
+
 /* The standard CSS for doxygen 1.9.2 */
 
 body, table, div, p, dl {
