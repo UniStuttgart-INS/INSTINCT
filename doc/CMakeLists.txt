@@ -73,11 +73,17 @@ if(ENABLE_DOXYGEN)
       ${CMAKE_CURRENT_SOURCE_DIR}/footer.html
       ${CMAKE_CURRENT_BINARY_DIR}/footer.html
     )
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/customdoxygen.css
+      ${CMAKE_CURRENT_BINARY_DIR}/customdoxygen.css
+    )
 
     add_custom_target(
         doc-prerequisites
         ALL
         COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTINCT_BINARY_DIR}/doc/html/
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/eigen_navtree_hacks.js           ${INSTINCT_BINARY_DIR}/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/ftv2pnode.png                    ${INSTINCT_BINARY_DIR}/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
 
