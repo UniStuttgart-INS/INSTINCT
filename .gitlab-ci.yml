@@ -287,11 +287,11 @@ coverage:
   needs: ["run-tests:gcc"]
   script:
     - mkdir -p coverage
-    - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
-    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' --output-file coverage/coverage.info
-    - genhtml coverage/coverage.info --output-directory coverage
-    - lcov --list coverage/coverage.info
-    - python3 tools/lcov_cobertura.py coverage/coverage.info --output coverage/cobertura-coverage.xml
+    - lcov --gcov-tool gcov --capture --no-external --directory . --output-file bin/doc/html/coverage/coverage_all.info
+    - lcov --remove bin/doc/html/coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' --output-file bin/doc/html/coverage/coverage.info
+    - genhtml bin/doc/html/coverage/coverage.info --output-directory bin/doc/html/coverage --config-file doc/coverage/lcovrc
+    - lcov --list bin/doc/html/coverage/coverage.info
+    - python3 tools/lcov_cobertura.py bin/doc/html/coverage/coverage.info --output bin/cobertura-coverage.xml
   coverage: '/Total:\| ?(\d+\.?\d+\%)/'
   artifacts:
     paths:
@@ -304,24 +304,25 @@ coverage:
 # ║                                              Deploy                                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
-.pages:
+pages:
   extends: .schedule
   stage: deploy
   tags:
     - linux
   needs: ["doxygen", "coverage"]
   script:
-    - mv doc/html/ public/
-    - mv coverage/ public/coverage/
+    - mv bin/doc/html/ public/
+    - mv bin/doc/html/coverage/ public/coverage/
+    - rm -f public/coverage/coverage_all.info public/coverage/coverage.info
   artifacts:
     name: "Documentation & Coverage Report"
     paths:
       - public
     expire_in: 2h
     reports:
-      cobertura: public/coverage/cobertura-coverage.xml
-  except:
-    - /^(?!master).+@/
+      cobertura: bin/cobertura-coverage.xml
+  # except:
+  #   - /^(?!master).+@/
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                           Ubuntu 20.04                                           ║
