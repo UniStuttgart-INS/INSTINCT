@@ -273,7 +273,7 @@ doxygen:
   needs: ["check-image"]
   script:
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DWARNINGS_AS_ERRORS=OFF -DENABLE_CPPCHECK=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF
-    - cmake --build build/Release --target doxygen-docs -- -j2
+    - cmake --build build/Release --target doc
   artifacts:
     paths:
       - bin/doc/html/
@@ -298,6 +298,7 @@ coverage:
   artifacts:
     paths:
       - coverage
+      - bin/cobertura-coverage.xml
     expire_in: 2h
   # only:
   #   - master

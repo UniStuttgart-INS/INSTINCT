@@ -325,8 +325,6 @@
                 "build/Release",
                 "--target",
                 "doc",
-                "--",
-                "-j",
             ],
             "dependsOn": [
                 "CMAKE: Documentation",
