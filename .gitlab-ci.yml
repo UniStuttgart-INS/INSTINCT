@@ -286,7 +286,7 @@ coverage:
     - linux
   needs: ["run-tests:gcc"]
   script:
-    - mkdir -p coverage
+    - mkdir -p bin/doc/html/coverage
     - lcov --gcov-tool gcov --capture --no-external --directory . --output-file bin/doc/html/coverage/coverage_all.info
     - lcov --remove bin/doc/html/coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' --output-file bin/doc/html/coverage/coverage.info
     - genhtml bin/doc/html/coverage/coverage.info --output-directory bin/doc/html/coverage --config-file doc/coverage/lcovrc
