@@ -267,7 +267,6 @@ run-tests:win:
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 doxygen:
-  extends: .schedule
   stage: analyze
   tags:
     - linux
@@ -277,8 +276,10 @@ doxygen:
     - cmake --build build/Release --target doxygen-docs -- -j2
   artifacts:
     paths:
-      - doc/html
+      - bin/doc/html/
     expire_in: 2h
+  # only:
+  #   - master
 
 coverage:
   stage: analyze
@@ -286,12 +287,13 @@ coverage:
     - linux
   needs: ["run-tests:gcc"]
   script:
-    - mkdir -p bin/doc/html/coverage
-    - lcov --gcov-tool gcov --capture --no-external --directory . --output-file bin/doc/html/coverage/coverage_all.info
-    - lcov --remove bin/doc/html/coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' --output-file bin/doc/html/coverage/coverage.info
-    - genhtml bin/doc/html/coverage/coverage.info --output-directory bin/doc/html/coverage --config-file doc/coverage/lcovrc
-    - lcov --list bin/doc/html/coverage/coverage.info
-    - python3 tools/lcov_cobertura.py bin/doc/html/coverage/coverage.info --output bin/cobertura-coverage.xml
+    - mkdir -p coverage
+    - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
+    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' --output-file coverage/coverage.info
+    - genhtml coverage/coverage.info --output-directory coverage --config-file doc/coverage/lcovrc
+    - lcov --list coverage/coverage.info
+    - python3 tools/lcov_cobertura.py coverage/coverage.info --output bin/cobertura-coverage.xml
+    - rm -f coverage/coverage_all.info coverage/coverage.info
   coverage: '/Total:\| ?(\d+\.?\d+\%)/'
   artifacts:
     paths:
@@ -305,15 +307,14 @@ coverage:
 # ╚══════════════════════════════════════════════════════════════════════════════════════════════════╝
 
 pages:
-  extends: .schedule
+  # extends: .schedule
   stage: deploy
   tags:
     - linux
   needs: ["doxygen", "coverage"]
   script:
     - mv bin/doc/html/ public/
-    - mv bin/doc/html/coverage/ public/coverage/
-    - rm -f public/coverage/coverage_all.info public/coverage/coverage.info
+    - mv coverage/ public/coverage/
   artifacts:
     name: "Documentation & Coverage Report"
     paths:
