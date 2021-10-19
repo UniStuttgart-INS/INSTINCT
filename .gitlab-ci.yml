@@ -278,8 +278,8 @@ doxygen:
     paths:
       - bin/doc/html/
     expire_in: 2h
-  # only:
-  #   - master
+  only:
+    - master
 
 coverage:
   stage: analyze
@@ -300,8 +300,8 @@ coverage:
       - coverage
       - bin/cobertura-coverage.xml
     expire_in: 2h
-  # only:
-  #   - master
+  only:
+    - master
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                              Deploy                                              ║
@@ -323,6 +323,8 @@ pages:
     expire_in: 2h
     reports:
       cobertura: bin/cobertura-coverage.xml
+  only:
+    - master
   # except:
   #   - /^(?!master).+@/
 
