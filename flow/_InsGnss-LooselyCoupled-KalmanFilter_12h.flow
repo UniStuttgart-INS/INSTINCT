@@ -2636,6 +2636,8 @@
         "node-503": {
             "data": {
                 "calculateIntermediateValues": true,
+                "centrifugalAccCompensation": true,
+                "coriolisCompensation": true,
                 "gravityModel": 3,
                 "integrationAlgorithmAttitude": 2,
                 "integrationAlgorithmPosition": 0,
@@ -5168,7 +5170,7 @@
                         ],
                         "size": {
                             "x": -1.0,
-                            "y": 300.0
+                            "y": 501.0
                         },
                         "title": "Position",
                         "xAxisLabel": "",
@@ -5255,7 +5257,7 @@
                         "y3AxisLabel": ""
                     },
                     {
-                        "autoLimitXaxis": false,
+                        "autoLimitXaxis": true,
                         "autoLimitYaxis": true,
                         "headerText": "Flight Angles",
                         "leftPaneWidth": 180.0,
@@ -15576,7 +15578,7 @@
                     },
                     {
                         "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
+                        "autoLimitYaxis": false,
                         "headerText": "Velocity error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -15619,7 +15621,7 @@
                     },
                     {
                         "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
+                        "autoLimitYaxis": false,
                         "headerText": "Flight Angles error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -16049,6 +16051,8 @@
         "node-812": {
             "data": {
                 "calculateIntermediateValues": false,
+                "centrifugalAccCompensation": true,
+                "coriolisCompensation": true,
                 "gravityModel": 3,
                 "integrationAlgorithmAttitude": 3,
                 "integrationAlgorithmPosition": 0,
