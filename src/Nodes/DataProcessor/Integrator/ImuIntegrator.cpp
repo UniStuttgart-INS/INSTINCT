@@ -876,7 +876,7 @@ void NAV::ImuIntegrator::integrateObservation()
         {
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
         }
-        LOG_DATA("{}: position_n__t0 = {}", nameId(), position_n__t0.transpose());
+        LOG_DATA("{}: latLonAlt__t0 = {}", nameId(), latLonAlt__t0.transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                               Store Results                                              */
