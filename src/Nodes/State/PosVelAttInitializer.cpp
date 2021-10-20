@@ -26,7 +26,7 @@ NAV::PosVelAttInitializer::PosVelAttInitializer()
     guiConfigDefaultWindowSize = { 345, 342 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &PosVelAttInitializer::receiveImuObs);
-    nm::CreateInputPin(this, "GnssObs", Pin::Type::Flow, { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type() }, &PosVelAttInitializer::receiveGnssObs);
+    nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::UbloxObs::type(), NAV::RtklibPosObs::type(), NAV::PosVelAtt::type() }, &PosVelAttInitializer::receiveGnssObs);
 
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
