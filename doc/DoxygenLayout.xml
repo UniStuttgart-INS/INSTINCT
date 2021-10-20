@@ -3,10 +3,10 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="user" url="index.html" title="Overview" />
-    <tab type="user" url="@ref GettingStarted" title="Getting started" />
-    <tab type="modules" visible="yes" title="Chapters" intro=""/>
-    <tab type="mainpage" visible="yes" title=""/>
+    <!-- <tab type="user" url="@ref GettingStarted" title="Getting started" /> -->
     <tab type="pages" visible="yes" title="" intro=""/>
+    <tab type="modules" visible="yes" title="Nodes" intro=""/>
+    <tab type="mainpage" visible="yes" title=""/>
     <tab type="classlist" visible="yes" title="" intro=""/>
     <tab type="user" visible="yes" url="coverage/index.html" title="Coverage Report"/>
   </navindex>
