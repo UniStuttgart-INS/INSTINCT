@@ -25,7 +25,7 @@ TEST_CASE("[PosVelAtt] Reference Functions", "[PosVelAtt]")
 
     Eigen::Vector3d latLonAlt = Eigen::Vector3d(trafo::deg2rad(5), trafo::deg2rad(6), 7);
     auto pos_e = trafo::lla2ecef_WGS84(latLonAlt);
-    state.setPosition_e(pos_e, latLonAlt);
+    state.setPosition_e(pos_e);
 
     CHECK(state.position_ecef() == pos_e);
     CHECK(state.latLonAlt() == trafo::ecef2lla_WGS84(pos_e));
@@ -34,7 +34,7 @@ TEST_CASE("[PosVelAtt] Reference Functions", "[PosVelAtt]")
     CHECK(state.altitude() == trafo::ecef2lla_WGS84(pos_e)(2));
 
     // Supposed to do nothing, as we overwrite temporary variable
-    state.setPosition_lla(latLonAlt, latLonAlt);
+    state.setPosition_lla(latLonAlt);
 
     CHECK(state.latLonAlt() == latLonAlt);
     CHECK(state.latitude() == latLonAlt(0));
