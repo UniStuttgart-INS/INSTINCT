@@ -863,6 +863,8 @@ bool NAV::Plot::initialize()
     LOG_TRACE("{}: called", nameId());
 
     startValue_Time = std::nan("");
+    startValue_North = std::nan("");
+    startValue_East = std::nan("");
 
     for (auto& pinData : data)
     {
