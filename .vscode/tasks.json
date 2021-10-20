@@ -416,7 +416,7 @@
             "command": "bash",
             "args": [
                 "-c",
-                "mkdir -p $COVERAGE_PATH && lcov --gcov-tool gcov --capture --no-external --directory . --output-file $COVERAGE_PATH/coverage_all.info && lcov --remove $COVERAGE_PATH/coverage_all.info \"${workspaceFolder}/lib/*\" \"${workspaceFolder}/test/*\" --output-file $COVERAGE_PATH/coverage.info && genhtml $COVERAGE_PATH/coverage.info --output-directory $COVERAGE_PATH --config-file doc/coverage/lcovrc && lcov --list $COVERAGE_PATH/coverage.info && python3 tools/lcov_cobertura.py $COVERAGE_PATH/coverage.info --output $COVERAGE_PATH/cobertura-coverage.xml",
+                "mkdir -p $COVERAGE_PATH && lcov --gcov-tool gcov --capture --no-external --directory . --output-file $COVERAGE_PATH/coverage_all.info && lcov --remove $COVERAGE_PATH/coverage_all.info \"${workspaceFolder}/lib/*\" \"${workspaceFolder}/test/*\" \"${workspaceFolder}/build/*\" --output-file $COVERAGE_PATH/coverage.info && genhtml $COVERAGE_PATH/coverage.info --output-directory $COVERAGE_PATH --config-file doc/coverage/lcovrc && lcov --list $COVERAGE_PATH/coverage.info && python3 tools/lcov_cobertura.py $COVERAGE_PATH/coverage.info --output $COVERAGE_PATH/cobertura-coverage.xml",
             ],
             "options": {
                 "env": {

@@ -289,7 +289,7 @@ coverage:
   script:
     - mkdir -p coverage
     - lcov --gcov-tool gcov --capture --no-external --directory . --output-file coverage/coverage_all.info
-    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' --output-file coverage/coverage.info
+    - lcov --remove coverage/coverage_all.info $(pwd)'/lib/*' $(pwd)'/test/*' $(pwd)'/build/*' --output-file coverage/coverage.info
     - genhtml coverage/coverage.info --output-directory coverage --config-file doc/coverage/lcovrc
     - lcov --list coverage/coverage.info
     - python3 tools/lcov_cobertura.py coverage/coverage.info --output bin/cobertura-coverage.xml
