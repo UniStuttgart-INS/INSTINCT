@@ -73,8 +73,6 @@ class Transformation : public Node
         Quat_nb_2_RollPitchYawDeg,
         RollPitchYawRad_2_Quat_nb,
         RollPitchYawDeg_2_Quat_nb,
-        ECEF_2_NED,
-        NED_2_ECEF,
         // CONJUGATE,
         // TRANSPOSE,
     };
@@ -101,10 +99,6 @@ class Transformation : public Node
 
     /// Algorithm to use
     Type selectedTransformation = Type::ECEF_2_LLArad;
-
-    /// Reference point [𝜙 latitude, λ longitude, altitude]^T in [rad, rad, m]
-    /// which represents the origin of the local frame for the ECEF <=> NED conversion
-    Eigen::Vector3d latLonAlt_ref = Eigen::Vector3d::Zero();
 };
 
 } // namespace NAV

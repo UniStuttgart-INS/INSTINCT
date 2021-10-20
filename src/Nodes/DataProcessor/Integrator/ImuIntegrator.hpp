@@ -103,9 +103,6 @@ class ImuIntegrator : public Node
     /// @brief Maximum amount of states to keep
     size_t maxSizeStates = 0;
 
-    /// Position, Velocity and Attitude at initialization (needed to transform the ECEF position into NED)
-    std::shared_ptr<const PosVelAtt> posVelAtt__init = nullptr;
-
     /// Time at initialization (needed to set time tag when TimeSinceStartup is used)
     InsTime time__init;
     /// TimeSinceStartup at initialization (needed to set time tag when TimeSinceStartup is used)

@@ -349,11 +349,11 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     {
         if (p_ecef.has_value())
         {
-            posVelAttObs->setPosition_e(p_ecef.value(), posVelAtt__init ? posVelAtt__init->position_n_ref_lla() : trafo::ecef2lla_WGS84(p_ecef.value()));
+            posVelAttObs->setPosition_e(p_ecef.value());
         }
         else
         {
-            posVelAttObs->setPosition_lla(p_lla.value(), posVelAtt__init ? posVelAtt__init->position_n_ref_lla() : p_lla.value());
+            posVelAttObs->setPosition_lla(p_lla.value());
         }
         posVelAttObs->setVelocity_n(v_n.value());
 
@@ -373,7 +373,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
 
         if (forceStatic)
         {
-            posVelAttObs->setPosition_e(posVelAtt__init->position_ecef(), posVelAtt__init->position_n_ref_lla());
+            posVelAttObs->setPosition_e(posVelAtt__init->position_ecef());
             posVelAttObs->setVelocity_n(Eigen::Vector3d::Zero());
             posVelAttObs->setAttitude_nb(posVelAtt__init->quaternion_nb());
         }

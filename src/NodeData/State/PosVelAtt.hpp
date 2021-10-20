@@ -132,12 +132,6 @@ class PosVelAtt : public InsObs
     /// Returns the ECEF coordinates in [m]
     [[nodiscard]] const Eigen::Vector3d& position_ecef() const { return p_ecef; }
 
-    /// Returns the local coordinates [m]
-    [[nodiscard]] const Eigen::Vector3d& position_n() const { return p_n; }
-
-    /// Returns the reference position in LatLon Alt for the local coordinates [rad, rad, m]
-    [[nodiscard]] const Eigen::Vector3d& position_n_ref_lla() const { return p_n_ref_lla; }
-
     /* -------------------------------------------------------------------------------------------------------- */
     /*                                                 Velocity                                                 */
     /* -------------------------------------------------------------------------------------------------------- */
@@ -154,37 +148,18 @@ class PosVelAtt : public InsObs
 
     /// @brief Set the Position in ecef coordinates
     /// @param[in] pos_ecef New Position in ECEF coordinates
-    /// @param[in] pos_n_ref_lla Reference position for the local n System
-    void setPosition_e(const Eigen::Vector3d& pos_ecef, const Eigen::Vector3d& pos_n_ref_lla)
+    void setPosition_e(const Eigen::Vector3d& pos_ecef)
     {
         p_ecef = pos_ecef;
         p_lla = trafo::ecef2lla_WGS84(pos_ecef);
-
-        p_n = trafo::ecef2ned(pos_ecef, pos_n_ref_lla);
-        p_n_ref_lla = pos_n_ref_lla;
     }
+
     /// @brief Set the Position lla object
     /// @param[in] pos_lla New Position in LatLonAlt coordinates
-    /// @param[in] pos_n_ref_lla Reference position for the local n System
-    void setPosition_lla(const Eigen::Vector3d& pos_lla, const Eigen::Vector3d& pos_n_ref_lla)
+    void setPosition_lla(const Eigen::Vector3d& pos_lla)
     {
         p_ecef = trafo::lla2ecef_WGS84(pos_lla);
         p_lla = pos_lla;
-
-        p_n = trafo::ecef2ned(p_ecef, pos_n_ref_lla);
-        p_n_ref_lla = pos_n_ref_lla;
-    }
-
-    /// @brief Set the Position in local coordinates
-    /// @param[in] pos_n New Position in local NED coordinates
-    /// @param[in] pos_n_ref_lla Reference position for the local n System
-    void setPosition_n(const Eigen::Vector3d& pos_n, const Eigen::Vector3d& pos_n_ref_lla)
-    {
-        p_ecef = trafo::ned2ecef(pos_n, pos_n_ref_lla);
-        p_lla = trafo::ecef2lla_WGS84(p_ecef);
-
-        p_n = pos_n;
-        p_n_ref_lla = pos_n_ref_lla;
     }
 
     /// @brief Set the Velocity in the earth frame
@@ -223,22 +198,20 @@ class PosVelAtt : public InsObs
     /// @param[in] pos_ecef New Position in ECEF coordinates
     /// @param[in] vel_e The new velocity in the earth frame
     /// @param[in] quat_eb Quaternion from body to earth frame
-    /// @param[in] pos_n_ref_lla Reference position for the local n System
-    void setState_e(const Eigen::Vector3d& pos_ecef, const Eigen::Vector3d& vel_e, const Eigen::Quaterniond& quat_eb, const Eigen::Vector3d& pos_n_ref_lla)
+    void setState_e(const Eigen::Vector3d& pos_ecef, const Eigen::Vector3d& vel_e, const Eigen::Quaterniond& quat_eb)
     {
-        setPosition_e(pos_ecef, pos_n_ref_lla);
+        setPosition_e(pos_ecef);
         setVelocity_e(vel_e);
         setAttitude_eb(quat_eb);
     }
 
     /// @brief Set the State
-    /// @param[in] pos_n New Position in local NED coordinates
+    /// @param[in] pos_lla New Position in LatLonAlt coordinates
     /// @param[in] vel_n The new velocity in the NED frame
     /// @param[in] quat_nb Quaternion from body to navigation frame
-    /// @param[in] pos_n_ref_lla Reference position for the local n System
-    void setState_n(const Eigen::Vector3d& pos_n, const Eigen::Vector3d& vel_n, const Eigen::Quaterniond& quat_nb, const Eigen::Vector3d& pos_n_ref_lla)
+    void setState_n(const Eigen::Vector3d& pos_lla, const Eigen::Vector3d& vel_n, const Eigen::Quaterniond& quat_nb)
     {
-        setPosition_n(pos_n, pos_n_ref_lla);
+        setPosition_lla(pos_lla);
         setVelocity_n(vel_n);
         setAttitude_nb(quat_nb);
     }
@@ -252,11 +225,6 @@ class PosVelAtt : public InsObs
     Eigen::Vector3d p_ecef{ 0, 0, 0 };
     /// Position in LatLonAlt coordinates [rad, rad, m]
     Eigen::Vector3d p_lla{ 0, 0, 0 };
-
-    /// Position in local NED coordinates [m]
-    Eigen::Vector3d p_n{ 0, 0, 0 };
-    /// Reference Position for the local NED coordinates [rad, rad, m]
-    Eigen::Vector3d p_n_ref_lla{ 0, 0, 0 };
 
     /// Velocity in earth coordinates [m/s]
     Eigen::Vector3d v_e{ std::nan(""), std::nan(""), std::nan("") };

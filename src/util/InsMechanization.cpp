@@ -433,15 +433,6 @@ Eigen::Vector3d updatePosition_lla(const long double& timeDifferenceSec__t0, // 
     return latLonAlt__t0;
 }
 
-Eigen::Vector3d updatePosition_n(const long double& timeDifferenceSec__t0, // Δtₖ Time difference in [seconds]. This epoch to previous epoch
-                                 const Eigen::Vector3d& position_n__t1,    // [x_n, x_e, x_d] (tₖ₋₁) Position NED in [m] at the time tₖ₋₁
-                                 const Eigen::Vector3d& velocity_n__t1)    // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
-{
-    auto position_n__t0 = position_n__t1 + velocity_n__t1 * static_cast<double>(timeDifferenceSec__t0);
-
-    return position_n__t0;
-}
-
 // ###########################################################################################################
 //                                             Earth Parameters
 // ###########################################################################################################

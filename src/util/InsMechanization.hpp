@@ -218,15 +218,6 @@ namespace NAV
                                                  const double& R_N,
                                                  const double& R_E);
 
-/// @brief Calculates the new position [x_n, x_e, x_d]
-/// @param[in] timeDifferenceSec__t0 Δtₖ Time difference in [seconds]. This epoch to previous epoch
-/// @param[in] position_n__t1 [x_n, x_e, x_d] (tₖ₋₁) Position NED in [m] at the time tₖ₋₁
-/// @param[in] velocity_n__t1 v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
-/// @return [x_n, x_e, x_d] (tₖ) Position NED in [m] at the time tₖ
-[[nodiscard]] Eigen::Vector3d updatePosition_n(const long double& timeDifferenceSec__t0,
-                                               const Eigen::Vector3d& position_n__t1,
-                                               const Eigen::Vector3d& velocity_n__t1);
-
 // ###########################################################################################################
 //                                             Earth Parameters
 // ###########################################################################################################

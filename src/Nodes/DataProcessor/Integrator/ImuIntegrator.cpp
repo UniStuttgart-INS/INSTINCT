@@ -339,7 +339,6 @@ bool NAV::ImuIntegrator::initialize()
     imuObservations.clear();
     posVelAttStates.clear();
 
-    posVelAtt__init = nullptr;
     skipIntermediateCalculation = false;
 
     time__init = InsTime();
@@ -418,12 +417,6 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& no
         posVelAttStates.pop_back();
     }
 
-    /// Initial State
-    if (posVelAtt__init == nullptr)
-    {
-        posVelAtt__init = posVelAtt;
-    }
-
     // If enough imu observations and states received, integrate the observation
     if (imuObservations.size() == maxSizeImuObservations
         && posVelAttStates.size() == maxSizeStates)
@@ -455,7 +448,7 @@ void NAV::ImuIntegrator::integrateObservation()
         for (auto& posVelAtt : posVelAttStates)
         {
             auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
-            posVelAttCorrected->setPosition_e(trafo::lla2ecef_WGS84(posVelAtt->latLonAlt() - pvaError->positionError_lla()), posVelAtt__init->latLonAlt());
+            posVelAttCorrected->setPosition_lla(posVelAtt->latLonAlt() - pvaError->positionError_lla());
 
             posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() - pvaError->velocityError_n());
 
@@ -743,7 +736,7 @@ void NAV::ImuIntegrator::integrateObservation()
         /*                                               Store Results                                              */
         /* -------------------------------------------------------------------------------------------------------- */
 
-        posVelAtt__t0->setState_e(position_e__t0, velocity_e__t0, quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb(), posVelAtt__init->latLonAlt());
+        posVelAtt__t0->setState_e(position_e__t0, velocity_e__t0, quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb());
     }
     else if (integrationFrame == IntegrationFrame::NED)
     {
@@ -787,9 +780,9 @@ void NAV::ImuIntegrator::integrateObservation()
         Eigen::Vector3d angularVelocity_en_n__t1 = transportRate(posVelAtt__t1->latLonAlt(), velocity_n__t1, R_N, R_E);
         LOG_DATA("{}: angularVelocity_en_n__t1 = {}", nameId(), angularVelocity_en_n__t1.transpose());
 
-        /// [x_n, x_e, x_d] (tₖ₋₁) Position NED in [m] at the time tₖ₋₁
-        Eigen::Vector3d position_n__t1 = posVelAtt__t1->position_n();
-        LOG_DATA("{}: position_n__t1 = {}", nameId(), position_n__t1.transpose());
+        /// [latitude 𝜙, longitude λ, altitude h] (tₖ₋₁) Position in [rad, rad, m] at the time tₖ₋₁
+        Eigen::Vector3d latLonAlt__t1 = posVelAtt__t1->latLonAlt();
+        LOG_DATA("{}: latLonAlt__t1 = {}", nameId(), latLonAlt__t1.transpose());
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                              Attitude Update                                             */
@@ -872,12 +865,12 @@ void NAV::ImuIntegrator::integrateObservation()
         /*                                              Position update                                             */
         /* -------------------------------------------------------------------------------------------------------- */
 
-        /// [x_n, x_e, x_d] (tₖ) Position NED in [m] at the time tₖ
-        Eigen::Vector3d position_n__t0 = Eigen::Vector3d::Zero();
+        /// [latitude 𝜙, longitude λ, altitude h] (tₖ) Position in [rad, rad, m] at the time tₖ
+        Eigen::Vector3d latLonAlt__t0 = Eigen::Vector3d::Zero();
 
         if (integrationAlgorithmPosition == IntegrationAlgorithm::RectangularRule)
         {
-            position_n__t0 = updatePosition_n(timeDifferenceSec__t0, position_n__t1, velocity_n__t1);
+            latLonAlt__t0 = updatePosition_lla(timeDifferenceSec__t0, latLonAlt__t1, velocity_n__t1, R_N, R_E);
         }
         else
         {
@@ -885,15 +878,11 @@ void NAV::ImuIntegrator::integrateObservation()
         }
         LOG_DATA("{}: position_n__t0 = {}", nameId(), position_n__t0.transpose());
 
-        /// Latitude, Longitude and Altitude in [rad, rad, m], at the current time tₖ (see Gleason eq. 6.18 - 6.20)
-        // Vector3d<LLA> latLonAlt__t0 = updatePosition_n(timeDifferenceSec__t0, posVelAtt__t1->latLonAlt(),
-        //                                                     velocity_n__t1, R_N, R_E);
-
         /* -------------------------------------------------------------------------------------------------------- */
         /*                                               Store Results                                              */
         /* -------------------------------------------------------------------------------------------------------- */
 
-        posVelAtt__t0->setState_n(position_n__t0, velocity_n__t0, quaternion_nb__t0, posVelAtt__init->latLonAlt());
+        posVelAtt__t0->setState_n(latLonAlt__t0, velocity_n__t0, quaternion_nb__t0);
     }
 
     LOG_DATA("{}: posVelAtt__t0->position_ecef() = {}", nameId(), posVelAtt__t0->position_ecef().transpose());

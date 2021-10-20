@@ -140,6 +140,7 @@ template<class T,
 /// @param[in] latLonAlt_ref Reference [𝜙 latitude, λ longitude, altitude]^T in [rad, rad, m] which represents the origin of the local frame
 /// @return [x_N, x_E, x_D]^T Local NED coordinates in [m]
 /// @note See G. Cai, B.M. Chen, Lee, T.H. Lee, 2011, Unmanned Rotorcraft Systems. Springer. pp. 32
+/// @attention This function does not take the sphericity of the Earth into account
 [[nodiscard]] Eigen::Vector3d ecef2ned(const Eigen::Vector3d& position_e, const Eigen::Vector3d& latLonAlt_ref);
 
 /// @brief Converts local NED coordinates into ECEF coordinates
@@ -147,6 +148,7 @@ template<class T,
 /// @param[in] latLonAlt_ref Reference [𝜙 latitude, λ longitude, altitude]^T in [rad, rad, m] which represents the origin of the local frame
 /// @return ECEF position in [m]
 /// @note See G. Cai, B.M. Chen, Lee, T.H. Lee, 2011, Unmanned Rotorcraft Systems. Springer. pp. 32
+/// @attention This function does not take the sphericity of the Earth into account
 [[nodiscard]] Eigen::Vector3d ned2ecef(const Eigen::Vector3d& position_n, const Eigen::Vector3d& latLonAlt_ref);
 
 /// @brief Converts latitude, longitude and altitude into Earth-centered-Earth-fixed coordinates using WGS84
