@@ -144,9 +144,7 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
                                        * trafo::quat_nb(roll, pitch, yaw)
                                        * trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ);
 
-#ifndef NDEBUG
     bool suppressCoriolis = false;
-#endif
 
     std::deque<Eigen::Vector3d> velocities;
     velocities.emplace_back(Eigen::Vector3d::Zero());
@@ -162,12 +160,8 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
                                                        gravity_e,
                                                        quaternion_ep,
                                                        quaternion_ep,
-                                                       quaternion_ep
-#ifndef NDEBUG
-                                                       ,
-                                                       suppressCoriolis
-#endif
-        );
+                                                       quaternion_ep,
+                                                       suppressCoriolis);
         velocities.push_back(v_e);
         velocities.pop_front();
     }
@@ -218,9 +212,7 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
     velocities.emplace_back(Eigen::Vector3d::Zero());
     velocities.emplace_back(Eigen::Vector3d::Zero());
 
-#ifndef NDEBUG
     bool suppressCoriolis = false;
-#endif
 
     size_t count = 10000;
     for (size_t i = 0; i < count; i++)
@@ -238,12 +230,8 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
                                                        angularVelocity_en_n,
                                                        quaternion_nb,
                                                        quaternion_nb,
-                                                       quaternion_nb
-#ifndef NDEBUG
-                                                       ,
-                                                       suppressCoriolis
-#endif
-        );
+                                                       quaternion_nb,
+                                                       suppressCoriolis);
         velocities.push_back(v_n);
         velocities.pop_front();
     }
