@@ -22,8 +22,8 @@ namespace NAV::trafo
 /// @param[in] b Semi-minor axis of the reference ellipsoid
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return Vector containing [latitude 𝜙, longitude λ, altitude]^T in [rad, rad, m]
-/// @note See J.A. Farrel and M. Barth, 1999, GPS & Inertal Navigation. McGraw-Hill. pp. 29.
-[[nodiscard]] Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double e_squared);
+/// @note See See S. Gleason (2009) - GNSS Applications and Methods: Software example 'Chapter6_GNSS_INS_1/wgsxyz2lla.m' (J.A. Farrel and M. Barth, 1999, GPS & Inertal Navigation. McGraw-Hill. pp. 29.)
+[[nodiscard]] Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double e_squared); //TODO: Take "Exact conversion of earth-centered, earth-fixed coordinates to geodetic coordinates" by Jijie Zhu instead of Gleason's Matlab code
 
 // ###########################################################################################################
 //                                             Public functions
