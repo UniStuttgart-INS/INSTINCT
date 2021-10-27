@@ -7,6 +7,7 @@
 
 #include <imgui_internal.h>
 #include "internal/gui/widgets/imgui_ex.hpp"
+#include "internal/gui/widgets/InputWithUnit.hpp"
 
 #include "NodeData/State/PVAError.hpp"
 #include "NodeData/State/ImuBiases.hpp"
@@ -139,54 +140,28 @@ void NAV::LooselyCoupledKF::guiConfig()
             }
         }
 
-        ImGui::SetNextItemWidth(configWidth - unitWidth);
-        if (ImGui::InputDouble(fmt::format("##variance_ra {}", size_t(id)).c_str(), &variance_ra, 0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the noise on the\naccelerometer specific-force measurements##{}",
+                                                          varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
+                                                  .c_str(),
+                                              configWidth, unitWidth, &variance_ra, reinterpret_cast<int*>(&varianceAccelNoiseUnits), "mg/√(Hz)\0\0",
+                                              0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: variance_ra changed to {}", nameId(), variance_ra);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(unitWidth);
-        if (ImGui::Combo(fmt::format("##varianceAccelNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceAccelNoiseUnits), "mg/√(Hz)\0\0"))
-        {
             LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), varianceAccelNoiseUnits);
             flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        if (varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz)
-        {
-            ImGui::TextUnformatted("Standard deviation of the noise on the\n"
-                                   "accelerometer specific-force measurements");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Variance of the noise on the\n"
-                                   "accelerometer specific-force measurements");
         }
 
         if (qCalculation == QCalculation::Groves)
         {
-            ImGui::SetNextItemWidth(configWidth - unitWidth);
-            if (ImGui::InputDouble(fmt::format("##variance_bad {}", size_t(id)).c_str(), &variance_bad, 0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the accelerometer dynamic bias##{}",
+                                                              varianceAccelBiasUnits == VarianceAccelBiasUnits::microg ? "Standard deviation" : "Variance", size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, &variance_bad, reinterpret_cast<int*>(&varianceAccelBiasUnits), "µg\0\0",
+                                                  0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
             {
                 LOG_DEBUG("{}: variance_bad changed to {}", nameId(), variance_bad);
-                flow::ApplyChanges();
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(unitWidth);
-            if (ImGui::Combo(fmt::format("##varianceAccelBiasUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceAccelBiasUnits), "µg\0\0"))
-            {
                 LOG_DEBUG("{}: varianceAccelBiasUnits changed to {}", nameId(), varianceAccelBiasUnits);
                 flow::ApplyChanges();
-            }
-            ImGui::SameLine();
-            if (varianceAccelBiasUnits == VarianceAccelBiasUnits::microg)
-            {
-                ImGui::TextUnformatted("Standard deviation of the accelerometer dynamic bias");
-            }
-            else
-            {
-                ImGui::TextUnformatted("Variance of the accelerometer dynamic bias");
             }
         }
 
@@ -220,54 +195,28 @@ void NAV::LooselyCoupledKF::guiConfig()
             }
         }
 
-        ImGui::SetNextItemWidth(configWidth - unitWidth);
-        if (ImGui::InputDouble(fmt::format("##variance_rg {}", size_t(id)).c_str(), &variance_rg, 0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+        if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the noise on\nthe gyro angular-rate measurements##{}",
+                                                          varianceGyroNoiseUnits == VarianceGyroNoiseUnits::deg_hr_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
+                                                  .c_str(),
+                                              configWidth, unitWidth, &variance_rg, reinterpret_cast<int*>(&varianceGyroNoiseUnits), "deg/hr/√(Hz)\0\0",
+                                              0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: variance_rg changed to {}", nameId(), variance_rg);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(unitWidth);
-        if (ImGui::Combo(fmt::format("##varianceGyroNoiseUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceGyroNoiseUnits), "deg/hr/√(Hz)\0\0"))
-        {
             LOG_DEBUG("{}: varianceGyroNoiseUnits changed to {}", nameId(), varianceGyroNoiseUnits);
             flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        if (varianceGyroNoiseUnits == VarianceGyroNoiseUnits::deg_hr_sqrtHz)
-        {
-            ImGui::TextUnformatted("Standard deviation of the noise on\n"
-                                   "the gyro angular-rate measurements");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Variance of the noise on\n"
-                                   "the gyro angular-rate measurements");
         }
 
         if (qCalculation == QCalculation::Groves)
         {
-            ImGui::SetNextItemWidth(configWidth - unitWidth);
-            if (ImGui::InputDouble(fmt::format("##variance_bgd {}", size_t(id)).c_str(), &variance_bgd, 0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+            if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the gyro dynamic bias##{}",
+                                                              varianceGyroBiasUnits == VarianceGyroBiasUnits::deg_h ? "Standard deviation" : "Variance", size_t(id))
+                                                      .c_str(),
+                                                  configWidth, unitWidth, &variance_bgd, reinterpret_cast<int*>(&varianceGyroBiasUnits), "°/h\0\0",
+                                                  0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: variance_rg changed to {}", nameId(), variance_bgd);
-                flow::ApplyChanges();
-            }
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(unitWidth);
-            if (ImGui::Combo(fmt::format("##varianceGyroBiasUnits {}", size_t(id)).c_str(), reinterpret_cast<int*>(&varianceGyroBiasUnits), "°/h\0\0"))
-            {
+                LOG_DEBUG("{}: variance_bgd changed to {}", nameId(), variance_bgd);
                 LOG_DEBUG("{}: varianceGyroBiasUnits changed to {}", nameId(), varianceGyroBiasUnits);
                 flow::ApplyChanges();
-            }
-            ImGui::SameLine();
-            if (varianceGyroBiasUnits == VarianceGyroBiasUnits::deg_h)
-            {
-                ImGui::TextUnformatted("Standard deviation of the gyro dynamic bias");
-            }
-            else
-            {
-                ImGui::TextUnformatted("Variance of the gyro dynamic bias");
             }
         }
 
@@ -281,55 +230,34 @@ void NAV::LooselyCoupledKF::guiConfig()
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode(fmt::format("R - Measurement noise covariance matrix##{}", size_t(id)).c_str()))
     {
-        ImGui::SetNextItemWidth(configWidth - unitWidth);
-        if (ImGui::InputDouble3(fmt::format("##gnssMeasurementUncertaintyPosition {}", size_t(id)).c_str(), gnssMeasurementUncertaintyPosition.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS position measurements##{}",
+                                                           gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2
+                                                                   || gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::meter2
+                                                               ? "Variance"
+                                                               : "Standard deviation",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, gnssMeasurementUncertaintyPosition.data(), reinterpret_cast<int*>(&gnssMeasurementUncertaintyPositionUnit), "rad^2, rad^2, m^2\0"
+                                                                                                                                                                                   "rad, rad, m\0"
+                                                                                                                                                                                   "m^2, m^2, m^2\0"
+                                                                                                                                                                                   "m, m, m\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: gnssMeasurementUncertaintyPosition changed to {}", nameId(), gnssMeasurementUncertaintyPosition);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(unitWidth);
-        if (ImGui::Combo(fmt::format("##gnssMeasurementUncertaintyPositionUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&gnssMeasurementUncertaintyPositionUnit), "rad^2, rad^2, m^2\0"
-                                                                                                                                                                          "rad, rad, m\0"
-                                                                                                                                                                          "m^2, m^2, m^2\0"
-                                                                                                                                                                          "m, m, m\0\0"))
-        {
             LOG_DEBUG("{}: gnssMeasurementUncertaintyPositionUnit changed to {}", nameId(), gnssMeasurementUncertaintyPositionUnit);
             flow::ApplyChanges();
         }
-        ImGui::SameLine();
-        if (gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::rad2_rad2_m2
-            || gnssMeasurementUncertaintyPositionUnit == GnssMeasurementUncertaintyPositionUnit::meter2)
-        {
-            ImGui::TextUnformatted("Variance of the GNSS position measurements");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Standard deviation of the GNSS position measurements");
-        }
 
-        ImGui::SetNextItemWidth(configWidth - unitWidth);
-        if (ImGui::InputDouble3(fmt::format("##gnssMeasurementUncertaintyVelocity {}", size_t(id)).c_str(), gnssMeasurementUncertaintyVelocity.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the GNSS velocity measurements##{}", gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m2_s2 ? "Variance" : "Standard deviation",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, gnssMeasurementUncertaintyVelocity.data(), reinterpret_cast<int*>(&gnssMeasurementUncertaintyVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                                                   "m/s\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocity changed to {}", nameId(), gnssMeasurementUncertaintyVelocity);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(unitWidth);
-        if (ImGui::Combo(fmt::format("##gnssMeasurementUncertaintyVelocityUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&gnssMeasurementUncertaintyVelocityUnit), "m^2/s^2\0"
-                                                                                                                                                                          "m/s\0\0"))
-        {
             LOG_DEBUG("{}: gnssMeasurementUncertaintyVelocityUnit changed to {}", nameId(), gnssMeasurementUncertaintyVelocityUnit);
             flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        if (gnssMeasurementUncertaintyVelocityUnit == GnssMeasurementUncertaintyVelocityUnit::m2_s2)
-        {
-            ImGui::TextUnformatted("Variance of the GNSS velocity measurements");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Standard deviation of the GNSS velocity measurements");
         }
 
         ImGui::TreePop();
@@ -342,133 +270,88 @@ void NAV::LooselyCoupledKF::guiConfig()
     ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode(fmt::format("P Error covariance matrix (init)##{}", size_t(id)).c_str()))
     {
-        ImGui::SetNextItemWidth(configWidth - unitWidth);
-        if (ImGui::InputDouble3(fmt::format("##initCovariancePosition {}", size_t(id)).c_str(), initCovariancePosition.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Position covariance ({})##{}",
+                                                           initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2
+                                                                   || initCovariancePositionUnit == InitCovariancePositionUnit::meter2
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, initCovariancePosition.data(), reinterpret_cast<int*>(&initCovariancePositionUnit), "rad^2, rad^2, m^2\0"
+                                                                                                                                                           "rad, rad, m\0"
+                                                                                                                                                           "m^2, m^2, m^2\0"
+                                                                                                                                                           "m, m, m\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovariancePosition changed to {}", nameId(), initCovariancePosition);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(unitWidth);
-        if (ImGui::Combo(fmt::format("##initCovariancePositionUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovariancePositionUnit), "rad^2, rad^2, m^2\0"
-                                                                                                                                                  "rad, rad, m\0"
-                                                                                                                                                  "m^2, m^2, m^2\0"
-                                                                                                                                                  "m, m, m\0\0"))
-        {
             LOG_DEBUG("{}: initCovariancePositionUnit changed to {}", nameId(), initCovariancePositionUnit);
             flow::ApplyChanges();
         }
-        ImGui::SameLine();
-        if (initCovariancePositionUnit == InitCovariancePositionUnit::rad2_rad2_m2
-            || initCovariancePositionUnit == InitCovariancePositionUnit::meter2)
-        {
-            ImGui::TextUnformatted("Position covariance (Variance σ²)");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Position covariance (Standard deviation σ)");
-        }
-        // ###########################################################################################################
-        ImGui::SetNextItemWidth(configWidth - unitWidth);
-        if (ImGui::InputDouble3(fmt::format("##initCovarianceVelocity {}", size_t(id)).c_str(), initCovarianceVelocity.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Velocity covariance ({})##{}",
+                                                           initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, initCovarianceVelocity.data(), reinterpret_cast<int*>(&initCovarianceVelocityUnit), "m^2/s^2\0"
+                                                                                                                                                           "m/s\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceVelocity changed to {}", nameId(), initCovarianceVelocity);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(unitWidth);
-        if (ImGui::Combo(fmt::format("##initCovarianceVelocityUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovarianceVelocityUnit), "m^2/s^2\0"
-                                                                                                                                                  "m/s\0\0"))
-        {
             LOG_DEBUG("{}: initCovarianceVelocityUnit changed to {}", nameId(), initCovarianceVelocityUnit);
             flow::ApplyChanges();
         }
-        ImGui::SameLine();
-        if (initCovarianceVelocityUnit == InitCovarianceVelocityUnit::m2_s2)
-        {
-            ImGui::TextUnformatted("Velocity covariance (Variance σ²)");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Velocity covariance (Standard deviation σ)");
-        }
-        // ###########################################################################################################
-        ImGui::SetNextItemWidth(configWidth - unitWidth);
-        if (ImGui::InputDouble3(fmt::format("##initCovarianceAttitudeAngles {}", size_t(id)).c_str(), initCovarianceAttitudeAngles.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Flight Angles covariance ({})##{}",
+                                                           initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2
+                                                                   || initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, initCovarianceAttitudeAngles.data(), reinterpret_cast<int*>(&initCovarianceAttitudeAnglesUnit), "rad^2\0"
+                                                                                                                                                                       "deg^2\0"
+                                                                                                                                                                       "rad\0"
+                                                                                                                                                                       "deg\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceAttitudeAngles changed to {}", nameId(), initCovarianceAttitudeAngles);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(unitWidth);
-        if (ImGui::Combo(fmt::format("##initCovarianceAttitudeAnglesUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovarianceAttitudeAnglesUnit), "rad^2\0"
-                                                                                                                                                              "deg^2\0"
-                                                                                                                                                              "rad\0"
-                                                                                                                                                              "deg\0\0"))
-        {
             LOG_DEBUG("{}: initCovarianceAttitudeAnglesUnit changed to {}", nameId(), initCovarianceAttitudeAnglesUnit);
             flow::ApplyChanges();
         }
-        ImGui::SameLine();
-        if (initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad2
-            || initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2)
-        {
-            ImGui::TextUnformatted("Flight Angles covariance (Variance σ²)");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Flight Angles covariance (Standard deviation σ)");
-        }
-        // ###########################################################################################################
-        ImGui::SetNextItemWidth(configWidth - unitWidth);
-        if (ImGui::InputDouble3(fmt::format("##initCovarianceBiasAccel {}", size_t(id)).c_str(), initCovarianceBiasAccel.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Bias covariance ({})##{}",
+                                                           initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m2_s4
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, initCovarianceBiasAccel.data(), reinterpret_cast<int*>(&initCovarianceBiasAccelUnit), "m^2/s^4\0"
+                                                                                                                                                             "m/s^2\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceBiasAccel changed to {}", nameId(), initCovarianceBiasAccel);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(unitWidth);
-        if (ImGui::Combo(fmt::format("##initCovarianceBiasAccelUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovarianceBiasAccelUnit), "m^2/s^4\0"
-                                                                                                                                                    "m/s^2\0\0"))
-        {
             LOG_DEBUG("{}: initCovarianceBiasAccelUnit changed to {}", nameId(), initCovarianceBiasAccelUnit);
             flow::ApplyChanges();
         }
-        ImGui::SameLine();
-        if (initCovarianceBiasAccelUnit == InitCovarianceBiasAccelUnit::m2_s4)
-        {
-            ImGui::TextUnformatted("Accelerometer Bias covariance (Variance σ²)");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Accelerometer Bias covariance (Standard deviation σ)");
-        }
-        // ###########################################################################################################
-        ImGui::SetNextItemWidth(configWidth - unitWidth);
-        if (ImGui::InputDouble3(fmt::format("##initCovarianceBiasGyro {}", size_t(id)).c_str(), initCovarianceBiasGyro.data(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyroscope Bias covariance ({})##{}",
+                                                           initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad2_s2
+                                                                   || initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2
+                                                               ? "Variance σ²"
+                                                               : "Standard deviation σ",
+                                                           size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, initCovarianceBiasGyro.data(), reinterpret_cast<int*>(&initCovarianceBiasGyroUnit), "rad^2/s^2\0"
+                                                                                                                                                           "deg^2/s^2\0"
+                                                                                                                                                           "rad/s\0"
+                                                                                                                                                           "deg/s\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: initCovarianceBiasGyro changed to {}", nameId(), initCovarianceBiasGyro);
-            flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(unitWidth);
-        if (ImGui::Combo(fmt::format("##initCovarianceBiasGyroUnit {}", size_t(id)).c_str(), reinterpret_cast<int*>(&initCovarianceBiasGyroUnit), "rad^2/s^2\0"
-                                                                                                                                                  "deg^2/s^2\0"
-                                                                                                                                                  "rad/s\0"
-                                                                                                                                                  "deg/s\0\0"))
-        {
             LOG_DEBUG("{}: initCovarianceBiasGyroUnit changed to {}", nameId(), initCovarianceBiasGyroUnit);
             flow::ApplyChanges();
-        }
-        ImGui::SameLine();
-        if (initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad2_s2
-            || initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2)
-        {
-            ImGui::TextUnformatted("Gyroscope Bias covariance (Variance σ²)");
-        }
-        else
-        {
-            ImGui::TextUnformatted("Gyroscope Bias covariance (Standard deviation σ)");
         }
 
         ImGui::TreePop();

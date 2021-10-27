@@ -16,7 +16,8 @@ if(ENABLE_DOXYGEN)
     set(INSTINCT_DOXY_HTML_COLORSTYLE_HUE      "220")
 
     if(DOC_CHECK_CODE_DOCUMENTATION)
-      set(INSTINCT_DOXY_EXCLUDE                  "")
+      set(INSTINCT_DOXY_EXCLUDE                "")
+      set(INSTINCT_DOXY_ALIASES                "eqref{1}=")
       set(INSTINCT_DOXY_WARN_AS_ERROR          "FAIL_ON_WARNINGS")
       set(INSTINCT_DOXY_WARN_IF_UNDOCUMENTED   "YES")
       set(INSTINCT_DOXY_WARN_IF_INCOMPLETE_DOC "YES")
@@ -30,6 +31,7 @@ if(ENABLE_DOXYGEN)
       set(INSTINCT_DOXY_HIDE_FRIEND_COMPOUNDS  "NO")
     else()
       set(INSTINCT_DOXY_EXCLUDE                ${CMAKE_SOURCE_DIR}/src/internal)
+      set(INSTINCT_DOXY_ALIASES                "")
       set(INSTINCT_DOXY_WARN_AS_ERROR          "NO")
       set(INSTINCT_DOXY_WARN_IF_UNDOCUMENTED   "NO")
       set(INSTINCT_DOXY_WARN_IF_INCOMPLETE_DOC "NO")
@@ -81,9 +83,10 @@ if(ENABLE_DOXYGEN)
     add_custom_target(
         doc-prerequisites
         ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTINCT_BINARY_DIR}/doc/html/
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${INSTINCT_BINARY_DIR}/doc/html/ ${INSTINCT_BINARY_DIR}/doc/html/resources
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/eigen_navtree_hacks.js           ${INSTINCT_BINARY_DIR}/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/ftv2pnode.png                    ${INSTINCT_BINARY_DIR}/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/resources/*                      ${INSTINCT_BINARY_DIR}/doc/html${INSTINCT_DOXY_OUTPUT_DIRECTORY_SUFFIX}/resources/
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
 
