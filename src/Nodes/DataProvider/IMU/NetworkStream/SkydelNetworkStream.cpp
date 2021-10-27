@@ -189,6 +189,21 @@ void NAV::SkydelNetworkStream::do_receive()
                     obsG->insTime = currentTime;
                 }
 
+                if (obs->timeSinceStartup.has_value())
+                {
+                    if (lastMessageTime)
+                    {
+                        // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
+                        // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
+                        if (obs->timeSinceStartup.value() - lastMessageTime >= static_cast<uint64_t>(1.5 / dataRate * 1e9))
+                        {
+                            LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", nameId(),
+                                     lastMessageTime, obs->timeSinceStartup.value(), static_cast<double>(obs->timeSinceStartup.value() - lastMessageTime) * 1e-9);
+                        }
+                    }
+                    lastMessageTime = obs->timeSinceStartup.value();
+                }
+
                 this->invokeCallbacks(OutputPortIndex_GnssObs, obsG);
                 this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
 
@@ -246,6 +261,8 @@ bool NAV::SkydelNetworkStream::initialize()
     packageCount = 0;
     startCounter = 0;
     packagesNumber = 2;
+
+    lastMessageTime = 0;
 
     do_receive();
 
