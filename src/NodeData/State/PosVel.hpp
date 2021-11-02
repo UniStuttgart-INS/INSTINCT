@@ -37,7 +37,9 @@ class PosVel : public Pos
     /// @return The parent data types
     [[nodiscard]] static std::vector<std::string> parentTypes()
     {
-        return { Pos::type() };
+        auto parent = Pos::parentTypes();
+        parent.push_back(Pos::type());
+        return parent;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
