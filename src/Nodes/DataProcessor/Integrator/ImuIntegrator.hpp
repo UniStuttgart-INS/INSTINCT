@@ -169,6 +169,9 @@ class ImuIntegrator : public Node
 
     /// Flag to toggle coriolis acceleration compensation of the acceleration at the current position
     bool coriolisCompensation = true;
+
+    /// Flag to let the integration algorithm use uncompensated acceleration and angular rates instead of compensated
+    bool prefereUncompensatedData = false;
 };
 
 } // namespace NAV

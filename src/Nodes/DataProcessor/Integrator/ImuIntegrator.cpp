@@ -23,7 +23,7 @@ NAV::ImuIntegrator::ImuIntegrator()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 481, 322 };
+    guiConfigDefaultWindowSize = { 483, 350 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
     nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
@@ -208,6 +208,14 @@ void NAV::ImuIntegrator::guiConfig()
     ImGui::SameLine();
     gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
 
+    if (ImGui::Checkbox(fmt::format("Prefere uncompensated data##{}", size_t(id)).c_str(), &prefereUncompensatedData))
+    {
+        LOG_DEBUG("{}: prefereUncompensatedData changed to {}", nameId(), prefereUncompensatedData);
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("Takes the uncompensated acceleration and angular rates instead of compensated values from the sensor. This option should be used when a Kalman Filter is used to correct the biases.");
+
     if (ImGui::Checkbox(fmt::format("Apply centrifugal acceleration compensation##{}", size_t(id)).c_str(), &centrifugalAccCompensation))
     {
         LOG_DEBUG("{}: centrifugalAccCompensation changed to {}", nameId(), centrifugalAccCompensation);
@@ -262,6 +270,7 @@ void NAV::ImuIntegrator::guiConfig()
     j["centrifugalAccCompensation"] = centrifugalAccCompensation;
     j["coriolisCompensation"] = coriolisCompensation;
     j["showCorrectionsInputPin"] = showCorrectionsInputPin;
+    j["prefereUncompensatedData"] = prefereUncompensatedData;
 
     return j;
 }
@@ -325,6 +334,10 @@ void NAV::ImuIntegrator::restore(json const& j)
                 inputPins.pop_back();
             }
         }
+    }
+    if (j.contains("prefereUncompensatedData"))
+    {
+        prefereUncompensatedData = j.at("prefereUncompensatedData");
     }
 }
 
@@ -542,7 +555,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
     /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
-    Eigen::Vector3d angularVelocity_ip_p__t1 = imuObs__t1->gyroCompXYZ.has_value()
+    Eigen::Vector3d angularVelocity_ip_p__t1 = !prefereUncompensatedData && imuObs__t1->gyroCompXYZ.has_value()
                                                    ? imuObs__t1->gyroCompXYZ.value()
                                                    : imuObs__t1->gyroUncompXYZ.value();
 
@@ -551,7 +564,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
     /// ω_ip_p (tₖ) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ
-    Eigen::Vector3d angularVelocity_ip_p__t0 = imuObs__t0->gyroCompXYZ.has_value()
+    Eigen::Vector3d angularVelocity_ip_p__t0 = !prefereUncompensatedData && imuObs__t0->gyroCompXYZ.has_value()
                                                    ? imuObs__t0->gyroCompXYZ.value()
                                                    : imuObs__t0->gyroUncompXYZ.value();
 
@@ -559,7 +572,7 @@ void NAV::ImuIntegrator::integrateObservation()
     LOG_DATA("{}: angularVelocity_ip_p__t0 = {}", nameId(), angularVelocity_ip_p__t0.transpose());
 
     /// a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
-    Eigen::Vector3d acceleration_p__t1 = imuObs__t1->accelCompXYZ.has_value()
+    Eigen::Vector3d acceleration_p__t1 = !prefereUncompensatedData && imuObs__t1->accelCompXYZ.has_value()
                                              ? imuObs__t1->accelCompXYZ.value()
                                              : imuObs__t1->accelUncompXYZ.value();
 
@@ -567,7 +580,7 @@ void NAV::ImuIntegrator::integrateObservation()
     LOG_DATA("{}: acceleration_p__t1 = {}", nameId(), acceleration_p__t1.transpose());
 
     /// a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
-    Eigen::Vector3d acceleration_p__t0 = imuObs__t0->accelCompXYZ.has_value()
+    Eigen::Vector3d acceleration_p__t0 = !prefereUncompensatedData && imuObs__t0->accelCompXYZ.has_value()
                                              ? imuObs__t0->accelCompXYZ.value()
                                              : imuObs__t0->accelUncompXYZ.value();
 
@@ -815,6 +828,7 @@ void NAV::ImuIntegrator::integrateObservation()
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
         }
         LOG_DATA("{}: quaternion_nb__t0 = {}", nameId(), quaternion_nb__t0.coeffs().transpose());
+        quaternion_nb__t0 = quaternion_nb__t1;
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                           Specific force frame transformation & Velocity update                          */

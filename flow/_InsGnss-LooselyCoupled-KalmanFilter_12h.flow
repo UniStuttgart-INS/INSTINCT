@@ -2583,8 +2583,8 @@
                 "initDuration": 5.0,
                 "overridePosition": false,
                 "overrideRollPitchYaw": [
-                    false,
-                    false,
+                    true,
+                    true,
                     false
                 ],
                 "overrideValuesPosition_lla": [
@@ -2644,6 +2644,7 @@
                 "integrationAlgorithmVelocity": 2,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
+                "prefereUncompensatedData": true,
                 "showCorrectionsInputPin": true
             },
             "enabled": true,
@@ -3173,7 +3174,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "LCKF-Ref",
+                                                "legendName": "LCKF-Comp",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -3244,7 +3245,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "LCKF-Ref",
+                                                "legendName": "LCKF-Comp",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -3282,7 +3283,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "LCKF-Ref",
+                                                "legendName": "LCKF-Comp",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -5512,8 +5513,8 @@
                 "varianceGyroNoiseUnits": 0,
                 "variance_bad": 10.0,
                 "variance_bgd": 1.0,
-                "variance_ra": 0.4,
-                "variance_rg": 15.0
+                "variance_ra": 0.04,
+                "variance_rg": 5.0
             },
             "enabled": true,
             "id": 564,
@@ -11165,7 +11166,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "X (LCKF-Ref)",
+                                                "legendName": "X (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11203,7 +11204,7 @@
                                                     "y": 0.6705882549285889,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "Y (LCKF-Ref)",
+                                                "legendName": "Y (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11241,7 +11242,7 @@
                                                     "y": 0.501960813999176,
                                                     "z": 0.501960813999176
                                                 },
-                                                "legendName": "Z (LCKF-Ref)",
+                                                "legendName": "Z (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11279,7 +11280,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "X (LCKF-Ref)",
+                                                "legendName": "X (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11317,7 +11318,7 @@
                                                     "y": 0.6705882549285889,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "Y (LCKF-Ref)",
+                                                "legendName": "Y (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11355,7 +11356,7 @@
                                                     "y": 0.501960813999176,
                                                     "z": 0.501960813999176
                                                 },
-                                                "legendName": "Z (LCKF-Ref)",
+                                                "legendName": "Z (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -15578,7 +15579,7 @@
                     },
                     {
                         "autoLimitXaxis": true,
-                        "autoLimitYaxis": false,
+                        "autoLimitYaxis": true,
                         "headerText": "Velocity error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -15621,7 +15622,7 @@
                     },
                     {
                         "autoLimitXaxis": true,
-                        "autoLimitYaxis": false,
+                        "autoLimitYaxis": true,
                         "headerText": "Flight Angles error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -16050,18 +16051,19 @@
         },
         "node-812": {
             "data": {
-                "calculateIntermediateValues": false,
+                "calculateIntermediateValues": true,
                 "centrifugalAccCompensation": true,
                 "coriolisCompensation": true,
                 "gravityModel": 3,
-                "integrationAlgorithmAttitude": 3,
+                "integrationAlgorithmAttitude": 2,
                 "integrationAlgorithmPosition": 0,
-                "integrationAlgorithmVelocity": 1,
+                "integrationAlgorithmVelocity": 2,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
+                "prefereUncompensatedData": false,
                 "showCorrectionsInputPin": true
             },
-            "enabled": false,
+            "enabled": true,
             "id": 812,
             "inputPins": [
                 {

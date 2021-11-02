@@ -685,9 +685,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(position_lla__t1, R_N, R_E);
 
     // a_p Acceleration in [m/s^2], in platform coordinates
-    const Eigen::Vector3d& acceleration_p = inertialNavSol->imuObs->accelCompXYZ.has_value()
-                                                ? inertialNavSol->imuObs->accelCompXYZ.value()
-                                                : inertialNavSol->imuObs->accelUncompXYZ.value();
+    const Eigen::Vector3d& acceleration_p = inertialNavSol->imuObs->accelUncompXYZ.value();
 
     // omega_in^n = omega_ie^n + omega_en^n
     Eigen::Vector3d angularRate_in_n = inertialNavSol->quaternion_ne() * InsConst::angularVelocity_ie_e
