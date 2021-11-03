@@ -640,8 +640,9 @@ void NAV::ImuIntegrator::integrateObservation()
 
     if (centrifugalAccCompensation)
     {
-        LOG_DATA("{}: Applying centrifugal acceleration", nameId());
-        gravity_n__t1 += gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        auto centrifugalAcceleration = gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        LOG_DATA("{}: Applying centrifugal acceleration: {}", nameId(), centrifugalAcceleration.transpose());
+        gravity_n__t1 += centrifugalAcceleration;
     }
     LOG_DATA("{}: gravity_n__t1 = {}", nameId(), gravity_n__t1.transpose());
 
