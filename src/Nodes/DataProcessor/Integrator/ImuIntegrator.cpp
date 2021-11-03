@@ -405,16 +405,12 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& no
 {
     auto posVelAtt = std::dynamic_pointer_cast<const PosVelAtt>(nodeData);
 
-    if (showCorrectionsInputPin) // Make a copy, as we going to alter it
-    {
-        posVelAtt = std::make_shared<PosVelAtt>(*posVelAtt);
-    }
-
     // Add imuObs tₖ₋₁ to the start of the list
     if (posVelAttStates.empty())
     {
         while (posVelAttStates.size() < maxSizeStates)
         {
+            LOG_DEBUG("{}: Adding posVelAtt to the start of the list {}", nameId(), posVelAtt);
             posVelAttStates.push_front(posVelAtt);
         }
     }
@@ -453,10 +449,11 @@ void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& no
 
 void NAV::ImuIntegrator::integrateObservation()
 {
-    LOG_DATA("{}: imuObservations.at(0) = {}, imuObservations.at(1) = {}, imuObservations.at(2) = {}, ", nameId(), imuObservations.at(0), imuObservations.at(1), imuObservations.at(2));
+    LOG_DATA("{}: imuObservations.at(0) = {}, imuObservations.at(1) = {}, imuObservations.at(2) = {}", nameId(), imuObservations.at(0), imuObservations.at(1), imuObservations.at(2));
+    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
     if (pvaError)
     {
-        LOG_DATA("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value(), posVelAttStates.at(1)->insTime.value());
+        LOG_DATA("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value().toYMDHMS(), posVelAttStates.at(1)->insTime.value().toYMDHMS());
 
         for (auto& posVelAtt : posVelAttStates)
         {
@@ -475,21 +472,22 @@ void NAV::ImuIntegrator::integrateObservation()
 
             posVelAtt = posVelAttCorrected;
         }
+        LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {} (after KF update)", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
 
         pvaError.reset();
     }
 
     /// IMU Observation at the time tₖ
-    std::shared_ptr<const ImuObs> imuObs__t0 = imuObservations.at(0);
+    const std::shared_ptr<const ImuObs>& imuObs__t0 = imuObservations.at(0);
     /// IMU Observation at the time tₖ₋₁
-    std::shared_ptr<const ImuObs> imuObs__t1 = imuObservations.at(1);
+    const std::shared_ptr<const ImuObs>& imuObs__t1 = imuObservations.at(1);
     /// IMU Observation at the time tₖ₋₂
-    std::shared_ptr<const ImuObs> imuObs__t2 = imuObservations.at(2);
+    const std::shared_ptr<const ImuObs>& imuObs__t2 = imuObservations.at(2);
 
     /// Position, Velocity and Attitude at the time tₖ₋₁
-    std::shared_ptr<const PosVelAtt> posVelAtt__t1 = posVelAttStates.at(0);
+    const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = posVelAttStates.at(0);
     /// Position, Velocity and Attitude at the time tₖ₋₂
-    std::shared_ptr<const PosVelAtt> posVelAtt__t2 = posVelAttStates.at(1);
+    const std::shared_ptr<const PosVelAtt>& posVelAtt__t2 = posVelAttStates.at(1);
 
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = imuObs__t0->imuPos;
@@ -521,9 +519,9 @@ void NAV::ImuIntegrator::integrateObservation()
         // Update time
         posVelAtt__t0->insTime = imuObs__t0->insTime;
 
-        LOG_DATA("{}: time__t2 {}", nameId(), time__t2.toGPSweekTow());
-        LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1.toGPSweekTow(), timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0.toGPSweekTow(), timeDifferenceSec__t0);
+        LOG_DATA("{}: time__t2 {}", nameId(), time__t2.toYMDHMS());
+        LOG_DATA("{}: time__t1 {}: DiffSec__t1 {}", nameId(), time__t1.toYMDHMS(), timeDifferenceSec__t1);
+        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0.toYMDHMS(), timeDifferenceSec__t0);
     }
     else
     {
@@ -928,6 +926,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         skipIntermediateCalculation = false;
     }
+    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
 }
 
 const char* NAV::ImuIntegrator::to_string(IntegrationAlgorithm algorithm)

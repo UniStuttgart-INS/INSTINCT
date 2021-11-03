@@ -62,7 +62,7 @@ namespace NAV::gravity
 /// @param[in] altitude Longitude in [rad]
 /// @return Centrifugal acceleration in NED frame in [m/s^2]
 ///
-/// @note See Groves (2013) Chapter 2.4.7
+/// @note See Groves (2013) Chapter 2.4.7, p. 67ff
 [[nodiscard]] Eigen::Vector3d centrifugalAcceleration(const double& latitude, const double& altitude);
 
 } // namespace NAV::gravity

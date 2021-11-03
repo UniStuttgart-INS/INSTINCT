@@ -1,6 +1,7 @@
 #include "InsTransformations.hpp"
 
 #include "util/Logger.hpp"
+#include "util/InsMechanization.hpp"
 
 namespace NAV::trafo
 {
@@ -175,12 +176,12 @@ Eigen::Vector3d lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_sq
 
     /// Radius of curvature of the ellipsoid in the prime vertical plane,
     /// i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
-    double N = a / std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
+    double R_E = earthRadius_E(latitude, a, e_squared);
 
     // Jekeli, 2001 (eq. 1.80) (see  Torge, 1991, for further details)
-    return Eigen::Vector3d((N + altitude) * std::cos(latitude) * std::cos(longitude),
-                           (N + altitude) * std::cos(latitude) * std::sin(longitude),
-                           (N * (1 - e_squared) + altitude) * std::sin(latitude));
+    return Eigen::Vector3d((R_E + altitude) * std::cos(latitude) * std::cos(longitude),
+                           (R_E + altitude) * std::cos(latitude) * std::sin(longitude),
+                           (R_E * (1 - e_squared) + altitude) * std::sin(latitude));
 }
 
 Eigen::Vector3d lla2ecef_WGS84(const Eigen::Vector3d& latLonAlt)

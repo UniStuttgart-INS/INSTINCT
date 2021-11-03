@@ -212,6 +212,7 @@ namespace NAV
 /// @return [𝜙, λ, h] (tₖ) Latitude, Longitude and altitude in [rad, rad, m] at the time tₖ
 ///
 /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.3)
+/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 2.111, p. 61)
 [[nodiscard]] Eigen::Vector3d updatePosition_lla(const long double& timeDifferenceSec__t0,
                                                  const Eigen::Vector3d& latLonAlt__t1,
                                                  const Eigen::Vector3d& velocity_n__t1,
