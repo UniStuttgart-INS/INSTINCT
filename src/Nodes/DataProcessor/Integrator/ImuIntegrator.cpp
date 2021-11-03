@@ -826,7 +826,6 @@ void NAV::ImuIntegrator::integrateObservation()
             LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
         }
         LOG_DATA("{}: quaternion_nb__t0 = {}", nameId(), quaternion_nb__t0.coeffs().transpose());
-        quaternion_nb__t0 = quaternion_nb__t1;
 
         /* -------------------------------------------------------------------------------------------------------- */
         /*                           Specific force frame transformation & Velocity update                          */
