@@ -2,13 +2,22 @@ namespace Instinct {
 
 /** \defgroup LooselyCoupledKF INS/GNSS Loosely-coupled Kalman Filter
 
-\section LooselyCoupledKFSec1 Section 1
+\section LooselyCoupledKFSec1 State Definition
 
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+\f{equation}{ \label{eq:state}
+    \mathbf{x} = \begin{bmatrix}
+                     \mathbf{\partial\Psi} \\
+                     \mathbf{\partial\text{v}} \\
+                     \mathbf{p_b} \\
+                     \mathbf{b_a} \\
+                     \mathbf{b_g} \\
+                 \end{bmatrix}
+\f}
 
-\section LooselyCoupledKFSec2 Section 2
-
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+where
+\f{equation}{ \label{eq:state_position}
+    \mathbf{p_b} = (\partial L_b \quad \partial \lambda_b \quad \partial h_b)
+\f}
 
 */
 
