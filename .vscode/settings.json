@@ -5,6 +5,12 @@
     "[c]": {
         "editor.defaultFormatter": "ms-vscode.cpptools"
     },
+    "[cmake]": {
+        "editor.formatOnSave": false
+    },
+    "[latex]": {
+        "editor.formatOnSave": false
+    },
     "C_Cpp.autoAddFileAssociations": false, // Otherwise the "files.associations" list will be filled everytime opening a file without extension (e.g. <iostream>)
     "C_Cpp.default.cppStandard": "c++20",
     "cSpell.words": [
