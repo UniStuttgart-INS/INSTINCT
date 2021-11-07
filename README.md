@@ -65,8 +65,11 @@ Most library dependencies are managed by Conan.io, so you just need to install t
 sudo pacman -S base-devel cmake clang glfw-x11
 trizen -S conan # AUR package
 
+# Documentation
+sudo apt install -y doxygen pdf2svg texlive-most ghostscript
+
 # Optional
-sudo pacman -S ccache doxygen cppcheck
+sudo pacman -S ccache cppcheck
 
 # Profiling (optional)
 sudo pacman -S valgrind kcachegrind
@@ -83,8 +86,11 @@ sudo ln -sf /usr/bin/gcc-10 /usr/bin/gcc
 sudo ln -sf /usr/bin/g++-10 /usr/bin/g++
 pip3 install conan --user
 
+# Documentation
+sudo apt install -y doxygen pdf2svg texlive texlive-lang-german texlive-latex-extra ghostscript
+
 # Optional
-sudo apt install ccache doxygen cppcheck
+sudo apt install ccache cppcheck
 
 # Profiling (optional)
 sudo apt install valgrind kcachegrind
@@ -103,7 +109,7 @@ ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
 ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 
 # Optional
-brew install ccache doxygen cppcheck
+brew install ccache cppcheck
 ```
 
 #### Windows 10 (WSL)

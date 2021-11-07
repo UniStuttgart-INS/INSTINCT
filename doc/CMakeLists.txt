@@ -1,7 +1,7 @@
 # Options
 option(ENABLE_DOXYGEN "Enable doxygen doc builds of source" FALSE)
 option(DOC_INTERNAL "Build internal documentation" OFF)
-option(DOC_USE_MATHJAX "Use MathJax for rendering math in HTML docs" ON)
+# option(DOC_USE_MATHJAX "Use MathJax for rendering math in HTML docs" ON)
 option(DOC_CHECK_CODE_DOCUMENTATION "Check if all code is documented" OFF)
 
 if(ENABLE_DOXYGEN)
@@ -17,7 +17,7 @@ if(ENABLE_DOXYGEN)
 
     if(DOC_CHECK_CODE_DOCUMENTATION)
       set(INSTINCT_DOXY_EXCLUDE                "")
-      set(INSTINCT_DOXY_ALIASES                "eqref{1}=")
+    #   set(INSTINCT_DOXY_ALIASES                "eqref{1}=")
       set(INSTINCT_DOXY_WARN_AS_ERROR          "FAIL_ON_WARNINGS")
       set(INSTINCT_DOXY_WARN_IF_UNDOCUMENTED   "YES")
       set(INSTINCT_DOXY_WARN_IF_INCOMPLETE_DOC "YES")
@@ -31,7 +31,7 @@ if(ENABLE_DOXYGEN)
       set(INSTINCT_DOXY_HIDE_FRIEND_COMPOUNDS  "NO")
     else()
       set(INSTINCT_DOXY_EXCLUDE                ${CMAKE_SOURCE_DIR}/src/internal)
-      set(INSTINCT_DOXY_ALIASES                "")
+    #   set(INSTINCT_DOXY_ALIASES                "")
       set(INSTINCT_DOXY_WARN_AS_ERROR          "NO")
       set(INSTINCT_DOXY_WARN_IF_UNDOCUMENTED   "NO")
       set(INSTINCT_DOXY_WARN_IF_INCOMPLETE_DOC "NO")
@@ -51,11 +51,11 @@ if(ENABLE_DOXYGEN)
       set(INSTINCT_DOXY_INTERNAL               "NO")
     endif()
 
-    if (DOC_USE_MATHJAX)
-      set(INSTINCT_DOXY_USE_MATHJAX            "YES")
-    else ()
-      set(INSTINCT_DOXY_USE_MATHJAX            "NO")
-    endif()
+    # if (DOC_USE_MATHJAX)
+    #   set(INSTINCT_DOXY_USE_MATHJAX            "YES")
+    # else ()
+    #   set(INSTINCT_DOXY_USE_MATHJAX            "NO")
+    # endif()
 
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
