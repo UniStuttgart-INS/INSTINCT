@@ -783,7 +783,7 @@ LAYOUT_FILE            = DoxygenLayout.xml
 # LATEX_BIB_STYLE. To use this feature you need bibtex and perl available in the
 # search path. See also \cite for info how to create references.
 
-CITE_BIB_FILES         =
+CITE_BIB_FILES         = "${INSTINCT_SOURCE_DIR}/doc/cite.bib"
 
 #---------------------------------------------------------------------------
 # Configuration options related to warning and progress messages
