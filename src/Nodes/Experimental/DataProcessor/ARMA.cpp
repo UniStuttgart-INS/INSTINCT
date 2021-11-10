@@ -182,7 +182,10 @@ void NAV::experimental::ARMA::pacf_function(Eigen::VectorXd& y, Eigen::VectorXd&
     // PACF while E(eta_t) = 0
     // first iteration step
     pacf(0) = acf(1); // initial value phi_1_1 = p(1)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnull-dereference"
     phi_tau_i(0) = pacf(0);
+#pragma GCC diagnostic pop
     sum1 = acf(1) * acf(1);
     sum2 = acf(1) * acf(1);
 
