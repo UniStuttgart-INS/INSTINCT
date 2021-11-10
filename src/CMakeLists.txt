@@ -34,4 +34,8 @@ if(ENABLE_MAIN)
   endif()
 
   target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
+
+  if(APPLE)
+    target_compile_definitions(${PROJECT_NAME_LOWERCASE} PUBLIC BOOST_ASIO_HAS_STD_INVOKE_RESULT=1)
+  endif()
 endif()

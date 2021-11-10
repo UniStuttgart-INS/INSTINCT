@@ -64,6 +64,10 @@ endif()
 
 target_compile_definitions(tests PUBLIC LOG_LEVEL=LOG_LEVEL_${LOG_LEVEL})
 
+if(APPLE)
+  target_compile_definitions(tests PUBLIC BOOST_ASIO_HAS_STD_INVOKE_RESULT=1)
+endif()
+
 target_compile_definitions(tests PUBLIC TESTING=1)
 
 # automatically discover tests that are defined in catch based test files you can modify the unittests. TEST_PREFIX to
