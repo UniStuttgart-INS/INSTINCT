@@ -1,3 +1,4 @@
+\usepackage[a2paper, margin=0cm]{geometry}
 \usepackage{amsmath}
 \usepackage{upgreek}
 \usepackage{xcolor}
@@ -5,7 +6,7 @@
 \renewcommand{\eqref}[1]{\textcolor{link}{\textbf{(\ref{#1})}}}
 
 \usepackage{tikz}
-\usetikzlibrary{matrix,backgrounds,decorations.pathreplacing}
+\usetikzlibrary{matrix,backgrounds,decorations.pathreplacing,calc}
 
 \newcommand{\highlight}[3][O{blue!40}]{%
   \draw[rounded corners,line width=1bp,color=#1] (#2.north west) rectangle (#3.south east);

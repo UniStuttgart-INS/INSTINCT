@@ -6,7 +6,7 @@ namespace Instinct {
 
 \fl{equation,eq-LCKF-stateMatrix-short}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter=(,right delimiter=),nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
       \delta \boldsymbol{\dot{\psi}}_{nb}^{n} \\
       \delta \boldsymbol{\dot{v}}_{eb}^{n} \\
       \delta \boldsymbol{\dot{r}}_b \\
@@ -25,7 +25,7 @@ namespace Instinct {
   \end{tikzpicture}
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter=(,right delimiter=),nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
     {
       \mathbf{F}_{11}^{n} & \mathbf{F}_{12}^{n} & \mathbf{F}_{13}^{n} & \mathbf{0}_3         & \hat{\mathbf{C}}_b^n \\
       \mathbf{F}_{21}^{n} & \mathbf{F}_{22}^{n} & \mathbf{F}_{23}^{n} & \hat{\mathbf{C}}_b^n & \mathbf{0}_3         \\
@@ -40,18 +40,18 @@ namespace Instinct {
       \fhighlight[green!20]{m-1-1}{m-1-1}
       \fhighlight[yellow!20]{m-1-2}{m-1-2}
       \fhighlight[lime!20]{m-1-3}{m-1-3}
+      \fhighlight[orange!20]{m-1-5}{m-1-5}
       \fhighlight[blue!20]{m-2-1}{m-2-1}
       \fhighlight[purple!20]{m-2-2}{m-2-2}
       \fhighlight[violet!20]{m-2-3}{m-2-3}
+      \fhighlight[red!20]{m-2-4}{m-2-4}
       \fhighlight[cyan!20]{m-3-2}{m-3-2}
       \fhighlight[teal!20]{m-3-3}{m-3-3}
-      \fhighlight[red!20]{m-2-4}{m-2-4}
-      \fhighlight[orange!20]{m-1-5}{m-1-5}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter=(,right delimiter=),nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
       \delta \boldsymbol{\psi}_{nb}^{n} \\
       \delta \boldsymbol{v}_{eb}^{n} \\
       \delta \boldsymbol{r}_b \\
@@ -74,7 +74,7 @@ namespace Instinct {
 
 \fl{equation,eq-LCKF-stateMatrix}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter=(,right delimiter=),nodes={rectangle,text width=1.5em,align=center},row sep=0.3em, column sep=0.4em] {
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.5em,align=center},row sep=0.3em, column sep=0.4em] {
       \delta \dotup{R}              \\ \delta \dotup{P}              \\ \delta \dotup{Y}              \\
       \delta \dotup{v}_{N}          \\ \delta \dotup{v}_{E}          \\ \delta \dotup{v}_{D}          \\
       \delta \dotup{\phi}           \\ \delta \dotup{\lambda}        \\ \delta \dotup{h}              \\
@@ -93,22 +93,61 @@ namespace Instinct {
   \end{tikzpicture}
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter=(,right delimiter=),nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em] {
-               0         &  \omega_{in,3}^{n} & -\omega_{in,2}^{n} &          0         &      \frac{1}{R_E + h}      & 0 \\
-      -\omega_{in,3}^{n} &          0         &  \omega_{in,1}^{n} & -\frac{1}{R_N + h} &              0              & 0 \\
-       \omega_{in,2}^{n} & -\omega_{in,1}^{n} &          0         &          0         & -\frac{\tan{\phi}}{R_E + h} & 0 \\
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes in empty cells,
+                row sep=0.3em, column sep=0.4em,
+                nodes={rectangle},] {
+               0         &  \omega_{in,3}^{n} & -\omega_{in,2}^{n} &                             0                            &                     \frac{1}{R_E + h}                     &                       0                      &                                   \omega_{ie}\sin{\phi}                                    &      0       &                            \frac{v_E}{(R_E + h)^2}                            &  &                      &  &  &                      & \\
+      -\omega_{in,3}^{n} &          0         &  \omega_{in,1}^{n} &                   -\frac{1}{R_N + h}                     &                             0                             &                       0                      &                                             0                                              &      0       &                           -\frac{v_N}{(R_N + h)^2}                            &  &     \mathbf{0}_3     &  &  & \hat{\mathbf{C}}_b^n & \\
+       \omega_{in,2}^{n} & -\omega_{in,1}^{n} &          0         &                             0                            &                -\frac{\tan{\phi}}{R_E + h}                &                       0                      &                  \omega_{ie}\cos{\phi} + \frac{v_E}{(R_E + h)\cos{\phi}^2}                 &      0       &                      -\frac{v_E \tan{\phi}}{(R_E + h)^2}                      &  &                      &  &  &                      & \\
+               0         &        -a_D        &         a_E        &                    \frac{v_D}{R_N + h}                   & -2\frac{v_E \tan{\phi}}{R_E + h} - 2\omega_{ie}\sin{\phi} &              \frac{v_N}{R_N + h}             &                 -\frac{v_E^2\sec^2{\phi}}{R_E+h}-2v_E\omega_{ie}\cos{\phi}                 &      0       &         \frac{v_E^2\tan{\phi}}{(R_E+h)^2} - \frac{v_Nv_D}{(R_N+h)^2}          &  &                      &  &  &                      & \\
+              a_D        &          0         &        -a_N        &  \frac{v_E \tan{\phi}}{R_E + h} + 2\omega_{ie}\sin{\phi} &            \frac{v_N \tan{\phi} + v_D}{R_E + h}           & \frac{v_E}{R_E + h} + 2\omega_{ie}\cos{\phi} & \frac{v_N v_E \sec^2{\phi}}{R_E+h} + 2v_N\omega_{ie}\cos{\phi} - 2v_D\omega_{ie}\sin{\phi} &      0       &                -\frac{v_Nv_E\tan{\phi} + v_Ev_D}{(R_E + h)^2}                 &  & \hat{\mathbf{C}}_b^n &  &  &    \mathbf{0}_3      & \\
+             -a_E        &         a_N        &          0         &                  -\frac{2v_N}{R_N + h}                   &       -\frac{2v_E}{R_E + h} - 2\omega_{ie}\cos{\phi}      &                       0                      &                                  2v_E\omega_{ie}\sin{\phi}                                 &      0       & \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2} - \frac{2g_0}{r_{eS}^e} &  &                      &  &  &                      & \\
+                         &                    &                    &                      \frac{1}{R_N+h}                     &                             0                             &                       0                      &                                             0                                              &      0       &                           -\frac{v_N}{(R_N + h)^2}                            &  &                      &  &  &                      & \\
+                         &    \mathbf{0}_3    &                    &                             0                            &                \frac{1}{(R_E+h)\cos{\phi}}                &                       0                      &                          \frac{v_E\sin{\phi}}{(R_E+h)\cos^2{\phi}}                         &      0       &                      -\frac{v_E}{(R_E + h)^2\cos{\phi}}                       &  &     \mathbf{0}_3     &  &  &     \mathbf{0}_3     & \\
+                         &                    &                    &                             0                            &                             0                             &                      -1                      &                                             0                                              &      0       &                                       0                                       &  &                      &  &  &                      & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                            &              &                                                                               &  &                      &  &  &                      & \\
+                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                            & \mathbf{0}_3 &                                                                               &  &     \mathbf{0}_3     &  &  &     \mathbf{0}_3     & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                            &              &                                                                               &  &                      &  &  &                      & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                            &              &                                                                               &  &                      &  &  &                      & \\
+                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                            & \mathbf{0}_3 &                                                                               &  &     \mathbf{0}_3     &  &  &     \mathbf{0}_3     & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                            &              &                                                                               &  &                      &  &  &                      & \\
     };
-    \coordinate[yshift=.2em] (tl) at (m-1-1.north west);
-    \draw[decorate,transform canvas={yshift=.5em},thick] (tl) -- node[above=2pt] {$\mathbf{F}$} (m-1-3.north east);
+
+    \foreach \r in {1,3,4,6,7,9} {
+      \foreach \c in {1,3,4,6,7,9,10,12,13,15} {
+        \coordinate (m-\r-\c-nw) at (100,-100);
+        \coordinate (m-\r-\c-se) at (-100,100);
+
+        \foreach \row in {1,...,9} {
+          \path let \p1=(m-\row-\c.west), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at ({min(\x1,\x2)},\y2);
+          \path let \p1=(m-\row-\c.east), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at ({max(\x1,\x2)},\y2);
+        }
+        \foreach \col in {1,...,15} {
+          \path let \p1=(m-\r-\col.north), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at (\x2,{max(\y1,\y2)});
+          \path let \p1=(m-\r-\col.south), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at (\x2,{min(\y1,\y2)});
+        }
+      }
+    }
+
+    \path let \p1=(m-1-1-nw), \p2=(m-1-15-se) in coordinate (m-1-15-ne) at (\x2,\y1);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1-nw) -- node[above=2pt] {$\mathbf{F}$} (m-1-15-ne);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[green!20]{m-1-1}{m-3-3}
-      \fhighlight[yellow!20]{m-1-4}{m-3-6}
+      \fhighlight[green!20]{m-1-1-nw}{m-3-3-se}
+      \fhighlight[yellow!20]{m-1-4-nw}{m-3-6-se}
+      \fhighlight[lime!20]{m-1-7-nw}{m-3-9-se}
+      \fhighlight[orange!20]{m-1-13-nw}{m-3-15-se}
+      \fhighlight[blue!20]{m-4-1-nw}{m-6-3-se}
+      \fhighlight[purple!20]{m-4-4-nw}{m-6-6-se}
+      \fhighlight[violet!20]{m-4-7-nw}{m-6-9-se}
+      \fhighlight[red!20]{m-4-10-nw}{m-6-12-se}
+      \fhighlight[cyan!20]{m-7-4-nw}{m-9-6-se}
+      \fhighlight[teal!20]{m-7-7-nw}{m-9-9-se}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter=(,right delimiter=),nodes={rectangle,text width=1.5em,align=center},row sep=0.3em, column sep=0.4em] {
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.5em,align=center},row sep=0.3em, column sep=0.4em] {
       \delta R              \\ \delta P              \\ \delta Y              \\
       \delta v_{N}          \\ \delta v_{E}          \\ \delta v_{D}          \\
       \delta \phi           \\ \delta \lambda        \\ \delta h              \\
@@ -137,6 +176,28 @@ Sources:
 \fl{equation,eq-confirm-still-working}
   a = 2
 \f}
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+
+Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+
+Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+
+Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis.
+
+At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, At accusam aliquyam diam diam dolore dolores duo eirmod eos erat, et nonumy sed tempor et et invidunt justo labore Stet clita ea et gubergren, kasd magna no rebum. sanctus sea sed takimata ut vero voluptua. est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat.
+
+Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus.
+
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+
+Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+
+Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+
+Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
 
 */
 

@@ -95,15 +95,8 @@ documentation:
   tags:
     - linux
   script:
-    - dvips --version
-    - gs --version
-    - latex --version
-    - command -v pdf2svg
     - cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=YES
     - cmake --build build/Release --target doc
-  artifacts:
-    untracked: true
-    when: always
 
 # ╔══════════════════════════════════════════════════════════════════════════════════════════════════╗
 # ║                                         Build Main & GUI                                         ║
