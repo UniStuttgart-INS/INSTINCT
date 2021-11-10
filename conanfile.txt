@@ -2,7 +2,7 @@
 spdlog/1.8.2
 fmt/7.1.2
 boost/1.76.0
-eigen/3.3.9
+eigen/3.4.0
 catch2/2.13.3
 nlohmann_json/3.9.1
 zlib/1.2.8
