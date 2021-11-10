@@ -9,7 +9,8 @@
         "editor.formatOnSave": false
     },
     "[latex]": {
-        "editor.formatOnSave": false
+        "editor.formatOnSave": false,
+        "editor.tabSize": 2,
     },
     "C_Cpp.autoAddFileAssociations": false, // Otherwise the "files.associations" list will be filled everytime opening a file without extension (e.g. <iostream>)
     "C_Cpp.default.cppStandard": "c++20",
@@ -60,7 +61,8 @@
         "**/boost/**": "cpp", // <-- boost libraries
         "*.tpp": "cpp", // <-- Template files
         "*.log.*": "log", // <-- log files
-        "*.flow": "json" // <-- nodeeditor save files
+        "*.flow": "json", // <-- nodeeditor save files
+        "*.dox": "latex", // <-- Doxygen files
     },
     "logFileHighlighter.customPatterns": [
         {
