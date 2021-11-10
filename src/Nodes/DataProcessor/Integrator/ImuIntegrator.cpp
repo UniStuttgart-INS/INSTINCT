@@ -457,20 +457,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         for (auto& posVelAtt : posVelAttStates)
         {
-            auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
-            posVelAttCorrected->setPosition_lla(posVelAtt->latLonAlt() - pvaError->positionError_lla());
-
-            posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() - pvaError->velocityError_n());
-
-            // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-            Eigen::Vector3d attError = pvaError->attitudeError_n();
-            Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
-            posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
-
-            // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
-            // TODO: Use quaternions for caluclation
-
-            posVelAtt = posVelAttCorrected;
+            posVelAtt = correctPosVelAtt(posVelAtt, pvaError);
         }
         LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {} (after KF update)", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
 

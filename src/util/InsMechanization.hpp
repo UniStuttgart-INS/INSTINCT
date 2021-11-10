@@ -8,6 +8,9 @@
 #include "util/Eigen.hpp"
 #include "util/InsConstants.hpp"
 
+#include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/PVAError.hpp"
+
 namespace NAV
 {
 // ###########################################################################################################
@@ -267,5 +270,11 @@ template<typename T>
 /// @return The skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 5.41)
 [[nodiscard]] Eigen::Matrix3d AngularVelocityEarthSkew_ie_n(double latitude);
+
+/// @brief Corrects the provided Position, Velocity and Attitude with the corrections
+/// @param[in] posVelAtt PosVelAtt to correct
+/// @param[in] pvaError Corrections to apply
+/// @return Newly allocated pointer to the corrected posVelAtt
+std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError> pvaError);
 
 } // namespace NAV
