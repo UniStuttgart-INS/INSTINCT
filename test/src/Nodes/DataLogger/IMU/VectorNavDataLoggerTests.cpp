@@ -30,7 +30,7 @@ int messageCounterGnssLogVnb = 0;  ///< Message Counter for the Gnss log vnb fil
 // TODO: Implement this test
 // }
 
-TEST_CASE("[VectorNavDataLogger] Read and log files and compare content", "[VectorNavDataLogger]")
+TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", "[VectorNavDataLogger][flow]")
 {
     messageCounterImuDataCsv = 0;
     messageCounterImuLogCsv = 0;
