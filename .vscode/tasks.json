@@ -391,6 +391,26 @@
             ],
             "problemMatcher": [],
         },
+        { // TEST: Build & run w/o flow tests
+            "label": "TEST: Build & run w/o flow tests",
+            "type": "shell",
+            "group": "test",
+            "command": "ctest",
+            "args": [
+                "-j2",
+                "--output-on-failure",
+                "--exclude-regex",
+                "'\\[flow\\]'"
+                // "--verbose",
+            ],
+            "options": {
+                "cwd": "build/Debug",
+            },
+            "dependsOn": [
+                "TEST: Build project",
+            ],
+            "problemMatcher": [],
+        },
         { // COVERAGE: Run Coverage Tests
             "label": "COVERAGE: Run Coverage Tests",
             "type": "shell",
@@ -399,6 +419,26 @@
             "args": [
                 "-j2",
                 "--output-on-failure",
+                // "--verbose",
+            ],
+            "options": {
+                "cwd": "build/Debug-cov",
+            },
+            "dependsOn": [
+                "COVERAGE: Build Coverage Report",
+            ],
+            "problemMatcher": [],
+        },
+        { // COVERAGE: Run Coverage Tests w/o flow tests
+            "label": "COVERAGE: Run Coverage Tests w/o flow tests",
+            "type": "shell",
+            "group": "test",
+            "command": "ctest",
+            "args": [
+                "-j2",
+                "--output-on-failure",
+                "--exclude-regex",
+                "'\\[flow\\]'"
                 // "--verbose",
             ],
             "options": {
@@ -428,6 +468,25 @@
             ],
             "problemMatcher": [],
         },
+        { // COVERAGE: Create w/o flow tests
+            "label": "COVERAGE: Create w/o flow tests",
+            "type": "shell",
+            "group": "test",
+            "command": "bash",
+            "args": [
+                "-c",
+                "mkdir -p $COVERAGE_PATH && lcov --gcov-tool gcov --capture --no-external --directory . --output-file $COVERAGE_PATH/coverage_all.info && lcov --remove $COVERAGE_PATH/coverage_all.info \"${workspaceFolder}/lib/*\" \"${workspaceFolder}/test/*\" \"${workspaceFolder}/build/*\" --output-file $COVERAGE_PATH/coverage.info && genhtml $COVERAGE_PATH/coverage.info --output-directory $COVERAGE_PATH --config-file doc/coverage/lcovrc && lcov --list $COVERAGE_PATH/coverage.info && python3 tools/lcov_cobertura.py $COVERAGE_PATH/coverage.info --output $COVERAGE_PATH/cobertura-coverage.xml",
+            ],
+            "options": {
+                "env": {
+                    "COVERAGE_PATH": "bin/doc/html/coverage",
+                },
+            },
+            "dependsOn": [
+                "COVERAGE: Run Coverage Tests w/o flow tests",
+            ],
+            "problemMatcher": [],
+        },
         { // COVERAGE: Create & Show
             "label": "COVERAGE: Create & Show",
             "type": "shell",
@@ -438,6 +497,19 @@
             ],
             "dependsOn": [
                 "COVERAGE: Create",
+            ],
+            "problemMatcher": [],
+        },
+        { // COVERAGE: Create & Show w/o flow tests
+            "label": "COVERAGE: Create & Show w/o flow tests",
+            "type": "shell",
+            "group": "build",
+            "command": "xdg-open",
+            "args": [
+                "bin/doc/html/coverage/index.html",
+            ],
+            "dependsOn": [
+                "COVERAGE: Create w/o flow tests",
             ],
             "problemMatcher": [],
         },
