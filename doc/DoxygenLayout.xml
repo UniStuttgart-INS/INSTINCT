@@ -8,6 +8,7 @@
     <tab type="mainpage" visible="yes" title=""/>
     <tab type="pages" visible="yes" title="" intro=""/>
     <tab type="classlist" visible="yes" title="" intro=""/>
+    <tab type="filelist" visible="yes" title="" intro=""/>
     <tab type="user" visible="yes" url="coverage/index.html" title="Coverage Report"/>
   </navindex>
 

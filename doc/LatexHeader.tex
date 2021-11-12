@@ -1,5 +1,6 @@
 \usepackage[a2paper, margin=0cm]{geometry}
 \usepackage{amsmath}
+\usepackage{nicefrac}
 \usepackage{upgreek}
 \usepackage{xcolor}
 \definecolor{link}{HTML}{4b69a4}
@@ -8,7 +9,9 @@
 \usepackage{tikz}
 \usetikzlibrary{matrix,backgrounds,decorations.pathreplacing,calc}
 
-\newcommand{\highlight}[3][O{blue!40}]{%
+\newcommand{\highlight}[2][yellow]{\colorbox{#1}{$#2$}}
+
+\newcommand{\bhighlight}[3][O{blue!40}]{%
   \draw[rounded corners,line width=1bp,color=#1] (#2.north west) rectangle (#3.south east);
 }
 

@@ -1182,7 +1182,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_33_n(const Eigen::Vector3d&
     const double& v_E = v_eb_n(1);
 
     F_33_n(0, 2) = -v_N / std::pow(R_N + height, 2.0);
-    F_33_n(1, 0) = v_E * std::sin(latitude) / ((R_E + height) * std::pow(std::cos(latitude), 2.0));
+    F_33_n(1, 0) = v_E * std::tan(latitude) / ((R_E + height) * std::cos(latitude));
     F_33_n(1, 2) = -v_E / (std::pow(R_E + height, 2.0) * std::cos(latitude));
 
     return F_33_n;
