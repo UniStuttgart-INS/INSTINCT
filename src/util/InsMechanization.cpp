@@ -29,6 +29,10 @@ Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, co
           angularVelocity(0),         0.0        ,  angularVelocity(2), -angularVelocity(1),
           angularVelocity(1), -angularVelocity(2),         0.0        ,  angularVelocity(0),
           angularVelocity(2),  angularVelocity(1), -angularVelocity(0),         0.0        ;
+    // A <<         0.0        , -angularVelocity(0), -angularVelocity(1), -angularVelocity(2),
+    //       angularVelocity(0),         0.0        , -angularVelocity(2),  angularVelocity(1),
+    //       angularVelocity(1),  angularVelocity(2),         0.0        , -angularVelocity(0),
+    //       angularVelocity(2), -angularVelocity(1),  angularVelocity(0),         0.0        ;
     // clang-format on
 
     q = 0.5 * A * q; // (w,x,y,z)
@@ -505,6 +509,13 @@ std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<con
     // posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
+    // const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb()
+    //                                  * (Eigen::AngleAxisd(attError(0), Eigen::Vector3d::UnitX())
+    //                                     * Eigen::AngleAxisd(attError(1), Eigen::Vector3d::UnitY())
+    //                                     * Eigen::AngleAxisd(attError(2), Eigen::Vector3d::UnitZ()))
+    //                                        .normalized();
+    // posVelAttCorrected->setAttitude_nb(q_nb.normalized());
+
     const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb();
     Eigen::Quaterniond q_nb_c{ q_nb.w() + 0.5 * (+attError(0) * q_nb.x() + attError(1) * q_nb.y() + attError(2) * q_nb.z()),
                                q_nb.x() + 0.5 * (-attError(0) * q_nb.w() + attError(1) * q_nb.z() - attError(2) * q_nb.y()),
