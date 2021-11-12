@@ -346,21 +346,21 @@ class LooselyCoupledKF : public Node
     static Eigen::Matrix3d systemMatrixF_11_n(const Eigen::Vector3d& angularRate_in_n);
 
     /// @brief Submatrix 𝐅_𝜓'_𝛿v of the system matrix 𝐅
-    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
-    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @param[in] latitude Geodetic latitude of the body in [rad]
+    /// @param[in] height Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_12
     /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21)
     /// @note See Groves (2013) equation (14.65)
-    static Eigen::Matrix3d systemMatrixF_12_n(double latitude_b, double height_b);
+    static Eigen::Matrix3d systemMatrixF_12_n(double latitude, double height);
 
     /// @brief Submatrix 𝐅_𝜓'_𝛿r of the system matrix 𝐅
-    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
-    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @param[in] latitude Geodetic latitude of the body in [rad]
+    /// @param[in] height Geodetic height of the body in [m]
     /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
     /// @return The 3x3 matrix 𝐅_13
     /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21)
     /// @note See Groves (2013) equation (14.66)
-    static Eigen::Matrix3d systemMatrixF_13_n(double latitude_b, double height_b, const Eigen::Vector3d& v_eb_n);
+    static Eigen::Matrix3d systemMatrixF_13_n(double latitude, double height, const Eigen::Vector3d& v_eb_n);
 
     /// @brief Submatrix 𝐅_𝛿v'_𝜓 of the system matrix 𝐅
     /// @param[in] quaternion_np Attitude of the platform with respect to n-system
@@ -372,38 +372,38 @@ class LooselyCoupledKF : public Node
 
     /// @brief Submatrix 𝐅_𝛿v'_𝛿v of the system matrix 𝐅
     /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
-    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
-    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @param[in] latitude Geodetic latitude of the body in [rad]
+    /// @param[in] height Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_22
     /// @note See T. Hobiger (2021) Inertialnavigation V08 - equation (8.6, 8.15)
     /// @note See Groves (2013) equation (14.68)
-    static Eigen::Matrix3d systemMatrixF_22_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
+    static Eigen::Matrix3d systemMatrixF_22_n(const Eigen::Vector3d& v_eb_n, double latitude, double height);
 
     /// @brief Submatrix 𝐅_𝛿v'_𝛿r of the system matrix 𝐅
     /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
-    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
-    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @param[in] latitude Geodetic latitude of the body in [rad]
+    /// @param[in] height Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_23
     /// @note See T. Hobiger (2021) Inertialnavigation V08 - equation (8.14, 8.16)
     /// @note See Groves (2013) equation (14.69)
-    static Eigen::Matrix3d systemMatrixF_23_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
+    static Eigen::Matrix3d systemMatrixF_23_n(const Eigen::Vector3d& v_eb_n, double latitude, double height);
 
     /// @brief Submatrix 𝐅_𝛿r'_𝛿v of the system matrix 𝐅
-    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
-    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @param[in] latitude Geodetic latitude of the body in [rad]
+    /// @param[in] height Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_32
     /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5)
     /// @note See Groves (2013) equation (14.70)
-    static Eigen::Matrix3d systemMatrixF_32_n(double latitude_b, double height_b);
+    static Eigen::Matrix3d systemMatrixF_32_n(double latitude, double height);
 
     /// @brief Submatrix 𝐅_𝛿r'_𝛿r of the system matrix 𝐅
     /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
-    /// @param[in] latitude_b Geodetic latitude of the body in [rad]
-    /// @param[in] height_b Geodetic height of the body in [m]
+    /// @param[in] latitude Geodetic latitude of the body in [rad]
+    /// @param[in] height Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_33
     /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5)
     /// @note See Groves (2013) equation (14.71)
-    static Eigen::Matrix3d systemMatrixF_33_n(const Eigen::Vector3d& v_eb_n, double latitude_b, double height_b);
+    static Eigen::Matrix3d systemMatrixF_33_n(const Eigen::Vector3d& v_eb_n, double latitude, double height);
 
     /// @brief Submatrix 𝐅_𝛿a'_𝛿a of the system matrix 𝐅
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)

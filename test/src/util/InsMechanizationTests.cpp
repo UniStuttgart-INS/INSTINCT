@@ -321,35 +321,42 @@ TEST_CASE("[InsMechanization] PVAError correction", "[InsMechanization]")
 {
     Eigen::Vector3d latLonAlt{ trafo::deg2rad(30), trafo::deg2rad(9), 400 };
     Eigen::Vector3d vel_n{ 15, 2, -5 };
-    double roll = trafo::deg2rad(20.0);
-    double pitch = trafo::deg2rad(-40.0);
-    double yaw = trafo::deg2rad(160.0);
-    Eigen::Quaterniond quat_nb = trafo::quat_nb(roll, pitch, yaw);
-
-    Eigen::Vector3d positionError_lla{ trafo::deg2rad(4), trafo::deg2rad(-7), 5 };
-    Eigen::Vector3d velocityError_n{ 3, -10, 15 };
-    Eigen::Vector3d attitudeError_n{ trafo::deg2rad3({ 1, -2, 3 }) };
-
+    double roll = trafo::deg2rad(10.0);
+    double pitch = trafo::deg2rad(10.0);
+    double yaw = trafo::deg2rad(10.0);
     auto posVelAtt = std::make_shared<PosVelAtt>();
-    posVelAtt->setState_n(latLonAlt, vel_n, quat_nb);
-    auto pvaError = std::make_shared<PVAError>();
-    pvaError->positionError_lla() = positionError_lla;
-    pvaError->velocityError_n() = velocityError_n;
-    pvaError->attitudeError_n() = attitudeError_n;
+    posVelAtt->setState_n(latLonAlt, vel_n, trafo::quat_nb(roll, pitch, yaw));
 
+    auto pvaError = std::make_shared<PVAError>();
+    pvaError->positionError_lla() = Eigen::Vector3d{ trafo::deg2rad(4), trafo::deg2rad(-7), 5 };
+    pvaError->velocityError_n() = Eigen::Vector3d{ 3, -10, 15 };
+    pvaError->attitudeError_n() = trafo::deg2rad3({ 1, 0, 0 });
+
+    Eigen::Vector3d expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
     auto correctedPVA = correctPosVelAtt(posVelAtt, pvaError);
 
-    CHECK(posVelAtt->latLonAlt()(0) - positionError_lla(0) == Approx(correctedPVA->latLonAlt()(0)).margin(1e-16));
-    CHECK(posVelAtt->latLonAlt()(1) - positionError_lla(1) == Approx(correctedPVA->latLonAlt()(1)).margin(1e-16));
-    CHECK(posVelAtt->latLonAlt()(2) - positionError_lla(2) == Approx(correctedPVA->latLonAlt()(2)).margin(1e-16));
+    CHECK(posVelAtt->latLonAlt() - pvaError->positionError_lla() == correctedPVA->latLonAlt());
+    CHECK(posVelAtt->velocity_n() - pvaError->velocityError_n() == correctedPVA->velocity_n());
 
-    CHECK(posVelAtt->velocity_n()(0) - velocityError_n(0) == Approx(correctedPVA->velocity_n()(0)).margin(1e-16));
-    CHECK(posVelAtt->velocity_n()(1) - velocityError_n(1) == Approx(correctedPVA->velocity_n()(1)).margin(1e-16));
-    CHECK(posVelAtt->velocity_n()(2) - velocityError_n(2) == Approx(correctedPVA->velocity_n()(2)).margin(1e-16));
+    CHECK(trafo::rad2deg3(expectedRollPitchYaw) == trafo::rad2deg3(correctedPVA->rollPitchYaw()));
 
-    CHECK(trafo::rad2deg(posVelAtt->rollPitchYaw()(0) - attitudeError_n(0)) == Approx(trafo::rad2deg(correctedPVA->rollPitchYaw()(0))));
-    CHECK(trafo::rad2deg(posVelAtt->rollPitchYaw()(1) - attitudeError_n(1)) == Approx(trafo::rad2deg(correctedPVA->rollPitchYaw()(1))));
-    CHECK(trafo::rad2deg(posVelAtt->rollPitchYaw()(2) - attitudeError_n(2)) == Approx(trafo::rad2deg(correctedPVA->rollPitchYaw()(2))));
+    // ###########################################################################################################
+
+    pvaError->attitudeError_n() = trafo::deg2rad3({ 0, 1, 0 });
+
+    expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
+    correctedPVA = correctPosVelAtt(posVelAtt, pvaError);
+
+    CHECK(trafo::rad2deg3(expectedRollPitchYaw) == trafo::rad2deg3(correctedPVA->rollPitchYaw()));
+
+    // ###########################################################################################################
+
+    pvaError->attitudeError_n() = trafo::deg2rad3({ 0, 0, 1 });
+
+    expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
+    correctedPVA = correctPosVelAtt(posVelAtt, pvaError);
+
+    CHECK(trafo::rad2deg3(expectedRollPitchYaw) == trafo::rad2deg3(correctedPVA->rollPitchYaw()));
 }
 
 } // namespace NAV
