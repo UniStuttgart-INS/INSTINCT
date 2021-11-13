@@ -20,19 +20,6 @@ class StringObs : public InsObs
     explicit StringObs(std::string str)
         : data(std::move(str)) {}
 
-    /// @brief Default constructor
-    StringObs() = default;
-    /// @brief Destructor
-    ~StringObs() override = default;
-    /// @brief Copy constructor
-    StringObs(const StringObs&) = delete;
-    /// @brief Move constructor
-    StringObs(StringObs&&) = delete;
-    /// @brief Copy assignment operator
-    StringObs& operator=(const StringObs&) = delete;
-    /// @brief Move assignment operator
-    StringObs& operator=(StringObs&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()

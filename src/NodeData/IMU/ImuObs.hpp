@@ -21,19 +21,6 @@ class ImuObs : public InsObs
     explicit ImuObs(const ImuPos& imuPos)
         : imuPos(imuPos) {}
 
-    /// @brief Default constructor
-    ImuObs() = delete;
-    /// @brief Destructor
-    ~ImuObs() override = default;
-    /// @brief Copy constructor
-    ImuObs(const ImuObs&) = delete;
-    /// @brief Move constructor
-    ImuObs(ImuObs&&) = delete;
-    /// @brief Copy assignment operator
-    ImuObs& operator=(const ImuObs&) = delete;
-    /// @brief Move assignment operator
-    ImuObs& operator=(ImuObs&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()

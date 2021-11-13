@@ -15,19 +15,6 @@ namespace NAV
 class InertialNavSol : public PosVelAtt
 {
   public:
-    /// @brief Default constructor
-    InertialNavSol() = default;
-    /// @brief Destructor
-    ~InertialNavSol() override = default;
-    /// @brief Copy constructor
-    InertialNavSol(const InertialNavSol&) = default;
-    /// @brief Move constructor
-    InertialNavSol(InertialNavSol&&) = default;
-    /// @brief Copy assignment operator
-    InertialNavSol& operator=(const InertialNavSol&) = default;
-    /// @brief Move assignment operator
-    InertialNavSol& operator=(InertialNavSol&&) = default;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()

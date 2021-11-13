@@ -26,19 +26,6 @@ class KvhObs final : public ImuObs
     explicit KvhObs(const ImuPos& imuPos)
         : ImuObs(imuPos) {}
 
-    /// @brief Default constructor
-    KvhObs() = delete;
-    /// @brief Destructor
-    ~KvhObs() final = default;
-    /// @brief Copy constructor
-    KvhObs(const KvhObs&) = delete;
-    /// @brief Move constructor
-    KvhObs(KvhObs&&) = delete;
-    /// @brief Copy assignment operator
-    KvhObs& operator=(const KvhObs&) = delete;
-    /// @brief Move assignment operator
-    KvhObs& operator=(KvhObs&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()

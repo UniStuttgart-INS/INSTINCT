@@ -18,19 +18,6 @@ class ImuObsWDelta final : public ImuObs
     explicit ImuObsWDelta(const ImuPos& imuPos)
         : ImuObs(imuPos) {}
 
-    /// @brief Default constructor
-    ImuObsWDelta() = delete;
-    /// @brief Destructor
-    ~ImuObsWDelta() final = default;
-    /// @brief Copy constructor
-    ImuObsWDelta(const ImuObsWDelta&) = delete;
-    /// @brief Move constructor
-    ImuObsWDelta(ImuObsWDelta&&) = delete;
-    /// @brief Copy assignment operator
-    ImuObsWDelta& operator=(const ImuObsWDelta&) = delete;
-    /// @brief Move assignment operator
-    ImuObsWDelta& operator=(ImuObsWDelta&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()

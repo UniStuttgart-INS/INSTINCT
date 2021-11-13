@@ -25,19 +25,6 @@ class EmlidObs : public InsObs
     explicit EmlidObs(uart::protocol::Packet& packet)
         : raw(packet) {}
 
-    /// @brief Default constructor
-    EmlidObs() = default;
-    /// @brief Destructor
-    ~EmlidObs() override = default;
-    /// @brief Copy constructor
-    EmlidObs(const EmlidObs&) = delete;
-    /// @brief Move constructor
-    EmlidObs(EmlidObs&&) = delete;
-    /// @brief Copy assignment operator
-    EmlidObs& operator=(const EmlidObs&) = delete;
-    /// @brief Move assignment operator
-    EmlidObs& operator=(EmlidObs&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()

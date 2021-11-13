@@ -16,19 +16,6 @@ class Imu;
 class ImuPos
 {
   public:
-    /// @brief Default constructor
-    ImuPos() = default;
-    /// @brief Destructor
-    ~ImuPos() = default;
-    /// @brief Copy constructor
-    ImuPos(const ImuPos&) = delete;
-    /// @brief Move constructor
-    ImuPos(ImuPos&&) = delete;
-    /// @brief Copy assignment operator
-    ImuPos& operator=(const ImuPos&) = delete;
-    /// @brief Move assignment operator
-    ImuPos& operator=(ImuPos&&) = delete;
-
     /// Accelerometer position in body frame coordinates in [m]
     [[nodiscard]] const Eigen::Vector3d& posAccel_b() const
     {

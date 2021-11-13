@@ -26,19 +26,6 @@ class UbloxObs : public InsObs
     explicit UbloxObs(uart::protocol::Packet& packet)
         : raw(packet) {}
 
-    /// Default constructor
-    UbloxObs() = default;
-    /// @brief Destructor
-    ~UbloxObs() override = default;
-    /// @brief Copy constructor
-    UbloxObs(const UbloxObs&) = delete;
-    /// @brief Move constructor
-    UbloxObs(UbloxObs&&) = delete;
-    /// @brief Copy assignment operator
-    UbloxObs& operator=(const UbloxObs&) = delete;
-    /// @brief Move assignment operator
-    UbloxObs& operator=(UbloxObs&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()

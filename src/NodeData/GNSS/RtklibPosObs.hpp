@@ -14,19 +14,6 @@ namespace NAV
 class RtklibPosObs : public InsObs
 {
   public:
-    /// @brief Default constructor
-    RtklibPosObs() = default;
-    /// @brief Destructor
-    ~RtklibPosObs() override = default;
-    /// @brief Copy constructor
-    RtklibPosObs(const RtklibPosObs&) = delete;
-    /// @brief Move constructor
-    RtklibPosObs(RtklibPosObs&&) = delete;
-    /// @brief Copy assignment operator
-    RtklibPosObs& operator=(const RtklibPosObs&) = delete;
-    /// @brief Move assignment operator
-    RtklibPosObs& operator=(RtklibPosObs&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()

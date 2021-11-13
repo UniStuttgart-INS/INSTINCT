@@ -16,19 +16,6 @@ namespace NAV
 class PosVelAtt : public PosVel
 {
   public:
-    /// @brief Default constructor
-    PosVelAtt() = default;
-    /// @brief Destructor
-    ~PosVelAtt() override = default;
-    /// @brief Copy constructor
-    PosVelAtt(const PosVelAtt&) = default;
-    /// @brief Move constructor
-    PosVelAtt(PosVelAtt&&) = default;
-    /// @brief Copy assignment operator
-    PosVelAtt& operator=(const PosVelAtt&) = default;
-    /// @brief Move assignment operator
-    PosVelAtt& operator=(PosVelAtt&&) = default;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
