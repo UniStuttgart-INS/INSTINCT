@@ -149,7 +149,7 @@ void NAV::VectorNavDataLogger::deinitialize()
 
 void NAV::VectorNavDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::dynamic_pointer_cast<const VectorNavBinaryOutput>(nodeData);
+    auto obs = std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData);
 
     if (fileType == FileType::CSV)
     {

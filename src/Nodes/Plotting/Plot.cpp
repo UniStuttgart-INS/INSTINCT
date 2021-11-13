@@ -1623,39 +1623,39 @@ void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::No
             if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
                 || sourcePin->dataIdentifier.front() == InertialNavSol::type())
             {
-                plotPosVelAtt(std::dynamic_pointer_cast<const PosVelAtt>(nodeData), pinIndex);
+                plotPosVelAtt(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == PVAError::type())
             {
-                plotPVAError(std::dynamic_pointer_cast<const PVAError>(nodeData), pinIndex);
+                plotPVAError(std::static_pointer_cast<const PVAError>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuBiases::type())
             {
-                plotImuBiases(std::dynamic_pointer_cast<const ImuBiases>(nodeData), pinIndex);
+                plotImuBiases(std::static_pointer_cast<const ImuBiases>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
-                plotRtklibPosObs(std::dynamic_pointer_cast<const RtklibPosObs>(nodeData), pinIndex);
+                plotRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
             {
-                plotUbloxObs(std::dynamic_pointer_cast<const UbloxObs>(nodeData), pinIndex);
+                plotUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuObs::type())
             {
-                plotImuObs(std::dynamic_pointer_cast<const ImuObs>(nodeData), pinIndex);
+                plotImuObs(std::static_pointer_cast<const ImuObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == KvhObs::type())
             {
-                plotKvhObs(std::dynamic_pointer_cast<const KvhObs>(nodeData), pinIndex);
+                plotKvhObs(std::static_pointer_cast<const KvhObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type())
             {
-                plotImuObsWDeltaObs(std::dynamic_pointer_cast<const ImuObsWDelta>(nodeData), pinIndex);
+                plotImuObsWDeltaObs(std::static_pointer_cast<const ImuObsWDelta>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type())
             {
-                plotVectorNavBinaryObs(std::dynamic_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIndex);
+                plotVectorNavBinaryObs(std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIndex);
             }
         }
     }

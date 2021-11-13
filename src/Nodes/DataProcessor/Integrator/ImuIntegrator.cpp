@@ -372,7 +372,7 @@ void NAV::ImuIntegrator::deinitialize()
 
 void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto imuObs = std::dynamic_pointer_cast<const ImuObs>(nodeData);
+    auto imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
 
     if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
     {
@@ -403,7 +403,7 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<const NodeData>& n
 
 void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto posVelAtt = std::dynamic_pointer_cast<const PosVelAtt>(nodeData);
+    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(nodeData);
 
     // Add imuObs tₖ₋₁ to the start of the list
     if (posVelAttStates.empty())
@@ -436,12 +436,12 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& no
 
 void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    pvaError = std::dynamic_pointer_cast<const PVAError>(nodeData);
+    pvaError = std::static_pointer_cast<const PVAError>(nodeData);
 }
 
 void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto imuBiasObs = std::dynamic_pointer_cast<const ImuBiases>(nodeData);
+    auto imuBiasObs = std::static_pointer_cast<const ImuBiases>(nodeData);
 
     imuBiases.biasAccel_p += imuBiasObs->biasAccel_p;
     imuBiases.biasGyro_p += imuBiasObs->biasGyro_p;

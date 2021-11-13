@@ -139,7 +139,7 @@ bool NAV::VectorNavBinaryConverter::initialize()
 
 void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto vnObs = std::dynamic_pointer_cast<const VectorNavBinaryOutput>(nodeData);
+    auto vnObs = std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData);
 
     std::shared_ptr<const NodeData> convertedData = nullptr;
 

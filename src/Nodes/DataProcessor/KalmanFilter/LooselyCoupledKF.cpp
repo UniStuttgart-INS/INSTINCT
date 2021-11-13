@@ -631,7 +631,7 @@ void NAV::LooselyCoupledKF::deinitialize()
 
 void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/) // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto inertialNavSol = std::dynamic_pointer_cast<const InertialNavSol>(nodeData);
+    auto inertialNavSol = std::static_pointer_cast<const InertialNavSol>(nodeData);
 
     if (latestInertialNavSol)
     {
@@ -645,7 +645,7 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
 
 void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto gnssMeasurement = std::dynamic_pointer_cast<const PosVelAtt>(nodeData);
+    auto gnssMeasurement = std::static_pointer_cast<const PosVelAtt>(nodeData);
 
     if (latestInertialNavSol)
     {

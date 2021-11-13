@@ -97,7 +97,7 @@ void NAV::EmlidDataLogger::deinitialize()
 
 void NAV::EmlidDataLogger::writeObservation(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
-    auto obs = std::dynamic_pointer_cast<const EmlidObs>(nodeData);
+    auto obs = std::static_pointer_cast<const EmlidObs>(nodeData);
 
     if (obs->raw.getRawDataLength() > 0)
     {
