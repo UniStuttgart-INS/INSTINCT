@@ -437,7 +437,7 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j2",
+                "-j4",
                 "--output-on-failure",
                 "--exclude-regex",
                 "'\\[flow\\]'"
