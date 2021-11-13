@@ -51,21 +51,8 @@ Eigen::Vector3d quat2eulerZYX(const Eigen::Quaterniond& q)
         double x = XYZ.x() > 0 ? XYZ.x() - M_PI : XYZ.x() + M_PI;
         double y = XYZ.y() >= M_PI / 2.0 ? -(XYZ.y() - M_PI) : -(XYZ.y() + M_PI);
         double z = XYZ.z() - M_PI;
-#ifndef NDEBUG
-        // Wanted range
-        if (x > -M_PI && x <= M_PI                // (-pi:pi]
-            && y > -M_PI / 2.0 && y <= M_PI / 2.0 // (-pi/2:pi/2]
-            && z > -M_PI && z <= M_PI)            // (-pi:pi]
-        {
-#endif
-            XYZ = { x, y, z };
-#ifndef NDEBUG
-        }
-        else
-        {
-            LOG_ERROR("\nCould not convert the angles [{}, {}, {}]", XYZ.x(), XYZ.y(), XYZ.z());
-        }
-#endif
+
+        XYZ = { x, y, z };
     }
 
     return XYZ;

@@ -496,7 +496,7 @@ Eigen::Matrix3d AngularVelocityEarthSkew_ie_n(double latitude)
     return InsConst::angularVelocity_ie * Omega;
 }
 
-std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError> pvaError)
+std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError)
 {
     auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
     posVelAttCorrected->setPosition_lla(posVelAtt->latLonAlt() - pvaError->positionError_lla());

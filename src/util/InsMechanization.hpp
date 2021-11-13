@@ -277,6 +277,6 @@ template<typename T>
 /// @param[in] posVelAtt PosVelAtt to correct
 /// @param[in] pvaError Corrections to apply
 /// @return Newly allocated pointer to the corrected posVelAtt
-std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError> pvaError);
+std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError);
 
 } // namespace NAV
