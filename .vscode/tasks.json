@@ -379,8 +379,10 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j2",
+                "-j4",
                 "--output-on-failure",
+                // "--tests-regex",
+                // "'PVAError|PosVelAtt'",
                 // "--verbose",
             ],
             "options": {
@@ -397,7 +399,7 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j2",
+                "-j4",
                 "--output-on-failure",
                 "--exclude-regex",
                 "'\\[flow\\]'"
@@ -417,7 +419,7 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j2",
+                "-j4",
                 "--output-on-failure",
                 // "--verbose",
             ],
