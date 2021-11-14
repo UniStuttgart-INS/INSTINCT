@@ -67,8 +67,7 @@ leads to the time derivative of the coordinate transformation matrix (see \cite 
   \mathbf{\dot{C}}_p^n &= \mathbf{C}_p^n \mathbf{\Omega}_{np}^p \\
                        &= \mathbf{C}_p^n (\mathbf{\Omega}_{ip}^p - \mathbf{\Omega}_{in}^p) \\
                        &= \mathbf{C}_p^n (\mathbf{\Omega}_{ip}^p - \mathbf{C}_n^p \mathbf{\Omega}_{in}^n \mathbf{C}_p^n) \\
-                       &= \mathbf{C}_p^n \mathbf{\Omega}_{ip}^p - \mathbf{\Omega}_{in}^n \mathbf{C}_p^n \\
-                       &= \mathbf{C}_p^n \mathbf{\Omega}_{ip}^p - (\mathbf{\Omega}_{ie}^n + \mathbf{\Omega}_{en}^n) \mathbf{C}_p^n
+                       &= \mathbf{C}_p^n \mathbf{\Omega}_{ip}^p - \mathbf{\Omega}_{in}^n \mathbf{C}_p^n
 \end{aligned}
 \f}
 
@@ -128,11 +127,48 @@ and neglect error product terms. This leads to (same as \cite Titterton2004 Titt
                               - \mathbf{C}_p^n \delta\mathbf{\Omega}_{ip}^p {\mathbf{C}_p^n}^T
 \f}
 
-Finally by performing an element by element comparison the equation can be expressed in vector form as:
+Finally by performing an element by element comparison with
+\fl{equation,eq-LCKF-Derivation-Attitude-element-comp}
+  \boldsymbol{\psi} \wedge = \mathbf{\Psi} \qquad\quad
+  \boldsymbol{\omega}_{in}^n \wedge = \mathbf{\Omega}_{in}^n \qquad\quad
+  \delta\boldsymbol{\omega}_{in}^n \wedge = \delta\mathbf{\Omega}_{in}^n \qquad\quad
+  \delta\boldsymbol{\omega}_{ip}^p \wedge = \delta\mathbf{\Omega}_{ip}^p
+\f}
+
+the equation can be expressed in vector form as:
 \fl{equation,eq-LCKF-Derivation-Attitude-differential}
-  \boldsymbol{\dot{\psi}} \approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \wedge} \boldsymbol{\psi}
-                                    + \delta \boldsymbol{\omega}_{in}^n
-                                    - \mathbf{C}_p^n \delta \boldsymbol{\omega}_{ip}^p
+\begin{aligned}
+  \boldsymbol{\dot{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \wedge} \boldsymbol{\psi}
+                                   + \delta \boldsymbol{\omega}_{in}^n
+                                   \highlight[orange!20]{- \mathbf{C}_p^n} \delta \boldsymbol{\omega}_{ip}^p \\
+                          &= \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \wedge} \boldsymbol{\psi}
+                             + \delta(\boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n)
+                             \highlight[orange!20]{- \mathbf{C}_p^n} \delta \boldsymbol{\omega}_{ip}^p
+\end{aligned}
+\f}
+
+The transport rate \f$ \boldsymbol{\omega}_{en}^n \f$ is defined as (see \cite Groves2013 Groves, ch. 5.4.1, eq. 5.44, p. 177 or \cite Gleason2009 Gleason, ch. 6.2.3.2, eq. 6.15, p. 155)
+\fl{equation,eq-LCKF-Derivation-Attitude-transport-rate}
+  \boldsymbol{\omega}_{en}^n = \left[ \frac{v_E}{R_E + h} \qquad -\frac{v_N}{R_N + h} \qquad -\frac{v_E \tan{\phi}}{R_E + h} \right]^T
+\f}
+
+and the Earth rotation in local-navigation-frame coordinates \f$ \boldsymbol{\omega}_{ie}^n \f$ is given body
+\fl{equation,eq-LCKF-Derivation-Attitude-earth-rotation-n}
+  \boldsymbol{\omega}_{ie}^n = \mathbf{C}_e^n \boldsymbol{\omega}_{ie}^e
+                             = \begin{pmatrix} -\sin{\phi}\cos{\lambda} & -\sin{\phi}\sin{\lambda} & \cos{\phi} \\
+                                                    -\sin{\lambda}      &      \cos{\lambda}       &      0     \\
+                                               -\cos{\phi}\cos{\lambda} & -\cos{\phi}\sin{\lambda} & -\sin{\phi} \end{pmatrix}
+                               \cdot \begin{pmatrix} 0 \\ 0 \\ \omega_{ie} \end{pmatrix}
+                             = \omega_{ie} \cdot \begin{pmatrix} \cos{\phi} \\ 0 \\ -\sin{\phi} \end{pmatrix}
+\f}
+
+Substituting \eqref{eq-LCKF-Derivation-Attitude-transport-rate} and \eqref{eq-LCKF-Derivation-Attitude-earth-rotation-n} into \eqref{eq-LCKF-Derivation-Attitude-differential} gives:
+\fl{equation,eq-LCKF-Derivation-Attitude-differential-final}
+\begin{aligned}
+  \boldsymbol{\dot{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \wedge} \boldsymbol{\psi}
+                                   + \delta(\boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n)
+                                   \highlight[orange!20]{- \mathbf{C}_p^n} \delta \boldsymbol{\omega}_{ip}^p
+\end{aligned}
 \f}
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
