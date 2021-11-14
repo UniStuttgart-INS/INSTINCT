@@ -6,7 +6,7 @@ template<typename _Scalar, int _Rows, int _Cols>
 class EigApprox : public Catch::Detail::Approx
 {
   public:
-    explicit EigApprox(const Eigen::Matrix<_Scalar, _Rows, _Cols>& matrix) : Approx(static_cast<_Scalar>(0.0)), _matrix(matrix) {}
+    explicit EigApprox(Eigen::Matrix<_Scalar, _Rows, _Cols> matrix) : Approx(static_cast<_Scalar>(0.0)), _matrix(std::move(matrix)) {}
 
     friend bool operator==(const Eigen::Matrix<_Scalar, _Rows, _Cols>& lhs, const EigApprox& rhs)
     {
@@ -20,7 +20,7 @@ class EigApprox : public Catch::Detail::Approx
         }
         return result;
     }
-    const Eigen::Matrix<_Scalar, _Rows, _Cols>& Matrix() const { return _matrix; }
+    [[nodiscard]] const Eigen::Matrix<_Scalar, _Rows, _Cols>& Matrix() const { return _matrix; }
 
     template<typename T, typename = typename std::enable_if<std::is_constructible<double, T>::value>::type>
     EigApprox& margin(T const& newMargin)
@@ -58,7 +58,7 @@ template<typename _Scalar>
 class EigApproxQ : public Catch::Detail::Approx
 {
   public:
-    explicit EigApproxQ(const Eigen::Quaternion<_Scalar>& quat) : Approx(static_cast<_Scalar>(0.0)), _quat(quat) {}
+    explicit EigApproxQ(Eigen::Quaternion<_Scalar> quat) : Approx(static_cast<_Scalar>(0.0)), _quat(std::move(quat)) {}
 
     friend bool operator==(const Eigen::Quaternion<_Scalar>& lhs, const EigApproxQ& rhs)
     {
@@ -69,7 +69,7 @@ class EigApproxQ : public Catch::Detail::Approx
         }
         return result;
     }
-    const Eigen::Quaternion<_Scalar>& Quat() const { return _quat; }
+    [[nodiscard]] const Eigen::Quaternion<_Scalar>& Quat() const { return _quat; }
 
     template<typename T, typename = typename std::enable_if<std::is_constructible<double, T>::value>::type>
     EigApproxQ& margin(T const& newMargin)
