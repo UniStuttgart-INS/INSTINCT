@@ -55,7 +55,7 @@ genhtml_html_prolog = doc/coverage/prolog.html
 genhtml_sort = 1
 
 # Include function coverage data display
-genhtml_function_coverage = 1
+genhtml_function_coverage = 0
 
 # Location of the gcov tool
 #geninfo_gcov_tool = gcov

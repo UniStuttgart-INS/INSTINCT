@@ -1,7 +1,7 @@
 
 // generate a table of contents in the side-nav based on the h1/h2 tags of the current page.
 function generate_autotoc() {
-  var headers = $("h1, h2");
+  var headers = $("h1, h2, h3");
   if(headers.length > 1) {
     var toc = $("#side-nav").append('<div id="nav-toc" class="toc"><h3>Table of contents</h3></div>');
     toc = $("#nav-toc");
@@ -12,6 +12,7 @@ function generate_autotoc() {
     var indices = new Array();
     indices[0] = 0;
     indices[1] = 0;
+    indices[2] = 0;
 
     var h1counts = $("h1").length;
     headers.each(function(i) {
@@ -26,10 +27,13 @@ function generate_autotoc() {
       if (levelTag >1) {
         prefix+="."+indices[1];
       }
+      if (levelTag >2) {
+        prefix+="."+indices[2];
+      }
 
       // Uncomment to add number prefixes
-      // current.html(prefix + "   " + current.html());
-      for(var l = levelTag; l < 2; ++l){
+      current.html(prefix + "   " + current.html());
+      for(var l = levelTag; l < 3; ++l){
           indices[l] = 0;
       }
 
