@@ -21,7 +21,7 @@ class InsObs : public NodeData
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("InsObs");
+        return "InsObs";
     }
 
     /// @brief Returns the parent types of the data class

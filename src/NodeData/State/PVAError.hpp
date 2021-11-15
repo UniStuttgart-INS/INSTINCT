@@ -19,7 +19,7 @@ class PVAError : public InsObs
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("PVAError");
+        return "PVAError";
     }
 
     /// @brief Returns the parent types of the data class

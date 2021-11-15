@@ -32,7 +32,7 @@ class VectorNavBinaryOutput : public InsObs
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("VectorNavBinaryOutput");
+        return "VectorNavBinaryOutput";
     }
 
     /// @brief Returns the parent types of the data class

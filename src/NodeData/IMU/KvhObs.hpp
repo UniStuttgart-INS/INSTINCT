@@ -30,7 +30,7 @@ class KvhObs final : public ImuObs
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("KvhObs");
+        return "KvhObs";
     }
 
     /// @brief Returns the parent types of the data class

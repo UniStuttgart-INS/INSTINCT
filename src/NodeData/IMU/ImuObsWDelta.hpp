@@ -22,7 +22,7 @@ class ImuObsWDelta final : public ImuObs
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("ImuObsWDelta");
+        return "ImuObsWDelta";
     }
 
     /// @brief Returns the parent types of the data class

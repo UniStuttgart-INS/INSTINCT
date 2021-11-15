@@ -20,7 +20,7 @@ class Pos : public InsObs
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("Pos");
+        return "Pos";
     }
 
     /// @brief Returns the parent types of the data class

@@ -25,7 +25,7 @@ class ImuObs : public InsObs
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("ImuObs");
+        return "ImuObs";
     }
 
     /// @brief Returns the parent types of the data class

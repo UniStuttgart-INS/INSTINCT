@@ -19,7 +19,7 @@ class InertialNavSol : public PosVelAtt
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("InertialNavSol");
+        return "InertialNavSol";
     }
 
     /// @brief Returns the parent types of the data class

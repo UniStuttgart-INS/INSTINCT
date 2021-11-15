@@ -18,7 +18,7 @@ class RtklibPosObs : public InsObs
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("RtklibPosObs");
+        return "RtklibPosObs";
     }
 
     /// @brief Returns the parent types of the data class

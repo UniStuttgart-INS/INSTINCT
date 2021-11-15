@@ -20,7 +20,7 @@ class PosVelAtt : public PosVel
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("PosVelAtt");
+        return "PosVelAtt";
     }
 
     /// @brief Returns the parent types of the data class

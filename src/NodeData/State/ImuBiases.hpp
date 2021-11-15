@@ -19,7 +19,7 @@ class ImuBiases : public InsObs
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("ImuBiases");
+        return "ImuBiases";
     }
 
     /// @brief Returns the parent types of the data class
