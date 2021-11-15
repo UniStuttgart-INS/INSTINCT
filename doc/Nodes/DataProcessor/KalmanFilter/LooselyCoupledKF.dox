@@ -152,7 +152,27 @@ The transport rate \f$ \boldsymbol{\omega}_{en}^n \f$ is defined as (see \cite G
   \boldsymbol{\omega}_{en}^n = \left[ \frac{v_E}{R_E + h} \qquad -\frac{v_N}{R_N + h} \qquad -\frac{v_E \tan{\phi}}{R_E + h} \right]^T
 \f}
 
-and the Earth rotation in local-navigation-frame coordinates \f$ \boldsymbol{\omega}_{ie}^n \f$ is given body
+The differential of left and right side neglecting errors in \f$R_N \f$ and \f$R_E \f$ (\f$ \nicefrac{\partial R_N}{\partial p_i} = 0 \f$ and \f$ \quad \nicefrac{\partial R_E}{\partial p_i} = 0\f$)
+\fl{equation,eq-LCKF-Derivation-Attitude-transport-rate-differential}
+\begin{aligned}
+  \delta\boldsymbol{\omega}_{en,1}^n &= \frac{\partial \boldsymbol{\omega}_{en,1}^n}{\partial v_E} \delta v_E
+                                        + \frac{\partial \boldsymbol{\omega}_{en,1}^n}{\partial h} \delta h
+                                      = \frac{1}{R_E + h} \delta v_E
+                                        - \frac{v_E}{(R_E + h)^2} \delta h \\
+  \delta\boldsymbol{\omega}_{en,2}^n &= \frac{\partial \boldsymbol{\omega}_{en,2}^n}{\partial v_N} \delta v_N
+                                        + \frac{\partial \boldsymbol{\omega}_{en,2}^n}{\partial h} \delta h
+                                      = -\frac{1}{R_N + h} \delta v_N
+                                        + \frac{v_N}{(R_N + h)^2} \delta h \\
+  \delta\boldsymbol{\omega}_{en,3}^n &= \frac{\partial \boldsymbol{\omega}_{en,3}^n}{\partial v_E} \delta v_E
+                                        + \frac{\partial \boldsymbol{\omega}_{en,3}^n}{\partial h} \delta h
+                                        + \frac{\partial \boldsymbol{\omega}_{en,3}^n}{\partial \phi} \delta \phi
+                                      = -\frac{\tan{\phi}}{R_E + h} \delta v_E
+                                        + \frac{v_E \tan{\phi}}{(R_E + h)^2} \delta h
+                                        - \frac{v_E}{(R_E + h)\cos^2{\phi}} \delta \phi
+\end{aligned}
+\f}
+
+The Earth rotation in local-navigation-frame coordinates \f$ \boldsymbol{\omega}_{ie}^n \f$ is given body
 \fl{equation,eq-LCKF-Derivation-Attitude-earth-rotation-n}
   \boldsymbol{\omega}_{ie}^n = \mathbf{C}_e^n \boldsymbol{\omega}_{ie}^e
                              = \begin{pmatrix} -\sin{\phi}\cos{\lambda} & -\sin{\phi}\sin{\lambda} & \cos{\phi} \\
@@ -162,14 +182,52 @@ and the Earth rotation in local-navigation-frame coordinates \f$ \boldsymbol{\om
                              = \omega_{ie} \cdot \begin{pmatrix} \cos{\phi} \\ 0 \\ -\sin{\phi} \end{pmatrix}
 \f}
 
-Substituting \eqref{eq-LCKF-Derivation-Attitude-transport-rate} and \eqref{eq-LCKF-Derivation-Attitude-earth-rotation-n} into \eqref{eq-LCKF-Derivation-Attitude-differential} gives:
-\fl{equation,eq-LCKF-Derivation-Attitude-differential-final}
+The differential of left and right side is
+\fl{equation,eq-LCKF-Derivation-Attitude-earth-rotation-n-differential}
 \begin{aligned}
-  \boldsymbol{\dot{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \wedge} \boldsymbol{\psi}
-                                   + \delta(\boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n)
-                                   \highlight[orange!20]{- \mathbf{C}_p^n} \delta \boldsymbol{\omega}_{ip}^p
+  \delta \boldsymbol{\omega}_{ie}^n = \frac{\partial \boldsymbol{\omega}_{ie}^n}{\partial \phi} \delta \phi
+                                    = \begin{pmatrix} -\omega_{ie}\sin{\phi} \\ 0 \\ -\omega_{ie}\cos{\phi} \end{pmatrix} \delta \phi
 \end{aligned}
 \f}
+
+Substituting \eqref{eq-LCKF-Derivation-Attitude-transport-rate-differential} and \eqref{eq-LCKF-Derivation-Attitude-earth-rotation-n-differential} into \eqref{eq-LCKF-Derivation-Attitude-differential} gives:
+\fl{equation,eq-LCKF-Derivation-Attitude-differential-final}
+  \boldsymbol{\dot{\psi}} \approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \wedge} \boldsymbol{\psi}
+                                  + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                      \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em] {
+                                        -\omega_{ie}\sin{\phi} \\
+                                                   0           \\
+                                        -\omega_{ie}\cos{\phi} \\
+                                      };
+                                      \begin{pgfonlayer}{background} \fhighlight[lime!20]{m-1-1}{m-3-1} \end{pgfonlayer}
+                                    \end{tikzpicture}
+                                    \delta \phi
+                                  + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                      \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                                                  column 1/.style={nodes={rectangle,text width=2.4em,align=center}}] {
+                                                 0         &      \frac{1}{R_E + h}      & 0 \\
+                                        -\frac{1}{R_N + h} &              0              & 0 \\
+                                                 0         & -\frac{\tan{\phi}}{R_E + h} & 0 \\
+                                      };
+                                      \begin{pgfonlayer}{background} \fhighlight[yellow!20]{m-1-1}{m-3-3} \end{pgfonlayer}
+                                    \end{tikzpicture}
+                                    \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_D \end{pmatrix}
+                                  + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                      \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                                                  column 1/.style={nodes={rectangle,text width=5.4em,align=center}}] {
+                                                         0                  & 0 &       -\frac{v_E}{(R_E + h)^2}      \\
+                                                         0                  & 0 &        \frac{v_N}{(R_N + h)^2}      \\
+                                        - \frac{v_E}{(R_E + h)\cos^2{\phi}} & 0 &  \frac{v_E \tan{\phi}}{(R_E + h)^2} \\
+                                      };
+                                      \begin{pgfonlayer}{background} \fhighlight[lime!20]{m-1-1}{m-3-3} \end{pgfonlayer}
+                                    \end{tikzpicture}
+                                    \begin{pmatrix} \delta \phi \\ \delta \lambda \\ \delta h \end{pmatrix}
+                                  \highlight[orange!20]{- \mathbf{C}_p^n} \delta \boldsymbol{\omega}_{ip}^p
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsubsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-Derivation-Velocity Velocity Equations
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
