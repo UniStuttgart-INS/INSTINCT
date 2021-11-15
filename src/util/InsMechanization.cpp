@@ -504,9 +504,9 @@ std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<con
     posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() - pvaError->velocityError_n());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-    Eigen::Vector3d attError = -pvaError->attitudeError_n();
-    // Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
-    // posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
+    Eigen::Vector3d attError = pvaError->attitudeError_n();
+    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
+    posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
     // const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb()
@@ -516,12 +516,13 @@ std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<con
     //                                        .normalized();
     // posVelAttCorrected->setAttitude_nb(q_nb.normalized());
 
-    const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb();
-    Eigen::Quaterniond q_nb_c{ q_nb.w() + 0.5 * (+attError(0) * q_nb.x() + attError(1) * q_nb.y() + attError(2) * q_nb.z()),
-                               q_nb.x() + 0.5 * (-attError(0) * q_nb.w() + attError(1) * q_nb.z() - attError(2) * q_nb.y()),
-                               q_nb.y() + 0.5 * (-attError(0) * q_nb.z() - attError(1) * q_nb.w() + attError(2) * q_nb.x()),
-                               q_nb.z() + 0.5 * (+attError(0) * q_nb.y() - attError(1) * q_nb.x() - attError(2) * q_nb.w()) };
-    posVelAttCorrected->setAttitude_nb(q_nb_c.normalized());
+    // Eigen::Vector3d attError = pvaError->attitudeError_n();
+    // const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb();
+    // Eigen::Quaterniond q_nb_c{ q_nb.w() + 0.5 * (+attError(0) * q_nb.x() + attError(1) * q_nb.y() + attError(2) * q_nb.z()),
+    //                            q_nb.x() + 0.5 * (-attError(0) * q_nb.w() + attError(1) * q_nb.z() - attError(2) * q_nb.y()),
+    //                            q_nb.y() + 0.5 * (-attError(0) * q_nb.z() - attError(1) * q_nb.w() + attError(2) * q_nb.x()),
+    //                            q_nb.z() + 0.5 * (+attError(0) * q_nb.y() - attError(1) * q_nb.x() - attError(2) * q_nb.w()) };
+    // posVelAttCorrected->setAttitude_nb(q_nb_c.normalized());
 
     return posVelAttCorrected;
 }
