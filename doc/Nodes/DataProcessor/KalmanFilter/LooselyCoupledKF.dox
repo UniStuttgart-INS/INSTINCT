@@ -229,6 +229,14 @@ Substituting \eqref{eq-LCKF-Derivation-Attitude-transport-rate-differential} and
 
 \subsubsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-Derivation-Velocity Velocity Equations
 
+The time derivative of the velocity in local-navigation-frame coordinates is (see \cite Titterton2004, ch. 3.7.1, eq. 3.69, p. 47)
+\fl{equation,eq-LCKF-Derivation-Attitude-timeDerivative}
+  \boldsymbol{\dot{v}}_e^n = \boldsymbol{f}^n - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}_e^n + \mathbf{g}_l^n
+\f}
+where
+- \f$ \boldsymbol{f}^n = [f_N \quad f_E \quad f_D]^T \f$ is the specific force vector as measured by a triad of accelerometers and resolved into the local geographic reference frame
+- \f$ \mathbf{g}_l^n \f$ is the local gravity vector which includes the combined effects of the mass attraction of the Earth (\f$ \mathbf{g} \f$) and the centripetal acceleration caused by the Earth's rotation (\f$ \boldsymbol{\omega}_{ie} \times \boldsymbol{\omega}_{ie} \times \mathbf{R} \f$)
+
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 \subsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-Results Resulting Equations
