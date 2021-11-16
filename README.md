@@ -27,18 +27,25 @@ The software consists of one executable ```instinct```
   ```
 
 ##### Cmake
-```
+```shell
 export CC=clang && export CXX=clang++ && cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DLOG_LEVEL=INFO
 ```
 ##### Build
-```
+```shell
 cmake --build build/Release -- -j
 ```
 
 ##### Run the executable
-```
+```shell
 ./bin/Release/instinct -f config.ini -l flow/Default.flow
 ```
+
+##### Build the documentation
+```shell
+cmake -Bbuild/Release -S. -DCMAKE_BUILD_TYPE=Release -DENABLE_MAIN=OFF -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=ON -DLOG_LEVEL=OFF -DENABLE_CLANG_TIDY=OFF -DENABLE_CPPCHECK=OFF -DENABLE_INCLUDE_WHAT_YOU_USE=OFF -DDOC_CHECK_CODE_DOCUMENTATION=NO
+cmake --build build/Release --target doc
+```
+The doxygen main page can then be opened under `bin/doc/html/index.html`
 
 ##### Help message
 
@@ -60,7 +67,7 @@ Allowed options:
 Most library dependencies are managed by Conan.io, so you just need to install the basics.
 
 #### ArchLinux
-```
+```shell
 # Needed
 sudo pacman -S base-devel cmake clang glfw-x11
 trizen -S conan # AUR package
@@ -76,7 +83,7 @@ sudo pacman -S valgrind kcachegrind
 ```
 
 #### Ubuntu 20.04
-```
+```shell
 # Needed
 sudo apt update
 sudo apt upgrade -y
@@ -97,7 +104,7 @@ sudo apt install valgrind kcachegrind
 ```
 
 #### MacOS
-```
+```shell
 # Basic
 xcode-select --install
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
@@ -108,6 +115,10 @@ brew install cmake llvm conan glfw3
 ln -s "$(brew --prefix llvm)/bin/clang-format" "/usr/local/bin/clang-format"
 ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 
+# Documentation
+brew install doxygen pdf2svg
+# Also latex is needed to compile the formulas
+
 # Optional
 brew install ccache cppcheck
 ```
@@ -116,7 +127,7 @@ brew install ccache cppcheck
 [Windows Subsystem for Linux Installation Guide for Windows 10](https://docs.microsoft.com/de-de/windows/wsl/install-win10):
 
 PowerShell (Administrator):
-```
+```shell
 dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 
 dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
@@ -135,7 +146,7 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 
 [Get the GUI to work](https://github.com/microsoft/WSL/issues/4793#issuecomment-577232999):
 * In Ubuntu install a new [OpenGL Version](https://launchpad.net/~oibaf/+archive/ubuntu/graphics-drivers/):
-```
+```shell
 sudo add-apt-repository ppa:oibaf/graphics-drivers
 sudo apt-get update
 sudo apt-get upgrade -y
