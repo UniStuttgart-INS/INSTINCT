@@ -23,18 +23,15 @@ Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, co
     Eigen::Vector4d q = { quat(3), quat(0), quat(1), quat(2) };
     // clang-format off
 
-    /// A Matrix at the time tₖ (Titterton p 319 e.q. 11.35)
+    /// Angular rates in matrix form (Titterton (2005), eq. (11.35)) at the time tₖ
     Eigen::Matrix4d A;
     A <<         0.0        , -angularVelocity(0), -angularVelocity(1), -angularVelocity(2),
           angularVelocity(0),         0.0        ,  angularVelocity(2), -angularVelocity(1),
           angularVelocity(1), -angularVelocity(2),         0.0        ,  angularVelocity(0),
           angularVelocity(2),  angularVelocity(1), -angularVelocity(0),         0.0        ;
-    // A <<         0.0        , -angularVelocity(0), -angularVelocity(1), -angularVelocity(2),
-    //       angularVelocity(0),         0.0        , -angularVelocity(2),  angularVelocity(1),
-    //       angularVelocity(1),  angularVelocity(2),         0.0        , -angularVelocity(0),
-    //       angularVelocity(2), -angularVelocity(1),  angularVelocity(0),         0.0        ;
     // clang-format on
 
+    // Propagation of an attitude Quaternion with time (Titterton (2005), eq. (11.34))
     q = 0.5 * A * q; // (w,x,y,z)
 
     // Rearranged because Eigen::Quaternion has order (x,y,z,w)
