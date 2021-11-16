@@ -94,6 +94,9 @@ class Plot : public Node
         /// Line thickness
         float thickness = 1.0F;
 
+        /// Amount of points to skip for plotting
+        int stride = 0;
+
         /// Display markers for the line plot (no effect for scatter type)
         bool markers = false;
         /// Style of the marker to display
@@ -195,6 +198,8 @@ class Plot : public Node
         std::vector<PlotData> plotData;
         /// Pin Type
         PinType pinType = PinType::Flow;
+        /// Amount of points to skip for plotting
+        int stride = 1;
     };
 
     /// @brief Information specifying the look of each plot

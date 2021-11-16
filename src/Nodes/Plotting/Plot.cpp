@@ -20,6 +20,7 @@ void to_json(json& j, const Plot::PlotStyle& style)
 {
     j = json{
         { "legendName", style.legendName },
+        { "stride", style.stride },
         { "lineType", style.lineType },
         { "color", style.color },
         { "thickness", style.thickness },
@@ -36,6 +37,10 @@ void from_json(const json& j, Plot::PlotStyle& style)
     if (j.contains("legendName"))
     {
         j.at("legendName").get_to(style.legendName);
+    }
+    if (j.contains("stride"))
+    {
+        j.at("stride").get_to(style.stride);
     }
     if (j.contains("lineType"))
     {
@@ -101,6 +106,7 @@ void to_json(json& j, const Plot::PinData& data)
         { "size", data.size },
         { "plotData", data.plotData },
         { "pinType", data.pinType },
+        { "stride", data.stride },
     };
 }
 void from_json(const json& j, Plot::PinData& data)
@@ -124,6 +130,10 @@ void from_json(const json& j, Plot::PinData& data)
     if (j.contains("pinType"))
     {
         j.at("pinType").get_to(data.pinType);
+    }
+    if (j.contains("stride"))
+    {
+        j.at("stride").get_to(data.stride);
     }
 }
 
@@ -301,12 +311,13 @@ void NAV::Plot::guiConfig()
             flow::ApplyChanges();
             updateNumberOfPlots();
         }
-        if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id))).c_str(), 3,
+        if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id))).c_str(), 4,
                               ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("Pin");
             ImGui::TableSetupColumn("Pin Type");
             ImGui::TableSetupColumn("# Data Points");
+            ImGui::TableSetupColumn("Stride");
             ImGui::TableHeadersRow();
 
             for (size_t pinIndex = 0; pinIndex < data.size(); pinIndex++)
@@ -377,6 +388,22 @@ void NAV::Plot::guiConfig()
                 if (ImGui::IsItemHovered())
                 {
                     ImGui::SetTooltip("The amount of data which should be stored before the buffer gets reused.\nEnter 0 to show all data.");
+                }
+
+                ImGui::TableNextColumn(); // Stride
+                ImGui::SetNextItemWidth(100.0F);
+                if (ImGui::InputInt(("##Stride" + std::to_string(size_t(id)) + " - " + std::to_string(pinIndex + 1)).c_str(),
+                                    &pinData.stride))
+                {
+                    if (pinData.stride < 1)
+                    {
+                        pinData.stride = 1;
+                    }
+                    flow::ApplyChanges();
+                }
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("The amount of points to skip when plotting. This greatly reduces lag when plotting");
                 }
             }
 
@@ -656,22 +683,29 @@ void NAV::Plot::guiConfig()
 
                             std::string plotName = fmt::format("{}##{} - {} - {}", plotData.plotOnAxis.at(plotNum).second.legendName, size_t(id), pinIndex + 1, plotData.displayName);
 
+                            auto stride = plotData.plotOnAxis.at(plotNum).second.stride ? plotData.plotOnAxis.at(plotNum).second.stride
+                                                                                        : data.at(pinIndex).stride;
+                            auto dataPointCount = static_cast<int>(std::ceil(static_cast<double>(plotData.buffer.size())
+                                                                             / static_cast<double>(stride)));
+
                             // Plot the data
                             if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Line)
                             {
                                 ImPlot::PlotLine(plotName.c_str(),
                                                  data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
                                                  plotData.buffer.data(),
-                                                 static_cast<int>(plotData.buffer.size()),
-                                                 plotData.buffer.offset(), sizeof(double));
+                                                 dataPointCount,
+                                                 plotData.buffer.offset(),
+                                                 stride * static_cast<int>(sizeof(double)));
                             }
                             else if (plotData.plotOnAxis.at(plotNum).second.lineType == PlotStyle::LineType::Scatter)
                             {
                                 ImPlot::PlotScatter(plotName.c_str(),
                                                     data.at(pinIndex).plotData.at(plotInfo.selectedXdata.at(pinIndex)).buffer.data(),
                                                     plotData.buffer.data(),
-                                                    static_cast<int>(plotData.buffer.size()),
-                                                    plotData.buffer.offset(), sizeof(double));
+                                                    dataPointCount,
+                                                    plotData.buffer.offset(),
+                                                    stride * static_cast<int>(sizeof(double)));
                             }
 
                             // allow legend labels to be dragged and dropped
@@ -700,6 +734,20 @@ void NAV::Plot::guiConfig()
                                     plotData.plotOnAxis.at(plotNum).second.legendName = plotData.plotOnAxis.at(plotNum).second.legendNameGui;
                                     flow::ApplyChanges();
                                     LOG_DEBUG("{}: Legend changed to {}", nameId(), plotData.plotOnAxis.at(plotNum).second.legendName);
+                                }
+
+                                if (ImGui::InputInt("Stride", &plotData.plotOnAxis.at(plotNum).second.stride))
+                                {
+                                    if (plotData.plotOnAxis.at(plotNum).second.stride < 0)
+                                    {
+                                        plotData.plotOnAxis.at(plotNum).second.stride = 0;
+                                    }
+                                    if (plotData.plotOnAxis.at(plotNum).second.stride > static_cast<int>(plotData.buffer.size()) - 1)
+                                    {
+                                        plotData.plotOnAxis.at(plotNum).second.stride = static_cast<int>(plotData.buffer.size()) - 1;
+                                    }
+                                    flow::ApplyChanges();
+                                    LOG_DEBUG("{}: Stride changed to {}", nameId(), plotData.plotOnAxis.at(plotNum).second.stride);
                                 }
 
                                 if (ImGui::Combo("Style", reinterpret_cast<int*>(&plotData.plotOnAxis.at(plotNum).second.lineType),
