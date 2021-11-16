@@ -34,9 +34,9 @@ Differential of left and right side neglecting errors in \f$R_N \f$ and \f$R_E \
 
 The equations here mainly follow \cite Titterton2004 Titterton, ch. 12.3.1.1, p. 342f
 
-The estimated attitude \f$ \mathbf{\hat{C}}_p^n \f$ can be written in therms of true direction cosine matrix \f$ \mathbf{C}_p^n \f$
+The estimated attitude \f$ \mathbf{\hat{C}}_b^n \f$ can be written in therms of true direction cosine matrix \f$ \mathbf{C}_b^n \f$
 \fl{equation,eq-LCKF-Derivation-Attitude-estimate-true}
-  \mathbf{\hat{C}}_p^n = \mathbf{B} \mathbf{C}_p^n
+  \mathbf{\hat{C}}_b^n = \mathbf{B} \mathbf{C}_b^n
 \f}
 where \f$ \mathbf{B} \f$ is the transformation from true reference axes to estimated reference axes and it can be approximated for small angle misalignments as
 \fl{equation,eq-LCKF-Derivation-Attitude-transformation}
@@ -46,16 +46,16 @@ with \f$ \mathbf{\Psi} \f$ being a skew symmetric matrix and \f$ \delta\alpha, \
 
 Substituting \eqref{eq-LCKF-Derivation-Attitude-transformation} into \eqref{eq-LCKF-Derivation-Attitude-estimate-true} and solving for \f$ \mathbf{\Psi} \f$
 \fl{equation,eq-LCKF-Derivation-Attitude-skew-mat}
-  \mathbf{\Psi} = \mathbf{I} - \mathbf{\hat{C}}_p^n {\mathbf{C}_p^n}^T
+  \mathbf{\Psi} = \mathbf{I} - \mathbf{\hat{C}}_b^n {\mathbf{C}_b^n}^T
 \f}
 
 Differentiating this equation yields:
 \fl{equation,eq-LCKF-Derivation-Attitude-skew-mat-dot}
-  \mathbf{\dot{\Psi}} = -\mathbf{\dot{\hat{C}}}_p^{\raise-1.25ex\hbox{$\scriptstyle n$}} {\mathbf{C}_p^n}^T - \mathbf{\hat{C}}_p^n {\mathbf{\dot{C}}_p^n}\raise1.25ex\hbox{$\scriptstyle T$}
+  \mathbf{\dot{\Psi}} = -\mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} {\mathbf{C}_b^n}^T - \mathbf{\hat{C}}_b^n {\mathbf{\dot{C}}_b^n}\raise1.25ex\hbox{$\scriptstyle T$}
 \f}
 
 Using the following equations
-- Time derivative DCM local-navigation-frame \f$ \mathbf{\dot{C}}_p^n = \mathbf{C}_p^n \mathbf{\Omega}_{np}^p \f$ &emsp;\cite Groves2013 Groves, ch. 5.4.1, eq. 5.39, p. 176 or \cite Titterton2004 Titterton, ch. 3.5.3, eq. 3.28, p. 32
+- Time derivative DCM local-navigation-frame \f$ \mathbf{\dot{C}}_b^n = \mathbf{C}_b^n \mathbf{\Omega}_{nb}^b \f$ &emsp;\cite Groves2013 Groves, ch. 5.4.1, eq. 5.39, p. 176 or \cite Titterton2004 Titterton, ch. 3.5.3, eq. 3.28, p. 32
   - Time derivative DCM \f$ \mathbf{\dot{C}}_\beta^\alpha(t) = \lim_{\delta t \to 0}\left(\dfrac{\mathbf{C}_\beta^\alpha(t+\delta t) - \mathbf{C}_\beta^\alpha(t)}{\delta t}\right) \f$ &emsp;\cite Groves2013 Groves, ch. 2.3.1, eq. 2.52, p. 45
   - DCM with small angle approximation \f$ C_\alpha^\beta \approx \begin{pmatrix} 1 & -\psi_{\beta\alpha} & \theta_{\beta\alpha} \\ \psi_{\beta\alpha} & 1 & -\phi_{\beta\alpha} \\ -\theta_{\beta\alpha} & \phi_{\beta\alpha} & 1 \end{pmatrix} = \mathbf{I}_3 + [\boldsymbol{\psi}_{\beta\alpha} \wedge ] = \mathbf{I}_3 + \mathbf{\Omega}_{\beta\alpha} \f$ &emsp;\cite Groves2013 Groves, ch. 2.2.2, eq. 2.26, p. 39
 - Angular rate splitting \f$ \boldsymbol{\omega}_{\beta\alpha}^\gamma = \boldsymbol{\omega}_{\beta\delta}^\gamma + \boldsymbol{\omega}_{\delta\alpha}^\gamma \f$ &emsp;\cite Groves2013 Groves, ch. 2.3.1, eq. 2.48, p. 45
@@ -64,53 +64,53 @@ Using the following equations
 leads to the time derivative of the coordinate transformation matrix (see \cite Groves2013 Groves, ch. 5.4.1, eq. 5.40, p. 177 or \cite Titterton2004 Titterton, ch. 12.3.1.1, eq. 12.12, p. 342)
 \fl{equation,eq-LCKF-Derivation-Attitude-DCM-dot}
 \begin{aligned}
-  \mathbf{\dot{C}}_p^n &= \mathbf{C}_p^n \mathbf{\Omega}_{np}^p \\
-                       &= \mathbf{C}_p^n (\mathbf{\Omega}_{ip}^p - \mathbf{\Omega}_{in}^p) \\
-                       &= \mathbf{C}_p^n (\mathbf{\Omega}_{ip}^p - \mathbf{C}_n^p \mathbf{\Omega}_{in}^n \mathbf{C}_p^n) \\
-                       &= \mathbf{C}_p^n \mathbf{\Omega}_{ip}^p - \mathbf{\Omega}_{in}^n \mathbf{C}_p^n
+  \mathbf{\dot{C}}_b^n &= \mathbf{C}_b^n \mathbf{\Omega}_{nb}^b \\
+                       &= \mathbf{C}_b^n (\mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{in}^b) \\
+                       &= \mathbf{C}_b^n (\mathbf{\Omega}_{ib}^b - \mathbf{C}_n^b \mathbf{\Omega}_{in}^n \mathbf{C}_b^n) \\
+                       &= \mathbf{C}_b^n \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{in}^n \mathbf{C}_b^n
 \end{aligned}
 \f}
 
 where
-- \f$ \mathbf{\Omega}_{ip}^p \f$ is the skew-symmetric matrix of the absolute body rate,
-- \f$ \mathbf{\Omega}_{in}^p \f$ is the skew-symmetric matrix of the navigation frame rate,
+- \f$ \mathbf{\Omega}_{ib}^b \f$ is the skew-symmetric matrix of the absolute body rate,
+- \f$ \mathbf{\Omega}_{in}^b \f$ is the skew-symmetric matrix of the navigation frame rate,
 - \f$ \mathbf{\Omega}_{ie}^n \f$ is the skew-symmetric matrix of the earth rotation in navigation frame coordinates (\cite Groves2013 Groves, ch. 5.4.1, eq. 5.41, p. 177), and
 - \f$ \mathbf{\Omega}_{en}^n \f$ is the skew-symmetric matrix of the transport rate (rotation of the local-navigation-frame with respect to the Earth) (\cite Groves2013 Groves, ch. 5.4.1, eq. 5.44, p. 177)
 
-Similarly, the time time differential of the estimated matrix \f$ \mathbf{\dot{\hat{C}}}_p^{\raise-1.25ex\hbox{$\scriptstyle n$}} \f$ can be calculated:
+Similarly, the time time differential of the estimated matrix \f$ \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} \f$ can be calculated:
 \fl{equation,eq-LCKF-Derivation-Attitude-DCM-dot-estimated}
-  \mathbf{\dot{\hat{C}}}_p^{\raise-1.25ex\hbox{$\scriptstyle n$}} = \mathbf{\hat{C}}_p^n \mathbf{\hat{\Omega}}_{ip}^p - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_p^n
+  \mathbf{\dot{\hat{C}}}_b^{\raise-1.25ex\hbox{$\scriptstyle n$}} = \mathbf{\hat{C}}_b^n \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_b^n
 \f}
 
 where
-- \f$ \mathbf{\hat{\Omega}}_{in}^p \f$ is the skew-symmetric matrix of the measured body rate,
-- \f$ \mathbf{\Omega}_{in}^p \f$ is the skew-symmetric matrix of the estimated turn rate of the navigation reference frame,
+- \f$ \mathbf{\hat{\Omega}}_{in}^b \f$ is the skew-symmetric matrix of the measured body rate,
+- \f$ \mathbf{\Omega}_{in}^b \f$ is the skew-symmetric matrix of the estimated turn rate of the navigation reference frame,
 
 Substituting \eqref{eq-LCKF-Derivation-Attitude-DCM-dot} and \eqref{eq-LCKF-Derivation-Attitude-DCM-dot-estimated} into \eqref{eq-LCKF-Derivation-Attitude-skew-mat-dot}
 \fl{equation,eq-LCKF-Derivation-Attitude-skew-mat-dot-calc1}
 \begin{aligned}
-  \mathbf{\dot{\Psi}} &= -(\mathbf{\hat{C}}_p^n \mathbf{\hat{\Omega}}_{ip}^p - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_p^n) {\mathbf{C}_p^n}^T
-                         - \mathbf{\hat{C}}_p^n (\mathbf{C}_p^n \mathbf{\Omega}_{ip}^p - \mathbf{\Omega}_{in}^n \mathbf{C}_p^n)^T \\
-                      &= - \mathbf{\hat{C}}_p^n \mathbf{\hat{\Omega}}_{ip}^p {\mathbf{C}_p^n}^T
-                         + \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_p^n {\mathbf{C}_p^n}^T
-                         + \mathbf{\hat{C}}_p^n \mathbf{\Omega}_{ip}^p {\mathbf{C}_p^n}^T
-                         - \mathbf{\hat{C}}_p^n {\mathbf{C}_p^n}^T \mathbf{\Omega}_{in}^n \\
-                      &= - \mathbf{\hat{C}}_p^n \left[ \mathbf{\hat{\Omega}}_{ip}^p - \mathbf{\Omega}_{ip}^p \right] {\mathbf{C}_p^n}^T
-                         + \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_p^n {\mathbf{C}_p^n}^T
-                         - \mathbf{\hat{C}}_p^n {\mathbf{C}_p^n}^T \mathbf{\Omega}_{in}^n
+  \mathbf{\dot{\Psi}} &= -(\mathbf{\hat{C}}_b^n \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_b^n) {\mathbf{C}_b^n}^T
+                         - \mathbf{\hat{C}}_b^n (\mathbf{C}_b^n \mathbf{\Omega}_{ib}^b - \mathbf{\Omega}_{in}^n \mathbf{C}_b^n)^T \\
+                      &= - \mathbf{\hat{C}}_b^n \mathbf{\hat{\Omega}}_{ib}^b {\mathbf{C}_b^n}^T
+                         + \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_b^n {\mathbf{C}_b^n}^T
+                         + \mathbf{\hat{C}}_b^n \mathbf{\Omega}_{ib}^b {\mathbf{C}_b^n}^T
+                         - \mathbf{\hat{C}}_b^n {\mathbf{C}_b^n}^T \mathbf{\Omega}_{in}^n \\
+                      &= - \mathbf{\hat{C}}_b^n \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^n}^T
+                         + \mathbf{\hat{\Omega}}_{in}^n \mathbf{\hat{C}}_b^n {\mathbf{C}_b^n}^T
+                         - \mathbf{\hat{C}}_b^n {\mathbf{C}_b^n}^T \mathbf{\Omega}_{in}^n
 \end{aligned}
 \f}
 
 Substituting \eqref{eq-LCKF-Derivation-Attitude-estimate-true} with \eqref{eq-LCKF-Derivation-Attitude-transformation} into \eqref{eq-LCKF-Derivation-Attitude-skew-mat-dot-calc1} gives:
 \fl{equation,eq-LCKF-Derivation-Attitude-skew-mat-dot-calc2}
 \begin{aligned}
-  \mathbf{\dot{\Psi}} &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_p^n \left[ \mathbf{\hat{\Omega}}_{ip}^p - \mathbf{\Omega}_{ip}^p \right] {\mathbf{C}_p^n}^T
-                         + \mathbf{\hat{\Omega}}_{in}^n [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_p^n {\mathbf{C}_p^n}^T
-                         - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_p^n {\mathbf{C}_p^n}^T \mathbf{\Omega}_{in}^n \\
-                      &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_p^n \left[ \mathbf{\hat{\Omega}}_{ip}^p - \mathbf{\Omega}_{ip}^p \right] {\mathbf{C}_p^n}^T
+  \mathbf{\dot{\Psi}} &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^n}^T
+                         + \mathbf{\hat{\Omega}}_{in}^n [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n {\mathbf{C}_b^n}^T
+                         - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n {\mathbf{C}_b^n}^T \mathbf{\Omega}_{in}^n \\
+                      &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^n}^T
                          + \mathbf{\hat{\Omega}}_{in}^n - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\Psi}
                          - \mathbf{\Omega}_{in}^n + \mathbf{\Psi} \mathbf{\Omega}_{in}^n \\
-                         &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_p^n \left[ \mathbf{\hat{\Omega}}_{ip}^p - \mathbf{\Omega}_{ip}^p \right] {\mathbf{C}_p^n}^T
+                         &= - [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n \left[ \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \right] {\mathbf{C}_b^n}^T
                             + \left[ \mathbf{\hat{\Omega}}_{in}^n - \mathbf{\Omega}_{in}^n \right]
                             - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\Psi} + \mathbf{\Psi} \mathbf{\Omega}_{in}^n
 \end{aligned}
@@ -118,13 +118,13 @@ Substituting \eqref{eq-LCKF-Derivation-Attitude-estimate-true} with \eqref{eq-LC
 
 Now we make the following substitutions
 - \f$ \delta\mathbf{\Omega}_{in}^n = \mathbf{\hat{\Omega}}_{in}^n - \mathbf{\Omega}_{in}^n \f$
-- \f$ \delta\mathbf{\Omega}_{ip}^p = \mathbf{\hat{\Omega}}_{ip}^p - \mathbf{\Omega}_{ip}^p \f$
+- \f$ \delta\mathbf{\Omega}_{ib}^b = \mathbf{\hat{\Omega}}_{ib}^b - \mathbf{\Omega}_{ib}^b \f$
 
 and neglect error product terms. This leads to (same as \cite Titterton2004 Titterton, ch. 12.3.1.1, eq. 12.17, p. 343)
 \fl{equation,eq-LCKF-Derivation-Attitude-skew-mat-dot-final}
   \mathbf{\dot{\Psi}} \approx \mathbf{\Psi} \mathbf{\Omega}_{in}^n - \mathbf{\hat{\Omega}}_{in}^n \mathbf{\Psi}
                               + \delta\mathbf{\Omega}_{in}^n
-                              - \mathbf{C}_p^n \delta\mathbf{\Omega}_{ip}^p {\mathbf{C}_p^n}^T
+                              - \mathbf{C}_b^n \delta\mathbf{\Omega}_{ib}^b {\mathbf{C}_b^n}^T
 \f}
 
 Finally by performing an element by element comparison with
@@ -132,7 +132,7 @@ Finally by performing an element by element comparison with
   \boldsymbol{\psi} \wedge = \mathbf{\Psi} \qquad\quad
   \boldsymbol{\omega}_{in}^n \wedge = \mathbf{\Omega}_{in}^n \qquad\quad
   \delta\boldsymbol{\omega}_{in}^n \wedge = \delta\mathbf{\Omega}_{in}^n \qquad\quad
-  \delta\boldsymbol{\omega}_{ip}^p \wedge = \delta\mathbf{\Omega}_{ip}^p
+  \delta\boldsymbol{\omega}_{ib}^b \wedge = \delta\mathbf{\Omega}_{ib}^b
 \f}
 
 the equation can be expressed in vector form as:
@@ -140,10 +140,10 @@ the equation can be expressed in vector form as:
 \begin{aligned}
   \boldsymbol{\dot{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \wedge} \boldsymbol{\psi}
                                    + \delta \boldsymbol{\omega}_{in}^n
-                                   \highlight[orange!20]{- \mathbf{C}_p^n} \delta \boldsymbol{\omega}_{ip}^p \\
+                                   \highlight[orange!20]{- \mathbf{C}_b^n} \delta \boldsymbol{\omega}_{ib}^b \\
                           &= \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \wedge} \boldsymbol{\psi}
                              + \delta(\boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n)
-                             \highlight[orange!20]{- \mathbf{C}_p^n} \delta \boldsymbol{\omega}_{ip}^p
+                             \highlight[orange!20]{- \mathbf{C}_b^n} \delta \boldsymbol{\omega}_{ib}^b
 \end{aligned}
 \f}
 
@@ -222,7 +222,7 @@ Substituting \eqref{eq-LCKF-Derivation-Attitude-transport-rate-differential} and
                                       \begin{pgfonlayer}{background} \fhighlight[lime!20]{m-1-1}{m-3-3} \end{pgfonlayer}
                                     \end{tikzpicture}
                                     \begin{pmatrix} \delta \phi \\ \delta \lambda \\ \delta h \end{pmatrix}
-                                  \highlight[orange!20]{- \mathbf{C}_p^n} \delta \boldsymbol{\omega}_{ip}^p
+                                  \highlight[orange!20]{- \mathbf{C}_b^n} \delta \boldsymbol{\omega}_{ib}^b
 \f}
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -249,8 +249,8 @@ where
       \delta \boldsymbol{\dot{\psi}}_{nb}^{n} \\
       \delta \boldsymbol{\dot{v}}_{eb}^{n} \\
       \delta \boldsymbol{\dot{r}}_b \\
-      \mathbf{\dot{b}}_a \\
-      \mathbf{\dot{b}}_g \\
+      \delta \boldsymbol{\dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} \\
+      \delta \boldsymbol{\dot{\omega}}_{ib}^b \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta\dot{x}}$} (m-1-1.north east);
 
@@ -267,8 +267,8 @@ where
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \mathbf{F}_{11}^{n} & \mathbf{F}_{12}^{n} & \mathbf{F}_{13}^{n} & \mathbf{0}_3         & -\hat{\mathbf{C}}_p^n \\
-      \mathbf{F}_{21}^{n} & \mathbf{F}_{22}^{n} & \mathbf{F}_{23}^{n} & \hat{\mathbf{C}}_p^n & \mathbf{0}_3          \\
+      \mathbf{F}_{11}^{n} & \mathbf{F}_{12}^{n} & \mathbf{F}_{13}^{n} & \mathbf{0}_3         & -\hat{\mathbf{C}}_b^n \\
+      \mathbf{F}_{21}^{n} & \mathbf{F}_{22}^{n} & \mathbf{F}_{23}^{n} & \hat{\mathbf{C}}_b^n & \mathbf{0}_3          \\
       \mathbf{0}_3        & \mathbf{F}_{32}^{n} & \mathbf{F}_{33}^{n} & \mathbf{0}_3         & \mathbf{0}_3          \\
       \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3         & \mathbf{0}_3          \\
       \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3         & \mathbf{0}_3          \\
@@ -296,8 +296,8 @@ where
       \delta \boldsymbol{\psi}_{nb}^{n} \\
       \delta \boldsymbol{v}_{eb}^{n} \\
       \delta \boldsymbol{r}_b \\
-      \mathbf{b}_a \\
-      \mathbf{b}_g \\
+      \delta \boldsymbol{f}^b \\
+      \delta \boldsymbol{\omega}_{ib}^b \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta x}$} (m-1-1.north east);
 
@@ -322,8 +322,8 @@ where
       \delta \dotup{R}              \\ \delta \dotup{P}              \\ \delta \dotup{Y}              \\
       \delta \dotup{v}_{N}          \\ \delta \dotup{v}_{E}          \\ \delta \dotup{v}_{D}          \\
       \delta \dotup{\phi}           \\ \delta \dotup{\lambda}        \\ \delta \dotup{h}              \\
-      \delta \dotup{f}_{x}^{p}      \\ \delta \dotup{f}_{y}^{p}      \\ \delta \dotup{f}_{z}^{p}      \\
-      \delta \dotup{\omega}_{x}^{p} \\ \delta \dotup{\omega}_{y}^{p} \\ \delta \dotup{\omega}_{z}^{p} \\
+      \delta \dotup{f}_{x}^{b}      \\ \delta \dotup{f}_{y}^{b}      \\ \delta \dotup{f}_{z}^{b}      \\
+      \delta \dotup{\omega}_{x}^{b} \\ \delta \dotup{\omega}_{y}^{b} \\ \delta \dotup{\omega}_{z}^{b} \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta\dot{x}}$} (m-1-1.north east);
 
@@ -341,10 +341,10 @@ where
                 row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,minimum height=2.3em,anchor=center},] {
                0         &  \omega_{in,3}^{n} & -\omega_{in,2}^{n} &                             0                            &                     \frac{1}{R_E + h}                     &                       0                      &                                   -\omega_{ie}\sin{\phi}                                    &      0       &                           -\frac{v_E}{(R_E + h)^2}                            &  &                      &  &  &                       & \\
-      -\omega_{in,3}^{n} &          0         &  \omega_{in,1}^{n} &                   -\frac{1}{R_N + h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                            \frac{v_N}{(R_N + h)^2}                            &  &     \mathbf{0}_3     &  &  & -\hat{\mathbf{C}}_p^n & \\
+      -\omega_{in,3}^{n} &          0         &  \omega_{in,1}^{n} &                   -\frac{1}{R_N + h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                            \frac{v_N}{(R_N + h)^2}                            &  &     \mathbf{0}_3     &  &  & -\hat{\mathbf{C}}_b^n & \\
        \omega_{in,2}^{n} & -\omega_{in,1}^{n} &          0         &                             0                            &                -\frac{\tan{\phi}}{R_E + h}                &                       0                      &                 -\omega_{ie}\cos{\phi} - \frac{v_E}{(R_E + h)\cos^2{\phi}}                  &      0       &                       \frac{v_E \tan{\phi}}{(R_E + h)^2}                      &  &                      &  &  &                       & \\
                0         &        -f_D        &         f_E        &                    \frac{v_D}{R_N + h}                   & -2\frac{v_E \tan{\phi}}{R_E + h} - 2\omega_{ie}\sin{\phi} &              \frac{v_N}{R_N + h}             &                -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi}                 &      0       &         \frac{v_E^2\tan{\phi}}{(R_E+h)^2} - \frac{v_Nv_D}{(R_N+h)^2}          &  &                      &  &  &                       & \\
-              f_D        &          0         &        -f_N        &  \frac{v_E \tan{\phi}}{R_E + h} + 2\omega_{ie}\sin{\phi} &            \frac{v_N \tan{\phi} + v_D}{R_E + h}           & \frac{v_E}{R_E + h} + 2\omega_{ie}\cos{\phi} & \frac{v_N v_E}{(R_E+h)\cos^2{\phi}} + 2v_N\omega_{ie}\cos{\phi} - 2v_D\omega_{ie}\sin{\phi} &      0       &                -\frac{v_Nv_E\tan{\phi} + v_Ev_D}{(R_E + h)^2}                 &  & \hat{\mathbf{C}}_p^n &  &  &     \mathbf{0}_3      & \\
+              f_D        &          0         &        -f_N        &  \frac{v_E \tan{\phi}}{R_E + h} + 2\omega_{ie}\sin{\phi} &            \frac{v_N \tan{\phi} + v_D}{R_E + h}           & \frac{v_E}{R_E + h} + 2\omega_{ie}\cos{\phi} & \frac{v_N v_E}{(R_E+h)\cos^2{\phi}} + 2v_N\omega_{ie}\cos{\phi} - 2v_D\omega_{ie}\sin{\phi} &      0       &                -\frac{v_Nv_E\tan{\phi} + v_Ev_D}{(R_E + h)^2}                 &  & \hat{\mathbf{C}}_b^n &  &  &     \mathbf{0}_3      & \\
              -f_E        &         f_N        &          0         &                  -\frac{2v_N}{R_N + h}                   &       -\frac{2v_E}{R_E + h} - 2\omega_{ie}\cos{\phi}      &                       0                      &                                  2v_E\omega_{ie}\sin{\phi}                                  &      0       & \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2} - \frac{2g_0}{r_{eS}^e} &  &                      &  &  &                       & \\
                          &                    &                    &                      \frac{1}{R_N+h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                           -\frac{v_N}{(R_N + h)^2}                            &  &                      &  &  &                       & \\
                          &    \mathbf{0}_3    &                    &                             0                            &                \frac{1}{(R_E+h)\cos{\phi}}                &                       0                      &                           \frac{v_E\tan{\phi}}{(R_E+h)\cos{\phi}}                           &      0       &                      -\frac{v_E}{(R_E + h)^2\cos{\phi}}                       &  &     \mathbf{0}_3     &  &  &      \mathbf{0}_3     & \\
@@ -396,8 +396,8 @@ where
       \delta R              \\ \delta P              \\ \delta Y              \\
       \delta v_{N}          \\ \delta v_{E}          \\ \delta v_{D}          \\
       \delta \phi           \\ \delta \lambda        \\ \delta h              \\
-      \delta f_{x}^{p}      \\ \delta f_{y}^{p}      \\ \delta f_{z}^{p}      \\
-      \delta \omega_{x}^{p} \\ \delta \omega_{y}^{p} \\ \delta \omega_{z}^{p} \\
+      \delta f_{x}^{b}      \\ \delta f_{y}^{b}      \\ \delta f_{z}^{b}      \\
+      \delta \omega_{x}^{b} \\ \delta \omega_{y}^{b} \\ \delta \omega_{z}^{b} \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta x}$} (m-1-1.north east);
 

@@ -991,18 +991,18 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // ImuBiases
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias X [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Z [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias X accumulated [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Y accumulated [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Z accumulated [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias X accumulated [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Y accumulated [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Z accumulated [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias X_b [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Y_b [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Z_b [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias X_b [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Y_b [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Z_b [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias X_b accumulated [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Y_b accumulated [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Z_b accumulated [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias X_b accumulated [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Y_b accumulated [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Z_b accumulated [rad/s]");
         }
         else if (startPin->dataIdentifier.front() == RtklibPosObs::type())
         {
@@ -1808,26 +1808,26 @@ void NAV::Plot::plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // ImuBiases
-    addData(pinIndex, i++, obs->biasAccel_p(0));
-    addData(pinIndex, i++, obs->biasAccel_p(1));
-    addData(pinIndex, i++, obs->biasAccel_p(2));
-    addData(pinIndex, i++, obs->biasGyro_p(0));
-    addData(pinIndex, i++, obs->biasGyro_p(1));
-    addData(pinIndex, i++, obs->biasGyro_p(2));
+    addData(pinIndex, i++, obs->biasAccel_b(0));
+    addData(pinIndex, i++, obs->biasAccel_b(1));
+    addData(pinIndex, i++, obs->biasAccel_b(2));
+    addData(pinIndex, i++, obs->biasGyro_b(0));
+    addData(pinIndex, i++, obs->biasGyro_b(1));
+    addData(pinIndex, i++, obs->biasGyro_b(2));
 
     double biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_p(0));
+    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_b(0));
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_p(1));
+    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_b(1));
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_p(2));
+    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_b(2));
 
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(0));
+    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_b(0));
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(1));
+    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_b(1));
     biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(2));
+    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_b(2));
 }
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex)
