@@ -589,9 +589,16 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
 
 TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
 {
+    double roll = trafo::deg2rad(20);
+    double pitch = trafo::deg2rad(50);
+    double yaw = trafo::deg2rad(190);
+
+    double latitude = trafo::deg2rad(10);
+    double longitude = trafo::deg2rad(40);
+
     Eigen::Quaterniond q_bp(Eigen::AngleAxisd(trafo::deg2rad(-90), Eigen::Vector3d::UnitZ()));
-    Eigen::Quaterniond q_nb = trafo::quat_nb(trafo::deg2rad(20), trafo::deg2rad(50), trafo::deg2rad(190));
-    Eigen::Quaterniond q_en = trafo::quat_en(trafo::deg2rad(10), trafo::deg2rad(40));
+    Eigen::Quaterniond q_nb = trafo::quat_nb(roll, pitch, yaw);
+    Eigen::Quaterniond q_en = trafo::quat_en(latitude, longitude);
 
     CHECK(q_bp.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
     CHECK(q_nb.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
@@ -618,6 +625,23 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     CHECK(v_e.x() == Approx(v_e_direct.x()).margin(EPSILON).epsilon(0));
     CHECK(v_e.y() == Approx(v_e_direct.y()).margin(EPSILON).epsilon(0));
     CHECK(v_e.z() == Approx(v_e_direct.z()).margin(EPSILON).epsilon(0));
+
+    Eigen::Matrix3d dcm_en = q_en.toRotationMatrix();
+    Eigen::Matrix3d dcm_nb = q_nb.toRotationMatrix();
+
+    Eigen::Matrix3d dcm_en_ref = DCM_en(latitude, longitude);
+    Eigen::Matrix3d dcm_nb_ref = DCM_nb(roll, pitch, yaw);
+
+    CHECK(dcm_en_ref == EigApprox(dcm_en).margin(1e-13).epsilon(0));
+    CHECK(dcm_nb_ref == EigApprox(dcm_nb).margin(1e-13).epsilon(0));
+
+    Eigen::Matrix3d dcm_eb_ref = dcm_en_ref * dcm_nb_ref;
+    Eigen::Matrix3d dcm_eb = dcm_en * dcm_nb;
+    Eigen::Matrix3d dcm_eb_quat = (q_en * q_nb).toRotationMatrix();
+
+    CHECK(dcm_eb_quat == EigApprox(dcm_eb).margin(1e-13).epsilon(0));
+    CHECK(dcm_eb_ref == EigApprox(dcm_eb).margin(1e-13).epsilon(0));
+    CHECK(dcm_eb_ref == EigApprox(dcm_eb_quat).margin(1e-13).epsilon(0));
 }
 
 } // namespace NAV
