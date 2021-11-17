@@ -10,7 +10,6 @@
 #include "internal/gui/widgets/InputWithUnit.hpp"
 
 #include "NodeData/State/PVAError.hpp"
-#include "NodeData/State/ImuBiases.hpp"
 
 #include "internal/FlowManager.hpp"
 #include "internal/NodeManager.hpp"
@@ -528,6 +527,8 @@ bool NAV::LooselyCoupledKF::initialize()
     kalmanFilter_Kz = Eigen::MatrixXd::Zero(15, 1);
 
     latestInertialNavSol = nullptr;
+    accumulatedImuBiases.biasAccel_b.setZero();
+    accumulatedImuBiases.biasGyro_b.setZero();
 
     // Initial Covariance of the attitude angles in [rad²]
     Eigen::Vector3d variance_angles = Eigen::Vector3d::Zero();
@@ -680,7 +681,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     // a_p Acceleration in [m/s^2], in body coordinates
     const Eigen::Vector3d& acceleration_b = inertialNavSol->imuObs->imuPos.quatAccel_bp()
-                                            * inertialNavSol->imuObs->accelUncompXYZ.value();
+                                                * inertialNavSol->imuObs->accelUncompXYZ.value()
+                                            - accumulatedImuBiases.biasAccel_b;
 
     // omega_in^n = omega_ie^n + omega_en^n
     Eigen::Vector3d angularRate_in_n = inertialNavSol->quaternion_ne() * InsConst::angularVelocity_ie_e
@@ -840,9 +842,10 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     // Angular rate measured in units of [rad/s], and given in the body frame
     const Eigen::Vector3d& angularRate_b = latestInertialNavSol->imuObs->imuPos.quatGyro_bp()
-                                           * (latestInertialNavSol->imuObs->gyroCompXYZ.has_value()
-                                                  ? latestInertialNavSol->imuObs->gyroCompXYZ.value()
-                                                  : latestInertialNavSol->imuObs->gyroUncompXYZ.value());
+                                               * (latestInertialNavSol->imuObs->gyroCompXYZ.has_value()
+                                                      ? latestInertialNavSol->imuObs->gyroCompXYZ.value()
+                                                      : latestInertialNavSol->imuObs->gyroUncompXYZ.value())
+                                           - accumulatedImuBiases.biasGyro_b;
 
     // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     Eigen::Matrix3d Omega_ie_n = AngularVelocityEarthSkew_ie_n(latestInertialNavSol->latitude());
@@ -958,10 +961,13 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     pvaError->velocityError_n() = kalmanFilter.x.block<3, 1>(3, 0);
     pvaError->attitudeError_n() = kalmanFilter.x.block<3, 1>(0, 0);
 
+    accumulatedImuBiases.biasAccel_b += kalmanFilter.x.block<3, 1>(9, 0);
+    accumulatedImuBiases.biasGyro_b += kalmanFilter.x.block<3, 1>(12, 0);
+
     auto imuBiases = std::make_shared<ImuBiases>();
     imuBiases->insTime = gnssMeasurement->insTime;
-    imuBiases->biasAccel_b = kalmanFilter.x.block<3, 1>(9, 0);
-    imuBiases->biasGyro_b = kalmanFilter.x.block<3, 1>(12, 0);
+    imuBiases->biasAccel_b = accumulatedImuBiases.biasAccel_b;
+    imuBiases->biasGyro_b = accumulatedImuBiases.biasGyro_b;
 
     // Closed loop
     // kalmanFilter.x.block<9, 1>(0, 0).setZero();

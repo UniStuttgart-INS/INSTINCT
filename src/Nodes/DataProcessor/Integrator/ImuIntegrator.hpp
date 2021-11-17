@@ -87,7 +87,7 @@ class ImuIntegrator : public Node
     void integrateObservation();
 
     /// Accumulated IMU biases
-    ImuBiases imuBiases;
+    std::shared_ptr<const ImuBiases> imuBiases = nullptr;
 
     /// IMU Observation list
     /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)

@@ -351,14 +351,12 @@ bool NAV::ImuIntegrator::initialize()
 
     imuObservations.clear();
     posVelAttStates.clear();
+    imuBiases.reset();
 
     skipIntermediateCalculation = false;
 
     time__init = InsTime();
     timeSinceStartup__init = 0;
-
-    imuBiases.biasAccel_b.setZero();
-    imuBiases.biasGyro_b.setZero();
 
     LOG_DEBUG("ImuIntegrator initialized");
 
@@ -441,10 +439,7 @@ void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<const NodeData>& nod
 
 void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto imuBiasObs = std::static_pointer_cast<const ImuBiases>(nodeData);
-
-    imuBiases.biasAccel_b += imuBiasObs->biasAccel_b;
-    imuBiases.biasGyro_b += imuBiasObs->biasGyro_b;
+    imuBiases = std::static_pointer_cast<const ImuBiases>(nodeData);
 }
 
 void NAV::ImuIntegrator::integrateObservation()
@@ -544,32 +539,32 @@ void NAV::ImuIntegrator::integrateObservation()
                                                    ? imuObs__t1->gyroCompXYZ.value()
                                                    : imuObs__t1->gyroUncompXYZ.value();
 
-    angularVelocity_ip_p__t1 -= imuPosition.quatGyro_pb() * imuBiases.biasGyro_b;
-    LOG_DATA("{}: angularVelocity_ip_p__t1 = {}", nameId(), angularVelocity_ip_p__t1.transpose());
-
     /// ω_ip_p (tₖ) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ
     Eigen::Vector3d angularVelocity_ip_p__t0 = !prefereUncompensatedData && imuObs__t0->gyroCompXYZ.has_value()
                                                    ? imuObs__t0->gyroCompXYZ.value()
                                                    : imuObs__t0->gyroUncompXYZ.value();
 
-    angularVelocity_ip_p__t0 -= imuPosition.quatGyro_pb() * imuBiases.biasGyro_b;
-    LOG_DATA("{}: angularVelocity_ip_p__t0 = {}", nameId(), angularVelocity_ip_p__t0.transpose());
-
     /// a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
     Eigen::Vector3d acceleration_p__t1 = !prefereUncompensatedData && imuObs__t1->accelCompXYZ.has_value()
                                              ? imuObs__t1->accelCompXYZ.value()
                                              : imuObs__t1->accelUncompXYZ.value();
-
-    acceleration_p__t1 -= imuPosition.quatAccel_pb() * imuBiases.biasAccel_b;
-    LOG_DATA("{}: acceleration_p__t1 = {}", nameId(), acceleration_p__t1.transpose());
 
     /// a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
     Eigen::Vector3d acceleration_p__t0 = !prefereUncompensatedData && imuObs__t0->accelCompXYZ.has_value()
                                              ? imuObs__t0->accelCompXYZ.value()
                                              : imuObs__t0->accelUncompXYZ.value();
 
-    acceleration_p__t0 -= imuPosition.quatAccel_pb() * imuBiases.biasAccel_b;
+    if (imuBiases)
+    {
+        angularVelocity_ip_p__t1 -= imuPosition.quatGyro_pb() * imuBiases->biasGyro_b;
+        angularVelocity_ip_p__t0 -= imuPosition.quatGyro_pb() * imuBiases->biasGyro_b;
+        acceleration_p__t1 -= imuPosition.quatAccel_pb() * imuBiases->biasAccel_b;
+        acceleration_p__t0 -= imuPosition.quatAccel_pb() * imuBiases->biasAccel_b;
+    }
+    LOG_DATA("{}: angularVelocity_ip_p__t1 = {}", nameId(), angularVelocity_ip_p__t1.transpose());
+    LOG_DATA("{}: angularVelocity_ip_p__t0 = {}", nameId(), angularVelocity_ip_p__t0.transpose());
+    LOG_DATA("{}: acceleration_p__t1 = {}", nameId(), acceleration_p__t1.transpose());
     LOG_DATA("{}: acceleration_p__t0 = {}", nameId(), acceleration_p__t0.transpose());
 
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁

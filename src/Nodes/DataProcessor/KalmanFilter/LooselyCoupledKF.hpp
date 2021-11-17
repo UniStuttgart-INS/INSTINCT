@@ -8,6 +8,7 @@
 
 #include "internal/Node/Node.hpp"
 #include "NodeData/State/InertialNavSol.hpp"
+#include "NodeData/State/ImuBiases.hpp"
 
 #include "KalmanFilter.hpp"
 
@@ -89,6 +90,9 @@ class LooselyCoupledKF : public Node
 
     /// Latest Position, Velocity, Attitude and Imu observation
     std::shared_ptr<const InertialNavSol> latestInertialNavSol = nullptr;
+
+    /// Accumulated IMU biases
+    ImuBiases accumulatedImuBiases;
 
     /// Kalman Filter representation
     KalmanFilter kalmanFilter{ 15, 6 };

@@ -6002,30 +6002,6 @@
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Accelerometer bias X_b [m/s^2]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Accelerometer bias Y_b [m/s^2]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Accelerometer bias Z_b [m/s^2]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Gyroscope bias X_b [rad/s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Gyroscope bias Y_b [rad/s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Gyroscope bias Z_b [rad/s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
                                 "displayName": "Accelerometer bias X_b accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
