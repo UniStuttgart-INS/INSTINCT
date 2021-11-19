@@ -12,6 +12,21 @@ namespace NAV
 {
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
+auto qCoeffsFromDcm(const Eigen::Matrix3d& C)
+{
+    auto a = 0.5 * std::sqrt(1 + C(0, 0) + C(1, 1) + C(2, 2));
+    if (1 + C(0, 0) + C(1, 1) + C(2, 2) < 0)
+    {
+        fmt::print("Negative a {}\n", 1 + C(0, 0) + C(1, 1) + C(2, 2));
+    }
+
+    auto b = 1 / (4 * a) * (C(2, 1) - C(1, 2));
+    auto c = 1 / (4 * a) * (C(0, 2) - C(2, 0));
+    auto d = 1 / (4 * a) * (C(1, 0) - C(0, 1));
+
+    return Eigen::Vector4d{ b, c, d, a };
+};
+
 Eigen::Matrix3d DCM_nb(double roll, double pitch, double yaw)
 {
     double& R = roll;
@@ -159,6 +174,78 @@ TEST_CASE("[InsTransformations] Radian to degree conversion constexpr", "[InsTra
     STATIC_REQUIRE(deg_360 == 360.0);
 }
 
+TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransformations]")
+{
+    double delta = trafo::deg2rad(2);
+    // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
+    for (double roll = -M_PI + delta; roll < M_PI - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+    {
+        Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitX());
+
+        auto q = Eigen::Quaterniond{ rollAngle };
+        Eigen::Matrix3d C = q.toRotationMatrix();
+
+        fmt::print("Roll: {}\n", trafo::rad2deg(roll));
+        REQUIRE(qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
+    }
+    // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
+    for (double roll = -M_PI + delta; roll < M_PI - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+    {
+        for (double pitch = -M_PI / 2.0 + delta; pitch <= M_PI / 2.0 + std::numeric_limits<float>::epsilon(); pitch += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+        {
+            Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitX());
+            Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
+
+            auto q = pitchAngle * rollAngle;
+            Eigen::Matrix3d C = q.toRotationMatrix();
+
+            fmt::print("Roll, Pitch: {}, {}\n", trafo::rad2deg(roll), trafo::rad2deg(pitch));
+            REQUIRE(qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
+        }
+    }
+    // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
+    for (double roll = -M_PI + delta; roll < M_PI - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+    {
+        if (std::abs(roll - (-M_PI / 2.0)) < 1e-8    // -90°
+            || std::abs(roll - (M_PI / 2.0)) < 1e-8) //  90°
+        {
+            continue; // Scalar Quaternion becomes 0
+        }
+        for (double pitch = -M_PI / 2.0 + delta; pitch < M_PI / 2.0 - std::numeric_limits<float>::epsilon(); pitch += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+        {
+            for (double yaw = -M_PI + delta; yaw < M_PI - std::numeric_limits<float>::epsilon(); yaw += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+            {
+                if (std::abs(yaw - (-M_PI / 2.0)) < 1e-8    // -90°
+                    || std::abs(yaw - (M_PI / 2.0)) < 1e-8) //  90°
+                {
+                    continue; // Scalar Quaternion becomes 0
+                }
+                Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitX());
+                Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
+                Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitZ());
+
+                auto q = yawAngle * pitchAngle * rollAngle;
+                Eigen::Matrix3d C = q.toRotationMatrix();
+
+                fmt::print("Roll, Pitch, Yaw: {}, {}, {}\n", trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
+                fmt::print("DCM\n{}\n", C);
+
+                // Check if in our notation the scalar quaternion is always positive
+                REQUIRE(qCoeffsFromDcm(C)(3) > 0);
+                if (q.w() < 0)
+                {
+                    Eigen::Vector4d qCoeffsNeg = -q.coeffs();
+                    REQUIRE(qCoeffsFromDcm(C) == EigApprox(qCoeffsNeg).margin(1e-6).epsilon(0));
+                }
+                else
+                {
+                    REQUIRE(qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-6).epsilon(0));
+                }
+            }
+        }
+    }
+}
+
 TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransformations]")
 {
     auto quat = [](double alpha, double beta, double gamma) {
@@ -170,15 +257,45 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
     };
 
     double delta = trafo::deg2rad(2);
-    bool error = false;
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
-    for (double alpha = -M_PI + delta; alpha <= M_PI && !error; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+    for (double alpha = -M_PI + delta; alpha <= M_PI; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
-        for (double beta = -M_PI / 2.0 + delta; beta <= M_PI / 2.0 && !error; beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+        for (double beta = -M_PI / 2.0 + delta; beta <= M_PI / 2.0; beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
         {
-            for (double gamma = -M_PI + delta; gamma <= M_PI && !error; gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+            for (double gamma = -M_PI + delta; gamma <= M_PI; gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
                 auto q = quat(alpha, beta, gamma);
+                auto ZYX = trafo::rad2deg3(trafo::quat2eulerZYX(q));
+                REQUIRE(ZYX == EigApprox(trafo::rad2deg3(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
+            }
+        }
+    }
+}
+
+TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTransformations]")
+{
+    auto quat = [](double alpha, double beta, double gamma) {
+        Eigen::AngleAxisd xAngle(alpha, Eigen::Vector3d::UnitX());
+        Eigen::AngleAxisd yAngle(beta, Eigen::Vector3d::UnitY());
+        Eigen::AngleAxisd zAngle(gamma, Eigen::Vector3d::UnitZ());
+
+        return zAngle * yAngle * xAngle;
+    };
+
+    double delta = trafo::deg2rad(2);
+    // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
+    for (double alpha = -M_PI + delta; alpha <= M_PI; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+    {
+        for (double beta = -M_PI / 2.0 + delta; beta <= M_PI / 2.0; beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+        {
+            for (double gamma = -M_PI + delta; gamma <= M_PI; gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+            {
+                auto q = quat(alpha, beta, gamma);
+                if (q.w() < 0)
+                {
+                    q.coeffs() = -q.coeffs();
+                }
+
                 auto ZYX = trafo::rad2deg3(trafo::quat2eulerZYX(q));
                 REQUIRE(ZYX == EigApprox(trafo::rad2deg3(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
             }
@@ -322,7 +439,7 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
     /* -------------------------------------------------------------------------------------------------------- */
 }
 
-TEST_CASE("[InsTransformations] Body <=> navigation DCM comparison", "[InsTransformations]")
+TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", "[InsTransformations]")
 {
     double delta = trafo::deg2rad(2);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
