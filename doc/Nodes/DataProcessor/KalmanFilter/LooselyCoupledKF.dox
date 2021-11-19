@@ -229,13 +229,41 @@ Substituting \eqref{eq-LCKF-Derivation-Attitude-transport-rate-differential} and
 
 \subsubsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-Derivation-Velocity Velocity Equations
 
-The time derivative of the velocity in local-navigation-frame coordinates is (see \cite Titterton2004, ch. 3.7.1, eq. 3.69, p. 47)
+The equations here mainly follow \cite Titterton2004 Titterton, ch. 12.3.1.2, p. 343f
+
+The time derivative of the velocity in local-navigation-frame coordinates is (see \cite Titterton2004 Titterton, ch. 3.7.1, eq. 3.69, p. 47)
 \fl{equation,eq-LCKF-Derivation-Attitude-timeDerivative}
-  \boldsymbol{\dot{v}}_e^n = \boldsymbol{f}^n - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}_e^n + \mathbf{g}_l^n
+  \boldsymbol{\dot{v}}_{eb}^n = \boldsymbol{f}^n - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}_e^n + \mathbf{g}_l^n
 \f}
 where
 - \f$ \boldsymbol{f}^n = [f_N \quad f_E \quad f_D]^T \f$ is the specific force vector as measured by a triad of accelerometers and resolved into the local geographic reference frame
-- \f$ \mathbf{g}_l^n \f$ is the local gravity vector which includes the combined effects of the mass attraction of the Earth (\f$ \mathbf{g} \f$) and the centripetal acceleration caused by the Earth's rotation (\f$ \boldsymbol{\omega}_{ie} \times \boldsymbol{\omega}_{ie} \times \mathbf{R} \f$)
+- \f$ \mathbf{g}_l^n \f$ is the local gravity vector which includes the combined effects of the mass attraction of the Earth (\f$ \mathbf{g} \f$) and the centripetal acceleration caused by the Earth's rotation (\f$ \boldsymbol{\omega}_{ie} \times \boldsymbol{\omega}_{ie} \times \mathbf{R} \f$) (see \cite Titterton2004 Titterton, ch. 3.7.1, eq. 3.75, p. 48)
+
+The estimated velocity follows the same propagation
+\fl{equation,eq-LCKF-Derivation-Attitude-timeDerivative-estimate}
+  \boldsymbol{\dot{\hat{v}}}_{eb}^{\raise-0.45ex\hbox{$\scriptstyle n$}} = \boldsymbol{\hat{f}}^n - (2 \boldsymbol{\hat{\omega}}_{ie}^n + \boldsymbol{\hat{\omega}}_{en}^n) \times \boldsymbol{\hat{v}}_e^n + \mathbf{\hat{g}}_l^n
+\f}
+
+Differencing equation \eqref{eq-LCKF-Derivation-Attitude-timeDerivative} and \eqref{eq-LCKF-Derivation-Attitude-timeDerivative-estimate} we get
+\fl{equation,eq-LCKF-Derivation-Attitude-timeDerivative-differential}
+\begin{aligned}
+  \delta \boldsymbol{\dot{v}}_{eb}^n &= \boldsymbol{\dot{\hat{v}}}_{eb}^{\raise-0.45ex\hbox{$\scriptstyle n$}} - \boldsymbol{\dot{v}}_{eb}^n \\
+                                     &= \mathbf{\hat{C}}_b^n \boldsymbol{\hat{f}}^b
+                                            - \mathbf{C}_b^n \boldsymbol{f}^b
+                                        - (2 \boldsymbol{\hat{\omega}}_{ie}^n + \boldsymbol{\hat{\omega}}_{en}^n) \times \boldsymbol{\hat{v}}_{eb}^n
+                                            + (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}_{eb}^n
+                                        + \mathbf{\hat{g}}_l^n
+                                            - \mathbf{g}_l^n
+\end{aligned}
+\f}
+
+- Substituting equation \eqref{eq-LCKF-Derivation-Attitude-estimate-true} and \eqref{eq-LCKF-Derivation-Attitude-transformation}: \f$ \mathbf{\hat{C}}_b^n = [\mathbf{I} - \mathbf{\Psi}] \mathbf{C}_b^n \f$
+- and writing
+    - \f$ \delta \boldsymbol{f}^b = \boldsymbol{\hat{f}}^b - \boldsymbol{f}^b \f$
+    - \f$ \delta \boldsymbol{v}_{eb}^n = \boldsymbol{\hat{v}}_{eb}^n - \boldsymbol{v}_{eb}^n \f$
+    - \f$ \delta \boldsymbol{\omega}_{ie}^n = \boldsymbol{\hat{\omega}}_{ie}^n - \boldsymbol{\omega}_{ie}^n \f$
+    - \f$ \delta \boldsymbol{\omega}_{en}^n = \boldsymbol{\hat{\omega}}_{en}^n - \boldsymbol{\omega}_{en}^n \f$
+
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 

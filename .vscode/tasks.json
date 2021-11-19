@@ -234,10 +234,7 @@
         { // MAIN: Build project
             "label": "MAIN: Build project",
             "type": "shell",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "command": "cmake",
             "linux": {
                 "args": [
@@ -318,7 +315,10 @@
         { // DOXYGEN: Build Documentation
             "label": "DOXYGEN: Build Documentation",
             "type": "shell",
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "command": "cmake",
             "args": [
                 "--build",
