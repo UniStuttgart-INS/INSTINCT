@@ -34,7 +34,7 @@
             "preLaunchTask": "TEST: Build project",
             "program": "${workspaceFolder}/bin/Debug/tests",
             "args": [ // If there is a space in the option, VSCode automatically encloses the option in '...'
-                // "'[PosVelAtt]'",
+                "'[Debug]'",
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
