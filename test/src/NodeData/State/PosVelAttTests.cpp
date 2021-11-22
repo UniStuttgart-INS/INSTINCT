@@ -93,7 +93,7 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
     PosVelAtt state;
     state.setPosition_lla({ trafo::deg2rad(48.78081), trafo::deg2rad(9.172012), 254 });
 
-    double delta = trafo::deg2rad(2);
+    double delta = trafo::deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double expectedRoll = -M_PI + delta; expectedRoll <= M_PI - delta + std::numeric_limits<float>::epsilon(); expectedRoll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {

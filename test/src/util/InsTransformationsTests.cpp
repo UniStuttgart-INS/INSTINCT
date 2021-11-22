@@ -176,7 +176,7 @@ TEST_CASE("[InsTransformations] Radian to degree conversion constexpr", "[InsTra
 
 TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransformations]")
 {
-    double delta = trafo::deg2rad(2);
+    double delta = trafo::deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double roll = -M_PI + delta; roll < M_PI - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
@@ -256,7 +256,7 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
         return zAngle * yAngle * xAngle;
     };
 
-    double delta = trafo::deg2rad(2);
+    double delta = trafo::deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double alpha = -M_PI + delta; alpha <= M_PI; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
@@ -282,7 +282,7 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
         return zAngle * yAngle * xAngle;
     };
 
-    double delta = trafo::deg2rad(2);
+    double delta = trafo::deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double alpha = -M_PI + delta; alpha <= M_PI; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
@@ -441,7 +441,7 @@ TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame convers
 
 TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", "[InsTransformations]")
 {
-    double delta = trafo::deg2rad(2);
+    double delta = trafo::deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double roll = -M_PI + delta; roll <= M_PI + std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
