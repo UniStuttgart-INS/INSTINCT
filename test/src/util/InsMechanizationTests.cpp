@@ -1,4 +1,5 @@
 #include <catch2/catch.hpp>
+#include "EigenApprox.hpp"
 
 #include "util/InsMath.hpp"
 #include "util/InsMechanization.hpp"
@@ -8,6 +9,8 @@
 #include "util/Eigen.hpp"
 
 #include <deque>
+#include <limits>
+#include <iostream>
 
 namespace NAV
 {
@@ -63,6 +66,143 @@ TEST_CASE("[InsMechanization] Update Quaternions ep Runge-Kutta 3. Order", "[Ins
     CHECK(rollPitchYaw.x() == Approx(expectedRollPitchYaw.x()).margin(1e-13));
     CHECK(rollPitchYaw.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
     CHECK(rollPitchYaw.z() == Approx(expectedRollPitchYaw.z()).margin(1e-13));
+}
+
+TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 1. Order", "[InsMechanization]")
+{
+    auto checkIntegration = [](const Eigen::Vector3d& angularVelocity_ip_n,
+                               const Eigen::Vector3d& angularVelocity_ip_b,
+                               const Eigen::Vector3d& expectedDeltaRPY,
+                               double delta,
+                               double rollMin, double rollMax,
+                               double pitchMin, double pitchMax,
+                               double yawMin, double yawMax) {
+        std::cout << "Testing with\n"
+                  << "    angularVelocity_ip_n = " << trafo::rad2deg3(angularVelocity_ip_n).transpose() << " [°/s]\n"
+                  << "    angularVelocity_ip_b = " << trafo::rad2deg3(angularVelocity_ip_b).transpose() << " [°/s]\n"
+                  << "    delta (test angle steps) = " << trafo::rad2deg(delta) << " [°]\n"
+                  << "    roll  [" << trafo::rad2deg(rollMin) << " " << trafo::rad2deg(rollMax) << ") [°]\n"
+                  << "    pitch [" << trafo::rad2deg(pitchMin) << " " << trafo::rad2deg(pitchMax) << ") [°]\n"
+                  << "    yaw   [" << trafo::rad2deg(yawMin) << " " << trafo::rad2deg(yawMax) << ") [°]\n";
+
+        // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+        long double timeDifferenceSec__t0 = 0.001L;
+        // ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in navigation coordinates, at the time tₖ
+        Eigen::Vector3d angularVelocity_ie_n__t1{ 0, 0, 0 };
+        // ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame in navigation coordinates
+        Eigen::Vector3d angularVelocity_en_n__t1{ 0, 0, 0 };
+
+        // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
+        for (double roll = rollMin; roll < rollMax - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+        {
+            for (double pitch = pitchMin; pitch < pitchMax - std::numeric_limits<float>::epsilon(); pitch += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+            {
+                for (double yaw = yawMin; yaw < yawMax - std::numeric_limits<float>::epsilon(); yaw += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+                {
+                    // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
+                    Eigen::Quaterniond quaternion_nb__t1 = trafo::quat_nb(roll, pitch, yaw);
+
+                    // ω_ip_b (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ
+                    const Eigen::Vector3d angularVelocity_ip_b__t0 = angularVelocity_ip_b
+                                                                     + quaternion_nb__t1.conjugate() * angularVelocity_ip_n;
+
+                    // q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
+                    Eigen::Quaterniond quaternion_nb__t0 = updateQuaternion_nb_RungeKutta1(timeDifferenceSec__t0,
+                                                                                           angularVelocity_ip_b__t0,
+                                                                                           angularVelocity_ie_n__t1,
+                                                                                           angularVelocity_en_n__t1,
+                                                                                           quaternion_nb__t1);
+
+                    // Roll, Pitch and Yaw angle at the time tₖ
+                    Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg3(trafo::quat2eulerZYX(quaternion_nb__t0));
+
+                    Eigen::Vector3d expectedRollPitchYaw{ roll + expectedDeltaRPY.x() * static_cast<double>(timeDifferenceSec__t0),
+                                                          pitch + expectedDeltaRPY.y() * static_cast<double>(timeDifferenceSec__t0),
+                                                          yaw + expectedDeltaRPY.z() * static_cast<double>(timeDifferenceSec__t0) };
+
+                    Eigen::Quaterniond expectedQuaternion_nb = trafo::quat_nb(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
+
+                    // std::cout << "quaternion_nb__t1 (x,y,z,w) = " << quaternion_nb__t1.coeffs().transpose() << "\n";
+
+                    Eigen::Vector3d vec_b{ 1, 2, 3 };
+                    Eigen::Vector3d vec_n = quaternion_nb__t0 * vec_b;
+                    Eigen::Vector3d expected_vec_n = expectedQuaternion_nb * vec_b;
+                    CHECK(vec_n == EigApprox(expected_vec_n).margin(1e-10).epsilon(0));
+
+                    REQUIRE(rollPitchYaw__t0 == EigApprox(trafo::rad2deg3(expectedRollPitchYaw)).margin(1e-10).epsilon(0));
+                }
+            }
+        }
+    };
+
+    double delta = trafo::deg2rad(5);
+    /* ########################################################################################################### */
+    checkIntegration(Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 }, // angularVelocity_ip_n__t0
+                     Eigen::Vector3d{ 0, 0, 0 },                 // angularVelocity_ip_b__t0
+                     Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 }, // expectedDeltaRPY
+                     delta,                                      // delta (test angle step size)
+                     -M_PI + delta, M_PI,                        // [rollMin, rollMax)
+                     0, trafo::deg2rad(1),                       // [pitchMin, pitchMax)
+                     0, trafo::deg2rad(1));                      // [yawMin, yawMax)
+    /* ########################################################################################################### */
+    checkIntegration(Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 },  // angularVelocity_ip_n__t0
+                     Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 },  // angularVelocity_ip_b__t0
+                     Eigen::Vector3d{ 0, trafo::deg2rad(10), 0 }, // expectedDeltaRPY
+                     delta,                                       // delta (test angle step size)
+                     0, trafo::deg2rad(1),                        // [rollMin, rollMax)
+                     -M_PI / 2.0 + delta, M_PI / 2.0,             // [pitchMin, pitchMax)
+                     0, trafo::deg2rad(1));                       // [yawMin, yawMax)
+    /* ########################################################################################################### */
+    checkIntegration(Eigen::Vector3d{ 0, 0, 0 },                 // angularVelocity_ip_n__t0
+                     Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 }, // angularVelocity_ip_b__t0
+                     Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 }, // expectedDeltaRPY
+                     delta,                                      // delta (test angle step size)
+                     0, trafo::deg2rad(1),                       // [rollMin, rollMax)
+                     0, trafo::deg2rad(1),                       // [pitchMin, pitchMax)
+                     -M_PI + delta, M_PI);                       // [yawMin, yawMax)
+    /* ########################################################################################################### */
+    /* ########################################################################################################### */
+    checkIntegration(Eigen::Vector3d{ 0, 0, 0 },                 // angularVelocity_ip_n__t0
+                     Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 }, // angularVelocity_ip_b__t0
+                     Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 }, // expectedDeltaRPY
+                     delta,                                      // delta (test angle step size)
+                     0, trafo::deg2rad(1),                       // [rollMin, rollMax)
+                     trafo::deg2rad(45), trafo::deg2rad(46),     // [pitchMin, pitchMax)
+                     trafo::deg2rad(45), trafo::deg2rad(46));    // [yawMin, yawMax)
+    /* ########################################################################################################### */
+    checkIntegration(Eigen::Vector3d{ 0, 0, trafo::deg2rad(5) }, // angularVelocity_ip_n__t0
+                     Eigen::Vector3d{ 0, 0, 0 },                 // angularVelocity_ip_b__t0
+                     Eigen::Vector3d{ 0, 0, trafo::deg2rad(5) }, // expectedDeltaRPY
+                     delta,                                      // delta (test angle step size)
+                     trafo::deg2rad(45), trafo::deg2rad(46),     // [rollMin, rollMax)
+                     0, trafo::deg2rad(1),                       // [pitchMin, pitchMax)
+                     trafo::deg2rad(45), trafo::deg2rad(46));    // [yawMin, yawMax)
+    /* ########################################################################################################### */
+    checkIntegration(Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 }, // angularVelocity_ip_n__t0
+                     Eigen::Vector3d{ 0, 0, 0 },                 // angularVelocity_ip_b__t0
+                     Eigen::Vector3d{ 0, trafo::deg2rad(5), 0 }, // expectedDeltaRPY
+                     delta,                                      // delta (test angle step size)
+                     trafo::deg2rad(45), trafo::deg2rad(46),     // [rollMin, rollMax)
+                     trafo::deg2rad(45), trafo::deg2rad(46),     // [pitchMin, pitchMax)
+                     0, trafo::deg2rad(1));                      // [yawMin, yawMax)
+    /* ########################################################################################################### */
+    /* ########################################################################################################### */
+    checkIntegration(Eigen::Vector3d{ 0, 0, trafo::deg2rad(-5) }, // angularVelocity_ip_n__t0
+                     Eigen::Vector3d{ 0, 0, 0 },                  // angularVelocity_ip_b__t0
+                     Eigen::Vector3d{ 0, 0, trafo::deg2rad(-5) }, // expectedDeltaRPY
+                     delta,                                       // delta (test angle step size)
+                     -M_PI + delta, M_PI,                         // [rollMin, rollMax)
+                     -M_PI / 2.0 + delta, M_PI / 2.0,             // [pitchMin, pitchMax)
+                     -M_PI + delta, M_PI);                        // [yawMin, yawMax)
+    // /* ########################################################################################################### */
+    // /* ########################################################################################################### */
+    checkIntegration(Eigen::Vector3d{ 0, 0, 0 },                  // angularVelocity_ip_n__t0
+                     Eigen::Vector3d{ trafo::deg2rad(10), 0, 0 }, // angularVelocity_ip_b__t0
+                     Eigen::Vector3d{ trafo::deg2rad(10), 0, 0 }, // expectedDeltaRPY
+                     delta,                                       // delta (test angle step size)
+                     -M_PI + delta, M_PI,                         // [rollMin, rollMax)
+                     -M_PI / 2.0 + delta, M_PI / 2.0,             // [pitchMin, pitchMax)
+                     -M_PI + delta, M_PI);                        // [yawMin, yawMax)
 }
 
 TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 3. Order", "[InsMechanization]")
