@@ -465,40 +465,14 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 {
     /* -------------------------------------------------------------------------------------------------------- */
 
-    double roll = 0.0;
-    double pitch = trafo::deg2rad(90);
-    double yaw = trafo::deg2rad(90);
+    double roll = trafo::deg2rad(45);
+    double pitch = 0.0;
+    double yaw = 0.0;
     auto q_bn = trafo::quat_bn(roll, pitch, yaw);
     CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
-    Eigen::Vector3d x_n{ 1.0, 0.0, 0.0 };
+    Eigen::Vector3d x_n{ 1.0, 1.0, 1.0 };
     Eigen::Vector3d x_b = q_bn * x_n;
-
-    CHECK(x_b == EigApprox(Eigen::Vector3d{ 0, -1, 0 }).margin(EPSILON).epsilon(0));
-
-    /* -------------------------------------------------------------------------------------------------------- */
-
-    roll = 0.0;
-    pitch = 0.0;
-    yaw = trafo::deg2rad(-45);
-    q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
-
-    x_n = Eigen::Vector3d{ 1.0, 1.0, 0.0 };
-    x_b = q_bn * x_n;
-
-    CHECK(x_b == EigApprox(Eigen::Vector3d{ 0, std::sqrt(2), 0 }).margin(EPSILON).epsilon(0));
-
-    /* -------------------------------------------------------------------------------------------------------- */
-
-    roll = trafo::deg2rad(45);
-    pitch = 0.0;
-    yaw = 0.0;
-    q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
-
-    x_n = { 1.0, 1.0, 1.0 };
-    x_b = q_bn * x_n;
 
     CHECK(x_b == EigApprox(Eigen::Vector3d{ 1, std::sqrt(2), 0 }).margin(EPSILON).epsilon(0));
 
@@ -517,6 +491,45 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
 
     /* -------------------------------------------------------------------------------------------------------- */
 
+    roll = 0.0;
+    pitch = 0.0;
+    yaw = trafo::deg2rad(-45);
+    q_bn = trafo::quat_bn(roll, pitch, yaw);
+    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+
+    x_n = Eigen::Vector3d{ 1.0, 1.0, 0.0 };
+    x_b = q_bn * x_n;
+
+    CHECK(x_b == EigApprox(Eigen::Vector3d{ 0, std::sqrt(2), 0 }).margin(EPSILON).epsilon(0));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    roll = 0.0;
+    pitch = trafo::deg2rad(90);
+    yaw = trafo::deg2rad(90);
+    q_bn = trafo::quat_bn(roll, pitch, yaw);
+    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+
+    x_n = Eigen::Vector3d{ 1.0, 2.0, 3.0 };
+    x_b = q_bn * x_n;
+
+    CHECK(x_b == EigApprox(Eigen::Vector3d{ -3, -1, 2 }).margin(EPSILON).epsilon(0));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
+    roll = trafo::deg2rad(90);
+    pitch = trafo::deg2rad(90);
+    yaw = 0.0;
+    q_bn = trafo::quat_bn(roll, pitch, yaw);
+    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+
+    x_n = Eigen::Vector3d{ 1.0, 2.0, 3.0 };
+    x_b = q_bn * x_n;
+
+    CHECK(x_b == EigApprox(Eigen::Vector3d{ -3, 1, -2 }).margin(EPSILON).epsilon(0));
+
+    /* -------------------------------------------------------------------------------------------------------- */
+
     roll = trafo::deg2rad(90);
     pitch = trafo::deg2rad(180);
     yaw = trafo::deg2rad(90);
@@ -526,7 +539,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     x_n = { 1.0, 2.0, 3.0 };
     x_b = q_bn * x_n;
 
-    CHECK(x_b == EigApprox(Eigen::Vector3d{ -x_n(1), -x_n(2), x_n(0) }).margin(EPSILON).epsilon(0));
+    CHECK(x_b == EigApprox(Eigen::Vector3d{ -2, -3, 1 }).margin(EPSILON).epsilon(0));
 }
 
 TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransformations]")
