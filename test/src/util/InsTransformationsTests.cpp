@@ -25,7 +25,7 @@ auto qCoeffsFromDcm(const Eigen::Matrix3d& C)
     auto d = 1 / (4 * a) * (C(1, 0) - C(0, 1));
 
     return Eigen::Vector4d{ b, c, d, a };
-};
+}
 
 Eigen::Matrix3d DCM_nb(double roll, double pitch, double yaw)
 {
