@@ -258,11 +258,11 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
 
     double delta = trafo::deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
-    for (double alpha = -M_PI + delta; alpha <= M_PI; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+    for (double alpha = -M_PI + delta; alpha < M_PI - std::numeric_limits<float>::epsilon(); alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
-        for (double beta = -M_PI / 2.0 + delta; beta <= M_PI / 2.0; beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+        for (double beta = -M_PI / 2.0 + delta; beta < M_PI / 2.0 - std::numeric_limits<float>::epsilon(); beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
         {
-            for (double gamma = -M_PI + delta; gamma <= M_PI; gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+            for (double gamma = -M_PI + delta; gamma < M_PI - std::numeric_limits<float>::epsilon(); gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
                 auto q = quat(alpha, beta, gamma);
                 auto ZYX = trafo::rad2deg3(trafo::quat2eulerZYX(q));
@@ -284,11 +284,11 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
 
     double delta = trafo::deg2rad(5);
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
-    for (double alpha = -M_PI + delta; alpha <= M_PI; alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+    for (double alpha = -M_PI + delta; alpha < M_PI - std::numeric_limits<float>::epsilon(); alpha += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
     {
-        for (double beta = -M_PI / 2.0 + delta; beta <= M_PI / 2.0; beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+        for (double beta = -M_PI / 2.0 + delta; beta < M_PI / 2.0 - std::numeric_limits<float>::epsilon(); beta += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
         {
-            for (double gamma = -M_PI + delta; gamma <= M_PI; gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
+            for (double gamma = -M_PI + delta; gamma < M_PI - std::numeric_limits<float>::epsilon(); gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
                 auto q = quat(alpha, beta, gamma);
                 if (q.w() < 0)
