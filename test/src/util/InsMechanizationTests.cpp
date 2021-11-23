@@ -42,9 +42,9 @@ TEST_CASE("[InsMechanization] Update Quaternions ep Runge-Kutta 3. Order", "[Ins
 
         Eigen::Vector3d angularVelocity_ip_b__t0 = quaternion_bp__t1 * angularVelocity_ip_p__t0;
 
-        for (double longitude = longitudeMin; longitude < longitudeMax - std::numeric_limits<float>::epsilon(); longitude += deltaLatLon)
+        for (double longitude = longitudeMin; longitude < longitudeMax - std::numeric_limits<float>::epsilon(); longitude += deltaLatLon) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
         {
-            for (double latitude = latitudeMin; latitude < latitudeMax - std::numeric_limits<float>::epsilon(); latitude += deltaLatLon)
+            for (double latitude = latitudeMin; latitude < latitudeMax - std::numeric_limits<float>::epsilon(); latitude += deltaLatLon) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
                 // q (tₖ₋₁) Quaternion, from navigation earth coordinates, at the time tₖ₋₁
                 Eigen::Quaterniond quaternion_en__t1 = trafo::quat_en(latitude, longitude);
