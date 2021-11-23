@@ -1420,7 +1420,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "VectorNavBinaryOutput",
@@ -2255,7 +2256,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     }
                 ],
                 "plotInfos": [
@@ -2644,6 +2646,7 @@
                 "integrationAlgorithmVelocity": 2,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
+                "prefereUncompensatedData": true,
                 "showCorrectionsInputPin": true
             },
             "enabled": true,
@@ -2765,6 +2768,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -2803,6 +2807,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -2836,6 +2841,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -2874,6 +2880,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -2924,6 +2931,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -2962,6 +2970,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3000,6 +3009,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3038,6 +3048,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3076,6 +3087,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3114,6 +3126,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3137,7 +3150,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "InertialNavSol",
@@ -3173,7 +3187,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "LCKF-Ref",
+                                                "legendName": "LCKF-Comp",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -3191,6 +3205,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3229,6 +3244,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3244,7 +3260,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "LCKF-Ref",
+                                                "legendName": "LCKF-Comp",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -3262,6 +3278,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3282,7 +3299,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "LCKF-Ref",
+                                                "legendName": "LCKF-Comp",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -3300,6 +3317,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3350,6 +3368,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3388,6 +3407,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3426,6 +3446,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3464,6 +3485,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3502,6 +3524,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3540,6 +3563,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3563,7 +3587,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "PosVelAtt",
@@ -3617,6 +3642,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3655,6 +3681,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3688,6 +3715,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3726,6 +3754,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3776,6 +3805,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3814,6 +3844,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3852,6 +3883,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3887,7 +3919,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "PosVelAtt",
@@ -3941,6 +3974,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -3979,6 +4013,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -4012,6 +4047,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -4050,6 +4086,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -4100,6 +4137,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -4138,6 +4176,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -4176,6 +4215,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -4211,7 +4251,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "VectorNavBinaryOutput",
@@ -4649,6 +4690,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -4687,6 +4729,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -4725,6 +4768,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5148,7 +5192,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     }
                 ],
                 "plotInfos": [
@@ -5512,8 +5557,8 @@
                 "varianceGyroNoiseUnits": 0,
                 "variance_bad": 10.0,
                 "variance_bgd": 1.0,
-                "variance_ra": 0.4,
-                "variance_rg": 15.0
+                "variance_ra": 0.04,
+                "variance_rg": 5.0
             },
             "enabled": true,
             "id": 564,
@@ -5621,6 +5666,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5659,6 +5705,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5697,6 +5744,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5735,6 +5783,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5773,6 +5822,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5811,6 +5861,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5849,6 +5900,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5887,6 +5939,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5925,6 +5978,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -5932,7 +5986,8 @@
                                 ]
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "ImuBiases",
@@ -5947,31 +6002,7 @@
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Accelerometer bias X [m/s^2]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Accelerometer bias Y [m/s^2]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Accelerometer bias Z [m/s^2]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Gyroscope bias X [rad/s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Gyroscope bias Y [rad/s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Gyroscope bias Z [rad/s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "Accelerometer bias X accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias X_b accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
@@ -6002,6 +6033,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6009,7 +6041,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Y accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias Y_b accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
@@ -6040,6 +6072,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6047,7 +6080,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Z accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias Z_b accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
@@ -6078,6 +6111,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6085,7 +6119,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias X accumulated [rad/s]",
+                                "displayName": "Gyroscope bias X_b accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         4,
@@ -6116,6 +6150,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6123,7 +6158,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Y accumulated [rad/s]",
+                                "displayName": "Gyroscope bias Y_b accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         4,
@@ -6154,6 +6189,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6161,7 +6197,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Z accumulated [rad/s]",
+                                "displayName": "Gyroscope bias Z_b accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         4,
@@ -6192,6 +6228,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6199,7 +6236,8 @@
                                 ]
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "x",
@@ -6274,7 +6312,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "P",
@@ -6320,6 +6359,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6418,6 +6458,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6516,6 +6557,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6614,6 +6656,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6712,6 +6755,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6810,6 +6854,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -6908,6 +6953,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -7006,6 +7052,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -7104,6 +7151,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -7495,7 +7543,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "Phi",
@@ -8410,7 +8459,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "Q",
@@ -9325,7 +9375,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "z",
@@ -9371,6 +9422,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -9409,6 +9461,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -9447,6 +9500,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -9485,6 +9539,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -9523,6 +9578,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -9561,6 +9617,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -9568,7 +9625,8 @@
                                 ]
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "H",
@@ -9943,7 +10001,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "R",
@@ -10102,7 +10161,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "K",
@@ -10477,7 +10537,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "K*z",
@@ -10535,6 +10596,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10573,6 +10635,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10611,6 +10674,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10649,6 +10713,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10687,6 +10752,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10725,6 +10791,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10756,7 +10823,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "PVAError",
@@ -10802,6 +10870,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10840,6 +10909,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10878,6 +10948,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10916,6 +10987,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10954,6 +11026,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -10992,6 +11065,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11030,6 +11104,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11068,6 +11143,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11106,6 +11182,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11113,7 +11190,8 @@
                                 ]
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "ImuBiases",
@@ -11128,31 +11206,31 @@
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Accelerometer bias X [m/s^2]",
+                                "displayName": "Accelerometer bias X_b [m/s^2]",
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Accelerometer bias Y [m/s^2]",
+                                "displayName": "Accelerometer bias Y_b [m/s^2]",
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Accelerometer bias Z [m/s^2]",
+                                "displayName": "Accelerometer bias Z_b [m/s^2]",
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Gyroscope bias X [rad/s]",
+                                "displayName": "Gyroscope bias X_b [rad/s]",
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Gyroscope bias Y [rad/s]",
+                                "displayName": "Gyroscope bias Y_b [rad/s]",
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Gyroscope bias Z [rad/s]",
+                                "displayName": "Gyroscope bias Z_b [rad/s]",
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Accelerometer bias X accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias X_b accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
@@ -11165,7 +11243,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "X (LCKF-Ref)",
+                                                "legendName": "X (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11183,6 +11261,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11190,7 +11269,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Y accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias Y_b accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
@@ -11203,7 +11282,7 @@
                                                     "y": 0.6705882549285889,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "Y (LCKF-Ref)",
+                                                "legendName": "Y (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11221,6 +11300,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11228,7 +11308,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Z accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias Z_b accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         3,
@@ -11241,7 +11321,7 @@
                                                     "y": 0.501960813999176,
                                                     "z": 0.501960813999176
                                                 },
-                                                "legendName": "Z (LCKF-Ref)",
+                                                "legendName": "Z (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11259,6 +11339,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11266,7 +11347,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias X accumulated [rad/s]",
+                                "displayName": "Gyroscope bias X_b accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         4,
@@ -11279,7 +11360,7 @@
                                                     "y": 0.7098039388656616,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "X (LCKF-Ref)",
+                                                "legendName": "X (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11297,6 +11378,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11304,7 +11386,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Y accumulated [rad/s]",
+                                "displayName": "Gyroscope bias Y_b accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         4,
@@ -11317,7 +11399,7 @@
                                                     "y": 0.6705882549285889,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "Y (LCKF-Ref)",
+                                                "legendName": "Y (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11335,6 +11417,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11342,7 +11425,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Z accumulated [rad/s]",
+                                "displayName": "Gyroscope bias Z_b accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         4,
@@ -11355,7 +11438,7 @@
                                                     "y": 0.501960813999176,
                                                     "z": 0.501960813999176
                                                 },
-                                                "legendName": "Z (LCKF-Ref)",
+                                                "legendName": "Z (LCKF-Comp)",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -11373,6 +11456,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11380,7 +11464,8 @@
                                 ]
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "x",
@@ -11455,7 +11540,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "P",
@@ -11501,6 +11587,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11599,6 +11686,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11697,6 +11785,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11795,6 +11884,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11893,6 +11983,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -11991,6 +12082,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -12089,6 +12181,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -12187,6 +12280,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -12285,6 +12379,7 @@
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
                                                 "markers": false,
+                                                "stride": 0,
                                                 "thickness": 1.0
                                             }
                                         ]
@@ -12676,7 +12771,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "Phi",
@@ -13591,7 +13687,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "Q",
@@ -14506,7 +14603,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "z",
@@ -14545,7 +14643,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "H",
@@ -14920,7 +15019,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "R",
@@ -15079,7 +15179,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "K",
@@ -15454,7 +15555,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "K*z",
@@ -15529,7 +15631,8 @@
                                 "plotOnAxisAndPlotStyle": []
                             }
                         ],
-                        "size": 0
+                        "size": 0,
+                        "stride": 1
                     }
                 ],
                 "plotInfos": [
@@ -15578,7 +15681,7 @@
                     },
                     {
                         "autoLimitXaxis": true,
-                        "autoLimitYaxis": false,
+                        "autoLimitYaxis": true,
                         "headerText": "Velocity error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -15621,7 +15724,7 @@
                     },
                     {
                         "autoLimitXaxis": true,
-                        "autoLimitYaxis": false,
+                        "autoLimitYaxis": true,
                         "headerText": "Flight Angles error",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -16050,18 +16153,19 @@
         },
         "node-812": {
             "data": {
-                "calculateIntermediateValues": false,
+                "calculateIntermediateValues": true,
                 "centrifugalAccCompensation": true,
                 "coriolisCompensation": true,
                 "gravityModel": 3,
-                "integrationAlgorithmAttitude": 3,
+                "integrationAlgorithmAttitude": 2,
                 "integrationAlgorithmPosition": 0,
-                "integrationAlgorithmVelocity": 1,
+                "integrationAlgorithmVelocity": 2,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
+                "prefereUncompensatedData": false,
                 "showCorrectionsInputPin": true
             },
-            "enabled": false,
+            "enabled": true,
             "id": 812,
             "inputPins": [
                 {

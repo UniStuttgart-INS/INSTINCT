@@ -21,7 +21,7 @@ Logger::Logger(const std::string& logpath)
     // Level should be smaller or equal to the level of the sinks
     spdlog::set_level(spdlog::level::level_enum::trace);
     // Minimum level which automatically triggers a flush
-    spdlog::flush_on(spdlog::level::info);
+    spdlog::flush_on(spdlog::level::trace);
 
     // See https://github.com/gabime/spdlog/wiki/3.-Custom-formatting for formatting options
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
@@ -46,7 +46,7 @@ Logger::Logger()
     // Level should be smaller or equal to the level of the sinks
     spdlog::set_level(spdlog::level::level_enum::trace);
     // Minimum level which automatically triggers a flush
-    spdlog::flush_on(spdlog::level::info);
+    spdlog::flush_on(spdlog::level::trace);
 
     // See https://github.com/gabime/spdlog/wiki/3.-Custom-formatting for formatting options
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE

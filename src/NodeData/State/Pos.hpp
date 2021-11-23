@@ -16,24 +16,11 @@ namespace NAV
 class Pos : public InsObs
 {
   public:
-    /// @brief Default constructor
-    Pos() = default;
-    /// @brief Destructor
-    ~Pos() override = default;
-    /// @brief Copy constructor
-    Pos(const Pos&) = default;
-    /// @brief Move constructor
-    Pos(Pos&&) = default;
-    /// @brief Copy assignment operator
-    Pos& operator=(const Pos&) = default;
-    /// @brief Move assignment operator
-    Pos& operator=(Pos&&) = default;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("Pos");
+        return "Pos";
     }
 
     /// @brief Returns the parent types of the data class

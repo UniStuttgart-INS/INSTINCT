@@ -4,7 +4,8 @@
 
 #include "util/Logger.hpp"
 
-#include <util/NumericalIntegration.hpp>
+#include "util/InsMath.hpp"
+#include "util/NumericalIntegration.hpp"
 
 namespace NAV
 {
@@ -22,7 +23,7 @@ Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, co
     Eigen::Vector4d q = { quat(3), quat(0), quat(1), quat(2) };
     // clang-format off
 
-    /// A Matrix at the time tₖ (Titterton p 319 e.q. 11.35)
+    /// Angular rates in matrix form (Titterton (2005), eq. (11.35)) at the time tₖ
     Eigen::Matrix4d A;
     A <<         0.0        , -angularVelocity(0), -angularVelocity(1), -angularVelocity(2),
           angularVelocity(0),         0.0        ,  angularVelocity(2), -angularVelocity(1),
@@ -30,6 +31,7 @@ Eigen::Vector4d quaternionUpdateModel(const Eigen::Vector3d& angularVelocity, co
           angularVelocity(2),  angularVelocity(1), -angularVelocity(0),         0.0        ;
     // clang-format on
 
+    // Propagation of an attitude Quaternion with time (Titterton (2005), eq. (11.34))
     q = 0.5 * A * q; // (w,x,y,z)
 
     // Rearranged because Eigen::Quaternion has order (x,y,z,w)
@@ -489,6 +491,37 @@ Eigen::Matrix3d AngularVelocityEarthSkew_ie_n(double latitude)
         0, std::cos(latitude), 0;
 
     return InsConst::angularVelocity_ie * Omega;
+}
+
+std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError)
+{
+    auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
+    posVelAttCorrected->setPosition_lla(posVelAtt->latLonAlt() - pvaError->positionError_lla());
+
+    posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() - pvaError->velocityError_n());
+
+    // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
+    Eigen::Vector3d attError = pvaError->attitudeError_n();
+    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
+    posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
+
+    // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
+    // const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb()
+    //                                  * (Eigen::AngleAxisd(attError(0), Eigen::Vector3d::UnitX())
+    //                                     * Eigen::AngleAxisd(attError(1), Eigen::Vector3d::UnitY())
+    //                                     * Eigen::AngleAxisd(attError(2), Eigen::Vector3d::UnitZ()))
+    //                                        .normalized();
+    // posVelAttCorrected->setAttitude_nb(q_nb.normalized());
+
+    // Eigen::Vector3d attError = pvaError->attitudeError_n();
+    // const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb();
+    // Eigen::Quaterniond q_nb_c{ q_nb.w() + 0.5 * (+attError(0) * q_nb.x() + attError(1) * q_nb.y() + attError(2) * q_nb.z()),
+    //                            q_nb.x() + 0.5 * (-attError(0) * q_nb.w() + attError(1) * q_nb.z() - attError(2) * q_nb.y()),
+    //                            q_nb.y() + 0.5 * (-attError(0) * q_nb.z() - attError(1) * q_nb.w() + attError(2) * q_nb.x()),
+    //                            q_nb.z() + 0.5 * (+attError(0) * q_nb.y() - attError(1) * q_nb.x() - attError(2) * q_nb.w()) };
+    // posVelAttCorrected->setAttitude_nb(q_nb_c.normalized());
+
+    return posVelAttCorrected;
 }
 
 } // namespace NAV

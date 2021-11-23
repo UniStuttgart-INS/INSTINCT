@@ -23,7 +23,7 @@ NAV::ImuIntegrator::ImuIntegrator()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 481, 322 };
+    guiConfigDefaultWindowSize = { 483, 350 };
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
     nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
@@ -208,6 +208,14 @@ void NAV::ImuIntegrator::guiConfig()
     ImGui::SameLine();
     gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
 
+    if (ImGui::Checkbox(fmt::format("Prefere uncompensated data##{}", size_t(id)).c_str(), &prefereUncompensatedData))
+    {
+        LOG_DEBUG("{}: prefereUncompensatedData changed to {}", nameId(), prefereUncompensatedData);
+        flow::ApplyChanges();
+    }
+    ImGui::SameLine();
+    gui::widgets::HelpMarker("Takes the uncompensated acceleration and angular rates instead of compensated values from the sensor. This option should be used when a Kalman Filter is used to correct the biases.");
+
     if (ImGui::Checkbox(fmt::format("Apply centrifugal acceleration compensation##{}", size_t(id)).c_str(), &centrifugalAccCompensation))
     {
         LOG_DEBUG("{}: centrifugalAccCompensation changed to {}", nameId(), centrifugalAccCompensation);
@@ -262,6 +270,7 @@ void NAV::ImuIntegrator::guiConfig()
     j["centrifugalAccCompensation"] = centrifugalAccCompensation;
     j["coriolisCompensation"] = coriolisCompensation;
     j["showCorrectionsInputPin"] = showCorrectionsInputPin;
+    j["prefereUncompensatedData"] = prefereUncompensatedData;
 
     return j;
 }
@@ -326,6 +335,10 @@ void NAV::ImuIntegrator::restore(json const& j)
             }
         }
     }
+    if (j.contains("prefereUncompensatedData"))
+    {
+        prefereUncompensatedData = j.at("prefereUncompensatedData");
+    }
 }
 
 bool NAV::ImuIntegrator::initialize()
@@ -338,14 +351,12 @@ bool NAV::ImuIntegrator::initialize()
 
     imuObservations.clear();
     posVelAttStates.clear();
+    imuBiases.reset();
 
     skipIntermediateCalculation = false;
 
     time__init = InsTime();
     timeSinceStartup__init = 0;
-
-    imuBiases.biasAccel_p.setZero();
-    imuBiases.biasGyro_p.setZero();
 
     LOG_DEBUG("ImuIntegrator initialized");
 
@@ -359,7 +370,7 @@ void NAV::ImuIntegrator::deinitialize()
 
 void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto imuObs = std::dynamic_pointer_cast<const ImuObs>(nodeData);
+    auto imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
 
     if (!imuObs->insTime.has_value() && !imuObs->timeSinceStartup.has_value())
     {
@@ -390,18 +401,14 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<const NodeData>& n
 
 void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto posVelAtt = std::dynamic_pointer_cast<const PosVelAtt>(nodeData);
-
-    if (showCorrectionsInputPin) // Make a copy, as we going to alter it
-    {
-        posVelAtt = std::make_shared<PosVelAtt>(*posVelAtt);
-    }
+    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(nodeData);
 
     // Add imuObs tₖ₋₁ to the start of the list
     if (posVelAttStates.empty())
     {
         while (posVelAttStates.size() < maxSizeStates)
         {
+            LOG_DEBUG("{}: Adding posVelAtt to the start of the list {}", nameId(), posVelAtt);
             posVelAttStates.push_front(posVelAtt);
         }
     }
@@ -427,56 +434,42 @@ void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& no
 
 void NAV::ImuIntegrator::recvPVAError(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    pvaError = std::dynamic_pointer_cast<const PVAError>(nodeData);
+    pvaError = std::static_pointer_cast<const PVAError>(nodeData);
 }
 
 void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    auto imuBiasObs = std::dynamic_pointer_cast<const ImuBiases>(nodeData);
-
-    imuBiases.biasAccel_p += imuBiasObs->biasAccel_p;
-    imuBiases.biasGyro_p += imuBiasObs->biasGyro_p;
+    imuBiases = std::static_pointer_cast<const ImuBiases>(nodeData);
 }
 
 void NAV::ImuIntegrator::integrateObservation()
 {
-    LOG_DATA("{}: imuObservations.at(0) = {}, imuObservations.at(1) = {}, imuObservations.at(2) = {}, ", nameId(), imuObservations.at(0), imuObservations.at(1), imuObservations.at(2));
+    LOG_DATA("{}: imuObservations.at(0) = {}, imuObservations.at(1) = {}, imuObservations.at(2) = {}", nameId(), imuObservations.at(0), imuObservations.at(1), imuObservations.at(2));
+    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
     if (pvaError)
     {
-        LOG_DATA("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value(), posVelAttStates.at(1)->insTime.value());
+        LOG_DATA("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value().toYMDHMS(), posVelAttStates.at(1)->insTime.value().toYMDHMS());
 
         for (auto& posVelAtt : posVelAttStates)
         {
-            auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
-            posVelAttCorrected->setPosition_lla(posVelAtt->latLonAlt() - pvaError->positionError_lla());
-
-            posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() - pvaError->velocityError_n());
-
-            // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-            Eigen::Vector3d attError = pvaError->attitudeError_n();
-            Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
-            posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
-
-            // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
-            // TODO: Use quaternions for caluclation
-
-            posVelAtt = posVelAttCorrected;
+            posVelAtt = correctPosVelAtt(posVelAtt, pvaError);
         }
+        LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {} (after KF update)", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
 
         pvaError.reset();
     }
 
     /// IMU Observation at the time tₖ
-    std::shared_ptr<const ImuObs> imuObs__t0 = imuObservations.at(0);
+    const std::shared_ptr<const ImuObs>& imuObs__t0 = imuObservations.at(0);
     /// IMU Observation at the time tₖ₋₁
-    std::shared_ptr<const ImuObs> imuObs__t1 = imuObservations.at(1);
+    const std::shared_ptr<const ImuObs>& imuObs__t1 = imuObservations.at(1);
     /// IMU Observation at the time tₖ₋₂
-    std::shared_ptr<const ImuObs> imuObs__t2 = imuObservations.at(2);
+    const std::shared_ptr<const ImuObs>& imuObs__t2 = imuObservations.at(2);
 
     /// Position, Velocity and Attitude at the time tₖ₋₁
-    std::shared_ptr<const PosVelAtt> posVelAtt__t1 = posVelAttStates.at(0);
+    const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = posVelAttStates.at(0);
     /// Position, Velocity and Attitude at the time tₖ₋₂
-    std::shared_ptr<const PosVelAtt> posVelAtt__t2 = posVelAttStates.at(1);
+    const std::shared_ptr<const PosVelAtt>& posVelAtt__t2 = posVelAttStates.at(1);
 
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = imuObs__t0->imuPos;
@@ -508,9 +501,9 @@ void NAV::ImuIntegrator::integrateObservation()
         // Update time
         posVelAtt__t0->insTime = imuObs__t0->insTime;
 
-        LOG_DATA("{}: time__t2 {}", nameId(), time__t2.toGPSweekTow());
-        LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1.toGPSweekTow(), timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0.toGPSweekTow(), timeDifferenceSec__t0);
+        LOG_DATA("{}: time__t2 {}", nameId(), time__t2.toYMDHMS());
+        LOG_DATA("{}: time__t1 {}: DiffSec__t1 {}", nameId(), time__t1.toYMDHMS(), timeDifferenceSec__t1);
+        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0.toYMDHMS(), timeDifferenceSec__t0);
     }
     else
     {
@@ -542,36 +535,36 @@ void NAV::ImuIntegrator::integrateObservation()
 
     /// ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
-    Eigen::Vector3d angularVelocity_ip_p__t1 = imuObs__t1->gyroCompXYZ.has_value()
+    Eigen::Vector3d angularVelocity_ip_p__t1 = !prefereUncompensatedData && imuObs__t1->gyroCompXYZ.has_value()
                                                    ? imuObs__t1->gyroCompXYZ.value()
                                                    : imuObs__t1->gyroUncompXYZ.value();
 
-    angularVelocity_ip_p__t1 -= imuBiases.biasGyro_p;
-    LOG_DATA("{}: angularVelocity_ip_p__t1 = {}", nameId(), angularVelocity_ip_p__t1.transpose());
-
     /// ω_ip_p (tₖ) Angular velocity in [rad/s],
     /// of the inertial to platform system, in platform coordinates, at the time tₖ
-    Eigen::Vector3d angularVelocity_ip_p__t0 = imuObs__t0->gyroCompXYZ.has_value()
+    Eigen::Vector3d angularVelocity_ip_p__t0 = !prefereUncompensatedData && imuObs__t0->gyroCompXYZ.has_value()
                                                    ? imuObs__t0->gyroCompXYZ.value()
                                                    : imuObs__t0->gyroUncompXYZ.value();
 
-    angularVelocity_ip_p__t0 -= imuBiases.biasGyro_p;
-    LOG_DATA("{}: angularVelocity_ip_p__t0 = {}", nameId(), angularVelocity_ip_p__t0.transpose());
-
     /// a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
-    Eigen::Vector3d acceleration_p__t1 = imuObs__t1->accelCompXYZ.has_value()
+    Eigen::Vector3d acceleration_p__t1 = !prefereUncompensatedData && imuObs__t1->accelCompXYZ.has_value()
                                              ? imuObs__t1->accelCompXYZ.value()
                                              : imuObs__t1->accelUncompXYZ.value();
 
-    acceleration_p__t1 -= imuBiases.biasAccel_p;
-    LOG_DATA("{}: acceleration_p__t1 = {}", nameId(), acceleration_p__t1.transpose());
-
     /// a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
-    Eigen::Vector3d acceleration_p__t0 = imuObs__t0->accelCompXYZ.has_value()
+    Eigen::Vector3d acceleration_p__t0 = !prefereUncompensatedData && imuObs__t0->accelCompXYZ.has_value()
                                              ? imuObs__t0->accelCompXYZ.value()
                                              : imuObs__t0->accelUncompXYZ.value();
 
-    acceleration_p__t0 -= imuBiases.biasAccel_p;
+    if (imuBiases)
+    {
+        angularVelocity_ip_p__t1 -= imuPosition.quatGyro_pb() * imuBiases->biasGyro_b;
+        angularVelocity_ip_p__t0 -= imuPosition.quatGyro_pb() * imuBiases->biasGyro_b;
+        acceleration_p__t1 -= imuPosition.quatAccel_pb() * imuBiases->biasAccel_b;
+        acceleration_p__t0 -= imuPosition.quatAccel_pb() * imuBiases->biasAccel_b;
+    }
+    LOG_DATA("{}: angularVelocity_ip_p__t1 = {}", nameId(), angularVelocity_ip_p__t1.transpose());
+    LOG_DATA("{}: angularVelocity_ip_p__t0 = {}", nameId(), angularVelocity_ip_p__t0.transpose());
+    LOG_DATA("{}: acceleration_p__t1 = {}", nameId(), acceleration_p__t1.transpose());
     LOG_DATA("{}: acceleration_p__t0 = {}", nameId(), acceleration_p__t0.transpose());
 
     /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
@@ -629,8 +622,9 @@ void NAV::ImuIntegrator::integrateObservation()
 
     if (centrifugalAccCompensation)
     {
-        LOG_DATA("{}: Applying centrifugal acceleration", nameId());
-        gravity_n__t1 += gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        auto centrifugalAcceleration = gravity::centrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
+        LOG_DATA("{}: Applying centrifugal acceleration: {}", nameId(), centrifugalAcceleration.transpose());
+        gravity_n__t1 += centrifugalAcceleration;
     }
     LOG_DATA("{}: gravity_n__t1 = {}", nameId(), gravity_n__t1.transpose());
 
@@ -914,6 +908,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         skipIntermediateCalculation = false;
     }
+    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
 }
 
 const char* NAV::ImuIntegrator::to_string(IntegrationAlgorithm algorithm)

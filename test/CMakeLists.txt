@@ -30,7 +30,7 @@ add_executable(
   src/util/InsTransformationsTests.cpp
   src/util/LoggerTests.cpp
   src/util/ScrollingBufferTests.cpp
-  src/NodeData/State/StateDataTests.cpp
+  src/NodeData/State/PosVelAttTests.cpp
   src/Nodes/FlowTester.cpp
   src/Nodes/DataLogger/IMU/VectorNavDataLoggerTests.cpp
   ${SRC_FILES})

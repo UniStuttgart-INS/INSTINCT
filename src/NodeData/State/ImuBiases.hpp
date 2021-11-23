@@ -15,24 +15,11 @@ namespace NAV
 class ImuBiases : public InsObs
 {
   public:
-    /// @brief Default constructor
-    ImuBiases() = default;
-    /// @brief Destructor
-    ~ImuBiases() override = default;
-    /// @brief Copy constructor
-    ImuBiases(const ImuBiases&) = delete;
-    /// @brief Move constructor
-    ImuBiases(ImuBiases&&) = delete;
-    /// @brief Copy assignment operator
-    ImuBiases& operator=(const ImuBiases&) = delete;
-    /// @brief Move assignment operator
-    ImuBiases& operator=(ImuBiases&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("ImuBiases");
+        return "ImuBiases";
     }
 
     /// @brief Returns the parent types of the data class
@@ -43,9 +30,9 @@ class ImuBiases : public InsObs
     }
 
     /// 𝐛_a The accelerometer bias in platform frame in [m/s^2]
-    Eigen::Vector3d biasAccel_p{ 0, 0, 0 };
+    Eigen::Vector3d biasAccel_b{ 0, 0, 0 };
     /// 𝐛_g The gyroscope bias in platform frame in [rad/s]
-    Eigen::Vector3d biasGyro_p{ 0, 0, 0 };
+    Eigen::Vector3d biasGyro_b{ 0, 0, 0 };
 };
 
 } // namespace NAV

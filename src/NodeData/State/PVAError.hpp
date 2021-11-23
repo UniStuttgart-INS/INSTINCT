@@ -15,24 +15,11 @@ namespace NAV
 class PVAError : public InsObs
 {
   public:
-    /// @brief Default constructor
-    PVAError() = default;
-    /// @brief Destructor
-    ~PVAError() override = default;
-    /// @brief Copy constructor
-    PVAError(const PVAError&) = delete;
-    /// @brief Move constructor
-    PVAError(PVAError&&) = delete;
-    /// @brief Copy assignment operator
-    PVAError& operator=(const PVAError&) = delete;
-    /// @brief Move assignment operator
-    PVAError& operator=(PVAError&&) = delete;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("PVAError");
+        return "PVAError";
     }
 
     /// @brief Returns the parent types of the data class

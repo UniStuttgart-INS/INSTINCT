@@ -13,24 +13,11 @@ namespace NAV
 class PosVel : public Pos
 {
   public:
-    /// @brief Default constructor
-    PosVel() = default;
-    /// @brief Destructor
-    ~PosVel() override = default;
-    /// @brief Copy constructor
-    PosVel(const PosVel&) = default;
-    /// @brief Move constructor
-    PosVel(PosVel&&) = default;
-    /// @brief Copy assignment operator
-    PosVel& operator=(const PosVel&) = default;
-    /// @brief Move assignment operator
-    PosVel& operator=(PosVel&&) = default;
-
     /// @brief Returns the type of the data class
     /// @return The data type
     [[nodiscard]] static std::string type()
     {
-        return std::string("PosVel");
+        return "PosVel";
     }
 
     /// @brief Returns the parent types of the data class

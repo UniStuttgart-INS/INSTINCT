@@ -1,6 +1,7 @@
 #include "InsTransformations.hpp"
 
 #include "util/Logger.hpp"
+#include "util/InsMechanization.hpp"
 
 namespace NAV::trafo
 {
@@ -22,8 +23,8 @@ namespace NAV::trafo
 /// @param[in] b Semi-minor axis of the reference ellipsoid
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return Vector containing [latitude 𝜙, longitude λ, altitude]^T in [rad, rad, m]
-/// @note See J.A. Farrel and M. Barth, 1999, GPS & Inertal Navigation. McGraw-Hill. pp. 29.
-[[nodiscard]] Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double e_squared);
+/// @note See See S. Gleason (2009) - GNSS Applications and Methods: Software example 'Chapter6_GNSS_INS_1/wgsxyz2lla.m' (J.A. Farrel and M. Barth, 1999, GPS & Inertal Navigation. McGraw-Hill. pp. 29.)
+[[nodiscard]] Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double e_squared); // TODO: Take "Exact conversion of earth-centered, earth-fixed coordinates to geodetic coordinates" by Jijie Zhu instead of Gleason's Matlab code
 
 // ###########################################################################################################
 //                                             Public functions
@@ -50,21 +51,8 @@ Eigen::Vector3d quat2eulerZYX(const Eigen::Quaterniond& q)
         double x = XYZ.x() > 0 ? XYZ.x() - M_PI : XYZ.x() + M_PI;
         double y = XYZ.y() >= M_PI / 2.0 ? -(XYZ.y() - M_PI) : -(XYZ.y() + M_PI);
         double z = XYZ.z() - M_PI;
-#ifndef NDEBUG
-        // Wanted range
-        if (x > -M_PI && x <= M_PI                // (-pi:pi]
-            && y > -M_PI / 2.0 && y <= M_PI / 2.0 // (-pi/2:pi/2]
-            && z > -M_PI && z <= M_PI)            // (-pi:pi]
-        {
-#endif
-            XYZ = { x, y, z };
-#ifndef NDEBUG
-        }
-        else
-        {
-            LOG_ERROR("\nCould not convert the angles [{}, {}, {}]", XYZ.x(), XYZ.y(), XYZ.z());
-        }
-#endif
+
+        XYZ = { x, y, z };
     }
 
     return XYZ;
@@ -175,12 +163,12 @@ Eigen::Vector3d lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_sq
 
     /// Radius of curvature of the ellipsoid in the prime vertical plane,
     /// i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
-    double N = a / std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
+    double R_E = earthRadius_E(latitude, a, e_squared);
 
     // Jekeli, 2001 (eq. 1.80) (see  Torge, 1991, for further details)
-    return Eigen::Vector3d((N + altitude) * std::cos(latitude) * std::cos(longitude),
-                           (N + altitude) * std::cos(latitude) * std::sin(longitude),
-                           (N * (1 - e_squared) + altitude) * std::sin(latitude));
+    return { (R_E + altitude) * std::cos(latitude) * std::cos(longitude),
+             (R_E + altitude) * std::cos(latitude) * std::sin(longitude),
+             (R_E * (1 - e_squared) + altitude) * std::sin(latitude) };
 }
 
 Eigen::Vector3d lla2ecef_WGS84(const Eigen::Vector3d& latLonAlt)
@@ -231,7 +219,7 @@ Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double
 
     auto lat = std::atan((z + z_0 * (e_p * e_p)) / p);
 
-    return Eigen::Vector3d(lat, lon, alt);
+    return { lat, lon, alt };
 }
 
 Eigen::Vector3d ecef2lla_WGS84(const Eigen::Vector3d& ecef)

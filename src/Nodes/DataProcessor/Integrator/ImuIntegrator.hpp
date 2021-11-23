@@ -87,7 +87,7 @@ class ImuIntegrator : public Node
     void integrateObservation();
 
     /// Accumulated IMU biases
-    ImuBiases imuBiases;
+    std::shared_ptr<const ImuBiases> imuBiases = nullptr;
 
     /// IMU Observation list
     /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
@@ -169,6 +169,9 @@ class ImuIntegrator : public Node
 
     /// Flag to toggle coriolis acceleration compensation of the acceleration at the current position
     bool coriolisCompensation = true;
+
+    /// Flag to let the integration algorithm use uncompensated acceleration and angular rates instead of compensated
+    bool prefereUncompensatedData = false;
 };
 
 } // namespace NAV

@@ -172,14 +172,16 @@ void NAV::SkydelNetworkStream::do_receive()
                 quat_eb = trafo::quat_en(posLLA(0), posLLA(1)) * trafo::quat_nb(attRoll, attPitch, attYaw);
 
                 obsG->setPosition_e(pos_ecef);
-                Eigen::Vector3d velDummy{ 0, 0, 0 }; //TODO: Add velocity output in Skydel API and NetStream
+                Eigen::Vector3d velDummy{ 0, 0, 0 }; // TODO: Add velocity output in Skydel API and NetStream
                 obsG->setVelocity_e(velDummy);
                 obsG->setAttitude_eb(quat_eb); // Attitude MUST BE set after Position, because the n- to e-sys trafo depends on posLLA
 
                 // Set IMU values
                 obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
+                obs->accelUncompXYZ = obs->accelCompXYZ;
                 obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
-                obs->magCompXYZ.emplace(0.0, 0.0, 0.0); //TODO: Add magnetometer model to Skydel API 'InstinctDataStream'
+                obs->gyroUncompXYZ = obs->gyroCompXYZ;
+                obs->magCompXYZ.emplace(0.0, 0.0, 0.0); // TODO: Add magnetometer model to Skydel API 'InstinctDataStream'
                 obs->magUncompXYZ.emplace(0.0, 0.0, 0.0);
 
                 InsTime currentTime = util::time::GetCurrentInsTime();
@@ -187,6 +189,21 @@ void NAV::SkydelNetworkStream::do_receive()
                 {
                     obs->insTime = currentTime;
                     obsG->insTime = currentTime;
+                }
+
+                if (obs->timeSinceStartup.has_value())
+                {
+                    if (lastMessageTime)
+                    {
+                        // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
+                        // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
+                        if (obs->timeSinceStartup.value() - lastMessageTime >= static_cast<uint64_t>(1.5 / dataRate * 1e9))
+                        {
+                            LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", nameId(),
+                                     lastMessageTime, obs->timeSinceStartup.value(), static_cast<double>(obs->timeSinceStartup.value() - lastMessageTime) * 1e-9);
+                        }
+                    }
+                    lastMessageTime = obs->timeSinceStartup.value();
                 }
 
                 this->invokeCallbacks(OutputPortIndex_GnssObs, obsG);
@@ -246,6 +263,8 @@ bool NAV::SkydelNetworkStream::initialize()
     packageCount = 0;
     startCounter = 0;
     packagesNumber = 2;
+
+    lastMessageTime = 0;
 
     do_receive();
 

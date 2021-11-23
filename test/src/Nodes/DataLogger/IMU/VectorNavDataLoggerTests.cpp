@@ -75,7 +75,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToOutputPin(1, [](const std::shared_ptr<const NAV::NodeData>& data) mutable { // test/data/vn310-imu.csv
         messageCounterImuDataCsv++;
 
-        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        [[maybe_unused]] auto obs = std::static_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
 
         // TODO: Compare Data with other files
     });
@@ -83,7 +83,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToOutputPin(29, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/logs/vn310-imu.csv
         messageCounterImuLogCsv++;
 
-        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        [[maybe_unused]] auto obs = std::static_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
 
         // TODO: Compare Data with other files
     });
@@ -91,7 +91,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToOutputPin(32, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/logs/vn310-imu.vnb
         messageCounterImuLogVnb++;
 
-        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        [[maybe_unused]] auto obs = std::static_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
 
         // TODO: Compare Data with other files
     });
@@ -101,7 +101,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToOutputPin(7, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/data/vn310-gnss.csv
         messageCounterGnssDataCsv++;
 
-        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        [[maybe_unused]] auto obs = std::static_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
 
         // TODO: Compare Data with other files
     });
@@ -109,7 +109,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToOutputPin(35, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/logs/vn310-gnss.csv
         messageCounterGnssLogCsv++;
 
-        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        [[maybe_unused]] auto obs = std::static_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
 
         // TODO: Compare Data with other files
     });
@@ -117,7 +117,7 @@ TEST_CASE("[VectorNavDataLogger][flow] Read and log files and compare content", 
     nm::RegisterWatcherCallbackToOutputPin(38, [](const std::shared_ptr<const NAV::NodeData>& data) { // test/logs/vn310-gnss.vnb
         messageCounterGnssLogVnb++;
 
-        [[maybe_unused]] auto obs = std::dynamic_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
+        [[maybe_unused]] auto obs = std::static_pointer_cast<const NAV::VectorNavBinaryOutput>(data);
 
         // TODO: Compare Data with other files
     });

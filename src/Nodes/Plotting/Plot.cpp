@@ -991,18 +991,12 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             data.at(pinIndex).addPlotDataItem(i++, "Time [s]");
             data.at(pinIndex).addPlotDataItem(i++, "GPS time of week [s]");
             // ImuBiases
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias X [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Y [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Z [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias X [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Y [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Z [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias X accumulated [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Y accumulated [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Z accumulated [m/s^2]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias X accumulated [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Y accumulated [rad/s]");
-            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Z accumulated [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias X_b accumulated [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Y_b accumulated [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Accelerometer bias Z_b accumulated [m/s^2]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias X_b accumulated [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Y_b accumulated [rad/s]");
+            data.at(pinIndex).addPlotDataItem(i++, "Gyroscope bias Z_b accumulated [rad/s]");
         }
         else if (startPin->dataIdentifier.front() == RtklibPosObs::type())
         {
@@ -1518,8 +1512,6 @@ void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
     {
         size_t pinIndex = pinIndexFromId(link->endPinId);
 
-        LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
-
         auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<bool>(pinIndex);
 
@@ -1547,8 +1539,6 @@ void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
     {
         size_t pinIndex = pinIndexFromId(link->endPinId);
 
-        LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
-
         auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<int>(pinIndex);
 
@@ -1575,8 +1565,6 @@ void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
     if (Link* link = nm::FindLink(linkId))
     {
         size_t pinIndex = pinIndexFromId(link->endPinId);
-
-        LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
         auto currentTime = util::time::GetCurrentInsTime();
         auto* value = getInputValue<double>(pinIndex);
@@ -1606,8 +1594,6 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
         if (Pin* sourcePin = nm::FindPin(link->startPinId))
         {
             size_t pinIndex = pinIndexFromId(link->endPinId);
-
-            LOG_DATA("{}: called on pin {}", nameId(), pinIndex);
 
             auto currentTime = util::time::GetCurrentInsTime();
             if (sourcePin->dataIdentifier.front() == "Eigen::MatrixXd")
@@ -1679,39 +1665,39 @@ void NAV::Plot::plotData(const std::shared_ptr<const NodeData>& nodeData, ax::No
             if (sourcePin->dataIdentifier.front() == PosVelAtt::type()
                 || sourcePin->dataIdentifier.front() == InertialNavSol::type())
             {
-                plotPosVelAtt(std::dynamic_pointer_cast<const PosVelAtt>(nodeData), pinIndex);
+                plotPosVelAtt(std::static_pointer_cast<const PosVelAtt>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == PVAError::type())
             {
-                plotPVAError(std::dynamic_pointer_cast<const PVAError>(nodeData), pinIndex);
+                plotPVAError(std::static_pointer_cast<const PVAError>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuBiases::type())
             {
-                plotImuBiases(std::dynamic_pointer_cast<const ImuBiases>(nodeData), pinIndex);
+                plotImuBiases(std::static_pointer_cast<const ImuBiases>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
-                plotRtklibPosObs(std::dynamic_pointer_cast<const RtklibPosObs>(nodeData), pinIndex);
+                plotRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
             {
-                plotUbloxObs(std::dynamic_pointer_cast<const UbloxObs>(nodeData), pinIndex);
+                plotUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuObs::type())
             {
-                plotImuObs(std::dynamic_pointer_cast<const ImuObs>(nodeData), pinIndex);
+                plotImuObs(std::static_pointer_cast<const ImuObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == KvhObs::type())
             {
-                plotKvhObs(std::dynamic_pointer_cast<const KvhObs>(nodeData), pinIndex);
+                plotKvhObs(std::static_pointer_cast<const KvhObs>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == ImuObsWDelta::type())
             {
-                plotImuObsWDeltaObs(std::dynamic_pointer_cast<const ImuObsWDelta>(nodeData), pinIndex);
+                plotImuObsWDeltaObs(std::static_pointer_cast<const ImuObsWDelta>(nodeData), pinIndex);
             }
             else if (sourcePin->dataIdentifier.front() == VectorNavBinaryOutput::type())
             {
-                plotVectorNavBinaryObs(std::dynamic_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIndex);
+                plotVectorNavBinaryObs(std::static_pointer_cast<const VectorNavBinaryOutput>(nodeData), pinIndex);
             }
         }
     }
@@ -1816,26 +1802,12 @@ void NAV::Plot::plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // ImuBiases
-    addData(pinIndex, i++, obs->biasAccel_p(0));
-    addData(pinIndex, i++, obs->biasAccel_p(1));
-    addData(pinIndex, i++, obs->biasAccel_p(2));
-    addData(pinIndex, i++, obs->biasGyro_p(0));
-    addData(pinIndex, i++, obs->biasGyro_p(1));
-    addData(pinIndex, i++, obs->biasGyro_p(2));
-
-    double biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_p(0));
-    biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_p(1));
-    biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasAccel_p(2));
-
-    biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(0));
-    biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(1));
-    biasAccumulated = !data.at(pinIndex).plotData.at(i).buffer.empty() ? data.at(pinIndex).plotData.at(i).buffer.back() : 0.0;
-    addData(pinIndex, i++, biasAccumulated + obs->biasGyro_p(2));
+    addData(pinIndex, i++, obs->biasAccel_b(0));
+    addData(pinIndex, i++, obs->biasAccel_b(1));
+    addData(pinIndex, i++, obs->biasAccel_b(2));
+    addData(pinIndex, i++, obs->biasGyro_b(0));
+    addData(pinIndex, i++, obs->biasGyro_b(1));
+    addData(pinIndex, i++, obs->biasGyro_b(2));
 }
 
 void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs, size_t pinIndex)

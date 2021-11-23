@@ -88,6 +88,9 @@ class SkydelNetworkStream : public Imu
     /// Time point where the first package has been received
     std::chrono::steady_clock::time_point startPoint;
 
+    /// Stores the time of the last received message
+    uint64_t lastMessageTime{};
+
     /// Counter for received packages
     int packageCount = 0;
 

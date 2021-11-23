@@ -138,7 +138,7 @@ void NAV::Delay::delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::N
         buffer.pop_front();
         buffer.push_back(nodeData);
 
-        if (auto obs = std::dynamic_pointer_cast<const InsObs>(nodeData))
+        if (auto obs = std::static_pointer_cast<const InsObs>(nodeData))
         {
             LOG_DATA("{}: Delay pushing out message: {}", nameId(), obs->insTime->toGPSweekTow());
         }

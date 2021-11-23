@@ -103,7 +103,7 @@ TEST_CASE("[CallbackManager] Flow order", "[CallbackManager]")
                   messageCounterVectorNavBinaryConverterIMU2ImuIntegrator, messageCounterVectorNavBinaryConverterIMU2PosVelAttInitializer, messageCounterVectorNavBinaryConverterIMU2ImuIntegratorRef);
 
         REQUIRE(vnBinImu2ImuIntegrator == nullptr); // Check if messages are missing in the other nodes
-        vnBinImu2ImuIntegrator = std::dynamic_pointer_cast<const NAV::ImuObsWDelta>(data);
+        vnBinImu2ImuIntegrator = std::static_pointer_cast<const NAV::ImuObsWDelta>(data);
 
         compareVectorNavBinaryImu();
     });
@@ -115,7 +115,7 @@ TEST_CASE("[CallbackManager] Flow order", "[CallbackManager]")
                   messageCounterVectorNavBinaryConverterIMU2ImuIntegrator, messageCounterVectorNavBinaryConverterIMU2PosVelAttInitializer, messageCounterVectorNavBinaryConverterIMU2ImuIntegratorRef);
 
         REQUIRE(vnBinImu2PosVelAttInitializer == nullptr); // Check if messages are missing in the other nodes
-        vnBinImu2PosVelAttInitializer = std::dynamic_pointer_cast<const NAV::ImuObsWDelta>(data);
+        vnBinImu2PosVelAttInitializer = std::static_pointer_cast<const NAV::ImuObsWDelta>(data);
 
         compareVectorNavBinaryImu();
     });
@@ -127,7 +127,7 @@ TEST_CASE("[CallbackManager] Flow order", "[CallbackManager]")
                   messageCounterVectorNavBinaryConverterIMU2ImuIntegrator, messageCounterVectorNavBinaryConverterIMU2PosVelAttInitializer, messageCounterVectorNavBinaryConverterIMU2ImuIntegratorRef);
 
         REQUIRE(vnBinImu2ImuIntegratorRef == nullptr); // Check if messages are missing in the other nodes
-        vnBinImu2ImuIntegratorRef = std::dynamic_pointer_cast<const NAV::ImuObsWDelta>(data);
+        vnBinImu2ImuIntegratorRef = std::static_pointer_cast<const NAV::ImuObsWDelta>(data);
 
         compareVectorNavBinaryImu();
     });
@@ -152,7 +152,7 @@ TEST_CASE("[CallbackManager] Flow order", "[CallbackManager]")
         LOG_TRACE("messageCounterIntegratorResult = {}, messageCounterIntegratorResultRef = {}", messageCounterIntegratorResult, messageCounterIntegratorResultRef);
 
         REQUIRE(integratorResultRef == nullptr); // Check if messages are missing in the other nodes
-        integratorResultRef = std::dynamic_pointer_cast<const NAV::InertialNavSol>(data);
+        integratorResultRef = std::static_pointer_cast<const NAV::InertialNavSol>(data);
 
         CHECK(messageCounterVectorNavBinaryConverterIMU2ImuIntegrator == messageCounterVectorNavBinaryConverterIMU2PosVelAttInitializer);
         CHECK(messageCounterVectorNavBinaryConverterIMU2ImuIntegrator == messageCounterVectorNavBinaryConverterIMU2ImuIntegratorRef);
@@ -166,7 +166,7 @@ TEST_CASE("[CallbackManager] Flow order", "[CallbackManager]")
         LOG_TRACE("messageCounterIntegratorResult = {}, messageCounterIntegratorResultRef = {}", messageCounterIntegratorResult, messageCounterIntegratorResultRef);
 
         REQUIRE(integratorResult == nullptr); // Check if messages are missing in the other nodes
-        integratorResult = std::dynamic_pointer_cast<const NAV::InertialNavSol>(data);
+        integratorResult = std::static_pointer_cast<const NAV::InertialNavSol>(data);
 
         CHECK(messageCounterVectorNavBinaryConverterIMU2ImuIntegrator == messageCounterVectorNavBinaryConverterIMU2PosVelAttInitializer);
         CHECK(messageCounterVectorNavBinaryConverterIMU2ImuIntegrator == messageCounterVectorNavBinaryConverterIMU2ImuIntegratorRef);

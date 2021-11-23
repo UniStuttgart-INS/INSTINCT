@@ -742,7 +742,7 @@ class InsTime
         auto jd_day = mjd.mjd_day + InsTimeUtil::DIFF_MJD_TO_JD_DAYS;
         auto jd_frac = mjd.mjd_frac + InsTimeUtil::DIFF_MJD_TO_JD_FRAC;
 
-        return InsTime_JD(jd_day, jd_frac);
+        return { jd_day, jd_frac };
     }
 
     /// @brief Converts this time object into a different format
@@ -757,7 +757,7 @@ class InsTime
         auto tow = static_cast<long double>((mjd_leap.mjd_day - InsTimeUtil::DIFF_TO_6_1_1980_MJD)) * InsTimeUtil::SECONDS_PER_DAY
                    + mjd_leap.mjd_frac * InsTimeUtil::SECONDS_PER_DAY;
 
-        return InsTime_GPSweekTow(0, 0, tow);
+        return { 0, 0, tow };
     }
 
     /// @brief Converts this time object into a different format
@@ -787,7 +787,7 @@ class InsTime
 
         long double sec = jd.jd_frac * InsTimeUtil::SECONDS_PER_DAY;
 
-        return InsTime_YMDHMS(year, month, day, 0, 0, sec);
+        return { year, month, day, 0, 0, sec };
     }
 
     /// @brief Converts this time object into a different format
@@ -809,7 +809,7 @@ class InsTime
         }
         doy += yearMonthDayHMS.day;
 
-        return InsTime_YDoySod(year, doy, sod);
+        return { year, doy, sod };
     }
 
     /// @brief Returns the current time rounded to a full day (changes time to 0:0:0h UTC of current day)

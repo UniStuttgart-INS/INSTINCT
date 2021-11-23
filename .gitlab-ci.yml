@@ -51,6 +51,10 @@ check-image:
     - genhtml --version
     - gcov --version
     - xml_grep --version
+    - dvips --version
+    - gs --version
+    - latex --version
+    - command -v pdf2svg
 
 check-windows:
   stage: prepare

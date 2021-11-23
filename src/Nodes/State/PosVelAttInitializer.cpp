@@ -508,7 +508,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
         return;
     }
 
-    auto obs = std::dynamic_pointer_cast<const ImuObs>(nodeData);
+    auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
 
     if (!obs->timeSinceStartup.has_value()) //TODO: Make this work with insTime
     {
@@ -586,15 +586,15 @@ void NAV::PosVelAttInitializer::receiveGnssObs(const std::shared_ptr<const NodeD
         {
             if (sourcePin->dataIdentifier.front() == RtklibPosObs::type())
             {
-                receiveRtklibPosObs(std::dynamic_pointer_cast<const RtklibPosObs>(nodeData));
+                receiveRtklibPosObs(std::static_pointer_cast<const RtklibPosObs>(nodeData));
             }
             else if (sourcePin->dataIdentifier.front() == UbloxObs::type())
             {
-                receiveUbloxObs(std::dynamic_pointer_cast<const UbloxObs>(nodeData));
+                receiveUbloxObs(std::static_pointer_cast<const UbloxObs>(nodeData));
             }
             else if (sourcePin->dataIdentifier.front() == PosVelAtt::type())
             {
-                receivePosVelAttObs(std::dynamic_pointer_cast<const PosVelAtt>(nodeData));
+                receivePosVelAttObs(std::static_pointer_cast<const PosVelAtt>(nodeData));
             }
         }
     }

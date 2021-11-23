@@ -8,6 +8,9 @@
 #include "util/Eigen.hpp"
 #include "util/InsConstants.hpp"
 
+#include "NodeData/State/PosVelAtt.hpp"
+#include "NodeData/State/PVAError.hpp"
+
 namespace NAV
 {
 // ###########################################################################################################
@@ -212,6 +215,7 @@ namespace NAV
 /// @return [𝜙, λ, h] (tₖ) Latitude, Longitude and altitude in [rad, rad, m] at the time tₖ
 ///
 /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.3)
+/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 2.111, p. 61)
 [[nodiscard]] Eigen::Vector3d updatePosition_lla(const long double& timeDifferenceSec__t0,
                                                  const Eigen::Vector3d& latLonAlt__t1,
                                                  const Eigen::Vector3d& velocity_n__t1,
@@ -227,7 +231,8 @@ namespace NAV
 /// @param[in] a Semi-major axis
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return North/South (meridian) earth radius [m]
-/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 2.105)
+/// @note See \cite Groves2013 Groves, ch. 2.4.2, eq. 2.105, p. 59
+/// @note See \cite Titterton2004 Titterton, ch. 3.7.2, eq. 3.83, p. 49
 [[nodiscard]] double earthRadius_N(const double& latitude, const double& a = InsConst::WGS84_a, const double& e_squared = InsConst::WGS84_e_squared);
 
 /// @brief Calculates the East/West (prime vertical) earth radius
@@ -235,7 +240,8 @@ namespace NAV
 /// @param[in] a Semi-major axis
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return East/West (prime vertical) earth radius [m]
-/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 2.106)
+/// @note See \cite Groves2013 Groves, ch. 2.4.2, eq. 2.106, p. 59
+/// @note See \cite Titterton2004 Titterton, ch. 3.7.2, eq. 3.84, p. 49
 [[nodiscard]] double earthRadius_E(const double& latitude, const double& a = InsConst::WGS84_a, const double& e_squared = InsConst::WGS84_e_squared);
 
 /// @brief r_eS^e The distance of a point on the Earth's surface from the center of the Earth
@@ -266,5 +272,11 @@ template<typename T>
 /// @return The skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (eq. 5.41)
 [[nodiscard]] Eigen::Matrix3d AngularVelocityEarthSkew_ie_n(double latitude);
+
+/// @brief Corrects the provided Position, Velocity and Attitude with the corrections
+/// @param[in] posVelAtt PosVelAtt to correct
+/// @param[in] pvaError Corrections to apply
+/// @return Newly allocated pointer to the corrected posVelAtt
+std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError);
 
 } // namespace NAV

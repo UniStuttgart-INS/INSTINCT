@@ -1,4 +1,24 @@
+\usepackage[a2paper, margin=0cm]{geometry}
 \usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{upgreek}
 \usepackage{xcolor}
 \definecolor{link}{HTML}{4b69a4}
 \renewcommand{\eqref}[1]{\textcolor{link}{\textbf{(\ref{#1})}}}
+
+\usepackage{tikz}
+\usetikzlibrary{matrix,backgrounds,decorations.pathreplacing,calc}
+
+\newcommand{\highlight}[2][yellow]{\colorbox{#1}{$#2$}}
+
+\newcommand{\bhighlight}[3][O{blue!40}]{%
+  \draw[rounded corners,line width=1bp,color=#1] (#2.north west) rectangle (#3.south east);
+}
+
+\newcommand{\fhighlight}[3][O{blue!40}]{%
+  \fill[rounded corners,fill=#1] (#2.north west) rectangle (#3.south east);
+}
+
+% Somehow using /dot{...} can break doxygen's alias system. So the next equation using \fl will not be rendered.
+% This however can be fixed by surrounding the \dot by a \mathbf, \mathnormal, ...
+\newcommand{\dotup}[1]{\mathnormal{\dot{#1}}}

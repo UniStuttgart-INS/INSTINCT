@@ -139,5 +139,5 @@ Eigen::Vector3d NAV::gravity::centrifugalAcceleration(const double& latitude, co
     double centrifugalN = InsConst::angularVelocity_ie * InsConst::angularVelocity_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::cos(M_PI_2 - latitudeGeocentric);
     double centrifugalD = InsConst::angularVelocity_ie * InsConst::angularVelocity_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::sin(M_PI_2 - latitudeGeocentric);
 
-    return Eigen::Vector3d(-centrifugalN, 0, -centrifugalD);
+    return { -centrifugalN, 0, -centrifugalD };
 }

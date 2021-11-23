@@ -234,10 +234,7 @@
         { // MAIN: Build project
             "label": "MAIN: Build project",
             "type": "shell",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "command": "cmake",
             "linux": {
                 "args": [
@@ -318,7 +315,10 @@
         { // DOXYGEN: Build Documentation
             "label": "DOXYGEN: Build Documentation",
             "type": "shell",
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "command": "cmake",
             "args": [
                 "--build",
@@ -379,8 +379,10 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j2",
+                "-j4",
                 "--output-on-failure",
+                // "--tests-regex",
+                // "'PVAError|PosVelAtt'",
                 // "--verbose",
             ],
             "options": {
@@ -397,7 +399,7 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j2",
+                "-j4",
                 "--output-on-failure",
                 "--exclude-regex",
                 "'\\[flow\\]'"
@@ -417,7 +419,7 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j2",
+                "-j4",
                 "--output-on-failure",
                 // "--verbose",
             ],
@@ -435,7 +437,7 @@
             "group": "test",
             "command": "ctest",
             "args": [
-                "-j2",
+                "-j4",
                 "--output-on-failure",
                 "--exclude-regex",
                 "'\\[flow\\]'"
