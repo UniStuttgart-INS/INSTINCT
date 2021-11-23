@@ -172,14 +172,16 @@ void NAV::SkydelNetworkStream::do_receive()
                 quat_eb = trafo::quat_en(posLLA(0), posLLA(1)) * trafo::quat_nb(attRoll, attPitch, attYaw);
 
                 obsG->setPosition_e(pos_ecef);
-                Eigen::Vector3d velDummy{ 0, 0, 0 }; //TODO: Add velocity output in Skydel API and NetStream
+                Eigen::Vector3d velDummy{ 0, 0, 0 }; // TODO: Add velocity output in Skydel API and NetStream
                 obsG->setVelocity_e(velDummy);
                 obsG->setAttitude_eb(quat_eb); // Attitude MUST BE set after Position, because the n- to e-sys trafo depends on posLLA
 
                 // Set IMU values
                 obs->accelCompXYZ.emplace(accelX, accelY, accelZ);
+                obs->accelUncompXYZ = obs->accelCompXYZ;
                 obs->gyroCompXYZ.emplace(gyroX, gyroY, gyroZ);
-                obs->magCompXYZ.emplace(0.0, 0.0, 0.0); //TODO: Add magnetometer model to Skydel API 'InstinctDataStream'
+                obs->gyroUncompXYZ = obs->gyroCompXYZ;
+                obs->magCompXYZ.emplace(0.0, 0.0, 0.0); // TODO: Add magnetometer model to Skydel API 'InstinctDataStream'
                 obs->magUncompXYZ.emplace(0.0, 0.0, 0.0);
 
                 InsTime currentTime = util::time::GetCurrentInsTime();
