@@ -17,6 +17,9 @@
 
 #include "gcem.hpp"
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json; ///< json namespace
+
 namespace NAV
 {
 /// @brief Utility Namespace for Time related tasks
@@ -1072,5 +1075,14 @@ std::ostream& operator<<(std::ostream& os, const InsTime_YDoySod& yDoySod);
 /// @param[in] insTime Object to print
 /// @return Returns the output stream object in order to chain stream insertions
 std::ostream& operator<<(std::ostream& os, const InsTime& insTime);
+
+/// @brief Converts the provided InsTime into a json object
+/// @param[out] j Return Json object
+/// @param[in] insTime Time to convert
+void to_json(json& j, const InsTime& insTime);
+/// @brief Converts the provided json object into an InsTime
+/// @param[in] j Json object with the time values
+/// @param[out] insTime Time to return
+void from_json(const json& j, InsTime& insTime);
 
 } // namespace NAV
