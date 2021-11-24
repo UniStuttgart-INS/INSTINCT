@@ -7,6 +7,8 @@
 
 #include <imgui.h>
 
+#include <limits>
+
 namespace ImGui
 {
 // Widgets: Drag Sliders
@@ -148,5 +150,17 @@ bool InputDouble3(const char* label, double v[3], const char* format = "%.6f", I
 /// @param[in] flags InputText flags to modify the behavior
 /// @return True if the value was changed
 bool InputDouble4(const char* label, double v[4], const char* format = "%.6f", ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+// ###########################################################################################################
+
+bool InputFloatL(const char* label, float* v, float v_min = std::numeric_limits<float>::lowest(), float v_max = std::numeric_limits<float>::max(), float step = 0.0f, float step_fast = 0.0f, const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
+bool InputFloat2L(const char* label, float v[2], float v_min = std::numeric_limits<float>::lowest(), float v_max = std::numeric_limits<float>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
+bool InputFloat3L(const char* label, float v[3], float v_min = std::numeric_limits<float>::lowest(), float v_max = std::numeric_limits<float>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
+bool InputFloat4L(const char* label, float v[4], float v_min = std::numeric_limits<float>::lowest(), float v_max = std::numeric_limits<float>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
+bool InputIntL(const char* label, int* v, int v_min = std::numeric_limits<int>::lowest(), int v_max = std::numeric_limits<int>::max(), int step = 1, int step_fast = 100, ImGuiInputTextFlags flags = 0);
+bool InputInt2L(const char* label, int v[2], int v_min = std::numeric_limits<int>::lowest(), int v_max = std::numeric_limits<int>::max(), ImGuiInputTextFlags flags = 0);
+bool InputInt3L(const char* label, int v[3], int v_min = std::numeric_limits<int>::lowest(), int v_max = std::numeric_limits<int>::max(), ImGuiInputTextFlags flags = 0);
+bool InputInt4L(const char* label, int v[4], int v_min = std::numeric_limits<int>::lowest(), int v_max = std::numeric_limits<int>::max(), ImGuiInputTextFlags flags = 0);
+bool InputDoubleL(const char* label, double* v, double v_min = std::numeric_limits<double>::lowest(), double v_max = std::numeric_limits<double>::max(), double step = 0.0, double step_fast = 0.0, const char* format = "%.6f", ImGuiInputTextFlags flags = 0);
 
 } // namespace ImGui
