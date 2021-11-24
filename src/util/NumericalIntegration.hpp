@@ -50,4 +50,40 @@ Y rungeKutta3(Y (*f)(const X&, const Y&), const Scalar& h, const Y& y__t2, const
     return y__t2 + h / 6.0 * (k1 + 4.0 * k2 + k3);
 }
 
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta1(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+{
+    return y_n + h * f(y_n, t_n);
+}
+
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta2(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+{
+    auto k1 = f(y_n, t_n);
+    auto k2 = f(y_n + h * k1, t_n + h);
+    return y_n + h / 2 * (k1 + k2);
+}
+
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta3(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+{
+    auto k1 = f(y_n, t_n);
+    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2);
+    auto k3 = f(y_n - h * k1 + 2 * h * k2, t_n + h);
+    return y_n + h / 6 * (k1 + 4 * k2 + k3);
+}
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta4(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+{
+    auto k1 = f(y_n, t_n);
+    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2);
+    auto k3 = f(y_n + h / 2 * k2, t_n + h / 2);
+    auto k4 = f(y_n + h * k3, t_n + h);
+    return y_n + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+}
+
 } // namespace NAV::Integration
