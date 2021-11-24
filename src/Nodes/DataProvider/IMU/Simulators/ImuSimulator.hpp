@@ -10,6 +10,8 @@
 #include "util/Eigen.hpp"
 #include "util/InsTime.hpp"
 
+#include "internal/gui/widgets/TimeEdit.hpp"
+
 namespace NAV
 {
 /// Imu Observation Simulator
@@ -53,8 +55,8 @@ class ImuSimulator : public Imu
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_ImuObs = 0;   ///< @brief Flow (ImuObs)
-    constexpr static size_t InputPortIndex_StateData = 0; ///< @brief Object (StateData)
+    constexpr static size_t OutputPortIndex_ImuObs = 0;    ///< @brief Flow (ImuObs)
+    constexpr static size_t OutputPortIndex_PosVelAtt = 1; ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -65,38 +67,129 @@ class ImuSimulator : public Imu
     /// @brief Polls the next simulated data
     /// @param[in] peek Specifies if the data should be peeked or read
     /// @return The simulated observation
-    [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
+    [[nodiscard]] std::shared_ptr<const NodeData> pollImuObs(bool peek = false);
+
+    /// @brief Polls the next simulated data
+    /// @param[in] peek Specifies if the data should be peeked or read
+    /// @return The simulated observation
+    [[nodiscard]] std::shared_ptr<const NodeData> pollPosVelAtt(bool peek = false);
+
+    // ###########################################################################################################
+
+    /// Types where the start time should be pulled from
+    enum class StartTimeSource
+    {
+        CustomTime,          ///< Custom time selected by the user
+        CurrentComputerTime, ///< Gets the current computer time as start time
+    };
+
+    /// Source for the start time, selected in the GUI
+    StartTimeSource startTimeSource = StartTimeSource::CustomTime;
+
+    /// Time Format to input the start time with
+    gui::widgets::TimeEditFormat startTimeEditFormat = gui::widgets::TimeEditFormat::YMDHMS;
 
     /// Global starttime
-    InsTime startTime;
+    InsTime startTime{ 2000, 1, 1, 0, 0, 0 };
 
-    /// Duration of the data gerneation in [s]
-    double duration = 1.0;
-    /// Frequency of the data generation in [Hz]
-    double frequency = 10.0;
-    /// Current Simulation Time in [s]
-    double currentSimTime = 0.0;
+    // ###########################################################################################################
 
-    /// Acceleration in navigation frame in [m/s^2]
-    Eigen::Vector3f accel_n{ 0, 0, 0 };
-    /// Acceleration in body frame in [m/s^2]
-    Eigen::Vector3f accel_b{ 0, 0, 0 };
-    /// Acceleration in platform frame in [m/s^2]
-    Eigen::Vector3f accel_p{ 0, 0, 0 };
-    /// Angular velocity in navigation frame in [rad/s]
-    Eigen::Vector3f gyro_n{ 0, 0, 0 };
-    /// Angular velocity in body frame in [rad/s]
-    Eigen::Vector3f gyro_b{ 0, 0, 0 };
-    /// Angular velocity in platform frame in [rad/s]
-    Eigen::Vector3f gyro_p{ 0, 0, 0 };
-    /// Magnetic field in navigation frame in [Gauss]
-    Eigen::Vector3f mag_n{ 0, 0, 0 };
-    /// Magnetic field in body frame in [Gauss]
-    Eigen::Vector3f mag_b{ 0, 0, 0 };
-    /// Magnetic field in platform frame in [Gauss]
-    Eigen::Vector3f mag_p{ 0, 0, 0 };
-    /// Temperature measured in units of [Celsius]
-    double temperature = 20.0;
+    /// Frequency to sample the IMU with in [Hz]
+    double imuFrequency = 200;
+    /// Frequency to sample the position with in [Hz]
+    double gnssFrequency = 5;
+
+    // ###########################################################################################################
+
+    /// Types of Trajectories available for simulation
+    enum class TrajectoryType
+    {
+        Fixed,    ///< Static position without movement
+        Linear,   ///< Linear movement with constant velocity
+        Circular, ///< Circular path in the horizontal plane
+        Helix,    ///< Circular path with velocity in normal direction of the circle plane
+        COUNT,    ///< Amount of items in the enum
+        // Spline,   ///< Path which follows a spline trajectory // TODO: Implement ImuSimulator Spline Trajectory
+    };
+    /// @brief Converts the enum to a string
+    /// @param[in] value Enum value to convert into text
+    /// @return String representation of the enum
+    static const char* to_string(TrajectoryType value);
+
+    /// Selected trajectory type in the GUI
+    TrajectoryType trajectoryType = TrajectoryType::Fixed;
+
+    /// Position in local navigation coordinates (latitude, longitude, altitude) [rad, rad, m]
+    ///
+    /// - Fixed, Linear: Start position
+    /// - Circular, Helix: Center of the circle
+    Eigen::Vector3d startPosition_lla = Eigen::Vector3d::Zero();
+
+    /// Orientation of the vehicle [roll, pitch, yaw] [rad]
+    Eigen::Vector3d startOrientation = Eigen::Vector3d::Zero();
+
+    /// Velocity of the vehicle in [m/s]
+    ///
+    /// - Linear: Velocity of the vehicle in NED coordinates
+    /// - Circular: Horizontal velocity in the north component
+    /// - Helix: Horizontal velocity in the north component, vertical in down component
+    Eigen::Vector3d velocity_n = Eigen::Vector3d::Zero();
+
+    /// In the GUI selected radius of the circular/helix trajectory
+    double circularTrajectoryRadius = 50.0;
+
+    /// In the GUI selected origin angle of the circular/helix trajectory in [rad]
+    double circularTrajectoryOriginAngle = 0.0;
+
+    /// Possible directions for the circular/helix trajectory
+    enum class Direction
+    {
+        CW,    ///< Clockwise
+        CCW,   ///< Counterclockwise
+        COUNT, ///< Amount of items in the enum
+    };
+    /// @brief Converts the enum to a string
+    /// @param[in] value Enum value to convert into text
+    /// @return String representation of the enum
+    static const char* to_string(Direction value);
+
+    /// In the GUI selected direction of the circular/helix trajectory
+    Direction circularTrajectoryDirection = Direction::CCW;
+
+    // ###########################################################################################################
+
+    /// Possible stop conditions for the simulation
+    enum StopCondition
+    {
+        Duration,          ///< Time Duration
+        DistanceOrCircles, ///< Distance for Linear trajectory / Circle count for Circular/Helix trajectory
+    };
+
+    /// Condition which has to be met to stop the simulation
+    StopCondition simulationStopCondition = StopCondition::Duration;
+
+    /// Duration to simulate in [s]
+    double simulationDuration = 5 * 60;
+
+    /// Distance in [m] to the start position to stop the simulation
+    double linearTrajectoryDistanceForStop = 100;
+
+    /// Amount of circles to simulate before stopping
+    double circularTrajectoryCircleCountForStop = 1.0;
+
+    // ###########################################################################################################
+
+    /// Time to send the next IMU message in [s]
+    double imuUpdateTime = 0.0;
+    /// Time to send the next GNSS message in [s]
+    double gnssUpdateTime = 0.0;
+
+    /// Calculates the position in latLonAlt at the given time depending on the trajectoryType
+    Eigen::Vector3d calcPosition(double time);
+
+    Eigen::Vector3d calcVelocity(double time);
+
+    Eigen::Vector3d calcAccel(double time);
 };
 
 } // namespace NAV
