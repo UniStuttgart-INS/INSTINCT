@@ -145,7 +145,9 @@ class ImuIntegrator : public Node
     /// @brief Integration algorithm used for the position update
     IntegrationAlgorithm integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
 
-    /// Converts the enum to a string
+    /// @brief Converts the enum to a string
+    /// @param[in] algorithm Enum value to convert into text
+    /// @return String representation of the enum
     static const char* to_string(IntegrationAlgorithm algorithm);
 
     /// GUI flag, whether to show the input pin for PVA Corrections
