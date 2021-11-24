@@ -603,7 +603,8 @@ void NAV::Plot::guiConfig()
             // Left Data Selectables
             for (auto& plotData : data.at(static_cast<size_t>(plotInfo.selectedPin)).plotData)
             {
-                if (!plotData.hasData)
+                auto plotDataHasData = plotData.hasData;
+                if (!plotDataHasData)
                 {
                     ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
                 }
@@ -622,7 +623,7 @@ void NAV::Plot::guiConfig()
                     ImGui::EndDragDropSource();
                 }
 
-                if (!plotData.hasData)
+                if (!plotDataHasData)
                 {
                     ImGui::PopStyleVar();
                 }
