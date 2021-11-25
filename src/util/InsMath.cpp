@@ -57,6 +57,16 @@ double NAV::pitchFromStaticAccelerationObs(const Eigen::Vector3d& accel_b)
     // return std::atan2((-accel_b.x()), sqrt(std::pow(accel_b.y(), 2) + std::pow(accel_b.z(), 2)));
 }
 
+double NAV::yawFromVelocity(const Eigen::Vector3d& velocity_n)
+{
+    return std::atan2(velocity_n(1), velocity_n(0));
+}
+
+double NAV::pitchFromVelocity(const Eigen::Vector3d& velocity_n)
+{
+    return std::atan(-velocity_n(2) / std::sqrt(std::pow(velocity_n(0), 2) + std::pow(velocity_n(1), 2)));
+}
+
 uint64_t NAV::factorial(uint64_t n)
 {
     // uint64_t is required to calculate factorials of n > 12 (Limit of uint32_t). The limit of uint64_t is at n = 20

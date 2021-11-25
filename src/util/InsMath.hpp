@@ -45,6 +45,20 @@ double rollFromStaticAccelerationObs(const Eigen::Vector3d& accel_b);
 /// @note See E.-H. Shin (2005) - Estimation Techniques for Low-Cost Inertial Navigation (Chapter 2.6)
 double pitchFromStaticAccelerationObs(const Eigen::Vector3d& accel_b);
 
+/// @brief Calculates the Yaw angle from the trajectory defined by the given velocity
+/// @param[in] velocity_n Velocity in [m/s] in local-navigation frame coordinates
+/// @return Yaw angle in [rad]
+///
+/// @note See Groves (2013) equation (6.14)
+double yawFromVelocity(const Eigen::Vector3d& velocity_n);
+
+/// @brief Calculates the Pitch angle from the trajectory defined by the given velocity
+/// @param[in] velocity_n Velocity in [m/s] in local-navigation frame coordinates
+/// @return Pitch angle in [rad]
+///
+/// @note See Groves (2013) equation (6.17)
+double pitchFromVelocity(const Eigen::Vector3d& velocity_n);
+
 /// @brief Calculates the factorial of an unsigned integer
 /// @param[in] n Unsigned integer
 /// @return The factorial of 'n'
