@@ -178,3 +178,45 @@ bool ImGui::InputDoubleL(const char* label, double* v, double v_min, double v_ma
     }
     return false;
 }
+
+bool ImGui::InputDouble2L(const char* label, double v[2], double v_min, double v_max, const char* format, ImGuiInputTextFlags flags) // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+{
+    if (InputDouble2(label, v, format, flags))
+    {
+        for (size_t i = 0; i < 2; i++)
+        {
+            v[i] = std::clamp(v[i], v_min, v_max);
+        }
+
+        return true;
+    }
+    return false;
+}
+
+bool ImGui::InputDouble3L(const char* label, double v[3], double v_min, double v_max, const char* format, ImGuiInputTextFlags flags) // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+{
+    if (InputDouble3(label, v, format, flags))
+    {
+        for (size_t i = 0; i < 3; i++)
+        {
+            v[i] = std::clamp(v[i], v_min, v_max);
+        }
+
+        return true;
+    }
+    return false;
+}
+
+bool ImGui::InputDouble4L(const char* label, double v[4], double v_min, double v_max, const char* format, ImGuiInputTextFlags flags) // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+{
+    if (InputDouble4(label, v, format, flags))
+    {
+        for (size_t i = 0; i < 4; i++)
+        {
+            v[i] = std::clamp(v[i], v_min, v_max);
+        }
+
+        return true;
+    }
+    return false;
+}
