@@ -184,12 +184,20 @@ class ImuSimulator : public Imu
     /// Time to send the next GNSS message in [s]
     double gnssUpdateTime = 0.0;
 
-    /// Calculates the position in latLonAlt at the given time depending on the trajectoryType
-    Eigen::Vector3d calcPosition(double time);
+    /// @brief Calculates the position in latLonAlt at the given time depending on the trajectoryType
+    /// @param[in] time Time in [s]
+    /// @return LatLonAlt in [rad, rad, m]
+    Eigen::Vector3d calcPosition_lla(double time);
 
-    Eigen::Vector3d calcVelocity(double time);
+    /// @brief Calculates the velocity in local-navigation frame coordinates at the given time depending on the trajectoryType
+    /// @param[in] time Time in [s]
+    /// @return v_n in [rad, rad, m]
+    Eigen::Vector3d calcVelocity_n(double time);
 
-    Eigen::Vector3d calcAccel(double time);
+    /// @brief Calculates the acceleration in local-navigation frame coordinates at the given time depending on the trajectoryType
+    /// @param[in] time Time in [s]
+    /// @return a_n in [rad, rad, m]
+    Eigen::Vector3d calcAccel_n(double time);
 };
 
 } // namespace NAV
