@@ -1785,8 +1785,8 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     }
     int sign = position_lla.x() > startValue_North ? 1 : -1;
     /// North/South deviation [m]
-    double northSouth = measureDistance(position_lla.x(), position_lla.y(),
-                                        startValue_North, position_lla.y())
+    double northSouth = calcGeographicalDistance(position_lla.x(), position_lla.y(),
+                                                 startValue_North, position_lla.y())
                         * sign;
 
     if (std::isnan(startValue_East))
@@ -1795,8 +1795,8 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     }
     sign = position_lla.y() > startValue_East ? 1 : -1;
     /// East/West deviation [m]
-    double eastWest = measureDistance(position_lla.x(), position_lla.y(),
-                                      position_lla.x(), startValue_East)
+    double eastWest = calcGeographicalDistance(position_lla.x(), position_lla.y(),
+                                               position_lla.x(), startValue_East)
                       * sign;
 
     // InsObs
@@ -1898,8 +1898,8 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
             startValue_North = position_lla->x();
         }
         int sign = position_lla->x() > startValue_North ? 1 : -1;
-        northSouth = measureDistance(position_lla->x(), position_lla->y(),
-                                     startValue_North, position_lla->y())
+        northSouth = calcGeographicalDistance(position_lla->x(), position_lla->y(),
+                                              startValue_North, position_lla->y())
                      * sign;
 
         if (std::isnan(startValue_East))
@@ -1907,8 +1907,8 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
             startValue_East = position_lla->y();
         }
         sign = position_lla->y() > startValue_East ? 1 : -1;
-        eastWest = measureDistance(position_lla->x(), position_lla->y(),
-                                   position_lla->x(), startValue_East)
+        eastWest = calcGeographicalDistance(position_lla->x(), position_lla->y(),
+                                            position_lla->x(), startValue_East)
                    * sign;
 
         position_lla->x() = trafo::rad2deg(position_lla->x());
@@ -2005,8 +2005,8 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
             startValue_North = position_lla->x();
         }
         int sign = position_lla->x() > startValue_North ? 1 : -1;
-        northSouth = measureDistance(position_lla->x(), position_lla->y(),
-                                     startValue_North, position_lla->y())
+        northSouth = calcGeographicalDistance(position_lla->x(), position_lla->y(),
+                                              startValue_North, position_lla->y())
                      * sign;
 
         if (std::isnan(startValue_East))
@@ -2014,8 +2014,8 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
             startValue_East = position_lla->y();
         }
         sign = position_lla->y() > startValue_East ? 1 : -1;
-        eastWest = measureDistance(position_lla->x(), position_lla->y(),
-                                   position_lla->x(), startValue_East)
+        eastWest = calcGeographicalDistance(position_lla->x(), position_lla->y(),
+                                            position_lla->x(), startValue_East)
                    * sign;
 
         position_lla->x() = trafo::rad2deg(position_lla->x());
