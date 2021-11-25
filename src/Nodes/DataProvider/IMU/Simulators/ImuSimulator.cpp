@@ -67,7 +67,7 @@ void NAV::ImuSimulator::guiConfig()
             ImGui::Indent();
 
             std::time_t t = std::time(nullptr);
-            std::tm* now = std::localtime(&t);
+            std::tm* now = std::localtime(&t); // NOLINT(concurrency-mt-unsafe)
 
             ImGui::Text("%d-%02d-%02d %02d:%02d:%02d", now->tm_year + 1900, now->tm_mon + 1, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec);
 
@@ -482,7 +482,7 @@ bool NAV::ImuSimulator::resetNode()
     if (startTimeSource == StartTimeSource::CurrentComputerTime)
     {
         std::time_t t = std::time(nullptr);
-        std::tm* now = std::localtime(&t);
+        std::tm* now = std::localtime(&t); // NOLINT(concurrency-mt-unsafe)
 
         startTime = InsTime{ static_cast<uint16_t>(now->tm_year + 1900), static_cast<uint16_t>(now->tm_mon), static_cast<uint16_t>(now->tm_mday),
                              static_cast<uint16_t>(now->tm_hour), static_cast<uint16_t>(now->tm_min), static_cast<long double>(now->tm_sec) };
@@ -513,7 +513,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     {
         return nullptr;
     }
-    else if (simulationStopCondition == StopCondition::DistanceOrCircles && trajectoryType == TrajectoryType::Linear)
+    if (simulationStopCondition == StopCondition::DistanceOrCircles && trajectoryType == TrajectoryType::Linear)
     {
         auto horizontalDistance = calcGeographicalDistance(startPosition_lla(0), startPosition_lla(1), position_lla(0), position_lla(1));
         auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(startPosition_lla(2) - position_lla(2), 2));
@@ -577,7 +577,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     {
         return nullptr;
     }
-    else if (simulationStopCondition == StopCondition::DistanceOrCircles && trajectoryType == TrajectoryType::Linear)
+    if (simulationStopCondition == StopCondition::DistanceOrCircles && trajectoryType == TrajectoryType::Linear)
     {
         auto horizontalDistance = calcGeographicalDistance(startPosition_lla(0), startPosition_lla(1), position_lla(0), position_lla(1));
         auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(startPosition_lla(2) - position_lla(2), 2));
@@ -618,7 +618,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
     {
         return startPosition_lla;
     }
-    else if (trajectoryType == TrajectoryType::Linear)
+    if (trajectoryType == TrajectoryType::Linear)
     {
         Eigen::Matrix<double, 6, 1> y;
         y.block<3, 1>(0, 0) = startPosition_lla;
@@ -628,7 +628,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
 
         return y.block<3, 1>(0, 0);
     }
-    else if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
+    if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
     {
         const auto& horizontalSpeed = velocity_n(0);
 
@@ -658,11 +658,11 @@ Eigen::Vector3d NAV::ImuSimulator::calcVelocity_n(double time)
     {
         return Eigen::Vector3d::Zero();
     }
-    else if (trajectoryType == TrajectoryType::Linear)
+    if (trajectoryType == TrajectoryType::Linear)
     {
         return velocity_n;
     }
-    else if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
+    if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
     {
         const auto& horizontalSpeed = velocity_n(0);
         auto direction = circularTrajectoryDirection == Direction::CW ? -1 : 1;
@@ -686,11 +686,11 @@ Eigen::Vector3d NAV::ImuSimulator::calcAccel_n([[maybe_unused]] double time)
     {
         return Eigen::Vector3d::Zero();
     }
-    else if (trajectoryType == TrajectoryType::Linear)
+    if (trajectoryType == TrajectoryType::Linear)
     {
         return Eigen::Vector3d::Zero();
     }
-    else if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
+    if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
     {
         const auto& horizontalSpeed = velocity_n(0);
         auto direction = circularTrajectoryDirection == Direction::CW ? -1 : 1;
