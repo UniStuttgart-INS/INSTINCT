@@ -496,7 +496,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 {
     Eigen::Vector3d position_lla = calcPosition_lla(imuUpdateTime);
     Eigen::Vector3d vel_n = calcVelocity_n(imuUpdateTime);
-    Eigen::Vector3d accel_n = calcAccel_n(imuUpdateTime);
+    Eigen::Vector3d accel_n = calcTrajectoryAccel_n(imuUpdateTime);
 
     double roll = 0;
     double pitch = pitchFromVelocity(vel_n);
@@ -504,8 +504,13 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
     auto accel_p = imuPos.quatAccel_pb() * trafo::quat_bn(roll, pitch, yaw) * accel_n;
 
-    Eigen::Vector3d omega_n{ 0, 0, velocity_n(0) / circularTrajectoryRadius };
-    Eigen::Vector3d omega_p = imuPos.quatGyro_pb() * trafo::quat_bn(roll, pitch, yaw) * accel_n;
+    Eigen::Vector3d omega_p = Eigen::Vector3d::Zero();
+    if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
+    {
+        auto direction = circularTrajectoryDirection == Direction::CCW ? -1 : 1;
+        Eigen::Vector3d omega_n{ 0, 0, direction * velocity_n(0) / circularTrajectoryRadius };
+        omega_p = imuPos.quatGyro_pb() * trafo::quat_bn(roll, pitch, yaw) * omega_n;
+    }
 
     // Check if a stop condition is met
     if ((simulationStopCondition == StopCondition::Duration || trajectoryType == TrajectoryType::Fixed)
@@ -680,7 +685,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcVelocity_n(double time)
     return Eigen::Vector3d::Zero();
 }
 
-Eigen::Vector3d NAV::ImuSimulator::calcAccel_n([[maybe_unused]] double time)
+Eigen::Vector3d NAV::ImuSimulator::calcTrajectoryAccel_n([[maybe_unused]] double time)
 {
     if (trajectoryType == TrajectoryType::Fixed)
     {

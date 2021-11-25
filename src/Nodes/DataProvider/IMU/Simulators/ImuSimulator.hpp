@@ -197,7 +197,7 @@ class ImuSimulator : public Imu
     /// @brief Calculates the acceleration in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
     /// @return a_n in [rad, rad, m]
-    Eigen::Vector3d calcAccel_n(double time);
+    Eigen::Vector3d calcTrajectoryAccel_n(double time);
 };
 
 } // namespace NAV
