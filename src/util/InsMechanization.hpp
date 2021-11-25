@@ -14,6 +14,10 @@
 namespace NAV
 {
 
+/// @brief Calculates the derivative of the curvilinear position
+/// @param[in] y Vector [lat, lon, alt, v_N, v_E, v_D]^T
+/// @param[in] t Time (Placeholder for Runge-Kutta algorithm)
+/// @return The curvilinear position derivative [lat_dot, lon_dot, alt_dot, 0, 0, 0]
 Eigen::Matrix<double, 6, 1> curvilinearPositionDerivative(const Eigen::Matrix<double, 6, 1>& y, const double& t);
 
 // ###########################################################################################################
