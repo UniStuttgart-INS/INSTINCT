@@ -7,6 +7,7 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "internal/gui/widgets/Splitter.hpp"
+#include "internal/gui/widgets/imgui_ex.hpp"
 #include "internal/Json.hpp"
 
 #include "util/Time/TimeBase.hpp"
@@ -288,7 +289,7 @@ std::string NAV::Plot::category()
 
 void NAV::Plot::guiConfig()
 {
-    ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+    ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
     if (ImGui::CollapsingHeader(("Options##" + std::to_string(size_t(id))).c_str()))
     {
         if (ImGui::InputInt("# Input Pins", &nInputPins))
@@ -408,6 +409,42 @@ void NAV::Plot::guiConfig()
             }
 
             ImGui::EndTable();
+        }
+
+        if (ImGui::Checkbox(fmt::format("Override local position origin (North/East)##{}", size_t(id)).c_str(), &overridePositionStartValues))
+        {
+            flow::ApplyChanges();
+            LOG_DEBUG("{}: overridePositionStartValues changed to {}", nameId(), overridePositionStartValues);
+            if (overridePositionStartValues)
+            {
+                if (std::isnan(startValue_East))
+                {
+                    startValue_East = 0;
+                }
+                if (std::isnan(startValue_North))
+                {
+                    startValue_North = 0;
+                }
+            }
+        }
+        if (overridePositionStartValues)
+        {
+            ImGui::Indent();
+            double latitudeOrigin = trafo::rad2deg(startValue_North);
+            if (ImGui::InputDoubleL(fmt::format("Latitude Origin##{}", size_t(id)).c_str(), &latitudeOrigin))
+            {
+                startValue_North = trafo::deg2rad(latitudeOrigin);
+                flow::ApplyChanges();
+                LOG_DEBUG("{}: latitudeOrigin changed to {}", nameId(), latitudeOrigin);
+            }
+            double longitudeOrigin = trafo::rad2deg(startValue_East);
+            if (ImGui::InputDoubleL(fmt::format("Longitude Origin##{}", size_t(id)).c_str(), &longitudeOrigin))
+            {
+                startValue_East = trafo::deg2rad(longitudeOrigin);
+                flow::ApplyChanges();
+                LOG_DEBUG("{}: longitudeOrigin changed to {}", nameId(), longitudeOrigin);
+            }
+            ImGui::Unindent();
         }
     }
 
@@ -844,6 +881,12 @@ void NAV::Plot::guiConfig()
     j["nPlots"] = nPlots;
     j["pinData"] = data;
     j["plotInfos"] = plotInfos;
+    j["overridePositionStartValues"] = overridePositionStartValues;
+    if (overridePositionStartValues)
+    {
+        j["startValue_North"] = startValue_North;
+        j["startValue_East"] = startValue_East;
+    }
 
     return j;
 }
@@ -905,6 +948,21 @@ void NAV::Plot::restore(json const& j)
     {
         j.at("plotInfos").get_to(plotInfos);
     }
+    if (j.contains("overridePositionStartValues"))
+    {
+        j.at("overridePositionStartValues").get_to(overridePositionStartValues);
+    }
+    if (overridePositionStartValues)
+    {
+        if (j.contains("startValue_North"))
+        {
+            j.at("startValue_North").get_to(startValue_North);
+        }
+        if (j.contains("startValue_East"))
+        {
+            j.at("startValue_East").get_to(startValue_East);
+        }
+    }
 }
 
 bool NAV::Plot::initialize()
@@ -912,8 +970,11 @@ bool NAV::Plot::initialize()
     LOG_TRACE("{}: called", nameId());
 
     startValue_Time = std::nan("");
-    startValue_North = std::nan("");
-    startValue_East = std::nan("");
+    if (!overridePositionStartValues)
+    {
+        startValue_North = std::nan("");
+        startValue_East = std::nan("");
+    }
 
     for (auto& pinData : data)
     {

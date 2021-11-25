@@ -352,6 +352,9 @@ class Plot : public Node
     double startValue_North = std::nan("");
     /// Start Longitude [rad] for calculation of relative East-West
     double startValue_East = std::nan("");
+
+    /// Flag, whether to override the North/East startValues in the GUI
+    bool overridePositionStartValues = false;
 };
 
 } // namespace NAV
