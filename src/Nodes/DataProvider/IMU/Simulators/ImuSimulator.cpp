@@ -4,7 +4,7 @@
 
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
-#include "util/InsGravity.hpp"
+#include "util/Gravity/Gravity.hpp"
 #include "util/InsMechanization.hpp"
 #include "util/InsMath.hpp"
 #include "util/NumericalIntegration.hpp"

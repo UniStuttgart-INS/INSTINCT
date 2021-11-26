@@ -4,7 +4,6 @@
 
 #include "util/InsMechanization.hpp"
 #include "util/InsConstants.hpp"
-#include "util/InsGravity.hpp"
 #include "util/InsMath.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"

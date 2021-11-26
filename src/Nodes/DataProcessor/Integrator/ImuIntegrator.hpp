@@ -13,7 +13,7 @@
 #include "NodeData/State/PVAError.hpp"
 #include "NodeData/State/ImuBiases.hpp"
 
-#include "util/InsGravity.hpp"
+#include "util/Gravity/Gravity.hpp"
 
 #include <deque>
 

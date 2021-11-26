@@ -17,7 +17,7 @@ namespace nm = NAV::NodeManager;
 #include "util/InsMechanization.hpp"
 #include "util/InsConstants.hpp"
 #include "util/InsMath.hpp"
-#include "util/InsGravity.hpp"
+#include "util/Gravity/Gravity.hpp"
 #include "util/Logger.hpp"
 
 NAV::LooselyCoupledKF::LooselyCoupledKF()
