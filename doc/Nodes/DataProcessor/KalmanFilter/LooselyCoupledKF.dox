@@ -231,7 +231,7 @@ Substituting \eqref{eq-LCKF-Derivation-Attitude-transport-rate-differential} and
 
 The equations here mainly follow \cite Titterton2004 Titterton, ch. 12.3.1.2, p. 343f
 
-The time derivative of the velocity in local-navigation-frame coordinates is (see \cite Titterton2004 Titterton, ch. 3.7.1, eq. 3.69, p. 47)
+The time derivative of the velocity in local-navigation-frame coordinates is (see \cite Titterton2004 Titterton, ch. 3.7.1, eq. 3.69, p. 47 or \cite Jekeli2001 Jekeli, ch. 4.3.4, eq. 4.88, p. 127)
 \fl{equation,eq-LCKF-Derivation-Attitude-timeDerivative}
   \boldsymbol{\dot{v}}_{eb}^n = \boldsymbol{f}^n - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}_e^n + \mathbf{g}_l^n
 \f}
