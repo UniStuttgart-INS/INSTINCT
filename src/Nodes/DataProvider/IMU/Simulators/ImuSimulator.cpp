@@ -498,22 +498,46 @@ bool NAV::ImuSimulator::resetNode()
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 {
     Eigen::Vector3d position_lla = calcPosition_lla(imuUpdateTime);
+    Eigen::Vector3d position_e = trafo::lla2ecef_WGS84(position_lla);
+    auto q_ne = trafo::quat_ne(position_lla(0), position_lla(1));
+
     Eigen::Vector3d vel_n = calcVelocity_n(imuUpdateTime);
+    // Force to keep vehicle on track
     Eigen::Vector3d accel_n = calcTrajectoryAccel_n(imuUpdateTime);
 
     double roll = 0;
     double pitch = pitchFromVelocity(vel_n);
     double yaw = yawFromVelocity(vel_n);
+    auto q_bn = trafo::quat_bn(roll, pitch, yaw);
 
-    auto accel_p = imuPos.quatAccel_pb() * trafo::quat_bn(roll, pitch, yaw) * accel_n;
+    const Eigen::Vector3d& angularVelocity_ie_e = InsConst::angularVelocity_ie_e;
+    const Eigen::Vector3d angularVelocity_ie_n = q_ne * angularVelocity_ie_e;
+    const double R_N = earthRadius_N(position_lla(0));
+    const double R_E = earthRadius_E(position_lla(0));
+    const Eigen::Vector3d angularVelocity_en_n = transportRate(position_lla, velocity_n, R_N, R_E);
 
-    Eigen::Vector3d omega_p = Eigen::Vector3d::Zero();
+    // Apply Coriolis Acceleration
+    accel_n += (2 * angularVelocity_ie_n + angularVelocity_en_n).cross(velocity_n);
+
+    // g_n Gravity in [m/s^2], in navigation coordinates
+    Eigen::Vector3d gravity_n = gravity::gravity_EGM96(position_lla(0), position_lla(1), position_lla(2));
+
+    // Apply the local gravity vector (mass attraction of the Earth and centripetal acceleration caused by the Earth's rotation)
+    accel_n -= gravity_n
+               - q_ne * (InsConst::angularVelocityCrossProduct_ie_e * InsConst::angularVelocityCrossProduct_ie_e * position_e);
+
+    // Acceleration measured by the accelerometer
+    auto accel_p = imuPos.quatAccel_pb() * q_bn * accel_n;
+
+    Eigen::Vector3d omega_n = Eigen::Vector3d::Zero();
     if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
     {
         auto direction = circularTrajectoryDirection == Direction::CCW ? -1 : 1;
-        Eigen::Vector3d omega_n{ 0, 0, direction * velocity_n(0) / circularTrajectoryRadius };
-        omega_p = imuPos.quatGyro_pb() * trafo::quat_bn(roll, pitch, yaw) * omega_n;
+        omega_n = Eigen::Vector3d{ 0, 0, direction * velocity_n(0) / circularTrajectoryRadius };
     }
+    omega_n += q_ne * InsConst::angularVelocity_ie_e;
+
+    Eigen::Vector3d omega_p = imuPos.quatGyro_pb() * trafo::quat_bn(roll, pitch, yaw) * omega_n;
 
     // Check if a stop condition is met
     if ((simulationStopCondition == StopCondition::Duration || trajectoryType == TrajectoryType::Fixed)
