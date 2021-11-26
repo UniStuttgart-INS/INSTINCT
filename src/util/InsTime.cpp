@@ -117,4 +117,29 @@ std::ostream& operator<<(std::ostream& os, const InsTime_YDoySod& yDoySod)
               << ", sod=" << std::setprecision(20) << yDoySod.sod;
 }
 
+void to_json(json& j, const InsTime& insTime)
+{
+    auto mjd = insTime.toMJD();
+
+    j = json{
+        { "mjd_day", mjd.mjd_day },
+        { "mjd_frac", mjd.mjd_frac },
+    };
+}
+
+void from_json(const json& j, InsTime& insTime)
+{
+    InsTime_MJD mjd;
+
+    if (j.contains("mjd_day"))
+    {
+        j.at("mjd_day").get_to(mjd.mjd_day);
+    }
+    if (j.contains("mjd_frac"))
+    {
+        j.at("mjd_frac").get_to(mjd.mjd_frac);
+    }
+    insTime = InsTime{ mjd };
+}
+
 } // namespace NAV

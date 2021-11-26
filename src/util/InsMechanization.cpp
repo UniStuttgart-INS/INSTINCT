@@ -66,6 +66,36 @@ Eigen::Vector3d velocityUpdateModel(const VelocityUpdateState& x, const Eigen::V
     return x.accel_n - coriolisAcceleration_n + x.gravity_n;
 }
 
+Eigen::Matrix<double, 6, 1> curvilinearPositionDerivative(const Eigen::Matrix<double, 6, 1>& y, const double& /* t */)
+{
+    // 𝜙 Latitude in [rad]
+    const auto& latitude = y(0);
+    // h Altitude in [m]
+    const auto& altitude = y(2);
+
+    // Velocity North in [m/s]
+    const auto& v_N = y(3);
+    // Velocity East in [m/s]
+    const auto& v_E = y(4);
+    // Velocity Down in [m/s]
+    const auto& v_D = y(5);
+
+    // North/South (meridian) earth radius [m]
+    double R_N = earthRadius_N(latitude);
+    // East/West (prime vertical) earth radius [m]
+    double R_E = earthRadius_E(latitude);
+
+    Eigen::Matrix<double, 6, 1> y_dot;
+    y_dot << v_N / (R_N + altitude),
+        v_E / ((R_E + altitude) * std::cos(latitude)),
+        -v_D,
+        0,
+        0,
+        0;
+
+    return y_dot;
+}
+
 // ###########################################################################################################
 //                                             Public Functions
 // ###########################################################################################################

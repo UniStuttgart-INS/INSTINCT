@@ -1,0 +1,1609 @@
+{
+    "links": {
+        "link-10": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 4,
+            "id": 10,
+            "startPinId": 1
+        },
+        "link-11": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 5,
+            "id": 11,
+            "startPinId": 2
+        },
+        "link-16": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 12,
+            "id": 16,
+            "startPinId": 1
+        },
+        "link-26": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 22,
+            "id": 26,
+            "startPinId": 14
+        },
+        "link-27": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 23,
+            "id": 27,
+            "startPinId": 20
+        },
+        "link-28": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 13,
+            "id": 28,
+            "startPinId": 24
+        },
+        "link-29": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 18,
+            "id": 29,
+            "startPinId": 1
+        },
+        "link-30": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 19,
+            "id": 30,
+            "startPinId": 2
+        },
+        "link-32": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 31,
+            "id": 32,
+            "startPinId": 14
+        }
+    },
+    "nodes": {
+        "node-15": {
+            "data": {
+                "calculateIntermediateValues": true,
+                "centrifugalAccCompensation": false,
+                "coriolisCompensation": false,
+                "gravityModel": 4,
+                "integrationAlgorithmAttitude": 2,
+                "integrationAlgorithmPosition": 0,
+                "integrationAlgorithmVelocity": 2,
+                "integrationFrame": 1,
+                "prefereTimeSinceStartupOverInsTime": false,
+                "prefereUncompensatedData": true,
+                "showCorrectionsInputPin": false
+            },
+            "enabled": false,
+            "id": 15,
+            "inputPins": [
+                {
+                    "id": 12
+                },
+                {
+                    "id": 13
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ImuIntegrator",
+            "outputPins": [
+                {
+                    "id": 14
+                }
+            ],
+            "pos": {
+                "x": 808.0,
+                "y": -786.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuIntegrator"
+        },
+        "node-21": {
+            "data": {
+                "attitudeMode": 0,
+                "initDuration": 0.0,
+                "overridePosition": false,
+                "overrideRollPitchYaw": [
+                    false,
+                    false,
+                    false
+                ],
+                "overrideValuesPosition_lla": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideValuesRollPitchYaw": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideValuesVelocity_n": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "overrideVelocity": false,
+                "positionAccuracyThreshold": 10.0,
+                "velocityAccuracyThreshold": 10.0
+            },
+            "enabled": true,
+            "id": 21,
+            "inputPins": [
+                {
+                    "id": 18
+                },
+                {
+                    "id": 19
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "PosVelAttInitializer",
+            "outputPins": [
+                {
+                    "id": 20
+                }
+            ],
+            "pos": {
+                "x": 792.0,
+                "y": -530.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "PosVelAttInitializer"
+        },
+        "node-25": {
+            "data": null,
+            "enabled": true,
+            "id": 25,
+            "inputPins": [
+                {
+                    "id": 22
+                },
+                {
+                    "id": 23
+                }
+            ],
+            "kind": "Simple",
+            "name": "",
+            "outputPins": [
+                {
+                    "id": 24
+                }
+            ],
+            "pos": {
+                "x": 888.0,
+                "y": -640.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Combiner"
+        },
+        "node-3": {
+            "data": {
+                "Imu": {
+                    "imuPos": {
+                        "posAccel_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "posGyro_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "posMag_b": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            }
+                        },
+                        "quatAccel_bp": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "quatGyro_bp": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "quatMag_bp": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        }
+                    }
+                },
+                "circularTrajectoryCircleCountForStop": 1.0,
+                "circularTrajectoryDirection": 0,
+                "circularTrajectoryOriginAngle": 0.0,
+                "circularTrajectoryRadius": 50.0,
+                "gnssFrequency": 5.0,
+                "imuFrequency": 200.0,
+                "linearTrajectoryDistanceForStop": 100.0,
+                "simulationDuration": 300.0,
+                "simulationStopCondition": 1,
+                "startOrientation": {
+                    "0": {
+                        "0": 0.3490658503988659
+                    },
+                    "1": {
+                        "0": 0.5235987755982988
+                    },
+                    "2": {
+                        "0": 1.5707963267948966
+                    }
+                },
+                "startPosition_lla": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "startTime": {
+                    "mjd_day": 51544,
+                    "mjd_frac": 0.0
+                },
+                "startTimeEditFormat": 0,
+                "startTimeSource": 0,
+                "trajectoryType": 2,
+                "velocity_n": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": -0.5
+                    }
+                }
+            },
+            "enabled": true,
+            "id": 3,
+            "inputPins": [],
+            "kind": "Blueprint",
+            "name": "ImuSimulator",
+            "outputPins": [
+                {
+                    "id": 1
+                },
+                {
+                    "id": 2
+                }
+            ],
+            "pos": {
+                "x": 495.0,
+                "y": -403.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuSimulator"
+        },
+        "node-9": {
+            "data": {
+                "nInputPins": 3,
+                "nPlots": 6,
+                "overridePositionStartValues": true,
+                "pinData": [
+                    {
+                        "dataIdentifier": "ImuObs",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Time since startup [ns]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Mag uncomp X [Gauss]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Mag uncomp Y [Gauss]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Mag uncomp Z [Gauss]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Accel uncomp X [m/s^2]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "X",
+                                                "lineType": 0,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Accel uncomp Y [m/s^2]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Y",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Accel uncomp Z [m/s^2]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Z",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Gyro uncomp X [rad/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        5,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "X",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Gyro uncomp Y [rad/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        5,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Y",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Gyro uncomp Z [rad/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        5,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Z",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Mag Comp X [Gauss]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Mag Comp Y [Gauss]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Mag Comp Z [Gauss]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Accel Comp X [m/s^2]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Accel Comp Y [m/s^2]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Accel Comp Z [m/s^2]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Gyro Comp X [rad/s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Gyro Comp Y [rad/s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Gyro Comp Z [rad/s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Temperature [°C]",
+                                "plotOnAxisAndPlotStyle": []
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 8
+                    },
+                    {
+                        "dataIdentifier": "PosVelAtt",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Latitude [deg]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Longitude [deg]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Altitude [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        1,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Simulator",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "North/South [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        0,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Simulator",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "East/West [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "X-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "North velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "North (Simulator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "East velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "East (Simulator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.8648648262023926,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Down (Simulator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Roll [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Roll (Simulator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Pitch [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Pitch (Simulator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Yaw [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            1,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.8666666746139526,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Yaw (Simulator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Quaternion::w",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::x",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::y",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::z",
+                                "plotOnAxisAndPlotStyle": []
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 8
+                    },
+                    {
+                        "dataIdentifier": "InertialNavSol",
+                        "pinType": 0,
+                        "plotData": [
+                            {
+                                "displayName": "Time [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "GPS time of week [s]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Latitude [deg]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Longitude [deg]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Altitude [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        1,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Integrator",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "North/South [m]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        0,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Integrator",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "East/West [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "X-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Y-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Z-ECEF [m]",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "North velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.8108107447624207,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "North (Integrator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "East velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "legendName": "East (Integrator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Down velocity [m/s]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Down (Integrator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Roll [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.8117647171020508,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Roll (Integrator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Pitch [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "legendName": "Pitch (Integrator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Yaw [deg]",
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            1,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Yaw (Integrator)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            },
+                            {
+                                "displayName": "Quaternion::w",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::x",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::y",
+                                "plotOnAxisAndPlotStyle": []
+                            },
+                            {
+                                "displayName": "Quaternion::z",
+                                "plotOnAxisAndPlotStyle": []
+                            }
+                        ],
+                        "size": 0,
+                        "stride": 8
+                    }
+                ],
+                "plotInfos": [
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Position (North/East)",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": true,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            6,
+                            6
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 450.0
+                        },
+                        "title": "Position (North/East)",
+                        "xAxisLabel": "East/West [m]",
+                        "y1AxisLabel": "North/South [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Altitude",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Altitude",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Altitude [m]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Velocity",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Velocity [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Flight Angles / Attitude",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 256,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 2,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Flight Angles / Attitude",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Roll/Pitch [deg]",
+                        "y2AxisLabel": "Yaw [deg]",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Acceleration (Platform)",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Acceleration (Platform)",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Acceleration [m/s^2]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Angular rate (Platform)",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Angular rate (Platform)",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Angular rate [rad/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    }
+                ],
+                "startValue_East": 0.0,
+                "startValue_North": 0.0
+            },
+            "enabled": true,
+            "id": 9,
+            "inputPins": [
+                {
+                    "id": 4
+                },
+                {
+                    "id": 5
+                },
+                {
+                    "id": 31
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "Plot",
+            "outputPins": [],
+            "pos": {
+                "x": 1288.0,
+                "y": -402.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "Plot"
+        }
+    }
+}

@@ -7,6 +7,8 @@
 
 #include <imgui.h>
 
+#include <limits>
+
 namespace ImGui
 {
 // Widgets: Drag Sliders
@@ -148,5 +150,129 @@ bool InputDouble3(const char* label, double v[3], const char* format = "%.6f", I
 /// @param[in] flags InputText flags to modify the behavior
 /// @return True if the value was changed
 bool InputDouble4(const char* label, double v[4], const char* format = "%.6f", ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+// ###########################################################################################################
+
+/// @brief Shows a value limited InputText GUI element for 'float'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] step If greater than 0, this will show buttons to increase/decrease the value
+/// @param[in] step_fast If greater than 0, this will show buttons to increase/decrease the value
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputFloatL(const char* label, float* v, float v_min = std::numeric_limits<float>::lowest(), float v_max = std::numeric_limits<float>::max(), float step = 0.0F, float step_fast = 0.0F, const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
+
+/// @brief Shows a value limited InputText GUI element for an array of 'float[2]'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputFloat2L(const char* label, float v[2], float v_min = std::numeric_limits<float>::lowest(), float v_max = std::numeric_limits<float>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a value limited InputText GUI element for an array of 'float[3]'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputFloat3L(const char* label, float v[3], float v_min = std::numeric_limits<float>::lowest(), float v_max = std::numeric_limits<float>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a value limited InputText GUI element for an array of 'float[4]'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputFloat4L(const char* label, float v[4], float v_min = std::numeric_limits<float>::lowest(), float v_max = std::numeric_limits<float>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a value limited InputText GUI element for 'int'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] step If greater than 0, this will show buttons to increase/decrease the value
+/// @param[in] step_fast If greater than 0, this will show buttons to increase/decrease the value
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputIntL(const char* label, int* v, int v_min = std::numeric_limits<int>::lowest(), int v_max = std::numeric_limits<int>::max(), int step = 1, int step_fast = 100, ImGuiInputTextFlags flags = 0);
+
+/// @brief Shows a value limited InputText GUI element for an array of 'int[2]'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputInt2L(const char* label, int v[2], int v_min = std::numeric_limits<int>::lowest(), int v_max = std::numeric_limits<int>::max(), ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a value limited InputText GUI element for an array of 'int[3]'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputInt3L(const char* label, int v[3], int v_min = std::numeric_limits<int>::lowest(), int v_max = std::numeric_limits<int>::max(), ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a value limited InputText GUI element for an array of 'int[4]'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputInt4L(const char* label, int v[4], int v_min = std::numeric_limits<int>::lowest(), int v_max = std::numeric_limits<int>::max(), ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a value limited InputText GUI element for 'double'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] step If greater than 0, this will show buttons to increase/decrease the value
+/// @param[in] step_fast If greater than 0, this will show buttons to increase/decrease the value
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputDoubleL(const char* label, double* v, double v_min = std::numeric_limits<double>::lowest(), double v_max = std::numeric_limits<double>::max(), double step = 0.0, double step_fast = 0.0, const char* format = "%.6f", ImGuiInputTextFlags flags = 0);
+
+/// @brief Shows a value limited InputText GUI element for an array of 'double[2]'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputDouble2L(const char* label, double v[2], double v_min = std::numeric_limits<double>::lowest(), double v_max = std::numeric_limits<double>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a value limited InputText GUI element for an array of 'double[3]'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputDouble3L(const char* label, double v[3], double v_min = std::numeric_limits<double>::lowest(), double v_max = std::numeric_limits<double>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a value limited InputText GUI element for an array of 'double[4]'
+/// @param[in] label Label to display beside the input. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum to clamp the value to
+/// @param[in] v_max Maximum to clamp the value to
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags InputText flags to modify the behavior
+/// @return True if the value was changed
+bool InputDouble4L(const char* label, double v[4], double v_min = std::numeric_limits<double>::lowest(), double v_max = std::numeric_limits<double>::max(), const char* format = "%.3f", ImGuiInputTextFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 
 } // namespace ImGui

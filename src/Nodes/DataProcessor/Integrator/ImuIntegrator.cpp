@@ -631,6 +631,10 @@ void NAV::ImuIntegrator::integrateObservation()
     /// g_e Gravity vector in [m/s^2], in earth coordinates
     const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;
 
+    /// ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
+    const Eigen::Vector3d& angularVelocity_ie_e = InsConst::angularVelocity_ie_e;
+    LOG_DATA("{}: angularVelocity_ie_e = {}", nameId(), angularVelocity_ie_e.transpose());
+
     if (integrationFrame == IntegrationFrame::ECEF)
     {
         LOG_DATA("{}: Integrating in ECEF frame", nameId());
@@ -641,10 +645,6 @@ void NAV::ImuIntegrator::integrateObservation()
         /// q (tₖ₋₁) Quaternion, from gyro platform to earth coordinates, at the time tₖ₋₁
         const Eigen::Quaterniond quaternion_gyro_ep__t1 = posVelAtt__t1->quaternion_eb() * imuPosition.quatGyro_bp();
         LOG_DATA("{}: quaternion_gyro_ep__t1 = {}", nameId(), quaternion_gyro_ep__t1.coeffs().transpose());
-
-        /// ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
-        const Eigen::Vector3d& angularVelocity_ie_e__t0 = InsConst::angularVelocity_ie_e;
-        LOG_DATA("{}: angularVelocity_ie_e__t0 = {}", nameId(), angularVelocity_ie_e__t0.transpose());
 
         /// q (tₖ₋₂) Quaternion, from accel platform to earth coordinates, at the time tₖ₋₂
         const Eigen::Quaterniond quaternion_accel_ep__t2 = posVelAtt__t2->quaternion_eb() * imuPosition.quatAccel_bp();
@@ -665,7 +665,7 @@ void NAV::ImuIntegrator::integrateObservation()
         {
             quaternion_gyro_ep__t0 = updateQuaternion_ep_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
                                                                      angularVelocity_ip_p__t0, angularVelocity_ip_p__t1,
-                                                                     angularVelocity_ie_e__t0,
+                                                                     angularVelocity_ie_e,
                                                                      quaternion_gyro_ep__t1, quaternion_gyro_ep__t2);
         }
         // TODO: Implement RungeKutta1
@@ -760,7 +760,7 @@ void NAV::ImuIntegrator::integrateObservation()
         LOG_DATA("{}: quaternion_nb__t2 = {}", nameId(), quaternion_nb__t2.coeffs().transpose());
 
         /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
-        Eigen::Vector3d angularVelocity_ie_n__t1 = posVelAtt__t1->quaternion_ne() * InsConst::angularVelocity_ie_e;
+        Eigen::Vector3d angularVelocity_ie_n__t1 = posVelAtt__t1->quaternion_ne() * angularVelocity_ie_e;
         LOG_DATA("{}: angularVelocity_ie_n__t1 = {}", nameId(), angularVelocity_ie_n__t1.transpose());
 
         /// North/South (meridian) earth radius [m]
@@ -908,7 +908,9 @@ void NAV::ImuIntegrator::integrateObservation()
 
         skipIntermediateCalculation = false;
     }
-    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
+    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(),
+             posVelAttStates.at(0),
+             posVelAttStates.size() >= 2 ? posVelAttStates.at(1) : nullptr);
 }
 
 const char* NAV::ImuIntegrator::to_string(IntegrationAlgorithm algorithm)

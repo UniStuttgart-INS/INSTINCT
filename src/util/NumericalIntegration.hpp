@@ -50,4 +50,65 @@ Y rungeKutta3(Y (*f)(const X&, const Y&), const Scalar& h, const Y& y__t2, const
     return y__t2 + h / 6.0 * (k1 + 4.0 * k2 + k3);
 }
 
+/// @brief Runge-Kutta First Order Algorithm
+/// @param[in] f Model function
+/// @param[in] h Integration step in [s]
+/// @param[in] y_n State vector at time t_n
+/// @param[in] t_n Time to evaluate the model function at in [s]
+/// @return State vector at time t_(n+1)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta1(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+{
+    return y_n + h * f(y_n, t_n);
+}
+
+/// @brief Runge-Kutta Second Order Algorithm
+/// @param[in] f Model function
+/// @param[in] h Integration step in [s]
+/// @param[in] y_n State vector at time t_n
+/// @param[in] t_n Time to evaluate the model function at in [s]
+/// @return State vector at time t_(n+1)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta2(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+{
+    auto k1 = f(y_n, t_n);
+    auto k2 = f(y_n + h * k1, t_n + h);
+    return y_n + h / 2 * (k1 + k2);
+}
+
+/// @brief Runge-Kutta Third Order Algorithm
+/// @param[in] f Model function
+/// @param[in] h Integration step in [s]
+/// @param[in] y_n State vector at time t_n
+/// @param[in] t_n Time to evaluate the model function at in [s]
+/// @return State vector at time t_(n+1)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta3(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+{
+    auto k1 = f(y_n, t_n);
+    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2);
+    auto k3 = f(y_n - h * k1 + 2 * h * k2, t_n + h);
+    return y_n + h / 6 * (k1 + 4 * k2 + k3);
+}
+
+/// @brief Runge-Kutta Fourth Order Algorithm
+/// @param[in] f Model function
+/// @param[in] h Integration step in [s]
+/// @param[in] y_n State vector at time t_n
+/// @param[in] t_n Time to evaluate the model function at in [s]
+/// @return State vector at time t_(n+1)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta4(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+{
+    auto k1 = f(y_n, t_n);
+    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2);
+    auto k3 = f(y_n + h / 2 * k2, t_n + h / 2);
+    auto k4 = f(y_n + h * k3, t_n + h);
+    return y_n + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+}
+
 } // namespace NAV::Integration
