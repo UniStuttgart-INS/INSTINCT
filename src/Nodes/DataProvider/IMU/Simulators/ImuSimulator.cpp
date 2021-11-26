@@ -520,7 +520,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     accel_n += (2 * angularVelocity_ie_n + angularVelocity_en_n).cross(velocity_n);
 
     // g_n Gravity in [m/s^2], in navigation coordinates
-    Eigen::Vector3d gravity_n = gravity::gravity_EGM96(position_lla(0), position_lla(1), position_lla(2));
+    Eigen::Vector3d gravity_n = gravity::calcGravitation_n_EGM96(position_lla);
 
     // Apply the local gravity vector (mass attraction of the Earth and centripetal acceleration caused by the Earth's rotation)
     accel_n -= gravity_n

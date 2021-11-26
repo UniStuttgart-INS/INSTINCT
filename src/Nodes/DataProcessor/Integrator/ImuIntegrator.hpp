@@ -13,6 +13,8 @@
 #include "NodeData/State/PVAError.hpp"
 #include "NodeData/State/ImuBiases.hpp"
 
+#include "util/InsGravity.hpp"
+
 #include <deque>
 
 namespace NAV
@@ -117,17 +119,8 @@ class ImuIntegrator : public Node
     /// Frame to integrate the observations in
     IntegrationFrame integrationFrame = IntegrationFrame::ECEF;
 
-    /// Gravity Model selection
-    enum class GravityModel : int
-    {
-        WGS84,        ///< World Geodetic System 1984
-        WGS84_Skydel, ///< World Geodetic System 1984 implemented by the Skydel Simulator // FIXME: Remove after Skydel uses the same as Instinct
-        Somigliana,   ///< Somigliana gravity model
-        EGM96,        ///< Earth Gravitational Model 1996
-        OFF,          ///< Gravity Model turned off
-    };
     /// @brief Gravity model selected in the GUI
-    GravityModel gravityModel = GravityModel::WGS84;
+    gravity::Model gravityModel = gravity::Model::WGS84;
 
     /// Integration Algorithm selection
     enum class IntegrationAlgorithm : size_t

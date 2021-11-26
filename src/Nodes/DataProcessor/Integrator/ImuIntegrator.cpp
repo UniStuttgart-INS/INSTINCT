@@ -63,23 +63,23 @@ void NAV::ImuIntegrator::guiConfig()
     ImGui::SetNextItemWidth(250);
     if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0OFF\0\0"))
     {
-        if (gravityModel == GravityModel::WGS84)
+        if (gravityModel == gravity::Model::WGS84)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84");
         }
-        else if (gravityModel == GravityModel::WGS84_Skydel)
+        else if (gravityModel == gravity::Model::WGS84_Skydel)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84_Skydel");
         }
-        else if (gravityModel == GravityModel::Somigliana)
+        else if (gravityModel == gravity::Model::Somigliana)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "Somigliana");
         }
-        else if (gravityModel == GravityModel::EGM96)
+        else if (gravityModel == gravity::Model::EGM96)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "EGM96");
         }
-        else if (gravityModel == GravityModel::OFF)
+        else if (gravityModel == gravity::Model::OFF)
         {
             LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "OFF");
         }
@@ -285,7 +285,7 @@ void NAV::ImuIntegrator::restore(json const& j)
     }
     if (j.contains("gravityModel"))
     {
-        gravityModel = static_cast<GravityModel>(j.at("gravityModel").get<int>());
+        gravityModel = static_cast<gravity::Model>(j.at("gravityModel").get<int>());
     }
     if (j.contains("integrationAlgorithmAttitude"))
     {
@@ -587,38 +587,7 @@ void NAV::ImuIntegrator::integrateObservation()
     LOG_DATA("{}: position_e__t1 = {}", nameId(), position_e__t1.transpose());
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
-    Eigen::Vector3d gravity_n__t1;
-
-    /// Gravity vector determination
-    if (gravityModel == GravityModel::Somigliana)
-    {
-        LOG_DATA("{}: Gravity calculated with Somigliana model", nameId());
-        gravity_n__t1 = gravity::gravity_SomiglianaAltitude(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-    }
-    else if (gravityModel == GravityModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
-    {
-        LOG_DATA("{}: Gravity calculated with WGS84 model as in the Skydel Simulator plug-in", nameId());
-        double gravityMagnitude = gravity::gravityMagnitude_WGS84_Skydel(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-        // Gravity vector NED
-        const Eigen::Vector3d gravityVector(0.0, 0.0, gravityMagnitude);
-        gravity_n__t1 = gravityVector;
-    }
-    else if (gravityModel == GravityModel::EGM96)
-    {
-        LOG_DATA("{}: Gravity calculated with EGM96", nameId());
-        int egm96degree = 10;
-        gravity_n__t1 = gravity::gravity_EGM96(posVelAtt__t1->latitude(), posVelAtt__t1->longitude(), posVelAtt__t1->altitude(), egm96degree);
-    }
-    else if (gravityModel == GravityModel::OFF)
-    {
-        LOG_DATA("{}: Gravity set to zero", nameId());
-        gravity_n__t1 = Eigen::Vector3d::Zero();
-    }
-    else
-    {
-        LOG_DATA("{}: Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')", nameId());
-        gravity_n__t1 = gravity::gravity_WGS84(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-    }
+    Eigen::Vector3d gravity_n__t1 = gravity::calcGravitation_n(posVelAtt__t1->latLonAlt(), gravityModel);
 
     if (centrifugalAccCompensation)
     {

@@ -1124,7 +1124,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_23_n(const Eigen::Vector3d&
     double R_E = NAV::earthRadius_E(latitude);
     double R_N = NAV::earthRadius_N(latitude);
     // Magnitude of gravity vector at ellipsoid height in [m / s^2]
-    double g_0 = NAV::gravity::gravityMagnitude_SomiglianaAltitude(latitude, 0); // TODO: Split calculation into latitude and altitude part to save time (--> InsGravity)
+    double g_0 = NAV::gravity::calcGravitation_n_SomiglianaAltitude(latitude, 0).norm();
     // Geocentric Radius in [m]
     double r_eS_e = geocentricRadius(latitude, R_E, InsConst::WGS84_e_squared);
 
