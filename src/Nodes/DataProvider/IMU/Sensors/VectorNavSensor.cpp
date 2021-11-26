@@ -1,6 +1,5 @@
 #include "VectorNavSensor.hpp"
 
-#include "util/Debug.hpp"
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
 #include "vn/util.h"
