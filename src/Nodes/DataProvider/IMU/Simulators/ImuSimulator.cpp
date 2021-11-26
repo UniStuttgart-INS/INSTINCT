@@ -25,7 +25,7 @@ NAV::ImuSimulator::ImuSimulator()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 648, 504 };
+    guiConfigDefaultWindowSize = { 653, 404 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuSimulator::pollImuObs);
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuSimulator::pollPosVelAtt);
@@ -92,6 +92,7 @@ void NAV::ImuSimulator::guiConfig()
         ImGui::TreePop();
     }
 
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode("Output datarate"))
     {
         ImGui::SetNextItemWidth(columnWidth);
@@ -110,6 +111,7 @@ void NAV::ImuSimulator::guiConfig()
         ImGui::TreePop();
     }
 
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode("Scenario"))
     {
         ImGui::SetNextItemWidth(columnWidth);
@@ -299,6 +301,7 @@ void NAV::ImuSimulator::guiConfig()
         ImGui::TreePop();
     }
 
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
     if (ImGui::TreeNode("Simulation Stop Condition"))
     {
         if (trajectoryType != TrajectoryType::Fixed)
