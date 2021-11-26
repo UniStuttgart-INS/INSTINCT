@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "util/ScrollingBuffer.hpp"
+#include "util/Container/ScrollingBuffer.hpp"
 #include <iostream>
 
 namespace NAV

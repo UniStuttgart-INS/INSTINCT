@@ -15,8 +15,8 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "util/InsMechanization.hpp"
-#include "util/InsConstants.hpp"
-#include "util/InsMath.hpp"
+#include "util/Constants.hpp"
+#include "util/Math/Math.hpp"
 #include "util/Gravity/Gravity.hpp"
 #include "util/Logger.hpp"
 
@@ -1401,7 +1401,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_r1_n(const Eigen::Matri
 {
     // Math: \mathbf{H}_{r1}^n \approx \mathbf{\hat{T}}_{r(n)}^p \begin{bmatrix} \begin{pmatrix} \mathbf{C}_b^n \mathbf{l}_{ba}^p \end{pmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
     Eigen::Vector3d product = DCM_nb * leverArm_InsGnss_b;
-    return T_rn_p * skewSymmetricMatrix(product);
+    return T_rn_p * Math::skewSymmetricMatrix(product);
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_v1_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n)
@@ -1409,13 +1409,13 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_v1_n(const Eigen::Matri
     // Math: \mathbf{H}_{v1}^n \approx \begin{bmatrix} \begin{Bmatrix} \mathbf{C}_b^n (\mathbf{\hat{\omega}}_{ib}^b \wedge \mathbf{l}_{ba}^b) - \mathbf{\hat{\Omega}}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{Bmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
     Eigen::Vector3d product = DCM_nb * (angularRate_ib_b.cross(leverArm_InsGnss_b)) - Omega_ie_n * DCM_nb * leverArm_InsGnss_b;
 
-    return skewSymmetricMatrix(product);
+    return Math::skewSymmetricMatrix(product);
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_v5_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss_b)
 {
     // Math: \mathbf{H}_{v5}^n = \mathbf{C}_b^n \begin{bmatrix} \mathbf{l}_{ba}^b \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    return DCM_nb * skewSymmetricMatrix(leverArm_InsGnss_b);
+    return DCM_nb * Math::skewSymmetricMatrix(leverArm_InsGnss_b);
 }
 
 Eigen::Matrix<double, 6, 6> NAV::LooselyCoupledKF::measurementNoiseCovariance(const Eigen::Vector3d& gnssVarianceLatLonAlt, const Eigen::Vector3d& gnssVarianceVelocity)

@@ -1,4 +1,4 @@
-/// @file InsConstants.hpp
+/// @file Constants.hpp
 /// @brief Holds all Constants
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-04-21

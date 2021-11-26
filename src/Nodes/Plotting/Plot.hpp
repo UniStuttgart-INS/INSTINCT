@@ -11,7 +11,7 @@
 
 #include "internal/Node/Node.hpp"
 
-#include "util/ScrollingBuffer.hpp"
+#include "util/Container/ScrollingBuffer.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/InertialNavSol.hpp"

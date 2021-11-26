@@ -1,5 +1,5 @@
 #include "Sleep.hpp"
-#include "Logger.hpp"
+#include "util/Logger.hpp"
 
 #if !__linux__ && !__APPLE__ && !__CYGWIN__ && !__QNXNTO__
     #include <chrono>
@@ -12,7 +12,7 @@
 /// Flag for interrupt check
 static volatile sig_atomic_t usr_interrupt = 0;
 
-void NAV::Sleep::handler(int /* */)
+void handler(int /* */)
 {
     LOG_DEBUG("Signal caught");
     usr_interrupt = 1;

@@ -1,4 +1,4 @@
-/// @file InsGravity.hpp
+/// @file Gravity.hpp
 /// @brief Different Gravity Models
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
@@ -8,7 +8,10 @@
 
 #include <Eigen/Dense>
 
-namespace NAV::gravity
+namespace NAV
+{
+
+namespace gravity
 {
 /// Available Gravity Models
 enum class Model : int
@@ -70,4 +73,11 @@ enum class Model : int
 /// @note See Groves (2013) Chapter 2.4.7, p. 67ff
 [[nodiscard]] Eigen::Vector3d centrifugalAcceleration(const double& latitude, const double& altitude);
 
-} // namespace NAV::gravity
+} // namespace gravity
+
+/// @brief Converts the enum to a string
+/// @param[in] gravityModel Enum value to convert into text
+/// @return String representation of the enum
+const char* to_string(gravity::Model gravityModel);
+
+} // namespace NAV

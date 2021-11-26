@@ -1,11 +1,11 @@
 #include "InsMechanization.hpp"
 
-#include "InsConstants.hpp"
+#include "Constants.hpp"
 
 #include "util/Logger.hpp"
 
-#include "util/InsMath.hpp"
-#include "util/NumericalIntegration.hpp"
+#include "util/Math/Math.hpp"
+#include "util/Math/NumericalIntegration.hpp"
 
 namespace NAV
 {
@@ -120,7 +120,7 @@ Eigen::Quaterniond updateQuaternion_nb_RungeKutta1(const long double& timeDiffer
 
     // Updated Quaternion (eq. 8.2)
     Eigen::Quaterniond q_nb__t0;
-    q_nb__t0 = Integration::rungeKutta1(quaternionUpdateModel, timeDifferenceSec__t0, quaternion_nb__t1.coeffs(), angularVelocity_nb_b__t0);
+    q_nb__t0 = Math::rungeKutta1(quaternionUpdateModel, timeDifferenceSec__t0, quaternion_nb__t1.coeffs(), angularVelocity_nb_b__t0);
 
     // Normalize Quaternion
     q_nb__t0.normalize();
@@ -172,8 +172,8 @@ Eigen::Quaterniond updateQuaternion_ep_RungeKutta3(
 
     // Updated Quaternion (eq. 8.2)
     Eigen::Quaterniond q_ep__t0;
-    q_ep__t0 = Integration::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_ep__t2.coeffs(),
-                                        angularVelocity_ep_p__t2, angularVelocity_ep_p__t1, angularVelocity_ep_p__t0);
+    q_ep__t0 = Math::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_ep__t2.coeffs(),
+                                 angularVelocity_ep_p__t2, angularVelocity_ep_p__t1, angularVelocity_ep_p__t0);
 
     // Normalize Quaternion
     q_ep__t0.normalize();
@@ -226,8 +226,8 @@ Eigen::Quaterniond updateQuaternion_nb_RungeKutta3(
 
     // Updated Quaternion (eq. 8.2)
     Eigen::Quaterniond q_nb__t0;
-    q_nb__t0 = Integration::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_nb__t2.coeffs(),
-                                        angularVelocity_nb_b__t2, angularVelocity_nb_b__t1, angularVelocity_nb_b__t0);
+    q_nb__t0 = Math::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_nb__t2.coeffs(),
+                                 angularVelocity_nb_b__t2, angularVelocity_nb_b__t1, angularVelocity_nb_b__t0);
 
     // Normalize Quaternion
     q_nb__t0.normalize();
@@ -257,7 +257,7 @@ Eigen::Vector3d updateVelocity_n_RungeKutta1(const long double& timeDifferenceSe
     state___t1.gravity_n = gravity_n__t1;
 
     /// v_n (tₖ) Velocity in [m/s], in navigation coordinates, at the time tₖ
-    Eigen::Vector3d velocity_n__t0 = Integration::rungeKutta1(velocityUpdateModel, timeDifferenceSec__t0, velocity_n__t1, state___t1);
+    Eigen::Vector3d velocity_n__t0 = Math::rungeKutta1(velocityUpdateModel, timeDifferenceSec__t0, velocity_n__t1, state___t1);
 
     return velocity_n__t0;
 }
@@ -415,7 +415,7 @@ Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSe
     state__t2.gravity_n = state__t0.gravity_n;
 
     /// v_n (tₖ) Velocity in [m/s], in navigation coordinates, at the time tₖ
-    Eigen::Vector3d velocity_n__t0 = Integration::rungeKutta3(velocityUpdateModel, integrationStep, velocity_n__t2, state__t2, state__t1, state__t0);
+    Eigen::Vector3d velocity_n__t0 = Math::rungeKutta3(velocityUpdateModel, integrationStep, velocity_n__t2, state__t2, state__t1, state__t0);
 
     return velocity_n__t0;
 }
@@ -532,7 +532,7 @@ std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<con
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
     Eigen::Vector3d attError = pvaError->attitudeError_n();
-    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
+    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + Math::skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
     posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16

@@ -8,7 +8,7 @@
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
 #include "util/Eigen.hpp"
-#include "util/InsTime.hpp"
+#include "util/Time/InsTime.hpp"
 
 #include "internal/gui/widgets/TimeEdit.hpp"
 

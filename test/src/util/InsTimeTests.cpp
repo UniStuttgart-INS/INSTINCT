@@ -4,7 +4,7 @@
 #include <limits>
 #include <chrono>
 
-#include "util/InsTime.hpp"
+#include "util/Time/InsTime.hpp"
 
 namespace NAV
 {

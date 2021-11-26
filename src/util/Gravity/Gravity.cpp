@@ -6,13 +6,31 @@
 #include "Eigen/Core"
 #include "util/InsTransformations.hpp"
 #include "util/Logger.hpp"
-#include "util/InsConstants.hpp"
+#include "util/Constants.hpp"
 #include "internal/AssociatedLegendre.hpp"
 #include "internal/egm96Coeffs.hpp"
 
 #include <string>
 #include <fstream>
 #include <streambuf>
+
+const char* NAV::to_string(gravity::Model gravityModel)
+{
+    switch (gravityModel)
+    {
+    case gravity::Model::WGS84:
+        return "WGS84";
+    case gravity::Model::WGS84_Skydel:
+        return "WGS84 (Skydel Constants)";
+    case gravity::Model::Somigliana:
+        return "Somigliana";
+    case gravity::Model::EGM96:
+        return "EGM96";
+    case gravity::Model::OFF:
+        return "";
+    }
+    return "";
+}
 
 Eigen::Vector3d NAV::gravity::calcGravitation_n(const Eigen::Vector3d& latLonAlt, Model gravityModel)
 {
@@ -21,25 +39,20 @@ Eigen::Vector3d NAV::gravity::calcGravitation_n(const Eigen::Vector3d& latLonAlt
 
     if (gravityModel == gravity::Model::WGS84)
     {
-        LOG_DATA("{}: Gravity calculated with WGS84 model (derivation of the gravity potential after 'r')", nameId());
         return gravity::calcGravitation_n_WGS84(latitude, altitude);
     }
     if (gravityModel == gravity::Model::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
     {
-        LOG_DATA("{}: Gravity calculated with WGS84 model as in the Skydel Simulator plug-in", nameId());
         return gravity::calcGravitation_n_WGS84_Skydel(latitude, altitude);
     }
     if (gravityModel == gravity::Model::Somigliana)
     {
-        LOG_DATA("{}: Gravity calculated with Somigliana model", nameId());
         return gravity::calcGravitation_n_SomiglianaAltitude(latitude, altitude);
     }
     if (gravityModel == gravity::Model::EGM96)
     {
-        LOG_DATA("{}: Gravity calculated with EGM96", nameId());
         return gravity::calcGravitation_n_EGM96(latLonAlt);
     }
-    LOG_DATA("{}: Gravity set to zero", nameId());
     return Eigen::Vector3d::Zero();
 }
 
@@ -94,7 +107,8 @@ Eigen::Vector3d NAV::gravity::calcGravitation_n_WGS84(const double& latitude, co
 
 Eigen::Vector3d NAV::gravity::calcGravitation_n_EGM96(const Eigen::Vector3d& latLonAlt, int ndegree)
 {
-    using namespace NAV::gravity::internal;
+    using NAV::gravity::internal::egm96Coeffs;
+    using NAV::gravity::internal::associatedLegendre;
 
     Eigen::Vector3d pos_ecef = trafo::lla2ecef_WGS84(latLonAlt);
 

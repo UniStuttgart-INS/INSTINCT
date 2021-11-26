@@ -7,7 +7,7 @@
 #include "util/Gravity/Gravity.hpp"
 #include "util/InsMechanization.hpp"
 #include "util/InsMath.hpp"
-#include "util/NumericalIntegration.hpp"
+#include "util/Math/NumericalIntegration.hpp"
 #include "util/Time/TimeBase.hpp"
 
 #include "internal/NodeManager.hpp"
@@ -656,7 +656,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
         y.block<3, 1>(0, 0) = startPosition_lla;
         y.block<3, 1>(3, 0) = velocity_n;
 
-        y = Integration::RungeKutta1(curvilinearPositionDerivative, time, y, time);
+        y = Math::RungeKutta1(curvilinearPositionDerivative, time, y, time);
 
         return y.block<3, 1>(0, 0);
     }

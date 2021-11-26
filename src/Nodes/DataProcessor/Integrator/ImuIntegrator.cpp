@@ -3,7 +3,7 @@
 #include "util/Logger.hpp"
 
 #include "util/InsMechanization.hpp"
-#include "util/InsConstants.hpp"
+#include "util/Constants.hpp"
 #include "util/InsMath.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
@@ -587,6 +587,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
     /// g_n Gravity vector in [m/s^2], in navigation coordinates
     Eigen::Vector3d gravity_n__t1 = gravity::calcGravitation_n(posVelAtt__t1->latLonAlt(), gravityModel);
+    LOG_DATA("{}: gravity_n__t1 = {} (gravitation {})", nameId(), gravity_n__t1.transpose(), NAV::to_string(gravityModel));
 
     if (centrifugalAccCompensation)
     {
