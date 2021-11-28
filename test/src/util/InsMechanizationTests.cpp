@@ -1,9 +1,10 @@
 #include <catch2/catch.hpp>
 #include "EigenApprox.hpp"
 
-#include "util/InsMath.hpp"
+#include "Navigation/Math/Math.hpp"
 #include "util/InsMechanization.hpp"
-#include "util/InsTransformations.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 
 #include "util/Eigen.hpp"
@@ -361,9 +362,9 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
     Eigen::Vector3d angularVelocity_ie_n = trafo::quat_ne(latitude, longitude) * InsConst::angularVelocity_ie_e;
 
     /// North/South (meridian) earth radius [m]
-    double R_N = earthRadius_N(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    double R_N = ellipsoid::earthRadius_N(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
     /// East/West (prime vertical) earth radius [m]
-    double R_E = earthRadius_E(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    double R_E = ellipsoid::earthRadius_E(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
     std::deque<Eigen::Vector3d> velocities;
     velocities.emplace_back(Eigen::Vector3d::Zero());
@@ -375,7 +376,7 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
     for (size_t i = 0; i < count; i++)
     {
         /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
-        Eigen::Vector3d angularVelocity_en_n = transportRate({ latitude, longitude, altitude }, velocities.at(1), R_N, R_E);
+        Eigen::Vector3d angularVelocity_en_n = ellipsoid::transportRate({ latitude, longitude, altitude }, velocities.at(1), R_N, R_E);
 
         Eigen::Vector3d v_n = updateVelocity_n_Simpson(timeDifferenceSec, timeDifferenceSec,
                                                        acceleration_b,
@@ -424,9 +425,9 @@ TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
     }
     auto lla = trafo::ecef2lla_WGS84(position_e);
 
-    CHECK(calcGeographicalDistance(latitude, longitude, lla(0), lla(1)) == Approx(2.0).margin(0.002));
+    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, lla(0), lla(1)) == Approx(2.0).margin(0.002));
 
-    CHECK(calcGeographicalDistance(latitude, longitude, lla(0), longitude) == Approx(2.0).margin(0.002));
+    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, lla(0), longitude) == Approx(2.0).margin(0.002));
     CHECK(longitude == Approx(lla(1)).margin(1e-13));
 
     CHECK(latitude < lla(0));
@@ -457,18 +458,18 @@ TEST_CASE("[InsMechanization] Update Position lla-frame", "[InsMechanization]")
     for (size_t i = 0; i < count; i++)
     {
         // North/South (meridian) earth radius [m]
-        double R_N = earthRadius_N(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
+        double R_N = ellipsoid::earthRadius_N(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
         // East/West (prime vertical) earth radius [m]
-        double R_E = earthRadius_E(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
+        double R_E = ellipsoid::earthRadius_E(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
         latLonAlt = updatePosition_lla(dt, latLonAlt, velocity_n, R_N, R_E);
     }
     double distance = static_cast<double>(count) * static_cast<double>(dt) * velocity_b.norm();
 
     // updatePosition_n with lat lon formula shows really bad accuracy
-    CHECK(calcGeographicalDistance(latitude, longitude, latLonAlt(0), latLonAlt(1)) == Approx(distance).margin(0.004));
-    CHECK(calcGeographicalDistance(latitude, longitude, latLonAlt(0), longitude) == Approx(distance * std::cos(yaw)).margin(0.02));
-    CHECK(calcGeographicalDistance(latitude, longitude, latitude, latLonAlt(1)) == Approx(distance * std::sin(yaw)).margin(0.02));
+    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, latLonAlt(0), latLonAlt(1)) == Approx(distance).margin(0.004));
+    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, latLonAlt(0), longitude) == Approx(distance * std::cos(yaw)).margin(0.02));
+    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, latitude, latLonAlt(1)) == Approx(distance * std::sin(yaw)).margin(0.02));
 
     CHECK(latitude < latLonAlt(0));
     CHECK(longitude < latLonAlt(1));

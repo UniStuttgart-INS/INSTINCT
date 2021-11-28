@@ -9,8 +9,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "util/UartSensors/Ublox/UbloxTypes.hpp"
-#include "util/InsTransformations.hpp"
-#include "util/InsMath.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
+#include "Navigation/Math/Attitude.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
 
@@ -510,7 +510,7 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
 
     auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
 
-    if (!obs->timeSinceStartup.has_value()) //TODO: Make this work with insTime
+    if (!obs->timeSinceStartup.has_value()) // TODO: Make this work with insTime
     {
         LOG_ERROR("{}: Can only process data with an insTime", nameId());
         return;
@@ -539,8 +539,8 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
 
     // Calculate Roll and Pitch from gravity vector direction (only valid under static conditions)
     const Eigen::Vector3d accel_b = imuPosition.quatAccel_bp() * accel_p * -1;
-    auto roll = rollFromStaticAccelerationObs(accel_b);
-    auto pitch = pitchFromStaticAccelerationObs(accel_b);
+    auto roll = math::rollFromStaticAccelerationObs(accel_b);
+    auto pitch = math::pitchFromStaticAccelerationObs(accel_b);
 
     // TODO: Determine Velocity first and if vehicle not static, initialize the attitude from velocity
 

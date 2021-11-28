@@ -4,9 +4,10 @@
 
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
+#include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
+#include "Navigation/Math/Attitude.hpp"
 #include "util/InsMechanization.hpp"
-#include "util/InsMath.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
 #include "util/Time/TimeBase.hpp"
 
@@ -506,15 +507,15 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     Eigen::Vector3d accel_n = calcTrajectoryAccel_n(imuUpdateTime);
 
     double roll = 0;
-    double pitch = pitchFromVelocity(vel_n);
-    double yaw = yawFromVelocity(vel_n);
+    double pitch = math::pitchFromVelocity(vel_n);
+    double yaw = math::yawFromVelocity(vel_n);
     auto q_bn = trafo::quat_bn(roll, pitch, yaw);
 
     const Eigen::Vector3d& angularVelocity_ie_e = InsConst::angularVelocity_ie_e;
     const Eigen::Vector3d angularVelocity_ie_n = q_ne * angularVelocity_ie_e;
-    const double R_N = earthRadius_N(position_lla(0));
-    const double R_E = earthRadius_E(position_lla(0));
-    const Eigen::Vector3d angularVelocity_en_n = transportRate(position_lla, velocity_n, R_N, R_E);
+    const double R_N = ellipsoid::earthRadius_N(position_lla(0));
+    const double R_E = ellipsoid::earthRadius_E(position_lla(0));
+    const Eigen::Vector3d angularVelocity_en_n = ellipsoid::transportRate(position_lla, velocity_n, R_N, R_E);
 
     // Apply Coriolis Acceleration
     accel_n += (2 * angularVelocity_ie_n + angularVelocity_en_n).cross(velocity_n);
@@ -547,7 +548,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     }
     if (simulationStopCondition == StopCondition::DistanceOrCircles && trajectoryType == TrajectoryType::Linear)
     {
-        auto horizontalDistance = calcGeographicalDistance(startPosition_lla(0), startPosition_lla(1), position_lla(0), position_lla(1));
+        auto horizontalDistance = ellipsoid::calcGeographicalDistance(startPosition_lla(0), startPosition_lla(1), position_lla(0), position_lla(1));
         auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(startPosition_lla(2) - position_lla(2), 2));
         if (distance > linearTrajectoryDistanceForStop)
         {
@@ -593,8 +594,8 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     Eigen::Vector3d vel_n = calcVelocity_n(gnssUpdateTime);
 
     double roll = 0;
-    double pitch = pitchFromVelocity(vel_n);
-    double yaw = yawFromVelocity(vel_n);
+    double pitch = math::pitchFromVelocity(vel_n);
+    double yaw = math::yawFromVelocity(vel_n);
 
     if (trajectoryType == TrajectoryType::Fixed)
     {
@@ -611,7 +612,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     }
     if (simulationStopCondition == StopCondition::DistanceOrCircles && trajectoryType == TrajectoryType::Linear)
     {
-        auto horizontalDistance = calcGeographicalDistance(startPosition_lla(0), startPosition_lla(1), position_lla(0), position_lla(1));
+        auto horizontalDistance = ellipsoid::calcGeographicalDistance(startPosition_lla(0), startPosition_lla(1), position_lla(0), position_lla(1));
         auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(startPosition_lla(2) - position_lla(2), 2));
         if (distance > linearTrajectoryDistanceForStop)
         {
@@ -656,7 +657,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
         y.block<3, 1>(0, 0) = startPosition_lla;
         y.block<3, 1>(3, 0) = velocity_n;
 
-        y = Math::RungeKutta1(curvilinearPositionDerivative, time, y, time);
+        y = math::RungeKutta1(curvilinearPositionDerivative, time, y, time);
 
         return y.block<3, 1>(0, 0);
     }

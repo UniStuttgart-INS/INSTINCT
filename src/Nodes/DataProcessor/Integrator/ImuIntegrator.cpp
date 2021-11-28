@@ -4,7 +4,7 @@
 
 #include "util/InsMechanization.hpp"
 #include "Navigation/Constants.hpp"
-#include "util/InsMath.hpp"
+#include "Navigation/Ellipsoid/Ellipsoid.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include <imgui_internal.h>
@@ -733,14 +733,14 @@ void NAV::ImuIntegrator::integrateObservation()
         LOG_DATA("{}: angularVelocity_ie_n__t1 = {}", nameId(), angularVelocity_ie_n__t1.transpose());
 
         /// North/South (meridian) earth radius [m]
-        double R_N = earthRadius_N(posVelAtt__t1->latitude());
+        double R_N = ellipsoid::earthRadius_N(posVelAtt__t1->latitude());
         LOG_DATA("{}: R_N = {}", nameId(), R_N);
         /// East/West (prime vertical) earth radius [m]
-        double R_E = earthRadius_E(posVelAtt__t1->latitude());
+        double R_E = ellipsoid::earthRadius_E(posVelAtt__t1->latitude());
         LOG_DATA("{}: R_E = {}", nameId(), R_E);
 
         /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
-        Eigen::Vector3d angularVelocity_en_n__t1 = transportRate(posVelAtt__t1->latLonAlt(), velocity_n__t1, R_N, R_E);
+        Eigen::Vector3d angularVelocity_en_n__t1 = ellipsoid::transportRate(posVelAtt__t1->latLonAlt(), velocity_n__t1, R_N, R_E);
         LOG_DATA("{}: angularVelocity_en_n__t1 = {}", nameId(), angularVelocity_en_n__t1.transpose());
 
         /// [latitude 𝜙, longitude λ, altitude h] (tₖ₋₁) Position in [rad, rad, m] at the time tₖ₋₁

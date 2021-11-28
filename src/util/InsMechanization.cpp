@@ -4,6 +4,7 @@
 
 #include "util/Logger.hpp"
 
+#include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
 
@@ -81,9 +82,9 @@ Eigen::Matrix<double, 6, 1> curvilinearPositionDerivative(const Eigen::Matrix<do
     const auto& v_D = y(5);
 
     // North/South (meridian) earth radius [m]
-    double R_N = earthRadius_N(latitude);
+    double R_N = ellipsoid::earthRadius_N(latitude);
     // East/West (prime vertical) earth radius [m]
-    double R_E = earthRadius_E(latitude);
+    double R_E = ellipsoid::earthRadius_E(latitude);
 
     Eigen::Matrix<double, 6, 1> y_dot;
     y_dot << v_N / (R_N + altitude),
@@ -120,7 +121,7 @@ Eigen::Quaterniond updateQuaternion_nb_RungeKutta1(const long double& timeDiffer
 
     // Updated Quaternion (eq. 8.2)
     Eigen::Quaterniond q_nb__t0;
-    q_nb__t0 = Math::rungeKutta1(quaternionUpdateModel, timeDifferenceSec__t0, quaternion_nb__t1.coeffs(), angularVelocity_nb_b__t0);
+    q_nb__t0 = math::rungeKutta1(quaternionUpdateModel, timeDifferenceSec__t0, quaternion_nb__t1.coeffs(), angularVelocity_nb_b__t0);
 
     // Normalize Quaternion
     q_nb__t0.normalize();
@@ -172,7 +173,7 @@ Eigen::Quaterniond updateQuaternion_ep_RungeKutta3(
 
     // Updated Quaternion (eq. 8.2)
     Eigen::Quaterniond q_ep__t0;
-    q_ep__t0 = Math::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_ep__t2.coeffs(),
+    q_ep__t0 = math::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_ep__t2.coeffs(),
                                  angularVelocity_ep_p__t2, angularVelocity_ep_p__t1, angularVelocity_ep_p__t0);
 
     // Normalize Quaternion
@@ -226,7 +227,7 @@ Eigen::Quaterniond updateQuaternion_nb_RungeKutta3(
 
     // Updated Quaternion (eq. 8.2)
     Eigen::Quaterniond q_nb__t0;
-    q_nb__t0 = Math::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_nb__t2.coeffs(),
+    q_nb__t0 = math::rungeKutta3(quaternionUpdateModel, integrationStep, quaternion_nb__t2.coeffs(),
                                  angularVelocity_nb_b__t2, angularVelocity_nb_b__t1, angularVelocity_nb_b__t0);
 
     // Normalize Quaternion
@@ -257,7 +258,7 @@ Eigen::Vector3d updateVelocity_n_RungeKutta1(const long double& timeDifferenceSe
     state___t1.gravity_n = gravity_n__t1;
 
     /// v_n (tₖ) Velocity in [m/s], in navigation coordinates, at the time tₖ
-    Eigen::Vector3d velocity_n__t0 = Math::rungeKutta1(velocityUpdateModel, timeDifferenceSec__t0, velocity_n__t1, state___t1);
+    Eigen::Vector3d velocity_n__t0 = math::rungeKutta1(velocityUpdateModel, timeDifferenceSec__t0, velocity_n__t1, state___t1);
 
     return velocity_n__t0;
 }
@@ -415,7 +416,7 @@ Eigen::Vector3d updateVelocity_n_RungeKutta3(const long double& timeDifferenceSe
     state__t2.gravity_n = state__t0.gravity_n;
 
     /// v_n (tₖ) Velocity in [m/s], in navigation coordinates, at the time tₖ
-    Eigen::Vector3d velocity_n__t0 = Math::rungeKutta3(velocityUpdateModel, integrationStep, velocity_n__t2, state__t2, state__t1, state__t0);
+    Eigen::Vector3d velocity_n__t0 = math::rungeKutta3(velocityUpdateModel, integrationStep, velocity_n__t2, state__t2, state__t1, state__t0);
 
     return velocity_n__t0;
 }
@@ -469,60 +470,6 @@ Eigen::Vector3d updatePosition_lla(const long double& timeDifferenceSec__t0, // 
 //                                             Earth Parameters
 // ###########################################################################################################
 
-double earthRadius_N(const double& latitude, const double& a, const double& e_squared)
-{
-    double k = std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
-
-    /// North/South (meridian) earth radius [m]
-    double R_N = a * (1 - e_squared) / std::pow(k, 3);
-
-    return R_N;
-}
-
-double earthRadius_E(const double& latitude, const double& a, const double& e_squared)
-{
-    /// East/West (prime vertical) earth radius [m]
-    double R_E = a / std::sqrt(1 - e_squared * std::pow(std::sin(latitude), 2));
-
-    return R_E;
-}
-
-Eigen::Vector3d transportRate(const Eigen::Vector3d& latLonAlt__t1,  // [𝜙, λ, h] (tₖ₋₁) Latitude, Longitude and altitude in [rad, rad, m] at the time tₖ₋₁
-                              const Eigen::Vector3d& velocity_n__t1, // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
-                              const double& R_N,                     // R_N North/South (meridian) earth radius [m]
-                              const double& R_E)                     // R_E East/West (prime vertical) earth radius [m]
-{
-    /// 𝜙 Latitude in [rad]
-    const auto& latitude = latLonAlt__t1(0);
-    /// h Altitude in [m]
-    const auto& altitude = latLonAlt__t1(2);
-
-    /// Velocity North in [m/s]
-    const auto& v_N = velocity_n__t1(0);
-    /// Velocity East in [m/s]
-    const auto& v_E = velocity_n__t1(1);
-
-    /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame,
-    /// in navigation coordinates see Gleason (eq. 6.15)
-    Eigen::Vector3d angularVelocity_en_n__t1;
-    angularVelocity_en_n__t1(0) = v_E / (R_E + altitude);
-    angularVelocity_en_n__t1(1) = -v_N / (R_N + altitude);
-    angularVelocity_en_n__t1(2) = -angularVelocity_en_n__t1(0) * std::tan(latitude);
-
-    return angularVelocity_en_n__t1;
-}
-
-Eigen::Matrix3d AngularVelocityEarthSkew_ie_n(double latitude)
-{
-    // Math: \mathbf{\Omega}_{ie}^{n} = \omega_{ie} \begin{pmatrix} 0 & \sin(L_b) & 0 \\ -\sin(L_b) & 0 & -\cos(L_b) \\ 0 & \cos(L_b) & 0 \end{pmatrix} \qquad \text{P. Groves}\,(5.34)
-    Eigen::Matrix3d Omega;
-    Omega << 0, std::sin(latitude), 0,
-        -std::sin(latitude), 0, -std::cos(latitude),
-        0, std::cos(latitude), 0;
-
-    return InsConst::angularVelocity_ie * Omega;
-}
-
 std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError)
 {
     auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
@@ -532,7 +479,7 @@ std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<con
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
     Eigen::Vector3d attError = pvaError->attitudeError_n();
-    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + Math::skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
+    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + math::skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
     posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16

@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 #include "EigenApprox.hpp"
 
-#include "util/InsTransformations.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "util/Logger.hpp"
 
 #include "util/Eigen.hpp"

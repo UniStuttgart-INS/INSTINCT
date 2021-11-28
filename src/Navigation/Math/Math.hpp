@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <Eigen/Core>
 
-namespace NAV::Math
+namespace NAV::math
 {
 
 /// @brief Calculates the factorial of an unsigned integer
@@ -42,4 +42,13 @@ T secant(const T& x)
     return 1.0 / std::cos(x);
 }
 
-} // namespace NAV::Math
+/// @brief Returns the sign of the given value
+/// @param[in] val Value to get the sign from
+/// @return Sign of the given value
+template<typename T>
+int sgn(const T& val)
+{
+    return (T(0) < val) - (val < T(0));
+}
+
+} // namespace NAV::math
