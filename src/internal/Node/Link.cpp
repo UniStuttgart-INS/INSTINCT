@@ -1,6 +1,6 @@
 #include "Link.hpp"
 
-#include "internal/Json.hpp"
+#include "util/Json.hpp"
 
 void NAV::to_json(json& j, const Link& link)
 {

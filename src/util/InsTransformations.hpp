@@ -34,7 +34,7 @@
 
 #include "util/Eigen.hpp"
 
-#include "util/Constants.hpp"
+#include "Navigation/Constants.hpp"
 
 namespace NAV
 {

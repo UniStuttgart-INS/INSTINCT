@@ -8,7 +8,7 @@ namespace nm = NAV::NodeManager;
 
 #include "internal/gui/widgets/Splitter.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
-#include "internal/Json.hpp"
+#include "util/Json.hpp"
 
 #include "util/Time/TimeBase.hpp"
 #include "util/InsTransformations.hpp"

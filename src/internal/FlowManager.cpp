@@ -1,6 +1,6 @@
 #include "internal/FlowManager.hpp"
 
-#include "internal/Json.hpp"
+#include "util/Json.hpp"
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;

@@ -9,7 +9,7 @@
 #include <vector>
 #include <fstream>
 
-#include "util/Time/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json; ///< json namespace

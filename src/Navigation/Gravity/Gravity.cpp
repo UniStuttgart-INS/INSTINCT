@@ -6,7 +6,7 @@
 #include "Eigen/Core"
 #include "util/InsTransformations.hpp"
 #include "util/Logger.hpp"
-#include "util/Constants.hpp"
+#include "Navigation/Constants.hpp"
 #include "internal/AssociatedLegendre.hpp"
 #include "internal/egm96Coeffs.hpp"
 

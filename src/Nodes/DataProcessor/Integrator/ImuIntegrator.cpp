@@ -3,7 +3,7 @@
 #include "util/Logger.hpp"
 
 #include "util/InsMechanization.hpp"
-#include "util/Constants.hpp"
+#include "Navigation/Constants.hpp"
 #include "util/InsMath.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"

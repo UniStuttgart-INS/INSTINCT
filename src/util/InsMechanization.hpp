@@ -6,7 +6,7 @@
 #pragma once
 
 #include "util/Eigen.hpp"
-#include "util/Constants.hpp"
+#include "Navigation/Constants.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
 #include "NodeData/State/PVAError.hpp"

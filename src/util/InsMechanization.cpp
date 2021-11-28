@@ -1,11 +1,11 @@
 #include "InsMechanization.hpp"
 
-#include "Constants.hpp"
+#include "Navigation/Constants.hpp"
 
 #include "util/Logger.hpp"
 
-#include "util/Math/Math.hpp"
-#include "util/Math/NumericalIntegration.hpp"
+#include "Navigation/Math/Math.hpp"
+#include "Navigation/Math/NumericalIntegration.hpp"
 
 namespace NAV
 {

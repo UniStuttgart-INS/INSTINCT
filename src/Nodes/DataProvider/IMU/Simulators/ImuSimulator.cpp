@@ -4,10 +4,10 @@
 
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
-#include "util/Gravity/Gravity.hpp"
+#include "Navigation/Gravity/Gravity.hpp"
 #include "util/InsMechanization.hpp"
 #include "util/InsMath.hpp"
-#include "util/Math/NumericalIntegration.hpp"
+#include "Navigation/Math/NumericalIntegration.hpp"
 #include "util/Time/TimeBase.hpp"
 
 #include "internal/NodeManager.hpp"

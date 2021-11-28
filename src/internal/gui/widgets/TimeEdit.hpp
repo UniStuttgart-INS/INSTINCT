@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "util/Time/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 namespace NAV::gui::widgets
 {

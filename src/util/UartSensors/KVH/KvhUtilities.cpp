@@ -1,7 +1,7 @@
 #include "KvhUtilities.hpp"
 
 #include "util/Logger.hpp"
-#include "util/Constants.hpp"
+#include "Navigation/Constants.hpp"
 #include "util/UartSensors/KVH/KvhUartSensor.hpp"
 #include <array>
 

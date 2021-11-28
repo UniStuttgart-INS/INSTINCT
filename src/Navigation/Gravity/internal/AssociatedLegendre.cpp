@@ -1,7 +1,7 @@
 #include "AssociatedLegendre.hpp"
 #include "util/Logger.hpp"
 
-#include "util/Constants.hpp"
+#include "Navigation/Constants.hpp"
 #include <cmath>
 #include <array>
 

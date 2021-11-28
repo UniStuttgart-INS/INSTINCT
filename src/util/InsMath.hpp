@@ -1,11 +1,11 @@
 /// @file InsMath.hpp
-/// @brief
+/// @brief Math functions
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-09-23
 
 #pragma once
 
-#include "Constants.hpp"
+#include "Navigation/Constants.hpp"
 
 #include "util/Eigen.hpp"
 

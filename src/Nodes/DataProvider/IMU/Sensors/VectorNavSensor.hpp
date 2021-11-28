@@ -9,7 +9,7 @@
 #include "Nodes/DataProvider/Protocol/UartSensor.hpp"
 #include "vn/sensors.h"
 
-#include "util/Time/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 #include "util/Container/ScrollingBuffer.hpp"
 
 #include <vector>

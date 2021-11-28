@@ -1,5 +1,5 @@
 /// @file NumericalIntegration.hpp
-/// @brief
+/// @brief Provides Numerical integration methods
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @date 2021-09-08

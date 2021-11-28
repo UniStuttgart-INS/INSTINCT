@@ -4,7 +4,7 @@
 #include "util/InsMath.hpp"
 #include "util/InsMechanization.hpp"
 #include "util/InsTransformations.hpp"
-#include "util/Gravity/Gravity.hpp"
+#include "Navigation/Gravity/Gravity.hpp"
 
 #include "util/Eigen.hpp"
 
