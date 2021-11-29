@@ -9,7 +9,7 @@
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
 
-Eigen::MatrixXd NAV::gravity::internal::readAscii2Matrix()
+Eigen::MatrixXd NAV::internal::readAscii2Matrix()
 {
     std::string line;
     std::ifstream myfileN("resources/data/egm96_to360.ascii");

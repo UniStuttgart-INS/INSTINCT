@@ -1,4 +1,4 @@
-/// @file InsMath.hpp
+/// @file Math.hpp
 /// @brief Simple Math functions
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-09-23
@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <Eigen/Core>
 
-namespace NAV::math
+namespace NAV
 {
 
 /// @brief Calculates the factorial of an unsigned integer
@@ -51,4 +51,4 @@ int sgn(const T& val)
     return (T(0) < val) - (val < T(0));
 }
 
-} // namespace NAV::math
+} // namespace NAV

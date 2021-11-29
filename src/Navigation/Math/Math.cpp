@@ -1,6 +1,9 @@
 #include "Math.hpp"
 
-uint64_t NAV::math::factorial(uint64_t n)
+namespace NAV
+{
+
+uint64_t factorial(uint64_t n)
 {
     // uint64_t is required to calculate factorials of n > 12 (Limit of uint32_t). The limit of uint64_t is at n = 20
     constexpr std::array factorials = {
@@ -33,3 +36,5 @@ uint64_t NAV::math::factorial(uint64_t n)
     }
     return n * factorial(n - 1);
 }
+
+} // namespace NAV

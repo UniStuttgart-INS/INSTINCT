@@ -17,6 +17,7 @@ namespace nm = NAV::NodeManager;
 #include "util/InsMechanization.hpp"
 #include "Navigation/Constants.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
+#include "Navigation/INS/Mechanization.hpp"
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "util/Logger.hpp"
@@ -662,17 +663,17 @@ void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<con
 void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol)
 {
     // ------------------------------------------- Data preparation ----------------------------------------------
-    /// v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
+    // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& velocity_n__t1 = inertialNavSol->velocity_n();
-    /// Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
+    // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
     const Eigen::Vector3d position_lla__t1 = inertialNavSol->latLonAlt();
-    /// q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
+    // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
     const Eigen::Quaterniond& quaternion_nb__t1 = inertialNavSol->quaternion_nb();
 
     // Prime vertical radius of curvature (East/West) [m]
-    const double R_E = ellipsoid::earthRadius_E(position_lla__t1(0));
+    const double R_E = calcEarthRadius_E(position_lla__t1(0));
     // Meridian radius of curvature in [m]
-    const double R_N = ellipsoid::earthRadius_N(position_lla__t1(0));
+    const double R_N = calcEarthRadius_N(position_lla__t1(0));
 
     // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
     Eigen::Matrix3d DCM_nb = quaternion_nb__t1.toRotationMatrix();
@@ -687,7 +688,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     // omega_in^n = omega_ie^n + omega_en^n
     Eigen::Vector3d angularRate_in_n = inertialNavSol->quaternion_ne() * InsConst::angularVelocity_ie_e
-                                       + ellipsoid::transportRate(position_lla__t1, velocity_n__t1, R_N, R_E);
+                                       + calcTransportRate_n(position_lla__t1, velocity_n__t1, R_N, R_E);
 
     // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
     Eigen::Vector3d beta_a = Eigen::Vector3d::Zero();
@@ -831,9 +832,9 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     const Eigen::Vector3d position_lla__t1 = latestInertialNavSol->latLonAlt();
 
     // Prime vertical radius of curvature (East/West) [m]
-    const double R_E = ellipsoid::earthRadius_E(position_lla__t1(0));
+    const double R_E = calcEarthRadius_E(position_lla__t1(0));
     // Meridian radius of curvature in [m]
-    const double R_N = ellipsoid::earthRadius_N(position_lla__t1(0));
+    const double R_N = calcEarthRadius_N(position_lla__t1(0));
 
     // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
     Eigen::Matrix3d DCM_nb = latestInertialNavSol->quaternion_nb().toRotationMatrix();
@@ -849,7 +850,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
                                            - accumulatedImuBiases.biasGyro_b;
 
     // Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
-    Eigen::Matrix3d Omega_ie_n = math::skewSymmetricMatrix(latestInertialNavSol->quaternion_ne() * InsConst::angularVelocity_ie_e);
+    Eigen::Matrix3d Omega_ie_n = skewSymmetricMatrix(latestInertialNavSol->quaternion_ne() * InsConst::angularVelocity_ie_e);
 
     // -------------------------------------------- GUI Parameters -----------------------------------------------
 
@@ -1043,8 +1044,8 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_12_n(double latitude, doubl
 {
     // Math: \mathbf{F}_{12}^n = \begin{bmatrix} 0 & \frac{1}{R_E + h} & 0 \\ -\frac{1}{R_N + h} & 0 & 0 \\ 0 & -\frac{\tan{\phi}}{R_E + h} & 0 \end{bmatrix} \qquad \text{P. Groves}\,(14.65) (\text{sign flip})
     Eigen::Matrix3d F_12_n = Eigen::Matrix3d::Zero(3, 3);
-    double R_E = ellipsoid::earthRadius_E(latitude);
-    double R_N = ellipsoid::earthRadius_N(latitude);
+    double R_E = calcEarthRadius_E(latitude);
+    double R_N = calcEarthRadius_N(latitude);
 
     F_12_n(0, 1) = 1 / (R_E + height);
     F_12_n(1, 0) = -1 / (R_N + height);
@@ -1057,8 +1058,8 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_13_n(double latitude, doubl
 {
     // Math: \mathbf{F}_{13}^n = \begin{bmatrix} -\omega_{ie}\sin{\phi} & 0 & -\frac{v_E}{(R_E + h)^2} \\ 0 & 0 & \frac{v_N}{(R_N + h)^2} \\ -\omega_{ie}\cos{\phi} - \frac{v_E}{(R_E + h)\cos^2{\phi}} & 0 & \frac{v_E\tan{\phi}}{(R_E + h)^2} \end{bmatrix} \qquad \text{P. Groves}\,(14.66) (\text{sign flip})
     Eigen::Matrix3d F_13_n = Eigen::Matrix3d::Zero(3, 3);
-    double R_E = ellipsoid::earthRadius_E(latitude);
-    double R_N = ellipsoid::earthRadius_N(latitude);
+    double R_E = calcEarthRadius_E(latitude);
+    double R_N = calcEarthRadius_N(latitude);
 
     const double& v_N = v_eb_n(0);
     const double& v_E = v_eb_n(1);
@@ -1095,8 +1096,8 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_22_n(const Eigen::Vector3d&
 {
     // Math: \mathbf{F}_{22}^n = \begin{bmatrix} \frac{v_D}{R_N+h} & -2\frac{v_E\tan{\phi}}{R_E+h}-2\omega_{ie}\sin{\phi} & \frac{v_N}{R_N+h} \\ \frac{v_E\tan{\phi}}{R_E+h}+2\omega_{ie}\sin{\phi} & \frac{v_N\tan{\phi}+v_D}{R_E+h} & \frac{v_E}{R_E+h}+2\omega_{ie}\cos{\phi} \\ -\frac{2v_N}{R_N+h} & -\frac{2v_E}{R_E+h}-2\omega_{ie}\cos{\phi} & 0 \end{bmatrix} \qquad \text{P. Groves}\,(14.68)
     Eigen::Matrix3d F_22_n = Eigen::Matrix3d::Zero(3, 3);
-    double R_E = ellipsoid::earthRadius_E(latitude);
-    double R_N = ellipsoid::earthRadius_N(latitude);
+    double R_E = calcEarthRadius_E(latitude);
+    double R_N = calcEarthRadius_N(latitude);
 
     const double& v_N = v_eb_n(0);
     const double& v_E = v_eb_n(1);
@@ -1122,12 +1123,12 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_23_n(const Eigen::Vector3d&
 {
     // Math: \mathbf{F}_{23}^n = \begin{bmatrix} -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi} & 0 & \frac{v_E^2\tan{\phi}}{(R_E+h)^2}-\frac{v_Nv_D}{(R_N+h)^2} \\ \frac{v_Nv_E}{(R_E+h)\cos^2{\phi}}+2v_N\omega_{ie}\cos{\phi}-2v_D\omega_{ie}\sin{\phi} & 0 & -\frac{v_Nv_E\tan{\phi}+v_Ev_D}{(R_E+h)^2} \\ 2v_E\omega_{ie}\sin{\phi} & 0 & \frac{v_E^2}{(R_E+h)^2}+\frac{v_N^2}{(R_N+h)^2}-\frac{2g_0}{r_{eS}^e} \end{bmatrix} \qquad \text{P. Groves}\,(14.69)
     Eigen::Matrix3d F_23_n = Eigen::Matrix3d::Zero(3, 3);
-    double R_E = ellipsoid::earthRadius_E(latitude);
-    double R_N = ellipsoid::earthRadius_N(latitude);
+    double R_E = calcEarthRadius_E(latitude);
+    double R_N = calcEarthRadius_N(latitude);
     // Magnitude of gravity vector at ellipsoid height in [m / s^2]
-    double g_0 = gravity::calcGravitation_n_SomiglianaAltitude(latitude, 0).norm();
+    double g_0 = calcGravitation_n_SomiglianaAltitude(latitude, 0).norm();
     // Geocentric Radius in [m]
-    double r_eS_e = ellipsoid::geocentricRadius(latitude, R_E, InsConst::WGS84_e_squared);
+    double r_eS_e = calcGeocentricRadius(latitude, R_E, InsConst::WGS84_e_squared);
 
     const double& v_N = v_eb_n(0);
     const double& v_E = v_eb_n(1);
@@ -1157,8 +1158,8 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_23_n(const Eigen::Vector3d&
 Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_32_n(double latitude, double height)
 {
     // Math: \mathbf{F}_{32}^n = \begin{bmatrix} \frac{1}{R_N + h} & 0 & 0 \\ 0 & \frac{1}{(R_E + h)\cos{\phi}} & 0 \\ 0 & 0 & -1 \end{bmatrix} \quad \text{P. Groves}\,(14.70)
-    double R_E = ellipsoid::earthRadius_E(latitude);
-    double R_N = ellipsoid::earthRadius_N(latitude);
+    double R_E = calcEarthRadius_E(latitude);
+    double R_N = calcEarthRadius_N(latitude);
 
     Eigen::Matrix3d F_32_n = Eigen::Matrix3d::Zero(3, 3);
     F_32_n(0, 0) = 1.0 / (R_N + height);
@@ -1172,8 +1173,8 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::systemMatrixF_33_n(const Eigen::Vector3d&
 {
     // Math: \mathbf{F}_{33}^n = \begin{bmatrix} 0 & 0 & -\frac{v_N}{(R_N + h)^2} \\ \frac{v_E \sin{\phi}}{(R_E + h) \cos^2{\phi}} & 0 & -\frac{v_E}{(R_E + h)^2 \cos{\phi}} \\ 0 & 0 & 0 \end{bmatrix} \quad \text{P. Groves}\,(14.71)
     Eigen::Matrix3d F_33_n = Eigen::Matrix3d::Zero(3, 3);
-    double R_E = ellipsoid::earthRadius_E(latitude);
-    double R_N = ellipsoid::earthRadius_N(latitude);
+    double R_E = calcEarthRadius_E(latitude);
+    double R_N = calcEarthRadius_N(latitude);
 
     const double& v_N = v_eb_n(0);
     const double& v_E = v_eb_n(1);
@@ -1402,7 +1403,7 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_r1_n(const Eigen::Matri
 {
     // Math: \mathbf{H}_{r1}^n \approx \mathbf{\hat{T}}_{r(n)}^p \begin{bmatrix} \begin{pmatrix} \mathbf{C}_b^n \mathbf{l}_{ba}^p \end{pmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
     Eigen::Vector3d product = DCM_nb * leverArm_InsGnss_b;
-    return T_rn_p * math::skewSymmetricMatrix(product);
+    return T_rn_p * skewSymmetricMatrix(product);
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_v1_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n)
@@ -1410,13 +1411,13 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_v1_n(const Eigen::Matri
     // Math: \mathbf{H}_{v1}^n \approx \begin{bmatrix} \begin{Bmatrix} \mathbf{C}_b^n (\mathbf{\hat{\omega}}_{ib}^b \wedge \mathbf{l}_{ba}^b) - \mathbf{\hat{\Omega}}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{Bmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
     Eigen::Vector3d product = DCM_nb * (angularRate_ib_b.cross(leverArm_InsGnss_b)) - Omega_ie_n * DCM_nb * leverArm_InsGnss_b;
 
-    return math::skewSymmetricMatrix(product);
+    return skewSymmetricMatrix(product);
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_v5_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss_b)
 {
     // Math: \mathbf{H}_{v5}^n = \mathbf{C}_b^n \begin{bmatrix} \mathbf{l}_{ba}^b \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    return DCM_nb * math::skewSymmetricMatrix(leverArm_InsGnss_b);
+    return DCM_nb * skewSymmetricMatrix(leverArm_InsGnss_b);
 }
 
 Eigen::Matrix<double, 6, 6> NAV::LooselyCoupledKF::measurementNoiseCovariance(const Eigen::Vector3d& gnssVarianceLatLonAlt, const Eigen::Vector3d& gnssVarianceVelocity)

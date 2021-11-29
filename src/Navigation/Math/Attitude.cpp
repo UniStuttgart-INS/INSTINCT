@@ -4,7 +4,7 @@
 
 #include "Math.hpp"
 
-namespace NAV::math
+namespace NAV
 {
 
 double rollFromStaticAccelerationObs(const Eigen::Vector3d& accel_b)
@@ -35,4 +35,4 @@ double pitchFromVelocity(const Eigen::Vector3d& velocity_n)
     return std::atan(-velocity_n(2) / std::sqrt(std::pow(velocity_n(0), 2) + std::pow(velocity_n(1), 2)));
 }
 
-} // namespace NAV::math
+} // namespace NAV

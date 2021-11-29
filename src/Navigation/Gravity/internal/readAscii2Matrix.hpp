@@ -7,9 +7,9 @@
 
 #include "util/Eigen.hpp"
 
-namespace NAV::gravity::internal
+namespace NAV::internal
 {
 /// @brief Read function for EGM96 coefficients
 /// @return 'coeffs' MatrixXd of the EGM96 coefficients
 [[nodiscard]] Eigen::MatrixXd readAscii2Matrix();
-} // namespace NAV::gravity::internal
+} // namespace NAV::internal

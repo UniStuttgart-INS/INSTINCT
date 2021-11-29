@@ -5,7 +5,7 @@
 #include <cmath>
 #include <array>
 
-std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::gravity::internal::associatedLegendre(int ndegree, double theta)
+std::pair<Eigen::MatrixXd, Eigen::MatrixXd> NAV::internal::associatedLegendre(int ndegree, double theta)
 {
     // Index needed for the calculation of all necessary 'Pd' entries up to 'ndegree' (--> Pd(n = ndegree, m = ndegree) is dependent on P(n = ndegree, m = ndegree + 1))
     int N = ndegree + 2;

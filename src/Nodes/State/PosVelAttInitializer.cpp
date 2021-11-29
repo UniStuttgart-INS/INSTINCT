@@ -539,8 +539,8 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
 
     // Calculate Roll and Pitch from gravity vector direction (only valid under static conditions)
     const Eigen::Vector3d accel_b = imuPosition.quatAccel_bp() * accel_p * -1;
-    auto roll = math::rollFromStaticAccelerationObs(accel_b);
-    auto pitch = math::pitchFromStaticAccelerationObs(accel_b);
+    auto roll = rollFromStaticAccelerationObs(accel_b);
+    auto pitch = pitchFromStaticAccelerationObs(accel_b);
 
     // TODO: Determine Velocity first and if vehicle not static, initialize the attitude from velocity
 

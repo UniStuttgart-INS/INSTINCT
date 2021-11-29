@@ -7,7 +7,7 @@
 
 #include <Eigen/Core>
 
-namespace NAV::math
+namespace NAV
 {
 
 /// @brief Calculates the roll angle from a static acceleration measurement
@@ -38,4 +38,4 @@ namespace NAV::math
 /// @note See Groves (2013) equation (6.17)
 [[nodiscard]] double pitchFromVelocity(const Eigen::Vector3d& velocity_n);
 
-} // namespace NAV::math
+} // namespace NAV

@@ -7,7 +7,7 @@
 
 #include "util/Eigen.hpp"
 
-namespace NAV::gravity::internal
+namespace NAV::internal
 {
 /// @brief Calculates the associated Legendre Polynomial coefficients necessary for the EGM96
 /// @param[in] ndegree Degree of associated Legendre polynomials
@@ -17,4 +17,4 @@ namespace NAV::gravity::internal
 /// @note See 'GUT User Guide' (2018) chapter 4.2, equations (4.2.2), (4.2.3) and (4.2.6)
 [[nodiscard]] std::pair<Eigen::MatrixXd, Eigen::MatrixXd> associatedLegendre(int ndegree, double theta);
 
-} // namespace NAV::gravity::internal
+} // namespace NAV::internal

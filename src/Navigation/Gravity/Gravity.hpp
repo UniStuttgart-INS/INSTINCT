@@ -11,10 +11,8 @@
 namespace NAV
 {
 
-namespace gravity
-{
 /// Available Gravity Models
-enum class Model : int
+enum class GravityModel : int
 {
     WGS84,        ///< World Geodetic System 1984
     WGS84_Skydel, ///< World Geodetic System 1984 implemented by the Skydel Simulator // FIXME: Remove after Skydel uses the same as Instinct
@@ -27,7 +25,7 @@ enum class Model : int
 /// @param[in] latLonAlt [ϕ, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]
 /// @param[in] gravityModel Gravitation model to use
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
-[[nodiscard]] Eigen::Vector3d calcGravitation_n(const Eigen::Vector3d& latLonAlt, Model gravityModel = Model::EGM96);
+[[nodiscard]] Eigen::Vector3d calcGravitation_n(const Eigen::Vector3d& latLonAlt, GravityModel gravityModel = GravityModel::EGM96);
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
 ///        using the Somigliana model and makes corrections for altitude
@@ -71,13 +69,11 @@ enum class Model : int
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See Groves (2013) Chapter 2.4.7, p. 67ff
-[[nodiscard]] Eigen::Vector3d centrifugalAcceleration(const double& latitude, const double& altitude);
-
-} // namespace gravity
+[[nodiscard]] Eigen::Vector3d calcCentrifugalAcceleration(const double& latitude, const double& altitude);
 
 /// @brief Converts the enum to a string
 /// @param[in] gravityModel Enum value to convert into text
 /// @return String representation of the enum
-const char* to_string(gravity::Model gravityModel);
+const char* to_string(GravityModel gravityModel);
 
 } // namespace NAV

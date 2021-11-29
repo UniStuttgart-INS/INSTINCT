@@ -161,9 +161,9 @@ Eigen::Vector3d lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_sq
     const auto& longitude = latLonAlt(1); // λ Geodetic longitude
     const auto& altitude = latLonAlt(2);  // Altitude (Height above ground)
 
-    /// Radius of curvature of the ellipsoid in the prime vertical plane,
-    /// i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
-    double R_E = ellipsoid::earthRadius_E(latitude, a, e_squared);
+    // Radius of curvature of the ellipsoid in the prime vertical plane,
+    // i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
+    double R_E = calcEarthRadius_E(latitude, a, e_squared);
 
     // Jekeli, 2001 (eq. 1.80) (see  Torge, 1991, for further details)
     return { (R_E + altitude) * std::cos(latitude) * std::cos(longitude),

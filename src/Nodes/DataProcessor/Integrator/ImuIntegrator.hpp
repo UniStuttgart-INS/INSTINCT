@@ -117,10 +117,10 @@ class ImuIntegrator : public Node
         NED,  ///< Local North-East-Down frame
     };
     /// Frame to integrate the observations in
-    IntegrationFrame integrationFrame = IntegrationFrame::ECEF;
+    IntegrationFrame integrationFrame = IntegrationFrame::NED;
 
     /// @brief Gravity model selected in the GUI
-    gravity::Model gravityModel = gravity::Model::WGS84;
+    GravityModel gravityModel = GravityModel::EGM96;
 
     /// Integration Algorithm selection
     enum class IntegrationAlgorithm : size_t

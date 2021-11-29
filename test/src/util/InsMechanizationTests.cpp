@@ -5,6 +5,7 @@
 #include "util/InsMechanization.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
+#include "Navigation/INS/Mechanization.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 
 #include "util/Eigen.hpp"
@@ -78,6 +79,7 @@ TEST_CASE("[InsMechanization] Update Quaternions ep Runge-Kutta 3. Order", "[Ins
                             Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg3(trafo::quat2eulerZYX(quaternion_nb__t0));
 
                             // Titterton Ch. 3.6.3.3, eq. 3.52, p. 42
+                            // Gleason Ch. 6.2.3.1, eq. 6.8, p. 153 (top left term should be cos(theta))
                             Eigen::Vector3d expectedRollPitchYaw = Eigen::Vector3d{ roll, pitch, yaw }
                                                                    + Eigen::Vector3d{ (angularVelocity_ip_b__t0.y() * std::sin(roll) + angularVelocity_ip_b__t0.z() * std::cos(roll)) * std::tan(pitch) + angularVelocity_ip_b__t0.x(),
                                                                                       angularVelocity_ip_b__t0.y() * std::cos(roll) - angularVelocity_ip_b__t0.z() * std::sin(roll),
@@ -225,13 +227,13 @@ TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 1. Order", "[Ins
 
 TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 3. Order", "[InsMechanization]")
 {
-    /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+    // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec = 0.0001L;
-    /// ω_ip_p (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
+    // ω_ip_p (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
     Eigen::Vector3d angularVelocity_ip_b{ 0, 0, 1.0 };
-    /// ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in navigation coordinates, at the time tₖ
+    // ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in navigation coordinates, at the time tₖ
     Eigen::Vector3d angularVelocity_ie_n{ 0, 0, 0 };
-    /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame in navigation coordinates
+    // ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame in navigation coordinates
     Eigen::Vector3d angularVelocity_en_n{ 0, 0, 0 };
 
     std::deque<Eigen::Quaterniond> quats_nb;
@@ -268,7 +270,7 @@ TEST_CASE("[InsMechanization] Update Quaternions nb Runge-Kutta 3. Order", "[Ins
 
 TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[InsMechanization]")
 {
-    /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+    // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec = 0.0001L;
 
     // Stuttgart, Breitscheidstraße 2
@@ -285,11 +287,11 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
     double mountingAngleY = 180;
     double mountingAngleZ = 0;
 
-    auto gravity = gravity::calcGravitation_n_SomiglianaAltitude(latitude, altitude).norm();
+    auto gravity = calcGravitation_n_SomiglianaAltitude(latitude, altitude).norm();
     Eigen::Vector3d gravity_n{ 0, 0, gravity };
     Eigen::Vector3d gravity_e = trafo::quat_en(latitude, longitude) * gravity_n;
 
-    /// a_p Acceleration in [m/s^2], in navigation coordinates
+    // a_p Acceleration in [m/s^2], in navigation coordinates
     Eigen::Vector3d acceleration_n(1, -1, -gravity);
 
     Eigen::Vector3d acceleration_p = trafo::quat_pb(mountingAngleX, mountingAngleY, mountingAngleZ)
@@ -336,7 +338,7 @@ TEST_CASE("[InsMechanization] Update Velocity e-frame Runge-Kutta 3. Order", "[I
 
 TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[InsMechanization]")
 {
-    /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+    // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec = 0.0001L;
 
     // Stuttgart, Breitscheidstraße 2
@@ -349,22 +351,22 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
     double pitch = 0;
     double yaw = trafo::deg2rad(45);
 
-    auto gravity = gravity::calcGravitation_n_SomiglianaAltitude(latitude, altitude).norm();
+    auto gravity = calcGravitation_n_SomiglianaAltitude(latitude, altitude).norm();
     Eigen::Vector3d gravity_n{ 0, 0, gravity };
 
-    /// a_p Acceleration in [m/s^2], in navigation coordinates
+    // a_p Acceleration in [m/s^2], in navigation coordinates
     Eigen::Vector3d acceleration_n{ 1, 1, -gravity };
     Eigen::Vector3d acceleration_b = trafo::quat_bn(roll, pitch, yaw) * acceleration_n;
 
     Eigen::Quaterniond quaternion_nb = trafo::quat_nb(roll, pitch, yaw);
 
-    /// ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
+    // ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
     Eigen::Vector3d angularVelocity_ie_n = trafo::quat_ne(latitude, longitude) * InsConst::angularVelocity_ie_e;
 
-    /// North/South (meridian) earth radius [m]
-    double R_N = ellipsoid::earthRadius_N(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
-    /// East/West (prime vertical) earth radius [m]
-    double R_E = ellipsoid::earthRadius_E(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    // North/South (meridian) earth radius [m]
+    double R_N = calcEarthRadius_N(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    // East/West (prime vertical) earth radius [m]
+    double R_E = calcEarthRadius_E(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
     std::deque<Eigen::Vector3d> velocities;
     velocities.emplace_back(Eigen::Vector3d::Zero());
@@ -375,8 +377,8 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
     size_t count = 10000;
     for (size_t i = 0; i < count; i++)
     {
-        /// ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
-        Eigen::Vector3d angularVelocity_en_n = ellipsoid::transportRate({ latitude, longitude, altitude }, velocities.at(1), R_N, R_E);
+        // ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
+        Eigen::Vector3d angularVelocity_en_n = calcTransportRate_n({ latitude, longitude, altitude }, velocities.at(1), R_N, R_E);
 
         Eigen::Vector3d v_n = updateVelocity_n_Simpson(timeDifferenceSec, timeDifferenceSec,
                                                        acceleration_b,
@@ -404,7 +406,7 @@ TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[I
 
 TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
 {
-    /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+    // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double timeDifferenceSec = 0.0001L;
 
     // Stuttgart, Breitscheidstraße 2
@@ -425,9 +427,9 @@ TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
     }
     auto lla = trafo::ecef2lla_WGS84(position_e);
 
-    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, lla(0), lla(1)) == Approx(2.0).margin(0.002));
+    CHECK(calcGeographicalDistance(latitude, longitude, lla(0), lla(1)) == Approx(2.0).margin(0.002));
 
-    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, lla(0), longitude) == Approx(2.0).margin(0.002));
+    CHECK(calcGeographicalDistance(latitude, longitude, lla(0), longitude) == Approx(2.0).margin(0.002));
     CHECK(longitude == Approx(lla(1)).margin(1e-13));
 
     CHECK(latitude < lla(0));
@@ -435,7 +437,7 @@ TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
 
 TEST_CASE("[InsMechanization] Update Position lla-frame", "[InsMechanization]")
 {
-    /// Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
+    // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
     long double dt = 0.001L;
 
     // Stuttgart, Breitscheidstraße 2
@@ -458,18 +460,18 @@ TEST_CASE("[InsMechanization] Update Position lla-frame", "[InsMechanization]")
     for (size_t i = 0; i < count; i++)
     {
         // North/South (meridian) earth radius [m]
-        double R_N = ellipsoid::earthRadius_N(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
+        double R_N = calcEarthRadius_N(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
         // East/West (prime vertical) earth radius [m]
-        double R_E = ellipsoid::earthRadius_E(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
+        double R_E = calcEarthRadius_E(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
         latLonAlt = updatePosition_lla(dt, latLonAlt, velocity_n, R_N, R_E);
     }
     double distance = static_cast<double>(count) * static_cast<double>(dt) * velocity_b.norm();
 
     // updatePosition_n with lat lon formula shows really bad accuracy
-    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, latLonAlt(0), latLonAlt(1)) == Approx(distance).margin(0.004));
-    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, latLonAlt(0), longitude) == Approx(distance * std::cos(yaw)).margin(0.02));
-    CHECK(ellipsoid::calcGeographicalDistance(latitude, longitude, latitude, latLonAlt(1)) == Approx(distance * std::sin(yaw)).margin(0.02));
+    CHECK(calcGeographicalDistance(latitude, longitude, latLonAlt(0), latLonAlt(1)) == Approx(distance).margin(0.004));
+    CHECK(calcGeographicalDistance(latitude, longitude, latLonAlt(0), longitude) == Approx(distance * std::cos(yaw)).margin(0.02));
+    CHECK(calcGeographicalDistance(latitude, longitude, latitude, latLonAlt(1)) == Approx(distance * std::sin(yaw)).margin(0.02));
 
     CHECK(latitude < latLonAlt(0));
     CHECK(longitude < latLonAlt(1));

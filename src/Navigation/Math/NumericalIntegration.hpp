@@ -8,7 +8,7 @@
 
 #include <type_traits>
 
-namespace NAV::math
+namespace NAV
 {
 /// @brief Runge-Kutta First Order Algorithm (analogous to Euler Method)
 /// @param[in] f Model function
@@ -111,4 +111,4 @@ Y RungeKutta4(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, co
     return y_n + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
 }
 
-} // namespace NAV::math
+} // namespace NAV
