@@ -1,0 +1,196 @@
+namespace Instinct {
+
+/** \defgroup ImuSimulator IMU Simulator
+
+\section ImuSimulator-Acceleration-Measurements Acceleration Measurements
+
+The navigation equation for a local-navigation frame is (see \cite Titterton2004 Titterton, ch. 3.7.1, eq. 3.69, p. 47f)
+\fl{equation,eq-ImuSimulator-VelocityNav-equation-pre}
+  \boldsymbol{\dot{v}}^n = \mathbf{f}^n - \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis force}} +\ \mathbf{g}_l^n
+\f}
+where
+- \f$ \boldsymbol{v}^n = \begin{pmatrix} v_N & v_E & v_D \end{pmatrix}^T \f$ is the velocity with respect to the Earth in local-navigation frame coordinates,
+- \f$ \mathbf{f}^n = \begin{pmatrix} f_N & f_E & f_D \end{pmatrix}^T \f$ is the specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
+- \f$ \boldsymbol{\omega}_{ie}^n \f$ is the turn rate of the Earth expressed in local-navigation frame coordinates
+- \f$ \boldsymbol{\omega}_{en}^n \f$ is the turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
+- \f$ \mathbf{g}_l^n \f$ is the local gravity vector which is a combination of (see \cite Titterton2004 Titterton, ch. 3.71, eq. 3.75, p. 48)
+    - \f$ \mathbf{g} \f$ the local gravitation vector (caused by effects of mass attraction)
+    - \f$ \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \f$ the centripetal force caused by the Earth's rotation
+
+Therefore equation \eqref{eq-ImuSimulator-VelocityNav-equation-pre} becomes
+\fl{equation,eq-ImuSimulator-VelocityNav-equation}
+  \underbrace{\boldsymbol{\dot{v}}^n}_{\hidewidth\text{trajectory}\hidewidth}
+      = \overbrace{\mathbf{f}^n}^{\hidewidth\text{measured}\hidewidth}
+        -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis force}}
+        +\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
+        -\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centripetal force}}
+\f}
+
+which can be reordered to calculate the measured accelerations with
+\fl{equation,eq-ImuSimulator-VelocityNav-equation}
+  \underbrace{\mathbf{f}^n}_{\hidewidth\text{measured}\hidewidth}
+      = \overbrace{\boldsymbol{\dot{v}}^n}^{\hidewidth\text{trajectory}\hidewidth}
+        + \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis force}}
+        -\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
+        +\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centripetal force}}
+\f}
+
+\section ImuSimulator-Trajectory Trajectory calculation
+
+\subsection ImuSimulator-Trajectory-Fixed Fixed
+
+The fixed trajectory describes a geostationary position on Earth.
+
+\paragraph ImuSimulator-Trajectory-Fixed-Position Position
+\fl{equation,eq-ImuSimulator-Trajectory-Fixed-position}
+  \mathbf{x}^n = \begin{pmatrix} \phi & \lambda & h \end{pmatrix}^T = \text{const}
+\f}
+
+\paragraph ImuSimulator-Trajectory-Fixed-Velocity Velocity
+\fl{equation,eq-ImuSimulator-Trajectory-Fixed-velocity}
+  \boldsymbol{v}^n = \mathbf{\dot{x}}^n = 0
+\f}
+
+\paragraph ImuSimulator-Trajectory-Fixed-Acceleration Acceleration
+\fl{equation,eq-ImuSimulator-Trajectory-Fixed-acceleration}
+  \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
+\f}
+
+\subsection ImuSimulator-Trajectory-Linear Linear
+
+The linear trajectory describes a vehicle moving with constant velocity in local-navigation coordinates.
+
+\paragraph ImuSimulator-Trajectory-Linear-Position Position
+
+The time derivative of the curvilinear position (lat, lon, alt) is given by (\cite Groves2013 Groves, ch. 2.4.2, eq. 2.111, p. 61 or \cite Titterton2004 Titterton, ch. 3.7, eq. 3.81,3.85,3.86, p. 48ff)
+
+\fl{equation,eq-ImuSimulator-Trajectory-Linear-curvilinearPositionDerivative}
+\begin{aligned}
+  \dotup{\phi}    &= \frac{v_N}{R_N + h} \\
+  \dotup{\lambda} &= \frac{v_E}{(R_E + h) \cos{\phi}} \\
+  \dotup{h}       &= -v_D
+\end{aligned}
+\f}
+
+As the velocity in local-navigation coordinates is constant and neglecting the change in non velocity terms, the position can be expressed as
+
+\fl{equation,eq-ImuSimulator-Trajectory-Linear-position}
+  \renewcommand*{\arraystretch}{2.0}
+  \mathbf{x}^n =
+  \begin{pmatrix} \phi \\ \lambda \\ h \end{pmatrix}
+  \approx \begin{pmatrix} \phi_0 \\ \lambda_0 \\ h_0 \end{pmatrix}
+  + \begin{pmatrix} \dfrac{v_N}{R_N + h} \\ \dfrac{v_E}{(R_E + h) \cos{\phi}} \\  -v_D \end{pmatrix}
+  \cdot t
+\f}
+
+\paragraph ImuSimulator-Trajectory-Linear-Velocity Velocity
+\fl{equation,eq-ImuSimulator-Trajectory-Linear-velocity}
+\boldsymbol{v}^n = \mathbf{\dot{x}}^n = const
+\f}
+
+\paragraph ImuSimulator-Trajectory-Linear-Acceleration Acceleration
+\fl{equation,eq-ImuSimulator-Trajectory-Linear-acceleration}
+  \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
+\f}
+
+\subsection ImuSimulator-Trajectory-Circular Circular/Helical
+
+The circular or helical trajectory describes a vehicle moving with constant horizontal speed on a circular shaped path.
+\fl{equation,eq-ImuSimulator-Trajectory-Circular-horizontal-speed}
+\begin{aligned}
+  \left|\boldsymbol{v}_{\text{h}}^n\right| &= \text{const}
+\end{aligned}
+\f}
+The vertical velocity is
+- for the circular trajectory: \f$ v_D = 0 \f$
+- for the helical trajectory: \f$ v_D = \text{const} \f$
+
+\paragraph ImuSimulator-Trajectory-Circular-Position Position
+In the local-navigation frame in a tangential plane to the Earth surface a circular path can be expressed as
+
+\fl{equation,eq-ImuSimulator-Trajectory-Circular-local-position-phi}
+  \mathbf{x}^n = \begin{pmatrix} x_N \\ x_E \end{pmatrix}
+               = \mathbf{x}_M^n
+                 + \begin{pmatrix} r \cdot \sin{\left( \varphi \cdot \text{dir} + \varphi_0 \right)} \\
+                                   r \cdot \cos{\left( \varphi \cdot \text{dir} + \varphi_0 \right)}
+                   \end{pmatrix}
+\f}
+where \f$ x_M \f$ is the center of the circle, \f$ \varphi_0 \f$ is the starting angle and \f$ \text{dir} \f$ is a sign (-1 for CW and +1 for CCW) determining the direction of the circle.
+
+The vertical position in case of a helical trajectory is \f$ x_D = x_{M,D} + v_D \cdot t \f$.
+
+The variable \f$ \varphi \f$ can be expressed due to the constant speed
+\fl{equation,eq-ImuSimulator-Trajectory-Circular-phi}
+  \left|\boldsymbol{v}_{\text{h}}^n\right| = \frac{s}{t}
+                                = \left( \frac{\varphi}{2\pi} \cdot U \right) \frac{1}{t}
+                                = \left( \frac{\varphi}{2\pi} \cdot 2\pi r \right) \frac{1}{t}
+                                = \frac{\varphi \cdot r}{t}
+\f}
+
+which leads to
+\fl{equation,eq-ImuSimulator-Trajectory-Circular-local-position}
+\begin{aligned}
+  x_N &= x_{M,N} + r \cdot \sin{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)} \\
+  x_E &= x_{M,E} + r \cdot \cos{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)} \\
+  x_D &= x_{M,D} + v_D \cdot t \\
+\end{aligned}
+\f}
+
+This can then be added to the start position after rotating it into the Earth frame
+
+\fl{equation,eq-ImuSimulator-Trajectory-Circular-position}
+  \renewcommand*{\arraystretch}{1.5}
+  \mathbf{x}^e = \mathbf{x}_M^e + \mathbf{C}_n^e(\mathbf{x}_M) \cdot \begin{pmatrix} r \cdot \sin{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \dfrac{t}{r} \cdot \text{dir} + \varphi_0 \right)} \\
+                                                                       r \cdot \cos{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \dfrac{t}{r} \cdot \text{dir} + \varphi_0 \right)} \\
+                                                                       v_D \cdot t \end{pmatrix}
+\f}
+which can the be converted into latitude, longitude and altitude.
+
+\paragraph ImuSimulator-Trajectory-Circular-Velocity Velocity
+\fl{equation,eq-ImuSimulator-Trajectory-Circular-velocity}
+\begin{aligned}
+  v_N &= r \cdot \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{1}{r} \cdot \text{dir} \cdot \cos{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)}
+       = \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \text{dir} \cdot \cos{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)} \\
+  v_E &= r \cdot \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{1}{r} \cdot \text{dir} \cdot -\sin{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)}
+       = -\left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \text{dir} \cdot \sin{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)} \\
+  v_D &= v_D \\
+\end{aligned}
+\f}
+
+\paragraph ImuSimulator-Trajectory-Circular-Acceleration Acceleration
+\fl{equation,eq-ImuSimulator-Trajectory-Circular-acceleration}
+\begin{aligned}
+  a_N &= \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{1}{r} \cdot \text{dir}^2 \cdot -\sin{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)}
+       = -\frac{\left|\boldsymbol{v}_{\text{h}}^n\right|^2}{r} \cdot \sin{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)} \\
+  a_E &= -\left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{1}{r} \cdot \text{dir}^2 \cdot \cos{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)}
+       = -\frac{\left|\boldsymbol{v}_{\text{h}}^n\right|^2}{r} \cdot \cos{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)} \\
+  a_D &= 0 \\
+\end{aligned}
+\f}
+
+
+\section ImuSimulator-AngularRate-Measurements Angular Rate Measurements
+
+When moving on a circular trajectory, the body frame rotates with respect to the navigation frame.
+Therefore the turn rate of the body frame with respect to the local-navigation frame expressed in local-navigation frame coordinates can be written as
+
+\fl{equation,eq-ImuSimulator-AngularRate}
+  \boldsymbol{\omega}_{nb}^n = \begin{pmatrix} 0 & 0 & \text{dir} \cdot \dfrac{\left|\boldsymbol{v}_{\text{h}}^n\right|}{r} \end{pmatrix}^T
+\f}
+The direction \f$ \text{dir} \f$ is a sign determining the direction of the circle.
+- When flying a CW circle the turn rate \f$ \boldsymbol{\omega}_D > 0 \f$ and therefore \f$ \text{dir} = 1 \f$
+- When flying a CCW circle the turn rate \f$ \boldsymbol{\omega}_D < 0 \f$ and therefore \f$ \text{dir} = -1 \f$
+
+Gyroscopes measure the turn rate of the platform frame with respect to an inertial frame expressed in platform coordinates
+\fl{equation,eq-ImuSimulator-GyroMeas}
+\begin{aligned}
+  \boldsymbol{\omega}_{ip}^p &= \boldsymbol{\omega}_{in}^p + \boldsymbol{\omega}_{np}^p \\
+                             &= \mathbf{C}_n^p \cdot [ \boldsymbol{\omega}_{in}^n + \boldsymbol{\omega}_{np}^n ] \\
+                             &= \mathbf{C}_n^p \cdot [ ( \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n ) + ( \boldsymbol{\omega}_{nb}^n + \overbrace{\boldsymbol{\omega}_{bp}^n}^{= 0} ) ] \\
+                             &= \mathbf{C}_n^p \cdot [ \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n + \boldsymbol{\omega}_{nb}^n ]
+\end{aligned}
+\f}
+
+*/
+
+}
