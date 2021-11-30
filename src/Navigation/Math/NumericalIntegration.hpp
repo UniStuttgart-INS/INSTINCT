@@ -10,6 +10,16 @@
 
 namespace NAV
 {
+/// Available Integration Algorithms
+enum class IntegrationAlgorithm
+{
+    RectangularRule, ///< Rectangular rule
+    Simpson,         ///< Simpson
+    RungeKutta1,     ///< Runge-Kutta 1st order
+    RungeKutta3,     ///< Runge-Kutta 3rd order
+    COUNT,           ///< Amount of available integration algorithms
+};
+
 /// @brief Runge-Kutta First Order Algorithm (analogous to Euler Method)
 /// @param[in] f Model function
 /// @param[in] h Integration step in [s] (Time difference Δtₖ = (tₖ - tₖ₋₁))
@@ -110,5 +120,10 @@ Y RungeKutta4(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, co
     auto k4 = f(y_n + h * k3, t_n + h);
     return y_n + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
 }
+
+/// @brief Converts the enum to a string
+/// @param[in] algorithm Enum value to convert into text
+/// @return String representation of the enum
+const char* to_string(IntegrationAlgorithm algorithm);
 
 } // namespace NAV

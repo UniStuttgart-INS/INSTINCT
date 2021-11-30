@@ -14,6 +14,7 @@
 #include "NodeData/State/ImuBiases.hpp"
 
 #include "Navigation/Gravity/Gravity.hpp"
+#include "Navigation/Math/NumericalIntegration.hpp"
 
 #include <deque>
 
@@ -122,26 +123,12 @@ class ImuIntegrator : public Node
     /// @brief Gravity model selected in the GUI
     GravityModel gravityModel = GravityModel::EGM96;
 
-    /// Integration Algorithm selection
-    enum class IntegrationAlgorithm : size_t
-    {
-        RectangularRule, ///< Rectangular rule
-        Simpson,         ///< Simpson
-        RungeKutta1,     ///< Runge-Kutta 1st order
-        RungeKutta3,     ///< Runge-Kutta 3rd order
-        COUNT,           ///< Amount of available integration algorithms
-    };
     /// @brief Integration algorithm used for the attitude update
     IntegrationAlgorithm integrationAlgorithmAttitude = IntegrationAlgorithm::RungeKutta3;
     /// @brief Integration algorithm used for the velocity update
     IntegrationAlgorithm integrationAlgorithmVelocity = IntegrationAlgorithm::Simpson;
     /// @brief Integration algorithm used for the position update
     IntegrationAlgorithm integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
-
-    /// @brief Converts the enum to a string
-    /// @param[in] algorithm Enum value to convert into text
-    /// @return String representation of the enum
-    static const char* to_string(IntegrationAlgorithm algorithm);
 
     /// GUI flag, whether to show the input pin for PVA Corrections
     bool showCorrectionsInputPin = false;
