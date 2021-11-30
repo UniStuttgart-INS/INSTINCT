@@ -27,7 +27,7 @@ Therefore equation \eqref{eq-ImuSimulator-VelocityNav-equation-pre} becomes
 \f}
 
 which can be reordered to calculate the measured accelerations with
-\fl{equation,eq-ImuSimulator-VelocityNav-equation}
+\fl{equation,eq-ImuSimulator-acceleration-measured}
   \underbrace{\mathbf{f}^n}_{\hidewidth\text{measured}\hidewidth}
       = \overbrace{\boldsymbol{\dot{v}}^n}^{\hidewidth\text{trajectory}\hidewidth}
         + \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis force}}
@@ -41,17 +41,17 @@ which can be reordered to calculate the measured accelerations with
 
 The fixed trajectory describes a geostationary position on Earth.
 
-\paragraph ImuSimulator-Trajectory-Fixed-Position Position
+#### Position
 \fl{equation,eq-ImuSimulator-Trajectory-Fixed-position}
   \mathbf{x}^n = \begin{pmatrix} \phi & \lambda & h \end{pmatrix}^T = \text{const}
 \f}
 
-\paragraph ImuSimulator-Trajectory-Fixed-Velocity Velocity
+#### Velocity
 \fl{equation,eq-ImuSimulator-Trajectory-Fixed-velocity}
   \boldsymbol{v}^n = \mathbf{\dot{x}}^n = 0
 \f}
 
-\paragraph ImuSimulator-Trajectory-Fixed-Acceleration Acceleration
+#### Acceleration
 \fl{equation,eq-ImuSimulator-Trajectory-Fixed-acceleration}
   \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
 \f}
@@ -60,7 +60,7 @@ The fixed trajectory describes a geostationary position on Earth.
 
 The linear trajectory describes a vehicle moving with constant velocity in local-navigation coordinates.
 
-\paragraph ImuSimulator-Trajectory-Linear-Position Position
+#### Position
 
 The time derivative of the curvilinear position (lat, lon, alt) is given by (\cite Groves2013 Groves, ch. 2.4.2, eq. 2.111, p. 61 or \cite Titterton2004 Titterton, ch. 3.7, eq. 3.81,3.85,3.86, p. 48ff)
 
@@ -83,12 +83,12 @@ As the velocity in local-navigation coordinates is constant and neglecting the c
   \cdot t
 \f}
 
-\paragraph ImuSimulator-Trajectory-Linear-Velocity Velocity
+#### Velocity
 \fl{equation,eq-ImuSimulator-Trajectory-Linear-velocity}
 \boldsymbol{v}^n = \mathbf{\dot{x}}^n = const
 \f}
 
-\paragraph ImuSimulator-Trajectory-Linear-Acceleration Acceleration
+#### Acceleration
 \fl{equation,eq-ImuSimulator-Trajectory-Linear-acceleration}
   \mathbf{a}^n = \boldsymbol{\dot{v}}^n = 0
 \f}
@@ -105,7 +105,7 @@ The vertical velocity is
 - for the circular trajectory: \f$ v_D = 0 \f$
 - for the helical trajectory: \f$ v_D = \text{const} \f$
 
-\paragraph ImuSimulator-Trajectory-Circular-Position Position
+#### Position
 In the local-navigation frame in a tangential plane to the Earth surface a circular path can be expressed as
 
 \fl{equation,eq-ImuSimulator-Trajectory-Circular-local-position-phi}
@@ -146,7 +146,7 @@ This can then be added to the start position after rotating it into the Earth fr
 \f}
 which can the be converted into latitude, longitude and altitude.
 
-\paragraph ImuSimulator-Trajectory-Circular-Velocity Velocity
+#### Velocity
 \fl{equation,eq-ImuSimulator-Trajectory-Circular-velocity}
 \begin{aligned}
   v_N &= r \cdot \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{1}{r} \cdot \text{dir} \cdot \cos{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)}
@@ -157,7 +157,7 @@ which can the be converted into latitude, longitude and altitude.
 \end{aligned}
 \f}
 
-\paragraph ImuSimulator-Trajectory-Circular-Acceleration Acceleration
+#### Acceleration
 \fl{equation,eq-ImuSimulator-Trajectory-Circular-acceleration}
 \begin{aligned}
   a_N &= \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{1}{r} \cdot \text{dir}^2 \cdot -\sin{\left( \left|\boldsymbol{v}_{\text{h}}^n\right| \cdot \frac{t}{r} \cdot \text{dir} + \varphi_0 \right)}
