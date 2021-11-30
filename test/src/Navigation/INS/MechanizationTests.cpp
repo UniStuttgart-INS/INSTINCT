@@ -2,9 +2,9 @@
 #include "EigenApprox.hpp"
 
 #include "Navigation/Math/Math.hpp"
-#include "util/InsMechanization.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
+#include "Navigation/INS/Functions.hpp"
 #include "Navigation/INS/Mechanization.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 

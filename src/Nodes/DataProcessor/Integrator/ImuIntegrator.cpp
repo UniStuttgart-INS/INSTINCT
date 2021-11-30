@@ -2,9 +2,9 @@
 
 #include "util/Logger.hpp"
 
-#include "util/InsMechanization.hpp"
 #include "Navigation/Constants.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
+#include "Navigation/INS/Functions.hpp"
 #include "Navigation/INS/Mechanization.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"

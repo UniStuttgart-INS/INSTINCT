@@ -9,8 +9,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/gui/widgets/HelpMarker.hpp"
 
 #include "util/UartSensors/Ublox/UbloxTypes.hpp"
+#include "Navigation/INS/Functions.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
-#include "Navigation/Math/Attitude.hpp"
 
 #include "NodeData/State/PosVelAtt.hpp"
 
@@ -539,8 +539,8 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
 
     // Calculate Roll and Pitch from gravity vector direction (only valid under static conditions)
     const Eigen::Vector3d accel_b = imuPosition.quatAccel_bp() * accel_p * -1;
-    auto roll = rollFromStaticAccelerationObs(accel_b);
-    auto pitch = pitchFromStaticAccelerationObs(accel_b);
+    auto roll = calcRollFromStaticAcceleration(accel_b);
+    auto pitch = calcPitchFromStaticAcceleration(accel_b);
 
     // TODO: Determine Velocity first and if vehicle not static, initialize the attitude from velocity
 

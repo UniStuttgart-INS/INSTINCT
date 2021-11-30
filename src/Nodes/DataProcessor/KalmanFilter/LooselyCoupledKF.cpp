@@ -14,10 +14,9 @@
 #include "internal/FlowManager.hpp"
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
-#include "util/InsMechanization.hpp"
 #include "Navigation/Constants.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
-#include "Navigation/INS/Mechanization.hpp"
+#include "Navigation/INS/Functions.hpp"
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "util/Logger.hpp"

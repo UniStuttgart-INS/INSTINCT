@@ -13,7 +13,6 @@ namespace nm = NAV::NodeManager;
 #include "util/Time/TimeBase.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Transformations/CoordinateFrames.hpp"
-#include "Navigation/Math/Attitude.hpp"
 
 #include <algorithm>
 

@@ -5,10 +5,9 @@
 #include "util/Logger.hpp"
 #include "util/StringUtil.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
+#include "Navigation/INS/Functions.hpp"
 #include "Navigation/INS/Mechanization.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
-#include "Navigation/Math/Attitude.hpp"
-#include "util/InsMechanization.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
 #include "util/Time/TimeBase.hpp"
 
@@ -506,8 +505,8 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     Eigen::Vector3d vel_n = calcVelocity_n(imuUpdateTime);
 
     double roll = 0;
-    double pitch = pitchFromVelocity(vel_n);
-    double yaw = yawFromVelocity(vel_n);
+    double pitch = calcPitchFromVelocity(vel_n);
+    double yaw = calcYawFromVelocity(vel_n);
     auto q_bn = trafo::quat_bn(roll, pitch, yaw);
 
     const Eigen::Vector3d omega_ie_n = q_ne * InsConst::angularVelocity_ie_e;
@@ -600,8 +599,8 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     Eigen::Vector3d vel_n = calcVelocity_n(gnssUpdateTime);
 
     double roll = 0;
-    double pitch = pitchFromVelocity(vel_n);
-    double yaw = yawFromVelocity(vel_n);
+    double pitch = calcPitchFromVelocity(vel_n);
+    double yaw = calcYawFromVelocity(vel_n);
 
     if (trajectoryType == TrajectoryType::Fixed)
     {

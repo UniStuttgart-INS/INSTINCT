@@ -1,4 +1,4 @@
-/// @file Transformations.hpp
+/// @file CoordinateFrames.hpp
 /// @brief Transformation collection
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2020-09-08

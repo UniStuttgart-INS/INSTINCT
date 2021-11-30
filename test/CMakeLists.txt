@@ -23,16 +23,16 @@ endforeach(TMP_PATH)
 add_executable(
   tests
   src/internal/CallbackManagerTests.cpp
-  src/util/UartSensors/Ublox/UbloxTypesTests.cpp
-  src/util/UartSensors/Ublox/UbloxUtilitiesTests.cpp
-  src/util/InsTimeTests.cpp
-  src/util/InsMechanizationTests.cpp
-  src/util/InsTransformationsTests.cpp
-  src/util/LoggerTests.cpp
-  src/util/ScrollingBufferTests.cpp
+  src/Navigation/INS/MechanizationTests.cpp
+  src/Navigation/Time/InsTimeTests.cpp
+  src/Navigation/Transformations/CoordinateFramesTests.cpp
   src/NodeData/State/PosVelAttTests.cpp
   src/Nodes/FlowTester.cpp
   src/Nodes/DataLogger/IMU/VectorNavDataLoggerTests.cpp
+  src/util/Container/ScrollingBufferTests.cpp
+  src/util/UartSensors/Ublox/UbloxTypesTests.cpp
+  src/util/UartSensors/Ublox/UbloxUtilitiesTests.cpp
+  src/util/LoggerTests.cpp
   ${SRC_FILES})
 
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
