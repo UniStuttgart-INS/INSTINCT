@@ -1,6 +1,5 @@
 #include "Navio2Sensor.hpp"
 
-#include "util/Debug.hpp"
 #include "util/Logger.hpp"
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)

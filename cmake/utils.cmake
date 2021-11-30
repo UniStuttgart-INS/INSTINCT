@@ -1,6 +1,6 @@
 # Get version from src/util/version.hpp and put it in INSTINCT_PROJECT_VERSION
 function(extract_project_version)
-  file(READ "${CMAKE_CURRENT_LIST_DIR}/src/util/Version.hpp" file_contents)
+  file(READ "${CMAKE_CURRENT_LIST_DIR}/src/internal/Version.hpp" file_contents)
 
   string(REGEX MATCH "PROJECT_VER_MAJOR = ([0-9]+)" _ "${file_contents}")
   if(NOT CMAKE_MATCH_COUNT EQUAL 1)

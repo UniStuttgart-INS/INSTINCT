@@ -1,5 +1,5 @@
 /// @file SkydelNetworkStream.hpp
-/// @brief
+/// @brief Node receiving UDP packages from the Skydel GNSS simulator Instinct plugin
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-04-19
 
@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-#include "util/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 namespace NAV
 {

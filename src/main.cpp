@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "util/Logger.hpp"
-#include "util/Version.hpp"
+#include "internal/Version.hpp"
 
 #include "internal/AppLogic.hpp"
 #include "internal/ConfigManager.hpp"

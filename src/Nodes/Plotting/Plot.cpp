@@ -8,11 +8,12 @@ namespace nm = NAV::NodeManager;
 
 #include "internal/gui/widgets/Splitter.hpp"
 #include "internal/gui/widgets/imgui_ex.hpp"
-#include "internal/Json.hpp"
+#include "util/Json.hpp"
 
 #include "util/Time/TimeBase.hpp"
-#include "util/InsTransformations.hpp"
-#include "util/InsMath.hpp"
+#include "Navigation/Ellipsoid/Ellipsoid.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
+
 #include <algorithm>
 
 namespace NAV
@@ -1776,7 +1777,7 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     }
     size_t i = 0;
 
-    /// [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
+    // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     Eigen::Vector3d position_lla = obs->latLonAlt();
 
     if (std::isnan(startValue_North))
@@ -1784,7 +1785,7 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
         startValue_North = position_lla.x();
     }
     int sign = position_lla.x() > startValue_North ? 1 : -1;
-    /// North/South deviation [m]
+    // North/South deviation [m]
     double northSouth = calcGeographicalDistance(position_lla.x(), position_lla.y(),
                                                  startValue_North, position_lla.y())
                         * sign;
@@ -1794,7 +1795,7 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
         startValue_East = position_lla.y();
     }
     sign = position_lla.y() > startValue_East ? 1 : -1;
-    /// East/West deviation [m]
+    // East/West deviation [m]
     double eastWest = calcGeographicalDistance(position_lla.x(), position_lla.y(),
                                                position_lla.x(), startValue_East)
                       * sign;
@@ -1883,11 +1884,11 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
     }
     size_t i = 0;
 
-    /// [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
+    // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     std::optional<Eigen::Vector3d> position_lla;
-    /// North/South deviation [m]
+    // North/South deviation [m]
     std::optional<double> northSouth;
-    /// East/West deviation [m]
+    // East/West deviation [m]
     std::optional<double> eastWest;
     if (obs->position_ecef.has_value())
     {
@@ -1955,11 +1956,11 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
         }
     }
 
-    /// Position in ECEF coordinates in [m]
+    // Position in ECEF coordinates in [m]
     std::optional<Eigen::Vector3d> position_ecef;
-    /// [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
+    // [𝜙, λ, h] Latitude, Longitude and altitude in [rad, rad, m]
     std::optional<Eigen::Vector3d> position_lla;
-    /// Velocity in NED coordinates in [m/s]
+    // Velocity in NED coordinates in [m/s]
     std::optional<Eigen::Vector3d> velocity_ned;
 
     if (obs->msgClass == sensors::ublox::UbxClass::UBX_CLASS_NAV)
@@ -1993,9 +1994,9 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
     {
         return;
     }
-    /// North/South deviation [m]
+    // North/South deviation [m]
     std::optional<double> northSouth;
-    /// East/West deviation [m]
+    // East/West deviation [m]
     std::optional<double> eastWest;
 
     if (position_lla.has_value())

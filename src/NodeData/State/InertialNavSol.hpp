@@ -1,5 +1,5 @@
 /// @file InertialNavSol.hpp
-/// @brief
+/// @brief PosVelAtt Observation with ImuObs included
 /// @author M. Maier (marcel.maier@ins.uni-stuttgart.de)
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-08-31

@@ -8,7 +8,7 @@
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
-#include "util/InsTransformations.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 
 NAV::VectorNavBinaryConverter::VectorNavBinaryConverter()
 {

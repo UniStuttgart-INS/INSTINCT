@@ -1,6 +1,5 @@
 #include "VectorNavSensor.hpp"
 
-#include "util/Debug.hpp"
 #include "util/Logger.hpp"
 #include "vn/searcher.h"
 #include "vn/util.h"
@@ -17,7 +16,7 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/VectorNavBinaryOutput.hpp"
 
 #include "util/Time/TimeBase.hpp"
-#include "util/InsTransformations.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 
 #include <map>
 

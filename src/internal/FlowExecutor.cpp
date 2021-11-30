@@ -1,7 +1,7 @@
 #include "FlowExecutor.hpp"
 
 #include "util/Logger.hpp"
-#include "util/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 #include "internal/Node/Node.hpp"
 #include "NodeData/InsObs.hpp"

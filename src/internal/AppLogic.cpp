@@ -13,7 +13,7 @@
 namespace nm = NAV::NodeManager;
 
 #include "util/Logger.hpp"
-#include "util/Sleep.hpp"
+#include "Sleep.hpp"
 
 int NAV::AppLogic::processCommandLineArguments(int argc, const char* argv[]) // NOLINT(cppcoreguidelines-avoid-c-arrays,hicpp-avoid-c-arrays,modernize-avoid-c-arrays)
 {

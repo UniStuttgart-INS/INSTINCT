@@ -8,7 +8,8 @@
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 
 #include "util/Eigen.hpp"
-#include "util/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
+#include "Navigation/Gravity/Gravity.hpp"
 
 #include "internal/gui/widgets/TimeEdit.hpp"
 
@@ -176,6 +177,11 @@ class ImuSimulator : public Imu
 
     /// Amount of circles to simulate before stopping
     double circularTrajectoryCircleCountForStop = 1.0;
+
+    // ###########################################################################################################
+
+    /// @brief Gravity model selected in the GUI
+    GravityModel gravityModel = GravityModel::EGM96;
 
     // ###########################################################################################################
 

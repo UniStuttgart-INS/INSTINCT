@@ -9,7 +9,7 @@
 
 #include "NodeData.hpp"
 
-#include "util/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 namespace NAV
 {

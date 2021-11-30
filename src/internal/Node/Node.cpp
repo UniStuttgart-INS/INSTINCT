@@ -8,7 +8,7 @@
 namespace nm = NAV::NodeManager;
 
 #include "internal/CallbackManager.hpp"
-#include "internal/Json.hpp"
+#include "util/Json.hpp"
 
 #include <imgui_node_editor.h>
 namespace ed = ax::NodeEditor;

@@ -31,7 +31,7 @@
     ],
     "editor.formatOnSave": true,
     "editor.rulers": [
-        120
+        150
     ],
     "doxdocgen.generic.paramTemplate": "@param[in, out] {param} ",
     "doxdocgen.file.fileOrder": [
@@ -113,7 +113,7 @@
     "clang-tidy.compilerArgs": [
         "-Wno-unknown-warning-option"
     ],
-    "comment-divider.length": 110,
+    "comment-divider.length": 140,
     "mathover.matchRegex": "\\/\\/\\sMath:\\s(.+)",
     "mathover.forwardSkip": 9,
     "search.exclude": {

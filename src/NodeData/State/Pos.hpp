@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "util/InsTransformations.hpp"
+#include "Navigation/Transformations/CoordinateFrames.hpp"
 
 #include "util/Eigen.hpp"
 #include "NodeData/InsObs.hpp"

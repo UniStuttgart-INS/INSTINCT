@@ -7,7 +7,7 @@
 
 #include "internal/Node/Node.hpp"
 
-#include "util/InsTime.hpp"
+#include "Navigation/Time/InsTime.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/GNSS/UbloxObs.hpp"
