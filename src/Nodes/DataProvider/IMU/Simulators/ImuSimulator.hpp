@@ -180,8 +180,20 @@ class ImuSimulator : public Imu
 
     // ###########################################################################################################
 
-    /// @brief Gravity model selected in the GUI
+    /// Gravity model selected in the GUI
     GravityModel gravityModel = GravityModel::EGM96;
+
+    /// Apply the coriolis force to the measured accelerations
+    bool coriolisForceEnabled = true;
+
+    /// Apply the centripetal force to the measured accelerations
+    bool centripetalForceEnabled = true;
+
+    /// Apply the Earth rotation rate to the measured angular rates
+    bool angularRateEarthRotationEnabled = true;
+
+    /// Apply the transport rate to the measured angular rates
+    bool angularRateTransportRateEnabled = true;
 
     // ###########################################################################################################
 

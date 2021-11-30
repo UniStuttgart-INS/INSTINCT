@@ -404,16 +404,16 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     LOG_TRACE("{}: called", nameId());
     if (j.contains("phiCalculation"))
     {
-        phiCalculation = static_cast<PhiCalculation>(j.at("phiCalculation").get<int>());
+        j.at("phiCalculation").get_to(phiCalculation);
     }
     if (j.contains("qCalculation"))
     {
-        qCalculation = static_cast<QCalculation>(j.at("qCalculation").get<int>());
+        j.at("qCalculation").get_to(qCalculation);
     }
     // ------------------------------- 𝐐 System/Process noise covariance matrix ---------------------------------
     if (j.contains("randomProcessAccel"))
     {
-        randomProcessAccel = static_cast<RandomProcess>(j.at("randomProcessAccel").get<int>());
+        j.at("randomProcessAccel").get_to(randomProcessAccel);
     }
     if (j.contains("beta_accel"))
     {
@@ -421,7 +421,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("randomProcessGyro"))
     {
-        randomProcessGyro = static_cast<RandomProcess>(j.at("randomProcessGyro").get<int>());
+        j.at("randomProcessGyro").get_to(randomProcessGyro);
     }
     if (j.contains("beta_gyro"))
     {
@@ -433,7 +433,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("varianceAccelNoiseUnits"))
     {
-        varianceAccelNoiseUnits = static_cast<VarianceAccelNoiseUnits>(j.at("varianceAccelNoiseUnits").get<int>());
+        j.at("varianceAccelNoiseUnits").get_to(varianceAccelNoiseUnits);
     }
     if (j.contains("variance_rg"))
     {
@@ -441,7 +441,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("varianceGyroNoiseUnits"))
     {
-        varianceGyroNoiseUnits = static_cast<VarianceGyroNoiseUnits>(j.at("varianceGyroNoiseUnits").get<int>());
+        j.at("varianceGyroNoiseUnits").get_to(varianceGyroNoiseUnits);
     }
     if (j.contains("variance_bad"))
     {
@@ -449,7 +449,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("varianceAccelBiasUnits"))
     {
-        varianceAccelBiasUnits = static_cast<VarianceAccelBiasUnits>(j.at("varianceAccelBiasUnits").get<int>());
+        j.at("varianceAccelBiasUnits").get_to(varianceAccelBiasUnits);
     }
     if (j.contains("variance_bgd"))
     {
@@ -457,12 +457,12 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("varianceGyroBiasUnits"))
     {
-        varianceGyroBiasUnits = static_cast<VarianceGyroBiasUnits>(j.at("varianceGyroBiasUnits").get<int>());
+        j.at("varianceGyroBiasUnits").get_to(varianceGyroBiasUnits);
     }
     // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
     if (j.contains("gnssMeasurementUncertaintyPositionUnit"))
     {
-        gnssMeasurementUncertaintyPositionUnit = static_cast<GnssMeasurementUncertaintyPositionUnit>(j.at("gnssMeasurementUncertaintyPositionUnit").get<int>());
+        j.at("gnssMeasurementUncertaintyPositionUnit").get_to(gnssMeasurementUncertaintyPositionUnit);
     }
     if (j.contains("gnssMeasurementUncertaintyPosition"))
     {
@@ -470,7 +470,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("gnssMeasurementUncertaintyVelocityUnit"))
     {
-        gnssMeasurementUncertaintyVelocityUnit = static_cast<GnssMeasurementUncertaintyVelocityUnit>(j.at("gnssMeasurementUncertaintyVelocityUnit").get<int>());
+        j.at("gnssMeasurementUncertaintyVelocityUnit").get_to(gnssMeasurementUncertaintyVelocityUnit);
     }
     if (j.contains("gnssMeasurementUncertaintyVelocity"))
     {
@@ -479,7 +479,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     // -------------------------------------- 𝐏 Error covariance matrix -----------------------------------------
     if (j.contains("initCovariancePositionUnit"))
     {
-        initCovariancePositionUnit = static_cast<InitCovariancePositionUnit>(j.at("initCovariancePositionUnit").get<int>());
+        j.at("initCovariancePositionUnit").get_to(initCovariancePositionUnit);
     }
     if (j.contains("initCovariancePosition"))
     {
@@ -487,7 +487,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("initCovarianceVelocityUnit"))
     {
-        initCovarianceVelocityUnit = static_cast<InitCovarianceVelocityUnit>(j.at("initCovarianceVelocityUnit").get<int>());
+        j.at("initCovarianceVelocityUnit").get_to(initCovarianceVelocityUnit);
     }
     if (j.contains("initCovarianceVelocity"))
     {
@@ -495,7 +495,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("initCovarianceAttitudeAnglesUnit"))
     {
-        initCovarianceAttitudeAnglesUnit = static_cast<InitCovarianceAttitudeAnglesUnit>(j.at("initCovarianceAttitudeAnglesUnit").get<int>());
+        j.at("initCovarianceAttitudeAnglesUnit").get_to(initCovarianceAttitudeAnglesUnit);
     }
     if (j.contains("initCovarianceAttitudeAngles"))
     {
@@ -503,7 +503,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("initCovarianceBiasAccelUnit"))
     {
-        initCovarianceBiasAccelUnit = static_cast<InitCovarianceBiasAccelUnit>(j.at("initCovarianceBiasAccelUnit").get<int>());
+        j.at("initCovarianceBiasAccelUnit").get_to(initCovarianceBiasAccelUnit);
     }
     if (j.contains("initCovarianceBiasAccel"))
     {
@@ -511,7 +511,7 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("initCovarianceBiasGyroUnit"))
     {
-        initCovarianceBiasGyroUnit = static_cast<InitCovarianceBiasGyroUnit>(j.at("initCovarianceBiasGyroUnit").get<int>());
+        j.at("initCovarianceBiasGyroUnit").get_to(initCovarianceBiasGyroUnit);
     }
     if (j.contains("initCovarianceBiasGyro"))
     {

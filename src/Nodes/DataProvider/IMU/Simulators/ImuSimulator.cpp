@@ -26,7 +26,7 @@ NAV::ImuSimulator::ImuSimulator()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    guiConfigDefaultWindowSize = { 653, 404 };
+    guiConfigDefaultWindowSize = { 653, 580 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuSimulator::pollImuObs);
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuSimulator::pollPosVelAtt);
@@ -352,6 +352,64 @@ void NAV::ImuSimulator::guiConfig()
         ImGui::TreePop();
     }
 
+    if (ImGui::TreeNode("Simulation models"))
+    {
+        ImGui::TextUnformatted("Measured acceleration");
+        {
+            ImGui::Indent();
+            ImGui::SetNextItemWidth(230);
+            if (ImGui::BeginCombo(fmt::format("Gravitation Model##{}", size_t(id)).c_str(), NAV::to_string(gravityModel)))
+            {
+                for (size_t i = 0; i < static_cast<size_t>(GravityModel::COUNT); i++)
+                {
+                    const bool is_selected = (static_cast<size_t>(gravityModel) == i);
+                    if (ImGui::Selectable(NAV::to_string(static_cast<GravityModel>(i)), is_selected))
+                    {
+                        gravityModel = static_cast<GravityModel>(i);
+                        LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(gravityModel));
+                        flow::ApplyChanges();
+                    }
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (is_selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+
+                ImGui::EndCombo();
+            }
+            if (ImGui::Checkbox(fmt::format("Coriolis force##{}", size_t(id)).c_str(), &coriolisForceEnabled))
+            {
+                LOG_DEBUG("{}: coriolisForceEnabled changed to {}", nameId(), coriolisForceEnabled);
+                flow::ApplyChanges();
+            }
+            if (ImGui::Checkbox(fmt::format("Centripetal force##{}", size_t(id)).c_str(), &centripetalForceEnabled))
+            {
+                LOG_DEBUG("{}: centripetalForceEnabled changed to {}", nameId(), centripetalForceEnabled);
+                flow::ApplyChanges();
+            }
+            ImGui::Unindent();
+        }
+        ImGui::TextUnformatted("Measured angular rates");
+        {
+            ImGui::Indent();
+            if (ImGui::Checkbox(fmt::format("Earth rotation rate##{}", size_t(id)).c_str(), &angularRateEarthRotationEnabled))
+            {
+                LOG_DEBUG("{}: angularRateEarthRotationEnabled changed to {}", nameId(), angularRateEarthRotationEnabled);
+                flow::ApplyChanges();
+            }
+            if (ImGui::Checkbox(fmt::format("Transport rate##{}", size_t(id)).c_str(), &angularRateTransportRateEnabled))
+            {
+                LOG_DEBUG("{}: angularRateTransportRateEnabled changed to {}", nameId(), angularRateTransportRateEnabled);
+                flow::ApplyChanges();
+            }
+            ImGui::Unindent();
+        }
+
+        ImGui::TreePop();
+    }
+
     Imu::guiConfig();
 }
 
@@ -380,6 +438,12 @@ void NAV::ImuSimulator::guiConfig()
     j["simulationDuration"] = simulationDuration;
     j["linearTrajectoryDistanceForStop"] = linearTrajectoryDistanceForStop;
     j["circularTrajectoryCircleCountForStop"] = circularTrajectoryCircleCountForStop;
+    // ###########################################################################################################
+    j["gravityModel"] = gravityModel;
+    j["coriolisForceEnabled"] = coriolisForceEnabled;
+    j["centripetalForceEnabled"] = centripetalForceEnabled;
+    j["angularRateEarthRotationEnabled"] = angularRateEarthRotationEnabled;
+    j["angularRateTransportRateEnabled"] = angularRateTransportRateEnabled;
     // ###########################################################################################################
     j["Imu"] = Imu::save();
 
@@ -458,6 +522,27 @@ void NAV::ImuSimulator::restore(json const& j)
         j.at("circularTrajectoryCircleCountForStop").get_to(circularTrajectoryCircleCountForStop);
     }
     // ###########################################################################################################
+    if (j.contains("gravityModel"))
+    {
+        j.at("gravityModel").get_to(gravityModel);
+    }
+    if (j.contains("coriolisForceEnabled"))
+    {
+        j.at("coriolisForceEnabled").get_to(coriolisForceEnabled);
+    }
+    if (j.contains("centripetalForceEnabled"))
+    {
+        j.at("centripetalForceEnabled").get_to(centripetalForceEnabled);
+    }
+    if (j.contains("angularRateEarthRotationEnabled"))
+    {
+        j.at("angularRateEarthRotationEnabled").get_to(angularRateEarthRotationEnabled);
+    }
+    if (j.contains("angularRateTransportRateEnabled"))
+    {
+        j.at("angularRateTransportRateEnabled").get_to(angularRateTransportRateEnabled);
+    }
+    // ###########################################################################################################
     if (j.contains("Imu"))
     {
         Imu::restore(j.at("Imu"));
@@ -519,19 +604,32 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     // Force to keep vehicle on track
     Eigen::Vector3d accel_n = calcTrajectoryAccel_n(imuUpdateTime);
 
-    // Apply Coriolis Acceleration
-    accel_n += calcCoriolisForce_n(omega_ie_n, omega_en_n, velocity_n);
+    if (coriolisForceEnabled) // Apply Coriolis Acceleration
+    {
+        accel_n += calcCoriolisForce_n(omega_ie_n, omega_en_n, velocity_n);
+    }
 
     // Apply the local gravity vector
     accel_n -= calcGravitation_n(position_lla, gravityModel); // Mass attraction of the Earth (gravitation)
-    accel_n += q_ne * calcCentripetalForce_e(position_e);     // Centripetal acceleration caused by the Earth's rotation
+    if (centripetalForceEnabled)                              // Centripetal acceleration caused by the Earth's rotation
+    {
+        accel_n += q_ne * calcCentripetalForce_e(position_e);
+    }
 
     // Acceleration measured by the accelerometer in platform coordinates
     Eigen::Vector3d accel_p = imuPos.quatAccel_pb() * q_bn * accel_n;
 
     // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
 
-    Eigen::Vector3d omega_ip_n = omega_ie_n + omega_en_n;
+    Eigen::Vector3d omega_ip_n = Eigen::Vector3d::Zero();
+    if (angularRateEarthRotationEnabled)
+    {
+        omega_ip_n += omega_ie_n;
+    }
+    if (angularRateTransportRateEnabled)
+    {
+        omega_ip_n += omega_en_n;
+    }
     if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
     {
         const auto& horizontalSpeed = velocity_n(0);

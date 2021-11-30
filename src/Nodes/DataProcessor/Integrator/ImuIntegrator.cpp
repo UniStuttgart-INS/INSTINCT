@@ -61,29 +61,26 @@ void NAV::ImuIntegrator::guiConfig()
     }
 
     ImGui::SetNextItemWidth(250);
-    if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0OFF\0\0"))
+    if (ImGui::BeginCombo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), NAV::to_string(gravityModel)))
     {
-        if (gravityModel == GravityModel::WGS84)
+        for (size_t i = 0; i < static_cast<size_t>(GravityModel::COUNT); i++)
         {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84");
+            const bool is_selected = (static_cast<size_t>(gravityModel) == i);
+            if (ImGui::Selectable(NAV::to_string(static_cast<GravityModel>(i)), is_selected))
+            {
+                gravityModel = static_cast<GravityModel>(i);
+                LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(gravityModel));
+                flow::ApplyChanges();
+            }
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
         }
-        else if (gravityModel == GravityModel::WGS84_Skydel)
-        {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84_Skydel");
-        }
-        else if (gravityModel == GravityModel::Somigliana)
-        {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "Somigliana");
-        }
-        else if (gravityModel == GravityModel::EGM96)
-        {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "EGM96");
-        }
-        else if (gravityModel == GravityModel::OFF)
-        {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "OFF");
-        }
-        flow::ApplyChanges();
+
+        ImGui::EndCombo();
     }
 
     ImGui::SetNextItemWidth(250);
@@ -281,23 +278,23 @@ void NAV::ImuIntegrator::restore(json const& j)
 
     if (j.contains("integrationFrame"))
     {
-        integrationFrame = static_cast<IntegrationFrame>(j.at("integrationFrame").get<int>());
+        j.at("integrationFrame").get_to(integrationFrame);
     }
     if (j.contains("gravityModel"))
     {
-        gravityModel = static_cast<GravityModel>(j.at("gravityModel").get<int>());
+        j.at("gravityModel").get_to(gravityModel);
     }
     if (j.contains("integrationAlgorithmAttitude"))
     {
-        integrationAlgorithmAttitude = static_cast<IntegrationAlgorithm>(j.at("integrationAlgorithmAttitude").get<int>());
+        j.at("integrationAlgorithmAttitude").get_to(integrationAlgorithmAttitude);
     }
     if (j.contains("integrationAlgorithmVelocity"))
     {
-        integrationAlgorithmVelocity = static_cast<IntegrationAlgorithm>(j.at("integrationAlgorithmVelocity").get<int>());
+        j.at("integrationAlgorithmVelocity").get_to(integrationAlgorithmVelocity);
     }
     if (j.contains("integrationAlgorithmPosition"))
     {
-        integrationAlgorithmPosition = static_cast<IntegrationAlgorithm>(j.at("integrationAlgorithmPosition").get<int>());
+        j.at("integrationAlgorithmPosition").get_to(integrationAlgorithmPosition);
     }
     if (j.contains("calculateIntermediateValues"))
     {

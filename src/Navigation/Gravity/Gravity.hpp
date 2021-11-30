@@ -19,6 +19,7 @@ enum class GravityModel : int
     Somigliana,   ///< Somigliana gravity model
     EGM96,        ///< Earth Gravitational Model 1996
     OFF,          ///< Gravity Model turned off
+    COUNT,        ///< Amount of items in the enum
 };
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth)

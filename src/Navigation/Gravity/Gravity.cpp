@@ -30,6 +30,8 @@ const char* to_string(GravityModel gravityModel)
     case GravityModel::EGM96:
         return "EGM96";
     case GravityModel::OFF:
+        return "OFF";
+    case GravityModel::COUNT:
         return "";
     }
     return "";

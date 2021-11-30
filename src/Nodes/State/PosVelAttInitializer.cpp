@@ -385,7 +385,7 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     }
     if (j.contains("attitudeMode"))
     {
-        attitudeMode = static_cast<AttitudeMode>(j.at("attitudeMode").get<int>());
+        j.at("attitudeMode").get_to(attitudeMode);
     }
     if (j.contains("positionAccuracyThreshold"))
     {

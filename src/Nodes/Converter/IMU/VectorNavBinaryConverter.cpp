@@ -102,7 +102,7 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
 
     if (j.contains("outputType"))
     {
-        outputType = static_cast<OutputType>(j.at("outputType").get<int>());
+        j.at("outputType").get_to(outputType);
 
         if (!outputPins.empty())
         {
@@ -120,7 +120,7 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
     }
     if (j.contains("posVelSource"))
     {
-        posVelSource = static_cast<PosVelSource>(j.at("posVelSource").get<int>());
+        j.at("posVelSource").get_to(posVelSource);
     }
     if (j.contains("forceStatic"))
     {

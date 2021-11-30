@@ -104,9 +104,9 @@
         "node-15": {
             "data": {
                 "calculateIntermediateValues": true,
-                "centrifugalAccCompensation": false,
-                "coriolisCompensation": false,
-                "gravityModel": 4,
+                "centrifugalAccCompensation": true,
+                "coriolisCompensation": true,
+                "gravityModel": 3,
                 "integrationAlgorithmAttitude": 2,
                 "integrationAlgorithmPosition": 0,
                 "integrationAlgorithmVelocity": 2,
@@ -115,7 +115,7 @@
                 "prefereUncompensatedData": true,
                 "showCorrectionsInputPin": false
             },
-            "enabled": false,
+            "enabled": true,
             "id": 15,
             "inputPins": [
                 {
@@ -308,11 +308,16 @@
                         }
                     }
                 },
+                "angularRateEarthRotationEnabled": false,
+                "angularRateTransportRateEnabled": false,
+                "centripetalForceEnabled": false,
                 "circularTrajectoryCircleCountForStop": 1.0,
-                "circularTrajectoryDirection": 0,
+                "circularTrajectoryDirection": 1,
                 "circularTrajectoryOriginAngle": 0.0,
                 "circularTrajectoryRadius": 50.0,
+                "coriolisForceEnabled": false,
                 "gnssFrequency": 5.0,
+                "gravityModel": 4,
                 "imuFrequency": 200.0,
                 "linearTrajectoryDistanceForStop": 100.0,
                 "simulationDuration": 300.0,
@@ -354,7 +359,7 @@
                         "0": 0.0
                     },
                     "2": {
-                        "0": -0.5
+                        "0": 0.0
                     }
                 }
             },
@@ -1194,14 +1199,14 @@
                                                 "markerFillColor": {
                                                     "w": 1.0,
                                                     "x": 1.0,
-                                                    "y": 0.0,
-                                                    "z": 1.0
+                                                    "y": 0.8117647171020508,
+                                                    "z": 0.0
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
                                                     "x": 1.0,
-                                                    "y": 0.0,
-                                                    "z": 1.0
+                                                    "y": 0.8117647171020508,
+                                                    "z": 0.0
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
