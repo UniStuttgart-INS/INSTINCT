@@ -14,7 +14,7 @@ where
 - \f$ \boldsymbol{\omega}_{ie}^n \f$ is the turn rate of the Earth expressed in local-navigation frame coordinates
 - \f$ \boldsymbol{\omega}_{en}^n \f$ is the turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
 - \f$ \mathbf{g}_l^n \f$ is the local gravity vector which is a combination of (see \cite Titterton2004 Titterton, ch. 3.71, eq. 3.75, p. 48)
-    - \f$ \mathbf{g} \f$ the local gravitation vector (caused by effects of mass attraction)
+    - \f$ \mathbf{g}^n \f$ the local gravitation vector (caused by effects of mass attraction)
     - \f$ \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \f$ the centripetal force caused by the Earth's rotation
 
 Therefore equation \eqref{eq-ImuSimulator-VelocityNav-equation-pre} becomes
