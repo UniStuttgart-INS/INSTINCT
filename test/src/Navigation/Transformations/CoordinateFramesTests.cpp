@@ -12,7 +12,7 @@ namespace NAV
 {
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
-auto qCoeffsFromDcm(const Eigen::Matrix3d& C)
+Eigen::Vector4d qCoeffsFromDcm(const Eigen::Matrix3d& C)
 {
     auto a = 0.5 * std::sqrt(1 + C(0, 0) + C(1, 1) + C(2, 2));
     if (1 + C(0, 0) + C(1, 1) + C(2, 2) < 0)
@@ -24,7 +24,7 @@ auto qCoeffsFromDcm(const Eigen::Matrix3d& C)
     auto c = 1 / (4 * a) * (C(0, 2) - C(2, 0));
     auto d = 1 / (4 * a) * (C(1, 0) - C(0, 1));
 
-    return Eigen::Vector4d{ b, c, d, a };
+    return { b, c, d, a };
 }
 
 Eigen::Matrix3d DCM_nb(double roll, double pitch, double yaw)
@@ -115,7 +115,7 @@ Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& ecef, double a = InsConst::
     double altitude = sqrt_x1x1_x2x2 / std::cos(latitude);
     altitude -= N;
 
-    return Eigen::Vector3d(latitude, longitude, altitude);
+    return { latitude, longitude, altitude };
 }
 
 TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformations]")
