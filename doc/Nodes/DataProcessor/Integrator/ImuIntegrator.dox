@@ -13,9 +13,9 @@ The derivative of the velocity in local-navigation coordinates can be expressed 
 \fl{equation,eq-ImuIntegrator-Mechanization-n-Velocity}
   \boldsymbol{\dot{v}}^n
       = \overbrace{\mathbf{f}^n}^{\hidewidth\text{measured}\hidewidth}
-        -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis force}}
+        -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
         +\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
-        -\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centripetal force}}
+        -\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
 \f}
 where
 - \f$ \boldsymbol{v}^n = \begin{pmatrix} v_N & v_E & v_D \end{pmatrix}^T \f$ is the velocity with respect to the Earth in local-navigation frame coordinates,
@@ -29,9 +29,9 @@ see
 - \cite Jekeli2001 Jekeli, ch. 4.3.4, eq. 4.88, p. 127
 - \cite Groves2013 Groves, ch. 5.4.3, eq. 5.53, p. 179
 
-\subsection ImuIntegrator-Mechanization-n-Velocity Position
+\subsection ImuIntegrator-Mechanization-n-Position Position
 
-\fl{equation,eq-ImuSimulator-Trajectory-Linear-curvilinearPositionDerivative}
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Position}
 \begin{aligned}
   \dotup{\phi}    &= \frac{v_N}{R_N + h} \\
   \dotup{\lambda} &= \frac{v_E}{(R_E + h) \cos{\phi}} \\
@@ -39,6 +39,7 @@ see
 \end{aligned}
 \f}
 where
+- \f$ \begin{pmatrix} \phi & \lambda & h \end{pmatrix}^T \f$ is the latitude, longitude and altitude above the ellipsoid,
 - \f$ R_N \f$ is the North/South (meridian) earth radius,
 - \f$ R_E \f$ is the East/West (prime vertical) earth radius
 

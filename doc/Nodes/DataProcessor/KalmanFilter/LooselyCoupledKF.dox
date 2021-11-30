@@ -237,7 +237,7 @@ The time derivative of the velocity in local-navigation-frame coordinates is (se
 \f}
 where
 - \f$ \boldsymbol{f}^n = [f_N \quad f_E \quad f_D]^T \f$ is the specific force vector as measured by a triad of accelerometers and resolved into the local geographic reference frame
-- \f$ \mathbf{g}_l^n \f$ is the local gravity vector which includes the combined effects of the mass attraction of the Earth (\f$ \mathbf{g} \f$) and the centripetal acceleration caused by the Earth's rotation (\f$ \boldsymbol{\omega}_{ie} \times \boldsymbol{\omega}_{ie} \times \mathbf{R} \f$) (see \cite Titterton2004 Titterton, ch. 3.7.1, eq. 3.75, p. 48)
+- \f$ \mathbf{g}_l^n \f$ is the local gravity vector which includes the combined effects of the mass attraction of the Earth (\f$ \mathbf{g} \f$) and the centrifugal acceleration caused by the Earth's rotation (\f$ \boldsymbol{\omega}_{ie} \times \boldsymbol{\omega}_{ie} \times \mathbf{R} \f$) (see \cite Titterton2004 Titterton, ch. 3.7.1, eq. 3.75, p. 48)
 
 The estimated velocity follows the same propagation
 \fl{equation,eq-LCKF-Derivation-Attitude-timeDerivative-estimate}

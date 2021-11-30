@@ -183,11 +183,11 @@ class ImuSimulator : public Imu
     /// Gravity model selected in the GUI
     GravityModel gravityModel = GravityModel::EGM96;
 
-    /// Apply the coriolis force to the measured accelerations
-    bool coriolisForceEnabled = true;
+    /// Apply the coriolis acceleration to the measured accelerations
+    bool coriolisAccelerationEnabled = true;
 
-    /// Apply the centripetal force to the measured accelerations
-    bool centripetalForceEnabled = true;
+    /// Apply the centrifugal acceleration to the measured accelerations
+    bool centrifgalAccelerationEnabled = true;
 
     /// Apply the Earth rotation rate to the measured angular rates
     bool angularRateEarthRotationEnabled = true;

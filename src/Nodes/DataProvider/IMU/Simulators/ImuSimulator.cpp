@@ -379,14 +379,14 @@ void NAV::ImuSimulator::guiConfig()
 
                 ImGui::EndCombo();
             }
-            if (ImGui::Checkbox(fmt::format("Coriolis force##{}", size_t(id)).c_str(), &coriolisForceEnabled))
+            if (ImGui::Checkbox(fmt::format("Coriolis acceleration##{}", size_t(id)).c_str(), &coriolisAccelerationEnabled))
             {
-                LOG_DEBUG("{}: coriolisForceEnabled changed to {}", nameId(), coriolisForceEnabled);
+                LOG_DEBUG("{}: coriolisAccelerationEnabled changed to {}", nameId(), coriolisAccelerationEnabled);
                 flow::ApplyChanges();
             }
-            if (ImGui::Checkbox(fmt::format("Centripetal force##{}", size_t(id)).c_str(), &centripetalForceEnabled))
+            if (ImGui::Checkbox(fmt::format("Centrifugal acceleration##{}", size_t(id)).c_str(), &centrifgalAccelerationEnabled))
             {
-                LOG_DEBUG("{}: centripetalForceEnabled changed to {}", nameId(), centripetalForceEnabled);
+                LOG_DEBUG("{}: centrifgalAccelerationEnabled changed to {}", nameId(), centrifgalAccelerationEnabled);
                 flow::ApplyChanges();
             }
             ImGui::Unindent();
@@ -440,8 +440,8 @@ void NAV::ImuSimulator::guiConfig()
     j["circularTrajectoryCircleCountForStop"] = circularTrajectoryCircleCountForStop;
     // ###########################################################################################################
     j["gravityModel"] = gravityModel;
-    j["coriolisForceEnabled"] = coriolisForceEnabled;
-    j["centripetalForceEnabled"] = centripetalForceEnabled;
+    j["coriolisAccelerationEnabled"] = coriolisAccelerationEnabled;
+    j["centrifgalAccelerationEnabled"] = centrifgalAccelerationEnabled;
     j["angularRateEarthRotationEnabled"] = angularRateEarthRotationEnabled;
     j["angularRateTransportRateEnabled"] = angularRateTransportRateEnabled;
     // ###########################################################################################################
@@ -526,13 +526,13 @@ void NAV::ImuSimulator::restore(json const& j)
     {
         j.at("gravityModel").get_to(gravityModel);
     }
-    if (j.contains("coriolisForceEnabled"))
+    if (j.contains("coriolisAccelerationEnabled"))
     {
-        j.at("coriolisForceEnabled").get_to(coriolisForceEnabled);
+        j.at("coriolisAccelerationEnabled").get_to(coriolisAccelerationEnabled);
     }
-    if (j.contains("centripetalForceEnabled"))
+    if (j.contains("centrifgalAccelerationEnabled"))
     {
-        j.at("centripetalForceEnabled").get_to(centripetalForceEnabled);
+        j.at("centrifgalAccelerationEnabled").get_to(centrifgalAccelerationEnabled);
     }
     if (j.contains("angularRateEarthRotationEnabled"))
     {
@@ -604,16 +604,16 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     // Force to keep vehicle on track
     Eigen::Vector3d accel_n = calcTrajectoryAccel_n(imuUpdateTime);
 
-    if (coriolisForceEnabled) // Apply Coriolis Acceleration
+    if (coriolisAccelerationEnabled) // Apply Coriolis Acceleration
     {
-        accel_n += calcCoriolisForce_n(omega_ie_n, omega_en_n, velocity_n);
+        accel_n += calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, velocity_n);
     }
 
     // Apply the local gravity vector
     accel_n -= calcGravitation_n(position_lla, gravityModel); // Mass attraction of the Earth (gravitation)
-    if (centripetalForceEnabled)                              // Centripetal acceleration caused by the Earth's rotation
+    if (centrifgalAccelerationEnabled)                        // Centrifugal acceleration caused by the Earth's rotation
     {
-        accel_n += q_ne * calcCentripetalForce_e(position_e);
+        accel_n += q_ne * calcCentrifugalAcceleration_e(position_e);
     }
 
     // Acceleration measured by the accelerometer in platform coordinates

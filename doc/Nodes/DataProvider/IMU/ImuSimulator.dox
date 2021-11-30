@@ -15,24 +15,24 @@ where
 - \f$ \boldsymbol{\omega}_{en}^n \f$ is the turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
 - \f$ \mathbf{g}_l^n \f$ is the local gravity vector which is a combination of (see \cite Titterton2004 Titterton, ch. 3.71, eq. 3.75, p. 48)
     - \f$ \mathbf{g}^n \f$ the local gravitation vector (caused by effects of mass attraction)
-    - \f$ \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \f$ the centripetal force caused by the Earth's rotation
+    - \f$ \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \f$ the centrifugal acceleration caused by the Earth's rotation
 
 Therefore equation \eqref{eq-ImuSimulator-VelocityNav-equation-pre} becomes
 \fl{equation,eq-ImuSimulator-VelocityNav-equation}
   \underbrace{\boldsymbol{\dot{v}}^n}_{\hidewidth\text{trajectory}\hidewidth}
       = \overbrace{\mathbf{f}^n}^{\hidewidth\text{measured}\hidewidth}
-        -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis force}}
+        -\ \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
         +\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
-        -\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centripetal force}}
+        -\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
 \f}
 
 which can be reordered to calculate the measured accelerations with
 \fl{equation,eq-ImuSimulator-acceleration-measured}
   \underbrace{\mathbf{f}^n}_{\hidewidth\text{measured}\hidewidth}
       = \overbrace{\boldsymbol{\dot{v}}^n}^{\hidewidth\text{trajectory}\hidewidth}
-        + \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis force}}
+        + \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}}
         -\ \overbrace{\mathbf{g}^n}^{\hidewidth\text{gravitation}\hidewidth}
-        +\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centripetal force}}
+        +\ \mathbf{C}_e^n \cdot \underbrace{\left(\boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ] \right)}_{\text{centrifugal acceleration}}
 \f}
 
 \section ImuSimulator-Trajectory Trajectory calculation

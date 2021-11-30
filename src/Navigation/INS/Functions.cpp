@@ -25,13 +25,13 @@ Eigen::Vector3d calcTransportRate_n(const Eigen::Vector3d& latLonAlt, const Eige
     return omega_en_n__t1;
 }
 
-Eigen::Vector3d calcCentripetalForce_e(const Eigen::Vector3d& x_e, const Eigen::Vector3d& omega_ie_e)
+Eigen::Vector3d calcCentrifugalAcceleration_e(const Eigen::Vector3d& x_e, const Eigen::Vector3d& omega_ie_e)
 {
     // ω_ie_e ⨯ [ω_ie_e ⨯ x_e]
     return omega_ie_e.cross(omega_ie_e.cross(x_e));
 }
 
-Eigen::Vector3d calcCoriolisForce_n(const Eigen::Vector3d& omega_ie_n, const Eigen::Vector3d& omega_en_n, const Eigen::Vector3d& velocity_n)
+Eigen::Vector3d calcCoriolisAcceleration_n(const Eigen::Vector3d& omega_ie_n, const Eigen::Vector3d& omega_en_n, const Eigen::Vector3d& velocity_n)
 {
     return (2 * omega_ie_n + omega_en_n).cross(velocity_n);
 }

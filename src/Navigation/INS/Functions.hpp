@@ -30,16 +30,16 @@ namespace NAV
 ///
 [[nodiscard]] Eigen::Vector3d calcTransportRate_n(const Eigen::Vector3d& latLonAlt, const Eigen::Vector3d& velocity_n, const double& R_N, const double& R_E);
 
-/// @brief Calculates the centripetal force in [m/s^2] (force that makes a body follow a curved path)
+/// @brief Calculates the centrifugal force in [m/s^2] (force that makes a body follow a curved path)
 ///
-/// \anchor eq-INS-Mechanization-CentripetalForce \f{equation}{ \label{eq:eq-INS-Mechanization-CentripetalForce}
+/// \anchor eq-INS-Mechanization-CentrifugalForce \f{equation}{ \label{eq:eq-INS-Mechanization-CentrifugalForce}
 ///   \boldsymbol{\omega}_{ie}^e \times [ \boldsymbol{\omega}_{ie}^e \times \mathbf{x}^e ]
 /// \f}
 ///
 /// @param[in] x_e Position in ECEF coordinates in [m]
 /// @param[in] omega_ie_e Angular rate of the Earth rotation in [rad/s] in the Earth coordinate frame
-/// @return Centripetal force in the Earth coordinate frame in [m/s^2]
-[[nodiscard]] Eigen::Vector3d calcCentripetalForce_e(const Eigen::Vector3d& x_e, const Eigen::Vector3d& omega_ie_e = InsConst::angularVelocity_ie_e);
+/// @return Centrifugal force in the Earth coordinate frame in [m/s^2]
+[[nodiscard]] Eigen::Vector3d calcCentrifugalAcceleration_e(const Eigen::Vector3d& x_e, const Eigen::Vector3d& omega_ie_e = InsConst::angularVelocity_ie_e);
 
 /// @brief Calculates the coriolis force in [m/s^2] (force due to motion in rotating reference frame)
 ///
@@ -51,7 +51,7 @@ namespace NAV
 /// @param[in] omega_en_n ω_en_n Transport rate in [rad/s] in local-navigation coordinates
 /// @param[in] velocity_n v_n Velocity in local-navigation frame coordinates in [m/s^2]
 /// @return Coriolis force in local-navigation coordinates in [m/s^2]
-[[nodiscard]] Eigen::Vector3d calcCoriolisForce_n(const Eigen::Vector3d& omega_ie_n, const Eigen::Vector3d& omega_en_n, const Eigen::Vector3d& velocity_n);
+[[nodiscard]] Eigen::Vector3d calcCoriolisAcceleration_n(const Eigen::Vector3d& omega_ie_n, const Eigen::Vector3d& omega_en_n, const Eigen::Vector3d& velocity_n);
 
 /// @brief Calculates the roll angle from a static acceleration measurement
 /// @param[in] accel_b Acceleration measurement in static condition in [m/s^2]
