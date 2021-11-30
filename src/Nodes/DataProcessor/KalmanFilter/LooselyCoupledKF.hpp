@@ -10,7 +10,7 @@
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/State/ImuBiases.hpp"
 
-#include "KalmanFilter.hpp"
+#include "Navigation/Math/KalmanFilter.hpp"
 
 namespace NAV
 {
