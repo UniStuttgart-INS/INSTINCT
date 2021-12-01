@@ -6,6 +6,172 @@ namespace Instinct {
 
 \subsection ImuIntegrator-Mechanization-n-Attitude Attitude
 
+\subsubsection ImuIntegrator-Mechanization-n-Attitude-DCM Propagation of direction cosine matrix with time
+
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-DCM}
+  \mathbf{\dot{C}}_b^n = \mathbf{C}_b^n \boldsymbol{\Omega}_{nb}^b
+\f}
+where
+- \f$ \boldsymbol{\Omega}_{nb}^b \f$ is the skew symmetric form of \f$ \boldsymbol{\omega}_{nb}^b \f$, the body rate with respect to the navigation frame
+
+see
+- \cite Titterton2004 Titterton, ch. 3.5.3, eq. 3.28, p. 32
+- \cite Jekeli2001 Jekeli, ch. 4.3.4, eq. 4.104, p. 130
+- \cite Groves2013 Groves, ch. 5.4.1, eq. 5.39, p. 176
+
+The body rate with respect to the navigation frame \f$ \boldsymbol{\omega}_{nb}^b \f$ can be expressed as
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-omega-nb}
+  \boldsymbol{\omega}_{nb}^b = \boldsymbol{\omega}_{ib}^b - \mathbf{C}_n^b [\boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n]
+\f}
+this together with the skew-symmetric matrix transformation (see \cite Groves2013 Groves, ch. 2.3.1, eq. 2.51, p. 45)
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-skew-symmetric-matrix-transform}
+  \mathbf{\Omega}_{\beta\alpha}^\delta = \mathbf{C}_\gamma^\delta \mathbf{\Omega}_{\beta\alpha}^\gamma \mathbf{C}_\delta^\gamma
+\f}
+leads to the skew symmetric form of \eqref{eq-ImuIntegrator-Mechanization-n-Attitude-DCM}
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-DCM-full}
+  \mathbf{\dot{C}}_b^n = \mathbf{C}_b^n \boldsymbol{\Omega}_{ib}^b - (\boldsymbol{\Omega}_{ie}^n + \boldsymbol{\Omega}_{en}^n) \mathbf{C}_b^n
+\f}
+
+\subsubsection ImuIntegrator-Mechanization-n-Attitude-Euler Propagation of Euler angles with time
+
+The gimbal angles \f$ \phi \f$ (roll), \f$ \theta \f$ (pitch), \f$ \psi \f$ (yaw) are related to the body rates as follows:
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Euler-relation}
+  \begin{bmatrix} \omega_x \\ \omega_y \\ \omega_z \end{bmatrix}
+      = \begin{bmatrix} \dotup{\phi} \\ 0 \\ 0 \end{bmatrix}
+        + \mathbf{C_3} \begin{bmatrix} 0 \\ \dotup{\theta} \\ 0 \end{bmatrix}
+        + \mathbf{C_3} \mathbf{C_2} \begin{bmatrix} 0 \\ 0 \\ \dotup{\psi} \end{bmatrix}
+\f}
+where
+- \f$ \mathbf{C_3} = \begin{bmatrix} 1 &      0      &     0      \\
+                                     0 &  \cos{\phi} & \sin{\phi} \\
+                                     0 & -\sin{\phi} & \cos{\phi} \end{bmatrix} \f$
+  is the rotation \f$ \phi \f$ about the x-axis (see \cite Titterton2004 Titterton, ch. 3.6.3.2, eq. 3.46, p. 41)
+- \f$ \mathbf{C_2} = \begin{bmatrix} \cos{\theta} & 0 & -\sin{\theta} \\
+                                          0       & 1 &       0       \\
+                                     \sin{\theta} & 0 &  \cos{\theta} \end{bmatrix} \f$
+  is the rotation \f$ \theta \f$ about the y-axis (see \cite Titterton2004 Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)
+- \f$ \boldsymbol{\omega}_{nb}^b = \begin{pmatrix} \omega_x & \omega_y & \omega_z \end{pmatrix}^T \f$ is the body rate with respect to the navigation frame, expressed in the body frame
+
+This can be rearranged into:
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Euler}
+\begin{aligned}
+  \dotup{\phi}   &= (\omega_y \sin{\phi} + \omega_z \cos{\phi}) \tan{\theta} + \omega_x \\
+  \dotup{\theta} &= \omega_y \cos{\phi} - \omega_z \sin{\phi} \\
+  \dotup{\psi}   &= (\omega_y \sin{\phi} + \omega_z \cos{\phi}) \sec{\theta} \\
+\end{aligned}
+\f}
+
+see
+- \cite Titterton2004 Titterton, ch. 3.6.3.3, eq. 3.52, p. 42
+- \cite Gleason2009 Gleason, ch. 6.2.3.1, eq. 6.7, p. 153 (top left term in eq. 6.8 should be \f$ \cos{\theta} \f$ instead of \f$ 1 \f$)
+
+\subsubsection ImuIntegrator-Mechanization-n-Attitude-Quaternion Propagation of quaternion with time
+
+The quaternion \f$ \mathbf{q} \f$ propagates as (see \cite Titterton2004 Titterton, ch. 3.6.4.3, eq. 3.60-3.62, p. 44)
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-base}
+  \mathbf{\dot{q}}_b^n = 0.5 \mathbf{q}_b^n \cdot \mathbf{p}_{nb}^b
+\f}
+where \f$ \mathbf{p}_{nb}^b = \begin{pmatrix} 0 & \boldsymbol{\omega}_{nb}^b \end{pmatrix}^T = \begin{pmatrix} 0 & \omega_x & \omega_y & \omega_z \end{pmatrix}^T \f$
+
+This can be written in matrix form as
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-base-matrix}
+  \mathbf{\dot{q}}_b^n
+      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
+      = 0.5 \begin{bmatrix} a & -b & -c & -d \\
+                            b &  a & -d &  c \\
+                            c &  d &  a & -b \\
+                            d & -c &  b &  a \end{bmatrix}
+            \begin{bmatrix} 0 \\ \omega_x \\ \omega_y \\ \omega_z \end{bmatrix}
+\f}
+that is
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-components}
+\begin{aligned}
+  \dotup{a} &= -0.5 (b \omega_x + c \omega_y + d \omega_z) &=  0.5 ( 0 \cdot a - \omega_x b - \omega_y c - \omega_z d) \\
+  \dotup{b} &=  0.5 (a \omega_x - d \omega_y + c \omega_z) &=  0.5 (\omega_x a +  0 \cdot b + \omega_z c - \omega_y d) \\
+  \dotup{c} &=  0.5 (d \omega_x + a \omega_y - b \omega_z) &=  0.5 (\omega_y a - \omega_z b +  0 \cdot c + \omega_x d) \\
+  \dotup{d} &= -0.5 (c \omega_x - b \omega_y - a \omega_z) &=  0.5 (\omega_z a + \omega_y b - \omega_x c +  0 \cdot d) \\
+\end{aligned}
+\f}
+
+and this can be written in matrix form again as
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-matrix-Titterton}
+  \mathbf{\dot{q}}_b^n
+      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
+      = \frac{1}{2} \begin{bmatrix}     0    & -\omega_x & -\omega_y & -\omega_z \\
+                                    \omega_x &     0     &  \omega_z & -\omega_y \\
+                                    \omega_y & -\omega_z &     0     &  \omega_x \\
+                                    \omega_z &  \omega_y & -\omega_x &     0     \end{bmatrix}
+                    \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix}
+\f}
+
+\subsubsection ImuIntegrator-Mechanization-n-Attitude-Quaternion-Comparison Quaternion propagation comparison
+
+Different books have different forms of the quaternion propagation, therefore this shall be discussed here.
+
+- \cite Titterton2004 Titterton, ch. 11.2.5, eq. 11.33-11.35, p. 319
+  - The matrix form for the propagation is
+    \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-matrix-Titterton}
+      \mathbf{\dot{q}}_b^n
+          = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
+          = \frac{1}{2} \begin{bmatrix}     0    & -\omega_x & -\omega_y & -\omega_z \\
+                                        \omega_x &     0     &  \omega_z & -\omega_y \\
+                                        \omega_y & -\omega_z &     0     &  \omega_x \\
+                                        \omega_z &  \omega_y & -\omega_x &     0     \end{bmatrix}
+                        \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix}
+    \f}
+  - which can be converted into a direction cosine matrix with
+    \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-DCM-Titterton}
+      \mathbf{C}_b^n = \begin{bmatrix} (a^2 + b^2 - c^2 - d^2) &       2(bc - ad)        &       2(bd + ac)        \\
+                                             2(bc + ad)        & (a^2 - b^2 + c^2 - d^2) &       2(cd - ab)        \\
+                                             2(bd - ac)        &       2(cd + ab)        & (a^2 - b^2 - c^2 + d^2) \end{bmatrix}
+    \f}
+  - the quaternion is defined as (see \cite Titterton2004 Titterton, ch. 3.6.4.2, eq. 3.57, p. 43)
+    \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-rotation-Titterton}
+      \mathbf{r}^n = \mathbf{q} \mathbf{r}^b \mathbf{q}^* \Rightarrow \mathbf{q} = \mathbf{q}_b^n
+    \f}
+- \cite Jekeli2001 Jekeli, ch. 4.2.3.1, eq. 4.21-4.23, p. 114f
+  - Defines a different matrix because the quaternion is the complex conjugated
+    \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-matrix-Jekeli}
+      \mathbf{\dot{q}}_n^b
+          = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
+          = \frac{1}{2} \begin{bmatrix}     0     &  \omega_x &  \omega_y &  \omega_z \\
+                                        -\omega_x &     0     &  \omega_z & -\omega_y \\
+                                        -\omega_y & -\omega_z &     0     &  \omega_x \\
+                                        -\omega_z &  \omega_y & -\omega_x &     0     \end{bmatrix}
+                        \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix}
+    \f}
+  - which can be converted into a direction cosine matrix with
+    \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-DCM-Jekeli}
+      \mathbf{C}_n^b = \begin{bmatrix} (a^2 + b^2 - c^2 - d^2) &       2(bc + ad)        &       2(bd - ac)        \\
+                                             2(bc - ad)        & (a^2 - b^2 + c^2 - d^2) &       2(cd + ab)        \\
+                                             2(bd + ac)        &       2(cd - ab)        & (a^2 - b^2 - c^2 + d^2) \end{bmatrix}
+    \f}
+  - Replacing the complex conjugated quaternion leads to the same equation as Titterton's \eqref{eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-matrix-Titterton}
+    \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-matrix-Jekeli}
+    \begin{aligned}
+      \mathbf{\dot{q}}_b^n
+          &= \begin{bmatrix} \dotup{a} \\ -\dotup{b}^* \\ -\dotup{c}^* \\ -\dotup{d}^* \end{bmatrix}
+           = \frac{1}{2} \begin{bmatrix}     0     &  \omega_x &  \omega_y &  \omega_z \\
+                                         -\omega_x &     0     &  \omega_z & -\omega_y \\
+                                         -\omega_y & -\omega_z &     0     &  \omega_x \\
+                                         -\omega_z &  \omega_y & -\omega_x &     0     \end{bmatrix}
+                         \begin{bmatrix} a \\ -b^* \\ -c^* \\ -d^* \end{bmatrix} \\
+          &= \begin{bmatrix} \dotup{a} \\ -\dotup{b}^* \\ -\dotup{c}^* \\ -\dotup{d}^* \end{bmatrix}
+           = \frac{1}{2} \begin{bmatrix}     0     & -\omega_x & -\omega_y & -\omega_z \\
+                                         -\omega_x &     0     & -\omega_z &  \omega_y \\
+                                         -\omega_y &  \omega_z &     0     & -\omega_x \\
+                                         -\omega_z & -\omega_y &  \omega_x &     0     \end{bmatrix}
+                         \begin{bmatrix} a \\ b^* \\ c^* \\ d^* \end{bmatrix} \\
+          &= \begin{bmatrix} \dotup{a} \\ \dotup{b}^* \\ \dotup{c}^* \\ \dotup{d}^* \end{bmatrix}
+           = \frac{1}{2} \begin{bmatrix}     0     & -\omega_x & -\omega_y & -\omega_z \\
+                                          \omega_x &     0     &  \omega_z & -\omega_y \\
+                                          \omega_y & -\omega_z &     0     &  \omega_x \\
+                                          \omega_z &  \omega_y & -\omega_x &     0     \end{bmatrix}
+                         \begin{bmatrix} a \\ b^* \\ c^* \\ d^* \end{bmatrix}
+    \end{aligned}
+    \f}
+- \cite Groves2013 Groves, Appendix E, ch. E.6.2, eq. E.32, p. E-12
+
 \subsection ImuIntegrator-Mechanization-n-Velocity Velocity
 
 The derivative of the velocity in local-navigation coordinates can be expressed as
