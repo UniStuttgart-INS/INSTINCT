@@ -6,7 +6,7 @@ namespace Instinct {
 
 The navigation equation for a local-navigation frame is (see \cite Titterton2004 Titterton, ch. 3.7.1, eq. 3.69, p. 47f)
 \fl{equation,eq-ImuSimulator-VelocityNav-equation-pre}
-  \boldsymbol{\dot{v}}^n = \mathbf{f}^n - \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis force}} +\ \mathbf{g}_l^n
+  \boldsymbol{\dot{v}}^n = \mathbf{f}^n - \underbrace{(2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n}_{\text{coriolis acceleration}} +\ \mathbf{g}_l^n
 \f}
 where
 - \f$ \boldsymbol{v}^n = \begin{pmatrix} v_N & v_E & v_D \end{pmatrix}^T \f$ is the velocity with respect to the Earth in local-navigation frame coordinates,

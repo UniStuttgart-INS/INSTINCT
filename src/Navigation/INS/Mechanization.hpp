@@ -13,7 +13,6 @@
 
 namespace NAV
 {
-
 /// @brief Calculates the derivative of the curvilinear position
 /// @param[in] y Vector [lat, lon, alt, v_N, v_E, v_D]^T
 /// @param[in] t Time (Placeholder for Runge-Kutta algorithm)
@@ -120,7 +119,7 @@ Eigen::Matrix<double, 6, 1> curvilinearPositionDerivative(const Eigen::Matrix<do
 /// @param[in] quaternion_ep__t0 q (tₖ) Quaternion, from platform to earth coordinates, at the time tₖ
 /// @param[in] quaternion_ep__t1 q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
 /// @param[in] quaternion_ep__t2 q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
-/// @param[in] suppressCoriolis If true, don't calculate the coriolis force
+/// @param[in] suppressCoriolis If true, don't calculate the coriolis acceleration
 /// @return The updated velocity v_e
 ///
 /// @note See C. Jekeli (2001) - Inertial Navigation Systems with Geodetic Applications (Chapter 4.2.4.1.2)
@@ -150,7 +149,7 @@ Eigen::Matrix<double, 6, 1> curvilinearPositionDerivative(const Eigen::Matrix<do
 /// @param[in] quaternion_nb__t0 q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
 /// @param[in] quaternion_nb__t1 q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
 /// @param[in] quaternion_nb__t2 q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
-/// @param[in] suppressCoriolis If true, don't calculate the coriolis force
+/// @param[in] suppressCoriolis If true, don't calculate the coriolis acceleration
 /// @return The updated velocity v_n
 ///
 /// @note See S. Gleason (2009) - GNSS Applications and Methods (Chapter 6.2.3.2)
@@ -180,7 +179,7 @@ Eigen::Matrix<double, 6, 1> curvilinearPositionDerivative(const Eigen::Matrix<do
 /// @param[in] quaternion_nb__t0 q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
 /// @param[in] quaternion_nb__t1 q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
 /// @param[in] quaternion_nb__t2 q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
-/// @param[in] suppressCoriolis If true, don't calculate the coriolis force
+/// @param[in] suppressCoriolis If true, don't calculate the coriolis acceleration
 /// @return The updated velocity v_n
 ///
 /// @note Prefer using Simpson for the velocity update as yields same result but computational more efficient (Jekeli (2001) - Chapter 4.3.6)
