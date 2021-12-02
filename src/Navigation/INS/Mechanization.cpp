@@ -59,7 +59,7 @@ struct VelocityUpdateState
 Eigen::Vector3d velocityUpdateModel(const VelocityUpdateState& x, const Eigen::Vector3d& velocity_n)
 {
     // TODO: Consider suppressCoriolis option from the GUI here
-    // The Coriolis force accounts for the fact that the NED frame is noninertial
+    // The Coriolis acceleration accounts for the fact that the NED frame is noninertial
     const Eigen::Vector3d coriolisAcceleration_n = (2 * x.angularVelocity_ie_n + x.angularVelocity_en_n).cross(velocity_n);
 
     // Jekeli (eq. 4.88) - g includes centrifugal acceleration
@@ -299,7 +299,7 @@ Eigen::Vector3d updateVelocity_e_Simpson(const long double& timeDifferenceSec__t
     }
     else
     {
-        // The Coriolis force accounts for the fact that the NED frame is noninertial
+        // The Coriolis acceleration accounts for the fact that the NED frame is noninertial
         coriolisAcceleration_e = 2 * InsConst::angularVelocityCrossProduct_ie_e * velocity_e__t2
                                  + InsConst::angularVelocityCrossProduct_ie_e * InsConst::angularVelocityCrossProduct_ie_e * position_e__t2;
     }
@@ -340,7 +340,7 @@ Eigen::Vector3d updateVelocity_n_Simpson(const long double& timeDifferenceSec__t
                                                   + quaternion_nb__t0 * (3 * deltaVelocity_b__t0 - deltaVelocity_b__t1))
                                                  / 6.0;
 
-    // The Coriolis force accounts for the fact that the NED frame is noninertial
+    // The Coriolis acceleration accounts for the fact that the NED frame is noninertial
     Eigen::Vector3d coriolisAcceleration_n__t1;
 
     if (suppressCoriolis)
@@ -349,7 +349,7 @@ Eigen::Vector3d updateVelocity_n_Simpson(const long double& timeDifferenceSec__t
     }
     else
     {
-        // The Coriolis force accounts for the fact that the NED frame is noninertial
+        // The Coriolis acceleration accounts for the fact that the NED frame is noninertial
         coriolisAcceleration_n__t1 = (2 * angularVelocity_ie_n__t1 + angularVelocity_en_n__t1).cross(velocity_n__t1);
     }
 
