@@ -247,8 +247,32 @@ Replacing the complex conjugated quaternion leads to the same equation as Titter
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \subsubsection ImuIntegrator-Mechanization-n-Attitude-Quaternion-Comparison-Groves Groves
-- \cite Groves2013 Groves, Appendix E, ch. E.6.2, eq. E.32, p. E-12
-
+Groves defines his Quaternion update in two arbitrary frames (\cite Groves2013 Groves, Appendix E, ch. E.6.2, eq. E.32, p. E-12)
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-Groves-E32}
+  \mathbf{\dot{q}}_\beta^\alpha
+      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
+      = \frac{1}{2} \begin{bmatrix}               0               & -\omega_{\beta\alpha,x}^\alpha & -\omega_{\beta\alpha,y}^\alpha & -\omega_{\beta\alpha,z}^\alpha \\
+                                    \omega_{\beta\alpha,x}^\alpha &                0               &  \omega_{\beta\alpha,z}^\alpha & -\omega_{\beta\alpha,y}^\alpha \\
+                                    \omega_{\beta\alpha,y}^\alpha & -\omega_{\beta\alpha,z}^\alpha &                0               &  \omega_{\beta\alpha,x}^\alpha \\
+                                    \omega_{\beta\alpha,z}^\alpha &  \omega_{\beta\alpha,y}^\alpha & -\omega_{\beta\alpha,x}^\alpha &                0               \end{bmatrix}
+        \mathbf{q}_\beta^\alpha
+      = \frac{1}{2} \begin{bmatrix}              0               & -\omega_{\beta\alpha,x}^\beta & -\omega_{\beta\alpha,y}^\beta & -\omega_{\beta\alpha,z}^\beta \\
+                                    \omega_{\beta\alpha,x}^\beta &               0               & -\omega_{\beta\alpha,z}^\beta &  \omega_{\beta\alpha,y}^\beta \\
+                                    \omega_{\beta\alpha,y}^\beta &  \omega_{\beta\alpha,z}^\beta &               0               & -\omega_{\beta\alpha,x}^\beta \\
+                                    \omega_{\beta\alpha,z}^\beta & -\omega_{\beta\alpha,y}^\beta &  \omega_{\beta\alpha,x}^\beta &               0               \end{bmatrix}
+        \mathbf{q}_\beta^\alpha
+\f}
+This can be expresed for the body rate with respect to the navigation frame in body frame coordinates \f$ \boldsymbol{\omega}_{nb}^b \f$
+\fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Quaternion-Groves-E32}
+  \mathbf{\dot{q}}_n^b
+      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
+      = \frac{1}{2} \begin{bmatrix}        0        & -\omega_{nb,x}^b & -\omega_{nb,y}^b & -\omega_{nb,z}^b \\
+                                    \omega_{nb,x}^b &         0        &  \omega_{nb,z}^b & -\omega_{nb,y}^b \\
+                                    \omega_{nb,y}^b & -\omega_{nb,z}^b &         0        &  \omega_{nb,x}^b \\
+                                    \omega_{nb,z}^b &  \omega_{nb,y}^b & -\omega_{nb,x}^b &         0        \end{bmatrix}
+        \mathbf{q}_n^b
+\f}
+which is the same as Titterton and Jekeli
 
 */
 
