@@ -336,7 +336,7 @@ we get
 \end{aligned}
 \f}
 Now neglecting error product terms \f$ \delta \boldsymbol{f}^b \times \boldsymbol{\psi} \approx 0 \f$ and \f$ (2 \delta \boldsymbol{\omega}_{ie}^n + \delta \boldsymbol{\omega}_{en}^n) \times \delta \boldsymbol{v}^n \approx 0\f$
-\fl{equation,eq-LCKF-Derivation-Velocity-timeDerivative-differential-transformation}
+\fl{equation,eq-LCKF-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
   \delta \boldsymbol{\dot{v}}^n \approx \highlight[blue!20]{\boldsymbol{f}^n \times} \boldsymbol{\psi}
                                    + \highlight[red!20]{\mathbf{C}_b^n \delta\boldsymbol{f}^b}
                                    - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \delta \boldsymbol{v}^n
