@@ -4,6 +4,194 @@ namespace Instinct {
 
 \section LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame Local-Level Frame Error State Equations
 
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-ShortForm Short form
+
+\fl{equation,eq-LCKF-stateMatrix-short}
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
+             \boldsymbol{\dot{\psi}}_{nb}^{n} \\
+      \delta \boldsymbol{\dot{v}}^{n} \\
+      \delta \boldsymbol{\dot{r}}_b \\
+      \delta \boldsymbol{\dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} \\
+      \delta \boldsymbol{\dot{\omega}}_{ib}^b \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta\dot{x}}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
+    {
+      \mathbf{F}_{11}^{n} & \mathbf{F}_{12}^{n} & \mathbf{F}_{13}^{n} & \mathbf{0}_3   & -\mathbf{C}_b^n \\
+      \mathbf{F}_{21}^{n} & \mathbf{F}_{22}^{n} & \mathbf{F}_{23}^{n} & \mathbf{C}_b^n &  \mathbf{0}_3   \\
+      \mathbf{0}_3        & \mathbf{F}_{32}^{n} & \mathbf{F}_{33}^{n} & \mathbf{0}_3   &  \mathbf{0}_3   \\
+      \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3   &  \mathbf{0}_3   \\
+      \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3   &  \mathbf{0}_3   \\
+    };
+    \coordinate[yshift=.3em] (tl) at (m-1-1.north west);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (tl) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[yellow!20]{m-1-2}{m-1-2}
+      \fhighlight[lime!20]{m-1-3}{m-1-3}
+      \fhighlight[orange!20]{m-1-5}{m-1-5}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[purple!20]{m-2-2}{m-2-2}
+      \fhighlight[violet!20]{m-2-3}{m-2-3}
+      \fhighlight[red!20]{m-2-4}{m-2-4}
+      \fhighlight[cyan!20]{m-3-2}{m-3-2}
+      \fhighlight[teal!20]{m-3-3}{m-3-3}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \cdot
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
+             \boldsymbol{\psi}_{nb}^{n} \\
+      \delta \boldsymbol{v}^{n} \\
+      \delta \boldsymbol{r}_b \\
+      \delta \boldsymbol{f}^b \\
+      \delta \boldsymbol{\omega}_{ib}^b \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta x}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-DetailledForm Detailled form
+
+\fl{equation,eq-LCKF-stateMatrix}
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=1.5em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.4em,] {
+      \delta \dotup{R}              \\ \delta \dotup{P}              \\ \delta \dotup{Y}              \\
+      \delta \dotup{v}_{N}          \\ \delta \dotup{v}_{E}          \\ \delta \dotup{v}_{D}          \\
+      \delta \dotup{\phi}           \\ \delta \dotup{\lambda}        \\ \delta \dotup{h}              \\
+      \delta \dotup{f}_{x}^{b}      \\ \delta \dotup{f}_{y}^{b}      \\ \delta \dotup{f}_{z}^{b}      \\
+      \delta \dotup{\omega}_{x}^{b} \\ \delta \dotup{\omega}_{y}^{b} \\ \delta \dotup{\omega}_{z}^{b} \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta\dot{x}}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-3-1}
+      \fhighlight[blue!20]{m-4-1}{m-6-1}
+      \fhighlight[cyan!20]{m-7-1}{m-9-1}
+      \fhighlight[red!20]{m-10-1}{m-12-1}
+      \fhighlight[orange!20]{m-13-1}{m-15-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes in empty cells,
+                row sep=0.3em, column sep=0.4em,
+                nodes={rectangle,minimum height=2.3em,anchor=center},] {
+               0         &  \omega_{in,3}^{n} & -\omega_{in,2}^{n} &                             0                            &                     \frac{1}{R_E + h}                     &                       0                      &                                   -\omega_{ie}\sin{\phi}                                    &      0       &                   -\frac{v_E}{(R_E + h)^2}                   &  &                &  &  &                 & \\
+      -\omega_{in,3}^{n} &          0         &  \omega_{in,1}^{n} &                   -\frac{1}{R_N + h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                    \frac{v_N}{(R_N + h)^2}                   &  &  \mathbf{0}_3  &  &  & -\mathbf{C}_b^n & \\
+       \omega_{in,2}^{n} & -\omega_{in,1}^{n} &          0         &                             0                            &                -\frac{\tan{\phi}}{R_E + h}                &                       0                      &                 -\omega_{ie}\cos{\phi} - \frac{v_E}{(R_E + h)\cos^2{\phi}}                  &      0       &               \frac{v_E \tan{\phi}}{(R_E + h)^2}             &  &                &  &  &                 & \\
+               0         &        -f_D        &         f_E        &                    \frac{v_D}{R_N + h}                   & -2\frac{v_E \tan{\phi}}{R_E + h} - 2\omega_{ie}\sin{\phi} &              \frac{v_N}{R_N + h}             &                -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi}                 &      0       & \frac{v_E^2\tan{\phi}}{(R_E+h)^2} - \frac{v_Nv_D}{(R_N+h)^2} &  &                &  &  &                 & \\
+              f_D        &          0         &        -f_N        &  \frac{v_E \tan{\phi}}{R_E + h} + 2\omega_{ie}\sin{\phi} &            \frac{v_N \tan{\phi} + v_D}{R_E + h}           & \frac{v_E}{R_E + h} + 2\omega_{ie}\cos{\phi} & \frac{v_N v_E}{(R_E+h)\cos^2{\phi}} + 2v_N\omega_{ie}\cos{\phi} - 2v_D\omega_{ie}\sin{\phi} &      0       &        -\frac{v_Nv_E\tan{\phi} + v_Ev_D}{(R_E + h)^2}        &  & \mathbf{C}_b^n &  &  &   \mathbf{0}_3  & \\
+             -f_E        &         f_N        &          0         &                  -\frac{2v_N}{R_N + h}                   &       -\frac{2v_E}{R_E + h} - 2\omega_{ie}\cos{\phi}      &                       0                      &                                  2v_E\omega_{ie}\sin{\phi}                                  &      0       &     \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2}    &  &                &  &  &                 & \\
+                         &                    &                    &                      \frac{1}{R_N+h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                   -\frac{v_N}{(R_N + h)^2}                   &  &                &  &  &                 & \\
+                         &    \mathbf{0}_3    &                    &                             0                            &                \frac{1}{(R_E+h)\cos{\phi}}                &                       0                      &                           \frac{v_E\tan{\phi}}{(R_E+h)\cos{\phi}}                           &      0       &              -\frac{v_E}{(R_E + h)^2\cos{\phi}}              &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
+                         &                    &                    &                             0                            &                             0                             &                      -1                      &                                             0                                               &      0       &                               0                              &  &                &  &  &                 & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
+                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                             & \mathbf{0}_3 &                                                              &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
+                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                             & \mathbf{0}_3 &                                                              &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
+    };
+
+    \foreach \r in {1,3,4,6,7,9} {
+      \foreach \c in {1,3,4,6,7,9,10,12,13,15} {
+        \coordinate (m-\r-\c-nw) at (100,-100);
+        \coordinate (m-\r-\c-se) at (-100,100);
+
+        \foreach \row in {1,...,9} {
+          \path let \p1=(m-\row-\c.west), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at ({min(\x1,\x2)},\y2);
+          \path let \p1=(m-\row-\c.east), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at ({max(\x1,\x2)},\y2);
+        }
+        \foreach \col in {1,...,15} {
+          \path let \p1=(m-\r-\col.north), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at (\x2,{max(\y1,\y2)});
+          \path let \p1=(m-\r-\col.south), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at (\x2,{min(\y1,\y2)});
+        }
+      }
+    }
+
+    \path let \p1=(m-1-1-nw), \p2=(m-1-15-se) in coordinate (m-1-15-ne) at (\x2,\y1);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1-nw) -- node[above=2pt] {$\mathbf{F}$} (m-1-15-ne);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1-nw}{m-3-3-se}
+      \fhighlight[yellow!20]{m-1-4-nw}{m-3-6-se}
+      \fhighlight[lime!20]{m-1-7-nw}{m-3-9-se}
+      \fhighlight[orange!20]{m-1-13-nw}{m-3-15-se}
+      \fhighlight[blue!20]{m-4-1-nw}{m-6-3-se}
+      \fhighlight[purple!20]{m-4-4-nw}{m-6-6-se}
+      \fhighlight[violet!20]{m-4-7-nw}{m-6-9-se}
+      \fhighlight[red!20]{m-4-10-nw}{m-6-12-se}
+      \fhighlight[cyan!20]{m-7-4-nw}{m-9-6-se}
+      \fhighlight[teal!20]{m-7-7-nw}{m-9-9-se}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \cdot
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                nodes={rectangle,text width=1.5em,align=center,minimum height=2.3em,anchor=center},] {
+      \delta R              \\ \delta P              \\ \delta Y              \\
+      \delta v_{N}          \\ \delta v_{E}          \\ \delta v_{D}          \\
+      \delta \phi           \\ \delta \lambda        \\ \delta h              \\
+      \delta f_{x}^{b}      \\ \delta f_{y}^{b}      \\ \delta f_{z}^{b}      \\
+      \delta \omega_{x}^{b} \\ \delta \omega_{y}^{b} \\ \delta \omega_{z}^{b} \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta x}$} (m-1-1.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-3-1}
+      \fhighlight[blue!20]{m-4-1}{m-6-1}
+      \fhighlight[cyan!20]{m-7-1}{m-9-1}
+      \fhighlight[red!20]{m-10-1}{m-12-1}
+      \fhighlight[orange!20]{m-13-1}{m-15-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+This form corresponds to
+- \cite Titterton2004 Titterton, ch. 12.3.1.3, eq. 12.28, p. 345
+
+The following sources can be taken as reference, but have at least one deviation from the form presented here
+- \cite Groves2013 Groves, ch. 14.2.4, eq. 14.63, p. 587ff
+  - Different *sign* in equations \f$ F_{15}^n \f$ (14.63), \f$ F_{12}^n \f$ (14.65), \f$ F_{13}^n \f$ (14.66), \f$ F_{21}^n \f$ (14.67)
+- \cite Noureldin2013 Noureldin, ch. 6.1.5, eq. 6.76, p. 219
+  - ENU-System
+  - Different *sign* for the DCM term
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF-Appendix Appendix
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
 \subsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-Derivation Derivation
 
 \subsubsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-Derivation-Position Position Equations
@@ -460,190 +648,6 @@ Reordering the terms leads to the final form (neglecting gravity errors)
                                           \end{pmatrix}
                                         + \highlight[red!20]{\mathbf{C}_b^n \delta\boldsymbol{f}^b}
 \f}
-
-<!-- --------------------------------------------------------------------------------------------------------------- -->
-
-\subsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-Results Resulting Equations
-
-\subsubsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-ShortForm Short form
-
-\fl{equation,eq-LCKF-stateMatrix-short}
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
-             \boldsymbol{\dot{\psi}}_{nb}^{n} \\
-      \delta \boldsymbol{\dot{v}}^{n} \\
-      \delta \boldsymbol{\dot{r}}_b \\
-      \delta \boldsymbol{\dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} \\
-      \delta \boldsymbol{\dot{\omega}}_{ib}^b \\
-    };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta\dot{x}}$} (m-1-1.north east);
-
-    \begin{pgfonlayer}{background}
-      \fhighlight[green!20]{m-1-1}{m-1-1}
-      \fhighlight[blue!20]{m-2-1}{m-2-1}
-      \fhighlight[cyan!20]{m-3-1}{m-3-1}
-      \fhighlight[red!20]{m-4-1}{m-4-1}
-      \fhighlight[orange!20]{m-5-1}{m-5-1}
-    \end{pgfonlayer}
-  \end{tikzpicture}
-  =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-                nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
-    {
-      \mathbf{F}_{11}^{n} & \mathbf{F}_{12}^{n} & \mathbf{F}_{13}^{n} & \mathbf{0}_3   & -\mathbf{C}_b^n \\
-      \mathbf{F}_{21}^{n} & \mathbf{F}_{22}^{n} & \mathbf{F}_{23}^{n} & \mathbf{C}_b^n &  \mathbf{0}_3   \\
-      \mathbf{0}_3        & \mathbf{F}_{32}^{n} & \mathbf{F}_{33}^{n} & \mathbf{0}_3   &  \mathbf{0}_3   \\
-      \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3   &  \mathbf{0}_3   \\
-      \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3        & \mathbf{0}_3   &  \mathbf{0}_3   \\
-    };
-    \coordinate[yshift=.3em] (tl) at (m-1-1.north west);
-    \draw[decorate,transform canvas={yshift=.5em},thick] (tl) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
-
-    \begin{pgfonlayer}{background}
-      \fhighlight[green!20]{m-1-1}{m-1-1}
-      \fhighlight[yellow!20]{m-1-2}{m-1-2}
-      \fhighlight[lime!20]{m-1-3}{m-1-3}
-      \fhighlight[orange!20]{m-1-5}{m-1-5}
-      \fhighlight[blue!20]{m-2-1}{m-2-1}
-      \fhighlight[purple!20]{m-2-2}{m-2-2}
-      \fhighlight[violet!20]{m-2-3}{m-2-3}
-      \fhighlight[red!20]{m-2-4}{m-2-4}
-      \fhighlight[cyan!20]{m-3-2}{m-3-2}
-      \fhighlight[teal!20]{m-3-3}{m-3-3}
-    \end{pgfonlayer}
-  \end{tikzpicture}
-  \cdot
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-                nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
-             \boldsymbol{\psi}_{nb}^{n} \\
-      \delta \boldsymbol{v}^{n} \\
-      \delta \boldsymbol{r}_b \\
-      \delta \boldsymbol{f}^b \\
-      \delta \boldsymbol{\omega}_{ib}^b \\
-    };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta x}$} (m-1-1.north east);
-
-    \begin{pgfonlayer}{background}
-      \fhighlight[green!20]{m-1-1}{m-1-1}
-      \fhighlight[blue!20]{m-2-1}{m-2-1}
-      \fhighlight[cyan!20]{m-3-1}{m-3-1}
-      \fhighlight[red!20]{m-4-1}{m-4-1}
-      \fhighlight[orange!20]{m-5-1}{m-5-1}
-    \end{pgfonlayer}
-  \end{tikzpicture}
-\f}
-
-<!-- --------------------------------------------------------------------------------------------------------------- -->
-
-\subsubsection LooselyCoupledKF-ErrorStateEquations-LocalLevelFrame-DetailledForm Detailled form
-
-\fl{equation,eq-LCKF-stateMatrix}
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-                nodes={rectangle,text width=1.5em,align=center,minimum height=2.3em,anchor=center},row sep=0.3em, column sep=0.4em,] {
-      \delta \dotup{R}              \\ \delta \dotup{P}              \\ \delta \dotup{Y}              \\
-      \delta \dotup{v}_{N}          \\ \delta \dotup{v}_{E}          \\ \delta \dotup{v}_{D}          \\
-      \delta \dotup{\phi}           \\ \delta \dotup{\lambda}        \\ \delta \dotup{h}              \\
-      \delta \dotup{f}_{x}^{b}      \\ \delta \dotup{f}_{y}^{b}      \\ \delta \dotup{f}_{z}^{b}      \\
-      \delta \dotup{\omega}_{x}^{b} \\ \delta \dotup{\omega}_{y}^{b} \\ \delta \dotup{\omega}_{z}^{b} \\
-    };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta\dot{x}}$} (m-1-1.north east);
-
-    \begin{pgfonlayer}{background}
-      \fhighlight[green!20]{m-1-1}{m-3-1}
-      \fhighlight[blue!20]{m-4-1}{m-6-1}
-      \fhighlight[cyan!20]{m-7-1}{m-9-1}
-      \fhighlight[red!20]{m-10-1}{m-12-1}
-      \fhighlight[orange!20]{m-13-1}{m-15-1}
-    \end{pgfonlayer}
-  \end{tikzpicture}
-  =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes in empty cells,
-                row sep=0.3em, column sep=0.4em,
-                nodes={rectangle,minimum height=2.3em,anchor=center},] {
-               0         &  \omega_{in,3}^{n} & -\omega_{in,2}^{n} &                             0                            &                     \frac{1}{R_E + h}                     &                       0                      &                                   -\omega_{ie}\sin{\phi}                                    &      0       &                   -\frac{v_E}{(R_E + h)^2}                   &  &                &  &  &                 & \\
-      -\omega_{in,3}^{n} &          0         &  \omega_{in,1}^{n} &                   -\frac{1}{R_N + h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                    \frac{v_N}{(R_N + h)^2}                   &  &  \mathbf{0}_3  &  &  & -\mathbf{C}_b^n & \\
-       \omega_{in,2}^{n} & -\omega_{in,1}^{n} &          0         &                             0                            &                -\frac{\tan{\phi}}{R_E + h}                &                       0                      &                 -\omega_{ie}\cos{\phi} - \frac{v_E}{(R_E + h)\cos^2{\phi}}                  &      0       &               \frac{v_E \tan{\phi}}{(R_E + h)^2}             &  &                &  &  &                 & \\
-               0         &        -f_D        &         f_E        &                    \frac{v_D}{R_N + h}                   & -2\frac{v_E \tan{\phi}}{R_E + h} - 2\omega_{ie}\sin{\phi} &              \frac{v_N}{R_N + h}             &                -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi}                 &      0       & \frac{v_E^2\tan{\phi}}{(R_E+h)^2} - \frac{v_Nv_D}{(R_N+h)^2} &  &                &  &  &                 & \\
-              f_D        &          0         &        -f_N        &  \frac{v_E \tan{\phi}}{R_E + h} + 2\omega_{ie}\sin{\phi} &            \frac{v_N \tan{\phi} + v_D}{R_E + h}           & \frac{v_E}{R_E + h} + 2\omega_{ie}\cos{\phi} & \frac{v_N v_E}{(R_E+h)\cos^2{\phi}} + 2v_N\omega_{ie}\cos{\phi} - 2v_D\omega_{ie}\sin{\phi} &      0       &        -\frac{v_Nv_E\tan{\phi} + v_Ev_D}{(R_E + h)^2}        &  & \mathbf{C}_b^n &  &  &   \mathbf{0}_3  & \\
-             -f_E        &         f_N        &          0         &                  -\frac{2v_N}{R_N + h}                   &       -\frac{2v_E}{R_E + h} - 2\omega_{ie}\cos{\phi}      &                       0                      &                                  2v_E\omega_{ie}\sin{\phi}                                  &      0       &     \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2}    &  &                &  &  &                 & \\
-                         &                    &                    &                      \frac{1}{R_N+h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                   -\frac{v_N}{(R_N + h)^2}                   &  &                &  &  &                 & \\
-                         &    \mathbf{0}_3    &                    &                             0                            &                \frac{1}{(R_E+h)\cos{\phi}}                &                       0                      &                           \frac{v_E\tan{\phi}}{(R_E+h)\cos{\phi}}                           &      0       &              -\frac{v_E}{(R_E + h)^2\cos{\phi}}              &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
-                         &                    &                    &                             0                            &                             0                             &                      -1                      &                                             0                                               &      0       &                               0                              &  &                &  &  &                 & \\
-                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
-                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                             & \mathbf{0}_3 &                                                              &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
-                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
-                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
-                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                             & \mathbf{0}_3 &                                                              &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
-                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
-    };
-
-    \foreach \r in {1,3,4,6,7,9} {
-      \foreach \c in {1,3,4,6,7,9,10,12,13,15} {
-        \coordinate (m-\r-\c-nw) at (100,-100);
-        \coordinate (m-\r-\c-se) at (-100,100);
-
-        \foreach \row in {1,...,9} {
-          \path let \p1=(m-\row-\c.west), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at ({min(\x1,\x2)},\y2);
-          \path let \p1=(m-\row-\c.east), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at ({max(\x1,\x2)},\y2);
-        }
-        \foreach \col in {1,...,15} {
-          \path let \p1=(m-\r-\col.north), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at (\x2,{max(\y1,\y2)});
-          \path let \p1=(m-\r-\col.south), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at (\x2,{min(\y1,\y2)});
-        }
-      }
-    }
-
-    \path let \p1=(m-1-1-nw), \p2=(m-1-15-se) in coordinate (m-1-15-ne) at (\x2,\y1);
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1-nw) -- node[above=2pt] {$\mathbf{F}$} (m-1-15-ne);
-
-    \begin{pgfonlayer}{background}
-      \fhighlight[green!20]{m-1-1-nw}{m-3-3-se}
-      \fhighlight[yellow!20]{m-1-4-nw}{m-3-6-se}
-      \fhighlight[lime!20]{m-1-7-nw}{m-3-9-se}
-      \fhighlight[orange!20]{m-1-13-nw}{m-3-15-se}
-      \fhighlight[blue!20]{m-4-1-nw}{m-6-3-se}
-      \fhighlight[purple!20]{m-4-4-nw}{m-6-6-se}
-      \fhighlight[violet!20]{m-4-7-nw}{m-6-9-se}
-      \fhighlight[red!20]{m-4-10-nw}{m-6-12-se}
-      \fhighlight[cyan!20]{m-7-4-nw}{m-9-6-se}
-      \fhighlight[teal!20]{m-7-7-nw}{m-9-9-se}
-    \end{pgfonlayer}
-  \end{tikzpicture}
-  \cdot
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
-                nodes={rectangle,text width=1.5em,align=center,minimum height=2.3em,anchor=center},] {
-      \delta R              \\ \delta P              \\ \delta Y              \\
-      \delta v_{N}          \\ \delta v_{E}          \\ \delta v_{D}          \\
-      \delta \phi           \\ \delta \lambda        \\ \delta h              \\
-      \delta f_{x}^{b}      \\ \delta f_{y}^{b}      \\ \delta f_{z}^{b}      \\
-      \delta \omega_{x}^{b} \\ \delta \omega_{y}^{b} \\ \delta \omega_{z}^{b} \\
-    };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta x}$} (m-1-1.north east);
-
-    \begin{pgfonlayer}{background}
-      \fhighlight[green!20]{m-1-1}{m-3-1}
-      \fhighlight[blue!20]{m-4-1}{m-6-1}
-      \fhighlight[cyan!20]{m-7-1}{m-9-1}
-      \fhighlight[red!20]{m-10-1}{m-12-1}
-      \fhighlight[orange!20]{m-13-1}{m-15-1}
-    \end{pgfonlayer}
-  \end{tikzpicture}
-\f}
-
-This form corresponds to
-- \cite Titterton2004 Titterton, ch. 12.3.1.3, eq. 12.28, p. 345
-
-The following sources can be taken as reference, but have at least one deviation from the form presented here
-- \cite Groves2013 Groves, ch. 14.2.4, eq. 14.63, p. 587ff
-  - Different *sign* in equations \f$ F_{15}^n \f$ (14.63), \f$ F_{12}^n \f$ (14.65), \f$ F_{13}^n \f$ (14.66), \f$ F_{21}^n \f$ (14.67)
-- \cite Noureldin2013 Noureldin, ch. 6.1.5, eq. 6.76, p. 219
-  - ENU-System
-  - Different *sign* for the DCM term
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
