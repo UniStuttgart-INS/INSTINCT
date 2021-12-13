@@ -14,6 +14,7 @@ namespace ed = ax::NodeEditor;
 
 #include "internal/gui/Shortcuts.hpp"
 #include "internal/gui/TouchTracker.hpp"
+#include "internal/gui/FlowAnimation.hpp"
 
 #include "internal/gui/panels/BlueprintNodeBuilder.hpp"
 namespace util = ax::NodeEditor::Utilities;
@@ -768,7 +769,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                         ImGui::PopStyleVar();
                         ed::EndPin();
 
-                        //DrawItemRect(ImColor(255, 0, 0));
+                        // DrawItemRect(ImColor(255, 0, 0));
                     }
                     ImGui::Spring(1, 0);
                     ImGui::EndVertical();
@@ -878,13 +879,13 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (ed::BeginGroupHint(node->id))
             {
-                //auto alpha   = static_cast<int>(commentAlpha * ImGui::GetStyle().Alpha * 255);
+                // auto alpha   = static_cast<int>(commentAlpha * ImGui::GetStyle().Alpha * 255);
                 auto bgAlpha = static_cast<int>(ImGui::GetStyle().Alpha * 255);
 
-                //ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha * ImGui::GetStyle().Alpha);
+                // ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha * ImGui::GetStyle().Alpha);
 
                 auto min = ed::GetGroupMin();
-                //auto max = ed::GetGroupMax();
+                // auto max = ed::GetGroupMax();
 
                 ImGui::SetCursorScreenPos(min - ImVec2(-8, ImGui::GetTextLineHeightWithSpacing() + 4));
                 ImGui::BeginGroup();
@@ -915,7 +916,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
                     hintFrameBounds.GetBR(),
                     IM_COL32(255, 255, 255, 128 * bgAlpha / 255), 4.0F);
 
-                //ImGui::PopStyleVar();
+                // ImGui::PopStyleVar();
             }
             ed::EndGroupHint();
         }
@@ -1392,6 +1393,8 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
         }
     }
     ed::Resume();
+
+    FlowAnimation::ProcessQueue();
 
     ed::End();
 

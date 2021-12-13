@@ -8,6 +8,7 @@
 namespace nm = NAV::NodeManager;
 
 #include "internal/CallbackManager.hpp"
+#include "internal/gui/FlowAnimation.hpp"
 #include "util/Json.hpp"
 
 #include <imgui_node_editor.h>
@@ -136,7 +137,7 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
     {
         if (nm::showFlowWhenNotifyingValueChange)
         {
-            ax::NodeEditor::Flow(connectedLink->id, ax::NodeEditor::FlowDirection::Backward);
+            FlowAnimation::Add(connectedLink->id, ax::NodeEditor::FlowDirection::Backward);
         }
 
         if (Pin* startPin = nm::FindPin(connectedLink->startPinId))
@@ -154,7 +155,7 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
                     }
                     if (nm::showFlowWhenNotifyingValueChange)
                     {
-                        ax::NodeEditor::Flow(linkId);
+                        FlowAnimation::Add(linkId);
                     }
                     // TODO: Put this into the Callback Manager
                     std::invoke(callback, node, linkId);
@@ -175,7 +176,7 @@ void NAV::Node::notifyOutputValueChanged(size_t portIndex)
 
         if (nm::showFlowWhenNotifyingValueChange)
         {
-            ax::NodeEditor::Flow(linkId);
+            FlowAnimation::Add(linkId);
         }
 
         // TODO: Put this into the Callback Manager
