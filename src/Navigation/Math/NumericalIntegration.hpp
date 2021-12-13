@@ -7,6 +7,7 @@
 #pragma once
 
 #include <type_traits>
+#include <concepts>
 
 namespace NAV
 {
@@ -105,7 +106,7 @@ auto RungeKutta2(const auto& f, const std::floating_point auto& h, const auto& y
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta2(const auto&f, const std::floating_point auto&h, const auto&y_n), const auto &c
+auto RungeKutta2(const auto& f, const std::floating_point auto& h, const auto& y_n, const auto& c)
 {
     auto k1 = f(y_n, c);
     auto k2 = f(y_n + h * k1, c);
@@ -119,7 +120,7 @@ auto RungeKutta2(const auto&f, const std::floating_point auto&h, const auto&y_n)
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta3(const auto&f, const std::floating_point auto&h, const auto&y_n, const std::floating_point auto&t_n), const auto &c
+auto RungeKutta3(const auto& f, const std::floating_point auto& h, const auto& y_n, const std::floating_point auto& t_n, const auto& c)
 {
     auto k1 = f(y_n, t_n, c);
     auto k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
@@ -133,7 +134,7 @@ auto RungeKutta3(const auto&f, const std::floating_point auto&h, const auto&y_n,
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta3(const auto&f, const std::floating_point auto&h, const auto&y_n), const auto &c
+auto RungeKutta3(const auto& f, const std::floating_point auto& h, const auto& y_n, const auto& c)
 {
     auto k1 = f(y_n, c);
     auto k2 = f(y_n + h / 2 * k1, c);
@@ -148,7 +149,7 @@ auto RungeKutta3(const auto&f, const std::floating_point auto&h, const auto&y_n)
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta4(const auto&f, const std::floating_point auto&h, const auto&y_n, const std::floating_point auto&t_n), const auto &c
+auto RungeKutta4(const auto& f, const std::floating_point auto& h, const auto& y_n, const std::floating_point auto& t_n, const auto& c)
 {
     auto k1 = f(y_n, t_n, c);
     auto k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
@@ -163,7 +164,7 @@ auto RungeKutta4(const auto&f, const std::floating_point auto&h, const auto&y_n,
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta4(const auto&f, const std::floating_point auto&h, const auto&y_n), const auto &c
+auto RungeKutta4(const auto& f, const std::floating_point auto& h, const auto& y_n, const auto& c)
 {
     auto k1 = f(y_n, c);
     auto k2 = f(y_n + h / 2 * k1, c);
