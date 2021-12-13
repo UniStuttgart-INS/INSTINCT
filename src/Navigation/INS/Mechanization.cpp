@@ -4,6 +4,7 @@
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Math/NumericalIntegration.hpp"
+#include "cmath"
 
 #include "util/Logger.hpp"
 
@@ -64,6 +65,39 @@ Eigen::Vector3d velocityUpdateModel(const VelocityUpdateState& x, const Eigen::V
 
     // Jekeli (eq. 4.88) - g includes centrifugal acceleration
     return x.accel_n - coriolisAcceleration_n + x.gravity_n;
+}
+
+/// @brief Equations to perform an update of the velocity, including rotational correction
+/// @param[in] x State information needed for the update
+/// @param[in] velocity_n Old velocity in navigation coordinates
+/// @param[in] angularVelocity_ip_b__t0 Angular velocity of platform system with respect to inertial system, represented in body coordinates in [rad/s]
+/// @param[in] angularVelocity_ie_n__t1 Angular velocity of earth with respect to inertial system, represented in n-sys
+/// @param[in] angularVelocity_en_n__t1 Transport rate represented in n-sys
+/// @param[in] quaternion_nb__t1 Orientation of body with respect to n-sys
+/// @param[in] timeDifferenceSec__t0 Time difference Δtₖ = (tₖ - tₖ₋₁) in [seconds]
+/// @return Derivative of the velocity
+/// @note See Zwiener (2019) - Robuste Zustandsschätzung zur Navigation und Regelung autonomer und bemannter Multikopter mit verteilten Sensoren, eqns. (3.39) and (3.44)
+Eigen::Vector3d velocityUpdateModel_Rotation(const VelocityUpdateState& x, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& angularVelocity_ip_b__t0, const Eigen::Vector3d& angularVelocity_ie_n__t1, const Eigen::Vector3d& angularVelocity_en_n__t1, const Eigen::Quaterniond& quaternion_nb__t1, const long double& timeDifferenceSec__t0)
+{
+    // q (tₖ₋₁) Quaternion, from n-system to b-system, at the time tₖ₋₁
+    const Eigen::Quaterniond quaternion_bn__t1 = quaternion_nb__t1.conjugate();
+
+    // Δβ⁠_nb_p (tₖ) The angular velocities in [rad],
+    // of the navigation to body system, in body coordinates, at the time tₖ (eq. 8.9)
+    const Eigen::Vector3d angularVelocity_nb_b__t0 = angularVelocity_ip_b__t0
+                                                     - quaternion_bn__t1 * (angularVelocity_ie_n__t1 + angularVelocity_en_n__t1);
+
+    // TODO: Consider suppressCoriolis option from the GUI here
+    // The Coriolis acceleration accounts for the fact that the NED frame is noninertial
+    const Eigen::Vector3d coriolisAcceleration_n = (2 * x.angularVelocity_ie_n + x.angularVelocity_en_n).cross(velocity_n);
+
+    Eigen::Matrix3d rotA = skewSymmetricMatrix(angularVelocity_nb_b__t0) * 0.5 * std::pow(timeDifferenceSec__t0, 2);
+    Eigen::Matrix3d rotB = (std::pow(timeDifferenceSec__t0, 3) / 6.0 - std::pow(std::sqrt(std::pow(angularVelocity_nb_b__t0(0), 2) + std::pow(angularVelocity_nb_b__t0(1), 2) + angularVelocity_nb_b__t0(2)), 2) / 120.0 * std::pow(timeDifferenceSec__t0, 5)) * skewSymmetricMatrix2(angularVelocity_nb_b__t0);
+
+    Eigen::Matrix3d rotCorr = Eigen::Matrix3d::Identity(3, 3) + rotA + rotB;
+
+    // Jekeli (eq. 4.88) - g includes centrifugal acceleration
+    return rotCorr * x.accel_n - coriolisAcceleration_n + x.gravity_n;
 }
 
 Eigen::Matrix<double, 6, 1> curvilinearPositionDerivative(const Eigen::Matrix<double, 6, 1>& y, const double& /* t */)
