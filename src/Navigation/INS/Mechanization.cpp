@@ -10,6 +10,55 @@
 
 namespace NAV
 {
+Eigen::Vector4d calcTimeDerivativeForQuaternion_nb(const Eigen::Vector3d& omega_nb_b, const Eigen::Vector4d& q_nb_coeffs)
+{
+    // Angular rates in matrix form (Titterton (2005), eq. (11.35))
+    Eigen::Matrix4d A;
+
+    // clang-format off
+    A <<       0.0     , -omega_nb_b(0), -omega_nb_b(1), -omega_nb_b(2),
+          omega_nb_b(0),       0.0     ,  omega_nb_b(2), -omega_nb_b(1),
+          omega_nb_b(1), -omega_nb_b(2),       0.0     ,  omega_nb_b(0),
+          omega_nb_b(2),  omega_nb_b(1), -omega_nb_b(0),       0.0     ;
+    // clang-format on
+
+    // Propagation of an attitude Quaternion with time (Titterton, ch. 11.2.5, eq. 11.33-11.35, p. 319)
+    return 0.5 * A * q_nb_coeffs; // (w, x, y, z)
+}
+
+Eigen::Vector3d calcTimeDerivativeForVelocity_n(const Eigen::Vector3d& f_n,
+                                                const Eigen::Vector3d& omega_ie_e,
+                                                const Eigen::Vector3d& omega_ie_n,
+                                                const Eigen::Vector3d& omega_en_n,
+                                                const Eigen::Vector3d& velocity_n,
+                                                const Eigen::Vector3d& gravitation_n,
+                                                const Eigen::Quaterniond& q_ne,
+                                                const Eigen::Vector3d& x_e)
+{
+    return f_n
+           - calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, velocity_n)
+           + gravitation_n
+           - q_ne * calcCentrifugalAcceleration_e(x_e, omega_ie_e);
+}
+
+Eigen::Vector3d calcTimeDerivativeForPosition_lla(const Eigen::Vector3d& velocity_n,
+                                                  const double& phi,
+                                                  const double& h,
+                                                  const double& R_N,
+                                                  const double& R_E)
+{
+    // Velocity North in [m/s]
+    const auto& v_N = velocity_n(0);
+    // Velocity East in [m/s]
+    const auto& v_E = velocity_n(1);
+    // Velocity Down in [m/s]
+    const auto& v_D = velocity_n(2);
+
+    return { v_N / (R_N + h),
+             v_E / ((R_E + h) * std::cos(phi)),
+             -v_D };
+}
+
 // ###########################################################################################################
 //                                             Private Functions
 // ###########################################################################################################
@@ -129,6 +178,17 @@ Eigen::Matrix<double, 6, 1> curvilinearPositionDerivative(const Eigen::Matrix<do
 
     return y_dot;
 }
+// #########################################################################################################################################
+
+/// @brief y = [q_w, q_x, q_y, q_z, v_N, v_E, v_D, ϕ, λ, h, ω_ip_b(0), ω_ip_b(1), ω_ip_b(2)]^T
+// Eigen::Matrix<double, 6, 1> insMechanization(const Eigen::Matrix<double, 6, 1>& y, const double& /* t */)
+// {
+//     const double& q_w = y(0);                             // a Skalar part (q = a + ib + jc + kd)
+//     const double& q_x = y(1);                             // b - i part of the quaternion (q = a + ib + jc + kd)
+//     const double& q_y = y(2);                             // c - j part of the quaternion (q = a + ib + jc + kd)
+//     const double& q_z = y(3);                             // d - k part of the quaternion (q = a + ib + jc + kd)
+//     Eigen::Vector4d q_nb_coeffs = { q_w, q_x, q_y, q_z }; // Quaternion coefficients with order (w, x, y, z)
+// }
 
 // ###########################################################################################################
 //                                             Public Functions

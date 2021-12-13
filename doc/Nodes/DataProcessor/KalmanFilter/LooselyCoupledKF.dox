@@ -774,11 +774,11 @@ where
 As all signs related to the attitude error have a different sign, it cab be explained by the attitude error being defined in the opposite direction.
 To check this, we can look at the definition of the correction of the state with the attitude errors (\cite Groves2013 Groves, ch. 14.1.1, eq. 14.7, p. 564)
 \fl{equation,eq-LCKF-stateMatrix-Groves-attitude-correction}
-  \mathbf{\hat{C}}_b^n (+) \approx (\mathbf{I}_3 - [\delta \boldsymbol{\hat{\psi}}_{nb}^n \times]) \mathbf{\hat{C}}_b^n (-)
+  \mathbf{C}_b^n \approx (\mathbf{I}_3 - [\boldsymbol{\psi}_{nb}^n \times]) \mathbf{\hat{C}}_b^n
 \f}
 while Titterton rearranges equation \eqref{eq-LCKF-Derivation-Attitude-estimate-errors} and defines the correction as (\cite Titterton2004 Titterton, ch. 13.6.2.3, eq. 13.15, p. 407)
 \fl{equation,eq-LCKF-stateMatrix-Groves-attitude-correction-Titterton}
-  \mathbf{C}_b^n (+) = (\mathbf{I}_3 + [\delta \boldsymbol{\psi} \times]) \mathbf{\hat{C}}_b^n (-)
+  \mathbf{C}_b^n = (\mathbf{I}_3 + [\boldsymbol{\psi} \times]) \mathbf{\hat{C}}_b^n
 \f}
 Therefore the attitude error is defined differently in Groves and Titterton, which explains the sign change in the error equations.
 

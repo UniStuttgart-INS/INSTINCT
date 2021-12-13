@@ -13,8 +13,12 @@ const char* to_string(IntegrationAlgorithm algorithm)
         return "Simpson";
     case IntegrationAlgorithm::RungeKutta1:
         return "Runge Kutta 1st Order";
+    case IntegrationAlgorithm::RungeKutta2:
+        return "Runge Kutta 2nd Order";
     case IntegrationAlgorithm::RungeKutta3:
         return "Runge Kutta 3rd Order";
+    case IntegrationAlgorithm::RungeKutta4:
+        return "Runge Kutta 4th Order";
     case IntegrationAlgorithm::COUNT:
         return "";
     }

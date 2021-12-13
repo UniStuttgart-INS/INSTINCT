@@ -756,11 +756,27 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
     }
     if (trajectoryType == TrajectoryType::Linear)
     {
+        /// @brief Calculates the derivative of the curvilinear position
+        /// @param[in] y Vector [𝜙, λ, h, v_N, v_E, v_D]^T
+        /// @return The curvilinear position derivative ∂/∂t [𝜙, λ, h, 0, 0, 0]^T
+        Eigen::Matrix<double, 6, 1> (*f)(const Eigen::Matrix<double, 6, 1>&) =
+            [](const Eigen::Matrix<double, 6, 1>& y) {
+                // ∂/∂t [𝜙, λ, h, v_N, v_E, v_D]^T
+                Eigen::Matrix<double, 6, 1> y_dot = Eigen::Matrix<double, 6, 1>::Zero();
+
+                y_dot.head(3) = calcTimeDerivativeForPosition_lla(y.block<3, 1>(3, 0),      // v_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
+                                                                  y(0),                     // 𝜙 Latitude in [rad]
+                                                                  y(2),                     // h Altitude in [m]
+                                                                  calcEarthRadius_N(y(0)),  // North/South (meridian) earth radius [m]
+                                                                  calcEarthRadius_E(y(0))); // East/West (prime vertical) earth radius [m]
+                return y_dot;
+            };
+
+        // [𝜙, λ, h, v_N, v_E, v_D]^T
         Eigen::Matrix<double, 6, 1> y;
         y.block<3, 1>(0, 0) = startPosition_lla;
         y.block<3, 1>(3, 0) = velocity_n;
-
-        y = RungeKutta1(curvilinearPositionDerivative, time, y, time);
+        y = RungeKutta1(f, time, y);
 
         return y.block<3, 1>(0, 0);
     }

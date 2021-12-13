@@ -16,7 +16,9 @@ enum class IntegrationAlgorithm
     RectangularRule, ///< Rectangular rule
     Simpson,         ///< Simpson
     RungeKutta1,     ///< Runge-Kutta 1st order
+    RungeKutta2,     ///< Runge-Kutta 2nd order
     RungeKutta3,     ///< Runge-Kutta 3rd order
+    RungeKutta4,     ///< Runge-Kutta 4th order
     COUNT,           ///< Amount of available integration algorithms
 };
 
@@ -65,12 +67,22 @@ Y rungeKutta3(Y (*f)(const X&, const Y&), const Scalar& h, const Y& y__t2, const
 /// @param[in] h Integration step in [s]
 /// @param[in] y_n State vector at time t_n
 /// @param[in] t_n Time to evaluate the model function at in [s]
+/// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y, typename Scalar,
-         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y RungeKutta1(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+auto RungeKutta1(const auto& f, const std::floating_point auto& h, const auto& y_n, const std::floating_point auto& t_n, const auto& c)
 {
-    return y_n + h * f(y_n, t_n);
+    return y_n + h * f(y_n, t_n, c);
+}
+
+/// @brief Runge-Kutta First Order Algorithm
+/// @param[in] f Model function
+/// @param[in] h Integration step in [s]
+/// @param[in] y_n State vector at time t_n
+/// @param[in] c Vector with constant information needed to calculate the model function
+/// @return State vector at time t_(n+1)
+auto RungeKutta1(const auto& f, const std::floating_point auto& h, const auto& y_n, const auto& c)
+{
+    return y_n + h * f(y_n, c);
 }
 
 /// @brief Runge-Kutta Second Order Algorithm
@@ -78,13 +90,25 @@ Y RungeKutta1(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, co
 /// @param[in] h Integration step in [s]
 /// @param[in] y_n State vector at time t_n
 /// @param[in] t_n Time to evaluate the model function at in [s]
+/// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y, typename Scalar,
-         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y RungeKutta2(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+auto RungeKutta2(const auto& f, const std::floating_point auto& h, const auto& y_n, const std::floating_point auto& t_n, const auto& c)
 {
-    auto k1 = f(y_n, t_n);
-    auto k2 = f(y_n + h * k1, t_n + h);
+    auto k1 = f(y_n, t_n, c);
+    auto k2 = f(y_n + h * k1, t_n + h, c);
+    return y_n + h / 2 * (k1 + k2);
+}
+
+/// @brief Runge-Kutta Second Order Algorithm
+/// @param[in] f Model function
+/// @param[in] h Integration step in [s]
+/// @param[in] y_n State vector at time t_n
+/// @param[in] c Vector with constant information needed to calculate the model function
+/// @return State vector at time t_(n+1)
+auto RungeKutta2(const auto&f, const std::floating_point auto&h, const auto&y_n), const auto &c
+{
+    auto k1 = f(y_n, c);
+    auto k2 = f(y_n + h * k1, c);
     return y_n + h / 2 * (k1 + k2);
 }
 
@@ -93,14 +117,27 @@ Y RungeKutta2(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, co
 /// @param[in] h Integration step in [s]
 /// @param[in] y_n State vector at time t_n
 /// @param[in] t_n Time to evaluate the model function at in [s]
+/// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y, typename Scalar,
-         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y RungeKutta3(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+auto RungeKutta3(const auto&f, const std::floating_point auto&h, const auto&y_n, const std::floating_point auto&t_n), const auto &c
 {
-    auto k1 = f(y_n, t_n);
-    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2);
-    auto k3 = f(y_n - h * k1 + 2 * h * k2, t_n + h);
+    auto k1 = f(y_n, t_n, c);
+    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
+    auto k3 = f(y_n - h * k1 + 2 * h * k2, t_n + h, c);
+    return y_n + h / 6 * (k1 + 4 * k2 + k3);
+}
+
+/// @brief Runge-Kutta Third Order Algorithm
+/// @param[in] f Model function
+/// @param[in] h Integration step in [s]
+/// @param[in] y_n State vector at time t_n
+/// @param[in] c Vector with constant information needed to calculate the model function
+/// @return State vector at time t_(n+1)
+auto RungeKutta3(const auto&f, const std::floating_point auto&h, const auto&y_n), const auto &c
+{
+    auto k1 = f(y_n, c);
+    auto k2 = f(y_n + h / 2 * k1, c);
+    auto k3 = f(y_n - h * k1 + 2 * h * k2, c);
     return y_n + h / 6 * (k1 + 4 * k2 + k3);
 }
 
@@ -109,15 +146,29 @@ Y RungeKutta3(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, co
 /// @param[in] h Integration step in [s]
 /// @param[in] y_n State vector at time t_n
 /// @param[in] t_n Time to evaluate the model function at in [s]
+/// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y, typename Scalar,
-         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
-Y RungeKutta4(Y (*f)(const Y&, const Scalar&), const Scalar& h, const Y& y_n, const Scalar& t_n)
+auto RungeKutta4(const auto&f, const std::floating_point auto&h, const auto&y_n, const std::floating_point auto&t_n), const auto &c
 {
-    auto k1 = f(y_n, t_n);
-    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2);
-    auto k3 = f(y_n + h / 2 * k2, t_n + h / 2);
-    auto k4 = f(y_n + h * k3, t_n + h);
+    auto k1 = f(y_n, t_n, c);
+    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
+    auto k3 = f(y_n + h / 2 * k2, t_n + h / 2, c);
+    auto k4 = f(y_n + h * k3, t_n + h, c);
+    return y_n + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+}
+
+/// @brief Runge-Kutta Fourth Order Algorithm
+/// @param[in] f Model function
+/// @param[in] h Integration step in [s]
+/// @param[in] y_n State vector at time t_n
+/// @param[in] c Vector with constant information needed to calculate the model function
+/// @return State vector at time t_(n+1)
+auto RungeKutta4(const auto&f, const std::floating_point auto&h, const auto&y_n), const auto &c
+{
+    auto k1 = f(y_n, c);
+    auto k2 = f(y_n + h / 2 * k1, c);
+    auto k3 = f(y_n + h / 2 * k2, c);
+    auto k4 = f(y_n + h * k3, c);
     return y_n + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
 }
 
