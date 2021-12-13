@@ -11,7 +11,10 @@ static std::mutex flowAnimationQueueMutex;
 void NAV::FlowAnimation::Add(ax::NodeEditor::LinkId id, ax::NodeEditor::FlowDirection direction)
 {
     const std::lock_guard<std::mutex> lock(flowAnimationQueueMutex);
-    flowAnimationQueue.emplace_back(id, direction);
+    if (std::find(flowAnimationQueue.begin(), flowAnimationQueue.end(), std::make_pair(id, direction)) == flowAnimationQueue.end())
+    {
+        flowAnimationQueue.emplace_back(id, direction);
+    }
 }
 
 void NAV::FlowAnimation::ProcessQueue()
