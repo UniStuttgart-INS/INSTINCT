@@ -154,6 +154,9 @@ class ImuIntegrator : public Node
 
     /// Flag to let the integration algorithm use uncompensated acceleration and angular rates instead of compensated
     bool prefereUncompensatedData = false;
+
+    /// Flag to change to old algorithms
+    bool useOldAlgorithms = true; // TODO: Remove after new algorithms work
 };
 
 } // namespace NAV

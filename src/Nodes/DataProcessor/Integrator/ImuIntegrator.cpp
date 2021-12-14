@@ -53,6 +53,11 @@ std::string NAV::ImuIntegrator::category()
 
 void NAV::ImuIntegrator::guiConfig()
 {
+    if (ImGui::Checkbox(fmt::format("Use the old algorithms##{}", size_t(id)).c_str(), &useOldAlgorithms)) // TODO: Remove after new algorithms work
+    {
+        LOG_DEBUG("{}: useOldAlgorithms changed to {}", nameId(), useOldAlgorithms);
+        flow::ApplyChanges();
+    }
     ImGui::SetNextItemWidth(250);
     if (ImGui::Combo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationFrame), "ECEF\0NED\0\0"))
     {
@@ -268,6 +273,7 @@ void NAV::ImuIntegrator::guiConfig()
     j["coriolisCompensation"] = coriolisCompensation;
     j["showCorrectionsInputPin"] = showCorrectionsInputPin;
     j["prefereUncompensatedData"] = prefereUncompensatedData;
+    j["useOldAlgorithms"] = useOldAlgorithms;
 
     return j;
 }
@@ -335,6 +341,10 @@ void NAV::ImuIntegrator::restore(json const& j)
     if (j.contains("prefereUncompensatedData"))
     {
         prefereUncompensatedData = j.at("prefereUncompensatedData");
+    }
+    if (j.contains("useOldAlgorithms"))
+    {
+        j.at("useOldAlgorithms").get_to(useOldAlgorithms);
     }
 }
 
@@ -602,7 +612,7 @@ void NAV::ImuIntegrator::integrateObservation()
     const Eigen::Vector3d& angularVelocity_ie_e = InsConst::angularVelocity_ie_e;
     LOG_DATA("{}: angularVelocity_ie_e = {}", nameId(), angularVelocity_ie_e.transpose());
 
-    if (integrationFrame == IntegrationFrame::ECEF)
+    if (useOldAlgorithms && integrationFrame == IntegrationFrame::ECEF)
     {
         LOG_DATA("{}: Integrating in ECEF frame", nameId());
 
@@ -699,7 +709,7 @@ void NAV::ImuIntegrator::integrateObservation()
 
         posVelAtt__t0->setState_e(position_e__t0, velocity_e__t0, quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb());
     }
-    else if (integrationFrame == IntegrationFrame::NED)
+    else if (useOldAlgorithms && integrationFrame == IntegrationFrame::NED)
     {
         LOG_DATA("{}: Integrating in NED frame", nameId());
         // ω_ip_b (tₖ₋₁) Angular velocity in [rad/s],
@@ -844,6 +854,105 @@ void NAV::ImuIntegrator::integrateObservation()
         /* -------------------------------------------------------------------------------------------------------- */
 
         posVelAtt__t0->setState_n(latLonAlt__t0, velocity_n__t0, quaternion_nb__t0);
+    }
+    // TODO: Remove after new algorithms work
+    else // !useOldAlgorithms
+    {
+        /// @brief Values needed to calculate the derivative
+        struct DerivativeConstants
+        {
+            GravityModel gravityModel;  //< Gravity Model to use
+            Eigen::Vector3d omega_ib_b; //< ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
+            Eigen::Vector3d f_b;        //< f_b Acceleration in [m/s^2], in body coordinates
+        };
+
+        /// @brief Calculates the derivative of the curvilinear position
+        /// @param[in] y [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
+        /// @param[in] c Constant values needed to calculate the derivatives
+        /// @return The curvilinear position derivative ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
+        auto f = [](const Eigen::Matrix<double, 10, 1>& y, const DerivativeConstants& c) {
+            //       0  1  2  3   4    5    6   7  8  9
+            // ∂/∂t [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
+            Eigen::Matrix<double, 10, 1> y_dot = Eigen::Matrix<double, 10, 1>::Zero();
+
+            const auto R_N = calcEarthRadius_N(y(7));
+            const auto R_E = calcEarthRadius_E(y(7));
+
+            const Eigen::Quaterniond q_ne = trafo::quat_ne(y(7), y(8));
+            const Eigen::Vector3d& omega_ie_e = InsConst::angularVelocity_ie_e;
+            const Eigen::Vector3d omega_ie_n = q_ne * omega_ie_e;
+            const Eigen::Vector3d omega_en_n = calcTransportRate_n(y.segment<3>(7), y.segment<3>(4), R_N, R_E);
+
+            auto q_nb = Eigen::Quaterniond{ y(0), y(1), y(2), y(3) };
+            // ω_nb_b = ω_ib_b - C_bn * (ω_ie_n + ω_en_n)
+            const Eigen::Vector3d omega_nb_b = c.omega_ib_b - q_nb.conjugate() * (omega_ie_n + omega_en_n);
+
+            y_dot.segment<4>(0) = calcTimeDerivativeForQuaternion_nb(omega_nb_b,       // ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame
+                                                                     y.segment<4>(0)); // q_nb_coeffs Coefficients of the quaternion q_nb in order w, x, y, z (q = w + ix + jy + kz)
+
+            y_dot.segment<3>(4) = calcTimeDerivativeForVelocity_n(q_nb * c.f_b,                                       // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
+                                                                  omega_ie_e,                                         // ω_ie_e Turn rate of the Earth expressed in Earth frame coordinates
+                                                                  omega_ie_n,                                         // ω_ie_n Turn rate of the Earth expressed in local-navigation frame coordinates
+                                                                  omega_en_n,                                         // ω_en_n Turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
+                                                                  y.segment<3>(4),                                    // v_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
+                                                                  calcGravitation_n(y.segment<3>(7), c.gravityModel), // gravitation_n Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
+                                                                  q_ne,                                               // q_ne Rotation quaternion which converts vectors in Earth frame to local-navigation frame coordinates (r_n = q_ne * r_e)
+                                                                  trafo::lla2ecef_WGS84(y.segment<3>(7)));            // x_e Position in ECEF coordinates
+
+            y_dot.segment<3>(7) = calcTimeDerivativeForPosition_lla(y.segment<3>(4), // v_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
+                                                                    y(7),            // 𝜙 Latitude in [rad]
+                                                                    y(9),            // h Altitude in [m]
+                                                                    R_N,             // North/South (meridian) earth radius [m]
+                                                                    R_E);            // East/West (prime vertical) earth radius [m]
+            return y_dot;
+        };
+
+        // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
+        const Eigen::Quaterniond quaternion_nb__t1 = posVelAtt__t1->quaternion_nb();
+        LOG_DATA("{}: quaternion_nb__t1 = {}", nameId(), quaternion_nb__t1.coeffs().transpose());
+
+        // [latitude 𝜙, longitude λ, altitude h] (tₖ₋₁) Position in [rad, rad, m] at the time tₖ₋₁
+        const Eigen::Vector3d position_lla__t1 = posVelAtt__t1->latLonAlt();
+        LOG_DATA("{}: position_lla__t1 = {}", nameId(), position_lla__t1.transpose());
+
+        // ω_ip_b (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ
+        const Eigen::Vector3d omega_ip_b__t0 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t0;
+        LOG_DATA("{}: angularVelocity_ip_b__t0 = {}", nameId(), angularVelocity_ip_b__t0.transpose());
+
+        // f_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
+        const Eigen::Vector3d f_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
+        LOG_DATA("{}: acceleration_b__t0 = {}", nameId(), acceleration_b__t0.transpose());
+
+        //  0  1  2  3   4    5    6   7  8  9
+        // [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
+        Eigen::Matrix<double, 10, 1> y;
+        y.segment<4>(0) = Eigen::Vector4d{ quaternion_nb__t1.w(), quaternion_nb__t1.x(), quaternion_nb__t1.y(), quaternion_nb__t1.z() };
+        y.segment<3>(4) = velocity_n__t1;
+        y.segment<3>(7) = position_lla__t1;
+
+        DerivativeConstants c;
+        c.omega_ib_b = omega_ip_b__t0; // platform system does not rotate with respect to body system
+        c.f_b = f_b__t0;
+        c.gravityModel = gravityModel;
+
+        if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta1)
+        {
+            y = RungeKutta1(f, timeDifferenceSec__t0, y, c);
+        }
+        else if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta2)
+        {
+            y = RungeKutta2(f, timeDifferenceSec__t0, y, c);
+        }
+        else if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta3)
+        {
+            y = RungeKutta3(f, timeDifferenceSec__t0, y, c);
+        }
+        else if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta4)
+        {
+            y = RungeKutta4(f, timeDifferenceSec__t0, y, c);
+        }
+
+        posVelAtt__t0->setState_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) });
     }
 
     LOG_DATA("{}: posVelAtt__t0->position_ecef() = {}", nameId(), posVelAtt__t0->position_ecef().transpose());
