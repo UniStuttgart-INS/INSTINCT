@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include <type_traits>
 #include <concepts>
 
 namespace NAV
@@ -70,7 +69,8 @@ Y rungeKutta3(Y (*f)(const X&, const Y&), const Scalar& h, const Y& y__t2, const
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta1(const auto& f, const std::floating_point auto& h, const auto& y_n, const std::floating_point auto& t_n, const auto& c)
+template<typename Y>
+Y RungeKutta1(const auto& f, const std::floating_point auto& h, const Y& y_n, const std::floating_point auto& t_n, const auto& c)
 {
     return y_n + h * f(y_n, t_n, c);
 }
@@ -81,7 +81,8 @@ auto RungeKutta1(const auto& f, const std::floating_point auto& h, const auto& y
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta1(const auto& f, const std::floating_point auto& h, const auto& y_n, const auto& c)
+template<typename Y>
+Y RungeKutta1(const auto& f, const std::floating_point auto& h, const Y& y_n, const auto& c)
 {
     return y_n + h * f(y_n, c);
 }
@@ -93,10 +94,11 @@ auto RungeKutta1(const auto& f, const std::floating_point auto& h, const auto& y
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta2(const auto& f, const std::floating_point auto& h, const auto& y_n, const std::floating_point auto& t_n, const auto& c)
+template<typename Y>
+Y RungeKutta2(const auto& f, const std::floating_point auto& h, const Y& y_n, const std::floating_point auto& t_n, const auto& c)
 {
-    auto k1 = f(y_n, t_n, c);
-    auto k2 = f(y_n + h * k1, t_n + h, c);
+    Y k1 = f(y_n, t_n, c);
+    Y k2 = f(y_n + h * k1, t_n + h, c);
     return y_n + h / 2 * (k1 + k2);
 }
 
@@ -106,10 +108,11 @@ auto RungeKutta2(const auto& f, const std::floating_point auto& h, const auto& y
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta2(const auto& f, const std::floating_point auto& h, const auto& y_n, const auto& c)
+template<typename Y>
+Y RungeKutta2(const auto& f, const std::floating_point auto& h, const Y& y_n, const auto& c)
 {
-    auto k1 = f(y_n, c);
-    auto k2 = f(y_n + h * k1, c);
+    Y k1 = f(y_n, c);
+    Y k2 = f(y_n + h * k1, c);
     return y_n + h / 2 * (k1 + k2);
 }
 
@@ -120,11 +123,12 @@ auto RungeKutta2(const auto& f, const std::floating_point auto& h, const auto& y
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta3(const auto& f, const std::floating_point auto& h, const auto& y_n, const std::floating_point auto& t_n, const auto& c)
+template<typename Y>
+Y RungeKutta3(const auto& f, const std::floating_point auto& h, const Y& y_n, const std::floating_point auto& t_n, const auto& c)
 {
-    auto k1 = f(y_n, t_n, c);
-    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
-    auto k3 = f(y_n - h * k1 + 2 * h * k2, t_n + h, c);
+    Y k1 = f(y_n, t_n, c);
+    Y k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
+    Y k3 = f(y_n - h * k1 + 2 * h * k2, t_n + h, c);
     return y_n + h / 6 * (k1 + 4 * k2 + k3);
 }
 
@@ -134,11 +138,12 @@ auto RungeKutta3(const auto& f, const std::floating_point auto& h, const auto& y
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta3(const auto& f, const std::floating_point auto& h, const auto& y_n, const auto& c)
+template<typename Y>
+Y RungeKutta3(const auto& f, const std::floating_point auto& h, const Y& y_n, const auto& c)
 {
-    auto k1 = f(y_n, c);
-    auto k2 = f(y_n + h / 2 * k1, c);
-    auto k3 = f(y_n - h * k1 + 2 * h * k2, c);
+    Y k1 = f(y_n, c);
+    Y k2 = f(y_n + h / 2 * k1, c);
+    Y k3 = f(y_n - h * k1 + 2 * h * k2, c);
     return y_n + h / 6 * (k1 + 4 * k2 + k3);
 }
 
@@ -149,12 +154,13 @@ auto RungeKutta3(const auto& f, const std::floating_point auto& h, const auto& y
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta4(const auto& f, const std::floating_point auto& h, const auto& y_n, const std::floating_point auto& t_n, const auto& c)
+template<typename Y>
+Y RungeKutta4(const auto& f, const std::floating_point auto& h, const Y& y_n, const std::floating_point auto& t_n, const auto& c)
 {
-    auto k1 = f(y_n, t_n, c);
-    auto k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
-    auto k3 = f(y_n + h / 2 * k2, t_n + h / 2, c);
-    auto k4 = f(y_n + h * k3, t_n + h, c);
+    Y k1 = f(y_n, t_n, c);
+    Y k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
+    Y k3 = f(y_n + h / 2 * k2, t_n + h / 2, c);
+    Y k4 = f(y_n + h * k3, t_n + h, c);
     return y_n + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
 }
 
@@ -164,12 +170,13 @@ auto RungeKutta4(const auto& f, const std::floating_point auto& h, const auto& y
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-auto RungeKutta4(const auto& f, const std::floating_point auto& h, const auto& y_n, const auto& c)
+template<typename Y>
+Y RungeKutta4(const auto& f, const std::floating_point auto& h, const Y& y_n, const auto& c)
 {
-    auto k1 = f(y_n, c);
-    auto k2 = f(y_n + h / 2 * k1, c);
-    auto k3 = f(y_n + h / 2 * k2, c);
-    auto k4 = f(y_n + h * k3, c);
+    Y k1 = f(y_n, c);
+    Y k2 = f(y_n + h / 2 * k1, c);
+    Y k3 = f(y_n + h / 2 * k2, c);
+    Y k4 = f(y_n + h * k3, c);
     return y_n + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
 }
 
