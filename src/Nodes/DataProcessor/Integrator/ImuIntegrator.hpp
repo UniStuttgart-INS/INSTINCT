@@ -95,8 +95,7 @@ class ImuIntegrator : public Node
     /// @brief Integrates the Imu Observation data
     void integrateObservation();
 
-    /// Accumulated IMU biases
-    std::shared_ptr<const ImuBiases> imuBiases = nullptr;
+    // #########################################################################################################################################
 
     /// IMU Observation list
     /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
@@ -117,6 +116,8 @@ class ImuIntegrator : public Node
     /// TimeSinceStartup at initialization (needed to set time tag when TimeSinceStartup is used)
     uint64_t timeSinceStartup__init = 0;
 
+    // #########################################################################################################################################
+
     /// @brief Available Integration Frames
     enum class IntegrationFrame : int
     {
@@ -126,11 +127,35 @@ class ImuIntegrator : public Node
     /// Frame to integrate the observations in
     IntegrationFrame integrationFrame = IntegrationFrame::NED;
 
+    /// @brief Integration algorithm used for the update
+    IntegrationAlgorithm integrationAlgorithm = IntegrationAlgorithm::RungeKutta1;
+
+    // #########################################################################################################################################
+
+    /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
+    bool prefereTimeSinceStartupOverInsTime = false;
+
+    /// Flag to let the integration algorithm use uncompensated acceleration and angular rates instead of compensated
+    bool prefereUncompensatedData = false;
+
+    // #########################################################################################################################################
+
     /// @brief Gravity model selected in the GUI
     GravityModel gravityModel = GravityModel::EGM96;
 
-    /// @brief Integration algorithm used for the update
-    IntegrationAlgorithm integrationAlgorithm = IntegrationAlgorithm::RungeKutta1;
+    /// Apply the coriolis acceleration compensation to the measured accelerations
+    bool coriolisAccelerationCompensationEnabled = true;
+
+    /// Apply the centrifugal acceleration compensation to the measured accelerations
+    bool centrifgalAccelerationCompensationEnabled = true;
+
+    /// Apply the Earth rotation rate compensation to the measured angular rates
+    bool angularRateEarthRotationCompensationEnabled = true;
+
+    /// Apply the transport rate compensation to the measured angular rates
+    bool angularRateTransportRateCompensationEnabled = true;
+
+    // #########################################################################################################################################
 
     /// GUI flag, whether to show the input pin for PVA Corrections
     bool showCorrectionsInputPin = false;
@@ -138,17 +163,8 @@ class ImuIntegrator : public Node
     /// Pointer to the most recent PVA error
     std::shared_ptr<const PVAError> pvaError = nullptr;
 
-    /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
-    bool prefereTimeSinceStartupOverInsTime = false;
-
-    /// Flag to toggle centrifugal acceleration compensation of the acceleration at the current position
-    bool centrifugalAccCompensation = true;
-
-    /// Flag to toggle coriolis acceleration compensation of the acceleration at the current position
-    bool coriolisCompensation = true;
-
-    /// Flag to let the integration algorithm use uncompensated acceleration and angular rates instead of compensated
-    bool prefereUncompensatedData = false;
+    /// Accumulated IMU biases
+    std::shared_ptr<const ImuBiases> imuBiases = nullptr;
 };
 
 } // namespace NAV

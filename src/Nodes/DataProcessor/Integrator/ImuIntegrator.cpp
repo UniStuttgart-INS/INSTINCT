@@ -66,29 +66,6 @@ void NAV::ImuIntegrator::guiConfig()
     ImGui::PopStyleVar();
 
     ImGui::SetNextItemWidth(250);
-    if (ImGui::BeginCombo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), NAV::to_string(gravityModel)))
-    {
-        for (size_t i = 0; i < static_cast<size_t>(GravityModel::COUNT); i++)
-        {
-            const bool is_selected = (static_cast<size_t>(gravityModel) == i);
-            if (ImGui::Selectable(NAV::to_string(static_cast<GravityModel>(i)), is_selected))
-            {
-                gravityModel = static_cast<GravityModel>(i);
-                LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(gravityModel));
-                flow::ApplyChanges();
-            }
-
-            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-            if (is_selected)
-            {
-                ImGui::SetItemDefaultFocus();
-            }
-        }
-
-        ImGui::EndCombo();
-    }
-
-    ImGui::SetNextItemWidth(250);
     if (ImGui::BeginCombo(fmt::format("Integration Algorithm##{}", size_t(id)).c_str(), to_string(integrationAlgorithm)))
     {
         for (size_t i = 0; i < static_cast<size_t>(IntegrationAlgorithm::COUNT); i++)
@@ -111,32 +88,83 @@ void NAV::ImuIntegrator::guiConfig()
         ImGui::EndCombo();
     }
 
-    if (ImGui::Checkbox(fmt::format("Prefere TimeSinceStartup over InsTime##{}", size_t(id)).c_str(), &prefereTimeSinceStartupOverInsTime))
+    if (ImGui::TreeNode(fmt::format("Data selection##{}", size_t(id)).c_str()))
     {
-        LOG_DEBUG("{}: prefereTimeSinceStartupOverInsTime changed to {}", nameId(), prefereTimeSinceStartupOverInsTime);
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
+        if (ImGui::Checkbox(fmt::format("Prefere TimeSinceStartup over InsTime##{}", size_t(id)).c_str(), &prefereTimeSinceStartupOverInsTime))
+        {
+            LOG_DEBUG("{}: prefereTimeSinceStartupOverInsTime changed to {}", nameId(), prefereTimeSinceStartupOverInsTime);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
 
-    if (ImGui::Checkbox(fmt::format("Prefere uncompensated data##{}", size_t(id)).c_str(), &prefereUncompensatedData))
-    {
-        LOG_DEBUG("{}: prefereUncompensatedData changed to {}", nameId(), prefereUncompensatedData);
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    gui::widgets::HelpMarker("Takes the uncompensated acceleration and angular rates instead of compensated values from the sensor. This option should be used when a Kalman Filter is used to correct the biases.");
+        if (ImGui::Checkbox(fmt::format("Prefere uncompensated data##{}", size_t(id)).c_str(), &prefereUncompensatedData))
+        {
+            LOG_DEBUG("{}: prefereUncompensatedData changed to {}", nameId(), prefereUncompensatedData);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Takes the uncompensated acceleration and angular rates instead of compensated values from the sensor. This option should be used when a Kalman Filter is used to correct the biases.");
 
-    if (ImGui::Checkbox(fmt::format("Apply centrifugal acceleration compensation##{}", size_t(id)).c_str(), &centrifugalAccCompensation))
-    {
-        LOG_DEBUG("{}: centrifugalAccCompensation changed to {}", nameId(), centrifugalAccCompensation);
-        flow::ApplyChanges();
+        ImGui::TreePop();
     }
 
-    if (ImGui::Checkbox(fmt::format("Apply coriolis acceleration compensation##{}", size_t(id)).c_str(), &coriolisCompensation))
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("Compensation models##{}", size_t(id)).c_str()))
     {
-        LOG_DEBUG("{}: coriolisCompensation changed to {}", nameId(), coriolisCompensation);
-        flow::ApplyChanges();
+        ImGui::TextUnformatted("Acceleration compensation");
+        {
+            ImGui::Indent();
+            ImGui::SetNextItemWidth(230);
+            if (ImGui::BeginCombo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), NAV::to_string(gravityModel)))
+            {
+                for (size_t i = 0; i < static_cast<size_t>(GravityModel::COUNT); i++)
+                {
+                    const bool is_selected = (static_cast<size_t>(gravityModel) == i);
+                    if (ImGui::Selectable(NAV::to_string(static_cast<GravityModel>(i)), is_selected))
+                    {
+                        gravityModel = static_cast<GravityModel>(i);
+                        LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(gravityModel));
+                        flow::ApplyChanges();
+                    }
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (is_selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+
+                ImGui::EndCombo();
+            }
+            if (ImGui::Checkbox(fmt::format("Coriolis acceleration ##{}", size_t(id)).c_str(), &coriolisAccelerationCompensationEnabled))
+            {
+                LOG_DEBUG("{}: coriolisAccelerationCompensationEnabled changed to {}", nameId(), coriolisAccelerationCompensationEnabled);
+                flow::ApplyChanges();
+            }
+            if (ImGui::Checkbox(fmt::format("Centrifugal acceleration##{}", size_t(id)).c_str(), &centrifgalAccelerationCompensationEnabled))
+            {
+                LOG_DEBUG("{}: centrifgalAccelerationCompensationEnabled changed to {}", nameId(), centrifgalAccelerationCompensationEnabled);
+                flow::ApplyChanges();
+            }
+            ImGui::Unindent();
+        }
+        ImGui::TextUnformatted("Angular rate compensation");
+        {
+            ImGui::Indent();
+            if (ImGui::Checkbox(fmt::format("Earth rotation rate##{}", size_t(id)).c_str(), &angularRateEarthRotationCompensationEnabled))
+            {
+                LOG_DEBUG("{}: angularRateEarthRotationCompensationEnabled changed to {}", nameId(), angularRateEarthRotationCompensationEnabled);
+                flow::ApplyChanges();
+            }
+            if (ImGui::Checkbox(fmt::format("Transport rate##{}", size_t(id)).c_str(), &angularRateTransportRateCompensationEnabled))
+            {
+                LOG_DEBUG("{}: angularRateTransportRateCompensationEnabled changed to {}", nameId(), angularRateTransportRateCompensationEnabled);
+                flow::ApplyChanges();
+            }
+            ImGui::Unindent();
+        }
+        ImGui::TreePop();
     }
 
     ImGui::Separator();
@@ -172,13 +200,18 @@ void NAV::ImuIntegrator::guiConfig()
     json j;
 
     j["integrationFrame"] = integrationFrame;
-    j["gravityModel"] = gravityModel;
     j["integrationAlgorithm"] = integrationAlgorithm;
+    // #########################################################################################################################################
     j["prefereTimeSinceStartupOverInsTime"] = prefereTimeSinceStartupOverInsTime;
-    j["centrifugalAccCompensation"] = centrifugalAccCompensation;
-    j["coriolisCompensation"] = coriolisCompensation;
-    j["showCorrectionsInputPin"] = showCorrectionsInputPin;
     j["prefereUncompensatedData"] = prefereUncompensatedData;
+    // #########################################################################################################################################
+    j["gravityModel"] = gravityModel;
+    j["coriolisAccelerationCompensationEnabled"] = coriolisAccelerationCompensationEnabled;
+    j["centrifgalAccelerationCompensationEnabled"] = centrifgalAccelerationCompensationEnabled;
+    j["angularRateEarthRotationCompensationEnabled"] = angularRateEarthRotationCompensationEnabled;
+    j["angularRateTransportRateCompensationEnabled"] = angularRateTransportRateCompensationEnabled;
+    // #########################################################################################################################################
+    j["showCorrectionsInputPin"] = showCorrectionsInputPin;
 
     return j;
 }
@@ -191,26 +224,41 @@ void NAV::ImuIntegrator::restore(json const& j)
     {
         j.at("integrationFrame").get_to(integrationFrame);
     }
-    if (j.contains("gravityModel"))
-    {
-        j.at("gravityModel").get_to(gravityModel);
-    }
     if (j.contains("integrationAlgorithm"))
     {
         j.at("integrationAlgorithm").get_to(integrationAlgorithm);
     }
+    // #########################################################################################################################################
     if (j.contains("prefereTimeSinceStartupOverInsTime"))
     {
         prefereTimeSinceStartupOverInsTime = j.at("prefereTimeSinceStartupOverInsTime");
     }
-    if (j.contains("centrifugalAccCompensation"))
+    if (j.contains("prefereUncompensatedData"))
     {
-        centrifugalAccCompensation = j.at("centrifugalAccCompensation");
+        prefereUncompensatedData = j.at("prefereUncompensatedData");
     }
-    if (j.contains("coriolisCompensation"))
+    // #########################################################################################################################################
+    if (j.contains("gravityModel"))
     {
-        coriolisCompensation = j.at("coriolisCompensation");
+        j.at("gravityModel").get_to(gravityModel);
     }
+    if (j.contains("coriolisAccelerationCompensationEnabled"))
+    {
+        coriolisAccelerationCompensationEnabled = j.at("coriolisAccelerationCompensationEnabled");
+    }
+    if (j.contains("centrifgalAccelerationCompensationEnabled"))
+    {
+        centrifgalAccelerationCompensationEnabled = j.at("centrifgalAccelerationCompensationEnabled");
+    }
+    if (j.contains("angularRateEarthRotationCompensationEnabled"))
+    {
+        angularRateEarthRotationCompensationEnabled = j.at("angularRateEarthRotationCompensationEnabled");
+    }
+    if (j.contains("angularRateTransportRateCompensationEnabled"))
+    {
+        angularRateTransportRateCompensationEnabled = j.at("angularRateTransportRateCompensationEnabled");
+    }
+    // #########################################################################################################################################
     if (j.contains("showCorrectionsInputPin"))
     {
         showCorrectionsInputPin = j.at("showCorrectionsInputPin");
@@ -230,10 +278,6 @@ void NAV::ImuIntegrator::restore(json const& j)
                 inputPins.pop_back();
             }
         }
-    }
-    if (j.contains("prefereUncompensatedData"))
-    {
-        prefereUncompensatedData = j.at("prefereUncompensatedData");
     }
 }
 
@@ -521,6 +565,10 @@ void NAV::ImuIntegrator::integrateObservation()
     c.omega_ib_b = omega_ip_b__t0; // platform system does not rotate with respect to body system
     c.f_b = f_b__t0;
     c.gravityModel = gravityModel;
+    c.coriolisAccelerationCompensationEnabled = coriolisAccelerationCompensationEnabled;
+    c.centrifgalAccelerationCompensationEnabled = centrifgalAccelerationCompensationEnabled;
+    c.angularRateEarthRotationCompensationEnabled = angularRateEarthRotationCompensationEnabled;
+    c.angularRateTransportRateCompensationEnabled = angularRateTransportRateCompensationEnabled;
 
     if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
     {

@@ -36,12 +36,21 @@ Eigen::Vector3d calcTimeDerivativeForVelocity_n(const Eigen::Vector3d& f_n,
                                                 const Eigen::Vector3d& velocity_n,
                                                 const Eigen::Vector3d& gravitation_n,
                                                 const Eigen::Quaterniond& q_ne,
-                                                const Eigen::Vector3d& x_e)
+                                                const Eigen::Vector3d& x_e,
+                                                bool coriolisAccelerationCompensationEnabled,
+                                                bool centrifgalAccelerationCompensationEnabled)
 {
-    return f_n
-           - calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, velocity_n)
-           + gravitation_n
-           - q_ne * calcCentrifugalAcceleration_e(x_e, omega_ie_e);
+    Eigen::Vector3d v_dot = f_n;
+    if (coriolisAccelerationCompensationEnabled)
+    {
+        v_dot -= calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, velocity_n);
+    }
+    v_dot += gravitation_n;
+    if (centrifgalAccelerationCompensationEnabled)
+    {
+        v_dot -= q_ne * calcCentrifugalAcceleration_e(x_e, omega_ie_e);
+    }
+    return v_dot;
 }
 
 Eigen::Vector3d calcTimeDerivativeForPosition_lla(const Eigen::Vector3d& velocity_n,
@@ -71,12 +80,17 @@ Eigen::Matrix<double, 10, 1> calcPosVelAttDerivative_n(const Eigen::Matrix<doubl
     const auto R_N = calcEarthRadius_N(y(7));
     const auto R_E = calcEarthRadius_E(y(7));
 
+    const Eigen::Quaterniond q_nb{ y(0), y(1), y(2), y(3) };
     const Eigen::Quaterniond q_ne = trafo::quat_ne(y(7), y(8));
-    const Eigen::Vector3d& omega_ie_e = InsConst::angularVelocity_ie_e;
+    // ω_ie_e Turn rate of the Earth expressed in Earth frame coordinates
+    const Eigen::Vector3d& omega_ie_e = c.angularRateEarthRotationCompensationEnabled ? InsConst::angularVelocity_ie_e
+                                                                                      : Eigen::Vector3d::Zero();
+    // ω_ie_n Turn rate of the Earth expressed in local-navigation frame coordinates
     const Eigen::Vector3d omega_ie_n = q_ne * omega_ie_e;
-    const Eigen::Vector3d omega_en_n = calcTransportRate_n(y.segment<3>(7), y.segment<3>(4), R_N, R_E);
+    // ω_en_n Turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
+    const Eigen::Vector3d omega_en_n = c.angularRateTransportRateCompensationEnabled ? calcTransportRate_n(y.segment<3>(7), y.segment<3>(4), R_N, R_E)
+                                                                                     : Eigen::Vector3d::Zero();
 
-    auto q_nb = Eigen::Quaterniond{ y(0), y(1), y(2), y(3) };
     // ω_nb_b = ω_ib_b - C_bn * (ω_ie_n + ω_en_n)
     const Eigen::Vector3d omega_nb_b = c.omega_ib_b - q_nb.conjugate() * (omega_ie_n + omega_en_n);
 
