@@ -86,6 +86,12 @@ class ImuIntegrator : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
+    /// @brief Corrects the provided Position, Velocity and Attitude with the corrections
+    /// @param[in] posVelAtt PosVelAtt to correct
+    /// @param[in] pvaError Corrections to apply
+    /// @return Newly allocated pointer to the corrected posVelAtt
+    std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError);
+
     /// @brief Integrates the Imu Observation data
     void integrateObservation();
 
@@ -123,25 +129,14 @@ class ImuIntegrator : public Node
     /// @brief Gravity model selected in the GUI
     GravityModel gravityModel = GravityModel::EGM96;
 
-    /// @brief Integration algorithm used for the attitude update
-    IntegrationAlgorithm integrationAlgorithmAttitude = IntegrationAlgorithm::RungeKutta3;
-    /// @brief Integration algorithm used for the velocity update
-    IntegrationAlgorithm integrationAlgorithmVelocity = IntegrationAlgorithm::Simpson;
-    /// @brief Integration algorithm used for the position update
-    IntegrationAlgorithm integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
+    /// @brief Integration algorithm used for the update
+    IntegrationAlgorithm integrationAlgorithm = IntegrationAlgorithm::RungeKutta1;
 
     /// GUI flag, whether to show the input pin for PVA Corrections
     bool showCorrectionsInputPin = false;
 
     /// Pointer to the most recent PVA error
     std::shared_ptr<const PVAError> pvaError = nullptr;
-
-    /// Runge Kutta uses intermediate observations but propagates only every other state. Because of this 2 separate state solutions can coexist.
-    /// To avoid this only every seconds state can be output resulting in halving the output frequency. The accuracy of the results is not affected by this.
-    bool calculateIntermediateValues = true;
-
-    /// Flag to skip every second calculation
-    bool skipIntermediateCalculation = false;
 
     /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
     bool prefereTimeSinceStartupOverInsTime = false;
@@ -154,9 +149,6 @@ class ImuIntegrator : public Node
 
     /// Flag to let the integration algorithm use uncompensated acceleration and angular rates instead of compensated
     bool prefereUncompensatedData = false;
-
-    /// Flag to change to old algorithms
-    bool useOldAlgorithms = true; // TODO: Remove after new algorithms work
 };
 
 } // namespace NAV
