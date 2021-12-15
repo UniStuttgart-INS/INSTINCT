@@ -38,30 +38,30 @@ leads to the skew symmetric form of \eqref{eq-ImuIntegrator-Mechanization-n-Atti
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \subsubsection ImuIntegrator-Mechanization-n-Attitude-Euler Propagation of Euler angles with time
 
-The gimbal angles \f$ \phi \f$ (roll), \f$ \theta \f$ (pitch), \f$ \psi \f$ (yaw) are related to the body rates as follows:
+The gimbal angles \f$ R \f$ (roll), \f$ P \f$ (pitch), \f$ Y \f$ (yaw) are related to the body rates as follows:
 \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Euler-relation}
   \begin{bmatrix} \omega_{nb,x}^b \\ \omega_{nb,y}^b \\ \omega_{nb,z}^b \end{bmatrix}
-      = \begin{bmatrix} \dotup{\phi} \\ 0 \\ 0 \end{bmatrix}
-        + \mathbf{C_3} \begin{bmatrix} 0 \\ \dotup{\theta} \\ 0 \end{bmatrix}
-        + \mathbf{C_3} \mathbf{C_2} \begin{bmatrix} 0 \\ 0 \\ \dotup{\psi} \end{bmatrix}
+      = \begin{bmatrix} \dotup{R} \\ 0 \\ 0 \end{bmatrix}
+        + \mathbf{C_3} \begin{bmatrix} 0 \\ \dotup{P} \\ 0 \end{bmatrix}
+        + \mathbf{C_3} \mathbf{C_2} \begin{bmatrix} 0 \\ 0 \\ \dotup{Y} \end{bmatrix}
 \f}
 where
-- \f$ \mathbf{C_3} = \begin{bmatrix} 1 &      0      &     0      \\
-                                     0 &  \cos{\phi} & \sin{\phi} \\
-                                     0 & -\sin{\phi} & \cos{\phi} \end{bmatrix} \f$
-  is the rotation \f$ \phi \f$ about the x-axis (see \cite Titterton2004 Titterton, ch. 3.6.3.2, eq. 3.46, p. 41)
-- \f$ \mathbf{C_2} = \begin{bmatrix} \cos{\theta} & 0 & -\sin{\theta} \\
-                                          0       & 1 &       0       \\
-                                     \sin{\theta} & 0 &  \cos{\theta} \end{bmatrix} \f$
-  is the rotation \f$ \theta \f$ about the y-axis (see \cite Titterton2004 Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)
+- \f$ \mathbf{C_3} = \begin{bmatrix} 1 &     0    &    0    \\
+                                     0 &  \cos{R} & \sin{R} \\
+                                     0 & -\sin{R} & \cos{R} \end{bmatrix} \f$
+  is the rotation \f$ R \f$ about the x-axis (see \cite Titterton2004 Titterton, ch. 3.6.3.2, eq. 3.46, p. 41)
+- \f$ \mathbf{C_2} = \begin{bmatrix} \cos{P} & 0 & -\sin{P} \\
+                                        0    & 1 &     0    \\
+                                     \sin{P} & 0 &  \cos{P} \end{bmatrix} \f$
+  is the rotation \f$ P \f$ about the y-axis (see \cite Titterton2004 Titterton, ch. 3.6.3.2, eq. 3.45, p. 41)
 - \f$ \boldsymbol{\omega}_{nb}^b = \begin{pmatrix} \omega_{nb,x}^b & \omega_{nb,y}^b & \omega_{nb,z}^b \end{pmatrix}^T \f$ is the body rate with respect to the navigation frame, expressed in the body frame
 
 This can be rearranged into:
 \fl{equation,eq-ImuIntegrator-Mechanization-n-Attitude-Euler}
 \begin{aligned}
-  \dotup{\phi}   &= (\omega_{nb,y}^b \sin{\phi} + \omega_{nb,z}^b \cos{\phi}) \tan{\theta} + \omega_{nb,x}^b \\
-  \dotup{\theta} &= \omega_{nb,y}^b \cos{\phi} - \omega_{nb,z}^b \sin{\phi} \\
-  \dotup{\psi}   &= (\omega_{nb,y}^b \sin{\phi} + \omega_{nb,z}^b \cos{\phi}) \sec{\theta} \\
+  \dotup{R} &= (\omega_{nb,y}^b \sin{R} + \omega_{nb,z}^b \cos{R}) \tan{P} + \omega_{nb,x}^b \\
+  \dotup{P} &= \omega_{nb,y}^b \cos{R} - \omega_{nb,z}^b \sin{R} \\
+  \dotup{Y} &= (\omega_{nb,y}^b \sin{R} + \omega_{nb,z}^b \cos{R}) \sec{P} \\
 \end{aligned}
 \f}
 

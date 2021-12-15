@@ -67,6 +67,11 @@ namespace NAV
 [[nodiscard]] double calcPitchFromStaticAcceleration(const Eigen::Vector3d& accel_b);
 
 /// @brief Calculates the Yaw angle from the trajectory defined by the given velocity
+///
+/// \anchor eq-INS-Mechanization-Yaw \f{equation}{ \label{eq:eq-INS-Mechanization-Yaw}
+///   Y = \tan^{-1}\left(\frac{v_E}{v_N}\right)
+/// \f}
+///
 /// @param[in] velocity_n Velocity in [m/s] in local-navigation frame coordinates
 /// @return Yaw angle in [rad]
 ///
@@ -74,6 +79,11 @@ namespace NAV
 [[nodiscard]] double calcYawFromVelocity(const Eigen::Vector3d& velocity_n);
 
 /// @brief Calculates the Pitch angle from the trajectory defined by the given velocity
+///
+/// \anchor eq-INS-Mechanization-Pitch \f{equation}{ \label{eq:eq-INS-Mechanization-Pitch}
+///   P = \tan^{-1}\left(\frac{-v_D}{\sqrt{v_N^2 + v_E^2}}\right)
+/// \f}
+///
 /// @param[in] velocity_n Velocity in [m/s] in local-navigation frame coordinates
 /// @return Pitch angle in [rad]
 ///
