@@ -134,7 +134,7 @@ class ImuSimulator : public Imu
     /// - Linear: Velocity of the vehicle in NED coordinates
     /// - Circular: Horizontal velocity in the north component
     /// - Helix: Horizontal velocity in the north component, vertical in down component
-    Eigen::Vector3d velocity_n = Eigen::Vector3d::Zero();
+    Eigen::Vector3d selectedVelocity_n = Eigen::Vector3d::Zero();
 
     /// In the GUI selected radius of the circular/helix trajectory
     double circularTrajectoryRadius = 50.0;
@@ -209,13 +209,30 @@ class ImuSimulator : public Imu
 
     /// @brief Calculates the velocity in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
+    /// @param[in] q_ne Rotation quaternion from Earth frame to local-navigation frame
     /// @return v_n in [rad, rad, m]
-    Eigen::Vector3d calcVelocity_n(double time);
+    Eigen::Vector3d calcVelocity_n(double time, const Eigen::Quaterniond& q_ne);
 
     /// @brief Calculates the acceleration in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
+    /// @param[in] q_ne Rotation quaternion from Earth frame to local-navigation frame
     /// @return a_n in [rad, rad, m]
-    Eigen::Vector3d calcTrajectoryAccel_n(double time);
+    Eigen::Vector3d calcTrajectoryAccel_n(double time, const Eigen::Quaterniond& q_ne);
+
+    /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in platform coordinates)
+    /// @param[in] velocity_n Velocity in local-navigation frame coordinates [m/s]
+    /// @param[in] acceleration_n Acceleration in local-navigation frame coordinates [m/s^2]
+    /// @param[in] rollPitchYaw Gimbal angles (roll, pitch, yaw) [rad]
+    /// @param[in] q_bn Rotation quaternion from local-navigation frame to the body frame
+    /// @param[in] omega_ie_n ω_ie_n Earth rotation rate in local-navigation coordinates
+    /// @param[in] omega_en_n ω_en_n Transport rate in local-navigation coordinates
+    /// @return ω_ip_p [rad/s]
+    Eigen::Vector3d calcOmega_ip_p(const Eigen::Vector3d& velocity_n,
+                                   const Eigen::Vector3d& acceleration_n,
+                                   const Eigen::Vector3d& rollPitchYaw,
+                                   const Eigen::Quaterniond& q_bn,
+                                   const Eigen::Vector3d& omega_ie_n,
+                                   const Eigen::Vector3d& omega_en_n);
 };
 
 } // namespace NAV

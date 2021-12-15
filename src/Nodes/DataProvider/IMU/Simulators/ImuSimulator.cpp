@@ -205,23 +205,23 @@ void NAV::ImuSimulator::guiConfig()
         else if (trajectoryType == TrajectoryType::Linear)
         {
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##North velocity{}", size_t(id)).c_str(), &velocity_n.x(), 0.0, 0.0, "%.3f m/s"))
+            if (ImGui::InputDouble(fmt::format("##North velocity{}", size_t(id)).c_str(), &selectedVelocity_n.x(), 0.0, 0.0, "%.3f m/s"))
             {
-                LOG_DEBUG("{}: velocity_n changed to {}", nameId(), velocity_n.transpose());
+                LOG_DEBUG("{}: selectedVelocity_n changed to {}", nameId(), selectedVelocity_n.transpose());
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##East velocity{}", size_t(id)).c_str(), &velocity_n.y(), 0.0, 0.0, "%.3f m/s"))
+            if (ImGui::InputDouble(fmt::format("##East velocity{}", size_t(id)).c_str(), &selectedVelocity_n.y(), 0.0, 0.0, "%.3f m/s"))
             {
-                LOG_DEBUG("{}: velocity_n changed to {}", nameId(), velocity_n.transpose());
+                LOG_DEBUG("{}: selectedVelocity_n changed to {}", nameId(), selectedVelocity_n.transpose());
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##Down velocity{}", size_t(id)).c_str(), &velocity_n.z(), 0.0, 0.0, "%.3f m/s"))
+            if (ImGui::InputDouble(fmt::format("##Down velocity{}", size_t(id)).c_str(), &selectedVelocity_n.z(), 0.0, 0.0, "%.3f m/s"))
             {
-                LOG_DEBUG("{}: velocity_n changed to {}", nameId(), velocity_n.transpose());
+                LOG_DEBUG("{}: selectedVelocity_n changed to {}", nameId(), selectedVelocity_n.transpose());
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
@@ -276,9 +276,9 @@ void NAV::ImuSimulator::guiConfig()
 
                 ImGui::TableNextColumn();
                 ImGui::SetNextItemWidth(columnWidth);
-                if (ImGui::InputDouble(fmt::format("Horizontal speed##{}", size_t(id)).c_str(), &velocity_n.x(), 0.0, 0.0, "%.3f m/s"))
+                if (ImGui::InputDouble(fmt::format("Horizontal speed##{}", size_t(id)).c_str(), &selectedVelocity_n.x(), 0.0, 0.0, "%.3f m/s"))
                 {
-                    LOG_DEBUG("{}: Horizontal speed changed to {}", nameId(), velocity_n.x());
+                    LOG_DEBUG("{}: Horizontal speed changed to {}", nameId(), selectedVelocity_n.x());
                     flow::ApplyChanges();
                 }
                 // ####################################################################################################
@@ -286,10 +286,10 @@ void NAV::ImuSimulator::guiConfig()
                 {
                     ImGui::TableNextColumn();
                     ImGui::SetNextItemWidth(columnWidth);
-                    double vspeed = -velocity_n.z();
+                    double vspeed = -selectedVelocity_n.z();
                     if (ImGui::InputDouble(fmt::format("Vertical speed (Up)##{}", size_t(id)).c_str(), &vspeed, 0.0, 0.0, "%.3f m/s"))
                     {
-                        velocity_n.z() = -vspeed;
+                        selectedVelocity_n.z() = -vspeed;
                         LOG_DEBUG("{}: Vertical speed changed to {}", nameId(), vspeed);
                         flow::ApplyChanges();
                     }
@@ -429,7 +429,7 @@ void NAV::ImuSimulator::guiConfig()
     j["trajectoryType"] = trajectoryType;
     j["startPosition_lla"] = startPosition_lla;
     j["startOrientation"] = startOrientation;
-    j["velocity_n"] = velocity_n;
+    j["selectedVelocity_n"] = selectedVelocity_n;
     j["circularTrajectoryRadius"] = circularTrajectoryRadius;
     j["circularTrajectoryOriginAngle"] = circularTrajectoryOriginAngle;
     j["circularTrajectoryDirection"] = circularTrajectoryDirection;
@@ -488,9 +488,9 @@ void NAV::ImuSimulator::restore(json const& j)
     {
         j.at("startOrientation").get_to(startOrientation);
     }
-    if (j.contains("velocity_n"))
+    if (j.contains("selectedVelocity_n"))
     {
-        j.at("velocity_n").get_to(velocity_n);
+        j.at("selectedVelocity_n").get_to(selectedVelocity_n);
     }
     if (j.contains("circularTrajectoryRadius"))
     {
@@ -587,7 +587,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     Eigen::Vector3d position_e = trafo::lla2ecef_WGS84(position_lla);
     auto q_ne = trafo::quat_ne(position_lla(0), position_lla(1));
 
-    Eigen::Vector3d vel_n = calcVelocity_n(imuUpdateTime);
+    Eigen::Vector3d vel_n = calcVelocity_n(imuUpdateTime, q_ne);
 
     double roll = 0;
     double pitch = calcPitchFromVelocity(vel_n);
@@ -597,53 +597,10 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     const Eigen::Vector3d omega_ie_n = q_ne * InsConst::angularVelocity_ie_e;
     const double R_N = calcEarthRadius_N(position_lla(0));
     const double R_E = calcEarthRadius_E(position_lla(0));
-    const Eigen::Vector3d omega_en_n = calcTransportRate_n(position_lla, velocity_n, R_N, R_E);
+    const Eigen::Vector3d omega_en_n = calcTransportRate_n(position_lla, vel_n, R_N, R_E);
 
-    // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
+    // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
 
-    // Force to keep vehicle on track
-    Eigen::Vector3d accel_n = calcTrajectoryAccel_n(imuUpdateTime);
-
-    if (coriolisAccelerationEnabled) // Apply Coriolis Acceleration
-    {
-        accel_n += calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, velocity_n);
-    }
-
-    // Apply the local gravity vector
-    accel_n -= calcGravitation_n(position_lla, gravityModel); // Mass attraction of the Earth (gravitation)
-    if (centrifgalAccelerationEnabled)                        // Centrifugal acceleration caused by the Earth's rotation
-    {
-        accel_n += q_ne * calcCentrifugalAcceleration_e(position_e);
-    }
-
-    // Acceleration measured by the accelerometer in platform coordinates
-    Eigen::Vector3d accel_p = imuPos.quatAccel_pb() * q_bn * accel_n;
-
-    // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
-
-    Eigen::Vector3d omega_ip_n = Eigen::Vector3d::Zero();
-    if (angularRateEarthRotationEnabled)
-    {
-        omega_ip_n += omega_ie_n;
-    }
-    if (angularRateTransportRateEnabled)
-    {
-        omega_ip_n += omega_en_n;
-    }
-    if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
-    {
-        const auto& horizontalSpeed = velocity_n(0);
-
-        // ω_nb_n calculation
-        auto direction = circularTrajectoryDirection == Direction::CW ? 1 : -1;
-        omega_ip_n += Eigen::Vector3d{ 0, 0, direction * horizontalSpeed / circularTrajectoryRadius };
-    }
-
-    Eigen::Vector3d omega_ip_p = imuPos.quatGyro_pb() * trafo::quat_bn(roll, pitch, yaw) * omega_ip_n;
-
-    // ----------------------------------------------------------------------------------------------------------------------------------------
-
-    // Check if a stop condition is met
     if ((simulationStopCondition == StopCondition::Duration || trajectoryType == TrajectoryType::Fixed)
         && imuUpdateTime > simulationDuration)
     {
@@ -660,15 +617,41 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     }
     else if (simulationStopCondition == StopCondition::DistanceOrCircles && (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix))
     {
-        auto phi = velocity_n(0) * imuUpdateTime / circularTrajectoryRadius; // Angle of the current point on the circle
-        auto circleCount = static_cast<int>(phi / (2 * M_PI));
+        auto phi = selectedVelocity_n(0) * imuUpdateTime / circularTrajectoryRadius; // Angle of the current point on the circle
+        auto circleCount = phi / (2 * M_PI);
         if (circleCount >= circularTrajectoryCircleCountForStop)
         {
             return nullptr;
         }
     }
 
-    // Construct the message to send out
+    // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
+
+    // Force to keep vehicle on track
+    const Eigen::Vector3d trajectoryAccel_n = calcTrajectoryAccel_n(imuUpdateTime, q_ne);
+
+    // Measured acceleration in local-navigation frame coordinates [m/s^2]
+    Eigen::Vector3d accel_n = trajectoryAccel_n;
+    if (coriolisAccelerationEnabled) // Apply Coriolis Acceleration
+    {
+        accel_n += calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, vel_n);
+    }
+
+    // Apply the local gravity vector
+    accel_n -= calcGravitation_n(position_lla, gravityModel); // Mass attraction of the Earth (gravitation)
+    if (centrifgalAccelerationEnabled)                        // Centrifugal acceleration caused by the Earth's rotation
+    {
+        accel_n += q_ne * calcCentrifugalAcceleration_e(position_e);
+    }
+
+    // Acceleration measured by the accelerometer in platform coordinates
+    Eigen::Vector3d accel_p = imuPos.quatAccel_pb() * q_bn * accel_n;
+
+    // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
+
+    const Eigen::Vector3d omega_ip_p = calcOmega_ip_p(vel_n, trajectoryAccel_n, Eigen::Vector3d{ roll, pitch, yaw }, q_bn, omega_ie_n, omega_en_n);
+
+    // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
     auto obs = std::make_shared<ImuObs>(imuPos);
     obs->timeSinceStartup = static_cast<uint64_t>(imuUpdateTime * 1e9);
     obs->insTime = startTime + std::chrono::nanoseconds(obs->timeSinceStartup.value());
@@ -694,7 +677,8 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
 {
     Eigen::Vector3d position_lla = calcPosition_lla(gnssUpdateTime);
-    Eigen::Vector3d vel_n = calcVelocity_n(gnssUpdateTime);
+    auto q_ne = trafo::quat_ne(position_lla(0), position_lla(1));
+    Eigen::Vector3d vel_n = calcVelocity_n(gnssUpdateTime, q_ne);
 
     double roll = 0;
     double pitch = calcPitchFromVelocity(vel_n);
@@ -724,8 +708,8 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     }
     else if (simulationStopCondition == StopCondition::DistanceOrCircles && (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix))
     {
-        auto phi = velocity_n(0) * gnssUpdateTime / circularTrajectoryRadius; // Angle of the current point on the circle
-        auto circleCount = static_cast<int>(phi / (2 * M_PI));
+        auto phi = selectedVelocity_n(0) * gnssUpdateTime / circularTrajectoryRadius; // Angle of the current point on the circle
+        auto circleCount = phi / (2 * M_PI);
         if (circleCount >= circularTrajectoryCircleCountForStop)
         {
             return nullptr;
@@ -768,19 +752,19 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
                                                      calcEarthRadius_E(position_lla(0))); // East/West (prime vertical) earth radius [m]
         };
 
-        return RungeKutta1(f, time, startPosition_lla, velocity_n);
+        return RungeKutta1(f, time, startPosition_lla, selectedVelocity_n);
     }
     if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
     {
-        const auto& horizontalSpeed = velocity_n(0);
+        const auto& horizontalSpeed = selectedVelocity_n(0);
 
         auto phi = horizontalSpeed * time / circularTrajectoryRadius; // Angle of the current point on the circle
         phi *= circularTrajectoryDirection == Direction::CW ? -1 : 1;
         phi += circularTrajectoryOriginAngle;
 
-        Eigen::Vector3d dx_n{ circularTrajectoryRadius * std::sin(phi),                               // [m]
-                              circularTrajectoryRadius * std::cos(phi),                               // [m]
-                              trajectoryType == TrajectoryType::Helix ? velocity_n(2) * time : 0.0 }; // [m]
+        Eigen::Vector3d dx_n{ circularTrajectoryRadius * std::sin(phi),                                       // [m]
+                              circularTrajectoryRadius * std::cos(phi),                                       // [m]
+                              trajectoryType == TrajectoryType::Helix ? selectedVelocity_n(2) * time : 0.0 }; // [m]
 
         Eigen::Vector3d dx_e = trafo::quat_en(startPosition_lla(0), startPosition_lla(1)) * dx_n;
 
@@ -793,7 +777,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
     return Eigen::Vector3d::Zero();
 }
 
-Eigen::Vector3d NAV::ImuSimulator::calcVelocity_n(double time)
+Eigen::Vector3d NAV::ImuSimulator::calcVelocity_n(double time, const Eigen::Quaterniond& q_ne)
 {
     if (trajectoryType == TrajectoryType::Fixed)
     {
@@ -801,27 +785,28 @@ Eigen::Vector3d NAV::ImuSimulator::calcVelocity_n(double time)
     }
     if (trajectoryType == TrajectoryType::Linear)
     {
-        return velocity_n;
+        return selectedVelocity_n;
     }
     if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
     {
-        const auto& horizontalSpeed = velocity_n(0);
+        const auto& horizontalSpeed = selectedVelocity_n(0);
         auto direction = circularTrajectoryDirection == Direction::CW ? -1 : 1;
 
         auto phi = horizontalSpeed * time / circularTrajectoryRadius; // Angle of the current point on the circle
         phi *= direction;
         phi += circularTrajectoryOriginAngle;
 
-        Eigen::Vector3d v_n{ horizontalSpeed * std::cos(phi) * direction,                     // [m/s]
-                             -horizontalSpeed * std::sin(phi) * direction,                    // [m/s]
-                             trajectoryType == TrajectoryType::Helix ? velocity_n(2) : 0.0 }; // [m/s]
+        Eigen::Vector3d v_e = trafo::quat_en(startPosition_lla(0), startPosition_lla(1))
+                              * Eigen::Vector3d{ horizontalSpeed * direction * std::cos(phi),                             // [m/s]
+                                                 -horizontalSpeed * direction * std::sin(phi),                            // [m/s]
+                                                 trajectoryType == TrajectoryType::Helix ? selectedVelocity_n(2) : 0.0 }; // [m/s]
 
-        return v_n;
+        return q_ne * v_e;
     }
     return Eigen::Vector3d::Zero();
 }
 
-Eigen::Vector3d NAV::ImuSimulator::calcTrajectoryAccel_n([[maybe_unused]] double time)
+Eigen::Vector3d NAV::ImuSimulator::calcTrajectoryAccel_n(double time, const Eigen::Quaterniond& q_ne)
 {
     if (trajectoryType == TrajectoryType::Fixed)
     {
@@ -833,20 +818,108 @@ Eigen::Vector3d NAV::ImuSimulator::calcTrajectoryAccel_n([[maybe_unused]] double
     }
     if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
     {
-        const auto& horizontalSpeed = velocity_n(0);
+        const auto& horizontalSpeed = selectedVelocity_n(0);
         auto direction = circularTrajectoryDirection == Direction::CW ? -1 : 1;
 
         auto phi = horizontalSpeed * time / circularTrajectoryRadius; // Angle of the current point on the circle
         phi *= direction;
         phi += circularTrajectoryOriginAngle;
 
-        Eigen::Vector3d a_n{ -std::pow(horizontalSpeed, 2) / circularTrajectoryRadius * std::sin(phi), // [m/s^2]
-                             -std::pow(horizontalSpeed, 2) / circularTrajectoryRadius * std::cos(phi), // [m/s^2]
-                             0.0 };                                                                    // [m/s^2]
+        Eigen::Vector3d a_e = trafo::quat_en(startPosition_lla(0), startPosition_lla(1))
+                              * Eigen::Vector3d{ -std::pow(horizontalSpeed, 2) / circularTrajectoryRadius * std::sin(phi), // [m/s^2]
+                                                 -std::pow(horizontalSpeed, 2) / circularTrajectoryRadius * std::cos(phi), // [m/s^2]
+                                                 0.0 };                                                                    // [m/s^2]
 
-        return a_n;
+        return q_ne * a_e;
     }
     return Eigen::Vector3d::Zero();
+}
+
+Eigen::Vector3d NAV::ImuSimulator::calcOmega_ip_p(const Eigen::Vector3d& velocity_n,
+                                                  const Eigen::Vector3d& acceleration_n,
+                                                  const Eigen::Vector3d& rollPitchYaw,
+                                                  const Eigen::Quaterniond& q_bn,
+                                                  const Eigen::Vector3d& omega_ie_n,
+                                                  const Eigen::Vector3d& omega_en_n)
+{
+    const auto& v_N = velocity_n(0);
+    const auto& v_E = velocity_n(1);
+    const auto& v_D = velocity_n(2);
+    const auto& v_N_2 = std::pow(v_N, 2);
+    const auto& v_E_2 = std::pow(v_E, 2);
+    const auto& v_D_2 = std::pow(v_D, 2);
+
+    const auto& a_N = acceleration_n(0);
+    const auto& a_E = acceleration_n(1);
+    const auto& a_D = acceleration_n(2);
+
+    const auto& R = rollPitchYaw(0);
+    const auto& P = rollPitchYaw(1);
+
+    const Eigen::Quaterniond q_nb = q_bn.conjugate();
+
+    // #########################################################################################################################################
+
+    const double R_dot = 0;
+    const double Y_dot = (a_E * v_N - v_E * a_N)
+                         / (v_E_2 + v_N_2);
+    const double P_dot = (-a_D * std::sqrt(v_N_2 + v_E_2) + v_D * (a_N * v_N + a_E * v_E) / std::sqrt(v_N_2 + v_E_2))
+                         / (v_D_2 + v_N_2 + v_E_2);
+
+    LOG_DATA("Y_dot "
+             "= (a_E * v_N - v_E * a_N) / (v_E_2 + v_N_2) "
+             "= ({} * {} - {} * {}) / ({} + {}) = {}",
+             a_E, v_N, v_E, a_N, v_E_2, v_N_2, Y_dot);
+    LOG_DATA("P_dot "
+             "= (-a_D * std::sqrt(v_N_2 + v_E_2) + v_D * (a_N * v_N + a_E * v_E) / std::sqrt(v_N_2 + v_E_2)) / (v_D_2 + v_N_2 + v_E_2) "
+             "= (-{} * std::sqrt({} + {}) + {} * ({} * {} + {} * {}) / std::sqrt({} + {})) / ({} + {} + {}) = {}",
+             a_D, v_N_2, v_E_2, v_D, a_N, v_N, a_E, v_E, v_N_2, v_E_2, v_D_2, v_N_2, v_E_2, P_dot);
+
+    auto C_3 = [](double R) {
+        // Eigen::Matrix3d C;
+        // // clang-format off
+        // C << 1,       0     ,      0     ,
+        //      0,  std::cos(R), std::sin(R),
+        //      0, -std::sin(R), std::cos(R);
+        // // clang-format on
+        // return C;
+        return Eigen::AngleAxisd{ -R, Eigen::Vector3d::UnitX() };
+    };
+    auto C_2 = [](double P) {
+        // Eigen::Matrix3d C;
+        // // clang-format off
+        // C << std::cos(P), 0 , -std::sin(P),
+        //           0     , 1 ,       0     ,
+        //      std::sin(P), 0 ,  std::cos(P);
+        // // clang-format on
+        // return C;
+        return Eigen::AngleAxisd{ -P, Eigen::Vector3d::UnitY() };
+    };
+
+    // ω_nb_b = [∂/∂t R] + C_3 [   0  ] + C_3 C_2 [   0  ]
+    //          [   0  ]       [∂/∂t P]           [   0  ]
+    //          [   0  ]       [   0  ]           [∂/∂t Y]
+    const Eigen::Vector3d omega_nb_b = Eigen::Vector3d{ R_dot, 0, 0 }
+                                       + C_3(R) * Eigen::Vector3d{ 0, P_dot, 0 }
+                                       + C_3(R) * C_2(P) * Eigen::Vector3d{ 0, 0, Y_dot };
+
+    //  ω_ib_n = ω_in_n + ω_nb_n = (ω_ie_n + ω_en_n) + q_nb * ω_nb_b
+    Eigen::Vector3d omega_ib_n = q_nb * omega_nb_b;
+    if (angularRateEarthRotationEnabled)
+    {
+        omega_ib_n += omega_ie_n;
+    }
+    if (angularRateTransportRateEnabled)
+    {
+        omega_ib_n += omega_en_n;
+    }
+
+    // ω_ib_b = q_bn * ω_ib_n
+    const Eigen::Vector3d omega_ib_b = q_bn * omega_ib_n;
+
+    //                            = 0
+    // ω_ip_p = q_pb * (ω_ib_b + ω_bp_b) = q_pb * ω_ib_b
+    return imuPos.quatGyro_pb() * omega_ib_b;
 }
 
 const char* NAV::ImuSimulator::to_string(TrajectoryType value)
