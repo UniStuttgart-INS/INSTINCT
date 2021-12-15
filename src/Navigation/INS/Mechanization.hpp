@@ -43,28 +43,16 @@ Eigen::Vector4d calcTimeDerivativeForQuaternion_nb(const Eigen::Vector3d& omega_
 /// \f}
 ///
 /// @param[in] f_n f_n = [f_N  f_E  f_D]^T Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-/// @param[in] omega_ie_e Turn rate of the Earth expressed in Earth frame coordinates
-/// @param[in] omega_ie_n Turn rate of the Earth expressed in local-navigation frame coordinates
-/// @param[in] omega_en_n Turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
-/// @param[in] velocity_n v_n = [v_N  v_E  v_D]^T Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
+/// @param[in] coriolisAcceleration_n Coriolis acceleration in local-navigation coordinates in [m/s^2]
 /// @param[in] gravitation_n Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
-/// @param[in] q_ne Rotation quaternion which converts vectors in Earth frame to local-navigation frame coordinates (r_n = q_ne * r_e)
-/// @param[in] x_e Position in ECEF coordinates
-/// @param[in] coriolisAccelerationCompensationEnabled Apply the coriolis acceleration compensation to the measured accelerations
-/// @param[in] centrifgalAccelerationCompensationEnabled Apply the centrifugal acceleration compensation to the measured accelerations
+/// @param[in] centrifugalAcceleration_n Centrifugal acceleration in local-navigation coordinates in [m/s^2]
 /// @return The time derivative of the velocity in local-navigation frame coordinates
 ///
 /// @note See \ref ImuIntegrator-Mechanization-n-Velocity equation \eqref{eq-ImuIntegrator-Mechanization-n-Velocity}
 Eigen::Vector3d calcTimeDerivativeForVelocity_n(const Eigen::Vector3d& f_n,
-                                                const Eigen::Vector3d& omega_ie_e,
-                                                const Eigen::Vector3d& omega_ie_n,
-                                                const Eigen::Vector3d& omega_en_n,
-                                                const Eigen::Vector3d& velocity_n,
+                                                const Eigen::Vector3d& coriolisAcceleration_n,
                                                 const Eigen::Vector3d& gravitation_n,
-                                                const Eigen::Quaterniond& q_ne,
-                                                const Eigen::Vector3d& x_e,
-                                                bool coriolisAccelerationCompensationEnabled = true,
-                                                bool centrifgalAccelerationCompensationEnabled = true);
+                                                const Eigen::Vector3d& centrifugalAcceleration_n);
 
 /// @brief Calculates the time derivative of the curvilinear position
 ///

@@ -787,7 +787,6 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
         Eigen::Vector3d x_e = trafo::lla2ecef_WGS84(startPosition_lla) + dx_e;
 
         Eigen::Vector3d pos_lla = trafo::ecef2lla_WGS84(x_e);
-        // pos_lla(2) = startPosition_lla(2) - dDown;
 
         return pos_lla;
     }

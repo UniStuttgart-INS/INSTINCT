@@ -30,27 +30,14 @@ Eigen::Vector4d calcTimeDerivativeForQuaternion_nb(const Eigen::Vector3d& omega_
 }
 
 Eigen::Vector3d calcTimeDerivativeForVelocity_n(const Eigen::Vector3d& f_n,
-                                                const Eigen::Vector3d& omega_ie_e,
-                                                const Eigen::Vector3d& omega_ie_n,
-                                                const Eigen::Vector3d& omega_en_n,
-                                                const Eigen::Vector3d& velocity_n,
+                                                const Eigen::Vector3d& coriolisAcceleration_n,
                                                 const Eigen::Vector3d& gravitation_n,
-                                                const Eigen::Quaterniond& q_ne,
-                                                const Eigen::Vector3d& x_e,
-                                                bool coriolisAccelerationCompensationEnabled,
-                                                bool centrifgalAccelerationCompensationEnabled)
+                                                const Eigen::Vector3d& centrifugalAcceleration_n)
 {
-    Eigen::Vector3d v_dot = f_n;
-    if (coriolisAccelerationCompensationEnabled)
-    {
-        v_dot -= calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, velocity_n);
-    }
-    v_dot += gravitation_n;
-    if (centrifgalAccelerationCompensationEnabled)
-    {
-        v_dot -= q_ne * calcCentrifugalAcceleration_e(x_e, omega_ie_e);
-    }
-    return v_dot;
+    return f_n
+           - coriolisAcceleration_n
+           + gravitation_n
+           - centrifugalAcceleration_n;
 }
 
 Eigen::Vector3d calcTimeDerivativeForPosition_lla(const Eigen::Vector3d& velocity_n,
@@ -90,21 +77,28 @@ Eigen::Matrix<double, 10, 1> calcPosVelAttDerivative_n(const Eigen::Matrix<doubl
     // ω_en_n Turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
     const Eigen::Vector3d omega_en_n = c.angularRateTransportRateCompensationEnabled ? calcTransportRate_n(y.segment<3>(7), y.segment<3>(4), R_N, R_E)
                                                                                      : Eigen::Vector3d::Zero();
-
     // ω_nb_b = ω_ib_b - C_bn * (ω_ie_n + ω_en_n)
-    const Eigen::Vector3d omega_nb_b = c.omega_ib_b - q_nb.conjugate() * (omega_ie_n + omega_en_n);
+    const Eigen::Vector3d omega_nb_b = c.omega_ib_b
+                                       - q_nb.conjugate()
+                                             * ((c.angularRateEarthRotationCompensationEnabled ? omega_ie_n : Eigen::Vector3d::Zero())
+                                                + (c.angularRateTransportRateCompensationEnabled ? omega_en_n : Eigen::Vector3d::Zero()));
+
+    // Coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame)
+    const Eigen::Vector3d coriolisAcceleration_n = c.coriolisAccelerationCompensationEnabled
+                                                       ? calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, y.segment<3>(4))
+                                                       : Eigen::Vector3d::Zero();
+    // Centrifugal acceleration in [m/s^2] (acceleration that makes a body follow a curved path)
+    const Eigen::Vector3d centrifugalAcceleration_n = c.centrifgalAccelerationCompensationEnabled
+                                                          ? q_ne * calcCentrifugalAcceleration_e(trafo::lla2ecef_WGS84(y.segment<3>(7)), omega_ie_e)
+                                                          : Eigen::Vector3d::Zero();
 
     y_dot.segment<4>(0) = calcTimeDerivativeForQuaternion_nb(omega_nb_b,       // ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame
                                                              y.segment<4>(0)); // q_nb_coeffs Coefficients of the quaternion q_nb in order w, x, y, z (q = w + ix + jy + kz)
 
     y_dot.segment<3>(4) = calcTimeDerivativeForVelocity_n(q_nb * c.f_b,                                       // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-                                                          omega_ie_e,                                         // ω_ie_e Turn rate of the Earth expressed in Earth frame coordinates
-                                                          omega_ie_n,                                         // ω_ie_n Turn rate of the Earth expressed in local-navigation frame coordinates
-                                                          omega_en_n,                                         // ω_en_n Turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
-                                                          y.segment<3>(4),                                    // v_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
+                                                          coriolisAcceleration_n,                             // Coriolis acceleration in local-navigation coordinates in [m/s^2]
                                                           calcGravitation_n(y.segment<3>(7), c.gravityModel), // gravitation_n Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
-                                                          q_ne,                                               // q_ne Rotation quaternion which converts vectors in Earth frame to local-navigation frame coordinates (r_n = q_ne * r_e)
-                                                          trafo::lla2ecef_WGS84(y.segment<3>(7)));            // x_e Position in ECEF coordinates
+                                                          centrifugalAcceleration_n);                         // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
 
     y_dot.segment<3>(7) = calcTimeDerivativeForPosition_lla(y.segment<3>(4), // v_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
                                                             y(7),            // 𝜙 Latitude in [rad]
