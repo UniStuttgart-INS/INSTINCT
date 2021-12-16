@@ -127,14 +127,16 @@ class ImuSimulator : public Imu
     Eigen::Vector3d startPosition_lla = Eigen::Vector3d::Zero();
 
     /// Orientation of the vehicle [roll, pitch, yaw] [rad]
-    Eigen::Vector3d startOrientation = Eigen::Vector3d::Zero();
+    Eigen::Vector3d fixedTrajectoryStartOrientation = Eigen::Vector3d::Zero();
 
-    /// Velocity of the vehicle in [m/s]
-    ///
-    /// - Linear: Velocity of the vehicle in NED coordinates
-    /// - Circular: Horizontal velocity in the north component
-    /// - Helix: Horizontal velocity in the north component, vertical in down component
-    Eigen::Vector3d selectedVelocity_n = Eigen::Vector3d::Zero();
+    /// Velocity of the vehicle in local-navigation frame cooridnates in [m/s]
+    Eigen::Vector3d linearTrajectoryVelocity_n = Eigen::Vector3d{ 1, 0, 0 };
+
+    /// Horizontal speed of the vehicle in the tangential plane in [m/s]
+    double circularTrajectoryHorizontalSpeed = 1.0;
+
+    /// Vertical speed of the vehicle in the tangential plane in [m/s]
+    double helicalTrajectoryVerticalSpeed = 1.0;
 
     /// In the GUI selected radius of the circular/helix trajectory
     double circularTrajectoryRadius = 50.0;
