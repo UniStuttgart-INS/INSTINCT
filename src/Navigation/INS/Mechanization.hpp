@@ -81,13 +81,13 @@ Eigen::Vector3d calcTimeDerivativeForPosition_lla(const Eigen::Vector3d& velocit
 /// @brief Values needed to calculate the PosVelAttDerivative for the local-navigation frame
 struct PosVelAttDerivativeConstants_n
 {
-    Eigen::Vector3d omega_ib_b;                       ///< ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
-    Eigen::Vector3d f_b;                              ///< f_b Acceleration in [m/s^2], in body coordinates
-    GravityModel gravityModel;                        ///< Gravity Model to use
-    bool coriolisAccelerationCompensationEnabled;     ///< Apply the coriolis acceleration compensation to the measured accelerations
-    bool centrifgalAccelerationCompensationEnabled;   ///< Apply the centrifugal acceleration compensation to the measured accelerations
-    bool angularRateEarthRotationCompensationEnabled; ///< Apply the Earth rotation rate compensation to the measured angular rates
-    bool angularRateTransportRateCompensationEnabled; ///< Apply the transport rate compensation to the measured angular rates
+    Eigen::Vector3d omega_ib_b;                              ///< ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
+    Eigen::Vector3d f_b;                                     ///< f_b Acceleration in [m/s^2], in body coordinates
+    GravityModel gravityModel = GravityModel::EGM96;         ///< Gravity Model to use
+    bool coriolisAccelerationCompensationEnabled = true;     ///< Apply the coriolis acceleration compensation to the measured accelerations
+    bool centrifgalAccelerationCompensationEnabled = true;   ///< Apply the centrifugal acceleration compensation to the measured accelerations
+    bool angularRateEarthRotationCompensationEnabled = true; ///< Apply the Earth rotation rate compensation to the measured angular rates
+    bool angularRateTransportRateCompensationEnabled = true; ///< Apply the transport rate compensation to the measured angular rates
 };
 
 /// @brief Calculates the derivative of the quaternion, velocity and curvilinear position

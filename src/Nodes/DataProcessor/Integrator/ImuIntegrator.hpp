@@ -58,7 +58,7 @@ class ImuIntegrator : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OutputPortIndex_InertialNavSol__t0 = 0; ///< @brief Flow (InertialNavSol)
+    constexpr static size_t OutputPortIndex_InertialNavSol = 0; ///< @brief Flow (InertialNavSol)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -66,15 +66,15 @@ class ImuIntegrator : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Receive Function for the PosVelAtt initial values
+    /// @param[in] nodeData PosVelAtt to process
+    /// @param[in] linkId Id of the link over which the data is received
+    void recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
     /// @brief Receive Function for the ImuObs at the time tₖ
     /// @param[in] nodeData ImuObs to process
     /// @param[in] linkId Id of the link over which the data is received
-    void recvImuObs__t0(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
-
-    /// @brief Receive Function for the PosVelAtt at the time tₖ₋₁
-    /// @param[in] nodeData PosVelAtt to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvState__t1(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive function for PVAError
     /// @param[in] nodeData PVAError received
@@ -90,7 +90,7 @@ class ImuIntegrator : public Node
     /// @param[in] posVelAtt PosVelAtt to correct
     /// @param[in] pvaError Corrections to apply
     /// @return Newly allocated pointer to the corrected posVelAtt
-    std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError);
+    static std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError);
 
     /// @brief Integrates the Imu Observation data
     void integrateObservation();

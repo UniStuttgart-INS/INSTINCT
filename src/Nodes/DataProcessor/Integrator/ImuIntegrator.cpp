@@ -17,6 +17,8 @@ namespace nm = NAV::NodeManager;
 
 #include "NodeData/State/InertialNavSol.hpp"
 
+#include <algorithm>
+
 NAV::ImuIntegrator::ImuIntegrator()
 {
     name = typeStatic();
@@ -26,8 +28,8 @@ NAV::ImuIntegrator::ImuIntegrator()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 483, 350 };
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
-    nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
+    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs);
+    nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvPosVelAttInit);
 
     nm::CreateOutputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() });
 }
@@ -286,8 +288,19 @@ bool NAV::ImuIntegrator::initialize()
     LOG_TRACE("{}: called", nameId());
 
     // This should be dependant on the integration algorithm
-    maxSizeImuObservations = 3;
-    maxSizeStates = 2;
+    switch (integrationAlgorithm)
+    {
+    case IntegrationAlgorithm::Heun:
+    case IntegrationAlgorithm::RungeKutta1:
+    case IntegrationAlgorithm::RungeKutta2:
+    case IntegrationAlgorithm::RungeKutta3:
+    case IntegrationAlgorithm::RungeKutta4:
+        maxSizeImuObservations = 2; // Has to be >= 2
+        maxSizeStates = 1;
+        break;
+    case IntegrationAlgorithm::COUNT:
+        return false;
+    }
 
     imuObservations.clear();
     posVelAttStates.clear();
@@ -306,7 +319,43 @@ void NAV::ImuIntegrator::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+{
+    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(nodeData);
+
+    // Fill the list with the initial state to the start of the list
+    if (posVelAttStates.empty())
+    {
+        while (posVelAttStates.size() < maxSizeStates)
+        {
+            LOG_DEBUG("{}: Adding posVelAtt to the start of the list {}", nameId(), posVelAtt);
+            posVelAttStates.push_front(posVelAtt);
+        }
+
+        if (imuObservations.size() >= maxSizeImuObservations - 1)
+        {
+            // Push out a message with the initial state and a matching imu Observation
+            auto inertialNavSol = std::make_shared<InertialNavSol>();
+
+            inertialNavSol->setState_n(posVelAtt->latLonAlt(), posVelAtt->velocity_n(), posVelAtt->quaternion_nb());
+
+            size_t imuObsIndex = std::min(1UL, imuObservations.size() - 1);
+
+            inertialNavSol->insTime = imuObservations.at(imuObsIndex)->insTime;
+            inertialNavSol->imuObs = imuObservations.at(imuObsIndex);
+
+            invokeCallbacks(OutputPortIndex_InertialNavSol, inertialNavSol);
+        }
+
+        // If enough imu observations received, integrate the observation
+        if (imuObservations.size() == maxSizeImuObservations)
+        {
+            integrateObservation();
+        }
+    }
+}
+
+void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     auto imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
 
@@ -329,37 +378,21 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<const NodeData>& n
         imuObservations.pop_back();
     }
 
-    // If enough imu observations and states received, integrate the observation
-    if (imuObservations.size() == maxSizeImuObservations
-        && posVelAttStates.size() == maxSizeStates)
+    // First ImuObs and already has state
+    if (imuObservations.size() == 1 && posVelAttStates.size() == maxSizeStates)
     {
-        integrateObservation();
-    }
-}
+        // Push out a message with the initial state and a matching imu Observation
+        auto inertialNavSol = std::make_shared<InertialNavSol>();
 
-void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
-{
-    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(nodeData);
+        inertialNavSol->setState_n(posVelAttStates.front()->latLonAlt(),
+                                   posVelAttStates.front()->velocity_n(),
+                                   posVelAttStates.front()->quaternion_nb());
 
-    // Add imuObs tₖ₋₁ to the start of the list
-    if (posVelAttStates.empty())
-    {
-        while (posVelAttStates.size() < maxSizeStates)
-        {
-            LOG_DEBUG("{}: Adding posVelAtt to the start of the list {}", nameId(), posVelAtt);
-            posVelAttStates.push_front(posVelAtt);
-        }
-    }
-    else
-    {
-        posVelAttStates.push_front(posVelAtt);
-    }
+        inertialNavSol->insTime = imuObs->insTime;
+        inertialNavSol->imuObs = imuObs;
 
-    // Remove states at the end of the list till the max size is reached
-    while (posVelAttStates.size() > maxSizeStates)
-    {
-        LOG_WARN("{}: Receive new state, but list is full --> discarding oldest state", nameId());
-        posVelAttStates.pop_back();
+        invokeCallbacks(OutputPortIndex_InertialNavSol, inertialNavSol);
+        return;
     }
 
     // If enough imu observations and states received, integrate the observation
@@ -413,8 +446,6 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::correctPosVelAtt(const
 
 void NAV::ImuIntegrator::integrateObservation()
 {
-    LOG_DATA("{}: imuObservations.at(0) = {}, imuObservations.at(1) = {}, imuObservations.at(2) = {}", nameId(), imuObservations.at(0), imuObservations.at(1), imuObservations.at(2));
-    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
     if (pvaError)
     {
         LOG_DATA("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value().toYMDHMS(), posVelAttStates.at(1)->insTime.value().toYMDHMS());
@@ -554,8 +585,8 @@ void NAV::ImuIntegrator::integrateObservation()
     y.segment<3>(7) = position_lla__t1;
 
     PosVelAttDerivativeConstants_n c;
-    c.omega_ib_b = omega_ip_b__t0; // platform system does not rotate with respect to body system
-    c.f_b = f_b__t0;
+    c.omega_ib_b = omega_ip_b__t1; // platform system does not rotate with respect to body system
+    c.f_b = f_b__t1;
     c.gravityModel = gravityModel;
     c.coriolisAccelerationCompensationEnabled = coriolisAccelerationCompensationEnabled;
     c.centrifgalAccelerationCompensationEnabled = centrifgalAccelerationCompensationEnabled;
@@ -613,11 +644,8 @@ void NAV::ImuIntegrator::integrateObservation()
     // Cycle lists
     imuObservations.pop_back();
     posVelAttStates.pop_back();
+    posVelAttStates.push_front(posVelAtt__t0);
 
     // Push out new data
-    invokeCallbacks(OutputPortIndex_InertialNavSol__t0, posVelAtt__t0);
-
-    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(),
-             posVelAttStates.at(0),
-             posVelAttStates.size() >= 2 ? posVelAttStates.at(1) : nullptr);
+    invokeCallbacks(OutputPortIndex_InertialNavSol, posVelAtt__t0);
 }
