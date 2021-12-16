@@ -1394,9 +1394,9 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     }
     ed::Resume();
 
-    FlowAnimation::ProcessQueue();
-
     ed::End();
+
+    FlowAnimation::ProcessQueue();
 
     // Push the Tooltip on the stack if needed
     if (!tooltipText.empty())
