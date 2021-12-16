@@ -534,17 +534,17 @@ void NAV::ImuIntegrator::integrateObservation()
 
     // ω_ip_b (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ₋₁
     const Eigen::Vector3d omega_ip_b__t1 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t1;
-    LOG_DATA("{}: angularVelocity_ip_b__t1 = {}", nameId(), angularVelocity_ip_b__t1.transpose());
+    LOG_DATA("{}: omega_ip_b__t1 = {}", nameId(), omega_ip_b__t1.transpose());
     // ω_ip_b (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ
     const Eigen::Vector3d omega_ip_b__t0 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t0;
-    LOG_DATA("{}: angularVelocity_ip_b__t0 = {}", nameId(), angularVelocity_ip_b__t0.transpose());
+    LOG_DATA("{}: omega_ip_b__t0 = {}", nameId(), omega_ip_b__t0.transpose());
 
     // f_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
     const Eigen::Vector3d f_b__t1 = imuPosition.quatAccel_bp() * acceleration_p__t1;
-    LOG_DATA("{}: acceleration_b__t1 = {}", nameId(), acceleration_b__t1.transpose());
+    LOG_DATA("{}: f_b__t1 = {}", nameId(), f_b__t1.transpose());
     // f_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
     const Eigen::Vector3d f_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
-    LOG_DATA("{}: acceleration_b__t0 = {}", nameId(), acceleration_b__t0.transpose());
+    LOG_DATA("{}: f_b__t0 = {}", nameId(), f_b__t0.transpose());
 
     //  0  1  2  3   4    5    6   7  8  9
     // [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T

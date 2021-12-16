@@ -106,7 +106,7 @@ Eigen::Matrix<double, 10, 1> calcPosVelAttDerivative_n(const Eigen::Matrix<doubl
                                                             R_N,             // North/South (meridian) earth radius [m]
                                                             R_E);            // East/West (prime vertical) earth radius [m]
     return y_dot;
-};
+}
 
 // TODO: M.M.: Remove this after migrating it to the new functions
 // ###########################################################################################################
