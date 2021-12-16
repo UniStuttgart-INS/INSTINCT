@@ -11,6 +11,8 @@ const char* to_string(IntegrationAlgorithm algorithm)
     //     return "Rectangular Rule";
     // case IntegrationAlgorithm::Simpson:
     //     return "Simpson";
+    case IntegrationAlgorithm::Heun:
+        return "Heun's method";
     case IntegrationAlgorithm::RungeKutta1:
         return "Runge Kutta 1st Order";
     case IntegrationAlgorithm::RungeKutta2:
