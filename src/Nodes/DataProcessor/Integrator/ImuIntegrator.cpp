@@ -432,8 +432,6 @@ void NAV::ImuIntegrator::integrateObservation()
     const std::shared_ptr<const ImuObs>& imuObs__t0 = imuObservations.at(0);
     // IMU Observation at the time tₖ₋₁
     const std::shared_ptr<const ImuObs>& imuObs__t1 = imuObservations.at(1);
-    // IMU Observation at the time tₖ₋₂
-    const std::shared_ptr<const ImuObs>& imuObs__t2 = imuObservations.at(2);
 
     // Position, Velocity and Attitude at the time tₖ₋₁
     const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = posVelAttStates.at(0);
@@ -449,42 +447,32 @@ void NAV::ImuIntegrator::integrateObservation()
     // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
     [[maybe_unused]] long double timeDifferenceSec__t1 = 0; // TODO: Use in Heun algorithm
     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
-    long double timeDifferenceSec__t0 = 0;
+    long double timeDifferenceSec = 0;
 
     if (imuObs__t0->insTime.has_value() && !(prefereTimeSinceStartupOverInsTime && imuObs__t0->timeSinceStartup.has_value()))
     {
-        // tₖ₋₂ Time at prior to previous epoch
-        const InsTime& time__t2 = imuObs__t2->insTime.value();
         // tₖ₋₁ Time at previous epoch
         const InsTime& time__t1 = imuObs__t1->insTime.value();
         // tₖ Current Time
         const InsTime& time__t0 = imuObs__t0->insTime.value();
 
-        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
-        timeDifferenceSec__t1 = (time__t1 - time__t2).count();
         // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
-        timeDifferenceSec__t0 = (time__t0 - time__t1).count();
+        timeDifferenceSec = (time__t0 - time__t1).count();
 
         // Update time
         posVelAtt__t0->insTime = imuObs__t0->insTime;
 
-        LOG_DATA("{}: time__t2 {}", nameId(), time__t2.toYMDHMS());
-        LOG_DATA("{}: time__t1 {}: DiffSec__t1 {}", nameId(), time__t1.toYMDHMS(), timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0.toYMDHMS(), timeDifferenceSec__t0);
+        LOG_DATA("time__t0 - time__t1 = {} - {} = {}", nameId(), time__t0.toYMDHMS(), time__t1.toYMDHMS(), timeDifferenceSec);
     }
     else
     {
-        // tₖ₋₂ Time at prior to previous epoch
-        const auto& time__t2 = imuObs__t2->timeSinceStartup.value();
         // tₖ₋₁ Time at previous epoch
         const auto& time__t1 = imuObs__t1->timeSinceStartup.value();
         // tₖ Current Time
         const auto& time__t0 = imuObs__t0->timeSinceStartup.value();
 
-        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
-        timeDifferenceSec__t1 = static_cast<long double>(time__t1 - time__t2) * 1e-9L;
         // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
-        timeDifferenceSec__t0 = static_cast<long double>(time__t0 - time__t1) * 1e-9L;
+        timeDifferenceSec = static_cast<long double>(time__t0 - time__t1) * 1e-9L;
 
         if (timeSinceStartup__init == 0)
         {
@@ -495,9 +483,7 @@ void NAV::ImuIntegrator::integrateObservation()
         // Update time
         posVelAtt__t0->insTime = time__init + std::chrono::nanoseconds(imuObs__t0->timeSinceStartup.value() - timeSinceStartup__init);
 
-        LOG_DATA("{}: time__t2 {}", nameId(), time__t2);
-        LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1, timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0, timeDifferenceSec__t0);
+        LOG_DATA("time__t0 - time__t1 = {} - {} = {}", nameId(), time__t0, time__t1, timeDifferenceSec);
     }
 
     // ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
@@ -546,10 +532,16 @@ void NAV::ImuIntegrator::integrateObservation()
     const Eigen::Vector3d position_lla__t1 = posVelAtt__t1->latLonAlt();
     LOG_DATA("{}: position_lla__t1 = {}", nameId(), position_lla__t1.transpose());
 
+    // ω_ip_b (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d omega_ip_b__t1 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t1;
+    LOG_DATA("{}: angularVelocity_ip_b__t1 = {}", nameId(), angularVelocity_ip_b__t1.transpose());
     // ω_ip_b (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ
     const Eigen::Vector3d omega_ip_b__t0 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t0;
     LOG_DATA("{}: angularVelocity_ip_b__t0 = {}", nameId(), angularVelocity_ip_b__t0.transpose());
 
+    // f_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d f_b__t1 = imuPosition.quatAccel_bp() * acceleration_p__t1;
+    LOG_DATA("{}: acceleration_b__t1 = {}", nameId(), acceleration_b__t1.transpose());
     // f_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
     const Eigen::Vector3d f_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
     LOG_DATA("{}: acceleration_b__t0 = {}", nameId(), acceleration_b__t0.transpose());
@@ -570,21 +562,46 @@ void NAV::ImuIntegrator::integrateObservation()
     c.angularRateEarthRotationCompensationEnabled = angularRateEarthRotationCompensationEnabled;
     c.angularRateTransportRateCompensationEnabled = angularRateTransportRateCompensationEnabled;
 
-    if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
+    if (integrationAlgorithm == IntegrationAlgorithm::Heun)
     {
-        y = RungeKutta1(calcPosVelAttDerivative_n, timeDifferenceSec__t0, y, c);
+        // Values needed to calculate the PosVelAttDerivative for the local-navigation frame
+        struct AccelGyroMeasurement
+        {
+            Eigen::Vector3d omega_ib_b; // ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
+            Eigen::Vector3d f_b;        // f_b Acceleration in [m/s^2], in body coordinates
+        };
+        auto posVelAttDerivativeWrapper = [](const Eigen::Matrix<double, 10, 1>& y, const AccelGyroMeasurement& z, const PosVelAttDerivativeConstants_n& c) {
+            PosVelAttDerivativeConstants_n c_new;
+            c_new.omega_ib_b = z.omega_ib_b;
+            c_new.f_b = z.f_b;
+            c_new.gravityModel = c.gravityModel;
+            c_new.coriolisAccelerationCompensationEnabled = c.coriolisAccelerationCompensationEnabled;
+            c_new.centrifgalAccelerationCompensationEnabled = c.centrifgalAccelerationCompensationEnabled;
+            c_new.angularRateEarthRotationCompensationEnabled = c.angularRateEarthRotationCompensationEnabled;
+            c_new.angularRateTransportRateCompensationEnabled = c.angularRateTransportRateCompensationEnabled;
+
+            return calcPosVelAttDerivative_n(y, c_new);
+        };
+        AccelGyroMeasurement z__t0{ omega_ip_b__t0, f_b__t0 };
+        AccelGyroMeasurement z__t1{ omega_ip_b__t1, f_b__t1 };
+
+        y = Heun(posVelAttDerivativeWrapper, timeDifferenceSec, y, z__t1, z__t0, c);
+    }
+    else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
+    {
+        y = RungeKutta1(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
     }
     else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta2)
     {
-        y = RungeKutta2(calcPosVelAttDerivative_n, timeDifferenceSec__t0, y, c);
+        y = RungeKutta2(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
     }
     else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
     {
-        y = RungeKutta3(calcPosVelAttDerivative_n, timeDifferenceSec__t0, y, c);
+        y = RungeKutta3(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
     }
     else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta4)
     {
-        y = RungeKutta4(calcPosVelAttDerivative_n, timeDifferenceSec__t0, y, c);
+        y = RungeKutta4(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
     }
 
     posVelAtt__t0->setState_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) });
