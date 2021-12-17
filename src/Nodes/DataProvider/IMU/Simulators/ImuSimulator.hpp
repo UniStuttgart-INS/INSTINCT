@@ -75,6 +75,12 @@ class ImuSimulator : public Imu
     /// @return The simulated observation
     [[nodiscard]] std::shared_ptr<const NodeData> pollPosVelAtt(bool peek = false);
 
+    /// @brief Checks the selected stop condition
+    /// @param[in] time Current simulation time
+    /// @param[in] position_lla Current position
+    /// @return True if it should be stopped
+    bool checkStopCondition(double time, const Eigen::Vector3d& position_lla);
+
     // ###########################################################################################################
 
     /// Types where the start time should be pulled from
@@ -182,6 +188,9 @@ class ImuSimulator : public Imu
 
     /// Amount of circles to simulate before stopping
     double circularTrajectoryCircleCountForStop = 1.0;
+
+    /// True if one of the pins has its stop condition achieved
+    bool stopConditionReached = false;
 
     // ###########################################################################################################
 

@@ -577,6 +577,7 @@ bool NAV::ImuSimulator::resetNode()
 
     imuUpdateTime = 0.0;
     gnssUpdateTime = 0.0;
+    stopConditionReached = false;
 
     if (startTimeSource == StartTimeSource::CurrentComputerTime)
     {
@@ -589,6 +590,40 @@ bool NAV::ImuSimulator::resetNode()
     }
 
     return true;
+}
+
+bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& position_lla)
+{
+    if (stopConditionReached)
+    {
+        return true;
+    }
+
+    if ((simulationStopCondition == StopCondition::Duration || trajectoryType == TrajectoryType::Fixed)
+        && imuUpdateTime > simulationDuration)
+    {
+        return true;
+    }
+    if (simulationStopCondition == StopCondition::DistanceOrCircles && trajectoryType == TrajectoryType::Linear)
+    {
+        auto horizontalDistance = calcGeographicalDistance(startPosition_lla(0), startPosition_lla(1), position_lla(0), position_lla(1));
+        auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(startPosition_lla(2) - position_lla(2), 2));
+        if (distance > linearTrajectoryDistanceForStop)
+        {
+            return true;
+        }
+    }
+    else if (simulationStopCondition == StopCondition::DistanceOrCircles && (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix))
+    {
+        auto phi = circularTrajectoryHorizontalSpeed * time / circularTrajectoryRadius; // Angle of the current point on the circle
+        auto circleCount = phi / (2 * M_PI);
+        if (circleCount >= circularTrajectoryCircleCountForStop)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
@@ -623,28 +658,10 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
 
-    if ((simulationStopCondition == StopCondition::Duration || trajectoryType == TrajectoryType::Fixed)
-        && imuUpdateTime > simulationDuration)
+    if (checkStopCondition(imuUpdateTime, position_lla))
     {
+        stopConditionReached = true;
         return nullptr;
-    }
-    if (simulationStopCondition == StopCondition::DistanceOrCircles && trajectoryType == TrajectoryType::Linear)
-    {
-        auto horizontalDistance = calcGeographicalDistance(startPosition_lla(0), startPosition_lla(1), position_lla(0), position_lla(1));
-        auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(startPosition_lla(2) - position_lla(2), 2));
-        if (distance > linearTrajectoryDistanceForStop)
-        {
-            return nullptr;
-        }
-    }
-    else if (simulationStopCondition == StopCondition::DistanceOrCircles && (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix))
-    {
-        auto phi = circularTrajectoryHorizontalSpeed * imuUpdateTime / circularTrajectoryRadius; // Angle of the current point on the circle
-        auto circleCount = phi / (2 * M_PI);
-        if (circleCount >= circularTrajectoryCircleCountForStop)
-        {
-            return nullptr;
-        }
     }
 
     // ------------------------------------------------------------ Accelerations --------------------------------------------------------------
@@ -718,32 +735,15 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
         roll = std::acos(position_e.dot(startPosition_e) / (position_e.norm() * startPosition_e.norm()));
     }
 
-    // Check if a stop condition is met
-    if ((simulationStopCondition == StopCondition::Duration || trajectoryType == TrajectoryType::Fixed)
-        && gnssUpdateTime > simulationDuration)
+    // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
+
+    if (checkStopCondition(gnssUpdateTime, position_lla))
     {
+        stopConditionReached = true;
         return nullptr;
     }
-    if (simulationStopCondition == StopCondition::DistanceOrCircles && trajectoryType == TrajectoryType::Linear)
-    {
-        auto horizontalDistance = calcGeographicalDistance(startPosition_lla(0), startPosition_lla(1), position_lla(0), position_lla(1));
-        auto distance = std::sqrt(std::pow(horizontalDistance, 2) + std::pow(startPosition_lla(2) - position_lla(2), 2));
-        if (distance > linearTrajectoryDistanceForStop)
-        {
-            return nullptr;
-        }
-    }
-    else if (simulationStopCondition == StopCondition::DistanceOrCircles && (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix))
-    {
-        auto phi = circularTrajectoryHorizontalSpeed * gnssUpdateTime / circularTrajectoryRadius; // Angle of the current point on the circle
-        auto circleCount = phi / (2 * M_PI);
-        if (circleCount >= circularTrajectoryCircleCountForStop)
-        {
-            return nullptr;
-        }
-    }
 
-    // Construct the message to send out
+    // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
     auto obs = std::make_shared<PosVelAtt>();
     obs->insTime = startTime + std::chrono::nanoseconds(static_cast<uint64_t>(gnssUpdateTime * 1e9));
 
