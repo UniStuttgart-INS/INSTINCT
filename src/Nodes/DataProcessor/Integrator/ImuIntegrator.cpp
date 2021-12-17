@@ -339,7 +339,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>
 
             inertialNavSol->setState_n(posVelAtt->latLonAlt(), posVelAtt->velocity_n(), posVelAtt->quaternion_nb());
 
-            size_t imuObsIndex = std::min(1UL, imuObservations.size() - 1);
+            auto imuObsIndex = std::min(static_cast<size_t>(1), imuObservations.size() - 1); // Casting to int, because Windows does not support std::min(size_t, size_t)
 
             inertialNavSol->insTime = imuObservations.at(imuObsIndex)->insTime;
             inertialNavSol->imuObs = imuObservations.at(imuObsIndex);
