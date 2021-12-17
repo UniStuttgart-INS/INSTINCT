@@ -120,11 +120,14 @@ class ImuSimulator : public Imu
     /// Selected trajectory type in the GUI
     TrajectoryType trajectoryType = TrajectoryType::Fixed;
 
-    /// Position in local navigation coordinates (latitude, longitude, altitude) [rad, rad, m]
+    /// Start position in local navigation coordinates (latitude, longitude, altitude) [rad, rad, m]
     ///
     /// - Fixed, Linear: Start position
     /// - Circular, Helix: Center of the circle
     Eigen::Vector3d startPosition_lla = Eigen::Vector3d::Zero();
+
+    /// Start position in ECEF coordinates in [m]. Will be set at initialization
+    Eigen::Vector3d startPosition_e;
 
     /// Orientation of the vehicle [roll, pitch, yaw] [rad]
     Eigen::Vector3d fixedTrajectoryStartOrientation = Eigen::Vector3d::Zero();

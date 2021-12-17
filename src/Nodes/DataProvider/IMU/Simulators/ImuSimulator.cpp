@@ -561,6 +561,8 @@ bool NAV::ImuSimulator::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    startPosition_e = trafo::lla2ecef_WGS84(startPosition_lla);
+
     return true;
 }
 
@@ -600,6 +602,18 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     double roll = 0;
     double pitch = calcPitchFromVelocity(vel_n);
     double yaw = calcYawFromVelocity(vel_n);
+
+    if (trajectoryType == TrajectoryType::Fixed)
+    {
+        roll = fixedTrajectoryStartOrientation.x();
+        pitch = fixedTrajectoryStartOrientation.y();
+        yaw = fixedTrajectoryStartOrientation.z();
+    }
+    else if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
+    {
+        roll = std::acos(position_e.dot(startPosition_e) / (position_e.norm() * startPosition_e.norm()));
+    }
+
     auto q_bn = trafo::quat_bn(roll, pitch, yaw);
 
     const Eigen::Vector3d omega_ie_n = q_ne * InsConst::angularVelocity_ie_e;
@@ -685,6 +699,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
 {
     Eigen::Vector3d position_lla = calcPosition_lla(gnssUpdateTime);
+    Eigen::Vector3d position_e = trafo::lla2ecef_WGS84(position_lla);
     auto q_ne = trafo::quat_ne(position_lla(0), position_lla(1));
     Eigen::Vector3d vel_n = calcVelocity_n(gnssUpdateTime, q_ne);
 
@@ -697,6 +712,10 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
         roll = fixedTrajectoryStartOrientation.x();
         pitch = fixedTrajectoryStartOrientation.y();
         yaw = fixedTrajectoryStartOrientation.z();
+    }
+    else if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
+    {
+        roll = std::acos(position_e.dot(startPosition_e) / (position_e.norm() * startPosition_e.norm()));
     }
 
     // Check if a stop condition is met
