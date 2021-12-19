@@ -592,6 +592,7 @@ Substituting equations \eqref{eq-LCKF-Derivation-Attitude-transport-rate}, \eqre
                                    + \delta \mathbf{g}_l^n \\
 \end{aligned}
 \f}
+\f$ \textcolor{red}{\text{TODO: Dont neglect gravity terms but look into Groves and derive the term}}\f$
 Reordering the terms leads to the final form (neglecting gravity errors)
 \fl{equation,eq-LCKF-Derivation-Velocity-timeDerivative-final}
   \delta \boldsymbol{\dot{v}}^n \approx \highlight[blue!20]{\boldsymbol{f}^n \times} \boldsymbol{\psi}
