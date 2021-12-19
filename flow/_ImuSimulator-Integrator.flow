@@ -11,17 +11,6 @@
             "id": 10,
             "startPinId": 1
         },
-        "link-109": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 106,
-            "id": 109,
-            "startPinId": 101
-        },
         "link-11": {
             "color": {
                 "a": 255,
@@ -32,17 +21,6 @@
             "endPinId": 5,
             "id": 11,
             "startPinId": 2
-        },
-        "link-110": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 100,
-            "id": 110,
-            "startPinId": 108
         },
         "link-111": {
             "color": {
@@ -87,50 +65,6 @@
             "endPinId": 99,
             "id": 114,
             "startPinId": 1
-        },
-        "link-115": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 51,
-            "id": 115,
-            "startPinId": 20
-        },
-        "link-116": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 71,
-            "id": 116,
-            "startPinId": 20
-        },
-        "link-117": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 91,
-            "id": 117,
-            "startPinId": 20
-        },
-        "link-118": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 107,
-            "id": 118,
-            "startPinId": 20
         },
         "link-123": {
             "color": {
@@ -186,39 +120,6 @@
             "endPinId": 12,
             "id": 16,
             "startPinId": 1
-        },
-        "link-174": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 171,
-            "id": 174,
-            "startPinId": 166
-        },
-        "link-175": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 165,
-            "id": 175,
-            "startPinId": 173
-        },
-        "link-221": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 172,
-            "id": 221,
-            "startPinId": 20
         },
         "link-223": {
             "color": {
@@ -429,6 +330,39 @@
             "id": 30,
             "startPinId": 2
         },
+        "link-317": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 13,
+            "id": 317,
+            "startPinId": 20
+        },
+        "link-318": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 44,
+            "id": 318,
+            "startPinId": 20
+        },
+        "link-319": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 64,
+            "id": 319,
+            "startPinId": 20
+        },
         "link-32": {
             "color": {
                 "a": 255,
@@ -440,95 +374,7 @@
             "id": 32,
             "startPinId": 14
         },
-        "link-36": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 23,
-            "id": 36,
-            "startPinId": 20
-        },
-        "link-37": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 22,
-            "id": 37,
-            "startPinId": 14
-        },
-        "link-38": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 13,
-            "id": 38,
-            "startPinId": 24
-        },
-        "link-53": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 50,
-            "id": 53,
-            "startPinId": 45
-        },
-        "link-54": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 44,
-            "id": 54,
-            "startPinId": 52
-        },
-        "link-73": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 70,
-            "id": 73,
-            "startPinId": 65
-        },
-        "link-74": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 64,
-            "id": 74,
-            "startPinId": 72
-        },
-        "link-93": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 90,
-            "id": 93,
-            "startPinId": 85
-        },
-        "link-94": {
+        "link-320": {
             "color": {
                 "a": 255,
                 "b": 255,
@@ -536,40 +382,33 @@
                 "r": 255
             },
             "endPinId": 84,
-            "id": 94,
-            "startPinId": 92
+            "id": 320,
+            "startPinId": 20
+        },
+        "link-321": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 100,
+            "id": 321,
+            "startPinId": 20
+        },
+        "link-322": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 165,
+            "id": 322,
+            "startPinId": 20
         }
     },
     "nodes": {
-        "node-105": {
-            "data": null,
-            "enabled": true,
-            "id": 105,
-            "inputPins": [
-                {
-                    "id": 106
-                },
-                {
-                    "id": 107
-                }
-            ],
-            "kind": "Simple",
-            "name": "",
-            "outputPins": [
-                {
-                    "id": 108
-                }
-            ],
-            "pos": {
-                "x": 1127.0,
-                "y": -1264.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Combiner"
-        },
         "node-15": {
             "data": {
                 "angularRateEarthRotationCompensationEnabled": true,
@@ -601,8 +440,8 @@
                 }
             ],
             "pos": {
-                "x": 792.0,
-                "y": -786.0
+                "x": 1113.0,
+                "y": -614.0
             },
             "size": {
                 "x": 0.0,
@@ -656,35 +495,6 @@
             },
             "type": "ImuIntegrator"
         },
-        "node-170": {
-            "data": null,
-            "enabled": true,
-            "id": 170,
-            "inputPins": [
-                {
-                    "id": 171
-                },
-                {
-                    "id": 172
-                }
-            ],
-            "kind": "Simple",
-            "name": "",
-            "outputPins": [
-                {
-                    "id": 173
-                }
-            ],
-            "pos": {
-                "x": 1128.0,
-                "y": -288.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Combiner"
-        },
         "node-21": {
             "data": {
                 "attitudeMode": 0,
@@ -733,7 +543,7 @@
             ],
             "pos": {
                 "x": 792.0,
-                "y": -654.0
+                "y": -482.0
             },
             "size": {
                 "x": 0.0,
@@ -918,35 +728,6 @@
                 "y": 0.0
             },
             "type": "LooselyCoupledKF"
-        },
-        "node-25": {
-            "data": null,
-            "enabled": true,
-            "id": 25,
-            "inputPins": [
-                {
-                    "id": 22
-                },
-                {
-                    "id": 23
-                }
-            ],
-            "kind": "Simple",
-            "name": "",
-            "outputPins": [
-                {
-                    "id": 24
-                }
-            ],
-            "pos": {
-                "x": 1128.0,
-                "y": -756.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Combiner"
         },
         "node-250": {
             "data": {
@@ -5378,7 +5159,7 @@
                 }
             ],
             "pos": {
-                "x": 544.0,
+                "x": 512.0,
                 "y": -594.0
             },
             "size": {
@@ -5418,43 +5199,14 @@
                 }
             ],
             "pos": {
-                "x": 792.0,
-                "y": -910.0
+                "x": 1113.0,
+                "y": -738.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "ImuIntegrator"
-        },
-        "node-49": {
-            "data": null,
-            "enabled": true,
-            "id": 49,
-            "inputPins": [
-                {
-                    "id": 50
-                },
-                {
-                    "id": 51
-                }
-            ],
-            "kind": "Simple",
-            "name": "",
-            "outputPins": [
-                {
-                    "id": 52
-                }
-            ],
-            "pos": {
-                "x": 1128.0,
-                "y": -880.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Combiner"
         },
         "node-62": {
             "data": {
@@ -5487,43 +5239,14 @@
                 }
             ],
             "pos": {
-                "x": 792.0,
-                "y": -1038.0
+                "x": 1113.0,
+                "y": -866.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "ImuIntegrator"
-        },
-        "node-69": {
-            "data": null,
-            "enabled": true,
-            "id": 69,
-            "inputPins": [
-                {
-                    "id": 70
-                },
-                {
-                    "id": 71
-                }
-            ],
-            "kind": "Simple",
-            "name": "",
-            "outputPins": [
-                {
-                    "id": 72
-                }
-            ],
-            "pos": {
-                "x": 1128.0,
-                "y": -1008.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Combiner"
         },
         "node-82": {
             "data": {
@@ -5556,43 +5279,14 @@
                 }
             ],
             "pos": {
-                "x": 791.0,
-                "y": -1166.0
+                "x": 1112.0,
+                "y": -994.0
             },
             "size": {
                 "x": 0.0,
                 "y": 0.0
             },
             "type": "ImuIntegrator"
-        },
-        "node-89": {
-            "data": null,
-            "enabled": true,
-            "id": 89,
-            "inputPins": [
-                {
-                    "id": 90
-                },
-                {
-                    "id": 91
-                }
-            ],
-            "kind": "Simple",
-            "name": "",
-            "outputPins": [
-                {
-                    "id": 92
-                }
-            ],
-            "pos": {
-                "x": 1127.0,
-                "y": -1136.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Combiner"
         },
         "node-9": {
             "data": {
@@ -7244,15 +6938,120 @@
                             },
                             {
                                 "displayName": "Roll [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.015444040298461914,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Roll (Heun)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Pitch [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Pitch (Heun)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Yaw [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            1,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 0.548262357711792
+                                                },
+                                                "legendName": "Yaw (Heun)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Quaternion::w",
@@ -7529,7 +7328,7 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 256,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 2,
+                        "selectedPin": 6,
                         "selectedXdata": [
                             0,
                             0,
@@ -7644,8 +7443,8 @@
             "name": "Plot",
             "outputPins": [],
             "pos": {
-                "x": 1144.0,
-                "y": -590.0
+                "x": 1512.0,
+                "y": -526.0
             },
             "size": {
                 "x": 0.0,
@@ -7684,8 +7483,8 @@
                 }
             ],
             "pos": {
-                "x": 791.0,
-                "y": -1294.0
+                "x": 1112.0,
+                "y": -1122.0
             },
             "size": {
                 "x": 0.0,

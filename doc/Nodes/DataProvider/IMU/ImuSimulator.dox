@@ -232,12 +232,6 @@ see
 
 Now we have to find the time derivative of the gimbal angles.
 
-#### Roll rate
-The roll angle is either zero or can be chosen to a constant value when simulating a fixed point. Therefore the roll rate is always
-\fl{equation,eq-ImuSimulator-roll-rate}
-  \dotup{R} = 0
-\f}
-
 #### Yaw rate
 The yaw angle can be expressed as
 \fl{equation,eq-ImuSimulator-yaw}
@@ -266,6 +260,51 @@ The pitch rate can then be found then as
             &= \dfrac{-\dotup{v}_D \cdot \sqrt{v_N^2 + v_E^2} + v_D \cdot \dfrac{1}{2} \left(2 \dotup{v}_N v_N + 2 \dotup{v}_E v_E \right) \dfrac{1}{\sqrt{v_N^2 + v_E^2}} }{v_N^2 + v_E^2} \cdot \frac{1}{\left(\dfrac{-v_D}{\sqrt{v_N^2 + v_E^2}}\right)^2 + 1} \\
             &= \dfrac{-a_D \cdot \sqrt{v_N^2 + v_E^2} + v_D \cdot \left(a_N v_N + a_E v_E \right) \dfrac{1}{\sqrt{v_N^2 + v_E^2}} }{v_D^2 + v_N^2 + v_E^2} \\
 \end{aligned}
+\f}
+
+#### Roll rate
+When not flying on constant height, which is the case for our circular trajectory, there is a certain roll angle. The following image should explain this.
+\anchor ImuSimulator-roll-image
+\f{tikzpicture}{
+  \def\earthradius{10.0};
+  \coordinate (origin) at (0.0, 0.0);
+  \centerarc[black,thick](origin)(45:120:\earthradius);
+  \node[left] at (-5.0, \earthradius-1) {Earth surface};
+
+  \draw[black,thick] (8.0,\earthradius) -- (5.0,\earthradius);
+  \draw[black,thick] (-5.0,\earthradius) -- (-8.0,\earthradius);
+  \draw[blue,ultra thick,name path=flightplain] (5.0,\earthradius) -- (-5.0,\earthradius) node[left,yshift=10px] {Flight plain};
+
+  \node[draw,cross=5pt,red,thick] (xE) at (5.0,\earthradius) {};
+  \path [draw,->,thick] ($($(origin)!.8!(xE)$)$) -- (xE) node [pos=0.38,left,red] {$\vec{x}$};
+  \path [draw, thick] ($($(origin)!.8!(xE)$)$) --pic[rotate=-45]{ext} ($($(origin)!.8!(xE)$)$);
+
+  \node[draw,cross=5pt,red,thick] (xM) at (0,\earthradius) {};
+  \path [draw,->,thick] ($($(origin)!.8!(xM)$)$) -- (xM) node [pos=0.5,right,red] {$\vec{x}_M$};
+  \path [draw, thick] ($($(origin)!.8!(xM)$)$) --pic{ext} ($($(origin)!.8!(xM)$)$);
+
+  \def\l1{2};
+  \path let \p1=(xE) in coordinate (t1) at (\x1 + 80.0,{\y1 + 80.0 * (-\x1 / \y1)});
+  \path let \p1=(xE) in coordinate (t2) at (\x1 - 80.0,{\y1 - 80.0 * (-\x1 / \y1)});
+  \draw[green,thick,name path=local] (t1) -- (t2);
+
+  \pgfmathanglebetweenpoints{\pgfpointanchor{xE}{center}}{\pgfpointanchor{t1}{center}}
+  \edef\angleRoll{\pgfmathresult}
+
+  \def\angleRadius{2.0};
+  \centerarc[black,thick,->](xE)(-(360-\angleRoll):0:\angleRadius);
+  \node[left,yshift=-10px,xshift=-5px] at ($(xE)+(\angleRadius,0)$) {$R$};
+\f}
+The simulated position is at the position \f$\vec{x}\f$ and facing out of the plain.
+The roll angle is therefore the angle between the tangential to the Earth surface in the current position and the center of the flight path.
+\fl{equation,eq-ImuSimulator-roll}
+  R = \arccos{\left(\frac{\vec{x}_M \cdot \vec{x}}{\left|\vec{x}_M\right| \cdot \left|\vec{x}\right|}\right)}
+\f}
+This is a constant value over a spherical central body. However over an ellipsoid this is not constant.
+
+\f$ \textcolor{red}{\text{TODO: Calculate this equation}}\f$
+\fl{equation,eq-ImuSimulator-roll-rate}
+  \dotup{R} = \dots
 \f}
 
 */
