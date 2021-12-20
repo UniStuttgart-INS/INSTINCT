@@ -13,6 +13,8 @@
 
 #include "internal/gui/widgets/TimeEdit.hpp"
 
+#include <array>
+
 namespace NAV
 {
 /// Imu Observation Simulator
@@ -215,6 +217,12 @@ class ImuSimulator : public Imu
     double imuUpdateTime = 0.0;
     /// Time to send the next GNSS message in [s]
     double gnssUpdateTime = 0.0;
+
+    /// @brief Calculates the flight angles (roll, pitch, yaw)
+    /// @param[in] position_lla Current position as latitude, longitude, altitude [rad, rad, m]
+    /// @param[in] velocity_n Velocity in local-navigation frame coordinates [m/s]
+    /// @return Roll, pitch, yaw in [rad]
+    std::array<double, 3> calcFlightAngles(const Eigen::Vector3d& position_lla, const Eigen::Vector3d& velocity_n);
 
     /// @brief Calculates the position in latLonAlt at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]

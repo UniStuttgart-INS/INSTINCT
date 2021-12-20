@@ -634,20 +634,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
     Eigen::Vector3d vel_n = calcVelocity_n(imuUpdateTime, q_ne);
 
-    double roll = 0;
-    double pitch = calcPitchFromVelocity(vel_n);
-    double yaw = calcYawFromVelocity(vel_n);
-
-    if (trajectoryType == TrajectoryType::Fixed)
-    {
-        roll = fixedTrajectoryStartOrientation.x();
-        pitch = fixedTrajectoryStartOrientation.y();
-        yaw = fixedTrajectoryStartOrientation.z();
-    }
-    else if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
-    {
-        roll = std::acos(position_e.dot(startPosition_e) / (position_e.norm() * startPosition_e.norm()));
-    }
+    auto [roll, pitch, yaw] = calcFlightAngles(position_lla, vel_n);
 
     auto q_bn = trafo::quat_bn(roll, pitch, yaw);
 
@@ -716,24 +703,9 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
 {
     Eigen::Vector3d position_lla = calcPosition_lla(gnssUpdateTime);
-    Eigen::Vector3d position_e = trafo::lla2ecef_WGS84(position_lla);
     auto q_ne = trafo::quat_ne(position_lla(0), position_lla(1));
     Eigen::Vector3d vel_n = calcVelocity_n(gnssUpdateTime, q_ne);
-
-    double roll = 0;
-    double pitch = calcPitchFromVelocity(vel_n);
-    double yaw = calcYawFromVelocity(vel_n);
-
-    if (trajectoryType == TrajectoryType::Fixed)
-    {
-        roll = fixedTrajectoryStartOrientation.x();
-        pitch = fixedTrajectoryStartOrientation.y();
-        yaw = fixedTrajectoryStartOrientation.z();
-    }
-    else if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
-    {
-        roll = std::acos(position_e.dot(startPosition_e) / (position_e.norm() * startPosition_e.norm()));
-    }
+    auto [roll, pitch, yaw] = calcFlightAngles(position_lla, vel_n);
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
 
@@ -757,6 +729,35 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     }
 
     return obs;
+}
+
+std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d& position_lla, const Eigen::Vector3d& velocity_n)
+{
+    double roll = 0;
+    double pitch = calcPitchFromVelocity(velocity_n);
+    double yaw = calcYawFromVelocity(velocity_n);
+
+    if (trajectoryType == TrajectoryType::Fixed)
+    {
+        roll = fixedTrajectoryStartOrientation.x();
+        pitch = fixedTrajectoryStartOrientation.y();
+        yaw = fixedTrajectoryStartOrientation.z();
+    }
+    else if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
+    {
+        // The normal vector of the center point of the circle to the ellipsoid expressed in Earth frame coordinates (see https://en.wikipedia.org/wiki/N-vector)
+        const Eigen::Vector3d normalVectorCenterCircle_e{ std::cos(startPosition_lla(0)) * std::cos(startPosition_lla(1)),
+                                                          std::cos(startPosition_lla(0)) * std::sin(startPosition_lla(1)),
+                                                          std::sin(startPosition_lla(0)) };
+        // The normal vector of the current position to the ellipsoid expressed in Earth frame coordinates
+        const Eigen::Vector3d normalVectorCurrentPosition_e{ std::cos(position_lla(0)) * std::cos(position_lla(1)),
+                                                             std::cos(position_lla(0)) * std::sin(position_lla(1)),
+                                                             std::sin(position_lla(0)) };
+
+        roll = std::acos(normalVectorCurrentPosition_e.dot(normalVectorCenterCircle_e) / (normalVectorCurrentPosition_e.norm() * normalVectorCenterCircle_e.norm()));
+    }
+
+    return { roll, pitch, yaw };
 }
 
 Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
