@@ -266,45 +266,79 @@ The pitch rate can then be found then as
 When not flying on constant height, which is the case for our circular trajectory, there is a certain roll angle. The following image should explain this.
 \anchor ImuSimulator-roll-image
 \f{tikzpicture}{
-  \def\earthradius{10.0};
+  \def\ellipseB{10.0};
+  \def\ellipseA{14.0};
   \coordinate (origin) at (0.0, 0.0);
-  \centerarc[black,thick](origin)(45:120:\earthradius);
-  \node[left] at (-5.0, \earthradius-1) {Earth surface};
+  \draw[thick, black] (0,0) [partial ellipse=45:120:12cm and 10cm];
+  \node[left] at (-5.0, \ellipseB-0.7) {Earth surface};
 
-  \draw[black,thick] (8.0,\earthradius) -- (5.0,\earthradius);
-  \draw[black,thick] (-5.0,\earthradius) -- (-8.0,\earthradius);
-  \draw[blue,ultra thick,name path=flightplain] (5.0,\earthradius) -- (-5.0,\earthradius) node[left,yshift=10px] {Flight plain};
+  \draw[black,thick] (8.0,\ellipseB) -- (5.0,\ellipseB);
+  \draw[black,thick] (-5.0,\ellipseB) -- (-8.0,\ellipseB);
+  \draw[blue,ultra thick,name path=flightplain] (5.0,\ellipseB) -- (-5.0,\ellipseB) node[left,yshift=10px] {Flight plain};
 
-  \node[draw,cross=5pt,red,thick] (xE) at (5.0,\earthradius) {};
-  \path [draw,->,thick] ($($(origin)!.8!(xE)$)$) -- (xE) node [pos=0.38,left,red] {$\vec{x}$};
-  \path [draw, thick] ($($(origin)!.8!(xE)$)$) --pic[rotate=-45]{ext} ($($(origin)!.8!(xE)$)$);
+  \coordinate (xE) at (5.0,\ellipseB);
+  \coordinate (xM) at (0,\ellipseB);
 
-  \node[draw,cross=5pt,red,thick] (xM) at (0,\earthradius) {};
-  \path [draw,->,thick] ($($(origin)!.8!(xM)$)$) -- (xM) node [pos=0.5,right,red] {$\vec{x}_M$};
-  \path [draw, thick] ($($(origin)!.8!(xM)$)$) --pic{ext} ($($(origin)!.8!(xM)$)$);
+  \def\tangentLength{100};
+  \path let \p1=(xE) in coordinate (t1) at (\x1 + \tangentLength pt, \y1 - \tangentLength * \ellipseB/\ellipseA * \ellipseB/\ellipseA * \x1/\y1);
+  \path let \p1=(xE) in coordinate (t2) at (\x1 - \tangentLength pt, \y1 + \tangentLength * \ellipseB/\ellipseA * \ellipseB/\ellipseA * \x1/\y1);
+  \draw[brown,thick] (t1) -- (t2);
 
-  \def\l1{2};
-  \path let \p1=(xE) in coordinate (t1) at (\x1 + 80.0,{\y1 + 80.0 * (-\x1 / \y1)});
-  \path let \p1=(xE) in coordinate (t2) at (\x1 - 80.0,{\y1 - 80.0 * (-\x1 / \y1)});
-  \draw[green,thick,name path=local] (t1) -- (t2);
+  \def\tangentLength{10};
+  \path let \p1=(xE) in coordinate (nE) at (\x1 + \tangentLength pt, \y1 + \tangentLength * \ellipseA/\ellipseB * \ellipseA/\ellipseB * \y1/\x1);
+  \draw[->,brown,thick] (xE) -- (nE) node[above] {$\vec{\mathbf{n}}^e$};
 
   \pgfmathanglebetweenpoints{\pgfpointanchor{xE}{center}}{\pgfpointanchor{t1}{center}}
   \edef\angleRoll{\pgfmathresult}
-
-  \def\angleRadius{2.0};
+  \def\angleRadius{2.5};
   \centerarc[black,thick,->](xE)(-(360-\angleRoll):0:\angleRadius);
-  \node[left,yshift=-10px,xshift=-5px] at ($(xE)+(\angleRadius,0)$) {$R$};
-\f}
-The simulated position is at the position \f$\vec{x}\f$ and facing out of the plain.
-The roll angle is therefore the angle between the tangential to the Earth surface in the current position and the center of the flight path.
-\fl{equation,eq-ImuSimulator-roll}
-  R = \arccos{\left(\frac{\vec{x}_M \cdot \vec{x}}{\left|\vec{x}_M\right| \cdot \left|\vec{x}\right|}\right)}
-\f}
-This is a constant value over a spherical central body. However over an ellipsoid this is not constant.
+  \node[left,xshift=-5px,yshift=-7px] at ($(xE)+(\angleRadius,0)$) {$R$};
 
-\f$ \textcolor{red}{\text{TODO: Calculate this equation}}\f$
+  \def\rightAngleRadius{0.5};
+  \centerarc[black,thick](xE)(90-(360-\angleRoll):180-(360-\angleRoll):\rightAngleRadius);
+  \node[left,xshift=1px,yshift=7px] at (xE) {$\boldsymbol{\cdot}$};
+
+  \coordinate (nM) at ($(xM)+(0,1.5)$);
+  \draw[->,brown,thick] (xM) -- (nM) node[left] {$\vec{\mathbf{n}}^e_M$};
+  \centerarc[black,thick](xM)(90:180:\rightAngleRadius);
+  \node[left,xshift=-1px,yshift=7px] at (xM) {$\boldsymbol{\cdot}$};
+
+  \node[draw,cross=5pt,red,thick] (xMC) at (xM) {};
+  \node[draw,cross=5pt,red,thick] (xEC) at (xE) {};
+
+  \path [draw,->,thick] ($($(origin)!.8!(xEC)$)$) -- (xEC) node [pos=0.38,left] {$\vec{\mathbf{x}}^e$};
+  \path [draw, thick] ($($(origin)!.8!(xEC)$)$) --pic[rotate=-45]{ext} ($($(origin)!.8!(xEC)$)$);
+
+  \path [draw,->,thick] ($($(origin)!.8!(xMC)$)$) -- (xMC) node [pos=0.5,right] {$\vec{\mathbf{x}}_M^e$};
+  \path [draw, thick] ($($(origin)!.8!(xMC)$)$) --pic{ext} ($($(origin)!.8!(xMC)$)$);
+\f}
+The simulated position is at the position \f$\vec{x}^e\f$ and its velocity vector is facing out of the plain.
+
+The roll angle is the angle between the tangential plains to the Earth surface in the current position and the center of the flight path.
+\fl{equation,eq-ImuSimulator-roll}
+  R = \arccos{\left(\frac{\vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}_M^e\right| \cdot \left|\vec{\mathbf{n}}^e\right|}\right)}
+\f}
+The normal of the tangential plains is however not the position vectors \f$\vec{\mathbf{x}}^e\f$ and \f$\vec{\mathbf{x}}^e_M\f$, because Earth is an ellipsoid, but can be calculated with the geodetic latitude and longitude as (see <a href="https://en.wikipedia.org/wiki/N-vector">Wikipedia n-vector</a> )
+\fl{equation,eq-ImuSimulator-n-vector}
+  \vec{\mathbf{n}}^e = \begin{pmatrix} \cos{\phi} \cdot \cos{\lambda} \\ \cos{\phi} \cdot \sin{\lambda} \\ \sin{\phi} \end{pmatrix}
+\f}
+
+The roll rate can be easily found because the center of the circle is a static point (\f$ \vec{\mathbf{n}}_M^e = \text{const.}\f$)
 \fl{equation,eq-ImuSimulator-roll-rate}
-  \dotup{R} = \dots
+  \dotup{R} = \dfrac{\vec{\mathbf{n}}_M^e}{\left|\vec{\mathbf{n}}_M^e\right|} \cdot \dfrac{\partial}{\partial t} \left( \dfrac{\vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}^e\right|} \right)
+              \cdot \dfrac{-1}{\sqrt{1 - \left( \dfrac{\vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}_M^e\right| \cdot \left|\vec{\mathbf{n}}^e\right|} \right)^2}}
+\f}
+
+The derivation of the normal vector is
+\fl{equation,eq-ImuSimulator-n-vector-derivative}
+\begin{aligned}
+  \dfrac{\partial}{\partial t} \left( \dfrac{\vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}^e\right|} \right)
+      &= \dfrac{\partial}{\partial t} \left( \dfrac{1}{\sqrt{ \cos^2{\phi} \cdot \cos^2{\lambda} + \cos^2{\phi} \cdot \sin^2{\lambda} + \sin^2{\phi} }}
+                                             \begin{pmatrix} \cos{\phi} \cdot \cos{\lambda} \\
+                                                             \cos{\phi} \cdot \sin{\lambda} \\
+                                                             \sin{\phi} \end{pmatrix}
+                                     \right) \\
+\end{aligned}
 \f}
 
 */
