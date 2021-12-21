@@ -242,17 +242,6 @@
             "id": 340,
             "startPinId": 325
         },
-        "link-348": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 346,
-            "id": 348,
-            "startPinId": 1
-        },
         "link-349": {
             "color": {
                 "a": 255,
@@ -406,6 +395,28 @@
             "endPinId": 121,
             "id": 383,
             "startPinId": 166
+        },
+        "link-387": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 385,
+            "id": 387,
+            "startPinId": 1
+        },
+        "link-388": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 346,
+            "id": 388,
+            "startPinId": 384
         }
     },
     "nodes": {
@@ -5159,7 +5170,7 @@
                 }
             ],
             "pos": {
-                "x": 288.0,
+                "x": 80.0,
                 "y": -546.0
             },
             "size": {
@@ -5496,6 +5507,32 @@
             },
             "type": "Combiner"
         },
+        "node-386": {
+            "data": null,
+            "enabled": true,
+            "id": 386,
+            "inputPins": [
+                {
+                    "id": 385
+                }
+            ],
+            "kind": "Blueprint",
+            "name": "ImuError",
+            "outputPins": [
+                {
+                    "id": 384
+                }
+            ],
+            "pos": {
+                "x": 264.0,
+                "y": -546.0
+            },
+            "size": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "type": "ImuError"
+        },
         "node-42": {
             "data": {
                 "angularRateEarthRotationCompensationEnabled": true,
@@ -5584,19 +5621,19 @@
                                                     "y": 0.7490196228027344,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "X",
+                                                "legendName": "Uncomp X",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 0.7490196228027344,
-                                                    "z": 1.0
+                                                    "x": 0.5411764979362488,
+                                                    "y": 0.16862745583057404,
+                                                    "z": 0.886274516582489
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 0.7490196228027344,
-                                                    "z": 1.0
+                                                    "x": 0.5411764979362488,
+                                                    "y": 0.16862745583057404,
+                                                    "z": 0.886274516582489
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -5623,19 +5660,19 @@
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "Y",
+                                                "legendName": "Uncomp Y",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
-                                                    "y": 1.0,
-                                                    "z": 0.0
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.49803921580314636,
-                                                    "y": 1.0,
-                                                    "z": 0.0
+                                                    "x": 0.5,
+                                                    "y": 0.5,
+                                                    "z": 0.5
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -5662,19 +5699,19 @@
                                                     "y": 1.0,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "Z",
+                                                "legendName": "Uncomp Z",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 1.0,
-                                                    "z": 1.0
+                                                    "x": 0.8235294222831726,
+                                                    "y": 0.7058823704719543,
+                                                    "z": 0.5490196347236633
                                                 },
                                                 "markerOutlineColor": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 1.0,
-                                                    "z": 1.0
+                                                    "x": 0.8235294222831726,
+                                                    "y": 0.7058823704719543,
+                                                    "z": 0.5490196347236633
                                                 },
                                                 "markerSize": 1.0,
                                                 "markerStyle": 7,
@@ -5701,7 +5738,7 @@
                                                     "y": 0.7490196228027344,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "X",
+                                                "legendName": "Uncomp X",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -5740,7 +5777,7 @@
                                                     "y": 1.0,
                                                     "z": 0.0
                                                 },
-                                                "legendName": "Y",
+                                                "legendName": "Uncomp Y",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -5779,7 +5816,7 @@
                                                     "y": 1.0,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "Z",
+                                                "legendName": "Uncomp Z",
                                                 "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
@@ -5818,27 +5855,237 @@
                             },
                             {
                                 "displayName": "Accel Comp X [m/s^2]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        10,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.6705882549285889,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Comp X",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Accel Comp Y [m/s^2]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        10,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Comp Y",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Accel Comp Z [m/s^2]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        10,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Comp Z",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Gyro Comp X [rad/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        11,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.6718146800994873,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Comp X",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.8235294222831726,
+                                                    "y": 0.7058823704719543,
+                                                    "z": 0.5490196347236633
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.8235294222831726,
+                                                    "y": 0.7058823704719543,
+                                                    "z": 0.5490196347236633
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Gyro Comp Y [rad/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        11,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Comp Y",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Gyro Comp Z [rad/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        11,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Comp Z",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Temperature [°C]",
