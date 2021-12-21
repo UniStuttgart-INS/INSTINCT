@@ -274,7 +274,7 @@ When not flying on constant height, which is the case for our circular trajector
 
   \draw[black,thick] (8.0,\ellipseB) -- (5.0,\ellipseB);
   \draw[black,thick] (-5.0,\ellipseB) -- (-8.0,\ellipseB);
-  \draw[blue,ultra thick,name path=flightplain] (5.0,\ellipseB) -- (-5.0,\ellipseB) node[left,yshift=10px] {Flight plain};
+  \draw[blue,ultra thick,name path=flightplain] (5.0,\ellipseB) -- (-5.0,\ellipseB) node[left,yshift=10pt] {Flight plain};
 
   \coordinate (xE) at (5.0,\ellipseB);
   \coordinate (xM) at (0,\ellipseB);
@@ -292,16 +292,16 @@ When not flying on constant height, which is the case for our circular trajector
   \edef\angleRoll{\pgfmathresult}
   \def\angleRadius{2.5};
   \centerarc[black,thick,->](xE)(-(360-\angleRoll):0:\angleRadius);
-  \node[left,xshift=-5px,yshift=-7px] at ($(xE)+(\angleRadius,0)$) {$R$};
+  \node[left,xshift=-5pt,yshift=-7pt] at ($(xE)+(\angleRadius,0)$) {$R$};
 
   \def\rightAngleRadius{0.5};
   \centerarc[black,thick](xE)(90-(360-\angleRoll):180-(360-\angleRoll):\rightAngleRadius);
-  \node[left,xshift=1px,yshift=7px] at (xE) {$\boldsymbol{\cdot}$};
+  \node[left,xshift=1pt,yshift=7pt] at (xE) {$\boldsymbol{\cdot}$};
 
   \coordinate (nM) at ($(xM)+(0,1.5)$);
   \draw[->,brown,thick] (xM) -- (nM) node[left] {$\vec{\mathbf{n}}^e_M$};
   \centerarc[black,thick](xM)(90:180:\rightAngleRadius);
-  \node[left,xshift=-1px,yshift=7px] at (xM) {$\boldsymbol{\cdot}$};
+  \node[left,xshift=-1pt,yshift=7pt] at (xM) {$\boldsymbol{\cdot}$};
 
   \node[draw,cross=5pt,red,thick] (xMC) at (xM) {};
   \node[draw,cross=5pt,red,thick] (xEC) at (xE) {};
