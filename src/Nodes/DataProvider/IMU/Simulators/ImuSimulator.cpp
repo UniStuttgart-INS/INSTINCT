@@ -682,7 +682,9 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     {
         const Eigen::Vector3d centrifugalAcceleration_e = calcCentrifugalAcceleration_e(position_e);
         LOG_DATA("{}: centrifugalAcceleration_e = {} [m/s^2]", nameId(), centrifugalAcceleration_e.transpose());
-        accel_n += q_ne * centrifugalAcceleration_e;
+        const Eigen::Vector3d centrifugalAcceleration_n = q_ne * centrifugalAcceleration_e;
+        LOG_DATA("{}: centrifugalAcceleration_n = {} [m/s^2]", nameId(), centrifugalAcceleration_n.transpose());
+        accel_n += centrifugalAcceleration_n;
     }
 
     // Acceleration measured by the accelerometer in platform coordinates

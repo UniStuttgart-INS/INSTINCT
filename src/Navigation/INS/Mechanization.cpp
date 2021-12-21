@@ -122,6 +122,11 @@ Eigen::Matrix<double, 10, 1> calcPosVelAttDerivative_n(const Eigen::Matrix<doubl
                                                             y(9),            // h Altitude in [m]
                                                             R_N,             // North/South (meridian) earth radius [m]
                                                             R_E);            // East/West (prime vertical) earth radius [m]
+
+    LOG_DATA("q_nb_dot = {} ", y_dot.segment<4>(0).transpose());
+    LOG_DATA("v_n_dot = {} [m/s^2]", y_dot.segment<3>(4).transpose());
+    LOG_DATA("latLonAlt_dot = {} [rad/s, rad/s, m/s]", y_dot.segment<3>(7).transpose());
+
     return y_dot;
 }
 
