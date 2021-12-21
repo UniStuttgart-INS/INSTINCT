@@ -66,6 +66,17 @@
             "id": 1286,
             "startPinId": 355
         },
+        "link-1312": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 501,
+            "id": 1312,
+            "startPinId": 496
+        },
         "link-482": {
             "color": {
                 "a": 255,
@@ -142,28 +153,6 @@
             "endPinId": 561,
             "id": 566,
             "startPinId": 483
-        },
-        "link-580": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 505,
-            "id": 580,
-            "startPinId": 496
-        },
-        "link-582": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 501,
-            "id": 582,
-            "startPinId": 506
         },
         "link-649": {
             "color": {
@@ -285,17 +274,6 @@
             "endPinId": 668,
             "id": 669,
             "startPinId": 596
-        },
-        "link-785": {
-            "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-            },
-            "endPinId": 504,
-            "id": 785,
-            "startPinId": 502
         },
         "link-991": {
             "color": {
@@ -2581,13 +2559,12 @@
         },
         "node-503": {
             "data": {
-                "calculateIntermediateValues": true,
-                "centrifugalAccCompensation": true,
-                "coriolisCompensation": true,
+                "angularRateEarthRotationCompensationEnabled": true,
+                "angularRateTransportRateCompensationEnabled": true,
+                "centrifgalAccelerationCompensationEnabled": true,
+                "coriolisAccelerationCompensationEnabled": true,
                 "gravityModel": 3,
-                "integrationAlgorithmAttitude": 2,
-                "integrationAlgorithmPosition": 0,
-                "integrationAlgorithmVelocity": 2,
+                "integrationAlgorithm": 0,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
                 "prefereUncompensatedData": true,
@@ -2625,35 +2602,6 @@
                 "y": 0.0
             },
             "type": "ImuIntegrator"
-        },
-        "node-507": {
-            "data": null,
-            "enabled": true,
-            "id": 507,
-            "inputPins": [
-                {
-                    "id": 504
-                },
-                {
-                    "id": 505
-                }
-            ],
-            "kind": "Simple",
-            "name": "",
-            "outputPins": [
-                {
-                    "id": 506
-                }
-            ],
-            "pos": {
-                "x": 904.0,
-                "y": -264.0
-            },
-            "size": {
-                "x": 0.0,
-                "y": 0.0
-            },
-            "type": "Combiner"
         },
         "node-518": {
             "data": {
@@ -2751,7 +2699,7 @@
                                                 "markerSize": 5.800000190734863,
                                                 "markerStyle": 7,
                                                 "markerWeight": 1.0,
-                                                "markers": true,
+                                                "markers": false,
                                                 "stride": 0,
                                                 "thickness": 1.0
                                             }
@@ -5075,7 +5023,7 @@
                 "variance_ra": 4e-05,
                 "variance_rg": 5e-05
             },
-            "enabled": true,
+            "enabled": false,
             "id": 564,
             "inputPins": [
                 {
@@ -10940,7 +10888,7 @@
                     }
                 ]
             },
-            "enabled": true,
+            "enabled": false,
             "id": 647,
             "inputPins": [
                 {
