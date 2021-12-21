@@ -422,7 +422,7 @@
                 "prefereUncompensatedData": true,
                 "showCorrectionsInputPin": false
             },
-            "enabled": true,
+            "enabled": false,
             "id": 15,
             "inputPins": [
                 {
@@ -451,11 +451,11 @@
         },
         "node-163": {
             "data": {
-                "angularRateEarthRotationCompensationEnabled": false,
-                "angularRateTransportRateCompensationEnabled": false,
-                "centrifgalAccelerationCompensationEnabled": false,
-                "coriolisAccelerationCompensationEnabled": false,
-                "gravityModel": 4,
+                "angularRateEarthRotationCompensationEnabled": true,
+                "angularRateTransportRateCompensationEnabled": true,
+                "centrifgalAccelerationCompensationEnabled": true,
+                "coriolisAccelerationCompensationEnabled": true,
+                "gravityModel": 2,
                 "integrationAlgorithm": 3,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
@@ -785,7 +785,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "ImuBiases",
@@ -1035,7 +1035,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "x",
@@ -5181,7 +5181,7 @@
                 "prefereUncompensatedData": true,
                 "showCorrectionsInputPin": false
             },
-            "enabled": true,
+            "enabled": false,
             "id": 42,
             "inputPins": [
                 {
@@ -5221,7 +5221,7 @@
                 "prefereUncompensatedData": true,
                 "showCorrectionsInputPin": false
             },
-            "enabled": true,
+            "enabled": false,
             "id": 62,
             "inputPins": [
                 {
@@ -5261,7 +5261,7 @@
                 "prefereUncompensatedData": true,
                 "showCorrectionsInputPin": false
             },
-            "enabled": true,
+            "enabled": false,
             "id": 82,
             "inputPins": [
                 {
@@ -5966,7 +5966,7 @@
                             }
                         ],
                         "size": 0,
-                        "stride": 8
+                        "stride": 1
                     },
                     {
                         "dataIdentifier": "InertialNavSol",
@@ -6946,9 +6946,9 @@
                                             {
                                                 "color": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 0.015444040298461914,
-                                                    "z": 1.0
+                                                    "x": 1.0,
+                                                    "y": 0.6486486196517944,
+                                                    "z": 0.0
                                                 },
                                                 "legendName": "Roll (Heun)",
                                                 "lineType": 1,
@@ -7024,9 +7024,9 @@
                                             {
                                                 "color": {
                                                     "w": 1.0,
-                                                    "x": 0.0,
-                                                    "y": 1.0,
-                                                    "z": 0.548262357711792
+                                                    "x": 1.0,
+                                                    "y": 0.9266408681869507,
+                                                    "z": 0.0
                                                 },
                                                 "legendName": "Yaw (Heun)",
                                                 "lineType": 1,
@@ -7107,8 +7107,8 @@
                                                     "y": 0.9999899864196777,
                                                     "z": 1.0
                                                 },
-                                                "legendName": "Altitude [m] (8 - InertialNavSol)",
-                                                "lineType": 0,
+                                                "legendName": "KF",
+                                                "lineType": 1,
                                                 "markerFillColor": {
                                                     "w": 1.0,
                                                     "x": 1.0,
@@ -7189,27 +7189,237 @@
                             },
                             {
                                 "displayName": "North velocity [m/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.6023165583610535,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "North (KF)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "East velocity [m/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "East (KF)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Down velocity [m/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Down (KF)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Roll [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.6470588445663452,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Roll (KF)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.6470588445663452,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.6470588445663452,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Pitch [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.9575290679931641,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Pitch (KF)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 1.0,
+                                                    "y": 0.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Yaw [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.16862744092941284,
+                                                    "y": 0.8779621124267578,
+                                                    "z": 0.886274516582489
+                                                },
+                                                "legendName": "Yaw (KF)",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5411764979362488,
+                                                    "y": 0.16862745583057404,
+                                                    "z": 0.886274516582489
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.5411764979362488,
+                                                    "y": 0.16862745583057404,
+                                                    "z": 0.886274516582489
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Quaternion::w",
@@ -7299,7 +7509,7 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 0,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 2,
+                        "selectedPin": 7,
                         "selectedXdata": [
                             0,
                             0,
@@ -7328,7 +7538,7 @@
                         "overrideXAxisLabel": false,
                         "plotFlags": 256,
                         "rightPaneWidth": 400.0,
-                        "selectedPin": 6,
+                        "selectedPin": 7,
                         "selectedXdata": [
                             0,
                             0,

@@ -675,7 +675,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
     // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
 
-    const Eigen::Vector3d omega_ip_p = calcOmega_ip_p(vel_n, trajectoryAccel_n, Eigen::Vector3d{ roll, pitch, yaw }, q_bn, omega_ie_n, omega_en_n);
+    const Eigen::Vector3d omega_ip_p = calcOmega_ip_p(position_lla, vel_n, trajectoryAccel_n, Eigen::Vector3d{ roll, pitch, yaw }, q_bn, omega_ie_n, omega_en_n);
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
     auto obs = std::make_shared<ImuObs>(imuPos);
@@ -859,13 +859,18 @@ Eigen::Vector3d NAV::ImuSimulator::calcTrajectoryAccel_n(double time, const Eige
     return Eigen::Vector3d::Zero();
 }
 
-Eigen::Vector3d NAV::ImuSimulator::calcOmega_ip_p(const Eigen::Vector3d& velocity_n,
+Eigen::Vector3d NAV::ImuSimulator::calcOmega_ip_p(const Eigen::Vector3d& position_lla,
+                                                  const Eigen::Vector3d& velocity_n,
                                                   const Eigen::Vector3d& acceleration_n,
                                                   const Eigen::Vector3d& rollPitchYaw,
                                                   const Eigen::Quaterniond& q_bn,
                                                   const Eigen::Vector3d& omega_ie_n,
                                                   const Eigen::Vector3d& omega_en_n)
 {
+    const auto& phi = position_lla(0);
+    const auto& lambda = position_lla(1);
+    const auto& h = position_lla(2);
+
     const auto& v_N = velocity_n(0);
     const auto& v_E = velocity_n(1);
     const auto& v_D = velocity_n(2);
@@ -882,22 +887,33 @@ Eigen::Vector3d NAV::ImuSimulator::calcOmega_ip_p(const Eigen::Vector3d& velocit
 
     const Eigen::Quaterniond q_nb = q_bn.conjugate();
 
+    const double R_N = calcEarthRadius_N(phi);
+    const double R_E = calcEarthRadius_E(phi);
+
     // #########################################################################################################################################
 
-    const double R_dot = 0;
+    double R_dot = 0;
+    if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
+    {
+        // The normal vector of the center point of the circle to the ellipsoid expressed in Earth frame coordinates (see https://en.wikipedia.org/wiki/N-vector)
+        const Eigen::Vector3d normalVectorCenterCircle_e{ std::cos(startPosition_lla(0)) * std::cos(startPosition_lla(1)),
+                                                          std::cos(startPosition_lla(0)) * std::sin(startPosition_lla(1)),
+                                                          std::sin(startPosition_lla(0)) };
+        // The normal vector of the current position to the ellipsoid expressed in Earth frame coordinates
+        const Eigen::Vector3d normalVectorCurrentPosition_e{ std::cos(phi) * std::cos(lambda),
+                                                             std::cos(phi) * std::sin(lambda),
+                                                             std::sin(phi) };
+
+        R_dot = normalVectorCenterCircle_e.dot(Eigen::Vector3d{ -v_N / (R_N + h) * std::sin(phi) * std::cos(lambda) - v_E / (R_E + h) * std::sin(lambda),
+                                                                v_N / (R_N + h) * (std::cos(phi) * std::cos(lambda) - std::sin(phi) * std::sin(lambda)),
+                                                                v_N / (R_N + h) * std::cos(phi) })
+                * -1 / std::sqrt(1 - std::pow(normalVectorCenterCircle_e.dot(normalVectorCurrentPosition_e), 2));
+    }
+
     const double Y_dot = (a_E * v_N - v_E * a_N)
                          / (v_E_2 + v_N_2);
     const double P_dot = (-a_D * std::sqrt(v_N_2 + v_E_2) + v_D * (a_N * v_N + a_E * v_E) / std::sqrt(v_N_2 + v_E_2))
                          / (v_D_2 + v_N_2 + v_E_2);
-
-    LOG_DATA("Y_dot "
-             "= (a_E * v_N - v_E * a_N) / (v_E_2 + v_N_2) "
-             "= ({} * {} - {} * {}) / ({} + {}) = {}",
-             a_E, v_N, v_E, a_N, v_E_2, v_N_2, Y_dot);
-    LOG_DATA("P_dot "
-             "= (-a_D * std::sqrt(v_N_2 + v_E_2) + v_D * (a_N * v_N + a_E * v_E) / std::sqrt(v_N_2 + v_E_2)) / (v_D_2 + v_N_2 + v_E_2) "
-             "= (-{} * std::sqrt({} + {}) + {} * ({} * {} + {} * {}) / std::sqrt({} + {})) / ({} + {} + {}) = {}",
-             a_D, v_N_2, v_E_2, v_D, a_N, v_N, a_E, v_E, v_N_2, v_E_2, v_D_2, v_N_2, v_E_2, P_dot);
 
     auto C_3 = [](double R) {
         // Eigen::Matrix3d C;

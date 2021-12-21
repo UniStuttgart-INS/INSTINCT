@@ -242,6 +242,7 @@ class ImuSimulator : public Imu
     Eigen::Vector3d calcTrajectoryAccel_n(double time, const Eigen::Quaterniond& q_ne);
 
     /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in platform coordinates)
+    /// @param[in] position_lla Current position as latitude, longitude, altitude [rad, rad, m]
     /// @param[in] velocity_n Velocity in local-navigation frame coordinates [m/s]
     /// @param[in] acceleration_n Acceleration in local-navigation frame coordinates [m/s^2]
     /// @param[in] rollPitchYaw Gimbal angles (roll, pitch, yaw) [rad]
@@ -249,7 +250,8 @@ class ImuSimulator : public Imu
     /// @param[in] omega_ie_n ω_ie_n Earth rotation rate in local-navigation coordinates
     /// @param[in] omega_en_n ω_en_n Transport rate in local-navigation coordinates
     /// @return ω_ip_p [rad/s]
-    Eigen::Vector3d calcOmega_ip_p(const Eigen::Vector3d& velocity_n,
+    Eigen::Vector3d calcOmega_ip_p(const Eigen::Vector3d& position_lla,
+                                   const Eigen::Vector3d& velocity_n,
                                    const Eigen::Vector3d& acceleration_n,
                                    const Eigen::Vector3d& rollPitchYaw,
                                    const Eigen::Quaterniond& q_bn,

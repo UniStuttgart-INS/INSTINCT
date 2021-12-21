@@ -9,6 +9,14 @@
 \usepackage{tikz}
 \usetikzlibrary{matrix,backgrounds,decorations.pathreplacing,calc,shapes.misc,intersections}
 
+\usepackage[makeroom]{cancel}
+\newcommand\Ccancel[2][black]{
+    \let\OldcancelColor\CancelColor
+    \renewcommand\CancelColor{\color{#1}}
+    \cancel{#2}
+    \renewcommand\CancelColor{\OldcancelColor}
+}
+
 \newcommand{\commentOut}[1]{}
 
 \newcommand{\highlight}[2][yellow]{\colorbox{#1}{$#2$}}

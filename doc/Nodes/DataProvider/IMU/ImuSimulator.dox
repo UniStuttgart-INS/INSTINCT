@@ -269,8 +269,8 @@ When not flying on constant height, which is the case for our circular trajector
   \def\ellipseB{10.0};
   \def\ellipseA{14.0};
   \coordinate (origin) at (0.0, 0.0);
-  \draw[thick, black] (0,0) [partial ellipse=45:120:12cm and 10cm];
-  \node[left] at (-5.0, \ellipseB-0.7) {Earth surface};
+  \draw[thick, black] (0,0) [partial ellipse=45:120:\ellipseA cm and \ellipseB cm];
+  \node[left] at (-5.0, \ellipseB-0.5) {Earth surface};
 
   \draw[black,thick] (8.0,\ellipseB) -- (5.0,\ellipseB);
   \draw[black,thick] (-5.0,\ellipseB) -- (-8.0,\ellipseB);
@@ -312,10 +312,11 @@ When not flying on constant height, which is the case for our circular trajector
   \path [draw,->,thick] ($($(origin)!.8!(xMC)$)$) -- (xMC) node [pos=0.5,right] {$\vec{\mathbf{x}}_M^e$};
   \path [draw, thick] ($($(origin)!.8!(xMC)$)$) --pic{ext} ($($(origin)!.8!(xMC)$)$);
 \f}
+
 The simulated position is at the position \f$\vec{x}^e\f$ and its velocity vector is facing out of the plain.
 
 The roll angle is the angle between the tangential plains to the Earth surface in the current position and the center of the flight path.
-\fl{equation,eq-ImuSimulator-roll}
+\fl{equation,eq-ImuSimulator-roll-with-norm}
   R = \arccos{\left(\frac{\vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}_M^e\right| \cdot \left|\vec{\mathbf{n}}^e\right|}\right)}
 \f}
 The normal of the tangential plains is however not the position vectors \f$\vec{\mathbf{x}}^e\f$ and \f$\vec{\mathbf{x}}^e_M\f$, because Earth is an ellipsoid, but can be calculated with the geodetic latitude and longitude as (see <a href="https://en.wikipedia.org/wiki/N-vector">Wikipedia n-vector</a> )
@@ -323,21 +324,39 @@ The normal of the tangential plains is however not the position vectors \f$\vec{
   \vec{\mathbf{n}}^e = \begin{pmatrix} \cos{\phi} \cdot \cos{\lambda} \\ \cos{\phi} \cdot \sin{\lambda} \\ \sin{\phi} \end{pmatrix}
 \f}
 
-The roll rate can be easily found because the center of the circle is a static point (\f$ \vec{\mathbf{n}}_M^e = \text{const.}\f$)
-\fl{equation,eq-ImuSimulator-roll-rate}
-  \dotup{R} = \dfrac{\vec{\mathbf{n}}_M^e}{\left|\vec{\mathbf{n}}_M^e\right|} \cdot \dfrac{\partial}{\partial t} \left( \dfrac{\vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}^e\right|} \right)
-              \cdot \dfrac{-1}{\sqrt{1 - \left( \dfrac{\vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}_M^e\right| \cdot \left|\vec{\mathbf{n}}^e\right|} \right)^2}}
+Especially it can be seen, that this vector has length one
+\fl{equation,eq-ImuSimulator-n-vector-norm}
+\begin{aligned}
+  \left|\vec{\mathbf{n}}^e\right| &= \sqrt{ \cos^2{\phi} \cdot \cos^2{\lambda} + \cos^2{\phi} \cdot \sin^2{\lambda} + \sin^2{\phi} } \\
+                                  &= \sqrt{ \cos^2{\phi} \cdot \underbrace{( \cos^2{\lambda} + \sin^2{\lambda})}_{=1} + \sin^2{\phi} } \\
+                                  &= \sqrt{ \cos^2{\phi} + \sin^2{\phi} } \\
+                                  &= 1
+\end{aligned}
 \f}
 
-The derivation of the normal vector is
-\fl{equation,eq-ImuSimulator-n-vector-derivative}
+The roll angle therefore becomes
+\fl{equation,eq-ImuSimulator-roll}
+  R = \arccos{\left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)}
+\f}
+
+The roll rate can be easily found because the center of the circle is a static point (\f$ \vec{\mathbf{n}}_M^e = \text{const.}\f$)
+\fl{equation,eq-ImuSimulator-roll-rate}
+\renewcommand*{\arraystretch}{1.7}
 \begin{aligned}
-  \dfrac{\partial}{\partial t} \left( \dfrac{\vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}^e\right|} \right)
-      &= \dfrac{\partial}{\partial t} \left( \dfrac{1}{\sqrt{ \cos^2{\phi} \cdot \cos^2{\lambda} + \cos^2{\phi} \cdot \sin^2{\lambda} + \sin^2{\phi} }}
-                                             \begin{pmatrix} \cos{\phi} \cdot \cos{\lambda} \\
-                                                             \cos{\phi} \cdot \sin{\lambda} \\
-                                                             \sin{\phi} \end{pmatrix}
-                                     \right) \\
+  \dotup{R} &= \vec{\mathbf{n}}_M^e \cdot \dfrac{\partial}{\partial t} \left( \vec{\mathbf{n}}^e \right)
+               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+            &= \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dotup{\phi} \sin{\phi} \cos{\lambda} - \dotup{\lambda} \cos{\phi} \sin{\lambda} \\
+                                                          -\dotup{\phi} \sin{\phi} \sin{\lambda} + \dotup{\phi}    \cos{\phi} \cos{\lambda} \\
+                                                           \dotup{\phi} \cos{\phi}                                                          \end{pmatrix}
+               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+            &= \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h}        \sin{\phi} \cos{\lambda} - \dfrac{v_E}{(R_E + h) \cos{\phi}} \cos{\phi} \sin{\lambda} \\
+                                                           \dfrac{v_N}{R_N + h} \left(-\sin{\phi} \sin{\lambda} + \cos{\phi} \cos{\lambda} \right)                           \\
+                                                           \dfrac{v_N}{R_N + h} \cos{\phi}                                                                                   \end{pmatrix}
+               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+            &= \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h} \sin{\phi} \cos{\lambda} - \dfrac{v_E}{R_E + h} \sin{\lambda}     \\
+                                                           \dfrac{v_N}{R_N + h} \left(\cos{\phi} \cos{\lambda} - \sin{\phi} \sin{\lambda} \right) \\
+                                                           \dfrac{v_N}{R_N + h} \cos{\phi}                                                        \end{pmatrix}
+               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
 \end{aligned}
 \f}
 
