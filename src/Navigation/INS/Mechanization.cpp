@@ -79,8 +79,7 @@ Eigen::Matrix<double, 10, 1> calcPosVelAttDerivative_n(const Eigen::Matrix<doubl
     LOG_DATA("R_E = {} [m]", R_E);
 
     // ω_ie_e Turn rate of the Earth expressed in Earth frame coordinates
-    const Eigen::Vector3d& omega_ie_e = c.angularRateEarthRotationCompensationEnabled ? InsConst::angularVelocity_ie_e
-                                                                                      : Eigen::Vector3d::Zero();
+    const Eigen::Vector3d& omega_ie_e = InsConst::angularVelocity_ie_e;
     LOG_DATA("omega_ie_e = {} [rad/s]", omega_ie_e.transpose());
     // ω_ie_n Turn rate of the Earth expressed in local-navigation frame coordinates
     const Eigen::Vector3d omega_ie_n = q_ne * omega_ie_e;
@@ -107,13 +106,16 @@ Eigen::Matrix<double, 10, 1> calcPosVelAttDerivative_n(const Eigen::Matrix<doubl
                                                           : Eigen::Vector3d::Zero();
     LOG_DATA("centrifugalAcceleration_n = {} [m/s^2]", centrifugalAcceleration_n.transpose());
 
+    const Eigen::Vector3d gravitation_n = calcGravitation_n(y.segment<3>(7), c.gravityModel);
+    LOG_DATA("gravitation_n = {} [m/s^2] ({})", gravitation_n.transpose(), to_string(c.gravityModel));
+
     y_dot.segment<4>(0) = calcTimeDerivativeForQuaternion_nb(omega_nb_b,       // ω_nb_b Body rate with respect to the navigation frame, expressed in the body frame
                                                              y.segment<4>(0)); // q_nb_coeffs Coefficients of the quaternion q_nb in order w, x, y, z (q = w + ix + jy + kz)
 
-    y_dot.segment<3>(4) = calcTimeDerivativeForVelocity_n(q_nb * c.f_b,                                       // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-                                                          coriolisAcceleration_n,                             // Coriolis acceleration in local-navigation coordinates in [m/s^2]
-                                                          calcGravitation_n(y.segment<3>(7), c.gravityModel), // gravitation_n Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
-                                                          centrifugalAcceleration_n);                         // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
+    y_dot.segment<3>(4) = calcTimeDerivativeForVelocity_n(q_nb * c.f_b,               // f_n Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
+                                                          coriolisAcceleration_n,     // Coriolis acceleration in local-navigation coordinates in [m/s^2]
+                                                          gravitation_n,              // gravitation_n Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
+                                                          centrifugalAcceleration_n); // Centrifugal acceleration in local-navigation coordinates in [m/s^2]
 
     y_dot.segment<3>(7) = calcTimeDerivativeForPosition_lla(y.segment<3>(4), // v_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
                                                             y(7),            // 𝜙 Latitude in [rad]

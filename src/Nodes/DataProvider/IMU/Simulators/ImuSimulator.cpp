@@ -629,19 +629,26 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& p
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 {
     Eigen::Vector3d position_lla = calcPosition_lla(imuUpdateTime);
+    LOG_DATA("{}: position_lla = {}°, {}°, {} m", nameId(), trafo::rad2deg(position_lla(0)), trafo::rad2deg(position_lla(1)), position_lla(2));
     Eigen::Vector3d position_e = trafo::lla2ecef_WGS84(position_lla);
     auto q_ne = trafo::quat_ne(position_lla(0), position_lla(1));
 
     Eigen::Vector3d vel_n = calcVelocity_n(imuUpdateTime, q_ne);
+    LOG_DATA("{}: vel_n = {} [m/s]", nameId(), vel_n.transpose());
 
     auto [roll, pitch, yaw] = calcFlightAngles(position_lla, vel_n);
+    LOG_DATA("{}: roll = {}°, pitch = {}°, yaw = {}°", nameId(), trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
 
     auto q_bn = trafo::quat_bn(roll, pitch, yaw);
 
     const Eigen::Vector3d omega_ie_n = q_ne * InsConst::angularVelocity_ie_e;
+    LOG_DATA("{}: omega_ie_n = {} [rad/s]", nameId(), omega_ie_n.transpose());
     const double R_N = calcEarthRadius_N(position_lla(0));
+    LOG_DATA("{}: R_N = {} [m]", nameId(), R_N);
     const double R_E = calcEarthRadius_E(position_lla(0));
+    LOG_DATA("{}: R_E = {} [m]", nameId(), R_E);
     const Eigen::Vector3d omega_en_n = calcTransportRate_n(position_lla, vel_n, R_N, R_E);
+    LOG_DATA("{}: omega_en_n = {} [rad/s]", nameId(), omega_en_n.transpose());
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
 
@@ -655,27 +662,37 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
     // Force to keep vehicle on track
     const Eigen::Vector3d trajectoryAccel_n = calcTrajectoryAccel_n(imuUpdateTime, q_ne);
+    LOG_DATA("{}: trajectoryAccel_n = {} [m/s^2]", nameId(), trajectoryAccel_n.transpose());
 
     // Measured acceleration in local-navigation frame coordinates [m/s^2]
     Eigen::Vector3d accel_n = trajectoryAccel_n;
     if (coriolisAccelerationEnabled) // Apply Coriolis Acceleration
     {
-        accel_n += calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, vel_n);
+        const Eigen::Vector3d coriolisAcceleration_n = calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, vel_n);
+        LOG_DATA("{}: coriolisAcceleration_n = {} [m/s^2]", nameId(), coriolisAcceleration_n.transpose());
+        accel_n += coriolisAcceleration_n;
     }
 
-    // Apply the local gravity vector
-    accel_n -= calcGravitation_n(position_lla, gravityModel); // Mass attraction of the Earth (gravitation)
-    if (centrifgalAccelerationEnabled)                        // Centrifugal acceleration caused by the Earth's rotation
+    // Mass attraction of the Earth (gravitation)
+    const Eigen::Vector3d gravitation_n = calcGravitation_n(position_lla, gravityModel);
+    LOG_DATA("gravitation_n = {} [m/s^2] ({})", gravitation_n.transpose(), NAV::to_string(gravityModel));
+    accel_n -= gravitation_n; // Apply the local gravity vector
+
+    if (centrifgalAccelerationEnabled) // Centrifugal acceleration caused by the Earth's rotation
     {
-        accel_n += q_ne * calcCentrifugalAcceleration_e(position_e);
+        const Eigen::Vector3d centrifugalAcceleration_e = calcCentrifugalAcceleration_e(position_e);
+        LOG_DATA("{}: centrifugalAcceleration_e = {} [m/s^2]", nameId(), centrifugalAcceleration_e.transpose());
+        accel_n += q_ne * centrifugalAcceleration_e;
     }
 
     // Acceleration measured by the accelerometer in platform coordinates
     Eigen::Vector3d accel_p = imuPos.quatAccel_pb() * q_bn * accel_n;
+    LOG_DATA("{}: accel_p = {} [m/s^2]", nameId(), accel_p.transpose());
 
     // ------------------------------------------------------------ Angular rates --------------------------------------------------------------
 
     const Eigen::Vector3d omega_ip_p = calcOmega_ip_p(position_lla, vel_n, trajectoryAccel_n, Eigen::Vector3d{ roll, pitch, yaw }, q_bn, omega_ie_n, omega_en_n);
+    LOG_DATA("{}: omega_ip_p = {} [rad/s]", nameId(), omega_ip_p.transpose());
 
     // -------------------------------------------------- Construct the message to send out ----------------------------------------------------
     auto obs = std::make_shared<ImuObs>(imuPos);
@@ -703,9 +720,12 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
 {
     Eigen::Vector3d position_lla = calcPosition_lla(gnssUpdateTime);
+    LOG_DATA("{}: position_lla = {}°, {}°, {} m", nameId(), trafo::rad2deg(position_lla(0)), trafo::rad2deg(position_lla(1)), position_lla(2));
     auto q_ne = trafo::quat_ne(position_lla(0), position_lla(1));
     Eigen::Vector3d vel_n = calcVelocity_n(gnssUpdateTime, q_ne);
+    LOG_DATA("{}: vel_n = {} [m/s]", nameId(), vel_n.transpose());
     auto [roll, pitch, yaw] = calcFlightAngles(position_lla, vel_n);
+    LOG_DATA("{}: roll = {}°, pitch = {}°, yaw = {}°", nameId(), trafo::rad2deg(roll), trafo::rad2deg(pitch), trafo::rad2deg(yaw));
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
 
@@ -893,6 +913,8 @@ Eigen::Vector3d NAV::ImuSimulator::calcOmega_ip_p(const Eigen::Vector3d& positio
     // #########################################################################################################################################
 
     double R_dot = 0;
+    double Y_dot = 0;
+    double P_dot = 0;
     if (trajectoryType == TrajectoryType::Circular || trajectoryType == TrajectoryType::Helix)
     {
         // The normal vector of the center point of the circle to the ellipsoid expressed in Earth frame coordinates (see https://en.wikipedia.org/wiki/N-vector)
@@ -908,12 +930,12 @@ Eigen::Vector3d NAV::ImuSimulator::calcOmega_ip_p(const Eigen::Vector3d& positio
                                                                 v_N / (R_N + h) * (std::cos(phi) * std::cos(lambda) - std::sin(phi) * std::sin(lambda)),
                                                                 v_N / (R_N + h) * std::cos(phi) })
                 * -1 / std::sqrt(1 - std::pow(normalVectorCenterCircle_e.dot(normalVectorCurrentPosition_e), 2));
-    }
 
-    const double Y_dot = (a_E * v_N - v_E * a_N)
-                         / (v_E_2 + v_N_2);
-    const double P_dot = (-a_D * std::sqrt(v_N_2 + v_E_2) + v_D * (a_N * v_N + a_E * v_E) / std::sqrt(v_N_2 + v_E_2))
-                         / (v_D_2 + v_N_2 + v_E_2);
+        Y_dot = (a_E * v_N - v_E * a_N)
+                / (v_E_2 + v_N_2);
+        P_dot = (-a_D * std::sqrt(v_N_2 + v_E_2) + v_D * (a_N * v_N + a_E * v_E) / std::sqrt(v_N_2 + v_E_2))
+                / (v_D_2 + v_N_2 + v_E_2);
+    }
 
     auto C_3 = [](double R) {
         // Eigen::Matrix3d C;
