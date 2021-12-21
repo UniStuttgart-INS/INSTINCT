@@ -776,7 +776,8 @@ std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d&
                                                              std::cos(position_lla(0)) * std::sin(position_lla(1)),
                                                              std::sin(position_lla(0)) };
 
-        roll = std::acos(normalVectorCurrentPosition_e.dot(normalVectorCenterCircle_e) / (normalVectorCurrentPosition_e.norm() * normalVectorCenterCircle_e.norm()));
+        roll = (circularTrajectoryDirection == Direction::CCW ? -1.0 : 1.0) // CCW = Right wing facing outwards, roll angle measured downwards
+               * std::acos(normalVectorCurrentPosition_e.dot(normalVectorCenterCircle_e) / (normalVectorCurrentPosition_e.norm() * normalVectorCenterCircle_e.norm()));
     }
 
     return { roll, pitch, yaw };
@@ -928,9 +929,10 @@ Eigen::Vector3d NAV::ImuSimulator::calcOmega_ip_p(const Eigen::Vector3d& positio
                                                              std::cos(phi) * std::sin(lambda),
                                                              std::sin(phi) };
 
-        R_dot = normalVectorCenterCircle_e.dot(Eigen::Vector3d{ -v_N / (R_N + h) * std::sin(phi) * std::cos(lambda) - v_E / (R_E + h) * std::sin(lambda),
-                                                                v_N / (R_N + h) * (std::cos(phi) * std::cos(lambda) - std::sin(phi) * std::sin(lambda)),
-                                                                v_N / (R_N + h) * std::cos(phi) })
+        R_dot = (circularTrajectoryDirection == Direction::CCW ? -1.0 : 1.0) // CCW = Right wing facing outwards, roll angle measured downwards
+                * normalVectorCenterCircle_e.dot(Eigen::Vector3d{ -v_N / (R_N + h) * std::sin(phi) * std::cos(lambda) - v_E / (R_E + h) * std::sin(lambda),
+                                                                  v_N / (R_N + h) * (std::cos(phi) * std::cos(lambda) - std::sin(phi) * std::sin(lambda)),
+                                                                  v_N / (R_N + h) * std::cos(phi) })
                 * -1 / std::sqrt(1 - std::pow(normalVectorCenterCircle_e.dot(normalVectorCurrentPosition_e), 2));
 
         Y_dot = (a_E * v_N - v_E * a_N)

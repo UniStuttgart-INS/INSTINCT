@@ -274,7 +274,7 @@ When not flying on constant height, which is the case for our circular trajector
 
   \draw[black,thick] (8.0,\ellipseB) -- (5.0,\ellipseB);
   \draw[black,thick] (-5.0,\ellipseB) -- (-8.0,\ellipseB);
-  \draw[blue,ultra thick,name path=flightplain] (5.0,\ellipseB) -- (-5.0,\ellipseB) node[left,yshift=10pt] {Flight plain};
+  \draw[blue,ultra thick] (5.0,\ellipseB) -- (-5.0,\ellipseB) node[left,yshift=10pt] {Flight plane};
 
   \coordinate (xE) at (5.0,\ellipseB);
   \coordinate (xM) at (0,\ellipseB);
@@ -313,13 +313,15 @@ When not flying on constant height, which is the case for our circular trajector
   \path [draw, thick] ($($(origin)!.8!(xMC)$)$) --pic{ext} ($($(origin)!.8!(xMC)$)$);
 \f}
 
-The simulated position is at the position \f$\vec{x}^e\f$ and its velocity vector is facing out of the plain.
+The simulated position is at the position \f$\vec{x}^e\f$ and its velocity vector is facing out of the plane. When facing into the plane, the roll angle runs into the other direction resulting in a minus in the formula.
 
-The roll angle is the angle between the tangential plains to the Earth surface in the current position and the center of the flight path.
+The roll angle is the angle between the tangential planes to the Earth surface in the current position and the center of the flight path.
 \fl{equation,eq-ImuSimulator-roll-with-norm}
-  R = \arccos{\left(\frac{\vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}_M^e\right| \cdot \left|\vec{\mathbf{n}}^e\right|}\right)}
+  R = \text{dir} \cdot \arccos{\left(\frac{\vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e}{\left|\vec{\mathbf{n}}_M^e\right| \cdot \left|\vec{\mathbf{n}}^e\right|}\right)}
 \f}
-The normal of the tangential plains is however not the position vectors \f$\vec{\mathbf{x}}^e\f$ and \f$\vec{\mathbf{x}}^e_M\f$, because Earth is an ellipsoid, but can be calculated with the geodetic latitude and longitude as (see <a href="https://en.wikipedia.org/wiki/N-vector">Wikipedia n-vector</a> )
+where \f$ \text{dir} \f$ is a sign (+1 for CW and -1 for CCW) determining the direction of the circle.
+
+The normal of the tangential planes is however not the position vectors \f$\vec{\mathbf{x}}^e\f$ and \f$\vec{\mathbf{x}}^e_M\f$, because Earth is an ellipsoid, but can be calculated with the geodetic latitude and longitude as (see <a href="https://en.wikipedia.org/wiki/N-vector">Wikipedia n-vector</a> )
 \fl{equation,eq-ImuSimulator-n-vector}
   \vec{\mathbf{n}}^e = \begin{pmatrix} \cos{\phi} \cdot \cos{\lambda} \\ \cos{\phi} \cdot \sin{\lambda} \\ \sin{\phi} \end{pmatrix}
 \f}
@@ -336,27 +338,27 @@ Especially it can be seen, that this vector has length one
 
 The roll angle therefore becomes
 \fl{equation,eq-ImuSimulator-roll}
-  R = \arccos{\left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)}
+  R = \text{dir} \cdot \arccos{\left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)}
 \f}
 
 The roll rate can be easily found because the center of the circle is a static point (\f$ \vec{\mathbf{n}}_M^e = \text{const.}\f$)
 \fl{equation,eq-ImuSimulator-roll-rate}
 \renewcommand*{\arraystretch}{1.7}
 \begin{aligned}
-  \dotup{R} &= \vec{\mathbf{n}}_M^e \cdot \dfrac{\partial}{\partial t} \left( \vec{\mathbf{n}}^e \right)
-               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
-            &= \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dotup{\phi} \sin{\phi} \cos{\lambda} - \dotup{\lambda} \cos{\phi} \sin{\lambda} \\
-                                                          -\dotup{\phi} \sin{\phi} \sin{\lambda} + \dotup{\phi}    \cos{\phi} \cos{\lambda} \\
-                                                           \dotup{\phi} \cos{\phi}                                                          \end{pmatrix}
-               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
-            &= \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h}        \sin{\phi} \cos{\lambda} - \dfrac{v_E}{(R_E + h) \cos{\phi}} \cos{\phi} \sin{\lambda} \\
-                                                           \dfrac{v_N}{R_N + h} \left(-\sin{\phi} \sin{\lambda} + \cos{\phi} \cos{\lambda} \right)                           \\
-                                                           \dfrac{v_N}{R_N + h} \cos{\phi}                                                                                   \end{pmatrix}
-               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
-            &= \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h} \sin{\phi} \cos{\lambda} - \dfrac{v_E}{R_E + h} \sin{\lambda}     \\
-                                                           \dfrac{v_N}{R_N + h} \left(\cos{\phi} \cos{\lambda} - \sin{\phi} \sin{\lambda} \right) \\
-                                                           \dfrac{v_N}{R_N + h} \cos{\phi}                                                        \end{pmatrix}
-               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+  \dotup{R} &= \text{dir} \cdot \vec{\mathbf{n}}_M^e \cdot \dfrac{\partial}{\partial t} \left( \vec{\mathbf{n}}^e \right)
+                                \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+            &= \text{dir} \cdot \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dotup{\phi} \sin{\phi} \cos{\lambda} - \dotup{\lambda} \cos{\phi} \sin{\lambda} \\
+                                                                           -\dotup{\phi} \sin{\phi} \sin{\lambda} + \dotup{\phi}    \cos{\phi} \cos{\lambda} \\
+                                                                            \dotup{\phi} \cos{\phi}                                                          \end{pmatrix}
+                                \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+            &= \text{dir} \cdot \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h}        \sin{\phi} \cos{\lambda} - \dfrac{v_E}{(R_E + h) \cos{\phi}} \cos{\phi} \sin{\lambda} \\
+                                                                            \dfrac{v_N}{R_N + h} \left(-\sin{\phi} \sin{\lambda} + \cos{\phi} \cos{\lambda} \right)                           \\
+                                                                            \dfrac{v_N}{R_N + h} \cos{\phi}                                                                                   \end{pmatrix}
+                                \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+            &= \text{dir} \cdot \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h} \sin{\phi} \cos{\lambda} - \dfrac{v_E}{R_E + h} \sin{\lambda}     \\
+                                                                            \dfrac{v_N}{R_N + h} \left(\cos{\phi} \cos{\lambda} - \sin{\phi} \sin{\lambda} \right) \\
+                                                                            \dfrac{v_N}{R_N + h} \cos{\phi}                                                        \end{pmatrix}
+                                \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
 \end{aligned}
 \f}
 
