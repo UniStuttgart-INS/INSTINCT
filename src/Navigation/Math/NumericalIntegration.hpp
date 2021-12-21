@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <concepts>
+#include <type_traits>
 
 namespace NAV
 {
@@ -32,8 +32,9 @@ enum class IntegrationAlgorithm
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y, typename Z>
-Y Heun(const auto& f, const std::floating_point auto& h, const Y& y_n, const Z& z_n, const Z& z_n_p1, const std::floating_point auto& t_n, const auto& c)
+template<typename Y, typename Z, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y Heun(const auto& f, const Scalar& h, const Y& y_n, const Z& z_n, const Z& z_n_p1, const Scalar& t_n, const auto& c)
 {
     Y y_n_p1 = y_n + h * f(y_n, z_n, t_n, c);
 
@@ -48,8 +49,9 @@ Y Heun(const auto& f, const std::floating_point auto& h, const Y& y_n, const Z& 
 /// @param[in] z_n_p1 Measurement vector at time t_(n+1)
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y, typename Z>
-Y Heun(const auto& f, const std::floating_point auto& h, const Y& y_n, const Z& z_n, const Z& z_n_p1, const auto& c)
+template<typename Y, typename Z, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y Heun(const auto& f, const Scalar& h, const Y& y_n, const Z& z_n, const Z& z_n_p1, const auto& c)
 {
     Y y_n_p1 = y_n + h * f(y_n, z_n, c);
 
@@ -63,8 +65,9 @@ Y Heun(const auto& f, const std::floating_point auto& h, const Y& y_n, const Z& 
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y>
-Y RungeKutta1(const auto& f, const std::floating_point auto& h, const Y& y_n, const std::floating_point auto& t_n, const auto& c)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta1(const auto& f, const Scalar& h, const Y& y_n, const Scalar& t_n, const auto& c)
 {
     return y_n + h * f(y_n, t_n, c);
 }
@@ -75,8 +78,9 @@ Y RungeKutta1(const auto& f, const std::floating_point auto& h, const Y& y_n, co
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y>
-Y RungeKutta1(const auto& f, const std::floating_point auto& h, const Y& y_n, const auto& c)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta1(const auto& f, const Scalar& h, const Y& y_n, const auto& c)
 {
     return y_n + h * f(y_n, c);
 }
@@ -88,8 +92,9 @@ Y RungeKutta1(const auto& f, const std::floating_point auto& h, const Y& y_n, co
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y>
-Y RungeKutta2(const auto& f, const std::floating_point auto& h, const Y& y_n, const std::floating_point auto& t_n, const auto& c)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta2(const auto& f, const Scalar& h, const Y& y_n, const Scalar& t_n, const auto& c)
 {
     Y k1 = f(y_n, t_n, c);
     Y k2 = f(y_n + h * k1, t_n + h, c);
@@ -102,8 +107,9 @@ Y RungeKutta2(const auto& f, const std::floating_point auto& h, const Y& y_n, co
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y>
-Y RungeKutta2(const auto& f, const std::floating_point auto& h, const Y& y_n, const auto& c)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta2(const auto& f, const Scalar& h, const Y& y_n, const auto& c)
 {
     Y k1 = f(y_n, c);
     Y k2 = f(y_n + h * k1, c);
@@ -117,8 +123,9 @@ Y RungeKutta2(const auto& f, const std::floating_point auto& h, const Y& y_n, co
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y>
-Y RungeKutta3(const auto& f, const std::floating_point auto& h, const Y& y_n, const std::floating_point auto& t_n, const auto& c)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta3(const auto& f, const Scalar& h, const Y& y_n, const Scalar& t_n, const auto& c)
 {
     Y k1 = f(y_n, t_n, c);
     Y k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
@@ -132,8 +139,9 @@ Y RungeKutta3(const auto& f, const std::floating_point auto& h, const Y& y_n, co
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y>
-Y RungeKutta3(const auto& f, const std::floating_point auto& h, const Y& y_n, const auto& c)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta3(const auto& f, const Scalar& h, const Y& y_n, const auto& c)
 {
     Y k1 = f(y_n, c);
     Y k2 = f(y_n + h / 2 * k1, c);
@@ -148,8 +156,9 @@ Y RungeKutta3(const auto& f, const std::floating_point auto& h, const Y& y_n, co
 /// @param[in] t_n Time to evaluate the model function at in [s]
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y>
-Y RungeKutta4(const auto& f, const std::floating_point auto& h, const Y& y_n, const std::floating_point auto& t_n, const auto& c)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta4(const auto& f, const Scalar& h, const Y& y_n, const Scalar& t_n, const auto& c)
 {
     Y k1 = f(y_n, t_n, c);
     Y k2 = f(y_n + h / 2 * k1, t_n + h / 2, c);
@@ -164,8 +173,9 @@ Y RungeKutta4(const auto& f, const std::floating_point auto& h, const Y& y_n, co
 /// @param[in] y_n State vector at time t_n
 /// @param[in] c Vector with constant information needed to calculate the model function
 /// @return State vector at time t_(n+1)
-template<typename Y>
-Y RungeKutta4(const auto& f, const std::floating_point auto& h, const Y& y_n, const auto& c)
+template<typename Y, typename Scalar,
+         typename = std::enable_if_t<std::is_floating_point_v<Scalar>>>
+Y RungeKutta4(const auto& f, const Scalar& h, const Y& y_n, const auto& c)
 {
     Y k1 = f(y_n, c);
     Y k2 = f(y_n + h / 2 * k1, c);
