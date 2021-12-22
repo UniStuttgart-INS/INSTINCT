@@ -9,6 +9,8 @@
 
 #include "NodeData/IMU/ImuObs.hpp"
 
+#include <Eigen/Core>
+
 namespace NAV
 {
 /// Adds errors (biases and noise) to IMU measurements
@@ -59,6 +61,33 @@ class ImuError : public Node
     /// @param[in] nodeData ImuObs to process
     /// @param[in] linkId Id of the link over which the data is received
     void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
+    // #########################################################################################################################################
+
+    /// Possible units to specify an accelerometer bias with
+    enum class AccelerometerBiasUnits
+    {
+        m_s2, ///< [m/s^2]
+    };
+
+    /// Selected unit for the accelerometer bias in the GUI
+    AccelerometerBiasUnits accelerometerBiasUnit = AccelerometerBiasUnits::m_s2;
+
+    /// Bias of the accelerometer in platform coordinates [m/s^2]
+    Eigen::Vector3d imuAccelerometerBias_p = Eigen::Vector3d::Zero();
+
+    /// Possible units to specify an gyroscope bias with
+    enum class GyroscopeBiasUnits
+    {
+        rad_s, ///< [rad/s]
+        deg_s, ///< [deg/s]
+    };
+
+    /// Selected unit for the gyroscope bias in the GUI
+    GyroscopeBiasUnits gyroscopeBiasUnit = GyroscopeBiasUnits::rad_s;
+
+    /// Bias of the gyroscope in platform coordinates [rad/s]
+    Eigen::Vector3d imuGyroscopeBias_p = Eigen::Vector3d::Zero();
 };
 
 } // namespace NAV

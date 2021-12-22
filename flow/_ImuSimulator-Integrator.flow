@@ -5508,7 +5508,32 @@
             "type": "Combiner"
         },
         "node-386": {
-            "data": null,
+            "data": {
+                "accelerometerBiasUnit": 0,
+                "gyroscopeBiasUnit": 0,
+                "imuAccelerometerBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
+                "imuGyroscopeBias_p": {
+                    "0": {
+                        "0": 0.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                }
+            },
             "enabled": true,
             "id": 386,
             "inputPins": [
