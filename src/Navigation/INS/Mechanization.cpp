@@ -55,16 +55,18 @@ Eigen::Vector3d calcTimeDerivativeForVelocity_n_RotationCorrection(const Eigen::
     // Δβ⁠_nb_p The angular velocities in [rad], of the navigation to body system, in body coordinates (eq. 8.9)
     const Eigen::Vector3d omega_nb_b = omega_ib_b - quaternion_bn * (omega_ie_n + omega_en_n);
 
-    //TODO: Change to Zwiener 3.37
+    // Zwiener eq. (3.37)
     Eigen::Matrix3d rotA = 2 * skewSymmetricMatrix(omega_nb_b) * std::pow(std::sin(timeDifferenceSec * omega_nb_b.norm() * 0.5) / omega_nb_b.norm(), 2);
+    // Zwiener eq. (3.43)
     Eigen::Matrix3d rotB = (std::pow(timeDifferenceSec, 3) / 6.0 - std::pow(omega_nb_b.norm(), 2) / 120.0 * std::pow(timeDifferenceSec, 5)) * skewSymmetricMatrix2(omega_nb_b);
 
+    // Rotation correction factor from Zwiener eq. (3.44)
     Eigen::Matrix3d rotCorr = Eigen::Matrix3d::Identity(3, 3) * timeDifferenceSec + rotA + rotB;
     rotCorr /= timeDifferenceSec;
 
+    // Specific force in body coordinates
     Eigen::Vector3d f_b = quaternion_bn * f_n;
 
-    // Jekeli (eq. 4.88) - g includes centrifugal acceleration
     return quaternion_nb * (rotCorr * f_b) - coriolisAcceleration_n + gravitation_n - centrifugalAcceleration_n;
 }
 

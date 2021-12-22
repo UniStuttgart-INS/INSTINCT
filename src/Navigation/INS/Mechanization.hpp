@@ -64,7 +64,7 @@ Eigen::Vector3d calcTimeDerivativeForVelocity_n(const Eigen::Vector3d& f_n,
 /// @param[in] quaternion_nb Orientation of body with respect to n-sys
 /// @param[in] timeDifferenceSec Time difference Δtₖ = (tₖ - tₖ₋₁) in [seconds]
 /// @return Derivative of the velocity
-/// @note See Zwiener (2019) - Robuste Zustandsschätzung zur Navigation und Regelung autonomer und bemannter Multikopter mit verteilten Sensoren, eqns. (3.39) and (3.44)
+/// @note See Zwiener (2019) - Robuste Zustandsschätzung zur Navigation und Regelung autonomer und bemannter Multikopter mit verteilten Sensoren, chapter 3.3.2
 Eigen::Vector3d calcTimeDerivativeForVelocity_n_RotationCorrection(const Eigen::Vector3d& f_n,
                                                                    const Eigen::Vector3d& coriolisAcceleration_n,
                                                                    const Eigen::Vector3d& gravitation_n,
