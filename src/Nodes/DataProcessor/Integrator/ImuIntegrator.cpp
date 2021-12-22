@@ -166,6 +166,11 @@ void NAV::ImuIntegrator::guiConfig()
             }
             ImGui::Unindent();
         }
+        if (ImGui::Checkbox(fmt::format("Zwiener Rotation Correction##{}", size_t(id)).c_str(), &velocityUpdateRotationCorrectionEnabled))
+        {
+            LOG_DEBUG("{}: velocityUpdateRotationCorrectionEnabled changed to {}", nameId(), velocityUpdateRotationCorrectionEnabled);
+            flow::ApplyChanges();
+        }
         ImGui::TreePop();
     }
 
@@ -212,6 +217,7 @@ void NAV::ImuIntegrator::guiConfig()
     j["centrifgalAccelerationCompensationEnabled"] = centrifgalAccelerationCompensationEnabled;
     j["angularRateEarthRotationCompensationEnabled"] = angularRateEarthRotationCompensationEnabled;
     j["angularRateTransportRateCompensationEnabled"] = angularRateTransportRateCompensationEnabled;
+    j["velocityUpdateRotationCorrectionEnabled"] = velocityUpdateRotationCorrectionEnabled;
     // #########################################################################################################################################
     j["showCorrectionsInputPin"] = showCorrectionsInputPin;
 
@@ -259,6 +265,10 @@ void NAV::ImuIntegrator::restore(json const& j)
     if (j.contains("angularRateTransportRateCompensationEnabled"))
     {
         angularRateTransportRateCompensationEnabled = j.at("angularRateTransportRateCompensationEnabled");
+    }
+    if (j.contains("velocityUpdateRotationCorrectionEnabled"))
+    {
+        velocityUpdateRotationCorrectionEnabled = j.at("velocityUpdateRotationCorrectionEnabled");
     }
     // #########################################################################################################################################
     if (j.contains("showCorrectionsInputPin"))
@@ -583,11 +593,13 @@ void NAV::ImuIntegrator::integrateObservation()
     PosVelAttDerivativeConstants_n c;
     c.omega_ib_b = omega_ip_b__t1; // platform system does not rotate with respect to body system
     c.f_b = f_b__t1;
+    c.timeDifferenceSec = static_cast<double>(timeDifferenceSec);
     c.gravityModel = gravityModel;
     c.coriolisAccelerationCompensationEnabled = coriolisAccelerationCompensationEnabled;
     c.centrifgalAccelerationCompensationEnabled = centrifgalAccelerationCompensationEnabled;
     c.angularRateEarthRotationCompensationEnabled = angularRateEarthRotationCompensationEnabled;
     c.angularRateTransportRateCompensationEnabled = angularRateTransportRateCompensationEnabled;
+    c.velocityUpdateRotationCorrectionEnabled = velocityUpdateRotationCorrectionEnabled;
 
     if (integrationAlgorithm == IntegrationAlgorithm::Heun)
     {
@@ -601,11 +613,13 @@ void NAV::ImuIntegrator::integrateObservation()
             PosVelAttDerivativeConstants_n c_new;
             c_new.omega_ib_b = z.omega_ib_b;
             c_new.f_b = z.f_b;
+            c_new.timeDifferenceSec = c.timeDifferenceSec;
             c_new.gravityModel = c.gravityModel;
             c_new.coriolisAccelerationCompensationEnabled = c.coriolisAccelerationCompensationEnabled;
             c_new.centrifgalAccelerationCompensationEnabled = c.centrifgalAccelerationCompensationEnabled;
             c_new.angularRateEarthRotationCompensationEnabled = c.angularRateEarthRotationCompensationEnabled;
             c_new.angularRateTransportRateCompensationEnabled = c.angularRateTransportRateCompensationEnabled;
+            c_new.velocityUpdateRotationCorrectionEnabled = c.velocityUpdateRotationCorrectionEnabled;
 
             return calcPosVelAttDerivative_n(y, c_new);
         };

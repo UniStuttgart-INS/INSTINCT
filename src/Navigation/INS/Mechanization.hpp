@@ -12,7 +12,6 @@
 
 namespace NAV
 {
-
 /// @brief Calculates the time derivative of the quaternion q_nb
 ///
 /// \anchor eq-INS-Mechanization-q_nb-dot \f{equation}{ \label{eq:eq-INS-Mechanization-q_nb-dot}
@@ -54,6 +53,28 @@ Eigen::Vector3d calcTimeDerivativeForVelocity_n(const Eigen::Vector3d& f_n,
                                                 const Eigen::Vector3d& gravitation_n,
                                                 const Eigen::Vector3d& centrifugalAcceleration_n);
 
+/// @brief Equations to perform an update of the velocity, including rotational correction
+/// @param[in] f_n f_n = [f_N  f_E  f_D]^T Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
+/// @param[in] coriolisAcceleration_n Coriolis acceleration in local-navigation coordinates in [m/s^2]
+/// @param[in] gravitation_n Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
+/// @param[in] centrifugalAcceleration_n Centrifugal acceleration in local-navigation coordinates in [m/s^2]
+/// @param[in] omega_ib_b Angular velocity of platform system with respect to inertial system, represented in body coordinates in [rad/s]
+/// @param[in] omega_ie_n Angular velocity of earth with respect to inertial system, represented in n-sys
+/// @param[in] omega_en_n Transport rate represented in n-sys
+/// @param[in] quaternion_nb Orientation of body with respect to n-sys
+/// @param[in] timeDifferenceSec Time difference Δtₖ = (tₖ - tₖ₋₁) in [seconds]
+/// @return Derivative of the velocity
+/// @note See Zwiener (2019) - Robuste Zustandsschätzung zur Navigation und Regelung autonomer und bemannter Multikopter mit verteilten Sensoren, eqns. (3.39) and (3.44)
+Eigen::Vector3d calcTimeDerivativeForVelocity_n_RotationCorrection(const Eigen::Vector3d& f_n,
+                                                                   const Eigen::Vector3d& coriolisAcceleration_n,
+                                                                   const Eigen::Vector3d& gravitation_n,
+                                                                   const Eigen::Vector3d& centrifugalAcceleration_n,
+                                                                   const Eigen::Vector3d& omega_ib_b,
+                                                                   const Eigen::Vector3d& omega_ie_n,
+                                                                   const Eigen::Vector3d& omega_en_n,
+                                                                   const Eigen::Quaterniond& quaternion_nb,
+                                                                   const double& timeDifferenceSec);
+
 /// @brief Calculates the time derivative of the curvilinear position
 ///
 /// \anchor eq-INS-Mechanization-p_lla-dot \f{equation}{ \label{eq:eq-INS-Mechanization-p_lla-dot}
@@ -83,11 +104,13 @@ struct PosVelAttDerivativeConstants_n
 {
     Eigen::Vector3d omega_ib_b;                              ///< ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
     Eigen::Vector3d f_b;                                     ///< f_b Acceleration in [m/s^2], in body coordinates
+    double timeDifferenceSec = 0;                            ///< Time difference Δtₖ = (tₖ - tₖ₋₁) in [seconds]
     GravityModel gravityModel = GravityModel::EGM96;         ///< Gravity Model to use
     bool coriolisAccelerationCompensationEnabled = true;     ///< Apply the coriolis acceleration compensation to the measured accelerations
     bool centrifgalAccelerationCompensationEnabled = true;   ///< Apply the centrifugal acceleration compensation to the measured accelerations
     bool angularRateEarthRotationCompensationEnabled = true; ///< Apply the Earth rotation rate compensation to the measured angular rates
     bool angularRateTransportRateCompensationEnabled = true; ///< Apply the transport rate compensation to the measured angular rates
+    bool velocityUpdateRotationCorrectionEnabled = true;     ///< Apply Zwiener's rotation correction for the velocity update
 };
 
 /// @brief Calculates the derivative of the quaternion, velocity and curvilinear position
