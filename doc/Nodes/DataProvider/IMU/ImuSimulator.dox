@@ -345,20 +345,20 @@ The roll rate can be easily found because the center of the circle is a static p
 \fl{equation,eq-ImuSimulator-roll-rate}
 \renewcommand*{\arraystretch}{1.7}
 \begin{aligned}
-  \dotup{R} &= \text{dir} \cdot \vec{\mathbf{n}}_M^e \cdot \dfrac{\partial}{\partial t} \left( \vec{\mathbf{n}}^e \right)
-                                \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
-            &= \text{dir} \cdot \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dotup{\phi} \sin{\phi} \cos{\lambda} - \dotup{\lambda} \cos{\phi} \sin{\lambda} \\
-                                                                           -\dotup{\phi} \sin{\phi} \sin{\lambda} + \dotup{\phi}    \cos{\phi} \cos{\lambda} \\
-                                                                            \dotup{\phi} \cos{\phi}                                                          \end{pmatrix}
-                                \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
-            &= \text{dir} \cdot \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h}        \sin{\phi} \cos{\lambda} - \dfrac{v_E}{(R_E + h) \cos{\phi}} \cos{\phi} \sin{\lambda} \\
-                                                                            \dfrac{v_N}{R_N + h} \left(-\sin{\phi} \sin{\lambda} + \cos{\phi} \cos{\lambda} \right)                           \\
-                                                                            \dfrac{v_N}{R_N + h} \cos{\phi}                                                                                   \end{pmatrix}
-                                \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
-            &= \text{dir} \cdot \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h} \sin{\phi} \cos{\lambda} - \dfrac{v_E}{R_E + h} \sin{\lambda}     \\
-                                                                            \dfrac{v_N}{R_N + h} \left(\cos{\phi} \cos{\lambda} - \sin{\phi} \sin{\lambda} \right) \\
-                                                                            \dfrac{v_N}{R_N + h} \cos{\phi}                                                        \end{pmatrix}
-                                \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+  \dotup{R} &= \vec{\mathbf{n}}_M^e \cdot \dfrac{\partial}{\partial t} \left( \vec{\mathbf{n}}^e \right)
+               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+            &= \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dotup{\phi} \sin{\phi} \cos{\lambda} - \dotup{\lambda} \cos{\phi} \sin{\lambda} \\
+                                                          -\dotup{\phi} \sin{\phi} \sin{\lambda} + \dotup{\lambda} \cos{\phi} \cos{\lambda} \\
+                                                           \dotup{\phi} \cos{\phi}                                                          \end{pmatrix}
+               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+            &= \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h} \sin{\phi} \cos{\lambda} - \dfrac{v_E}{(R_E + h) \cos{\phi}} \cos{\phi} \sin{\lambda} \\
+                                                          -\dfrac{v_N}{R_N + h} \sin{\phi} \sin{\lambda} + \dfrac{v_E}{(R_E + h) \cos{\phi}} \cos{\phi} \cos{\lambda} \\
+                                                           \dfrac{v_N}{R_N + h} \cos{\phi}                                                                            \end{pmatrix}
+               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
+            &= \vec{\mathbf{n}}_M^e \cdot \begin{pmatrix} -\dfrac{v_N}{R_N + h} \sin{\phi} \cos{\lambda} - \dfrac{v_E}{R_E + h} \sin{\lambda} \\
+                                                          -\dfrac{v_N}{R_N + h} \sin{\phi} \sin{\lambda} + \dfrac{v_E}{R_E + h} \cos{\lambda} \\
+                                                           \dfrac{v_N}{R_N + h} \cos{\phi}                                                    \end{pmatrix}
+               \cdot \dfrac{-1}{\sqrt{1 - \left( \vec{\mathbf{n}}_M^e \cdot \vec{\mathbf{n}}^e \right)^2}} \\
 \end{aligned}
 \f}
 
