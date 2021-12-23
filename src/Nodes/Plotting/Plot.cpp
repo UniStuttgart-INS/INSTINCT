@@ -18,6 +18,9 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV
 {
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] rng Object to read info from
 void to_json(json& j, const Plot::PlotStyle& style)
 {
     j = json{
@@ -34,6 +37,9 @@ void to_json(json& j, const Plot::PlotStyle& style)
         { "markerOutlineColor", style.markerOutlineColor },
     };
 }
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] rng Output object
 void from_json(const json& j, Plot::PlotStyle& style)
 {
     if (j.contains("legendName"))
@@ -82,6 +88,9 @@ void from_json(const json& j, Plot::PlotStyle& style)
     }
 }
 
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] rng Object to read info from
 void to_json(json& j, const Plot::PinData::PlotData& data)
 {
     j = json{
@@ -89,6 +98,9 @@ void to_json(json& j, const Plot::PinData::PlotData& data)
         { "displayName", data.displayName },
     };
 }
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] rng Output object
 void from_json(const json& j, Plot::PinData::PlotData& data)
 {
     if (j.contains("plotOnAxisAndPlotStyle"))
@@ -101,6 +113,9 @@ void from_json(const json& j, Plot::PinData::PlotData& data)
     }
 }
 
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] rng Object to read info from
 void to_json(json& j, const Plot::PinData& data)
 {
     j = json{
@@ -111,6 +126,9 @@ void to_json(json& j, const Plot::PinData& data)
         { "stride", data.stride },
     };
 }
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] rng Output object
 void from_json(const json& j, Plot::PinData& data)
 {
     if (j.contains("dataIdentifier"))
@@ -139,6 +157,9 @@ void from_json(const json& j, Plot::PinData& data)
     }
 }
 
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] rng Object to read info from
 void to_json(json& j, const Plot::PlotInfo& data)
 {
     j = json{
@@ -159,6 +180,9 @@ void to_json(json& j, const Plot::PlotInfo& data)
         { "y3AxisLabel", data.y3AxisLabel },
     };
 }
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] rng Output object
 void from_json(const json& j, Plot::PlotInfo& data)
 {
     if (j.contains("size"))
