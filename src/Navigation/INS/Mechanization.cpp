@@ -115,8 +115,7 @@ Eigen::Matrix<double, 10, 1> calcPosVelAttDerivative_n(const Eigen::Matrix<doubl
     const Eigen::Vector3d omega_ie_n = q_ne * omega_ie_e;
     LOG_DATA("omega_ie_n = {} [rad/s]", omega_ie_n.transpose());
     // ω_en_n Turn rate of the local frame with respect to the Earth-fixed frame, called the transport rate, expressed in local-navigation frame coordinates
-    const Eigen::Vector3d omega_en_n = c.angularRateTransportRateCompensationEnabled ? calcTransportRate_n(y.segment<3>(7), y.segment<3>(4), R_N, R_E)
-                                                                                     : Eigen::Vector3d::Zero();
+    const Eigen::Vector3d omega_en_n = calcTransportRate_n(y.segment<3>(7), y.segment<3>(4), R_N, R_E);
     LOG_DATA("omega_en_n = {} [rad/s]", omega_en_n.transpose());
     // ω_nb_b = ω_ib_b - C_bn * (ω_ie_n + ω_en_n)
     const Eigen::Vector3d omega_nb_b = c.omega_ib_b
