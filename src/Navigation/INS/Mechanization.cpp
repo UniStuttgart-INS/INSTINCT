@@ -67,7 +67,7 @@ Eigen::Matrix<double, 10, 1> calcPosVelAttDerivative_n(const Eigen::Matrix<doubl
     const Eigen::Quaterniond q_nb{ y(0), y(1), y(2), y(3) };
     const Eigen::Quaterniond q_ne = trafo::quat_ne(y(7), y(8));
 
-    LOG_DATA("rollPitchYaw = {} [°]", trafo::rad2deg3(trafo::quat2eulerZYX(q_nb)).transpose());
+    LOG_DATA("rollPitchYaw = {} [°]", trafo::rad2deg(trafo::quat2eulerZYX(q_nb)).transpose());
     LOG_DATA("velocity_n   = {} [m/s]", y.segment<3>(4).transpose());
     LOG_DATA("position_lla = {}°, {}°, {} m", trafo::rad2deg(y(7)), trafo::rad2deg(y(8)), y(9));
     LOG_DATA("f_b = {} [m/s^2]", c.f_b.transpose());

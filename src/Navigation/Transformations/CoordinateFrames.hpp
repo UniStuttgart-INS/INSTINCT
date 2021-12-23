@@ -51,32 +51,20 @@ namespace trafo
 /// @brief Convert Degree to Radians
 /// @param[in] deg Value to convert in [deg]
 /// @return The converted value in [rad]
-template<class T,
-         typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-[[nodiscard]] constexpr double deg2rad(T deg)
+template<class T>
+[[nodiscard]] constexpr auto deg2rad(T deg)
 {
-    return static_cast<double>(deg) * M_PI / 180.0;
+    return deg * M_PI / 180.0;
 }
 
 /// @brief Convert Radians to Degree
 /// @param[in] rad Value to convert in [rad]
 /// @return The converted value in [deg]
-template<class T,
-         typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-[[nodiscard]] constexpr double rad2deg(T rad)
+template<class T>
+[[nodiscard]] constexpr auto rad2deg(T rad)
 {
-    return static_cast<double>(rad) * 180.0 / M_PI;
+    return rad * 180.0 / M_PI;
 }
-
-/// @brief Convert Degree to Radians
-/// @param[in] deg Vector to convert in [deg]
-/// @return The converted Vector in [rad]
-[[nodiscard]] Eigen::Vector3d deg2rad3(const Eigen::Vector3d& deg);
-
-/// @brief Convert Radians to Degree
-/// @param[in] rad Vector to convert in [rad]
-/// @return The converted Vector in [deg]
-[[nodiscard]] Eigen::Vector3d rad2deg3(const Eigen::Vector3d& rad);
 
 /// @brief Converts the quaternion to Euler rotation angles with rotation sequence ZYX
 /// @param[in] q Quaternion to convert

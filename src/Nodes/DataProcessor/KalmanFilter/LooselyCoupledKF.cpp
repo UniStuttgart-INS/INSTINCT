@@ -541,7 +541,7 @@ bool NAV::LooselyCoupledKF::initialize()
     }
     else if (initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg2)
     {
-        variance_angles = trafo::deg2rad3(initCovarianceAttitudeAngles);
+        variance_angles = trafo::deg2rad(initCovarianceAttitudeAngles);
     }
     else if (initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::rad)
     {
@@ -549,7 +549,7 @@ bool NAV::LooselyCoupledKF::initialize()
     }
     else if (initCovarianceAttitudeAnglesUnit == InitCovarianceAttitudeAnglesUnit::deg)
     {
-        variance_angles = trafo::deg2rad3(initCovarianceAttitudeAngles).array().pow(2);
+        variance_angles = trafo::deg2rad(initCovarianceAttitudeAngles).array().pow(2);
     }
 
     // Initial Covariance of the velocity in [m²/s²]
@@ -604,7 +604,7 @@ bool NAV::LooselyCoupledKF::initialize()
     }
     else if (initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg2_s2)
     {
-        variance_gyroBias = trafo::deg2rad3(initCovarianceBiasGyro.array().sqrt()).array().pow(2);
+        variance_gyroBias = trafo::deg2rad(initCovarianceBiasGyro.array().sqrt()).array().pow(2);
     }
     else if (initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::rad_s)
     {
@@ -612,7 +612,7 @@ bool NAV::LooselyCoupledKF::initialize()
     }
     else if (initCovarianceBiasGyroUnit == InitCovarianceBiasGyroUnit::deg_s)
     {
-        variance_gyroBias = trafo::deg2rad3(initCovarianceBiasGyro).array().pow(2);
+        variance_gyroBias = trafo::deg2rad(initCovarianceBiasGyro).array().pow(2);
     }
 
     // 𝐏 Error covariance matrix

@@ -28,7 +28,7 @@ namespace NAV
 //                                double pitchMin, double pitchMax,
 //                                double yawMin, double yawMax) {
 //         std::cout << "Testing with\n"
-//                   << "    angularVelocity_ip_p__t0 = " << trafo::rad2deg3(angularVelocity_ip_p__t0).transpose() << " [°/s]\n"
+//                   << "    angularVelocity_ip_p__t0 = " << trafo::rad2deg(angularVelocity_ip_p__t0).transpose() << " [°/s]\n"
 //                   << "    deltaLatLon (test angle steps) = " << trafo::rad2deg(deltaLatLon) << " [°]\n"
 //                   << "    delta       (test angle steps) = " << trafo::rad2deg(delta) << " [°]\n"
 //                   << "    longitude  [" << trafo::rad2deg(longitudeMin) << " " << trafo::rad2deg(longitudeMax) << ") [°]\n"
@@ -78,7 +78,7 @@ namespace NAV
 //                             Eigen::Quaterniond quaternion_nb__t0 = quaternion_en__t1.conjugate() * quaternion_ep__t0 * quaternion_bp__t1.conjugate();
 
 //                             // Roll, Pitch and Yaw angle at the time tₖ
-//                             Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg3(trafo::quat2eulerZYX(quaternion_nb__t0));
+//                             Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg(trafo::quat2eulerZYX(quaternion_nb__t0));
 
 //                             // Titterton Ch. 3.6.3.3, eq. 3.52, p. 42
 //                             // Gleason Ch. 6.2.3.1, eq. 6.8, p. 153 (top left term should be cos(theta))
@@ -97,7 +97,7 @@ namespace NAV
 //                             Eigen::Vector3d expected_vec_n = expectedQuaternion_nb * vec_b;
 //                             CHECK(vec_n == EigApprox(expected_vec_n).margin(1e-6).epsilon(0));
 
-//                             REQUIRE(rollPitchYaw__t0 == EigApprox(trafo::rad2deg3(expectedRollPitchYaw)).margin(1e-3).epsilon(0));
+//                             REQUIRE(rollPitchYaw__t0 == EigApprox(trafo::rad2deg(expectedRollPitchYaw)).margin(1e-3).epsilon(0));
 //                         }
 //                     }
 //                 }
@@ -108,7 +108,7 @@ namespace NAV
 //     double delta = trafo::deg2rad(10);
 //     double deltaLatLon = trafo::deg2rad(30);
 //     /* ########################################################################################################### */
-//     checkIntegration(trafo::deg2rad3(Eigen::Vector3d{ 7, -3, 2 }), // angularVelocity_ip_b__t0
+//     checkIntegration(trafo::deg2rad(Eigen::Vector3d{ 7, -3, 2 }), // angularVelocity_ip_b__t0
 //                      deltaLatLon, delta,                           // deltaLatLon, delta (test angle step size)
 //                      -M_PI + delta, M_PI,                          // [longitudeMin, longitudeMax)
 //                      -M_PI / 2 + delta, M_PI / 2,                  // [latitudeMin, latitudeMax)
@@ -125,7 +125,7 @@ namespace NAV
 //                                double pitchMin, double pitchMax,
 //                                double yawMin, double yawMax) {
 //         std::cout << "Testing with\n"
-//                   << "    angularVelocity_ip_b__t0 = " << trafo::rad2deg3(angularVelocity_ip_b__t0).transpose() << " [°/s]\n"
+//                   << "    angularVelocity_ip_b__t0 = " << trafo::rad2deg(angularVelocity_ip_b__t0).transpose() << " [°/s]\n"
 //                   << "    delta (test angle steps) = " << trafo::rad2deg(delta) << " [°]\n"
 //                   << "    roll  [" << trafo::rad2deg(rollMin) << " " << trafo::rad2deg(rollMax) << ") [°]\n"
 //                   << "    pitch [" << trafo::rad2deg(pitchMin) << " " << trafo::rad2deg(pitchMax) << ") [°]\n"
@@ -156,7 +156,7 @@ namespace NAV
 //                                                                                            quaternion_nb__t1);
 
 //                     // Roll, Pitch and Yaw angle at the time tₖ
-//                     Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg3(trafo::quat2eulerZYX(quaternion_nb__t0));
+//                     Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg(trafo::quat2eulerZYX(quaternion_nb__t0));
 
 //                     // Titterton Ch. 3.6.3.3, eq. 3.52, p. 42
 //                     Eigen::Vector3d expectedRollPitchYaw = Eigen::Vector3d{ roll, pitch, yaw }
@@ -174,7 +174,7 @@ namespace NAV
 //                     Eigen::Vector3d expected_vec_n = expectedQuaternion_nb * vec_b;
 //                     CHECK(vec_n == EigApprox(expected_vec_n).margin(1e-6).epsilon(0));
 
-//                     REQUIRE(rollPitchYaw__t0 == EigApprox(trafo::rad2deg3(expectedRollPitchYaw)).margin(1e-4).epsilon(0));
+//                     REQUIRE(rollPitchYaw__t0 == EigApprox(trafo::rad2deg(expectedRollPitchYaw)).margin(1e-4).epsilon(0));
 //                 }
 //             }
 //         }
@@ -220,7 +220,7 @@ namespace NAV
 //                      -M_PI + delta, M_PI);                        // [yawMin, yawMax)
 //     /* ########################################################################################################### */
 //     /* ########################################################################################################### */
-//     checkIntegration(trafo::deg2rad3(Eigen::Vector3d{ 7, -3, 2 }), // angularVelocity_ip_b__t0
+//     checkIntegration(trafo::deg2rad(Eigen::Vector3d{ 7, -3, 2 }), // angularVelocity_ip_b__t0
 //                      delta,                                        // delta (test angle step size)
 //                      -M_PI + delta, M_PI,                          // [rollMin, rollMax)
 //                      -M_PI / 2.0 + delta, M_PI / 2.0,              // [pitchMin, pitchMax)
@@ -492,7 +492,7 @@ namespace NAV
 //     auto pvaError = std::make_shared<PVAError>();
 //     pvaError->positionError_lla() = Eigen::Vector3d{ trafo::deg2rad(4), trafo::deg2rad(-7), 5 };
 //     pvaError->velocityError_n() = Eigen::Vector3d{ 3, -10, 15 };
-//     pvaError->attitudeError_n() = trafo::deg2rad3({ 1, 0, 0 });
+//     pvaError->attitudeError_n() = trafo::deg2rad({ 1, 0, 0 });
 
 //     Eigen::Vector3d expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
 //     auto correctedPVA = correctPosVelAtt(posVelAtt, pvaError);
@@ -500,27 +500,27 @@ namespace NAV
 //     CHECK(posVelAtt->latLonAlt() - pvaError->positionError_lla() == correctedPVA->latLonAlt());
 //     CHECK(posVelAtt->velocity_n() - pvaError->velocityError_n() == correctedPVA->velocity_n());
 
-//     CHECK(trafo::rad2deg3(expectedRollPitchYaw) == trafo::rad2deg3(correctedPVA->rollPitchYaw()));
+//     CHECK(trafo::rad2deg(expectedRollPitchYaw) == trafo::rad2deg(correctedPVA->rollPitchYaw()));
 
 //     // ###########################################################################################################
 
 //     posVelAtt->setAttitude_nb(trafo::quat_nb(0, trafo::deg2rad(10.0), 0));
-//     pvaError->attitudeError_n() = trafo::deg2rad3({ 0, 1, 0 });
+//     pvaError->attitudeError_n() = trafo::deg2rad({ 0, 1, 0 });
 
 //     expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
 //     correctedPVA = correctPosVelAtt(posVelAtt, pvaError);
 
-//     CHECK(trafo::rad2deg3(expectedRollPitchYaw) == trafo::rad2deg3(correctedPVA->rollPitchYaw()));
+//     CHECK(trafo::rad2deg(expectedRollPitchYaw) == trafo::rad2deg(correctedPVA->rollPitchYaw()));
 
 //     // ###########################################################################################################
 
 //     posVelAtt->setAttitude_nb(trafo::quat_nb(0, 0, trafo::deg2rad(10.0)));
-//     pvaError->attitudeError_n() = trafo::deg2rad3({ 0, 0, 1 });
+//     pvaError->attitudeError_n() = trafo::deg2rad({ 0, 0, 1 });
 
 //     expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
 //     correctedPVA = correctPosVelAtt(posVelAtt, pvaError);
 
-//     CHECK(trafo::rad2deg3(expectedRollPitchYaw) == trafo::rad2deg3(correctedPVA->rollPitchYaw()));
+//     CHECK(trafo::rad2deg(expectedRollPitchYaw) == trafo::rad2deg(correctedPVA->rollPitchYaw()));
 // }
 
 } // namespace NAV
