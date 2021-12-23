@@ -5,6 +5,7 @@
 
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
+#include "internal/gui/FlowAnimation.hpp"
 
 namespace NAV::CallbackManager
 {
@@ -46,7 +47,7 @@ void processNextCallback()
 
         if (nm::showFlowWhenInvokingCallbacks)
         {
-            ax::NodeEditor::Flow(linkId);
+            FlowAnimation::Add(linkId);
         }
 
         std::invoke(callback, node, data, linkId);

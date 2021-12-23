@@ -30,6 +30,8 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 822, 556 };
 
+    kalmanFilter_Kz = Eigen::MatrixXd::Zero(15, 1);
+
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
     nm::CreateOutputPin(this, "PVAError", Pin::Type::Flow, { NAV::PVAError::type() });
