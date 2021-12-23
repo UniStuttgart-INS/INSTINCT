@@ -293,6 +293,60 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
 
 \subsection LooselyCoupledKF-Noise-RW Random Walk
 
+\fl{equation,eq-LCKF-random-walk}
+  \dotup{x} = 0 + W(t)
+\f}
+
+Using this we can see that \f$ \highlight[magenta!20]{\boldsymbol{\beta}_f} = \mathbf{0}_3 \f$ and \f$ \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \mathbf{0}_3 \f$.
+
+The terms in \f$ \mathbf{G} \f$ are scaled factors for the noise and depend on the amplitude of the power spectral density (PSD) of the noise process.
+For a random walk (white noise) this is \f$ \sigma^2 \f$ and therefore
+
+\fl{equation,eq-LCKF-random-walk-G}
+  \highlight[brown!20]{\mathbf{G}_f} = \begin{pmatrix} \sqrt{\sigma_{f}^2} &          0          &          0          \\
+                                                                0          & \sqrt{\sigma_{f}^2} &          0          \\
+                                                                0          &          0          & \sqrt{\sigma_{f}^2} \end{pmatrix}, \qquad
+  \highlight[darkgray!20]{\mathbf{G}_\omega} = \begin{pmatrix} \sqrt{\sigma_{\omega}^2} &            0             &            0             \\
+                                                                          0             & \sqrt{\sigma_{\omega}^2} &            0             \\
+                                                                          0             &            0             & \sqrt{\sigma_{\omega}^2} \end{pmatrix}
+\f}
+where
+- \f$ \sigma_{f}^2 \f$ is the variance of the noise on the accelerometer specific-force measurements
+- \f$ \sigma_{\omega}^2 \f$ is the variance of the noise on the gyro angular-rate measurements
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF-Noise-GM1 Gauss-Markov 1. Order
+
+\fl{equation,eq-LCKF-gauss-markov-1}
+  \dotup{x} = -\beta x + W(t)
+\f}
+
+The terms in the  \f$ \mathbf{F} \f$ matrix are
+\fl{equation,eq-LCKF-random-walk-beta}
+  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} -\beta_{f} &      0     &      0     \\
+                                                                    0       & -\beta_{f} &      0     \\
+                                                                    0       &      0     & -\beta_{f} \end{pmatrix}, \qquad
+  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} -\beta_{\omega} &        0        &        0        \\
+                                                                           0        & -\beta_{\omega} &        0        \\
+                                                                           0        &        0        & -\beta_{\omega} \end{pmatrix}
+\f}
+where
+- \f$ \beta_{f} \f$ is the Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+- \f$ \beta_{\omega} \f$ is the Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+
+The amplitude of the power spectral density (PSD) of a Gauss-Markov-1 process is \f$ 2\sigma^2 \beta \f$ and therefore
+\fl{equation,eq-LCKF-random-walk-G}
+  \highlight[brown!20]{\mathbf{G}_f} = \begin{pmatrix} \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               &                0               \\
+                                                                      0               & \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               \\
+                                                                      0               &                0               & \sqrt{2\sigma_{f}^2 \beta_{f}} \end{pmatrix}, \qquad
+  \highlight[darkgray!20]{\mathbf{G}_\omega} = \begin{pmatrix} \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     &                    0                     \\
+                                                                                  0                     & \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     \\
+                                                                                  0                     &                    0                     & \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} \end{pmatrix}
+\f}
+where
+- \f$ \sigma_{f}^2 \f$ is the variance of the noise on the accelerometer specific-force measurements
+- \f$ \sigma_{\omega}^2 \f$ is the variance of the noise on the gyro angular-rate measurements
 
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
