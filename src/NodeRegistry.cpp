@@ -169,6 +169,7 @@ std::vector<std::string> NAV::NodeRegistry::GetParentNodeDataTypes(const std::st
 #include "Nodes/DataLogger/IMU/KvhDataLogger.hpp"
 #include "Nodes/DataLogger/IMU/VectorNavDataLogger.hpp"
 // Data Processor
+#include "Nodes/DataProcessor/ErrorModel/ErrorModel.hpp"
 #include "Nodes/DataProcessor/Integrator/ImuIntegrator.hpp"
 #include "Nodes/DataProcessor/KalmanFilter/LooselyCoupledKF.hpp"
 // Data Provider
@@ -215,6 +216,7 @@ void NAV::NodeRegistry::RegisterNodeTypes()
     registerNodeType<KvhDataLogger>();
     registerNodeType<VectorNavDataLogger>();
     // Data Processor
+    registerNodeType<ErrorModel>();
     registerNodeType<ImuIntegrator>();
     registerNodeType<LooselyCoupledKF>();
     // Data Provider

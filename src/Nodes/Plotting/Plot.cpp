@@ -1000,6 +1000,11 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
 
     size_t pinIndex = pinIndexFromId(endPin->id);
 
+    for (auto& plotData : data.at(pinIndex).plotData) // Mark all plot data for deletion
+    {
+        plotData.markedForDelete = true;
+    }
+
     size_t i = 0;
 
     if (inputPins.at(pinIndex).type == Pin::Type::Flow)
@@ -1487,20 +1492,21 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             }
         }
     }
-}
 
-void NAV::Plot::onDeleteLink([[maybe_unused]] Pin* startPin, Pin* endPin)
-{
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
-
-    // Empty old pin data
-    size_t pinIndex = pinIndexFromId(endPin->id);
-    data.at(pinIndex).plotData.clear();
-    data.at(pinIndex).dataIdentifier.clear();
+    for (size_t i = 0; i < data.at(pinIndex).plotData.size(); i++)
+    {
+        auto iter = data.at(pinIndex).plotData.begin();
+        std::advance(iter, i);
+        if (iter->markedForDelete)
+        {
+            data.at(pinIndex).plotData.erase(iter);
+            i--;
+        }
+    }
 
     for (auto& plotInfo : plotInfos)
     {
-        if (plotInfo.selectedXdata.size() > pinIndex)
+        if (plotInfo.selectedXdata.at(pinIndex) > data.at(pinIndex).plotData.size())
         {
             plotInfo.selectedXdata.at(pinIndex) = 0;
         }

@@ -68,11 +68,6 @@ class Plot : public Node
     /// @param[in] endPin Pin where the link ends
     void afterCreateLink(Pin* startPin, Pin* endPin) override;
 
-    /// @brief Called when a link is to be deleted
-    /// @param[in] startPin Pin where the link starts
-    /// @param[in] endPin Pin where the link ends
-    void onDeleteLink(Pin* startPin, Pin* endPin) override;
-
     /// @brief Specifying the look of a certain line in the plot
     struct PlotStyle
     {
@@ -134,6 +129,9 @@ class Plot : public Node
             bool hasData = false;
             /// Key: PlotIndex; Value: <yAxisIndex, plotStyle>
             std::map<size_t, std::pair<int, PlotStyle>> plotOnAxis;
+
+            /// When connecting a new link. All data is flagged for delete and only those who are also present in the new link are kept
+            bool markedForDelete = false;
         };
 
         /// @brief Possible Pin types
@@ -155,12 +153,16 @@ class Plot : public Node
             {
                 if (plotData.at(dataIndex).displayName == displayName) // Item was restored already at this position
                 {
+                    plotData.at(dataIndex).markedForDelete = false;
                     return;
                 }
 
                 // Some other item was restored at this position
-                LOG_WARN("Adding PlotData item '{}' at position {}, but at this position exists already the item '{}'. Reordering the items to match the data. Consider resaving the flow file.",
-                         displayName, dataIndex, plotData.at(dataIndex).displayName);
+                if (!plotData.at(dataIndex).markedForDelete)
+                {
+                    LOG_WARN("Adding PlotData item '{}' at position {}, but at this position exists already the item '{}'. Reordering the items to match the data. Consider resaving the flow file.",
+                             displayName, dataIndex, plotData.at(dataIndex).displayName);
+                }
                 auto searchIter = std::find_if(plotData.begin(),
                                                plotData.end(),
                                                [displayName](const PlotData& plotData) { return plotData.displayName == displayName; });
@@ -176,6 +178,7 @@ class Plot : public Node
                     plotData.erase(searchIter);         // Delete the old element
                     plotData.insert(iter, tmpPlotData); // Put the found element at the right position
                 }
+                iter->markedForDelete = false;
             }
             else if (std::find_if(plotData.begin(),
                                   plotData.end(),

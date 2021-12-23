@@ -294,14 +294,6 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             return false;
         }
 
-        if (!startPin->canCreateLink(*endPin))
-        {
-            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} can not be added because the pins do not match", size_t(link.id),
-                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
-            m_links.pop_back();
-            return false;
-        }
-
         if (!startPin->parentNode->onCreateLink(startPin, endPin))
         {
             LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} was refused by the start Node.", size_t(link.id),
@@ -317,6 +309,19 @@ bool NAV::NodeManager::AddLink(const NAV::Link& link)
             startPin->parentNode->onDeleteLink(startPin, endPin);
             m_links.pop_back();
             startPin->parentNode->afterDeleteLink(startPin, endPin);
+            return false;
+        }
+
+        if (!startPin->canCreateLink(*endPin))
+        {
+            LOG_ERROR("Link {} between node '{}'-{} and '{}'-{} can not be added because the pins do not match", size_t(link.id),
+                      startPin->parentNode->nameId(), size_t(startPin->id), endPin->parentNode->nameId(), size_t(endPin->id));
+            // Undo the Link adding on the start and end node
+            startPin->parentNode->onDeleteLink(startPin, endPin);
+            endPin->parentNode->onDeleteLink(startPin, endPin);
+            m_links.pop_back();
+            startPin->parentNode->afterDeleteLink(startPin, endPin);
+            endPin->parentNode->afterDeleteLink(startPin, endPin);
             return false;
         }
 

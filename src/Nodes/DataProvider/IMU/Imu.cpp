@@ -66,7 +66,7 @@ void NAV::Imu::guiConfig()
         ImGui::SameLine();
         gui::widgets::HelpMarker("Position of the magnetometer sensor relative to the vehicle center of mass in the body coordinate frame.");
 
-        Eigen::Vector3d eulerAccel = trafo::rad2deg3(trafo::quat2eulerZYX(imuPos.quatAccel_pb()));
+        Eigen::Vector3d eulerAccel = trafo::rad2deg(trafo::quat2eulerZYX(imuPos.quatAccel_pb()));
         std::array<float, 3> imuRotAccel = { static_cast<float>(eulerAccel.x()), static_cast<float>(eulerAccel.y()), static_cast<float>(eulerAccel.z()) };
         if (ImGui::InputFloat3(fmt::format("Rotation Accel [deg]##{}", size_t(id)).c_str(), imuRotAccel.data()))
         {
@@ -102,7 +102,7 @@ void NAV::Imu::guiConfig()
         ImGui::SameLine();
         TrafoHelperMarker(imuPos.quaternionAccel_bp);
 
-        Eigen::Vector3d eulerGyro = trafo::rad2deg3(trafo::quat2eulerZYX(imuPos.quatGyro_pb()));
+        Eigen::Vector3d eulerGyro = trafo::rad2deg(trafo::quat2eulerZYX(imuPos.quatGyro_pb()));
         std::array<float, 3> imuRotGyro = { static_cast<float>(eulerGyro.x()), static_cast<float>(eulerGyro.y()), static_cast<float>(eulerGyro.z()) };
         if (ImGui::InputFloat3(fmt::format("Rotation Gyro [deg]##{}", size_t(id)).c_str(), imuRotGyro.data()))
         {
@@ -138,7 +138,7 @@ void NAV::Imu::guiConfig()
         ImGui::SameLine();
         TrafoHelperMarker(imuPos.quaternionGyro_bp);
 
-        Eigen::Vector3d eulerMag = trafo::rad2deg3(trafo::quat2eulerZYX(imuPos.quatMag_pb()));
+        Eigen::Vector3d eulerMag = trafo::rad2deg(trafo::quat2eulerZYX(imuPos.quatMag_pb()));
         std::array<float, 3> imuRotMag = { static_cast<float>(eulerMag.x()), static_cast<float>(eulerMag.y()), static_cast<float>(eulerMag.z()) };
         if (ImGui::InputFloat3(fmt::format("Rotation Mag [deg]##{}", size_t(id)).c_str(), imuRotMag.data()))
         {

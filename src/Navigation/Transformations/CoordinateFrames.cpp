@@ -30,16 +30,6 @@ namespace NAV::trafo
 //                                             Public functions
 // ###########################################################################################################
 
-Eigen::Vector3d deg2rad3(const Eigen::Vector3d& deg)
-{
-    return deg * M_PI / 180.0;
-}
-
-Eigen::Vector3d rad2deg3(const Eigen::Vector3d& rad)
-{
-    return rad * 180.0 / M_PI;
-}
-
 Eigen::Vector3d quat2eulerZYX(const Eigen::Quaterniond& q)
 {
     // Given range [-pi:pi] x [-pi:pi] x [0:pi]
@@ -97,9 +87,19 @@ Eigen::Quaterniond quat_bn(const double roll, const double pitch, const double y
     return (rollAngle * pitchAngle * yawAngle).normalized();
 }
 
+Eigen::Quaterniond quat_bn(const Eigen::Vector3d& rollPitchYaw)
+{
+    return quat_bn(rollPitchYaw(0), rollPitchYaw(1), rollPitchYaw(2));
+}
+
 Eigen::Quaterniond quat_nb(const double roll, const double pitch, const double yaw)
 {
     return quat_bn(roll, pitch, yaw).conjugate();
+}
+
+Eigen::Quaterniond quat_nb(const Eigen::Vector3d& rollPitchYaw)
+{
+    return quat_nb(rollPitchYaw(0), rollPitchYaw(1), rollPitchYaw(2));
 }
 
 Eigen::Quaterniond quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)

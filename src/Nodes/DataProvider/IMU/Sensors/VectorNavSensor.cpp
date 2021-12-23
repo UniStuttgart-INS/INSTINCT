@@ -2643,7 +2643,7 @@ void NAV::VectorNavSensor::guiConfig()
                 referenceFrameRotationMatrix.e20, referenceFrameRotationMatrix.e21, referenceFrameRotationMatrix.e22;
             auto q_bp = Eigen::Quaterniond(dcm);
 
-            Eigen::Vector3d eulerRot = trafo::rad2deg3(trafo::quat2eulerZYX(q_bp.conjugate()));
+            Eigen::Vector3d eulerRot = trafo::rad2deg(trafo::quat2eulerZYX(q_bp.conjugate()));
             std::array<float, 3> imuRot = { static_cast<float>(eulerRot.x()), static_cast<float>(eulerRot.y()), static_cast<float>(eulerRot.z()) };
             if (ImGui::InputFloat3(fmt::format("##rotationAngles{}", size_t(id)).c_str(), imuRot.data()))
             {
