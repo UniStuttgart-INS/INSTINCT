@@ -612,7 +612,7 @@ void NAV::ImuIntegrator::integrateObservation()
         AccelGyroMeasurement z__t0{ omega_ip_b__t0, f_b__t0 };
         AccelGyroMeasurement z__t1{ omega_ip_b__t1, f_b__t1 };
 
-        y = Heun(posVelAttDerivativeWrapper, timeDifferenceSec, y, z__t1, z__t0, c);
+        y = Heun(posVelAttDerivativeWrapper, timeDifferenceSec, y, z__t1, z__t0, c); // NOLINT(readability-suspicious-call-argument)
     }
     else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
     {

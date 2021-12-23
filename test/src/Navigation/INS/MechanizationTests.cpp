@@ -492,7 +492,7 @@ namespace NAV
 //     auto pvaError = std::make_shared<PVAError>();
 //     pvaError->positionError_lla() = Eigen::Vector3d{ trafo::deg2rad(4), trafo::deg2rad(-7), 5 };
 //     pvaError->velocityError_n() = Eigen::Vector3d{ 3, -10, 15 };
-//     pvaError->attitudeError_n() = trafo::deg2rad({ 1, 0, 0 });
+//     pvaError->attitudeError_n() = trafo::deg2rad(Eigen::Vector3d{ 1, 0, 0 });
 
 //     Eigen::Vector3d expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
 //     auto correctedPVA = correctPosVelAtt(posVelAtt, pvaError);
@@ -505,7 +505,7 @@ namespace NAV
 //     // ###########################################################################################################
 
 //     posVelAtt->setAttitude_nb(trafo::quat_nb(0, trafo::deg2rad(10.0), 0));
-//     pvaError->attitudeError_n() = trafo::deg2rad({ 0, 1, 0 });
+//     pvaError->attitudeError_n() = trafo::deg2rad(Eigen::Vector3d{ 0, 1, 0 });
 
 //     expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
 //     correctedPVA = correctPosVelAtt(posVelAtt, pvaError);
@@ -515,7 +515,7 @@ namespace NAV
 //     // ###########################################################################################################
 
 //     posVelAtt->setAttitude_nb(trafo::quat_nb(0, 0, trafo::deg2rad(10.0)));
-//     pvaError->attitudeError_n() = trafo::deg2rad({ 0, 0, 1 });
+//     pvaError->attitudeError_n() = trafo::deg2rad(Eigen::Vector3d{ 0, 0, 1 });
 
 //     expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
 //     correctedPVA = correctPosVelAtt(posVelAtt, pvaError);

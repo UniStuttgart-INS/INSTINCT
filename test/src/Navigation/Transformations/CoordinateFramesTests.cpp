@@ -128,7 +128,7 @@ TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformatio
     REQUIRE(rad_180 == M_PI);
     REQUIRE(rad_360 == M_PI * 2.0);
 
-    Eigen::Vector3d rad3 = trafo::deg2rad({ 90, 180, 360 });
+    Eigen::Vector3d rad3 = trafo::deg2rad(Eigen::Vector3d{ 90, 180, 360 });
 
     REQUIRE(rad3.x() == M_PI_2);
     REQUIRE(rad3.y() == M_PI);
@@ -156,7 +156,7 @@ TEST_CASE("[InsTransformations] Radian to degree conversion", "[InsTransformatio
     REQUIRE(deg_180 == 180);
     REQUIRE(deg_360 == 360);
 
-    Eigen::Vector3d deg3 = trafo::rad2deg({ M_PI_2, M_PI, M_PI * 2.0 });
+    Eigen::Vector3d deg3 = trafo::rad2deg(Eigen::Vector3d{ M_PI_2, M_PI, M_PI * 2.0 });
 
     REQUIRE(deg3.x() == 90);
     REQUIRE(deg3.y() == 180);

@@ -53,7 +53,7 @@ class ErrorModel : public Node
     void restore(const json& j) override;
 
     /// Random Number Generator GUI settings
-    struct RandomNumberGenerator
+    struct RandomNumberGenerator // NOLINT(cert-msc32-c,cert-msc51-cpp)
     {
         bool useSeedInsteadOfSystemTime = true; ///< Flag whether to use the seed instead of the system time
         uint64_t seed = 0;                      ///< Seed for the random number generator

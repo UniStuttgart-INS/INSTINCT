@@ -52,18 +52,38 @@ namespace trafo
 /// @param[in] deg Value to convert in [deg]
 /// @return The converted value in [rad]
 template<class T>
-[[nodiscard]] constexpr auto deg2rad(T deg)
+[[nodiscard]] constexpr auto deg2rad(const T& deg)
 {
     return deg * M_PI / 180.0;
+}
+
+/// @brief Convert Degree to Radians
+/// @param[in] deg Value to convert in [deg]
+/// @return The converted value in [rad]
+template<>
+[[nodiscard]] inline auto deg2rad(const Eigen::Vector3d& deg)
+{
+    Eigen::Vector3d ret = deg * M_PI / 180.0;
+    return ret;
 }
 
 /// @brief Convert Radians to Degree
 /// @param[in] rad Value to convert in [rad]
 /// @return The converted value in [deg]
 template<class T>
-[[nodiscard]] constexpr auto rad2deg(T rad)
+[[nodiscard]] constexpr auto rad2deg(const T& rad)
 {
     return rad * 180.0 / M_PI;
+}
+
+/// @brief Convert Radians to Degree
+/// @param[in] rad Value to convert in [rad]
+/// @return The converted value in [deg]
+template<>
+[[nodiscard]] inline auto rad2deg(const Eigen::Vector3d& rad)
+{
+    Eigen::Vector3d ret = rad * 180.0 / M_PI;
+    return ret;
 }
 
 /// @brief Converts the quaternion to Euler rotation angles with rotation sequence ZYX
