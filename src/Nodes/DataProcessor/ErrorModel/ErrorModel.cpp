@@ -613,7 +613,7 @@ void NAV::ErrorModel::receiveObs(const std::shared_ptr<const NodeData>& nodeData
 void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
 {
     // Accelerometer Bias in platform frame coordinates [m/s^2]
-    Eigen::Vector3d accelerometerBias_p;
+    Eigen::Vector3d accelerometerBias_p = Eigen::Vector3d::Zero();
     switch (_imuAccelerometerBiasUnit)
     {
     case ImuAccelerometerBiasUnits::m_s2:
@@ -623,7 +623,7 @@ void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
     LOG_DATA("{}: accelerometerBias_p = {} [m/s^2]", nameId(), accelerometerBias_p.transpose());
 
     // Gyroscope Bias in platform frame coordinates [rad/s]
-    Eigen::Vector3d gyroscopeBias_p;
+    Eigen::Vector3d gyroscopeBias_p = Eigen::Vector3d::Zero();
     switch (_imuGyroscopeBiasUnit)
     {
     case ImuGyroscopeBiasUnits::deg_s:
@@ -638,7 +638,7 @@ void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
     // #########################################################################################################################################
 
     // Accelerometer Noise standard deviation in platform frame coordinates [m/s^2]
-    Eigen::Vector3d accelerometerNoiseStd;
+    Eigen::Vector3d accelerometerNoiseStd = Eigen::Vector3d::Zero();
     switch (_imuAccelerometerNoiseUnit)
     {
     case ImuAccelerometerNoiseUnits::m_s2:
@@ -651,7 +651,7 @@ void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
     LOG_DATA("{}: accelerometerNoiseStd = {} [m/s^2]", nameId(), accelerometerNoiseStd.transpose());
 
     // Gyroscope Noise standard deviation in platform frame coordinates [rad/s]
-    Eigen::Vector3d gyroscopeNoiseStd;
+    Eigen::Vector3d gyroscopeNoiseStd = Eigen::Vector3d::Zero();
     switch (_imuGyroscopeNoiseUnit)
     {
     case ImuGyroscopeNoiseUnits::rad_s:
@@ -686,7 +686,7 @@ void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
 void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
 {
     // Position Bias in latLonAlt in [rad, rad, m]
-    Eigen::Vector3d positionBias_lla;
+    Eigen::Vector3d positionBias_lla = Eigen::Vector3d::Zero();
     switch (_positionBiasUnit)
     {
     case PositionBiasUnits::meter:
@@ -705,7 +705,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     LOG_DATA("{}: positionBias_lla = {} [rad, rad, m]", nameId(), positionBias_lla.transpose());
 
     // Velocity bias in local-navigation coordinates in [m/s]
-    Eigen::Vector3d velocityBias_n;
+    Eigen::Vector3d velocityBias_n = Eigen::Vector3d::Zero();
     switch (_velocityBiasUnit)
     {
     case VelocityBiasUnits::m_s:
@@ -715,7 +715,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     LOG_DATA("{}: velocityBias_n = {} [m/s]", nameId(), velocityBias_n.transpose());
 
     // Roll, pitch, yaw bias in [rad]
-    Eigen::Vector3d attitudeBias;
+    Eigen::Vector3d attitudeBias = Eigen::Vector3d::Zero();
     switch (_attitudeBiasUnit)
     {
     case AttitudeBiasUnits::rad:
@@ -730,7 +730,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     // #########################################################################################################################################
 
     // Position Noise standard deviation in latitude, longitude and altitude [rad, rad, m]
-    Eigen::Vector3d positionNoiseStd_lla;
+    Eigen::Vector3d positionNoiseStd_lla = Eigen::Vector3d::Zero();
     switch (_positionNoiseUnit)
     {
     case PositionNoiseUnits::meter:
@@ -761,7 +761,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     LOG_DATA("{}: positionNoiseStd_lla = {} [rad, rad, m]", nameId(), positionNoiseStd_lla.transpose());
 
     // Velocity Noise standard deviation in local-navigation coordinates in [m/s]
-    Eigen::Vector3d velocityNoiseStd_n;
+    Eigen::Vector3d velocityNoiseStd_n = Eigen::Vector3d::Zero();
     switch (_velocityNoiseUnit)
     {
     case VelocityNoiseUnits::m_s:
@@ -774,7 +774,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     LOG_DATA("{}: velocityNoiseStd_n = {} [m/s]", nameId(), velocityNoiseStd_n.transpose());
 
     // Attitude Noise standard deviation in [rad]
-    Eigen::Vector3d attitudeNoiseStd;
+    Eigen::Vector3d attitudeNoiseStd = Eigen::Vector3d::Zero();
     switch (_attitudeNoiseUnit)
     {
     case AttitudeNoiseUnits::rad:
