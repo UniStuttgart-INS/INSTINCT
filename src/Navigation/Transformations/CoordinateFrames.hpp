@@ -102,12 +102,22 @@ template<class T>
 /// @return The rotation Quaternion representation
 [[nodiscard]] Eigen::Quaterniond quat_nb(double roll, double pitch, double yaw);
 
+/// @brief Quaternion for rotations from body to navigation frame
+/// @param[in] rollPitchYaw Roll, Pitch, Yaw angle in [rad]
+/// @return The rotation Quaternion representation
+[[nodiscard]] Eigen::Quaterniond quat_nb(const Eigen::Vector3d& rollPitchYaw);
+
 /// @brief Quaternion for rotations from navigation to body frame
 /// @param[in] roll Roll angle in [rad]
 /// @param[in] pitch Pitch angle in [rad]
 /// @param[in] yaw Yaw angle in [rad]
 /// @return The rotation Quaternion representation
 [[nodiscard]] Eigen::Quaterniond quat_bn(double roll, double pitch, double yaw);
+
+/// @brief Quaternion for rotations from navigation to body frame
+/// @param[in] rollPitchYaw Roll, Pitch, Yaw angle in [rad]
+/// @return The rotation Quaternion representation
+[[nodiscard]] Eigen::Quaterniond quat_bn(const Eigen::Vector3d& rollPitchYaw);
 
 /// @brief Quaternion for rotations from platform to body frame
 /// @param[in] mountingAngleX Mounting angle to x axis in [rad]. First rotation. (-pi:pi]

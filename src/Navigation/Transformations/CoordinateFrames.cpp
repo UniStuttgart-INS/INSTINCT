@@ -87,9 +87,19 @@ Eigen::Quaterniond quat_bn(const double roll, const double pitch, const double y
     return (rollAngle * pitchAngle * yawAngle).normalized();
 }
 
+Eigen::Quaterniond quat_bn(const Eigen::Vector3d& rollPitchYaw)
+{
+    return quat_bn(rollPitchYaw(0), rollPitchYaw(1), rollPitchYaw(2));
+}
+
 Eigen::Quaterniond quat_nb(const double roll, const double pitch, const double yaw)
 {
     return quat_bn(roll, pitch, yaw).conjugate();
+}
+
+Eigen::Quaterniond quat_nb(const Eigen::Vector3d& rollPitchYaw)
+{
+    return quat_nb(rollPitchYaw(0), rollPitchYaw(1), rollPitchYaw(2));
 }
 
 Eigen::Quaterniond quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
