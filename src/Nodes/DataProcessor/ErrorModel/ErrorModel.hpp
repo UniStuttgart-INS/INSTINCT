@@ -1,5 +1,5 @@
-/// @file ImuError.hpp
-/// @brief Adds errors (biases and noise) to IMU measurements
+/// @file ErrorModel.hpp
+/// @brief Adds errors (biases and noise) to measurements
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2021-12-21
 
@@ -13,22 +13,22 @@
 
 namespace NAV
 {
-/// Adds errors (biases and noise) to IMU measurements
-class ImuError : public Node
+/// Adds errors (biases and noise) to measurements
+class ErrorModel : public Node
 {
   public:
     /// @brief Default constructor
-    ImuError();
+    ErrorModel();
     /// @brief Destructor
-    ~ImuError() override;
+    ~ErrorModel() override;
     /// @brief Copy constructor
-    ImuError(const ImuError&) = delete;
+    ErrorModel(const ErrorModel&) = delete;
     /// @brief Move constructor
-    ImuError(ImuError&&) = delete;
+    ErrorModel(ErrorModel&&) = delete;
     /// @brief Copy assignment operator
-    ImuError& operator=(const ImuError&) = delete;
+    ErrorModel& operator=(const ErrorModel&) = delete;
     /// @brief Move assignment operator
-    ImuError& operator=(ImuError&&) = delete;
+    ErrorModel& operator=(ErrorModel&&) = delete;
 
     /// @brief String representation of the Class Type
     [[nodiscard]] static std::string typeStatic();
@@ -57,34 +57,36 @@ class ImuError : public Node
     /// @brief Initialize the node
     bool initialize() override;
 
-    /// @brief Add errors to the ImuObs observation
+    /// @brief Callback when receiving data on a port
     /// @param[in] nodeData ImuObs to process
     /// @param[in] linkId Id of the link over which the data is received
     void receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     // #########################################################################################################################################
+    //                                                                 ImuObs
+    // #########################################################################################################################################
 
     /// Possible units to specify an accelerometer bias with
-    enum class AccelerometerBiasUnits
+    enum class ImuAccelerometerBiasUnits
     {
         m_s2, ///< [m/s^2]
     };
 
     /// Selected unit for the accelerometer bias in the GUI
-    AccelerometerBiasUnits accelerometerBiasUnit = AccelerometerBiasUnits::m_s2;
+    ImuAccelerometerBiasUnits imuAccelerometerBiasUnit = ImuAccelerometerBiasUnits::m_s2;
 
     /// Bias of the accelerometer in platform coordinates [m/s^2]
     Eigen::Vector3d imuAccelerometerBias_p = Eigen::Vector3d::Zero();
 
     /// Possible units to specify an gyroscope bias with
-    enum class GyroscopeBiasUnits
+    enum class ImuGyroscopeBiasUnits
     {
         rad_s, ///< [rad/s]
         deg_s, ///< [deg/s]
     };
 
     /// Selected unit for the gyroscope bias in the GUI
-    GyroscopeBiasUnits gyroscopeBiasUnit = GyroscopeBiasUnits::rad_s;
+    ImuGyroscopeBiasUnits imuGyroscopeBiasUnit = ImuGyroscopeBiasUnits::rad_s;
 
     /// Bias of the gyroscope in platform coordinates [rad/s]
     Eigen::Vector3d imuGyroscopeBias_p = Eigen::Vector3d::Zero();

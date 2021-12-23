@@ -1,4 +1,4 @@
-#include "ImuError.hpp"
+#include "ErrorModel.hpp"
 
 #include "NodeData/IMU/ImuObs.hpp"
 
@@ -12,7 +12,7 @@ namespace nm = NAV::NodeManager;
 
 #include "util/Eigen.hpp"
 
-NAV::ImuError::ImuError()
+NAV::ErrorModel::ErrorModel()
 {
     name = typeStatic();
 
@@ -22,81 +22,81 @@ NAV::ImuError::ImuError()
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuError::receiveObs);
+    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ErrorModel::receiveObs);
 }
 
-NAV::ImuError::~ImuError()
+NAV::ErrorModel::~ErrorModel()
 {
     LOG_TRACE("{}: called", nameId());
 }
 
-std::string NAV::ImuError::typeStatic()
+std::string NAV::ErrorModel::typeStatic()
 {
-    return "ImuError";
+    return "ErrorModel";
 }
 
-std::string NAV::ImuError::type() const
+std::string NAV::ErrorModel::type() const
 {
     return typeStatic();
 }
 
-std::string NAV::ImuError::category()
+std::string NAV::ErrorModel::category()
 {
     return "DataProcessor";
 }
 
-void NAV::ImuError::guiConfig()
+void NAV::ErrorModel::guiConfig()
 {
     float itemWidth = 350;
     float unitWidth = 80;
 
     if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Bias (platform)##{}", size_t(id)).c_str(), itemWidth, unitWidth,
-                                           imuAccelerometerBias_p.data(), reinterpret_cast<int*>(&accelerometerBiasUnit), "m/s^2\0\0", // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                           imuAccelerometerBias_p.data(), reinterpret_cast<int*>(&imuAccelerometerBiasUnit), "m/s^2\0\0", // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
                                            "%.2e", ImGuiInputTextFlags_CharsScientific))
     {
         LOG_DEBUG("{}: imuAccelerometerBias_p changed to {}", nameId(), imuAccelerometerBias_p.transpose());
-        LOG_DEBUG("{}: accelerometerBiasUnit changed to {}", nameId(), accelerometerBiasUnit);
+        LOG_DEBUG("{}: imuAccelerometerBiasUnit changed to {}", nameId(), imuAccelerometerBiasUnit);
         flow::ApplyChanges();
     }
     if (gui::widgets::InputDouble3WithUnit(fmt::format("Gyroscope Bias (platform)##{}", size_t(id)).c_str(), itemWidth, unitWidth,
-                                           imuGyroscopeBias_p.data(), reinterpret_cast<int*>(&gyroscopeBiasUnit), "rad/s\0deg/s\0\0", // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+                                           imuGyroscopeBias_p.data(), reinterpret_cast<int*>(&imuGyroscopeBiasUnit), "rad/s\0deg/s\0\0", // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
                                            "%.2e", ImGuiInputTextFlags_CharsScientific))
     {
         LOG_DEBUG("{}: imuGyroscopeBias_p changed to {}", nameId(), imuGyroscopeBias_p.transpose());
-        LOG_DEBUG("{}: gyroscopeBiasUnit changed to {}", nameId(), gyroscopeBiasUnit);
+        LOG_DEBUG("{}: imuGyroscopeBiasUnit changed to {}", nameId(), imuGyroscopeBiasUnit);
         flow::ApplyChanges();
     }
 }
 
-[[nodiscard]] json NAV::ImuError::save() const
+[[nodiscard]] json NAV::ErrorModel::save() const
 {
     LOG_TRACE("{}: called", nameId());
 
     json j;
 
-    j["accelerometerBiasUnit"] = accelerometerBiasUnit;
+    j["imuAccelerometerBiasUnit"] = imuAccelerometerBiasUnit;
     j["imuAccelerometerBias_p"] = imuAccelerometerBias_p;
-    j["gyroscopeBiasUnit"] = gyroscopeBiasUnit;
+    j["imuGyroscopeBiasUnit"] = imuGyroscopeBiasUnit;
     j["imuGyroscopeBias_p"] = imuGyroscopeBias_p;
 
     return j;
 }
 
-void NAV::ImuError::restore(json const& j)
+void NAV::ErrorModel::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (j.contains("accelerometerBiasUnit"))
+    if (j.contains("imuAccelerometerBiasUnit"))
     {
-        j.at("accelerometerBiasUnit").get_to(accelerometerBiasUnit);
+        j.at("imuAccelerometerBiasUnit").get_to(imuAccelerometerBiasUnit);
     }
     if (j.contains("imuAccelerometerBias_p"))
     {
         j.at("imuAccelerometerBias_p").get_to(imuAccelerometerBias_p);
     }
-    if (j.contains("gyroscopeBiasUnit"))
+    if (j.contains("imuGyroscopeBiasUnit"))
     {
-        j.at("gyroscopeBiasUnit").get_to(gyroscopeBiasUnit);
+        j.at("imuGyroscopeBiasUnit").get_to(imuGyroscopeBiasUnit);
     }
     if (j.contains("imuGyroscopeBias_p"))
     {
@@ -104,25 +104,25 @@ void NAV::ImuError::restore(json const& j)
     }
 }
 
-bool NAV::ImuError::initialize()
+bool NAV::ErrorModel::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
     return true;
 }
 
-void NAV::ImuError::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
+void NAV::ErrorModel::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /*linkId*/)
 {
     auto imuObs = std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(nodeData));
 
     Eigen::Vector3d accelerometerBias_p = imuAccelerometerBias_p;
 
     Eigen::Vector3d gyroscopeBias_p = Eigen::Vector3d::Zero();
-    if (gyroscopeBiasUnit == GyroscopeBiasUnits::deg_s)
+    if (imuGyroscopeBiasUnit == ImuGyroscopeBiasUnits::deg_s)
     {
         gyroscopeBias_p = trafo::deg2rad3(imuGyroscopeBias_p);
     }
-    else // if (gyroscopeBiasUnit == GyroscopeBiasUnits::rad_s)
+    else // if (imuGyroscopeBiasUnit == ImuGyroscopeBiasUnits::rad_s)
     {
         gyroscopeBias_p = imuGyroscopeBias_p;
     }

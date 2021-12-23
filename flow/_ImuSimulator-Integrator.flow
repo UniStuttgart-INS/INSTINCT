@@ -5542,7 +5542,7 @@
                 }
             ],
             "kind": "Blueprint",
-            "name": "ImuError",
+            "name": "ErrorModel",
             "outputPins": [
                 {
                     "id": 384
@@ -5556,7 +5556,7 @@
                 "x": 0.0,
                 "y": 0.0
             },
-            "type": "ImuError"
+            "type": "ErrorModel"
         },
         "node-42": {
             "data": {
