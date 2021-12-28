@@ -5,7 +5,7 @@
 #include "internal/gui/widgets/FileDialog.hpp"
 
 #include "internal/NodeManager.hpp"
-// namespace nm = NAV::NodeManager; //TODO: Uncomment when node is created
+namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 // #include "NodeData/IMU/"
@@ -20,7 +20,7 @@ NAV::UlogFile::UlogFile()
     hasConfig = true;
     // guiConfigDefaultWindowSize = {}; //TODO
 
-    // nm::CreateOutputPin(this, "Binary Output", Pin::Type::Flow, { NAV::UlogFile::type() }, &UlogFile::pollData);
+    nm::CreateOutputPin(this, "Output", Pin::Type::Flow, { NAV::UlogFile::type() }, &UlogFile::pollData);
 }
 
 NAV::UlogFile::~UlogFile()
@@ -99,4 +99,9 @@ bool NAV::UlogFile::resetNode()
 
 void NAV::UlogFile::readHeader()
 {
+}
+
+std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
+{
+    return nullptr; //TODO
 }
