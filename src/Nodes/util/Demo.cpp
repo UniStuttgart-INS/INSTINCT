@@ -18,7 +18,7 @@ namespace NAV
 {
 /// @brief Write info to a json object
 /// @param[out] j Json output
-/// @param[in] rng Object to read info from
+/// @param[in] data Object to read info from
 void to_json(json& j, const Demo::DemoData& data)
 {
     j = json{
@@ -28,7 +28,7 @@ void to_json(json& j, const Demo::DemoData& data)
 }
 /// @brief Read info from a json object
 /// @param[in] j Json variable to read info from
-/// @param[out] rng Output object
+/// @param[out] data Output object
 void from_json(const json& j, Demo::DemoData& data)
 {
     if (j.contains("boolean"))
