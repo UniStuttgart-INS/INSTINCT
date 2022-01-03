@@ -217,10 +217,10 @@ void NAV::Transformation::notifyOnOutputValueChanged(ax::NodeEditor::LinkId link
                     *inputMatrix = trafo::quat2eulerZYX(Eigen::Quaterniond(matrix(0, 0), matrix(1, 0), matrix(2, 0), matrix(3, 0)));
                     break;
                 case Type::RollPitchYawDeg_2_Quat_nb:
-                    *inputMatrix = trafo::rad2deg3(trafo::quat2eulerZYX(Eigen::Quaterniond(matrix(0, 0),
-                                                                                           matrix(1, 0),
-                                                                                           matrix(2, 0),
-                                                                                           matrix(3, 0))));
+                    *inputMatrix = trafo::rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond(matrix(0, 0),
+                                                                                          matrix(1, 0),
+                                                                                          matrix(2, 0),
+                                                                                          matrix(3, 0))));
                     break;
                 }
                 notifyInputValueChanged(InputPortIndex_Matrix);
@@ -266,10 +266,10 @@ void NAV::Transformation::notifyOnOutputValueChanged(ax::NodeEditor::LinkId link
                     inputMatrix = trafo::quat2eulerZYX(Eigen::Quaterniond(matrix(0, 0), matrix(1, 0), matrix(2, 0), matrix(3, 0)));
                     break;
                 case Type::RollPitchYawDeg_2_Quat_nb:
-                    inputMatrix = trafo::rad2deg3(trafo::quat2eulerZYX(Eigen::Quaterniond(matrix(0, 0),
-                                                                                          matrix(1, 0),
-                                                                                          matrix(2, 0),
-                                                                                          matrix(3, 0))));
+                    inputMatrix = trafo::rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond(matrix(0, 0),
+                                                                                         matrix(1, 0),
+                                                                                         matrix(2, 0),
+                                                                                         matrix(3, 0))));
                     break;
                 }
                 notifyInputValueChanged(InputPortIndex_Matrix);
@@ -316,10 +316,10 @@ void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkI
                     matrix = trafo::quat2eulerZYX(Eigen::Quaterniond((*inputMatrix)(0, 0), (*inputMatrix)(1, 0), (*inputMatrix)(2, 0), (*inputMatrix)(3, 0)));
                     break;
                 case Type::Quat_nb_2_RollPitchYawDeg:
-                    matrix = trafo::rad2deg3(trafo::quat2eulerZYX(Eigen::Quaterniond((*inputMatrix)(0, 0),
-                                                                                     (*inputMatrix)(1, 0),
-                                                                                     (*inputMatrix)(2, 0),
-                                                                                     (*inputMatrix)(3, 0))));
+                    matrix = trafo::rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond((*inputMatrix)(0, 0),
+                                                                                    (*inputMatrix)(1, 0),
+                                                                                    (*inputMatrix)(2, 0),
+                                                                                    (*inputMatrix)(3, 0))));
                     break;
                 case Type::RollPitchYawRad_2_Quat_nb:
                     matrix = trafo::quat_nb((*inputMatrix)(0, 0), (*inputMatrix)(1, 0), (*inputMatrix)(2, 0)).coeffs();
@@ -365,10 +365,10 @@ void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkI
                     matrix = trafo::quat2eulerZYX(Eigen::Quaterniond(inputMatrix(0, 0), inputMatrix(1, 0), inputMatrix(2, 0), inputMatrix(3, 0)));
                     break;
                 case Type::Quat_nb_2_RollPitchYawDeg:
-                    matrix = trafo::rad2deg3(trafo::quat2eulerZYX(Eigen::Quaterniond(inputMatrix(0, 0),
-                                                                                     inputMatrix(1, 0),
-                                                                                     inputMatrix(2, 0),
-                                                                                     inputMatrix(3, 0))));
+                    matrix = trafo::rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond(inputMatrix(0, 0),
+                                                                                    inputMatrix(1, 0),
+                                                                                    inputMatrix(2, 0),
+                                                                                    inputMatrix(3, 0))));
                     break;
                 case Type::RollPitchYawRad_2_Quat_nb:
                     matrix = trafo::quat_nb(inputMatrix(0, 0), inputMatrix(1, 0), inputMatrix(2, 0)).coeffs();

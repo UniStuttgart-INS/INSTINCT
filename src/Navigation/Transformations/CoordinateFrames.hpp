@@ -51,32 +51,40 @@ namespace trafo
 /// @brief Convert Degree to Radians
 /// @param[in] deg Value to convert in [deg]
 /// @return The converted value in [rad]
-template<class T,
-         typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-[[nodiscard]] constexpr double deg2rad(T deg)
+template<class T>
+[[nodiscard]] constexpr auto deg2rad(const T& deg)
 {
-    return static_cast<double>(deg) * M_PI / 180.0;
+    return deg * M_PI / 180.0;
+}
+
+/// @brief Convert Degree to Radians
+/// @param[in] deg Value to convert in [deg]
+/// @return The converted value in [rad]
+template<>
+[[nodiscard]] inline auto deg2rad(const Eigen::Vector3d& deg)
+{
+    Eigen::Vector3d ret = deg * M_PI / 180.0;
+    return ret;
 }
 
 /// @brief Convert Radians to Degree
 /// @param[in] rad Value to convert in [rad]
 /// @return The converted value in [deg]
-template<class T,
-         typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-[[nodiscard]] constexpr double rad2deg(T rad)
+template<class T>
+[[nodiscard]] constexpr auto rad2deg(const T& rad)
 {
-    return static_cast<double>(rad) * 180.0 / M_PI;
+    return rad * 180.0 / M_PI;
 }
 
-/// @brief Convert Degree to Radians
-/// @param[in] deg Vector to convert in [deg]
-/// @return The converted Vector in [rad]
-[[nodiscard]] Eigen::Vector3d deg2rad3(const Eigen::Vector3d& deg);
-
 /// @brief Convert Radians to Degree
-/// @param[in] rad Vector to convert in [rad]
-/// @return The converted Vector in [deg]
-[[nodiscard]] Eigen::Vector3d rad2deg3(const Eigen::Vector3d& rad);
+/// @param[in] rad Value to convert in [rad]
+/// @return The converted value in [deg]
+template<>
+[[nodiscard]] inline auto rad2deg(const Eigen::Vector3d& rad)
+{
+    Eigen::Vector3d ret = rad * 180.0 / M_PI;
+    return ret;
+}
 
 /// @brief Converts the quaternion to Euler rotation angles with rotation sequence ZYX
 /// @param[in] q Quaternion to convert
@@ -114,12 +122,22 @@ template<class T,
 /// @return The rotation Quaternion representation
 [[nodiscard]] Eigen::Quaterniond quat_nb(double roll, double pitch, double yaw);
 
+/// @brief Quaternion for rotations from body to navigation frame
+/// @param[in] rollPitchYaw Roll, Pitch, Yaw angle in [rad]
+/// @return The rotation Quaternion representation
+[[nodiscard]] Eigen::Quaterniond quat_nb(const Eigen::Vector3d& rollPitchYaw);
+
 /// @brief Quaternion for rotations from navigation to body frame
 /// @param[in] roll Roll angle in [rad]
 /// @param[in] pitch Pitch angle in [rad]
 /// @param[in] yaw Yaw angle in [rad]
 /// @return The rotation Quaternion representation
 [[nodiscard]] Eigen::Quaterniond quat_bn(double roll, double pitch, double yaw);
+
+/// @brief Quaternion for rotations from navigation to body frame
+/// @param[in] rollPitchYaw Roll, Pitch, Yaw angle in [rad]
+/// @return The rotation Quaternion representation
+[[nodiscard]] Eigen::Quaterniond quat_bn(const Eigen::Vector3d& rollPitchYaw);
 
 /// @brief Quaternion for rotations from platform to body frame
 /// @param[in] mountingAngleX Mounting angle to x axis in [rad]. First rotation. (-pi:pi]

@@ -10,7 +10,6 @@
 
 namespace NAV
 {
-
 /// Available Gravity Models
 enum class GravityModel : int
 {
@@ -19,6 +18,7 @@ enum class GravityModel : int
     Somigliana,   ///< Somigliana gravity model
     EGM96,        ///< Earth Gravitational Model 1996
     OFF,          ///< Gravity Model turned off
+    COUNT,        ///< Amount of items in the enum
 };
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth)
@@ -37,7 +37,7 @@ enum class GravityModel : int
 [[nodiscard]] Eigen::Vector3d calcGravitation_n_SomiglianaAltitude(const double& latitude, const double& altitude);
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
-///        using gravity as derived from the gravity potential, but neglecting the north component of the centrifugal acceleration
+///        using gravity as derived from the gravity potential. However, the north component of the centrifugal acceleration is neglected in order to match the implementation of Skydel's 'ImuPlugin'
 /// @param[in] latitude Latitude in [rad]
 /// @param[in] altitude Altitude in [m]
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
@@ -46,7 +46,7 @@ enum class GravityModel : int
 [[nodiscard]] Eigen::Vector3d calcGravitation_n_WGS84_Skydel(const double& latitude, const double& altitude);
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
-///        using gravity as derived from the gravity potential with correctly oriented centrifugal acceleration
+///        using gravity as derived from the gravity potential.
 /// @param[in] latitude Latitude in [rad]
 /// @param[in] altitude Altitude in [m]
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
@@ -55,7 +55,7 @@ enum class GravityModel : int
 [[nodiscard]] Eigen::Vector3d calcGravitation_n_WGS84(const double& latitude, const double& altitude);
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
-///        using the EGM96 spherical harmonic model (up to order 10) including the centrifugal acceleration
+///        using the EGM96 spherical harmonic model (up to order 10)
 /// @param[in] latLonAlt [ϕ, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]
 /// @param[in] ndegree Degree of the EGM96 (1 <= ndegree <= 10)
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]

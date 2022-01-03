@@ -102,8 +102,8 @@ TEST_CASE("[PosVelAtt] Attitude RollPitchYaw", "[PosVelAtt]")
             for (double expectedYaw = -M_PI + delta; expectedYaw <= M_PI - delta + std::numeric_limits<float>::epsilon(); expectedYaw += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
                 state.setAttitude_nb(trafo::quat_nb(expectedRoll, expectedPitch, expectedYaw));
-                auto actualRollPitchYaw = trafo::rad2deg3(state.rollPitchYaw());
-                REQUIRE(trafo::rad2deg3(Eigen::Vector3d{ expectedRoll, expectedPitch, expectedYaw }) == EigApprox(actualRollPitchYaw).margin(1e-8).epsilon(0));
+                auto actualRollPitchYaw = trafo::rad2deg(state.rollPitchYaw());
+                REQUIRE(trafo::rad2deg(Eigen::Vector3d{ expectedRoll, expectedPitch, expectedYaw }) == EigApprox(actualRollPitchYaw).margin(1e-8).epsilon(0));
             }
         }
     }

@@ -128,7 +128,7 @@ TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformatio
     REQUIRE(rad_180 == M_PI);
     REQUIRE(rad_360 == M_PI * 2.0);
 
-    Eigen::Vector3d rad3 = trafo::deg2rad3({ 90, 180, 360 });
+    Eigen::Vector3d rad3 = trafo::deg2rad(Eigen::Vector3d{ 90, 180, 360 });
 
     REQUIRE(rad3.x() == M_PI_2);
     REQUIRE(rad3.y() == M_PI);
@@ -156,7 +156,7 @@ TEST_CASE("[InsTransformations] Radian to degree conversion", "[InsTransformatio
     REQUIRE(deg_180 == 180);
     REQUIRE(deg_360 == 360);
 
-    Eigen::Vector3d deg3 = trafo::rad2deg3({ M_PI_2, M_PI, M_PI * 2.0 });
+    Eigen::Vector3d deg3 = trafo::rad2deg(Eigen::Vector3d{ M_PI_2, M_PI, M_PI * 2.0 });
 
     REQUIRE(deg3.x() == 90);
     REQUIRE(deg3.y() == 180);
@@ -265,8 +265,8 @@ TEST_CASE("[InsTransformations] Quaternion to Euler conversion", "[InsTransforma
             for (double gamma = -M_PI + delta; gamma < M_PI - std::numeric_limits<float>::epsilon(); gamma += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
                 auto q = quat(alpha, beta, gamma);
-                auto ZYX = trafo::rad2deg3(trafo::quat2eulerZYX(q));
-                REQUIRE(ZYX == EigApprox(trafo::rad2deg3(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
+                auto ZYX = trafo::rad2deg(trafo::quat2eulerZYX(q));
+                REQUIRE(ZYX == EigApprox(trafo::rad2deg(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
             }
         }
     }
@@ -296,8 +296,8 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
                     q.coeffs() = -q.coeffs();
                 }
 
-                auto ZYX = trafo::rad2deg3(trafo::quat2eulerZYX(q));
-                REQUIRE(ZYX == EigApprox(trafo::rad2deg3(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
+                auto ZYX = trafo::rad2deg(trafo::quat2eulerZYX(q));
+                REQUIRE(ZYX == EigApprox(trafo::rad2deg(Eigen::Vector3d{ alpha, beta, gamma })).margin(1e-8).epsilon(0));
             }
         }
     }

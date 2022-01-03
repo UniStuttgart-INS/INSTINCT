@@ -14,6 +14,7 @@
 #include "NodeData/State/ImuBiases.hpp"
 
 #include "Navigation/Gravity/Gravity.hpp"
+#include "Navigation/Math/NumericalIntegration.hpp"
 
 #include <deque>
 
@@ -57,7 +58,7 @@ class ImuIntegrator : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OutputPortIndex_InertialNavSol__t0 = 0; ///< @brief Flow (InertialNavSol)
+    constexpr static size_t OutputPortIndex_InertialNavSol = 0; ///< @brief Flow (InertialNavSol)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -65,15 +66,15 @@ class ImuIntegrator : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
+    /// @brief Receive Function for the PosVelAtt initial values
+    /// @param[in] nodeData PosVelAtt to process
+    /// @param[in] linkId Id of the link over which the data is received
+    void recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+
     /// @brief Receive Function for the ImuObs at the time tₖ
     /// @param[in] nodeData ImuObs to process
     /// @param[in] linkId Id of the link over which the data is received
-    void recvImuObs__t0(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
-
-    /// @brief Receive Function for the PosVelAtt at the time tₖ₋₁
-    /// @param[in] nodeData PosVelAtt to process
-    /// @param[in] linkId Id of the link over which the data is received
-    void recvState__t1(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
+    void recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
     /// @brief Receive function for PVAError
     /// @param[in] nodeData PVAError received
@@ -85,11 +86,16 @@ class ImuIntegrator : public Node
     /// @param[in] linkId Id of the link over which the data is received
     void recvImuBiases(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId linkId);
 
+    /// @brief Corrects the provided Position, Velocity and Attitude with the corrections
+    /// @param[in] posVelAtt PosVelAtt to correct
+    /// @param[in] pvaError Corrections to apply
+    /// @return Newly allocated pointer to the corrected posVelAtt
+    static std::shared_ptr<const NAV::PosVelAtt> correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError);
+
     /// @brief Integrates the Imu Observation data
     void integrateObservation();
 
-    /// Accumulated IMU biases
-    std::shared_ptr<const ImuBiases> imuBiases = nullptr;
+    // #########################################################################################################################################
 
     /// IMU Observation list
     /// Length depends on the integration algorithm. Newest observation first (tₖ, tₖ₋₁, tₖ₋₂, ...)
@@ -110,6 +116,8 @@ class ImuIntegrator : public Node
     /// TimeSinceStartup at initialization (needed to set time tag when TimeSinceStartup is used)
     uint64_t timeSinceStartup__init = 0;
 
+    // #########################################################################################################################################
+
     /// @brief Available Integration Frames
     enum class IntegrationFrame : int
     {
@@ -119,29 +127,38 @@ class ImuIntegrator : public Node
     /// Frame to integrate the observations in
     IntegrationFrame integrationFrame = IntegrationFrame::NED;
 
+    /// @brief Integration algorithm used for the update
+    IntegrationAlgorithm integrationAlgorithm = IntegrationAlgorithm::RungeKutta1;
+
+    // #########################################################################################################################################
+
+    /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
+    bool prefereTimeSinceStartupOverInsTime = false;
+
+    /// Flag to let the integration algorithm use uncompensated acceleration and angular rates instead of compensated
+    bool prefereUncompensatedData = false;
+
+    // #########################################################################################################################################
+
     /// @brief Gravity model selected in the GUI
     GravityModel gravityModel = GravityModel::EGM96;
 
-    /// Integration Algorithm selection
-    enum class IntegrationAlgorithm : size_t
-    {
-        RectangularRule, ///< Rectangular rule
-        Simpson,         ///< Simpson
-        RungeKutta1,     ///< Runge-Kutta 1st order
-        RungeKutta3,     ///< Runge-Kutta 3rd order
-        COUNT,           ///< Amount of available integration algorithms
-    };
-    /// @brief Integration algorithm used for the attitude update
-    IntegrationAlgorithm integrationAlgorithmAttitude = IntegrationAlgorithm::RungeKutta3;
-    /// @brief Integration algorithm used for the velocity update
-    IntegrationAlgorithm integrationAlgorithmVelocity = IntegrationAlgorithm::Simpson;
-    /// @brief Integration algorithm used for the position update
-    IntegrationAlgorithm integrationAlgorithmPosition = IntegrationAlgorithm::RectangularRule;
+    /// Apply the coriolis acceleration compensation to the measured accelerations
+    bool coriolisAccelerationCompensationEnabled = true;
 
-    /// @brief Converts the enum to a string
-    /// @param[in] algorithm Enum value to convert into text
-    /// @return String representation of the enum
-    static const char* to_string(IntegrationAlgorithm algorithm);
+    /// Apply the centrifugal acceleration compensation to the measured accelerations
+    bool centrifgalAccelerationCompensationEnabled = true;
+
+    /// Apply the Earth rotation rate compensation to the measured angular rates
+    bool angularRateEarthRotationCompensationEnabled = true;
+
+    /// Apply the transport rate compensation to the measured angular rates
+    bool angularRateTransportRateCompensationEnabled = true;
+
+    /// Apply Zwiener's rotation correction for the velocity update
+    bool velocityUpdateRotationCorrectionEnabled = true;
+
+    // #########################################################################################################################################
 
     /// GUI flag, whether to show the input pin for PVA Corrections
     bool showCorrectionsInputPin = false;
@@ -149,24 +166,8 @@ class ImuIntegrator : public Node
     /// Pointer to the most recent PVA error
     std::shared_ptr<const PVAError> pvaError = nullptr;
 
-    /// Runge Kutta uses intermediate observations but propagates only every other state. Because of this 2 separate state solutions can coexist.
-    /// To avoid this only every seconds state can be output resulting in halving the output frequency. The accuracy of the results is not affected by this.
-    bool calculateIntermediateValues = true;
-
-    /// Flag to skip every second calculation
-    bool skipIntermediateCalculation = false;
-
-    /// Flag, whether the integrator should take the time from the IMU clock instead of the insTime
-    bool prefereTimeSinceStartupOverInsTime = false;
-
-    /// Flag to toggle centrifugal acceleration compensation of the acceleration at the current position
-    bool centrifugalAccCompensation = true;
-
-    /// Flag to toggle coriolis acceleration compensation of the acceleration at the current position
-    bool coriolisCompensation = true;
-
-    /// Flag to let the integration algorithm use uncompensated acceleration and angular rates instead of compensated
-    bool prefereUncompensatedData = false;
+    /// Accumulated IMU biases
+    std::shared_ptr<const ImuBiases> imuBiases = nullptr;
 };
 
 } // namespace NAV

@@ -102,7 +102,7 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
 
     if (j.contains("outputType"))
     {
-        outputType = static_cast<OutputType>(j.at("outputType").get<int>());
+        j.at("outputType").get_to(outputType);
 
         if (!outputPins.empty())
         {
@@ -120,7 +120,7 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
     }
     if (j.contains("posVelSource"))
     {
-        posVelSource = static_cast<PosVelSource>(j.at("posVelSource").get<int>());
+        j.at("posVelSource").get_to(posVelSource);
     }
     if (j.contains("forceStatic"))
     {
@@ -238,7 +238,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
         {
-            auto ypr = trafo::deg2rad3(vnObs->attitudeOutputs->ypr.cast<double>());
+            auto ypr = trafo::deg2rad(vnObs->attitudeOutputs->ypr.cast<double>());
             quat_nb = trafo::quat_nb(ypr(2), ypr(1), ypr(0));
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)

@@ -10,7 +10,6 @@
 
 namespace NAV
 {
-
 /// @brief Calculates the factorial of an unsigned integer
 /// @param[in] n Unsigned integer
 /// @return The factorial of 'n'
@@ -32,6 +31,22 @@ Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrix(const Eigen::Matrix<_Scalar, 3,
         -a(1), a(0), 0;
 
     return skewMat;
+}
+
+/// @brief Calculates the square of a skew symmetric matrix of the given vector.
+/// @tparam _Scalar Data type of the Matrix
+/// @param[in, out] a The vector
+/// @return Square of skew symmetric matrix
+template<typename _Scalar,
+         typename = std::enable_if_t<std::is_arithmetic_v<_Scalar>>>
+Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrix2(const Eigen::Matrix<_Scalar, 3, 1>& a)
+{
+    Eigen::Matrix<_Scalar, 3, 3> skewMat2;
+    skewMat2 << std::pow(a(2), 2) + std::pow(a(1), 2), a(0) * a(1), a(0) * a(2),
+        a(0) * a(1), std::pow(a(2), 2) + std::pow(a(0), 2), a(1) * a(2),
+        a(0) * a(2), a(1) * a(2), std::pow(a(0), 2) + std::pow(a(1), 2);
+
+    return skewMat2;
 }
 
 /// @brief Calculates the secant of a value (1 / cos(x))

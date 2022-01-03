@@ -6,6 +6,7 @@
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
 #include "Navigation/INS/Mechanization.hpp"
+#include "Navigation/Math/Math.hpp"
 
 #include "internal/gui/widgets/HelpMarker.hpp"
 #include <imgui_internal.h>
@@ -16,6 +17,8 @@ namespace nm = NAV::NodeManager;
 
 #include "NodeData/State/InertialNavSol.hpp"
 
+#include <algorithm>
+
 NAV::ImuIntegrator::ImuIntegrator()
 {
     name = typeStatic();
@@ -25,8 +28,8 @@ NAV::ImuIntegrator::ImuIntegrator()
     hasConfig = true;
     guiConfigDefaultWindowSize = { 483, 350 };
 
-    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs__t0);
-    nm::CreateInputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvState__t1);
+    nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuIntegrator::recvImuObs);
+    nm::CreateInputPin(this, "PosVelAttInit", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuIntegrator::recvPosVelAttInit);
 
     nm::CreateOutputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() });
 }
@@ -54,61 +57,27 @@ std::string NAV::ImuIntegrator::category()
 void NAV::ImuIntegrator::guiConfig()
 {
     ImGui::SetNextItemWidth(250);
+    ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
     if (ImGui::Combo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&integrationFrame), "ECEF\0NED\0\0"))
     {
         LOG_DEBUG("{}: Integration Frame changed to {}", nameId(), integrationFrame == IntegrationFrame::NED ? "NED" : "ECEF");
         flow::ApplyChanges();
     }
+    ImGui::PopItemFlag();
+    ImGui::PopStyleVar();
 
     ImGui::SetNextItemWidth(250);
-    if (ImGui::Combo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&gravityModel), "WGS84\0WGS84_Skydel\0Somigliana\0EGM96\0OFF\0\0"))
-    {
-        if (gravityModel == GravityModel::WGS84)
-        {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84");
-        }
-        else if (gravityModel == GravityModel::WGS84_Skydel)
-        {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "WGS84_Skydel");
-        }
-        else if (gravityModel == GravityModel::Somigliana)
-        {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "Somigliana");
-        }
-        else if (gravityModel == GravityModel::EGM96)
-        {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "EGM96");
-        }
-        else if (gravityModel == GravityModel::OFF)
-        {
-            LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), "OFF");
-        }
-        flow::ApplyChanges();
-    }
-
-    ImGui::SetNextItemWidth(250);
-    if (ImGui::BeginCombo(fmt::format("Integration Algorithm Attitude##{}", size_t(id)).c_str(), to_string(integrationAlgorithmAttitude)))
+    if (ImGui::BeginCombo(fmt::format("Integration Algorithm##{}", size_t(id)).c_str(), to_string(integrationAlgorithm)))
     {
         for (size_t i = 0; i < static_cast<size_t>(IntegrationAlgorithm::COUNT); i++)
         {
-            if (i != static_cast<size_t>(IntegrationAlgorithm::RungeKutta1) && i != static_cast<size_t>(IntegrationAlgorithm::RungeKutta3))
-            {
-                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
-            }
-
-            const bool is_selected = (static_cast<size_t>(integrationAlgorithmAttitude) == i);
+            const bool is_selected = (static_cast<size_t>(integrationAlgorithm) == i);
             if (ImGui::Selectable(to_string(static_cast<IntegrationAlgorithm>(i)), is_selected))
             {
-                integrationAlgorithmAttitude = static_cast<IntegrationAlgorithm>(i);
-                LOG_DEBUG("{}: Integration Algorithm Attitude changed to {}", nameId(), integrationAlgorithmAttitude);
+                integrationAlgorithm = static_cast<IntegrationAlgorithm>(i);
+                LOG_DEBUG("{}: Integration Algorithm Attitude changed to {}", nameId(), integrationAlgorithm);
                 flow::ApplyChanges();
-            }
-
-            if (i != static_cast<size_t>(IntegrationAlgorithm::RungeKutta1) && i != static_cast<size_t>(IntegrationAlgorithm::RungeKutta3))
-            {
-                ImGui::PopItemFlag();
-                ImGui::PopStyleVar();
             }
 
             // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -121,111 +90,88 @@ void NAV::ImuIntegrator::guiConfig()
         ImGui::EndCombo();
     }
 
-    ImGui::SetNextItemWidth(250);
-    if (ImGui::BeginCombo(fmt::format("Integration Algorithm Velocity##{}", size_t(id)).c_str(), to_string(integrationAlgorithmVelocity)))
+    if (ImGui::TreeNode(fmt::format("Data selection##{}", size_t(id)).c_str()))
     {
-        for (size_t i = 0; i < static_cast<size_t>(IntegrationAlgorithm::COUNT); i++)
+        if (ImGui::Checkbox(fmt::format("Prefere TimeSinceStartup over InsTime##{}", size_t(id)).c_str(), &prefereTimeSinceStartupOverInsTime))
         {
-            if (i == static_cast<size_t>(IntegrationAlgorithm::RectangularRule))
-            {
-                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
-            }
+            LOG_DEBUG("{}: prefereTimeSinceStartupOverInsTime changed to {}", nameId(), prefereTimeSinceStartupOverInsTime);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
 
-            const bool is_selected = (static_cast<size_t>(integrationAlgorithmVelocity) == i);
-            if (ImGui::Selectable(to_string(static_cast<IntegrationAlgorithm>(i)), is_selected))
+        if (ImGui::Checkbox(fmt::format("Prefere uncompensated data##{}", size_t(id)).c_str(), &prefereUncompensatedData))
+        {
+            LOG_DEBUG("{}: prefereUncompensatedData changed to {}", nameId(), prefereUncompensatedData);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        gui::widgets::HelpMarker("Takes the uncompensated acceleration and angular rates instead of compensated values from the sensor. This option should be used when a Kalman Filter is used to correct the biases.");
+
+        ImGui::TreePop();
+    }
+
+    ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+    if (ImGui::TreeNode(fmt::format("Compensation models##{}", size_t(id)).c_str()))
+    {
+        ImGui::TextUnformatted("Acceleration compensation");
+        {
+            ImGui::Indent();
+            ImGui::SetNextItemWidth(230);
+            if (ImGui::BeginCombo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), NAV::to_string(gravityModel)))
             {
-                integrationAlgorithmVelocity = static_cast<IntegrationAlgorithm>(i);
-                LOG_DEBUG("{}: Integration Algorithm Velocity changed to {}", nameId(), integrationAlgorithmVelocity);
+                for (size_t i = 0; i < static_cast<size_t>(GravityModel::COUNT); i++)
+                {
+                    const bool is_selected = (static_cast<size_t>(gravityModel) == i);
+                    if (ImGui::Selectable(NAV::to_string(static_cast<GravityModel>(i)), is_selected))
+                    {
+                        gravityModel = static_cast<GravityModel>(i);
+                        LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(gravityModel));
+                        flow::ApplyChanges();
+                    }
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (is_selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+
+                ImGui::EndCombo();
+            }
+            if (ImGui::Checkbox(fmt::format("Coriolis acceleration ##{}", size_t(id)).c_str(), &coriolisAccelerationCompensationEnabled))
+            {
+                LOG_DEBUG("{}: coriolisAccelerationCompensationEnabled changed to {}", nameId(), coriolisAccelerationCompensationEnabled);
                 flow::ApplyChanges();
             }
-
-            if (i == static_cast<size_t>(IntegrationAlgorithm::RectangularRule))
+            if (ImGui::Checkbox(fmt::format("Centrifugal acceleration##{}", size_t(id)).c_str(), &centrifgalAccelerationCompensationEnabled))
             {
-                ImGui::PopItemFlag();
-                ImGui::PopStyleVar();
-            }
-
-            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-            if (is_selected)
-            {
-                ImGui::SetItemDefaultFocus();
-            }
-        }
-
-        ImGui::EndCombo();
-    }
-
-    ImGui::SetNextItemWidth(250);
-    if (ImGui::BeginCombo(fmt::format("Integration Algorithm Position##{}", size_t(id)).c_str(), to_string(integrationAlgorithmPosition)))
-    {
-        for (size_t i = 0; i < static_cast<size_t>(IntegrationAlgorithm::COUNT); i++)
-        {
-            if (i != static_cast<size_t>(IntegrationAlgorithm::RectangularRule))
-            {
-                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
-            }
-
-            const bool is_selected = (static_cast<size_t>(integrationAlgorithmPosition) == i);
-            if (ImGui::Selectable(to_string(static_cast<IntegrationAlgorithm>(i)), is_selected))
-            {
-                integrationAlgorithmPosition = static_cast<IntegrationAlgorithm>(i);
-                LOG_DEBUG("{}: Integration Algorithm Position changed to {}", nameId(), integrationAlgorithmPosition);
+                LOG_DEBUG("{}: centrifgalAccelerationCompensationEnabled changed to {}", nameId(), centrifgalAccelerationCompensationEnabled);
                 flow::ApplyChanges();
             }
-
-            if (i != static_cast<size_t>(IntegrationAlgorithm::RectangularRule))
-            {
-                ImGui::PopItemFlag();
-                ImGui::PopStyleVar();
-            }
-
-            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-            if (is_selected)
-            {
-                ImGui::SetItemDefaultFocus();
-            }
+            ImGui::Unindent();
         }
-
-        ImGui::EndCombo();
-    }
-
-    if (ImGui::Checkbox(fmt::format("Calculate intermediate values##{}", size_t(id)).c_str(), &calculateIntermediateValues))
-    {
-        LOG_DEBUG("{}: calculateIntermediateValues changed to {}", nameId(), calculateIntermediateValues);
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    gui::widgets::HelpMarker("Runge Kutta uses intermediate observations but propagates only every other state. Because of this 2 separate state solutions can coexist."
-                             "To avoid this only every seconds state can be output resulting in halving the output frequency. The accuracy of the results is not affected by this.");
-
-    if (ImGui::Checkbox(fmt::format("Prefere TimeSinceStartup over InsTime##{}", size_t(id)).c_str(), &prefereTimeSinceStartupOverInsTime))
-    {
-        LOG_DEBUG("{}: prefereTimeSinceStartupOverInsTime changed to {}", nameId(), prefereTimeSinceStartupOverInsTime);
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    gui::widgets::HelpMarker("Takes the IMU internal 'TimeSinceStartup' value instead of the absolute 'insTime'");
-
-    if (ImGui::Checkbox(fmt::format("Prefere uncompensated data##{}", size_t(id)).c_str(), &prefereUncompensatedData))
-    {
-        LOG_DEBUG("{}: prefereUncompensatedData changed to {}", nameId(), prefereUncompensatedData);
-        flow::ApplyChanges();
-    }
-    ImGui::SameLine();
-    gui::widgets::HelpMarker("Takes the uncompensated acceleration and angular rates instead of compensated values from the sensor. This option should be used when a Kalman Filter is used to correct the biases.");
-
-    if (ImGui::Checkbox(fmt::format("Apply centrifugal acceleration compensation##{}", size_t(id)).c_str(), &centrifugalAccCompensation))
-    {
-        LOG_DEBUG("{}: centrifugalAccCompensation changed to {}", nameId(), centrifugalAccCompensation);
-        flow::ApplyChanges();
-    }
-
-    if (ImGui::Checkbox(fmt::format("Apply coriolis acceleration compensation##{}", size_t(id)).c_str(), &coriolisCompensation))
-    {
-        LOG_DEBUG("{}: coriolisCompensation changed to {}", nameId(), coriolisCompensation);
-        flow::ApplyChanges();
+        ImGui::TextUnformatted("Angular rate compensation");
+        {
+            ImGui::Indent();
+            if (ImGui::Checkbox(fmt::format("Earth rotation rate##{}", size_t(id)).c_str(), &angularRateEarthRotationCompensationEnabled))
+            {
+                LOG_DEBUG("{}: angularRateEarthRotationCompensationEnabled changed to {}", nameId(), angularRateEarthRotationCompensationEnabled);
+                flow::ApplyChanges();
+            }
+            if (ImGui::Checkbox(fmt::format("Transport rate##{}", size_t(id)).c_str(), &angularRateTransportRateCompensationEnabled))
+            {
+                LOG_DEBUG("{}: angularRateTransportRateCompensationEnabled changed to {}", nameId(), angularRateTransportRateCompensationEnabled);
+                flow::ApplyChanges();
+            }
+            ImGui::Unindent();
+        }
+        if (ImGui::Checkbox(fmt::format("Zwiener Rotation Correction##{}", size_t(id)).c_str(), &velocityUpdateRotationCorrectionEnabled))
+        {
+            LOG_DEBUG("{}: velocityUpdateRotationCorrectionEnabled changed to {}", nameId(), velocityUpdateRotationCorrectionEnabled);
+            flow::ApplyChanges();
+        }
+        ImGui::TreePop();
     }
 
     ImGui::Separator();
@@ -261,16 +207,19 @@ void NAV::ImuIntegrator::guiConfig()
     json j;
 
     j["integrationFrame"] = integrationFrame;
-    j["gravityModel"] = gravityModel;
-    j["integrationAlgorithmAttitude"] = integrationAlgorithmAttitude;
-    j["integrationAlgorithmVelocity"] = integrationAlgorithmVelocity;
-    j["integrationAlgorithmPosition"] = integrationAlgorithmPosition;
-    j["calculateIntermediateValues"] = calculateIntermediateValues;
+    j["integrationAlgorithm"] = integrationAlgorithm;
+    // #########################################################################################################################################
     j["prefereTimeSinceStartupOverInsTime"] = prefereTimeSinceStartupOverInsTime;
-    j["centrifugalAccCompensation"] = centrifugalAccCompensation;
-    j["coriolisCompensation"] = coriolisCompensation;
-    j["showCorrectionsInputPin"] = showCorrectionsInputPin;
     j["prefereUncompensatedData"] = prefereUncompensatedData;
+    // #########################################################################################################################################
+    j["gravityModel"] = gravityModel;
+    j["coriolisAccelerationCompensationEnabled"] = coriolisAccelerationCompensationEnabled;
+    j["centrifgalAccelerationCompensationEnabled"] = centrifgalAccelerationCompensationEnabled;
+    j["angularRateEarthRotationCompensationEnabled"] = angularRateEarthRotationCompensationEnabled;
+    j["angularRateTransportRateCompensationEnabled"] = angularRateTransportRateCompensationEnabled;
+    j["velocityUpdateRotationCorrectionEnabled"] = velocityUpdateRotationCorrectionEnabled;
+    // #########################################################################################################################################
+    j["showCorrectionsInputPin"] = showCorrectionsInputPin;
 
     return j;
 }
@@ -281,40 +230,47 @@ void NAV::ImuIntegrator::restore(json const& j)
 
     if (j.contains("integrationFrame"))
     {
-        integrationFrame = static_cast<IntegrationFrame>(j.at("integrationFrame").get<int>());
+        j.at("integrationFrame").get_to(integrationFrame);
     }
-    if (j.contains("gravityModel"))
+    if (j.contains("integrationAlgorithm"))
     {
-        gravityModel = static_cast<GravityModel>(j.at("gravityModel").get<int>());
+        j.at("integrationAlgorithm").get_to(integrationAlgorithm);
     }
-    if (j.contains("integrationAlgorithmAttitude"))
-    {
-        integrationAlgorithmAttitude = static_cast<IntegrationAlgorithm>(j.at("integrationAlgorithmAttitude").get<int>());
-    }
-    if (j.contains("integrationAlgorithmVelocity"))
-    {
-        integrationAlgorithmVelocity = static_cast<IntegrationAlgorithm>(j.at("integrationAlgorithmVelocity").get<int>());
-    }
-    if (j.contains("integrationAlgorithmPosition"))
-    {
-        integrationAlgorithmPosition = static_cast<IntegrationAlgorithm>(j.at("integrationAlgorithmPosition").get<int>());
-    }
-    if (j.contains("calculateIntermediateValues"))
-    {
-        calculateIntermediateValues = j.at("calculateIntermediateValues");
-    }
+    // #########################################################################################################################################
     if (j.contains("prefereTimeSinceStartupOverInsTime"))
     {
         prefereTimeSinceStartupOverInsTime = j.at("prefereTimeSinceStartupOverInsTime");
     }
-    if (j.contains("centrifugalAccCompensation"))
+    if (j.contains("prefereUncompensatedData"))
     {
-        centrifugalAccCompensation = j.at("centrifugalAccCompensation");
+        prefereUncompensatedData = j.at("prefereUncompensatedData");
     }
-    if (j.contains("coriolisCompensation"))
+    // #########################################################################################################################################
+    if (j.contains("gravityModel"))
     {
-        coriolisCompensation = j.at("coriolisCompensation");
+        j.at("gravityModel").get_to(gravityModel);
     }
+    if (j.contains("coriolisAccelerationCompensationEnabled"))
+    {
+        coriolisAccelerationCompensationEnabled = j.at("coriolisAccelerationCompensationEnabled");
+    }
+    if (j.contains("centrifgalAccelerationCompensationEnabled"))
+    {
+        centrifgalAccelerationCompensationEnabled = j.at("centrifgalAccelerationCompensationEnabled");
+    }
+    if (j.contains("angularRateEarthRotationCompensationEnabled"))
+    {
+        angularRateEarthRotationCompensationEnabled = j.at("angularRateEarthRotationCompensationEnabled");
+    }
+    if (j.contains("angularRateTransportRateCompensationEnabled"))
+    {
+        angularRateTransportRateCompensationEnabled = j.at("angularRateTransportRateCompensationEnabled");
+    }
+    if (j.contains("velocityUpdateRotationCorrectionEnabled"))
+    {
+        velocityUpdateRotationCorrectionEnabled = j.at("velocityUpdateRotationCorrectionEnabled");
+    }
+    // #########################################################################################################################################
     if (j.contains("showCorrectionsInputPin"))
     {
         showCorrectionsInputPin = j.at("showCorrectionsInputPin");
@@ -335,10 +291,6 @@ void NAV::ImuIntegrator::restore(json const& j)
             }
         }
     }
-    if (j.contains("prefereUncompensatedData"))
-    {
-        prefereUncompensatedData = j.at("prefereUncompensatedData");
-    }
 }
 
 bool NAV::ImuIntegrator::initialize()
@@ -346,14 +298,23 @@ bool NAV::ImuIntegrator::initialize()
     LOG_TRACE("{}: called", nameId());
 
     // This should be dependant on the integration algorithm
-    maxSizeImuObservations = 3;
-    maxSizeStates = 2;
+    switch (integrationAlgorithm)
+    {
+    case IntegrationAlgorithm::Heun:
+    case IntegrationAlgorithm::RungeKutta1:
+    case IntegrationAlgorithm::RungeKutta2:
+    case IntegrationAlgorithm::RungeKutta3:
+    case IntegrationAlgorithm::RungeKutta4:
+        maxSizeImuObservations = 2; // Has to be >= 2
+        maxSizeStates = 1;
+        break;
+    case IntegrationAlgorithm::COUNT:
+        return false;
+    }
 
     imuObservations.clear();
     posVelAttStates.clear();
     imuBiases.reset();
-
-    skipIntermediateCalculation = false;
 
     time__init = InsTime();
     timeSinceStartup__init = 0;
@@ -368,7 +329,43 @@ void NAV::ImuIntegrator::deinitialize()
     LOG_TRACE("{}: called", nameId());
 }
 
-void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
+{
+    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(nodeData);
+
+    // Fill the list with the initial state to the start of the list
+    if (posVelAttStates.empty())
+    {
+        while (posVelAttStates.size() < maxSizeStates)
+        {
+            LOG_DEBUG("{}: Adding posVelAtt to the start of the list {}", nameId(), posVelAtt);
+            posVelAttStates.push_front(posVelAtt);
+        }
+
+        if (imuObservations.size() >= maxSizeImuObservations - 1)
+        {
+            // Push out a message with the initial state and a matching imu Observation
+            auto inertialNavSol = std::make_shared<InertialNavSol>();
+
+            inertialNavSol->setState_n(posVelAtt->latLonAlt(), posVelAtt->velocity_n(), posVelAtt->quaternion_nb());
+
+            auto imuObsIndex = std::min(static_cast<size_t>(1), imuObservations.size() - 1); // Casting to int, because Windows does not support std::min(size_t, size_t)
+
+            inertialNavSol->insTime = imuObservations.at(imuObsIndex)->insTime;
+            inertialNavSol->imuObs = imuObservations.at(imuObsIndex);
+
+            invokeCallbacks(OutputPortIndex_InertialNavSol, inertialNavSol);
+        }
+
+        // If enough imu observations received, integrate the observation
+        if (imuObservations.size() == maxSizeImuObservations)
+        {
+            integrateObservation();
+        }
+    }
+}
+
+void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     auto imuObs = std::static_pointer_cast<const ImuObs>(nodeData);
 
@@ -391,37 +388,21 @@ void NAV::ImuIntegrator::recvImuObs__t0(const std::shared_ptr<const NodeData>& n
         imuObservations.pop_back();
     }
 
-    // If enough imu observations and states received, integrate the observation
-    if (imuObservations.size() == maxSizeImuObservations
-        && posVelAttStates.size() == maxSizeStates)
+    // First ImuObs and already has state
+    if (imuObservations.size() == 1 && posVelAttStates.size() == maxSizeStates)
     {
-        integrateObservation();
-    }
-}
+        // Push out a message with the initial state and a matching imu Observation
+        auto inertialNavSol = std::make_shared<InertialNavSol>();
 
-void NAV::ImuIntegrator::recvState__t1(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
-{
-    auto posVelAtt = std::static_pointer_cast<const PosVelAtt>(nodeData);
+        inertialNavSol->setState_n(posVelAttStates.front()->latLonAlt(),
+                                   posVelAttStates.front()->velocity_n(),
+                                   posVelAttStates.front()->quaternion_nb());
 
-    // Add imuObs tₖ₋₁ to the start of the list
-    if (posVelAttStates.empty())
-    {
-        while (posVelAttStates.size() < maxSizeStates)
-        {
-            LOG_DEBUG("{}: Adding posVelAtt to the start of the list {}", nameId(), posVelAtt);
-            posVelAttStates.push_front(posVelAtt);
-        }
-    }
-    else
-    {
-        posVelAttStates.push_front(posVelAtt);
-    }
+        inertialNavSol->insTime = imuObs->insTime;
+        inertialNavSol->imuObs = imuObs;
 
-    // Remove states at the end of the list till the max size is reached
-    while (posVelAttStates.size() > maxSizeStates)
-    {
-        LOG_WARN("{}: Receive new state, but list is full --> discarding oldest state", nameId());
-        posVelAttStates.pop_back();
+        invokeCallbacks(OutputPortIndex_InertialNavSol, inertialNavSol);
+        return;
     }
 
     // If enough imu observations and states received, integrate the observation
@@ -442,19 +423,47 @@ void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& no
     imuBiases = std::static_pointer_cast<const ImuBiases>(nodeData);
 }
 
+std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError)
+{
+    auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
+    posVelAttCorrected->setPosition_lla(posVelAtt->latLonAlt() - pvaError->positionError_lla());
+
+    posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() - pvaError->velocityError_n());
+
+    // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
+    Eigen::Vector3d attError = pvaError->attitudeError_n();
+    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
+    posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
+
+    // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
+    // const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb()
+    //                                  * (Eigen::AngleAxisd(attError(0), Eigen::Vector3d::UnitX())
+    //                                     * Eigen::AngleAxisd(attError(1), Eigen::Vector3d::UnitY())
+    //                                     * Eigen::AngleAxisd(attError(2), Eigen::Vector3d::UnitZ()))
+    //                                        .normalized();
+    // posVelAttCorrected->setAttitude_nb(q_nb.normalized());
+
+    // Eigen::Vector3d attError = pvaError->attitudeError_n();
+    // const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb();
+    // Eigen::Quaterniond q_nb_c{ q_nb.w() + 0.5 * (+attError(0) * q_nb.x() + attError(1) * q_nb.y() + attError(2) * q_nb.z()),
+    //                            q_nb.x() + 0.5 * (-attError(0) * q_nb.w() + attError(1) * q_nb.z() - attError(2) * q_nb.y()),
+    //                            q_nb.y() + 0.5 * (-attError(0) * q_nb.z() - attError(1) * q_nb.w() + attError(2) * q_nb.x()),
+    //                            q_nb.z() + 0.5 * (+attError(0) * q_nb.y() - attError(1) * q_nb.x() - attError(2) * q_nb.w()) };
+    // posVelAttCorrected->setAttitude_nb(q_nb_c.normalized());
+
+    return posVelAttCorrected;
+}
+
 void NAV::ImuIntegrator::integrateObservation()
 {
-    LOG_DATA("{}: imuObservations.at(0) = {}, imuObservations.at(1) = {}, imuObservations.at(2) = {}", nameId(), imuObservations.at(0), imuObservations.at(1), imuObservations.at(2));
-    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
     if (pvaError)
     {
-        LOG_DATA("{}: Applying corrections to {} and {}", nameId(), posVelAttStates.at(0)->insTime.value().toYMDHMS(), posVelAttStates.at(1)->insTime.value().toYMDHMS());
+        LOG_DATA("{}: Applying PVA corrections", nameId());
 
         for (auto& posVelAtt : posVelAttStates)
         {
             posVelAtt = correctPosVelAtt(posVelAtt, pvaError);
         }
-        LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {} (after KF update)", nameId(), posVelAttStates.at(0), posVelAttStates.at(1));
 
         pvaError.reset();
     }
@@ -463,13 +472,9 @@ void NAV::ImuIntegrator::integrateObservation()
     const std::shared_ptr<const ImuObs>& imuObs__t0 = imuObservations.at(0);
     // IMU Observation at the time tₖ₋₁
     const std::shared_ptr<const ImuObs>& imuObs__t1 = imuObservations.at(1);
-    // IMU Observation at the time tₖ₋₂
-    const std::shared_ptr<const ImuObs>& imuObs__t2 = imuObservations.at(2);
 
     // Position, Velocity and Attitude at the time tₖ₋₁
     const std::shared_ptr<const PosVelAtt>& posVelAtt__t1 = posVelAttStates.at(0);
-    // Position, Velocity and Attitude at the time tₖ₋₂
-    const std::shared_ptr<const PosVelAtt>& posVelAtt__t2 = posVelAttStates.at(1);
 
     // Position and rotation information for conversion of IMU data from platform to body frame
     const auto& imuPosition = imuObs__t0->imuPos;
@@ -479,45 +484,33 @@ void NAV::ImuIntegrator::integrateObservation()
 
     posVelAtt__t0->imuObs = imuObs__t0;
 
-    // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
-    long double timeDifferenceSec__t1 = 0;
     // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
-    long double timeDifferenceSec__t0 = 0;
+    long double timeDifferenceSec = 0;
 
     if (imuObs__t0->insTime.has_value() && !(prefereTimeSinceStartupOverInsTime && imuObs__t0->timeSinceStartup.has_value()))
     {
-        // tₖ₋₂ Time at prior to previous epoch
-        const InsTime& time__t2 = imuObs__t2->insTime.value();
         // tₖ₋₁ Time at previous epoch
         const InsTime& time__t1 = imuObs__t1->insTime.value();
         // tₖ Current Time
         const InsTime& time__t0 = imuObs__t0->insTime.value();
 
-        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
-        timeDifferenceSec__t1 = (time__t1 - time__t2).count();
         // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
-        timeDifferenceSec__t0 = (time__t0 - time__t1).count();
+        timeDifferenceSec = (time__t0 - time__t1).count();
 
         // Update time
         posVelAtt__t0->insTime = imuObs__t0->insTime;
 
-        LOG_DATA("{}: time__t2 {}", nameId(), time__t2.toYMDHMS());
-        LOG_DATA("{}: time__t1 {}: DiffSec__t1 {}", nameId(), time__t1.toYMDHMS(), timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0.toYMDHMS(), timeDifferenceSec__t0);
+        LOG_DATA("{}: time__t0 - time__t1 = {} - {} = {}", nameId(), time__t0.toYMDHMS(), time__t1.toYMDHMS(), timeDifferenceSec);
     }
     else
     {
-        // tₖ₋₂ Time at prior to previous epoch
-        const auto& time__t2 = imuObs__t2->timeSinceStartup.value();
         // tₖ₋₁ Time at previous epoch
         const auto& time__t1 = imuObs__t1->timeSinceStartup.value();
         // tₖ Current Time
         const auto& time__t0 = imuObs__t0->timeSinceStartup.value();
 
-        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
-        timeDifferenceSec__t1 = static_cast<long double>(time__t1 - time__t2) * 1e-9L;
         // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
-        timeDifferenceSec__t0 = static_cast<long double>(time__t0 - time__t1) * 1e-9L;
+        timeDifferenceSec = static_cast<long double>(time__t0 - time__t1) * 1e-9L;
 
         if (timeSinceStartup__init == 0)
         {
@@ -528,326 +521,131 @@ void NAV::ImuIntegrator::integrateObservation()
         // Update time
         posVelAtt__t0->insTime = time__init + std::chrono::nanoseconds(imuObs__t0->timeSinceStartup.value() - timeSinceStartup__init);
 
-        LOG_DATA("{}: time__t2 {}", nameId(), time__t2);
-        LOG_DATA("{}: time__t1 {}; DiffSec__t1 {}", nameId(), time__t1, timeDifferenceSec__t1);
-        LOG_DATA("{}: time__t0 {}: DiffSec__t0 {}", nameId(), time__t0, timeDifferenceSec__t0);
+        LOG_DATA("{}: time__t0 - time__t1 = {} - {} = {}", nameId(), time__t0, time__t1, timeDifferenceSec);
     }
 
-    // ω_ip_p (tₖ₋₁) Angular velocity in [rad/s],
-    // of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
-    Eigen::Vector3d angularVelocity_ip_p__t1 = !prefereUncompensatedData && imuObs__t1->gyroCompXYZ.has_value()
-                                                   ? imuObs__t1->gyroCompXYZ.value()
-                                                   : imuObs__t1->gyroUncompXYZ.value();
+    // ω_ip_p (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
+    Eigen::Vector3d omega_ip_p__t1 = !prefereUncompensatedData && imuObs__t1->gyroCompXYZ.has_value()
+                                         ? imuObs__t1->gyroCompXYZ.value()
+                                         : imuObs__t1->gyroUncompXYZ.value();
 
-    // ω_ip_p (tₖ) Angular velocity in [rad/s],
-    // of the inertial to platform system, in platform coordinates, at the time tₖ
-    Eigen::Vector3d angularVelocity_ip_p__t0 = !prefereUncompensatedData && imuObs__t0->gyroCompXYZ.has_value()
-                                                   ? imuObs__t0->gyroCompXYZ.value()
-                                                   : imuObs__t0->gyroUncompXYZ.value();
+    // ω_ip_p (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in platform coordinates, at the time tₖ
+    Eigen::Vector3d omega_ip_p__t0 = !prefereUncompensatedData && imuObs__t0->gyroCompXYZ.has_value()
+                                         ? imuObs__t0->gyroCompXYZ.value()
+                                         : imuObs__t0->gyroUncompXYZ.value();
 
     // a_p (tₖ₋₁) Acceleration in [m/s^2], in platform coordinates, at the time tₖ₋₁
-    Eigen::Vector3d acceleration_p__t1 = !prefereUncompensatedData && imuObs__t1->accelCompXYZ.has_value()
-                                             ? imuObs__t1->accelCompXYZ.value()
-                                             : imuObs__t1->accelUncompXYZ.value();
+    Eigen::Vector3d f_p__t1 = !prefereUncompensatedData && imuObs__t1->accelCompXYZ.has_value()
+                                  ? imuObs__t1->accelCompXYZ.value()
+                                  : imuObs__t1->accelUncompXYZ.value();
 
     // a_p (tₖ) Acceleration in [m/s^2], in platform coordinates, at the time tₖ
-    Eigen::Vector3d acceleration_p__t0 = !prefereUncompensatedData && imuObs__t0->accelCompXYZ.has_value()
-                                             ? imuObs__t0->accelCompXYZ.value()
-                                             : imuObs__t0->accelUncompXYZ.value();
+    Eigen::Vector3d f_p__t0 = !prefereUncompensatedData && imuObs__t0->accelCompXYZ.has_value()
+                                  ? imuObs__t0->accelCompXYZ.value()
+                                  : imuObs__t0->accelUncompXYZ.value();
 
     if (imuBiases)
     {
-        angularVelocity_ip_p__t1 -= imuPosition.quatGyro_pb() * imuBiases->biasGyro_b;
-        angularVelocity_ip_p__t0 -= imuPosition.quatGyro_pb() * imuBiases->biasGyro_b;
-        acceleration_p__t1 -= imuPosition.quatAccel_pb() * imuBiases->biasAccel_b;
-        acceleration_p__t0 -= imuPosition.quatAccel_pb() * imuBiases->biasAccel_b;
+        LOG_DATA("{}: Applying IMU Biases", nameId());
+        omega_ip_p__t1 += imuPosition.quatGyro_pb() * imuBiases->biasGyro_b;
+        omega_ip_p__t0 += imuPosition.quatGyro_pb() * imuBiases->biasGyro_b;
+        f_p__t1 += imuPosition.quatAccel_pb() * imuBiases->biasAccel_b;
+        f_p__t0 += imuPosition.quatAccel_pb() * imuBiases->biasAccel_b;
     }
-    LOG_DATA("{}: angularVelocity_ip_p__t1 = {}", nameId(), angularVelocity_ip_p__t1.transpose());
-    LOG_DATA("{}: angularVelocity_ip_p__t0 = {}", nameId(), angularVelocity_ip_p__t0.transpose());
-    LOG_DATA("{}: acceleration_p__t1 = {}", nameId(), acceleration_p__t1.transpose());
-    LOG_DATA("{}: acceleration_p__t0 = {}", nameId(), acceleration_p__t0.transpose());
+    LOG_DATA("{}: omega_ip_p__t1 = {}", nameId(), omega_ip_p__t1.transpose());
+    LOG_DATA("{}: omega_ip_p__t0 = {}", nameId(), omega_ip_p__t0.transpose());
+    LOG_DATA("{}: f_p__t1 = {}", nameId(), f_p__t1.transpose());
+    LOG_DATA("{}: f_p__t0 = {}", nameId(), f_p__t0.transpose());
+
+    // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
+    const Eigen::Quaterniond quaternion_nb__t1 = posVelAtt__t1->quaternion_nb();
+    LOG_DATA("{}: quaternion_nb__t1 = {}", nameId(), quaternion_nb__t1.coeffs().transpose());
 
     // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& velocity_n__t1 = posVelAtt__t1->velocity_n();
     LOG_DATA("{}: velocity_n__t1 = {}", nameId(), velocity_n__t1.transpose());
-    // v_n (tₖ₋₂) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₂
-    const Eigen::Vector3d& velocity_n__t2 = posVelAtt__t2->velocity_n();
-    LOG_DATA("{}: velocity_n__t2 = {}", nameId(), velocity_n__t2.transpose());
-    // v_e (tₖ₋₂) Velocity in [m/s], in earth coordinates, at the time tₖ₋₂
-    const Eigen::Vector3d velocity_e__t2 = posVelAtt__t2->velocity_e();
-    LOG_DATA("{}: velocity_e__t2 = {}", nameId(), velocity_e__t2.transpose());
-    // v_e (tₖ₋₁) Velocity in [m/s], in earth coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d velocity_e__t1 = posVelAtt__t1->velocity_e();
-    LOG_DATA("{}: velocity_e__t1 = {}", nameId(), velocity_e__t1.transpose());
-    // x_e (tₖ₋₂) Position in [m], in ECEF coordinates, at the time tₖ₋₂
-    const Eigen::Vector3d position_e__t2 = posVelAtt__t2->position_ecef();
-    LOG_DATA("{}: position_e__t2 = {}", nameId(), position_e__t2.transpose());
-    // x_e (tₖ₋₁) Position in [m], in ECEF coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d position_e__t1 = posVelAtt__t1->position_ecef();
-    LOG_DATA("{}: position_e__t1 = {}", nameId(), position_e__t1.transpose());
 
-    // g_n Gravity vector in [m/s^2], in navigation coordinates
-    Eigen::Vector3d gravity_n__t1 = calcGravitation_n(posVelAtt__t1->latLonAlt(), gravityModel);
-    LOG_DATA("{}: gravity_n__t1 = {} (gravitation {})", nameId(), gravity_n__t1.transpose(), NAV::to_string(gravityModel));
+    // [latitude 𝜙, longitude λ, altitude h] (tₖ₋₁) Position in [rad, rad, m] at the time tₖ₋₁
+    const Eigen::Vector3d position_lla__t1 = posVelAtt__t1->latLonAlt();
+    LOG_DATA("{}: position_lla__t1 = {}", nameId(), position_lla__t1.transpose());
 
-    if (centrifugalAccCompensation)
+    // ω_ip_b (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d omega_ip_b__t1 = imuPosition.quatGyro_bp() * omega_ip_p__t1;
+    LOG_DATA("{}: omega_ip_b__t1 = {}", nameId(), omega_ip_b__t1.transpose());
+    // ω_ip_b (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in body coordinates, at the time tₖ
+    const Eigen::Vector3d omega_ip_b__t0 = imuPosition.quatGyro_bp() * omega_ip_p__t0;
+    LOG_DATA("{}: omega_ip_b__t0 = {}", nameId(), omega_ip_b__t0.transpose());
+
+    // f_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d f_b__t1 = imuPosition.quatAccel_bp() * f_p__t1;
+    LOG_DATA("{}: f_b__t1 = {}", nameId(), f_b__t1.transpose());
+    // f_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
+    const Eigen::Vector3d f_b__t0 = imuPosition.quatAccel_bp() * f_p__t0;
+    LOG_DATA("{}: f_b__t0 = {}", nameId(), f_b__t0.transpose());
+
+    //  0  1  2  3   4    5    6   7  8  9
+    // [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
+    Eigen::Matrix<double, 10, 1> y;
+    y.segment<4>(0) = Eigen::Vector4d{ quaternion_nb__t1.w(), quaternion_nb__t1.x(), quaternion_nb__t1.y(), quaternion_nb__t1.z() };
+    y.segment<3>(4) = velocity_n__t1;
+    y.segment<3>(7) = position_lla__t1;
+
+    PosVelAttDerivativeConstants_n c;
+    c.omega_ib_b = omega_ip_b__t1; // platform system does not rotate with respect to body system
+    c.f_b = f_b__t1;
+    c.timeDifferenceSec = static_cast<double>(timeDifferenceSec);
+    c.gravityModel = gravityModel;
+    c.coriolisAccelerationCompensationEnabled = coriolisAccelerationCompensationEnabled;
+    c.centrifgalAccelerationCompensationEnabled = centrifgalAccelerationCompensationEnabled;
+    c.angularRateEarthRotationCompensationEnabled = angularRateEarthRotationCompensationEnabled;
+    c.angularRateTransportRateCompensationEnabled = angularRateTransportRateCompensationEnabled;
+    c.velocityUpdateRotationCorrectionEnabled = velocityUpdateRotationCorrectionEnabled;
+
+    if (integrationAlgorithm == IntegrationAlgorithm::Heun)
     {
-        auto centrifugalAcceleration = calcCentrifugalAcceleration(posVelAtt__t1->latitude(), posVelAtt__t1->altitude());
-        LOG_DATA("{}: Applying centrifugal acceleration: {}", nameId(), centrifugalAcceleration.transpose());
-        gravity_n__t1 += centrifugalAcceleration;
+        // Values needed to calculate the PosVelAttDerivative for the local-navigation frame
+        struct AccelGyroMeasurement
+        {
+            Eigen::Vector3d omega_ib_b; // ω_ip_b Angular velocity in [rad/s], of the inertial to platform system, in body coordinates
+            Eigen::Vector3d f_b;        // f_b Acceleration in [m/s^2], in body coordinates
+        };
+        auto posVelAttDerivativeWrapper = [](const Eigen::Matrix<double, 10, 1>& y, const AccelGyroMeasurement& z, const PosVelAttDerivativeConstants_n& c) {
+            PosVelAttDerivativeConstants_n c_new;
+            c_new.omega_ib_b = z.omega_ib_b;
+            c_new.f_b = z.f_b;
+            c_new.timeDifferenceSec = c.timeDifferenceSec;
+            c_new.gravityModel = c.gravityModel;
+            c_new.coriolisAccelerationCompensationEnabled = c.coriolisAccelerationCompensationEnabled;
+            c_new.centrifgalAccelerationCompensationEnabled = c.centrifgalAccelerationCompensationEnabled;
+            c_new.angularRateEarthRotationCompensationEnabled = c.angularRateEarthRotationCompensationEnabled;
+            c_new.angularRateTransportRateCompensationEnabled = c.angularRateTransportRateCompensationEnabled;
+            c_new.velocityUpdateRotationCorrectionEnabled = c.velocityUpdateRotationCorrectionEnabled;
+
+            return calcPosVelAttDerivative_n(y, c_new);
+        };
+        AccelGyroMeasurement z__t0{ omega_ip_b__t0, f_b__t0 };
+        AccelGyroMeasurement z__t1{ omega_ip_b__t1, f_b__t1 };
+
+        y = Heun(posVelAttDerivativeWrapper, timeDifferenceSec, y, z__t1, z__t0, c); // NOLINT(readability-suspicious-call-argument)
     }
-    LOG_DATA("{}: gravity_n__t1 = {}", nameId(), gravity_n__t1.transpose());
-
-    // g_e Gravity vector in [m/s^2], in earth coordinates
-    const Eigen::Vector3d gravity_e__t1 = posVelAtt__t1->quaternion_en() * gravity_n__t1;
-
-    // ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
-    const Eigen::Vector3d& angularVelocity_ie_e = InsConst::angularVelocity_ie_e;
-    LOG_DATA("{}: angularVelocity_ie_e = {}", nameId(), angularVelocity_ie_e.transpose());
-
-    if (integrationFrame == IntegrationFrame::ECEF)
+    else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
     {
-        LOG_DATA("{}: Integrating in ECEF frame", nameId());
-
-        // q (tₖ₋₂) Quaternion, from gyro platform to earth coordinates, at the time tₖ₋₂
-        const Eigen::Quaterniond quaternion_gyro_ep__t2 = posVelAtt__t2->quaternion_eb() * imuPosition.quatGyro_bp();
-        LOG_DATA("{}: quaternion_gyro_ep__t2 = {}", nameId(), quaternion_gyro_ep__t2.coeffs().transpose());
-        // q (tₖ₋₁) Quaternion, from gyro platform to earth coordinates, at the time tₖ₋₁
-        const Eigen::Quaterniond quaternion_gyro_ep__t1 = posVelAtt__t1->quaternion_eb() * imuPosition.quatGyro_bp();
-        LOG_DATA("{}: quaternion_gyro_ep__t1 = {}", nameId(), quaternion_gyro_ep__t1.coeffs().transpose());
-
-        // q (tₖ₋₂) Quaternion, from accel platform to earth coordinates, at the time tₖ₋₂
-        const Eigen::Quaterniond quaternion_accel_ep__t2 = posVelAtt__t2->quaternion_eb() * imuPosition.quatAccel_bp();
-        LOG_DATA("{}: quaternion_accel_ep__t2 = {}", nameId(), quaternion_accel_ep__t2.coeffs().transpose());
-
-        // q (tₖ₋₁) Quaternion, from accel platform to earth coordinates, at the time tₖ₋₁
-        const Eigen::Quaterniond quaternion_accel_ep__t1 = posVelAtt__t1->quaternion_eb() * imuPosition.quatAccel_bp();
-        LOG_DATA("{}: quaternion_accel_ep__t1 = {}", nameId(), quaternion_accel_ep__t1.coeffs().transpose());
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        /*                                              Attitude Update                                             */
-        /* -------------------------------------------------------------------------------------------------------- */
-
-        // q (tₖ) Quaternion, from platform to earth coordinates, at the current time tₖ
-        Eigen::Quaterniond quaternion_gyro_ep__t0 = Eigen::Quaterniond::Identity();
-
-        if (integrationAlgorithmAttitude == IntegrationAlgorithm::RungeKutta3)
-        {
-            quaternion_gyro_ep__t0 = updateQuaternion_ep_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                                     angularVelocity_ip_p__t0, angularVelocity_ip_p__t1,
-                                                                     angularVelocity_ie_e,
-                                                                     quaternion_gyro_ep__t1, quaternion_gyro_ep__t2);
-        }
-        // TODO: Implement RungeKutta1
-        else
-        {
-            LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
-        }
-        LOG_DATA("{}: quaternion_gyro_ep__t0 = {}", nameId(), quaternion_gyro_ep__t0.coeffs().transpose());
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        /*                                    Specific force frame transformation                                   */
-        /* -------------------------------------------------------------------------------------------------------- */
-
-        // q (tₖ) Quaternion, from accel platform to earth coordinates, at the time tₖ
-        const Eigen::Quaterniond quaternion_accel_ep__t0 = quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb() * imuPosition.quatAccel_bp();
-        LOG_DATA("{}: quaternion_accel_ep__t0 = {}", nameId(), quaternion_accel_ep__t0.coeffs().transpose());
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        /*                                              Velocity update                                             */
-        /* -------------------------------------------------------------------------------------------------------- */
-
-        // v (tₖ), Velocity in [m/s], in earth coordinates, at the current time tₖ
-        Eigen::Vector3d velocity_e__t0 = Eigen::Vector3d::Zero();
-
-        if (integrationAlgorithmVelocity == IntegrationAlgorithm::Simpson)
-        {
-            velocity_e__t0 = updateVelocity_e_Simpson(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                      acceleration_p__t0, acceleration_p__t1,
-                                                      velocity_e__t2,
-                                                      position_e__t2,
-                                                      gravity_e__t1,
-                                                      quaternion_accel_ep__t0,
-                                                      quaternion_accel_ep__t1,
-                                                      quaternion_accel_ep__t2,
-                                                      !coriolisCompensation);
-        }
-        // TODO: Implement RungeKutta1 & RungeKutta3
-        else
-        {
-            LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
-        }
-        LOG_DATA("{}: velocity_e__t0 = {}", nameId(), velocity_e__t0.transpose());
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        /*                                              Position update                                             */
-        /* -------------------------------------------------------------------------------------------------------- */
-
-        // x_e (tₖ) Position in [m], in earth coordinates, at the time tₖ
-        Eigen::Vector3d position_e__t0 = Eigen::Vector3d::Zero();
-
-        if (integrationAlgorithmPosition == IntegrationAlgorithm::RectangularRule)
-        {
-            position_e__t0 = updatePosition_e(timeDifferenceSec__t0, position_e__t1, velocity_e__t1);
-        }
-        else
-        {
-            LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
-        }
-        LOG_DATA("{}: position_e__t0 = {}", nameId(), position_e__t0.transpose());
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        /*                                               Store Results                                              */
-        /* -------------------------------------------------------------------------------------------------------- */
-
-        posVelAtt__t0->setState_e(position_e__t0, velocity_e__t0, quaternion_gyro_ep__t0 * imuPosition.quatGyro_pb());
+        y = RungeKutta1(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
     }
-    else if (integrationFrame == IntegrationFrame::NED)
+    else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta2)
     {
-        LOG_DATA("{}: Integrating in NED frame", nameId());
-        // ω_ip_b (tₖ₋₁) Angular velocity in [rad/s],
-        // of the inertial to platform system, in body coordinates, at the time tₖ₋₁
-        const Eigen::Vector3d angularVelocity_ip_b__t1 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t1;
-        LOG_DATA("{}: angularVelocity_ip_b__t1 = {}", nameId(), angularVelocity_ip_b__t1.transpose());
-        // ω_ip_b (tₖ) Angular velocity in [rad/s],
-        // of the inertial to platform system, in body coordinates, at the time tₖ
-        const Eigen::Vector3d angularVelocity_ip_b__t0 = imuPosition.quatGyro_bp() * angularVelocity_ip_p__t0;
-        LOG_DATA("{}: angularVelocity_ip_b__t0 = {}", nameId(), angularVelocity_ip_b__t0.transpose());
-
-        // a_b (tₖ₋₁) Acceleration in [m/s^2], in body coordinates, at the time tₖ₋₁
-        const Eigen::Vector3d acceleration_b__t1 = imuPosition.quatAccel_bp() * acceleration_p__t1;
-        LOG_DATA("{}: acceleration_b__t1 = {}", nameId(), acceleration_b__t1.transpose());
-
-        // a_b (tₖ) Acceleration in [m/s^2], in body coordinates, at the time tₖ
-        const Eigen::Vector3d acceleration_b__t0 = imuPosition.quatAccel_bp() * acceleration_p__t0;
-        LOG_DATA("{}: acceleration_b__t0 = {}", nameId(), acceleration_b__t0.transpose());
-
-        // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-        const Eigen::Quaterniond quaternion_nb__t1 = posVelAtt__t1->quaternion_nb();
-        LOG_DATA("{}: quaternion_nb__t1 = {}", nameId(), quaternion_nb__t1.coeffs().transpose());
-        // q (tₖ₋₂) Quaternion, from body to navigation coordinates, at the time tₖ₋₂
-        const Eigen::Quaterniond quaternion_nb__t2 = posVelAtt__t2->quaternion_nb();
-        LOG_DATA("{}: quaternion_nb__t2 = {}", nameId(), quaternion_nb__t2.coeffs().transpose());
-
-        // ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
-        Eigen::Vector3d angularVelocity_ie_n__t1 = posVelAtt__t1->quaternion_ne() * angularVelocity_ie_e;
-        LOG_DATA("{}: angularVelocity_ie_n__t1 = {}", nameId(), angularVelocity_ie_n__t1.transpose());
-
-        // North/South (meridian) earth radius [m]
-        double R_N = calcEarthRadius_N(posVelAtt__t1->latitude());
-        LOG_DATA("{}: R_N = {}", nameId(), R_N);
-        // East/West (prime vertical) earth radius [m]
-        double R_E = calcEarthRadius_E(posVelAtt__t1->latitude());
-        LOG_DATA("{}: R_E = {}", nameId(), R_E);
-
-        // ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
-        Eigen::Vector3d angularVelocity_en_n__t1 = calcTransportRate_n(posVelAtt__t1->latLonAlt(), velocity_n__t1, R_N, R_E);
-        LOG_DATA("{}: angularVelocity_en_n__t1 = {}", nameId(), angularVelocity_en_n__t1.transpose());
-
-        // [latitude 𝜙, longitude λ, altitude h] (tₖ₋₁) Position in [rad, rad, m] at the time tₖ₋₁
-        Eigen::Vector3d latLonAlt__t1 = posVelAtt__t1->latLonAlt();
-        LOG_DATA("{}: latLonAlt__t1 = {}", nameId(), latLonAlt__t1.transpose());
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        /*                                              Attitude Update                                             */
-        /* -------------------------------------------------------------------------------------------------------- */
-
-        // q (tₖ) Quaternion, from body to navigation coordinates, at the current time tₖ
-        Eigen::Quaterniond quaternion_nb__t0 = Eigen::Quaterniond::Identity();
-
-        if (integrationAlgorithmAttitude == IntegrationAlgorithm::RungeKutta3)
-        {
-            quaternion_nb__t0 = updateQuaternion_nb_RungeKutta3(timeDifferenceSec__t0,
-                                                                timeDifferenceSec__t1,
-                                                                angularVelocity_ip_b__t0,
-                                                                angularVelocity_ip_b__t1,
-                                                                angularVelocity_ie_n__t1,
-                                                                angularVelocity_en_n__t1,
-                                                                quaternion_nb__t1,
-                                                                quaternion_nb__t2);
-        }
-        else if (integrationAlgorithmAttitude == IntegrationAlgorithm::RungeKutta1)
-        {
-            quaternion_nb__t0 = updateQuaternion_nb_RungeKutta1(timeDifferenceSec__t0,
-                                                                angularVelocity_ip_b__t0,
-                                                                angularVelocity_ie_n__t1,
-                                                                angularVelocity_en_n__t1,
-                                                                quaternion_nb__t1);
-        }
-        else
-        {
-            LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
-        }
-        LOG_DATA("{}: quaternion_nb__t0 = {}", nameId(), quaternion_nb__t0.coeffs().transpose());
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        /*                           Specific force frame transformation & Velocity update                          */
-        /* -------------------------------------------------------------------------------------------------------- */
-
-        // v (tₖ), Velocity in navigation coordinates, at the current time tₖ
-        Eigen::Vector3d velocity_n__t0 = Eigen::Vector3d::Zero();
-
-        if (integrationAlgorithmVelocity == IntegrationAlgorithm::Simpson)
-        {
-            velocity_n__t0 = updateVelocity_n_Simpson(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                      acceleration_b__t0, acceleration_b__t1,
-                                                      velocity_n__t1, velocity_n__t2,
-                                                      gravity_n__t1,
-                                                      angularVelocity_ie_n__t1,
-                                                      angularVelocity_en_n__t1,
-                                                      quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2,
-                                                      !coriolisCompensation);
-        }
-        else if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta1)
-        {
-            velocity_n__t0 = updateVelocity_n_RungeKutta1(timeDifferenceSec__t0,
-                                                          acceleration_b__t0,
-                                                          velocity_n__t1,
-                                                          gravity_n__t1,
-                                                          angularVelocity_ie_n__t1,
-                                                          angularVelocity_en_n__t1,
-                                                          quaternion_nb__t1);
-        }
-        else if (integrationAlgorithmVelocity == IntegrationAlgorithm::RungeKutta3)
-        {
-            velocity_n__t0 = updateVelocity_n_RungeKutta3(timeDifferenceSec__t0, timeDifferenceSec__t1,
-                                                          acceleration_b__t0, acceleration_b__t1,
-                                                          velocity_n__t2,
-                                                          gravity_n__t1,
-                                                          angularVelocity_ie_n__t1,
-                                                          angularVelocity_en_n__t1,
-                                                          quaternion_nb__t0, quaternion_nb__t1, quaternion_nb__t2,
-                                                          !coriolisCompensation);
-        }
-        else
-        {
-            LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
-        }
-        LOG_DATA("{}: velocity_n__t0 = {}", nameId(), velocity_n__t0.transpose());
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        /*                                              Position update                                             */
-        /* -------------------------------------------------------------------------------------------------------- */
-
-        // [latitude 𝜙, longitude λ, altitude h] (tₖ) Position in [rad, rad, m] at the time tₖ
-        Eigen::Vector3d latLonAlt__t0 = Eigen::Vector3d::Zero();
-
-        if (integrationAlgorithmPosition == IntegrationAlgorithm::RectangularRule)
-        {
-            latLonAlt__t0 = updatePosition_lla(timeDifferenceSec__t0, latLonAlt__t1, velocity_n__t1, R_N, R_E);
-        }
-        else
-        {
-            LOG_CRITICAL("{}: Selected integration algorithm not supported", nameId());
-        }
-        LOG_DATA("{}: latLonAlt__t0 = {}", nameId(), latLonAlt__t0.transpose());
-
-        /* -------------------------------------------------------------------------------------------------------- */
-        /*                                               Store Results                                              */
-        /* -------------------------------------------------------------------------------------------------------- */
-
-        posVelAtt__t0->setState_n(latLonAlt__t0, velocity_n__t0, quaternion_nb__t0);
+        y = RungeKutta2(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
     }
+    else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
+    {
+        y = RungeKutta3(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
+    }
+    else if (integrationAlgorithm == IntegrationAlgorithm::RungeKutta4)
+    {
+        y = RungeKutta4(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
+    }
+
+    posVelAtt__t0->setState_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) });
 
     LOG_DATA("{}: posVelAtt__t0->position_ecef() = {}", nameId(), posVelAtt__t0->position_ecef().transpose());
     LOG_DATA("{}: posVelAtt__t0->velocity_n() = {}", nameId(), posVelAtt__t0->velocity_n().transpose());
@@ -856,47 +654,8 @@ void NAV::ImuIntegrator::integrateObservation()
     // Cycle lists
     imuObservations.pop_back();
     posVelAttStates.pop_back();
+    posVelAttStates.push_front(posVelAtt__t0);
 
-    if (!skipIntermediateCalculation)
-    {
-        // Push out new data
-        invokeCallbacks(OutputPortIndex_InertialNavSol__t0, posVelAtt__t0);
-
-        if (!calculateIntermediateValues)
-        {
-            skipIntermediateCalculation = true;
-        }
-    }
-    else
-    {
-        posVelAttStates.push_front(posVelAtt__t0);
-        // Remove states at the end of the list till the max size is reached
-        while (posVelAttStates.size() > maxSizeStates)
-        {
-            posVelAttStates.pop_back();
-        }
-
-        skipIntermediateCalculation = false;
-    }
-    LOG_DATA("{}: posVelAttStates.at(0) = {}, posVelAttStates.at(1) = {}", nameId(),
-             posVelAttStates.at(0),
-             posVelAttStates.size() >= 2 ? posVelAttStates.at(1) : nullptr);
-}
-
-const char* NAV::ImuIntegrator::to_string(IntegrationAlgorithm algorithm)
-{
-    switch (algorithm)
-    {
-    case IntegrationAlgorithm::RectangularRule:
-        return "Rectangular Rule";
-    case IntegrationAlgorithm::Simpson:
-        return "Simpson";
-    case IntegrationAlgorithm::RungeKutta1:
-        return "Runge Kutta 1st Order";
-    case IntegrationAlgorithm::RungeKutta3:
-        return "Runge Kutta 3rd Order";
-    case IntegrationAlgorithm::COUNT:
-        return "";
-    }
-    return "";
+    // Push out new data
+    invokeCallbacks(OutputPortIndex_InertialNavSol, posVelAtt__t0);
 }

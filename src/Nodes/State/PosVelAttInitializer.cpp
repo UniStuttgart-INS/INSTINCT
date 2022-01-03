@@ -385,7 +385,7 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     }
     if (j.contains("attitudeMode"))
     {
-        attitudeMode = static_cast<AttitudeMode>(j.at("attitudeMode").get<int>());
+        j.at("attitudeMode").get_to(attitudeMode);
     }
     if (j.contains("positionAccuracyThreshold"))
     {
@@ -708,7 +708,19 @@ void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const 
 
     if (attitudeMode == AttitudeMode_BOTH || attitudeMode == AttitudeMode_GNSS || !nm::IsPinLinked(inputPins.at(InputPortIndex_ImuObs).id))
     {
-        q_nb_init = obs->quaternion_nb();
+        if (overrideRollPitchYaw.at(0) || overrideRollPitchYaw.at(1) || overrideRollPitchYaw.at(2))
+        {
+            const Eigen::Vector3d rollPitchYaw = obs->rollPitchYaw();
+
+            q_nb_init = trafo::quat_nb(overrideRollPitchYaw.at(0) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(0)) : rollPitchYaw(0),
+                                       overrideRollPitchYaw.at(1) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(1)) : rollPitchYaw(1),
+                                       overrideRollPitchYaw.at(2) ? trafo::deg2rad(overrideValuesRollPitchYaw.at(2)) : rollPitchYaw(2));
+        }
+        else
+        {
+            q_nb_init = obs->quaternion_nb();
+        }
+
         posVelAttInitialized.at(2) = true;
     }
 }

@@ -8,6 +8,7 @@
 #include <imgui.h>
 
 #include <limits>
+#include <cstdint>
 
 namespace ImGui
 {
@@ -74,6 +75,98 @@ bool DragDouble4(const char* label, double v[4], float v_speed = 1.0F, double v_
 
 // #####################################################################################################################
 
+/// @brief Shows a Drag GUI element for 'int64'
+/// @param[in] label Label to display beside the drag. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_speed Speed to drag the value
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool DragLong(const char* label, int64_t* v, float v_speed = 1.0F, int64_t v_min = 0.0, int64_t v_max = 0.0, const char* format = "%ld", ImGuiSliderFlags flags = 0);
+
+/// @brief Shows a Drag GUI element for an array of 'int64[2]'
+/// @param[in] label Label to display beside the drag. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_speed Speed to drag the value
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool DragLong2(const char* label, int64_t v[2], float v_speed = 1.0F, int64_t v_min = 0.0, int64_t v_max = 0.0, const char* format = "%ld", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Drag GUI element for an array of 'int64[3]'
+/// @param[in] label Label to display beside the drag. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_speed Speed to drag the value
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool DragLong3(const char* label, int64_t v[3], float v_speed = 1.0F, int64_t v_min = 0.0, int64_t v_max = 0.0, const char* format = "%ld", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Drag GUI element for an array of 'int64[4]'
+/// @param[in] label Label to display beside the drag. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_speed Speed to drag the value
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool DragLong4(const char* label, int64_t v[4], float v_speed = 1.0F, int64_t v_min = 0.0, int64_t v_max = 0.0, const char* format = "%ld", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+// #####################################################################################################################
+
+/// @brief Shows a Drag GUI element for 'uint64'
+/// @param[in] label Label to display beside the drag. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_speed Speed to drag the value
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool DragULong(const char* label, uint64_t* v, float v_speed = 1.0F, uint64_t v_min = 0.0, uint64_t v_max = 0.0, const char* format = "%lu", ImGuiSliderFlags flags = 0);
+
+/// @brief Shows a Drag GUI element for an array of 'uint64[2]'
+/// @param[in] label Label to display beside the drag. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_speed Speed to drag the value
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool DragULong2(const char* label, uint64_t v[2], float v_speed = 1.0F, uint64_t v_min = 0.0, uint64_t v_max = 0.0, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Drag GUI element for an array of 'uint64[3]'
+/// @param[in] label Label to display beside the drag. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_speed Speed to drag the value
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool DragULong3(const char* label, uint64_t v[3], float v_speed = 1.0F, uint64_t v_min = 0.0, uint64_t v_max = 0.0, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Drag GUI element for an array of 'uint64[4]'
+/// @param[in] label Label to display beside the drag. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_speed Speed to drag the value
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool DragULong4(const char* label, uint64_t v[4], float v_speed = 1.0F, uint64_t v_min = 0.0, uint64_t v_max = 0.0, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+// #####################################################################################################################
+
 // Widgets: Regular Sliders
 // - CTRL+Click on any slider to turn them into an input box. Manually input values aren't clamped and can go off-bounds.
 // - Adjust format string to decorate the value with a prefix, a suffix, or adapt the editing and display precision e.g. "%.3f" -> 1.234; "%5.2f secs" -> 01.23 secs; "Biscuit: %.0f" -> Biscuit: 1; etc.
@@ -120,6 +213,90 @@ bool SliderDouble3(const char* label, double v[3], double v_min, double v_max, c
 /// @param[in] flags Slider flags to modify the behavior
 /// @return True if the value was changed
 bool SliderDouble4(const char* label, double v[4], double v_min, double v_max, const char* format = "%.6f", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+// #####################################################################################################################
+
+/// @brief Shows a Slider GUI element for 'int64'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderLong(const char* label, int64_t* v, int64_t v_min, int64_t v_max, const char* format = "%ld", ImGuiSliderFlags flags = 0);
+
+/// @brief Shows a Slider GUI element for an array of 'int64[2]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderLong2(const char* label, int64_t v[2], int64_t v_min, int64_t v_max, const char* format = "%ld", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Slider GUI element for an array of 'int64[3]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderLong3(const char* label, int64_t v[3], int64_t v_min, int64_t v_max, const char* format = "%ld", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Slider GUI element for an array of 'int64[4]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderLong4(const char* label, int64_t v[4], int64_t v_min, int64_t v_max, const char* format = "%ld", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+// #####################################################################################################################
+
+/// @brief Shows a Slider GUI element for 'uint64'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderULong(const char* label, uint64_t* v, uint64_t v_min, uint64_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0);
+
+/// @brief Shows a Slider GUI element for an array of 'uint64[2]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderULong2(const char* label, uint64_t v[2], uint64_t v_min, uint64_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Slider GUI element for an array of 'uint64[3]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderULong3(const char* label, uint64_t v[3], uint64_t v_min, uint64_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+
+/// @brief Shows a Slider GUI element for an array of 'uint64[4]'
+/// @param[in] label Label to display beside the slider. Has to be unique (use # to hide text afterwards to append an uid)
+/// @param[in, out] v Pointer to the value to modify
+/// @param[in] v_min Minimum value allowed
+/// @param[in] v_max Maximum value allowed
+/// @param[in] format Printf format to display the value with
+/// @param[in] flags Slider flags to modify the behavior
+/// @return True if the value was changed
+bool SliderULong4(const char* label, uint64_t v[4], uint64_t v_min, uint64_t v_max, const char* format = "%lu", ImGuiSliderFlags flags = 0); // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 
 // #####################################################################################################################
 

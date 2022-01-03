@@ -7,7 +7,17 @@
 \renewcommand{\eqref}[1]{\textcolor{link}{\textbf{(\ref{#1})}}}
 
 \usepackage{tikz}
-\usetikzlibrary{matrix,backgrounds,decorations.pathreplacing,calc}
+\usetikzlibrary{matrix,backgrounds,decorations.pathreplacing,calc,shapes.misc,intersections}
+
+\usepackage[makeroom]{cancel}
+\newcommand\Ccancel[2][black]{
+    \let\OldcancelColor\CancelColor
+    \renewcommand\CancelColor{\color{#1}}
+    \cancel{#2}
+    \renewcommand\CancelColor{\OldcancelColor}
+}
+
+\newcommand{\commentOut}[1]{}
 
 \newcommand{\highlight}[2][yellow]{\colorbox{#1}{$#2$}}
 
@@ -19,6 +29,19 @@
   \fill[rounded corners,fill=#1] (#2.north west) rectangle (#3.south east);
 }
 
+\def\centerarc[#1](#2)(#3:#4:#5)% Syntax: [draw options] (center) (initial angle:final angle:radius)
+    { \draw[#1] ($(#2)+({#5*cos(#3)},{#5*sin(#3)})$) arc (#3:#4:#5); }
+\tikzset{partial ellipse/.style args={#1:#2:#3}{insert path={+ (#1:#3) arc (#1:#2:#3)}}}
+\tikzset{cross/.style={cross out, draw=black, minimum size=2*(#1-\pgflinewidth), inner sep=0pt, outer sep=0pt},
+         cross/.default={1pt}}%default radius will be 1pt.
+\tikzset{ext/.pic={\path [fill=white] (-0.2,0)to[bend left](0,0.1)to[bend right](0.2,0.2)to(0.2,0)to[bend left](0,-0.1)to[bend right](-0.2,-0.2)--cycle;
+                   \draw (-0.2,0)to[bend left](0,0.1)to[bend right](0.2,0.2) (0.2,0)to[bend left](0,-0.1)to[bend right](-0.2,-0.2);}}
+
+\newdimen\XCoord
+\newdimen\YCoord
+\newcommand*{\ExtractCoordinate}[1]{\path (#1); \pgfgetlastxy{\XCoord}{\YCoord};}%
+
 % Somehow using /dot{...} can break doxygen's alias system. So the next equation using \fl will not be rendered.
 % This however can be fixed by surrounding the \dot by a \mathbf, \mathnormal, ...
 \newcommand{\dotup}[1]{\mathnormal{\dot{#1}}}
+\newcommand{\ddotup}[1]{\mathnormal{\ddot{#1}}}

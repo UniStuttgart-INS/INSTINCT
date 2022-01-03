@@ -13,6 +13,8 @@
 
 #include "internal/gui/widgets/TimeEdit.hpp"
 
+#include <array>
+
 namespace NAV
 {
 /// Imu Observation Simulator
@@ -75,6 +77,12 @@ class ImuSimulator : public Imu
     /// @return The simulated observation
     [[nodiscard]] std::shared_ptr<const NodeData> pollPosVelAtt(bool peek = false);
 
+    /// @brief Checks the selected stop condition
+    /// @param[in] time Current simulation time
+    /// @param[in] position_lla Current position
+    /// @return True if it should be stopped
+    bool checkStopCondition(double time, const Eigen::Vector3d& position_lla);
+
     // ###########################################################################################################
 
     /// Types where the start time should be pulled from
@@ -120,21 +128,26 @@ class ImuSimulator : public Imu
     /// Selected trajectory type in the GUI
     TrajectoryType trajectoryType = TrajectoryType::Fixed;
 
-    /// Position in local navigation coordinates (latitude, longitude, altitude) [rad, rad, m]
+    /// Start position in local navigation coordinates (latitude, longitude, altitude) [rad, rad, m]
     ///
     /// - Fixed, Linear: Start position
     /// - Circular, Helix: Center of the circle
     Eigen::Vector3d startPosition_lla = Eigen::Vector3d::Zero();
 
-    /// Orientation of the vehicle [roll, pitch, yaw] [rad]
-    Eigen::Vector3d startOrientation = Eigen::Vector3d::Zero();
+    /// Start position in ECEF coordinates in [m]. Will be set at initialization
+    Eigen::Vector3d startPosition_e;
 
-    /// Velocity of the vehicle in [m/s]
-    ///
-    /// - Linear: Velocity of the vehicle in NED coordinates
-    /// - Circular: Horizontal velocity in the north component
-    /// - Helix: Horizontal velocity in the north component, vertical in down component
-    Eigen::Vector3d velocity_n = Eigen::Vector3d::Zero();
+    /// Orientation of the vehicle [roll, pitch, yaw] [rad]
+    Eigen::Vector3d fixedTrajectoryStartOrientation = Eigen::Vector3d::Zero();
+
+    /// Velocity of the vehicle in local-navigation frame cooridnates in [m/s]
+    Eigen::Vector3d linearTrajectoryVelocity_n = Eigen::Vector3d{ 1, 0, 0 };
+
+    /// Horizontal speed of the vehicle in the tangential plane in [m/s]
+    double circularTrajectoryHorizontalSpeed = 1.0;
+
+    /// Vertical speed of the vehicle in the tangential plane in [m/s]
+    double helicalTrajectoryVerticalSpeed = 1.0;
 
     /// In the GUI selected radius of the circular/helix trajectory
     double circularTrajectoryRadius = 50.0;
@@ -178,10 +191,25 @@ class ImuSimulator : public Imu
     /// Amount of circles to simulate before stopping
     double circularTrajectoryCircleCountForStop = 1.0;
 
+    /// True if one of the pins has its stop condition achieved
+    bool stopConditionReached = false;
+
     // ###########################################################################################################
 
-    /// @brief Gravity model selected in the GUI
+    /// Gravity model selected in the GUI
     GravityModel gravityModel = GravityModel::EGM96;
+
+    /// Apply the coriolis acceleration to the measured accelerations
+    bool coriolisAccelerationEnabled = true;
+
+    /// Apply the centrifugal acceleration to the measured accelerations
+    bool centrifgalAccelerationEnabled = true;
+
+    /// Apply the Earth rotation rate to the measured angular rates
+    bool angularRateEarthRotationEnabled = true;
+
+    /// Apply the transport rate to the measured angular rates
+    bool angularRateTransportRateEnabled = true;
 
     // ###########################################################################################################
 
@@ -190,6 +218,12 @@ class ImuSimulator : public Imu
     /// Time to send the next GNSS message in [s]
     double gnssUpdateTime = 0.0;
 
+    /// @brief Calculates the flight angles (roll, pitch, yaw)
+    /// @param[in] position_lla Current position as latitude, longitude, altitude [rad, rad, m]
+    /// @param[in] velocity_n Velocity in local-navigation frame coordinates [m/s]
+    /// @return Roll, pitch, yaw in [rad]
+    std::array<double, 3> calcFlightAngles(const Eigen::Vector3d& position_lla, const Eigen::Vector3d& velocity_n);
+
     /// @brief Calculates the position in latLonAlt at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
     /// @return LatLonAlt in [rad, rad, m]
@@ -197,13 +231,32 @@ class ImuSimulator : public Imu
 
     /// @brief Calculates the velocity in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
+    /// @param[in] q_ne Rotation quaternion from Earth frame to local-navigation frame
     /// @return v_n in [rad, rad, m]
-    Eigen::Vector3d calcVelocity_n(double time);
+    Eigen::Vector3d calcVelocity_n(double time, const Eigen::Quaterniond& q_ne);
 
     /// @brief Calculates the acceleration in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
+    /// @param[in] q_ne Rotation quaternion from Earth frame to local-navigation frame
     /// @return a_n in [rad, rad, m]
-    Eigen::Vector3d calcTrajectoryAccel_n(double time);
+    Eigen::Vector3d calcTrajectoryAccel_n(double time, const Eigen::Quaterniond& q_ne);
+
+    /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in platform coordinates)
+    /// @param[in] position_lla Current position as latitude, longitude, altitude [rad, rad, m]
+    /// @param[in] velocity_n Velocity in local-navigation frame coordinates [m/s]
+    /// @param[in] acceleration_n Acceleration in local-navigation frame coordinates [m/s^2]
+    /// @param[in] rollPitchYaw Gimbal angles (roll, pitch, yaw) [rad]
+    /// @param[in] q_bn Rotation quaternion from local-navigation frame to the body frame
+    /// @param[in] omega_ie_n ω_ie_n Earth rotation rate in local-navigation coordinates
+    /// @param[in] omega_en_n ω_en_n Transport rate in local-navigation coordinates
+    /// @return ω_ip_p [rad/s]
+    Eigen::Vector3d calcOmega_ip_p(const Eigen::Vector3d& position_lla,
+                                   const Eigen::Vector3d& velocity_n,
+                                   const Eigen::Vector3d& acceleration_n,
+                                   const Eigen::Vector3d& rollPitchYaw,
+                                   const Eigen::Quaterniond& q_bn,
+                                   const Eigen::Vector3d& omega_ie_n,
+                                   const Eigen::Vector3d& omega_en_n);
 };
 
 } // namespace NAV

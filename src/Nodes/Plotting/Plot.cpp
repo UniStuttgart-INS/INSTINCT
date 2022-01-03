@@ -18,6 +18,9 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV
 {
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] style Object to read info from
 void to_json(json& j, const Plot::PlotStyle& style)
 {
     j = json{
@@ -34,6 +37,9 @@ void to_json(json& j, const Plot::PlotStyle& style)
         { "markerOutlineColor", style.markerOutlineColor },
     };
 }
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] style Output object
 void from_json(const json& j, Plot::PlotStyle& style)
 {
     if (j.contains("legendName"))
@@ -82,6 +88,9 @@ void from_json(const json& j, Plot::PlotStyle& style)
     }
 }
 
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] data Object to read info from
 void to_json(json& j, const Plot::PinData::PlotData& data)
 {
     j = json{
@@ -89,6 +98,9 @@ void to_json(json& j, const Plot::PinData::PlotData& data)
         { "displayName", data.displayName },
     };
 }
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] data Output object
 void from_json(const json& j, Plot::PinData::PlotData& data)
 {
     if (j.contains("plotOnAxisAndPlotStyle"))
@@ -101,6 +113,9 @@ void from_json(const json& j, Plot::PinData::PlotData& data)
     }
 }
 
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] data Object to read info from
 void to_json(json& j, const Plot::PinData& data)
 {
     j = json{
@@ -111,6 +126,9 @@ void to_json(json& j, const Plot::PinData& data)
         { "stride", data.stride },
     };
 }
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] data Output object
 void from_json(const json& j, Plot::PinData& data)
 {
     if (j.contains("dataIdentifier"))
@@ -139,6 +157,9 @@ void from_json(const json& j, Plot::PinData& data)
     }
 }
 
+/// @brief Write info to a json object
+/// @param[out] j Json output
+/// @param[in] data Object to read info from
 void to_json(json& j, const Plot::PlotInfo& data)
 {
     j = json{
@@ -159,6 +180,9 @@ void to_json(json& j, const Plot::PlotInfo& data)
         { "y3AxisLabel", data.y3AxisLabel },
     };
 }
+/// @brief Read info from a json object
+/// @param[in] j Json variable to read info from
+/// @param[out] data Output object
 void from_json(const json& j, Plot::PlotInfo& data)
 {
     if (j.contains("size"))
@@ -1000,6 +1024,11 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
 
     size_t pinIndex = pinIndexFromId(endPin->id);
 
+    for (auto& plotData : data.at(pinIndex).plotData) // Mark all plot data for deletion
+    {
+        plotData.markedForDelete = true;
+    }
+
     size_t i = 0;
 
     if (inputPins.at(pinIndex).type == Pin::Type::Flow)
@@ -1487,20 +1516,21 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
             }
         }
     }
-}
 
-void NAV::Plot::onDeleteLink([[maybe_unused]] Pin* startPin, Pin* endPin)
-{
-    LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
-
-    // Empty old pin data
-    size_t pinIndex = pinIndexFromId(endPin->id);
-    data.at(pinIndex).plotData.clear();
-    data.at(pinIndex).dataIdentifier.clear();
+    for (size_t i = 0; i < data.at(pinIndex).plotData.size(); i++)
+    {
+        auto iter = data.at(pinIndex).plotData.begin();
+        std::advance(iter, i);
+        if (iter->markedForDelete)
+        {
+            data.at(pinIndex).plotData.erase(iter);
+            i--;
+        }
+    }
 
     for (auto& plotInfo : plotInfos)
     {
-        if (plotInfo.selectedXdata.size() > pinIndex)
+        if (plotInfo.selectedXdata.at(pinIndex) > data.at(pinIndex).plotData.size())
         {
             plotInfo.selectedXdata.at(pinIndex) = 0;
         }

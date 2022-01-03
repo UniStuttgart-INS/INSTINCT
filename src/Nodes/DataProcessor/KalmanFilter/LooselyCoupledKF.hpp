@@ -10,7 +10,7 @@
 #include "NodeData/State/InertialNavSol.hpp"
 #include "NodeData/State/ImuBiases.hpp"
 
-#include "KalmanFilter.hpp"
+#include "Navigation/Math/KalmanFilter.hpp"
 
 namespace NAV
 {
@@ -360,11 +360,11 @@ class LooselyCoupledKF : public Node
     /// @brief Submatrix 𝐅_𝜓'_𝛿r of the system matrix 𝐅
     /// @param[in] latitude Geodetic latitude of the body in [rad]
     /// @param[in] height Geodetic height of the body in [m]
-    /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
+    /// @param[in] v_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
     /// @return The 3x3 matrix 𝐅_13
     /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.21)
     /// @note See Groves (2013) equation (14.66)
-    static Eigen::Matrix3d systemMatrixF_13_n(double latitude, double height, const Eigen::Vector3d& v_eb_n);
+    static Eigen::Matrix3d systemMatrixF_13_n(double latitude, double height, const Eigen::Vector3d& v_n);
 
     /// @brief Submatrix 𝐅_𝛿v'_𝜓 of the system matrix 𝐅
     /// @param[in] quaternion_nb Attitude of the body with respect to n-system
@@ -375,22 +375,22 @@ class LooselyCoupledKF : public Node
     static Eigen::Matrix3d systemMatrixF_21_n(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b);
 
     /// @brief Submatrix 𝐅_𝛿v'_𝛿v of the system matrix 𝐅
-    /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
+    /// @param[in] v_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
     /// @param[in] latitude Geodetic latitude of the body in [rad]
     /// @param[in] height Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_22
     /// @note See T. Hobiger (2021) Inertialnavigation V08 - equation (8.6, 8.15)
     /// @note See Groves (2013) equation (14.68)
-    static Eigen::Matrix3d systemMatrixF_22_n(const Eigen::Vector3d& v_eb_n, double latitude, double height);
+    static Eigen::Matrix3d systemMatrixF_22_n(const Eigen::Vector3d& v_n, double latitude, double height);
 
     /// @brief Submatrix 𝐅_𝛿v'_𝛿r of the system matrix 𝐅
-    /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
+    /// @param[in] v_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
     /// @param[in] latitude Geodetic latitude of the body in [rad]
     /// @param[in] height Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_23
     /// @note See T. Hobiger (2021) Inertialnavigation V08 - equation (8.14, 8.16)
     /// @note See Groves (2013) equation (14.69)
-    static Eigen::Matrix3d systemMatrixF_23_n(const Eigen::Vector3d& v_eb_n, double latitude, double height);
+    static Eigen::Matrix3d systemMatrixF_23_n(const Eigen::Vector3d& v_n, double latitude, double height);
 
     /// @brief Submatrix 𝐅_𝛿r'_𝛿v of the system matrix 𝐅
     /// @param[in] latitude Geodetic latitude of the body in [rad]
@@ -401,13 +401,13 @@ class LooselyCoupledKF : public Node
     static Eigen::Matrix3d systemMatrixF_32_n(double latitude, double height);
 
     /// @brief Submatrix 𝐅_𝛿r'_𝛿r of the system matrix 𝐅
-    /// @param[in] v_eb_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
+    /// @param[in] v_n Velocity of the body with respect to the e-system in [m / s], resolved in the n-system
     /// @param[in] latitude Geodetic latitude of the body in [rad]
     /// @param[in] height Geodetic height of the body in [m]
     /// @return The 3x3 matrix 𝐅_33
     /// @note See T. Hobiger (2021) Inertialnavigation V07 - equation (7.5)
     /// @note See Groves (2013) equation (14.71)
-    static Eigen::Matrix3d systemMatrixF_33_n(const Eigen::Vector3d& v_eb_n, double latitude, double height);
+    static Eigen::Matrix3d systemMatrixF_33_n(const Eigen::Vector3d& v_n, double latitude, double height);
 
     /// @brief Submatrix 𝐅_𝛿a'_𝛿a of the system matrix 𝐅
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
