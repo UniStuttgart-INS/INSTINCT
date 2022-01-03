@@ -16,28 +16,28 @@ struct message_header_s
 
 struct ulog_message_flag_bits_s
 {
-    struct message_header_s;
-    std::array<uint8_t, 8> compat_flags;
-    std::array<uint8_t, 8> incompat_flags;
-    std::array<uint64_t, 3> appended_offsets;
+    message_header_s header;
+    std::array<uint8_t, 8> compat_flags{};
+    std::array<uint8_t, 8> incompat_flags{};
+    std::array<uint64_t, 3> appended_offsets{};
 };
 
 struct message_format_s
 {
-    struct message_header_s header;
+    message_header_s header;
     char format = static_cast<char>(header.msg_size);
 };
 
 struct message_info_s
 {
-    struct message_header_s header;
+    message_header_s header;
     uint8_t key_len{ 0 };
     char key = static_cast<char>(key_len);
 };
 
 struct ulog_message_info_multiple_header_s
 {
-    struct message_header_s header;
+    message_header_s header;
     uint8_t is_continued{ 0 }; ///< can be used for arrays
     uint8_t key_len{ 0 };
     char key = static_cast<char>(key_len);
@@ -47,7 +47,7 @@ struct ulog_message_info_multiple_header_s
 
 struct ulog_message_parameter_default_header_s
 {
-    struct message_header_s header;
+    message_header_s header;
     uint8_t default_types{ 'B' }; //TODO: Validate default value
     uint8_t key_len{ 0 };
     char key = static_cast<char>(key_len);
@@ -58,7 +58,7 @@ struct ulog_message_parameter_default_header_s
 
 struct message_add_logged_s
 {
-    struct message_header_s header;
+    message_header_s header;
     uint8_t multi_id{ 0 };
     uint16_t msg_id{ 0 };
     char message_name = static_cast<char>(header.msg_size - 3);
@@ -66,20 +66,20 @@ struct message_add_logged_s
 
 struct message_remove_logged_s
 {
-    struct message_header_s header;
+    message_header_s header;
     uint16_t msg_id{ 0 };
 };
 
 struct message_data_s
 {
-    struct message_header_s header;
+    message_header_s header;
     uint16_t msg_id{ 0 };
     uint8_t data = static_cast<uint8_t>(header.msg_size - 2);
 };
 
 struct message_logging_s
 {
-    struct message_header_s header;
+    message_header_s header;
     uint8_t log_level{ 0 };
     uint64_t timestamp{ 0 };
     char message = static_cast<char>(header.msg_size - 9);
@@ -87,7 +87,7 @@ struct message_logging_s
 
 struct message_logging_tagged_s
 {
-    struct message_header_s header;
+    message_header_s header;
     uint8_t log_level{ 0 };
     uint16_t tag{ 'C' }; //TODO: Validate default value
     uint64_t timestamp{ 0 };
@@ -110,12 +110,50 @@ enum class ulog_tag : uint16_t
 
 struct message_sync_s
 {
-    struct message_header_s header;
+    message_header_s header;
     std::array<uint8_t, 8> snyc_magic{};
 };
 
 struct message_dropout_s
 {
-    struct message_header_s header;
+    message_header_s header;
     uint16_t duration{ 0 };
 };
+
+// NAV::sensors::ublox::UbxClass NAV::sensors::ublox::getMsgClassFromString(const std::string& className)
+// {
+//     if (className == "NAV")
+//     {
+//         return UbxClass::UBX_CLASS_NAV;
+//     }
+//     return static_cast<UbxClass>(NULL);
+// }
+
+// uint8_t NAV::sensors::ublox::getMsgIdFromString(NAV::sensors::ublox::UbxClass msgClass, const std::string& idName)
+// {
+//     if (msgClass == UbxClass::UBX_CLASS_ACK)
+//     {
+//         if (idName == "ACK")
+//         {
+//             return UbxAckMessages::UBX_ACK_ACK;
+//         }
+//         if (idName == "NAK")
+//         {
+//             return UbxAckMessages::UBX_ACK_NAK;
+//         }
+//     }
+//     else if (msgClass == UbxClass::UBX_CLASS_CFG)
+//     {
+//         if (idName == "ANT")
+//         {
+//             return UbxCfgMessages::UBX_CFG_ANT;
+//         }
+//     }
+
+//     return UINT8_MAX;
+// }
+
+// uint8_t NAV::sensors::ublox::getMsgIdFromString(const std::string& className, const std::string& idName)
+// {
+//     return getMsgIdFromString(getMsgClassFromString(className), idName);
+// }

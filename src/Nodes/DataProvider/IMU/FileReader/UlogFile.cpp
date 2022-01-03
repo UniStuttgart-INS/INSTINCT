@@ -110,7 +110,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
     // Get current position
     // auto pos = filestream.tellg();
     // uint8_t i = 0;
-    // std::unique_ptr
+    // std::unique_ptr<UlogFile> packet = nullptr;
+    // while (filestream.readsome(reinterpret_cast<char*>(&i), 1))
+    // {
+    //     // packet =
+    // }
 
     return nullptr; //TODO
 }
