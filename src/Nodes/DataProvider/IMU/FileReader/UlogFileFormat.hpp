@@ -10,8 +10,8 @@
 // --------------------------------------------------------- Definitions Section ---------------------------------------------------
 struct message_header_s
 {
-    uint16_t msg_size{ 1 };  //TODO: Default value
-    uint8_t msg_type{ 'A' }; //TODO: Default value
+    uint16_t msg_size{ 0 };
+    uint8_t msg_type{ 'B' }; //TODO: Validate default value
 };
 
 struct ulog_message_flag_bits_s
@@ -31,15 +31,15 @@ struct message_format_s
 struct message_info_s
 {
     struct message_header_s header;
-    uint8_t key_len{ 1 }; //TODO: Default value
+    uint8_t key_len{ 0 };
     char key = static_cast<char>(key_len);
 };
 
 struct ulog_message_info_multiple_header_s
 {
     struct message_header_s header;
-    uint8_t is_continued{ 1 }; ///< can be used for arrays //TODO: Default value
-    uint8_t key_len{ 1 };      //TODO: Default value
+    uint8_t is_continued{ 0 }; ///< can be used for arrays
+    uint8_t key_len{ 0 };
     char key = static_cast<char>(key_len);
     char value = static_cast<char>(header.msg_size - 2 - key_len);
     // char value[header.msg_size - 2 - key_len]
@@ -48,8 +48,8 @@ struct ulog_message_info_multiple_header_s
 struct ulog_message_parameter_default_header_s
 {
     struct message_header_s header;
-    uint8_t default_types{ 'A' }; //TODO: Default value
-    uint8_t key_len{ 1 };         //TODO: Default value
+    uint8_t default_types{ 'B' }; //TODO: Validate default value
+    uint8_t key_len{ 0 };
     char key = static_cast<char>(key_len);
     char value = static_cast<char>(header.msg_size - 2 - key_len);
 };
@@ -59,38 +59,38 @@ struct ulog_message_parameter_default_header_s
 struct message_add_logged_s
 {
     struct message_header_s header;
-    uint8_t multi_id{ 1 }; //TODO: Default value
-    uint16_t msg_id{ 1 };  //TODO: Default value
+    uint8_t multi_id{ 0 };
+    uint16_t msg_id{ 0 };
     char message_name = static_cast<char>(header.msg_size - 3);
 };
 
 struct message_remove_logged_s
 {
     struct message_header_s header;
-    uint16_t msg_id{ 1 }; //TODO: Default value
+    uint16_t msg_id{ 0 };
 };
 
 struct message_data_s
 {
     struct message_header_s header;
-    uint16_t msg_id{ 1 }; //TODO: Default value
+    uint16_t msg_id{ 0 };
     uint8_t data = static_cast<uint8_t>(header.msg_size - 2);
 };
 
 struct message_logging_s
 {
     struct message_header_s header;
-    uint8_t log_level{ 1 };  //TODO: Default value
-    uint64_t timestamp{ 1 }; //TODO: Default value
+    uint8_t log_level{ 0 };
+    uint64_t timestamp{ 0 };
     char message = static_cast<char>(header.msg_size - 9);
 };
 
 struct message_logging_tagged_s
 {
     struct message_header_s header;
-    uint8_t log_level{ 1 };  //TODO: Default value
-    uint16_t tag{ 'A' };     //TODO: Default value
-    uint64_t timestamp{ 1 }; //TODO: Default value
+    uint8_t log_level{ 0 };
+    uint16_t tag{ 'C' }; //TODO: Validate default value
+    uint64_t timestamp{ 0 };
     char message = static_cast<char>(header.msg_size - 9);
 };
 
@@ -117,5 +117,5 @@ struct message_sync_s
 struct message_dropout_s
 {
     struct message_header_s header;
-    uint16_t duration{ 1 }; //TODO: Default value
+    uint16_t duration{ 0 };
 };
