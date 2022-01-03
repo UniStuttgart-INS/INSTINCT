@@ -1,5 +1,7 @@
 #include "UlogFile.hpp"
 
+#include "util/Logger.hpp"
+
 #include <exception>
 
 #include "internal/gui/widgets/FileDialog.hpp"
@@ -7,6 +9,8 @@
 #include "internal/NodeManager.hpp"
 namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
+
+#include "UlogFileFormat.hpp"
 
 // #include "NodeData/IMU/"
 // #include "Nodes/DataProvider/IMU/Sensors/"
@@ -45,7 +49,11 @@ std::string NAV::UlogFile::category()
 
 void NAV::UlogFile::guiConfig()
 {
-    //TODO
+    if (gui::widgets::FileDialogLoad(path, "Select File", ".ulg", { ".ulg" }, size_t(id), nameId()))
+    {
+        flow::ApplyChanges();
+        initializeNode();
+    }
 }
 
 [[nodiscard]] json NAV::UlogFile::save() const
@@ -97,11 +105,32 @@ bool NAV::UlogFile::resetNode()
     return true;
 }
 
-void NAV::UlogFile::readHeader()
-{
-}
-
 std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
 {
+    // Get current position
+    // auto pos = filestream.tellg();
+    // uint8_t i = 0;
+    // std::unique_ptr
+
     return nullptr; //TODO
+}
+
+NAV::FileReader::FileType NAV::UlogFile::determineFileType()
+{
+    LOG_TRACE("called for {}", nameId());
+
+    auto filestream = std::ifstream(path);
+
+    constexpr uint16_t BUFFER_SIZE = 10; //TODO: validate size
+
+    std::array<char, BUFFER_SIZE> buffer{};
+    if (filestream.good())
+    {
+        filestream.read(buffer.data(), BUFFER_SIZE);
+        filestream.close();
+        LOG_DEBUG("{} has the file type: binary", nameId());
+        return FileType::BINARY;
+    }
+    LOG_ERROR("{} could not determine file type", nameId(), path);
+    return FileType::NONE;
 }

@@ -58,13 +58,14 @@ class UlogFile : public Imu, public FileReader
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Read the Header of the file
-    void readHeader() override;
-
     /// @brief Polls data from the file
     /// @param[in] peek Specifies if the data should be peeked (without moving the read cursor) or read
     /// @return The read observation
     [[nodiscard]] std::shared_ptr<const NodeData> pollData([[maybe_unused]] bool peek = false); //TODO: remove [[maybe_unused]] when enabling the callbacks
+
+    /// @brief Determines the type of the file
+    /// @return The file type
+    [[nodiscard]] FileType determineFileType() override;
 
     /// @brief Number of messages read
     uint32_t messageCount = 0;
