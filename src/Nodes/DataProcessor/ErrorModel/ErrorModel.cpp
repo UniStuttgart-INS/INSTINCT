@@ -55,8 +55,8 @@ NAV::ErrorModel::ErrorModel()
     name = typeStatic();
 
     LOG_TRACE("{}: called", name);
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 812, 332 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 812, 332 };
 
     nm::CreateInputPin(this, "True", Pin::Type::Flow, supportedDataIdentifier, &ErrorModel::receiveObs);
 
@@ -85,7 +85,7 @@ std::string NAV::ErrorModel::category()
 
 void NAV::ErrorModel::guiConfig()
 {
-    if (outputPins.at(OutputPortIndex).dataIdentifier.size() != 1)
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.size() != 1)
     {
         ImGui::TextUnformatted("Please connect the input pin to show the options");
         return;
@@ -96,7 +96,7 @@ void NAV::ErrorModel::guiConfig()
 
     ImGui::TextUnformatted("Offsets:");
     ImGui::Indent();
-    if (outputPins.at(OutputPortIndex).dataIdentifier.front() == ImuObs::type())
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Bias (platform)##{}", size_t(id)).c_str(), itemWidth, unitWidth,
                                                _imuAccelerometerBias_p.data(), reinterpret_cast<int*>(&_imuAccelerometerBiasUnit), "m/s^2\0\0", // NOLINT(hicpp-avoid-c-arrays,modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
@@ -115,7 +115,7 @@ void NAV::ErrorModel::guiConfig()
             flow::ApplyChanges();
         }
     }
-    else if (outputPins.at(OutputPortIndex).dataIdentifier.front() == PosVelAtt::type())
+    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Position Bias ({})##{}",
                                                            _positionBiasUnit == PositionBiasUnits::meter ? "NED" : "LatLonAlt",
@@ -150,7 +150,7 @@ void NAV::ErrorModel::guiConfig()
 
     ImGui::TextUnformatted("Measurement noise:");
     ImGui::Indent();
-    if (outputPins.at(OutputPortIndex).dataIdentifier.front() == ImuObs::type())
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
         // #########################################################################################################################################
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Accelerometer Noise ({})##{}",
@@ -232,7 +232,7 @@ void NAV::ErrorModel::guiConfig()
         }
         // #########################################################################################################################################
     }
-    else if (outputPins.at(OutputPortIndex).dataIdentifier.front() == PosVelAtt::type())
+    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         // #########################################################################################################################################
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Position Noise ({})##{}",
@@ -510,7 +510,7 @@ bool NAV::ErrorModel::resetNode()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (outputPins.at(OutputPortIndex).dataIdentifier.front() == ImuObs::type())
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
         _imuAccelerometerRandomNumberGenerator.generator.seed(_imuAccelerometerRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                                   ? _imuAccelerometerRandomNumberGenerator.seed
@@ -519,7 +519,7 @@ bool NAV::ErrorModel::resetNode()
                                                               ? _imuGyroscopeRandomNumberGenerator.seed
                                                               : static_cast<uint64_t>(std::chrono::system_clock::now().time_since_epoch().count()));
     }
-    else if (outputPins.at(OutputPortIndex).dataIdentifier.front() == PosVelAtt::type())
+    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         _positionRandomNumberGenerator.generator.seed(_positionRandomNumberGenerator.useSeedInsteadOfSystemTime
                                                           ? _positionRandomNumberGenerator.seed
@@ -547,14 +547,14 @@ void NAV::ErrorModel::afterCreateLink(Pin* startPin, Pin* endPin)
         }
 
         // Store previous output pin identifier
-        auto previousOutputPinDataIdentifier = outputPins.at(OutputPortIndex).dataIdentifier;
+        auto previousOutputPinDataIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
         // Overwrite output pin identifier with input pin identifier
-        outputPins.at(OutputPortIndex).dataIdentifier = startPin->dataIdentifier;
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin->dataIdentifier;
 
-        if (previousOutputPinDataIdentifier != outputPins.at(OutputPortIndex).dataIdentifier) // If the identifier changed
+        if (previousOutputPinDataIdentifier != outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier) // If the identifier changed
         {
             // Check if connected links on output port are still valid
-            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex).id))
+            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
             {
                 auto* startPin = nm::FindPin(link->startPinId);
                 auto* endPin = nm::FindPin(link->endPinId);
@@ -570,9 +570,9 @@ void NAV::ErrorModel::afterCreateLink(Pin* startPin, Pin* endPin)
             }
 
             // Refresh all links connected to the output pin if the type changed
-            if (outputPins.at(OutputPortIndex).dataIdentifier != previousOutputPinDataIdentifier)
+            if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != previousOutputPinDataIdentifier)
             {
-                for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex).id))
+                for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
                 {
                     nm::RefreshLink(link->id);
                 }
@@ -587,12 +587,12 @@ void NAV::ErrorModel::afterDeleteLink(Pin* startPin, Pin* endPin)
     {
         LOG_TRACE("{}: called for {} ==> {}", nameId(), size_t(startPin->id), size_t(endPin->id));
 
-        if ((endPin->parentNode->id != id                                // Link on Output port is removed
-             && !nm::IsPinLinked(inputPins.at(InputPortIndex).id))       //     and the Input port is not linked
-            || (startPin->parentNode->id != id                           // Link on Input port is removed
-                && !nm::IsPinLinked(outputPins.at(OutputPortIndex).id))) //     and the Output port is not linked
+        if ((endPin->parentNode->id != id                                       // Link on Output port is removed
+             && !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_FLOW).id))       //     and the Input port is not linked
+            || (startPin->parentNode->id != id                                  // Link on Input port is removed
+                && !nm::IsPinLinked(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))) //     and the Output port is not linked
         {
-            outputPins.at(OutputPortIndex).dataIdentifier = supportedDataIdentifier;
+            outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = supportedDataIdentifier;
         }
     }
 }
@@ -600,11 +600,11 @@ void NAV::ErrorModel::afterDeleteLink(Pin* startPin, Pin* endPin)
 void NAV::ErrorModel::receiveObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
     // Select the correct data type and make a copy of the node data to modify
-    if (outputPins.at(OutputPortIndex).dataIdentifier.front() == ImuObs::type())
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == ImuObs::type())
     {
         receiveImuObs(std::make_shared<ImuObs>(*std::static_pointer_cast<const ImuObs>(nodeData)));
     }
-    else if (outputPins.at(OutputPortIndex).dataIdentifier.front() == PosVelAtt::type())
+    else if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier.front() == PosVelAtt::type())
     {
         receivePosVelAtt(std::make_shared<PosVelAtt>(*std::static_pointer_cast<const PosVelAtt>(nodeData)));
     }
@@ -680,7 +680,7 @@ void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
                                                         std::normal_distribution<double>{ 0.0, gyroscopeNoiseStd(1) }(_imuGyroscopeRandomNumberGenerator.generator),
                                                         std::normal_distribution<double>{ 0.0, gyroscopeNoiseStd(2) }(_imuGyroscopeRandomNumberGenerator.generator) };
 
-    invokeCallbacks(OutputPortIndex, imuObs);
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, imuObs);
 }
 
 void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
@@ -810,5 +810,5 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
                                                             std::normal_distribution<double>{ 0.0, attitudeNoiseStd(1) }(_attitudeRandomNumberGenerator.generator),
                                                             std::normal_distribution<double>{ 0.0, attitudeNoiseStd(2) }(_attitudeRandomNumberGenerator.generator) }));
 
-    invokeCallbacks(OutputPortIndex, posVelAtt);
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, posVelAtt);
 }

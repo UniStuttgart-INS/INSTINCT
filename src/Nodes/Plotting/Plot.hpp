@@ -53,7 +53,7 @@ class Plot : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -258,7 +258,7 @@ class Plot : public Node
     /// @brief Deinitialize the node
     void deinitialize() override;
 
-    /// @brief Adds/Deletes Input Pins depending on the variable nInputPins
+    /// @brief Adds/Deletes Input Pins depending on the variable _nInputPins
     void updateNumberOfInputPins();
 
     /// @brief Adds/Deletes Plots depending on the variable nPlots
@@ -337,27 +337,27 @@ class Plot : public Node
     void plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBinaryOutput>& obs, size_t pinIndex);
 
     /// Data storage for each pin
-    std::vector<PinData> data;
+    std::vector<PinData> _pinData;
 
     /// Info for each plot window
-    std::vector<PlotInfo> plotInfos;
+    std::vector<PlotInfo> _plotInfos;
 
     /// Amount of input pins (should equal data.size())
-    int nInputPins = 5;
-    /// Amount of plot windows (should equal plotInfos.size())
-    int nPlots = 0;
+    int _nInputPins = 5;
+    /// Amount of plot windows (should equal _plotInfos.size())
+    int _nPlots = 0;
     /// Possible data identifiers to connect
-    std::vector<std::string> dataIdentifier;
+    std::vector<std::string> _dataIdentifier;
 
     /// Start Time for calculation of relative time with the GPS ToW
-    double startValue_Time = std::nan("");
+    double _startValue_Time = std::nan("");
     /// Start Latitude [rad] for calculation of relative North-South
-    double startValue_North = std::nan("");
+    double _startValue_North = std::nan("");
     /// Start Longitude [rad] for calculation of relative East-West
-    double startValue_East = std::nan("");
+    double _startValue_East = std::nan("");
 
     /// Flag, whether to override the North/East startValues in the GUI
-    bool overridePositionStartValues = false;
+    bool _overridePositionStartValues = false;
 };
 
 } // namespace NAV

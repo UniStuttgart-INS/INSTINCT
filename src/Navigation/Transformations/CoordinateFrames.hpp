@@ -95,13 +95,13 @@ template<>
 /// @param[in] time Time (t - t0)
 /// @param[in] angularRate_ie Angular velocity in [rad/s] of earth frame with regard to the inertial frame
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_ei(double time, double angularRate_ie = InsConst::angularVelocity_ie);
+[[nodiscard]] Eigen::Quaterniond quat_ei(double time, double angularRate_ie = InsConst::omega_ie);
 
 /// @brief Quaternion for rotations from Earth-centered-Earth-fixed to inertial frame
 /// @param[in] time Time (t - t0)
 /// @param[in] angularRate_ie Angular velocity in [rad/s] of earth frame with regard to the inertial frame
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_ie(double time, double angularRate_ie = InsConst::angularVelocity_ie);
+[[nodiscard]] Eigen::Quaterniond quat_ie(double time, double angularRate_ie = InsConst::omega_ie);
 
 /// @brief Quaternion for rotations from navigation to Earth-fixed frame
 /// @param[in] latitude 𝜙 Geodetic latitude in [rad]

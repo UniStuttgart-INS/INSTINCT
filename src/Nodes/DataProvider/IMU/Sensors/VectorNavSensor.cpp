@@ -616,7 +616,7 @@ void from_json(const json& j, VelocityCompensationControlRegister& velocityCompe
 } // namespace sensors
 } // namespace vn
 
-const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::binaryGroupCommon = { {
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor::_binaryGroupCommon = { {
     /*  0 */ { "TimeStartup", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C). This field is\nequivalent to the TimeStartup field in group 2."); } },
     /*  1 */ { "TimeGps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS, []() { ImGui::TextUnformatted("GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds. This field is equivalent to\nthe TimeGps field in group 2."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
     /*  2 */ { "TimeSyncIn", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn trigger event expressed in nano seconds. This field is equivalent to the\nTimeSyncIn field in group 2."); } },
@@ -634,7 +634,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 15> NAV::VectorNavSensor
     /* 14 */ { "TimeGpsPps", vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS, []() { ImGui::TextUnformatted("Time since last GNSS PPS trigger.\n\nThe time since the last GPS PPS trigger event expressed in nano seconds. This field is equivalent to the\nTimePPS field in group 2."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
 } };
 
-const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor::binaryGroupTime = { {
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor::_binaryGroupTime = { {
     /*  0 */ { "TimeStartup", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP, []() { ImGui::TextUnformatted("Time since startup.\n\nThe system time since startup measured in nano seconds. The time since startup is based upon the internal\nTXCO oscillator for the MCU. The accuracy of the internal TXCO is +/- 20ppm (-40C to 85C)."); } },
     /*  1 */ { "TimeGps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS, []() { ImGui::TextUnformatted("Absolute GPS time.\n\nThe absolute GPS time since start of GPS epoch 1980 expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
     /*  2 */ { "GpsTow", vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW, []() { ImGui::TextUnformatted("Time since start of GPS week.\n\nThe time since the start of the current GPS time week expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
@@ -676,7 +676,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
                                                                                                                                                                                                                     && !(bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC); } },
 } };
 
-const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor::binaryGroupIMU{ {
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor::_binaryGroupIMU{ {
     /*  0 */ { "ImuStatus", vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS, []() { ImGui::TextUnformatted("Status is reserved for future use. Not currently used in the current code, as such will always report 0."); }, [](VectorNavModel /* sensorModel */, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return false; } },
     /*  1 */ { "UncompMag", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG, []() { ImGui::TextUnformatted("Uncompensated magnetic measurement.\n\nThe IMU magnetic field measured in units of Gauss, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), and the user\ncompensation, however it is not compensated by the onboard Hard/Soft Iron estimator."); } },
     /*  2 */ { "UncompAccel", vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL, []() { ImGui::TextUnformatted("Uncompensated acceleration measurement.\n\nThe IMU acceleration measured in units of m/s^2, given in the body frame. This measurement is\ncompensated by the static calibration (individual factory calibration stored in flash), however it is not\ncompensated by any dynamic calibration such as bias compensation from the onboard INS Kalman filter."); } },
@@ -690,7 +690,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor
     /* 10 */ { "AngularRate", vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE, []() { ImGui::TextUnformatted("Compensated angular rate measurement.\n\nThe compensated angular rate measured in units of rad/s, and given in the body frame. This measurement\nis compensated by the static calibration (individual factor calibration stored in flash), the user compensation,\nand the dynamic bias compensation from the onboard INS Kalman filter."); } },
 } };
 
-const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor::binaryGroupGNSS{ {
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor::_binaryGroupGNSS{ {
     /*  0 */ { "UTC", vn::protocol::uart::GpsGroup::GPSGROUP_UTC, []() { ImGui::TextUnformatted("GPS UTC Time\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_UTC) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
     /*  1 */ { "Tow", vn::protocol::uart::GpsGroup::GPSGROUP_TOW, []() { ImGui::TextUnformatted("GPS time of week\n\nThe GPS time of week given in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_TOW) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
     /*  2 */ { "Week", vn::protocol::uart::GpsGroup::GPSGROUP_WEEK, []() { ImGui::TextUnformatted("GPS week\n\nThe current GPS week."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& /* bor */, uint32_t& binaryField) { (static_cast<vn::protocol::uart::GpsGroup>(binaryField) & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK) && (binaryField |= vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO); } },
@@ -1084,7 +1084,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 16> NAV::VectorNavSensor
                                                                                  } }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
 } };
 
-const std::array<NAV::VectorNavSensor::BinaryGroupData, 9> NAV::VectorNavSensor::binaryGroupAttitude{ {
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 9> NAV::VectorNavSensor::_binaryGroupAttitude{ {
     /*  0 */ { "VpeStatus", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS, []() { ImGui::TextUnformatted("VPE Status bitfield\n\n");
                                                                                                if (ImGui::BeginTable("VectorNavSatRawTooltipChan", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                                                                                                {
@@ -1161,7 +1161,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 9> NAV::VectorNavSensor:
     /*  8 */ { "YprU", vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU, []() { ImGui::TextUnformatted("Yaw Pitch Roll uncertainty\n\nThe estimated attitude (Yaw, Pitch, Roll) uncertainty (1 Sigma), reported in degrees.\n\nThe estimated attitude (YprU) field is not valid when the INS Scenario mode in the INS Basic\nConfiguration register is set to AHRS mode. See the INS Basic Configuration Register in the INS\nsection for more details."); } },
 } };
 
-const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor::binaryGroupINS{ {
+const std::array<NAV::VectorNavSensor::BinaryGroupData, 11> NAV::VectorNavSensor::_binaryGroupINS{ {
     /*  0 */ { "InsStatus", vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS, []() { ImGui::TextUnformatted("Ins Status bitfield:");
                                                                                      if (ImGui::BeginTable("VectorNavInsStatusTooltip", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                                                                                      {
@@ -1247,15 +1247,15 @@ NAV::VectorNavSensor::VectorNavSensor()
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 954, 783 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 954, 783 };
 
     nm::CreateOutputPin(this, "Ascii Output", Pin::Type::Flow, { NAV::StringObs::type() });
     nm::CreateOutputPin(this, "Binary Output 1", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
     nm::CreateOutputPin(this, "Binary Output 2", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
     nm::CreateOutputPin(this, "Binary Output 3", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() });
 
-    dividerFrequency = []() {
+    _dividerFrequency = []() {
         std::map<int, int, std::greater<>> divFreq;
         for (int freq = 1; freq <= IMU_DEFAULT_FREQUENCY; freq++)
         {
@@ -1301,76 +1301,76 @@ std::string NAV::VectorNavSensor::category()
 
 void NAV::VectorNavSensor::guiConfig()
 {
-    if (ImGui::Combo("Sensor", reinterpret_cast<int*>(&sensorModel), "VN-100 / VN-110\0VN-310\0\0"))
+    if (ImGui::Combo("Sensor", reinterpret_cast<int*>(&_sensorModel), "VN-100 / VN-110\0VN-310\0\0"))
     {
-        LOG_DEBUG("{}: Sensor changed to {}", nameId(), sensorModel);
+        LOG_DEBUG("{}: Sensor changed to {}", nameId(), _sensorModel);
         flow::ApplyChanges();
         deinitializeNode();
 
-        if (sensorModel != VectorNavModel::VN310
-            && (asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPS
-                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPE
-                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNINS
-                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNINE
-                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNISL
-                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNISE
-                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNG2S
-                || asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNG2E))
+        if (_sensorModel != VectorNavModel::VN310
+            && (_asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPS
+                || _asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNGPE
+                || _asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNINS
+                || _asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNINE
+                || _asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNISL
+                || _asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNISE
+                || _asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNG2S
+                || _asyncDataOutputType == vn::protocol::uart::AsciiAsync::VNG2E))
         {
-            asyncDataOutputType = vn::protocol::uart::AsciiAsync::VNOFF;
+            _asyncDataOutputType = vn::protocol::uart::AsciiAsync::VNOFF;
         }
 
-        if (sensorModel == VectorNavModel::VN310)
+        if (_sensorModel == VectorNavModel::VN310)
         {
-            communicationProtocolControlRegister.spiCount = vn::protocol::uart::CountMode::COUNTMODE_NONE;
-            communicationProtocolControlRegister.spiStatus = vn::protocol::uart::StatusMode::STATUSMODE_OFF;
-            communicationProtocolControlRegister.spiChecksum = vn::protocol::uart::ChecksumMode::CHECKSUMMODE_OFF;
+            _communicationProtocolControlRegister.spiCount = vn::protocol::uart::CountMode::COUNTMODE_NONE;
+            _communicationProtocolControlRegister.spiStatus = vn::protocol::uart::StatusMode::STATUSMODE_OFF;
+            _communicationProtocolControlRegister.spiChecksum = vn::protocol::uart::ChecksumMode::CHECKSUMMODE_OFF;
         }
 
-        for (auto& binaryOutput : binaryOutputRegister)
+        for (auto& binaryOutput : _binaryOutputRegister)
         {
-            for (const auto& item : binaryGroupCommon)
+            for (const auto& item : _binaryGroupCommon)
             {
-                if (!item.isEnabled(sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.commonField)))
+                if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.commonField)))
                 {
                     binaryOutput.commonField &= ~vn::protocol::uart::CommonGroup(item.flagsValue);
                 }
             }
-            for (const auto& item : binaryGroupTime)
+            for (const auto& item : _binaryGroupTime)
             {
-                if (!item.isEnabled(sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.timeField)))
+                if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.timeField)))
                 {
                     binaryOutput.timeField &= ~vn::protocol::uart::TimeGroup(item.flagsValue);
                 }
             }
-            for (const auto& item : binaryGroupIMU)
+            for (const auto& item : _binaryGroupIMU)
             {
-                if (!item.isEnabled(sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.imuField)))
+                if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.imuField)))
                 {
                     binaryOutput.imuField &= ~vn::protocol::uart::ImuGroup(item.flagsValue);
                 }
             }
-            for (const auto& item : binaryGroupGNSS)
+            for (const auto& item : _binaryGroupGNSS)
             {
-                if (!item.isEnabled(sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.gpsField)))
+                if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.gpsField)))
                 {
                     binaryOutput.gpsField &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
                 }
-                if (!item.isEnabled(sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.gps2Field)))
+                if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.gps2Field)))
                 {
                     binaryOutput.gps2Field &= ~vn::protocol::uart::GpsGroup(item.flagsValue);
                 }
             }
-            for (const auto& item : binaryGroupAttitude)
+            for (const auto& item : _binaryGroupAttitude)
             {
-                if (!item.isEnabled(sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.attitudeField)))
+                if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.attitudeField)))
                 {
                     binaryOutput.attitudeField &= ~vn::protocol::uart::AttitudeGroup(item.flagsValue);
                 }
             }
-            for (const auto& item : binaryGroupINS)
+            for (const auto& item : _binaryGroupINS)
             {
-                if (!item.isEnabled(sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.insField)))
+                if (!item.isEnabled(_sensorModel, binaryOutput, static_cast<uint32_t>(binaryOutput.insField)))
                 {
                     binaryOutput.insField &= ~vn::protocol::uart::InsGroup(item.flagsValue);
                 }
@@ -1378,9 +1378,9 @@ void NAV::VectorNavSensor::guiConfig()
         }
     }
 
-    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &sensorPort))
+    if (ImGui::InputTextWithHint("SensorPort", "/dev/ttyUSB0", &_sensorPort))
     {
-        LOG_DEBUG("{}: SensorPort changed to {}", nameId(), sensorPort);
+        LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
         deinitializeNode();
     }
@@ -1402,7 +1402,7 @@ void NAV::VectorNavSensor::guiConfig()
         // ------------------------------------------- Serial Baud Rate ----------------------------------------------
 
         std::array<const char*, 10> items = { "Fastest", "9600", "19200", "38400", "57600", "115200", "128000", "230400", "460800", "921600" };
-        if (ImGui::Combo("Baudrate", &selectedBaudrate, items.data(), items.size()))
+        if (ImGui::Combo("Baudrate", &_selectedBaudrate, items.data(), items.size()))
         {
             LOG_DEBUG("{}: Baudrate changed to {}", nameId(), sensorBaudrate());
             flow::ApplyChanges();
@@ -1426,7 +1426,7 @@ void NAV::VectorNavSensor::guiConfig()
                 { vn::protocol::uart::AsciiAsync::VNYIA, "Yaw, Pitch, Roll, Inertial True Acceleration, and Angular Rates" },
                 { vn::protocol::uart::AsciiAsync::VNIMU, "IMU Measurements" }
             };
-            if (sensorModel == VectorNavModel::VN310)
+            if (_sensorModel == VectorNavModel::VN310)
             {
                 asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNGPS, "GNSS LLA");
                 asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNGPE, "GNSS ECEF");
@@ -1436,27 +1436,27 @@ void NAV::VectorNavSensor::guiConfig()
                 asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNISE, "INS ECEF 2");
             }
             asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNDTV, "Delta theta and delta velocity");
-            if (sensorModel == VectorNavModel::VN310)
+            if (_sensorModel == VectorNavModel::VN310)
             {
                 asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNG2S, "GNSS2 LLA");
                 asciiAsyncItems.emplace_back(vn::protocol::uart::AsciiAsync::VNG2E, "GNSS2 ECEF");
             }
 
-            if (ImGui::BeginCombo(fmt::format("Async Ascii Output Type##{}", size_t(id)).c_str(), vn::protocol::uart::str(asyncDataOutputType).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Async Ascii Output Type##{}", size_t(id)).c_str(), vn::protocol::uart::str(_asyncDataOutputType).c_str()))
             {
                 for (const auto& asciiAsyncItem : asciiAsyncItems)
                 {
-                    const bool isSelected = (asyncDataOutputType == asciiAsyncItem.first);
+                    const bool isSelected = (_asyncDataOutputType == asciiAsyncItem.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(asciiAsyncItem.first).c_str(), isSelected))
                     {
-                        asyncDataOutputType = asciiAsyncItem.first;
-                        LOG_DEBUG("{}: asyncDataOutputType changed to {}", nameId(), vn::protocol::uart::str(asyncDataOutputType));
+                        _asyncDataOutputType = asciiAsyncItem.first;
+                        LOG_DEBUG("{}: _asyncDataOutputType changed to {}", nameId(), vn::protocol::uart::str(_asyncDataOutputType));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeAsyncDataOutputType(asyncDataOutputType);
+                                _vs.writeAsyncDataOutputType(_asyncDataOutputType);
                             }
                             catch (const std::exception& e)
                             {
@@ -1493,18 +1493,18 @@ void NAV::VectorNavSensor::guiConfig()
                                      "automatically at a frequency specified by the Async Data Output Frequency Register.");
 
             if (ImGui::SliderInt(fmt::format("Async Ascii Output Frequency##{}", size_t(id)).c_str(),
-                                 &asyncDataOutputFrequencySelected,
-                                 0, possibleAsyncDataOutputFrequency.size() - 1,
-                                 fmt::format("{} Hz", possibleAsyncDataOutputFrequency.at(static_cast<size_t>(asyncDataOutputFrequencySelected))).c_str()))
+                                 &_asyncDataOutputFrequencySelected,
+                                 0, _possibleAsyncDataOutputFrequency.size() - 1,
+                                 fmt::format("{} Hz", _possibleAsyncDataOutputFrequency.at(static_cast<size_t>(_asyncDataOutputFrequencySelected))).c_str()))
             {
-                asyncDataOutputFrequency = static_cast<uint32_t>(possibleAsyncDataOutputFrequency.at(static_cast<size_t>(asyncDataOutputFrequencySelected)));
-                LOG_DEBUG("{}: asyncDataOutputType changed to {} Hz", nameId(), asyncDataOutputFrequency);
+                _asyncDataOutputFrequency = static_cast<uint32_t>(_possibleAsyncDataOutputFrequency.at(static_cast<size_t>(_asyncDataOutputFrequencySelected)));
+                LOG_DEBUG("{}: asyncDataOutputFrequency changed to {} Hz", nameId(), _asyncDataOutputFrequency);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeAsyncDataOutputFrequency(asyncDataOutputFrequency);
+                        _vs.writeAsyncDataOutputFrequency(_asyncDataOutputFrequency);
                     }
                     catch (const std::exception& e)
                     {
@@ -1520,17 +1520,17 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("Asynchronous data output frequency.\nThe ADOF will be changed for the active serial port.");
 
-            if (ImGui::DragInt(fmt::format("Async Ascii Output buffer size##{}", size_t(id)).c_str(), &asciiOutputBufferSize, 1.0F, 0, INT32_MAX / 2))
+            if (ImGui::DragInt(fmt::format("Async Ascii Output buffer size##{}", size_t(id)).c_str(), &_asciiOutputBufferSize, 1.0F, 0, INT32_MAX / 2))
             {
-                asciiOutputBuffer.resize(static_cast<size_t>(asciiOutputBufferSize));
-                LOG_DEBUG("{}: asciiOutputBufferSize changed to {}", nameId(), asciiOutputBufferSize);
+                _asciiOutputBuffer.resize(static_cast<size_t>(_asciiOutputBufferSize));
+                LOG_DEBUG("{}: asciiOutputBufferSize changed to {}", nameId(), _asciiOutputBufferSize);
                 flow::ApplyChanges();
             }
 
             std::string messages;
-            for (size_t i = 0; i < asciiOutputBuffer.size(); i++)
+            for (size_t i = 0; i < _asciiOutputBuffer.size(); i++)
             {
-                messages.append(asciiOutputBuffer.at(i));
+                messages.append(_asciiOutputBuffer.at(i));
             }
             ImGui::TextUnformatted("Async Ascii Messages:");
             ImGui::BeginChild(fmt::format("##Ascii Mesages {}", size_t(id)).c_str(), ImVec2(0, 300), true);
@@ -1558,21 +1558,21 @@ void NAV::VectorNavSensor::guiConfig()
                                                                        "Async message set by the Async Data Output Register, the user configurate binary output messages set\n"
                                                                        "by the Binary Output Registers, as well as the NMEA messages configured by the NMEA Output Registers." } }
             };
-            if (ImGui::BeginCombo(fmt::format("SyncIn Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncInMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("SyncIn Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_synchronizationControlRegister.syncInMode).c_str()))
             {
                 for (const auto& synchronizationControlSyncInMode : synchronizationControlSyncInModes)
                 {
-                    const bool isSelected = (synchronizationControlRegister.syncInMode == synchronizationControlSyncInMode.first);
+                    const bool isSelected = (_synchronizationControlRegister.syncInMode == synchronizationControlSyncInMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(synchronizationControlSyncInMode.first).c_str(), isSelected))
                     {
-                        synchronizationControlRegister.syncInMode = synchronizationControlSyncInMode.first;
-                        LOG_DEBUG("{}: synchronizationControlRegister.syncInMode changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncInMode));
+                        _synchronizationControlRegister.syncInMode = synchronizationControlSyncInMode.first;
+                        LOG_DEBUG("{}: synchronizationControlRegister.syncInMode changed to {}", nameId(), vn::protocol::uart::str(_synchronizationControlRegister.syncInMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeSynchronizationControl(synchronizationControlRegister);
+                                _vs.writeSynchronizationControl(_synchronizationControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -1610,21 +1610,21 @@ void NAV::VectorNavSensor::guiConfig()
                 { { vn::protocol::uart::SyncInEdge::SYNCINEDGE_RISING, "Trigger on rising edge" },
                   { vn::protocol::uart::SyncInEdge::SYNCINEDGE_FALLING, "Trigger on falling edge" } }
             };
-            if (ImGui::BeginCombo(fmt::format("SyncIn Edge##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncInEdge).c_str()))
+            if (ImGui::BeginCombo(fmt::format("SyncIn Edge##{}", size_t(id)).c_str(), vn::protocol::uart::str(_synchronizationControlRegister.syncInEdge).c_str()))
             {
                 for (const auto& synchronizationControlSyncInEdge : synchronizationControlSyncInEdges)
                 {
-                    const bool isSelected = (synchronizationControlRegister.syncInEdge == synchronizationControlSyncInEdge.first);
+                    const bool isSelected = (_synchronizationControlRegister.syncInEdge == synchronizationControlSyncInEdge.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(synchronizationControlSyncInEdge.first).c_str(), isSelected))
                     {
-                        synchronizationControlRegister.syncInEdge = synchronizationControlSyncInEdge.first;
-                        LOG_DEBUG("{}: synchronizationControlRegister.syncInEdge changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncInEdge));
+                        _synchronizationControlRegister.syncInEdge = synchronizationControlSyncInEdge.first;
+                        LOG_DEBUG("{}: synchronizationControlRegister.syncInEdge changed to {}", nameId(), vn::protocol::uart::str(_synchronizationControlRegister.syncInEdge));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeSynchronizationControl(synchronizationControlRegister);
+                                _vs.writeSynchronizationControl(_synchronizationControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -1655,7 +1655,7 @@ void NAV::VectorNavSensor::guiConfig()
             gui::widgets::HelpMarker("The SyncInEdge register controls the type of edge the signal is set to trigger on.\n"
                                      "The factory default state is to trigger on a rising edge.");
 
-            int syncInSkipFactor = synchronizationControlRegister.syncInSkipFactor;
+            int syncInSkipFactor = _synchronizationControlRegister.syncInSkipFactor;
             if (ImGui::InputInt(fmt::format("SyncIn Skip Factor##{}", size_t(id)).c_str(), &syncInSkipFactor))
             {
                 if (syncInSkipFactor < 0)
@@ -1666,14 +1666,14 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     syncInSkipFactor = std::numeric_limits<uint16_t>::max();
                 }
-                synchronizationControlRegister.syncInSkipFactor = static_cast<uint16_t>(syncInSkipFactor);
-                LOG_DEBUG("{}: synchronizationControlRegister.syncInSkipFactor changed to {}", nameId(), synchronizationControlRegister.syncInSkipFactor);
+                _synchronizationControlRegister.syncInSkipFactor = static_cast<uint16_t>(syncInSkipFactor);
+                LOG_DEBUG("{}: synchronizationControlRegister.syncInSkipFactor changed to {}", nameId(), _synchronizationControlRegister.syncInSkipFactor);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeSynchronizationControl(synchronizationControlRegister);
+                        _vs.writeSynchronizationControl(_synchronizationControlRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -1699,21 +1699,21 @@ void NAV::VectorNavSensor::guiConfig()
                   { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_INS, "Trigger when attitude measurements are available" },
                   { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS, "Trigger on a GPS PPS event (1 Hz) when a 3D fix is valid." } }
             };
-            if (ImGui::BeginCombo(fmt::format("SyncOut Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncOutMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("SyncOut Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_synchronizationControlRegister.syncOutMode).c_str()))
             {
                 for (const auto& synchronizationControlSyncOutMode : synchronizationControlSyncOutModes)
                 {
-                    const bool isSelected = (synchronizationControlRegister.syncOutMode == synchronizationControlSyncOutMode.first);
+                    const bool isSelected = (_synchronizationControlRegister.syncOutMode == synchronizationControlSyncOutMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(synchronizationControlSyncOutMode.first).c_str(), isSelected))
                     {
-                        synchronizationControlRegister.syncOutMode = synchronizationControlSyncOutMode.first;
-                        LOG_DEBUG("{}: synchronizationControlRegister.syncOutMode changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncOutMode));
+                        _synchronizationControlRegister.syncOutMode = synchronizationControlSyncOutMode.first;
+                        LOG_DEBUG("{}: synchronizationControlRegister.syncOutMode changed to {}", nameId(), vn::protocol::uart::str(_synchronizationControlRegister.syncOutMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeSynchronizationControl(synchronizationControlRegister);
+                                _vs.writeSynchronizationControl(_synchronizationControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -1751,21 +1751,21 @@ void NAV::VectorNavSensor::guiConfig()
                 { { vn::protocol::uart::SyncOutPolarity::SYNCOUTPOLARITY_NEGATIVE, "Negative Pulse" },
                   { vn::protocol::uart::SyncOutPolarity::SYNCOUTPOLARITY_POSITIVE, "Positive Pulse" } }
             };
-            if (ImGui::BeginCombo(fmt::format("SyncOut Polarity##{}", size_t(id)).c_str(), vn::protocol::uart::str(synchronizationControlRegister.syncOutPolarity).c_str()))
+            if (ImGui::BeginCombo(fmt::format("SyncOut Polarity##{}", size_t(id)).c_str(), vn::protocol::uart::str(_synchronizationControlRegister.syncOutPolarity).c_str()))
             {
                 for (const auto& synchronizationControlSyncOutPolarity : synchronizationControlSyncOutPolarities)
                 {
-                    const bool isSelected = (synchronizationControlRegister.syncOutPolarity == synchronizationControlSyncOutPolarity.first);
+                    const bool isSelected = (_synchronizationControlRegister.syncOutPolarity == synchronizationControlSyncOutPolarity.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(synchronizationControlSyncOutPolarity.first).c_str(), isSelected))
                     {
-                        synchronizationControlRegister.syncOutPolarity = synchronizationControlSyncOutPolarity.first;
-                        LOG_DEBUG("{}: synchronizationControlRegister.syncOutPolarity changed to {}", nameId(), vn::protocol::uart::str(synchronizationControlRegister.syncOutPolarity));
+                        _synchronizationControlRegister.syncOutPolarity = synchronizationControlSyncOutPolarity.first;
+                        LOG_DEBUG("{}: synchronizationControlRegister.syncOutPolarity changed to {}", nameId(), vn::protocol::uart::str(_synchronizationControlRegister.syncOutPolarity));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeSynchronizationControl(synchronizationControlRegister);
+                                _vs.writeSynchronizationControl(_synchronizationControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -1796,7 +1796,7 @@ void NAV::VectorNavSensor::guiConfig()
             gui::widgets::HelpMarker("The SyncOutPolarity register controls the polarity of the output pulse on the SyncOut pin.\n"
                                      "Changes to this register take effect immediately.");
 
-            int syncOutSkipFactor = synchronizationControlRegister.syncOutSkipFactor;
+            int syncOutSkipFactor = _synchronizationControlRegister.syncOutSkipFactor;
             if (ImGui::InputInt(fmt::format("SyncOut Skip Factor##{}", size_t(id)).c_str(), &syncOutSkipFactor))
             {
                 if (syncOutSkipFactor < 0)
@@ -1807,14 +1807,14 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     syncOutSkipFactor = std::numeric_limits<uint16_t>::max();
                 }
-                synchronizationControlRegister.syncOutSkipFactor = static_cast<uint16_t>(syncOutSkipFactor);
-                LOG_DEBUG("{}: synchronizationControlRegister.syncOutSkipFactor changed to {}", nameId(), synchronizationControlRegister.syncOutSkipFactor);
+                _synchronizationControlRegister.syncOutSkipFactor = static_cast<uint16_t>(syncOutSkipFactor);
+                LOG_DEBUG("{}: synchronizationControlRegister.syncOutSkipFactor changed to {}", nameId(), _synchronizationControlRegister.syncOutSkipFactor);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeSynchronizationControl(synchronizationControlRegister);
+                        _vs.writeSynchronizationControl(_synchronizationControlRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -1830,21 +1830,21 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("The SyncOutSkipFactor defines how many times the sync out event should be skipped before actually triggering the SyncOut pin.");
 
-            int syncOutPulseWidth = static_cast<int>(synchronizationControlRegister.syncOutPulseWidth);
+            int syncOutPulseWidth = static_cast<int>(_synchronizationControlRegister.syncOutPulseWidth);
             if (ImGui::InputInt(fmt::format("SyncOut Pulse Width##{}", size_t(id)).c_str(), &syncOutPulseWidth))
             {
                 if (syncOutPulseWidth < 0)
                 {
                     syncOutPulseWidth = 0;
                 }
-                synchronizationControlRegister.syncOutPulseWidth = static_cast<uint32_t>(syncOutPulseWidth);
-                LOG_DEBUG("{}: synchronizationControlRegister.syncOutPulseWidth changed to {}", nameId(), synchronizationControlRegister.syncOutPulseWidth);
+                _synchronizationControlRegister.syncOutPulseWidth = static_cast<uint32_t>(syncOutPulseWidth);
+                LOG_DEBUG("{}: synchronizationControlRegister.syncOutPulseWidth changed to {}", nameId(), _synchronizationControlRegister.syncOutPulseWidth);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeSynchronizationControl(synchronizationControlRegister);
+                        _vs.writeSynchronizationControl(_synchronizationControlRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -1875,21 +1875,21 @@ void NAV::VectorNavSensor::guiConfig()
                   { vn::protocol::uart::CountMode::COUNTMODE_SYNCOUTCOUNTER, "SyncOut Counter" },
                   { vn::protocol::uart::CountMode::COUNTMODE_GPSPPS, "Gps Pps Time" } }
             };
-            if (ImGui::BeginCombo(fmt::format("Serial Count Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.serialCount).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Serial Count Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_communicationProtocolControlRegister.serialCount).c_str()))
             {
                 for (const auto& communicationProtocolControlSerialCount : communicationProtocolControlSerialCounts)
                 {
-                    const bool isSelected = (communicationProtocolControlRegister.serialCount == communicationProtocolControlSerialCount.first);
+                    const bool isSelected = (_communicationProtocolControlRegister.serialCount == communicationProtocolControlSerialCount.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSerialCount.first).c_str(), isSelected))
                     {
-                        communicationProtocolControlRegister.serialCount = communicationProtocolControlSerialCount.first;
-                        LOG_DEBUG("{}: communicationProtocolControlRegister.serialCount changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialCount));
+                        _communicationProtocolControlRegister.serialCount = communicationProtocolControlSerialCount.first;
+                        LOG_DEBUG("{}: communicationProtocolControlRegister.serialCount changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.serialCount));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                _vs.writeCommunicationProtocolControl(_communicationProtocolControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -1933,21 +1933,21 @@ void NAV::VectorNavSensor::guiConfig()
                   { vn::protocol::uart::StatusMode::STATUSMODE_VPESTATUS, "VPE Status" },
                   { vn::protocol::uart::StatusMode::STATUSMODE_INSSTATUS, "INS Status" } }
             };
-            if (ImGui::BeginCombo(fmt::format("Serial Status##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.serialStatus).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Serial Status##{}", size_t(id)).c_str(), vn::protocol::uart::str(_communicationProtocolControlRegister.serialStatus).c_str()))
             {
                 for (const auto& communicationProtocolControlSerialStatus : communicationProtocolControlSerialStatuses)
                 {
-                    const bool isSelected = (communicationProtocolControlRegister.serialStatus == communicationProtocolControlSerialStatus.first);
+                    const bool isSelected = (_communicationProtocolControlRegister.serialStatus == communicationProtocolControlSerialStatus.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSerialStatus.first).c_str(), isSelected))
                     {
-                        communicationProtocolControlRegister.serialStatus = communicationProtocolControlSerialStatus.first;
-                        LOG_DEBUG("{}: communicationProtocolControlRegister.serialStatus changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialStatus));
+                        _communicationProtocolControlRegister.serialStatus = communicationProtocolControlSerialStatus.first;
+                        LOG_DEBUG("{}: communicationProtocolControlRegister.serialStatus changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.serialStatus));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                _vs.writeCommunicationProtocolControl(_communicationProtocolControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -1987,23 +1987,23 @@ void NAV::VectorNavSensor::guiConfig()
                                      "displayed first. The counter will be preceded by the S character to distinguish it from the counter field. The "
                                      "status consists of 4 hexadecimal characters.");
 
-            if (sensorModel == VectorNavModel::VN100_VN110)
+            if (_sensorModel == VectorNavModel::VN100_VN110)
             {
-                if (ImGui::BeginCombo(fmt::format("SPI Count##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.spiCount).c_str()))
+                if (ImGui::BeginCombo(fmt::format("SPI Count##{}", size_t(id)).c_str(), vn::protocol::uart::str(_communicationProtocolControlRegister.spiCount).c_str()))
                 {
                     for (const auto& communicationProtocolControlSpiCount : communicationProtocolControlSerialCounts)
                     {
-                        const bool isSelected = (communicationProtocolControlRegister.spiCount == communicationProtocolControlSpiCount.first);
+                        const bool isSelected = (_communicationProtocolControlRegister.spiCount == communicationProtocolControlSpiCount.first);
                         if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSpiCount.first).c_str(), isSelected))
                         {
-                            communicationProtocolControlRegister.spiCount = communicationProtocolControlSpiCount.first;
-                            LOG_DEBUG("{}: communicationProtocolControlRegister.spiCount changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiCount));
+                            _communicationProtocolControlRegister.spiCount = communicationProtocolControlSpiCount.first;
+                            LOG_DEBUG("{}: communicationProtocolControlRegister.spiCount changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.spiCount));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                    _vs.writeCommunicationProtocolControl(_communicationProtocolControlRegister);
                                 }
                                 catch (const std::exception& e)
                                 {
@@ -2035,23 +2035,23 @@ void NAV::VectorNavSensor::guiConfig()
                                          "values for each of these counters come directly from the Synchronization Status Register.");
             }
 
-            if (sensorModel == VectorNavModel::VN100_VN110)
+            if (_sensorModel == VectorNavModel::VN100_VN110)
             {
-                if (ImGui::BeginCombo(fmt::format("SPI Status##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.spiStatus).c_str()))
+                if (ImGui::BeginCombo(fmt::format("SPI Status##{}", size_t(id)).c_str(), vn::protocol::uart::str(_communicationProtocolControlRegister.spiStatus).c_str()))
                 {
                     for (const auto& communicationProtocolControlSpiStatus : communicationProtocolControlSerialStatuses)
                     {
-                        const bool isSelected = (communicationProtocolControlRegister.spiStatus == communicationProtocolControlSpiStatus.first);
+                        const bool isSelected = (_communicationProtocolControlRegister.spiStatus == communicationProtocolControlSpiStatus.first);
                         if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSpiStatus.first).c_str(), isSelected))
                         {
-                            communicationProtocolControlRegister.spiStatus = communicationProtocolControlSpiStatus.first;
-                            LOG_DEBUG("{}: communicationProtocolControlRegister.spiStatus changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiStatus));
+                            _communicationProtocolControlRegister.spiStatus = communicationProtocolControlSpiStatus.first;
+                            LOG_DEBUG("{}: communicationProtocolControlRegister.spiStatus changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.spiStatus));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                    _vs.writeCommunicationProtocolControl(_communicationProtocolControlRegister);
                                 }
                                 catch (const std::exception& e)
                                 {
@@ -2089,21 +2089,21 @@ void NAV::VectorNavSensor::guiConfig()
                 { { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_CHECKSUM, "8-Bit Checksum" },
                   { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_CRC, "16-Bit CRC" } }
             };
-            if (ImGui::BeginCombo(fmt::format("Serial Checksum##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.serialChecksum).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Serial Checksum##{}", size_t(id)).c_str(), vn::protocol::uart::str(_communicationProtocolControlRegister.serialChecksum).c_str()))
             {
                 for (const auto& communicationProtocolControlSerialChecksum : communicationProtocolControlSerialChecksums)
                 {
-                    const bool isSelected = (communicationProtocolControlRegister.serialChecksum == communicationProtocolControlSerialChecksum.first);
+                    const bool isSelected = (_communicationProtocolControlRegister.serialChecksum == communicationProtocolControlSerialChecksum.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSerialChecksum.first).c_str(), isSelected))
                     {
-                        communicationProtocolControlRegister.serialChecksum = communicationProtocolControlSerialChecksum.first;
-                        LOG_DEBUG("{}: communicationProtocolControlRegister.serialChecksum changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.serialChecksum));
+                        _communicationProtocolControlRegister.serialChecksum = communicationProtocolControlSerialChecksum.first;
+                        LOG_DEBUG("{}: communicationProtocolControlRegister.serialChecksum changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.serialChecksum));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                _vs.writeCommunicationProtocolControl(_communicationProtocolControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -2136,28 +2136,28 @@ void NAV::VectorNavSensor::guiConfig()
                                      "offers only a limited means of error checking. As an alternative a full 16-bit CRC (CRC16-CCITT with "
                                      "polynomial = 0x07) is also offered. The 2-byte CRC value is printed using 4 hexadecimal digits.");
 
-            if (sensorModel == VectorNavModel::VN100_VN110)
+            if (_sensorModel == VectorNavModel::VN100_VN110)
             {
                 static constexpr std::array<std::pair<vn::protocol::uart::ChecksumMode, const char*>, 3> communicationProtocolControlSpiChecksums = {
                     { { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_OFF, "OFF" },
                       { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_CHECKSUM, "8-Bit Checksum" },
                       { vn::protocol::uart::ChecksumMode::CHECKSUMMODE_CRC, "16-Bit CRC" } }
                 };
-                if (ImGui::BeginCombo(fmt::format("SPI Checksum##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.spiChecksum).c_str()))
+                if (ImGui::BeginCombo(fmt::format("SPI Checksum##{}", size_t(id)).c_str(), vn::protocol::uart::str(_communicationProtocolControlRegister.spiChecksum).c_str()))
                 {
                     for (const auto& communicationProtocolControlSpiChecksum : communicationProtocolControlSpiChecksums)
                     {
-                        const bool isSelected = (communicationProtocolControlRegister.spiChecksum == communicationProtocolControlSpiChecksum.first);
+                        const bool isSelected = (_communicationProtocolControlRegister.spiChecksum == communicationProtocolControlSpiChecksum.first);
                         if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlSpiChecksum.first).c_str(), isSelected))
                         {
-                            communicationProtocolControlRegister.spiChecksum = communicationProtocolControlSpiChecksum.first;
-                            LOG_DEBUG("{}: communicationProtocolControlRegister.spiChecksum changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.spiChecksum));
+                            _communicationProtocolControlRegister.spiChecksum = communicationProtocolControlSpiChecksum.first;
+                            LOG_DEBUG("{}: communicationProtocolControlRegister.spiChecksum changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.spiChecksum));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                    _vs.writeCommunicationProtocolControl(_communicationProtocolControlRegister);
                                 }
                                 catch (const std::exception& e)
                                 {
@@ -2195,21 +2195,21 @@ void NAV::VectorNavSensor::guiConfig()
                   { vn::protocol::uart::ErrorMode::ERRORMODE_SEND, "Send Error" },
                   { vn::protocol::uart::ErrorMode::ERRORMODE_SENDANDOFF, "Send Error and set ADOR register to OFF" } }
             };
-            if (ImGui::BeginCombo(fmt::format("Error Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(communicationProtocolControlRegister.errorMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Error Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_communicationProtocolControlRegister.errorMode).c_str()))
             {
                 for (const auto& communicationProtocolControlErrorMode : communicationProtocolControlErrorModes)
                 {
-                    const bool isSelected = (communicationProtocolControlRegister.errorMode == communicationProtocolControlErrorMode.first);
+                    const bool isSelected = (_communicationProtocolControlRegister.errorMode == communicationProtocolControlErrorMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(communicationProtocolControlErrorMode.first).c_str(), isSelected))
                     {
-                        communicationProtocolControlRegister.errorMode = communicationProtocolControlErrorMode.first;
-                        LOG_DEBUG("{}: communicationProtocolControlRegister.errorMode changed to {}", nameId(), vn::protocol::uart::str(communicationProtocolControlRegister.errorMode));
+                        _communicationProtocolControlRegister.errorMode = communicationProtocolControlErrorMode.first;
+                        LOG_DEBUG("{}: communicationProtocolControlRegister.errorMode changed to {}", nameId(), vn::protocol::uart::str(_communicationProtocolControlRegister.errorMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
+                                _vs.writeCommunicationProtocolControl(_communicationProtocolControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -2278,7 +2278,7 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::TreePop();
         }
 
-        for (size_t b = 0; b < binaryOutputRegister.size(); b++)
+        for (size_t b = 0; b < _binaryOutputRegister.size(); b++)
         {
             if (ImGui::TreeNode(fmt::format("Binary Output {}##{}", b + 1, size_t(id)).c_str()))
             {
@@ -2288,30 +2288,30 @@ void NAV::VectorNavSensor::guiConfig()
                       { vn::protocol::uart::AsyncMode::ASYNCMODE_PORT2, "Message is sent out serial port 2 at a fixed rate" },
                       { vn::protocol::uart::AsyncMode::ASYNCMODE_BOTH, "Message is sent out both serial ports at a fixed rate" } }
                 };
-                if (ImGui::BeginCombo(fmt::format("Async Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(binaryOutputRegister.at(b).asyncMode).c_str()))
+                if (ImGui::BeginCombo(fmt::format("Async Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_binaryOutputRegister.at(b).asyncMode).c_str()))
                 {
                     for (const auto& asyncMode : asyncModes)
                     {
-                        const bool isSelected = (binaryOutputRegister.at(b).asyncMode == asyncMode.first);
+                        const bool isSelected = (_binaryOutputRegister.at(b).asyncMode == asyncMode.first);
                         if (ImGui::Selectable(vn::protocol::uart::str(asyncMode.first).c_str(), isSelected))
                         {
-                            binaryOutputRegister.at(b).asyncMode = asyncMode.first;
-                            LOG_DEBUG("{}: binaryOutputRegister.at(b).asyncMode changed to {}", nameId(), vn::protocol::uart::str(binaryOutputRegister.at(b).asyncMode));
+                            _binaryOutputRegister.at(b).asyncMode = asyncMode.first;
+                            LOG_DEBUG("{}: binaryOutputRegister.at(b).asyncMode changed to {}", nameId(), vn::protocol::uart::str(_binaryOutputRegister.at(b).asyncMode));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
                                     switch (b)
                                     {
                                     case 0:
-                                        vs.writeBinaryOutput1(binaryOutputRegister.at(0));
+                                        _vs.writeBinaryOutput1(_binaryOutputRegister.at(0));
                                         break;
                                     case 1:
-                                        vs.writeBinaryOutput2(binaryOutputRegister.at(1));
+                                        _vs.writeBinaryOutput2(_binaryOutputRegister.at(1));
                                         break;
                                     case 2:
-                                        vs.writeBinaryOutput3(binaryOutputRegister.at(2));
+                                        _vs.writeBinaryOutput3(_binaryOutputRegister.at(2));
                                         break;
                                     default:
                                         break;
@@ -2346,31 +2346,31 @@ void NAV::VectorNavSensor::guiConfig()
                 gui::widgets::HelpMarker("Selects whether the output message should be sent "
                                          "out on the serial port(s) at a fixed rate.");
 
-                const char* frequencyText = binaryOutputSelectedFrequency.at(b) < dividerFrequency.first.size()
-                                                ? dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)).c_str()
+                const char* frequencyText = _binaryOutputSelectedFrequency.at(b) < _dividerFrequency.first.size()
+                                                ? _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)).c_str()
                                                 : "Unknown";
                 if (ImGui::SliderInt(fmt::format("Frequency##{} {}", size_t(id), b).c_str(),
-                                     reinterpret_cast<int*>(&binaryOutputSelectedFrequency.at(b)),
-                                     0, static_cast<int>(dividerFrequency.second.size()) - 1,
+                                     reinterpret_cast<int*>(&_binaryOutputSelectedFrequency.at(b)),
+                                     0, static_cast<int>(_dividerFrequency.second.size()) - 1,
                                      frequencyText))
                 {
-                    binaryOutputRegister.at(b).rateDivisor = dividerFrequency.first.at(binaryOutputSelectedFrequency.at(b));
-                    LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, dividerFrequency.second.at(binaryOutputSelectedFrequency.at(b)));
+                    _binaryOutputRegister.at(b).rateDivisor = _dividerFrequency.first.at(_binaryOutputSelectedFrequency.at(b));
+                    LOG_DEBUG("{}: Frequency of Binary Group {} changed to {}", nameId(), b + 1, _dividerFrequency.second.at(_binaryOutputSelectedFrequency.at(b)));
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
                             switch (b)
                             {
                             case 0:
-                                vs.writeBinaryOutput1(binaryOutputRegister.at(b));
+                                _vs.writeBinaryOutput1(_binaryOutputRegister.at(b));
                                 break;
                             case 1:
-                                vs.writeBinaryOutput2(binaryOutputRegister.at(b));
+                                _vs.writeBinaryOutput2(_binaryOutputRegister.at(b));
                                 break;
                             case 2:
-                                vs.writeBinaryOutput3(binaryOutputRegister.at(b));
+                                _vs.writeBinaryOutput3(_binaryOutputRegister.at(b));
                                 break;
                             default:
                                 break;
@@ -2414,16 +2414,16 @@ void NAV::VectorNavSensor::guiConfig()
                             LOG_DEBUG("{}: Field '{}' of Binary Group {} is now {}", nameId(), std::string(label).substr(0, std::string(label).find('#')), b + 1, (*flags & flags_value) ? "checked" : "unchecked");
                             if (toggleFields)
                             {
-                                toggleFields(binaryOutputRegister.at(b), *reinterpret_cast<uint32_t*>(flags));
+                                toggleFields(_binaryOutputRegister.at(b), *reinterpret_cast<uint32_t*>(flags));
                             }
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
                                     if (b == 0)
                                     {
-                                        vs.writeBinaryOutput1(binaryOutputRegister.at(b));
+                                        _vs.writeBinaryOutput1(_binaryOutputRegister.at(b));
                                         auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2).id);
                                         for (auto& connectedLink : connectedLinks)
                                         {
@@ -2432,7 +2432,7 @@ void NAV::VectorNavSensor::guiConfig()
                                     }
                                     else if (b == 1)
                                     {
-                                        vs.writeBinaryOutput2(binaryOutputRegister.at(b));
+                                        _vs.writeBinaryOutput2(_binaryOutputRegister.at(b));
                                         auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2).id);
                                         for (auto& connectedLink : connectedLinks)
                                         {
@@ -2441,7 +2441,7 @@ void NAV::VectorNavSensor::guiConfig()
                                     }
                                     else if (b == 2)
                                     {
-                                        vs.writeBinaryOutput3(binaryOutputRegister.at(b));
+                                        _vs.writeBinaryOutput3(_binaryOutputRegister.at(b));
                                         auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.at(b + 2).id);
                                         for (auto& connectedLink : connectedLinks)
                                         {
@@ -2470,18 +2470,18 @@ void NAV::VectorNavSensor::guiConfig()
 
                     for (size_t i = 0; i < 16; i++)
                     {
-                        if (i < std::max({ binaryGroupCommon.size(), binaryGroupTime.size(), binaryGroupIMU.size(),
-                                           binaryGroupGNSS.size(), binaryGroupAttitude.size(), binaryGroupINS.size() }))
+                        if (i < std::max({ _binaryGroupCommon.size(), _binaryGroupTime.size(), _binaryGroupIMU.size(),
+                                           _binaryGroupGNSS.size(), _binaryGroupAttitude.size(), _binaryGroupINS.size() }))
                         {
                             ImGui::TableNextRow();
                         }
-                        if (i < binaryGroupCommon.size())
+                        if (i < _binaryGroupCommon.size())
                         {
-                            const auto& binaryGroupItem = binaryGroupCommon.at(i);
+                            const auto& binaryGroupItem = _binaryGroupCommon.at(i);
                             CheckboxFlags(0, fmt::format("{}##Common {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
-                                          reinterpret_cast<int*>(&binaryOutputRegister.at(b).commonField),
+                                          reinterpret_cast<int*>(&_binaryOutputRegister.at(b).commonField),
                                           binaryGroupItem.flagsValue,
-                                          binaryGroupItem.isEnabled(sensorModel, binaryOutputRegister.at(b), static_cast<uint32_t>(binaryOutputRegister.at(b).commonField)),
+                                          binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).commonField)),
                                           binaryGroupItem.toggleFields);
                             if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                             {
@@ -2490,13 +2490,13 @@ void NAV::VectorNavSensor::guiConfig()
                                 ImGui::EndTooltip();
                             }
                         }
-                        if (i < binaryGroupTime.size())
+                        if (i < _binaryGroupTime.size())
                         {
-                            const auto& binaryGroupItem = binaryGroupTime.at(i);
+                            const auto& binaryGroupItem = _binaryGroupTime.at(i);
                             CheckboxFlags(1, fmt::format("{}##Time {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
-                                          reinterpret_cast<int*>(&binaryOutputRegister.at(b).timeField),
+                                          reinterpret_cast<int*>(&_binaryOutputRegister.at(b).timeField),
                                           binaryGroupItem.flagsValue,
-                                          binaryGroupItem.isEnabled(sensorModel, binaryOutputRegister.at(b), static_cast<uint32_t>(binaryOutputRegister.at(b).timeField)),
+                                          binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).timeField)),
                                           binaryGroupItem.toggleFields);
                             if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                             {
@@ -2505,13 +2505,13 @@ void NAV::VectorNavSensor::guiConfig()
                                 ImGui::EndTooltip();
                             }
                         }
-                        if (i < binaryGroupIMU.size())
+                        if (i < _binaryGroupIMU.size())
                         {
-                            const auto& binaryGroupItem = binaryGroupIMU.at(i);
+                            const auto& binaryGroupItem = _binaryGroupIMU.at(i);
                             CheckboxFlags(2, fmt::format("{}##IMU {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
-                                          reinterpret_cast<int*>(&binaryOutputRegister.at(b).imuField),
+                                          reinterpret_cast<int*>(&_binaryOutputRegister.at(b).imuField),
                                           binaryGroupItem.flagsValue,
-                                          binaryGroupItem.isEnabled(sensorModel, binaryOutputRegister.at(b), static_cast<uint32_t>(binaryOutputRegister.at(b).imuField)),
+                                          binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).imuField)),
                                           binaryGroupItem.toggleFields);
                             if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                             {
@@ -2520,13 +2520,13 @@ void NAV::VectorNavSensor::guiConfig()
                                 ImGui::EndTooltip();
                             }
                         }
-                        if (i < binaryGroupGNSS.size())
+                        if (i < _binaryGroupGNSS.size())
                         {
-                            const auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                            const auto& binaryGroupItem = _binaryGroupGNSS.at(i);
                             CheckboxFlags(3, fmt::format("{}##GNSS1 {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
-                                          reinterpret_cast<int*>(&binaryOutputRegister.at(b).gpsField),
+                                          reinterpret_cast<int*>(&_binaryOutputRegister.at(b).gpsField),
                                           binaryGroupItem.flagsValue,
-                                          binaryGroupItem.isEnabled(sensorModel, binaryOutputRegister.at(b), static_cast<uint32_t>(binaryOutputRegister.at(b).gpsField)),
+                                          binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).gpsField)),
                                           binaryGroupItem.toggleFields);
                             if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                             {
@@ -2535,13 +2535,13 @@ void NAV::VectorNavSensor::guiConfig()
                                 ImGui::EndTooltip();
                             }
                         }
-                        if (i < binaryGroupAttitude.size())
+                        if (i < _binaryGroupAttitude.size())
                         {
-                            const auto& binaryGroupItem = binaryGroupAttitude.at(i);
+                            const auto& binaryGroupItem = _binaryGroupAttitude.at(i);
                             CheckboxFlags(4, fmt::format("{}##Attitude {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
-                                          reinterpret_cast<int*>(&binaryOutputRegister.at(b).attitudeField),
+                                          reinterpret_cast<int*>(&_binaryOutputRegister.at(b).attitudeField),
                                           binaryGroupItem.flagsValue,
-                                          binaryGroupItem.isEnabled(sensorModel, binaryOutputRegister.at(b), static_cast<uint32_t>(binaryOutputRegister.at(b).attitudeField)),
+                                          binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).attitudeField)),
                                           binaryGroupItem.toggleFields);
                             if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                             {
@@ -2550,13 +2550,13 @@ void NAV::VectorNavSensor::guiConfig()
                                 ImGui::EndTooltip();
                             }
                         }
-                        if (i < binaryGroupINS.size())
+                        if (i < _binaryGroupINS.size())
                         {
-                            const auto& binaryGroupItem = binaryGroupINS.at(i);
+                            const auto& binaryGroupItem = _binaryGroupINS.at(i);
                             CheckboxFlags(5, fmt::format("{}##INS {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
-                                          reinterpret_cast<int*>(&binaryOutputRegister.at(b).insField),
+                                          reinterpret_cast<int*>(&_binaryOutputRegister.at(b).insField),
                                           binaryGroupItem.flagsValue,
-                                          binaryGroupItem.isEnabled(sensorModel, binaryOutputRegister.at(b), static_cast<uint32_t>(binaryOutputRegister.at(b).insField)),
+                                          binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).insField)),
                                           binaryGroupItem.toggleFields);
                             if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                             {
@@ -2565,13 +2565,13 @@ void NAV::VectorNavSensor::guiConfig()
                                 ImGui::EndTooltip();
                             }
                         }
-                        if (i < binaryGroupGNSS.size())
+                        if (i < _binaryGroupGNSS.size())
                         {
-                            const auto& binaryGroupItem = binaryGroupGNSS.at(i);
+                            const auto& binaryGroupItem = _binaryGroupGNSS.at(i);
                             CheckboxFlags(6, fmt::format("{}##GNSS2 {} {}", binaryGroupItem.name, size_t(id), b).c_str(),
-                                          reinterpret_cast<int*>(&binaryOutputRegister.at(b).gps2Field),
+                                          reinterpret_cast<int*>(&_binaryOutputRegister.at(b).gps2Field),
                                           binaryGroupItem.flagsValue,
-                                          binaryGroupItem.isEnabled(sensorModel, binaryOutputRegister.at(b), static_cast<uint32_t>(binaryOutputRegister.at(b).gps2Field)),
+                                          binaryGroupItem.isEnabled(_sensorModel, _binaryOutputRegister.at(b), static_cast<uint32_t>(_binaryOutputRegister.at(b).gps2Field)),
                                           binaryGroupItem.toggleFields);
                             if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                             {
@@ -2614,7 +2614,7 @@ void NAV::VectorNavSensor::guiConfig()
                                      "frame of reference. The reference frame rotation register Thus needs to be loaded with the transformation "
                                      "matrix that will transform measurements from the body reference frame of the VectorNav to the desired user "
                                      "frame of reference.");
-            if (sensorModel == VectorNavModel::VN310)
+            if (_sensorModel == VectorNavModel::VN310)
             {
                 ImGui::SameLine();
                 gui::widgets::HelpMarker("The reference frame rotation is performed on all vector measurements prior to entering the INS "
@@ -2638,9 +2638,9 @@ void NAV::VectorNavSensor::guiConfig()
 
             // TODO: Angles to define this
             Eigen::Matrix3d dcm;
-            dcm << referenceFrameRotationMatrix.e00, referenceFrameRotationMatrix.e01, referenceFrameRotationMatrix.e02,
-                referenceFrameRotationMatrix.e10, referenceFrameRotationMatrix.e11, referenceFrameRotationMatrix.e12,
-                referenceFrameRotationMatrix.e20, referenceFrameRotationMatrix.e21, referenceFrameRotationMatrix.e22;
+            dcm << _referenceFrameRotationMatrix.e00, _referenceFrameRotationMatrix.e01, _referenceFrameRotationMatrix.e02,
+                _referenceFrameRotationMatrix.e10, _referenceFrameRotationMatrix.e11, _referenceFrameRotationMatrix.e12,
+                _referenceFrameRotationMatrix.e20, _referenceFrameRotationMatrix.e21, _referenceFrameRotationMatrix.e22;
             auto q_bp = Eigen::Quaterniond(dcm);
 
             Eigen::Vector3d eulerRot = trafo::rad2deg(trafo::quat2eulerZYX(q_bp.conjugate()));
@@ -2673,16 +2673,16 @@ void NAV::VectorNavSensor::guiConfig()
                     imuRot.at(2) = 180;
                 }
                 auto dcmf = trafo::quat_bp(trafo::deg2rad(imuRot.at(0)), trafo::deg2rad(imuRot.at(1)), trafo::deg2rad(imuRot.at(2))).toRotationMatrix().cast<float>();
-                referenceFrameRotationMatrix = vn::math::mat3f(dcmf(0, 0), dcmf(0, 1), dcmf(0, 2),
-                                                               dcmf(1, 0), dcmf(1, 1), dcmf(1, 2),
-                                                               dcmf(2, 0), dcmf(2, 1), dcmf(2, 2));
-                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+                _referenceFrameRotationMatrix = vn::math::mat3f(dcmf(0, 0), dcmf(0, 1), dcmf(0, 2),
+                                                                dcmf(1, 0), dcmf(1, 1), dcmf(1, 2),
+                                                                dcmf(2, 0), dcmf(2, 1), dcmf(2, 2));
+                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), _referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+                        _vs.writeReferenceFrameRotation(_referenceFrameRotationMatrix);
                     }
                     catch (const std::exception& e)
                     {
@@ -2700,19 +2700,19 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::TextUnformatted("Rotation Matrix C");
             ImGui::Indent();
 
-            std::array<float, 3> row = { referenceFrameRotationMatrix.e00, referenceFrameRotationMatrix.e01, referenceFrameRotationMatrix.e02 };
+            std::array<float, 3> row = { _referenceFrameRotationMatrix.e00, _referenceFrameRotationMatrix.e01, _referenceFrameRotationMatrix.e02 };
             if (ImGui::InputFloat3(fmt::format("##referenceFrameRotationMatrix row 0 {}", size_t(id)).c_str(), row.data(), "%.2f"))
             {
-                referenceFrameRotationMatrix.e00 = row.at(0);
-                referenceFrameRotationMatrix.e01 = row.at(1);
-                referenceFrameRotationMatrix.e02 = row.at(2);
-                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+                _referenceFrameRotationMatrix.e00 = row.at(0);
+                _referenceFrameRotationMatrix.e01 = row.at(1);
+                _referenceFrameRotationMatrix.e02 = row.at(2);
+                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), _referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+                        _vs.writeReferenceFrameRotation(_referenceFrameRotationMatrix);
                     }
                     catch (const std::exception& e)
                     {
@@ -2725,19 +2725,19 @@ void NAV::VectorNavSensor::guiConfig()
                     deinitializeNode();
                 }
             }
-            row = { referenceFrameRotationMatrix.e10, referenceFrameRotationMatrix.e11, referenceFrameRotationMatrix.e12 };
+            row = { _referenceFrameRotationMatrix.e10, _referenceFrameRotationMatrix.e11, _referenceFrameRotationMatrix.e12 };
             if (ImGui::InputFloat3(fmt::format("##referenceFrameRotationMatrix row 1 {}", size_t(id)).c_str(), row.data(), "%.2f"))
             {
-                referenceFrameRotationMatrix.e10 = row.at(0);
-                referenceFrameRotationMatrix.e11 = row.at(1);
-                referenceFrameRotationMatrix.e12 = row.at(2);
-                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+                _referenceFrameRotationMatrix.e10 = row.at(0);
+                _referenceFrameRotationMatrix.e11 = row.at(1);
+                _referenceFrameRotationMatrix.e12 = row.at(2);
+                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), _referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+                        _vs.writeReferenceFrameRotation(_referenceFrameRotationMatrix);
                     }
                     catch (const std::exception& e)
                     {
@@ -2750,19 +2750,19 @@ void NAV::VectorNavSensor::guiConfig()
                     deinitializeNode();
                 }
             }
-            row = { referenceFrameRotationMatrix.e20, referenceFrameRotationMatrix.e21, referenceFrameRotationMatrix.e22 };
+            row = { _referenceFrameRotationMatrix.e20, _referenceFrameRotationMatrix.e21, _referenceFrameRotationMatrix.e22 };
             if (ImGui::InputFloat3(fmt::format("##referenceFrameRotationMatrix row 2 {}", size_t(id)).c_str(), row.data(), "%.2f"))
             {
-                referenceFrameRotationMatrix.e20 = row.at(0);
-                referenceFrameRotationMatrix.e21 = row.at(1);
-                referenceFrameRotationMatrix.e22 = row.at(2);
-                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), referenceFrameRotationMatrix);
+                _referenceFrameRotationMatrix.e20 = row.at(0);
+                _referenceFrameRotationMatrix.e21 = row.at(1);
+                _referenceFrameRotationMatrix.e22 = row.at(2);
+                LOG_DEBUG("{}: referenceFrameRotationMatrix changed to {}", nameId(), _referenceFrameRotationMatrix);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
+                        _vs.writeReferenceFrameRotation(_referenceFrameRotationMatrix);
                     }
                     catch (const std::exception& e)
                     {
@@ -2786,7 +2786,7 @@ void NAV::VectorNavSensor::guiConfig()
                                    "filter is a uniformly-weighted moving window (boxcar) filter of configurable size. The filtering does not affect\n"
                                    "the values used by the internal filter, but only the output values.");
 
-            int magWindowSize = imuFilteringConfigurationRegister.magWindowSize;
+            int magWindowSize = _imuFilteringConfigurationRegister.magWindowSize;
             if (ImGui::InputInt(fmt::format("Mag Window Size##{}", size_t(id)).c_str(), &magWindowSize))
             {
                 if (magWindowSize < 0)
@@ -2797,14 +2797,14 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     magWindowSize = std::numeric_limits<uint16_t>::max();
                 }
-                imuFilteringConfigurationRegister.magWindowSize = static_cast<uint16_t>(magWindowSize);
-                LOG_DEBUG("{}: imuFilteringConfigurationRegister.magWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.magWindowSize);
+                _imuFilteringConfigurationRegister.magWindowSize = static_cast<uint16_t>(magWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.magWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.magWindowSize);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                        _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -2821,7 +2821,7 @@ void NAV::VectorNavSensor::guiConfig()
             gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
                                      "which will be averaged for each output measurement.");
 
-            int accelWindowSize = imuFilteringConfigurationRegister.accelWindowSize;
+            int accelWindowSize = _imuFilteringConfigurationRegister.accelWindowSize;
             if (ImGui::InputInt(fmt::format("Accel Window Size##{}", size_t(id)).c_str(), &accelWindowSize))
             {
                 if (accelWindowSize < 0)
@@ -2832,14 +2832,14 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     accelWindowSize = std::numeric_limits<uint16_t>::max();
                 }
-                imuFilteringConfigurationRegister.accelWindowSize = static_cast<uint16_t>(accelWindowSize);
-                LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.accelWindowSize);
+                _imuFilteringConfigurationRegister.accelWindowSize = static_cast<uint16_t>(accelWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.accelWindowSize);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                        _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -2856,7 +2856,7 @@ void NAV::VectorNavSensor::guiConfig()
             gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
                                      "which will be averaged for each output measurement.");
 
-            int gyroWindowSize = imuFilteringConfigurationRegister.gyroWindowSize;
+            int gyroWindowSize = _imuFilteringConfigurationRegister.gyroWindowSize;
             if (ImGui::InputInt(fmt::format("Gyro Window Size##{}", size_t(id)).c_str(), &gyroWindowSize))
             {
                 if (gyroWindowSize < 0)
@@ -2867,14 +2867,14 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     gyroWindowSize = std::numeric_limits<uint16_t>::max();
                 }
-                imuFilteringConfigurationRegister.gyroWindowSize = static_cast<uint16_t>(gyroWindowSize);
-                LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.gyroWindowSize);
+                _imuFilteringConfigurationRegister.gyroWindowSize = static_cast<uint16_t>(gyroWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.gyroWindowSize);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                        _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -2891,7 +2891,7 @@ void NAV::VectorNavSensor::guiConfig()
             gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
                                      "which will be averaged for each output measurement.");
 
-            int tempWindowSize = imuFilteringConfigurationRegister.tempWindowSize;
+            int tempWindowSize = _imuFilteringConfigurationRegister.tempWindowSize;
             if (ImGui::InputInt(fmt::format("Temp Window Size##{}", size_t(id)).c_str(), &tempWindowSize))
             {
                 if (tempWindowSize < 0)
@@ -2902,14 +2902,14 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     tempWindowSize = std::numeric_limits<uint16_t>::max();
                 }
-                imuFilteringConfigurationRegister.tempWindowSize = static_cast<uint16_t>(tempWindowSize);
-                LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.tempWindowSize);
+                _imuFilteringConfigurationRegister.tempWindowSize = static_cast<uint16_t>(tempWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.tempWindowSize);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                        _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -2926,7 +2926,7 @@ void NAV::VectorNavSensor::guiConfig()
             gui::widgets::HelpMarker("The WindowSize parameters for each sensor define the number of samples at the IMU rate (default 800Hz) "
                                      "which will be averaged for each output measurement.");
 
-            int presWindowSize = imuFilteringConfigurationRegister.presWindowSize;
+            int presWindowSize = _imuFilteringConfigurationRegister.presWindowSize;
             if (ImGui::InputInt(fmt::format("Pres Window Size##{}", size_t(id)).c_str(), &presWindowSize))
             {
                 if (presWindowSize < 0)
@@ -2937,14 +2937,14 @@ void NAV::VectorNavSensor::guiConfig()
                 {
                     presWindowSize = std::numeric_limits<uint16_t>::max();
                 }
-                imuFilteringConfigurationRegister.presWindowSize = static_cast<uint16_t>(presWindowSize);
-                LOG_DEBUG("{}: imuFilteringConfigurationRegister.presWindowSize changed to {}", nameId(), imuFilteringConfigurationRegister.presWindowSize);
+                _imuFilteringConfigurationRegister.presWindowSize = static_cast<uint16_t>(presWindowSize);
+                LOG_DEBUG("{}: imuFilteringConfigurationRegister.presWindowSize changed to {}", nameId(), _imuFilteringConfigurationRegister.presWindowSize);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                        _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -2967,21 +2967,21 @@ void NAV::VectorNavSensor::guiConfig()
                   { vn::protocol::uart::FilterMode::FILTERMODE_ONLYCOMPENSATED, "Filtering performed only on compensated IMU measurements." },
                   { vn::protocol::uart::FilterMode::FILTERMODE_BOTH, "Filtering performed on both uncompensated and compensated IMU measurements." } }
             };
-            if (ImGui::BeginCombo(fmt::format("Mag Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.magFilterMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Mag Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.magFilterMode).c_str()))
             {
                 for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
                 {
-                    const bool isSelected = (imuFilteringConfigurationRegister.magFilterMode == imuFilteringConfigurationFilterMode.first);
+                    const bool isSelected = (_imuFilteringConfigurationRegister.magFilterMode == imuFilteringConfigurationFilterMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
                     {
-                        imuFilteringConfigurationRegister.magFilterMode = imuFilteringConfigurationFilterMode.first;
-                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.magFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.magFilterMode));
+                        _imuFilteringConfigurationRegister.magFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.magFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.magFilterMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                                _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3013,21 +3013,21 @@ void NAV::VectorNavSensor::guiConfig()
                                      "Filtering can be applied to either the uncompensated IMU measurements, compensated (HSI and biases "
                                      "compensated by onboard filters, if applicable), or both.");
 
-            if (ImGui::BeginCombo(fmt::format("Accel Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.accelFilterMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Accel Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.accelFilterMode).c_str()))
             {
                 for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
                 {
-                    const bool isSelected = (imuFilteringConfigurationRegister.accelFilterMode == imuFilteringConfigurationFilterMode.first);
+                    const bool isSelected = (_imuFilteringConfigurationRegister.accelFilterMode == imuFilteringConfigurationFilterMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
                     {
-                        imuFilteringConfigurationRegister.accelFilterMode = imuFilteringConfigurationFilterMode.first;
-                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.accelFilterMode));
+                        _imuFilteringConfigurationRegister.accelFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.accelFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.accelFilterMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                                _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3059,21 +3059,21 @@ void NAV::VectorNavSensor::guiConfig()
                                      "Filtering can be applied to either the uncompensated IMU measurements, compensated (HSI and biases "
                                      "compensated by onboard filters, if applicable), or both.");
 
-            if (ImGui::BeginCombo(fmt::format("Gyro Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.gyroFilterMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Gyro Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.gyroFilterMode).c_str()))
             {
                 for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
                 {
-                    const bool isSelected = (imuFilteringConfigurationRegister.gyroFilterMode == imuFilteringConfigurationFilterMode.first);
+                    const bool isSelected = (_imuFilteringConfigurationRegister.gyroFilterMode == imuFilteringConfigurationFilterMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
                     {
-                        imuFilteringConfigurationRegister.gyroFilterMode = imuFilteringConfigurationFilterMode.first;
-                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.gyroFilterMode));
+                        _imuFilteringConfigurationRegister.gyroFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.gyroFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.gyroFilterMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                                _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3105,21 +3105,21 @@ void NAV::VectorNavSensor::guiConfig()
                                      "Filtering can be applied to either the uncompensated IMU measurements, compensated (HSI and biases "
                                      "compensated by onboard filters, if applicable), or both.");
 
-            if (ImGui::BeginCombo(fmt::format("Temp Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.tempFilterMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Temp Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.tempFilterMode).c_str()))
             {
                 for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
                 {
-                    const bool isSelected = (imuFilteringConfigurationRegister.tempFilterMode == imuFilteringConfigurationFilterMode.first);
+                    const bool isSelected = (_imuFilteringConfigurationRegister.tempFilterMode == imuFilteringConfigurationFilterMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
                     {
-                        imuFilteringConfigurationRegister.tempFilterMode = imuFilteringConfigurationFilterMode.first;
-                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.tempFilterMode));
+                        _imuFilteringConfigurationRegister.tempFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.tempFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.tempFilterMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                                _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3151,21 +3151,21 @@ void NAV::VectorNavSensor::guiConfig()
                                      "Filtering can be applied to either the uncompensated IMU measurements, compensated (HSI and biases "
                                      "compensated by onboard filters, if applicable), or both.");
 
-            if (ImGui::BeginCombo(fmt::format("Pres Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(imuFilteringConfigurationRegister.presFilterMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Pres Filter Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.presFilterMode).c_str()))
             {
                 for (const auto& imuFilteringConfigurationFilterMode : imuFilteringConfigurationFilterModes)
                 {
-                    const bool isSelected = (imuFilteringConfigurationRegister.presFilterMode == imuFilteringConfigurationFilterMode.first);
+                    const bool isSelected = (_imuFilteringConfigurationRegister.presFilterMode == imuFilteringConfigurationFilterMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(imuFilteringConfigurationFilterMode.first).c_str(), isSelected))
                     {
-                        imuFilteringConfigurationRegister.presFilterMode = imuFilteringConfigurationFilterMode.first;
-                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.presFilterMode changed to {}", nameId(), vn::protocol::uart::str(imuFilteringConfigurationRegister.presFilterMode));
+                        _imuFilteringConfigurationRegister.presFilterMode = imuFilteringConfigurationFilterMode.first;
+                        LOG_DEBUG("{}: imuFilteringConfigurationRegister.presFilterMode changed to {}", nameId(), vn::protocol::uart::str(_imuFilteringConfigurationRegister.presFilterMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
+                                _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3210,21 +3210,21 @@ void NAV::VectorNavSensor::guiConfig()
                 { { vn::protocol::uart::IntegrationFrame::INTEGRATIONFRAME_BODY, "Body frame" },
                   { vn::protocol::uart::IntegrationFrame::INTEGRATIONFRAME_NED, "NED frame" } }
             };
-            if (ImGui::BeginCombo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Integration Frame##{}", size_t(id)).c_str(), vn::protocol::uart::str(_deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame).c_str()))
             {
                 for (const auto& deltaThetaAndDeltaVelocityConfigurationIntegrationFrame : deltaThetaAndDeltaVelocityConfigurationIntegrationFrames)
                 {
-                    const bool isSelected = (deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame == deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first);
+                    const bool isSelected = (_deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame == deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first).c_str(), isSelected))
                     {
-                        deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame = deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first;
-                        LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame changed to {}", nameId(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame));
+                        _deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame = deltaThetaAndDeltaVelocityConfigurationIntegrationFrame.first;
+                        LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame changed to {}", nameId(), vn::protocol::uart::str(_deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeDeltaThetaAndDeltaVelocityConfiguration(deltaThetaAndDeltaVelocityConfigurationRegister);
+                                _vs.writeDeltaThetaAndDeltaVelocityConfiguration(_deltaThetaAndDeltaVelocityConfigurationRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3260,21 +3260,21 @@ void NAV::VectorNavSensor::guiConfig()
                 { { vn::protocol::uart::CompensationMode::COMPENSATIONMODE_NONE, "None" },
                   { vn::protocol::uart::CompensationMode::COMPENSATIONMODE_BIAS, "Bias" } }
             };
-            if (ImGui::BeginCombo(fmt::format("Gyro Compensation##{}", size_t(id)).c_str(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Gyro Compensation##{}", size_t(id)).c_str(), vn::protocol::uart::str(_deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation).c_str()))
             {
                 for (const auto& deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode : deltaThetaAndDeltaVelocityConfigurationGyroCompensationModes)
                 {
-                    const bool isSelected = (deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation == deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first);
+                    const bool isSelected = (_deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation == deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first).c_str(), isSelected))
                     {
-                        deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation = deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first;
-                        LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation changed to {}", nameId(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation));
+                        _deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation = deltaThetaAndDeltaVelocityConfigurationGyroCompensationMode.first;
+                        LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation changed to {}", nameId(), vn::protocol::uart::str(_deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeDeltaThetaAndDeltaVelocityConfiguration(deltaThetaAndDeltaVelocityConfigurationRegister);
+                                _vs.writeDeltaThetaAndDeltaVelocityConfiguration(_deltaThetaAndDeltaVelocityConfigurationRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3311,21 +3311,21 @@ void NAV::VectorNavSensor::guiConfig()
                 { { vn::protocol::uart::AccCompensationMode::ACCCOMPENSATIONMODE_NONE, "None" },
                   { vn::protocol::uart::AccCompensationMode::ACCCOMPENSATIONMODE_BIAS, "Bias" } }
             };
-            if (ImGui::BeginCombo(fmt::format("Accel Compensation##{}", size_t(id)).c_str(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Accel Compensation##{}", size_t(id)).c_str(), vn::protocol::uart::str(_deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation).c_str()))
             {
                 for (const auto& deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode : deltaThetaAndDeltaVelocityConfigurationAccelCompensationModes)
                 {
-                    const bool isSelected = (deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation == deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first);
+                    const bool isSelected = (_deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation == deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first).c_str(), isSelected))
                     {
-                        deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation = deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first;
-                        LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation changed to {}", nameId(), vn::protocol::uart::str(deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation));
+                        _deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation = deltaThetaAndDeltaVelocityConfigurationAccelCompensationMode.first;
+                        LOG_DEBUG("{}: deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation changed to {}", nameId(), vn::protocol::uart::str(_deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeDeltaThetaAndDeltaVelocityConfiguration(deltaThetaAndDeltaVelocityConfigurationRegister);
+                                _vs.writeDeltaThetaAndDeltaVelocityConfiguration(_deltaThetaAndDeltaVelocityConfigurationRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3366,7 +3366,7 @@ void NAV::VectorNavSensor::guiConfig()
     //                                              GNSS SUBSYSTEM
     // ###########################################################################################################
 
-    if (sensorModel == VectorNavModel::VN310)
+    if (_sensorModel == VectorNavModel::VN310)
     {
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::CollapsingHeader(fmt::format("GNSS Subsystem##{}", size_t(id)).c_str()))
@@ -3378,21 +3378,21 @@ void NAV::VectorNavSensor::guiConfig()
                       { vn::protocol::uart::GpsMode::GPSMODE_EXTERNALGPS, "Use external GNSS" },
                       { vn::protocol::uart::GpsMode::GPSMODE_EXTERNALVN200GPS, "Use external VectorNav sensor as the GNSS" } }
                 };
-                if (ImGui::BeginCombo(fmt::format("Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(gpsConfigurationRegister.mode).c_str()))
+                if (ImGui::BeginCombo(fmt::format("Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_gpsConfigurationRegister.mode).c_str()))
                 {
                     for (const auto& gpsConfigurationMode : gpsConfigurationModes)
                     {
-                        const bool isSelected = (gpsConfigurationRegister.mode == gpsConfigurationMode.first);
+                        const bool isSelected = (_gpsConfigurationRegister.mode == gpsConfigurationMode.first);
                         if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationMode.first).c_str(), isSelected))
                         {
-                            gpsConfigurationRegister.mode = gpsConfigurationMode.first;
-                            LOG_DEBUG("{}: gpsConfigurationRegister.mode changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.mode));
+                            _gpsConfigurationRegister.mode = gpsConfigurationMode.first;
+                            LOG_DEBUG("{}: gpsConfigurationRegister.mode changed to {}", nameId(), vn::protocol::uart::str(_gpsConfigurationRegister.mode));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    vs.writeGpsConfiguration(gpsConfigurationRegister);
+                                    _vs.writeGpsConfiguration(_gpsConfigurationRegister);
                                 }
                                 catch (const std::exception& e)
                                 {
@@ -3426,21 +3426,21 @@ void NAV::VectorNavSensor::guiConfig()
                       { vn::protocol::uart::PpsSource::PPSSOURCE_SYNCINRISING, "GNSS PPS signal is present on the SyncIn pin (pin 22) and should trigger on a rising edge" },
                       { vn::protocol::uart::PpsSource::PPSSOURCE_SYNCINFALLING, "GNSS PPS signal is present on the SyncIn pin (pin 22) and should trigger on a falling edge" } }
                 };
-                if (ImGui::BeginCombo(fmt::format("PPS Source##{}", size_t(id)).c_str(), vn::protocol::uart::str(gpsConfigurationRegister.ppsSource).c_str()))
+                if (ImGui::BeginCombo(fmt::format("PPS Source##{}", size_t(id)).c_str(), vn::protocol::uart::str(_gpsConfigurationRegister.ppsSource).c_str()))
                 {
                     for (const auto& gpsConfigurationPpsSource : gpsConfigurationPpsSources)
                     {
-                        const bool isSelected = (gpsConfigurationRegister.ppsSource == gpsConfigurationPpsSource.first);
+                        const bool isSelected = (_gpsConfigurationRegister.ppsSource == gpsConfigurationPpsSource.first);
                         if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationPpsSource.first).c_str(), isSelected))
                         {
-                            gpsConfigurationRegister.ppsSource = gpsConfigurationPpsSource.first;
-                            LOG_DEBUG("{}: gpsConfigurationRegister.ppsSource changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.ppsSource));
+                            _gpsConfigurationRegister.ppsSource = gpsConfigurationPpsSource.first;
+                            LOG_DEBUG("{}: gpsConfigurationRegister.ppsSource changed to {}", nameId(), vn::protocol::uart::str(_gpsConfigurationRegister.ppsSource));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    vs.writeGpsConfiguration(gpsConfigurationRegister);
+                                    _vs.writeGpsConfiguration(_gpsConfigurationRegister);
                                 }
                                 catch (const std::exception& e)
                                 {
@@ -3472,21 +3472,21 @@ void NAV::VectorNavSensor::guiConfig()
                     { /* vn::protocol::uart::GpsRate::GPSRATE_1HZ, */
                       vn::protocol::uart::GpsRate::GPSRATE_5HZ }
                 };
-                if (ImGui::BeginCombo(fmt::format("Rate##{}", size_t(id)).c_str(), vn::protocol::uart::str(gpsConfigurationRegister.rate).c_str()))
+                if (ImGui::BeginCombo(fmt::format("Rate##{}", size_t(id)).c_str(), vn::protocol::uart::str(_gpsConfigurationRegister.rate).c_str()))
                 {
                     for (const auto& gpsConfigurationRate : gpsConfigurationRates)
                     {
-                        const bool isSelected = (gpsConfigurationRegister.rate == gpsConfigurationRate);
+                        const bool isSelected = (_gpsConfigurationRegister.rate == gpsConfigurationRate);
                         if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationRate).c_str(), isSelected))
                         {
-                            gpsConfigurationRegister.rate = gpsConfigurationRate;
-                            LOG_DEBUG("{}: gpsConfigurationRegister.rate changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.rate));
+                            _gpsConfigurationRegister.rate = gpsConfigurationRate;
+                            LOG_DEBUG("{}: gpsConfigurationRegister.rate changed to {}", nameId(), vn::protocol::uart::str(_gpsConfigurationRegister.rate));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    vs.writeGpsConfiguration(gpsConfigurationRegister);
+                                    _vs.writeGpsConfiguration(_gpsConfigurationRegister);
                                 }
                                 catch (const std::exception& e)
                                 {
@@ -3515,21 +3515,21 @@ void NAV::VectorNavSensor::guiConfig()
                       { vn::protocol::uart::AntPower::ANTPOWER_INTERNAL, "Use internal antenna power supply (3V, 50mA combined)." },
                       { vn::protocol::uart::AntPower::ANTPOWER_EXTERNAL, "Use external antenna power supply (VANT pin, up to 5V and 100mA combined)" } }
                 };
-                if (ImGui::BeginCombo(fmt::format("Ant Power##{}", size_t(id)).c_str(), vn::protocol::uart::str(gpsConfigurationRegister.antPow).c_str()))
+                if (ImGui::BeginCombo(fmt::format("Ant Power##{}", size_t(id)).c_str(), vn::protocol::uart::str(_gpsConfigurationRegister.antPow).c_str()))
                 {
                     for (const auto& gpsConfigurationAntPower : gpsConfigurationAntPowers)
                     {
-                        const bool isSelected = (gpsConfigurationRegister.antPow == gpsConfigurationAntPower.first);
+                        const bool isSelected = (_gpsConfigurationRegister.antPow == gpsConfigurationAntPower.first);
                         if (ImGui::Selectable(vn::protocol::uart::str(gpsConfigurationAntPower.first).c_str(), isSelected))
                         {
-                            gpsConfigurationRegister.antPow = gpsConfigurationAntPower.first;
-                            LOG_DEBUG("{}: gpsConfigurationRegister.antPow changed to {}", nameId(), vn::protocol::uart::str(gpsConfigurationRegister.antPow));
+                            _gpsConfigurationRegister.antPow = gpsConfigurationAntPower.first;
+                            LOG_DEBUG("{}: gpsConfigurationRegister.antPow changed to {}", nameId(), vn::protocol::uart::str(_gpsConfigurationRegister.antPow));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    vs.writeGpsConfiguration(gpsConfigurationRegister);
+                                    _vs.writeGpsConfiguration(_gpsConfigurationRegister);
                                 }
                                 catch (const std::exception& e)
                                 {
@@ -3567,15 +3567,15 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::TextUnformatted("The position of the GNSS antenna A relative to the sensor in the vehicle coordinate frame\n"
                                        "also referred to as the GNSS antenna lever arm.");
 
-                if (ImGui::InputFloat3(fmt::format("##gpsAntennaOffset {}", size_t(id)).c_str(), gpsAntennaOffset.c, "%.6f"))
+                if (ImGui::InputFloat3(fmt::format("##gpsAntennaOffset {}", size_t(id)).c_str(), _gpsAntennaOffset.c, "%.6f"))
                 {
-                    LOG_DEBUG("{}: gpsAntennaOffset changed to {}", nameId(), gpsAntennaOffset);
+                    LOG_DEBUG("{}: gpsAntennaOffset changed to {}", nameId(), _gpsAntennaOffset);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeGpsAntennaOffset(gpsAntennaOffset);
+                            _vs.writeGpsAntennaOffset(_gpsAntennaOffset);
                         }
                         catch (const std::exception& e)
                         {
@@ -3597,15 +3597,15 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::TextUnformatted("Configures the position offset and measurement uncertainty of the second GNSS\n"
                                        "antenna relative to the first GNSS antenna in the vehicle reference frame.");
 
-                if (ImGui::InputFloat3(fmt::format("Position [m]##{}", size_t(id)).c_str(), gpsCompassBaselineRegister.position.c, "%.6f"))
+                if (ImGui::InputFloat3(fmt::format("Position [m]##{}", size_t(id)).c_str(), _gpsCompassBaselineRegister.position.c, "%.6f"))
                 {
-                    LOG_DEBUG("{}: gpsCompassBaselineRegister.position changed to {}", nameId(), gpsCompassBaselineRegister.position);
+                    LOG_DEBUG("{}: gpsCompassBaselineRegister.position changed to {}", nameId(), _gpsCompassBaselineRegister.position);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeGpsCompassBaseline(gpsCompassBaselineRegister);
+                            _vs.writeGpsCompassBaseline(_gpsCompassBaselineRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -3631,15 +3631,15 @@ void NAV::VectorNavSensor::guiConfig()
                                          "On a 1 meter baseline, a 1 cm measurement error equates to heading error of 0.6 degrees.",
                                          "(!)");
 
-                if (ImGui::InputFloat3(fmt::format("Uncertainty [m]##{}", size_t(id)).c_str(), gpsCompassBaselineRegister.uncertainty.c, "%.3f"))
+                if (ImGui::InputFloat3(fmt::format("Uncertainty [m]##{}", size_t(id)).c_str(), _gpsCompassBaselineRegister.uncertainty.c, "%.3f"))
                 {
-                    LOG_DEBUG("{}: gpsCompassBaselineRegister.uncertainty changed to {}", nameId(), gpsCompassBaselineRegister.uncertainty);
+                    LOG_DEBUG("{}: gpsCompassBaselineRegister.uncertainty changed to {}", nameId(), _gpsCompassBaselineRegister.uncertainty);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeGpsCompassBaseline(gpsCompassBaselineRegister);
+                            _vs.writeGpsCompassBaseline(_gpsCompassBaselineRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -3686,21 +3686,21 @@ void NAV::VectorNavSensor::guiConfig()
                 { vn::protocol::uart::VpeEnable::VPEENABLE_DISABLE,
                   vn::protocol::uart::VpeEnable::VPEENABLE_ENABLE }
             };
-            if (ImGui::BeginCombo(fmt::format("Enable##{}", size_t(id)).c_str(), vn::protocol::uart::str(vpeBasicControlRegister.enable).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Enable##{}", size_t(id)).c_str(), vn::protocol::uart::str(_vpeBasicControlRegister.enable).c_str()))
             {
                 for (const auto& vpeBasicControlEnable : vpeBasicControlEnables)
                 {
-                    const bool isSelected = (vpeBasicControlRegister.enable == vpeBasicControlEnable);
+                    const bool isSelected = (_vpeBasicControlRegister.enable == vpeBasicControlEnable);
                     if (ImGui::Selectable(vn::protocol::uart::str(vpeBasicControlEnable).c_str(), isSelected))
                     {
-                        vpeBasicControlRegister.enable = vpeBasicControlEnable;
-                        LOG_DEBUG("{}: vpeBasicControlRegister.enable changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.enable));
+                        _vpeBasicControlRegister.enable = vpeBasicControlEnable;
+                        LOG_DEBUG("{}: vpeBasicControlRegister.enable changed to {}", nameId(), vn::protocol::uart::str(_vpeBasicControlRegister.enable));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeVpeBasicControl(vpeBasicControlRegister);
+                                _vs.writeVpeBasicControl(_vpeBasicControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3727,21 +3727,21 @@ void NAV::VectorNavSensor::guiConfig()
                   vn::protocol::uart::HeadingMode::HEADINGMODE_RELATIVE,
                   vn::protocol::uart::HeadingMode::HEADINGMODE_INDOOR }
             };
-            if (ImGui::BeginCombo(fmt::format("Heading Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(vpeBasicControlRegister.headingMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Heading Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_vpeBasicControlRegister.headingMode).c_str()))
             {
                 for (const auto& vpeBasicControlHeadingMode : vpeBasicControlHeadingModes)
                 {
-                    const bool isSelected = (vpeBasicControlRegister.headingMode == vpeBasicControlHeadingMode);
+                    const bool isSelected = (_vpeBasicControlRegister.headingMode == vpeBasicControlHeadingMode);
                     if (ImGui::Selectable(vn::protocol::uart::str(vpeBasicControlHeadingMode).c_str(), isSelected))
                     {
-                        vpeBasicControlRegister.headingMode = vpeBasicControlHeadingMode;
-                        LOG_DEBUG("{}: vpeBasicControlRegister.headingMode changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.headingMode));
+                        _vpeBasicControlRegister.headingMode = vpeBasicControlHeadingMode;
+                        LOG_DEBUG("{}: vpeBasicControlRegister.headingMode changed to {}", nameId(), vn::protocol::uart::str(_vpeBasicControlRegister.headingMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeVpeBasicControl(vpeBasicControlRegister);
+                                _vs.writeVpeBasicControl(_vpeBasicControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3767,21 +3767,21 @@ void NAV::VectorNavSensor::guiConfig()
                 { vn::protocol::uart::VpeMode::VPEMODE_OFF,
                   vn::protocol::uart::VpeMode::VPEMODE_MODE1 }
             };
-            if (ImGui::BeginCombo(fmt::format("Filtering Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(vpeBasicControlRegister.filteringMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Filtering Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_vpeBasicControlRegister.filteringMode).c_str()))
             {
                 for (const auto& vpeBasicControlMode : vpeBasicControlModes)
                 {
-                    const bool isSelected = (vpeBasicControlRegister.filteringMode == vpeBasicControlMode);
+                    const bool isSelected = (_vpeBasicControlRegister.filteringMode == vpeBasicControlMode);
                     if (ImGui::Selectable(vn::protocol::uart::str(vpeBasicControlMode).c_str(), isSelected))
                     {
-                        vpeBasicControlRegister.filteringMode = vpeBasicControlMode;
-                        LOG_DEBUG("{}: vpeBasicControlRegister.filteringMode changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.filteringMode));
+                        _vpeBasicControlRegister.filteringMode = vpeBasicControlMode;
+                        LOG_DEBUG("{}: vpeBasicControlRegister.filteringMode changed to {}", nameId(), vn::protocol::uart::str(_vpeBasicControlRegister.filteringMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeVpeBasicControl(vpeBasicControlRegister);
+                                _vs.writeVpeBasicControl(_vpeBasicControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3803,21 +3803,21 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::EndCombo();
             }
 
-            if (ImGui::BeginCombo(fmt::format("Tuning Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(vpeBasicControlRegister.tuningMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("Tuning Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_vpeBasicControlRegister.tuningMode).c_str()))
             {
                 for (const auto& vpeBasicControlMode : vpeBasicControlModes)
                 {
-                    const bool isSelected = (vpeBasicControlRegister.tuningMode == vpeBasicControlMode);
+                    const bool isSelected = (_vpeBasicControlRegister.tuningMode == vpeBasicControlMode);
                     if (ImGui::Selectable(vn::protocol::uart::str(vpeBasicControlMode).c_str(), isSelected))
                     {
-                        vpeBasicControlRegister.tuningMode = vpeBasicControlMode;
-                        LOG_DEBUG("{}: vpeBasicControlRegister.tuningMode changed to {}", nameId(), vn::protocol::uart::str(vpeBasicControlRegister.tuningMode));
+                        _vpeBasicControlRegister.tuningMode = vpeBasicControlMode;
+                        LOG_DEBUG("{}: vpeBasicControlRegister.tuningMode changed to {}", nameId(), vn::protocol::uart::str(_vpeBasicControlRegister.tuningMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeVpeBasicControl(vpeBasicControlRegister);
+                                _vs.writeVpeBasicControl(_vpeBasicControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -3842,21 +3842,21 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::TreePop();
         }
 
-        if (sensorModel == VectorNavModel::VN100_VN110)
+        if (_sensorModel == VectorNavModel::VN100_VN110)
         {
             if (ImGui::TreeNode(fmt::format("VPE Magnetometer Basic Tuning##{}", size_t(id)).c_str()))
             {
                 ImGui::TextUnformatted("Provides basic control of the adaptive filtering and tuning for the magnetometer.");
 
-                if (ImGui::DragFloat3(fmt::format("Base Tuning Level##{}", size_t(id)).c_str(), vpeMagnetometerBasicTuningRegister.baseTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                if (ImGui::DragFloat3(fmt::format("Base Tuning Level##{}", size_t(id)).c_str(), _vpeMagnetometerBasicTuningRegister.baseTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
                 {
-                    LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.baseTuning changed to {}", nameId(), vpeMagnetometerBasicTuningRegister.baseTuning);
+                    LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.baseTuning changed to {}", nameId(), _vpeMagnetometerBasicTuningRegister.baseTuning);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVpeMagnetometerBasicTuning(vpeMagnetometerBasicTuningRegister);
+                            _vs.writeVpeMagnetometerBasicTuning(_vpeMagnetometerBasicTuningRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -3873,15 +3873,15 @@ void NAV::VectorNavSensor::guiConfig()
                 gui::widgets::HelpMarker("This sets the level of confidence placed in the magnetometer when no disturbances are present. "
                                          "A larger number provides better heading accuracy, but with more sensitivity to magnetic interference.");
 
-                if (ImGui::DragFloat3(fmt::format("Adaptive Tuning Level##{}", size_t(id)).c_str(), vpeMagnetometerBasicTuningRegister.adaptiveTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                if (ImGui::DragFloat3(fmt::format("Adaptive Tuning Level##{}", size_t(id)).c_str(), _vpeMagnetometerBasicTuningRegister.adaptiveTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
                 {
-                    LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), vpeMagnetometerBasicTuningRegister.adaptiveTuning);
+                    LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), _vpeMagnetometerBasicTuningRegister.adaptiveTuning);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVpeMagnetometerBasicTuning(vpeMagnetometerBasicTuningRegister);
+                            _vs.writeVpeMagnetometerBasicTuning(_vpeMagnetometerBasicTuningRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -3895,15 +3895,15 @@ void NAV::VectorNavSensor::guiConfig()
                     }
                 }
 
-                if (ImGui::DragFloat3(fmt::format("Adaptive Filtering Level##{}", size_t(id)).c_str(), vpeMagnetometerBasicTuningRegister.adaptiveFiltering.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                if (ImGui::DragFloat3(fmt::format("Adaptive Filtering Level##{}", size_t(id)).c_str(), _vpeMagnetometerBasicTuningRegister.adaptiveFiltering.c, 0.1F, 0.0F, 10.0F, "%.1f"))
                 {
-                    LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), vpeMagnetometerBasicTuningRegister.adaptiveFiltering);
+                    LOG_DEBUG("{}: vpeMagnetometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), _vpeMagnetometerBasicTuningRegister.adaptiveFiltering);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVpeMagnetometerBasicTuning(vpeMagnetometerBasicTuningRegister);
+                            _vs.writeVpeMagnetometerBasicTuning(_vpeMagnetometerBasicTuningRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -3924,15 +3924,15 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 ImGui::TextUnformatted("Provides basic control of the adaptive filtering and tuning for the accelerometer.");
 
-                if (ImGui::DragFloat3(fmt::format("Base Tuning Level##{}", size_t(id)).c_str(), vpeAccelerometerBasicTuningRegister.baseTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                if (ImGui::DragFloat3(fmt::format("Base Tuning Level##{}", size_t(id)).c_str(), _vpeAccelerometerBasicTuningRegister.baseTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
                 {
-                    LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.baseTuning changed to {}", nameId(), vpeAccelerometerBasicTuningRegister.baseTuning);
+                    LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.baseTuning changed to {}", nameId(), _vpeAccelerometerBasicTuningRegister.baseTuning);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVpeAccelerometerBasicTuning(vpeAccelerometerBasicTuningRegister);
+                            _vs.writeVpeAccelerometerBasicTuning(_vpeAccelerometerBasicTuningRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -3949,15 +3949,15 @@ void NAV::VectorNavSensor::guiConfig()
                 gui::widgets::HelpMarker("This sets the level of confidence placed in the accelerometer when no disturbances are present. "
                                          "A larger number provides better pitch/roll heading accuracy, but with more sensitivity to acceleration interference.");
 
-                if (ImGui::DragFloat3(fmt::format("Adaptive Tuning Level##{}", size_t(id)).c_str(), vpeAccelerometerBasicTuningRegister.adaptiveTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                if (ImGui::DragFloat3(fmt::format("Adaptive Tuning Level##{}", size_t(id)).c_str(), _vpeAccelerometerBasicTuningRegister.adaptiveTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
                 {
-                    LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), vpeAccelerometerBasicTuningRegister.adaptiveTuning);
+                    LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveTuning changed to {}", nameId(), _vpeAccelerometerBasicTuningRegister.adaptiveTuning);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVpeAccelerometerBasicTuning(vpeAccelerometerBasicTuningRegister);
+                            _vs.writeVpeAccelerometerBasicTuning(_vpeAccelerometerBasicTuningRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -3971,15 +3971,15 @@ void NAV::VectorNavSensor::guiConfig()
                     }
                 }
 
-                if (ImGui::DragFloat3(fmt::format("Adaptive Filtering Level##{}", size_t(id)).c_str(), vpeAccelerometerBasicTuningRegister.adaptiveFiltering.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                if (ImGui::DragFloat3(fmt::format("Adaptive Filtering Level##{}", size_t(id)).c_str(), _vpeAccelerometerBasicTuningRegister.adaptiveFiltering.c, 0.1F, 0.0F, 10.0F, "%.1f"))
                 {
-                    LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), vpeAccelerometerBasicTuningRegister.adaptiveFiltering);
+                    LOG_DEBUG("{}: vpeAccelerometerBasicTuningRegister.adaptiveFiltering changed to {}", nameId(), _vpeAccelerometerBasicTuningRegister.adaptiveFiltering);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVpeAccelerometerBasicTuning(vpeAccelerometerBasicTuningRegister);
+                            _vs.writeVpeAccelerometerBasicTuning(_vpeAccelerometerBasicTuningRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -4000,15 +4000,15 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 ImGui::TextUnformatted("Provides basic control of the adaptive filtering and tuning for the gyroscope.");
 
-                if (ImGui::DragFloat3(fmt::format("Base Tuning Level##{}", size_t(id)).c_str(), vpeGyroBasicTuningRegister.baseTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                if (ImGui::DragFloat3(fmt::format("Base Tuning Level##{}", size_t(id)).c_str(), _vpeGyroBasicTuningRegister.baseTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
                 {
-                    LOG_DEBUG("{}: vpeGyroBasicTuningRegister.baseTuning changed to {}", nameId(), vpeGyroBasicTuningRegister.baseTuning);
+                    LOG_DEBUG("{}: vpeGyroBasicTuningRegister.baseTuning changed to {}", nameId(), _vpeGyroBasicTuningRegister.baseTuning);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVpeGyroBasicTuning(vpeGyroBasicTuningRegister);
+                            _vs.writeVpeGyroBasicTuning(_vpeGyroBasicTuningRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -4024,15 +4024,15 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::SameLine();
                 gui::widgets::HelpMarker("This sets the level of confidence placed in the gyro axes.");
 
-                if (ImGui::DragFloat3(fmt::format("Adaptive Tuning Level##{}", size_t(id)).c_str(), vpeGyroBasicTuningRegister.adaptiveTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                if (ImGui::DragFloat3(fmt::format("Adaptive Tuning Level##{}", size_t(id)).c_str(), _vpeGyroBasicTuningRegister.adaptiveTuning.c, 0.1F, 0.0F, 10.0F, "%.1f"))
                 {
-                    LOG_DEBUG("{}: vpeGyroBasicTuningRegister.adaptiveTuning changed to {}", nameId(), vpeGyroBasicTuningRegister.adaptiveTuning);
+                    LOG_DEBUG("{}: vpeGyroBasicTuningRegister.adaptiveTuning changed to {}", nameId(), _vpeGyroBasicTuningRegister.adaptiveTuning);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVpeGyroBasicTuning(vpeGyroBasicTuningRegister);
+                            _vs.writeVpeGyroBasicTuning(_vpeGyroBasicTuningRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -4046,15 +4046,15 @@ void NAV::VectorNavSensor::guiConfig()
                     }
                 }
 
-                if (ImGui::DragFloat3(fmt::format("Variance - Angular Walk##{}", size_t(id)).c_str(), vpeGyroBasicTuningRegister.angularWalkVariance.c, 0.1F, 0.0F, 10.0F, "%.1f"))
+                if (ImGui::DragFloat3(fmt::format("Variance - Angular Walk##{}", size_t(id)).c_str(), _vpeGyroBasicTuningRegister.angularWalkVariance.c, 0.1F, 0.0F, 10.0F, "%.1f"))
                 {
-                    LOG_DEBUG("{}: vpeGyroBasicTuningRegister.angularWalkVariance changed to {}", nameId(), vpeGyroBasicTuningRegister.angularWalkVariance);
+                    LOG_DEBUG("{}: vpeGyroBasicTuningRegister.angularWalkVariance changed to {}", nameId(), _vpeGyroBasicTuningRegister.angularWalkVariance);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVpeGyroBasicTuning(vpeGyroBasicTuningRegister);
+                            _vs.writeVpeGyroBasicTuning(_vpeGyroBasicTuningRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -4075,15 +4075,15 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 ImGui::TextUnformatted("The filter gyro bias estimate used at startup [rad/s].");
 
-                if (ImGui::InputFloat3(fmt::format("## FilterStartupGyroBias {}", size_t(id)).c_str(), filterStartupGyroBias.c, "%.1f"))
+                if (ImGui::InputFloat3(fmt::format("## FilterStartupGyroBias {}", size_t(id)).c_str(), _filterStartupGyroBias.c, "%.1f"))
                 {
-                    LOG_DEBUG("{}: filterStartupGyroBias changed to {}", nameId(), filterStartupGyroBias);
+                    LOG_DEBUG("{}: filterStartupGyroBias changed to {}", nameId(), _filterStartupGyroBias);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeFilterStartupGyroBias(filterStartupGyroBias);
+                            _vs.writeFilterStartupGyroBias(_filterStartupGyroBias);
                         }
                         catch (const std::exception& e)
                         {
@@ -4106,7 +4106,7 @@ void NAV::VectorNavSensor::guiConfig()
     //                                               INS SUBSYSTEM
     // ###########################################################################################################
 
-    if (sensorModel == VectorNavModel::VN310)
+    if (_sensorModel == VectorNavModel::VN310)
     {
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::CollapsingHeader(fmt::format("INS Subsystem##{}", size_t(id)).c_str()))
@@ -4118,21 +4118,21 @@ void NAV::VectorNavSensor::guiConfig()
                       { vn::protocol::uart::Scenario::SCENARIO_INSWITHOUTPRESSURE, "General purpose INS without barometric pressure sensor" },
                       { vn::protocol::uart::Scenario::SCENARIO_GPSMOVINGBASELINEDYNAMIC, "GNSS moving baseline for dynamic applications" } }
                 };
-                if (ImGui::BeginCombo(fmt::format("Scenario##{}", size_t(id)).c_str(), vn::protocol::uart::str(insBasicConfigurationRegisterVn300.scenario).c_str()))
+                if (ImGui::BeginCombo(fmt::format("Scenario##{}", size_t(id)).c_str(), vn::protocol::uart::str(_insBasicConfigurationRegisterVn300.scenario).c_str()))
                 {
                     for (const auto& insBasicConfigurationRegisterVn300Scenario : insBasicConfigurationRegisterVn300Scenarios)
                     {
-                        const bool isSelected = (insBasicConfigurationRegisterVn300.scenario == insBasicConfigurationRegisterVn300Scenario.first);
+                        const bool isSelected = (_insBasicConfigurationRegisterVn300.scenario == insBasicConfigurationRegisterVn300Scenario.first);
                         if (ImGui::Selectable(vn::protocol::uart::str(insBasicConfigurationRegisterVn300Scenario.first).c_str(), isSelected))
                         {
-                            insBasicConfigurationRegisterVn300.scenario = insBasicConfigurationRegisterVn300Scenario.first;
-                            LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.scenario changed to {}", nameId(), vn::protocol::uart::str(insBasicConfigurationRegisterVn300.scenario));
+                            _insBasicConfigurationRegisterVn300.scenario = insBasicConfigurationRegisterVn300Scenario.first;
+                            LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.scenario changed to {}", nameId(), vn::protocol::uart::str(_insBasicConfigurationRegisterVn300.scenario));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    vs.writeInsBasicConfigurationVn300(insBasicConfigurationRegisterVn300);
+                                    _vs.writeInsBasicConfigurationVn300(_insBasicConfigurationRegisterVn300);
                                 }
                                 catch (const std::exception& e)
                                 {
@@ -4160,15 +4160,15 @@ void NAV::VectorNavSensor::guiConfig()
                     ImGui::EndCombo();
                 }
 
-                if (ImGui::Checkbox(fmt::format("Ahrs Aiding##{}", size_t(id)).c_str(), &insBasicConfigurationRegisterVn300.ahrsAiding))
+                if (ImGui::Checkbox(fmt::format("Ahrs Aiding##{}", size_t(id)).c_str(), &_insBasicConfigurationRegisterVn300.ahrsAiding))
                 {
-                    LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.ahrsAiding changed to {}", nameId(), insBasicConfigurationRegisterVn300.ahrsAiding);
+                    LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.ahrsAiding changed to {}", nameId(), _insBasicConfigurationRegisterVn300.ahrsAiding);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeInsBasicConfigurationVn300(insBasicConfigurationRegisterVn300);
+                            _vs.writeInsBasicConfigurationVn300(_insBasicConfigurationRegisterVn300);
                         }
                         catch (const std::exception& e)
                         {
@@ -4190,15 +4190,15 @@ void NAV::VectorNavSensor::guiConfig()
                                          "the attitude solution during times when heading is "
                                          "weakly observable, such as at startup.");
 
-                if (ImGui::Checkbox(fmt::format("Estimate Baseline##{}", size_t(id)).c_str(), &insBasicConfigurationRegisterVn300.estBaseline))
+                if (ImGui::Checkbox(fmt::format("Estimate Baseline##{}", size_t(id)).c_str(), &_insBasicConfigurationRegisterVn300.estBaseline))
                 {
-                    LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.estBaseline changed to {}", nameId(), insBasicConfigurationRegisterVn300.estBaseline);
+                    LOG_DEBUG("{}: insBasicConfigurationRegisterVn300.estBaseline changed to {}", nameId(), _insBasicConfigurationRegisterVn300.estBaseline);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeInsBasicConfigurationVn300(insBasicConfigurationRegisterVn300);
+                            _vs.writeInsBasicConfigurationVn300(_insBasicConfigurationRegisterVn300);
                         }
                         catch (const std::exception& e)
                         {
@@ -4221,15 +4221,15 @@ void NAV::VectorNavSensor::guiConfig()
             {
                 ImGui::TextUnformatted("Sets the initial estimate for the filter bias states");
 
-                if (ImGui::InputFloat3(fmt::format("Gyro Bias [rad/s]##{}", size_t(id)).c_str(), startupFilterBiasEstimateRegister.gyroBias.c, "%.1f"))
+                if (ImGui::InputFloat3(fmt::format("Gyro Bias [rad/s]##{}", size_t(id)).c_str(), _startupFilterBiasEstimateRegister.gyroBias.c, "%.1f"))
                 {
-                    LOG_DEBUG("{}: startupFilterBiasEstimateRegister.gyroBias changed to {}", nameId(), startupFilterBiasEstimateRegister.gyroBias);
+                    LOG_DEBUG("{}: startupFilterBiasEstimateRegister.gyroBias changed to {}", nameId(), _startupFilterBiasEstimateRegister.gyroBias);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeStartupFilterBiasEstimate(startupFilterBiasEstimateRegister);
+                            _vs.writeStartupFilterBiasEstimate(_startupFilterBiasEstimateRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -4243,15 +4243,15 @@ void NAV::VectorNavSensor::guiConfig()
                     }
                 }
 
-                if (ImGui::InputFloat3(fmt::format("Accel Bias [m/s^2]##{}", size_t(id)).c_str(), startupFilterBiasEstimateRegister.accelBias.c, "%.1f"))
+                if (ImGui::InputFloat3(fmt::format("Accel Bias [m/s^2]##{}", size_t(id)).c_str(), _startupFilterBiasEstimateRegister.accelBias.c, "%.1f"))
                 {
-                    LOG_DEBUG("{}: startupFilterBiasEstimateRegister.accelBias changed to {}", nameId(), startupFilterBiasEstimateRegister.accelBias);
+                    LOG_DEBUG("{}: startupFilterBiasEstimateRegister.accelBias changed to {}", nameId(), _startupFilterBiasEstimateRegister.accelBias);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeStartupFilterBiasEstimate(startupFilterBiasEstimateRegister);
+                            _vs.writeStartupFilterBiasEstimate(_startupFilterBiasEstimateRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -4265,15 +4265,15 @@ void NAV::VectorNavSensor::guiConfig()
                     }
                 }
 
-                if (ImGui::InputFloat(fmt::format("Pressure Bias [m]##{}", size_t(id)).c_str(), &startupFilterBiasEstimateRegister.pressureBias))
+                if (ImGui::InputFloat(fmt::format("Pressure Bias [m]##{}", size_t(id)).c_str(), &_startupFilterBiasEstimateRegister.pressureBias))
                 {
-                    LOG_DEBUG("{}: startupFilterBiasEstimateRegister.pressureBias changed to {}", nameId(), startupFilterBiasEstimateRegister.pressureBias);
+                    LOG_DEBUG("{}: startupFilterBiasEstimateRegister.pressureBias changed to {}", nameId(), _startupFilterBiasEstimateRegister.pressureBias);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeStartupFilterBiasEstimate(startupFilterBiasEstimateRegister);
+                            _vs.writeStartupFilterBiasEstimate(_startupFilterBiasEstimateRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -4302,7 +4302,7 @@ void NAV::VectorNavSensor::guiConfig()
         if (ImGui::TreeNode(fmt::format("Magnetometer Calibration Control##{}", size_t(id)).c_str()))
         {
             ImGui::TextUnformatted("Controls the magnetometer real-time calibration algorithm.");
-            if (sensorModel == VectorNavModel::VN310)
+            if (_sensorModel == VectorNavModel::VN310)
             {
                 ImGui::SameLine();
                 gui::widgets::HelpMarker("On the PRODUCT the magnetometer is only used to provide a coarse heading estimate at startup "
@@ -4318,21 +4318,21 @@ void NAV::VectorNavSensor::guiConfig()
                                                               "The algorithm can be started and stopped at any time by switching between the HSI_OFF and HSI_RUN state." },
                   { vn::protocol::uart::HsiMode::HSIMODE_RESET, "Resets the real-time hard/soft iron solution" } }
             };
-            if (ImGui::BeginCombo(fmt::format("HSI Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiMode).c_str()))
+            if (ImGui::BeginCombo(fmt::format("HSI Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiMode).c_str()))
             {
                 for (const auto& magnetometerCalibrationControlHsiMode : magnetometerCalibrationControlHsiModes)
                 {
-                    const bool isSelected = (magnetometerCalibrationControlRegister.hsiMode == magnetometerCalibrationControlHsiMode.first);
+                    const bool isSelected = (_magnetometerCalibrationControlRegister.hsiMode == magnetometerCalibrationControlHsiMode.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(magnetometerCalibrationControlHsiMode.first).c_str(), isSelected))
                     {
-                        magnetometerCalibrationControlRegister.hsiMode = magnetometerCalibrationControlHsiMode.first;
-                        LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiMode changed to {}", nameId(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiMode));
+                        _magnetometerCalibrationControlRegister.hsiMode = magnetometerCalibrationControlHsiMode.first;
+                        LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiMode changed to {}", nameId(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiMode));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeMagnetometerCalibrationControl(magnetometerCalibrationControlRegister);
+                                _vs.writeMagnetometerCalibrationControl(_magnetometerCalibrationControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -4366,21 +4366,21 @@ void NAV::VectorNavSensor::guiConfig()
                 { { vn::protocol::uart::HsiOutput::HSIOUTPUT_NOONBOARD, "Onboard HSI is not applied to the magnetic measurements" },
                   { vn::protocol::uart::HsiOutput::HSIOUTPUT_USEONBOARD, "Onboard HSI is applied to the magnetic measurements" } }
             };
-            if (ImGui::BeginCombo(fmt::format("HSI Output##{}", size_t(id)).c_str(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiOutput).c_str()))
+            if (ImGui::BeginCombo(fmt::format("HSI Output##{}", size_t(id)).c_str(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiOutput).c_str()))
             {
                 for (const auto& magnetometerCalibrationControlHsiOutput : magnetometerCalibrationControlHsiOutputs)
                 {
-                    const bool isSelected = (magnetometerCalibrationControlRegister.hsiOutput == magnetometerCalibrationControlHsiOutput.first);
+                    const bool isSelected = (_magnetometerCalibrationControlRegister.hsiOutput == magnetometerCalibrationControlHsiOutput.first);
                     if (ImGui::Selectable(vn::protocol::uart::str(magnetometerCalibrationControlHsiOutput.first).c_str(), isSelected))
                     {
-                        magnetometerCalibrationControlRegister.hsiOutput = magnetometerCalibrationControlHsiOutput.first;
-                        LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiOutput changed to {}", nameId(), vn::protocol::uart::str(magnetometerCalibrationControlRegister.hsiOutput));
+                        _magnetometerCalibrationControlRegister.hsiOutput = magnetometerCalibrationControlHsiOutput.first;
+                        LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiOutput changed to {}", nameId(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiOutput));
                         flow::ApplyChanges();
-                        if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                        if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
                             try
                             {
-                                vs.writeMagnetometerCalibrationControl(magnetometerCalibrationControlRegister);
+                                _vs.writeMagnetometerCalibrationControl(_magnetometerCalibrationControlRegister);
                             }
                             catch (const std::exception& e)
                             {
@@ -4412,17 +4412,17 @@ void NAV::VectorNavSensor::guiConfig()
                                      "outputs from the magnetometer sensor and also "
                                      "subsequently used in the attitude filter.");
 
-            int convergeRate = magnetometerCalibrationControlRegister.convergeRate;
+            int convergeRate = _magnetometerCalibrationControlRegister.convergeRate;
             if (ImGui::SliderInt(fmt::format("Converge Rate##{}", size_t(id)).c_str(), &convergeRate, 0, 5))
             {
-                magnetometerCalibrationControlRegister.convergeRate = static_cast<uint8_t>(convergeRate);
-                LOG_DEBUG("{}: magnetometerCalibrationControlRegister.convergeRate changed to {}", nameId(), magnetometerCalibrationControlRegister.convergeRate);
+                _magnetometerCalibrationControlRegister.convergeRate = static_cast<uint8_t>(convergeRate);
+                LOG_DEBUG("{}: magnetometerCalibrationControlRegister.convergeRate changed to {}", nameId(), _magnetometerCalibrationControlRegister.convergeRate);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeMagnetometerCalibrationControl(magnetometerCalibrationControlRegister);
+                        _vs.writeMagnetometerCalibrationControl(_magnetometerCalibrationControlRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4472,15 +4472,15 @@ void NAV::VectorNavSensor::guiConfig()
                                      "overwritten by the onboard models, but will retain their previous values for when the onboard models are "
                                      "disabled.");
 
-            if (ImGui::InputFloat3(fmt::format("Magnetic Reference [Gauss]##{}", size_t(id)).c_str(), magneticAndGravityReferenceVectorsRegister.magRef.c, "%.3f"))
+            if (ImGui::InputFloat3(fmt::format("Magnetic Reference [Gauss]##{}", size_t(id)).c_str(), _magneticAndGravityReferenceVectorsRegister.magRef.c, "%.3f"))
             {
-                LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.magRef changed to {}", nameId(), magneticAndGravityReferenceVectorsRegister.magRef);
+                LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.magRef changed to {}", nameId(), _magneticAndGravityReferenceVectorsRegister.magRef);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeMagneticAndGravityReferenceVectors(magneticAndGravityReferenceVectorsRegister);
+                        _vs.writeMagneticAndGravityReferenceVectors(_magneticAndGravityReferenceVectorsRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4494,15 +4494,15 @@ void NAV::VectorNavSensor::guiConfig()
                 }
             }
 
-            if (ImGui::InputFloat3(fmt::format("Gravity Reference [m/s^2]##{}", size_t(id)).c_str(), magneticAndGravityReferenceVectorsRegister.accRef.c, "%.6f"))
+            if (ImGui::InputFloat3(fmt::format("Gravity Reference [m/s^2]##{}", size_t(id)).c_str(), _magneticAndGravityReferenceVectorsRegister.accRef.c, "%.6f"))
             {
-                LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.accRef changed to {}", nameId(), magneticAndGravityReferenceVectorsRegister.accRef);
+                LOG_DEBUG("{}: magneticAndGravityReferenceVectorsRegister.accRef changed to {}", nameId(), _magneticAndGravityReferenceVectorsRegister.accRef);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeMagneticAndGravityReferenceVectors(magneticAndGravityReferenceVectorsRegister);
+                        _vs.writeMagneticAndGravityReferenceVectors(_magneticAndGravityReferenceVectorsRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4540,15 +4540,15 @@ void NAV::VectorNavSensor::guiConfig()
                                      "whenever the current position has changed by the RecaclThreshold or the date has changed by more than "
                                      "approximately 8 hours, whichever comes first.");
 
-            if (ImGui::Checkbox(fmt::format("Use Mag Model##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.useMagModel))
+            if (ImGui::Checkbox(fmt::format("Use Mag Model##{}", size_t(id)).c_str(), &_referenceVectorConfigurationRegister.useMagModel))
             {
-                LOG_DEBUG("{}: referenceVectorConfigurationRegister.useMagModel changed to {}", nameId(), referenceVectorConfigurationRegister.useMagModel);
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.useMagModel changed to {}", nameId(), _referenceVectorConfigurationRegister.useMagModel);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                        _vs.writeReferenceVectorConfiguration(_referenceVectorConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4562,15 +4562,15 @@ void NAV::VectorNavSensor::guiConfig()
                 }
             }
 
-            if (ImGui::Checkbox(fmt::format("Use Gravity Model##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.useGravityModel))
+            if (ImGui::Checkbox(fmt::format("Use Gravity Model##{}", size_t(id)).c_str(), &_referenceVectorConfigurationRegister.useGravityModel))
             {
-                LOG_DEBUG("{}: referenceVectorConfigurationRegister.useGravityModel changed to {}", nameId(), referenceVectorConfigurationRegister.useGravityModel);
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.useGravityModel changed to {}", nameId(), _referenceVectorConfigurationRegister.useGravityModel);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                        _vs.writeReferenceVectorConfiguration(_referenceVectorConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4584,17 +4584,17 @@ void NAV::VectorNavSensor::guiConfig()
                 }
             }
 
-            auto recalcThreshold = static_cast<int>(referenceVectorConfigurationRegister.recalcThreshold);
+            auto recalcThreshold = static_cast<int>(_referenceVectorConfigurationRegister.recalcThreshold);
             if (ImGui::InputInt(fmt::format("Recalc Threshold [m]##{}", size_t(id)).c_str(), &recalcThreshold))
             {
-                referenceVectorConfigurationRegister.recalcThreshold = static_cast<uint32_t>(recalcThreshold);
-                LOG_DEBUG("{}: referenceVectorConfigurationRegister.recalcThreshold changed to {}", nameId(), referenceVectorConfigurationRegister.recalcThreshold);
+                _referenceVectorConfigurationRegister.recalcThreshold = static_cast<uint32_t>(recalcThreshold);
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.recalcThreshold changed to {}", nameId(), _referenceVectorConfigurationRegister.recalcThreshold);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                        _vs.writeReferenceVectorConfiguration(_referenceVectorConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4610,15 +4610,15 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("Maximum distance traveled before magnetic and gravity models are recalculated for the new position.");
 
-            if (ImGui::InputFloat(fmt::format("Year##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.year))
+            if (ImGui::InputFloat(fmt::format("Year##{}", size_t(id)).c_str(), &_referenceVectorConfigurationRegister.year))
             {
-                LOG_DEBUG("{}: referenceVectorConfigurationRegister.year changed to {}", nameId(), referenceVectorConfigurationRegister.year);
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.year changed to {}", nameId(), _referenceVectorConfigurationRegister.year);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                        _vs.writeReferenceVectorConfiguration(_referenceVectorConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4634,15 +4634,15 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("The reference date expressed as a decimal year. Used for both the magnetic and gravity models.");
 
-            if (ImGui::InputDouble(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.position[0]))
+            if (ImGui::InputDouble(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &_referenceVectorConfigurationRegister.position[0]))
             {
-                LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.latitude changed to {}", nameId(), referenceVectorConfigurationRegister.position[0]);
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.latitude changed to {}", nameId(), _referenceVectorConfigurationRegister.position[0]);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                        _vs.writeReferenceVectorConfiguration(_referenceVectorConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4658,15 +4658,15 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("The reference latitude position in degrees.");
 
-            if (ImGui::InputDouble(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.position[1]))
+            if (ImGui::InputDouble(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &_referenceVectorConfigurationRegister.position[1]))
             {
-                LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.longitude changed to {}", nameId(), referenceVectorConfigurationRegister.position[1]);
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.longitude changed to {}", nameId(), _referenceVectorConfigurationRegister.position[1]);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                        _vs.writeReferenceVectorConfiguration(_referenceVectorConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4682,15 +4682,15 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("The reference longitude position in degrees.");
 
-            if (ImGui::InputDouble(fmt::format("Altitude [m]##{}", size_t(id)).c_str(), &referenceVectorConfigurationRegister.position[2]))
+            if (ImGui::InputDouble(fmt::format("Altitude [m]##{}", size_t(id)).c_str(), &_referenceVectorConfigurationRegister.position[2]))
             {
-                LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.altitude changed to {}", nameId(), referenceVectorConfigurationRegister.position[2]);
+                LOG_DEBUG("{}: referenceVectorConfigurationRegister.position.altitude changed to {}", nameId(), _referenceVectorConfigurationRegister.position[2]);
                 flow::ApplyChanges();
-                if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                 {
                     try
                     {
-                        vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
+                        _vs.writeReferenceVectorConfiguration(_referenceVectorConfigurationRegister);
                     }
                     catch (const std::exception& e)
                     {
@@ -4714,7 +4714,7 @@ void NAV::VectorNavSensor::guiConfig()
     //                                              VELOCITY AIDING
     // ###########################################################################################################
 
-    if (sensorModel == VectorNavModel::VN100_VN110)
+    if (_sensorModel == VectorNavModel::VN100_VN110)
     {
         ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
         if (ImGui::CollapsingHeader(fmt::format("Velocity Aiding##{}", size_t(id)).c_str()))
@@ -4727,21 +4727,21 @@ void NAV::VectorNavSensor::guiConfig()
                     { vn::protocol::uart::VelocityCompensationMode::VELOCITYCOMPENSATIONMODE_DISABLED,
                       vn::protocol::uart::VelocityCompensationMode::VELOCITYCOMPENSATIONMODE_BODYMEASUREMENT }
                 };
-                if (ImGui::BeginCombo(fmt::format("Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(velocityCompensationControlRegister.mode).c_str()))
+                if (ImGui::BeginCombo(fmt::format("Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_velocityCompensationControlRegister.mode).c_str()))
                 {
                     for (const auto& velocityCompensationControlMode : velocityCompensationControlModes)
                     {
-                        const bool isSelected = (velocityCompensationControlRegister.mode == velocityCompensationControlMode);
+                        const bool isSelected = (_velocityCompensationControlRegister.mode == velocityCompensationControlMode);
                         if (ImGui::Selectable(vn::protocol::uart::str(velocityCompensationControlMode).c_str(), isSelected))
                         {
-                            velocityCompensationControlRegister.mode = velocityCompensationControlMode;
-                            LOG_DEBUG("{}: velocityCompensationControlRegister.mode changed to {}", nameId(), vn::protocol::uart::str(velocityCompensationControlRegister.mode));
+                            _velocityCompensationControlRegister.mode = velocityCompensationControlMode;
+                            LOG_DEBUG("{}: velocityCompensationControlRegister.mode changed to {}", nameId(), vn::protocol::uart::str(_velocityCompensationControlRegister.mode));
                             flow::ApplyChanges();
-                            if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                            if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                             {
                                 try
                                 {
-                                    vs.writeVelocityCompensationControl(velocityCompensationControlRegister);
+                                    _vs.writeVelocityCompensationControl(_velocityCompensationControlRegister);
                                 }
                                 catch (const std::exception& e)
                                 {
@@ -4765,15 +4765,15 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::SameLine();
                 gui::widgets::HelpMarker("Selects the type of velocity compensation performed by the VPE");
 
-                if (ImGui::InputFloat(fmt::format("Velocity Tuning##{}", size_t(id)).c_str(), &velocityCompensationControlRegister.velocityTuning))
+                if (ImGui::InputFloat(fmt::format("Velocity Tuning##{}", size_t(id)).c_str(), &_velocityCompensationControlRegister.velocityTuning))
                 {
-                    LOG_DEBUG("{}: velocityCompensationControlRegister.velocityTuning changed to {}", nameId(), velocityCompensationControlRegister.velocityTuning);
+                    LOG_DEBUG("{}: velocityCompensationControlRegister.velocityTuning changed to {}", nameId(), _velocityCompensationControlRegister.velocityTuning);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVelocityCompensationControl(velocityCompensationControlRegister);
+                            _vs.writeVelocityCompensationControl(_velocityCompensationControlRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -4789,15 +4789,15 @@ void NAV::VectorNavSensor::guiConfig()
                 ImGui::SameLine();
                 gui::widgets::HelpMarker("Tuning parameter for the velocity measurement");
 
-                if (ImGui::InputFloat(fmt::format("Rate Tuning##{}", size_t(id)).c_str(), &velocityCompensationControlRegister.rateTuning))
+                if (ImGui::InputFloat(fmt::format("Rate Tuning##{}", size_t(id)).c_str(), &_velocityCompensationControlRegister.rateTuning))
                 {
-                    LOG_DEBUG("{}: velocityCompensationControlRegister.rateTuning changed to {}", nameId(), velocityCompensationControlRegister.rateTuning);
+                    LOG_DEBUG("{}: velocityCompensationControlRegister.rateTuning changed to {}", nameId(), _velocityCompensationControlRegister.rateTuning);
                     flow::ApplyChanges();
-                    if (isInitialized() && vs.isConnected() && vs.verifySensorConnectivity())
+                    if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                     {
                         try
                         {
-                            vs.writeVelocityCompensationControl(velocityCompensationControlRegister);
+                            _vs.writeVelocityCompensationControl(_velocityCompensationControlRegister);
                         }
                         catch (const std::exception& e)
                         {
@@ -4826,74 +4826,74 @@ void NAV::VectorNavSensor::guiConfig()
     json j;
 
     j["UartSensor"] = UartSensor::save();
-    j["sensorModel"] = sensorModel;
+    j["sensorModel"] = _sensorModel;
 
     // ###########################################################################################################
     //                                               SYSTEM MODULE
     // ###########################################################################################################
 
-    j["asyncDataOutputType"] = asyncDataOutputType;
-    j["asyncDataOutputFrequency"] = asyncDataOutputFrequency;
-    j["asciiOutputBufferSize"] = asciiOutputBufferSize;
-    j["synchronizationControlRegister"] = synchronizationControlRegister;
-    j["communicationProtocolControlRegister"] = communicationProtocolControlRegister;
+    j["asyncDataOutputType"] = _asyncDataOutputType;
+    j["asyncDataOutputFrequency"] = _asyncDataOutputFrequency;
+    j["asciiOutputBufferSize"] = _asciiOutputBufferSize;
+    j["synchronizationControlRegister"] = _synchronizationControlRegister;
+    j["communicationProtocolControlRegister"] = _communicationProtocolControlRegister;
     for (size_t b = 0; b < 3; b++)
     {
-        j[fmt::format("binaryOutputRegister{}", b + 1)] = binaryOutputRegister.at(b);
-        j[fmt::format("binaryOutputRegister{}-Frequency", b + 1)] = dividerFrequency.second.at(static_cast<size_t>(binaryOutputSelectedFrequency.at(b)));
+        j[fmt::format("binaryOutputRegister{}", b + 1)] = _binaryOutputRegister.at(b);
+        j[fmt::format("binaryOutputRegister{}-Frequency", b + 1)] = _dividerFrequency.second.at(static_cast<size_t>(_binaryOutputSelectedFrequency.at(b)));
     }
 
     // ###########################################################################################################
     //                                               IMU SUBSYSTEM
     // ###########################################################################################################
 
-    j["referenceFrameRotationMatrix"] = referenceFrameRotationMatrix;
-    j["imuFilteringConfigurationRegister"] = imuFilteringConfigurationRegister;
-    j["deltaThetaAndDeltaVelocityConfigurationRegister"] = deltaThetaAndDeltaVelocityConfigurationRegister;
+    j["referenceFrameRotationMatrix"] = _referenceFrameRotationMatrix;
+    j["imuFilteringConfigurationRegister"] = _imuFilteringConfigurationRegister;
+    j["deltaThetaAndDeltaVelocityConfigurationRegister"] = _deltaThetaAndDeltaVelocityConfigurationRegister;
 
     // ###########################################################################################################
     //                                              GNSS SUBSYSTEM
     // ###########################################################################################################
 
-    j["gpsConfigurationRegister"] = gpsConfigurationRegister;
-    j["gpsAntennaOffset"] = gpsAntennaOffset;
-    j["gpsCompassBaselineRegister"] = gpsCompassBaselineRegister;
+    j["gpsConfigurationRegister"] = _gpsConfigurationRegister;
+    j["gpsAntennaOffset"] = _gpsAntennaOffset;
+    j["gpsCompassBaselineRegister"] = _gpsCompassBaselineRegister;
 
     // ###########################################################################################################
     //                                            ATTITUDE SUBSYSTEM
     // ###########################################################################################################
 
-    j["vpeBasicControlRegister"] = vpeBasicControlRegister;
-    j["vpeMagnetometerBasicTuningRegister"] = vpeMagnetometerBasicTuningRegister;
-    j["vpeAccelerometerBasicTuningRegister"] = vpeAccelerometerBasicTuningRegister;
-    j["vpeGyroBasicTuningRegister"] = vpeGyroBasicTuningRegister;
-    j["filterStartupGyroBias"] = filterStartupGyroBias;
+    j["vpeBasicControlRegister"] = _vpeBasicControlRegister;
+    j["vpeMagnetometerBasicTuningRegister"] = _vpeMagnetometerBasicTuningRegister;
+    j["vpeAccelerometerBasicTuningRegister"] = _vpeAccelerometerBasicTuningRegister;
+    j["vpeGyroBasicTuningRegister"] = _vpeGyroBasicTuningRegister;
+    j["filterStartupGyroBias"] = _filterStartupGyroBias;
 
     // ###########################################################################################################
     //                                               INS SUBSYSTEM
     // ###########################################################################################################
 
-    j["insBasicConfigurationRegisterVn300"] = insBasicConfigurationRegisterVn300;
-    j["startupFilterBiasEstimateRegister"] = startupFilterBiasEstimateRegister;
+    j["insBasicConfigurationRegisterVn300"] = _insBasicConfigurationRegisterVn300;
+    j["startupFilterBiasEstimateRegister"] = _startupFilterBiasEstimateRegister;
 
     // ###########################################################################################################
     //                                    HARD/SOFT IRON ESTIMATOR SUBSYSTEM
     // ###########################################################################################################
 
-    j["magnetometerCalibrationControlRegister"] = magnetometerCalibrationControlRegister;
+    j["magnetometerCalibrationControlRegister"] = _magnetometerCalibrationControlRegister;
 
     // ###########################################################################################################
     //                                      WORLD MAGNETIC & GRAVITY MODULE
     // ###########################################################################################################
 
-    j["magneticAndGravityReferenceVectorsRegister"] = magneticAndGravityReferenceVectorsRegister;
-    j["referenceVectorConfigurationRegister"] = referenceVectorConfigurationRegister;
+    j["magneticAndGravityReferenceVectorsRegister"] = _magneticAndGravityReferenceVectorsRegister;
+    j["referenceVectorConfigurationRegister"] = _referenceVectorConfigurationRegister;
 
     // ###########################################################################################################
     //                                              VELOCITY AIDING
     // ###########################################################################################################
 
-    j["velocityCompensationControlRegister"] = velocityCompensationControlRegister;
+    j["velocityCompensationControlRegister"] = _velocityCompensationControlRegister;
 
     return j;
 }
@@ -4908,7 +4908,7 @@ void NAV::VectorNavSensor::restore(json const& j)
     }
     if (j.contains("sensorModel"))
     {
-        j.at("sensorModel").get_to(sensorModel);
+        j.at("sensorModel").get_to(_sensorModel);
     }
 
     // ###########################################################################################################
@@ -4917,42 +4917,42 @@ void NAV::VectorNavSensor::restore(json const& j)
 
     if (j.contains("asyncDataOutputType"))
     {
-        j.at("asyncDataOutputType").get_to(asyncDataOutputType);
+        j.at("asyncDataOutputType").get_to(_asyncDataOutputType);
     }
     if (j.contains("asyncDataOutputFrequency"))
     {
-        j.at("asyncDataOutputFrequency").get_to(asyncDataOutputFrequency);
-        asyncDataOutputFrequencySelected = static_cast<int>(std::find(possibleAsyncDataOutputFrequency.begin(), possibleAsyncDataOutputFrequency.end(), static_cast<int>(asyncDataOutputFrequency))
-                                                            - possibleAsyncDataOutputFrequency.begin());
+        j.at("asyncDataOutputFrequency").get_to(_asyncDataOutputFrequency);
+        _asyncDataOutputFrequencySelected = static_cast<int>(std::find(_possibleAsyncDataOutputFrequency.begin(), _possibleAsyncDataOutputFrequency.end(), static_cast<int>(_asyncDataOutputFrequency))
+                                                             - _possibleAsyncDataOutputFrequency.begin());
     }
     if (j.contains("asciiOutputBufferSize"))
     {
-        j.at("asciiOutputBufferSize").get_to(asciiOutputBufferSize);
-        asciiOutputBuffer.resize(static_cast<size_t>(asciiOutputBufferSize));
+        j.at("asciiOutputBufferSize").get_to(_asciiOutputBufferSize);
+        _asciiOutputBuffer.resize(static_cast<size_t>(_asciiOutputBufferSize));
     }
     if (j.contains("synchronizationControlRegister"))
     {
-        j.at("synchronizationControlRegister").get_to(synchronizationControlRegister);
+        j.at("synchronizationControlRegister").get_to(_synchronizationControlRegister);
     }
     if (j.contains("communicationProtocolControlRegister"))
     {
-        j.at("communicationProtocolControlRegister").get_to(communicationProtocolControlRegister);
+        j.at("communicationProtocolControlRegister").get_to(_communicationProtocolControlRegister);
     }
     for (size_t b = 0; b < 3; b++)
     {
         if (j.contains(fmt::format("binaryOutputRegister{}", b + 1)))
         {
-            j.at(fmt::format("binaryOutputRegister{}", b + 1)).get_to(binaryOutputRegister.at(b));
+            j.at(fmt::format("binaryOutputRegister{}", b + 1)).get_to(_binaryOutputRegister.at(b));
         }
         if (j.contains(fmt::format("binaryOutputRegister{}-Frequency", b + 1)))
         {
             std::string frequency;
             j.at(fmt::format("binaryOutputRegister{}-Frequency", b + 1)).get_to(frequency);
-            for (size_t i = 0; i < dividerFrequency.second.size(); i++)
+            for (size_t i = 0; i < _dividerFrequency.second.size(); i++)
             {
-                if (dividerFrequency.second.at(i) == frequency)
+                if (_dividerFrequency.second.at(i) == frequency)
                 {
-                    binaryOutputSelectedFrequency.at(b) = i;
+                    _binaryOutputSelectedFrequency.at(b) = i;
                     break;
                 }
             }
@@ -4965,15 +4965,15 @@ void NAV::VectorNavSensor::restore(json const& j)
 
     if (j.contains("referenceFrameRotationMatrix"))
     {
-        j.at("referenceFrameRotationMatrix").get_to(referenceFrameRotationMatrix);
+        j.at("referenceFrameRotationMatrix").get_to(_referenceFrameRotationMatrix);
     }
     if (j.contains("imuFilteringConfigurationRegister"))
     {
-        j.at("imuFilteringConfigurationRegister").get_to(imuFilteringConfigurationRegister);
+        j.at("imuFilteringConfigurationRegister").get_to(_imuFilteringConfigurationRegister);
     }
     if (j.contains("deltaThetaAndDeltaVelocityConfigurationRegister"))
     {
-        j.at("deltaThetaAndDeltaVelocityConfigurationRegister").get_to(deltaThetaAndDeltaVelocityConfigurationRegister);
+        j.at("deltaThetaAndDeltaVelocityConfigurationRegister").get_to(_deltaThetaAndDeltaVelocityConfigurationRegister);
     }
 
     // ###########################################################################################################
@@ -4982,15 +4982,15 @@ void NAV::VectorNavSensor::restore(json const& j)
 
     if (j.contains("gpsConfigurationRegister"))
     {
-        j.at("gpsConfigurationRegister").get_to(gpsConfigurationRegister);
+        j.at("gpsConfigurationRegister").get_to(_gpsConfigurationRegister);
     }
     if (j.contains("gpsAntennaOffset"))
     {
-        j.at("gpsAntennaOffset").get_to(gpsAntennaOffset);
+        j.at("gpsAntennaOffset").get_to(_gpsAntennaOffset);
     }
     if (j.contains("gpsCompassBaselineRegister"))
     {
-        j.at("gpsCompassBaselineRegister").get_to(gpsCompassBaselineRegister);
+        j.at("gpsCompassBaselineRegister").get_to(_gpsCompassBaselineRegister);
     }
 
     // ###########################################################################################################
@@ -4999,23 +4999,23 @@ void NAV::VectorNavSensor::restore(json const& j)
 
     if (j.contains("vpeBasicControlRegister"))
     {
-        j.at("vpeBasicControlRegister").get_to(vpeBasicControlRegister);
+        j.at("vpeBasicControlRegister").get_to(_vpeBasicControlRegister);
     }
     if (j.contains("vpeMagnetometerBasicTuningRegister"))
     {
-        j.at("vpeMagnetometerBasicTuningRegister").get_to(vpeMagnetometerBasicTuningRegister);
+        j.at("vpeMagnetometerBasicTuningRegister").get_to(_vpeMagnetometerBasicTuningRegister);
     }
     if (j.contains("vpeAccelerometerBasicTuningRegister"))
     {
-        j.at("vpeAccelerometerBasicTuningRegister").get_to(vpeAccelerometerBasicTuningRegister);
+        j.at("vpeAccelerometerBasicTuningRegister").get_to(_vpeAccelerometerBasicTuningRegister);
     }
     if (j.contains("vpeGyroBasicTuningRegister"))
     {
-        j.at("vpeGyroBasicTuningRegister").get_to(vpeGyroBasicTuningRegister);
+        j.at("vpeGyroBasicTuningRegister").get_to(_vpeGyroBasicTuningRegister);
     }
     if (j.contains("filterStartupGyroBias"))
     {
-        j.at("filterStartupGyroBias").get_to(filterStartupGyroBias);
+        j.at("filterStartupGyroBias").get_to(_filterStartupGyroBias);
     }
 
     // ###########################################################################################################
@@ -5024,11 +5024,11 @@ void NAV::VectorNavSensor::restore(json const& j)
 
     if (j.contains("insBasicConfigurationRegisterVn300"))
     {
-        j.at("insBasicConfigurationRegisterVn300").get_to(insBasicConfigurationRegisterVn300);
+        j.at("insBasicConfigurationRegisterVn300").get_to(_insBasicConfigurationRegisterVn300);
     }
     if (j.contains("startupFilterBiasEstimateRegister"))
     {
-        j.at("startupFilterBiasEstimateRegister").get_to(startupFilterBiasEstimateRegister);
+        j.at("startupFilterBiasEstimateRegister").get_to(_startupFilterBiasEstimateRegister);
     }
 
     // ###########################################################################################################
@@ -5037,7 +5037,7 @@ void NAV::VectorNavSensor::restore(json const& j)
 
     if (j.contains("magnetometerCalibrationControlRegister"))
     {
-        j.at("magnetometerCalibrationControlRegister").get_to(magnetometerCalibrationControlRegister);
+        j.at("magnetometerCalibrationControlRegister").get_to(_magnetometerCalibrationControlRegister);
     }
 
     // ###########################################################################################################
@@ -5046,11 +5046,11 @@ void NAV::VectorNavSensor::restore(json const& j)
 
     if (j.contains("magneticAndGravityReferenceVectorsRegister"))
     {
-        j.at("magneticAndGravityReferenceVectorsRegister").get_to(magneticAndGravityReferenceVectorsRegister);
+        j.at("magneticAndGravityReferenceVectorsRegister").get_to(_magneticAndGravityReferenceVectorsRegister);
     }
     if (j.contains("referenceVectorConfigurationRegister"))
     {
-        j.at("referenceVectorConfigurationRegister").get_to(referenceVectorConfigurationRegister);
+        j.at("referenceVectorConfigurationRegister").get_to(_referenceVectorConfigurationRegister);
     }
 
     // ###########################################################################################################
@@ -5059,7 +5059,7 @@ void NAV::VectorNavSensor::restore(json const& j)
 
     if (j.contains("velocityCompensationControlRegister"))
     {
-        j.at("velocityCompensationControlRegister").get_to(velocityCompensationControlRegister);
+        j.at("velocityCompensationControlRegister").get_to(_velocityCompensationControlRegister);
     }
 }
 
@@ -5084,7 +5084,7 @@ bool NAV::VectorNavSensor::initialize()
     Baudrate connectedBaudrate{};
     // Search for the VectorNav Sensor
     if (int32_t foundBaudrate = 0;
-        vn::sensors::Searcher::search(sensorPort, &foundBaudrate))
+        vn::sensors::Searcher::search(_sensorPort, &foundBaudrate))
     {
         // Sensor was found at specified port with the baudrate 'foundBaudrate'
         connectedBaudrate = static_cast<Baudrate>(foundBaudrate);
@@ -5094,31 +5094,31 @@ bool NAV::VectorNavSensor::initialize()
     {
         if (foundSensors.size() == 1)
         {
-            sensorPort = foundSensors.at(0).first;
+            _sensorPort = foundSensors.at(0).first;
             connectedBaudrate = static_cast<Baudrate>(foundSensors.at(0).second);
         }
         else
         {
-            sensorPort = "";
+            _sensorPort = "";
             // Some VectorNav sensors where found, try to identify the wanted one by it's name
             for (auto [port, baudrate] : foundSensors)
             {
-                vs.connect(port, baudrate);
-                std::string modelNumber = vs.readModelNumber();
-                vs.disconnect();
+                _vs.connect(port, baudrate);
+                std::string modelNumber = _vs.readModelNumber();
+                _vs.disconnect();
 
                 LOG_DEBUG("{}: Found VectorNav Sensor {} on port {} with baudrate {}", nameId(), modelNumber, port, baudrate);
 
                 // Regex search may be better, but simple find is used here
                 if (modelNumber.find(name) != std::string::npos)
                 {
-                    sensorPort = port;
+                    _sensorPort = port;
                     connectedBaudrate = static_cast<Baudrate>(baudrate);
                     break;
                 }
             }
             // Sensor could not be identified
-            if (sensorPort.empty())
+            if (_sensorPort.empty())
             {
                 // This point is also reached if a sensor is connected with USB but external power is off
                 LOG_ERROR("{}: Could not connect", nameId());
@@ -5135,33 +5135,33 @@ bool NAV::VectorNavSensor::initialize()
     try
     {
         // Connect to the sensor (vs.verifySensorConnectivity does not have to be called as sensor is already tested)
-        vs.connect(sensorPort, connectedBaudrate);
+        _vs.connect(_sensorPort, connectedBaudrate);
     }
     catch (const std::exception& e)
     {
         LOG_ERROR("{}: Failed to connect to sensor on port {} with baudrate {} with error: {}", nameId(),
-                  sensorPort, connectedBaudrate, e.what());
+                  _sensorPort, connectedBaudrate, e.what());
         return false;
     }
 
     try
     {
-        if (!vs.verifySensorConnectivity())
+        if (!_vs.verifySensorConnectivity())
         {
             LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor does not answer", nameId(),
-                      sensorPort, connectedBaudrate);
+                      _sensorPort, connectedBaudrate);
             return false;
         }
     }
     catch (const std::exception& e)
     {
         LOG_ERROR("{}: Connected to sensor on port {} with baudrate {} but sensor threw an exception: {}", nameId(),
-                  sensorPort, connectedBaudrate, e.what());
+                  _sensorPort, connectedBaudrate, e.what());
         return false;
     }
 
     // Query the sensor's model number
-    LOG_DEBUG("{}: {} connected on port {} with baudrate {}", nameId(), vs.readModelNumber(), sensorPort, connectedBaudrate);
+    LOG_DEBUG("{}: {} connected on port {} with baudrate {}", nameId(), _vs.readModelNumber(), _sensorPort, connectedBaudrate);
 
     // ###########################################################################################################
     //                                               SYSTEM MODULE
@@ -5173,7 +5173,7 @@ bool NAV::VectorNavSensor::initialize()
         auto suppBaud = vn::sensors::VnSensor::supportedBaudrates();
         if (std::find(suppBaud.begin(), suppBaud.end(), targetBaudrate) != suppBaud.end())
         {
-            vs.changeBaudRate(targetBaudrate);
+            _vs.changeBaudRate(targetBaudrate);
             LOG_DEBUG("{}: Baudrate changed to {}", nameId(), static_cast<size_t>(targetBaudrate));
         }
         else
@@ -5182,110 +5182,110 @@ bool NAV::VectorNavSensor::initialize()
             return false;
         }
     }
-    if (vs.readSerialBaudRate() != targetBaudrate)
+    if (_vs.readSerialBaudRate() != targetBaudrate)
     {
-        LOG_ERROR("{}: Changing the baudrate from {} to {} was not successfull", nameId(), vs.readSerialBaudRate(), targetBaudrate);
+        LOG_ERROR("{}: Changing the baudrate from {} to {} was not successfull", nameId(), _vs.readSerialBaudRate(), targetBaudrate);
         deinitializeNode();
         return false;
     }
 
-    vs.writeSynchronizationControl(synchronizationControlRegister);
-    if (auto vnSynchronizationControlRegister = vs.readSynchronizationControl();
-        vnSynchronizationControlRegister.syncInMode != synchronizationControlRegister.syncInMode
-        || vnSynchronizationControlRegister.syncInEdge != synchronizationControlRegister.syncInEdge
-        || vnSynchronizationControlRegister.syncInSkipFactor != synchronizationControlRegister.syncInSkipFactor
-        || vnSynchronizationControlRegister.syncOutMode != synchronizationControlRegister.syncOutMode
-        || vnSynchronizationControlRegister.syncOutPolarity != synchronizationControlRegister.syncOutPolarity
-        || vnSynchronizationControlRegister.syncOutSkipFactor != synchronizationControlRegister.syncOutSkipFactor
-        || vnSynchronizationControlRegister.syncOutPulseWidth != synchronizationControlRegister.syncOutPulseWidth)
+    _vs.writeSynchronizationControl(_synchronizationControlRegister);
+    if (auto vnSynchronizationControlRegister = _vs.readSynchronizationControl();
+        vnSynchronizationControlRegister.syncInMode != _synchronizationControlRegister.syncInMode
+        || vnSynchronizationControlRegister.syncInEdge != _synchronizationControlRegister.syncInEdge
+        || vnSynchronizationControlRegister.syncInSkipFactor != _synchronizationControlRegister.syncInSkipFactor
+        || vnSynchronizationControlRegister.syncOutMode != _synchronizationControlRegister.syncOutMode
+        || vnSynchronizationControlRegister.syncOutPolarity != _synchronizationControlRegister.syncOutPolarity
+        || vnSynchronizationControlRegister.syncOutSkipFactor != _synchronizationControlRegister.syncOutSkipFactor
+        || vnSynchronizationControlRegister.syncOutPulseWidth != _synchronizationControlRegister.syncOutPulseWidth)
     {
         LOG_ERROR("{}: Writing the synchronizationControlRegister was not successfull.\n"
                   "Target: syncInMode = {}, syncInEdge = {}, syncInSkipFactor = {}, syncOutMode = {}, syncOutPolarity = {}, syncOutSkipFactor = {}, syncOutPulseWidth = {}\n"
                   "Sensor: syncInMode = {}, syncInEdge = {}, syncInSkipFactor = {}, syncOutMode = {}, syncOutPolarity = {}, syncOutSkipFactor = {}, syncOutPulseWidth = {}",
                   nameId(),
-                  synchronizationControlRegister.syncInMode, synchronizationControlRegister.syncInEdge, synchronizationControlRegister.syncInSkipFactor, synchronizationControlRegister.syncOutMode, synchronizationControlRegister.syncOutPolarity, synchronizationControlRegister.syncOutSkipFactor, synchronizationControlRegister.syncOutPulseWidth,
+                  _synchronizationControlRegister.syncInMode, _synchronizationControlRegister.syncInEdge, _synchronizationControlRegister.syncInSkipFactor, _synchronizationControlRegister.syncOutMode, _synchronizationControlRegister.syncOutPolarity, _synchronizationControlRegister.syncOutSkipFactor, _synchronizationControlRegister.syncOutPulseWidth,
                   vnSynchronizationControlRegister.syncInMode, vnSynchronizationControlRegister.syncInEdge, vnSynchronizationControlRegister.syncInSkipFactor, vnSynchronizationControlRegister.syncOutMode, vnSynchronizationControlRegister.syncOutPolarity, vnSynchronizationControlRegister.syncOutSkipFactor, vnSynchronizationControlRegister.syncOutPulseWidth);
         deinitializeNode();
         return false;
     }
 
-    vs.writeCommunicationProtocolControl(communicationProtocolControlRegister);
-    if (auto vnCommunicationProtocolControlRegister = vs.readCommunicationProtocolControl();
-        vnCommunicationProtocolControlRegister.serialCount != communicationProtocolControlRegister.serialCount
-        || vnCommunicationProtocolControlRegister.serialStatus != communicationProtocolControlRegister.serialStatus
-        || vnCommunicationProtocolControlRegister.spiCount != communicationProtocolControlRegister.spiCount
-        || vnCommunicationProtocolControlRegister.spiStatus != communicationProtocolControlRegister.spiStatus
-        || vnCommunicationProtocolControlRegister.serialChecksum != communicationProtocolControlRegister.serialChecksum
-        || vnCommunicationProtocolControlRegister.spiChecksum != communicationProtocolControlRegister.spiChecksum
-        || vnCommunicationProtocolControlRegister.errorMode != communicationProtocolControlRegister.errorMode)
+    _vs.writeCommunicationProtocolControl(_communicationProtocolControlRegister);
+    if (auto vnCommunicationProtocolControlRegister = _vs.readCommunicationProtocolControl();
+        vnCommunicationProtocolControlRegister.serialCount != _communicationProtocolControlRegister.serialCount
+        || vnCommunicationProtocolControlRegister.serialStatus != _communicationProtocolControlRegister.serialStatus
+        || vnCommunicationProtocolControlRegister.spiCount != _communicationProtocolControlRegister.spiCount
+        || vnCommunicationProtocolControlRegister.spiStatus != _communicationProtocolControlRegister.spiStatus
+        || vnCommunicationProtocolControlRegister.serialChecksum != _communicationProtocolControlRegister.serialChecksum
+        || vnCommunicationProtocolControlRegister.spiChecksum != _communicationProtocolControlRegister.spiChecksum
+        || vnCommunicationProtocolControlRegister.errorMode != _communicationProtocolControlRegister.errorMode)
     {
         LOG_ERROR("{}: Writing the communicationProtocolControlRegister was not successfull.\n"
                   "Target: serialCount = {}, serialStatus = {}, spiCount = {}, spiStatus = {}, serialChecksum = {}, spiChecksum = {}, errorMode = {}\n"
                   "Sensor: serialCount = {}, serialStatus = {}, spiCount = {}, spiStatus = {}, serialChecksum = {}, spiChecksum = {}, errorMode = {}",
                   nameId(),
-                  communicationProtocolControlRegister.serialCount, communicationProtocolControlRegister.serialStatus, communicationProtocolControlRegister.spiCount, communicationProtocolControlRegister.spiStatus, communicationProtocolControlRegister.serialChecksum, communicationProtocolControlRegister.spiChecksum, communicationProtocolControlRegister.errorMode,
+                  _communicationProtocolControlRegister.serialCount, _communicationProtocolControlRegister.serialStatus, _communicationProtocolControlRegister.spiCount, _communicationProtocolControlRegister.spiStatus, _communicationProtocolControlRegister.serialChecksum, _communicationProtocolControlRegister.spiChecksum, _communicationProtocolControlRegister.errorMode,
                   vnCommunicationProtocolControlRegister.serialCount, vnCommunicationProtocolControlRegister.serialStatus, vnCommunicationProtocolControlRegister.spiCount, vnCommunicationProtocolControlRegister.spiStatus, vnCommunicationProtocolControlRegister.serialChecksum, vnCommunicationProtocolControlRegister.spiChecksum, vnCommunicationProtocolControlRegister.errorMode);
         deinitializeNode();
         return false;
     }
 
-    // vs.writeSynchronizationStatus(vn::sensors::SynchronizationStatusRegister); // User manual VN-310 - 8.3.1 (p 105) / VN-100 - 5.3.1 (p 76)
+    // _vs.writeSynchronizationStatus(vn::sensors::SynchronizationStatusRegister); // User manual VN-310 - 8.3.1 (p 105) / VN-100 - 5.3.1 (p 76)
 
     // ###########################################################################################################
     //                                               IMU SUBSYSTEM
     // ###########################################################################################################
 
-    // vs.writeMagnetometerCompensation(vn::sensors::MagnetometerCompensationRegister()); // User manual VN-310 - 9.2.1 (p 111) / VN-100 - 6.2.1 (p 82)
-    // vs.writeAccelerationCompensation(vn::sensors::AccelerationCompensationRegister()); // User manual VN-310 - 9.2.2 (p 112) / VN-100 - 6.2.2 (p 83)
-    // vs.writeGyroCompensation(vn::sensors::GyroCompensationRegister());                 // User manual VN-310 - 9.2.3 (p 113) / VN-100 - 6.2.3 (p 84)
+    // _vs.writeMagnetometerCompensation(vn::sensors::MagnetometerCompensationRegister()); // User manual VN-310 - 9.2.1 (p 111) / VN-100 - 6.2.1 (p 82)
+    // _vs.writeAccelerationCompensation(vn::sensors::AccelerationCompensationRegister()); // User manual VN-310 - 9.2.2 (p 112) / VN-100 - 6.2.2 (p 83)
+    // _vs.writeGyroCompensation(vn::sensors::GyroCompensationRegister());                 // User manual VN-310 - 9.2.3 (p 113) / VN-100 - 6.2.3 (p 84)
 
-    vs.writeReferenceFrameRotation(referenceFrameRotationMatrix);
-    if (auto vnReferenceFrameRotationMatrix = vs.readReferenceFrameRotation();
-        vnReferenceFrameRotationMatrix != referenceFrameRotationMatrix)
+    _vs.writeReferenceFrameRotation(_referenceFrameRotationMatrix);
+    if (auto vnReferenceFrameRotationMatrix = _vs.readReferenceFrameRotation();
+        vnReferenceFrameRotationMatrix != _referenceFrameRotationMatrix)
     {
         LOG_ERROR("{}: Writing the referenceFrameRotationMatrix was not successfull.\n"
                   "Target: DCM = {}\n"
                   "Sensor: DCM = {}",
-                  nameId(), referenceFrameRotationMatrix, vnReferenceFrameRotationMatrix);
+                  nameId(), _referenceFrameRotationMatrix, vnReferenceFrameRotationMatrix);
         deinitializeNode();
         return false;
     }
 
-    vs.writeImuFilteringConfiguration(imuFilteringConfigurationRegister);
-    if (auto vnImuFilteringConfigurationRegister = vs.readImuFilteringConfiguration();
-        vnImuFilteringConfigurationRegister.magWindowSize != imuFilteringConfigurationRegister.magWindowSize
-        || vnImuFilteringConfigurationRegister.accelWindowSize != imuFilteringConfigurationRegister.accelWindowSize
-        || vnImuFilteringConfigurationRegister.gyroWindowSize != imuFilteringConfigurationRegister.gyroWindowSize
-        || vnImuFilteringConfigurationRegister.tempWindowSize != imuFilteringConfigurationRegister.tempWindowSize
-        || vnImuFilteringConfigurationRegister.presWindowSize != imuFilteringConfigurationRegister.presWindowSize
-        || vnImuFilteringConfigurationRegister.magFilterMode != imuFilteringConfigurationRegister.magFilterMode
-        || vnImuFilteringConfigurationRegister.accelFilterMode != imuFilteringConfigurationRegister.accelFilterMode
-        || vnImuFilteringConfigurationRegister.gyroFilterMode != imuFilteringConfigurationRegister.gyroFilterMode
-        || vnImuFilteringConfigurationRegister.tempFilterMode != imuFilteringConfigurationRegister.tempFilterMode
-        || vnImuFilteringConfigurationRegister.presFilterMode != imuFilteringConfigurationRegister.presFilterMode)
+    _vs.writeImuFilteringConfiguration(_imuFilteringConfigurationRegister);
+    if (auto vnImuFilteringConfigurationRegister = _vs.readImuFilteringConfiguration();
+        vnImuFilteringConfigurationRegister.magWindowSize != _imuFilteringConfigurationRegister.magWindowSize
+        || vnImuFilteringConfigurationRegister.accelWindowSize != _imuFilteringConfigurationRegister.accelWindowSize
+        || vnImuFilteringConfigurationRegister.gyroWindowSize != _imuFilteringConfigurationRegister.gyroWindowSize
+        || vnImuFilteringConfigurationRegister.tempWindowSize != _imuFilteringConfigurationRegister.tempWindowSize
+        || vnImuFilteringConfigurationRegister.presWindowSize != _imuFilteringConfigurationRegister.presWindowSize
+        || vnImuFilteringConfigurationRegister.magFilterMode != _imuFilteringConfigurationRegister.magFilterMode
+        || vnImuFilteringConfigurationRegister.accelFilterMode != _imuFilteringConfigurationRegister.accelFilterMode
+        || vnImuFilteringConfigurationRegister.gyroFilterMode != _imuFilteringConfigurationRegister.gyroFilterMode
+        || vnImuFilteringConfigurationRegister.tempFilterMode != _imuFilteringConfigurationRegister.tempFilterMode
+        || vnImuFilteringConfigurationRegister.presFilterMode != _imuFilteringConfigurationRegister.presFilterMode)
     {
         LOG_ERROR("{}: Writing the imuFilteringConfigurationRegister was not successfull.\n"
                   "Target: magWindowSize = {}, accelWindowSize = {}, gyroWindowSize = {}, tempWindowSize = {}, presWindowSize = {}, magFilterMode = {}, accelFilterMode = {}, gyroFilterMode = {}, tempFilterMode = {}, presFilterMode = {}\n"
                   "Sensor: magWindowSize = {}, accelWindowSize = {}, gyroWindowSize = {}, tempWindowSize = {}, presWindowSize = {}, magFilterMode = {}, accelFilterMode = {}, gyroFilterMode = {}, tempFilterMode = {}, presFilterMode = {}",
                   nameId(),
-                  imuFilteringConfigurationRegister.magWindowSize, imuFilteringConfigurationRegister.accelWindowSize, imuFilteringConfigurationRegister.gyroWindowSize, imuFilteringConfigurationRegister.tempWindowSize, imuFilteringConfigurationRegister.presWindowSize, imuFilteringConfigurationRegister.magFilterMode, imuFilteringConfigurationRegister.accelFilterMode, imuFilteringConfigurationRegister.gyroFilterMode, imuFilteringConfigurationRegister.tempFilterMode, imuFilteringConfigurationRegister.presFilterMode,
+                  _imuFilteringConfigurationRegister.magWindowSize, _imuFilteringConfigurationRegister.accelWindowSize, _imuFilteringConfigurationRegister.gyroWindowSize, _imuFilteringConfigurationRegister.tempWindowSize, _imuFilteringConfigurationRegister.presWindowSize, _imuFilteringConfigurationRegister.magFilterMode, _imuFilteringConfigurationRegister.accelFilterMode, _imuFilteringConfigurationRegister.gyroFilterMode, _imuFilteringConfigurationRegister.tempFilterMode, _imuFilteringConfigurationRegister.presFilterMode,
                   vnImuFilteringConfigurationRegister.magWindowSize, vnImuFilteringConfigurationRegister.accelWindowSize, vnImuFilteringConfigurationRegister.gyroWindowSize, vnImuFilteringConfigurationRegister.tempWindowSize, vnImuFilteringConfigurationRegister.presWindowSize, vnImuFilteringConfigurationRegister.magFilterMode, vnImuFilteringConfigurationRegister.accelFilterMode, vnImuFilteringConfigurationRegister.gyroFilterMode, vnImuFilteringConfigurationRegister.tempFilterMode, vnImuFilteringConfigurationRegister.presFilterMode);
         deinitializeNode();
         return false;
     }
 
-    vs.writeDeltaThetaAndDeltaVelocityConfiguration(deltaThetaAndDeltaVelocityConfigurationRegister);
-    if (auto vnDeltaThetaAndDeltaVelocityConfigurationRegister = vs.readDeltaThetaAndDeltaVelocityConfiguration();
-        vnDeltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame != deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame
-        || vnDeltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation != deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation
-        || vnDeltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation != deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation
-        || vnDeltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection != deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection)
+    _vs.writeDeltaThetaAndDeltaVelocityConfiguration(_deltaThetaAndDeltaVelocityConfigurationRegister);
+    if (auto vnDeltaThetaAndDeltaVelocityConfigurationRegister = _vs.readDeltaThetaAndDeltaVelocityConfiguration();
+        vnDeltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame != _deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame
+        || vnDeltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation != _deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation
+        || vnDeltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation != _deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation
+        || vnDeltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection != _deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection)
     {
         LOG_ERROR("{}: Writing the deltaThetaAndDeltaVelocityConfigurationRegister was not successfull.\n"
                   "Target: integrationFrame = {}, gyroCompensation = {}, accelCompensation = {}, earthRateCorrection = {}\n"
                   "Sensor: integrationFrame = {}, gyroCompensation = {}, accelCompensation = {}, earthRateCorrection = {}",
                   nameId(),
-                  deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame, deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation, deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation, deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection,
+                  _deltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame, _deltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation, _deltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation, _deltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection,
                   vnDeltaThetaAndDeltaVelocityConfigurationRegister.integrationFrame, vnDeltaThetaAndDeltaVelocityConfigurationRegister.gyroCompensation, vnDeltaThetaAndDeltaVelocityConfigurationRegister.accelCompensation, vnDeltaThetaAndDeltaVelocityConfigurationRegister.earthRateCorrection);
         deinitializeNode();
         return false;
@@ -5295,49 +5295,49 @@ bool NAV::VectorNavSensor::initialize()
     //                                               GNSS SUBSYSTEM
     // ###########################################################################################################
 
-    if (sensorModel == VectorNavModel::VN310)
+    if (_sensorModel == VectorNavModel::VN310)
     {
-        vs.writeGpsConfiguration(gpsConfigurationRegister);
-        if (auto vnGpsConfigurationRegister = vs.readGpsConfiguration();
-            vnGpsConfigurationRegister.mode != gpsConfigurationRegister.mode
-            || vnGpsConfigurationRegister.ppsSource != gpsConfigurationRegister.ppsSource
-            || vnGpsConfigurationRegister.rate != gpsConfigurationRegister.rate
-            || vnGpsConfigurationRegister.antPow != gpsConfigurationRegister.antPow)
+        _vs.writeGpsConfiguration(_gpsConfigurationRegister);
+        if (auto vnGpsConfigurationRegister = _vs.readGpsConfiguration();
+            vnGpsConfigurationRegister.mode != _gpsConfigurationRegister.mode
+            || vnGpsConfigurationRegister.ppsSource != _gpsConfigurationRegister.ppsSource
+            || vnGpsConfigurationRegister.rate != _gpsConfigurationRegister.rate
+            || vnGpsConfigurationRegister.antPow != _gpsConfigurationRegister.antPow)
         {
             LOG_ERROR("{}: Writing the gpsConfigurationRegister was not successfull.\n"
                       "Target: mode = {}, ppsSource = {}, rate = {}, antPow = {}\n"
                       "Sensor: mode = {}, ppsSource = {}, rate = {}, antPow = {}",
                       nameId(),
-                      gpsConfigurationRegister.mode, gpsConfigurationRegister.ppsSource, gpsConfigurationRegister.rate, gpsConfigurationRegister.antPow,
+                      _gpsConfigurationRegister.mode, _gpsConfigurationRegister.ppsSource, _gpsConfigurationRegister.rate, _gpsConfigurationRegister.antPow,
                       vnGpsConfigurationRegister.mode, vnGpsConfigurationRegister.ppsSource, vnGpsConfigurationRegister.rate, vnGpsConfigurationRegister.antPow);
             deinitializeNode();
             return false;
         }
 
-        vs.writeGpsAntennaOffset(gpsAntennaOffset);
-        if (auto vnGpsAntennaOffset = vs.readGpsAntennaOffset();
-            vnGpsAntennaOffset != gpsAntennaOffset)
+        _vs.writeGpsAntennaOffset(_gpsAntennaOffset);
+        if (auto vnGpsAntennaOffset = _vs.readGpsAntennaOffset();
+            vnGpsAntennaOffset != _gpsAntennaOffset)
         {
             LOG_ERROR("{}: Writing the gpsAntennaOffset was not successfull.\n"
                       "Target: {}\n"
                       "Sensor: {}",
                       nameId(),
-                      gpsAntennaOffset,
+                      _gpsAntennaOffset,
                       vnGpsAntennaOffset);
             deinitializeNode();
             return false;
         }
 
-        vs.writeGpsCompassBaseline(gpsCompassBaselineRegister);
-        if (auto vnGpsCompassBaselineRegister = vs.readGpsCompassBaseline();
-            vnGpsCompassBaselineRegister.position != gpsCompassBaselineRegister.position
-            || vnGpsCompassBaselineRegister.uncertainty != gpsCompassBaselineRegister.uncertainty)
+        _vs.writeGpsCompassBaseline(_gpsCompassBaselineRegister);
+        if (auto vnGpsCompassBaselineRegister = _vs.readGpsCompassBaseline();
+            vnGpsCompassBaselineRegister.position != _gpsCompassBaselineRegister.position
+            || vnGpsCompassBaselineRegister.uncertainty != _gpsCompassBaselineRegister.uncertainty)
         {
             LOG_ERROR("{}: Writing the gpsCompassBaselineRegister was not successfull.\n"
                       "Target: position = {}, uncertainty = {}\n"
                       "Sensor: position = {}, uncertainty = {}",
                       nameId(),
-                      gpsCompassBaselineRegister.position, gpsCompassBaselineRegister.uncertainty,
+                      _gpsCompassBaselineRegister.position, _gpsCompassBaselineRegister.uncertainty,
                       vnGpsCompassBaselineRegister.position, vnGpsCompassBaselineRegister.uncertainty);
             deinitializeNode();
             return false;
@@ -5347,92 +5347,92 @@ bool NAV::VectorNavSensor::initialize()
     // ###########################################################################################################
     //                                             ATTITUDE SUBSYSTEM
     // ###########################################################################################################
-    if (sensorModel == VectorNavModel::VN100_VN110)
+    if (_sensorModel == VectorNavModel::VN100_VN110)
     {
-        // vs.tare(); // User manual VN-100 - 7.1.1 (p 92)
-        // vs.magneticDisturbancePresent(bool); // User manual VN-100 - 7.1.2 (p 92)
-        // vs.accelerationDisturbancePresent(true); // User manual VN-100 - 7.1.3 (p 92f)
+        // _vs.tare(); // User manual VN-100 - 7.1.1 (p 92)
+        // _vs.magneticDisturbancePresent(bool); // User manual VN-100 - 7.1.2 (p 92)
+        // _vs.accelerationDisturbancePresent(true); // User manual VN-100 - 7.1.3 (p 92f)
     }
-    // vs.setGyroBias(); // User manual VN-310 - 11.1.1 (p 148) / VN-100 - 7.1.4 (p 93)
+    // _vs.setGyroBias(); // User manual VN-310 - 11.1.1 (p 148) / VN-100 - 7.1.4 (p 93)
 
-    // TODO: Implement in vnproglib: vs.setInitialHeading() - User manual VN-310 - 11.1.2 (p 148)
+    // TODO: Implement in vnproglib: _vs.setInitialHeading() - User manual VN-310 - 11.1.2 (p 148)
 
-    vs.writeVpeBasicControl(vpeBasicControlRegister);
-    if (auto vnVpeBasicControlRegister = vs.readVpeBasicControl();
-        vnVpeBasicControlRegister.enable != vpeBasicControlRegister.enable
-        || vnVpeBasicControlRegister.headingMode != vpeBasicControlRegister.headingMode
-        || vnVpeBasicControlRegister.filteringMode != vpeBasicControlRegister.filteringMode
-        || vnVpeBasicControlRegister.tuningMode != vpeBasicControlRegister.tuningMode)
+    _vs.writeVpeBasicControl(_vpeBasicControlRegister);
+    if (auto vnVpeBasicControlRegister = _vs.readVpeBasicControl();
+        vnVpeBasicControlRegister.enable != _vpeBasicControlRegister.enable
+        || vnVpeBasicControlRegister.headingMode != _vpeBasicControlRegister.headingMode
+        || vnVpeBasicControlRegister.filteringMode != _vpeBasicControlRegister.filteringMode
+        || vnVpeBasicControlRegister.tuningMode != _vpeBasicControlRegister.tuningMode)
     {
         LOG_ERROR("{}: Writing the vpeBasicControlRegister was not successfull.\n"
                   "Target: enable = {}, headingMode = {}, filteringMode = {}, tuningMode = {}\n"
                   "Sensor: enable = {}, headingMode = {}, filteringMode = {}, tuningMode = {}",
                   nameId(),
-                  vpeBasicControlRegister.enable, vpeBasicControlRegister.headingMode, vpeBasicControlRegister.filteringMode, vpeBasicControlRegister.tuningMode,
+                  _vpeBasicControlRegister.enable, _vpeBasicControlRegister.headingMode, _vpeBasicControlRegister.filteringMode, _vpeBasicControlRegister.tuningMode,
                   vnVpeBasicControlRegister.enable, vnVpeBasicControlRegister.headingMode, vnVpeBasicControlRegister.filteringMode, vnVpeBasicControlRegister.tuningMode);
         deinitializeNode();
         return false;
     }
 
-    if (sensorModel == VectorNavModel::VN100_VN110)
+    if (_sensorModel == VectorNavModel::VN100_VN110)
     {
-        vs.writeVpeMagnetometerBasicTuning(vpeMagnetometerBasicTuningRegister);
-        if (auto vnVpeMagnetometerBasicTuningRegister = vs.readVpeMagnetometerBasicTuning();
-            vnVpeMagnetometerBasicTuningRegister.baseTuning != vpeMagnetometerBasicTuningRegister.baseTuning
-            || vnVpeMagnetometerBasicTuningRegister.adaptiveTuning != vpeMagnetometerBasicTuningRegister.adaptiveTuning
-            || vnVpeMagnetometerBasicTuningRegister.adaptiveFiltering != vpeMagnetometerBasicTuningRegister.adaptiveFiltering)
+        _vs.writeVpeMagnetometerBasicTuning(_vpeMagnetometerBasicTuningRegister);
+        if (auto vnVpeMagnetometerBasicTuningRegister = _vs.readVpeMagnetometerBasicTuning();
+            vnVpeMagnetometerBasicTuningRegister.baseTuning != _vpeMagnetometerBasicTuningRegister.baseTuning
+            || vnVpeMagnetometerBasicTuningRegister.adaptiveTuning != _vpeMagnetometerBasicTuningRegister.adaptiveTuning
+            || vnVpeMagnetometerBasicTuningRegister.adaptiveFiltering != _vpeMagnetometerBasicTuningRegister.adaptiveFiltering)
         {
             LOG_ERROR("{}: Writing the vpeMagnetometerBasicTuningRegister was not successfull.\n"
                       "Target: baseTuning = {}, adaptiveTuning = {}, adaptiveFiltering = {}\n"
                       "Sensor: baseTuning = {}, adaptiveTuning = {}, adaptiveFiltering = {}",
                       nameId(),
-                      vpeMagnetometerBasicTuningRegister.baseTuning, vpeMagnetometerBasicTuningRegister.adaptiveTuning, vpeMagnetometerBasicTuningRegister.adaptiveFiltering,
+                      _vpeMagnetometerBasicTuningRegister.baseTuning, _vpeMagnetometerBasicTuningRegister.adaptiveTuning, _vpeMagnetometerBasicTuningRegister.adaptiveFiltering,
                       vnVpeMagnetometerBasicTuningRegister.baseTuning, vnVpeMagnetometerBasicTuningRegister.adaptiveTuning, vnVpeMagnetometerBasicTuningRegister.adaptiveFiltering);
             deinitializeNode();
             return false;
         }
 
-        vs.writeVpeAccelerometerBasicTuning(vpeAccelerometerBasicTuningRegister);
-        if (auto vnVpeAccelerometerBasicTuningRegister = vs.readVpeAccelerometerBasicTuning();
-            vnVpeAccelerometerBasicTuningRegister.baseTuning != vpeAccelerometerBasicTuningRegister.baseTuning
-            || vnVpeAccelerometerBasicTuningRegister.adaptiveTuning != vpeAccelerometerBasicTuningRegister.adaptiveTuning
-            || vnVpeAccelerometerBasicTuningRegister.adaptiveFiltering != vpeAccelerometerBasicTuningRegister.adaptiveFiltering)
+        _vs.writeVpeAccelerometerBasicTuning(_vpeAccelerometerBasicTuningRegister);
+        if (auto vnVpeAccelerometerBasicTuningRegister = _vs.readVpeAccelerometerBasicTuning();
+            vnVpeAccelerometerBasicTuningRegister.baseTuning != _vpeAccelerometerBasicTuningRegister.baseTuning
+            || vnVpeAccelerometerBasicTuningRegister.adaptiveTuning != _vpeAccelerometerBasicTuningRegister.adaptiveTuning
+            || vnVpeAccelerometerBasicTuningRegister.adaptiveFiltering != _vpeAccelerometerBasicTuningRegister.adaptiveFiltering)
         {
             LOG_ERROR("{}: Writing the vpeAccelerometerBasicTuningRegister was not successfull.\n"
                       "Target: baseTuning = {}, adaptiveTuning = {}, adaptiveFiltering = {}\n"
                       "Sensor: baseTuning = {}, adaptiveTuning = {}, adaptiveFiltering = {}",
                       nameId(),
-                      vpeAccelerometerBasicTuningRegister.baseTuning, vpeAccelerometerBasicTuningRegister.adaptiveTuning, vpeAccelerometerBasicTuningRegister.adaptiveFiltering,
+                      _vpeAccelerometerBasicTuningRegister.baseTuning, _vpeAccelerometerBasicTuningRegister.adaptiveTuning, _vpeAccelerometerBasicTuningRegister.adaptiveFiltering,
                       vnVpeAccelerometerBasicTuningRegister.baseTuning, vnVpeAccelerometerBasicTuningRegister.adaptiveTuning, vnVpeAccelerometerBasicTuningRegister.adaptiveFiltering);
             deinitializeNode();
             return false;
         }
 
-        vs.writeFilterStartupGyroBias(filterStartupGyroBias);
-        if (auto vnFilterStartupGyroBias = vs.readFilterStartupGyroBias();
-            vnFilterStartupGyroBias != filterStartupGyroBias)
+        _vs.writeFilterStartupGyroBias(_filterStartupGyroBias);
+        if (auto vnFilterStartupGyroBias = _vs.readFilterStartupGyroBias();
+            vnFilterStartupGyroBias != _filterStartupGyroBias)
         {
             LOG_ERROR("{}: Writing the filterStartupGyroBias was not successfull.\n"
                       "Target: {}\n"
                       "Sensor: {}",
                       nameId(),
-                      filterStartupGyroBias,
+                      _filterStartupGyroBias,
                       vnFilterStartupGyroBias);
             deinitializeNode();
             return false;
         }
 
-        vs.writeVpeGyroBasicTuning(vpeGyroBasicTuningRegister);
-        if (auto vnVpeGyroBasicTuningRegister = vs.readVpeGyroBasicTuning();
-            vnVpeGyroBasicTuningRegister.angularWalkVariance != vpeGyroBasicTuningRegister.angularWalkVariance
-            || vnVpeGyroBasicTuningRegister.baseTuning != vpeGyroBasicTuningRegister.baseTuning
-            || vnVpeGyroBasicTuningRegister.adaptiveTuning != vpeGyroBasicTuningRegister.adaptiveTuning)
+        _vs.writeVpeGyroBasicTuning(_vpeGyroBasicTuningRegister);
+        if (auto vnVpeGyroBasicTuningRegister = _vs.readVpeGyroBasicTuning();
+            vnVpeGyroBasicTuningRegister.angularWalkVariance != _vpeGyroBasicTuningRegister.angularWalkVariance
+            || vnVpeGyroBasicTuningRegister.baseTuning != _vpeGyroBasicTuningRegister.baseTuning
+            || vnVpeGyroBasicTuningRegister.adaptiveTuning != _vpeGyroBasicTuningRegister.adaptiveTuning)
         {
             LOG_ERROR("{}: Writing the vpeGyroBasicTuningRegister was not successfull.\n"
                       "Target: angularWalkVariance = {}, baseTuning = {}, adaptiveTuning = {}\n"
                       "Sensor: angularWalkVariance = {}, baseTuning = {}, adaptiveTuning = {}",
                       nameId(),
-                      vpeGyroBasicTuningRegister.angularWalkVariance, vpeGyroBasicTuningRegister.baseTuning, vpeGyroBasicTuningRegister.adaptiveTuning,
+                      _vpeGyroBasicTuningRegister.angularWalkVariance, _vpeGyroBasicTuningRegister.baseTuning, _vpeGyroBasicTuningRegister.adaptiveTuning,
                       vnVpeGyroBasicTuningRegister.angularWalkVariance, vnVpeGyroBasicTuningRegister.baseTuning, vnVpeGyroBasicTuningRegister.adaptiveTuning);
             deinitializeNode();
             return false;
@@ -5443,35 +5443,35 @@ bool NAV::VectorNavSensor::initialize()
     //                                               INS SUBSYSTEM
     // ###########################################################################################################
 
-    if (sensorModel == VectorNavModel::VN310)
+    if (_sensorModel == VectorNavModel::VN310)
     {
-        vs.writeInsBasicConfigurationVn300(insBasicConfigurationRegisterVn300);
-        if (auto vnInsBasicConfigurationRegisterVn300 = vs.readInsBasicConfigurationVn300();
-            vnInsBasicConfigurationRegisterVn300.scenario != insBasicConfigurationRegisterVn300.scenario
-            || vnInsBasicConfigurationRegisterVn300.ahrsAiding != insBasicConfigurationRegisterVn300.ahrsAiding
-            || vnInsBasicConfigurationRegisterVn300.estBaseline != insBasicConfigurationRegisterVn300.estBaseline)
+        _vs.writeInsBasicConfigurationVn300(_insBasicConfigurationRegisterVn300);
+        if (auto vnInsBasicConfigurationRegisterVn300 = _vs.readInsBasicConfigurationVn300();
+            vnInsBasicConfigurationRegisterVn300.scenario != _insBasicConfigurationRegisterVn300.scenario
+            || vnInsBasicConfigurationRegisterVn300.ahrsAiding != _insBasicConfigurationRegisterVn300.ahrsAiding
+            || vnInsBasicConfigurationRegisterVn300.estBaseline != _insBasicConfigurationRegisterVn300.estBaseline)
         {
             LOG_ERROR("{}: Writing the insBasicConfigurationRegisterVn300 was not successfull.\n"
                       "Target: scenario = {}, ahrsAiding = {}, estBaseline = {}\n"
                       "Sensor: scenario = {}, ahrsAiding = {}, estBaseline = {}",
                       nameId(),
-                      insBasicConfigurationRegisterVn300.scenario, insBasicConfigurationRegisterVn300.ahrsAiding, insBasicConfigurationRegisterVn300.estBaseline,
+                      _insBasicConfigurationRegisterVn300.scenario, _insBasicConfigurationRegisterVn300.ahrsAiding, _insBasicConfigurationRegisterVn300.estBaseline,
                       vnInsBasicConfigurationRegisterVn300.scenario, vnInsBasicConfigurationRegisterVn300.ahrsAiding, vnInsBasicConfigurationRegisterVn300.estBaseline);
             deinitializeNode();
             return false;
         }
 
-        vs.writeStartupFilterBiasEstimate(startupFilterBiasEstimateRegister);
-        if (auto vnStartupFilterBiasEstimateRegister = vs.readStartupFilterBiasEstimate();
-            vnStartupFilterBiasEstimateRegister.gyroBias != startupFilterBiasEstimateRegister.gyroBias
-            || vnStartupFilterBiasEstimateRegister.accelBias != startupFilterBiasEstimateRegister.accelBias
-            || vnStartupFilterBiasEstimateRegister.pressureBias != startupFilterBiasEstimateRegister.pressureBias)
+        _vs.writeStartupFilterBiasEstimate(_startupFilterBiasEstimateRegister);
+        if (auto vnStartupFilterBiasEstimateRegister = _vs.readStartupFilterBiasEstimate();
+            vnStartupFilterBiasEstimateRegister.gyroBias != _startupFilterBiasEstimateRegister.gyroBias
+            || vnStartupFilterBiasEstimateRegister.accelBias != _startupFilterBiasEstimateRegister.accelBias
+            || vnStartupFilterBiasEstimateRegister.pressureBias != _startupFilterBiasEstimateRegister.pressureBias)
         {
             LOG_ERROR("{}: Writing the startupFilterBiasEstimateRegister was not successfull.\n"
                       "Target: gyroBias = {}, accelBias = {}, pressureBias = {}\n"
                       "Sensor: gyroBias = {}, accelBias = {}, pressureBias = {}",
                       nameId(),
-                      startupFilterBiasEstimateRegister.gyroBias, startupFilterBiasEstimateRegister.accelBias, startupFilterBiasEstimateRegister.pressureBias,
+                      _startupFilterBiasEstimateRegister.gyroBias, _startupFilterBiasEstimateRegister.accelBias, _startupFilterBiasEstimateRegister.pressureBias,
                       vnStartupFilterBiasEstimateRegister.gyroBias, vnStartupFilterBiasEstimateRegister.accelBias, vnStartupFilterBiasEstimateRegister.pressureBias);
             deinitializeNode();
             return false;
@@ -5482,17 +5482,17 @@ bool NAV::VectorNavSensor::initialize()
     //                                     HARD/SOFT IRON ESTIMATOR SUBSYSTEM
     // ###########################################################################################################
 
-    vs.writeMagnetometerCalibrationControl(magnetometerCalibrationControlRegister);
-    if (auto vnMagnetometerCalibrationControlRegister = vs.readMagnetometerCalibrationControl();
-        vnMagnetometerCalibrationControlRegister.hsiMode != magnetometerCalibrationControlRegister.hsiMode
-        || vnMagnetometerCalibrationControlRegister.hsiOutput != magnetometerCalibrationControlRegister.hsiOutput
-        || vnMagnetometerCalibrationControlRegister.convergeRate != magnetometerCalibrationControlRegister.convergeRate)
+    _vs.writeMagnetometerCalibrationControl(_magnetometerCalibrationControlRegister);
+    if (auto vnMagnetometerCalibrationControlRegister = _vs.readMagnetometerCalibrationControl();
+        vnMagnetometerCalibrationControlRegister.hsiMode != _magnetometerCalibrationControlRegister.hsiMode
+        || vnMagnetometerCalibrationControlRegister.hsiOutput != _magnetometerCalibrationControlRegister.hsiOutput
+        || vnMagnetometerCalibrationControlRegister.convergeRate != _magnetometerCalibrationControlRegister.convergeRate)
     {
         LOG_ERROR("{}: Writing the magnetometerCalibrationControlRegister was not successfull.\n"
                   "Target: hsiMode = {}, hsiOutput = {}, convergeRate = {}\n"
                   "Sensor: hsiMode = {}, hsiOutput = {}, convergeRate = {}",
                   nameId(),
-                  magnetometerCalibrationControlRegister.hsiMode, magnetometerCalibrationControlRegister.hsiOutput, magnetometerCalibrationControlRegister.convergeRate,
+                  _magnetometerCalibrationControlRegister.hsiMode, _magnetometerCalibrationControlRegister.hsiOutput, _magnetometerCalibrationControlRegister.convergeRate,
                   vnMagnetometerCalibrationControlRegister.hsiMode, vnMagnetometerCalibrationControlRegister.hsiOutput, vnMagnetometerCalibrationControlRegister.convergeRate);
         deinitializeNode();
         return false;
@@ -5502,34 +5502,34 @@ bool NAV::VectorNavSensor::initialize()
     //                                      WORLD MAGNETIC & GRAVITY MODULE
     // ###########################################################################################################
 
-    vs.writeMagneticAndGravityReferenceVectors(magneticAndGravityReferenceVectorsRegister);
-    if (auto vnMagneticAndGravityReferenceVectorsRegister = vs.readMagneticAndGravityReferenceVectors();
-        (!referenceVectorConfigurationRegister.useMagModel && vnMagneticAndGravityReferenceVectorsRegister.magRef != magneticAndGravityReferenceVectorsRegister.magRef)
-        || (!referenceVectorConfigurationRegister.useGravityModel && vnMagneticAndGravityReferenceVectorsRegister.accRef != magneticAndGravityReferenceVectorsRegister.accRef))
+    _vs.writeMagneticAndGravityReferenceVectors(_magneticAndGravityReferenceVectorsRegister);
+    if (auto vnMagneticAndGravityReferenceVectorsRegister = _vs.readMagneticAndGravityReferenceVectors();
+        (!_referenceVectorConfigurationRegister.useMagModel && vnMagneticAndGravityReferenceVectorsRegister.magRef != _magneticAndGravityReferenceVectorsRegister.magRef)
+        || (!_referenceVectorConfigurationRegister.useGravityModel && vnMagneticAndGravityReferenceVectorsRegister.accRef != _magneticAndGravityReferenceVectorsRegister.accRef))
     {
         LOG_ERROR("{}: Writing the magneticAndGravityReferenceVectorsRegister was not successfull.\n"
                   "Target: magRef = {}, accRef = {}\n"
                   "Sensor: magRef = {}, accRef = {}",
                   nameId(),
-                  magneticAndGravityReferenceVectorsRegister.magRef, magneticAndGravityReferenceVectorsRegister.accRef,
+                  _magneticAndGravityReferenceVectorsRegister.magRef, _magneticAndGravityReferenceVectorsRegister.accRef,
                   vnMagneticAndGravityReferenceVectorsRegister.magRef, vnMagneticAndGravityReferenceVectorsRegister.accRef);
         deinitializeNode();
         return false;
     }
 
-    vs.writeReferenceVectorConfiguration(referenceVectorConfigurationRegister);
-    if (auto vnReferenceVectorConfigurationRegister = vs.readReferenceVectorConfiguration();
-        vnReferenceVectorConfigurationRegister.useMagModel != referenceVectorConfigurationRegister.useMagModel
-        || vnReferenceVectorConfigurationRegister.useGravityModel != referenceVectorConfigurationRegister.useGravityModel
-        || vnReferenceVectorConfigurationRegister.recalcThreshold != referenceVectorConfigurationRegister.recalcThreshold
-        || vnReferenceVectorConfigurationRegister.year != referenceVectorConfigurationRegister.year
-        || vnReferenceVectorConfigurationRegister.position != referenceVectorConfigurationRegister.position)
+    _vs.writeReferenceVectorConfiguration(_referenceVectorConfigurationRegister);
+    if (auto vnReferenceVectorConfigurationRegister = _vs.readReferenceVectorConfiguration();
+        vnReferenceVectorConfigurationRegister.useMagModel != _referenceVectorConfigurationRegister.useMagModel
+        || vnReferenceVectorConfigurationRegister.useGravityModel != _referenceVectorConfigurationRegister.useGravityModel
+        || vnReferenceVectorConfigurationRegister.recalcThreshold != _referenceVectorConfigurationRegister.recalcThreshold
+        || vnReferenceVectorConfigurationRegister.year != _referenceVectorConfigurationRegister.year
+        || vnReferenceVectorConfigurationRegister.position != _referenceVectorConfigurationRegister.position)
     {
         LOG_ERROR("{}: Writing the referenceVectorConfigurationRegister was not successfull.\n"
                   "Target: useMagModel = {}, useGravityModel = {}, recalcThreshold = {}, year = {}, position = {}\n"
                   "Sensor: useMagModel = {}, useGravityModel = {}, recalcThreshold = {}, year = {}, position = {}",
                   nameId(),
-                  referenceVectorConfigurationRegister.useMagModel, referenceVectorConfigurationRegister.useGravityModel, referenceVectorConfigurationRegister.recalcThreshold, referenceVectorConfigurationRegister.year, referenceVectorConfigurationRegister.position,
+                  _referenceVectorConfigurationRegister.useMagModel, _referenceVectorConfigurationRegister.useGravityModel, _referenceVectorConfigurationRegister.recalcThreshold, _referenceVectorConfigurationRegister.year, _referenceVectorConfigurationRegister.position,
                   vnReferenceVectorConfigurationRegister.useMagModel, vnReferenceVectorConfigurationRegister.useGravityModel, vnReferenceVectorConfigurationRegister.recalcThreshold, vnReferenceVectorConfigurationRegister.year, vnReferenceVectorConfigurationRegister.position);
         deinitializeNode();
         return false;
@@ -5539,56 +5539,56 @@ bool NAV::VectorNavSensor::initialize()
     //                                              Velocity Aiding
     // ###########################################################################################################
 
-    if (sensorModel == VectorNavModel::VN100_VN110)
+    if (_sensorModel == VectorNavModel::VN100_VN110)
     {
-        vs.writeVelocityCompensationControl(velocityCompensationControlRegister);
-        if (auto vnVelocityCompensationControlRegister = vs.readVelocityCompensationControl();
-            vnVelocityCompensationControlRegister.mode != velocityCompensationControlRegister.mode
-            || vnVelocityCompensationControlRegister.velocityTuning != velocityCompensationControlRegister.velocityTuning
-            || vnVelocityCompensationControlRegister.rateTuning != velocityCompensationControlRegister.rateTuning)
+        _vs.writeVelocityCompensationControl(_velocityCompensationControlRegister);
+        if (auto vnVelocityCompensationControlRegister = _vs.readVelocityCompensationControl();
+            vnVelocityCompensationControlRegister.mode != _velocityCompensationControlRegister.mode
+            || vnVelocityCompensationControlRegister.velocityTuning != _velocityCompensationControlRegister.velocityTuning
+            || vnVelocityCompensationControlRegister.rateTuning != _velocityCompensationControlRegister.rateTuning)
         {
             LOG_ERROR("{}: Writing the velocityCompensationControlRegister was not successfull.\n"
                       "Target: mode = {}, velocityTuning = {}, rateTuning = {}\n"
                       "Sensor: mode = {}, velocityTuning = {}, rateTuning = {}",
                       nameId(),
-                      velocityCompensationControlRegister.mode, velocityCompensationControlRegister.velocityTuning, velocityCompensationControlRegister.rateTuning,
+                      _velocityCompensationControlRegister.mode, _velocityCompensationControlRegister.velocityTuning, _velocityCompensationControlRegister.rateTuning,
                       vnVelocityCompensationControlRegister.mode, vnVelocityCompensationControlRegister.velocityTuning, vnVelocityCompensationControlRegister.rateTuning);
             deinitializeNode();
             return false;
         }
 
-        // vs.writeVelocityCompensationMeasurement(vn::math::vec3f); // User manual VN-100 - 10.3.1 (p 124)
+        // _vs.writeVelocityCompensationMeasurement(vn::math::vec3f); // User manual VN-100 - 10.3.1 (p 124)
     }
 
     // ###########################################################################################################
     //                                                  Outputs
     // ###########################################################################################################
 
-    vs.writeAsyncDataOutputType(asyncDataOutputType);
-    if (auto vnAsyncDataOutputType = vs.readAsyncDataOutputType();
-        vnAsyncDataOutputType != asyncDataOutputType)
+    _vs.writeAsyncDataOutputType(_asyncDataOutputType);
+    if (auto vnAsyncDataOutputType = _vs.readAsyncDataOutputType();
+        vnAsyncDataOutputType != _asyncDataOutputType)
     {
         LOG_ERROR("{}: Writing the asyncDataOutputType was not successfull.\n"
                   "Target: {}\n"
                   "Sensor: {}",
                   nameId(),
-                  asyncDataOutputType,
+                  _asyncDataOutputType,
                   vnAsyncDataOutputType);
         deinitializeNode();
         return false;
     }
 
-    if (asyncDataOutputType != vn::protocol::uart::AsciiAsync::VNOFF)
+    if (_asyncDataOutputType != vn::protocol::uart::AsciiAsync::VNOFF)
     {
-        vs.writeAsyncDataOutputFrequency(asyncDataOutputFrequency);
-        if (auto vnAsyncDataOutputFrequency = vs.readAsyncDataOutputType();
-            vnAsyncDataOutputFrequency != asyncDataOutputFrequency)
+        _vs.writeAsyncDataOutputFrequency(_asyncDataOutputFrequency);
+        if (auto vnAsyncDataOutputFrequency = _vs.readAsyncDataOutputType();
+            vnAsyncDataOutputFrequency != _asyncDataOutputFrequency)
         {
             LOG_ERROR("{}: Writing the asyncDataOutputFrequency was not successfull.\n"
                       "Target: {}\n"
                       "Sensor: {}",
                       nameId(),
-                      asyncDataOutputFrequency,
+                      _asyncDataOutputFrequency,
                       vnAsyncDataOutputFrequency);
             deinitializeNode();
             return false;
@@ -5620,24 +5620,24 @@ bool NAV::VectorNavSensor::initialize()
         //     return true;
         // };
 
-        vs.writeBinaryOutput1(binaryOutputRegister.at(0));
-        // if (!checkBinaryRegister(vs.readBinaryOutput1(), binaryOutputRegister.at(0)))
+        _vs.writeBinaryOutput1(_binaryOutputRegister.at(0));
+        // if (!checkBinaryRegister(_vs.readBinaryOutput1(), _binaryOutputRegister.at(0)))
         // {
         //     deinitializeNode();
         //     return false;
         // }
 
         binaryOutputRegisterCounter++;
-        vs.writeBinaryOutput2(binaryOutputRegister.at(1));
-        // if (!checkBinaryRegister(vs.readBinaryOutput2(), binaryOutputRegister.at(1)))
+        _vs.writeBinaryOutput2(_binaryOutputRegister.at(1));
+        // if (!checkBinaryRegister(_vs.readBinaryOutput2(), _binaryOutputRegister.at(1)))
         // {
         //     deinitializeNode();
         //     return false;
         // }
 
         binaryOutputRegisterCounter++;
-        vs.writeBinaryOutput3(binaryOutputRegister.at(2));
-        // if (!checkBinaryRegister(vs.readBinaryOutput3(), binaryOutputRegister.at(2)))
+        _vs.writeBinaryOutput3(_binaryOutputRegister.at(2));
+        // if (!checkBinaryRegister(_vs.readBinaryOutput3(), _binaryOutputRegister.at(2)))
         // {
         //     deinitializeNode();
         //     return false;
@@ -5652,13 +5652,13 @@ bool NAV::VectorNavSensor::initialize()
 
     // Some changes need to be set at startup, therefore write the settings and reset the device
     LOG_DEBUG("{}: writing settings", nameId());
-    vs.writeSettings();
-    vs.reset();
+    _vs.writeSettings();
+    _vs.reset();
 
-    // TODO: Implement in vnproglib: vs.writeNmeaOutput1(...) - User manual VN-310 - 8.2.14 (p 103)
-    // TODO: Implement in vnproglib: vs.writeNmeaOutput2(...) - User manual VN-310 - 8.2.15 (p 104)
+    // TODO: Implement in vnproglib: _vs.writeNmeaOutput1(...) - User manual VN-310 - 8.2.14 (p 103)
+    // TODO: Implement in vnproglib: _vs.writeNmeaOutput2(...) - User manual VN-310 - 8.2.15 (p 104)
 
-    vs.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
+    _vs.registerAsyncPacketReceivedHandler(this, asciiOrBinaryAsyncMessageReceived);
 
     LOG_DEBUG("{}: successfully initialized", nameId());
 
@@ -5669,11 +5669,11 @@ void NAV::VectorNavSensor::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    if (vs.isConnected())
+    if (_vs.isConnected())
     {
         try
         {
-            vs.unregisterAsyncPacketReceivedHandler();
+            _vs.unregisterAsyncPacketReceivedHandler();
         }
         catch (...)
         {
@@ -5681,7 +5681,7 @@ void NAV::VectorNavSensor::deinitialize()
         }
         try
         {
-            vs.reset(true);
+            _vs.reset(true);
             LOG_TRACE("{}: Sensor resettet", nameId());
         }
         catch (...)
@@ -5690,7 +5690,7 @@ void NAV::VectorNavSensor::deinitialize()
         }
         try
         {
-            vs.disconnect();
+            _vs.disconnect();
             LOG_TRACE("{}: Sensor disconnected", nameId());
         }
         catch (...)
@@ -5711,121 +5711,121 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
         for (size_t b = 0; b < 3; b++)
         {
             // Make sure that the binary packet is from the type we expect
-            if (p.isCompatible(vnSensor->binaryOutputRegister.at(b).commonField,
-                               vnSensor->binaryOutputRegister.at(b).timeField,
-                               vnSensor->binaryOutputRegister.at(b).imuField,
-                               vnSensor->binaryOutputRegister.at(b).gpsField,
-                               vnSensor->binaryOutputRegister.at(b).attitudeField,
-                               vnSensor->binaryOutputRegister.at(b).insField,
-                               vnSensor->binaryOutputRegister.at(b).gps2Field))
+            if (p.isCompatible(vnSensor->_binaryOutputRegister.at(b).commonField,
+                               vnSensor->_binaryOutputRegister.at(b).timeField,
+                               vnSensor->_binaryOutputRegister.at(b).imuField,
+                               vnSensor->_binaryOutputRegister.at(b).gpsField,
+                               vnSensor->_binaryOutputRegister.at(b).attitudeField,
+                               vnSensor->_binaryOutputRegister.at(b).insField,
+                               vnSensor->_binaryOutputRegister.at(b).gps2Field))
             {
-                auto obs = std::make_shared<VectorNavBinaryOutput>(vnSensor->imuPos);
+                auto obs = std::make_shared<VectorNavBinaryOutput>(vnSensor->_imuPos);
 
                 // Group 1 (Common)
-                if (vnSensor->binaryOutputRegister.at(b).commonField != vn::protocol::uart::CommonGroup::COMMONGROUP_NONE)
+                if (vnSensor->_binaryOutputRegister.at(b).commonField != vn::protocol::uart::CommonGroup::COMMONGROUP_NONE)
                 {
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESTARTUP)
                     {
                         if (!obs->timeOutputs)
                         {
                             obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP;
                         obs->timeOutputs->timeStartup = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPS)
                     {
                         if (!obs->timeOutputs)
                         {
                             obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS;
                         obs->timeOutputs->timeStartup = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
                     {
                         if (!obs->timeOutputs)
                         {
                             obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN;
                         obs->timeOutputs->timeSyncIn = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_YAWPITCHROLL)
                     {
                         if (!obs->attitudeOutputs)
                         {
                             obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
-                            obs->attitudeOutputs->attitudeField |= vnSensor->binaryOutputRegister.at(b).attitudeField;
+                            obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
                         }
                         obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL;
                         auto vec = p.extractVec3f();
                         obs->attitudeOutputs->ypr = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_QUATERNION)
                     {
                         if (!obs->attitudeOutputs)
                         {
                             obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
-                            obs->attitudeOutputs->attitudeField |= vnSensor->binaryOutputRegister.at(b).attitudeField;
+                            obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
                         }
                         obs->attitudeOutputs->attitudeField |= vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION;
                         auto vec = p.extractVec4f();
                         obs->attitudeOutputs->qtn = { vec.w, vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ANGULARRATE)
                     {
                         if (!obs->imuOutputs)
                         {
                             obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE;
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->angularRate = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_POSITION)
                     {
                         if (!obs->insOutputs)
                         {
                             obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
-                            obs->insOutputs->insField |= vnSensor->binaryOutputRegister.at(b).insField;
+                            obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
                         }
                         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_POSLLA;
                         auto vec = p.extractVec3d();
                         obs->insOutputs->posLla = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_VELOCITY)
                     {
                         if (!obs->insOutputs)
                         {
                             obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
-                            obs->insOutputs->insField |= vnSensor->binaryOutputRegister.at(b).insField;
+                            obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
                         }
                         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_VELNED;
                         auto vec = p.extractVec3f();
                         obs->insOutputs->velNed = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_ACCEL)
                     {
                         if (!obs->imuOutputs)
                         {
                             obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL;
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->accel = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_IMU)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_IMU)
                     {
                         if (!obs->imuOutputs)
                         {
                             obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL;
                         auto vec = p.extractVec3f();
@@ -5834,12 +5834,12 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         vec = p.extractVec3f();
                         obs->imuOutputs->uncompGyro = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_MAGPRES)
                     {
                         if (!obs->imuOutputs)
                         {
                             obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_MAG;
                         auto vec = p.extractVec3f();
@@ -5849,12 +5849,12 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_PRES;
                         obs->imuOutputs->pres = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_DELTATHETA)
                     {
                         if (!obs->imuOutputs)
                         {
                             obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
-                            obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                            obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                         }
                         obs->imuOutputs->imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA;
                         obs->imuOutputs->deltaTime = p.extractFloat();
@@ -5864,71 +5864,71 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         vec = p.extractVec3f();
                         obs->imuOutputs->deltaV = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_INSSTATUS)
                     {
                         if (!obs->insOutputs)
                         {
                             obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
-                            obs->insOutputs->insField |= vnSensor->binaryOutputRegister.at(b).insField;
+                            obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
                         }
                         obs->insOutputs->insField |= vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS;
                         obs->insOutputs->insStatus = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMESYNCIN)
                     {
                         if (!obs->timeOutputs)
                         {
                             obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT;
                         obs->timeOutputs->syncInCnt = p.extractUint32();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS)
+                    if (vnSensor->_binaryOutputRegister.at(b).commonField & vn::protocol::uart::CommonGroup::COMMONGROUP_TIMEGPSPPS)
                     {
                         if (!obs->timeOutputs)
                         {
                             obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
-                            obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                            obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                         }
                         obs->timeOutputs->timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS;
                         obs->timeOutputs->timePPS = p.extractUint64();
                     }
                 }
                 // Group 2 (Time)
-                if (vnSensor->binaryOutputRegister.at(b).timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
+                if (vnSensor->_binaryOutputRegister.at(b).timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
                 {
                     if (!obs->timeOutputs)
                     {
                         obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
-                        obs->timeOutputs->timeField |= vnSensor->binaryOutputRegister.at(b).timeField;
+                        obs->timeOutputs->timeField |= vnSensor->_binaryOutputRegister.at(b).timeField;
                     }
 
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
                     {
                         obs->timeOutputs->timeStartup = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
                     {
                         obs->timeOutputs->timeGps = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
                     {
                         obs->timeOutputs->gpsTow = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
                     {
                         obs->timeOutputs->gpsWeek = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN)
                     {
                         obs->timeOutputs->timeSyncIn = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS)
                     {
                         obs->timeOutputs->timePPS = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
                     {
                         obs->timeOutputs->timeUtc.year = p.extractInt8();
                         obs->timeOutputs->timeUtc.month = p.extractUint8();
@@ -5938,92 +5938,92 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->timeOutputs->timeUtc.sec = p.extractUint8();
                         obs->timeOutputs->timeUtc.ms = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT)
                     {
                         obs->timeOutputs->syncInCnt = p.extractUint32();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT)
                     {
                         obs->timeOutputs->syncOutCnt = p.extractUint32();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
+                    if (vnSensor->_binaryOutputRegister.at(b).timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
                     {
                         obs->timeOutputs->timeStatus = p.extractUint8();
                     }
                 }
                 // Group 3 (IMU)
-                if (vnSensor->binaryOutputRegister.at(b).imuField != vn::protocol::uart::ImuGroup::IMUGROUP_NONE)
+                if (vnSensor->_binaryOutputRegister.at(b).imuField != vn::protocol::uart::ImuGroup::IMUGROUP_NONE)
                 {
                     if (!obs->imuOutputs)
                     {
                         obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
-                        obs->imuOutputs->imuField |= vnSensor->binaryOutputRegister.at(b).imuField;
+                        obs->imuOutputs->imuField |= vnSensor->_binaryOutputRegister.at(b).imuField;
                     }
 
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS)
                     {
                         obs->imuOutputs->imuStatus = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
                     {
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->uncompMag = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
                     {
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->uncompAccel = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
                     {
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->uncompGyro = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
                     {
                         obs->imuOutputs->temp = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES)
                     {
                         obs->imuOutputs->pres = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
                     {
                         obs->imuOutputs->deltaTime = p.extractFloat();
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->deltaTheta = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
                     {
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->deltaV = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
                     {
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->mag = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
                     {
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->accel = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
+                    if (vnSensor->_binaryOutputRegister.at(b).imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
                     {
                         auto vec = p.extractVec3f();
                         obs->imuOutputs->angularRate = { vec.x, vec.y, vec.z };
                     }
                 }
                 // Group 4 (GNSS1)
-                if (vnSensor->binaryOutputRegister.at(b).gpsField != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
+                if (vnSensor->_binaryOutputRegister.at(b).gpsField != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
                 {
                     if (!obs->gnss1Outputs)
                     {
                         obs->gnss1Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
-                        obs->gnss1Outputs->gnssField |= vnSensor->binaryOutputRegister.at(b).gpsField;
+                        obs->gnss1Outputs->gnssField |= vnSensor->_binaryOutputRegister.at(b).gpsField;
                     }
 
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                     {
                         obs->gnss1Outputs->timeUtc.year = p.extractInt8();
                         obs->gnss1Outputs->timeUtc.month = p.extractUint8();
@@ -6033,61 +6033,61 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->gnss1Outputs->timeUtc.sec = p.extractUint8();
                         obs->gnss1Outputs->timeUtc.ms = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                     {
                         obs->gnss1Outputs->tow = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                     {
                         obs->gnss1Outputs->week = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
                     {
                         obs->gnss1Outputs->numSats = p.extractUint8();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
                     {
                         obs->gnss1Outputs->fix = p.extractUint8();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                     {
                         auto vec = p.extractVec3d();
                         obs->gnss1Outputs->posLla = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                     {
                         auto vec = p.extractVec3d();
                         obs->gnss1Outputs->posEcef = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                     {
                         auto vec = p.extractVec3f();
                         obs->gnss1Outputs->velNed = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                     {
                         auto vec = p.extractVec3f();
                         obs->gnss1Outputs->velEcef = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                     {
                         auto vec = p.extractVec3f();
                         obs->gnss1Outputs->posU = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                     {
                         obs->gnss1Outputs->velU = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                     {
                         obs->gnss1Outputs->timeU = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                     {
                         obs->gnss1Outputs->timeInfo.status = p.extractUint8();
                         obs->gnss1Outputs->timeInfo.leapSeconds = p.extractInt8();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                     {
                         obs->gnss1Outputs->dop.gDop = p.extractFloat();
                         obs->gnss1Outputs->dop.pDop = p.extractFloat();
@@ -6097,7 +6097,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->gnss1Outputs->dop.nDop = p.extractFloat();
                         obs->gnss1Outputs->dop.eDop = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                     {
                         obs->gnss1Outputs->satInfo.numSats = p.extractUint8();
                         p.extractUint8(); // Reserved for future use
@@ -6113,7 +6113,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             obs->gnss1Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
                         }
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+                    if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                     {
                         obs->gnss1Outputs->raw.tow = p.extractDouble();
                         obs->gnss1Outputs->raw.week = p.extractUint16();
@@ -6136,29 +6136,29 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     }
                 }
                 // Group 5 (Attitude)
-                if (vnSensor->binaryOutputRegister.at(b).attitudeField != vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE)
+                if (vnSensor->_binaryOutputRegister.at(b).attitudeField != vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE)
                 {
                     if (!obs->attitudeOutputs)
                     {
                         obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
-                        obs->attitudeOutputs->attitudeField |= vnSensor->binaryOutputRegister.at(b).attitudeField;
+                        obs->attitudeOutputs->attitudeField |= vnSensor->_binaryOutputRegister.at(b).attitudeField;
                     }
 
-                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS)
+                    if (vnSensor->_binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS)
                     {
                         obs->attitudeOutputs->vpeStatus = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
+                    if (vnSensor->_binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
                     {
                         auto vec = p.extractVec3f();
                         obs->attitudeOutputs->ypr = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
+                    if (vnSensor->_binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
                     {
                         auto vec = p.extractVec4f();
                         obs->attitudeOutputs->qtn = { vec.w, vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
+                    if (vnSensor->_binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
                     {
                         auto col0 = p.extractVec3f();
                         auto col1 = p.extractVec3f();
@@ -6167,104 +6167,104 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             col0.y, col1.y, col2.y,
                             col0.z, col1.z, col2.z;
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
+                    if (vnSensor->_binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
                     {
                         auto vec = p.extractVec3f();
                         obs->attitudeOutputs->magNed = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED)
+                    if (vnSensor->_binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED)
                     {
                         auto vec = p.extractVec3f();
                         obs->attitudeOutputs->accelNed = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY)
+                    if (vnSensor->_binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY)
                     {
                         auto vec = p.extractVec3f();
                         obs->attitudeOutputs->linearAccelBody = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED)
+                    if (vnSensor->_binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED)
                     {
                         auto vec = p.extractVec3f();
                         obs->attitudeOutputs->linearAccelNed = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU)
+                    if (vnSensor->_binaryOutputRegister.at(b).attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU)
                     {
                         auto vec = p.extractVec3f();
                         obs->attitudeOutputs->yprU = { vec.x, vec.y, vec.z };
                     }
                 }
                 // Group 6 (INS)
-                if (vnSensor->binaryOutputRegister.at(b).insField != vn::protocol::uart::InsGroup::INSGROUP_NONE)
+                if (vnSensor->_binaryOutputRegister.at(b).insField != vn::protocol::uart::InsGroup::INSGROUP_NONE)
                 {
                     if (!obs->insOutputs)
                     {
                         obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
-                        obs->insOutputs->insField |= vnSensor->binaryOutputRegister.at(b).insField;
+                        obs->insOutputs->insField |= vnSensor->_binaryOutputRegister.at(b).insField;
                     }
 
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
                     {
                         obs->insOutputs->insStatus = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
                     {
                         auto vec = p.extractVec3d();
                         obs->insOutputs->posLla = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
                     {
                         auto vec = p.extractVec3d();
                         obs->insOutputs->posEcef = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
                     {
                         auto vec = p.extractVec3f();
                         obs->insOutputs->velBody = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
                     {
                         auto vec = p.extractVec3f();
                         obs->insOutputs->velNed = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
                     {
                         auto vec = p.extractVec3f();
                         obs->insOutputs->velEcef = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF)
                     {
                         auto vec = p.extractVec3f();
                         obs->insOutputs->magEcef = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF)
                     {
                         auto vec = p.extractVec3f();
                         obs->insOutputs->accelEcef = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF)
                     {
                         auto vec = p.extractVec3f();
                         obs->insOutputs->linearAccelEcef = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_POSU)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_POSU)
                     {
                         obs->insOutputs->posU = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELU)
+                    if (vnSensor->_binaryOutputRegister.at(b).insField & vn::protocol::uart::InsGroup::INSGROUP_VELU)
                     {
                         obs->insOutputs->velU = p.extractFloat();
                     }
                 }
                 // Group 7 (GNSS2)
-                if (vnSensor->binaryOutputRegister.at(b).gps2Field != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
+                if (vnSensor->_binaryOutputRegister.at(b).gps2Field != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
                 {
                     if (!obs->gnss2Outputs)
                     {
                         obs->gnss2Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
-                        obs->gnss2Outputs->gnssField |= vnSensor->binaryOutputRegister.at(b).gps2Field;
+                        obs->gnss2Outputs->gnssField |= vnSensor->_binaryOutputRegister.at(b).gps2Field;
                     }
 
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                     {
                         obs->gnss2Outputs->timeUtc.year = p.extractInt8();
                         obs->gnss2Outputs->timeUtc.month = p.extractUint8();
@@ -6274,61 +6274,61 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->gnss2Outputs->timeUtc.sec = p.extractUint8();
                         obs->gnss2Outputs->timeUtc.ms = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                     {
                         obs->gnss2Outputs->tow = p.extractUint64();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                     {
                         obs->gnss2Outputs->week = p.extractUint16();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
                     {
                         obs->gnss2Outputs->numSats = p.extractUint8();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
                     {
                         obs->gnss2Outputs->fix = p.extractUint8();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                     {
                         auto vec = p.extractVec3d();
                         obs->gnss2Outputs->posLla = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                     {
                         auto vec = p.extractVec3d();
                         obs->gnss2Outputs->posEcef = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                     {
                         auto vec = p.extractVec3f();
                         obs->gnss2Outputs->velNed = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                     {
                         auto vec = p.extractVec3f();
                         obs->gnss2Outputs->velEcef = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                     {
                         auto vec = p.extractVec3f();
                         obs->gnss2Outputs->posU = { vec.x, vec.y, vec.z };
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                     {
                         obs->gnss2Outputs->velU = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                     {
                         obs->gnss2Outputs->timeU = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                     {
                         obs->gnss2Outputs->timeInfo.status = p.extractUint8();
                         obs->gnss2Outputs->timeInfo.leapSeconds = p.extractInt8();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                     {
                         obs->gnss2Outputs->dop.gDop = p.extractFloat();
                         obs->gnss2Outputs->dop.pDop = p.extractFloat();
@@ -6338,7 +6338,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->gnss2Outputs->dop.nDop = p.extractFloat();
                         obs->gnss2Outputs->dop.eDop = p.extractFloat();
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                     {
                         obs->gnss2Outputs->satInfo.numSats = p.extractUint8();
                         p.extractUint8(); // Reserved for future use
@@ -6354,7 +6354,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             obs->gnss2Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
                         }
                     }
-                    if (vnSensor->binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+                    if (vnSensor->_binaryOutputRegister.at(b).gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                     {
                         obs->gnss2Outputs->raw.tow = p.extractDouble();
                         obs->gnss2Outputs->raw.week = p.extractUint16();
@@ -6486,17 +6486,17 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
                 if (obs->insTime.has_value() && !obs->insTime->empty())
                 {
-                    if (!vnSensor->lastMessageTime.at(b).empty())
+                    if (!vnSensor->_lastMessageTime.at(b).empty())
                     {
                         // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
                         // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
-                        if (obs->insTime.value() - vnSensor->lastMessageTime.at(b) >= std::chrono::microseconds(static_cast<int>(1.5 / IMU_DEFAULT_FREQUENCY * vnSensor->binaryOutputRegister.at(b).rateDivisor * 1e6)))
+                        if (obs->insTime.value() - vnSensor->_lastMessageTime.at(b) >= std::chrono::microseconds(static_cast<int>(1.5 / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor * 1e6)))
                         {
                             LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", vnSensor->nameId(),
-                                     vnSensor->lastMessageTime.at(b), obs->insTime.value(), (obs->insTime.value() - vnSensor->lastMessageTime.at(b)).count());
+                                     vnSensor->_lastMessageTime.at(b), obs->insTime.value(), (obs->insTime.value() - vnSensor->_lastMessageTime.at(b)).count());
                         }
                     }
-                    vnSensor->lastMessageTime.at(b) = obs->insTime.value();
+                    vnSensor->_lastMessageTime.at(b) = obs->insTime.value();
                 }
 
                 // Calls all the callbacks
@@ -6507,7 +6507,7 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
     else if (p.type() == vn::protocol::uart::Packet::TYPE_ASCII)
     {
         LOG_DATA("{} received an ASCII Async message: {}", vnSensor->nameId(), p.datastr());
-        vnSensor->asciiOutputBuffer.push_back(p.datastr());
+        vnSensor->_asciiOutputBuffer.push_back(p.datastr());
 
         auto obs = std::make_shared<StringObs>(p.datastr());
 
@@ -6517,6 +6517,6 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
             obs->insTime = currentTime;
         }
         // Calls all the callbacks
-        vnSensor->invokeCallbacks(VectorNavSensor::OutputPortIndex_AsciiOutput, obs);
+        vnSensor->invokeCallbacks(VectorNavSensor::OUTPUT_PORT_INDEX_ASCII_OUTPUT, obs);
     }
 }

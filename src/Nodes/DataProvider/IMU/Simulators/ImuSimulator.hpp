@@ -44,7 +44,7 @@ class ImuSimulator : public Imu
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -58,8 +58,8 @@ class ImuSimulator : public Imu
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_ImuObs = 0;    ///< @brief Flow (ImuObs)
-    constexpr static size_t OutputPortIndex_PosVelAtt = 1; ///< @brief Flow (PosVelAtt)
+    constexpr static size_t OUTPUT_PORT_INDEX_IMU_OBS = 0;     ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_POS_VEL_ATT = 1; ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -93,20 +93,20 @@ class ImuSimulator : public Imu
     };
 
     /// Source for the start time, selected in the GUI
-    StartTimeSource startTimeSource = StartTimeSource::CustomTime;
+    StartTimeSource _startTimeSource = StartTimeSource::CustomTime;
 
     /// Time Format to input the start time with
-    gui::widgets::TimeEditFormat startTimeEditFormat = gui::widgets::TimeEditFormat::YMDHMS;
+    gui::widgets::TimeEditFormat _startTimeEditFormat = gui::widgets::TimeEditFormat::YMDHMS;
 
     /// Global starttime
-    InsTime startTime{ 2000, 1, 1, 0, 0, 0 };
+    InsTime _startTime{ 2000, 1, 1, 0, 0, 0 };
 
     // ###########################################################################################################
 
     /// Frequency to sample the IMU with in [Hz]
-    double imuFrequency = 200;
+    double _imuFrequency = 200;
     /// Frequency to sample the position with in [Hz]
-    double gnssFrequency = 5;
+    double _gnssFrequency = 5;
 
     // ###########################################################################################################
 
@@ -126,34 +126,34 @@ class ImuSimulator : public Imu
     static const char* to_string(TrajectoryType value);
 
     /// Selected trajectory type in the GUI
-    TrajectoryType trajectoryType = TrajectoryType::Fixed;
+    TrajectoryType _trajectoryType = TrajectoryType::Fixed;
 
     /// Start position in local navigation coordinates (latitude, longitude, altitude) [rad, rad, m]
     ///
     /// - Fixed, Linear: Start position
     /// - Circular, Helix: Center of the circle
-    Eigen::Vector3d startPosition_lla = Eigen::Vector3d::Zero();
+    Eigen::Vector3d _startPosition_lla = Eigen::Vector3d::Zero();
 
     /// Start position in ECEF coordinates in [m]. Will be set at initialization
-    Eigen::Vector3d startPosition_e;
+    Eigen::Vector3d _startPosition_e;
 
     /// Orientation of the vehicle [roll, pitch, yaw] [rad]
-    Eigen::Vector3d fixedTrajectoryStartOrientation = Eigen::Vector3d::Zero();
+    Eigen::Vector3d _fixedTrajectoryStartOrientation = Eigen::Vector3d::Zero();
 
     /// Velocity of the vehicle in local-navigation frame cooridnates in [m/s]
-    Eigen::Vector3d linearTrajectoryVelocity_n = Eigen::Vector3d{ 1, 0, 0 };
+    Eigen::Vector3d _linearTrajectoryVelocity_n = Eigen::Vector3d{ 1, 0, 0 };
 
     /// Horizontal speed of the vehicle in the tangential plane in [m/s]
-    double circularTrajectoryHorizontalSpeed = 1.0;
+    double _circularTrajectoryHorizontalSpeed = 1.0;
 
     /// Vertical speed of the vehicle in the tangential plane in [m/s]
-    double helicalTrajectoryVerticalSpeed = 1.0;
+    double _helicalTrajectoryVerticalSpeed = 1.0;
 
     /// In the GUI selected radius of the circular/helix trajectory
-    double circularTrajectoryRadius = 50.0;
+    double _circularTrajectoryRadius = 50.0;
 
     /// In the GUI selected origin angle of the circular/helix trajectory in [rad]
-    double circularTrajectoryOriginAngle = 0.0;
+    double _circularTrajectoryOriginAngle = 0.0;
 
     /// Possible directions for the circular/helix trajectory
     enum class Direction
@@ -168,7 +168,7 @@ class ImuSimulator : public Imu
     static const char* to_string(Direction value);
 
     /// In the GUI selected direction of the circular/helix trajectory
-    Direction circularTrajectoryDirection = Direction::CCW;
+    Direction _circularTrajectoryDirection = Direction::CCW;
 
     // ###########################################################################################################
 
@@ -180,43 +180,43 @@ class ImuSimulator : public Imu
     };
 
     /// Condition which has to be met to stop the simulation
-    StopCondition simulationStopCondition = StopCondition::Duration;
+    StopCondition _simulationStopCondition = StopCondition::Duration;
 
     /// Duration to simulate in [s]
-    double simulationDuration = 5 * 60;
+    double _simulationDuration = 5 * 60;
 
     /// Distance in [m] to the start position to stop the simulation
-    double linearTrajectoryDistanceForStop = 100;
+    double _linearTrajectoryDistanceForStop = 100;
 
     /// Amount of circles to simulate before stopping
-    double circularTrajectoryCircleCountForStop = 1.0;
+    double _circularTrajectoryCircleCountForStop = 1.0;
 
     /// True if one of the pins has its stop condition achieved
-    bool stopConditionReached = false;
+    bool _stopConditionReached = false;
 
     // ###########################################################################################################
 
     /// Gravity model selected in the GUI
-    GravityModel gravityModel = GravityModel::EGM96;
+    GravityModel _gravityModel = GravityModel::EGM96;
 
     /// Apply the coriolis acceleration to the measured accelerations
-    bool coriolisAccelerationEnabled = true;
+    bool _coriolisAccelerationEnabled = true;
 
     /// Apply the centrifugal acceleration to the measured accelerations
-    bool centrifgalAccelerationEnabled = true;
+    bool _centrifgalAccelerationEnabled = true;
 
     /// Apply the Earth rotation rate to the measured angular rates
-    bool angularRateEarthRotationEnabled = true;
+    bool _angularRateEarthRotationEnabled = true;
 
     /// Apply the transport rate to the measured angular rates
-    bool angularRateTransportRateEnabled = true;
+    bool _angularRateTransportRateEnabled = true;
 
     // ###########################################################################################################
 
     /// Time to send the next IMU message in [s]
-    double imuUpdateTime = 0.0;
+    double _imuUpdateTime = 0.0;
     /// Time to send the next GNSS message in [s]
-    double gnssUpdateTime = 0.0;
+    double _gnssUpdateTime = 0.0;
 
     /// @brief Calculates the flight angles (roll, pitch, yaw)
     /// @param[in] position_lla Current position as latitude, longitude, altitude [rad, rad, m]

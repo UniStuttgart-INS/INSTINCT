@@ -109,7 +109,7 @@ Eigen::Matrix<double, 10, 1> calcPosVelAttDerivative_n(const Eigen::Matrix<doubl
     LOG_DATA("R_E = {} [m]", R_E);
 
     // ω_ie_e Turn rate of the Earth expressed in Earth frame coordinates
-    const Eigen::Vector3d& omega_ie_e = InsConst::angularVelocity_ie_e;
+    const Eigen::Vector3d& omega_ie_e = InsConst::omega_ie_e;
     LOG_DATA("omega_ie_e = {} [rad/s]", omega_ie_e.transpose());
     // ω_ie_n Turn rate of the Earth expressed in local-navigation frame coordinates
     const Eigen::Vector3d omega_ie_n = q_ne * omega_ie_e;

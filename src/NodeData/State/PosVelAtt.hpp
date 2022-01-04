@@ -40,7 +40,7 @@ class PosVelAtt : public PosVel
     /// @return The Quaternion for the rotation from body to navigation coordinates
     [[nodiscard]] const Eigen::Quaterniond& quaternion_nb() const
     {
-        return q_nb;
+        return _q_nb;
     }
 
     /// @brief Returns the Quaternion from navigation to body frame (NED)
@@ -54,7 +54,7 @@ class PosVelAtt : public PosVel
     /// @return The Quaternion for the rotation from body to earth coordinates
     [[nodiscard]] const Eigen::Quaterniond& quaternion_eb() const
     {
-        return q_eb;
+        return _q_eb;
     }
 
     /// @brief Returns the Quaternion from Earth-fixed to body frame
@@ -96,16 +96,16 @@ class PosVelAtt : public PosVel
     /// @param[in] quat_eb Quaternion from body to earth frame
     void setAttitude_eb(const Eigen::Quaterniond& quat_eb)
     {
-        q_eb = quat_eb;
-        q_nb = quaternion_ne() * quat_eb;
+        _q_eb = quat_eb;
+        _q_nb = quaternion_ne() * quat_eb;
     }
 
     /// @brief Set the Quaternion from body to navigation frame
     /// @param[in] quat_nb Quaternion from body to navigation frame
     void setAttitude_nb(const Eigen::Quaterniond& quat_nb)
     {
-        q_eb = quaternion_en() * quat_nb;
-        q_nb = quat_nb;
+        _q_eb = quaternion_en() * quat_nb;
+        _q_nb = quat_nb;
     }
 
     /// @brief Set the State
@@ -136,9 +136,9 @@ class PosVelAtt : public PosVel
 
   private:
     /// Quaternion body to earth frame
-    Eigen::Quaterniond q_eb{ 0, 0, 0, 0 };
+    Eigen::Quaterniond _q_eb{ 0, 0, 0, 0 };
     /// Quaternion body to navigation frame (roll, pitch, yaw)
-    Eigen::Quaterniond q_nb{ 0, 0, 0, 0 };
+    Eigen::Quaterniond _q_nb{ 0, 0, 0, 0 };
 };
 
 } // namespace NAV

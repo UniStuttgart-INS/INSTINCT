@@ -810,7 +810,7 @@ void NAV::NodeManager::EnableAllCallbacks()
     LOG_TRACE("called");
     for (auto* node : m_nodes)
     {
-        if (node->enabled)
+        if (node->isEnabled())
         {
             node->callbacksEnabled = true;
         }
@@ -832,7 +832,7 @@ bool NAV::NodeManager::InitializeAllNodes()
     bool nodeCouldNotInitialize = false;
     for (auto* node : m_nodes)
     {
-        if (node->enabled && !node->isInitialized())
+        if (node->isEnabled() && !node->isInitialized())
         {
             if (!node->initializeNode())
             {
@@ -868,7 +868,7 @@ void NAV::NodeManager::InitializeAllNodesAsync()
             {
                 break;
             }
-            if (m_nodes.at(i)->enabled && !m_nodes.at(i)->isInitialized())
+            if (m_nodes.at(i)->isEnabled() && !m_nodes.at(i)->isInitialized())
             {
                 m_nodes.at(i)->initializeNode();
             }

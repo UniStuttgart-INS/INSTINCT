@@ -12,7 +12,7 @@ NAV::Combiner::Combiner()
 {
     LOG_TRACE("{}: called", name);
 
-    hasConfig = false;
+    _hasConfig = false;
     kind = Kind::Simple;
 
     nm::CreateInputPin(this, "", Pin::Type::Flow, { InsObs::type() }, &Combiner::receiveData);
@@ -57,7 +57,7 @@ void NAV::Combiner::setPinIdentifiers(size_t connectedPinIndex, size_t otherPinI
         }
 
         // Update the dataIdentifier of the output pin to the same as input pin
-        outputPins.at(OutputPortIndex_Flow).dataIdentifier = dataIdentifiers;
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = dataIdentifiers;
     }
     else
     {
@@ -72,7 +72,7 @@ void NAV::Combiner::setPinIdentifiers(size_t connectedPinIndex, size_t otherPinI
         }
         if (!combinedIdentifiers.empty())
         {
-            outputPins.at(OutputPortIndex_Flow).dataIdentifier = combinedIdentifiers;
+            outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = combinedIdentifiers;
             return;
         }
 
@@ -88,11 +88,11 @@ void NAV::Combiner::setPinIdentifiers(size_t connectedPinIndex, size_t otherPinI
         {
             if (std::find(connectedPinParents.begin(), connectedPinParents.end(), dataIdentifier) != connectedPinParents.end())
             {
-                outputPins.at(OutputPortIndex_Flow).dataIdentifier = inputPins.at(otherPinIndex).dataIdentifier;
+                outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = inputPins.at(otherPinIndex).dataIdentifier;
             }
             else
             {
-                outputPins.at(OutputPortIndex_Flow).dataIdentifier = inputPins.at(connectedPinIndex).dataIdentifier;
+                outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = inputPins.at(connectedPinIndex).dataIdentifier;
             }
         }
     }
@@ -101,7 +101,7 @@ void NAV::Combiner::setPinIdentifiers(size_t connectedPinIndex, size_t otherPinI
 void NAV::Combiner::updateOutputPin(const std::vector<std::string>& oldDataIdentifiers)
 {
     // Check if connected links on output port are still valid
-    for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_Flow).id))
+    for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
     {
         auto* startPin = nm::FindPin(link->startPinId);
         auto* endPin = nm::FindPin(link->endPinId);
@@ -117,9 +117,9 @@ void NAV::Combiner::updateOutputPin(const std::vector<std::string>& oldDataIdent
     }
 
     // Refresh all links connected to the output pin if the type changed
-    if (outputPins.at(OutputPortIndex_Flow).dataIdentifier != oldDataIdentifiers)
+    if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != oldDataIdentifiers)
     {
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_Flow).id))
+        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
         {
             nm::RefreshLink(link->id);
         }
@@ -134,18 +134,18 @@ bool NAV::Combiner::onCreateLink(Pin* startPin, Pin* endPin)
 
         if (endPin->parentNode->id != id) // Link on Output Port
         {
-            if (!nm::IsPinLinked(inputPins.at(InputPortIndex_Flow_First).id)
-                && !nm::IsPinLinked(inputPins.at(InputPortIndex_Flow_Second).id))
+            if (!nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_FLOW_FIRST).id)
+                && !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_FLOW_SECOND).id))
             {
-                outputPins.at(OutputPortIndex_Flow).dataIdentifier = endPin->dataIdentifier;
+                outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = endPin->dataIdentifier;
             }
             return true;
         }
 
         size_t connectedPinIndex = pinIndexFromId(endPin->id);
-        size_t otherPinIndex = connectedPinIndex == InputPortIndex_Flow_First ? InputPortIndex_Flow_Second : InputPortIndex_Flow_First;
+        size_t otherPinIndex = connectedPinIndex == INPUT_PORT_INDEX_FLOW_FIRST ? INPUT_PORT_INDEX_FLOW_SECOND : INPUT_PORT_INDEX_FLOW_FIRST;
 
-        auto outputPinIdentifier = outputPins.at(OutputPortIndex_Flow).dataIdentifier;
+        auto outputPinIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
 
         setPinIdentifiers(connectedPinIndex, otherPinIndex, startPin->dataIdentifier);
 
@@ -174,11 +174,11 @@ void NAV::Combiner::afterDeleteLink(Pin* startPin, Pin* endPin)
                 if (nm::IsPinLinked(pin.id))
                 {
                     size_t connectedPinIndex = pinIndexFromId(pin.id);
-                    size_t otherPinIndex = connectedPinIndex == InputPortIndex_Flow_First ? InputPortIndex_Flow_Second : InputPortIndex_Flow_First;
+                    size_t otherPinIndex = connectedPinIndex == INPUT_PORT_INDEX_FLOW_FIRST ? INPUT_PORT_INDEX_FLOW_SECOND : INPUT_PORT_INDEX_FLOW_FIRST;
 
                     Pin* otherNodePin = nm::FindConnectedPinToInputPin(pin.id);
 
-                    auto outputPinIdentifier = outputPins.at(OutputPortIndex_Flow).dataIdentifier;
+                    auto outputPinIdentifier = outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier;
 
                     setPinIdentifiers(connectedPinIndex, otherPinIndex, otherNodePin->dataIdentifier);
 
@@ -204,5 +204,5 @@ void NAV::Combiner::receiveData(const std::shared_ptr<const NodeData>& nodeData,
         NAV::Node::callbacksEnabled = true;
     }
 
-    invokeCallbacks(OutputPortIndex_Flow, nodeData);
+    invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, nodeData);
 }

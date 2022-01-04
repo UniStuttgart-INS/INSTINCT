@@ -684,7 +684,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
             if (!isSimple) // Header Text for Blueprint Nodes
             {
-                if (!node->enabled) // Node disabled
+                if (!node->isEnabled()) // Node disabled
                 {
                     builder.Header(ImColor(192, 192, 192)); // Silver
                 }
@@ -870,7 +870,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::TextUnformatted(node->name.c_str());
             ImGui::Spring(1);
             ImGui::EndHorizontal();
-            ed::Group(node->size);
+            ed::Group(node->_size);
             ImGui::EndVertical();
             ImGui::PopID();
             ed::EndNode();
@@ -1127,7 +1127,7 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
     else if (ed::NodeId doubleClickedNodeId = ed::GetDoubleClickedNode())
     {
         Node* node = nm::FindNode(doubleClickedNodeId);
-        node->showConfig = true;
+        node->_showConfig = true;
     }
     ed::Resume();
 
@@ -1148,40 +1148,40 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
             ImGui::Text("Inputs: %lu", node->inputPins.size());
             ImGui::Text("Outputs: %lu", node->outputPins.size());
             ImGui::Separator();
-            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "", false, node->enabled && !node->isInitializing() && !node->isDeinitializing()))
+            if (ImGui::MenuItem(node->isInitialized() ? "Reinitialize" : "Initialize", "", false, node->isEnabled() && !node->isInitializing() && !node->isDeinitializing()))
             {
                 if (node->isInitialized())
                 {
-                    node->isDeinitializing_ = true;
+                    node->_isDeinitializing = true;
                     initList.emplace_back(node, false);
                 }
-                node->isInitializing_ = true;
+                node->_isInitializing = true;
                 initList.emplace_back(node, true);
             }
-            if (ImGui::MenuItem("Deinitialize", "", false, node->enabled && node->isInitialized() && !node->isInitializing() && !node->isDeinitializing()))
+            if (ImGui::MenuItem("Deinitialize", "", false, node->isEnabled() && node->isInitialized() && !node->isInitializing() && !node->isDeinitializing()))
             {
-                node->isDeinitializing_ = true;
+                node->_isDeinitializing = true;
                 initList.emplace_back(node, false);
             }
             ImGui::Separator();
-            if (node->hasConfig && ImGui::MenuItem("Configure", "", false))
+            if (node->_hasConfig && ImGui::MenuItem("Configure", "", false))
             {
-                node->showConfig = true;
+                node->_showConfig = true;
             }
-            if (ImGui::MenuItem(node->enabled ? "Disable" : "Enable", "", false))
+            if (ImGui::MenuItem(node->isEnabled() ? "Disable" : "Enable", "", false))
             {
-                if (node->enabled)
+                if (node->isEnabled())
                 {
                     if (node->isInitialized())
                     {
-                        node->isDeinitializing_ = true;
+                        node->_isDeinitializing = true;
                         initList.emplace_back(node, false);
                     }
-                    node->enabled = false;
+                    node->_isEnabled = false;
                 }
                 else
                 {
-                    node->enabled = true;
+                    node->_isEnabled = true;
                 }
                 flow::ApplyChanges();
             }
@@ -1371,12 +1371,12 @@ void NAV::gui::NodeEditorApplication::OnFrame(float deltaTime)
 
     for (const auto& node : nm::m_Nodes()) // Config Windows for nodes
     {
-        if (node->hasConfig && node->showConfig)
+        if (node->_hasConfig && node->_showConfig)
         {
             ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5F, ImGui::GetIO().DisplaySize.y * 0.5F);
             ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5F, 0.5F));
-            ImGui::SetNextWindowSize(node->guiConfigDefaultWindowSize, ImGuiCond_FirstUseEver);
-            if (ImGui::Begin(fmt::format("{} ({})", node->type(), size_t(node->id)).c_str(), &(node->showConfig),
+            ImGui::SetNextWindowSize(node->_guiConfigDefaultWindowSize, ImGuiCond_FirstUseEver);
+            if (ImGui::Begin(fmt::format("{} ({})", node->nameId(), node->type()).c_str(), &(node->_showConfig),
                              ImGuiWindowFlags_None))
             {
                 node->guiConfig();

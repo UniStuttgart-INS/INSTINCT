@@ -44,15 +44,15 @@ class SkydelNetworkStream : public Imu
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Resets the node. It is guaranteed that the node is initialized when this is called.
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_ImuObs = 0;  ///< @brief Port number of the Skydel-ImuObs output
-    constexpr static size_t OutputPortIndex_GnssObs = 1; ///< @brief Port number of the Skydel-GnssObs output
+    constexpr static size_t OUTPUT_PORT_INDEX_IMU_OBS = 0;  ///< @brief Port number of the Skydel-ImuObs output
+    constexpr static size_t OUTPUT_PORT_INDEX_GNSS_OBS = 1; ///< @brief Port number of the Skydel-GnssObs output
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -61,50 +61,50 @@ class SkydelNetworkStream : public Imu
     void deinitialize() override;
 
     /// Asynchronous receive fct
-    boost::asio::io_context ioservice;
+    boost::asio::io_context _ioservice;
 
     /// @brief Receive Skydel network stream data
     void do_receive();
 
     /// Thread for receiver fct
-    std::thread TestThread;
+    std::thread _testThread;
 
     /// Network data stream buffer size (boost::asio)
-    constexpr static unsigned int max_length = 1024;
+    constexpr static unsigned int _maxLength = 1024;
 
     /// Network data stream array
-    std::array<char, max_length> m_data{};
+    std::array<char, _maxLength> _data{};
 
     /// Boost udp endpoint
-    boost::asio::ip::udp::endpoint m_senderEndpoint;
-    /// Boost udo socket
-    boost::asio::ip::udp::socket m_socket;
+    boost::asio::ip::udp::endpoint _senderEndpoint;
+    /// Boost udp socket
+    boost::asio::ip::udp::socket _socket;
 
     /// Stop handler: once true, the asynchronous receive function stops
-    bool stop = false;
+    bool _stop = false;
     /// Startup handler: used in 'initialize()' to differentiate between startup and re-initialization
-    bool isStartup = true;
+    bool _isStartup = true;
 
     /// Time point where the first package has been received
-    std::chrono::steady_clock::time_point startPoint;
+    std::chrono::steady_clock::time_point _startPoint;
 
     /// Stores the time of the last received message
-    uint64_t lastMessageTime{};
+    uint64_t _lastMessageTime{};
 
     /// Counter for received packages
-    int packageCount = 0;
+    int _packageCount = 0;
 
     /// # of packages for averaging dataRate (minimum is '2', since two time points are required to calculate a data rate)
-    int packagesNumber = 2;
+    int _packagesNumber = 2;
 
     /// Data rate of the received network stream [Hz]
-    double dataRate = 0.0;
+    double _dataRate = 0.0;
 
     /// Counter for packages that are skipped until data rate is shown
-    int startCounter = 0;
+    int _startCounter = 0;
 
     /// # of packages that are skipped until data rate is shown
-    int startNow = 20;
+    int _startNow = 20;
 };
 
 } // namespace NAV

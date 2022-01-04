@@ -43,7 +43,7 @@ class VectorNavBinaryConverter : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -54,8 +54,8 @@ class VectorNavBinaryConverter : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OutputPortIndex_Converted = 0;            ///< @brief Flow
-    constexpr static size_t InputPortIndex_VectorNavBinaryOutput = 0; ///< @brief Flow (VectorNavBinaryOutput)
+    constexpr static size_t OUTPUT_PORT_INDEX_CONVERTED = 0;              ///< @brief Flow
+    constexpr static size_t INPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT = 0; ///< @brief Flow (VectorNavBinaryOutput)
 
     /// Enum specifying the type of the output message
     enum OutputType
@@ -65,7 +65,7 @@ class VectorNavBinaryConverter : public Node
     };
 
     /// The selected output type in the GUI
-    OutputType outputType = OutputType_ImuObsWDelta;
+    OutputType _outputType = OutputType_ImuObsWDelta;
 
     /// Enum specifying the source for the PosVelAtt conversion
     enum PosVelSource
@@ -77,13 +77,13 @@ class VectorNavBinaryConverter : public Node
     };
 
     /// The selected PosVel source in the GUI
-    PosVelSource posVelSource = PosVelSource_Best;
+    PosVelSource _posVelSource = PosVelSource_Best;
 
     /// GUI option. If checked forces position to a static value and velocity to 0
-    bool forceStatic = false;
+    bool _forceStatic = false;
 
     /// Position, Velocity and Attitude at initialization (needed for static data)
-    std::shared_ptr<const PosVelAtt> posVelAtt__init = nullptr;
+    std::shared_ptr<const PosVelAtt> _posVelAtt__init = nullptr;
 
     /// @brief Initialize the node
     bool initialize() override;

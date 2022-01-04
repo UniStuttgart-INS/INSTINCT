@@ -24,9 +24,9 @@ class ScrollingBuffer
     /// @brief Reserves space for the buffer but does not fill the buffer with values
     /// @param[in] maxSize The maximum size of the scrolling buffer
     explicit ScrollingBuffer(size_t maxSize = 2000)
-        : m_maxSize(maxSize)
+        : _maxSize(maxSize)
     {
-        m_data.reserve(maxSize);
+        _data.reserve(maxSize);
 
         resize(maxSize); // In case 0 was provided to make the buffer infinite
     }
@@ -34,10 +34,10 @@ class ScrollingBuffer
     /// @brief Constructs a new container with the contents of the initializer list init.
     /// @param[in] init initializer list to initialize the elements of the container with
     ScrollingBuffer(std::initializer_list<T> init)
-        : m_maxSize(init.size())
+        : _maxSize(init.size())
     {
-        m_data.reserve(m_maxSize);
-        resize(m_maxSize); // In case 0 was provided to make the buffer infinite
+        _data.reserve(_maxSize);
+        resize(_maxSize); // In case 0 was provided to make the buffer infinite
 
         for (auto& val : init)
         {
@@ -73,12 +73,12 @@ class ScrollingBuffer
 
         // 8 9 3 4 5 6 7
         // at(0) = 3, at(4) = 7, at(5) = 8
-        if (m_dataStart + pos >= size())
+        if (_dataStart + pos >= size())
         {
-            return m_data.at(pos - (size() - m_dataStart));
+            return _data.at(pos - (size() - _dataStart));
         }
 
-        return m_data.at(m_dataStart + pos);
+        return _data.at(_dataStart + pos);
     }
 
     /// @brief Returns a reference to the first element in the container.
@@ -95,12 +95,12 @@ class ScrollingBuffer
     /// @return Reference to the first element
     [[nodiscard]] const T& front() const
     {
-        if (m_data.size() < m_maxSize)
+        if (_data.size() < _maxSize)
         {
-            return m_data.front();
+            return _data.front();
         }
 
-        return m_data.at(m_dataStart);
+        return _data.at(_dataStart);
     }
 
     /// @brief Returns a reference to the last element in the container.
@@ -116,12 +116,12 @@ class ScrollingBuffer
     /// @return Reference to the last element.
     [[nodiscard]] const T& back() const
     {
-        if (m_data.size() < m_maxSize || m_dataEnd == 0)
+        if (_data.size() < _maxSize || _dataEnd == 0)
         {
-            return m_data.back();
+            return _data.back();
         }
 
-        return m_data.at(m_dataEnd - 1);
+        return _data.at(_dataEnd - 1);
     }
 
     // ###########################################################################################################
@@ -131,13 +131,13 @@ class ScrollingBuffer
     /// @brief Checks if the container has no elements
     [[nodiscard]] bool empty() const
     {
-        return m_data.empty();
+        return _data.empty();
     }
 
     /// @brief Returns the number of elements in the container
     [[nodiscard]] size_t size() const
     {
-        return m_data.size() - (m_dataStart - m_dataEnd);
+        return _data.size() - (_dataStart - _dataEnd);
     }
 
     // ###########################################################################################################
@@ -147,32 +147,32 @@ class ScrollingBuffer
     /// @brief Erases all elements from the container. After this call, size() returns zero.
     void clear()
     {
-        m_data.clear();
-        m_dataStart = 0;
-        m_dataEnd = 0;
+        _data.clear();
+        _dataStart = 0;
+        _dataEnd = 0;
     }
 
     /// @brief Appends the given element value to the end of the container.
     /// @param[in] value the value of the element to append
     void push_back(const T& value)
     {
-        if (m_infiniteBuffer) // The buffer should grow when adding new values
+        if (_infiniteBuffer) // The buffer should grow when adding new values
         {
-            m_data.push_back(value);
-            m_maxSize = m_data.size();
+            _data.push_back(value);
+            _maxSize = _data.size();
         }
-        else if (m_data.size() < m_maxSize) // The real buffer is smaller than the allowed buffer size
+        else if (_data.size() < _maxSize) // The real buffer is smaller than the allowed buffer size
         {
-            m_data.push_back(value);
+            _data.push_back(value);
         }
         else // The real buffer as large as or bigger than the allowed buffer size, so we have to scroll the buffer
         {
-            m_data.at(m_dataEnd) = value;
-            if (m_dataStart == m_dataEnd)
+            _data.at(_dataEnd) = value;
+            if (_dataStart == _dataEnd)
             {
-                m_dataStart = (m_dataStart + 1) % m_maxSize;
+                _dataStart = (_dataStart + 1) % _maxSize;
             }
-            m_dataEnd = (m_dataEnd + 1) % m_maxSize;
+            _dataEnd = (_dataEnd + 1) % _maxSize;
         }
     }
 
@@ -182,104 +182,104 @@ class ScrollingBuffer
     {
         if (targetSize == 0) // Buffer should grow indefinitely when adding new values
         {
-            m_infiniteBuffer = true;
+            _infiniteBuffer = true;
             // 6, 7, 3, 4, 5,
             // 3, 4, 5, 6, 7,
-            if (m_dataStart != 0) // Buffer is scrolled and needs to be sorted
+            if (_dataStart != 0) // Buffer is scrolled and needs to be sorted
             {
                 std::vector<T> to_vector;
-                std::copy(std::next(m_data.begin(), static_cast<int64_t>(m_dataStart)), m_data.end(),
+                std::copy(std::next(_data.begin(), static_cast<int64_t>(_dataStart)), _data.end(),
                           std::back_inserter(to_vector));
 
-                std::copy(m_data.begin(), std::next(m_data.begin(), static_cast<int64_t>(m_dataEnd)),
+                std::copy(_data.begin(), std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
                           std::back_inserter(to_vector));
-                m_data.swap(to_vector);
+                _data.swap(to_vector);
 
-                m_maxSize = m_data.size();
+                _maxSize = _data.size();
 
-                m_dataStart = 0;
-                m_dataEnd = 0;
+                _dataStart = 0;
+                _dataEnd = 0;
             }
         }
         else // Buffer should have scrolling behaviour when adding new values
         {
-            m_infiniteBuffer = false;
+            _infiniteBuffer = false;
 
-            if (m_maxSize > targetSize) // We make the buffer smaller
+            if (_maxSize > targetSize) // We make the buffer smaller
             {
-                if (m_dataStart == 0) // Buffer is not scrolled, so shrinking removes the values from the front of the buffer
+                if (_dataStart == 0) // Buffer is not scrolled, so shrinking removes the values from the front of the buffer
                 {
                     // 1, 2, 3, _, _,
                     // 1, 2, 3, _,
-                    if (m_data.size() < targetSize)
+                    if (_data.size() < targetSize)
                     {
-                        m_maxSize = targetSize;
+                        _maxSize = targetSize;
                     }
                     // 1, 2, 3, _, _,
                     // 1, 2, 3,
-                    else if (m_data.size() < m_maxSize)
+                    else if (_data.size() < _maxSize)
                     {
-                        m_data.resize(std::max(m_data.size(), targetSize));
-                        m_maxSize = m_data.size();
+                        _data.resize(std::max(_data.size(), targetSize));
+                        _maxSize = _data.size();
                         resize(targetSize);
                     }
                     // 1, 2, 3,
                     // 2, 3,
                     else
                     {
-                        auto diff = static_cast<int64_t>(m_maxSize - targetSize);
-                        std::copy(std::next(m_data.begin(), diff), m_data.end(), m_data.begin());
-                        m_data.resize(targetSize);
-                        m_maxSize = targetSize;
+                        auto diff = static_cast<int64_t>(_maxSize - targetSize);
+                        std::copy(std::next(_data.begin(), diff), _data.end(), _data.begin());
+                        _data.resize(targetSize);
+                        _maxSize = targetSize;
                     }
                 }
-                else // (m_dataStart != 0) Buffer is scrolled, so the correct values have to be erased from the buffer when shrinking
+                else // (_dataStart != 0) Buffer is scrolled, so the correct values have to be erased from the buffer when shrinking
                 {
                     // 5, 6, _, _, 2, 3, 4,
                     // 5, 6, _, 2, 3, 4,
 
                     // 6, 7, 3, 4, 5,
                     // 6, 7, 4, 5,
-                    auto diff = std::min(m_maxSize - targetSize, m_maxSize - m_dataEnd);
+                    auto diff = std::min(_maxSize - targetSize, _maxSize - _dataEnd);
 
-                    std::copy(std::next(m_data.begin(), static_cast<int64_t>(m_dataEnd + diff)), m_data.end(),
-                              std::next(m_data.begin(), static_cast<int64_t>(m_dataEnd)));
-                    m_maxSize -= diff;
-                    m_data.resize(m_maxSize);
-                    m_dataStart %= m_maxSize;
-                    m_dataEnd %= m_maxSize;
+                    std::copy(std::next(_data.begin(), static_cast<int64_t>(_dataEnd + diff)), _data.end(),
+                              std::next(_data.begin(), static_cast<int64_t>(_dataEnd)));
+                    _maxSize -= diff;
+                    _data.resize(_maxSize);
+                    _dataStart %= _maxSize;
+                    _dataEnd %= _maxSize;
 
                     // 6, 7,
                     // 7,
-                    if (m_maxSize > targetSize)
+                    if (_maxSize > targetSize)
                     {
                         resize(targetSize);
                     }
                 }
             }
-            else if (m_maxSize < targetSize) // We make the buffer bigger
+            else if (_maxSize < targetSize) // We make the buffer bigger
             {
                 // 1, 2, 3, _, _,
                 // 1, 2, 3, _, _, _, _,
-                if (m_dataStart == 0) // Buffer not scrolled, so we can simply reserve more space
+                if (_dataStart == 0) // Buffer not scrolled, so we can simply reserve more space
                 {
-                    m_data.reserve(targetSize);
-                    m_maxSize = targetSize;
+                    _data.reserve(targetSize);
+                    _maxSize = targetSize;
                 }
                 // 6, 7, 3, 4, 5,
                 // 6, 7, _, 3, 4, 5,
-                else // (m_dataStart != 0) // Buffer scrolled, so we need to copy the values to the correct positions
+                else // (_dataStart != 0) // Buffer scrolled, so we need to copy the values to the correct positions
                 {
-                    m_data.resize(targetSize);
+                    _data.resize(targetSize);
 
-                    std::copy_backward(std::next(m_data.begin(), static_cast<int64_t>(m_dataStart)),
-                                       std::next(m_data.begin(), static_cast<int64_t>(m_maxSize)),
-                                       std::next(m_data.begin(), static_cast<int64_t>(targetSize)));
+                    std::copy_backward(std::next(_data.begin(), static_cast<int64_t>(_dataStart)),
+                                       std::next(_data.begin(), static_cast<int64_t>(_maxSize)),
+                                       std::next(_data.begin(), static_cast<int64_t>(targetSize)));
 
-                    auto diff = targetSize - m_maxSize;
-                    m_dataStart += diff;
+                    auto diff = targetSize - _maxSize;
+                    _dataStart += diff;
 
-                    m_maxSize = targetSize;
+                    _maxSize = targetSize;
                 }
             }
         }
@@ -293,11 +293,11 @@ class ScrollingBuffer
     [[nodiscard]] T max() const
     {
         T currentMax = front();
-        for (size_t i = 0; i < m_data.size(); i++)
+        for (size_t i = 0; i < _data.size(); i++)
         {
-            if (i >= m_dataStart || i < m_dataEnd)
+            if (i >= _dataStart || i < _dataEnd)
             {
-                currentMax = std::max(currentMax, m_data.at(i));
+                currentMax = std::max(currentMax, _data.at(i));
             }
         }
         return currentMax;
@@ -307,11 +307,11 @@ class ScrollingBuffer
     [[nodiscard]] T min() const
     {
         T currentMin = front();
-        for (size_t i = 0; i < m_data.size(); i++)
+        for (size_t i = 0; i < _data.size(); i++)
         {
-            if (i >= m_dataStart || i < m_dataEnd)
+            if (i >= _dataStart || i < _dataEnd)
             {
-                currentMin = std::min(currentMin, m_data.at(i));
+                currentMin = std::min(currentMin, _data.at(i));
             }
         }
         return currentMin;
@@ -320,13 +320,13 @@ class ScrollingBuffer
     /// @brief Returns the data index of the first element in the buffer
     [[nodiscard]] int offset() const
     {
-        return static_cast<int>(m_dataStart);
+        return static_cast<int>(_dataStart);
     }
 
     /// @brief Returns a pointer to the raw data array (not in scrolled order)
     [[nodiscard]] const T* data()
     {
-        return m_data.data();
+        return _data.data();
     }
 
     /// @brief Prints the buffer to the output stream
@@ -335,9 +335,9 @@ class ScrollingBuffer
     /// @return The output stream given as parameter
     friend std::ostream& operator<<(std::ostream& os, const ScrollingBuffer<T>& buffer)
     {
-        for (size_t i = 0; i < buffer.m_maxSize; i++)
+        for (size_t i = 0; i < buffer._maxSize; i++)
         {
-            os << ((i < buffer.m_data.size() && (i >= buffer.m_dataStart || i < buffer.m_dataEnd)) ? std::to_string(buffer.m_data.at(i)) : "_")
+            os << ((i < buffer._data.size() && (i >= buffer._dataStart || i < buffer._dataEnd)) ? std::to_string(buffer._data.at(i)) : "_")
                << ", ";
         }
         return os << '\n';
@@ -345,16 +345,16 @@ class ScrollingBuffer
 
   private:
     /// A Flag whether the buffer is currently growing every time when values are inserted or if it is overwriting itself from the start when full
-    bool m_infiniteBuffer{ false };
+    bool _infiniteBuffer{ false };
     /// The maximum amount of objects to store in the buffer before overwriting itself when full
-    /// When m_infiniteBuffer == true, then this corresponds to m_data.size()
-    size_t m_maxSize;
+    /// When _infiniteBuffer == true, then this corresponds to m_data.size()
+    size_t _maxSize;
     /// The index of the first element in the scrolling buffer (0 if the buffer is empty)
-    size_t m_dataStart{ 0 };
+    size_t _dataStart{ 0 };
     /// The index one after the last element (0 if the buffer is empty)
-    size_t m_dataEnd{ 0 };
+    size_t _dataEnd{ 0 };
     /// The data storage object
-    std::vector<T> m_data;
+    std::vector<T> _data;
 };
 
 } // namespace NAV

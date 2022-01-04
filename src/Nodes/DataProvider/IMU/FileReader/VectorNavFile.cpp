@@ -20,8 +20,8 @@ NAV::VectorNavFile::VectorNavFile()
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 630, 466 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 630, 466 };
 
     nm::CreateOutputPin(this, "Binary Output", Pin::Type::Flow, { NAV::VectorNavBinaryOutput::type() }, &VectorNavFile::pollData);
 }
@@ -48,7 +48,7 @@ std::string NAV::VectorNavFile::category()
 
 void NAV::VectorNavFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(path, "Select File", "Supported types (*.csv *.vnb){.csv,.vnb},.*", { ".csv", ".vnb" }, size_t(id), nameId()))
+    if (gui::widgets::FileDialogLoad(_path, "Select File", "Supported types (*.csv *.vnb){.csv,.vnb},.*", { ".csv", ".vnb" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         initializeNode();
@@ -82,15 +82,15 @@ void NAV::VectorNavFile::guiConfig()
 
         for (size_t i = 0; i < 16; i++)
         {
-            if (i < std::max({ VectorNavSensor::binaryGroupCommon.size(), VectorNavSensor::binaryGroupTime.size(), VectorNavSensor::binaryGroupIMU.size(),
-                               VectorNavSensor::binaryGroupGNSS.size(), VectorNavSensor::binaryGroupAttitude.size(), VectorNavSensor::binaryGroupINS.size() }))
+            if (i < std::max({ VectorNavSensor::_binaryGroupCommon.size(), VectorNavSensor::_binaryGroupTime.size(), VectorNavSensor::_binaryGroupIMU.size(),
+                               VectorNavSensor::_binaryGroupGNSS.size(), VectorNavSensor::_binaryGroupAttitude.size(), VectorNavSensor::_binaryGroupINS.size() }))
             {
                 ImGui::TableNextRow();
             }
-            if (i < VectorNavSensor::binaryGroupTime.size())
+            if (i < VectorNavSensor::_binaryGroupTime.size())
             {
-                const auto& binaryGroupItem = VectorNavSensor::binaryGroupTime.at(i);
-                TextColored(0, binaryGroupItem.name, binaryOutputRegister.timeField & binaryGroupItem.flagsValue);
+                const auto& binaryGroupItem = VectorNavSensor::_binaryGroupTime.at(i);
+                TextColored(0, binaryGroupItem.name, _binaryOutputRegister.timeField & binaryGroupItem.flagsValue);
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
                     ImGui::BeginTooltip();
@@ -98,10 +98,10 @@ void NAV::VectorNavFile::guiConfig()
                     ImGui::EndTooltip();
                 }
             }
-            if (i < VectorNavSensor::binaryGroupIMU.size())
+            if (i < VectorNavSensor::_binaryGroupIMU.size())
             {
-                const auto& binaryGroupItem = VectorNavSensor::binaryGroupIMU.at(i);
-                TextColored(1, binaryGroupItem.name, binaryOutputRegister.imuField & binaryGroupItem.flagsValue);
+                const auto& binaryGroupItem = VectorNavSensor::_binaryGroupIMU.at(i);
+                TextColored(1, binaryGroupItem.name, _binaryOutputRegister.imuField & binaryGroupItem.flagsValue);
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
                     ImGui::BeginTooltip();
@@ -109,10 +109,10 @@ void NAV::VectorNavFile::guiConfig()
                     ImGui::EndTooltip();
                 }
             }
-            if (i < VectorNavSensor::binaryGroupGNSS.size())
+            if (i < VectorNavSensor::_binaryGroupGNSS.size())
             {
-                const auto& binaryGroupItem = VectorNavSensor::binaryGroupGNSS.at(i);
-                TextColored(2, binaryGroupItem.name, binaryOutputRegister.gpsField & binaryGroupItem.flagsValue);
+                const auto& binaryGroupItem = VectorNavSensor::_binaryGroupGNSS.at(i);
+                TextColored(2, binaryGroupItem.name, _binaryOutputRegister.gpsField & binaryGroupItem.flagsValue);
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
                     ImGui::BeginTooltip();
@@ -120,10 +120,10 @@ void NAV::VectorNavFile::guiConfig()
                     ImGui::EndTooltip();
                 }
             }
-            if (i < VectorNavSensor::binaryGroupAttitude.size())
+            if (i < VectorNavSensor::_binaryGroupAttitude.size())
             {
-                const auto& binaryGroupItem = VectorNavSensor::binaryGroupAttitude.at(i);
-                TextColored(3, binaryGroupItem.name, binaryOutputRegister.attitudeField & binaryGroupItem.flagsValue);
+                const auto& binaryGroupItem = VectorNavSensor::_binaryGroupAttitude.at(i);
+                TextColored(3, binaryGroupItem.name, _binaryOutputRegister.attitudeField & binaryGroupItem.flagsValue);
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
                     ImGui::BeginTooltip();
@@ -131,10 +131,10 @@ void NAV::VectorNavFile::guiConfig()
                     ImGui::EndTooltip();
                 }
             }
-            if (i < VectorNavSensor::binaryGroupINS.size())
+            if (i < VectorNavSensor::_binaryGroupINS.size())
             {
-                const auto& binaryGroupItem = VectorNavSensor::binaryGroupINS.at(i);
-                TextColored(4, binaryGroupItem.name, binaryOutputRegister.insField & binaryGroupItem.flagsValue);
+                const auto& binaryGroupItem = VectorNavSensor::_binaryGroupINS.at(i);
+                TextColored(4, binaryGroupItem.name, _binaryOutputRegister.insField & binaryGroupItem.flagsValue);
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
                     ImGui::BeginTooltip();
@@ -142,10 +142,10 @@ void NAV::VectorNavFile::guiConfig()
                     ImGui::EndTooltip();
                 }
             }
-            if (i < VectorNavSensor::binaryGroupGNSS.size())
+            if (i < VectorNavSensor::_binaryGroupGNSS.size())
             {
-                const auto& binaryGroupItem = VectorNavSensor::binaryGroupGNSS.at(i);
-                TextColored(5, binaryGroupItem.name, binaryOutputRegister.gps2Field & binaryGroupItem.flagsValue);
+                const auto& binaryGroupItem = VectorNavSensor::_binaryGroupGNSS.at(i);
+                TextColored(5, binaryGroupItem.name, _binaryOutputRegister.gps2Field & binaryGroupItem.flagsValue);
                 if (ImGui::IsItemHovered() && binaryGroupItem.tooltip != nullptr)
                 {
                     ImGui::BeginTooltip();
@@ -189,7 +189,7 @@ bool NAV::VectorNavFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    messageCount = 0;
+    _messageCount = 0;
 
     return FileReader::initialize();
 }
@@ -212,14 +212,14 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
 {
     LOG_TRACE("called");
 
-    std::string filepath = path;
-    if (!path.starts_with('/') && !path.starts_with('~'))
+    std::string filepath = _path;
+    if (!_path.starts_with('/') && !_path.starts_with('~'))
     {
-        filepath = flow::GetProgramRootPath() + '/' + path;
+        filepath = flow::GetProgramRootPath() + '/' + _path;
     }
 
     auto filestreamHeader = std::ifstream(filepath);
-    if (filestream.good())
+    if (_filestream.good())
     {
         std::array<char, std::string_view("GpsCycle").length()> buffer{};
         filestreamHeader.read(buffer.data(), buffer.size());
@@ -239,18 +239,18 @@ NAV::FileReader::FileType NAV::VectorNavFile::determineFileType()
 
 void NAV::VectorNavFile::readHeader()
 {
-    if (fileType == FileType::CSV)
+    if (_fileType == FileType::CSV)
     {
-        binaryOutputRegister.timeField = vn::protocol::uart::TimeGroup::TIMEGROUP_NONE;
-        binaryOutputRegister.imuField = vn::protocol::uart::ImuGroup::IMUGROUP_NONE;
-        binaryOutputRegister.gpsField = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
-        binaryOutputRegister.attitudeField = vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE;
-        binaryOutputRegister.insField = vn::protocol::uart::InsGroup::INSGROUP_NONE;
-        binaryOutputRegister.gps2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
+        _binaryOutputRegister.timeField = vn::protocol::uart::TimeGroup::TIMEGROUP_NONE;
+        _binaryOutputRegister.imuField = vn::protocol::uart::ImuGroup::IMUGROUP_NONE;
+        _binaryOutputRegister.gpsField = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
+        _binaryOutputRegister.attitudeField = vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE;
+        _binaryOutputRegister.insField = vn::protocol::uart::InsGroup::INSGROUP_NONE;
+        _binaryOutputRegister.gps2Field = vn::protocol::uart::GpsGroup::GPSGROUP_NONE;
 
         // Read header line
         std::string line;
-        std::getline(filestream, line);
+        std::getline(_filestream, line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isalnum(ch); }));
         // Convert line into stream
@@ -277,11 +277,11 @@ void NAV::VectorNavFile::readHeader()
                 bool identified = false;
                 if (group == "Time")
                 {
-                    for (const auto& binaryGroupItem : VectorNavSensor::binaryGroupTime)
+                    for (const auto& binaryGroupItem : VectorNavSensor::_binaryGroupTime)
                     {
                         if (cell == binaryGroupItem.name)
                         {
-                            binaryOutputRegister.timeField |= static_cast<vn::protocol::uart::TimeGroup>(binaryGroupItem.flagsValue);
+                            _binaryOutputRegister.timeField |= static_cast<vn::protocol::uart::TimeGroup>(binaryGroupItem.flagsValue);
                             identified = true;
                             break;
                         }
@@ -289,17 +289,17 @@ void NAV::VectorNavFile::readHeader()
                 }
                 else if (group == "IMU")
                 {
-                    for (const auto& binaryGroupItem : VectorNavSensor::binaryGroupIMU)
+                    for (const auto& binaryGroupItem : VectorNavSensor::_binaryGroupIMU)
                     {
                         if (cell == binaryGroupItem.name)
                         {
-                            binaryOutputRegister.imuField |= static_cast<vn::protocol::uart::ImuGroup>(binaryGroupItem.flagsValue);
+                            _binaryOutputRegister.imuField |= static_cast<vn::protocol::uart::ImuGroup>(binaryGroupItem.flagsValue);
                             identified = true;
                             break;
                         }
                         if (cell == "DeltaTime")
                         {
-                            binaryOutputRegister.imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA;
+                            _binaryOutputRegister.imuField |= vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA;
                             identified = true;
                             break;
                         }
@@ -307,11 +307,11 @@ void NAV::VectorNavFile::readHeader()
                 }
                 else if (group == "GNSS1")
                 {
-                    for (const auto& binaryGroupItem : VectorNavSensor::binaryGroupGNSS)
+                    for (const auto& binaryGroupItem : VectorNavSensor::_binaryGroupGNSS)
                     {
                         if (cell == binaryGroupItem.name)
                         {
-                            binaryOutputRegister.gpsField |= static_cast<vn::protocol::uart::GpsGroup>(binaryGroupItem.flagsValue);
+                            _binaryOutputRegister.gpsField |= static_cast<vn::protocol::uart::GpsGroup>(binaryGroupItem.flagsValue);
                             identified = true;
                             break;
                         }
@@ -319,11 +319,11 @@ void NAV::VectorNavFile::readHeader()
                 }
                 else if (group == "Att")
                 {
-                    for (const auto& binaryGroupItem : VectorNavSensor::binaryGroupAttitude)
+                    for (const auto& binaryGroupItem : VectorNavSensor::_binaryGroupAttitude)
                     {
                         if (cell == binaryGroupItem.name)
                         {
-                            binaryOutputRegister.attitudeField |= static_cast<vn::protocol::uart::AttitudeGroup>(binaryGroupItem.flagsValue);
+                            _binaryOutputRegister.attitudeField |= static_cast<vn::protocol::uart::AttitudeGroup>(binaryGroupItem.flagsValue);
                             identified = true;
                             break;
                         }
@@ -331,11 +331,11 @@ void NAV::VectorNavFile::readHeader()
                 }
                 else if (group == "INS")
                 {
-                    for (const auto& binaryGroupItem : VectorNavSensor::binaryGroupINS)
+                    for (const auto& binaryGroupItem : VectorNavSensor::_binaryGroupINS)
                     {
                         if (cell == binaryGroupItem.name)
                         {
-                            binaryOutputRegister.insField |= static_cast<vn::protocol::uart::InsGroup>(binaryGroupItem.flagsValue);
+                            _binaryOutputRegister.insField |= static_cast<vn::protocol::uart::InsGroup>(binaryGroupItem.flagsValue);
                             identified = true;
                             break;
                         }
@@ -343,11 +343,11 @@ void NAV::VectorNavFile::readHeader()
                 }
                 else if (group == "GNSS2")
                 {
-                    for (const auto& binaryGroupItem : VectorNavSensor::binaryGroupGNSS)
+                    for (const auto& binaryGroupItem : VectorNavSensor::_binaryGroupGNSS)
                     {
                         if (cell == binaryGroupItem.name)
                         {
-                            binaryOutputRegister.gps2Field |= static_cast<vn::protocol::uart::GpsGroup>(binaryGroupItem.flagsValue);
+                            _binaryOutputRegister.gps2Field |= static_cast<vn::protocol::uart::GpsGroup>(binaryGroupItem.flagsValue);
                             identified = true;
                             break;
                         }
@@ -371,33 +371,33 @@ void NAV::VectorNavFile::readHeader()
     }
     else // if (fileType == FileType::BINARY)
     {
-        filestream.read(reinterpret_cast<char*>(&binaryOutputRegister.timeField), sizeof(vn::protocol::uart::TimeGroup));
-        filestream.read(reinterpret_cast<char*>(&binaryOutputRegister.imuField), sizeof(vn::protocol::uart::ImuGroup));
-        filestream.read(reinterpret_cast<char*>(&binaryOutputRegister.gpsField), sizeof(vn::protocol::uart::GpsGroup));
-        filestream.read(reinterpret_cast<char*>(&binaryOutputRegister.attitudeField), sizeof(vn::protocol::uart::AttitudeGroup));
-        filestream.read(reinterpret_cast<char*>(&binaryOutputRegister.insField), sizeof(vn::protocol::uart::InsGroup));
-        filestream.read(reinterpret_cast<char*>(&binaryOutputRegister.gps2Field), sizeof(vn::protocol::uart::GpsGroup));
+        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.timeField), sizeof(vn::protocol::uart::TimeGroup));
+        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.imuField), sizeof(vn::protocol::uart::ImuGroup));
+        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.gpsField), sizeof(vn::protocol::uart::GpsGroup));
+        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.attitudeField), sizeof(vn::protocol::uart::AttitudeGroup));
+        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.insField), sizeof(vn::protocol::uart::InsGroup));
+        _filestream.read(reinterpret_cast<char*>(&_binaryOutputRegister.gps2Field), sizeof(vn::protocol::uart::GpsGroup));
     }
 }
 
 std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
 {
-    auto obs = std::make_shared<VectorNavBinaryOutput>(imuPos);
+    auto obs = std::make_shared<VectorNavBinaryOutput>(_imuPos);
 
     // Get current position
-    auto len = filestream.tellg();
+    auto len = _filestream.tellg();
 
-    if (fileType == FileType::CSV)
+    if (_fileType == FileType::CSV)
     {
         // Read line
         std::string line;
-        std::getline(filestream, line);
+        std::getline(_filestream, line);
         // Remove any starting non text characters
         line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
 
         if (line.empty())
         {
-            LOG_DEBUG("{}: End of file reached after {} lines", nameId(), messageCount);
+            LOG_DEBUG("{}: End of file reached after {} lines", nameId(), _messageCount);
             return nullptr;
         }
 
@@ -427,39 +427,39 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             obs->insTime = InsTime(gpsCycle, gpsWeek, tow);
 
             // Group 2 (Time)
-            if (binaryOutputRegister.timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
+            if (_binaryOutputRegister.timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
             {
                 if (!obs->timeOutputs)
                 {
                     obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
-                    obs->timeOutputs->timeField |= binaryOutputRegister.timeField;
+                    obs->timeOutputs->timeField |= _binaryOutputRegister.timeField;
                 }
 
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
                 {
                     obs->timeOutputs->timeStartup = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
                 {
                     obs->timeOutputs->timeGps = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
                 {
                     obs->timeOutputs->gpsTow = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
                 {
                     obs->timeOutputs->gpsWeek = static_cast<uint16_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN)
                 {
                     obs->timeOutputs->timeSyncIn = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS)
                 {
                     obs->timeOutputs->timePPS = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
                 {
                     obs->timeOutputs->timeUtc.year = static_cast<int8_t>(std::stoi(extractCell()));
                     obs->timeOutputs->timeUtc.month = static_cast<uint8_t>(std::stoul(extractCell()));
@@ -469,15 +469,15 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     obs->timeOutputs->timeUtc.sec = static_cast<uint8_t>(std::stoul(extractCell()));
                     obs->timeOutputs->timeUtc.ms = static_cast<uint16_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT)
                 {
                     obs->timeOutputs->syncInCnt = static_cast<uint32_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT)
                 {
                     obs->timeOutputs->syncOutCnt = static_cast<uint32_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
+                if (_binaryOutputRegister.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
                 {
                     auto timeOk = static_cast<uint8_t>(std::stoul(extractCell()));
                     auto dateOk = static_cast<uint8_t>(std::stoul(extractCell()));
@@ -486,48 +486,48 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
             }
             // Group 3 (IMU)
-            if (binaryOutputRegister.imuField != vn::protocol::uart::ImuGroup::IMUGROUP_NONE)
+            if (_binaryOutputRegister.imuField != vn::protocol::uart::ImuGroup::IMUGROUP_NONE)
             {
                 if (!obs->imuOutputs)
                 {
                     obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
-                    obs->imuOutputs->imuField |= binaryOutputRegister.imuField;
+                    obs->imuOutputs->imuField |= _binaryOutputRegister.imuField;
                 }
 
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS)
                 {
                     obs->imuOutputs->imuStatus = static_cast<uint16_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->imuOutputs->uncompMag = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->imuOutputs->uncompAccel = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->imuOutputs->uncompGyro = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
                 {
                     obs->imuOutputs->temp = std::stof(extractCell());
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES)
                 {
                     obs->imuOutputs->pres = std::stof(extractCell());
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
                 {
                     obs->imuOutputs->deltaTime = std::stof(extractCell());
                     float vecX = std::stof(extractCell());
@@ -535,28 +535,28 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     float vecZ = std::stof(extractCell());
                     obs->imuOutputs->deltaTheta = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->imuOutputs->deltaV = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->imuOutputs->mag = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->imuOutputs->accel = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
+                if (_binaryOutputRegister.imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
@@ -565,15 +565,15 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
             }
             // Group 4 (GNSS1)
-            if (binaryOutputRegister.gpsField != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
+            if (_binaryOutputRegister.gpsField != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
             {
                 if (!obs->gnss1Outputs)
                 {
                     obs->gnss1Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
-                    obs->gnss1Outputs->gnssField |= binaryOutputRegister.gpsField;
+                    obs->gnss1Outputs->gnssField |= _binaryOutputRegister.gpsField;
                 }
 
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                 {
                     obs->gnss1Outputs->timeUtc.year = static_cast<int8_t>(std::stoi(extractCell()));
                     obs->gnss1Outputs->timeUtc.month = static_cast<uint8_t>(std::stoul(extractCell()));
@@ -583,66 +583,66 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     obs->gnss1Outputs->timeUtc.sec = static_cast<uint8_t>(std::stoul(extractCell()));
                     obs->gnss1Outputs->timeUtc.ms = static_cast<uint16_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
                     obs->gnss1Outputs->tow = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {
                     obs->gnss1Outputs->week = static_cast<uint16_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
                 {
                     obs->gnss1Outputs->numSats = static_cast<uint8_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
                 {
                     obs->gnss1Outputs->fix = static_cast<uint8_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                 {
                     double vecX = std::stod(extractCell());
                     double vecY = std::stod(extractCell());
                     double vecZ = std::stod(extractCell());
                     obs->gnss1Outputs->posLla = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                 {
                     double vecX = std::stod(extractCell());
                     double vecY = std::stod(extractCell());
                     double vecZ = std::stod(extractCell());
                     obs->gnss1Outputs->posEcef = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->gnss1Outputs->velNed = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->gnss1Outputs->velEcef = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->gnss1Outputs->posU = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                 {
                     obs->gnss1Outputs->velU = std::stof(extractCell());
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                 {
                     obs->gnss1Outputs->timeU = std::stof(extractCell());
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
                     auto timeOk = static_cast<uint8_t>(std::stoul(extractCell()));
                     auto dateOk = static_cast<uint8_t>(std::stoul(extractCell()));
@@ -650,7 +650,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     obs->gnss1Outputs->timeInfo.status = static_cast<uint8_t>(timeOk << 0U | dateOk << 1U | utcTimeValid << 2U);
                     obs->gnss1Outputs->timeInfo.leapSeconds = static_cast<int8_t>(std::stoi(extractCell()));
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                 {
                     obs->gnss1Outputs->dop.gDop = std::stof(extractCell());
                     obs->gnss1Outputs->dop.pDop = std::stof(extractCell());
@@ -660,7 +660,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     obs->gnss1Outputs->dop.nDop = std::stof(extractCell());
                     obs->gnss1Outputs->dop.eDop = std::stof(extractCell());
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {
                     obs->gnss1Outputs->satInfo.numSats = static_cast<uint8_t>(std::stoul(extractCell()));
                     for (size_t i = 0; i < obs->gnss1Outputs->satInfo.numSats; i++)
@@ -675,7 +675,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                         obs->gnss1Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
                     }
                 }
-                if (binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+                if (_binaryOutputRegister.gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                 {
                     obs->gnss1Outputs->raw.tow = std::stod(extractCell());
                     obs->gnss1Outputs->raw.week = static_cast<uint16_t>(std::stoul(extractCell()));
@@ -697,26 +697,26 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
             }
             // Group 5 (Attitude)
-            if (binaryOutputRegister.attitudeField != vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE)
+            if (_binaryOutputRegister.attitudeField != vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE)
             {
                 if (!obs->attitudeOutputs)
                 {
                     obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
-                    obs->attitudeOutputs->attitudeField |= binaryOutputRegister.attitudeField;
+                    obs->attitudeOutputs->attitudeField |= _binaryOutputRegister.attitudeField;
                 }
 
-                if (binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS)
+                if (_binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS)
                 {
                     obs->attitudeOutputs->vpeStatus = static_cast<uint16_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
+                if (_binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->attitudeOutputs->ypr = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
+                if (_binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
                 {
                     float vecW = std::stof(extractCell());
                     float vecX = std::stof(extractCell());
@@ -724,7 +724,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     float vecZ = std::stof(extractCell());
                     obs->attitudeOutputs->qtn = { vecW, vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
+                if (_binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
                 {
                     float mat00 = std::stof(extractCell());
                     float mat01 = std::stof(extractCell());
@@ -739,35 +739,35 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                         mat10, mat11, mat12,
                         mat20, mat21, mat22;
                 }
-                if (binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
+                if (_binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->attitudeOutputs->magNed = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED)
+                if (_binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->attitudeOutputs->accelNed = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY)
+                if (_binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->attitudeOutputs->linearAccelBody = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED)
+                if (_binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->attitudeOutputs->linearAccelNed = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU)
+                if (_binaryOutputRegister.attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
@@ -776,15 +776,15 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                 }
             }
             // Group 6 (INS)
-            if (binaryOutputRegister.insField != vn::protocol::uart::InsGroup::INSGROUP_NONE)
+            if (_binaryOutputRegister.insField != vn::protocol::uart::InsGroup::INSGROUP_NONE)
             {
                 if (!obs->insOutputs)
                 {
                     obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
-                    obs->insOutputs->insField |= binaryOutputRegister.insField;
+                    obs->insOutputs->insField |= _binaryOutputRegister.insField;
                 }
 
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
                 {
                     auto mode = static_cast<uint8_t>(std::stoul(extractCell()));
                     auto gpsFix = static_cast<uint8_t>(std::stoul(extractCell()));
@@ -797,81 +797,81 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                                                                                 | errorImu << 4U | errorMagPres << 5U | errorGnss << 6U
                                                                                 | gpsHeadingIns << 8U | gpsCompass << 9U);
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
                 {
                     double vecX = std::stod(extractCell());
                     double vecY = std::stod(extractCell());
                     double vecZ = std::stod(extractCell());
                     obs->insOutputs->posLla = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
                 {
                     double vecX = std::stod(extractCell());
                     double vecY = std::stod(extractCell());
                     double vecZ = std::stod(extractCell());
                     obs->insOutputs->posEcef = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->insOutputs->velBody = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->insOutputs->velNed = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->insOutputs->velEcef = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->insOutputs->magEcef = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->insOutputs->accelEcef = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->insOutputs->linearAccelEcef = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_POSU)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_POSU)
                 {
                     obs->insOutputs->posU = std::stof(extractCell());
                 }
-                if (binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_VELU)
+                if (_binaryOutputRegister.insField & vn::protocol::uart::InsGroup::INSGROUP_VELU)
                 {
                     obs->insOutputs->velU = std::stof(extractCell());
                 }
             }
             // Group 7 (GNSS2)
-            if (binaryOutputRegister.gps2Field != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
+            if (_binaryOutputRegister.gps2Field != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
             {
                 if (!obs->gnss2Outputs)
                 {
                     obs->gnss2Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
-                    obs->gnss2Outputs->gnssField |= binaryOutputRegister.gps2Field;
+                    obs->gnss2Outputs->gnssField |= _binaryOutputRegister.gps2Field;
                 }
 
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                 {
                     obs->gnss2Outputs->timeUtc.year = static_cast<int8_t>(std::stoi(extractCell()));
                     obs->gnss2Outputs->timeUtc.month = static_cast<uint8_t>(std::stoul(extractCell()));
@@ -881,66 +881,66 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     obs->gnss2Outputs->timeUtc.sec = static_cast<uint8_t>(std::stoul(extractCell()));
                     obs->gnss2Outputs->timeUtc.ms = static_cast<uint16_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
                     obs->gnss2Outputs->tow = static_cast<uint64_t>(std::stoull(extractCell()));
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {
                     obs->gnss2Outputs->week = static_cast<uint16_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
                 {
                     obs->gnss2Outputs->numSats = static_cast<uint8_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
                 {
                     obs->gnss2Outputs->fix = static_cast<uint8_t>(std::stoul(extractCell()));
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                 {
                     double vecX = std::stod(extractCell());
                     double vecY = std::stod(extractCell());
                     double vecZ = std::stod(extractCell());
                     obs->gnss2Outputs->posLla = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                 {
                     double vecX = std::stod(extractCell());
                     double vecY = std::stod(extractCell());
                     double vecZ = std::stod(extractCell());
                     obs->gnss2Outputs->posEcef = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->gnss2Outputs->velNed = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->gnss2Outputs->velEcef = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                 {
                     float vecX = std::stof(extractCell());
                     float vecY = std::stof(extractCell());
                     float vecZ = std::stof(extractCell());
                     obs->gnss2Outputs->posU = { vecX, vecY, vecZ };
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                 {
                     obs->gnss2Outputs->velU = std::stof(extractCell());
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                 {
                     obs->gnss2Outputs->timeU = std::stof(extractCell());
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
                     auto timeOk = static_cast<uint8_t>(std::stoul(extractCell()));
                     auto dateOk = static_cast<uint8_t>(std::stoul(extractCell()));
@@ -948,7 +948,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     obs->gnss2Outputs->timeInfo.status = static_cast<uint8_t>(timeOk << 0U | dateOk << 1U | utcTimeValid << 2U);
                     obs->gnss2Outputs->timeInfo.leapSeconds = static_cast<int8_t>(std::stoi(extractCell()));
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                 {
                     obs->gnss2Outputs->dop.gDop = std::stof(extractCell());
                     obs->gnss2Outputs->dop.pDop = std::stof(extractCell());
@@ -958,7 +958,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                     obs->gnss2Outputs->dop.nDop = std::stof(extractCell());
                     obs->gnss2Outputs->dop.eDop = std::stof(extractCell());
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {
                     obs->gnss2Outputs->satInfo.numSats = static_cast<uint8_t>(std::stoul(extractCell()));
                     for (size_t i = 0; i < obs->gnss2Outputs->satInfo.numSats; i++)
@@ -973,7 +973,7 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
                         obs->gnss2Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
                     }
                 }
-                if (binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
+                if (_binaryOutputRegister.gps2Field & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                 {
                     obs->gnss2Outputs->raw.tow = std::stod(extractCell());
                     obs->gnss2Outputs->raw.week = static_cast<uint16_t>(std::stoul(extractCell()));
@@ -997,15 +997,15 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
         }
         catch (const std::exception& e)
         {
-            LOG_ERROR("{}: Could not read line {} completely: {}", nameId(), messageCount + 2, e.what());
+            LOG_ERROR("{}: Could not read line {} completely: {}", nameId(), _messageCount + 2, e.what());
             return nullptr;
         }
     }
     else // if (fileType == FileType::BINARY)
     {
         auto readFromFilestream = [&, this](char* __s, std::streamsize __n) {
-            filestream.read(__s, __n);
-            if (!filestream.good())
+            _filestream.read(__s, __n);
+            if (!_filestream.good())
             {
                 throw std::runtime_error("End of file reached");
             }
@@ -1022,452 +1022,452 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
             obs->insTime = InsTime(gpsCycle, gpsWeek, tow);
 
             // Group 2 (Time)
-            if (binaryOutputRegister.timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
+            if (_binaryOutputRegister.timeField != vn::protocol::uart::TimeGroup::TIMEGROUP_NONE)
             {
                 if (!obs->timeOutputs)
                 {
                     obs->timeOutputs = std::make_shared<NAV::sensors::vectornav::TimeOutputs>();
-                    obs->timeOutputs->timeField |= binaryOutputRegister.timeField;
+                    obs->timeOutputs->timeField |= _binaryOutputRegister.timeField;
                 }
 
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTARTUP)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeStartup), sizeof(obs->timeOutputs->timeStartup));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeStartup), sizeof(obs->timeOutputs->timeStartup));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeGps), sizeof(obs->timeOutputs->timeGps));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeGps), sizeof(obs->timeOutputs->timeGps));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->gpsTow), sizeof(obs->timeOutputs->gpsTow));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->gpsTow), sizeof(obs->timeOutputs->gpsTow));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->gpsWeek), sizeof(obs->timeOutputs->gpsWeek));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->gpsWeek), sizeof(obs->timeOutputs->gpsWeek));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeSyncIn), sizeof(obs->timeOutputs->timeSyncIn));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeSyncIn), sizeof(obs->timeOutputs->timeSyncIn));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timePPS), sizeof(obs->timeOutputs->timePPS));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timePPS), sizeof(obs->timeOutputs->timePPS));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.year), sizeof(obs->timeOutputs->timeUtc.year));
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.month), sizeof(obs->timeOutputs->timeUtc.month));
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.day), sizeof(obs->timeOutputs->timeUtc.day));
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.hour), sizeof(obs->timeOutputs->timeUtc.hour));
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.min), sizeof(obs->timeOutputs->timeUtc.min));
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.sec), sizeof(obs->timeOutputs->timeUtc.sec));
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.ms), sizeof(obs->timeOutputs->timeUtc.ms));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.year), sizeof(obs->timeOutputs->timeUtc.year));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.month), sizeof(obs->timeOutputs->timeUtc.month));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.day), sizeof(obs->timeOutputs->timeUtc.day));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.hour), sizeof(obs->timeOutputs->timeUtc.hour));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.min), sizeof(obs->timeOutputs->timeUtc.min));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.sec), sizeof(obs->timeOutputs->timeUtc.sec));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeUtc.ms), sizeof(obs->timeOutputs->timeUtc.ms));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->syncInCnt), sizeof(obs->timeOutputs->syncInCnt));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->syncInCnt), sizeof(obs->timeOutputs->syncInCnt));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->syncOutCnt), sizeof(obs->timeOutputs->syncOutCnt));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->syncOutCnt), sizeof(obs->timeOutputs->syncOutCnt));
                 }
                 if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeStatus.status()), sizeof(obs->timeOutputs->timeStatus.status()));
+                    _filestream.read(reinterpret_cast<char*>(&obs->timeOutputs->timeStatus.status()), sizeof(obs->timeOutputs->timeStatus.status()));
                 }
             }
             // Group 3 (IMU)
-            if (binaryOutputRegister.imuField != vn::protocol::uart::ImuGroup::IMUGROUP_NONE)
+            if (_binaryOutputRegister.imuField != vn::protocol::uart::ImuGroup::IMUGROUP_NONE)
             {
                 if (!obs->imuOutputs)
                 {
                     obs->imuOutputs = std::make_shared<NAV::sensors::vectornav::ImuOutputs>();
-                    obs->imuOutputs->imuField |= binaryOutputRegister.imuField;
+                    obs->imuOutputs->imuField |= _binaryOutputRegister.imuField;
                 }
 
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_IMUSTATUS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->imuStatus), sizeof(obs->imuOutputs->imuStatus));
+                    _filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->imuStatus), sizeof(obs->imuOutputs->imuStatus));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPMAG)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->imuOutputs->uncompMag.data()), sizeof(obs->imuOutputs->uncompMag));
+                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->uncompMag.data()), sizeof(obs->imuOutputs->uncompMag));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPACCEL)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->imuOutputs->uncompAccel.data()), sizeof(obs->imuOutputs->uncompAccel));
+                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->uncompAccel.data()), sizeof(obs->imuOutputs->uncompAccel));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_UNCOMPGYRO)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->imuOutputs->uncompGyro.data()), sizeof(obs->imuOutputs->uncompGyro));
+                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->uncompGyro.data()), sizeof(obs->imuOutputs->uncompGyro));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_TEMP)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->temp), sizeof(obs->imuOutputs->temp));
+                    _filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->temp), sizeof(obs->imuOutputs->temp));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_PRES)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->pres), sizeof(obs->imuOutputs->pres));
+                    _filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->pres), sizeof(obs->imuOutputs->pres));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTATHETA)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->deltaTime), sizeof(obs->imuOutputs->deltaTime));
-                    filestream.read(reinterpret_cast<char*>(obs->imuOutputs->deltaTheta.data()), sizeof(obs->imuOutputs->deltaTheta));
+                    _filestream.read(reinterpret_cast<char*>(&obs->imuOutputs->deltaTime), sizeof(obs->imuOutputs->deltaTime));
+                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->deltaTheta.data()), sizeof(obs->imuOutputs->deltaTheta));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_DELTAVEL)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->imuOutputs->deltaV.data()), sizeof(obs->imuOutputs->deltaV));
+                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->deltaV.data()), sizeof(obs->imuOutputs->deltaV));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_MAG)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->imuOutputs->mag.data()), sizeof(obs->imuOutputs->mag));
+                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->mag.data()), sizeof(obs->imuOutputs->mag));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ACCEL)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->imuOutputs->accel.data()), sizeof(obs->imuOutputs->accel));
+                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->accel.data()), sizeof(obs->imuOutputs->accel));
                 }
                 if (obs->imuOutputs->imuField & vn::protocol::uart::ImuGroup::IMUGROUP_ANGULARRATE)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->imuOutputs->angularRate.data()), sizeof(obs->imuOutputs->angularRate));
+                    _filestream.read(reinterpret_cast<char*>(obs->imuOutputs->angularRate.data()), sizeof(obs->imuOutputs->angularRate));
                 }
             }
             // Group 4 (GNSS1)
-            if (binaryOutputRegister.gpsField != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
+            if (_binaryOutputRegister.gpsField != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
             {
                 if (!obs->gnss1Outputs)
                 {
                     obs->gnss1Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
-                    obs->gnss1Outputs->gnssField |= binaryOutputRegister.gpsField;
+                    obs->gnss1Outputs->gnssField |= _binaryOutputRegister.gpsField;
                 }
 
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.year), sizeof(obs->gnss1Outputs->timeUtc.year));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.month), sizeof(obs->gnss1Outputs->timeUtc.month));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.day), sizeof(obs->gnss1Outputs->timeUtc.day));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.hour), sizeof(obs->gnss1Outputs->timeUtc.hour));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.min), sizeof(obs->gnss1Outputs->timeUtc.min));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.sec), sizeof(obs->gnss1Outputs->timeUtc.sec));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.ms), sizeof(obs->gnss1Outputs->timeUtc.ms));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.year), sizeof(obs->gnss1Outputs->timeUtc.year));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.month), sizeof(obs->gnss1Outputs->timeUtc.month));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.day), sizeof(obs->gnss1Outputs->timeUtc.day));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.hour), sizeof(obs->gnss1Outputs->timeUtc.hour));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.min), sizeof(obs->gnss1Outputs->timeUtc.min));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.sec), sizeof(obs->gnss1Outputs->timeUtc.sec));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeUtc.ms), sizeof(obs->gnss1Outputs->timeUtc.ms));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->tow), sizeof(obs->gnss1Outputs->tow));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->tow), sizeof(obs->gnss1Outputs->tow));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->week), sizeof(obs->gnss1Outputs->week));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->week), sizeof(obs->gnss1Outputs->week));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->numSats), sizeof(obs->gnss1Outputs->numSats));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->numSats), sizeof(obs->gnss1Outputs->numSats));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->fix), sizeof(obs->gnss1Outputs->fix));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->fix), sizeof(obs->gnss1Outputs->fix));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->posLla.data()), sizeof(obs->gnss1Outputs->posLla));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->posLla.data()), sizeof(obs->gnss1Outputs->posLla));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->posEcef.data()), sizeof(obs->gnss1Outputs->posEcef));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->posEcef.data()), sizeof(obs->gnss1Outputs->posEcef));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->velNed.data()), sizeof(obs->gnss1Outputs->velNed));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->velNed.data()), sizeof(obs->gnss1Outputs->velNed));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->velEcef.data()), sizeof(obs->gnss1Outputs->velEcef));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->velEcef.data()), sizeof(obs->gnss1Outputs->velEcef));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->posU.data()), sizeof(obs->gnss1Outputs->posU));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss1Outputs->posU.data()), sizeof(obs->gnss1Outputs->posU));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->velU), sizeof(obs->gnss1Outputs->velU));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->velU), sizeof(obs->gnss1Outputs->velU));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeU), sizeof(obs->gnss1Outputs->timeU));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeU), sizeof(obs->gnss1Outputs->timeU));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.status.status()), sizeof(obs->gnss1Outputs->timeInfo.status.status()));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.leapSeconds), sizeof(obs->gnss1Outputs->timeInfo.leapSeconds));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.status.status()), sizeof(obs->gnss1Outputs->timeInfo.status.status()));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->timeInfo.leapSeconds), sizeof(obs->gnss1Outputs->timeInfo.leapSeconds));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.gDop), sizeof(obs->gnss1Outputs->dop.gDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.pDop), sizeof(obs->gnss1Outputs->dop.pDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.tDop), sizeof(obs->gnss1Outputs->dop.tDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.vDop), sizeof(obs->gnss1Outputs->dop.vDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.hDop), sizeof(obs->gnss1Outputs->dop.hDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.nDop), sizeof(obs->gnss1Outputs->dop.nDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.eDop), sizeof(obs->gnss1Outputs->dop.eDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.gDop), sizeof(obs->gnss1Outputs->dop.gDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.pDop), sizeof(obs->gnss1Outputs->dop.pDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.tDop), sizeof(obs->gnss1Outputs->dop.tDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.vDop), sizeof(obs->gnss1Outputs->dop.vDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.hDop), sizeof(obs->gnss1Outputs->dop.hDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.nDop), sizeof(obs->gnss1Outputs->dop.nDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->dop.eDop), sizeof(obs->gnss1Outputs->dop.eDop));
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->satInfo.numSats), sizeof(obs->gnss1Outputs->satInfo.numSats));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->satInfo.numSats), sizeof(obs->gnss1Outputs->satInfo.numSats));
                     obs->gnss1Outputs->satInfo.satellites.resize(obs->gnss1Outputs->satInfo.numSats);
 
                     for (auto& satellite : obs->gnss1Outputs->satInfo.satellites)
                     {
-                        filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
-                        filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
-                        filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
-                        filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
-                        filestream.read(reinterpret_cast<char*>(&satellite.qi), sizeof(satellite.qi));
-                        filestream.read(reinterpret_cast<char*>(&satellite.el), sizeof(satellite.el));
-                        filestream.read(reinterpret_cast<char*>(&satellite.az), sizeof(satellite.az));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.qi), sizeof(satellite.qi));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.el), sizeof(satellite.el));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.az), sizeof(satellite.az));
                     }
                 }
                 if (obs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.tow), sizeof(obs->gnss1Outputs->raw.tow));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.week), sizeof(obs->gnss1Outputs->raw.week));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.numSats), sizeof(obs->gnss1Outputs->raw.numSats));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.tow), sizeof(obs->gnss1Outputs->raw.tow));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.week), sizeof(obs->gnss1Outputs->raw.week));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss1Outputs->raw.numSats), sizeof(obs->gnss1Outputs->raw.numSats));
                     obs->gnss1Outputs->raw.satellites.resize(obs->gnss1Outputs->raw.numSats);
 
                     for (auto& satellite : obs->gnss1Outputs->raw.satellites)
                     {
-                        filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
-                        filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
-                        filestream.read(reinterpret_cast<char*>(&satellite.freq), sizeof(satellite.freq));
-                        filestream.read(reinterpret_cast<char*>(&satellite.chan), sizeof(satellite.chan));
-                        filestream.read(reinterpret_cast<char*>(&satellite.slot), sizeof(satellite.slot));
-                        filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
-                        filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
-                        filestream.read(reinterpret_cast<char*>(&satellite.pr), sizeof(satellite.pr));
-                        filestream.read(reinterpret_cast<char*>(&satellite.cp), sizeof(satellite.cp));
-                        filestream.read(reinterpret_cast<char*>(&satellite.dp), sizeof(satellite.dp));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.freq), sizeof(satellite.freq));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.chan), sizeof(satellite.chan));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.slot), sizeof(satellite.slot));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.pr), sizeof(satellite.pr));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.cp), sizeof(satellite.cp));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.dp), sizeof(satellite.dp));
                     }
                 }
             }
             // Group 5 (Attitude)
-            if (binaryOutputRegister.attitudeField != vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE)
+            if (_binaryOutputRegister.attitudeField != vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_NONE)
             {
                 if (!obs->attitudeOutputs)
                 {
                     obs->attitudeOutputs = std::make_shared<NAV::sensors::vectornav::AttitudeOutputs>();
-                    obs->attitudeOutputs->attitudeField |= binaryOutputRegister.attitudeField;
+                    obs->attitudeOutputs->attitudeField |= _binaryOutputRegister.attitudeField;
                 }
 
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_VPESTATUS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->attitudeOutputs->vpeStatus.status()), sizeof(obs->attitudeOutputs->vpeStatus.status()));
+                    _filestream.read(reinterpret_cast<char*>(&obs->attitudeOutputs->vpeStatus.status()), sizeof(obs->attitudeOutputs->vpeStatus.status()));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->ypr.data()), sizeof(obs->attitudeOutputs->ypr));
+                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->ypr.data()), sizeof(obs->attitudeOutputs->ypr));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->qtn.coeffs().data()), sizeof(obs->attitudeOutputs->qtn));
+                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->qtn.coeffs().data()), sizeof(obs->attitudeOutputs->qtn));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->dcm.data()), sizeof(obs->attitudeOutputs->dcm));
+                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->dcm.data()), sizeof(obs->attitudeOutputs->dcm));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_MAGNED)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->magNed.data()), sizeof(obs->attitudeOutputs->magNed));
+                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->magNed.data()), sizeof(obs->attitudeOutputs->magNed));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_ACCELNED)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->accelNed.data()), sizeof(obs->attitudeOutputs->accelNed));
+                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->accelNed.data()), sizeof(obs->attitudeOutputs->accelNed));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELBODY)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->linearAccelBody.data()), sizeof(obs->attitudeOutputs->linearAccelBody));
+                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->linearAccelBody.data()), sizeof(obs->attitudeOutputs->linearAccelBody));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_LINEARACCELNED)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->linearAccelNed.data()), sizeof(obs->attitudeOutputs->linearAccelNed));
+                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->linearAccelNed.data()), sizeof(obs->attitudeOutputs->linearAccelNed));
                 }
                 if (obs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YPRU)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->yprU.data()), sizeof(obs->attitudeOutputs->yprU));
+                    _filestream.read(reinterpret_cast<char*>(obs->attitudeOutputs->yprU.data()), sizeof(obs->attitudeOutputs->yprU));
                 }
             }
             // Group 6 (INS)
-            if (binaryOutputRegister.insField != vn::protocol::uart::InsGroup::INSGROUP_NONE)
+            if (_binaryOutputRegister.insField != vn::protocol::uart::InsGroup::INSGROUP_NONE)
             {
                 if (!obs->insOutputs)
                 {
                     obs->insOutputs = std::make_shared<NAV::sensors::vectornav::InsOutputs>();
-                    obs->insOutputs->insField |= binaryOutputRegister.insField;
+                    obs->insOutputs->insField |= _binaryOutputRegister.insField;
                 }
 
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_INSSTATUS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->insOutputs->insStatus.status()), sizeof(obs->insOutputs->insStatus.status()));
+                    _filestream.read(reinterpret_cast<char*>(&obs->insOutputs->insStatus.status()), sizeof(obs->insOutputs->insStatus.status()));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->insOutputs->posLla.data()), sizeof(obs->insOutputs->posLla));
+                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->posLla.data()), sizeof(obs->insOutputs->posLla));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->insOutputs->posEcef.data()), sizeof(obs->insOutputs->posEcef));
+                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->posEcef.data()), sizeof(obs->insOutputs->posEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->insOutputs->velBody.data()), sizeof(obs->insOutputs->velBody));
+                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->velBody.data()), sizeof(obs->insOutputs->velBody));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->insOutputs->velNed.data()), sizeof(obs->insOutputs->velNed));
+                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->velNed.data()), sizeof(obs->insOutputs->velNed));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->insOutputs->velEcef.data()), sizeof(obs->insOutputs->velEcef));
+                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->velEcef.data()), sizeof(obs->insOutputs->velEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_MAGECEF)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->insOutputs->magEcef.data()), sizeof(obs->insOutputs->magEcef));
+                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->magEcef.data()), sizeof(obs->insOutputs->magEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_ACCELECEF)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->insOutputs->accelEcef.data()), sizeof(obs->insOutputs->accelEcef));
+                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->accelEcef.data()), sizeof(obs->insOutputs->accelEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_LINEARACCELECEF)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->insOutputs->linearAccelEcef.data()), sizeof(obs->insOutputs->linearAccelEcef));
+                    _filestream.read(reinterpret_cast<char*>(obs->insOutputs->linearAccelEcef.data()), sizeof(obs->insOutputs->linearAccelEcef));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSU)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->insOutputs->posU), sizeof(obs->insOutputs->posU));
+                    _filestream.read(reinterpret_cast<char*>(&obs->insOutputs->posU), sizeof(obs->insOutputs->posU));
                 }
                 if (obs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELU)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->insOutputs->velU), sizeof(obs->insOutputs->velU));
+                    _filestream.read(reinterpret_cast<char*>(&obs->insOutputs->velU), sizeof(obs->insOutputs->velU));
                 }
             }
             // Group 7 (GNSS2)
-            if (binaryOutputRegister.gps2Field != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
+            if (_binaryOutputRegister.gps2Field != vn::protocol::uart::GpsGroup::GPSGROUP_NONE)
             {
                 if (!obs->gnss2Outputs)
                 {
                     obs->gnss2Outputs = std::make_shared<NAV::sensors::vectornav::GnssOutputs>();
-                    obs->gnss2Outputs->gnssField |= binaryOutputRegister.gps2Field;
+                    obs->gnss2Outputs->gnssField |= _binaryOutputRegister.gps2Field;
                 }
 
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_UTC)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.year), sizeof(obs->gnss2Outputs->timeUtc.year));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.month), sizeof(obs->gnss2Outputs->timeUtc.month));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.day), sizeof(obs->gnss2Outputs->timeUtc.day));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.hour), sizeof(obs->gnss2Outputs->timeUtc.hour));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.min), sizeof(obs->gnss2Outputs->timeUtc.min));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.sec), sizeof(obs->gnss2Outputs->timeUtc.sec));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.ms), sizeof(obs->gnss2Outputs->timeUtc.ms));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.year), sizeof(obs->gnss2Outputs->timeUtc.year));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.month), sizeof(obs->gnss2Outputs->timeUtc.month));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.day), sizeof(obs->gnss2Outputs->timeUtc.day));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.hour), sizeof(obs->gnss2Outputs->timeUtc.hour));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.min), sizeof(obs->gnss2Outputs->timeUtc.min));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.sec), sizeof(obs->gnss2Outputs->timeUtc.sec));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeUtc.ms), sizeof(obs->gnss2Outputs->timeUtc.ms));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TOW)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->tow), sizeof(obs->gnss2Outputs->tow));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->tow), sizeof(obs->gnss2Outputs->tow));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_WEEK)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->week), sizeof(obs->gnss2Outputs->week));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->week), sizeof(obs->gnss2Outputs->week));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_NUMSATS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->numSats), sizeof(obs->gnss2Outputs->numSats));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->numSats), sizeof(obs->gnss2Outputs->numSats));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_FIX)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->fix), sizeof(obs->gnss2Outputs->fix));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->fix), sizeof(obs->gnss2Outputs->fix));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->posLla.data()), sizeof(obs->gnss2Outputs->posLla));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->posLla.data()), sizeof(obs->gnss2Outputs->posLla));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->posEcef.data()), sizeof(obs->gnss2Outputs->posEcef));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->posEcef.data()), sizeof(obs->gnss2Outputs->posEcef));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELNED)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->velNed.data()), sizeof(obs->gnss2Outputs->velNed));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->velNed.data()), sizeof(obs->gnss2Outputs->velNed));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->velEcef.data()), sizeof(obs->gnss2Outputs->velEcef));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->velEcef.data()), sizeof(obs->gnss2Outputs->velEcef));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSU)
                 {
-                    filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->posU.data()), sizeof(obs->gnss2Outputs->posU));
+                    _filestream.read(reinterpret_cast<char*>(obs->gnss2Outputs->posU.data()), sizeof(obs->gnss2Outputs->posU));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELU)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->velU), sizeof(obs->gnss2Outputs->velU));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->velU), sizeof(obs->gnss2Outputs->velU));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEU)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeU), sizeof(obs->gnss2Outputs->timeU));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeU), sizeof(obs->gnss2Outputs->timeU));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_TIMEINFO)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.status.status()), sizeof(obs->gnss2Outputs->timeInfo.status.status()));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.leapSeconds), sizeof(obs->gnss2Outputs->timeInfo.leapSeconds));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.status.status()), sizeof(obs->gnss2Outputs->timeInfo.status.status()));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->timeInfo.leapSeconds), sizeof(obs->gnss2Outputs->timeInfo.leapSeconds));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_DOP)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.gDop), sizeof(obs->gnss2Outputs->dop.gDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.pDop), sizeof(obs->gnss2Outputs->dop.pDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.tDop), sizeof(obs->gnss2Outputs->dop.tDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.vDop), sizeof(obs->gnss2Outputs->dop.vDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.hDop), sizeof(obs->gnss2Outputs->dop.hDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.nDop), sizeof(obs->gnss2Outputs->dop.nDop));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.eDop), sizeof(obs->gnss2Outputs->dop.eDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.gDop), sizeof(obs->gnss2Outputs->dop.gDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.pDop), sizeof(obs->gnss2Outputs->dop.pDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.tDop), sizeof(obs->gnss2Outputs->dop.tDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.vDop), sizeof(obs->gnss2Outputs->dop.vDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.hDop), sizeof(obs->gnss2Outputs->dop.hDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.nDop), sizeof(obs->gnss2Outputs->dop.nDop));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->dop.eDop), sizeof(obs->gnss2Outputs->dop.eDop));
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_SATINFO)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->satInfo.numSats), sizeof(obs->gnss2Outputs->satInfo.numSats));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->satInfo.numSats), sizeof(obs->gnss2Outputs->satInfo.numSats));
                     obs->gnss2Outputs->satInfo.satellites.resize(obs->gnss2Outputs->satInfo.numSats);
 
                     for (auto& satellite : obs->gnss2Outputs->satInfo.satellites)
                     {
-                        filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
-                        filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
-                        filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
-                        filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
-                        filestream.read(reinterpret_cast<char*>(&satellite.qi), sizeof(satellite.qi));
-                        filestream.read(reinterpret_cast<char*>(&satellite.el), sizeof(satellite.el));
-                        filestream.read(reinterpret_cast<char*>(&satellite.az), sizeof(satellite.az));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.qi), sizeof(satellite.qi));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.el), sizeof(satellite.el));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.az), sizeof(satellite.az));
                     }
                 }
                 if (obs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
                 {
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.tow), sizeof(obs->gnss2Outputs->raw.tow));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.week), sizeof(obs->gnss2Outputs->raw.week));
-                    filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.numSats), sizeof(obs->gnss2Outputs->raw.numSats));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.tow), sizeof(obs->gnss2Outputs->raw.tow));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.week), sizeof(obs->gnss2Outputs->raw.week));
+                    _filestream.read(reinterpret_cast<char*>(&obs->gnss2Outputs->raw.numSats), sizeof(obs->gnss2Outputs->raw.numSats));
                     obs->gnss1Outputs->raw.satellites.resize(obs->gnss1Outputs->raw.numSats);
 
                     for (auto& satellite : obs->gnss2Outputs->raw.satellites)
                     {
-                        filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
-                        filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
-                        filestream.read(reinterpret_cast<char*>(&satellite.freq), sizeof(satellite.freq));
-                        filestream.read(reinterpret_cast<char*>(&satellite.chan), sizeof(satellite.chan));
-                        filestream.read(reinterpret_cast<char*>(&satellite.slot), sizeof(satellite.slot));
-                        filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
-                        filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
-                        filestream.read(reinterpret_cast<char*>(&satellite.pr), sizeof(satellite.pr));
-                        filestream.read(reinterpret_cast<char*>(&satellite.cp), sizeof(satellite.cp));
-                        filestream.read(reinterpret_cast<char*>(&satellite.dp), sizeof(satellite.dp));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.sys), sizeof(satellite.sys));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.svId), sizeof(satellite.svId));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.freq), sizeof(satellite.freq));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.chan), sizeof(satellite.chan));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.slot), sizeof(satellite.slot));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.cno), sizeof(satellite.cno));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.flags), sizeof(satellite.flags));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.pr), sizeof(satellite.pr));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.cp), sizeof(satellite.cp));
+                        _filestream.read(reinterpret_cast<char*>(&satellite.dp), sizeof(satellite.dp));
                     }
                 }
             }
         }
         catch (const std::exception& e)
         {
-            LOG_DEBUG("{}: {} after {} messages", nameId(), e.what(), messageCount);
+            LOG_DEBUG("{}: {} after {} messages", nameId(), e.what(), _messageCount);
             return nullptr;
         }
     }
@@ -1475,14 +1475,14 @@ std::shared_ptr<const NAV::NodeData> NAV::VectorNavFile::pollData(bool peek)
     if (peek)
     {
         // Return to position before "Read line".
-        filestream.seekg(len, std::ios_base::beg);
-        messageCount++;
+        _filestream.seekg(len, std::ios_base::beg);
+        _messageCount++;
     }
 
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(OutputPortIndex_VectorNavBinaryOutput, obs);
+        invokeCallbacks(OUTPUT_PORT_INDEX_VECTORNAV_BINARY_OUTPUT, obs);
     }
 
     return obs;

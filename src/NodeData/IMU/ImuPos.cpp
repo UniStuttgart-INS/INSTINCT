@@ -26,27 +26,27 @@ void from_json(const json& j, ImuPos& pos)
 {
     if (j.contains("posAccel_b"))
     {
-        j.at("posAccel_b").get_to(pos.positionAccel_b);
+        j.at("posAccel_b").get_to(pos._positionAccel_b);
     }
     if (j.contains("positionGyro_b"))
     {
-        j.at("positionGyro_b").get_to(pos.positionGyro_b);
+        j.at("positionGyro_b").get_to(pos._positionGyro_b);
     }
     if (j.contains("posMag_b"))
     {
-        j.at("posMag_b").get_to(pos.positionMag_b);
+        j.at("posMag_b").get_to(pos._positionMag_b);
     }
     if (j.contains("quatAccel_bp"))
     {
-        j.at("quatAccel_bp").get_to(pos.quaternionAccel_bp.coeffs());
+        j.at("quatAccel_bp").get_to(pos._quaternionAccel_bp.coeffs());
     }
     if (j.contains("quatGyro_bp"))
     {
-        j.at("quatGyro_bp").get_to(pos.quaternionGyro_bp.coeffs());
+        j.at("quatGyro_bp").get_to(pos._quaternionGyro_bp.coeffs());
     }
     if (j.contains("quatMag_bp"))
     {
-        j.at("quatMag_bp").get_to(pos.quaternionMag_bp.coeffs());
+        j.at("quatMag_bp").get_to(pos._quaternionMag_bp.coeffs());
     }
 }
 

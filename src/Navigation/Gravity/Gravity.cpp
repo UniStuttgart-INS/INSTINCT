@@ -71,7 +71,7 @@ Eigen::Vector3d calcGravitation_n_SomiglianaAltitude(const double& latitude, con
     double k = 1
                - (2 * altitude / InsConst::WGS84_a)
                      * (1 + InsConst::WGS84_f
-                        + (std::pow(InsConst::angularVelocity_ie * InsConst::WGS84_a, 2))
+                        + (std::pow(InsConst::omega_ie * InsConst::WGS84_a, 2))
                               * (InsConst::WGS84_b / InsConst::WGS84_MU))
                + 3 * std::pow(altitude / InsConst::WGS84_a, 2);
 
@@ -88,7 +88,7 @@ Eigen::Vector3d calcGravitation_n_WGS84_Skydel(const double& latitude, const dou
     // Derivation of gravity, i.e. gravitational potential derived after effective radius
     double gravitationMagnitude = InsConst::WGS84_MU * std::pow(radiusSpheroid, -2.0)
                                   - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
-                                  - std::pow(InsConst::angularVelocity_ie_Skydel, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
+                                  - std::pow(InsConst::omega_ie_Skydel, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 
     return { 0, 0, gravitationMagnitude };
 }
@@ -103,7 +103,7 @@ Eigen::Vector3d calcGravitation_n_WGS84(const double& latitude, const double& al
     // Magnitude of the gravity, i.e. without orientation
     double gravityMagnitude = InsConst::WGS84_MU * std::pow(radiusSpheroid, -2.0)
                               - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
-                              - std::pow(InsConst::angularVelocity_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
+                              - std::pow(InsConst::omega_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 
     Eigen::Vector3d gravity_n(0.0, 0.0, gravityMagnitude);
 
@@ -178,8 +178,8 @@ Eigen::Vector3d calcCentrifugalAcceleration(const double& latitude, const double
     double radiusEarthBody = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0)) + std::abs(altitude);
 
     // Centrifugal acceleration - components North and Down (see 'GUT User Guide' eq. 7.4.2)
-    double centrifugalN = InsConst::angularVelocity_ie * InsConst::angularVelocity_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::cos(M_PI_2 - latitudeGeocentric);
-    double centrifugalD = InsConst::angularVelocity_ie * InsConst::angularVelocity_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::sin(M_PI_2 - latitudeGeocentric);
+    double centrifugalN = InsConst::omega_ie * InsConst::omega_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::cos(M_PI_2 - latitudeGeocentric);
+    double centrifugalD = InsConst::omega_ie * InsConst::omega_ie * radiusEarthBody * std::sin(M_PI_2 - latitudeGeocentric) * std::sin(M_PI_2 - latitudeGeocentric);
 
     return { -centrifugalN, 0, -centrifugalD };
 }

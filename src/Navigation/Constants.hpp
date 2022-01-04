@@ -13,18 +13,12 @@ namespace NAV::InsConst
 /// @brief Nominal mean angular velocity of the Earth in [rad/s]
 /// @note D. D. McCarthy, G. Petit (Hrsg.): IERS Conventions (2003) (IERS Technical Note No. 32), Kap. 1: General Definitions and Numerical Standards.
 ///         ftp://tai.bipm.org/iers/conv2003/chapter1/tn32_c1.pdf
-constexpr double angularVelocity_ie = 7.2921151467e-05;
+constexpr double omega_ie = 7.2921151467e-05;
 /// @brief Nominal mean angular velocity of the Earth in [rad/s]. Value implemented by the Skydel GNSS simulator (for compatibility with Skydel's IMU plugin)
-constexpr double angularVelocity_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibility with Skydel's IMU plugin)
+constexpr double omega_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibility with Skydel's IMU plugin)
 
 /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
-const static Eigen::Vector3d angularVelocity_ie_e{ 0.0, 0.0, angularVelocity_ie };
-
-/// Ω_ie_e Cross product Matrix of nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
-const static Eigen::Matrix3d angularVelocityCrossProduct_ie_e{ (Eigen::Matrix3d() << 0, -angularVelocity_ie_e(2), angularVelocity_ie_e(1),
-                                                                angularVelocity_ie_e(2), 0, -angularVelocity_ie_e(0),
-                                                                -angularVelocity_ie_e(1), angularVelocity_ie_e(0), 0)
-                                                                   .finished() };
+const static Eigen::Vector3d omega_ie_e{ 0.0, 0.0, omega_ie };
 
 /// Semi-major axis = equatorial radius (World Geodetic System 1984)
 constexpr double WGS84_a = 6378137.0;
@@ -62,8 +56,8 @@ constexpr double GLO_MU = 3.986005e+14; ///< gravitational constant GLONASS
 constexpr double GLO_J2 = 1.0826257e-3; ///< 2nd zonal harmonic of geopot GLONASS
 constexpr double GLO_RE = 6378136.0;    ///< radius GLONASS
 
-constexpr double GAL_OMG = angularVelocity_ie; ///< earth angular velocity (rad/s) GALILEO
-constexpr double GAL_MU = 3.986004418e+14;     ///< earth gravitational constant GALILEO
+constexpr double GAL_OMG = omega_ie;       ///< earth angular velocity (rad/s) GALILEO
+constexpr double GAL_MU = 3.986004418e+14; ///< earth gravitational constant GALILEO
 
 /// Gravity norm constant [m/s^2]
 constexpr double G_NORM = 9.80665;

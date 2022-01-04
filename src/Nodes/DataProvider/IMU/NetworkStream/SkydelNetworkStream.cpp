@@ -21,12 +21,12 @@ namespace nm = NAV::NodeManager;
 using boost::asio::ip::udp;
 
 NAV::SkydelNetworkStream::SkydelNetworkStream()
-    : m_senderEndpoint(udp::v4(), 4444), m_socket(ioservice, m_senderEndpoint)
+    : _senderEndpoint(udp::v4(), 4444), _socket(_ioservice, _senderEndpoint)
 {
     name = typeStatic();
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 305, 70 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 305, 70 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() });
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
@@ -56,14 +56,14 @@ void NAV::SkydelNetworkStream::guiConfig()
 {
     std::string str;
 
-    if (startCounter < startNow)
+    if (_startCounter < _startNow)
     {
         str = "(loading)";
     }
     else
     {
         std::ostringstream strs;
-        strs << dataRate;
+        strs << _dataRate;
         str = strs.str();
     }
 
@@ -79,16 +79,16 @@ bool NAV::SkydelNetworkStream::resetNode()
 
 void NAV::SkydelNetworkStream::do_receive()
 {
-    m_socket.async_receive_from(
-        boost::asio::buffer(m_data, max_length), m_senderEndpoint,
+    _socket.async_receive_from(
+        boost::asio::buffer(_data, _maxLength), _senderEndpoint,
         [this](boost::system::error_code errorRcvd, std::size_t bytesRcvd) {
             if ((!errorRcvd) && (bytesRcvd > 0))
             {
                 // Splitting the incoming string analogous to 'ImuFile.cpp'
-                std::stringstream lineStream(std::string(m_data.begin(), m_data.end()));
+                std::stringstream lineStream(std::string(_data.begin(), _data.end()));
                 std::string cell;
                 auto obsG = std::make_shared<PosVelAtt>();
-                auto obs = std::make_shared<ImuObs>(this->imuPos);
+                auto obs = std::make_shared<ImuObs>(this->_imuPos);
 
                 //  Inits for simulated measurement variables
                 double posX = 0.0;
@@ -192,54 +192,54 @@ void NAV::SkydelNetworkStream::do_receive()
 
                 if (obs->timeSinceStartup.has_value())
                 {
-                    if (lastMessageTime)
+                    if (_lastMessageTime)
                     {
                         // FIXME: This seems like a bug in clang-tidy. Check if it is working in future versions of clang-tidy
                         // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
-                        if (obs->timeSinceStartup.value() - lastMessageTime >= static_cast<uint64_t>(1.5 / dataRate * 1e9))
+                        if (obs->timeSinceStartup.value() - _lastMessageTime >= static_cast<uint64_t>(1.5 / _dataRate * 1e9))
                         {
                             LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", nameId(),
-                                     lastMessageTime, obs->timeSinceStartup.value(), static_cast<double>(obs->timeSinceStartup.value() - lastMessageTime) * 1e-9);
+                                     _lastMessageTime, obs->timeSinceStartup.value(), static_cast<double>(obs->timeSinceStartup.value() - _lastMessageTime) * 1e-9);
                         }
                     }
-                    lastMessageTime = obs->timeSinceStartup.value();
+                    _lastMessageTime = obs->timeSinceStartup.value();
                 }
 
-                this->invokeCallbacks(OutputPortIndex_GnssObs, obsG);
-                this->invokeCallbacks(OutputPortIndex_ImuObs, obs);
+                this->invokeCallbacks(OUTPUT_PORT_INDEX_GNSS_OBS, obsG);
+                this->invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
 
                 // Data rate (for visualization in GUI)
-                packageCount++;
+                _packageCount++;
 
-                if (startCounter < startNow)
+                if (_startCounter < _startNow)
                 {
-                    packageCount = 0;
-                    startCounter++;
+                    _packageCount = 0;
+                    _startCounter++;
                 }
 
-                if (packageCount == 1)
+                if (_packageCount == 1)
                 {
-                    startPoint = std::chrono::steady_clock::now();
+                    _startPoint = std::chrono::steady_clock::now();
                 }
-                else if (packageCount == packagesNumber)
+                else if (_packageCount == _packagesNumber)
                 {
-                    std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - startPoint;
-                    dataRate = static_cast<double>(packagesNumber - 1) / elapsed_seconds.count();
+                    std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - _startPoint;
+                    _dataRate = static_cast<double>(_packagesNumber - 1) / elapsed_seconds.count();
 
                     // Dynamic adaptation of data rate to a human-readable display update rate in GUI (~ 1 Hz)
-                    if ((dataRate > 2) && (dataRate < 1001)) // restriction on 'reasonable' sensor data rates (Skydel max. is 1000 Hz)
+                    if ((_dataRate > 2) && (_dataRate < 1001)) // restriction on 'reasonable' sensor data rates (Skydel max. is 1000 Hz)
                     {
-                        packagesNumber = static_cast<int>(dataRate);
+                        _packagesNumber = static_cast<int>(_dataRate);
                     }
-                    else if (dataRate >= 1001)
+                    else if (_dataRate >= 1001)
                     {
-                        packagesNumber = 1000;
+                        _packagesNumber = 1000;
                     }
 
-                    packageCount = 0;
+                    _packageCount = 0;
 
                     LOG_DATA("Elapsed Seconds = {}", elapsed_seconds.count());
-                    LOG_DATA("SkydelNetworkStream: dataRate = {}", dataRate);
+                    LOG_DATA("SkydelNetworkStream: dataRate = {}", _dataRate);
                 }
             }
             else
@@ -247,7 +247,7 @@ void NAV::SkydelNetworkStream::do_receive()
                 LOG_ERROR("Error receiving the network stream from Skydel");
             }
 
-            if (!stop)
+            if (!_stop)
             {
                 do_receive();
             }
@@ -258,30 +258,30 @@ bool NAV::SkydelNetworkStream::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    stop = false;
-    packageCount = 0;
-    startCounter = 0;
-    packagesNumber = 2;
+    _stop = false;
+    _packageCount = 0;
+    _startCounter = 0;
+    _packagesNumber = 2;
 
-    lastMessageTime = 0;
+    _lastMessageTime = 0;
 
     do_receive();
 
-    if (isStartup)
+    if (_isStartup)
     {
-        TestThread = std::thread([=, this]() {
-            ioservice.run();
+        _testThread = std::thread([=, this]() {
+            _ioservice.run();
         });
     }
     else
     {
-        TestThread = std::thread([=, this]() {
-            ioservice.restart();
-            ioservice.run();
+        _testThread = std::thread([=, this]() {
+            _ioservice.restart();
+            _ioservice.run();
         });
     }
 
-    isStartup = false;
+    _isStartup = false;
 
     return true;
 }
@@ -290,7 +290,7 @@ void NAV::SkydelNetworkStream::deinitialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    stop = true;
-    ioservice.stop();
-    TestThread.join();
+    _stop = true;
+    _ioservice.stop();
+    _testThread.join();
 }

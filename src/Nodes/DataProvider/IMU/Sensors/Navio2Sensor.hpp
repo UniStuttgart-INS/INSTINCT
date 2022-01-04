@@ -43,7 +43,7 @@ class Navio2Sensor : public Imu
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -57,7 +57,7 @@ class Navio2Sensor : public Imu
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_ImuObs = 0; ///< @brief Flow (ImuObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_IMU_OBS = 0; ///< @brief Flow (ImuObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -76,38 +76,38 @@ class Navio2Sensor : public Imu
 
 #if !__APPLE__ && !defined(WIN32) && !defined(_WIN32) && !defined(__WIN32)
     /// Sensor object
-    std::unique_ptr<InertialSensor> sensor;
+    std::unique_ptr<InertialSensor> _sensor;
 #endif
 
     /// The Imu type
-    ImuType imuType = ImuType::MPU;
+    ImuType _imuType = ImuType::MPU;
 
     /// OutputFrequency to calculate rateDivisor field.
-    int outputFrequency = 100;
+    int _outputFrequency = 100;
 
     /// Timer object to handle async data requests
-    CallbackTimer timer;
+    CallbackTimer _timer;
     /// Start Time to calculate the TimeSinceStartup
-    std::chrono::time_point<std::chrono::steady_clock> startTime;
+    std::chrono::time_point<std::chrono::steady_clock> _startTime;
 
     /// Accelerometer X data, which are read into by the sensor
-    float ax{};
+    float _ax{};
     /// Accelerometer Y data, which are read into by the sensor
-    float ay{};
+    float _ay{};
     /// Accelerometer Z data, which are read into by the sensor
-    float az{};
+    float _az{};
     /// Gyroscope X data, which are read into by the sensor
-    float gx{};
+    float _gx{};
     /// Gyroscope Y data, which are read into by the sensor
-    float gy{};
+    float _gy{};
     /// Gyroscope Z data, which are read into by the sensor
-    float gz{};
+    float _gz{};
     /// Magnetometer X data, which are read into by the sensor
-    float mx{};
+    float _mx{};
     /// Magnetometer Y data, which are read into by the sensor
-    float my{};
+    float _my{};
     /// Magnetometer Z data, which are read into by the sensor
-    float mz{};
+    float _mz{};
 
     /// @brief Function which performs the async data reading
     /// @param[in, out] userData Pointer to the Navio2Sensor object

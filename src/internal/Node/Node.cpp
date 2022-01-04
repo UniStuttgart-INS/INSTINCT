@@ -24,13 +24,13 @@ void NAV::Node::restoreAtferLink(const json& /*j*/) {}
 
 bool NAV::Node::initializeNode()
 {
-    if (!enabled)
+    if (!_isEnabled)
     {
         return false;
     }
 
     // Lock the node against recursive calling
-    isInitializing_ = true;
+    _isInitializing = true;
 
     if (isInitialized())
     {
@@ -53,7 +53,7 @@ bool NAV::Node::initializeNode()
                     if (!connectedNode->initializeNode())
                     {
                         LOG_ERROR("{}: Could not initialize connected node {}", nameId(), connectedNode->nameId());
-                        isInitializing_ = false;
+                        _isInitializing = false;
                         return false;
                     }
                 }
@@ -62,9 +62,9 @@ bool NAV::Node::initializeNode()
     }
 
     // Initialize the node itself
-    isInitialized_ = initialize();
+    _isInitialized = initialize();
 
-    isInitializing_ = false;
+    _isInitializing = false;
 
     return isInitialized();
 }
@@ -72,7 +72,7 @@ bool NAV::Node::initializeNode()
 void NAV::Node::deinitializeNode()
 {
     // Lock the node against recursive calling
-    isDeinitializing_ = true;
+    _isDeinitializing = true;
 
     LOG_DEBUG("{}: Deinitializing Node", nameId());
 
@@ -97,14 +97,14 @@ void NAV::Node::deinitializeNode()
 
     // Deinitialize the node itself
     deinitialize();
-    isInitialized_ = false;
+    _isInitialized = false;
 
-    isDeinitializing_ = false;
+    _isDeinitializing = false;
 }
 
 bool NAV::Node::initialize()
 {
-    return enabled;
+    return _isEnabled;
 }
 
 void NAV::Node::deinitialize() {}
@@ -142,7 +142,7 @@ void NAV::Node::notifyInputValueChanged(size_t portIndex)
 
         if (Pin* startPin = nm::FindPin(connectedLink->startPinId))
         {
-            if (startPin->parentNode && startPin->parentNode->enabled)
+            if (startPin->parentNode && startPin->parentNode->_isEnabled)
             {
                 // Notify the node itself that changes were made
                 startPin->parentNode->notifyOnOutputValueChanged(connectedLink->id);
@@ -169,7 +169,7 @@ void NAV::Node::notifyOutputValueChanged(size_t portIndex)
 {
     for (auto& [node, callback, linkId] : outputPins.at(portIndex).notifyFunc)
     {
-        if (!node->enabled)
+        if (!node->_isEnabled)
         {
             continue;
         }
@@ -203,7 +203,7 @@ void NAV::Node::invokeCallbacks(size_t portIndex, const std::shared_ptr<const NA
         {
             const auto* node = std::get<0>(nodeCallback);
 
-            if (node->enabled && node->isInitialized())
+            if (node->_isEnabled && node->isInitialized())
             {
 #ifdef TESTING
                 const auto& linkId = std::get<2>(nodeCallback);
@@ -254,17 +254,27 @@ std::string NAV::Node::nameId() const
 
 bool NAV::Node::isInitialized() const
 {
-    return isInitialized_;
+    return _isInitialized;
 }
 
 bool NAV::Node::isInitializing() const
 {
-    return isInitializing_;
+    return _isInitializing;
 }
 
 bool NAV::Node::isDeinitializing() const
 {
-    return isDeinitializing_;
+    return _isDeinitializing;
+}
+
+bool NAV::Node::isEnabled() const
+{
+    return _isEnabled;
+}
+
+const ImVec2& NAV::Node::getSize() const
+{
+    return _size;
 }
 
 void NAV::to_json(json& j, const Node& node)
@@ -277,9 +287,9 @@ void NAV::to_json(json& j, const Node& node)
         { "type", node.type() },
         { "kind", std::string(node.kind) },
         { "name", node.name },
-        { "size", node.size.x == 0 && node.size.y == 0 ? node.size : realSize },
+        { "size", node._size.x == 0 && node._size.y == 0 ? node._size : realSize },
         { "pos", ed::GetNodePosition(node.id) },
-        { "enabled", node.enabled },
+        { "enabled", node._isEnabled },
         { "inputPins", node.inputPins },
         { "outputPins", node.outputPins },
     };
@@ -297,11 +307,11 @@ void NAV::from_json(const json& j, Node& node)
     }
     if (j.contains("size"))
     {
-        j.at("size").get_to(node.size);
+        j.at("size").get_to(node._size);
     }
     if (j.contains("enabled"))
     {
-        j.at("enabled").get_to(node.enabled);
+        j.at("enabled").get_to(node._isEnabled);
     }
 
     if (j.contains("inputPins"))
