@@ -442,9 +442,10 @@
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
                 "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": false
+                "showCorrectionsInputPin": false,
+                "velocityUpdateRotationCorrectionEnabled": true
             },
-            "enabled": true,
+            "enabled": false,
             "id": 15,
             "inputPins": [
                 {
@@ -477,14 +478,15 @@
                 "angularRateTransportRateCompensationEnabled": true,
                 "centrifgalAccelerationCompensationEnabled": true,
                 "coriolisAccelerationCompensationEnabled": true,
-                "gravityModel": 2,
-                "integrationAlgorithm": 3,
+                "gravityModel": 3,
+                "integrationAlgorithm": 0,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
                 "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": true
+                "showCorrectionsInputPin": true,
+                "velocityUpdateRotationCorrectionEnabled": false
             },
-            "enabled": false,
+            "enabled": true,
             "id": 163,
             "inputPins": [
                 {
@@ -754,7 +756,7 @@
         "node-250": {
             "data": {
                 "nInputPins": 11,
-                "nPlots": 2,
+                "nPlots": 5,
                 "overridePositionStartValues": false,
                 "pinData": [
                     {
@@ -771,39 +773,354 @@
                             },
                             {
                                 "displayName": "Roll error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Roll",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Pitch error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Pitch",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Yaw error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        4,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Yaw",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "North velocity error [m/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "North",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "East velocity error [m/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "East",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Down velocity error [m/s]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        3,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Down",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Latitude error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Lat",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 0.7490196228027344,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Longitude error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            0,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "legendName": "Lon",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.49803921580314636,
+                                                    "y": 1.0,
+                                                    "z": 0.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             },
                             {
                                 "displayName": "Altitude error [deg]",
-                                "plotOnAxisAndPlotStyle": []
+                                "plotOnAxisAndPlotStyle": [
+                                    [
+                                        2,
+                                        [
+                                            1,
+                                            {
+                                                "color": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "legendName": "Alt",
+                                                "lineType": 1,
+                                                "markerFillColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerOutlineColor": {
+                                                    "w": 1.0,
+                                                    "x": 0.0,
+                                                    "y": 1.0,
+                                                    "z": 1.0
+                                                },
+                                                "markerSize": 1.0,
+                                                "markerStyle": 7,
+                                                "markerWeight": 1.0,
+                                                "markers": false,
+                                                "stride": 0,
+                                                "thickness": 1.0
+                                            }
+                                        ]
+                                    ]
+                                ]
                             }
                         ],
                         "size": 0,
@@ -4976,6 +5293,102 @@
                         "y1AxisLabel": "Gyroscope bias X_b [rad/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Lat/Lon/Alt error",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 256,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Lat/Lon/Alt error",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Lat/Lon error [deg]",
+                        "y2AxisLabel": "Altitude error [m]",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Velocity error",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Velocity error",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Velocity error [m/s]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
+                    },
+                    {
+                        "autoLimitXaxis": true,
+                        "autoLimitYaxis": true,
+                        "headerText": "Angle error",
+                        "leftPaneWidth": 180.0,
+                        "overrideXAxisLabel": false,
+                        "plotFlags": 0,
+                        "rightPaneWidth": 400.0,
+                        "selectedPin": 0,
+                        "selectedXdata": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        "size": {
+                            "x": -1.0,
+                            "y": 300.0
+                        },
+                        "title": "Angle error",
+                        "xAxisLabel": "",
+                        "y1AxisLabel": "Angle error [deg]",
+                        "y2AxisLabel": "",
+                        "y3AxisLabel": ""
                     }
                 ]
             },
@@ -5113,7 +5526,7 @@
                 "angularRateEarthRotationEnabled": true,
                 "angularRateTransportRateEnabled": true,
                 "centrifgalAccelerationEnabled": true,
-                "circularTrajectoryCircleCountForStop": 1.0,
+                "circularTrajectoryCircleCountForStop": 2.0,
                 "circularTrajectoryDirection": 1,
                 "circularTrajectoryHorizontalSpeed": 1.0,
                 "circularTrajectoryOriginAngle": 0.0,
@@ -5863,7 +6276,8 @@
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
                 "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": false
+                "showCorrectionsInputPin": false,
+                "velocityUpdateRotationCorrectionEnabled": true
             },
             "enabled": false,
             "id": 42,
@@ -9427,9 +9841,10 @@
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
                 "prefereUncompensatedData": true,
-                "showCorrectionsInputPin": false
+                "showCorrectionsInputPin": false,
+                "velocityUpdateRotationCorrectionEnabled": true
             },
-            "enabled": true,
+            "enabled": false,
             "id": 98,
             "inputPins": [
                 {
