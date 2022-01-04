@@ -306,11 +306,11 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
 TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
     double time = 86164.099 / 3.0;
-    auto q_ei = trafo::quat_ei(time, InsConst::angularVelocity_ie);
+    auto q_ei = trafo::quat_ei(time, InsConst::omega_ie);
     CHECK(q_ei.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     auto C_ei = q_ei.toRotationMatrix();
-    auto C_ei_ref = DCM_ei(time, InsConst::angularVelocity_ie);
+    auto C_ei_ref = DCM_ei(time, InsConst::omega_ie);
 
     CHECK(C_ei == EigApprox(C_ei_ref).margin(EPSILON).epsilon(0));
 
@@ -318,7 +318,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
 
     // Sidereal day: 23h 56min 4.099s
     auto siderialDay4 = 86164.099 / 4.0;
-    q_ei = trafo::quat_ei(siderialDay4, InsConst::angularVelocity_ie);
+    q_ei = trafo::quat_ei(siderialDay4, InsConst::omega_ie);
     CHECK(q_ei.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
     // Star day: 23h 56min 4.0905s
     // auto starHalfDay = 86164.0905 / 2.0;
@@ -329,7 +329,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
 
     CHECK(x_e == EigApprox(Eigen::Vector3d{ -2.5, -1, 22 }).margin(1e-8).epsilon(0));
 
-    auto q_ie = trafo::quat_ie(siderialDay4, InsConst::angularVelocity_ie);
+    auto q_ie = trafo::quat_ie(siderialDay4, InsConst::omega_ie);
     CHECK(q_ie.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     auto q_identity = q_ie * q_ei;
@@ -383,9 +383,9 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     q_ne = trafo::quat_ne(latitude, longitude);
     CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
     //                    (0, 0, 7.2921151467e-05)
-    x_n = q_ne * InsConst::angularVelocity_ie_e;
+    x_n = q_ne * InsConst::omega_ie_e;
 
-    CHECK(x_n == EigApprox(Eigen::Vector3d{ InsConst::angularVelocity_ie, 0, 0 }).margin(EPSILON));
+    CHECK(x_n == EigApprox(Eigen::Vector3d{ InsConst::omega_ie, 0, 0 }).margin(EPSILON));
 
     /* -------------------------------------------------------------------------------------------------------- */
 
@@ -395,9 +395,9 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     q_ne = trafo::quat_ne(latitude, longitude);
     CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
     //                    (0, 0, 7.2921151467e-05)
-    x_n = q_ne * InsConst::angularVelocity_ie_e;
+    x_n = q_ne * InsConst::omega_ie_e;
 
-    CHECK(x_n == EigApprox(Eigen::Vector3d{ InsConst::angularVelocity_ie / std::sqrt(2), 0, -InsConst::angularVelocity_ie / std::sqrt(2) }).margin(EPSILON));
+    CHECK(x_n == EigApprox(Eigen::Vector3d{ InsConst::omega_ie / std::sqrt(2), 0, -InsConst::omega_ie / std::sqrt(2) }).margin(EPSILON));
 }
 
 TEST_CASE("[InsTransformations] NED <=> Earth-centered-earth-fixed frame conversion", "[InsTransformations]")

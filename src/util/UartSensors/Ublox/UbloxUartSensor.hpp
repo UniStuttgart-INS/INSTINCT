@@ -32,30 +32,30 @@ class UbloxUartSensor
     /// @brief Move assignment operator
     UbloxUartSensor& operator=(UbloxUartSensor&&) = delete;
     /// @brief Arrow operator overload
-    uart::sensors::UartSensor* operator->() { return &sensor; };
+    uart::sensors::UartSensor* operator->() { return &_sensor; };
 
     /// @brief Collects data bytes and searches for packages inside of them
     /// @param[in] dataByte The next data byte
     /// @return nullptr if no packet found yet, otherwise a pointer to the packet
     std::unique_ptr<uart::protocol::Packet> findPacket(uint8_t dataByte);
 
-    static constexpr uint8_t BinarySyncChar1 = 0xB5; ///< µ - First sync character which begins a new binary message
-    static constexpr uint8_t BinarySyncChar2 = 0x62; ///< b - Second sync character which begins a new binary message
-    static constexpr uint8_t AsciiStartChar = '$';   ///< Ascii character which begins a new ascii message
+    static constexpr uint8_t BINARY_SYNC_CHAR_1 = 0xB5; ///< µ - First sync character which begins a new binary message
+    static constexpr uint8_t BINARY_SYNC_CHAR_2 = 0x62; ///< b - Second sync character which begins a new binary message
+    static constexpr uint8_t ASCII_START_CHAR = '$';    ///< Ascii character which begins a new ascii message
 
   private:
     /// Name of the Parent Node
-    const std::string name;
+    const std::string _name;
 
     /// UartSensor object which handles the UART interface
-    uart::sensors::UartSensor sensor{ endianness,
-                                      packetFinderFunction,
-                                      this,
-                                      packetTypeFunction,
-                                      checksumFunction,
-                                      isErrorFunction,
-                                      isResponseFunction,
-                                      packetHeaderLength };
+    uart::sensors::UartSensor _sensor{ ENDIANNESS,
+                                       packetFinderFunction,
+                                       this,
+                                       packetTypeFunction,
+                                       checksumFunction,
+                                       isErrorFunction,
+                                       isResponseFunction,
+                                       PACKET_HEADER_LENGTH };
 
     /// @brief Function which is called to find packets in the provided data buffer
     /// @param[in] data Raw data buffer which has potential packets inside
@@ -86,36 +86,36 @@ class UbloxUartSensor
     /// @param[in] packet The packet to check
     static bool isResponseFunction(const uart::protocol::Packet& packet);
 
-    static constexpr uart::Endianness endianness = uart::Endianness::ENDIAN_LITTLE; ///< Endianess of the sensor
-    static constexpr size_t packetHeaderLength = 2;                                 ///< Length of the header of each packet
-    static constexpr uint8_t AsciiEndChar1 = '\r';                                  ///< First Ascii End character
-    static constexpr uint8_t AsciiEndChar2 = '\n';                                  ///< Second Ascii End character
-    static constexpr uint8_t AsciiEscapeChar = '\0';                                ///< Ascii Escape charater
+    static constexpr uart::Endianness ENDIANNESS = uart::Endianness::ENDIAN_LITTLE; ///< Endianess of the sensor
+    static constexpr size_t PACKET_HEADER_LENGTH = 2;                               ///< Length of the header of each packet
+    static constexpr uint8_t ASCII_END_CHAR_1 = '\r';                               ///< First Ascii End character
+    static constexpr uint8_t ASCII_END_CHAR_2 = '\n';                               ///< Second Ascii End character
+    static constexpr uint8_t ASCII_ESCAPE_CHAR = '\0';                              ///< Ascii Escape charater
 
-    bool currentlyBuildingAsciiPacket{ false };  ///< Flag if currently a ascii packet is built
-    bool currentlyBuildingBinaryPacket{ false }; ///< Flag if currently a binary packet is built
+    bool _currentlyBuildingAsciiPacket{ false };  ///< Flag if currently a ascii packet is built
+    bool _currentlyBuildingBinaryPacket{ false }; ///< Flag if currently a binary packet is built
 
-    bool asciiEndChar1Found{ false };        ///< Flag if the first ascii end character was found
-    bool binarySyncChar2Found{ false };      ///< Flag if the second binary end character was found
-    bool binaryMsgClassFound{ false };       ///< Flag if the message class was found
-    bool binaryMsgIdFound{ false };          ///< Flag if the message id was found
-    bool binaryPayloadLength1Found{ false }; ///< Flag if the first byte of the payload length was found
-    bool binaryPayloadLength2Found{ false }; ///< Flag if the second byte of the payload length was found
+    bool _asciiEndChar1Found{ false };        ///< Flag if the first ascii end character was found
+    bool _binarySyncChar2Found{ false };      ///< Flag if the second binary end character was found
+    bool _binaryMsgClassFound{ false };       ///< Flag if the message class was found
+    bool _binaryMsgIdFound{ false };          ///< Flag if the message id was found
+    bool _binaryPayloadLength1Found{ false }; ///< Flag if the first byte of the payload length was found
+    bool _binaryPayloadLength2Found{ false }; ///< Flag if the second byte of the payload length was found
 
     /// Message class of the current packet
-    uint8_t binaryMsgClass{ 0 };
+    uint8_t _binaryMsgClass{ 0 };
     /// Message id of the current packet
-    uint8_t binaryMsgId{ 0 };
+    uint8_t _binaryMsgId{ 0 };
     /// Payload length of the current packet
-    uint16_t binaryPayloadLength{ 0 };
+    uint16_t _binaryPayloadLength{ 0 };
 
     /// Buffer to collect messages till they are complete
     std::vector<uint8_t> _buffer;
 
     /// Used for correlating raw data with where the packet was found for the end user.
-    size_t runningDataIndex{ 0 };
+    size_t _runningDataIndex{ 0 };
     /// Amount of bytes remaining for a complete packet
-    size_t numOfBytesRemainingForCompletePacket{ 0 };
+    size_t _numOfBytesRemainingForCompletePacket{ 0 };
 
     /// @brief Resets the current message tracking
     void resetTracking();

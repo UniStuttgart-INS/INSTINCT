@@ -40,7 +40,7 @@ class Demo : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -72,23 +72,23 @@ class Demo : public Node
     };
 
   private:
-    constexpr static size_t OutputPortIndex_NodeData = 1; ///< @brief Flow (NodeData)
-    constexpr static size_t OutputPortIndex_InsObs = 2;   ///< @brief Flow (InsObs)
-    constexpr static size_t OutputPortIndex_Bool = 3;     ///< @brief Bool
-    constexpr static size_t OutputPortIndex_Int = 4;      ///< @brief Int
-    constexpr static size_t OutputPortIndex_Float = 5;    ///< @brief Float
-    constexpr static size_t OutputPortIndex_Double = 6;   ///< @brief Double
-    constexpr static size_t OutputPortIndex_String = 7;   ///< @brief String
-    constexpr static size_t OutputPortIndex_DemoData = 8; ///< @brief DemoData
-    constexpr static size_t OutputPortIndex_Matrix = 9;   ///< @brief Matrix
-    constexpr static size_t InputPortIndex_DemoNode = 0;  ///< @brief Delegate (Demo)
-    constexpr static size_t InputPortIndex_Bool = 3;      ///< @brief Bool
-    constexpr static size_t InputPortIndex_Int = 4;       ///< @brief Int
-    constexpr static size_t InputPortIndex_Float = 5;     ///< @brief Float
-    constexpr static size_t InputPortIndex_Double = 6;    ///< @brief Double
-    constexpr static size_t InputPortIndex_String = 7;    ///< @brief String
-    constexpr static size_t InputPortIndex_DemoData = 8;  ///< @brief DemoData
-    constexpr static size_t InputPortIndex_Matrix = 9;    ///< @brief Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_NODE_DATA = 1; ///< @brief Flow (NodeData)
+    constexpr static size_t OUTPUT_PORT_INDEX_INS_OBS = 2;   ///< @brief Flow (InsObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_BOOL = 3;      ///< @brief Bool
+    constexpr static size_t OUTPUT_PORT_INDEX_INT = 4;       ///< @brief Int
+    constexpr static size_t OUTPUT_PORT_INDEX_FLOAT = 5;     ///< @brief Float
+    constexpr static size_t OUTPUT_PORT_INDEX_DOUBLE = 6;    ///< @brief Double
+    constexpr static size_t OUTPUT_PORT_INDEX_STRING = 7;    ///< @brief String
+    constexpr static size_t OUTPUT_PORT_INDEX_DEMO_DATA = 8; ///< @brief DemoData
+    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 9;    ///< @brief Matrix
+    constexpr static size_t INPUT_PORT_INDEX_DEMO_NODE = 0;  ///< @brief Delegate (Demo)
+    constexpr static size_t INPUT_PORT_INDEX_BOOL = 3;       ///< @brief Bool
+    constexpr static size_t INPUT_PORT_INDEX_INT = 4;        ///< @brief Int
+    constexpr static size_t INPUT_PORT_INDEX_FLOAT = 5;      ///< @brief Float
+    constexpr static size_t INPUT_PORT_INDEX_DOUBLE = 6;     ///< @brief Double
+    constexpr static size_t INPUT_PORT_INDEX_STRING = 7;     ///< @brief String
+    constexpr static size_t INPUT_PORT_INDEX_DEMO_DATA = 8;  ///< @brief DemoData
+    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 9;     ///< @brief Matrix
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -112,32 +112,32 @@ class Demo : public Node
     [[nodiscard]] std::shared_ptr<const NodeData> pollData(bool peek = false);
 
     /// Timer object to handle async data requests
-    CallbackTimer timer;
+    CallbackTimer _timer;
 
     /// @brief Function which performs the async data reading
     /// @param[in] userData Pointer to the object
     static void readSensorDataThread(void* userData);
 
     /// @brief Output frequency for the simulated sensor data
-    int outputFrequency = 1;
+    int _outputFrequency = 1;
     /// @brief Counter how often sensor data was received
-    int receivedDataFromSensorCnt = 0;
+    int _receivedDataFromSensorCnt = 0;
     /// @brief Counter how often file reader data was received
-    int receivedDataFromFileReaderCnt = 0;
+    int _receivedDataFromFileReaderCnt = 0;
 
     /// Counter for data Reading
-    int iPollData = 0;
+    int _iPollData = 0;
     /// Amount of Observations to be read
-    int nPollData = 20;
+    int _nPollData = 20;
 
-    bool valueBool = true;                                         ///< Value which is represented over the Bool pin
-    int valueInt = -1;                                             ///< Value which is represented over the Int pin
-    float valueFloat = 65.4F;                                      ///< Value which is represented over the Float pin
-    double valueDouble = 1242.342;                                 ///< Value which is represented over the Double pin
-    std::string valueString = "Demo";                              ///< Value which is represented over the String pin
-    DemoData valueObject;                                          ///< Value which is represented over the Object pin
-    Eigen::MatrixXd valueMatrix = Eigen::MatrixXd::Identity(3, 3); ///< Value which is represented over the Matrix pin
-    size_t stringUpdateCounter = 0;                                ///< Counter of how often the string was updated
+    bool _valueBool = true;                                         ///< Value which is represented over the Bool pin
+    int _valueInt = -1;                                             ///< Value which is represented over the Int pin
+    float _valueFloat = 65.4F;                                      ///< Value which is represented over the Float pin
+    double _valueDouble = 1242.342;                                 ///< Value which is represented over the Double pin
+    std::string _valueString = "Demo";                              ///< Value which is represented over the String pin
+    DemoData _valueObject;                                          ///< Value which is represented over the Object pin
+    Eigen::MatrixXd _valueMatrix = Eigen::MatrixXd::Identity(3, 3); ///< Value which is represented over the Matrix pin
+    size_t _stringUpdateCounter = 0;                                ///< Counter of how often the string was updated
 
     /// @brief Function to call when the string is updated
     /// @param[in] linkId Id of the Link where the string is connected over

@@ -40,7 +40,7 @@ class LooselyCoupledKF : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -51,20 +51,20 @@ class LooselyCoupledKF : public Node
     void restore(const json& j) override;
 
   private:
-    constexpr static size_t OutputPortIndex_PVAError = 0;  ///< @brief Flow (PVAError)
-    constexpr static size_t OutputPortIndex_ImuBiases = 1; ///< @brief Flow (ImuBiases)
-    constexpr static size_t OutputPortIndex_x = 2;         ///< @brief x̂ State vector
-    constexpr static size_t OutputPortIndex_P = 3;         ///< @brief 𝐏 Error covariance matrix
-    constexpr static size_t OutputPortIndex_Phi = 4;       ///< @brief 𝚽 State transition matrix
-    constexpr static size_t OutputPortIndex_Q = 5;         ///< @brief 𝐐 System/Process noise covariance matrix
-    constexpr static size_t OutputPortIndex_z = 6;         ///< @brief 𝐳 Measurement vector
-    constexpr static size_t OutputPortIndex_H = 7;         ///< @brief 𝐇 Measurement sensitivity Matrix
-    constexpr static size_t OutputPortIndex_R = 8;         ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-    constexpr static size_t OutputPortIndex_K = 9;         ///< @brief 𝐊 Kalman gain matrix
-    constexpr static size_t OutputPortIndex_Kz = 10;       ///< @brief 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector
+    constexpr static size_t OUTPUT_PORT_INDEX_PVA_ERROR = 0;  ///< @brief Flow (PVAError)
+    constexpr static size_t OUTPUT_PORT_INDEX_IMU_BIASES = 1; ///< @brief Flow (ImuBiases)
+    constexpr static size_t OUTPUT_PORT_INDEX_x = 2;          ///< @brief x̂ State vector
+    constexpr static size_t OUTPUT_PORT_INDEX_P = 3;          ///< @brief 𝐏 Error covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Phi = 4;        ///< @brief 𝚽 State transition matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Q = 5;          ///< @brief 𝐐 System/Process noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_z = 6;          ///< @brief 𝐳 Measurement vector
+    constexpr static size_t OUTPUT_PORT_INDEX_H = 7;          ///< @brief 𝐇 Measurement sensitivity Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_R = 8;          ///< @brief 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_K = 9;          ///< @brief 𝐊 Kalman gain matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_Kz = 10;        ///< @brief 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector
 
     /// 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector
-    Eigen::MatrixXd kalmanFilter_Kz;
+    Eigen::MatrixXd _kalmanFilter_Kz;
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -89,28 +89,28 @@ class LooselyCoupledKF : public Node
     void looselyCoupledUpdate(const std::shared_ptr<const PosVelAtt>& gnssMeasurement);
 
     /// Latest Position, Velocity, Attitude and Imu observation
-    std::shared_ptr<const InertialNavSol> latestInertialNavSol = nullptr;
+    std::shared_ptr<const InertialNavSol> _latestInertialNavSol = nullptr;
 
     /// Accumulated IMU biases
-    ImuBiases accumulatedImuBiases;
+    ImuBiases _accumulatedImuBiases;
 
     /// Kalman Filter representation
-    KalmanFilter kalmanFilter{ 15, 6 };
+    KalmanFilter _kalmanFilter{ 15, 6 };
 
     // ###########################################################################################################
     //                                                Parameters
     // ###########################################################################################################
 
     /// Timestamp of the KF
-    double tau_KF = 0.01;
+    double _tau_KF = 0.01;
 
     /// GUI Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_accel = 2.0 / tau_KF * Eigen::Vector3d::Ones();
+    Eigen::Vector3d _beta_accel = 2.0 / _tau_KF * Eigen::Vector3d::Ones();
     /// GUI Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_gyro = 2.0 / tau_KF * Eigen::Vector3d::Ones();
+    Eigen::Vector3d _beta_gyro = 2.0 / _tau_KF * Eigen::Vector3d::Ones();
 
     /// Lever arm between INS and GNSS in [m, m, m]
-    Eigen::Vector3d leverArm_InsGnss_b{ 0.0, 0.0, 0.0 };
+    Eigen::Vector3d _leverArm_InsGnss_b{ 0.0, 0.0, 0.0 };
 
     // ###########################################################################################################
 
@@ -120,11 +120,11 @@ class LooselyCoupledKF : public Node
         mg_sqrtHz, ///< [mg/√(Hz)]
     };
     /// Gui selection for the Unit of the input variance_ra parameter
-    VarianceAccelNoiseUnits varianceAccelNoiseUnits = VarianceAccelNoiseUnits::mg_sqrtHz;
+    VarianceAccelNoiseUnits _varianceAccelNoiseUnits = VarianceAccelNoiseUnits::mg_sqrtHz;
 
     /// @brief 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    double variance_ra = 0.04 /* [mg/√(Hz)] */;
+    double _variance_ra = 0.04 /* [mg/√(Hz)] */;
 
     // ###########################################################################################################
 
@@ -134,11 +134,11 @@ class LooselyCoupledKF : public Node
         deg_hr_sqrtHz, ///< [deg/hr/√(Hz)]
     };
     /// Gui selection for the Unit of the input variance_rg parameter
-    VarianceGyroNoiseUnits varianceGyroNoiseUnits = VarianceGyroNoiseUnits::deg_hr_sqrtHz;
+    VarianceGyroNoiseUnits _varianceGyroNoiseUnits = VarianceGyroNoiseUnits::deg_hr_sqrtHz;
 
     /// @brief 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    double variance_rg = 5 /* [deg/hr/√(Hz)] */;
+    double _variance_rg = 5 /* [deg/hr/√(Hz)] */;
 
     // ###########################################################################################################
 
@@ -148,11 +148,11 @@ class LooselyCoupledKF : public Node
         microg, ///< [µg]
     };
     /// Gui selection for the Unit of the input variance_bad parameter
-    VarianceAccelBiasUnits varianceAccelBiasUnits = VarianceAccelBiasUnits::microg;
+    VarianceAccelBiasUnits _varianceAccelBiasUnits = VarianceAccelBiasUnits::microg;
 
     /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    double variance_bad = 10 /* [µg] */;
+    double _variance_bad = 10 /* [µg] */;
 
     // ###########################################################################################################
 
@@ -162,11 +162,11 @@ class LooselyCoupledKF : public Node
         deg_h, ///< [°/h]
     };
     /// Gui selection for the Unit of the input variance_bad parameter
-    VarianceGyroBiasUnits varianceGyroBiasUnits = VarianceGyroBiasUnits::deg_h;
+    VarianceGyroBiasUnits _varianceGyroBiasUnits = VarianceGyroBiasUnits::deg_h;
 
     /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    double variance_bgd = 1 /* [°/h] */;
+    double _variance_bgd = 1 /* [°/h] */;
 
     // ###########################################################################################################
 
@@ -182,9 +182,9 @@ class LooselyCoupledKF : public Node
     };
 
     /// @brief Random Process used to estimate the accelerometer biases
-    RandomProcess randomProcessAccel = RandomProcess::RandomWalk;
+    RandomProcess _randomProcessAccel = RandomProcess::RandomWalk;
     /// @brief Random Process used to estimate the gyroscope biases
-    RandomProcess randomProcessGyro = RandomProcess::RandomWalk;
+    RandomProcess _randomProcessGyro = RandomProcess::RandomWalk;
 
     // ###########################################################################################################
 
@@ -197,11 +197,11 @@ class LooselyCoupledKF : public Node
         meter,        ///< Standard deviation NED [m, m, m]
     };
     /// Gui selection for the Unit of the GNSS measurement uncertainty for the position
-    GnssMeasurementUncertaintyPositionUnit gnssMeasurementUncertaintyPositionUnit = GnssMeasurementUncertaintyPositionUnit::meter;
+    GnssMeasurementUncertaintyPositionUnit _gnssMeasurementUncertaintyPositionUnit = GnssMeasurementUncertaintyPositionUnit::meter;
 
     /// @brief GUI selection of the GNSS position measurement uncertainty (standard deviation σ or Variance σ²).
     /// SPP accuracy approx. 3m in horizontal direction and 3 times worse in vertical direction
-    Eigen::Vector3d gnssMeasurementUncertaintyPosition{ 0.3, 0.3, 0.3 * 3 };
+    Eigen::Vector3d _gnssMeasurementUncertaintyPosition{ 0.3, 0.3, 0.3 * 3 };
 
     // ###########################################################################################################
 
@@ -212,10 +212,10 @@ class LooselyCoupledKF : public Node
         m_s,   ///< Standard deviation [m/s]
     };
     /// Gui selection for the Unit of the GNSS measurement uncertainty for the velocity
-    GnssMeasurementUncertaintyVelocityUnit gnssMeasurementUncertaintyVelocityUnit = GnssMeasurementUncertaintyVelocityUnit::m_s;
+    GnssMeasurementUncertaintyVelocityUnit _gnssMeasurementUncertaintyVelocityUnit = GnssMeasurementUncertaintyVelocityUnit::m_s;
 
     /// GUI selection of the GNSS NED velocity measurement uncertainty (standard deviation σ or Variance σ²)
-    Eigen::Vector3d gnssMeasurementUncertaintyVelocity{ 0.5, 0.5, 0.5 };
+    Eigen::Vector3d _gnssMeasurementUncertaintyVelocity{ 0.5, 0.5, 0.5 };
 
     // ###########################################################################################################
 
@@ -228,10 +228,10 @@ class LooselyCoupledKF : public Node
         meter,        ///< Standard deviation NED [m, m, m]
     };
     /// Gui selection for the Unit of the initial covariance for the position
-    InitCovariancePositionUnit initCovariancePositionUnit = InitCovariancePositionUnit::meter;
+    InitCovariancePositionUnit _initCovariancePositionUnit = InitCovariancePositionUnit::meter;
 
     /// GUI selection of the initial covariance diagonal values for position (standard deviation σ or Variance σ²)
-    Eigen::Vector3d initCovariancePosition{ 100, 100, 100 };
+    Eigen::Vector3d _initCovariancePosition{ 100, 100, 100 };
 
     // ###########################################################################################################
 
@@ -242,10 +242,10 @@ class LooselyCoupledKF : public Node
         m_s,   ///< Standard deviation [m/s]
     };
     /// Gui selection for the Unit of the initial covariance for the velocity
-    InitCovarianceVelocityUnit initCovarianceVelocityUnit = InitCovarianceVelocityUnit::m_s;
+    InitCovarianceVelocityUnit _initCovarianceVelocityUnit = InitCovarianceVelocityUnit::m_s;
 
     /// GUI selection of the initial covariance diagonal values for velocity (standard deviation σ or Variance σ²)
-    Eigen::Vector3d initCovarianceVelocity{ 10, 10, 10 };
+    Eigen::Vector3d _initCovarianceVelocity{ 10, 10, 10 };
 
     // ###########################################################################################################
 
@@ -258,10 +258,10 @@ class LooselyCoupledKF : public Node
         deg,  ///< Standard deviation [deg]
     };
     /// Gui selection for the Unit of the initial covariance for the attitude angles
-    InitCovarianceAttitudeAnglesUnit initCovarianceAttitudeAnglesUnit = InitCovarianceAttitudeAnglesUnit::deg;
+    InitCovarianceAttitudeAnglesUnit _initCovarianceAttitudeAnglesUnit = InitCovarianceAttitudeAnglesUnit::deg;
 
     /// GUI selection of the initial covariance diagonal values for attitude angles (standard deviation σ or Variance σ²)
-    Eigen::Vector3d initCovarianceAttitudeAngles{ 10, 10, 10 };
+    Eigen::Vector3d _initCovarianceAttitudeAngles{ 10, 10, 10 };
 
     // ###########################################################################################################
 
@@ -272,10 +272,10 @@ class LooselyCoupledKF : public Node
         m_s2,  ///< Standard deviation [m/s^2]
     };
     /// Gui selection for the Unit of the initial covariance for the accelerometer biases
-    InitCovarianceBiasAccelUnit initCovarianceBiasAccelUnit = InitCovarianceBiasAccelUnit::m_s2;
+    InitCovarianceBiasAccelUnit _initCovarianceBiasAccelUnit = InitCovarianceBiasAccelUnit::m_s2;
 
     /// GUI selection of the initial covariance diagonal values for accelerometer biases (standard deviation σ or Variance σ²)
-    Eigen::Vector3d initCovarianceBiasAccel{ 1, 1, 1 };
+    Eigen::Vector3d _initCovarianceBiasAccel{ 1, 1, 1 };
 
     // ###########################################################################################################
 
@@ -288,30 +288,30 @@ class LooselyCoupledKF : public Node
         deg_s,   ///< Standard deviation [deg/s]
     };
     /// Gui selection for the Unit of the initial covariance for the gyroscope biases
-    InitCovarianceBiasGyroUnit initCovarianceBiasGyroUnit = InitCovarianceBiasGyroUnit::deg_s;
+    InitCovarianceBiasGyroUnit _initCovarianceBiasGyroUnit = InitCovarianceBiasGyroUnit::deg_s;
 
     /// GUI selection of the initial covariance diagonal values for gyroscope biases (standard deviation σ or Variance σ²)
-    Eigen::Vector3d initCovarianceBiasGyro{ 0.5, 0.5, 0.5 };
+    Eigen::Vector3d _initCovarianceBiasGyro{ 0.5, 0.5, 0.5 };
 
     // ###########################################################################################################
 
     /// GUI option for the Phi calculation algorithm
-    enum class PhiCalculation
+    enum class PhiCalculationAlgorithm
     {
         Taylor1,
         VanLoan,
     };
     /// GUI option for the Phi calculation algorithm
-    PhiCalculation phiCalculation = PhiCalculation::Taylor1;
+    PhiCalculationAlgorithm _phiCalculationAlgorithm = PhiCalculationAlgorithm::Taylor1;
 
     /// GUI option for the Phi calculation algorithm
-    enum class QCalculation
+    enum class QCalculationAlgorithm
     {
         Groves,
         VanLoan,
     };
     /// GUI option for the Phi calculation algorithm
-    QCalculation qCalculation = QCalculation::Groves;
+    QCalculationAlgorithm _qCalculationAlgorithm = QCalculationAlgorithm::Groves;
 
     // ###########################################################################################################
     //                                                Prediction

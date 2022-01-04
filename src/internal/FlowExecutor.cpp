@@ -91,7 +91,7 @@ bool NAV::FlowExecutor::initialize()
     bool hasUninitializedNodes = false;
     for (Node* node : nm::m_Nodes())
     {
-        if (node->enabled)
+        if (node->isEnabled())
         {
             if (!node->isInitialized())
             {
@@ -151,7 +151,7 @@ void NAV::FlowExecutor::execute()
 
     for (Node* node : nm::m_Nodes()) // Search for node pins with data callbacks
     {
-        if (node == nullptr || !node->enabled)
+        if (node == nullptr || !node->isEnabled())
         {
             continue;
         }

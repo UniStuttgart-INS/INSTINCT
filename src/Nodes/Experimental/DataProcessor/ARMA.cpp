@@ -15,7 +15,7 @@ NAV::experimental::ARMA::ARMA()
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
+    _hasConfig = true;
 
     nm::CreateInputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ARMA::receiveImuObs);
 
@@ -45,9 +45,9 @@ std::string NAV::experimental::ARMA::category()
 void NAV::experimental::ARMA::guiConfig()
 {
     // GUI ARMA node input
-    ImGui::InputInt("Deque size", &deque_size); // int input of modelling size
-    ImGui::InputInt("p", &p);                   // int input of initial AR-order
-    ImGui::InputInt("q", &q);                   // int input of initial MA-order
+    ImGui::InputInt("Deque size", &_deque_size); // int input of modelling size
+    ImGui::InputInt("p", &_p);                   // int input of initial AR-order
+    ImGui::InputInt("q", &_q);                   // int input of initial MA-order
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("##table1", 3, flags)) // display ARMA parameters (phi and theta) in table
     {
@@ -56,22 +56,22 @@ void NAV::experimental::ARMA::guiConfig()
         ImGui::TableSetupColumn("p");
         ImGui::TableHeadersRow();
 
-        for (int table_row = 0; table_row < x.size(); table_row++)
+        for (int table_row = 0; table_row < _x.size(); table_row++)
         {
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
-            if (table_row < p) // columns for AR-parameters (phi)
+            if (table_row < _p) // columns for AR-parameters (phi)
             {
                 ImGui::Text("phi %d", table_row + 1);
             }
             else // columns for MA-parameters (theta)
             {
-                ImGui::Text("theta %d", table_row - p + 1);
+                ImGui::Text("theta %d", table_row - _p + 1);
             }
             ImGui::TableNextColumn();
-            ImGui::Text("%f", x(table_row)); //display parameter
+            ImGui::Text("%f", _x(table_row)); // display parameter
             ImGui::TableNextColumn();
-            ImGui::Text("%f", emp_sig(table_row)); // display p-Value of zero slope test
+            ImGui::Text("%f", _emp_sig(table_row)); // display p-Value of zero slope test
         }
         ImGui::EndTable();
     }
@@ -83,9 +83,9 @@ void NAV::experimental::ARMA::guiConfig()
 
     json j;
 
-    j["deque_size"] = deque_size;
-    j["p"] = p;
-    j["q"] = q;
+    j["deque_size"] = _deque_size;
+    j["p"] = _p;
+    j["q"] = _q;
 
     return j;
 }
@@ -96,15 +96,15 @@ void NAV::experimental::ARMA::restore(json const& j)
 
     if (j.contains("deque_size"))
     {
-        j.at("deque_size").get_to(deque_size);
+        j.at("deque_size").get_to(_deque_size);
     }
     if (j.contains("p"))
     {
-        j.at("p").get_to(p);
+        j.at("p").get_to(_p);
     }
     if (j.contains("q"))
     {
-        j.at("q").get_to(q);
+        j.at("q").get_to(_q);
     }
 }
 
@@ -112,20 +112,20 @@ bool NAV::experimental::ARMA::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    buffer.clear(); // clear deque
+    _buffer.clear(); // clear deque
 
     // declaration
-    p_mem = p; // reset p, q to initial for next observation
-    q_mem = q;
-    y = Eigen::MatrixXd::Zero(deque_size, num_obs); // measurement data
-    y_rbm = Eigen::VectorXd::Zero(deque_size);      // y (reduced by mean)
-    x = Eigen::VectorXd::Zero(p + q);               // ARMA slope parameters
-    emp_sig = Eigen::VectorXd::Zero(p + q);         // empirical significance (p-Value) of parameters
-    y_hat = Eigen::VectorXd::Zero(deque_size);      // ARMA estimates for y_rbm
+    _p_mem = _p; // reset p, q to initial for next observation
+    _q_mem = _q;
+    _y = Eigen::MatrixXd::Zero(_deque_size, _num_obs); // measurement data
+    _y_rbm = Eigen::VectorXd::Zero(_deque_size);       // y (reduced by mean)
+    _x = Eigen::VectorXd::Zero(_p + _q);               // ARMA slope parameters
+    _emp_sig = Eigen::VectorXd::Zero(_p + _q);         // empirical significance (p-Value) of parameters
+    _y_hat = Eigen::VectorXd::Zero(_deque_size);       // ARMA estimates for y_rbm
 
-    m = static_cast<int>(std::max(p, q)); // value of superior order (p or q)
-    y_mean = 0.0;
-    y_hat_t = Eigen::VectorXd::Zero(num_obs); // output container
+    _m = static_cast<int>(std::max(_p, _q)); // value of superior order (p or q)
+    _y_mean = 0.0;
+    _y_hat_t = Eigen::VectorXd::Zero(_num_obs); // output container
 
     return true;
 }
@@ -266,7 +266,7 @@ void NAV::experimental::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, 
     Eigen::MatrixXd ata_inv = Eigen::MatrixXd::Zero(p + q, p + q); // inverse Covariance matrix of least squares estimator
 
     // necessary for parameter test:
-    int df = deque_size - p - q - 1;  //degrees of freedom
+    int df = deque_size - p - q - 1;  // degrees of freedom
     boost::math::students_t dist(df); // T distribution
 
     // calculate acf
@@ -277,13 +277,13 @@ void NAV::experimental::ARMA::hannan_rissanen(Eigen::VectorXd& y, int p, int q, 
     // arma process
     for (int it = 0; it < 2; it++)
     {
-        matrix_function(y, e_hat, p, q, m, A); //set A
+        matrix_function(y, e_hat, p, q, m, A); // set A
 
         x = (A.transpose() * A).ldlt().solve(A.transpose() * y.tail(deque_size - m)); // t > max(p, q)
 
-        for (int i_HR = 0; i_HR < m; i_HR++) //for t <= max(p,q)
+        for (int i_HR = 0; i_HR < m; i_HR++) // for t <= max(p,q)
         {
-            y_hat(i_HR) = y(i_HR); //y_hat = y
+            y_hat(i_HR) = y(i_HR); // y_hat = y
         }
         y_hat.tail(deque_size - m) = A * x; // calculate y_hat and ê for t > max(p,q)
         e_hat = y - y_hat;
@@ -304,61 +304,61 @@ void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<const NodeData
 {
     auto obs = std::static_pointer_cast<const ImuObs>(nodeData);
     auto newImuObs = std::make_shared<ImuObs>(obs->imuPos);
-    buffer.push_back(obs); // push latest IMU epoch to deque
+    _buffer.push_back(obs); // push latest IMU epoch to deque
 
-    if (static_cast<int>(buffer.size()) == deque_size) // deque filled
+    if (static_cast<int>(_buffer.size()) == _deque_size) // deque filled
     {
         std::cout << "Initializing..." << std::endl;
 
-        k = 0;
-        for (auto& obs : buffer) // read observations from buffer to y
+        _k = 0;
+        for (auto& obs : _buffer) // read observations from buffer to y
         {
             const Eigen::Vector3d acc = obs->accelCompXYZ.value(); // acceleration in x, y and z
             const Eigen::Vector3d gyro = obs->gyroCompXYZ.value(); // gyro in x, y and z
-            y.row(k) << acc.transpose(), gyro.transpose();         // write to y
-            k++;
+            _y.row(_k) << acc.transpose(), gyro.transpose();       // write to y
+            _k++;
         }
-        for (int obs_nr = 0; obs_nr < num_obs; obs_nr++) // build ARMA-model for each observation
+        for (int obs_nr = 0; obs_nr < _num_obs; obs_nr++) // build ARMA-model for each observation
         {
-            p = p_mem; // reset p, q to initial for next observation
-            q = q_mem;
+            _p = _p_mem; // reset p, q to initial for next observation
+            _q = _q_mem;
 
-            y_mean = y.col(obs_nr).mean();
-            y_rbm = y.col(obs_nr) - y_mean * Eigen::VectorXd::Ones(deque_size, 1); // reduce y by mean
+            _y_mean = _y.col(obs_nr).mean();
+            _y_rbm = _y.col(obs_nr) - _y_mean * Eigen::VectorXd::Ones(_deque_size, 1); // reduce y by mean
 
             INITIALIZE = true; // set INITIALIZE true for each observation
             while (INITIALIZE) // while initializing ARMA-parameters
             {
-                if (p + q == 0) //arma(0,0) -> y_hat = 0
+                if (_p + _q == 0) // arma(0,0) -> y_hat = 0
                 {
-                    y_hat(deque_size - 1) = 0;
+                    _y_hat(_deque_size - 1) = 0;
                     break;
                 }
-                x.resize(p + q);       // resize
-                emp_sig.resize(p + q); // resize
+                _x.resize(_p + _q);       // resize
+                _emp_sig.resize(_p + _q); // resize
 
-                m = static_cast<int>(std::max(p, q));
+                _m = static_cast<int>(std::max(_p, _q));
 
-                hannan_rissanen(y_rbm, p, q, m, deque_size, x, emp_sig, y_hat); // parameter estimation
+                hannan_rissanen(_y_rbm, _p, _q, _m, _deque_size, _x, _emp_sig, _y_hat); // parameter estimation
 
                 // zero slope parameter test: search for emp_sig(p-Value) > alpha(0.05)
-                if (emp_sig.maxCoeff() > 0.05)
+                if (_emp_sig.maxCoeff() > 0.05)
                 {
                     int arma_it = 0;
-                    for (arma_it = 0; arma_it < p + q; arma_it++)
+                    for (arma_it = 0; arma_it < _p + _q; arma_it++)
                     {
-                        if (emp_sig(arma_it) == emp_sig.maxCoeff()) // find index of maximum
+                        if (_emp_sig(arma_it) == _emp_sig.maxCoeff()) // find index of maximum
                         {
                             break;
                         }
                     }
-                    if (arma_it < p) // if p-value has maximum for phi
+                    if (arma_it < _p) // if p-value has maximum for phi
                     {
-                        p--; // reduce AR order by 1
+                        _p--; // reduce AR order by 1
                     }
                     else // if p-value has maximum for theta
                     {
-                        q--; // reduce MA order by 1
+                        _q--; // reduce MA order by 1
                     }
                 }
                 else
@@ -367,18 +367,18 @@ void NAV::experimental::ARMA::receiveImuObs(const std::shared_ptr<const NodeData
                     INITIALIZE = false; // initialized parameters for observation
                 }
             }
-            y_hat_t(obs_nr) = y_hat(deque_size - 1) + y_mean; // hand over last entry of y_hat and add y_mean
+            _y_hat_t(obs_nr) = _y_hat(_deque_size - 1) + _y_mean; // hand over last entry of y_hat and add y_mean
         }
         // output
         LOG_TRACE("{}: called {}", nameId(), obs->insTime->GetStringOfDate());
         newImuObs->insTime = obs->insTime.value();
-        newImuObs->accelCompXYZ = Eigen::Vector3d(y_hat_t.head(3)); // output estimations of accelerometer observations
-        newImuObs->gyroCompXYZ = Eigen::Vector3d(y_hat_t.tail(3));  // output estimations of gyro observations
-        invokeCallbacks(OutputPortIndex_ImuObs, newImuObs);
-        buffer.pop_front();
+        newImuObs->accelCompXYZ = Eigen::Vector3d(_y_hat_t.head(3)); // output estimations of accelerometer observations
+        newImuObs->gyroCompXYZ = Eigen::Vector3d(_y_hat_t.tail(3));  // output estimations of gyro observations
+        invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, newImuObs);
+        _buffer.pop_front();
     }
     else // output = input while filling deque
     {
-        invokeCallbacks(OutputPortIndex_ImuObs, obs);
+        invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
     }
 }

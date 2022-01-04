@@ -38,7 +38,7 @@ class KvhSensor : public Imu, public UartSensor
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -52,7 +52,7 @@ class KvhSensor : public Imu, public UartSensor
     bool resetNode() override;
 
   private:
-    constexpr static size_t OutputPortIndex_KvhObs = 0; ///< @brief Flow (KvhObs)
+    constexpr static size_t OUTPUT_PORT_INDEX_KVH_OBS = 0; ///< @brief Flow (KvhObs)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -67,10 +67,10 @@ class KvhSensor : public Imu, public UartSensor
     static void asciiOrBinaryAsyncMessageReceived(void* userData, uart::protocol::Packet& p, size_t index);
 
     /// Sensor Object
-    sensors::kvh::KvhUartSensor sensor;
+    sensors::kvh::KvhUartSensor _sensor;
 
     /// Previous Sequence number to check for order errors
-    uint8_t prevSequenceNumber = UINT8_MAX;
+    uint8_t _prevSequenceNumber = UINT8_MAX;
 };
 
 } // namespace NAV

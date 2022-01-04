@@ -18,11 +18,11 @@ NAV::ImuFile::ImuFile()
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 377, 201 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 377, 201 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuFile::pollData);
-    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &headerColumns);
+    nm::CreateOutputPin(this, "Header Columns", Pin::Type::Object, { "std::vector<std::string>" }, &_headerColumns);
 }
 
 NAV::ImuFile::~ImuFile()
@@ -47,7 +47,7 @@ std::string NAV::ImuFile::category()
 
 void NAV::ImuFile::guiConfig()
 {
-    if (gui::widgets::FileDialogLoad(path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
+    if (gui::widgets::FileDialogLoad(_path, "Select File", ".csv", { ".csv" }, size_t(id), nameId()))
     {
         flow::ApplyChanges();
         initializeNode();
@@ -66,7 +66,7 @@ void NAV::ImuFile::guiConfig()
 
         auto TextColoredIfExists = [this](int index, const char* displayText, const char* searchText, bool alwaysNormal = false) {
             ImGui::TableSetColumnIndex(index);
-            if (alwaysNormal || std::find(headerColumns.begin(), headerColumns.end(), searchText) != headerColumns.end())
+            if (alwaysNormal || std::find(_headerColumns.begin(), _headerColumns.end(), searchText) != _headerColumns.end())
             {
                 ImGui::TextUnformatted(displayText);
             }
@@ -145,17 +145,17 @@ bool NAV::ImuFile::resetNode()
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
 {
-    auto obs = std::make_shared<ImuObs>(imuPos);
+    auto obs = std::make_shared<ImuObs>(_imuPos);
 
     // Read line
     std::string line;
     // Get current position
-    auto len = filestream.tellg();
-    std::getline(filestream, line);
+    auto len = _filestream.tellg();
+    std::getline(_filestream, line);
     if (peek)
     {
         // Return to position before "Read line".
-        filestream.seekg(len, std::ios_base::beg);
+        _filestream.seekg(len, std::ios_base::beg);
     }
     // Remove any starting non text characters
     line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](int ch) { return std::isgraph(ch); }));
@@ -192,7 +192,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
     std::optional<double> gyroCompZ;
 
     // Split line at comma
-    for (const auto& column : headerColumns)
+    for (const auto& column : _headerColumns)
     {
         if (std::getline(lineStream, cell, ','))
         {
@@ -330,7 +330,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuFile::pollData(bool peek)
     // Calls all the callbacks
     if (!peek)
     {
-        invokeCallbacks(OutputPortIndex_ImuObs, obs);
+        invokeCallbacks(OUTPUT_PORT_INDEX_IMU_OBS, obs);
     }
 
     return obs;

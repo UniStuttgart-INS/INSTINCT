@@ -8,12 +8,12 @@ namespace nm = NAV::NodeManager;
 
 NAV::Delay::Delay()
 {
-    name = fmt::format("z^-{}", delayLength);
+    name = fmt::format("z^-{}", _delayLength);
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 305, 70 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 305, 70 };
     kind = Kind::Simple;
 
     nm::CreateInputPin(this, "", Pin::Type::Flow, { InsObs::type() }, &Delay::delayObs);
@@ -42,21 +42,21 @@ std::string NAV::Delay::category()
 
 void NAV::Delay::guiConfig()
 {
-    if (ImGui::InputInt(fmt::format("Delay length##{}", size_t(id)).c_str(), &delayLength))
+    if (ImGui::InputInt(fmt::format("Delay length##{}", size_t(id)).c_str(), &_delayLength))
     {
-        if (delayLength < 1)
+        if (_delayLength < 1)
         {
-            delayLength = 1;
+            _delayLength = 1;
         }
-        LOG_DEBUG("{}: delayLength changed to {}", nameId(), delayLength);
+        LOG_DEBUG("{}: delayLength changed to {}", nameId(), _delayLength);
         if (name.starts_with("z^-"))
         {
-            name = fmt::format("z^-{}", delayLength);
+            name = fmt::format("z^-{}", _delayLength);
         }
 
-        while (buffer.size() > static_cast<size_t>(delayLength))
+        while (_buffer.size() > static_cast<size_t>(_delayLength))
         {
-            buffer.pop_front();
+            _buffer.pop_front();
         }
     }
 }
@@ -67,7 +67,7 @@ void NAV::Delay::guiConfig()
 
     json j;
 
-    j["delayLength"] = delayLength;
+    j["delayLength"] = _delayLength;
 
     return j;
 }
@@ -78,7 +78,7 @@ void NAV::Delay::restore(json const& j)
 
     if (j.contains("delayLength"))
     {
-        j.at("delayLength").get_to(delayLength);
+        j.at("delayLength").get_to(_delayLength);
     }
 }
 
@@ -86,7 +86,7 @@ bool NAV::Delay::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    buffer.clear();
+    _buffer.clear();
 
     return true;
 }
@@ -109,19 +109,19 @@ bool NAV::Delay::onCreateLink(Pin* startPin, Pin* endPin)
 
         // New Link on the Input port, but the previously connected dataIdentifier is different from the new one.
         // Then remove all links.
-        if (outputPins.at(OutputPortIndex_Flow).dataIdentifier != startPin->dataIdentifier)
+        if (outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier != startPin->dataIdentifier)
         {
-            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_Flow).id))
+            for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
             {
                 nm::DeleteLink(link->id);
             }
         }
 
         // Update the dataIdentifier of the output pin to the same as input pin
-        outputPins.at(OutputPortIndex_Flow).dataIdentifier = startPin->dataIdentifier;
+        outputPins.at(OUTPUT_PORT_INDEX_FLOW).dataIdentifier = startPin->dataIdentifier;
 
         // Refresh all links connected to the output pin
-        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OutputPortIndex_Flow).id))
+        for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.at(OUTPUT_PORT_INDEX_FLOW).id))
         {
             nm::RefreshLink(link->id);
         }
@@ -132,11 +132,11 @@ bool NAV::Delay::onCreateLink(Pin* startPin, Pin* endPin)
 
 void NAV::Delay::delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::NodeEditor::LinkId /* linkId */)
 {
-    if (buffer.size() == static_cast<size_t>(delayLength))
+    if (_buffer.size() == static_cast<size_t>(_delayLength))
     {
-        auto oldest = buffer.front();
-        buffer.pop_front();
-        buffer.push_back(nodeData);
+        auto oldest = _buffer.front();
+        _buffer.pop_front();
+        _buffer.push_back(nodeData);
 
         if (auto obs = std::static_pointer_cast<const InsObs>(nodeData))
         {
@@ -152,10 +152,10 @@ void NAV::Delay::delayObs(const std::shared_ptr<const NodeData>& nodeData, ax::N
             NAV::Node::callbacksEnabled = true;
         }
 
-        invokeCallbacks(OutputPortIndex_Flow, oldest);
+        invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, oldest);
     }
     else
     {
-        buffer.push_back(nodeData);
+        _buffer.push_back(nodeData);
     }
 }

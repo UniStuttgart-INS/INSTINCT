@@ -10,14 +10,14 @@ NAV::experimental::Matrix::Matrix()
 
     LOG_TRACE("{}: called", name);
 
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 330, 420 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 330, 420 };
     kind = Kind::Simple;
 
-    nm::CreateOutputPin(this, "", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &matrix);
+    nm::CreateOutputPin(this, "", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_matrix);
 
-    initMatrix = Eigen::MatrixXd::Zero(nRows, nCols);
-    matrix = initMatrix;
+    _initMatrix = Eigen::MatrixXd::Zero(_nRows, _nCols);
+    _matrix = _initMatrix;
 
     updateNumberOfOutputPins();
 }
@@ -47,23 +47,23 @@ void NAV::experimental::Matrix::guiConfig()
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::CollapsingHeader(("Options##" + std::to_string(size_t(id))).c_str()))
     {
-        if (ImGui::InputInt("Rows", &nRows))
+        if (ImGui::InputInt("Rows", &_nRows))
         {
-            if (nRows < 1)
+            if (_nRows < 1)
             {
-                nRows = 1;
+                _nRows = 1;
             }
-            LOG_DEBUG("{}: # Rows changed to {}", nameId(), nRows);
+            LOG_DEBUG("{}: # Rows changed to {}", nameId(), _nRows);
             flow::ApplyChanges();
-            Eigen::MatrixXd mat = Eigen::MatrixXd::Zero(nRows, nCols);
-            for (int64_t row = 0; row < initMatrix.rows() && row < mat.rows(); row++)
+            Eigen::MatrixXd mat = Eigen::MatrixXd::Zero(_nRows, _nCols);
+            for (int64_t row = 0; row < _initMatrix.rows() && row < mat.rows(); row++)
             {
-                for (int64_t col = 0; col < initMatrix.cols() && col < mat.cols(); col++)
+                for (int64_t col = 0; col < _initMatrix.cols() && col < mat.cols(); col++)
                 {
-                    mat(row, col) = initMatrix(row, col);
+                    mat(row, col) = _initMatrix(row, col);
                 }
             }
-            for (auto& block : blocks)
+            for (auto& block : _blocks)
             {
                 if (block.startRow < 0)
                 {
@@ -84,11 +84,11 @@ void NAV::experimental::Matrix::guiConfig()
                 }
             }
 
-            initMatrix = mat;
-            matrix = initMatrix;
-            for (auto& block : blocks)
+            _initMatrix = mat;
+            _matrix = _initMatrix;
+            for (auto& block : _blocks)
             {
-                block.matrix = &matrix;
+                block.matrix = &_matrix;
             }
             for (auto& outputPin : outputPins)
             {
@@ -99,24 +99,24 @@ void NAV::experimental::Matrix::guiConfig()
                 }
             }
         }
-        if (ImGui::InputInt("Cols", &nCols))
+        if (ImGui::InputInt("Cols", &_nCols))
         {
-            if (nCols < 1)
+            if (_nCols < 1)
             {
-                nCols = 1;
+                _nCols = 1;
             }
-            LOG_DEBUG("{}: # Cols changed to {}", nameId(), nCols);
+            LOG_DEBUG("{}: # Cols changed to {}", nameId(), _nCols);
             flow::ApplyChanges();
-            Eigen::MatrixXd mat = Eigen::MatrixXd::Zero(nRows, nCols);
-            for (int64_t row = 0; row < initMatrix.rows() && row < mat.rows(); row++)
+            Eigen::MatrixXd mat = Eigen::MatrixXd::Zero(_nRows, _nCols);
+            for (int64_t row = 0; row < _initMatrix.rows() && row < mat.rows(); row++)
             {
-                for (int64_t col = 0; col < initMatrix.cols() && col < mat.cols(); col++)
+                for (int64_t col = 0; col < _initMatrix.cols() && col < mat.cols(); col++)
                 {
-                    mat(row, col) = initMatrix(row, col);
+                    mat(row, col) = _initMatrix(row, col);
                 }
             }
 
-            for (auto& block : blocks)
+            for (auto& block : _blocks)
             {
                 if (block.startCol < 0)
                 {
@@ -137,11 +137,11 @@ void NAV::experimental::Matrix::guiConfig()
                 }
             }
 
-            initMatrix = mat;
-            matrix = initMatrix;
-            for (auto& block : blocks)
+            _initMatrix = mat;
+            _matrix = _initMatrix;
+            for (auto& block : _blocks)
             {
-                block.matrix = &matrix;
+                block.matrix = &_matrix;
             }
             for (auto& outputPin : outputPins)
             {
@@ -152,48 +152,48 @@ void NAV::experimental::Matrix::guiConfig()
                 }
             }
         }
-        if (ImGui::InputInt("# Subblocks", &nBlocks))
+        if (ImGui::InputInt("# Subblocks", &_nBlocks))
         {
-            if (nBlocks < 0)
+            if (_nBlocks < 0)
             {
-                nBlocks = 0;
+                _nBlocks = 0;
             }
-            LOG_DEBUG("{}: nBlocks changed to {}", nameId(), nBlocks);
+            LOG_DEBUG("{}: nBlocks changed to {}", nameId(), _nBlocks);
             flow::ApplyChanges();
             updateNumberOfOutputPins();
         }
 
         if (ImGui::Button("Update Matrix with"))
         {
-            matrix = initMatrix;
-            for (auto& block : blocks)
+            _matrix = _initMatrix;
+            for (auto& block : _blocks)
             {
-                block.matrix = &matrix;
+                block.matrix = &_matrix;
             }
         }
         ImGui::SameLine();
         ImGui::TextUnformatted("Init Matrix:");
-        if (ImGui::BeginTable("Init Matrix", static_cast<int>(initMatrix.cols() + 1),
+        if (ImGui::BeginTable("Init Matrix", static_cast<int>(_initMatrix.cols() + 1),
                               ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("");
-            for (int64_t col = 0; col < initMatrix.cols(); col++)
+            for (int64_t col = 0; col < _initMatrix.cols(); col++)
             {
                 ImGui::TableSetupColumn(std::to_string(col).c_str());
             }
             ImGui::TableHeadersRow();
-            for (int64_t row = 0; row < initMatrix.rows(); row++)
+            for (int64_t row = 0; row < _initMatrix.rows(); row++)
             {
                 ImGui::TableNextColumn();
                 ImGui::TextUnformatted(std::to_string(row).c_str());
                 ImU32 cell_bg_color = ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_TableHeaderBg]);
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
-                for (int64_t col = 0; col < initMatrix.cols(); col++)
+                for (int64_t col = 0; col < _initMatrix.cols(); col++)
                 {
                     ImGui::TableNextColumn();
                     ImGui::SetNextItemWidth(50);
                     if (ImGui::InputDouble(("##initMatrix(" + std::to_string(row) + ", " + std::to_string(col) + ")").c_str(),
-                                           &initMatrix(row, col), 0.0, 0.0, "%.1f"))
+                                           &_initMatrix(row, col), 0.0, 0.0, "%.1f"))
                     {
                         flow::ApplyChanges();
                     }
@@ -206,25 +206,25 @@ void NAV::experimental::Matrix::guiConfig()
     ImGui::SetNextItemOpen(true, ImGuiCond_Once);
     if (ImGui::CollapsingHeader(("Current Matrix##" + std::to_string(size_t(id))).c_str()))
     {
-        if (ImGui::BeginTable("Current Matrix", static_cast<int>(matrix.cols() + 1),
+        if (ImGui::BeginTable("Current Matrix", static_cast<int>(_matrix.cols() + 1),
                               ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("");
-            for (int64_t col = 0; col < matrix.cols(); col++)
+            for (int64_t col = 0; col < _matrix.cols(); col++)
             {
                 ImGui::TableSetupColumn(std::to_string(col).c_str());
             }
             ImGui::TableHeadersRow();
-            for (int64_t row = 0; row < matrix.rows(); row++)
+            for (int64_t row = 0; row < _matrix.rows(); row++)
             {
                 ImGui::TableNextColumn();
                 ImGui::TextUnformatted(std::to_string(row).c_str());
                 ImU32 cell_bg_color = ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_TableHeaderBg]);
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
-                for (int64_t col = 0; col < matrix.cols(); col++)
+                for (int64_t col = 0; col < _matrix.cols(); col++)
                 {
                     ImGui::TableNextColumn();
-                    ImGui::Text("%.1f", matrix(row, col));
+                    ImGui::Text("%.1f", _matrix(row, col));
                 }
             }
 
@@ -232,14 +232,14 @@ void NAV::experimental::Matrix::guiConfig()
         }
     }
 
-    for (size_t blockIndex = 0; blockIndex < blocks.size(); blockIndex++)
+    for (size_t blockIndex = 0; blockIndex < _blocks.size(); blockIndex++)
     {
         Pin& outputPin = outputPins.at(blockIndex + 1);
 
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
         if (ImGui::CollapsingHeader((outputPin.name + "## " + std::to_string(size_t(id))).c_str()))
         {
-            auto& block = blocks.at(blockIndex);
+            auto& block = _blocks.at(blockIndex);
 
             ImGui::SetNextItemOpen(true, ImGuiCond_Once);
             if (ImGui::TreeNode(("Options##" + std::to_string(size_t(id)) + " - " + std::to_string(blockIndex)).c_str()))
@@ -257,18 +257,18 @@ void NAV::experimental::Matrix::guiConfig()
                     {
                         block.startRow = 0;
                     }
-                    else if (block.startRow >= matrix.rows())
+                    else if (block.startRow >= _matrix.rows())
                     {
-                        block.startRow = static_cast<int>(matrix.rows() - 1);
+                        block.startRow = static_cast<int>(_matrix.rows() - 1);
                     }
 
                     if (block.blockRows < 1)
                     {
                         block.blockRows = 1;
                     }
-                    else if (block.blockRows >= matrix.rows() - block.startRow)
+                    else if (block.blockRows >= _matrix.rows() - block.startRow)
                     {
-                        block.blockRows = static_cast<int>(matrix.rows() - block.startRow);
+                        block.blockRows = static_cast<int>(_matrix.rows() - block.startRow);
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
@@ -287,18 +287,18 @@ void NAV::experimental::Matrix::guiConfig()
                     {
                         block.startCol = 0;
                     }
-                    else if (block.startCol >= matrix.cols())
+                    else if (block.startCol >= _matrix.cols())
                     {
-                        block.startCol = static_cast<int>(matrix.cols() - 1);
+                        block.startCol = static_cast<int>(_matrix.cols() - 1);
                     }
 
                     if (block.blockCols < 1)
                     {
                         block.blockCols = 1;
                     }
-                    else if (block.blockCols >= matrix.cols() - block.startCol)
+                    else if (block.blockCols >= _matrix.cols() - block.startCol)
                     {
-                        block.blockCols = static_cast<int>(matrix.cols() - block.startCol);
+                        block.blockCols = static_cast<int>(_matrix.cols() - block.startCol);
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
@@ -317,9 +317,9 @@ void NAV::experimental::Matrix::guiConfig()
                     {
                         block.blockRows = 1;
                     }
-                    else if (block.blockRows >= matrix.rows() - block.startRow)
+                    else if (block.blockRows >= _matrix.rows() - block.startRow)
                     {
-                        block.blockRows = static_cast<int>(matrix.rows() - block.startRow);
+                        block.blockRows = static_cast<int>(_matrix.rows() - block.startRow);
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
@@ -338,9 +338,9 @@ void NAV::experimental::Matrix::guiConfig()
                     {
                         block.blockCols = 1;
                     }
-                    else if (block.blockCols >= matrix.cols() - block.startCol)
+                    else if (block.blockCols >= _matrix.cols() - block.startCol)
                     {
-                        block.blockCols = static_cast<int>(matrix.cols() - block.startCol);
+                        block.blockCols = static_cast<int>(_matrix.cols() - block.startCol);
                     }
 
                     auto& outputPin = outputPins.at(blockIndex + 1);
@@ -358,27 +358,27 @@ void NAV::experimental::Matrix::guiConfig()
             }
 
             if (ImGui::BeginTable(("Current Block Matrix##" + std::to_string(size_t(id)) + " - " + std::to_string(blockIndex)).c_str(),
-                                  static_cast<int>(matrix.cols() + 1), ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
+                                  static_cast<int>(_matrix.cols() + 1), ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
             {
                 ImGui::TableSetupColumn("");
-                for (int64_t col = 0; col < matrix.cols(); col++)
+                for (int64_t col = 0; col < _matrix.cols(); col++)
                 {
                     ImGui::TableSetupColumn(std::to_string(col).c_str());
                 }
                 ImGui::TableHeadersRow();
-                for (int64_t row = 0; row < matrix.rows(); row++)
+                for (int64_t row = 0; row < _matrix.rows(); row++)
                 {
                     ImGui::TableNextColumn();
                     ImGui::TextUnformatted(std::to_string(row).c_str());
                     ImU32 cell_bg_color = ImGui::GetColorU32(ImGui::GetStyle().Colors[ImGuiCol_TableHeaderBg]);
                     ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
-                    for (int64_t col = 0; col < matrix.cols(); col++)
+                    for (int64_t col = 0; col < _matrix.cols(); col++)
                     {
                         ImGui::TableNextColumn();
                         if (row < block.startRow || row >= block.startRow + block.blockRows
                             || col < block.startCol || col >= block.startCol + block.blockCols)
                         {
-                            ImGui::TextDisabled("%.1f", matrix(row, col));
+                            ImGui::TextDisabled("%.1f", _matrix(row, col));
                         }
                         else
                         {
@@ -400,11 +400,11 @@ void NAV::experimental::Matrix::guiConfig()
 
     json j;
 
-    j["nRows"] = nRows;
-    j["nCols"] = nCols;
-    j["nBlocks"] = nBlocks;
-    j["blocks"] = blocks;
-    j["matrix"] = initMatrix;
+    j["nRows"] = _nRows;
+    j["nCols"] = _nCols;
+    j["nBlocks"] = _nBlocks;
+    j["blocks"] = _blocks;
+    j["matrix"] = _initMatrix;
 
     return j;
 }
@@ -415,30 +415,30 @@ void NAV::experimental::Matrix::restore(json const& j)
 
     if (j.contains("nRows"))
     {
-        j.at("nRows").get_to(nRows);
+        j.at("nRows").get_to(_nRows);
     }
     if (j.contains("nCols"))
     {
-        j.at("nCols").get_to(nCols);
+        j.at("nCols").get_to(_nCols);
     }
     if (j.contains("nBlocks"))
     {
-        j.at("nBlocks").get_to(nBlocks);
+        j.at("nBlocks").get_to(_nBlocks);
         updateNumberOfOutputPins();
     }
     if (j.contains("matrix"))
     {
-        j.at("matrix").get_to(initMatrix);
-        matrix = initMatrix;
-        outputPins.at(OutputPortIndex_FullMatrix).data = Pin::PinData(&matrix);
+        j.at("matrix").get_to(_initMatrix);
+        _matrix = _initMatrix;
+        outputPins.at(OUTPUT_PORT_INDEX_FULL_MATRIX).data = Pin::PinData(&_matrix);
     }
     if (j.contains("blocks"))
     {
-        j.at("blocks").get_to(blocks);
-        for (size_t blockIndex = 0; blockIndex < blocks.size(); blockIndex++)
+        j.at("blocks").get_to(_blocks);
+        for (size_t blockIndex = 0; blockIndex < _blocks.size(); blockIndex++)
         {
-            blocks.at(blockIndex).matrix = &matrix;
-            outputPins.at(blockIndex + 1).data = Pin::PinData(&blocks.at(blockIndex));
+            _blocks.at(blockIndex).matrix = &_matrix;
+            outputPins.at(blockIndex + 1).data = Pin::PinData(&_blocks.at(blockIndex));
         }
     }
 }
@@ -447,10 +447,10 @@ bool NAV::experimental::Matrix::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    matrix = initMatrix;
-    for (auto& block : blocks)
+    _matrix = _initMatrix;
+    for (auto& block : _blocks)
     {
-        block.matrix = &matrix;
+        block.matrix = &_matrix;
     }
 
     return true;
@@ -463,12 +463,12 @@ void NAV::experimental::Matrix::deinitialize()
 
 void NAV::experimental::Matrix::updateNumberOfOutputPins()
 {
-    while (outputPins.size() - 1 < static_cast<size_t>(nBlocks))
+    while (outputPins.size() - 1 < static_cast<size_t>(_nBlocks))
     {
-        blocks.emplace_back(matrix, std::to_string(blocks.size() + 1), 0, 0, initMatrix.rows(), initMatrix.cols());
-        nm::CreateOutputPin(this, std::to_string(blocks.size()).c_str(), Pin::Type::Matrix, { "BlockMatrix" }, &blocks.back());
+        _blocks.emplace_back(_matrix, std::to_string(_blocks.size() + 1), 0, 0, _initMatrix.rows(), _initMatrix.cols());
+        nm::CreateOutputPin(this, std::to_string(_blocks.size()).c_str(), Pin::Type::Matrix, { "BlockMatrix" }, &_blocks.back());
     }
-    while (outputPins.size() - 1 > static_cast<size_t>(nBlocks))
+    while (outputPins.size() - 1 > static_cast<size_t>(_nBlocks))
     {
         auto connectedLinks = nm::FindConnectedLinksToOutputPin(outputPins.back().id);
         for (Link* link : connectedLinks)
@@ -476,13 +476,13 @@ void NAV::experimental::Matrix::updateNumberOfOutputPins()
             nm::DeleteLink(link->id);
         }
         outputPins.pop_back();
-        blocks.pop_back();
+        _blocks.pop_back();
     }
 
-    for (size_t blockIndex = 0; blockIndex < blocks.size(); blockIndex++)
+    for (size_t blockIndex = 0; blockIndex < _blocks.size(); blockIndex++)
     {
-        blocks.at(blockIndex).matrix = &matrix;
-        outputPins.at(blockIndex + 1).data = Pin::PinData(&blocks.at(blockIndex));
+        _blocks.at(blockIndex).matrix = &_matrix;
+        outputPins.at(blockIndex + 1).data = Pin::PinData(&_blocks.at(blockIndex));
     }
     for (auto& outputPin : outputPins)
     {
@@ -531,7 +531,7 @@ void NAV::experimental::Matrix::notifyOnOutputValueChanged(ax::NodeEditor::LinkI
         {
             size_t pinIndex = pinIndexFromId(link->startPinId);
 
-            auto& block = blocks.at(pinIndex - 1);
+            auto& block = _blocks.at(pinIndex - 1);
 
             for (size_t i = 0; i < outputPins.size(); i++) // Loop through all pins and trigger a notify
             {
@@ -542,10 +542,10 @@ void NAV::experimental::Matrix::notifyOnOutputValueChanged(ax::NodeEditor::LinkI
 
                 if (i == 0 // Trigger notify on Eigen::MatrixXd pin
                     ||     // Check if modified block is part of any other subblock
-                    (((blocks.at(i - 1).startRow <= block.startRow && blocks.at(i - 1).startRow + blocks.at(i - 1).blockRows > block.startRow)
-                      || (blocks.at(i - 1).startRow >= block.startRow && blocks.at(i - 1).startRow < block.startRow + block.blockRows))
-                     && ((blocks.at(i - 1).startCol <= block.startCol && blocks.at(i - 1).startCol + blocks.at(i - 1).blockCols > block.startCol)
-                         || (blocks.at(i - 1).startCol >= block.startCol && blocks.at(i - 1).startCol < block.startCol + block.blockCols))))
+                    (((_blocks.at(i - 1).startRow <= block.startRow && _blocks.at(i - 1).startRow + _blocks.at(i - 1).blockRows > block.startRow)
+                      || (_blocks.at(i - 1).startRow >= block.startRow && _blocks.at(i - 1).startRow < block.startRow + block.blockRows))
+                     && ((_blocks.at(i - 1).startCol <= block.startCol && _blocks.at(i - 1).startCol + _blocks.at(i - 1).blockCols > block.startCol)
+                         || (_blocks.at(i - 1).startCol >= block.startCol && _blocks.at(i - 1).startCol < block.startCol + block.blockCols))))
                 {
                     for (auto& [node, callback, linkId] : outputPins.at(i).notifyFunc)
                     {

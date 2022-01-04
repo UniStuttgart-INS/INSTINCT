@@ -363,7 +363,7 @@ namespace NAV
 //     Eigen::Quaterniond quaternion_nb = trafo::quat_nb(roll, pitch, yaw);
 
 //     // ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
-//     Eigen::Vector3d angularVelocity_ie_n = trafo::quat_ne(latitude, longitude) * InsConst::angularVelocity_ie_e;
+//     Eigen::Vector3d angularVelocity_ie_n = trafo::quat_ne(latitude, longitude) * InsConst::OMEGA_ie_e;
 
 //     // North/South (meridian) earth radius [m]
 //     double R_N = calcEarthRadius_N(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);

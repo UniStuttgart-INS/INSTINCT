@@ -38,7 +38,7 @@ namespace NAV
 /// @param[in] x_e Position in ECEF coordinates in [m]
 /// @param[in] omega_ie_e Angular rate of the Earth rotation in [rad/s] in the Earth coordinate frame
 /// @return Centrifugal acceleration in the Earth coordinate frame in [m/s^2]
-[[nodiscard]] Eigen::Vector3d calcCentrifugalAcceleration_e(const Eigen::Vector3d& x_e, const Eigen::Vector3d& omega_ie_e = InsConst::angularVelocity_ie_e);
+[[nodiscard]] Eigen::Vector3d calcCentrifugalAcceleration_e(const Eigen::Vector3d& x_e, const Eigen::Vector3d& omega_ie_e = InsConst::omega_ie_e);
 
 /// @brief Calculates the coriolis acceleration in [m/s^2] (acceleration due to motion in rotating reference frame)
 ///

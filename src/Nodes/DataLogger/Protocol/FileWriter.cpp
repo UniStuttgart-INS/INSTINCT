@@ -10,8 +10,8 @@
 
     json j;
 
-    j["path"] = path;
-    j["fileType"] = fileType;
+    j["path"] = _path;
+    j["fileType"] = _fileType;
 
     return j;
 }
@@ -22,11 +22,11 @@ void NAV::FileWriter::restore(json const& j)
 
     if (j.contains("path"))
     {
-        j.at("path").get_to(path);
+        j.at("path").get_to(_path);
     }
     if (j.contains("fileType"))
     {
-        j.at("fileType").get_to(fileType);
+        j.at("fileType").get_to(_fileType);
     }
 }
 
@@ -36,25 +36,25 @@ bool NAV::FileWriter::initialize()
 
     LOG_TRACE("called");
 
-    if (fileType == FileType::NONE)
+    if (_fileType == FileType::NONE)
     {
-        LOG_ERROR("FileWriter needs the fileType set in the child class.");
+        LOG_ERROR("FileWriter needs the _fileType set in the child class.");
         return false;
     }
 
-    std::string filepath = path;
-    if (!path.starts_with('/') && !path.starts_with('~'))
+    std::string filepath = _path;
+    if (!_path.starts_with('/') && !_path.starts_with('~'))
     {
-        filepath = flow::GetProgramRootPath() + '/' + path;
+        filepath = flow::GetProgramRootPath() + '/' + _path;
     }
 
-    if (fileType == FileType::CSV || fileType == FileType::BINARY)
+    if (_fileType == FileType::CSV || _fileType == FileType::BINARY)
     {
         // Does not enable binary read/write, but disables OS dependant treatment of \n, \r
-        filestream.open(filepath, std::ios_base::trunc | std::ios_base::binary);
+        _filestream.open(filepath, std::ios_base::trunc | std::ios_base::binary);
     }
 
-    if (!filestream.good())
+    if (!_filestream.good())
     {
         LOG_ERROR("Could not open file {}", filepath);
         return false;
@@ -69,20 +69,20 @@ void NAV::FileWriter::deinitialize()
 
     try
     {
-        if (filestream.is_open())
+        if (_filestream.is_open())
         {
-            filestream.flush();
-            filestream.close();
+            _filestream.flush();
+            _filestream.close();
         }
     }
     catch (...)
     {
     }
 
-    filestream.clear();
+    _filestream.clear();
 }
 
-std::string NAV::FileWriter::str(NAV::FileWriter::FileType type)
+const char* NAV::FileWriter::to_string(NAV::FileWriter::FileType type)
 {
     switch (type)
     {

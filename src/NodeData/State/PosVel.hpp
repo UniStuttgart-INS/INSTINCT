@@ -34,10 +34,10 @@ class PosVel : public Pos
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the velocity in [m/s], in earth coordinates
-    [[nodiscard]] const Eigen::Vector3d& velocity_e() const { return v_e; }
+    [[nodiscard]] const Eigen::Vector3d& velocity_e() const { return _v_e; }
 
     /// Returns the velocity in [m/s], in navigation coordinates
-    [[nodiscard]] const Eigen::Vector3d& velocity_n() const { return v_n; }
+    [[nodiscard]] const Eigen::Vector3d& velocity_n() const { return _v_n; }
 
     // ###########################################################################################################
     //                                                  Setter
@@ -47,16 +47,16 @@ class PosVel : public Pos
     /// @param[in] vel_e The new velocity in the earth frame
     void setVelocity_e(const Eigen::Vector3d& vel_e)
     {
-        v_e = vel_e;
-        v_n = quaternion_ne() * vel_e;
+        _v_e = vel_e;
+        _v_n = quaternion_ne() * vel_e;
     }
 
     /// @brief Set the Velocity in the NED frame
     /// @param[in] vel_n The new velocity in the NED frame
     void setVelocity_n(const Eigen::Vector3d& vel_n)
     {
-        v_e = quaternion_en() * vel_n;
-        v_n = vel_n;
+        _v_e = quaternion_en() * vel_n;
+        _v_n = vel_n;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -65,9 +65,9 @@ class PosVel : public Pos
 
   private:
     /// Velocity in earth coordinates [m/s]
-    Eigen::Vector3d v_e{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d _v_e{ std::nan(""), std::nan(""), std::nan("") };
     /// Velocity in navigation coordinates [m/s]
-    Eigen::Vector3d v_n{ std::nan(""), std::nan(""), std::nan("") };
+    Eigen::Vector3d _v_n{ std::nan(""), std::nan(""), std::nan("") };
 };
 
 } // namespace NAV

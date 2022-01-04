@@ -38,7 +38,7 @@ class Transformation : public Node
     [[nodiscard]] static std::string category();
 
     /// @brief ImGui config window which is shown on double click
-    /// @attention Don't forget to set hasConfig to true in the constructor of the node
+    /// @attention Don't forget to set _hasConfig to true in the constructor of the node
     void guiConfig() override;
 
     /// @brief Saves the node into a json object
@@ -59,8 +59,8 @@ class Transformation : public Node
     void notifyOnOutputValueChanged(ax::NodeEditor::LinkId linkId) override;
 
   private:
-    constexpr static size_t OutputPortIndex_Matrix = 0; ///< @brief Matrix
-    constexpr static size_t InputPortIndex_Matrix = 0;  ///< @brief Matrix
+    constexpr static size_t OUTPUT_PORT_INDEX_MATRIX = 0; ///< @brief Matrix
+    constexpr static size_t INPUT_PORT_INDEX_MATRIX = 0;  ///< @brief Matrix
 
     /// @brief Possible Transformation types
     enum class Type : int
@@ -95,10 +95,10 @@ class Transformation : public Node
     void updateMatrixSize();
 
     /// The matrix object
-    Eigen::MatrixXd matrix;
+    Eigen::MatrixXd _matrix;
 
     /// Algorithm to use
-    Type selectedTransformation = Type::ECEF_2_LLArad;
+    Type _selectedTransformation = Type::ECEF_2_LLArad;
 };
 
 } // namespace NAV

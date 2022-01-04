@@ -53,7 +53,7 @@ class Pos : public InsObs
     /* -------------------------------------------------------------------------------------------------------- */
 
     /// Returns the latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m]
-    [[nodiscard]] const Eigen::Vector3d& latLonAlt() const { return p_lla; }
+    [[nodiscard]] const Eigen::Vector3d& latLonAlt() const { return _p_lla; }
 
     /// Returns the latitude 𝜙 in [rad]
     [[nodiscard]] const double& latitude() const { return latLonAlt()(0); }
@@ -65,7 +65,7 @@ class Pos : public InsObs
     [[nodiscard]] const double& altitude() const { return latLonAlt()(2); }
 
     /// Returns the ECEF coordinates in [m]
-    [[nodiscard]] const Eigen::Vector3d& position_ecef() const { return p_ecef; }
+    [[nodiscard]] const Eigen::Vector3d& position_ecef() const { return _p_ecef; }
 
     // ###########################################################################################################
     //                                                  Setter
@@ -75,16 +75,16 @@ class Pos : public InsObs
     /// @param[in] pos_ecef New Position in ECEF coordinates
     void setPosition_e(const Eigen::Vector3d& pos_ecef)
     {
-        p_ecef = pos_ecef;
-        p_lla = trafo::ecef2lla_WGS84(pos_ecef);
+        _p_ecef = pos_ecef;
+        _p_lla = trafo::ecef2lla_WGS84(pos_ecef);
     }
 
     /// @brief Set the Position lla object
     /// @param[in] pos_lla New Position in LatLonAlt coordinates
     void setPosition_lla(const Eigen::Vector3d& pos_lla)
     {
-        p_ecef = trafo::lla2ecef_WGS84(pos_lla);
-        p_lla = pos_lla;
+        _p_ecef = trafo::lla2ecef_WGS84(pos_lla);
+        _p_lla = pos_lla;
     }
 
     /* -------------------------------------------------------------------------------------------------------- */
@@ -93,9 +93,9 @@ class Pos : public InsObs
 
   private:
     /// Position in ECEF coordinates [m]
-    Eigen::Vector3d p_ecef{ 0, 0, 0 };
+    Eigen::Vector3d _p_ecef{ 0, 0, 0 };
     /// Position in LatLonAlt coordinates [rad, rad, m]
-    Eigen::Vector3d p_lla{ 0, 0, 0 };
+    Eigen::Vector3d _p_lla{ 0, 0, 0 };
 };
 
 } // namespace NAV

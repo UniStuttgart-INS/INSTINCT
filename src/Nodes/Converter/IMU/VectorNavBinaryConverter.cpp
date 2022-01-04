@@ -15,8 +15,8 @@ NAV::VectorNavBinaryConverter::VectorNavBinaryConverter()
     name = typeStatic();
 
     LOG_TRACE("{}: called", name);
-    hasConfig = true;
-    guiConfigDefaultWindowSize = { 350, 123 };
+    _hasConfig = true;
+    _guiConfigDefaultWindowSize = { 350, 123 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObsWDelta::type() });
 
@@ -45,19 +45,19 @@ std::string NAV::VectorNavBinaryConverter::category()
 
 void NAV::VectorNavBinaryConverter::guiConfig()
 {
-    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&outputType), "ImuObsWDelta\0PosVelAtt\0\0"))
+    if (ImGui::Combo(fmt::format("Output Type##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_outputType), "ImuObsWDelta\0PosVelAtt\0\0"))
     {
-        LOG_DEBUG("{}: Output Type changed to {}", nameId(), outputType ? "PosVelAtt" : "ImuObsWDelta");
+        LOG_DEBUG("{}: Output Type changed to {}", nameId(), _outputType ? "PosVelAtt" : "ImuObsWDelta");
 
-        if (outputType == OutputType_ImuObsWDelta)
+        if (_outputType == OutputType_ImuObsWDelta)
         {
-            outputPins.at(OutputPortIndex_Converted).dataIdentifier = { NAV::ImuObsWDelta::type() };
-            outputPins.at(OutputPortIndex_Converted).name = NAV::ImuObsWDelta::type();
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::ImuObsWDelta::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::ImuObsWDelta::type();
         }
-        else if (outputType == OutputType_PosVelAtt)
+        else if (_outputType == OutputType_PosVelAtt)
         {
-            outputPins.at(OutputPortIndex_Converted).dataIdentifier = { NAV::PosVelAtt::type() };
-            outputPins.at(OutputPortIndex_Converted).name = NAV::PosVelAtt::type();
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::PosVelAtt::type() };
+            outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::PosVelAtt::type();
         }
 
         for (auto* link : nm::FindConnectedLinksToOutputPin(outputPins.front().id))
@@ -68,16 +68,16 @@ void NAV::VectorNavBinaryConverter::guiConfig()
         flow::ApplyChanges();
     }
 
-    if (outputType == OutputType_PosVelAtt)
+    if (_outputType == OutputType_PosVelAtt)
     {
-        if (ImGui::Combo(fmt::format("Data Source##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&posVelSource), "Best\0INS\0GNSS 1\0GNSS 2\0\0"))
+        if (ImGui::Combo(fmt::format("Data Source##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_posVelSource), "Best\0INS\0GNSS 1\0GNSS 2\0\0"))
         {
-            LOG_DEBUG("{}: posVelSource changed to {}", nameId(), posVelSource);
+            LOG_DEBUG("{}: _posVelSource changed to {}", nameId(), _posVelSource);
             flow::ApplyChanges();
         }
-        if (ImGui::Checkbox(fmt::format("Force static##{}", size_t(id)).c_str(), &forceStatic))
+        if (ImGui::Checkbox(fmt::format("Force static##{}", size_t(id)).c_str(), &_forceStatic))
         {
-            LOG_DEBUG("{}: forceStatic changed to {}", nameId(), forceStatic);
+            LOG_DEBUG("{}: _forceStatic changed to {}", nameId(), _forceStatic);
             flow::ApplyChanges();
         }
     }
@@ -89,9 +89,9 @@ void NAV::VectorNavBinaryConverter::guiConfig()
 
     json j;
 
-    j["outputType"] = outputType;
-    j["posVelSource"] = posVelSource;
-    j["forceStatic"] = forceStatic;
+    j["outputType"] = _outputType;
+    j["posVelSource"] = _posVelSource;
+    j["forceStatic"] = _forceStatic;
 
     return j;
 }
@@ -102,29 +102,29 @@ void NAV::VectorNavBinaryConverter::restore(json const& j)
 
     if (j.contains("outputType"))
     {
-        j.at("outputType").get_to(outputType);
+        j.at("outputType").get_to(_outputType);
 
         if (!outputPins.empty())
         {
-            if (outputType == OutputType_ImuObsWDelta)
+            if (_outputType == OutputType_ImuObsWDelta)
             {
-                outputPins.at(OutputPortIndex_Converted).dataIdentifier = { NAV::ImuObsWDelta::type() };
-                outputPins.at(OutputPortIndex_Converted).name = NAV::ImuObsWDelta::type();
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::ImuObsWDelta::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::ImuObsWDelta::type();
             }
-            else if (outputType == OutputType_PosVelAtt)
+            else if (_outputType == OutputType_PosVelAtt)
             {
-                outputPins.at(OutputPortIndex_Converted).dataIdentifier = { NAV::PosVelAtt::type() };
-                outputPins.at(OutputPortIndex_Converted).name = NAV::PosVelAtt::type();
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).dataIdentifier = { NAV::PosVelAtt::type() };
+                outputPins.at(OUTPUT_PORT_INDEX_CONVERTED).name = NAV::PosVelAtt::type();
             }
         }
     }
     if (j.contains("posVelSource"))
     {
-        j.at("posVelSource").get_to(posVelSource);
+        j.at("posVelSource").get_to(_posVelSource);
     }
     if (j.contains("forceStatic"))
     {
-        forceStatic = j.at("forceStatic");
+        _forceStatic = j.at("forceStatic");
     }
 }
 
@@ -132,7 +132,7 @@ bool NAV::VectorNavBinaryConverter::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
-    posVelAtt__init = nullptr;
+    _posVelAtt__init = nullptr;
 
     return true;
 }
@@ -143,18 +143,18 @@ void NAV::VectorNavBinaryConverter::receiveObs(const std::shared_ptr<const NodeD
 
     std::shared_ptr<const NodeData> convertedData = nullptr;
 
-    if (outputType == OutputType_ImuObsWDelta)
+    if (_outputType == OutputType_ImuObsWDelta)
     {
         convertedData = convert2ImuObsWDelta(vnObs);
     }
-    else if (outputType == OutputType_PosVelAtt)
+    else if (_outputType == OutputType_PosVelAtt)
     {
         convertedData = convert2PosVelAtt(vnObs);
     }
 
     if (convertedData)
     {
-        invokeCallbacks(OutputPortIndex_Converted, convertedData);
+        invokeCallbacks(OUTPUT_PORT_INDEX_CONVERTED, convertedData);
     }
 }
 
@@ -247,7 +247,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         }
     }
 
-    if ((posVelSource == PosVelSource_Best || posVelSource == PosVelSource_Ins)
+    if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Ins)
         && vnObs->insOutputs && (vnObs->insOutputs->insStatus.mode() == 1 || vnObs->insOutputs->insStatus.mode() == 2))
     {
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
@@ -278,7 +278,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         }
     }
 
-    if ((posVelSource == PosVelSource_Best || posVelSource == PosVelSource_Gnss1)
+    if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Gnss1)
         && vnObs->gnss1Outputs && vnObs->gnss1Outputs->fix >= 2)
     {
         if (!p_ecef.has_value() && !p_lla.has_value())
@@ -309,7 +309,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
             }
         }
     }
-    if ((posVelSource == PosVelSource_Best || posVelSource == PosVelSource_Gnss2)
+    if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Gnss2)
         && vnObs->gnss2Outputs && vnObs->gnss2Outputs->fix >= 2)
     {
         if (!p_ecef.has_value() && !p_lla.has_value())
@@ -366,16 +366,16 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
             posVelAttObs->setAttitude_nb(quat_nb.value());
         }
 
-        if (posVelAtt__init == nullptr)
+        if (_posVelAtt__init == nullptr)
         {
-            posVelAtt__init = posVelAttObs;
+            _posVelAtt__init = posVelAttObs;
         }
 
-        if (forceStatic)
+        if (_forceStatic)
         {
-            posVelAttObs->setPosition_e(posVelAtt__init->position_ecef());
+            posVelAttObs->setPosition_e(_posVelAtt__init->position_ecef());
             posVelAttObs->setVelocity_n(Eigen::Vector3d::Zero());
-            posVelAttObs->setAttitude_nb(posVelAtt__init->quaternion_nb());
+            posVelAttObs->setAttitude_nb(_posVelAtt__init->quaternion_nb());
         }
 
         return posVelAttObs;

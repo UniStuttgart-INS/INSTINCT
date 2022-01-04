@@ -613,12 +613,12 @@ class InsTime
     /// @brief Constructor
     /// @param[in] mjd Time in Modified Julien Date [UTC]
     constexpr explicit InsTime(const InsTime_MJD& mjd)
-        : mjd(mjd) {}
+        : _mjd(mjd) {}
 
     /// @brief Constructor
     /// @param[in] jd Time in Julien Date [UTC]
     constexpr explicit InsTime(const InsTime_JD& jd)
-        : mjd(jd.jd_day - InsTimeUtil::DIFF_MJD_TO_JD_DAYS, jd.jd_frac - InsTimeUtil::DIFF_MJD_TO_JD_FRAC) {}
+        : _mjd(jd.jd_day - InsTimeUtil::DIFF_MJD_TO_JD_DAYS, jd.jd_frac - InsTimeUtil::DIFF_MJD_TO_JD_FRAC) {}
 
     /// @brief Constructor
     /// @param[in] gpsWeekTow Time in GPS standard time [GPST]
@@ -631,7 +631,7 @@ class InsTime
 
         mjd_frac -= static_cast<long double>(leapGps2UTC(InsTime_MJD(mjd_day, mjd_frac))) / InsTimeUtil::SECONDS_PER_DAY; // from GPST to UTC
 
-        mjd = InsTime_MJD(mjd_day, mjd_frac);
+        _mjd = InsTime_MJD(mjd_day, mjd_frac);
     }
 
     /// @brief Constructor
@@ -654,7 +654,7 @@ class InsTime
                         + static_cast<long double>(yearMonthDayHMS.hour - 12.0) * InsTimeUtil::SECONDS_PER_HOUR)
                        / InsTimeUtil::SECONDS_PER_DAY;
 
-        mjd = InsTime(InsTime_JD(jd_day, jd_frac)).toMJD();
+        _mjd = InsTime(InsTime_JD(jd_day, jd_frac)).toMJD();
     }
 
     /// @brief Constructor
@@ -675,7 +675,7 @@ class InsTime
 
         sod -= static_cast<long double>(leapGps2UTC(InsTime_YMDHMS(year, month, day, 0, 0, sod)));
 
-        mjd = InsTime(InsTime_YMDHMS(year, month, day, 0, 0, sod)).toMJD();
+        _mjd = InsTime(InsTime_YMDHMS(year, month, day, 0, 0, sod)).toMJD();
     }
 
     /// @brief Constructor
@@ -735,15 +735,15 @@ class InsTime
     /// @return InsTime_MJD structure of the this object
     [[nodiscard]] constexpr InsTime_MJD toMJD() const
     {
-        return mjd;
+        return _mjd;
     }
 
     /// @brief Converts this time object into a different format
     /// @return InsTime_JD structure of the this object
     [[nodiscard]] constexpr InsTime_JD toJD() const
     {
-        auto jd_day = mjd.mjd_day + InsTimeUtil::DIFF_MJD_TO_JD_DAYS;
-        auto jd_frac = mjd.mjd_frac + InsTimeUtil::DIFF_MJD_TO_JD_FRAC;
+        auto jd_day = _mjd.mjd_day + InsTimeUtil::DIFF_MJD_TO_JD_DAYS;
+        auto jd_frac = _mjd.mjd_frac + InsTimeUtil::DIFF_MJD_TO_JD_FRAC;
 
         return { jd_day, jd_frac };
     }
@@ -752,7 +752,7 @@ class InsTime
     /// @return InsTime_GPSweekTow structure of the this object
     [[nodiscard]] constexpr InsTime_GPSweekTow toGPSweekTow() const
     {
-        InsTime_MJD mjd_leap = mjd;
+        InsTime_MJD mjd_leap = _mjd;
         // Convert from UTC to GPST
         mjd_leap.mjd_frac += static_cast<long double>(leapGps2UTC(mjd_leap)) / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY);
 
@@ -819,7 +819,7 @@ class InsTime
     /// @return The rounded time object
     [[nodiscard]] constexpr InsTime toFullDay() const
     {
-        return InsTime(InsTime_MJD(mjd.mjd_day, 0.0L));
+        return InsTime(InsTime_MJD(_mjd.mjd_day, 0.0L));
     }
 
     /* ----------------------------- Leap functions ----------------------------- */
@@ -828,7 +828,7 @@ class InsTime
     /// @return Number of leap seconds
     [[nodiscard]] constexpr uint16_t leapGps2UTC() const
     {
-        return leapGps2UTC(mjd);
+        return leapGps2UTC(_mjd);
     }
 
     /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime object
@@ -836,7 +836,7 @@ class InsTime
     /// @return Number of leap seconds
     static constexpr uint16_t leapGps2UTC(const InsTime& insTime)
     {
-        return leapGps2UTC(insTime.mjd);
+        return leapGps2UTC(insTime._mjd);
     }
 
     /// @brief Returns the number of leap seconds (offset GPST to UTC) for the provided InsTime_GPSweekTow object
@@ -927,7 +927,7 @@ class InsTime
     /// @brief Equal comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
     /// @return Comparison result
-    constexpr bool operator==(const InsTime& rhs) const { return mjd == rhs.mjd; }
+    constexpr bool operator==(const InsTime& rhs) const { return _mjd == rhs._mjd; }
     /// @brief Inequal comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
     /// @return Comparison result
@@ -943,7 +943,7 @@ class InsTime
     /// @brief Smaller comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
     /// @return Comparison result
-    constexpr bool operator<(const InsTime& rhs) const { return mjd < rhs.mjd; }
+    constexpr bool operator<(const InsTime& rhs) const { return _mjd < rhs._mjd; }
     /// @brief Greater comparison operator (takes double precision into account)
     /// @param[in] rhs Right-hand side to compare with
     /// @return Comparison result
@@ -957,8 +957,8 @@ class InsTime
     /// @return Time difference in [seconds]
     constexpr friend std::chrono::duration<long double> operator-(const InsTime& lhs, const InsTime& rhs)
     {
-        auto diffDays = lhs.mjd.mjd_day - rhs.mjd.mjd_day;
-        auto diffFrac = lhs.mjd.mjd_frac - rhs.mjd.mjd_frac;
+        auto diffDays = lhs._mjd.mjd_day - rhs._mjd.mjd_day;
+        auto diffFrac = lhs._mjd.mjd_frac - rhs._mjd.mjd_frac;
         long double diffSec = (diffFrac + static_cast<long double>(diffDays)) * InsTimeUtil::SECONDS_PER_DAY;
         return std::chrono::duration<long double>(diffSec);
     }
@@ -969,8 +969,8 @@ class InsTime
     constexpr InsTime& operator+=(const std::chrono::duration<long double>& duration)
     {
         auto duration_mjd_frac = std::chrono::duration<long double, std::ratio<InsTimeUtil::SECONDS_PER_DAY>>(duration).count();
-        this->mjd = InsTime_MJD(this->mjd.mjd_day,
-                                this->mjd.mjd_frac + duration_mjd_frac);
+        this->_mjd = InsTime_MJD(this->_mjd.mjd_day,
+                                 this->_mjd.mjd_frac + duration_mjd_frac);
         return *this;
     }
 
@@ -980,8 +980,8 @@ class InsTime
     constexpr InsTime& operator-=(const std::chrono::duration<long double>& duration)
     {
         auto duration_mjd_frac = std::chrono::duration<long double, std::ratio<InsTimeUtil::SECONDS_PER_DAY>>(duration).count();
-        this->mjd = InsTime_MJD(this->mjd.mjd_day,
-                                this->mjd.mjd_frac - duration_mjd_frac);
+        this->_mjd = InsTime_MJD(this->_mjd.mjd_day,
+                                 this->_mjd.mjd_frac - duration_mjd_frac);
         return *this;
     }
 
@@ -1008,7 +1008,7 @@ class InsTime
     /// @brief Checks if the Time object has a value
     [[nodiscard]] constexpr bool empty() const
     {
-        return mjd.mjd_day == 0 && mjd.mjd_frac == 0.0L;
+        return _mjd.mjd_day == 0 && _mjd.mjd_frac == 0.0L;
     }
 
     /// @brief Adds the difference [seconds] between toe (OBRIT-0 last element) and toc (ORBIT-0 first element) to the current time
@@ -1042,7 +1042,7 @@ class InsTime
 
   private:
     /// @brief Modified Julien Date of this InsTime object
-    InsTime_MJD mjd{};
+    InsTime_MJD _mjd{};
 };
 
 /// @brief Stream insertion operator overload
