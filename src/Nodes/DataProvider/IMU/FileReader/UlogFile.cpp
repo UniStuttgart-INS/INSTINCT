@@ -12,8 +12,7 @@ namespace nm = NAV::NodeManager;
 
 #include "UlogFileFormat.hpp"
 
-// #include "NodeData/IMU/"
-// #include "Nodes/DataProvider/IMU/Sensors/"
+// ----------------------------------------------------------- Basic Node Functions --------------------------------------------------------------
 
 NAV::UlogFile::UlogFile()
 {
@@ -105,6 +104,8 @@ bool NAV::UlogFile::resetNode()
     return true;
 }
 
+// ------------------------------------------------------------ File Reading ---------------------------------------------------------------
+
 std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
 {
     // Get current position
@@ -132,9 +133,39 @@ NAV::FileReader::FileType NAV::UlogFile::determineFileType()
     {
         filestream.read(buffer.data(), BUFFER_SIZE);
         filestream.close();
-        LOG_DEBUG("{} has the file type: binary", nameId());
-        return FileType::BINARY;
+        LOG_DEBUG("{} has the file type: CSV", nameId());
+        return FileType::CSV;
     }
-    LOG_ERROR("{} could not determine file type", nameId(), path);
+    filestream.close();
+
+    LOG_ERROR("{} could not open file", nameId(), path);
     return FileType::NONE;
+}
+
+void NAV::UlogFile::readHeader()
+{
+    if (fileType == FileType::CSV)
+    {
+        filestream.seekg(7, std::ios::cur);
+        char version{ 0 };
+        filestream.read(&version, sizeof(version));
+
+        LOG_DEBUG("version: {}", static_cast<int>(version));
+
+        // Read header line
+        // std::string line;
+        // std::getline(filestream, line);
+
+        // // LOG_DEBUG("line: {}", line);
+
+        // std::string fileMagic = line.substr(0, 7);
+        // LOG_DEBUG("fileMagic: {}", fileMagic);
+        // // int version = std::atoi((line.substr(7, 1)).c_str()); //NOLINT(cert-err34-c)
+        // std::string version = line.substr(7, 1); //NOLINT(cert-err34-c)
+        // LOG_DEBUG("version: {}", version);
+
+        // // Convert line into stream
+        // // std::stringstream lineStream(line);
+        // // std::string cell;
+    }
 }

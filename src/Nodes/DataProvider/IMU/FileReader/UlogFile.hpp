@@ -5,6 +5,11 @@
 
 #pragma once
 
+// Already in 'FileReader.hpp'
+// #include <string>
+// #include <vector>
+// #include <fstream>
+
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
@@ -66,6 +71,9 @@ class UlogFile : public Imu, public FileReader
     /// @brief Determines the type of the file
     /// @return The file type
     [[nodiscard]] FileType determineFileType() override;
+
+    /// @brief Read the Header of the file
+    void readHeader() override;
 
     /// @brief Number of messages read
     uint32_t messageCount = 0;
