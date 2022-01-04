@@ -426,13 +426,13 @@ void NAV::ImuIntegrator::recvImuBiases(const std::shared_ptr<const NodeData>& no
 std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::correctPosVelAtt(const std::shared_ptr<const NAV::PosVelAtt>& posVelAtt, const std::shared_ptr<const NAV::PVAError>& pvaError)
 {
     auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
-    posVelAttCorrected->setPosition_lla(posVelAtt->latLonAlt() + pvaError->positionError_lla());
+    posVelAttCorrected->setPosition_lla(posVelAtt->latLonAlt() - pvaError->positionError_lla());
 
-    posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() + pvaError->velocityError_n());
+    posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() - pvaError->velocityError_n());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
     Eigen::Vector3d attError = pvaError->attitudeError_n();
-    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
+    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() + skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
     posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
@@ -547,10 +547,10 @@ void NAV::ImuIntegrator::integrateObservation()
     if (_imuBiases)
     {
         LOG_DATA("{}: Applying IMU Biases", nameId());
-        omega_ip_p__t1 += imuPosition.quatGyro_pb() * _imuBiases->biasGyro_b;
-        omega_ip_p__t0 += imuPosition.quatGyro_pb() * _imuBiases->biasGyro_b;
-        f_p__t1 += imuPosition.quatAccel_pb() * _imuBiases->biasAccel_b;
-        f_p__t0 += imuPosition.quatAccel_pb() * _imuBiases->biasAccel_b;
+        omega_ip_p__t1 -= imuPosition.quatGyro_pb() * _imuBiases->biasGyro_b;
+        omega_ip_p__t0 -= imuPosition.quatGyro_pb() * _imuBiases->biasGyro_b;
+        f_p__t1 -= imuPosition.quatAccel_pb() * _imuBiases->biasAccel_b;
+        f_p__t0 -= imuPosition.quatAccel_pb() * _imuBiases->biasAccel_b;
     }
     LOG_DATA("{}: omega_ip_p__t1 = {}", nameId(), omega_ip_p__t1.transpose());
     LOG_DATA("{}: omega_ip_p__t0 = {}", nameId(), omega_ip_p__t0.transpose());

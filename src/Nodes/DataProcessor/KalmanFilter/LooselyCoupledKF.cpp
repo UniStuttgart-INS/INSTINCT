@@ -1250,9 +1250,9 @@ Eigen::Matrix<double, 6, 15> NAV::LooselyCoupledKF::measurementMatrix(const Eige
     // G denotes GNSS indicated
     Eigen::Matrix<double, 6, 15> H = Eigen::Matrix<double, 6, 15>::Zero();
     H.block<3, 3>(0, 0) = S_p * measurementMatrix_r1_n(T_rn_p, DCM_nb, leverArm_InsGnss_b);
-    H.block<3, 3>(0, 6) = S_p;
+    H.block<3, 3>(0, 6) = -Eigen::Matrix3d::Identity();
     H.block<3, 3>(3, 0) = measurementMatrix_v1_n(DCM_nb, angularRate_ib_b, leverArm_InsGnss_b, Omega_ie_n);
-    H.block<3, 3>(3, 3) = Eigen::Matrix3d::Identity();
+    H.block<3, 3>(3, 3) = -Eigen::Matrix3d::Identity();
     H.block<3, 3>(3, 12) = measurementMatrix_v5_n(DCM_nb, leverArm_InsGnss_b);
 
     return H;
