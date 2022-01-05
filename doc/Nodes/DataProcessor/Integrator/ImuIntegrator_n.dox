@@ -1,6 +1,6 @@
 namespace Instinct {
 
-/** \defgroup ImuIntegrator IMU Integrator
+/** \defgroup ImuIntegrator_n IMU Integrator (local-navigation frame)
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section ImuIntegrator-Mechanization-n Local-navigation frame mechanization
@@ -156,7 +156,7 @@ see
 - \cite Groves2013 Groves, ch. 2.4.2, eq. 2.111, p. 61
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
-\section ImuIntegrator-Appendix Appendix
+\section ImuIntegrator-n-Appendix Appendix
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 \subsection ImuIntegrator-Mechanization-n-Attitude-Quaternion-Comparison Quaternion propagation comparison
