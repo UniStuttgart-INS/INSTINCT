@@ -145,7 +145,7 @@ void NAV::LooselyCoupledKF::guiConfig()
         if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the noise on the\naccelerometer specific-force measurements##{}",
                                                           _varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
                                                   .c_str(),
-                                              configWidth, unitWidth, &_variance_ra, reinterpret_cast<int*>(&_varianceAccelNoiseUnits), "mg/√(Hz)\0\0",
+                                              configWidth, unitWidth, &_variance_ra, reinterpret_cast<int*>(&_varianceAccelNoiseUnits), "m/s^3/√(s)\0\0", //"mg/√(Hz)\0\0", //TODO: Correct units from data sheet
                                               0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: variance_ra changed to {}", nameId(), _variance_ra);
@@ -200,7 +200,7 @@ void NAV::LooselyCoupledKF::guiConfig()
         if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the noise on\nthe gyro angular-rate measurements##{}",
                                                           _varianceGyroNoiseUnits == VarianceGyroNoiseUnits::deg_hr_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
                                                   .c_str(),
-                                              configWidth, unitWidth, &_variance_rg, reinterpret_cast<int*>(&_varianceGyroNoiseUnits), "deg/hr/√(Hz)\0\0",
+                                              configWidth, unitWidth, &_variance_rg, reinterpret_cast<int*>(&_varianceGyroNoiseUnits), "rad/s^2/√(s)\0\0", //"deg/hr/√(Hz)\0\0", //TODO: Correct units from data sheet
                                               0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
         {
             LOG_DEBUG("{}: variance_rg changed to {}", nameId(), _variance_rg);
@@ -714,19 +714,19 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
-    // 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements [m²/s³]
-    double sigma2_ra{};
-    if (_varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz)
-    {
-        sigma2_ra = std::pow((_variance_ra /* [mg/√(Hz)] */) * 1e-3 * InsConst::G_NORM, 2);
-    }
-    // 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
-    double sigma2_rg{};
-    if (_varianceGyroNoiseUnits == VarianceGyroNoiseUnits::deg_hr_sqrtHz)
-    {
-        // See Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours.
-        sigma2_rg = std::pow(1 / 3600.0 * (trafo::deg2rad(_variance_rg /* [deg/hr/√(Hz)] */)), 2);
-    }
+    // 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements [m/s^3/√(s)]
+    double sigma2_ra = _variance_ra;
+    // if (_varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz) //TODO: Correct units from data sheet
+    // {
+    //     sigma2_ra = std::pow((_variance_ra /* [mg/√(Hz)] */) * 1e-3 * InsConst::G_NORM, 2);
+    // }
+    // 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [rad/s^2/√(s)]
+    double sigma2_rg = _variance_rg;
+    // if (_varianceGyroNoiseUnits == VarianceGyroNoiseUnits::deg_hr_sqrtHz) //TODO: Correct units from data sheet
+    // {
+    //     // See Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours.
+    //     sigma2_rg = std::pow(1 / 3600.0 * (trafo::deg2rad(_variance_rg /* [deg/hr/√(Hz)] */)), 2);
+    // }
 
     // ---------------------------------------------- Prediction -------------------------------------------------
 
