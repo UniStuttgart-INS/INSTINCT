@@ -134,7 +134,7 @@ NAV::FileReader::FileType NAV::UlogFile::determineFileType()
         filestream.read(buffer.data(), BUFFER_SIZE);
         filestream.close();
         LOG_DEBUG("{} has the file type: CSV", nameId());
-        return FileType::CSV;
+        return FileType::BINARY;
     }
     filestream.close();
 
@@ -144,28 +144,44 @@ NAV::FileReader::FileType NAV::UlogFile::determineFileType()
 
 void NAV::UlogFile::readHeader()
 {
-    if (fileType == FileType::CSV)
+    if (fileType == FileType::BINARY)
     {
-        filestream.seekg(7, std::ios::cur);
-        char version{ 0 };
-        filestream.read(&version, sizeof(version));
+#pragma pack(push, 1) // Syntax for gcc for #pragma pack
+        struct UlogHeaderStruct
+        {                                    // Offset | Size
+            std::array<char, 7> fileMagic{}; //   0    | 7 Byte
+            char version{ 0 };               //   7    | 1 Byte
+            std::array<char, 8> timeStamp{}; //   8    | 8 Byte
+        };
+#pragma pack(pop)
 
-        LOG_DEBUG("version: {}", static_cast<int>(version));
+        union UlogHeader
+        {
+            std::array<char, 16> data{};
+            UlogHeaderStruct header;
+        };
 
-        // Read header line
-        // std::string line;
-        // std::getline(filestream, line);
+        UlogHeader ulogHeader{};
 
-        // // LOG_DEBUG("line: {}", line);
+        filestream.read(ulogHeader.header.fileMagic.data(), sizeof(ulogHeader.header.fileMagic));
 
-        // std::string fileMagic = line.substr(0, 7);
-        // LOG_DEBUG("fileMagic: {}", fileMagic);
-        // // int version = std::atoi((line.substr(7, 1)).c_str()); //NOLINT(cert-err34-c)
-        // std::string version = line.substr(7, 1); //NOLINT(cert-err34-c)
-        // LOG_DEBUG("version: {}", version);
+        if (!((ulogHeader.header.fileMagic[0] == 'U') && (ulogHeader.header.fileMagic[1] == 'L') && (ulogHeader.header.fileMagic[2] == 'o') && (ulogHeader.header.fileMagic[3] == 'g')))
+        {
+            LOG_WARN("FileType is binary, but not ULog");
+        }
 
-        // // Convert line into stream
-        // // std::stringstream lineStream(line);
-        // // std::string cell;
+        filestream.read(&ulogHeader.header.version, sizeof(ulogHeader.header.version));
+        filestream.read(ulogHeader.header.timeStamp.data(), sizeof(ulogHeader.header.timeStamp));
+
+        LOG_DATA("version: {}", static_cast<int>(ulogHeader.header.version)); // No use so far, hence just a LOG_DATA
+        LOG_DEBUG("timeStamp: {}", static_cast<int>(ulogHeader.header.timeStamp[0]));
+
+        // --------------------------------------------------------------- TT sol ------------------------------------------------------------------
+        // filestream.seekg(7, std::ios::cur);
+        // char version{ 0 };
+        // filestream.read(&version, sizeof(version));
+
+        // LOG_DEBUG("version: {}", static_cast<int>(version));
+        // --------------------------------------------------------------- TT sol ------------------------------------------------------------------
     }
 }
