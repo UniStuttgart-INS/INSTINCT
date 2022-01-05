@@ -20,6 +20,7 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "util/Logger.hpp"
+#include "util/Units/Units.hpp"
 
 NAV::LooselyCoupledKF::LooselyCoupledKF()
 {
@@ -718,6 +719,10 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     double sigma2_ra{};
     if (_varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz)
     {
+        // using namespace units::isq;
+        // using namespace units::isq::si::references;
+
+        // [[maybe_unused]] auto sigma2_ra_units = _variance_ra * mg * units::sqrt(1.0 * Hz);
         sigma2_ra = std::pow((_variance_ra /* [mg/√(Hz)] */) * 1e-3 * InsConst::G_NORM, 2);
     }
     // 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
