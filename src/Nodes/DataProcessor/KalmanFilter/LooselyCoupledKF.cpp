@@ -1218,8 +1218,8 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const double& sigma2_
     }
     // else if (randomProcessAccel == RandomProcess::GaussMarkov1)
 
-    // Math: \mathbf{G}_{a} = \begin{bmatrix} \sqrt{\beta_{a,1} \sigma_{a,1}^2} & 0 & 0 \\ 0 & \sqrt{\beta_{a,2} \sigma_{a,2}^2} & 0 \\ 0 & 0 & \sqrt{\beta_{a,3} \sigma_{a,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return Eigen::DiagonalMatrix<double, 3>{ (beta_a * sigma2_ra).cwiseSqrt() };
+    // Math: \mathbf{G}_{a} = \begin{bmatrix} \sqrt{2 \sigma_{a,1}^2 \beta_{a,1}} & 0 & 0 \\ 0 & \sqrt{2 \sigma_{a,2}^2 \beta_{a,2}} & 0 \\ 0 & 0 & \sqrt{2 \sigma_{a,3}^2 \beta_{a,3}} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
+    return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta_a * sigma2_ra).cwiseSqrt() };
 }
 
 Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega)
@@ -1232,8 +1232,8 @@ Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sig
     }
     // else if (randomProcessGyro == RandomProcess::GaussMarkov1)
 
-    // Math: \mathbf{G}_{\omega} = \begin{bmatrix} \sqrt{\beta_{\omega,1} \sigma_{\omega,1}^2} & 0 & 0 \\ 0 & \sqrt{\beta_{\omega,2} \sigma_{\omega,2}^2} & 0 \\ 0 & 0 & \sqrt{\beta_{\omega,3} \sigma_{\omega,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return Eigen::DiagonalMatrix<double, 3>{ (beta_omega * sigma2_rg).cwiseSqrt() };
+    // Math: \mathbf{G}_{\omega} = \begin{bmatrix} \sqrt{2 \sigma_{\omega,1}^2 \beta_{\omega,1}} & 0 & 0 \\ 0 & \sqrt{2 \sigma_{\omega,2}^2 \beta_{\omega,2}} & 0 \\ 0 & 0 & \sqrt{2 \sigma_{\omega,3}^2 \beta_{\omega,3}} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
+    return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta_omega * sigma2_rg).cwiseSqrt() };
 }
 
 // ###########################################################################################################
