@@ -13,7 +13,7 @@ namespace units::isq::si
 {
 
 /// @brief Standard gravity [g]
-struct standardgravity : named_scaled_unit<standardgravity, "g", prefix, ratio(NAV::InsConst::G_NORM * 1e5, 1e5, 0), metre_per_second_sq>
+struct standardgravity : named_scaled_unit<standardgravity, "g", prefix, ratio(static_cast<intmax_t>(NAV::InsConst::G_NORM * 1e5), 1e5, 0), metre_per_second_sq>
 {};
 /// @brief Milli standard gravity [mg]
 struct millistandardgravity : prefixed_unit<millistandardgravity, milli, standardgravity>
@@ -24,21 +24,22 @@ struct millistandardgravity : prefixed_unit<millistandardgravity, milli, standar
 inline namespace literals
 {
 
-// standard gravity [g]
-/// @brief
-constexpr auto operator"" _q_g(unsigned long long l)
+/// @brief Standard gravity [g]
+constexpr auto operator"" _q_g(unsigned long long l) // NOLINT(google-runtime-int)
 {
-    gsl_ExpectsAudit(std::in_range<std::int64_t>(l));
-    return acceleration<standardgravity, std::int64_t>(static_cast<std::int64_t>(l));
+    gsl_ExpectsAudit(std::in_range<int64_t>(l));
+    return acceleration<standardgravity, int64_t>(static_cast<int64_t>(l));
 }
+/// @brief Standard gravity [g]
 constexpr auto operator"" _q_g(long double l) { return acceleration<standardgravity, long double>(l); }
 
-// milli standard gravity [mg]
-constexpr auto operator"" _q_mg(unsigned long long l)
+/// @brief Milli standard gravity [mg]
+constexpr auto operator"" _q_mg(unsigned long long l) // NOLINT(google-runtime-int)
 {
-    gsl_ExpectsAudit(std::in_range<std::int64_t>(l));
-    return acceleration<millistandardgravity, std::int64_t>(static_cast<std::int64_t>(l));
+    gsl_ExpectsAudit(std::in_range<int64_t>(l));
+    return acceleration<millistandardgravity, int64_t>(static_cast<int64_t>(l));
 }
+/// @brief Milli standard gravity [mg]
 constexpr auto operator"" _q_mg(long double l) { return acceleration<millistandardgravity, long double>(l); }
 
 } // namespace literals
@@ -58,7 +59,7 @@ inline constexpr auto mg = reference<dim_acceleration, millistandardgravity>{};
 namespace references
 {
 
-using namespace acceleration_references;
+using namespace acceleration_references; // NOLINT(google-build-using-namespace)
 
 } // namespace references
 
@@ -76,6 +77,6 @@ using g = units::isq::si::acceleration<units::isq::si::standardgravity, Rep>;
 template<units::Representation Rep = double>
 using mg = units::isq::si::acceleration<units::isq::si::millistandardgravity, Rep>;
 
-} // namespace units::aliases::isq::si::inline acceleration
+} // namespace units::aliases::isq::si::acceleration
 
 #endif // UNITS_NO_ALIASES
