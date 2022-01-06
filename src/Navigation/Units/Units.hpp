@@ -11,17 +11,17 @@
 
 /* Unit-Specific Aliases (see https://mpusz.github.io/units/framework/quantities.html#unit-specific-aliases-experimental)
  *
- * using namespace units::isq::si::references;
- * auto d = 123. * km;       // si::length<si::kilometre, double>
- * auto v = 70 * (km / h);   // si::speed<si::kilometre_per_hour, int>
+ * using namespace units::aliases::isq;
+ * si::length::km d(123.);           // si::length<si::kilometre, double>
+ * si::speed::km_per_h<int> v(70);   // si::speed<si::kilometre_per_hour, int>
  */
 // #define UNITS_NO_ALIASES
 
 /* Quantity References (see https://mpusz.github.io/units/framework/quantities.html#quantity-references-experimental)
  *
- * using namespace units::aliases::isq;
- * si::length::km d(123.);           // si::length<si::kilometre, double>
- * si::speed::km_per_h<int> v(70);   // si::speed<si::kilometre_per_hour, int>
+ * using namespace units::isq::si::references;
+ * auto d = 123. * km;       // si::length<si::kilometre, double>
+ * auto v = 70 * (km / h);   // si::speed<si::kilometre_per_hour, int>
  */
 // #define UNITS_NO_REFERENCES
 
@@ -31,7 +31,7 @@
  * auto d = 123._q_km;     // si::length<si::kilometre, long double>
  * auto v = 70_q_km_per_h; // si::speed<si::kilometre_per_hour, std::int64_t>
  */
-// #define UNITS_NO_LITERALS
+#define UNITS_NO_LITERALS
 
 // #########################################################################################################################################
 //                                                         Custom Unit Definition
