@@ -74,6 +74,8 @@ using deg = units::angle<units::degree, Rep>; */
 template<units::Representation Rep = double>
 using m = units::angle<units::pseudometre, Rep>;
 
-} // namespace units::aliases::isq::si::inline angle
+// clang-format off
+} // namespace units::aliases::isq::si::angle
+// clang-format on
 
 #endif // UNITS_NO_ALIASES

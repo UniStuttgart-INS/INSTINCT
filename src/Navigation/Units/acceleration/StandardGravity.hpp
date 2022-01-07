@@ -80,6 +80,8 @@ using g = units::isq::si::acceleration<units::isq::si::standardgravity, Rep>;
 template<units::Representation Rep = double>
 using mg = units::isq::si::acceleration<units::isq::si::millistandardgravity, Rep>;
 
-} // namespace units::aliases::isq::si::inline acceleration
+// clang-format off
+} // namespace units::aliases::isq::si::acceleration
+// clang-format on
 
 #endif // UNITS_NO_ALIASES
