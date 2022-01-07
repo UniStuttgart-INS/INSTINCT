@@ -6,14 +6,13 @@
 #pragma once
 
 #include <units/isq/si/acceleration.h>
-
-#include <Navigation/Constants.hpp>
+#include <units/isq/si/constants.h>
 
 namespace units::isq::si
 {
 
 /// @brief Standard gravity [g]
-struct standardgravity : named_scaled_unit<standardgravity, "g", prefix, ratio(static_cast<intmax_t>(NAV::InsConst::G_NORM * 1e5), 1e5, 0), metre_per_second_sq>
+struct standardgravity : named_scaled_unit<standardgravity, "g", prefix, ratio(static_cast<intmax_t>(si2019::standard_gravity<double>.number() * 1e5), 1e5, 0), metre_per_second_sq>
 {};
 /// @brief Milli standard gravity [mg]
 struct millistandardgravity : prefixed_unit<millistandardgravity, milli, standardgravity>
@@ -23,6 +22,7 @@ struct millistandardgravity : prefixed_unit<millistandardgravity, milli, standar
 
 inline namespace literals
 {
+/* Do not work as name conflict with 'gram'
 
 /// @brief Standard gravity [g]
 constexpr auto operator"" _q_g(unsigned long long l) // NOLINT(google-runtime-int)
@@ -42,6 +42,7 @@ constexpr auto operator"" _q_mg(unsigned long long l) // NOLINT(google-runtime-i
 /// @brief Milli standard gravity [mg]
 constexpr auto operator"" _q_mg(long double l) { return acceleration<millistandardgravity, long double>(l); }
 
+*/
 } // namespace literals
 
 #endif // UNITS_NO_LITERALS
@@ -50,10 +51,12 @@ constexpr auto operator"" _q_mg(long double l) { return acceleration<millistanda
 
 namespace acceleration_references
 {
+/* Do not work as name conflict with 'gram'
 
 inline constexpr auto g = reference<dim_acceleration, standardgravity>{};
 inline constexpr auto mg = reference<dim_acceleration, millistandardgravity>{};
 
+*/
 } // namespace acceleration_references
 
 namespace references
@@ -77,6 +80,6 @@ using g = units::isq::si::acceleration<units::isq::si::standardgravity, Rep>;
 template<units::Representation Rep = double>
 using mg = units::isq::si::acceleration<units::isq::si::millistandardgravity, Rep>;
 
-} // namespace units::aliases::isq::si::acceleration
+} // namespace units::aliases::isq::si::inline acceleration
 
 #endif // UNITS_NO_ALIASES

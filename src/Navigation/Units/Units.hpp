@@ -66,4 +66,4 @@
 #include <units/isq/si/frequency.h>
 #include <units/math.h>
 
-#include "internal/StandardGravity.hpp"
+#include "acceleration/StandardGravity.hpp"
