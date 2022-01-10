@@ -202,6 +202,25 @@ void NAV::UlogFile::readDefinitions()
     {
         LOG_WARN("Flag bits not set.");
     }
+
+    // Format definition for a single (composite) type that can be logged or used in another definition as a nested type
+    if (ulogMsgHeader.msgHeader.msg_type == 'F')
+    {
+        /* code */
+    }
+
+    // Information message
+    if (ulogMsgHeader.msgHeader.msg_type == 'I')
+    {
+        union UlogInfoMsg
+        {
+            std::array<char, 2> data{};
+            Ulog::message_info_s ulogInfoMsg_s;
+        } ulogInfoMsg{};
+
+        filestream.read(ulogInfoMsg.data.data(), ulogInfoMsg.data.size());
+        LOG_DEBUG("Info Msg key_len: {}", ulogInfoMsg.ulogInfoMsg_s.key_len);
+    }
 }
 
 std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
