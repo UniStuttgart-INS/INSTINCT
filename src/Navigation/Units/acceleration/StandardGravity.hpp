@@ -1,4 +1,4 @@
-/// @file Units.hpp
+/// @file StandardGravity.hpp
 /// @brief Standard gravity related units [g]
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-01-04

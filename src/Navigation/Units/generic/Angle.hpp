@@ -1,4 +1,4 @@
-/// @file Units.hpp
+/// @file Angle.hpp
 /// @brief Angle related units
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-01-07
@@ -29,6 +29,7 @@ struct pseudometre : named_scaled_unit<pseudometre, "m", units::isq::si::prefix,
 
 inline namespace literals
 {
+/*
 /// @brief Degree [°]
 constexpr auto operator"" _q_deg(unsigned long long l) // NOLINT(google-runtime-int)
 {
@@ -36,8 +37,8 @@ constexpr auto operator"" _q_deg(unsigned long long l) // NOLINT(google-runtime-
     return angle<degree, int64_t>(static_cast<int64_t>(l));
 }
 /// @brief Degree [°]
-constexpr auto operator"" _q_g(long double l) { return angle<degree, long double>(l); }
-
+constexpr auto operator"" _q_deg(long double l) { return angle<degree, long double>(l); }
+*/
 } // namespace literals
 
 #endif // UNITS_NO_LITERALS

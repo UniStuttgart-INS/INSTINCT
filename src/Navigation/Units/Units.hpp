@@ -67,4 +67,4 @@
 #include <units/math.h>
 
 #include "acceleration/StandardGravity.hpp"
-#include "generic/angle.hpp"
+#include "generic/Angle.hpp"
