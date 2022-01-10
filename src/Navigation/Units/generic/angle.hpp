@@ -1,4 +1,4 @@
-/// @file Angle.hpp
+/// @file angle.hpp
 /// @brief Angle related units
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-01-07
@@ -21,6 +21,10 @@ struct degree : named_scaled_unit<degree, "deg", units::no_prefix, ratio(static_
 {};
 */
 
+/// @brief Milliradian [mrad]
+struct milliradian : prefixed_unit<milliradian, units::isq::si::milli, radian>
+{};
+
 /// @brief Pseudometre [m]
 struct pseudometre : named_scaled_unit<pseudometre, "m", units::isq::si::prefix, ratio(6378134), units::radian>
 {};
@@ -29,12 +33,22 @@ struct pseudometre : named_scaled_unit<pseudometre, "m", units::isq::si::prefix,
 
 inline namespace literals
 {
+
+/// @brief Milliradian [mrad]
+constexpr auto operator"" _q_mrad(unsigned long long l) // NOLINT(google-runtime-int)
+{
+    gsl_ExpectsAudit(std::in_range<std::int64_t>(l));
+    return angle<milliradian, std::int64_t>(static_cast<std::int64_t>(l));
+}
+/// @brief Milliradian [mrad]
+constexpr auto operator"" _q_mrad(long double l) { return angle<milliradian, long double>(l); }
+
 /*
 /// @brief Degree [°]
 constexpr auto operator"" _q_deg(unsigned long long l) // NOLINT(google-runtime-int)
 {
-    gsl_ExpectsAudit(std::in_range<int64_t>(l));
-    return angle<degree, int64_t>(static_cast<int64_t>(l));
+    gsl_ExpectsAudit(std::in_range<std::int64_t>(l));
+    return angle<degree, std::int64_t>(static_cast<std::int64_t>(l));
 }
 /// @brief Degree [°]
 constexpr auto operator"" _q_deg(long double l) { return angle<degree, long double>(l); }
@@ -47,15 +61,20 @@ constexpr auto operator"" _q_deg(long double l) { return angle<degree, long doub
 
 namespace angle_references
 {
+/*
+/// @brief Degree [°]
+inline constexpr auto deg = reference<units::dim_angle<>, units::degree>{};
+*/
 
-/* inline constexpr auto deg = reference<units::dim_angle<>, units::degree>{}; */
+/// @brief Milliradian [mrad]
+inline constexpr auto mrad = reference<dim_angle<>, milliradian>{};
 
 } // namespace angle_references
 
 namespace references
 {
 
-/* using namespace angle_references; // NOLINT(google-build-using-namespace) */
+using namespace angle_references; // NOLINT(google-build-using-namespace)
 
 } // namespace references
 
@@ -68,10 +87,16 @@ namespace references
 namespace units::aliases::isq::si::inline angle
 {
 
+/// @brief Radian [rad]
 template<units::Representation Rep = double>
 using rad = units::angle<units::radian, Rep>;
+/// @brief Milliradian [mrad]
+template<units::Representation Rep = double>
+using mrad = units::angle<units::milliradian, Rep>;
 /* template<units::Representation Rep = double>
 using deg = units::angle<units::degree, Rep>; */
+
+/// @brief Pseudometre [m]
 template<units::Representation Rep = double>
 using m = units::angle<units::pseudometre, Rep>;
 

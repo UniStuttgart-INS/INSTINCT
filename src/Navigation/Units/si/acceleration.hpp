@@ -1,5 +1,5 @@
-/// @file StandardGravity.hpp
-/// @brief Standard gravity related units [g]
+/// @file acceleration.hpp
+/// @brief Acceleration related units
 /// @author T. Topp (topp@ins.uni-stuttgart.de)
 /// @date 2022-01-04
 
@@ -75,8 +75,10 @@ using namespace acceleration_references; // NOLINT(google-build-using-namespace)
 namespace units::aliases::isq::si::inline acceleration
 {
 
+/// @brief Standard gravity [g]
 template<units::Representation Rep = double>
 using g = units::isq::si::acceleration<units::isq::si::standardgravity, Rep>;
+/// @brief Milli standard gravity [mg]
 template<units::Representation Rep = double>
 using mg = units::isq::si::acceleration<units::isq::si::millistandardgravity, Rep>;
 

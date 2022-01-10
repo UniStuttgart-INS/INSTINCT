@@ -66,5 +66,6 @@
 #include <units/isq/si/frequency.h>
 #include <units/math.h>
 
-#include "acceleration/StandardGravity.hpp"
-#include "generic/Angle.hpp"
+#include "generic/angle.hpp"
+#include "si/acceleration.hpp"
+#include "si/angular_velocity.hpp"
