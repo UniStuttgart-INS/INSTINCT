@@ -17,9 +17,9 @@ struct message_header_s
 struct ulog_message_flag_bits_s
 {
     message_header_s header;
-    std::array<uint8_t, 8> compat_flags{};
-    std::array<uint8_t, 8> incompat_flags{};
-    std::array<uint64_t, 3> appended_offsets{};
+    std::array<char, 8> compat_flags{};
+    std::array<char, 8> incompat_flags{};
+    std::array<char, 3> appended_offsets{};
 };
 
 struct message_format_s
