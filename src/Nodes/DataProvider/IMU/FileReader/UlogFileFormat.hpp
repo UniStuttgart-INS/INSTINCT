@@ -7,11 +7,22 @@
 #include <array>
 #include <cstdint>
 
+namespace NAV::Ulog
+{
+#pragma pack(push, 1) // Syntax for gcc for #pragma pack
+// --------------------------------------------------------------- Header ------------------------------------------------------------------
+struct ulog_Header_s
+{
+    std::array<char, 7> fileMagic{};
+    char version{ 0 };
+    uint64_t timeStamp{};
+};
+
 // --------------------------------------------------------- Definitions Section ---------------------------------------------------
 struct message_header_s
 {
     uint16_t msg_size{ 0 };
-    uint8_t msg_type{ 'B' }; //TODO: Validate default value
+    char msg_type{ 0 };
 };
 
 struct ulog_message_flag_bits_s
@@ -119,3 +130,7 @@ struct message_dropout_s
     message_header_s header;
     uint16_t duration{ 0 };
 };
+
+#pragma pack(pop)
+
+} // namespace NAV::Ulog

@@ -132,47 +132,24 @@ void NAV::UlogFile::readHeader()
 {
     if (fileType == FileType::BINARY)
     {
-#pragma pack(push, 1) // Syntax for gcc for #pragma pack
-        struct UlogHeaderStruct
-        {                                    // Offset | Size
-            std::array<char, 7> fileMagic{}; //   0    | 7 Byte
-            char version{ 0 };               //   7    | 1 Byte
-            std::array<char, 8> timeStamp{}; //   8    | 8 Byte
-        };
-#pragma pack(pop)
-
-        union UlogHeader
+        union
         {
             std::array<char, 16> data{};
-            UlogHeaderStruct header;
-        };
+            Ulog::ulog_Header_s header;
+        } ulogHeader{};
 
-        UlogHeader ulogHeader{};
+        filestream.read(ulogHeader.data.data(), ulogHeader.data.size());
 
-        // Read "ULog" for check
-        filestream.read(ulogHeader.header.fileMagic.data(), sizeof(ulogHeader.header.fileMagic));
-
+        // Check "ULog" at beginning of file
         if (!((ulogHeader.header.fileMagic[0] == 'U') && (ulogHeader.header.fileMagic[1] == 'L') && (ulogHeader.header.fileMagic[2] == 'o') && (ulogHeader.header.fileMagic[3] == 'g')))
         {
             LOG_WARN("FileType is binary, but not ULog");
         }
 
         // Read ULog version (currently only 1, see https://docs.px4.io/master/en/dev_log/ulog_file_format.html)
-        filestream.read(&ulogHeader.header.version, sizeof(ulogHeader.header.version));
         LOG_DATA("version: {}", static_cast<int>(ulogHeader.header.version)); // No use so far, hence just a LOG_DATA
 
-        // Read ULog timeStamp
-        filestream.read(ulogHeader.header.timeStamp.data(), sizeof(ulogHeader.header.timeStamp));
-        auto timeStampMicroSec = static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(0)))
-                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(1))) << 8UL
-                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(2))) << 16UL
-                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(3))) << 24UL
-                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(4))) << 32UL
-                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(5))) << 40UL
-                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(6))) << 48UL
-                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(7))) << 56UL;
-
-        LOG_DEBUG("timeStampMicroSec: {}", timeStampMicroSec);
+        LOG_DATA("time stamp in microseconds: {}", ulogHeader.header.timeStamp); // TODO: Woher weiß der Reader, dass das little Endian ist?
 
         readDefinitions();
     }
@@ -181,58 +158,42 @@ void NAV::UlogFile::readHeader()
 void NAV::UlogFile::readDefinitions()
 {
     // Read message header
-    struct UlogMsgHeader_s
-    {
-        std::array<char, 2> msg_size{};
-        char msg_type{ 0 };
-    };
-
-    union UlogMsgHeader
+    union
     {
         std::array<char, 3> data{};
-        UlogMsgHeader_s msgHeader;
-    };
+        Ulog::message_header_s msgHeader;
+    } ulogMsgHeader{};
 
-    UlogMsgHeader ulogMsgHeader{};
+    filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
 
-    filestream.read(ulogMsgHeader.msgHeader.msg_size.data(), sizeof(ulogMsgHeader.msgHeader.msg_size));
-    auto msgSize = static_cast<uint16_t>(std::abs(ulogMsgHeader.msgHeader.msg_size.at(0)))
-                   | static_cast<uint16_t>(std::abs(ulogMsgHeader.msgHeader.msg_size.at(1))) << 8;
-
-    LOG_DEBUG("msgSize: {}", msgSize);
-
-    filestream.read(&ulogMsgHeader.msgHeader.msg_type, sizeof(ulogMsgHeader.msgHeader.msg_type));
-    auto msgType = ulogMsgHeader.msgHeader.msg_type;
-
-    LOG_DEBUG("msgType: {}", msgType);
+    LOG_DATA("msgSize: {}", ulogMsgHeader.msgHeader.msg_size);
+    LOG_DATA("msgType: {}", ulogMsgHeader.msgHeader.msg_type);
 
     // Read definition message
     // Flag bitset message
-    if (msgType == 'B')
+    if (ulogMsgHeader.msgHeader.msg_type == 'B')
     {
-        if (msgSize > 40)
+        if (ulogMsgHeader.msgHeader.msg_size > 40)
         {
             LOG_WARN("Exceeding bytes in 'flag bitset message' are ignored. Check for ULog file format update.");
         }
 
-        union UlogMsgFlagBits
+        union
         {
             std::array<char, 19> data{};
-            ulog_message_flag_bits_s ulogMsgFlagBits_s;
-        };
+            Ulog::ulog_message_flag_bits_s ulogMsgFlagBits_s;
+        } ulogMsgFlagBits{};
 
-        UlogMsgFlagBits ulogMsgFlagBits{};
+        filestream.read(ulogMsgFlagBits.data.data(), ulogMsgFlagBits.data.size());
 
-        filestream.read(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags.data(), sizeof(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags));
+        // TODO: Remove the following logs once when this data is really not necessary
         LOG_DEBUG("compat_flags: {}, {}, {}, {}, {}, {}, {}, {}", static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[0]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[1]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[2]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[3]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[4]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[5]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[6]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[7]));
 
-        filestream.read(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags.data(), sizeof(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags));
         LOG_DEBUG("incompat_flags: {}, {}, {}, {}, {}, {}, {}, {}", static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[0]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[1]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[2]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[3]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[4]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[5]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[6]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[7]));
 
-        filestream.read(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets.data(), sizeof(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets));
         LOG_DEBUG("appended_offsets: {}, {}, {}", static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets[0]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets[1]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets[2]));
 
-        // TODO: Move read cursor to make 40 bytes of this msg "full"
+        // Move read cursor to make 40 bytes of this msg "full"
         LOG_DEBUG("Current read cursor position: {}", filestream.tellg());
         filestream.seekg(21, std::ios_base::cur);
         LOG_DEBUG("Current read cursor position (should be 59): {}", filestream.tellg()); // pos = 19 after header, then + 40
