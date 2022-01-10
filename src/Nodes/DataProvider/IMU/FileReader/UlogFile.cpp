@@ -163,6 +163,7 @@ void NAV::UlogFile::readHeader()
 
         UlogHeader ulogHeader{};
 
+        // Read "ULog" for check
         filestream.read(ulogHeader.header.fileMagic.data(), sizeof(ulogHeader.header.fileMagic));
 
         if (!((ulogHeader.header.fileMagic[0] == 'U') && (ulogHeader.header.fileMagic[1] == 'L') && (ulogHeader.header.fileMagic[2] == 'o') && (ulogHeader.header.fileMagic[3] == 'g')))
@@ -170,18 +171,21 @@ void NAV::UlogFile::readHeader()
             LOG_WARN("FileType is binary, but not ULog");
         }
 
+        // Read ULog version (currently only 1, see https://docs.px4.io/master/en/dev_log/ulog_file_format.html)
         filestream.read(&ulogHeader.header.version, sizeof(ulogHeader.header.version));
-        filestream.read(ulogHeader.header.timeStamp.data(), sizeof(ulogHeader.header.timeStamp));
-
         LOG_DATA("version: {}", static_cast<int>(ulogHeader.header.version)); // No use so far, hence just a LOG_DATA
-        LOG_DEBUG("timeStamp: {}", static_cast<int>(ulogHeader.header.timeStamp[0]));
 
-        // --------------------------------------------------------------- TT sol ------------------------------------------------------------------
-        // filestream.seekg(7, std::ios::cur);
-        // char version{ 0 };
-        // filestream.read(&version, sizeof(version));
+        // Read ULog timeStamp
+        filestream.read(ulogHeader.header.timeStamp.data(), sizeof(ulogHeader.header.timeStamp));
+        auto timeStampMicroSec = static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(0)))
+                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(1))) << 8UL
+                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(2))) << 16UL
+                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(3))) << 24UL
+                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(4))) << 32UL
+                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(5))) << 40UL
+                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(6))) << 48UL
+                                 | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(7))) << 56UL;
 
-        // LOG_DEBUG("version: {}", static_cast<int>(version));
-        // --------------------------------------------------------------- TT sol ------------------------------------------------------------------
+        LOG_DEBUG("timeStampMicroSec: {}", timeStampMicroSec);
     }
 }
