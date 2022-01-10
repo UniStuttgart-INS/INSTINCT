@@ -22,6 +22,16 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Units/Units.hpp"
 #include "util/Logger.hpp"
 
+namespace si = units::isq::si;
+
+using AttitudeUnit = units::angle<units::radian>; // Better would be degree, but library does not support this yet
+using VelocityUnit = si::speed<si::metre_per_second>;
+using LatitudeUnit = units::angle<units::pseudometre>;
+using LongitudeUnit = units::angle<units::pseudometre>;
+using AltitudeUnit = si::length<si::metre>;
+using AccelBiasUnit = si::acceleration<si::millistandardgravity>;
+using GyroBiasUnit = si::angular_velocity<si::milliradian_per_second>;
+
 NAV::LooselyCoupledKF::LooselyCoupledKF()
 {
     name = typeStatic();
