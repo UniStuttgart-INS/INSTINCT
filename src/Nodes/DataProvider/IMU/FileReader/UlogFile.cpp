@@ -106,20 +106,6 @@ bool NAV::UlogFile::resetNode()
 
 // ------------------------------------------------------------ File Reading ---------------------------------------------------------------
 
-std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
-{
-    // Get current position
-    // auto pos = filestream.tellg();
-    // uint8_t i = 0;
-    // std::unique_ptr<UlogFile> packet = nullptr;
-    // while (filestream.readsome(reinterpret_cast<char*>(&i), 1))
-    // {
-    //     // packet =
-    // }
-
-    return nullptr; //TODO
-}
-
 NAV::FileReader::FileType NAV::UlogFile::determineFileType()
 {
     LOG_TRACE("called for {}", nameId());
@@ -187,5 +173,52 @@ void NAV::UlogFile::readHeader()
                                  | static_cast<uint64_t>(std::abs(ulogHeader.header.timeStamp.at(7))) << 56UL;
 
         LOG_DEBUG("timeStampMicroSec: {}", timeStampMicroSec);
+
+        readDefinitions();
     }
+}
+
+void NAV::UlogFile::readDefinitions()
+{
+    // Read message header
+    struct UlogMsgHeader_s
+    {
+        std::array<char, 2> msg_size{};
+        char msg_type{ 0 };
+    };
+
+    union UlogMsgHeader
+    {
+        std::array<char, 3> data{};
+        UlogMsgHeader_s msgHeader;
+    };
+
+    UlogMsgHeader ulogMsgHeader{};
+
+    filestream.read(ulogMsgHeader.msgHeader.msg_size.data(), sizeof(ulogMsgHeader.msgHeader.msg_size));
+    auto msgSize = static_cast<uint16_t>(std::abs(ulogMsgHeader.msgHeader.msg_size.at(0)))
+                   | static_cast<uint16_t>(std::abs(ulogMsgHeader.msgHeader.msg_size.at(1))) << 8;
+
+    LOG_DEBUG("msgSize: {}", msgSize);
+
+    filestream.read(&ulogMsgHeader.msgHeader.msg_type, sizeof(ulogMsgHeader.msgHeader.msg_type));
+    auto msgType = ulogMsgHeader.msgHeader.msg_type;
+
+    LOG_DEBUG("msgType: {}", msgType);
+
+    // Read definition message
+}
+
+std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
+{
+    // Get current position
+    // auto pos = filestream.tellg();
+    // uint8_t i = 0;
+    // std::unique_ptr<UlogFile> packet = nullptr;
+    // while (filestream.readsome(reinterpret_cast<char*>(&i), 1))
+    // {
+    //     // packet =
+    // }
+
+    return nullptr; //TODO
 }
