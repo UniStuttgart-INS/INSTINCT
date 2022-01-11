@@ -180,7 +180,7 @@ void NAV::UlogFile::readDefinitions()
 
         union
         {
-            std::array<char, 19> data{};
+            std::array<char, 40> data{};
             Ulog::ulog_message_flag_bits_s ulogMsgFlagBits_s;
         } ulogMsgFlagBits{};
 
@@ -193,10 +193,7 @@ void NAV::UlogFile::readDefinitions()
 
         LOG_DEBUG("appended_offsets: {}, {}, {}", static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets[0]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets[1]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets[2]));
 
-        // Move read cursor to make 40 bytes of this msg "full"
-        LOG_DEBUG("Current read cursor position: {}", filestream.tellg());
-        filestream.seekg(21, std::ios_base::cur);
-        LOG_DEBUG("Current read cursor position (should be 59): {}", filestream.tellg()); // pos = 19 after header, then + 40
+        LOG_DATA("Current read cursor position (should be 59): {}", filestream.tellg());
     }
     else
     {
@@ -206,7 +203,11 @@ void NAV::UlogFile::readDefinitions()
     // Format definition for a single (composite) type that can be logged or used in another definition as a nested type
     if (ulogMsgHeader.msgHeader.msg_type == 'F')
     {
-        /* code */
+        std::vector<char> format(ulogMsgHeader.msgHeader.msg_size, 0);
+        format.push_back('\0');
+
+        filestream.read(format.data(), ulogMsgHeader.msgHeader.msg_size);
+        LOG_DEBUG("format[0]: {}", format[0]);
     }
 
     // Information message

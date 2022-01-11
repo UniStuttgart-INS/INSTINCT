@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cstdint>
+#include <vector>
 
 namespace NAV::Ulog
 {
@@ -25,18 +26,20 @@ struct message_header_s
     char msg_type{ 0 };
 };
 
+// Flag bitset message
 struct ulog_message_flag_bits_s
 {
     message_header_s header;
-    std::array<char, 8> compat_flags{};
-    std::array<char, 8> incompat_flags{};
-    std::array<char, 3> appended_offsets{};
+    std::array<uint8_t, 8> compat_flags{};
+    std::array<uint8_t, 8> incompat_flags{};
+    std::array<uint64_t, 3> appended_offsets{};
 };
 
+// format definition for a single (composite) type that can be logged or used in another definition as a nested type
 struct message_format_s
 {
     message_header_s header;
-    char format = static_cast<char>(header.msg_size);
+    std::vector<char> format;
 };
 
 struct message_info_s
