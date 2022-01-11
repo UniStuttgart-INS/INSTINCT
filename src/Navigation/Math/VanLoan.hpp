@@ -17,16 +17,17 @@ namespace NAV
 /// @tparam _ColsG Columns of the matrix G
 /// @param[in] F System model matrix
 /// @param[in] G Noise model matrix (includes scale factors)
+/// @param[in] dt Time step in [s]
 /// @return A pair with the matrices {𝚽, 𝐐}
 ///
 /// 1. Form a \f$ 2n \times 2n \f$ matrix called \f$ \mathbf{A} \f$ (\f$ n \f$ is the dimension of \f$ \mathbf{x} \f$ and \f$ \mathbf{W} \f$ is the power spectral density of the noise \f$ W(t) \f$)
-/// \fl{equation,eq-LCKF_n-Loan-A}
+/// \anchor eq-Loan-A \f{equation}{ \label{eq:eq-Loan-A}
 ///   \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G} \\
 ///                                 \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
 /// \f}
 ///
 /// 2. Calculate the exponential of \f$ \mathbf{A} \f$
-/// \fl{equation,eq-LCKF_n-Loan-B}
+/// \anchor eq-Loan-B \f{equation}{ \label{eq:eq-Loan-B}
 ///   \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}
 ///                                             \dots          & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
 ///                                             \hdashline[2pt/2pt] &                                  \\[-2mm]
@@ -36,12 +37,12 @@ namespace NAV
 /// \f}
 ///
 /// 3. Calculate the state transition matrix \f$ \mathbf{\Phi} \f$ as
-/// \fl{equation,eq-LCKF_n-Loan-Phi}
+/// \anchor eq-Loan-Phi \f{equation}{ \label{eq:eq-Loan-Phi}
 ///   \mathbf{\Phi} = \mathbf{B}_{22}^T
 /// \f}
 ///
 /// 4. Calculate the process noise covariance matrix \f$ \mathbf{Q} \f$ as
-/// \fl{equation,eq-LCKF_n-Loan-Q}
+/// \anchor eq-Loan-Q \f{equation}{ \label{eq:eq-Loan-Q}
 ///   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
 /// \f}
 ///
