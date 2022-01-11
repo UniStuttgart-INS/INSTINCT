@@ -19,6 +19,32 @@ namespace NAV
 /// @param[in] G Noise model matrix (includes scale factors)
 /// @return A pair with the matrices {𝚽, 𝐐}
 ///
+/// 1. Form a \f$ 2n \times 2n \f$ matrix called \f$ \mathbf{A} \f$ (\f$ n \f$ is the dimension of \f$ \mathbf{x} \f$ and \f$ \mathbf{W} \f$ is the power spectral density of the noise \f$ W(t) \f$)
+/// \fl{equation,eq-LCKF_n-Loan-A}
+///   \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G} \\
+///                                 \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
+/// \f}
+///
+/// 2. Calculate the exponential of \f$ \mathbf{A} \f$
+/// \fl{equation,eq-LCKF_n-Loan-B}
+///   \mathbf{B} = \text{expm}(\mathbf{A}) = \left[ \begin{array}{c;{2pt/2pt}c}
+///                                             \dots          & \mathbf{\Phi}^{-1} \mathbf{Q} \\[2mm]
+///                                             \hdashline[2pt/2pt] &                                  \\[-2mm]
+///                                             \mathbf{0}          & \mathbf{\Phi}^T                     \end{array} \right]
+///                                        = \begin{bmatrix} \mathbf{B}_{11} & \mathbf{B}_{12} \\
+///                                                          \mathbf{B}_{21} & \mathbf{B}_{22} \end{bmatrix}
+/// \f}
+///
+/// 3. Calculate the state transition matrix \f$ \mathbf{\Phi} \f$ as
+/// \fl{equation,eq-LCKF_n-Loan-Phi}
+///   \mathbf{\Phi} = \mathbf{B}_{22}^T
+/// \f}
+///
+/// 4. Calculate the process noise covariance matrix \f$ \mathbf{Q} \f$ as
+/// \fl{equation,eq-LCKF_n-Loan-Q}
+///   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
+/// \f}
+///
 /// @note See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential \cite Loan1978
 template<typename _Scalar, int _Dim, int _ColsG>
 [[nodiscard]] std::pair<Eigen::Matrix<_Scalar, _Dim, _Dim>, Eigen::Matrix<_Scalar, _Dim, _Dim>>
