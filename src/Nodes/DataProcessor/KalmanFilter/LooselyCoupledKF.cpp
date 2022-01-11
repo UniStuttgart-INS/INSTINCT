@@ -18,6 +18,7 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
 #include "Navigation/Math/Math.hpp"
+#include "Navigation/Math/VanLoan.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
 #include "Navigation/Units/Units.hpp"
 #include "util/Logger.hpp"
@@ -753,31 +754,16 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         // Noise Input Matrix
         Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(sigma2_ra, sigma2_rg, beta_a, beta_omega);
 
-        // Power Spectral Density of u (See Brown & Hwang (2012) chapter 3.9, p. 126 - footnote)
-        // Eigen::Matrix<double, 6, 6> W = Eigen::Matrix<double, 6, 6>::Identity();
-
-        // C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential
-        Eigen::Matrix<double, 30, 30> A = Eigen::Matrix<double, 30, 30>::Zero();
-        A.block<15, 15>(0, 0) = -F;
-        A.block<15, 15>(0, 15) = G /* * W */ * G.transpose();
-        A.block<15, 15>(15, 15) = F.transpose();
-        A *= _tau_KF;
-
-        // Exponential Matrix of A (https://eigen.tuxfamily.org/dox/unsupported/group__MatrixFunctions__Module.html#matrixbase_exp)
-        Eigen::Matrix<double, 30, 30> B = A.exp();
+        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod(F, G, _tau_KF);
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
-        _kalmanFilter.Phi = B.block<15, 15>(15, 15).transpose();
+        _kalmanFilter.Phi = Phi;
 
         // 2. Calculate the system noise covariance matrix Q_{k-1}
         if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
         {
-            _kalmanFilter.Q = _kalmanFilter.Phi * B.block<15, 15>(0, 15);
+            _kalmanFilter.Q = Q;
         }
-
-        // LOG_DEBUG("{}: A \n{}\n", nameId(), A);
-        // LOG_DEBUG("{}: B \n{}\n", nameId(), B);
-        // LOG_DEBUG("{}: G \n{}\n", nameId(), G);
     }
     else if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor1)
     {
