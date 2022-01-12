@@ -7,6 +7,7 @@
 #include <array>
 #include <cstdint>
 #include <vector>
+#include <string>
 
 namespace NAV::Ulog
 {
@@ -42,11 +43,13 @@ struct message_format_s
     std::vector<char> format;
 };
 
+// Information message
 struct message_info_s
 {
     message_header_s header;
-    uint8_t key_len{ 0 };
-    char key = static_cast<char>(key_len);
+    uint8_t key_len{ 1 };
+    std::string key;
+    std::string value;
 };
 
 struct ulog_message_info_multiple_header_s

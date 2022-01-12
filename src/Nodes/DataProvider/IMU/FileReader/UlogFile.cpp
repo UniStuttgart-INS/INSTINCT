@@ -164,63 +164,57 @@ void NAV::UlogFile::readDefinitions()
         Ulog::message_header_s msgHeader;
     } ulogMsgHeader{};
 
-    filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
-
-    LOG_DATA("msgSize: {}", ulogMsgHeader.msgHeader.msg_size);
-    LOG_DATA("msgType: {}", ulogMsgHeader.msgHeader.msg_type);
-
-    // Read definition message
-    // Flag bitset message
-    if (ulogMsgHeader.msgHeader.msg_type == 'B')
+    // while (true)
+    for (int i = 0; i < 4; i++) // FIXME: Quick fix, remove later and enable while-loop, stop once there is no more msg type identifier
     {
-        if (ulogMsgHeader.msgHeader.msg_size > 40)
+        filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
+
+        LOG_DATA("msgSize: {}", ulogMsgHeader.msgHeader.msg_size);
+        LOG_DATA("msgType: {}", ulogMsgHeader.msgHeader.msg_type);
+
+        // Read definition message
+        // Flag bitset message
+        if (ulogMsgHeader.msgHeader.msg_type == 'B')
         {
-            LOG_WARN("Exceeding bytes in 'flag bitset message' are ignored. Check for ULog file format update.");
+            if (ulogMsgHeader.msgHeader.msg_size > 40)
+            {
+                LOG_WARN("Exceeding bytes in 'flag bitset message' are ignored. Check for ULog file format update.");
+            }
+
+            union
+            {
+                std::array<char, 40> data{};
+                Ulog::ulog_message_flag_bits_s ulogMsgFlagBits_s;
+            } ulogMsgFlagBits{};
+
+            filestream.read(ulogMsgFlagBits.data.data(), ulogMsgFlagBits.data.size() * sizeof(char)); // 'sizeof' is optional here, but it is the solution in general, since data types can be larger than one byte
         }
 
-        union
+        // Format definition for a single (composite) type that can be logged or used in another definition as a nested type
+        else if (ulogMsgHeader.msgHeader.msg_type == 'F')
         {
-            std::array<char, 40> data{};
-            Ulog::ulog_message_flag_bits_s ulogMsgFlagBits_s;
-        } ulogMsgFlagBits{};
+            std::vector<char> format(ulogMsgHeader.msgHeader.msg_size, 0);
+            format.push_back('\0');
 
-        filestream.read(ulogMsgFlagBits.data.data(), ulogMsgFlagBits.data.size());
+            filestream.read(format.data(), ulogMsgHeader.msgHeader.msg_size);
+            LOG_DEBUG("format[0]: {}", format[0]);
+        }
 
-        // TODO: Remove the following logs once when this data is really not necessary
-        LOG_DEBUG("compat_flags: {}, {}, {}, {}, {}, {}, {}, {}", static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[0]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[1]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[2]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[3]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[4]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[5]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[6]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.compat_flags[7]));
-
-        LOG_DEBUG("incompat_flags: {}, {}, {}, {}, {}, {}, {}, {}", static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[0]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[1]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[2]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[3]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[4]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[5]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[6]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.incompat_flags[7]));
-
-        LOG_DEBUG("appended_offsets: {}, {}, {}", static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets[0]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets[1]), static_cast<int>(ulogMsgFlagBits.ulogMsgFlagBits_s.appended_offsets[2]));
-
-        LOG_DATA("Current read cursor position (should be 59): {}", filestream.tellg());
-    }
-    else
-    {
-        LOG_WARN("Flag bits not set.");
-    }
-
-    // Format definition for a single (composite) type that can be logged or used in another definition as a nested type
-    if (ulogMsgHeader.msgHeader.msg_type == 'F')
-    {
-        std::vector<char> format(ulogMsgHeader.msgHeader.msg_size, 0);
-        format.push_back('\0');
-
-        filestream.read(format.data(), ulogMsgHeader.msgHeader.msg_size);
-        LOG_DEBUG("format[0]: {}", format[0]);
-    }
-
-    // Information message
-    if (ulogMsgHeader.msgHeader.msg_type == 'I')
-    {
-        union UlogInfoMsg
+        // Information message
+        else if (ulogMsgHeader.msgHeader.msg_type == 'I')
         {
-            std::array<char, 2> data{};
-            Ulog::message_info_s ulogInfoMsg_s;
-        } ulogInfoMsg{};
+            Ulog::message_info_s messageInfo;
+            messageInfo.header = ulogMsgHeader.msgHeader;
+            uint8_t key_len{};
+            filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(key_len));
 
-        filestream.read(ulogInfoMsg.data.data(), ulogInfoMsg.data.size());
-        LOG_DEBUG("Info Msg key_len: {}", ulogInfoMsg.ulogInfoMsg_s.key_len);
+            messageInfo.key.resize(messageInfo.key_len);
+            filestream.read(messageInfo.key.data(), messageInfo.key_len);
+            messageInfo.value.resize(messageInfo.header.msg_size - 1 - messageInfo.key_len);
+            filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
+            LOG_DEBUG("key: {}", messageInfo.key);
+            LOG_DEBUG("value: {}", messageInfo.value);
+        }
     }
 }
 
