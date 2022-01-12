@@ -1006,21 +1006,22 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::
     F.block<3, 3>(9, 9) = F_dotdf_df_n(beta_a);
     F.block<3, 3>(12, 12) = F_dotdw_dw_n(beta_omega);
 
-    // Conversion because state vector has milliradians for latitude and longitude
-    constexpr double mrad2rad = 1e-3;
-    // Conversion because state vector has milliradians for latitude and longitude
-    constexpr double rad2mrad = 1e3;
+    F.middleRows<3>(0) *= 180. / M_PI; // 𝜓' [deg / s] = 180/π * ... [rad / s]
+    F.middleCols<3>(0) *= M_PI / 180.;
 
-    F.block<3, 1>(0, 6) *= mrad2rad; // F_13 first column gets multiplied by δϕ (Lat errors) [mrad] which needs to be scaled into rad
-    // F.block<3, 1>(0, 7) *= mrad2rad; // F_13 second column gets multiplied by δλ (Lon errors) [mrad] - column contains only zeroes
+    // F.middleRows<3>(3) *= 1.; // 𝛿v' [m / s^2] = 1 * [m / s^2]
+    // F.middleCols<3>(3) *= 1. / 1.;
 
-    F.block<3, 1>(3, 6) *= mrad2rad; // F_23 first column gets multiplied by δϕ (Lat errors) [mrad] which needs to be scaled into rad
-    // F.block<3, 1>(3, 7) *= mrad2rad; // F_23 second column gets multiplied by δλ (Lon errors) [mrad] - column contains only zeroes
+    F.middleRows<2>(6) *= InsConst::pseudometre; // 𝛿ϕ' [pseudometre / s] = R0 * [rad / s]
+    F.middleCols<2>(6) *= 1. / InsConst::pseudometre;
+    // F.middleRows<1>(8) *= 1.; // 𝛿h' [m / s] = 1 * [m / s]
+    // F.middleCols<1>(8) *= 1. / 1.;
 
-    F.block<1, 3>(6, 3) *= rad2mrad; // F_32 first row δϕ' (Lat errors time derivative) gets multiplied with velocity and therefore needs to be scaled into mrad
-    F.block<1, 3>(7, 3) *= rad2mrad; // F_32 second row δλ' (Lon errors time derivative) gets multiplied with velocity and therefore needs to be scaled into mrad
+    F.middleRows<3>(9) *= 1e3 / InsConst::standard_gravity; // 𝛿f' [mg / s] = 1e3 / g * [m / s^3]
+    F.middleCols<3>(9) *= InsConst::standard_gravity / 1e3;
 
-    F.block<2, 1>(6, 8) *= rad2mrad; // F33 third column δh, first and second row δϕ', δλ' - Altitude error needs to be scaled into mrad
+    F.middleRows<3>(12) *= 1e3; // 𝛿ω' [mrad / s^2] = 1e3 * [rad / s^2]
+    F.middleCols<3>(12) *= 1e-3;
 
     return F;
 }

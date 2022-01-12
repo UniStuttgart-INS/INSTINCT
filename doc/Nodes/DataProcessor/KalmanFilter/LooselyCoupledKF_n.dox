@@ -668,11 +668,11 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the \f$
   +
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-                nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
+                nodes={rectangle,text width=4.8em,align=center},row sep=0.3em, column sep=0.4em]
     {
-          \dots    &     \dots         \\
-      \mathbf{G}_f & \mathbf{0}_3      \\
-      \mathbf{0}_3 & \mathbf{G}_\omega \\
+          \dots                                                         &     \dots                                                                \\
+      \mathbf{G}_f \left[ \frac{\text{m} \sqrt{s} }{\text{s}^3} \right] & \mathbf{0}_3                                                             \\
+      \mathbf{0}_3                                                      & \mathbf{G}_\omega \left[ \frac{\text{rad} \sqrt{s} }{\text{s}^2} \right] \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-2.north east);
 
@@ -682,13 +682,11 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the \f$
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
-  \mathbf{W}
+  \mathbf{W} \left[ \frac{1}{\sqrt{\text{s}}} \right]
 \f}
 
 When scaling the biases in \f$ \mathbf{\delta x} \f$ the \f$ \mathbf{\beta} \f$ factors stay unscaled.
 However the \f$ \mathbf{G} \f$ matrices have to be adapted.
-
-\f$ \text{\textcolor{red}{TODO: Add unit for G matrix}} \f$
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
