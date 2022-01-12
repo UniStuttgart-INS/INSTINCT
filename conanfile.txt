@@ -6,7 +6,6 @@ eigen/3.4.0
 catch2/2.13.3
 nlohmann_json/3.9.1
 zlib/1.2.8
-mp-units/0.7.0
 
 [options]
 boost:without_atomic=True

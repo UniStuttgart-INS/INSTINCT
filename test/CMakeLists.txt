@@ -49,7 +49,6 @@ target_link_libraries(
           CONAN_PKG::boost
           CONAN_PKG::eigen
           CONAN_PKG::nlohmann_json
-          CONAN_PKG::mp-units
           Threads::Threads
           imgui
           imgui_node_editor
