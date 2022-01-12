@@ -7,6 +7,7 @@
 
 #include <utility>
 #include <Eigen/Core>
+#include <unsupported/Eigen/MatrixFunctions>
 
 namespace NAV
 {

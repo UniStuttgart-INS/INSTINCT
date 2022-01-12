@@ -2,7 +2,6 @@
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
-#include <unsupported/Eigen/MatrixFunctions>
 #include <cmath>
 
 #include <imgui_internal.h>
@@ -754,7 +753,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         // Noise Input Matrix
         Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(sigma2_ra, sigma2_rg, beta_a, beta_omega);
 
-        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod(F, G, _tau_KF);
+        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 6>(F, G, _tau_KF);
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
         _kalmanFilter.Phi = Phi;
