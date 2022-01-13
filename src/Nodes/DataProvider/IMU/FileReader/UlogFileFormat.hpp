@@ -57,9 +57,8 @@ struct ulog_message_info_multiple_header_s
     message_header_s header;
     uint8_t is_continued{ 0 }; ///< can be used for arrays
     uint8_t key_len{ 0 };
-    char key = static_cast<char>(key_len);
-    char value = static_cast<char>(header.msg_size - 2 - key_len);
-    // char value[header.msg_size - 2 - key_len]
+    std::string key;
+    std::string value;
 };
 
 struct ulog_message_parameter_default_header_s

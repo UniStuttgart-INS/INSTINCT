@@ -203,17 +203,61 @@ void NAV::UlogFile::readDefinitions()
         // Information message
         else if (ulogMsgHeader.msgHeader.msg_type == 'I')
         {
+            // Read msg size (2B) and type (1B)
             Ulog::message_info_s messageInfo;
             messageInfo.header = ulogMsgHeader.msgHeader;
             uint8_t key_len{};
             filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(key_len));
 
+            // Read 'key' identifier ('keylength' byte) and its associated 'value'
             messageInfo.key.resize(messageInfo.key_len);
             filestream.read(messageInfo.key.data(), messageInfo.key_len);
-            messageInfo.value.resize(messageInfo.header.msg_size - 1 - messageInfo.key_len);
+            messageInfo.value.resize(messageInfo.header.msg_size - 1 - messageInfo.key_len); // 'msg_size' contains key and value, but not header
             filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
             LOG_DEBUG("key: {}", messageInfo.key);
             LOG_DEBUG("value: {}", messageInfo.value);
+        }
+
+        // Information message multi
+        else if (ulogMsgHeader.msgHeader.msg_type == 'M')
+        {
+            // Read msg size (2B) and type (1B)
+            Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
+            messageInfoMulti.header = ulogMsgHeader.msgHeader;
+            uint8_t key_len{};
+            filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(key_len));
+
+            // Read 'key' identifier ('keylength' byte) and its associated 'value'
+            messageInfoMulti.key.resize(messageInfoMulti.key_len);
+            filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
+            messageInfoMulti.value.resize(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len); // contains 'is_continued' flag in contrast to information message
+            filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
+            LOG_DEBUG("key: {}", messageInfoMulti.key);
+            LOG_DEBUG("value: {}", messageInfoMulti.value);
+
+            // Check, whether there is another msg with the same key
+            if (filestream.read(reinterpret_cast<char*>(messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued)))
+            {
+                LOG_WARN("'Information message multi' has not been read entirly");
+            }
+        }
+
+        // Parameter message (same format as 'message_info_s')
+        else if (ulogMsgHeader.msgHeader.msg_type == 'P')
+        {
+            // Read msg size (2B) and type (1B)
+            Ulog::message_info_s messageParam;
+            messageParam.header = ulogMsgHeader.msgHeader;
+            uint8_t key_len{};
+            filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(key_len));
+
+            // Read 'key' identifier ('keylength' byte) and its associated 'value'
+            messageParam.key.resize(messageParam.key_len);
+            filestream.read(messageParam.key.data(), messageParam.key_len);
+            messageParam.value.resize(messageParam.header.msg_size - 1 - messageParam.key_len); // 'msg_size' contains key and value, but not header
+            filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
+            LOG_DEBUG("key: {}", messageParam.key);
+            LOG_DEBUG("value: {}", messageParam.value);
         }
     }
 }
