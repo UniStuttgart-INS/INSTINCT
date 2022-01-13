@@ -318,16 +318,6 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     // ###########################################################################################################
-    //                                           Transition matrix 𝚽
-    // ###########################################################################################################
-
-    /// @brief Updates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ
-    /// @param[in] F System Matrix
-    /// @param[in] tau_s time interval in [s]
-    /// @note See Groves (2013) chapter 14.2.4, equation (14.72)
-    static Eigen::MatrixXd transitionMatrix(const Eigen::MatrixXd& F, double tau_s);
-
-    // ###########################################################################################################
     //                                             System matrix 𝐅
     // ###########################################################################################################
 
@@ -365,6 +355,23 @@ class LooselyCoupledKF : public Node
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
     Eigen::Matrix3d noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega);
+
+    // ###########################################################################################################
+    //                                         Error covariance matrix P
+    // ###########################################################################################################
+
+    /// @brief Initial error covariance matrix P_0
+    /// @param[in] variance_angles Initial Covariance of the attitude angles in [rad²]
+    /// @param[in] variance_vel Initial Covariance of the velocity in [m²/s²]
+    /// @param[in] variance_lla Initial Covariance of the position in [rad² rad² m²]
+    /// @param[in] variance_accelBias Initial Covariance of the accelerometer biases in [m^2/s^4]
+    /// @param[in] variance_gyroBias Initial Covariance of the gyroscope biases in [rad^2/s^2]
+    /// @return The 15x15 matrix of initial state variances
+    Eigen::Matrix<double, 15, 15> initialErrorCovarianceMatrixP0(const Eigen::Vector3d& variance_angles,
+                                                                 const Eigen::Vector3d& variance_vel,
+                                                                 const Eigen::Vector3d& variance_lla,
+                                                                 const Eigen::Vector3d& variance_accelBias,
+                                                                 const Eigen::Vector3d& variance_gyroBias);
 
     // ###########################################################################################################
     //                                     System noise covariance matrix 𝐐

@@ -1160,13 +1160,13 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the mea
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
-                nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
-      &                                                                & &                    &                    &                    & 1 \left[ - \right] & 0                  & 0                  & &              & & &                                                        &  \\
-      & \mathbf{H}_{r,\psi}^n \left[ \text{rad} \right]                & &                    &    \mathbf{0}_3    &                    & 0                  & 1 \left[ - \right] & 0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                  &  \\
-      &                                                                & &                    &                    &                    & 0                  & 0                  & 1 \left[ - \right] & &              & & &                                                        &  \\
-      &                                                                & & 1 \left[ - \right] & 0                  & 0                  &                    &                    &                    & &              & & &                                                        &  \\
-      & \mathbf{H}_{v,\psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & & 0                  & 1 \left[ - \right] & 0                  &                    &    \mathbf{0}_3    &                    & & \mathbf{0}_3 & & & \mathbf{H}_{v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
-      &                                                                & & 0                  & 0                  & 1 \left[ - \right] &                    &                    &                    & &              & & &                                                        &  \\
+                nodes={rectangle,text width=2.8em,align=center,minimum height=2.3em,anchor=center},] {
+      &                                                                & &                     &                     &                     & -1 \left[ - \right] &  0                  &  0                  & &              & & &                                                        &  \\
+      & \mathbf{H}_{r,\psi}^n \left[ \text{rad} \right]                & &                     &     \mathbf{0}_3    &                     &  0                  & -1 \left[ - \right] &  0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                  &  \\
+      &                                                                & &                     &                     &                     &  0                  &  0                  & -1 \left[ - \right] & &              & & &                                                        &  \\
+      &                                                                & & -1 \left[ - \right] &  0                  &  0                  &                     &                     &                     & &              & & &                                                        &  \\
+      & \mathbf{H}_{v,\psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & &  0                  & -1 \left[ - \right] &  0                  &                     &     \mathbf{0}_3    &                     & & \mathbf{0}_3 & & & \mathbf{H}_{v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
+      &                                                                & &  0                  &  0                  & -1 \left[ - \right] &                     &                     &                     & &              & & &                                                        &  \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{H}$} (m-1-15.north east);
 
@@ -1233,13 +1233,13 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the mea
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
-                nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
-      &                                                                & &                    &                    &                    & 1 \left[ - \right] & 0                  & 0                  & &              & & &                                                        &  \\
-      & \mathbf{H}_{r,\psi}^n \left[ \text{rad} \right]                & &                    &    \mathbf{0}_3    &                    & 0                  & 1 \left[ - \right] & 0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                  &  \\
-      &                                                                & &                    &                    &                    & 0                  & 0                  & 1 \left[ - \right] & &              & & &                                                        &  \\
-      &                                                                & & 1 \left[ - \right] & 0                  & 0                  &                    &                    &                    & &              & & &                                                        &  \\
-      & \mathbf{H}_{v,\psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & & 0                  & 1 \left[ - \right] & 0                  &                    &    \mathbf{0}_3    &                    & & \mathbf{0}_3 & & & \mathbf{H}_{v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
-      &                                                                & & 0                  & 0                  & 1 \left[ - \right] &                    &                    &                    & &              & & &                                                        &  \\
+                nodes={rectangle,text width=2.8em,align=center,minimum height=2.3em,anchor=center},] {
+      &                                                                & &                     &                     &                     & -1 \left[ - \right] &  0                  &  0                  & &              & & &                                                        &  \\
+      & \mathbf{H}_{r,\psi}^n \left[ \text{rad} \right]                & &                     &     \mathbf{0}_3    &                     &  0                  & -1 \left[ - \right] &  0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                  &  \\
+      &                                                                & &                     &                     &                     &  0                  &  0                  & -1 \left[ - \right] & &              & & &                                                        &  \\
+      &                                                                & & -1 \left[ - \right] &  0                  &  0                  &                     &                     &                     & &              & & &                                                        &  \\
+      & \mathbf{H}_{v,\psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & &  0                  & -1 \left[ - \right] &  0                  &                     &     \mathbf{0}_3    &                     & & \mathbf{0}_3 & & & \mathbf{H}_{v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
+      &                                                                & &  0                  &  0                  & -1 \left[ - \right] &                     &                     &                     & &              & & &                                                        &  \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{H}$} (m-1-15.north east);
 
@@ -1355,7 +1355,7 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the measurement innovation \f
       }
     }
 
-    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-2-1-sw) -- node[left=2pt] {$ \times \frac{10^6}{g^2} $} (m-1-1-nw);
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-2-1-sw) -- node[left=2pt] {$ \times R_0^2 $} (m-1-1-nw);
 
     \begin{pgfonlayer}{background}
       \fhighlight[cyan!20]{m-1-1}{m-1-1}

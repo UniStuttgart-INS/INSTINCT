@@ -98,6 +98,16 @@ class KalmanFilter
         P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose();
     }
 
+    /// @brief Updates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ
+    /// @param[in] F System Matrix
+    /// @param[in] tau_s time interval in [s]
+    /// @note See Groves (2013) chapter 14.2.4, equation (14.72)
+    static Eigen::MatrixXd transitionMatrix(const Eigen::MatrixXd& F, double tau_s)
+    {
+        // Transition matrix 𝚽
+        return Eigen::MatrixXd::Identity(F.rows(), F.cols()) + F * tau_s;
+    }
+
     /// x̂ State vector
     Eigen::MatrixXd x;
 
