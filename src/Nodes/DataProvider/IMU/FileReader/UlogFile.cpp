@@ -214,8 +214,8 @@ void NAV::UlogFile::readDefinitions()
             filestream.read(messageInfo.key.data(), messageInfo.key_len);
             messageInfo.value.resize(messageInfo.header.msg_size - 1 - messageInfo.key_len); // 'msg_size' contains key and value, but not header
             filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
-            LOG_DEBUG("key: {}", messageInfo.key);
-            LOG_DEBUG("value: {}", messageInfo.value);
+            LOG_DEBUG("Information message - key: {}", messageInfo.key);
+            LOG_DEBUG("Information message - value: {}", messageInfo.value);
         }
 
         // Information message multi
@@ -232,8 +232,8 @@ void NAV::UlogFile::readDefinitions()
             filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
             messageInfoMulti.value.resize(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len); // contains 'is_continued' flag in contrast to information message
             filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
-            LOG_DEBUG("key: {}", messageInfoMulti.key);
-            LOG_DEBUG("value: {}", messageInfoMulti.value);
+            LOG_DEBUG("Information message multi - key: {}", messageInfoMulti.key);
+            LOG_DEBUG("Information message multi - value: {}", messageInfoMulti.value);
 
             // Check, whether there is another msg with the same key
             if (filestream.read(reinterpret_cast<char*>(messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued)))
@@ -256,8 +256,26 @@ void NAV::UlogFile::readDefinitions()
             filestream.read(messageParam.key.data(), messageParam.key_len);
             messageParam.value.resize(messageParam.header.msg_size - 1 - messageParam.key_len); // 'msg_size' contains key and value, but not header
             filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
-            LOG_DEBUG("key: {}", messageParam.key);
-            LOG_DEBUG("value: {}", messageParam.value);
+            LOG_DEBUG("Parameter message - key: {}", messageParam.key);
+            LOG_DEBUG("Parameter message - value: {}", messageParam.value);
+        }
+
+        // Parameter default message
+        else if (ulogMsgHeader.msgHeader.msg_type == 'Q')
+        {
+            Ulog::ulog_message_parameter_default_header_s messageParamDefault;
+            messageParamDefault.header = ulogMsgHeader.msgHeader;
+            uint8_t default_types{};
+            filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(default_types));
+            uint8_t key_len{};
+            filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(key_len));
+
+            messageParamDefault.key.resize(messageParamDefault.key_len);
+            filestream.read(messageParamDefault.key.data(), messageParamDefault.key_len);
+            messageParamDefault.value.resize(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
+            filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
+            LOG_DEBUG("Parameter default message - key: {}", messageParamDefault.key);
+            LOG_DEBUG("Parameter default message - value: {}", messageParamDefault.value);
         }
     }
 }

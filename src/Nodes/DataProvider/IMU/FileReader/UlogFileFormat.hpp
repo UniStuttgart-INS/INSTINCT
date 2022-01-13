@@ -64,10 +64,10 @@ struct ulog_message_info_multiple_header_s
 struct ulog_message_parameter_default_header_s
 {
     message_header_s header;
-    uint8_t default_types{ 'B' }; //TODO: Validate default value
+    uint8_t default_types{ 0 }; //TODO: Validate default value
     uint8_t key_len{ 0 };
-    char key = static_cast<char>(key_len);
-    char value = static_cast<char>(header.msg_size - 2 - key_len);
+    std::string key;
+    std::string value;
 };
 
 // ------------------------------------------------------------ Data Section --------------------------------------------------------
