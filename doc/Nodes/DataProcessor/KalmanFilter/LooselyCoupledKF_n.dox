@@ -402,75 +402,65 @@ The error covariance matrix is initialized as a diagonal matrix with the varianc
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
-\subsection LooselyCoupledKF_n-KF-H Measurement sensitivity Matrix H
+\subsection LooselyCoupledKF_n-deltaz Measurement innovation 𝛿z
 
-When neglecting the lever arm, the measurement sensitivity matrix can be written as
-
-\fl{equation,eq-LCKF_n-H-short}
-  \mathbf{\delta z} = \mathbf{\tilde{z}} - \mathbf{\hat{z}} = \mathbf{H} \mathbf{\delta x}
-\f}
-
-\fl{equation,eq-LCKF_n-H}
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
-                nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
-      \delta \boldsymbol{p}_b   \\
-      \delta \boldsymbol{v}^{n} \\
-    };
-
-    \begin{pgfonlayer}{background}
-      \fhighlight[blue!20]{m-2-1}{m-2-1}
-      \fhighlight[cyan!20]{m-1-1}{m-1-1}
-    \end{pgfonlayer}
-  \end{tikzpicture}
-  = \begin{pmatrix} \boldsymbol{\tilde{p}}_b \\
-                    \boldsymbol{\tilde{v}}^n \end{pmatrix}
-    - \begin{pmatrix} \boldsymbol{\hat{p}}_b \\
-                      \boldsymbol{\hat{v}}^n \end{pmatrix}
-  = \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-      \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
-                  nodes={rectangle,text width=1.6em,align=center,minimum height=2.3em,anchor=center},] {
-        \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\
-        \mathbf{0}_3 & \mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\
-      };
-      \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{H}$} (m-1-5.north east);
-
-      \begin{pgfonlayer}{background}
-        \fhighlight[blue!20]{m-2-2}{m-2-2}
-        \fhighlight[cyan!20]{m-1-3}{m-1-3}
-      \end{pgfonlayer}
-    \end{tikzpicture}
-    \cdot
-    \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-      \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
-                  nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
-               \boldsymbol{\psi} \\
-        \delta \boldsymbol{v}^{n} \\
-        \delta \boldsymbol{p}_b \\
-        \delta \boldsymbol{f}^b \\
-        \delta \boldsymbol{\omega}_{ib}^b \\
-      };
-      \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta x}$} (m-1-1.north east);
-
-      \begin{pgfonlayer}{background}
-        \fhighlight[green!20]{m-1-1}{m-1-1}
-        \fhighlight[blue!20]{m-2-1}{m-2-1}
-        \fhighlight[cyan!20]{m-3-1}{m-3-1}
-        \fhighlight[red!20]{m-4-1}{m-4-1}
-        \fhighlight[orange!20]{m-5-1}{m-5-1}
-      \end{pgfonlayer}
-    \end{tikzpicture}
+\fl{equation,eq-LCKF_n-deltaz}
+  \mathbf{\delta z}^n = \begin{pmatrix} \tilde{\mathbf{p}}_{b,G} - \hat{\mathbf{p}}_{b} - \mathbf{T}_{r(n)}^{p} \mathbf{C}_b^n \mathbf{l}_{ba}^b \\
+                                      \tilde{\mathbf{v}}^n_{G} - \hat{\mathbf{v}}^n - \mathbf{C}_b^n (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) + \boldsymbol{\Omega}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{pmatrix}
 \f}
 
 where
-- \f$ \mathbf{\delta z} \f$ is the filter measurement innovation
-- \f$ \mathbf{\tilde{z}} \f$ is the GNSS measurement
-- \f$ \mathbf{\hat{z}} \f$ is the estimate of those quantities
+- \f$ G \f$ denotes GNSS indicated measurements
+- \f$ \mathbf{l}_{ba}^b \f$ is the lever arm from the INS to the GNSS antenna in [m]
+- \f$ \mathbf{T}_{r(n)}^{p} = \begin{pmatrix} \frac{1}{R_N + h} &               0               &  0 \\
+                                                       0        & \frac{1}{(R_E + h)\cos{\phi}} &  0 \\
+                                                       0        &               0               & -1 \end{pmatrix} \f$ is the Cartesian-to-curvilinear position change transformation matrix (\cite Groves2013 Groves, ch. 14.3.1, eq. 14.104, p. 598ff)
+
+This form corresponds to
+- \cite Groves2013 Groves, ch. 14.3.1, eq. 14.103, p. 598
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_n-KF-H Measurement sensitivity Matrix H
+
+\fl{equation,eq-LCKF_n-H-general}
+  \mathbf{H}_k = \left. \frac{\partial \mathbf{h} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
+               = \left. \frac{\partial \mathbf{z} (\mathbf{x}, t_k)}{\partial \mathbf{x}} \right|_{x = \hat{x}_k^{-}}
+\f}
+
+see
+- \cite Groves2013 Groves, ch. 3.4.1, eq. 3.90, p. 119
+
+\fl{equation,eq-LCKF_n-H}
+  \mathbf{H}^n =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                nodes={rectangle,text width=2.5em,align=center,minimum height=2.3em,anchor=center},] {
+      \mathbf{H}_{r,\psi}^n &  \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3                   \\
+      \mathbf{H}_{v,\psi}^n & -\mathbf{I}_3 &  \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v,\omega_{ib}^b}^n \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[green!20]{m-2-1}{m-2-1}
+      \fhighlight[blue!20]{m-2-2}{m-2-2}
+      \fhighlight[cyan!20]{m-1-3}{m-1-3}
+      \fhighlight[orange!20]{m-2-5}{m-2-5}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+where
+\fl{equation,eq-LCKF_n-H-sub}
+\begin{aligned}
+  \highlight[green!20]{\mathbf{H}_{r,\psi}^n}           &\approx \mathbf{T}_{r(n)}^{p} \left[ (\mathbf{C}_b^n \mathbf{l}_{ba}^b) \times \right] \\
+  \highlight[green!20]{\mathbf{H}_{v,\psi}^n}           &\approx \left[ \left\{ \mathbf{C}_b^n (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \right\} \times \right] \\
+  \highlight[orange!20]{\mathbf{H}_{v,\omega_{ib}^b}^n} &\approx \mathbf{C}_b^n \left[ \mathbf{l}_{ba}^b \times \right] \\
+\end{aligned}
+\f}
 
 See
-- \cite Titterton2004 Titterton, ch. 13.6.2.2, eq. 13.7, p. 405
-
-\f$ \textcolor{red}{\text{TODO: Look into Groves and get the H matrix over the derivative}}\f$
+- \cite Groves2013 Groves, ch. 14.3.1, eq. 14.113/14.114, p. 600
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -1022,6 +1012,56 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the \f$
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
+\subsection LooselyCoupledKF_n-Units-deltaz Measurement innovation 𝛿z
+
+\fl{equation,eq-LCKF_n-Units-deltaz}
+  \mathbf{\delta z} =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
+                nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
+      \delta \phi    \\
+      \delta \lambda \\
+      \delta h       \\
+      \delta v_N     \\
+      \delta v_E     \\
+      \delta v_D     \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[cyan!20]{m-1-1}{m-3-1}
+      \fhighlight[blue!20]{m-4-1}{m-6-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
+                nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
+      \delta \tilde{\phi}    \\
+      \delta \tilde{\lambda} \\
+      \delta \tilde{h}       \\
+      \delta \tilde{v}_N     \\
+      \delta \tilde{v}_E     \\
+      \delta \tilde{v}_D     \\
+    };
+  \end{tikzpicture}
+  -
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
+                nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
+      \delta \hat{\phi}    \\
+      \delta \hat{\lambda} \\
+      \delta \hat{h}       \\
+      \delta \hat{v}_N     \\
+      \delta \hat{v}_E     \\
+      \delta \hat{v}_D     \\
+    };
+  \end{tikzpicture}
+\f}
+
+\f$ \textcolor{red}{\text{TODO: Add units to measurement innovation and add scaled form}}\f$
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
 \subsection LooselyCoupledKF_n-Units-H Measurement sensitivity Matrix H
 
 \fl{equation,eq-LCKF_n-Units-H}
@@ -1093,56 +1133,6 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the \f$
 \f}
 
 When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the measurement innovation \f$ \mathbf{\delta z} \f$ have to be adapted. The \f$ \mathbf{H} \f$ matrix stays unscaled.
-
-<!-- --------------------------------------------------------------------------------------------------------------- -->
-
-\subsection LooselyCoupledKF_n-Units-deltaz Measurement innovation 𝛿z
-
-\fl{equation,eq-LCKF_n-deltaz}
-  \mathbf{\delta z} =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
-                nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
-      \delta \phi    \\
-      \delta \lambda \\
-      \delta h       \\
-      \delta v_N     \\
-      \delta v_E     \\
-      \delta v_D     \\
-    };
-
-    \begin{pgfonlayer}{background}
-      \fhighlight[cyan!20]{m-1-1}{m-3-1}
-      \fhighlight[blue!20]{m-4-1}{m-6-1}
-    \end{pgfonlayer}
-  \end{tikzpicture}
-  =
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
-                nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
-      \delta \tilde{\phi}    \\
-      \delta \tilde{\lambda} \\
-      \delta \tilde{h}       \\
-      \delta \tilde{v}_N     \\
-      \delta \tilde{v}_E     \\
-      \delta \tilde{v}_D     \\
-    };
-  \end{tikzpicture}
-  -
-  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
-                nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
-      \delta \hat{\phi}    \\
-      \delta \hat{\lambda} \\
-      \delta \hat{h}       \\
-      \delta \hat{v}_N     \\
-      \delta \hat{v}_E     \\
-      \delta \hat{v}_D     \\
-    };
-  \end{tikzpicture}
-\f}
-
-\f$ \textcolor{red}{\text{TODO: Add units to measurement innovation and add scaled form}}\f$
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
