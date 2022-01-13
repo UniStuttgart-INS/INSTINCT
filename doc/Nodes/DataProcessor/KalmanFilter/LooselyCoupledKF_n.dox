@@ -393,11 +393,25 @@ The white noise scale factor is usually accounted for within the \f$ \mathbf{G} 
 The error covariance matrix is initialized as a diagonal matrix with the variance of the initial state as diagonal elements.
 
 \fl{equation,eq-LCKF_n-P}
-  \mathbf{P}_0 = \begin{pmatrix} \boldsymbol{\sigma}_{\boldsymbol{\psi}}^2 &                                                 &                      \dots                      &                                                 &                        \mathbf{0}_3                       \\
-                                                                           & \boldsymbol{\sigma}_{\boldsymbol{\delta v^n}}^2 &                                                 &                    \iddots                      &                                                           \\
-                                                   \vdots                  &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta p_b}}^2 &                                                 &                          \vdots                           \\
-                                                                           &                    \iddots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta f^b}}^2 &                                                           \\
-                                                \mathbf{0}_3               &                                                 &                      \dots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta \omega^b_{ib}}}^2 \end{pmatrix}
+  \mathbf{P}_0 =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                nodes={rectangle,text width=2.5em,align=center,minimum height=2.3em,anchor=center},] {
+      \boldsymbol{\sigma}_{\boldsymbol{\psi}}^2 &                                                 &                      \dots                      &                                                 &                        \mathbf{0}_3                       \\
+                                                & \boldsymbol{\sigma}_{\boldsymbol{\delta v^n}}^2 &                                                 &                    \iddots                      &                                                           \\
+                        \vdots                  &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta p_b}}^2 &                                                 &                          \vdots                           \\
+                                                &                    \iddots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta f^b}}^2 &                                                           \\
+                     \mathbf{0}_3               &                                                 &                      \dots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta \omega^b_{ib}}}^2 \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-2}{m-2-2}
+      \fhighlight[cyan!20]{m-3-3}{m-3-3}
+      \fhighlight[red!20]{m-4-4}{m-4-4}
+      \fhighlight[orange!20]{m-5-5}{m-5-5}
+    \end{pgfonlayer}
+  \end{tikzpicture}
 \f}
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -469,13 +483,27 @@ See
 The measurement noise covariance matrix is a diagonal matrix with the variances of the measurements as diagonal elements.
 
 \fl{equation,eq-LCKF_n-R}
-  \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right)
-             = \begin{pmatrix} \sigma^2_\phi &        0         &     0      &       0        &       0        &       0        \\
-                                     0       & \sigma^2_\lambda &     0      &       0        &       0        &       0        \\
-                                     0       &        0         & \sigma^2_h &       0        &       0        &       0        \\
-                                     0       &        0         &     0      & \sigma^2_{v_N} &       0        &       0        \\
-                                     0       &        0         &     0      &       0        & \sigma^2_{v_E} &       0        \\
-                                     0       &        0         &     0      &       0        &       0        & \sigma^2_{v_D} \end{pmatrix}
+  \mathbf{R} = E \left( (\mathbf{z} - \mathbf{H} \mathbf{x})(\mathbf{z} - \mathbf{H} \mathbf{x})^T \right) =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
+                nodes={rectangle,text width=2.2em,align=center,minimum height=2.3em,anchor=center},] {
+      \sigma^2_{z_\phi} &          0           &       0        &         0          &         0          &         0          \\
+              0         & \sigma^2_{z_\lambda} &       0        &         0          &         0          &         0          \\
+              0         &          0           & \sigma^2_{z_h} &         0          &         0          &         0          \\
+              0         &          0           &       0        & \sigma^2_{z_{v_N}} &         0          &         0          \\
+              0         &          0           &       0        &         0          & \sigma^2_{z_{v_E}} &         0          \\
+              0         &          0           &       0        &         0          &         0          & \sigma^2_{z_{v_D}} \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[cyan!20]{m-1-1}{m-1-1}
+      \fhighlight[cyan!20]{m-2-2}{m-2-2}
+      \fhighlight[cyan!20]{m-3-3}{m-3-3}
+      \fhighlight[blue!20]{m-4-4}{m-4-4}
+      \fhighlight[blue!20]{m-5-5}{m-5-5}
+      \fhighlight[blue!20]{m-6-6}{m-6-6}
+    \end{pgfonlayer}
+  \end{tikzpicture}
 \f}
 
 
@@ -1017,14 +1045,14 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the \f$
 \fl{equation,eq-LCKF_n-Units-deltaz}
   \mathbf{\delta z} =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
-                nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
-      \delta \phi    \\
-      \delta \lambda \\
-      \delta h       \\
-      \delta v_N     \\
-      \delta v_E     \\
-      \delta v_D     \\
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
+                nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
+      \delta \phi           & \left[ \text{rad} \right]                  \\
+      \delta \lambda        & \left[ \text{rad} \right]                  \\
+      \delta h              & \left[ \text{m} \right]                    \\
+      \delta v_{N}          & \left[ \frac{\text{m}}{\text{s}} \right]   \\
+      \delta v_{E}          & \left[ \frac{\text{m}}{\text{s}} \right]   \\
+      \delta v_{D}          & \left[ \frac{\text{m}}{\text{s}} \right]   \\
     };
 
     \begin{pgfonlayer}{background}
@@ -1034,31 +1062,78 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the \f$
   \end{tikzpicture}
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=2.5em,
                 nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
-      \delta \tilde{\phi}    \\
-      \delta \tilde{\lambda} \\
-      \delta \tilde{h}       \\
-      \delta \tilde{v}_N     \\
-      \delta \tilde{v}_E     \\
-      \delta \tilde{v}_D     \\
+       \tilde{\phi}_G    - \hat{\phi}    & \left[ \text{rad} \right]                \\
+       \tilde{\lambda}_G - \hat{\lambda} & \left[ \text{rad} \right]                \\
+       \tilde{h}_G       - \hat{h}       & \left[ \text{m} \right]                  \\
+       \tilde{v}_{N,G}   - \hat{v}_{N}   & \left[ \frac{\text{m}}{\text{s}} \right] \\
+       \tilde{v}_{E,G}   - \hat{v}_{E}   & \left[ \frac{\text{m}}{\text{s}} \right] \\
+       \tilde{v}_{D,G}   - \hat{v}_{D}   & \left[ \frac{\text{m}}{\text{s}} \right] \\
     };
   \end{tikzpicture}
-  -
+  +
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
-                nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
-      \delta \hat{\phi}    \\
-      \delta \hat{\lambda} \\
-      \delta \hat{h}       \\
-      \delta \hat{v}_N     \\
-      \delta \hat{v}_E     \\
-      \delta \hat{v}_D     \\
+                nodes={rectangle,text width=26em,align=center,minimum height=6.0em,anchor=center},] {
+        - \begin{pmatrix} \frac{1}{R_N + h} \left[ \frac{1}{\text{m}} \right] &               0                                                 &  0                  \\[1.2em]
+                                   0                                          & \frac{1}{(R_E + h)\cos{\phi}} \left[ \frac{1}{\text{m}} \right] &  0                  \\[1.2em]
+                                   0                                          &               0                                                 & -1 \left[ - \right] \end{pmatrix}
+          \mathbf{C}_b^n \left[ - \right] \mathbf{l}_{ba}^b \left[ \text{m} \right] \\
+        - \mathbf{C}_b^n \left[ - \right] (\boldsymbol{\omega}_{ib}^b  \left[ \frac{\text{rad}}{\text{s}} \right] \times \mathbf{l}_{ba}^b  \left[ \text{m} \right]) + \boldsymbol{\Omega}_{ie}^n \left[ \frac{\text{rad}}{\text{s}} \right] \mathbf{C}_b^n  \left[ - \right] \mathbf{l}_{ba}^b  \left[ \text{m} \right] \\
     };
   \end{tikzpicture}
 \f}
 
-\f$ \textcolor{red}{\text{TODO: Add units to measurement innovation and add scaled form}}\f$
+When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the measurement innovation \f$ \mathbf{\delta z} \f$ have to be adapted
+
+\fl{equation,eq-LCKF_n-Units-deltaz-scaled}
+  \mathbf{\delta z} =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
+                nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
+      \delta \phi           & \left[ \highlight[red!60]{\text{m'}} \right] \\
+      \delta \lambda        & \left[ \highlight[red!60]{\text{m'}} \right] \\
+      \delta h              & \left[ \text{m} \right]                      \\
+      \delta v_{N}          & \left[ \frac{\text{m}}{\text{s}} \right]     \\
+      \delta v_{E}          & \left[ \frac{\text{m}}{\text{s}} \right]     \\
+      \delta v_{D}          & \left[ \frac{\text{m}}{\text{s}} \right]     \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[cyan!20]{m-1-1}{m-3-1}
+      \fhighlight[blue!20]{m-4-1}{m-6-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  =
+  \quad
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=2.5em,
+                nodes={rectangle,text width=1.8em,align=center,minimum height=2.0em,anchor=center},] {
+       \tilde{\phi}_G    - \hat{\phi}    & \left[ \text{rad} \right]                \\
+       \tilde{\lambda}_G - \hat{\lambda} & \left[ \text{rad} \right]                \\
+       \tilde{h}_G       - \hat{h}       & \left[ \text{m} \right]                  \\
+       \tilde{v}_{N,G}   - \hat{v}_{N}   & \left[ \frac{\text{m}}{\text{s}} \right] \\
+       \tilde{v}_{E,G}   - \hat{v}_{E}   & \left[ \frac{\text{m}}{\text{s}} \right] \\
+       \tilde{v}_{D,G}   - \hat{v}_{D}   & \left[ \frac{\text{m}}{\text{s}} \right] \\
+    };
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-2-1.south west) -- node[left=2pt] {$ \times R_0 $} (m-1-1.north west);
+  \end{tikzpicture}
+  +
+  \quad
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.0em,
+                nodes={rectangle,text width=26em,align=center,minimum height=6.0em,anchor=center},] {
+        - \begin{pmatrix} \frac{1}{R_N + h} \left[ \frac{1}{\text{m}} \right] &               0                                                 &  0                  \\[1.2em]
+                                   0                                          & \frac{1}{(R_E + h)\cos{\phi}} \left[ \frac{1}{\text{m}} \right] &  0                  \\[1.2em]
+                                   0                                          &               0                                                 & -1 \left[ - \right] \end{pmatrix}
+          \mathbf{C}_b^n \left[ - \right] \mathbf{l}_{ba}^b \left[ \text{m} \right] \\
+        - \mathbf{C}_b^n \left[ - \right] (\boldsymbol{\omega}_{ib}^b  \left[ \frac{\text{rad}}{\text{s}} \right] \times \mathbf{l}_{ba}^b  \left[ \text{m} \right]) + \boldsymbol{\Omega}_{ie}^n \left[ \frac{\text{rad}}{\text{s}} \right] \mathbf{C}_b^n  \left[ - \right] \mathbf{l}_{ba}^b  \left[ \text{m} \right] \\
+    };
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] ($(m-1-1.south west) + (0,2.5em) $) -- node[left=2pt] {$ \times R_0 $} (m-1-1.north west);
+  \end{tikzpicture}
+\f}
+
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -1084,20 +1159,23 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the \f$
   \end{tikzpicture}
   =
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
+    \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
-      0 & 0 & 0 & 0                  & 0                  & 0                  & 1 \left[ - \right] & 0                  & 0                  & 0 & 0 & 0 & 0 & 0 & 0 \\
-      0 & 0 & 0 & 0                  & 0                  & 0                  & 0                  & 1 \left[ - \right] & 0                  & 0 & 0 & 0 & 0 & 0 & 0 \\
-      0 & 0 & 0 & 0                  & 0                  & 0                  & 0                  & 0                  & 1 \left[ - \right] & 0 & 0 & 0 & 0 & 0 & 0 \\
-      0 & 0 & 0 & 1 \left[ - \right] & 0                  & 0                  & 0                  & 0                  & 0                  & 0 & 0 & 0 & 0 & 0 & 0 \\
-      0 & 0 & 0 & 0                  & 1 \left[ - \right] & 0                  & 0                  & 0                  & 0                  & 0 & 0 & 0 & 0 & 0 & 0 \\
-      0 & 0 & 0 & 0                  & 0                  & 1 \left[ - \right] & 0                  & 0                  & 0                  & 0 & 0 & 0 & 0 & 0 & 0 \\
+      &                                                                & &                    &                    &                    & 1 \left[ - \right] & 0                  & 0                  & &              & & &                                                        &  \\
+      & \mathbf{H}_{r,\psi}^n \left[ \text{rad} \right]                & &                    &    \mathbf{0}_3    &                    & 0                  & 1 \left[ - \right] & 0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                  &  \\
+      &                                                                & &                    &                    &                    & 0                  & 0                  & 1 \left[ - \right] & &              & & &                                                        &  \\
+      &                                                                & & 1 \left[ - \right] & 0                  & 0                  &                    &                    &                    & &              & & &                                                        &  \\
+      & \mathbf{H}_{v,\psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & & 0                  & 1 \left[ - \right] & 0                  &                    &    \mathbf{0}_3    &                    & & \mathbf{0}_3 & & & \mathbf{H}_{v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
+      &                                                                & & 0                  & 0                  & 1 \left[ - \right] &                    &                    &                    & &              & & &                                                        &  \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{H}$} (m-1-15.north east);
 
     \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-3-3}
+      \fhighlight[green!20]{m-4-1}{m-6-3}
       \fhighlight[blue!20]{m-4-4}{m-6-6}
       \fhighlight[cyan!20]{m-1-7}{m-3-9}
+      \fhighlight[orange!20]{m-4-13}{m-6-15}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
@@ -1133,6 +1211,84 @@ When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the \f$
 \f}
 
 When scaling elements in \f$ \mathbf{\delta x} \f$ the relevant parts of the measurement innovation \f$ \mathbf{\delta z} \f$ have to be adapted. The \f$ \mathbf{H} \f$ matrix stays unscaled.
+
+\fl{equation,eq-LCKF_n-Units-H-scaled}
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
+                nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
+      \delta \phi           & \left[ \highlight[red!60]{\text{m'}} \right] \\
+      \delta \lambda        & \left[ \highlight[red!60]{\text{m'}} \right] \\
+      \delta h              & \left[ \text{m} \right]                      \\
+      \delta v_{N}          & \left[ \frac{\text{m}}{\text{s}} \right]     \\
+      \delta v_{E}          & \left[ \frac{\text{m}}{\text{s}} \right]     \\
+      \delta v_{D}          & \left[ \frac{\text{m}}{\text{s}} \right]     \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta z}$} (m-1-2.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[blue!20]{m-4-1}{m-6-1}
+      \fhighlight[cyan!20]{m-1-1}{m-3-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                nodes={rectangle,text width=1.8em,align=center,minimum height=2.3em,anchor=center},] {
+      &                                                                & &                    &                    &                    & 1 \left[ - \right] & 0                  & 0                  & &              & & &                                                        &  \\
+      & \mathbf{H}_{r,\psi}^n \left[ \text{rad} \right]                & &                    &    \mathbf{0}_3    &                    & 0                  & 1 \left[ - \right] & 0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                  &  \\
+      &                                                                & &                    &                    &                    & 0                  & 0                  & 1 \left[ - \right] & &              & & &                                                        &  \\
+      &                                                                & & 1 \left[ - \right] & 0                  & 0                  &                    &                    &                    & &              & & &                                                        &  \\
+      & \mathbf{H}_{v,\psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & & 0                  & 1 \left[ - \right] & 0                  &                    &    \mathbf{0}_3    &                    & & \mathbf{0}_3 & & & \mathbf{H}_{v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
+      &                                                                & & 0                  & 0                  & 1 \left[ - \right] &                    &                    &                    & &              & & &                                                        &  \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{H}$} (m-1-15.north east);
+
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-2-1.south west) -- node[left=2pt] {$ \times R_0 $} (m-1-1.north west);
+
+    \draw[decorate,transform canvas={yshift=1.1em},thick,red] (m-1-1.north west) -- node[above=2pt] {$ \times \frac{\pi}{180} $} (m-1-3.north east);
+    \draw[decorate,transform canvas={yshift=2.0em},thick,red] (m-1-7.north west) -- node[above=2pt] {$ \times \frac{1}{R_0} $} (m-1-8.north east);
+    \draw[decorate,transform canvas={yshift=1.1em},thick,red] (m-1-10.north west) -- node[above=2pt] {$ \times \frac{g}{10^3} $} (m-1-12.north east);
+    \draw[decorate,transform canvas={yshift=1.1em},thick,red] (m-1-13.north west) -- node[above=2pt] {$ \times 10^{-3} $} (m-1-15.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-3-3}
+      \fhighlight[green!20]{m-4-1}{m-6-3}
+      \fhighlight[blue!20]{m-4-4}{m-6-6}
+      \fhighlight[cyan!20]{m-1-7}{m-3-9}
+      \fhighlight[orange!20]{m-4-13}{m-6-15}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+  \cdot
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.1em,
+                nodes={rectangle,text width=2.4em,align=center,minimum height=2.3em,anchor=center},] {
+      \delta R              & \left[ \highlight[red!60]{\text{deg}} \right]                   \\
+      \delta P              & \left[ \highlight[red!60]{\text{deg}} \right]                   \\
+      \delta Y              & \left[ \highlight[red!60]{\text{deg}} \right]                   \\
+      \delta v_{N}          & \left[ \frac{\text{m}}{\text{s}} \right]                        \\
+      \delta v_{E}          & \left[ \frac{\text{m}}{\text{s}} \right]                        \\
+      \delta v_{D}          & \left[ \frac{\text{m}}{\text{s}} \right]                        \\
+      \delta \phi           & \left[ \highlight[red!60]{\text{m'}} \right]                    \\
+      \delta \lambda        & \left[ \highlight[red!60]{\text{m'}} \right]                    \\
+      \delta h              & \left[ \text{m} \right]                                         \\
+      \delta f_{x}^{b}      & \left[ \highlight[red!60]{\text{mg}} \right]                    \\
+      \delta f_{y}^{b}      & \left[ \highlight[red!60]{\text{mg}} \right]                    \\
+      \delta f_{z}^{b}      & \left[ \highlight[red!60]{\text{mg}} \right]                    \\
+      \delta \omega_{x}^{b} & \left[ \highlight[red!60]{\frac{\text{mrad}}{\text{s}}} \right] \\
+      \delta \omega_{y}^{b} & \left[ \highlight[red!60]{\frac{\text{mrad}}{\text{s}}} \right] \\
+      \delta \omega_{z}^{b} & \left[ \highlight[red!60]{\frac{\text{mrad}}{\text{s}}} \right] \\
+    };
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{\delta x}$} (m-1-2.north east);
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[green!20]{m-1-1}{m-3-1}
+      \fhighlight[blue!20]{m-4-1}{m-6-1}
+      \fhighlight[cyan!20]{m-7-1}{m-9-1}
+      \fhighlight[red!20]{m-10-1}{m-12-1}
+      \fhighlight[orange!20]{m-13-1}{m-15-1}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
