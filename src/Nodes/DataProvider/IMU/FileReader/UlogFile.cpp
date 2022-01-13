@@ -164,8 +164,7 @@ void NAV::UlogFile::readDefinitions()
         Ulog::message_header_s msgHeader;
     } ulogMsgHeader{};
 
-    // while (true)
-    for (int i = 0; i < 4; i++) // FIXME: Quick fix, remove later and enable while-loop, stop once there is no more msg type identifier
+    while (!((ulogMsgHeader.msgHeader.msg_type == 'A') || (ulogMsgHeader.msgHeader.msg_type == 'L')))
     {
         filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
 
@@ -224,6 +223,8 @@ void NAV::UlogFile::readDefinitions()
             // Read msg size (2B) and type (1B)
             Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
             messageInfoMulti.header = ulogMsgHeader.msgHeader;
+            uint8_t is_continued{};
+            filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(is_continued));
             uint8_t key_len{};
             filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(key_len));
 
@@ -232,14 +233,10 @@ void NAV::UlogFile::readDefinitions()
             filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
             messageInfoMulti.value.resize(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len); // contains 'is_continued' flag in contrast to information message
             filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
+            LOG_DEBUG("Information message multi - key_len: {}", messageInfoMulti.key_len);
             LOG_DEBUG("Information message multi - key: {}", messageInfoMulti.key);
             LOG_DEBUG("Information message multi - value: {}", messageInfoMulti.value);
-
-            // Check, whether there is another msg with the same key
-            if (filestream.read(reinterpret_cast<char*>(messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued)))
-            {
-                LOG_WARN("'Information message multi' has not been read entirly");
-            }
+            //TODO: Use 'is_continued' to generate a list of values with the same key
         }
 
         // Parameter message (same format as 'message_info_s')
@@ -254,6 +251,12 @@ void NAV::UlogFile::readDefinitions()
             // Read 'key' identifier ('keylength' byte) and its associated 'value'
             messageParam.key.resize(messageParam.key_len);
             filestream.read(messageParam.key.data(), messageParam.key_len);
+
+            if (!(messageParam.key.find("int32_t")) && !(messageParam.key.find("float")))
+            {
+                LOG_WARN("Parameter message contains invalid data type. It is neither 'int32_t', nor 'float', instead: {}", messageParam.key);
+            }
+
             messageParam.value.resize(messageParam.header.msg_size - 1 - messageParam.key_len); // 'msg_size' contains key and value, but not header
             filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
             LOG_DEBUG("Parameter message - key: {}", messageParam.key);
@@ -276,12 +279,16 @@ void NAV::UlogFile::readDefinitions()
             filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
             LOG_DEBUG("Parameter default message - key: {}", messageParamDefault.key);
             LOG_DEBUG("Parameter default message - value: {}", messageParamDefault.value);
+
+            //TODO: Restriction on '1<<0' and '1<<1'
         }
     }
+    LOG_DEBUG("Read 'Definitions Section' completed");
 }
 
 std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
 {
+    LOG_DEBUG("Start reading Ulog data section");
     // Get current position
     // auto pos = filestream.tellg();
     // uint8_t i = 0;
