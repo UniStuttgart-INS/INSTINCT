@@ -117,7 +117,8 @@ class LooselyCoupledKF : public Node
     /// Possible Units for the Standard deviation of the noise on the accelerometer specific-force measurements
     enum class StdevAccelNoiseUnits
     {
-        mg_sqrtHz, ///< [mg/√(Hz)]
+        mg_sqrtHz,   ///< [mg / √(Hz)]
+        m_s2_sqrtHz, ///< [m / s^2 / √(Hz)]
     };
     /// Gui selection for the Unit of the input stdev_ra parameter
     StdevAccelNoiseUnits _stdevAccelNoiseUnits = StdevAccelNoiseUnits::mg_sqrtHz;
@@ -131,7 +132,8 @@ class LooselyCoupledKF : public Node
     /// Possible Units for the Standard deviation of the noise on the gyro angular-rate measurements
     enum class StdevGyroNoiseUnits
     {
-        deg_hr_sqrtHz, ///< [deg/hr/√(Hz)]
+        deg_hr_sqrtHz, ///< [deg / hr /√(Hz)]
+        rad_s_sqrtHz,  ///< [rad / s /√(Hz)]
     };
     /// Gui selection for the Unit of the input stdev_rg parameter
     StdevGyroNoiseUnits _stdevGyroNoiseUnits = StdevGyroNoiseUnits::deg_hr_sqrtHz;
