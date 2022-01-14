@@ -27,7 +27,7 @@ constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
 /// @brief Scale factor to convert the latitude and longitude error
 constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst::pseudometre;
 /// @brief Scale factor to convert the acceleration error
-constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst::standard_gravity;
+constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst::G_NORM;
 /// @brief Scale factor to convert the angular rate error
 constexpr double SCALE_FACTOR_ANGULAR_RATE = 1e3;
 
@@ -153,13 +153,13 @@ void NAV::LooselyCoupledKF::guiConfig()
         }
 
         if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the noise on the\naccelerometer specific-force measurements##{}",
-                                                          _varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
+                                                          _stdevAccelNoiseUnits == StdevAccelNoiseUnits::mg_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
                                                   .c_str(),
-                                              configWidth, unitWidth, &_variance_ra, reinterpret_cast<int*>(&_varianceAccelNoiseUnits), "m/s^3/√(s)\0\0", //"mg/√(Hz)\0\0", //TODO: Correct units from data sheet
+                                              configWidth, unitWidth, &_stdev_ra, reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0\0",
                                               0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: variance_ra changed to {}", nameId(), _variance_ra);
-            LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), _varianceAccelNoiseUnits);
+            LOG_DEBUG("{}: variance_ra changed to {}", nameId(), _stdev_ra);
+            LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), _stdevAccelNoiseUnits);
             flow::ApplyChanges();
         }
 
@@ -208,13 +208,13 @@ void NAV::LooselyCoupledKF::guiConfig()
         }
 
         if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the noise on\nthe gyro angular-rate measurements##{}",
-                                                          _varianceGyroNoiseUnits == VarianceGyroNoiseUnits::deg_hr_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
+                                                          _stdevGyroNoiseUnits == StdevGyroNoiseUnits::deg_hr_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
                                                   .c_str(),
-                                              configWidth, unitWidth, &_variance_rg, reinterpret_cast<int*>(&_varianceGyroNoiseUnits), "rad/s^2/√(s)\0\0", //"deg/hr/√(Hz)\0\0", //TODO: Correct units from data sheet
+                                              configWidth, unitWidth, &_stdev_rg, reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0\0",
                                               0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: variance_rg changed to {}", nameId(), _variance_rg);
-            LOG_DEBUG("{}: varianceGyroNoiseUnits changed to {}", nameId(), _varianceGyroNoiseUnits);
+            LOG_DEBUG("{}: variance_rg changed to {}", nameId(), _stdev_rg);
+            LOG_DEBUG("{}: varianceGyroNoiseUnits changed to {}", nameId(), _stdevGyroNoiseUnits);
             flow::ApplyChanges();
         }
 
@@ -383,10 +383,10 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["beta_accel"] = _beta_accel;
     j["randomProcessGyro"] = _randomProcessGyro;
     j["beta_gyro"] = _beta_gyro;
-    j["variance_ra"] = _variance_ra;
-    j["varianceAccelNoiseUnits"] = _varianceAccelNoiseUnits;
-    j["variance_rg"] = _variance_rg;
-    j["varianceGyroNoiseUnits"] = _varianceGyroNoiseUnits;
+    j["stdev_ra"] = _stdev_ra;
+    j["stdevAccelNoiseUnits"] = _stdevAccelNoiseUnits;
+    j["stdev_rg"] = _stdev_rg;
+    j["stdevGyroNoiseUnits"] = _stdevGyroNoiseUnits;
     j["variance_bad"] = _variance_bad;
     j["varianceAccelBiasUnits"] = _varianceAccelBiasUnits;
     j["variance_bgd"] = _variance_bgd;
@@ -439,21 +439,21 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         _beta_gyro = j.at("beta_gyro");
     }
-    if (j.contains("variance_ra"))
+    if (j.contains("stdev_ra"))
     {
-        _variance_ra = j.at("variance_ra");
+        _stdev_ra = j.at("stdev_ra");
     }
-    if (j.contains("varianceAccelNoiseUnits"))
+    if (j.contains("stdevAccelNoiseUnits"))
     {
-        j.at("varianceAccelNoiseUnits").get_to(_varianceAccelNoiseUnits);
+        j.at("stdevAccelNoiseUnits").get_to(_stdevAccelNoiseUnits);
     }
-    if (j.contains("variance_rg"))
+    if (j.contains("stdev_rg"))
     {
-        _variance_rg = j.at("variance_rg");
+        _stdev_rg = j.at("stdev_rg");
     }
-    if (j.contains("varianceGyroNoiseUnits"))
+    if (j.contains("stdevGyroNoiseUnits"))
     {
-        j.at("varianceGyroNoiseUnits").get_to(_varianceGyroNoiseUnits);
+        j.at("stdevGyroNoiseUnits").get_to(_stdevGyroNoiseUnits);
     }
     if (j.contains("variance_bad"))
     {
@@ -722,30 +722,41 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
     // TODO: Correct units here
+    // mg/√(Hz)
+    // deg/hr/√(Hz)
 
-    // 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements [m/s^3/√(s)]
-    double sigma2_ra = _variance_ra;
-    // if (_varianceAccelNoiseUnits == VarianceAccelNoiseUnits::mg_sqrtHz) //TODO: Correct units from data sheet
-    // {
-    //     sigma2_ra = std::pow((_variance_ra /* [mg/√(Hz)] */) * 1e-3 * InsConst::G_NORM, 2);
-    // }
-    // 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [rad/s^2/√(s)]
-    double sigma2_rg = _variance_rg;
-    // if (_varianceGyroNoiseUnits == VarianceGyroNoiseUnits::deg_hr_sqrtHz) //TODO: Correct units from data sheet
-    // {
-    //     // See Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours.
-    //     sigma2_rg = std::pow(1 / 3600.0 * (trafo::deg2rad(_variance_rg /* [deg/hr/√(Hz)] */)), 2);
-    // }
+    // 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements [m / (s^2 · √(s))]
+    double sigma_ra{};
+    switch (_stdevAccelNoiseUnits)
+    {
+    case StdevAccelNoiseUnits::mg_sqrtHz: // [mg / √(Hz)]
+        sigma_ra = _stdev_ra * 1e-3;      // [g / √(Hz)]
+        sigma_ra *= InsConst::G_NORM;     // [m / (s^2 · √(Hz))]
+        sigma_ra /= 60.;                  // [m / (s^2 · √(s))]
+        break;
+    }
+
+    // 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [rad / (s · √(s))]
+    double sigma_rg{};
+    switch (_stdevGyroNoiseUnits)
+    {
+    case StdevGyroNoiseUnits::deg_hr_sqrtHz:  // [deg / hr / √(Hz)] (see Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours)
+        sigma_rg = trafo::deg2rad(_stdev_rg); // [rad / hr / √(Hz)]
+        sigma_rg /= 60.;                      // [rad / √(hr)]
+        sigma_rg /= 60.;                      // [rad / √(s)]
+        // sigma_rg /= 1.;                    // [rad / (s · √(s))]
+        break;
+    }
 
     // ---------------------------------------------- Prediction -------------------------------------------------
 
     // System Matrix
-    Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, beta_a, beta_omega);
+    Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, beta_a, beta_omega, R_N, R_E);
 
     if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
-        Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(sigma2_ra, sigma2_rg, beta_a, beta_omega);
+        Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(std::pow(sigma_ra, 2), std::pow(sigma_rg, 2), beta_a, beta_omega);
 
         auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 6>(F, G, _tau_KF);
 
@@ -773,18 +784,26 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     {
         // 𝜎²_bad Variance of the accelerometer dynamic bias
         double sigma2_bad{};
-        if (_varianceAccelBiasUnits == VarianceAccelBiasUnits::microg)
+        switch (_varianceAccelBiasUnits)
         {
-            sigma2_bad = std::pow((_variance_bad /* [µg] */) * 1e-6 * InsConst::G_NORM, 2);
+        case VarianceAccelBiasUnits::microg:   // [µg]
+            sigma2_bad = _variance_bad * 1e-6; // [g]
+            sigma2_bad *= InsConst::G_NORM;    // [m / s^2]
+            sigma2_bad = std::pow(sigma2_bad, 2);
+            break;
         }
         // 𝜎²_bgd Variance of the gyro dynamic bias
         double sigma2_bgd{};
-        if (_varianceGyroBiasUnits == VarianceGyroBiasUnits::deg_h)
+        switch (_varianceGyroBiasUnits)
         {
-            sigma2_bgd = std::pow((_variance_bgd /* [°/h] */) / 3600.0, 2);
+        case VarianceGyroBiasUnits::deg_h:           // [° / h]
+            sigma2_bgd = _variance_bgd / 3600.0;     // [° / s];
+            sigma2_bgd = trafo::deg2rad(sigma2_bgd); // [rad / s];
+            sigma2_bgd = std::pow(sigma2_bgd, 2);
+            break;
         }
 
-        _kalmanFilter.Q = systemNoiseCovarianceMatrix(sigma2_ra, sigma2_rg, sigma2_bad, sigma2_bgd,
+        _kalmanFilter.Q = systemNoiseCovarianceMatrix(std::pow(sigma_ra, 2), std::pow(sigma_rg, 2), sigma2_bad, sigma2_bgd,
                                                       F.block<3, 3>(3, 0),
                                                       T_rn_p,
                                                       DCM_nb, _tau_KF);
@@ -951,12 +970,12 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // Push out the new data
     auto pvaError = std::make_shared<PVAError>();
     pvaError->insTime = gnssMeasurement->insTime;
-    pvaError->positionError_lla() = _kalmanFilter.x.block<3, 1>(6, 0).array() * Eigen::Array3d(1e-3, 1e-3, 1);
+    pvaError->positionError_lla() = _kalmanFilter.x.block<3, 1>(6, 0).array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
     pvaError->velocityError_n() = _kalmanFilter.x.block<3, 1>(3, 0);
-    pvaError->attitudeError_n() = _kalmanFilter.x.block<3, 1>(0, 0);
+    pvaError->attitudeError_n() = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
 
-    _accumulatedImuBiases.biasAccel_b += _kalmanFilter.x.block<3, 1>(9, 0);
-    _accumulatedImuBiases.biasGyro_b += _kalmanFilter.x.block<3, 1>(12, 0);
+    _accumulatedImuBiases.biasAccel_b += _kalmanFilter.x.block<3, 1>(9, 0) * (1. / SCALE_FACTOR_ACCELERATION);
+    _accumulatedImuBiases.biasGyro_b += _kalmanFilter.x.block<3, 1>(12, 0) * (1. / SCALE_FACTOR_ANGULAR_RATE);
 
     auto imuBiases = std::make_shared<ImuBiases>();
     imuBiases->insTime = gnssMeasurement->insTime;
@@ -975,13 +994,18 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 //                                             System matrix 𝐅
 // ###########################################################################################################
 
-Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& angularRate_in_n, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega)
+Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::Quaterniond& quaternion_nb,
+                                                                   const Eigen::Vector3d& specForce_ib_b,
+                                                                   const Eigen::Vector3d& angularRate_in_n,
+                                                                   const Eigen::Vector3d& velocity_n,
+                                                                   const Eigen::Vector3d& position_lla,
+                                                                   const Eigen::Vector3d& beta_a,
+                                                                   const Eigen::Vector3d& beta_omega,
+                                                                   double R_N,
+                                                                   double R_E)
 {
     const double& latitude = position_lla(0); // Geodetic latitude of the body in [rad]
     const double& altitude = position_lla(2); // Geodetic height of the body in [m]
-
-    double R_E = calcEarthRadius_E(latitude); // North/South (meridian) earth radius [m]
-    double R_N = calcEarthRadius_N(latitude); // East/West (prime vertical) earth radius [m]
 
     // System matrix 𝐅
     // Math: \mathbf{F}^n = \begin{pmatrix} \mathbf{F}_{\dot{\psi},\psi}^n & \mathbf{F}_{\dot{\psi},\delta v}^n & \mathbf{F}_{\dot{\psi},\delta r}^n & \mathbf{0}_3 & -\mathbf{C}_b^n \\ \mathbf{F}_{\delta \dot{v},\psi}^n & \mathbf{F}_{\delta \dot{v},\delta v}^n & \mathbf{F}_{\delta \dot{v},\delta r}^n & \mathbf{C}_b^n & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{\delta \dot{r},\delta v}^n & \mathbf{F}_{\delta \dot{r},\delta r}^n & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \end{pmatrix} \qquad \text{T. Hobiger, Inertialnavigation V06 - V09 }
@@ -1149,11 +1173,8 @@ Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation(const E
                                                                          const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss_b,
                                                                          const Eigen::Vector3d& angularRate_ib_b, const Eigen::Matrix3d& Omega_ie_n)
 {
-    // Scale factor to scale rad to milliradians
-    Eigen::Matrix3d S_p = Eigen::DiagonalMatrix<double, 3>{ 1e3, 1e3, 1 };
-
-    // Math: \delta\mathbf{z}_{G,k}^{n-} = \begin{pmatrix} \mathbf{S}_p (\mathbf{\hat{p}}_{aG} - \mathbf{\hat{p}}_b - \mathbf{\hat{T}}_{r(n)}^p \mathbf{C}_b^n \mathbf{l}_{ba}^b) \\ \mathbf{\hat{v}}_{eaG}^n - \mathbf{\hat{v}}_{eb}^n - \mathbf{C}_b^n (\mathbf{\hat{\omega}}_{ib}^b \wedge \mathbf{l}_{ba}^b) + \mathbf{\hat{\Omega}}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{pmatrix} \qquad \text{P. Groves}\,(14.116)
-    Eigen::Vector3d deltaLLA = S_p * (positionMeasurement_lla - positionEstimate_lla - T_rn_p * (q_nb * leverArm_InsGnss_b));
+    // Math: \delta\mathbf{z}_{G,k}^{n-} = \begin{pmatrix} \mathbf{\hat{p}}_{aG} - \mathbf{\hat{p}}_b - \mathbf{\hat{T}}_{r(n)}^p \mathbf{C}_b^n \mathbf{l}_{ba}^b \\ \mathbf{\hat{v}}_{eaG}^n - \mathbf{\hat{v}}_{eb}^n - \mathbf{C}_b^n (\mathbf{\hat{\omega}}_{ib}^b \wedge \mathbf{l}_{ba}^b) + \mathbf{\hat{\Omega}}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{pmatrix} \qquad \text{P. Groves}\,(14.116)
+    Eigen::Vector3d deltaLLA = positionMeasurement_lla - positionEstimate_lla - T_rn_p * (q_nb * leverArm_InsGnss_b);
     Eigen::Vector3d deltaVel = velocityMeasurement_n - velocityEstimate_n - q_nb * (angularRate_ib_b.cross(leverArm_InsGnss_b)) + Omega_ie_n * (q_nb * leverArm_InsGnss_b);
 
     deltaLLA.topRows<2>() *= SCALE_FACTOR_LAT_LON;
@@ -1203,6 +1224,8 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix
     Q.block<3, 3>(12, 6) = Q.block<3, 3>(6, 12).transpose(); // Q_35^T
     Q.block<3, 3>(3, 9) = Q.block<3, 3>(9, 3).transpose();   // Q_42^T
     Q.block<3, 3>(0, 12) = Q.block<3, 3>(12, 0).transpose(); // Q_51^T
+
+    // TODO: Scale the Q matrix
 
     return Q;
 }

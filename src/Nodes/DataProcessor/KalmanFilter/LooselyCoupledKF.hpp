@@ -114,31 +114,31 @@ class LooselyCoupledKF : public Node
 
     // ###########################################################################################################
 
-    /// Possible Units for the Variance of the noise on the accelerometer specific-force measurements
-    enum class VarianceAccelNoiseUnits
+    /// Possible Units for the Standard deviation of the noise on the accelerometer specific-force measurements
+    enum class StdevAccelNoiseUnits
     {
         mg_sqrtHz, ///< [mg/√(Hz)]
     };
-    /// Gui selection for the Unit of the input variance_ra parameter
-    VarianceAccelNoiseUnits _varianceAccelNoiseUnits = VarianceAccelNoiseUnits::mg_sqrtHz;
+    /// Gui selection for the Unit of the input stdev_ra parameter
+    StdevAccelNoiseUnits _stdevAccelNoiseUnits = StdevAccelNoiseUnits::mg_sqrtHz;
 
-    /// @brief 𝜎²_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @brief 𝜎_ra Standard deviation of the noise on the accelerometer specific-force measurements
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    double _variance_ra = 0.04 /* [mg/√(Hz)] */;
+    double _stdev_ra = 0.04 /* [mg/√(Hz)] */;
 
     // ###########################################################################################################
 
-    /// Possible Units for the Variance of the noise on the gyro angular-rate measurements
-    enum class VarianceGyroNoiseUnits
+    /// Possible Units for the Standard deviation of the noise on the gyro angular-rate measurements
+    enum class StdevGyroNoiseUnits
     {
         deg_hr_sqrtHz, ///< [deg/hr/√(Hz)]
     };
-    /// Gui selection for the Unit of the input variance_rg parameter
-    VarianceGyroNoiseUnits _varianceGyroNoiseUnits = VarianceGyroNoiseUnits::deg_hr_sqrtHz;
+    /// Gui selection for the Unit of the input stdev_rg parameter
+    StdevGyroNoiseUnits _stdevGyroNoiseUnits = StdevGyroNoiseUnits::deg_hr_sqrtHz;
 
-    /// @brief 𝜎²_rg Variance of the noise on the gyro angular-rate measurements [deg²/s]
+    /// @brief 𝜎_rg Standard deviation of the noise on the gyro angular-rate measurements
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    double _variance_rg = 5 /* [deg/hr/√(Hz)] */;
+    double _stdev_rg = 5 /* [deg/hr/√(Hz)]^2 */;
 
     // ###########################################################################################################
 
@@ -329,8 +329,18 @@ class LooselyCoupledKF : public Node
     /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @param[in] R_N Meridian radius of curvature in [m]
+    /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
     /// @note See Groves (2013) chapter 14.2.4, equation (14.63)
-    static Eigen::Matrix<double, 15, 15> systemMatrixF(const Eigen::Quaterniond& quaternion_nb, const Eigen::Vector3d& specForce_ib_b, const Eigen::Vector3d& angularRate_in_n, const Eigen::Vector3d& velocity_n, const Eigen::Vector3d& position_lla, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
+    static Eigen::Matrix<double, 15, 15> systemMatrixF(const Eigen::Quaterniond& quaternion_nb,
+                                                       const Eigen::Vector3d& specForce_ib_b,
+                                                       const Eigen::Vector3d& angularRate_in_n,
+                                                       const Eigen::Vector3d& velocity_n,
+                                                       const Eigen::Vector3d& position_lla,
+                                                       const Eigen::Vector3d& beta_a,
+                                                       const Eigen::Vector3d& beta_omega,
+                                                       double R_N,
+                                                       double R_E);
 
     // ###########################################################################################################
     //                                           Noise input matrix 𝐆
