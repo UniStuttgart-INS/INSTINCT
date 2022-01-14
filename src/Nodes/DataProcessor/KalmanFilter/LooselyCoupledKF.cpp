@@ -22,9 +22,13 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Gravity/Gravity.hpp"
 #include "util/Logger.hpp"
 
+/// @brief Scale factor to convert the attitude error
 constexpr double SCALE_FACTOR_ATTITUDE = 180. / M_PI;
+/// @brief Scale factor to convert the latitude and longitude error
 constexpr double SCALE_FACTOR_LAT_LON = NAV::InsConst::pseudometre;
+/// @brief Scale factor to convert the acceleration error
 constexpr double SCALE_FACTOR_ACCELERATION = 1e3 / NAV::InsConst::standard_gravity;
+/// @brief Scale factor to convert the angular rate error
 constexpr double SCALE_FACTOR_ANGULAR_RATE = 1e3;
 
 NAV::LooselyCoupledKF::LooselyCoupledKF()
@@ -865,9 +869,6 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     {
         gnssSigmaSquaredLatLonAlt = _gnssMeasurementUncertaintyPosition;
     }
-    // Conversion rad to mrad
-    gnssSigmaSquaredLatLonAlt(0) *= 1e6;
-    gnssSigmaSquaredLatLonAlt(1) *= 1e6;
 
     // GNSS measurement uncertainty for the velocity (Variance σ²) in [m^2/s^2]
     Eigen::Vector3d gnssSigmaSquaredVelocity = Eigen::Vector3d::Zero();
@@ -1077,12 +1078,12 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::initialErrorCovarianceMatri
     Eigen::Matrix<double, 15, 15> P = Eigen::Matrix<double, 15, 15>::Zero();
 
     P.diagonal() << std::pow(SCALE_FACTOR_ATTITUDE, 2) * variance_angles, // Flight Angles covariance
-        variance_vel,                                                                   // Velocity covariance
-        std::pow(SCALE_FACTOR_LAT_LON, 2) * variance_lla(0),                            // Latitude covariance
-        std::pow(SCALE_FACTOR_LAT_LON, 2) * variance_lla(1),                            // Longitude covariance
-        variance_lla(2),                                                                // Altitude covariance
-        std::pow(SCALE_FACTOR_ACCELERATION, 2) * variance_accelBias,                    // Accelerometer Bias covariance
-        std::pow(SCALE_FACTOR_ANGULAR_RATE, 2) * variance_gyroBias;                     // Gyroscope Bias covariance
+        variance_vel,                                                     // Velocity covariance
+        std::pow(SCALE_FACTOR_LAT_LON, 2) * variance_lla(0),              // Latitude covariance
+        std::pow(SCALE_FACTOR_LAT_LON, 2) * variance_lla(1),              // Longitude covariance
+        variance_lla(2),                                                  // Altitude covariance
+        std::pow(SCALE_FACTOR_ACCELERATION, 2) * variance_accelBias,      // Accelerometer Bias covariance
+        std::pow(SCALE_FACTOR_ANGULAR_RATE, 2) * variance_gyroBias;       // Gyroscope Bias covariance
 
     return P;
 }

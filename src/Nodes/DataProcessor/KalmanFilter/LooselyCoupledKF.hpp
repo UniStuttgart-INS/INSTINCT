@@ -367,11 +367,11 @@ class LooselyCoupledKF : public Node
     /// @param[in] variance_accelBias Initial Covariance of the accelerometer biases in [m^2/s^4]
     /// @param[in] variance_gyroBias Initial Covariance of the gyroscope biases in [rad^2/s^2]
     /// @return The 15x15 matrix of initial state variances
-    Eigen::Matrix<double, 15, 15> initialErrorCovarianceMatrixP0(const Eigen::Vector3d& variance_angles,
-                                                                 const Eigen::Vector3d& variance_vel,
-                                                                 const Eigen::Vector3d& variance_lla,
-                                                                 const Eigen::Vector3d& variance_accelBias,
-                                                                 const Eigen::Vector3d& variance_gyroBias);
+    [[nodiscard]] static Eigen::Matrix<double, 15, 15> initialErrorCovarianceMatrixP0(const Eigen::Vector3d& variance_angles,
+                                                                                      const Eigen::Vector3d& variance_vel,
+                                                                                      const Eigen::Vector3d& variance_lla,
+                                                                                      const Eigen::Vector3d& variance_accelBias,
+                                                                                      const Eigen::Vector3d& variance_gyroBias);
 
     // ###########################################################################################################
     //                                     System noise covariance matrix 𝐐
@@ -387,7 +387,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
     /// @param[in] tau_s Time interval in [s]
     /// @return The 15x15 matrix of system noise covariances
-    static Eigen::Matrix<double, 15, 15> systemNoiseCovarianceMatrix(const double& sigma2_ra, const double& sigma2_rg, const double& sigma2_bad, const double& sigma2_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix<double, 15, 15> systemNoiseCovarianceMatrix(const double& sigma2_ra, const double& sigma2_rg, const double& sigma2_bad, const double& sigma2_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     /// @brief S_ra Power Spectral Density of the accelerometer random noise
     /// @param[in] sigma2_ra 𝜎²_ra standard deviation of the noise on the accelerometer specific-force measurements in [m/s^2]
@@ -418,7 +418,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] R_N Meridian radius of curvature in [m]
     /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
     /// @return A 3x3 matrix
-    static Eigen::Matrix3d conversionMatrixCartesianCurvilinear(const Eigen::Vector3d& position_lla, const double& R_N, const double& R_E);
+    [[nodiscard]] static Eigen::Matrix3d conversionMatrixCartesianCurvilinear(const Eigen::Vector3d& position_lla, const double& R_N, const double& R_E);
 
     /// @brief Submatrix 𝐐_11 of the system noise covariance matrix 𝐐
     /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
@@ -426,7 +426,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_11
     /// @note See Groves (2013) equation (14.81)
-    static Eigen::Matrix3d systemNoiseCovariance_11(const double& S_rg, const double& S_bgd, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_11(const double& S_rg, const double& S_bgd, const double& tau_s);
 
     /// @brief Submatrix 𝐐_21 of the system noise covariance matrix 𝐐
     /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
@@ -435,7 +435,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_21
     /// @note See Groves (2013) equation (14.81)
-    static Eigen::Matrix3d systemNoiseCovariance_21(const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_21(const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s);
 
     /// @brief Submatrix 𝐐_22 of the system noise covariance matrix 𝐐
     /// @param[in] S_ra Power Spectral Density of the accelerometer random noise
@@ -446,7 +446,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_22
     /// @note See Groves (2013) equation (14.81)
-    static Eigen::Matrix3d systemNoiseCovariance_22(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_22(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s);
 
     /// @brief Submatrix 𝐐_25 of the system noise covariance matrix 𝐐
     /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
@@ -455,7 +455,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_25
     /// @note See Groves (2013) equation (14.80)
-    static Eigen::Matrix3d systemNoiseCovariance_25(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_25(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     /// @brief Submatrix 𝐐_31 of the system noise covariance matrix 𝐐
     /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
@@ -465,7 +465,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_31
     /// @note See Groves (2013) equation (14.81)
-    static Eigen::Matrix3d systemNoiseCovariance_31(const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_31(const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s);
 
     /// @brief Submatrix 𝐐_32 of the system noise covariance matrix 𝐐
     /// @param[in] S_ra Power Spectral Density of the accelerometer random noise
@@ -477,7 +477,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_32
     /// @note See Groves (2013) equation (14.81)
-    static Eigen::Matrix3d systemNoiseCovariance_32(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_32(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s);
 
     /// @brief Submatrix 𝐐_33 of the system noise covariance matrix 𝐐
     /// @param[in] S_ra Power Spectral Density of the accelerometer random noise
@@ -489,7 +489,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_33
     /// @note See Groves (2013) equation (14.81)
-    static Eigen::Matrix3d systemNoiseCovariance_33(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& F_21_n, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_33(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& F_21_n, const double& tau_s);
 
     /// @brief Submatrix 𝐐_34 of the system noise covariance matrix 𝐐
     /// @param[in] S_bad Power Spectral Density of the accelerometer bias variation
@@ -498,7 +498,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_34
     /// @note See Groves (2013) equation (14.81)
-    static Eigen::Matrix3d systemNoiseCovariance_34(const double& S_bad, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_34(const double& S_bad, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     /// @brief Submatrix 𝐐_35 of the system noise covariance matrix 𝐐
     /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
@@ -508,7 +508,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_35
     /// @note See Groves (2013) equation (14.81)
-    static Eigen::Matrix3d systemNoiseCovariance_35(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_35(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     /// @brief Submatrix 𝐐_42 of the system noise covariance matrix 𝐐
     /// @param[in] S_bad Power Spectral Density of the accelerometer bias variation
@@ -516,14 +516,14 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_42
     /// @note See Groves (2013) equation (14.80)
-    static Eigen::Matrix3d systemNoiseCovariance_42(const double& S_bad, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_42(const double& S_bad, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     /// @brief Submatrix 𝐐_44 of the system noise covariance matrix 𝐐
     /// @param[in] S_bad Power Spectral Density of the accelerometer bias variation
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_44
     /// @note See Groves (2013) equation (14.80)
-    static Eigen::Matrix3d systemNoiseCovariance_44(const double& S_bad, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_44(const double& S_bad, const double& tau_s);
 
     /// @brief Submatrix 𝐐_51 of the system noise covariance matrix 𝐐
     /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
@@ -531,14 +531,14 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_51
     /// @note See Groves (2013) equation (14.80)
-    static Eigen::Matrix3d systemNoiseCovariance_51(const double& S_bgd, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_51(const double& S_bgd, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     /// @brief Submatrix 𝐐_55 of the system noise covariance matrix 𝐐
     /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
     /// @param[in] tau_s Time interval in [s]
     /// @return The 3x3 matrix 𝐐_55
     /// @note See Groves (2013) equation (14.80)
-    static Eigen::Matrix3d systemNoiseCovariance_55(const double& S_bgd, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix3d systemNoiseCovariance_55(const double& S_bgd, const double& tau_s);
 
     // ###########################################################################################################
     //                                                Correction
@@ -551,14 +551,14 @@ class LooselyCoupledKF : public Node
     /// @param[in] leverArm_InsGnss_b l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
     /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x15 measurement matrix 𝐇
-    static Eigen::Matrix<double, 6, 15> measurementMatrix(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n);
+    [[nodiscard]] static Eigen::Matrix<double, 6, 15> measurementMatrix(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n);
 
     /// @brief Submatrix 𝐇_r1 of the measurement sensitivity matrix 𝐇
     /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
     /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
     /// @param[in] leverArm_InsGnss_b l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
     /// @return The 3x3 matrix 𝐇_r1
-    static Eigen::Matrix3d measurementMatrix_r1_n(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss_b);
+    [[nodiscard]] static Eigen::Matrix3d measurementMatrix_r1_n(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss_b);
 
     /// @brief Submatrix 𝐇_v1 of the measurement sensitivity matrix 𝐇
     /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
@@ -566,19 +566,19 @@ class LooselyCoupledKF : public Node
     /// @param[in] leverArm_InsGnss_b l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
     /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 3x3 matrix 𝐇_v1
-    static Eigen::Matrix3d measurementMatrix_v1_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n);
+    [[nodiscard]] static Eigen::Matrix3d measurementMatrix_v1_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n);
 
     /// @brief Submatrix 𝐇_v5 of the measurement sensitivity matrix 𝐇
     /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
     /// @param[in] leverArm_InsGnss_b l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
     /// @return The 3x3 matrix 𝐇_v5
-    static Eigen::Matrix3d measurementMatrix_v5_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss_b);
+    [[nodiscard]] static Eigen::Matrix3d measurementMatrix_v5_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss_b);
 
     /// @brief Measurement noise covariance matrix 𝐑
     /// @param[in] gnssVarianceLatLonAlt Variances of the position LLA in [rad² rad² m²]
     /// @param[in] gnssVarianceVelocity Variances of the velocity in [m² m² m²]
     /// @return The 6x6 measurement covariance matrix 𝐑
-    static Eigen::Matrix<double, 6, 6> measurementNoiseCovariance(const Eigen::Vector3d& gnssVarianceLatLonAlt, const Eigen::Vector3d& gnssVarianceVelocity);
+    [[nodiscard]] static Eigen::Matrix<double, 6, 6> measurementNoiseCovariance(const Eigen::Vector3d& gnssVarianceLatLonAlt, const Eigen::Vector3d& gnssVarianceVelocity);
 
     /// @brief Measurement innovation vector 𝜹𝐳
     /// @param[in] positionMeasurement_lla Position measurement as Lat Lon Alt in [rad rad m]
@@ -591,9 +591,9 @@ class LooselyCoupledKF : public Node
     /// @param[in] angularRate_ib_b Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
     /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x1 measurement innovation vector 𝜹𝐳
-    static Eigen::Matrix<double, 6, 1> measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_lla,
-                                                             const Eigen::Vector3d& velocityMeasurement_n, const Eigen::Vector3d& velocityEstimate_n,
-                                                             const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss_b,
-                                                             const Eigen::Vector3d& angularRate_ib_b, const Eigen::Matrix3d& Omega_ie_n);
+    [[nodiscard]] static Eigen::Matrix<double, 6, 1> measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_lla,
+                                                                           const Eigen::Vector3d& velocityMeasurement_n, const Eigen::Vector3d& velocityEstimate_n,
+                                                                           const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss_b,
+                                                                           const Eigen::Vector3d& angularRate_ib_b, const Eigen::Matrix3d& Omega_ie_n);
 };
 } // namespace NAV
