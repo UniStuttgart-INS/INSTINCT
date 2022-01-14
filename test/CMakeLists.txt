@@ -48,8 +48,8 @@ target_link_libraries(
           CONAN_PKG::spdlog
           CONAN_PKG::boost
           CONAN_PKG::eigen
-          Threads::Threads
           CONAN_PKG::nlohmann_json
+          Threads::Threads
           imgui
           imgui_node_editor
           ImGuiFileDialog

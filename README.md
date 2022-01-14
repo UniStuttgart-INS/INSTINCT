@@ -91,6 +91,10 @@ sudo apt install -y build-essential clang clang-tidy cmake python3-pip libglfw3-
 sudo apt install -y gcc-10 g++-10
 sudo ln -sf /usr/bin/gcc-10 /usr/bin/gcc
 sudo ln -sf /usr/bin/g++-10 /usr/bin/g++
+sudo apt install -y clang-12 clang-tidy-12
+sudo ln -sf /usr/bin/clang-12 /usr/bin/clang
+sudo ln -sf /usr/bin/clang++-12 /usr/bin/clang++
+sudo ln -sf /usr/bin/clang-tidy-12 /usr/bin/clang-tidy
 pip3 install conan --user
 
 # Documentation
