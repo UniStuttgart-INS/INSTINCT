@@ -20,6 +20,12 @@ constexpr double omega_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibi
 /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
 const static Eigen::Vector3d omega_ie_e{ 0.0, 0.0, omega_ie };
 
+/// @brief Conversion factor between latitude and longitude in [rad] to [pseudometre]
+constexpr double pseudometre = 6370000;
+
+/// @brief Standard gravity in [m / s^2]
+inline constexpr double standard_gravity{ 9.80665 };
+
 /// Semi-major axis = equatorial radius (World Geodetic System 1984)
 constexpr double WGS84_a = 6378137.0;
 /// Flattening f = (a-b)/a (World Geodetic System 1984)
