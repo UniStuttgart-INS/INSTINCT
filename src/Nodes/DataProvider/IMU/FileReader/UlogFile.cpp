@@ -149,7 +149,7 @@ void NAV::UlogFile::readHeader()
         // Read ULog version (currently only 1, see https://docs.px4.io/master/en/dev_log/ulog_file_format.html)
         LOG_DATA("version: {}", static_cast<int>(ulogHeader.header.version)); // No use so far, hence just a LOG_DATA
 
-        LOG_DATA("time stamp in microseconds: {}", ulogHeader.header.timeStamp); // TODO: Woher weiß der Reader, dass das little Endian ist?
+        LOG_DATA("time stamp in microseconds: {}", ulogHeader.header.timeStamp);
 
         readDefinitions();
     }
@@ -284,6 +284,107 @@ void NAV::UlogFile::readDefinitions()
         }
     }
     LOG_DEBUG("Read 'Definitions Section' completed");
+
+    readData(); //FIXME: use pollData
+}
+
+void NAV::UlogFile::readData()
+{
+    LOG_DEBUG("Start reading data");
+    bool startDataFlag = true;
+    // Read message header
+    union
+    {
+        std::array<char, 3> data{};
+        Ulog::message_header_s msgHeader;
+    } ulogMsgHeader{};
+    // uint8_t test{ 0 };
+    // for (size_t i = 0; i < 100; i++)
+    // {
+    //     filestream.read(reinterpret_cast<char*>(&test), sizeof(test));
+    //     LOG_DEBUG("test: {}", test);
+    // }
+
+    // while (true)
+    for (size_t i = 0; i < 5; i++) //FIXME: Quick fix, enable while loop once eof is reached
+    {
+        // Reset cursor to position before the while-loop in 'readDefinitions()' reached its break condition
+        if (startDataFlag)
+        {
+            filestream.seekg(-3, std::ios_base::cur); // 'msg_size' + 'msg_type' = 3 Byte
+            startDataFlag = false;
+        }
+
+        filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
+
+        LOG_DATA("msgSize: {}", ulogMsgHeader.msgHeader.msg_size);
+        LOG_DATA("msgType: {}", ulogMsgHeader.msgHeader.msg_type);
+
+        if (ulogMsgHeader.msgHeader.msg_type == 'A')
+        {
+            Ulog::message_add_logged_s messageAddLog;
+            messageAddLog.header = ulogMsgHeader.msgHeader;
+            uint8_t multi_id{};
+            filestream.read(reinterpret_cast<char*>(&messageAddLog.multi_id), sizeof(multi_id));
+            LOG_DEBUG("multi_id: {}", multi_id);
+            uint16_t msg_id{};
+            filestream.read(reinterpret_cast<char*>(&messageAddLog.msg_id), sizeof(msg_id));
+            LOG_DEBUG("msg_id: {}", msg_id);
+
+            messageAddLog.msg_name.resize(messageAddLog.header.msg_size);
+            filestream.read(messageAddLog.msg_name.data(), messageAddLog.header.msg_size - 3);
+            LOG_DEBUG("messageAddLog.msg_name: {}", messageAddLog.msg_name);
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'R')
+        {
+            LOG_DEBUG("Read R");
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'D')
+        {
+            LOG_DEBUG("Read D");
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'L')
+        {
+            Ulog::message_logging_s messageLog;
+            messageLog.header = ulogMsgHeader.msgHeader;
+            uint8_t logLevel{};
+            filestream.read(reinterpret_cast<char*>(&messageLog.log_level), sizeof(logLevel));
+            LOG_DEBUG("messageLog.log_level: {}", messageLog.log_level);
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'C')
+        {
+            LOG_DEBUG("Read C");
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'S')
+        {
+            LOG_DEBUG("Read S");
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'O')
+        {
+            LOG_DEBUG("Read O");
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'I')
+        {
+            LOG_DEBUG("Read I");
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'M')
+        {
+            LOG_DEBUG("Read M");
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'P')
+        {
+            LOG_DEBUG("Read P");
+        }
+        else if (ulogMsgHeader.msgHeader.msg_type == 'Q')
+        {
+            LOG_DEBUG("Read Q");
+        }
+
+        else
+        {
+            LOG_DEBUG("Read nothing");
+        }
+    }
 }
 
 std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)

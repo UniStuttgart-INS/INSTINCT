@@ -77,7 +77,7 @@ struct message_add_logged_s
     message_header_s header;
     uint8_t multi_id{ 0 };
     uint16_t msg_id{ 0 };
-    char message_name = static_cast<char>(header.msg_size - 3);
+    std::string msg_name;
 };
 
 struct message_remove_logged_s
