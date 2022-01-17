@@ -63,8 +63,32 @@ class LooselyCoupledKF : public Node
     constexpr static size_t OUTPUT_PORT_INDEX_K = 9;          ///< @brief 𝐊 Kalman gain matrix
     constexpr static size_t OUTPUT_PORT_INDEX_Kz = 10;        ///< @brief 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector
 
-    /// 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector
-    Eigen::MatrixXd _kalmanFilter_Kz;
+    /// 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector (to use on output port)
+    Eigen::MatrixXd _kalmanFilter_Kz = Eigen::MatrixXd::Zero(15, 1);
+
+    /// x̂ State vector (to use on output port)
+    Eigen::MatrixXd _kalmanFilter_x = Eigen::MatrixXd::Zero(15, 1);
+
+    /// 𝐏 Error covariance matrix (to use on output port)
+    Eigen::MatrixXd _kalmanFilter_P = Eigen::MatrixXd::Zero(15, 15);
+
+    /// 𝚽 State transition matrix (to use on output port)
+    Eigen::MatrixXd _kalmanFilter_Phi = Eigen::MatrixXd::Zero(15, 15);
+
+    /// 𝐐 System/Process noise covariance matrix (to use on output port)
+    Eigen::MatrixXd _kalmanFilter_Q = Eigen::MatrixXd::Zero(15, 15);
+
+    /// 𝐳 Measurement vector (to use on output port)
+    Eigen::MatrixXd _kalmanFilter_z = Eigen::MatrixXd::Zero(6, 1);
+
+    /// 𝐇 Measurement sensitivity Matrix (to use on output port)
+    Eigen::MatrixXd _kalmanFilter_H = Eigen::MatrixXd::Zero(6, 15);
+
+    /// 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix (to use on output port)
+    Eigen::MatrixXd _kalmanFilter_R = Eigen::MatrixXd::Zero(6, 6);
+
+    /// 𝐊 Kalman gain matrix (to use on output port)
+    Eigen::MatrixXd _kalmanFilter_K = Eigen::MatrixXd::Zero(15, 6);
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -95,7 +119,7 @@ class LooselyCoupledKF : public Node
     ImuBiases _accumulatedImuBiases;
 
     /// Kalman Filter representation
-    KalmanFilter _kalmanFilter{ 15, 6 };
+    KalmanFilter<double, 15, 6> _kalmanFilter;
 
     // ###########################################################################################################
     //                                                Parameters

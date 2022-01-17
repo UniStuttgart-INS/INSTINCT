@@ -11,44 +11,37 @@
 namespace NAV
 {
 /// @brief Generalized Kalman Filter class
+template<typename _Scalar, int _n, int _m>
 class KalmanFilter
 {
   public:
-    /// @brief Constructor
-    /// @param[in] n Number of States
-    /// @param[in] m Number of Measurements
-    KalmanFilter(int n, int m)
+    /// @brief Sets all Vectors and matrices to 0
+    void setZero()
     {
-        // x̂ State vector
-        x = Eigen::MatrixXd::Zero(n, 1);
+        /// x̂ State vector
+        x = Eigen::Vector<_Scalar, _n>::Zero();
 
-        // 𝐏 Error covariance matrix
-        P = Eigen::MatrixXd::Zero(n, n);
+        /// 𝐏 Error covariance matrix
+        P = Eigen::Matrix<_Scalar, _n, _n>::Zero();
 
         /// 𝚽 State transition matrix
-        Phi = Eigen::MatrixXd::Zero(n, n);
+        Phi = Eigen::Matrix<_Scalar, _n, _n>::Zero();
 
         /// 𝐐 System/Process noise covariance matrix
-        Q = Eigen::MatrixXd::Zero(n, n);
+        Q = Eigen::Matrix<_Scalar, _n, _n>::Zero();
 
         /// 𝐳 Measurement vector
-        z = Eigen::MatrixXd::Zero(m, 1);
+        z = Eigen::Vector<_Scalar, _m>::Zero();
 
         /// 𝐇 Measurement sensitivity Matrix
-        H = Eigen::MatrixXd::Zero(m, n);
+        H = Eigen::Matrix<_Scalar, _m, _n>::Zero();
 
         /// 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-        R = Eigen::MatrixXd::Zero(m, m);
+        R = Eigen::Matrix<_Scalar, _m, _m>::Zero();
 
         /// 𝐊 Kalman gain matrix
-        K = Eigen::MatrixXd::Zero(n, m);
-
-        /// 𝑰 Identity Matrix
-        I = Eigen::MatrixXd::Identity(n, n);
+        K = Eigen::Matrix<_Scalar, _n, _m>::Zero();
     }
-
-    /// @brief Default constructor
-    KalmanFilter() = delete;
 
     /// @brief Do a Time Update
     /// @attention Update the State transition matrix (𝚽) and the Process noise covariance matrix (𝐐) before calling this
@@ -98,43 +91,44 @@ class KalmanFilter
         P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose();
     }
 
-    /// @brief Updates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ
-    /// @param[in] F System Matrix
-    /// @param[in] tau_s time interval in [s]
-    /// @note See Groves (2013) chapter 14.2.4, equation (14.72)
-    static Eigen::MatrixXd transitionMatrix(const Eigen::MatrixXd& F, double tau_s)
-    {
-        // Transition matrix 𝚽
-        return Eigen::MatrixXd::Identity(F.rows(), F.cols()) + F * tau_s;
-    }
-
     /// x̂ State vector
-    Eigen::MatrixXd x;
+    Eigen::Vector<_Scalar, _n> x = Eigen::Vector<_Scalar, _n>::Zero();
 
     /// 𝐏 Error covariance matrix
-    Eigen::MatrixXd P;
+    Eigen::Matrix<_Scalar, _n, _n> P = Eigen::Matrix<_Scalar, _n, _n>::Zero();
 
     /// 𝚽 State transition matrix
-    Eigen::MatrixXd Phi;
+    Eigen::Matrix<_Scalar, _n, _n> Phi = Eigen::Matrix<_Scalar, _n, _n>::Zero();
 
     /// 𝐐 System/Process noise covariance matrix
-    Eigen::MatrixXd Q;
+    Eigen::Matrix<_Scalar, _n, _n> Q = Eigen::Matrix<_Scalar, _n, _n>::Zero();
 
     /// 𝐳 Measurement vector
-    Eigen::MatrixXd z;
+    Eigen::Vector<_Scalar, _m> z = Eigen::Vector<_Scalar, _m>::Zero();
 
     /// 𝐇 Measurement sensitivity Matrix
-    Eigen::MatrixXd H;
+    Eigen::Matrix<_Scalar, _m, _n> H = Eigen::Matrix<_Scalar, _m, _n>::Zero();
 
     /// 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-    Eigen::MatrixXd R;
+    Eigen::Matrix<_Scalar, _m, _m> R = Eigen::Matrix<_Scalar, _m, _m>::Zero();
 
     /// 𝐊 Kalman gain matrix
-    Eigen::MatrixXd K;
+    Eigen::Matrix<_Scalar, _n, _m> K = Eigen::Matrix<_Scalar, _n, _m>::Zero();
 
   private:
     /// 𝑰 Identity Matrix (n x n)
-    Eigen::MatrixXd I;
+    const Eigen::Matrix<_Scalar, _n, _n> I = Eigen::Matrix<_Scalar, _n, _n>::Identity();
 };
+
+/// @brief Updates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ
+/// @param[in] F System Matrix
+/// @param[in] tau_s time interval in [s]
+/// @note See Groves (2013) chapter 14.2.4, equation (14.72)
+template<typename _Scalar, int _n>
+Eigen::Matrix<_Scalar, _n, _n> transitionMatrixApproxOrder1(const Eigen::Matrix<_Scalar, _n, _n>& F, double tau_s)
+{
+    // Transition matrix 𝚽
+    return Eigen::Matrix<_Scalar, _n, _n>::Identity() + F * tau_s;
+}
 
 } // namespace NAV
