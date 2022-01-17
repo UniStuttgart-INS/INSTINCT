@@ -783,7 +783,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     }
     else if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor1)
     {
-        _kalmanFilter.Phi = transitionMatrixApproxOrder1(F, _tau_KF);
+        _kalmanFilter.Phi = transitionMatrixApproxOrder1<double, 15>(F, _tau_KF);
     }
     else
     {
