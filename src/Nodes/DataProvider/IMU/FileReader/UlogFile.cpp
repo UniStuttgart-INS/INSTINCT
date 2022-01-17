@@ -353,7 +353,14 @@ void NAV::UlogFile::readData()
 
         else
         {
-            LOG_WARN("Read nothing");
+            std::string nextChars;
+            auto unidentifiedPos = static_cast<uint64_t>(filestream.tellg());
+            nextChars.resize(100);
+            filestream.read(nextChars.data(), 100);
+            LOG_WARN("Message type not identified. Position: {}, The next 100 chars: {}", unidentifiedPos, nextChars);
+
+            // Reset read cursor
+            filestream.seekg(-100, std::ios_base::cur);
         }
     }
 }
