@@ -202,85 +202,25 @@ void NAV::UlogFile::readDefinitions()
         // Information message
         else if (ulogMsgHeader.msgHeader.msg_type == 'I')
         {
-            // Read msg size (2B) and type (1B)
-            Ulog::message_info_s messageInfo;
-            messageInfo.header = ulogMsgHeader.msgHeader;
-            uint8_t key_len{};
-            filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(key_len));
-
-            // Read 'key' identifier ('keylength' byte) and its associated 'value'
-            messageInfo.key.resize(messageInfo.key_len);
-            filestream.read(messageInfo.key.data(), messageInfo.key_len);
-            messageInfo.value.resize(messageInfo.header.msg_size - 1 - messageInfo.key_len); // 'msg_size' contains key and value, but not header
-            filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
-            LOG_DEBUG("Information message - key: {}", messageInfo.key);
-            LOG_DEBUG("Information message - value: {}", messageInfo.value);
+            readInformationMessage(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
         }
 
         // Information message multi
         else if (ulogMsgHeader.msgHeader.msg_type == 'M')
         {
-            // Read msg size (2B) and type (1B)
-            Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
-            messageInfoMulti.header = ulogMsgHeader.msgHeader;
-            uint8_t is_continued{};
-            filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(is_continued));
-            uint8_t key_len{};
-            filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(key_len));
-
-            // Read 'key' identifier ('keylength' byte) and its associated 'value'
-            messageInfoMulti.key.resize(messageInfoMulti.key_len);
-            filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
-            messageInfoMulti.value.resize(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len); // contains 'is_continued' flag in contrast to information message
-            filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
-            LOG_DEBUG("Information message multi - key_len: {}", messageInfoMulti.key_len);
-            LOG_DEBUG("Information message multi - key: {}", messageInfoMulti.key);
-            LOG_DEBUG("Information message multi - value: {}", messageInfoMulti.value);
-            //TODO: Use 'is_continued' to generate a list of values with the same key
+            readInformationMessageMulti(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
         }
 
-        // Parameter message (same format as 'message_info_s')
+        // Parameter message
         else if (ulogMsgHeader.msgHeader.msg_type == 'P')
         {
-            // Read msg size (2B) and type (1B)
-            Ulog::message_info_s messageParam;
-            messageParam.header = ulogMsgHeader.msgHeader;
-            uint8_t key_len{};
-            filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(key_len));
-
-            // Read 'key' identifier ('keylength' byte) and its associated 'value'
-            messageParam.key.resize(messageParam.key_len);
-            filestream.read(messageParam.key.data(), messageParam.key_len);
-
-            if (!(messageParam.key.find("int32_t")) && !(messageParam.key.find("float")))
-            {
-                LOG_WARN("Parameter message contains invalid data type. It is neither 'int32_t', nor 'float', instead: {}", messageParam.key);
-            }
-
-            messageParam.value.resize(messageParam.header.msg_size - 1 - messageParam.key_len); // 'msg_size' contains key and value, but not header
-            filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
-            LOG_DEBUG("Parameter message - key: {}", messageParam.key);
-            LOG_DEBUG("Parameter message - value: {}", messageParam.value);
+            readParameterMessage(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
         }
 
-        // Parameter default message
+        // Parameter message default
         else if (ulogMsgHeader.msgHeader.msg_type == 'Q')
         {
-            Ulog::ulog_message_parameter_default_header_s messageParamDefault;
-            messageParamDefault.header = ulogMsgHeader.msgHeader;
-            uint8_t default_types{};
-            filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(default_types));
-            uint8_t key_len{};
-            filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(key_len));
-
-            messageParamDefault.key.resize(messageParamDefault.key_len);
-            filestream.read(messageParamDefault.key.data(), messageParamDefault.key_len);
-            messageParamDefault.value.resize(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
-            filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
-            LOG_DEBUG("Parameter default message - key: {}", messageParamDefault.key);
-            LOG_DEBUG("Parameter default message - value: {}", messageParamDefault.value);
-
-            //TODO: Restriction on '1<<0' and '1<<1'
+            readParameterMessageDefault(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
         }
     }
     LOG_DEBUG("Read 'Definitions Section' completed");
