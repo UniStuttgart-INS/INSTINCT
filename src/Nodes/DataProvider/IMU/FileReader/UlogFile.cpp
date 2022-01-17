@@ -149,7 +149,7 @@ void NAV::UlogFile::readHeader()
         // Read ULog version (currently only 1, see https://docs.px4.io/master/en/dev_log/ulog_file_format.html)
         LOG_DATA("version: {}", static_cast<int>(ulogHeader.header.version)); // No use so far, hence just a LOG_DATA
 
-        LOG_DATA("time stamp in microseconds: {}", ulogHeader.header.timeStamp);
+        LOG_DATA("time stamp [µs]: {}", ulogHeader.header.timeStamp);
 
         readDefinitions();
     }
@@ -298,12 +298,6 @@ void NAV::UlogFile::readData()
         std::array<char, 3> data{};
         Ulog::message_header_s msgHeader;
     } ulogMsgHeader{};
-    // uint8_t test{ 0 };
-    // for (size_t i = 0; i < 100; i++)
-    // {
-    //     filestream.read(reinterpret_cast<char*>(&test), sizeof(test));
-    //     LOG_DEBUG("test: {}", test);
-    // }
 
     // while (true)
     for (size_t i = 0; i < 100; i++) //FIXME: Quick fix, enable while loop once eof is reached
@@ -362,6 +356,9 @@ void NAV::UlogFile::readData()
             uint8_t logLevel{};
             filestream.read(reinterpret_cast<char*>(&messageLog.log_level), sizeof(logLevel));
             LOG_DEBUG("messageLog.log_level: {}", messageLog.log_level);
+            uint64_t timestamp{};
+            filestream.read(reinterpret_cast<char*>(&messageLog.timestamp), sizeof(timestamp));
+            LOG_DEBUG("messageLog.timestamp [µs]: {}", messageLog.timestamp);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'C')
         {
