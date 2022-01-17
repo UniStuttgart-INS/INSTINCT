@@ -67,7 +67,7 @@ that is
 
 and this can be written in matrix form again as
 \fl{equation,eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix}
-  \mathbf{\dot{q}}_b^n
+  \mathbf{\dot{q}}_b^e
       = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
       = \frac{1}{2} \begin{bmatrix}        0        & -\omega_{eb,x}^b & -\omega_{eb,y}^b & -\omega_{eb,z}^b \\
                                     \omega_{eb,x}^b &        0         &  \omega_{eb,z}^b & -\omega_{eb,y}^b \\
