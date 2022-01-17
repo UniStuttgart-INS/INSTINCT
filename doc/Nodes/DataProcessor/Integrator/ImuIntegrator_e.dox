@@ -39,6 +39,45 @@ leads to the skew symmetric form of \eqref{eq-ImuIntegrator-Mechanization-e-Atti
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \subsubsection ImuIntegrator-Mechanization-e-Attitude-Quaternion Propagation of quaternion with time
 
+The quaternion \f$ \mathbf{q} = a + \mathbf{i} b + \mathbf{j} c + \mathbf{k} d \f$ propagates as (see \cite Titterton2004 Titterton, ch. 3.6.4.3, eq. 3.60-3.62, p. 44)
+\fl{equation,eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-base}
+  \mathbf{\dot{q}}_b^e = 0.5 \mathbf{q}_b^e \cdot \mathbf{p}_{eb}^b
+\f}
+where \f$ \mathbf{p}_{eb}^b = \begin{pmatrix} 0 & \boldsymbol{\omega}_{eb}^b \end{pmatrix}^T = \begin{pmatrix} 0 & \omega_{eb,x}^b & \omega_{eb,y}^b & \omega_{eb,z}^b \end{pmatrix}^T \f$
+
+This can be written in matrix form as
+\fl{equation,eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-base-matrix}
+  \mathbf{\dot{q}}_b^e
+      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
+      = 0.5 \begin{bmatrix} a & -b & -c & -d \\
+                            b &  a & -d &  c \\
+                            c &  d &  a & -b \\
+                            d & -c &  b &  a \end{bmatrix}
+            \begin{bmatrix} 0 \\ \omega_{eb,x}^b \\ \omega_{eb,y}^b \\ \omega_{eb,z}^b \end{bmatrix}
+\f}
+that is
+\fl{equation,eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-components}
+\begin{aligned}
+  \dotup{a} &= -0.5 (b \omega_{eb,x}^b + c \omega_{eb,y}^b + d \omega_{eb,z}^b) &=  0.5 ( 0 \cdot a - \omega_{eb,x}^b b - \omega_{eb,y}^b c - \omega_{eb,z}^b d) \\
+  \dotup{b} &=  0.5 (a \omega_{eb,x}^b - d \omega_{eb,y}^b + c \omega_{eb,z}^b) &=  0.5 (\omega_{eb,x}^b a +  0 \cdot b + \omega_{eb,z}^b c - \omega_{eb,y}^b d) \\
+  \dotup{c} &=  0.5 (d \omega_{eb,x}^b + a \omega_{eb,y}^b - b \omega_{eb,z}^b) &=  0.5 (\omega_{eb,y}^b a - \omega_{eb,z}^b b +  0 \cdot c + \omega_{eb,x}^b d) \\
+  \dotup{d} &= -0.5 (c \omega_{eb,x}^b - b \omega_{eb,y}^b - a \omega_{eb,z}^b) &=  0.5 (\omega_{eb,z}^b a + \omega_{eb,y}^b b - \omega_{eb,x}^b c +  0 \cdot d) \\
+\end{aligned}
+\f}
+
+and this can be written in matrix form again as
+\fl{equation,eq-ImuIntegrator-Mechanization-e-Attitude-Quaternion-matrix}
+  \mathbf{\dot{q}}_b^n
+      = \begin{bmatrix} \dotup{a} \\ \dotup{b} \\ \dotup{c} \\ \dotup{d} \end{bmatrix}
+      = \frac{1}{2} \begin{bmatrix}        0        & -\omega_{eb,x}^b & -\omega_{eb,y}^b & -\omega_{eb,z}^b \\
+                                    \omega_{eb,x}^b &        0         &  \omega_{eb,z}^b & -\omega_{eb,y}^b \\
+                                    \omega_{eb,y}^b & -\omega_{eb,z}^b &        0         &  \omega_{eb,x}^b \\
+                                    \omega_{eb,z}^b &  \omega_{eb,y}^b & -\omega_{eb,x}^b &        0         \end{bmatrix}
+                    \begin{bmatrix} a \\ b \\ c \\ d \end{bmatrix}
+\f}
+see
+- \cite Titterton2004 Titterton, ch. 11.2.5, eq. 11.33-11.35, p. 319 (e instead of n system)
+
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \subsection ImuIntegrator-Mechanization-e-Velocity Velocity
