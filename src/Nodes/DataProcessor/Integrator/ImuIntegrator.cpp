@@ -547,10 +547,10 @@ void NAV::ImuIntegrator::integrateObservation()
     if (_imuBiases)
     {
         LOG_DATA("{}: Applying IMU Biases", nameId());
-        omega_ip_p__t1 += imuPosition.quatGyro_pb() * _imuBiases->biasGyro_b;
-        omega_ip_p__t0 += imuPosition.quatGyro_pb() * _imuBiases->biasGyro_b;
-        f_p__t1 += imuPosition.quatAccel_pb() * _imuBiases->biasAccel_b;
-        f_p__t0 += imuPosition.quatAccel_pb() * _imuBiases->biasAccel_b;
+        omega_ip_p__t1 -= imuPosition.quatGyro_pb() * _imuBiases->biasGyro_b;
+        omega_ip_p__t0 -= imuPosition.quatGyro_pb() * _imuBiases->biasGyro_b;
+        f_p__t1 -= imuPosition.quatAccel_pb() * _imuBiases->biasAccel_b;
+        f_p__t0 -= imuPosition.quatAccel_pb() * _imuBiases->biasAccel_b;
     }
     LOG_DATA("{}: omega_ip_p__t1 = {}", nameId(), omega_ip_p__t1.transpose());
     LOG_DATA("{}: omega_ip_p__t0 = {}", nameId(), omega_ip_p__t0.transpose());
