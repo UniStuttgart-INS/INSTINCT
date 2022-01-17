@@ -339,12 +339,21 @@ void NAV::UlogFile::readData()
         {
             Ulog::message_remove_logged_s messageRemoveLog;
             messageRemoveLog.header = ulogMsgHeader.msgHeader;
-            uint8_t msg_id{};
+            uint16_t msg_id{};
             filestream.read(reinterpret_cast<char*>(&messageRemoveLog.msg_id), sizeof(msg_id));
-            LOG_DEBUG("msg_id: {}", msg_id); //TODO: once tested, make LOG_DATA
+            LOG_DEBUG("msg_id: {}", msg_id); //TODO: once callback is enabled, make LOG_DATA
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'D')
         {
+            Ulog::message_data_s messageData;
+            messageData.header = ulogMsgHeader.msgHeader;
+            uint16_t msg_id{};
+            filestream.read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(msg_id));
+            LOG_DEBUG("msg_id: {}", msg_id); //TODO: once callback is enabled, make LOG_DATA
+
+            messageData.data.resize(messageData.header.msg_size - 2);
+            filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
+            LOG_DEBUG("messageData.data: {}", messageData.data);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'L')
         {
@@ -385,7 +394,7 @@ void NAV::UlogFile::readData()
 
         else
         {
-            LOG_DEBUG("Read nothing");
+            LOG_WARN("Read nothing");
         }
     }
 }

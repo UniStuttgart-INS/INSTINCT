@@ -90,7 +90,8 @@ struct message_data_s
 {
     message_header_s header;
     uint16_t msg_id{ 0 };
-    uint8_t data = static_cast<uint8_t>(header.msg_size - 2);
+    std::string data;
+    // uint8_t data = static_cast<uint8_t>(header.msg_size - 2);
 };
 
 struct message_logging_s
