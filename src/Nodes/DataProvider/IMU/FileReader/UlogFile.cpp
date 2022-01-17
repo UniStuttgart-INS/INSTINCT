@@ -396,19 +396,19 @@ void NAV::UlogFile::readData()
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'I')
         {
-            LOG_DEBUG("Read I");
+            readInformationMessage(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'M')
         {
-            LOG_DEBUG("Read M");
+            readInformationMessageMulti(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'P')
         {
-            LOG_DEBUG("Read P");
+            readParameterMessage(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'Q')
         {
-            LOG_DEBUG("Read Q");
+            readParameterMessageDefault(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
         }
 
         else
@@ -416,6 +416,97 @@ void NAV::UlogFile::readData()
             LOG_WARN("Read nothing");
         }
     }
+}
+
+void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
+{
+    // Read msg size (2B) and type (1B)
+    Ulog::message_info_s messageInfo;
+    messageInfo.header.msg_size = msgSize;
+    messageInfo.header.msg_type = msgType;
+    uint8_t key_len{};
+    filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(key_len));
+
+    // Read 'key' identifier ('keylength' byte) and its associated 'value'
+    messageInfo.key.resize(messageInfo.key_len);
+    filestream.read(messageInfo.key.data(), messageInfo.key_len);
+    messageInfo.value.resize(messageInfo.header.msg_size - 1 - messageInfo.key_len); // 'msg_size' contains key and value, but not header
+    filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
+    LOG_DEBUG("Information message - key: {}", messageInfo.key);
+    LOG_DEBUG("Information message - value: {}", messageInfo.value);
+}
+
+void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
+{
+    // Read msg size (2B) and type (1B)
+    Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
+    messageInfoMulti.header.msg_size = msgSize;
+    messageInfoMulti.header.msg_type = msgType;
+    uint8_t is_continued{};
+    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(is_continued));
+    uint8_t key_len{};
+    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(key_len));
+
+    // Read 'key' identifier ('keylength' byte) and its associated 'value'
+    messageInfoMulti.key.resize(messageInfoMulti.key_len);
+    filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
+    messageInfoMulti.value.resize(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len); // contains 'is_continued' flag in contrast to information message
+    filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
+    LOG_DEBUG("Information message multi - key_len: {}", messageInfoMulti.key_len);
+    LOG_DEBUG("Information message multi - key: {}", messageInfoMulti.key);
+    LOG_DEBUG("Information message multi - value: {}", messageInfoMulti.value);
+    //TODO: Use 'is_continued' to generate a list of values with the same key
+}
+
+void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
+{
+    // Read msg size (2B) and type (1B)
+    Ulog::message_info_s messageParam;
+    messageParam.header.msg_size = msgSize;
+    messageParam.header.msg_type = msgType;
+    uint8_t key_len{};
+    filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(key_len));
+
+    // Read 'key' identifier ('keylength' byte) and its associated 'value'
+    messageParam.key.resize(messageParam.key_len);
+    filestream.read(messageParam.key.data(), messageParam.key_len);
+
+    if (!(messageParam.key.find("int32_t")) && !(messageParam.key.find("float")))
+    {
+        LOG_WARN("Parameter message contains invalid data type. It is neither 'int32_t', nor 'float', instead: {}", messageParam.key);
+    }
+
+    if (messageParam.header.msg_size - 1 - messageParam.key_len < 0)
+    {
+        LOG_WARN("Parameter msg has key_len: {}", messageParam.key_len);
+    }
+    else
+    {
+        messageParam.value.resize(messageParam.header.msg_size - 1 - messageParam.key_len); // 'msg_size' contains key and value, but not header
+        filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
+        LOG_DEBUG("Parameter message - key: {}", messageParam.key);
+        LOG_DEBUG("Parameter message - value: {}", messageParam.value);
+    }
+}
+
+void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
+{
+    Ulog::ulog_message_parameter_default_header_s messageParamDefault;
+    messageParamDefault.header.msg_size = msgSize;
+    messageParamDefault.header.msg_type = msgType;
+    uint8_t default_types{};
+    filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(default_types));
+    uint8_t key_len{};
+    filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(key_len));
+
+    messageParamDefault.key.resize(messageParamDefault.key_len);
+    filestream.read(messageParamDefault.key.data(), messageParamDefault.key_len);
+    messageParamDefault.value.resize(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
+    filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
+    LOG_DEBUG("Parameter default message - key: {}", messageParamDefault.key);
+    LOG_DEBUG("Parameter default message - value: {}", messageParamDefault.value);
+
+    //TODO: Restriction on '1<<0' and '1<<1'
 }
 
 std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
