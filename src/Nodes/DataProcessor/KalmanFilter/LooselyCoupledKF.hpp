@@ -125,7 +125,7 @@ class LooselyCoupledKF : public Node
 
     /// @brief 𝜎_ra Standard deviation of the noise on the accelerometer specific-force measurements
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    double _stdev_ra = 0.04 /* [mg/√(Hz)] */;
+    Eigen::Vector3d _stdev_ra = 0.04 /* [mg/√(Hz)] */ * Eigen::Vector3d::Ones();
 
     // ###########################################################################################################
 
@@ -140,7 +140,7 @@ class LooselyCoupledKF : public Node
 
     /// @brief 𝜎_rg Standard deviation of the noise on the gyro angular-rate measurements
     /// @note Value from VN-310 Datasheet but verify with values from Brown (2012) table 9.3 for 'High quality'
-    double _stdev_rg = 5 /* [deg/hr/√(Hz)]^2 */;
+    Eigen::Vector3d _stdev_rg = 5 /* [deg/hr/√(Hz)]^2 */ * Eigen::Vector3d::Ones();
 
     // ###########################################################################################################
 
@@ -354,19 +354,19 @@ class LooselyCoupledKF : public Node
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.5)
-    Eigen::Matrix<double, 15, 6> noiseInputMatrixG(const double& sigma2_ra, const double& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
+    Eigen::Matrix<double, 15, 6> noiseInputMatrixG(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
 
     /// @brief Submatrix 𝐆_a of the noise input matrix 𝐆
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
-    Eigen::Matrix3d noiseInputMatrixG_a(const double& sigma2_ra, const Eigen::Vector3d& beta_a);
+    Eigen::Matrix3d noiseInputMatrixG_a(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& beta_a);
 
     /// @brief Submatrix 𝐆_ω of the noise input matrix 𝐆
     /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
-    Eigen::Matrix3d noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega);
+    Eigen::Matrix3d noiseInputMatrixG_omega(const Eigen::Vector3d& sigma2_rg, const Eigen::Vector3d& beta_omega);
 
     // ###########################################################################################################
     //                                         Error covariance matrix P
@@ -399,19 +399,22 @@ class LooselyCoupledKF : public Node
     /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
     /// @param[in] tau_s Time interval in [s]
     /// @return The 15x15 matrix of system noise covariances
-    [[nodiscard]] static Eigen::Matrix<double, 15, 15> systemNoiseCovarianceMatrix(const double& sigma2_ra, const double& sigma2_rg, const double& sigma2_bad, const double& sigma2_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix<double, 15, 15> systemNoiseCovarianceMatrix(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                   const double& sigma2_bad, const double& sigma2_bgd,
+                                                                                   const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
+                                                                                   const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     /// @brief S_ra Power Spectral Density of the accelerometer random noise
     /// @param[in] sigma2_ra 𝜎²_ra standard deviation of the noise on the accelerometer specific-force measurements in [m/s^2]
     /// @param[in] tau_i 𝜏ᵢ interval between the input of successive accelerometer outputs to the inertial navigation equations in [s]
     /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-    [[nodiscard]] static double psdGyroNoise(const double& sigma2_ra, const double& tau_i);
+    [[nodiscard]] static double psdGyroNoise(const Eigen::Vector3d& sigma2_ra, const double& tau_i);
 
     /// @brief S_rg Power Spectral Density of the gyroscope random noise
     /// @param[in] sigma2_rg 𝜎²_rg standard deviation of the noise on the gyroscope angular-rate measurements in [rad/s]
     /// @param[in] tau_i 𝜏ᵢ interval between the input of successive gyroscope outputs to the inertial navigation equations in [s]
     /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-    [[nodiscard]] static double psdAccelNoise(const double& sigma2_rg, const double& tau_i);
+    [[nodiscard]] static double psdAccelNoise(const Eigen::Vector3d& sigma2_rg, const double& tau_i);
 
     /// @brief S_bad Power Spectral Density of the accelerometer bias variation
     /// @param[in] sigma2_bad 𝜎²_bad standard deviation of the accelerometer dynamic bias [m/s^2]

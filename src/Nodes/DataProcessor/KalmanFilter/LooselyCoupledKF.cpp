@@ -152,11 +152,11 @@ void NAV::LooselyCoupledKF::guiConfig()
             }
         }
 
-        if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the noise on the\naccelerometer specific-force measurements##{}", "Standard deviation", size_t(id)).c_str(),
-                                              configWidth, unitWidth, &_stdev_ra, reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
-                                              0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the noise on the\naccelerometer specific-force measurements##{}", "Standard deviation", size_t(id)).c_str(),
+                                               configWidth, unitWidth, _stdev_ra.data(), reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: variance_ra changed to {}", nameId(), _stdev_ra);
+            LOG_DEBUG("{}: variance_ra changed to {}", nameId(), _stdev_ra.transpose());
             LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), _stdevAccelNoiseUnits);
             flow::ApplyChanges();
         }
@@ -203,13 +203,13 @@ void NAV::LooselyCoupledKF::guiConfig()
             }
         }
 
-        if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the noise on\nthe gyro angular-rate measurements##{}",
-                                                          _stdevGyroNoiseUnits == StdevGyroNoiseUnits::deg_hr_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
-                                                  .c_str(),
-                                              configWidth, unitWidth, &_stdev_rg, reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
-                                              0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the noise on\nthe gyro angular-rate measurements##{}",
+                                                           _stdevGyroNoiseUnits == StdevGyroNoiseUnits::deg_hr_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
+                                                   .c_str(),
+                                               configWidth, unitWidth, _stdev_rg.data(), reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: variance_rg changed to {}", nameId(), _stdev_rg);
+            LOG_DEBUG("{}: variance_rg changed to {}", nameId(), _stdev_rg.transpose());
             LOG_DEBUG("{}: varianceGyroNoiseUnits changed to {}", nameId(), _stdevGyroNoiseUnits);
             flow::ApplyChanges();
         }
@@ -251,7 +251,7 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                                                                                                                                                      "m, m, m\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: gnssMeasurementUncertaintyPosition changed to {}", nameId(), _gnssMeasurementUncertaintyPosition);
+            LOG_DEBUG("{}: gnssMeasurementUncertaintyPosition changed to {}", nameId(), _gnssMeasurementUncertaintyPosition.transpose());
             LOG_DEBUG("{}: gnssMeasurementUncertaintyPositionUnit changed to {}", nameId(), _gnssMeasurementUncertaintyPositionUnit);
             flow::ApplyChanges();
         }
@@ -728,7 +728,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
     // 𝜎_ra Standard deviation of the noise on the accelerometer specific-force state [m / (s^2 · √(s))]
-    double sigma_ra{};
+    Eigen::Vector3d sigma_ra = Eigen::Vector3d::Zero();
     switch (_stdevAccelNoiseUnits)
     {
     case StdevAccelNoiseUnits::mg_sqrtHz: // [mg / √(Hz)]
@@ -741,10 +741,10 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         // sigma_ra /= 1.;                  // [m / (s^2 · √(s))]
         break;
     }
-    LOG_DATA("{}: sigma_ra = {} [m / (s^2 · √(s))]", nameId(), sigma_ra);
+    LOG_DATA("{}: sigma_ra = {} [m / (s^2 · √(s))]", nameId(), sigma_ra.transpose());
 
     // 𝜎_rg Standard deviation of the noise on the gyro angular-rate state [rad / (s · √(s))]
-    double sigma_rg{};
+    Eigen::Vector3d sigma_rg = Eigen::Vector3d::Zero();
     switch (_stdevGyroNoiseUnits)
     {
     case StdevGyroNoiseUnits::deg_hr_sqrtHz:  // [deg / hr / √(Hz)] (see Woodman (2007) Chp. 3.2.2 - eq. 7 with seconds instead of hours)
@@ -758,7 +758,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         // sigma_rg /= 1.;                  // [rad / (s · √(s))]
         break;
     }
-    LOG_DATA("{}: sigma_rg = {} [rad / (s · √(s))]", nameId(), sigma_rg);
+    LOG_DATA("{}: sigma_rg = {} [rad / (s · √(s))]", nameId(), sigma_rg.transpose());
 
     // ---------------------------------------------- Prediction -------------------------------------------------
 
@@ -769,7 +769,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
-        Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(std::pow(sigma_ra, 2), std::pow(sigma_rg, 2), beta_a, beta_omega);
+        Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(sigma_ra.array().square(), sigma_rg.array().square(), beta_a, beta_omega);
         LOG_DATA("{}: G =\n{}", nameId(), G);
 
         auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 6>(F, G, _tau_KF);
@@ -820,7 +820,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         }
         LOG_DATA("{}: sigma2_bgd = {} [° / h]", nameId(), sigma2_bgd);
 
-        _kalmanFilter.Q = systemNoiseCovarianceMatrix(std::pow(sigma_ra, 2), std::pow(sigma_rg, 2), sigma2_bad, sigma2_bgd,
+        _kalmanFilter.Q = systemNoiseCovarianceMatrix(sigma_ra.array().square(), sigma_rg.array().square(), sigma2_bad, sigma2_bgd,
                                                       F.block<3, 3>(3, 0),
                                                       T_rn_p,
                                                       DCM_nb, _tau_KF);
@@ -1081,7 +1081,7 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::
 //                                           Noise input matrix 𝐆
 // ###########################################################################################################
 
-Eigen::Matrix<double, 15, 6> NAV::LooselyCoupledKF::noiseInputMatrixG(const double& sigma2_ra, const double& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega)
+Eigen::Matrix<double, 15, 6> NAV::LooselyCoupledKF::noiseInputMatrixG(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega)
 {
     // Math: \mathbf{G}_{a} = \begin{bmatrix} 0 & 0 \\ 0 & 0 \\ 0 & 0 \\ \mathbf{G}_{a} & 0 \\ 0 & \mathbf{G}_{\omega} \end{bmatrix} \quad \text{T. Hobiger}\,(6.5)
     Eigen::Matrix<double, 15, 6> G = Eigen::Matrix<double, 15, 6>::Zero();
@@ -1092,31 +1092,31 @@ Eigen::Matrix<double, 15, 6> NAV::LooselyCoupledKF::noiseInputMatrixG(const doub
     return G;
 }
 
-Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const double& sigma2_ra, const Eigen::Vector3d& beta_a)
+Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& beta_a)
 {
     if (_randomProcessAccel == RandomProcess::RandomWalk) // Random walk (beta = 0)
     {
         // Math: \mathbf{G}_{a} = \begin{bmatrix} \sqrt{\sigma_{a,1}^2} & 0 & 0 \\ 0 & \sqrt{\sigma_{a,2}^2} & 0 \\ 0 & 0 & \sqrt{\sigma_{a,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-        return Eigen::DiagonalMatrix<double, 3>{ std::sqrt(sigma2_ra), std::sqrt(sigma2_ra), std::sqrt(sigma2_ra) };
+        return Eigen::DiagonalMatrix<double, 3>{ sigma2_ra.cwiseSqrt() };
     }
     // else if (randomProcessAccel == RandomProcess::GaussMarkov1)
 
     // Math: \mathbf{G}_{a} = \begin{bmatrix} \sqrt{2 \sigma_{a,1}^2 \beta_{a,1}} & 0 & 0 \\ 0 & \sqrt{2 \sigma_{a,2}^2 \beta_{a,2}} & 0 \\ 0 & 0 & \sqrt{2 \sigma_{a,3}^2 \beta_{a,3}} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta_a * sigma2_ra).cwiseSqrt() };
+    return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta_a.cwiseProduct(sigma2_ra)).cwiseSqrt() };
 }
 
-Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const double& sigma2_rg, const Eigen::Vector3d& beta_omega)
+Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const Eigen::Vector3d& sigma2_rg, const Eigen::Vector3d& beta_omega)
 {
     if (_randomProcessGyro == RandomProcess::RandomWalk) // Random walk (beta = 0)
     {
         // Math: \mathbf{G}_{\omega} = \begin{bmatrix} \sqrt{\sigma_{\omega,1}^2} & 0 & 0 \\ 0 & \sqrt{\sigma_{\omega,2}^2} & 0 \\ 0 & 0 & \sqrt{\sigma_{\omega,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
 
-        return Eigen::DiagonalMatrix<double, 3>{ std::sqrt(sigma2_rg), std::sqrt(sigma2_rg), std::sqrt(sigma2_rg) };
+        return Eigen::DiagonalMatrix<double, 3>{ sigma2_rg.cwiseSqrt() };
     }
     // else if (randomProcessGyro == RandomProcess::GaussMarkov1)
 
     // Math: \mathbf{G}_{\omega} = \begin{bmatrix} \sqrt{2 \sigma_{\omega,1}^2 \beta_{\omega,1}} & 0 & 0 \\ 0 & \sqrt{2 \sigma_{\omega,2}^2 \beta_{\omega,2}} & 0 \\ 0 & 0 & \sqrt{2 \sigma_{\omega,3}^2 \beta_{\omega,3}} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta_omega * sigma2_rg).cwiseSqrt() };
+    return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta_omega.cwiseProduct(sigma2_rg)).cwiseSqrt() };
 }
 
 // ###########################################################################################################
@@ -1226,7 +1226,7 @@ Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation(const E
 //                                     System noise covariance matrix 𝐐
 // ###########################################################################################################
 
-Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix(const double& sigma2_ra, const double& sigma2_rg, const double& sigma2_bad, const double& sigma2_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
+Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg, const double& sigma2_bad, const double& sigma2_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
 {
     // Math: \mathbf{Q}_{INS}^n = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^n}^T & {\mathbf{Q}_{31}^n}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^n}^T \\ \mathbf{Q}_{21}^n & \mathbf{Q}_{22}^n & {\mathbf{Q}_{32}^n}^T & {\mathbf{Q}_{42}^n}^T & \mathbf{Q}_{25}^n \\ \mathbf{Q}_{31}^n & \mathbf{Q}_{32}^n & \mathbf{Q}_{33}^n & \mathbf{Q}_{34}^n & \mathbf{Q}_{35}^n \\ \mathbf{0}_3 & \mathbf{Q}_{42}^n & {\mathbf{Q}_{34}^n}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^n & \mathbf{Q}_{52}^n & {\mathbf{Q}_{35}^n}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \qquad \text{P. Groves}\,(14.80)
     const double S_ra = psdGyroNoise(sigma2_ra, tau_s);
@@ -1263,16 +1263,16 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix
     return Q;
 }
 
-double NAV::LooselyCoupledKF::psdGyroNoise(const double& sigma2_ra, const double& tau_i)
+double NAV::LooselyCoupledKF::psdGyroNoise(const Eigen::Vector3d& sigma2_ra, const double& tau_i)
 {
     // Math: S_{ra} = \sigma_{ra}^2\tau_i \qquad \text{P. Groves}\,(14.83)
-    return sigma2_ra * tau_i;
+    return sigma2_ra.mean() * tau_i; // TODO: This is only a temporary fix. Here the values should be accounted for, for each axis separately.
 }
 
-double NAV::LooselyCoupledKF::psdAccelNoise(const double& sigma2_rg, const double& tau_i)
+double NAV::LooselyCoupledKF::psdAccelNoise(const Eigen::Vector3d& sigma2_rg, const double& tau_i)
 {
     // Math: S_{rg} = \sigma_{rg}^2\tau_i \qquad \text{P. Groves}\,(14.83)
-    return sigma2_rg * tau_i;
+    return sigma2_rg.mean() * tau_i; // TODO: This is only a temporary fix. Here the values should be accounted for, for each axis separately.
 }
 
 double NAV::LooselyCoupledKF::psdAccelBiasVariation(const double& sigma2_bad, const double& tau_i)
