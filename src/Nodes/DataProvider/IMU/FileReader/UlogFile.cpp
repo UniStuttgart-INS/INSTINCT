@@ -384,11 +384,15 @@ void NAV::UlogFile::readData()
             messageSync.header = ulogMsgHeader.msgHeader;
             std::array<uint8_t, 8> sync_magic{};
             filestream.read(reinterpret_cast<char*>(messageSync.snyc_magic.data()), sizeof(sync_magic));
-            LOG_DEBUG("messageSync.snyc_magic: {}", messageSync.snyc_magic);
+            LOG_DEBUG("messageSync.snyc_magic[0]: {}", messageSync.snyc_magic[0]);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'O')
         {
-            LOG_DEBUG("Read O");
+            Ulog::message_dropout_s messageDropout;
+            messageDropout.header = ulogMsgHeader.msgHeader;
+            uint16_t duration{};
+            filestream.read(reinterpret_cast<char*>(&messageDropout.duration), sizeof(duration));
+            LOG_DEBUG("messageDropout.duration: {}", messageDropout.duration);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'I')
         {
