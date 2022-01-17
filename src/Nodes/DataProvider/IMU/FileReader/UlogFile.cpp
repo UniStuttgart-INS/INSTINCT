@@ -362,7 +362,21 @@ void NAV::UlogFile::readData()
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'C')
         {
-            LOG_DEBUG("Read C");
+            Ulog::message_logging_tagged_s messageLogTagged;
+            messageLogTagged.header = ulogMsgHeader.msgHeader;
+            uint8_t logLevel{};
+            filestream.read(reinterpret_cast<char*>(&messageLogTagged.log_level), sizeof(logLevel));
+            LOG_DEBUG("messageLogTagged.log_level: {}", messageLogTagged.log_level);
+            uint16_t tag{};
+            filestream.read(reinterpret_cast<char*>(&messageLogTagged.tag), sizeof(tag));
+            LOG_DEBUG("messageLogTagged.tag: {}", messageLogTagged.tag);
+            uint64_t timestamp{};
+            filestream.read(reinterpret_cast<char*>(&messageLogTagged.timestamp), sizeof(timestamp));
+            LOG_DEBUG("messageLogTagged.timestamp [µs]: {}", messageLogTagged.timestamp);
+
+            messageLogTagged.message.resize(messageLogTagged.header.msg_size - 9);
+            filestream.read(messageLogTagged.message.data(), messageLogTagged.header.msg_size - 9);
+            LOG_DEBUG("messageLogTagged.header.msg_size: {}", messageLogTagged.header.msg_size);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'S')
         {

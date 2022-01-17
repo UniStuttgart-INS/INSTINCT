@@ -106,9 +106,9 @@ struct message_logging_tagged_s
 {
     message_header_s header;
     uint8_t log_level{ 0 };
-    uint16_t tag{ 'C' }; //TODO: Validate default value
+    uint16_t tag{ 0 }; //TODO: Validate default value
     uint64_t timestamp{ 0 };
-    char message = static_cast<char>(header.msg_size - 9);
+    std::string message;
 };
 
 enum class ulog_tag : uint16_t
