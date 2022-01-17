@@ -380,7 +380,11 @@ void NAV::UlogFile::readData()
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'S')
         {
-            LOG_DEBUG("Read S");
+            Ulog::message_sync_s messageSync;
+            messageSync.header = ulogMsgHeader.msgHeader;
+            std::array<uint8_t, 8> sync_magic{};
+            filestream.read(reinterpret_cast<char*>(messageSync.snyc_magic.data()), sizeof(sync_magic));
+            LOG_DEBUG("messageSync.snyc_magic: {}", messageSync.snyc_magic);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'O')
         {
