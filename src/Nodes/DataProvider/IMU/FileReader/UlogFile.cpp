@@ -306,7 +306,7 @@ void NAV::UlogFile::readData()
     // }
 
     // while (true)
-    for (size_t i = 0; i < 5; i++) //FIXME: Quick fix, enable while loop once eof is reached
+    for (size_t i = 0; i < 100; i++) //FIXME: Quick fix, enable while loop once eof is reached
     {
         // Reset cursor to position before the while-loop in 'readDefinitions()' reached its break condition
         if (startDataFlag)
@@ -337,11 +337,14 @@ void NAV::UlogFile::readData()
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'R')
         {
-            LOG_DEBUG("Read R");
+            Ulog::message_remove_logged_s messageRemoveLog;
+            messageRemoveLog.header = ulogMsgHeader.msgHeader;
+            uint8_t msg_id{};
+            filestream.read(reinterpret_cast<char*>(&messageRemoveLog.msg_id), sizeof(msg_id));
+            LOG_DEBUG("msg_id: {}", msg_id); //TODO: once tested, make LOG_DATA
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'D')
         {
-            LOG_DEBUG("Read D");
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'L')
         {
