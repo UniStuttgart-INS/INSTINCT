@@ -446,7 +446,7 @@ run-tests:ubuntu:20.04:gcc:
   needs: []
   before_script:
     - curl -fsSL "https://repo.archlinuxcn.org/x86_64/glibc-linux4-2.33-4-x86_64.pkg.tar.zst" | bsdtar -C / -xvf -
-    - pacman -Syyu --noconfirm --needed
+    - pacman -Sy archlinux-keyring --noconfirm && pacman -Syyu --noconfirm --needed
     - pacman -S --noconfirm --needed base-devel cmake clang ccache cppcheck python-pip glfw-x11
     - pip install conan
     - g++ --version
