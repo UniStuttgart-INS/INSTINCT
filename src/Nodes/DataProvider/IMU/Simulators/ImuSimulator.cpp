@@ -26,7 +26,7 @@ NAV::ImuSimulator::ImuSimulator()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 653, 580 };
+    _guiConfigDefaultWindowSize = { 677, 580 };
 
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &ImuSimulator::pollImuObs);
     nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &ImuSimulator::pollPosVelAtt);
@@ -205,28 +205,52 @@ void NAV::ImuSimulator::guiConfig()
         else if (_trajectoryType == TrajectoryType::Linear)
         {
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##North velocity{}", size_t(id)).c_str(), &_linearTrajectoryVelocity_n.x(), 0.0, 0.0, "%.3f m/s"))
+            if (ImGui::InputDouble(fmt::format("##North velocity{}", size_t(id)).c_str(), &_linearTrajectoryStartVelocity_n.x(), 0.0, 0.0, "%.3f m/s"))
             {
-                LOG_DEBUG("{}: linearTrajectoryVelocity_n changed to {}", nameId(), _linearTrajectoryVelocity_n.transpose());
+                LOG_DEBUG("{}: linearTrajectoryStartVelocity_n changed to {}", nameId(), _linearTrajectoryStartVelocity_n.transpose());
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##East velocity{}", size_t(id)).c_str(), &_linearTrajectoryVelocity_n.y(), 0.0, 0.0, "%.3f m/s"))
+            if (ImGui::InputDouble(fmt::format("##East velocity{}", size_t(id)).c_str(), &_linearTrajectoryStartVelocity_n.y(), 0.0, 0.0, "%.3f m/s"))
             {
-                LOG_DEBUG("{}: linearTrajectoryVelocity_n changed to {}", nameId(), _linearTrajectoryVelocity_n.transpose());
+                LOG_DEBUG("{}: linearTrajectoryStartVelocity_n changed to {}", nameId(), _linearTrajectoryStartVelocity_n.transpose());
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
             ImGui::SetNextItemWidth(columnWidth);
-            if (ImGui::InputDouble(fmt::format("##Down velocity{}", size_t(id)).c_str(), &_linearTrajectoryVelocity_n.z(), 0.0, 0.0, "%.3f m/s"))
+            if (ImGui::InputDouble(fmt::format("##Down velocity{}", size_t(id)).c_str(), &_linearTrajectoryStartVelocity_n.z(), 0.0, 0.0, "%.3f m/s"))
             {
-                LOG_DEBUG("{}: linearTrajectoryVelocity_n changed to {}", nameId(), _linearTrajectoryVelocity_n.transpose());
+                LOG_DEBUG("{}: linearTrajectoryStartVelocity_n changed to {}", nameId(), _linearTrajectoryStartVelocity_n.transpose());
                 flow::ApplyChanges();
             }
             ImGui::SameLine();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
-            ImGui::TextUnformatted("Velocity (North, East, Down)");
+            ImGui::TextUnformatted("Start velocity (North, East, Down)");
+
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDouble(fmt::format("##North acceleration{}", size_t(id)).c_str(), &_linearTrajectoryAcceleration_n.x(), 0.0, 0.0, "%.3f m/s^2"))
+            {
+                LOG_DEBUG("{}: linearTrajectoryAcceleration_n changed to {}", nameId(), _linearTrajectoryAcceleration_n.transpose());
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDouble(fmt::format("##East acceleration{}", size_t(id)).c_str(), &_linearTrajectoryAcceleration_n.y(), 0.0, 0.0, "%.3f m/s^2"))
+            {
+                LOG_DEBUG("{}: linearTrajectoryAcceleration_n changed to {}", nameId(), _linearTrajectoryAcceleration_n.transpose());
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(columnWidth);
+            if (ImGui::InputDouble(fmt::format("##Down acceleration{}", size_t(id)).c_str(), &_linearTrajectoryAcceleration_n.z(), 0.0, 0.0, "%.3f m/s^2"))
+            {
+                LOG_DEBUG("{}: linearTrajectoryAcceleration_n changed to {}", nameId(), _linearTrajectoryAcceleration_n.transpose());
+                flow::ApplyChanges();
+            }
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
+            ImGui::TextUnformatted("Acceleration (North, East, Down)");
         }
         else if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
         {
@@ -427,7 +451,8 @@ void NAV::ImuSimulator::guiConfig()
     j["trajectoryType"] = _trajectoryType;
     j["startPosition_lla"] = _startPosition_lla;
     j["fixedTrajectoryStartOrientation"] = _fixedTrajectoryStartOrientation;
-    j["linearTrajectoryVelocity_n"] = _linearTrajectoryVelocity_n;
+    j["linearTrajectoryStartVelocity_n"] = _linearTrajectoryStartVelocity_n;
+    j["linearTrajectoryAcceleration_n"] = _linearTrajectoryAcceleration_n;
     j["circularTrajectoryHorizontalSpeed"] = _circularTrajectoryHorizontalSpeed;
     j["helicalTrajectoryVerticalSpeed"] = _helicalTrajectoryVerticalSpeed;
     j["circularTrajectoryRadius"] = _circularTrajectoryRadius;
@@ -488,9 +513,13 @@ void NAV::ImuSimulator::restore(json const& j)
     {
         j.at("fixedTrajectoryStartOrientation").get_to(_fixedTrajectoryStartOrientation);
     }
-    if (j.contains("linearTrajectoryVelocity_n"))
+    if (j.contains("linearTrajectoryStartVelocity_n"))
     {
-        j.at("linearTrajectoryVelocity_n").get_to(_linearTrajectoryVelocity_n);
+        j.at("linearTrajectoryStartVelocity_n").get_to(_linearTrajectoryStartVelocity_n);
+    }
+    if (j.contains("linearTrajectoryAcceleration_n"))
+    {
+        j.at("linearTrajectoryAcceleration_n").get_to(_linearTrajectoryAcceleration_n);
     }
     if (j.contains("circularTrajectoryHorizontalSpeed"))
     {
@@ -834,7 +863,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcVelocity_n(double time, const Eigen::Quat
     }
     if (_trajectoryType == TrajectoryType::Linear)
     {
-        return _linearTrajectoryVelocity_n;
+        return _linearTrajectoryStartVelocity_n + _linearTrajectoryAcceleration_n * time;
     }
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
@@ -862,7 +891,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcTrajectoryAccel_n(double time, const Eige
     }
     if (_trajectoryType == TrajectoryType::Linear)
     {
-        return Eigen::Vector3d::Zero();
+        return _linearTrajectoryAcceleration_n;
     }
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {

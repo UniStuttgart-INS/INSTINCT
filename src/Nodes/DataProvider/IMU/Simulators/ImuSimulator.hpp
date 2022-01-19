@@ -140,8 +140,11 @@ class ImuSimulator : public Imu
     /// Orientation of the vehicle [roll, pitch, yaw] [rad]
     Eigen::Vector3d _fixedTrajectoryStartOrientation = Eigen::Vector3d::Zero();
 
-    /// Velocity of the vehicle in local-navigation frame cooridnates in [m/s]
-    Eigen::Vector3d _linearTrajectoryVelocity_n = Eigen::Vector3d{ 1, 0, 0 };
+    /// Start Velocity of the vehicle in local-navigation frame cooridnates in [m/s]
+    Eigen::Vector3d _linearTrajectoryStartVelocity_n = Eigen::Vector3d{ 1, 0, 0 };
+
+    /// Acceleration of the vehicle in local-navigation frame cooridnates in [m/s]
+    Eigen::Vector3d _linearTrajectoryAcceleration_n = Eigen::Vector3d{ 0, 0, 0 };
 
     /// Horizontal speed of the vehicle in the tangential plane in [m/s]
     double _circularTrajectoryHorizontalSpeed = 1.0;
