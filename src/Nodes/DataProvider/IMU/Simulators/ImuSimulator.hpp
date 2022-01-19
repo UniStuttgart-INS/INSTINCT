@@ -140,8 +140,11 @@ class ImuSimulator : public Imu
     /// Orientation of the vehicle [roll, pitch, yaw] [rad]
     Eigen::Vector3d _fixedTrajectoryStartOrientation = Eigen::Vector3d::Zero();
 
-    /// Velocity of the vehicle in local-navigation frame cooridnates in [m/s]
-    Eigen::Vector3d _linearTrajectoryVelocity_n = Eigen::Vector3d{ 1, 0, 0 };
+    /// Start Velocity of the vehicle in local-navigation frame cooridnates in [m/s]
+    Eigen::Vector3d _linearTrajectoryStartVelocity_n = Eigen::Vector3d{ 1, 0, 0 };
+
+    /// Acceleration of the vehicle in local-navigation frame cooridnates in [m/s]
+    Eigen::Vector3d _linearTrajectoryAcceleration_n = Eigen::Vector3d{ 0, 0, 0 };
 
     /// Horizontal speed of the vehicle in the tangential plane in [m/s]
     double _circularTrajectoryHorizontalSpeed = 1.0;
@@ -218,6 +221,18 @@ class ImuSimulator : public Imu
     /// Time to send the next GNSS message in [s]
     double _gnssUpdateTime = 0.0;
 
+    /// Update rate for the internal solution of linear movement in [Hz]
+    static constexpr double INTERNAL_LINEAR_UPDATE_FREQUENCY = 1000;
+
+    /// Last time the IMU message was calculated in [s]
+    double _imuLastUpdateTime = 0.0;
+    /// Last time the GNSS message was calculated in [s]
+    double _gnssLastUpdateTime = 0.0;
+    /// Last calculated position for the IMU in linear mode for iterative calculations as latitude, longitude, altitude [rad, rad, m]
+    Eigen::Vector3d _imuLastLinearPosition_lla = Eigen::Vector3d::Zero();
+    /// Last calculated position for the GNSS in linear mode for iterative calculations as latitude, longitude, altitude [rad, rad, m]
+    Eigen::Vector3d _gnssLastLinearPosition_lla = Eigen::Vector3d::Zero();
+
     /// @brief Calculates the flight angles (roll, pitch, yaw)
     /// @param[in] position_lla Current position as latitude, longitude, altitude [rad, rad, m]
     /// @param[in] velocity_n Velocity in local-navigation frame coordinates [m/s]
@@ -226,8 +241,10 @@ class ImuSimulator : public Imu
 
     /// @brief Calculates the position in latLonAlt at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
+    /// @param[in, out] lastUpdateTime Last time the update was called in [s]. Needed for the iterative linear calculation.
+    /// @param[in, out] lastPosition_lla Last calculated position in linear mode for iterative calculations as latitude, longitude, altitude [rad, rad, m]
     /// @return LatLonAlt in [rad, rad, m]
-    Eigen::Vector3d calcPosition_lla(double time);
+    Eigen::Vector3d calcPosition_lla(double time, double& lastUpdateTime, Eigen::Vector3d& lastPosition_lla);
 
     /// @brief Calculates the velocity in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]

@@ -648,6 +648,8 @@ void NAV::ImuIntegrator::integrateObservation()
     posVelAtt__t0->setState_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) });
 
     LOG_DATA("{}: posVelAtt__t0->position_ecef() = {}", nameId(), posVelAtt__t0->position_ecef().transpose());
+    LOG_DATA("{}: posVelAtt__t0->position_lla() - posVelAtt__t1->position_lla() = {} [m]", nameId(),
+             calcGeographicalDistance(posVelAtt__t0->latitude(), posVelAtt__t0->longitude(), posVelAtt__t1->latitude(), posVelAtt__t1->longitude()));
     LOG_DATA("{}: posVelAtt__t0->velocity_n() = {}", nameId(), posVelAtt__t0->velocity_n().transpose());
     LOG_DATA("{}: posVelAtt__t0->quaternion_nb() = {}", nameId(), posVelAtt__t0->quaternion_nb().coeffs().transpose());
 
