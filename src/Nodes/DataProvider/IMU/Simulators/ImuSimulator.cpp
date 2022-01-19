@@ -608,6 +608,11 @@ bool NAV::ImuSimulator::resetNode()
     _gnssUpdateTime = 0.0;
     _stopConditionReached = false;
 
+    _imuLastUpdateTime = 0.0;
+    _gnssLastUpdateTime = 0.0;
+    _imuLastLinearPosition_lla = _startPosition_lla;
+    _gnssLastLinearPosition_lla = _startPosition_lla;
+
     if (_startTimeSource == StartTimeSource::CurrentComputerTime)
     {
         std::time_t t = std::time(nullptr);
@@ -657,7 +662,7 @@ bool NAV::ImuSimulator::checkStopCondition(double time, const Eigen::Vector3d& p
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 {
-    Eigen::Vector3d position_lla = calcPosition_lla(_imuUpdateTime);
+    Eigen::Vector3d position_lla = calcPosition_lla(_imuUpdateTime, _imuLastUpdateTime, _imuLastLinearPosition_lla);
     LOG_DATA("{}: position_lla = {}°, {}°, {} m", nameId(), trafo::rad2deg(position_lla(0)), trafo::rad2deg(position_lla(1)), position_lla(2));
     Eigen::Vector3d position_e = trafo::lla2ecef_WGS84(position_lla);
     auto q_ne = trafo::quat_ne(position_lla(0), position_lla(1));
@@ -750,7 +755,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
 
 std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
 {
-    Eigen::Vector3d position_lla = calcPosition_lla(_gnssUpdateTime);
+    Eigen::Vector3d position_lla = calcPosition_lla(_gnssUpdateTime, _gnssLastUpdateTime, _gnssLastLinearPosition_lla);
     LOG_DATA("{}: position_lla = {}°, {}°, {} m", nameId(), trafo::rad2deg(position_lla(0)), trafo::rad2deg(position_lla(1)), position_lla(2));
     auto q_ne = trafo::quat_ne(position_lla(0), position_lla(1));
     Eigen::Vector3d vel_n = calcVelocity_n(_gnssUpdateTime, q_ne);
@@ -812,7 +817,7 @@ std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d&
     return { roll, pitch, yaw };
 }
 
-Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
+Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time, double& lastUpdateTime, Eigen::Vector3d& lastPosition_lla)
 {
     if (_trajectoryType == TrajectoryType::Fixed)
     {
@@ -820,19 +825,41 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time)
     }
     if (_trajectoryType == TrajectoryType::Linear)
     {
-        // @brief Calculates the derivative of the curvilinear position
-        // @param[in] position_lla [𝜙, λ, h]^T Latitude, longitude, altitude in [rad, rad, m]
-        // @param[in] velocity_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
-        // @return The curvilinear position derivative ∂/∂t [𝜙, λ, h]^T
-        auto f = [](const Eigen::Vector3d& position_lla, const Eigen::Vector3d& velocity_n) {
-            return calcTimeDerivativeForPosition_lla(velocity_n,                          // v_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
-                                                     position_lla(0),                     // 𝜙 Latitude in [rad]
-                                                     position_lla(2),                     // h Altitude in [m]
-                                                     calcEarthRadius_N(position_lla(0)),  // North/South (meridian) earth radius [m]
-                                                     calcEarthRadius_E(position_lla(0))); // East/West (prime vertical) earth radius [m]
+        // @brief Calculates the derivative of the curvilinear position and velocity
+        // @param[in] y [𝜙, λ, h, v_N, v_E, v_D]^T Latitude, longitude, altitude, velocity NED in [rad, rad, m, m/s, m/s, m/s]
+        // @param[in] acceleration_n Acceleration in local-navigation frame coordinates [m/s^s]
+        // @return The curvilinear position and velocity derivatives ∂/∂t [𝜙, λ, h, v_N, v_E, v_D]^T
+        auto f = [](const Eigen::Vector<double, 6>& y, const Eigen::Vector3d& acceleration_n) {
+            Eigen::Vector<double, 6> y_dot;
+            y_dot << calcTimeDerivativeForPosition_lla(y.tail<3>(),              // v_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
+                                                       y(0),                     // 𝜙 Latitude in [rad]
+                                                       y(2),                     // h Altitude in [m]
+                                                       calcEarthRadius_N(y(0)),  // North/South (meridian) earth radius [m]
+                                                       calcEarthRadius_E(y(0))), // East/West (prime vertical) earth radius [m]
+                acceleration_n;
+
+            return y_dot;
         };
 
-        return RungeKutta1(f, time, _startPosition_lla, _linearTrajectoryVelocity_n);
+        // Time to propagate the position
+        double dt = time - lastUpdateTime;
+
+        while (dt > 0) // Iterate in small steps to avoid numeric precision loss
+        {
+            double h = std::min(dt, 1.0 / INTERNAL_LINEAR_UPDATE_FREQUENCY);
+
+            Eigen::Vector<double, 6> y;
+            y << lastPosition_lla,
+                _linearTrajectoryStartVelocity_n + _linearTrajectoryAcceleration_n * lastUpdateTime;
+
+            y = RungeKutta1(f, h, y, _linearTrajectoryAcceleration_n);
+            lastPosition_lla = y.head<3>();
+
+            lastUpdateTime += h;
+            dt -= h;
+        }
+
+        return lastPosition_lla;
     }
     if (_trajectoryType == TrajectoryType::Circular || _trajectoryType == TrajectoryType::Helix)
     {
