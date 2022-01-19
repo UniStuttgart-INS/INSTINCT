@@ -428,6 +428,17 @@
             "endPinId": 4,
             "id": 427,
             "startPinId": 347
+        },
+        "link-428": {
+            "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 255
+            },
+            "endPinId": 418,
+            "id": 428,
+            "startPinId": 402
         }
     },
     "nodes": {
@@ -601,85 +612,85 @@
                 },
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
-                        "0": 0.003
+                        "0": 0.006
                     },
                     "1": {
-                        "0": 0.003
+                        "0": 0.006
                     },
                     "2": {
-                        "0": 0.009
+                        "0": 0.018
                     }
                 },
                 "gnssMeasurementUncertaintyPositionUnit": 3,
                 "gnssMeasurementUncertaintyVelocity": {
                     "0": {
-                        "0": 0.05
+                        "0": 0.1
                     },
                     "1": {
-                        "0": 0.05
+                        "0": 0.1
                     },
                     "2": {
-                        "0": 0.05
+                        "0": 0.2
                     }
                 },
                 "gnssMeasurementUncertaintyVelocityUnit": 1,
                 "initCovarianceAttitudeAngles": {
                     "0": {
-                        "0": 10.0
+                        "0": 1.0
                     },
                     "1": {
-                        "0": 10.0
+                        "0": 1.0
                     },
                     "2": {
-                        "0": 10.0
+                        "0": 1.0
                     }
                 },
                 "initCovarianceAttitudeAnglesUnit": 3,
                 "initCovarianceBiasAccel": {
                     "0": {
-                        "0": 1.0
+                        "0": 0.3
                     },
                     "1": {
-                        "0": 1.0
+                        "0": 0.3
                     },
                     "2": {
-                        "0": 1.0
+                        "0": 0.3
                     }
                 },
                 "initCovarianceBiasAccelUnit": 1,
                 "initCovarianceBiasGyro": {
                     "0": {
-                        "0": 0.5
+                        "0": 0.0015
                     },
                     "1": {
-                        "0": 0.5
+                        "0": 0.0015
                     },
                     "2": {
-                        "0": 0.5
+                        "0": 0.0015
                     }
                 },
                 "initCovarianceBiasGyroUnit": 3,
                 "initCovariancePosition": {
                     "0": {
-                        "0": 100.0
+                        "0": 3.0
                     },
                     "1": {
-                        "0": 100.0
+                        "0": 3.0
                     },
                     "2": {
-                        "0": 100.0
+                        "0": 6.0
                     }
                 },
                 "initCovariancePositionUnit": 3,
                 "initCovarianceVelocity": {
                     "0": {
-                        "0": 10.0
+                        "0": 0.1
                     },
                     "1": {
-                        "0": 10.0
+                        "0": 0.1
                     },
                     "2": {
-                        "0": 10.0
+                        "0": 0.2
                     }
                 },
                 "initCovarianceVelocityUnit": 1,
@@ -687,14 +698,34 @@
                 "qCalculation": 1,
                 "randomProcessAccel": 2,
                 "randomProcessGyro": 2,
+                "stdevAccelNoiseUnits": 1,
+                "stdevGyroNoiseUnits": 1,
+                "stdev_ra": {
+                    "0": {
+                        "0": 0.0007
+                    },
+                    "1": {
+                        "0": 0.00096
+                    },
+                    "2": {
+                        "0": 0.00064
+                    }
+                },
+                "stdev_rg": {
+                    "0": {
+                        "0": 7e-05
+                    },
+                    "1": {
+                        "0": 3.4e-05
+                    },
+                    "2": {
+                        "0": 0.00013
+                    }
+                },
                 "varianceAccelBiasUnits": 0,
-                "varianceAccelNoiseUnits": 0,
                 "varianceGyroBiasUnits": 0,
-                "varianceGyroNoiseUnits": 0,
                 "variance_bad": 10.0,
-                "variance_bgd": 1.0,
-                "variance_ra": 0.0001,
-                "variance_rg": 0.0001
+                "variance_bgd": 1.0
             },
             "enabled": true,
             "id": 239,
@@ -5547,8 +5578,19 @@
                 "gravityModel": 3,
                 "helicalTrajectoryVerticalSpeed": 1.0,
                 "imuFrequency": 200.0,
+                "linearTrajectoryAcceleration_n": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 0.0
+                    },
+                    "2": {
+                        "0": 0.0
+                    }
+                },
                 "linearTrajectoryDistanceForStop": 100.0,
-                "linearTrajectoryVelocity_n": {
+                "linearTrajectoryStartVelocity_n": {
                     "0": {
                         "0": 1.0
                     },
@@ -5560,7 +5602,7 @@
                     }
                 },
                 "simulationDuration": 300.0,
-                "simulationStopCondition": 1,
+                "simulationStopCondition": 0,
                 "startPosition_lla": {
                     "0": {
                         "0": 0.0
@@ -5578,7 +5620,7 @@
                 },
                 "startTimeEditFormat": 0,
                 "startTimeSource": 0,
-                "trajectoryType": 2
+                "trajectoryType": 1
             },
             "enabled": true,
             "id": 3,
@@ -5975,13 +6017,13 @@
                 },
                 "imuAccelerometerNoise": {
                     "0": {
-                        "0": 0.0
+                        "0": 0.00035
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 0.00048
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 0.00032
                     }
                 },
                 "imuAccelerometerNoiseUnit": 0,
@@ -6003,13 +6045,13 @@
                 },
                 "imuGyroscopeNoise": {
                     "0": {
-                        "0": 0.0
+                        "0": 3.5e-05
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 1.7e-05
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 6.5e-05
                     }
                 },
                 "imuGyroscopeNoiseUnit": 0,
@@ -6198,13 +6240,13 @@
                 "positionBiasUnit": 0,
                 "positionNoise": {
                     "0": {
-                        "0": 0.0
+                        "0": 0.003
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 0.003
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 0.009
                     }
                 },
                 "positionNoiseUnit": 0,
@@ -6226,13 +6268,13 @@
                 "velocityBiasUnit": 0,
                 "velocityNoise": {
                     "0": {
-                        "0": 0.0
+                        "0": 0.05
                     },
                     "1": {
-                        "0": 0.0
+                        "0": 0.05
                     },
                     "2": {
-                        "0": 0.0
+                        "0": 0.1
                     }
                 },
                 "velocityNoiseUnit": 0,
