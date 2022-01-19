@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                               CLEAN Tasks                                                ║
+        // ║                                       CLEAN Tasks                                        ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
         { // CLEAN: Remove Build Files
             "label": "CLEAN: Remove Build Files",
@@ -36,7 +36,7 @@
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                               CMAKE Tasks                                                ║
+        // ║                                       CMAKE Tasks                                        ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
         { // CMAKE: Main
             "label": "CMAKE: Main",
@@ -46,7 +46,7 @@
                 "command": "bash",
                 "args": [
                     "-c",
-                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/${input:buildType}-${input:compiler} -S. -DCMAKE_BUILD_TYPE=${input:buildType} -DENABLE_MAIN=ON -DENABLE_TESTING=OFF -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
                 ],
                 // "options": {
                 //     "env": {
@@ -58,7 +58,7 @@
             "windows": {
                 "command": "cmake",
                 "args": [
-                    "-Bbuild/${input:buildType}",
+                    "-Bbuild/${input:buildType}-msvc",
                     "-S.",
                     "-DCMAKE_BUILD_TYPE=${input:buildType}",
                     "-DENABLE_MAIN=ON",
@@ -90,7 +90,7 @@
                 "command": "bash",
                 "args": [
                     "-c",
-                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Debug -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
+                    "export CC=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo gcc || echo clang) && export CXX=$([[ \"${input:compiler}\" == \"gcc\" ]] && echo g++ || echo clang++) && cmake -Bbuild/Debug-${input:compiler} -S. -DCMAKE_BUILD_TYPE=Debug -DENABLE_MAIN=OFF -DENABLE_TESTING=ON -DENABLE_DOXYGEN=OFF -DENABLE_CLANG_TIDY=$(echo \"${input:clangTidy}\" | sed \"s/.*: //\") -DENABLE_CPPCHECK=$(echo \"${input:cppcheck}\" | sed \"s/.*: //\") -DLOG_LEVEL=$(echo \"${input:logLevel}\" | sed \"s/.*: //\")",
                 ],
                 // "options": {
                 //     "env": {
@@ -102,7 +102,7 @@
             "windows": {
                 "command": "cmake",
                 "args": [
-                    "-Bbuild/Debug",
+                    "-Bbuild/Debug-msvc",
                     "-S.",
                     "-DCMAKE_BUILD_TYPE=Debug",
                     "-DENABLE_MAIN=OFF",
@@ -161,7 +161,7 @@
             "group": "build",
             "command": "cmake",
             "args": [
-                "-Bbuild/Release",
+                "-Bbuild/Release-doc",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DENABLE_MAIN=OFF",
@@ -184,7 +184,7 @@
             "group": "build",
             "command": "cmake",
             "args": [
-                "-Bbuild/Release",
+                "-Bbuild/Release-doc",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DENABLE_MAIN=OFF",
@@ -202,7 +202,7 @@
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                          CMAKE Configure Tasks                                           ║
+        // ║                                  CMAKE Configure Tasks                                   ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
         { // CMAKE: Configure
             "label": "CMAKE: Configure",
@@ -210,7 +210,7 @@
             "group": "build",
             "command": "ccmake",
             "args": [
-                "-Bbuild/${input:buildType}",
+                "-Bbuild/${input:buildType}-${input:compiler}",
                 "-S.",
                 "-DCMAKE_BUILD_TYPE=${input:buildType}",
             ],
@@ -229,7 +229,7 @@
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                                Build Tasks                                               ║
+        // ║                                        Build Tasks                                       ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
         { // MAIN: Build project
             "label": "MAIN: Build project",
@@ -239,7 +239,7 @@
             "linux": {
                 "args": [
                     "--build",
-                    "build/${input:buildType}",
+                    "build/${input:buildType}-${input:compiler}",
                     "--",
                     "-j",
                 ],
@@ -247,7 +247,7 @@
             "windows": {
                 "args": [
                     "--build",
-                    "build/${input:buildType}",
+                    "build/${input:buildType}-msvc",
                     "--",
                     "-maxCpuCount",
                 ],
@@ -271,7 +271,7 @@
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "build/Debug",
+                    "build/Debug-${input:compiler}",
                     "--",
                     "-j",
                 ],
@@ -280,7 +280,7 @@
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "build/Debug",
+                    "build/Debug-msvc",
                     "--",
                     "-maxCpuCount",
                 ],
@@ -322,7 +322,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "build/Release",
+                "build/Release-doc",
                 "--target",
                 "doc",
             ],
@@ -338,7 +338,7 @@
             "command": "cmake",
             "args": [
                 "--build",
-                "build/Release",
+                "build/Release-doc",
                 "--target",
                 "doc",
             ],
@@ -348,7 +348,7 @@
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                                Run Tasks                                                 ║
+        // ║                                        Run Tasks                                         ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
         { // MAIN: Build & run project
             "label": "MAIN: Build & run project",
@@ -386,7 +386,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug",
+                "cwd": "build/Debug-${input:compiler}",
             },
             "dependsOn": [
                 "TEST: Build project",
@@ -406,7 +406,7 @@
                 // "--verbose",
             ],
             "options": {
-                "cwd": "build/Debug",
+                "cwd": "build/Debug-${input:compiler}",
             },
             "dependsOn": [
                 "TEST: Build project",
@@ -529,7 +529,7 @@
             "problemMatcher": [],
         },
         // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
-        // ║                                             Debugging Tasks                                              ║
+        // ║                                     Debugging Tasks                                      ║
         // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
         { // VALGRIND: Run profiler
             "label": "VALGRIND: Run profiler",
@@ -571,6 +571,9 @@
             "problemMatcher": [],
         }
     ],
+    // ╔══════════════════════════════════════════════════════════════════════════════════════════╗
+    // ║                                   Status Bar Parameter                                   ║
+    // ╚══════════════════════════════════════════════════════════════════════════════════════════╝
     "inputs": [
         { // buildType
             "id": "buildType",

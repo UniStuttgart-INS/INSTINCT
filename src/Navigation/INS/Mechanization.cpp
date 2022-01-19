@@ -51,21 +51,38 @@ Eigen::Vector3d calcTimeDerivativeForVelocity_n_RotationCorrection(const Eigen::
 {
     // q Quaternion, from n-system to b-system
     const Eigen::Quaterniond quaternion_bn = quaternion_nb.conjugate();
+    LOG_DATA("quaternion_bn = {}", quaternion_bn.coeffs().transpose());
+    LOG_DATA("rollPitchYaw = {} [°]", trafo::rad2deg(trafo::quat2eulerZYX(quaternion_nb)).transpose());
 
     // Δβ⁠_nb_p The angular velocities in [rad], of the navigation to body system, in body coordinates (eq. 8.9)
     const Eigen::Vector3d omega_nb_b = omega_ib_b - quaternion_bn * (omega_ie_n + omega_en_n);
+    LOG_DATA("omega_nb_b = {} [rad/s]", omega_nb_b.transpose());
 
-    // Zwiener eq. (3.37)
-    Eigen::Matrix3d rotA = 2 * skewSymmetricMatrix(omega_nb_b) * std::pow(std::sin(timeDifferenceSec * omega_nb_b.norm() * 0.5) / omega_nb_b.norm(), 2);
+    Eigen::Matrix3d rotA;
+    if (omega_nb_b.norm() > 1e-5)
+    {
+        // Zwiener eq. (3.37)
+        rotA = 2 * skewSymmetricMatrix(omega_nb_b) * std::pow(std::sin(timeDifferenceSec * omega_nb_b.norm() * 0.5) / omega_nb_b.norm(), 2);
+        LOG_DATA("rotA =\n{}", rotA);
+    }
+    else
+    {
+        // Zwiener eq. (3.39)
+        rotA = skewSymmetricMatrix(omega_nb_b) * 0.5 * std::pow(timeDifferenceSec, 2);
+        LOG_DATA("rotA (small omega_nb_b) =\n{}", rotA);
+    }
     // Zwiener eq. (3.43)
     Eigen::Matrix3d rotB = (std::pow(timeDifferenceSec, 3) / 6.0 - std::pow(omega_nb_b.norm(), 2) / 120.0 * std::pow(timeDifferenceSec, 5)) * skewSymmetricMatrix2(omega_nb_b);
+    LOG_DATA("rotB =\n{}", rotB);
 
     // Rotation correction factor from Zwiener eq. (3.44)
     Eigen::Matrix3d rotCorr = Eigen::Matrix3d::Identity(3, 3) * timeDifferenceSec + rotA + rotB;
     rotCorr /= timeDifferenceSec;
+    LOG_DATA("rotCorr =\n{}", rotCorr);
 
     // Specific force in body coordinates
     Eigen::Vector3d f_b = quaternion_bn * f_n;
+    LOG_DATA("f_b = {} [m/s^2]", f_b.transpose());
 
     return quaternion_nb * (rotCorr * f_b) - coriolisAcceleration_n + gravitation_n - centrifugalAcceleration_n;
 }
