@@ -99,7 +99,7 @@ struct message_logging_s
     message_header_s header;
     uint8_t log_level{ 0 };
     uint64_t timestamp{ 0 };
-    char message = static_cast<char>(header.msg_size - 9);
+    std::string message;
 };
 
 struct message_logging_tagged_s

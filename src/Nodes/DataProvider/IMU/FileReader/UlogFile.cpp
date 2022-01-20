@@ -295,10 +295,51 @@ void NAV::UlogFile::readData()
             messageLog.header = ulogMsgHeader.msgHeader;
             uint8_t logLevel{};
             filestream.read(reinterpret_cast<char*>(&messageLog.log_level), sizeof(logLevel));
-            LOG_DEBUG("messageLog.log_level: {}", messageLog.log_level);
+
+            if (messageLog.log_level == 48) // '0'
+            {
+                LOG_INFO("Log-level: EMERG - System is unusable");
+            }
+            else if (messageLog.log_level == 49) // '1'
+            {
+                LOG_INFO("Log-level: ALERT - Action must be taken immediately");
+            }
+            else if (messageLog.log_level == 50) // '2'
+            {
+                LOG_INFO("Log-level: CRIT - Critical conditions");
+            }
+            else if (messageLog.log_level == 51) // '3'
+            {
+                LOG_INFO("Log-level: ERR - Error conditions");
+            }
+            else if (messageLog.log_level == 52) // '4'
+            {
+                LOG_INFO("Log-level: WARNING - Warning conditions");
+            }
+            else if (messageLog.log_level == 53) // '5'
+            {
+                LOG_INFO("Log-level: NOTICE - Normal but significant condition");
+            }
+            else if (messageLog.log_level == 54) // '6'
+            {
+                LOG_INFO("Log-level: INFO - Informational");
+            }
+            else if (messageLog.log_level == 55) // '7'
+            {
+                LOG_INFO("Log-level: DEBUG - Debug-level messages");
+            }
+            else
+            {
+                LOG_WARN("Log-level is out of scope ({}) - possible data loss", messageLog.log_level);
+            }
+
             uint64_t timestamp{};
             filestream.read(reinterpret_cast<char*>(&messageLog.timestamp), sizeof(timestamp));
-            LOG_DEBUG("messageLog.timestamp [µs]: {}", messageLog.timestamp);
+            LOG_DATA("messageLog.timestamp [µs]: {}", messageLog.timestamp);
+
+            messageLog.message.resize(messageLog.header.msg_size - 9);
+            filestream.read(messageLog.message.data(), messageLog.header.msg_size - 9);
+            LOG_DATA("messageLog.message: {}", messageLog.message);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'C')
         {
@@ -306,17 +347,54 @@ void NAV::UlogFile::readData()
             messageLogTagged.header = ulogMsgHeader.msgHeader;
             uint8_t logLevel{};
             filestream.read(reinterpret_cast<char*>(&messageLogTagged.log_level), sizeof(logLevel));
-            LOG_DEBUG("messageLogTagged.log_level: {}", messageLogTagged.log_level);
+
+            if (messageLogTagged.log_level == 48) // '0'
+            {
+                LOG_INFO("Log-level: EMERG - System is unusable");
+            }
+            else if (messageLogTagged.log_level == 49) // '1'
+            {
+                LOG_INFO("Log-level: ALERT - Action must be taken immediately");
+            }
+            else if (messageLogTagged.log_level == 50) // '2'
+            {
+                LOG_INFO("Log-level: CRIT - Critical conditions");
+            }
+            else if (messageLogTagged.log_level == 51) // '3'
+            {
+                LOG_INFO("Log-level: ERR - Error conditions");
+            }
+            else if (messageLogTagged.log_level == 52) // '4'
+            {
+                LOG_INFO("Log-level: WARNING - Warning conditions");
+            }
+            else if (messageLogTagged.log_level == 53) // '5'
+            {
+                LOG_INFO("Log-level: NOTICE - Normal but significant condition");
+            }
+            else if (messageLogTagged.log_level == 54) // '6'
+            {
+                LOG_INFO("Log-level: INFO - Informational");
+            }
+            else if (messageLogTagged.log_level == 55) // '7'
+            {
+                LOG_INFO("Log-level: DEBUG - Debug-level messages");
+            }
+            else
+            {
+                LOG_WARN("Log-level is out of scope ({}) - possible data loss", messageLogTagged.log_level);
+            }
+
             uint16_t tag{};
             filestream.read(reinterpret_cast<char*>(&messageLogTagged.tag), sizeof(tag));
             LOG_DEBUG("messageLogTagged.tag: {}", messageLogTagged.tag);
             uint64_t timestamp{};
             filestream.read(reinterpret_cast<char*>(&messageLogTagged.timestamp), sizeof(timestamp));
-            LOG_DEBUG("messageLogTagged.timestamp [µs]: {}", messageLogTagged.timestamp);
+            LOG_DATA("messageLogTagged.timestamp [µs]: {}", messageLogTagged.timestamp);
 
-            messageLogTagged.message.resize(messageLogTagged.header.msg_size - 9);
-            filestream.read(messageLogTagged.message.data(), messageLogTagged.header.msg_size - 9);
-            LOG_DEBUG("messageLogTagged.header.msg_size: {}", messageLogTagged.header.msg_size);
+            messageLogTagged.message.resize(messageLogTagged.header.msg_size - 11);
+            filestream.read(messageLogTagged.message.data(), messageLogTagged.header.msg_size - 11);
+            LOG_DATA("messageLogTagged.header.msg_size: {}", messageLogTagged.header.msg_size);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'S')
         {
