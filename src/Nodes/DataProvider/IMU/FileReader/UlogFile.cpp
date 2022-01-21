@@ -203,13 +203,159 @@ void NAV::UlogFile::readDefinitions()
 
             std::string msgName = messageFormat.format.substr(0, messageFormat.format.find(':'));
 
+            // Decoding data format fields
             std::stringstream lineStream(messageFormat.format.substr(messageFormat.format.find(':') + 1));
-
             std::string cell;
             while (std::getline(lineStream, cell, ';'))
             {
-                LOG_INFO("messageFormat.format.cell[0]: {}", cell.substr(0, cell.find(' ')));
-                LOG_INFO("messageFormat.format.cell[1]: {}", cell.substr(cell.find(' ') + 1));
+                if (cell.substr(0, cell.find(' ')) == "uint64_t")
+                {
+                    if (cell.substr(cell.find(' ') + 1) == "timestamp")
+                    {
+                        [[maybe_unused]] uint64_t timestamp{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "timestamp_sample")
+                    {
+                        [[maybe_unused]] uint64_t timestamp_sample{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "timestamp_sample")
+                    {
+                        [[maybe_unused]] uint64_t time_utc_usec{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "timestamp_sample")
+                    {
+                        [[maybe_unused]] uint64_t nav_state_timestamp{ 0 };
+                    }
+                    else
+                    {
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'uint64_t' field: {}", cell.substr(0, cell.find(' ')));
+                    }
+                }
+                else if (cell.substr(0, cell.find(' ')) == "uint32_t")
+                {
+                    if (cell.substr(cell.find(' ') + 1) == "device_id")
+                    {
+                        [[maybe_unused]] uint32_t device_id{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "error_count")
+                    {
+                        [[maybe_unused]] uint32_t error_count{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "baro_device_id")
+                    {
+                        [[maybe_unused]] uint32_t baro_device_id{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "onboard_control_sensors_present")
+                    {
+                        [[maybe_unused]] uint32_t onboard_control_sensors_present{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "onboard_control_sensors_health")
+                    {
+                        [[maybe_unused]] uint32_t onboard_control_sensors_health{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "ver_sw_release")
+                    {
+                        [[maybe_unused]] uint32_t ver_sw_release{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "ver_vendor_sw_release")
+                    {
+                        [[maybe_unused]] uint32_t ver_vendor_sw_release{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "sys_os_ver_release")
+                    {
+                        [[maybe_unused]] uint32_t sys_os_ver_release{ 0 };
+                    }
+                    else
+                    {
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'uint32_t' field: {}", cell.substr(0, cell.find(' ')));
+                    }
+                }
+                else if (cell.substr(0, cell.find(' ')) == "uint16_t")
+                {
+                    LOG_ERROR("msg type 'format' - undefined variable in a 'uint16_t' field: {}", cell.substr(0, cell.find(' ')));
+                }
+                else if (cell.substr(0, cell.find(' ')) == "uint8_t")
+                {
+                    if (cell.substr(cell.find(' ') + 1) == "clip_counter[3]")
+                    {
+                        [[maybe_unused]] std::array<uint8_t, 3>(clip_counter){};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "_padding")
+                    {
+                        LOG_DATA("msg type 'format' - No action on purpose for '_padding'");
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "fix_type")
+                    {
+                        [[maybe_unused]] uint8_t fix_type{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "satellites_used")
+                    {
+                        [[maybe_unused]] uint8_t satellites_used{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "quat_reset_counter")
+                    {
+                        [[maybe_unused]] uint8_t quat_reset_counter{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "nav_state")
+                    {
+                        [[maybe_unused]] uint8_t nav_state{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "arming_state")
+                    {
+                        [[maybe_unused]] uint8_t arming_state{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "hil_state")
+                    {
+                        [[maybe_unused]] uint8_t hil_state{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "system_type")
+                    {
+                        [[maybe_unused]] uint8_t system_type{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "system_id")
+                    {
+                        [[maybe_unused]] uint8_t system_id{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "component_id")
+                    {
+                        [[maybe_unused]] uint8_t component_id{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "vehicle_type")
+                    {
+                        [[maybe_unused]] uint8_t vehicle_type{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "rc_input_mode")
+                    {
+                        [[maybe_unused]] uint8_t rc_input_mode{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "data_link_lost_counter")
+                    {
+                        [[maybe_unused]] uint8_t data_link_lost_counter{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "failure_detector_status")
+                    {
+                        [[maybe_unused]] uint8_t failure_detector_status{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "latest_arming_reason")
+                    {
+                        [[maybe_unused]] uint8_t latest_arming_reason{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "latest_disarming_reason")
+                    {
+                        [[maybe_unused]] uint8_t latest_disarming_reason{ 0 };
+                    }
+                    else
+                    {
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'uint8_t' field: {}", cell.substr(0, cell.find(' ')));
+                    }
+                }
+                else
+                {
+                    LOG_ERROR("msg type 'format' - undefined data type: {}", cell.substr(0, cell.find(' ')));
+                }
+
+                // LOG_INFO("messageFormat.format.cell[0]: {}", cell.substr(0, cell.find(' ')));
+                // LOG_INFO("messageFormat.format.cell[1]: {}", cell.substr(cell.find(' ') + 1));
             }
         }
 
