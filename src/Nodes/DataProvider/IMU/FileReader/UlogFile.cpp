@@ -228,7 +228,7 @@ void NAV::UlogFile::readDefinitions()
                     }
                     else
                     {
-                        LOG_ERROR("msg type 'format' - undefined variable in a 'uint64_t' field: {}", cell.substr(0, cell.find(' ')));
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'uint64_t' field: {}", cell.substr(cell.find(' ') + 1));
                     }
                 }
                 else if (cell.substr(0, cell.find(' ')) == "uint32_t")
@@ -267,20 +267,20 @@ void NAV::UlogFile::readDefinitions()
                     }
                     else
                     {
-                        LOG_ERROR("msg type 'format' - undefined variable in a 'uint32_t' field: {}", cell.substr(0, cell.find(' ')));
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'uint32_t' field: {}", cell.substr(cell.find(' ') + 1));
                     }
                 }
                 else if (cell.substr(0, cell.find(' ')) == "uint16_t")
                 {
                     LOG_ERROR("msg type 'format' - undefined variable in a 'uint16_t' field: {}", cell.substr(0, cell.find(' ')));
                 }
-                else if (cell.substr(0, cell.find(' ')) == "uint8_t")
+                else if (cell.substr(0, cell.find(' ')).compare(0, 7, "uint8_t") >= 0)
                 {
-                    if (cell.substr(cell.find(' ') + 1) == "clip_counter[3]")
+                    if (cell.substr(cell.find(' ') + 1) == "clip_counter")
                     {
                         [[maybe_unused]] std::array<uint8_t, 3>(clip_counter){};
                     }
-                    else if (cell.substr(cell.find(' ') + 1) == "_padding")
+                    else if (cell.substr(cell.find(' ') + 1).compare(0, 8, "_padding") >= 0)
                     {
                         LOG_DATA("msg type 'format' - No action on purpose for '_padding'");
                     }
@@ -346,7 +346,7 @@ void NAV::UlogFile::readDefinitions()
                     }
                     else
                     {
-                        LOG_ERROR("msg type 'format' - undefined variable in a 'uint8_t' field: {}", cell.substr(0, cell.find(' ')));
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'uint8_t' field: {}", cell.substr(cell.find(' ') + 1));
                     }
                 }
                 else if (cell.substr(0, cell.find(' ')) == "float")
@@ -453,7 +453,7 @@ void NAV::UlogFile::readDefinitions()
                     }
                     else
                     {
-                        LOG_ERROR("msg type 'format' - undefined variable in a 'float' field: {}", cell.substr(0, cell.find(' ')));
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'float' field: {}", cell.substr(cell.find(' ') + 1));
                     }
                 }
                 else if (cell.substr(0, cell.find(' ')) == "int32_t")
@@ -496,7 +496,7 @@ void NAV::UlogFile::readDefinitions()
                     }
                     else
                     {
-                        LOG_ERROR("msg type 'format' - undefined variable in a 'int32_t' field: {}", cell.substr(0, cell.find(' ')));
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'int32_t' field: {}", cell.substr(cell.find(' ') + 1));
                     }
                 }
                 else if (cell.substr(0, cell.find(' ')) == "bool")
@@ -623,7 +623,7 @@ void NAV::UlogFile::readDefinitions()
                     }
                     else
                     {
-                        LOG_ERROR("msg type 'format' - undefined variable in a 'bool' field: {}", cell.substr(0, cell.find(' ')));
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'bool' field: {}", cell.substr(cell.find(' ') + 1));
                     }
                 }
                 else
