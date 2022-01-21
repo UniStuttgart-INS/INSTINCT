@@ -349,6 +349,113 @@ void NAV::UlogFile::readDefinitions()
                         LOG_ERROR("msg type 'format' - undefined variable in a 'uint8_t' field: {}", cell.substr(0, cell.find(' ')));
                     }
                 }
+                else if (cell.substr(0, cell.find(' ')) == "float")
+                {
+                    if (cell.substr(cell.find(' ') + 1) == "x")
+                    {
+                        [[maybe_unused]] float x{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "y")
+                    {
+                        [[maybe_unused]] float y{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "z")
+                    {
+                        [[maybe_unused]] float z{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "temperature")
+                    {
+                        [[maybe_unused]] float temperature{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "s_variance_m_s")
+                    {
+                        [[maybe_unused]] float s_variance_m_s{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "c_variance_rad")
+                    {
+                        [[maybe_unused]] float c_variance_rad{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "eph")
+                    {
+                        [[maybe_unused]] float eph{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "epv")
+                    {
+                        [[maybe_unused]] float epv{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "hdop")
+                    {
+                        [[maybe_unused]] float hdop{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "vdop")
+                    {
+                        [[maybe_unused]] float vdop{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "vel_m_s")
+                    {
+                        [[maybe_unused]] float vel_m_s{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "vel_n_m_s")
+                    {
+                        [[maybe_unused]] float vel_n_m_s{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "vel_e_m_s")
+                    {
+                        [[maybe_unused]] float vel_e_m_s{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "vel_d_m_s")
+                    {
+                        [[maybe_unused]] float vel_d_m_s{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "cog_rad")
+                    {
+                        [[maybe_unused]] float cog_rad{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "heading")
+                    {
+                        [[maybe_unused]] float heading{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "heading_offset")
+                    {
+                        [[maybe_unused]] float heading_offset{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "q[4]")
+                    {
+                        [[maybe_unused]] std::array<uint8_t, 4>(q){};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "delta_q_reset[4]")
+                    {
+                        [[maybe_unused]] std::array<uint8_t, 4>(delta_q_reset){};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "baro_alt_meter")
+                    {
+                        [[maybe_unused]] float baro_alt_meter{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "baro_temp_celcius")
+                    {
+                        [[maybe_unused]] float baro_temp_celcius{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "baro_pressure_pa")
+                    {
+                        [[maybe_unused]] float baro_pressure_pa{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "rho")
+                    {
+                        [[maybe_unused]] float rho{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "load")
+                    {
+                        [[maybe_unused]] float load{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "ram_usage")
+                    {
+                        [[maybe_unused]] float ram_usage{ 0 };
+                    }
+                    else
+                    {
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'float' field: {}", cell.substr(0, cell.find(' ')));
+                    }
+                }
                 else
                 {
                     LOG_ERROR("msg type 'format' - undefined data type: {}", cell.substr(0, cell.find(' ')));
