@@ -192,11 +192,25 @@ void NAV::UlogFile::readDefinitions()
         // Format definition for a single (composite) type that can be logged or used in another definition as a nested type
         else if (ulogMsgHeader.msgHeader.msg_type == 'F')
         {
-            std::vector<char> format(ulogMsgHeader.msgHeader.msg_size, 0);
-            format.push_back('\0');
+            Ulog::message_format_s messageFormat;
+            messageFormat.header = ulogMsgHeader.msgHeader;
 
-            filestream.read(format.data(), ulogMsgHeader.msgHeader.msg_size);
-            LOG_DEBUG("format[0]: {}", format[0]);
+            LOG_INFO("messageFormat.header.msg_size: {}", messageFormat.header.msg_size);
+
+            messageFormat.format.resize(messageFormat.header.msg_size);
+            filestream.read(messageFormat.format.data(), ulogMsgHeader.msgHeader.msg_size);
+            LOG_INFO("messageFormat.format.data(): {}", messageFormat.format.data());
+
+            std::string msgName = messageFormat.format.substr(0, messageFormat.format.find(':'));
+
+            std::stringstream lineStream(messageFormat.format.substr(messageFormat.format.find(':') + 1));
+
+            std::string cell;
+            while (std::getline(lineStream, cell, ';'))
+            {
+                LOG_INFO("messageFormat.format.cell[0]: {}", cell.substr(0, cell.find(' ')));
+                LOG_INFO("messageFormat.format.cell[1]: {}", cell.substr(cell.find(' ') + 1));
+            }
         }
 
         // Information message
@@ -287,7 +301,7 @@ void NAV::UlogFile::readData()
 
             messageData.data.resize(messageData.header.msg_size - 2);
             filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
-            LOG_DEBUG("messageData.data: {}", messageData.data);
+            LOG_DEBUG("messageData.data: {}", std::atof(messageData.data.data())); //NOLINT(cert-err34-c)
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'L')
         {
@@ -410,7 +424,7 @@ void NAV::UlogFile::readData()
             messageDropout.header = ulogMsgHeader.msgHeader;
             uint16_t duration{};
             filestream.read(reinterpret_cast<char*>(&messageDropout.duration), sizeof(duration));
-            LOG_DEBUG("messageDropout.duration: {}", messageDropout.duration);
+            LOG_WARN("Dropout of duration: {} ms", messageDropout.duration);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'I')
         {
@@ -457,8 +471,8 @@ void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
     filestream.read(messageInfo.key.data(), messageInfo.key_len);
     messageInfo.value.resize(messageInfo.header.msg_size - 1 - messageInfo.key_len); // 'msg_size' contains key and value, but not header
     filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
-    LOG_DEBUG("Information message - key: {}", messageInfo.key);
-    LOG_DEBUG("Information message - value: {}", messageInfo.value);
+    LOG_DATA("Information message - key: {}", messageInfo.key);
+    LOG_DATA("Information message - value: {}", messageInfo.value);
 }
 
 void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
@@ -477,9 +491,9 @@ void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
     filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
     messageInfoMulti.value.resize(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len); // contains 'is_continued' flag in contrast to information message
     filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
-    LOG_DEBUG("Information message multi - key_len: {}", messageInfoMulti.key_len);
-    LOG_DEBUG("Information message multi - key: {}", messageInfoMulti.key);
-    LOG_DEBUG("Information message multi - value: {}", messageInfoMulti.value);
+    LOG_DATA("Information message multi - key_len: {}", messageInfoMulti.key_len);
+    LOG_DATA("Information message multi - key: {}", messageInfoMulti.key);
+    LOG_DATA("Information message multi - value: {}", messageInfoMulti.value);
     //TODO: Use 'is_continued' to generate a list of values with the same key
 }
 
@@ -509,8 +523,8 @@ void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
     {
         messageParam.value.resize(messageParam.header.msg_size - 1 - messageParam.key_len); // 'msg_size' contains key and value, but not header
         filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
-        LOG_DEBUG("Parameter message - key: {}", messageParam.key);
-        LOG_DEBUG("Parameter message - value: {}", messageParam.value);
+        LOG_DATA("Parameter message - key: {}", messageParam.key);
+        LOG_DATA("Parameter message - value: {}", messageParam.value);
     }
 }
 

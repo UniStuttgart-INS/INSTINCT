@@ -40,7 +40,7 @@ struct ulog_message_flag_bits_s
 struct message_format_s
 {
     message_header_s header;
-    std::vector<char> format;
+    std::string format;
 };
 
 // Information message
@@ -91,7 +91,6 @@ struct message_data_s
     message_header_s header;
     uint16_t msg_id{ 0 };
     std::string data;
-    // uint8_t data = static_cast<uint8_t>(header.msg_size - 2);
 };
 
 struct message_logging_s
@@ -106,7 +105,7 @@ struct message_logging_tagged_s
 {
     message_header_s header;
     uint8_t log_level{ 0 };
-    uint16_t tag{ 0 }; //TODO: Validate default value
+    uint16_t tag{ 0 };
     uint64_t timestamp{ 0 };
     std::string message;
 };
