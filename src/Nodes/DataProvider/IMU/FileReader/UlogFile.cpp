@@ -456,13 +456,180 @@ void NAV::UlogFile::readDefinitions()
                         LOG_ERROR("msg type 'format' - undefined variable in a 'float' field: {}", cell.substr(0, cell.find(' ')));
                     }
                 }
+                else if (cell.substr(0, cell.find(' ')) == "int32_t")
+                {
+                    if (cell.substr(cell.find(' ') + 1) == "ver_data_format")
+                    {
+                        [[maybe_unused]] int32_t ver_data_format{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "time_ref_utc")
+                    {
+                        [[maybe_unused]] int32_t time_ref_utc{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "lat")
+                    {
+                        [[maybe_unused]] int32_t lat{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "lon")
+                    {
+                        [[maybe_unused]] int32_t lon{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "alt")
+                    {
+                        [[maybe_unused]] int32_t alt{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "alt_ellipsoid")
+                    {
+                        [[maybe_unused]] int32_t alt_ellipsoid{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "noise_per_ms")
+                    {
+                        [[maybe_unused]] int32_t noise_per_ms{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "jamming_indicator")
+                    {
+                        [[maybe_unused]] int32_t jamming_indicator{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "timestamp_time_relative")
+                    {
+                        [[maybe_unused]] int32_t timestamp_time_relative{ 0 };
+                    }
+                    else
+                    {
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'int32_t' field: {}", cell.substr(0, cell.find(' ')));
+                    }
+                }
+                else if (cell.substr(0, cell.find(' ')) == "bool")
+                {
+                    if (cell.substr(cell.find(' ') + 1) == "is_external")
+                    {
+                        [[maybe_unused]] bool is_external{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "vel_ned_valid")
+                    {
+                        [[maybe_unused]] bool vel_ned_valid{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_armed")
+                    {
+                        [[maybe_unused]] bool flag_armed{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_external_manual_override_ok")
+                    {
+                        [[maybe_unused]] bool flag_external_manual_override_ok{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_manual_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_manual_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_auto_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_auto_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_offboard_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_offboard_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_rates_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_rates_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_attitude_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_attitude_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_yawrate_override_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_yawrate_override_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_rattitude_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_rattitude_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_force_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_force_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_acceleration_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_acceleration_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_velocity_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_velocity_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_position_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_position_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_altitude_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_altitude_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_climb_rate_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_climb_rate_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_termination_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_termination_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "flag_control_fixed_hdg_enabled")
+                    {
+                        [[maybe_unused]] bool flag_control_fixed_hdg_enabled{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "failsafe")
+                    {
+                        [[maybe_unused]] bool failsafe{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "is_vtol")
+                    {
+                        [[maybe_unused]] bool is_vtol{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "is_vtol_tailsitter")
+                    {
+                        [[maybe_unused]] bool is_vtol_tailsitter{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "vtol_fw_permanent_stab")
+                    {
+                        [[maybe_unused]] bool vtol_fw_permanent_stab{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "in_transition_mode")
+                    {
+                        [[maybe_unused]] bool in_transition_mode{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "in_transition_to_fw")
+                    {
+                        [[maybe_unused]] bool in_transition_to_fw{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "rc_signal_lost")
+                    {
+                        [[maybe_unused]] bool rc_signal_lost{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "data_link_lost")
+                    {
+                        [[maybe_unused]] bool data_link_lost{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "high_latency_data_link_lost")
+                    {
+                        [[maybe_unused]] bool high_latency_data_link_lost{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "engine_failure")
+                    {
+                        [[maybe_unused]] bool engine_failure{};
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "mission_failure")
+                    {
+                        [[maybe_unused]] bool mission_failure{};
+                    }
+                    else
+                    {
+                        LOG_ERROR("msg type 'format' - undefined variable in a 'bool' field: {}", cell.substr(0, cell.find(' ')));
+                    }
+                }
                 else
                 {
                     LOG_ERROR("msg type 'format' - undefined data type: {}", cell.substr(0, cell.find(' ')));
                 }
-
-                // LOG_INFO("messageFormat.format.cell[0]: {}", cell.substr(0, cell.find(' ')));
-                // LOG_INFO("messageFormat.format.cell[1]: {}", cell.substr(cell.find(' ') + 1));
             }
         }
 
