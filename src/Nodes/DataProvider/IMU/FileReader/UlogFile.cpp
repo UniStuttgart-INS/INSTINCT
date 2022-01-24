@@ -195,11 +195,11 @@ void NAV::UlogFile::readDefinitions()
             Ulog::message_format_s messageFormat;
             messageFormat.header = ulogMsgHeader.msgHeader;
 
-            LOG_INFO("messageFormat.header.msg_size: {}", messageFormat.header.msg_size);
+            LOG_DATA("messageFormat.header.msg_size: {}", messageFormat.header.msg_size);
 
             messageFormat.format.resize(messageFormat.header.msg_size);
             filestream.read(messageFormat.format.data(), ulogMsgHeader.msgHeader.msg_size);
-            LOG_INFO("messageFormat.format.data(): {}", messageFormat.format.data());
+            LOG_DATA("messageFormat.format.data(): {}", messageFormat.format.data());
 
             std::string msgName = messageFormat.format.substr(0, messageFormat.format.find(':'));
 
@@ -724,12 +724,10 @@ void NAV::UlogFile::readData()
         {
             Ulog::message_add_logged_s messageAddLog;
             messageAddLog.header = ulogMsgHeader.msgHeader;
-            uint8_t multi_id{};
-            filestream.read(reinterpret_cast<char*>(&messageAddLog.multi_id), sizeof(multi_id));
-            LOG_DEBUG("multi_id: {}", multi_id);
-            uint16_t msg_id{};
-            filestream.read(reinterpret_cast<char*>(&messageAddLog.msg_id), sizeof(msg_id));
-            LOG_DEBUG("msg_id: {}", msg_id);
+            filestream.read(reinterpret_cast<char*>(&messageAddLog.multi_id), sizeof(messageAddLog.multi_id));
+            LOG_DEBUG("multi_id: {}", messageAddLog.multi_id);
+            filestream.read(reinterpret_cast<char*>(&messageAddLog.msg_id), sizeof(messageAddLog.msg_id));
+            LOG_DEBUG("msg_id: {}", messageAddLog.msg_id);
 
             messageAddLog.msg_name.resize(messageAddLog.header.msg_size);
             filestream.read(messageAddLog.msg_name.data(), messageAddLog.header.msg_size - 3);
@@ -739,17 +737,15 @@ void NAV::UlogFile::readData()
         {
             Ulog::message_remove_logged_s messageRemoveLog;
             messageRemoveLog.header = ulogMsgHeader.msgHeader;
-            uint16_t msg_id{};
-            filestream.read(reinterpret_cast<char*>(&messageRemoveLog.msg_id), sizeof(msg_id));
-            LOG_DEBUG("msg_id: {}", msg_id); //TODO: once callback is enabled, make LOG_DATA
+            filestream.read(reinterpret_cast<char*>(&messageRemoveLog.msg_id), sizeof(messageRemoveLog.msg_id));
+            LOG_DEBUG("msg_id: {}", messageRemoveLog.msg_id); //TODO: once callback is enabled, make LOG_DATA
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'D')
         {
             Ulog::message_data_s messageData;
             messageData.header = ulogMsgHeader.msgHeader;
-            uint16_t msg_id{};
-            filestream.read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(msg_id));
-            LOG_DEBUG("msg_id: {}", msg_id); //TODO: once callback is enabled, make LOG_DATA
+            filestream.read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(messageData.msg_id));
+            LOG_DEBUG("msg_id: {}", messageData.msg_id); //TODO: once callback is enabled, make LOG_DATA
 
             messageData.data.resize(messageData.header.msg_size - 2);
             filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
@@ -759,8 +755,7 @@ void NAV::UlogFile::readData()
         {
             Ulog::message_logging_s messageLog;
             messageLog.header = ulogMsgHeader.msgHeader;
-            uint8_t logLevel{};
-            filestream.read(reinterpret_cast<char*>(&messageLog.log_level), sizeof(logLevel));
+            filestream.read(reinterpret_cast<char*>(&messageLog.log_level), sizeof(messageLog.log_level));
 
             if (messageLog.log_level == 48) // '0'
             {
@@ -799,8 +794,7 @@ void NAV::UlogFile::readData()
                 LOG_WARN("Log-level is out of scope ({}) - possible data loss", messageLog.log_level);
             }
 
-            uint64_t timestamp{};
-            filestream.read(reinterpret_cast<char*>(&messageLog.timestamp), sizeof(timestamp));
+            filestream.read(reinterpret_cast<char*>(&messageLog.timestamp), sizeof(messageLog.timestamp));
             LOG_DATA("messageLog.timestamp [µs]: {}", messageLog.timestamp);
 
             messageLog.message.resize(messageLog.header.msg_size - 9);
@@ -811,8 +805,7 @@ void NAV::UlogFile::readData()
         {
             Ulog::message_logging_tagged_s messageLogTagged;
             messageLogTagged.header = ulogMsgHeader.msgHeader;
-            uint8_t logLevel{};
-            filestream.read(reinterpret_cast<char*>(&messageLogTagged.log_level), sizeof(logLevel));
+            filestream.read(reinterpret_cast<char*>(&messageLogTagged.log_level), sizeof(messageLogTagged.log_level));
 
             if (messageLogTagged.log_level == 48) // '0'
             {
@@ -851,11 +844,9 @@ void NAV::UlogFile::readData()
                 LOG_WARN("Log-level is out of scope ({}) - possible data loss", messageLogTagged.log_level);
             }
 
-            uint16_t tag{};
-            filestream.read(reinterpret_cast<char*>(&messageLogTagged.tag), sizeof(tag));
+            filestream.read(reinterpret_cast<char*>(&messageLogTagged.tag), sizeof(messageLogTagged.tag));
             LOG_DEBUG("messageLogTagged.tag: {}", messageLogTagged.tag);
-            uint64_t timestamp{};
-            filestream.read(reinterpret_cast<char*>(&messageLogTagged.timestamp), sizeof(timestamp));
+            filestream.read(reinterpret_cast<char*>(&messageLogTagged.timestamp), sizeof(messageLogTagged.timestamp));
             LOG_DATA("messageLogTagged.timestamp [µs]: {}", messageLogTagged.timestamp);
 
             messageLogTagged.message.resize(messageLogTagged.header.msg_size - 11);
