@@ -218,11 +218,11 @@ void NAV::UlogFile::readDefinitions()
                     {
                         [[maybe_unused]] uint64_t timestamp_sample{ 0 };
                     }
-                    else if (cell.substr(cell.find(' ') + 1) == "timestamp_sample")
+                    else if (cell.substr(cell.find(' ') + 1) == "time_utc_usec")
                     {
                         [[maybe_unused]] uint64_t time_utc_usec{ 0 };
                     }
-                    else if (cell.substr(cell.find(' ') + 1) == "timestamp_sample")
+                    else if (cell.substr(cell.find(' ') + 1) == "nav_state_timestamp")
                     {
                         [[maybe_unused]] uint64_t nav_state_timestamp{ 0 };
                     }
@@ -248,6 +248,10 @@ void NAV::UlogFile::readDefinitions()
                     else if (cell.substr(cell.find(' ') + 1) == "onboard_control_sensors_present")
                     {
                         [[maybe_unused]] uint32_t onboard_control_sensors_present{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "onboard_control_sensors_enabled")
+                    {
+                        [[maybe_unused]] uint32_t onboard_control_sensors_enabled{ 0 };
                     }
                     else if (cell.substr(cell.find(' ') + 1) == "onboard_control_sensors_health")
                     {
@@ -349,7 +353,7 @@ void NAV::UlogFile::readDefinitions()
                         LOG_ERROR("msg type 'format' - undefined variable in a 'uint8_t' field: {}", cell.substr(cell.find(' ') + 1));
                     }
                 }
-                else if (cell.substr(0, cell.find(' ')) == "float")
+                else if (cell.substr(0, cell.find(' ')).compare(0, 5, "float") >= 0)
                 {
                     if (cell.substr(cell.find(' ') + 1) == "x")
                     {
@@ -419,11 +423,11 @@ void NAV::UlogFile::readDefinitions()
                     {
                         [[maybe_unused]] float heading_offset{ 0 };
                     }
-                    else if (cell.substr(cell.find(' ') + 1) == "q[4]")
+                    else if (cell.substr(cell.find(' ') + 1) == "q")
                     {
                         [[maybe_unused]] std::array<uint8_t, 4>(q){};
                     }
-                    else if (cell.substr(cell.find(' ') + 1) == "delta_q_reset[4]")
+                    else if (cell.substr(cell.find(' ') + 1) == "delta_q_reset")
                     {
                         [[maybe_unused]] std::array<uint8_t, 4>(delta_q_reset){};
                     }
@@ -450,6 +454,34 @@ void NAV::UlogFile::readDefinitions()
                     else if (cell.substr(cell.find(' ') + 1) == "ram_usage")
                     {
                         [[maybe_unused]] float ram_usage{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "lat")
+                    {
+                        [[maybe_unused]] float lat{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "lon")
+                    {
+                        [[maybe_unused]] float lon{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "alt")
+                    {
+                        [[maybe_unused]] float alt{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "alt_ellipsoid")
+                    {
+                        [[maybe_unused]] float alt_ellipsoid{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "noise_per_ms")
+                    {
+                        [[maybe_unused]] float noise_per_ms{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "jamming_indicator")
+                    {
+                        [[maybe_unused]] float jamming_indicator{ 0 };
+                    }
+                    else if (cell.substr(cell.find(' ') + 1) == "timestamp_time_relative")
+                    {
+                        [[maybe_unused]] float timestamp_time_relative{ 0 };
                     }
                     else
                     {
