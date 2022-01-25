@@ -12,9 +12,6 @@ namespace nm = NAV::NodeManager;
 
 #include "UlogFileFormat.hpp"
 
-#include <map>
-#include <variant>
-
 // ----------------------------------------------------------- Basic Node Functions --------------------------------------------------------------
 
 NAV::UlogFile::UlogFile()
@@ -209,9 +206,71 @@ void NAV::UlogFile::readDefinitions()
             // Decoding data format fields
             std::stringstream lineStream(messageFormat.format.substr(messageFormat.format.find(':') + 1));
             std::string cell;
+
+            std::vector<DataField> msgDataFields;
+
+            while (std::getline(lineStream, cell, ';'))
+            {
+                DataField data_field{ cell.substr(0, cell.find(' ')), cell.substr(cell.find(' ') + 1) };
+                msgDataFields.push_back(data_field);
+            }
+
+            if (msgName == "sensor_accel")
+            {
+                messageFormats.insert_or_assign(msgName, msgDataFields);
+            }
+            else if (msgName == "sensor_gyro")
+            {
+                messageFormats.insert_or_assign(msgName, msgDataFields);
+            }
+            else if (msgName == "sensor_mag")
+            {
+                messageFormats.insert_or_assign(msgName, msgDataFields);
+            }
+            else if (msgName == "vehicle_gps_position")
+            {
+                messageFormats.insert_or_assign(msgName, msgDataFields);
+            }
+            else if (msgName == "vehicle_attitude")
+            {
+                messageFormats.insert_or_assign(msgName, msgDataFields);
+            }
+            else if (msgName == "vehicle_air_data")
+            {
+                messageFormats.insert_or_assign(msgName, msgDataFields);
+            }
+            else if (msgName == "vehicle_control_mode")
+            {
+                messageFormats.insert_or_assign(msgName, msgDataFields);
+            }
+            else if (msgName == "vehicle_status")
+            {
+                messageFormats.insert_or_assign(msgName, msgDataFields);
+            }
+            else if (msgName == "cpuload")
+            {
+                messageFormats.insert_or_assign(msgName, msgDataFields);
+            }
+            else
+            {
+                LOG_ERROR("Data format '{}' could not be decoded", msgName);
+            }
+
             while (std::getline(lineStream, cell, ';'))
             {
                 // TODO: fill 'messageFormats' with data (instead of the initializations)
+                // if (msgName == "sensor_accel")
+                // {
+                //     DataField data_field{ cell.substr(0, cell.find(' ')), cell.substr(cell.find(' ') + 1) };
+
+                //     std::vector<DataField> msgDataFields;
+
+                //     msgDataFields.push_back(data_field);
+
+                //     // messageFormats["sensor_accel"] = msgDataFields;
+                //     messageFormats.insert_or_assign("sensor_accel", msgDataFields);
+                // }
+
                 if (cell.substr(0, cell.find(' ')) == "uint64_t")
                 {
                     if (cell.substr(cell.find(' ') + 1) == "timestamp")
@@ -698,14 +757,22 @@ void NAV::UlogFile::readDefinitions()
     readData(); //FIXME: use pollData
 }
 
+auto hashSubscriptionData = [](const NAV::UlogFile::SubscriptionData& sData) {
+    return std::hash<uint8_t>()(sData.multi_id) ^ (std::hash<std::string>()(sData.message_name) << 1);
+};
 /// comparison function
 auto cmpSubscriptionData = [](const NAV::UlogFile::SubscriptionData& lhs, const NAV::UlogFile::SubscriptionData& rhs) {
-    return lhs.message_name == rhs.message_name
-               ? lhs.multi_id < rhs.multi_id
-               : lhs.message_name < rhs.message_name; // NOLINT(hicpp-use-nullptr, modernize-use-nullptr)
+    return lhs.message_name == rhs.message_name && lhs.multi_id == rhs.multi_id;
 };
+
 // Key: [multi_id, msg_name], e.g. [0, "sensor_accel"]
-std::map<NAV::UlogFile::SubscriptionData, std::variant<NAV::UlogFile::SensorAccel, NAV::UlogFile::SensorGyro, NAV::UlogFile::SensorMag>, decltype(cmpSubscriptionData)> epochData{ cmpSubscriptionData };
+std::unordered_map<NAV::UlogFile::SubscriptionData,                                                               // key
+                   std::variant<NAV::UlogFile::SensorAccel, NAV::UlogFile::SensorGyro, NAV::UlogFile::SensorMag>, // value
+                   decltype(hashSubscriptionData),
+                   decltype(cmpSubscriptionData)>
+    epochData{
+        6, hashSubscriptionData, cmpSubscriptionData
+    };
 
 void NAV::UlogFile::readData()
 {
@@ -742,7 +809,7 @@ void NAV::UlogFile::readData()
             filestream.read(reinterpret_cast<char*>(&messageAddLog.msg_id), sizeof(messageAddLog.msg_id));
             LOG_DEBUG("msg_id: {}", messageAddLog.msg_id);
 
-            messageAddLog.msg_name.resize(messageAddLog.header.msg_size);
+            messageAddLog.msg_name.resize(messageAddLog.header.msg_size - 3);
             filestream.read(messageAddLog.msg_name.data(), messageAddLog.header.msg_size - 3);
             LOG_DEBUG("messageAddLog.msg_name: {}", messageAddLog.msg_name);
 
@@ -763,11 +830,11 @@ void NAV::UlogFile::readData()
             Ulog::message_data_s messageData;
             messageData.header = ulogMsgHeader.msgHeader;
             filestream.read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(messageData.msg_id));
-            LOG_DEBUG("msg_id: {}", messageData.msg_id); //TODO: once callback is enabled, make LOG_DATA
+            // LOG_DEBUG("msg_id: {}", messageData.msg_id); //TODO: once callback is enabled, make LOG_DATA
 
             messageData.data.resize(messageData.header.msg_size - 2);
             filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
-            LOG_DEBUG("messageData.data: {}", std::atof(messageData.data.data())); //NOLINT(cert-err34-c)
+            // LOG_DEBUG("messageData.data: {}", std::atof(messageData.data.data())); //NOLINT(cert-err34-c)
 
             if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_accel")
             {
@@ -779,6 +846,7 @@ void NAV::UlogFile::readData()
                 for (const auto& dataField : messageFormat)
                 {
                     [[maybe_unused]] char* currentData = messageData.data.data() + currentDataPos;
+                    LOG_WARN("currentData: {}", currentData);
                     if (dataField.name == "timestamp")
                     {
                         if (dataField.type == "uint64_t")

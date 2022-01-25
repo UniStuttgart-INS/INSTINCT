@@ -10,6 +10,9 @@
 // #include <vector>
 // #include <fstream>
 
+#include <unordered_map>
+#include <variant>
+
 #include "Nodes/DataProvider/IMU/Imu.hpp"
 #include "Nodes/DataProvider/Protocol/FileReader.hpp"
 
@@ -62,7 +65,7 @@ class UlogFile : public Imu, public FileReader
     };
 
     /// Key: message_name, e.g. "sensor_accel"
-    std::map<std::string, std::vector<DataField>> messageFormats;
+    std::unordered_map<std::string, std::vector<DataField>> messageFormats;
 
     struct SensorAccel
     {
@@ -226,7 +229,7 @@ class UlogFile : public Imu, public FileReader
     };
 
     /// Key: msg_id
-    std::map<uint16_t, SubscriptionData> subscribedMessages;
+    std::unordered_map<uint16_t, SubscriptionData> subscribedMessages;
 
     uint64_t currentTimestamp{};
 
