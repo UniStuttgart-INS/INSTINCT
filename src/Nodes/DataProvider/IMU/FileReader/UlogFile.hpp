@@ -54,6 +54,70 @@ class UlogFile : public Imu, public FileReader
     /// @brief Resets the node. Moves the read cursor to the start
     bool resetNode() override;
 
+    /// Key-value pair of the message format
+    struct DataField
+    {
+        std::string type; ///< e.g. "uint64_t"
+        std::string name; ///< e.g. "timestamp"
+    };
+
+    /// Key: message_name, e.g. "sensor_accel"
+    std::map<std::string, std::vector<DataField>> messageFormats;
+
+    struct SensorAccel
+    {
+        uint64_t timestamp;
+        uint64_t timestamp_sample;
+        uint32_t device_id;
+        float x;
+        float y;
+        float z;
+        float temperature;
+        uint32_t error_count;
+        std::array<uint8_t, 3> clip_counter;
+        std::array<uint8_t, 5> _padding0;
+    };
+
+    struct SensorGyro
+    {
+        uint64_t timestamp;
+        uint64_t timestamp_sample;
+        uint32_t device_id;
+        float x;
+        float y;
+        float z;
+        float temperature;
+        uint32_t error_count;
+    };
+
+    struct SensorMag
+    {
+        uint64_t timestamp;
+        uint64_t timestamp_sample;
+        uint32_t device_id;
+        float x;
+        float y;
+        float z;
+        float temperature;
+        uint32_t error_count;
+        bool is_external;
+        std::array<uint8_t, 7> _padding0;
+    };
+
+    //TODO: Declare structs for other sensors, e.g. GPS, etc. (in header)
+
+    /// Combined (sensor-)message name with unique ID
+    struct SubscriptionData
+    {
+        uint8_t multi_id;
+        std::string message_name;
+    };
+
+    /// Key: msg_id
+    std::map<uint16_t, SubscriptionData> subscribedMessages;
+
+    uint64_t currentTimestamp{};
+
   private:
     constexpr static size_t OutputPortIndex_UlogOutput = 0; ///< @brief Flow (UlogOutput)
 

@@ -158,16 +158,6 @@ void NAV::UlogFile::readHeader()
     }
 }
 
-/// Key-value pair of the message format //TODO: Put in header
-struct DataField
-{
-    std::string type; ///< e.g. "uint64_t"
-    std::string name; ///< e.g. "timestamp"
-};
-
-/// Key: message_name, e.g. "sensor_accel"
-std::map<std::string, std::vector<DataField>> messageFormats;
-
 void NAV::UlogFile::readDefinitions()
 {
     // Read message header
@@ -708,53 +698,14 @@ void NAV::UlogFile::readDefinitions()
     readData(); //FIXME: use pollData
 }
 
-// TODO: Put in header
-// struct: sensor_accel:uint64_t timestamp;uint64_t timestamp_sample;uint32_t device_id;float x;float y;float z;float temperature;uint32_t error_count;uint8_t[3] clip_counter;uint8_t[5] _padding0;
-struct SensorAccel
-{
-    uint64_t timestamp;
-    uint64_t timestamp_sample;
-    uint32_t device_id;
-    float x;
-    float y;
-    float z;
-    float temperature;
-    uint32_t error_count;
-    std::array<uint8_t, 3> clip_counter;
-    std::array<uint8_t, 5> _padding0;
-};
-
-struct SensorGyro
-{
-    //TODO: Fill as in SensorAccel
-};
-struct SensorMag
-{
-    //TODO: Fill as in SensorAccel
-};
-
-//TODO: Declare structs for other sensors, e.g. GPS, etc. (in header)
-
-/// Combined (sensor-)message name with unique ID
-struct SubscriptionData
-{
-    uint8_t multi_id;
-    std::string message_name;
-};
-
-/// Key: msg_id
-std::map<uint16_t, SubscriptionData> subscribedMessages;
-
-uint64_t currentTimestamp{};
-
 /// comparison function
-auto cmpSubscriptionData = [](const SubscriptionData& lhs, const SubscriptionData& rhs) {
+auto cmpSubscriptionData = [](const NAV::UlogFile::SubscriptionData& lhs, const NAV::UlogFile::SubscriptionData& rhs) {
     return lhs.message_name == rhs.message_name
                ? lhs.multi_id < rhs.multi_id
                : lhs.message_name < rhs.message_name; // NOLINT(hicpp-use-nullptr, modernize-use-nullptr)
 };
 // Key: [multi_id, msg_name], e.g. [0, "sensor_accel"]
-std::map<SubscriptionData, std::variant<SensorAccel, SensorGyro, SensorMag>, decltype(cmpSubscriptionData)> epochData{ cmpSubscriptionData };
+std::map<NAV::UlogFile::SubscriptionData, std::variant<NAV::UlogFile::SensorAccel, NAV::UlogFile::SensorGyro, NAV::UlogFile::SensorMag>, decltype(cmpSubscriptionData)> epochData{ cmpSubscriptionData };
 
 void NAV::UlogFile::readData()
 {
