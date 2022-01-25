@@ -104,7 +104,119 @@ class UlogFile : public Imu, public FileReader
         std::array<uint8_t, 7> _padding0;
     };
 
-    //TODO: Declare structs for other sensors, e.g. GPS, etc. (in header)
+    struct VehicleGpsPosition
+    {
+        uint64_t timestamp;
+        uint64_t time_utc_usec;
+        int32_t lat;
+        int32_t lon;
+        int32_t alt;
+        int32_t alt_ellipsoid;
+        float s_variance_m_s;
+        float c_variance_rad;
+        float eph;
+        float epv;
+        float hdop;
+        float vdop;
+        int32_t noise_per_ms;
+        int32_t jamming_indicator;
+        float vel_m_s;
+        float vel_n_m_s;
+        float vel_e_m_s;
+        float vel_d_m_s;
+        float cog_rad;
+        int32_t timestamp_time_relative;
+        float heading;
+        float heading_offset;
+        uint8_t fix_type;
+        bool vel_ned_valid;
+        uint8_t satellites_used;
+        std::array<uint8_t, 5> _padding0;
+    };
+
+    struct VehicleAttitude
+    {
+        uint64_t timestamp;
+        std::array<float, 4> q;
+        std::array<float, 4> delta_q_reset;
+        uint8_t quat_reset_counter;
+        std::array<uint8_t, 7> _padding0;
+    };
+
+    struct VehicleAirData
+    {
+        uint64_t timestamp;
+        uint64_t timestamp_sample;
+        uint32_t baro_device_id;
+        float baro_alt_meter;
+        float baro_temp_celcius;
+        float baro_pressure_pa;
+        float rho;
+        std::array<uint8_t, 4> _padding0;
+    };
+
+    struct VehicleControlMode
+    {
+        uint64_t timestamp;
+        bool flag_armed;
+        bool flag_external_manual_override_ok;
+        bool flag_control_manual_enabled;
+        bool flag_control_auto_enabled;
+        bool flag_control_offboard_enabled;
+        bool flag_control_rates_enabled;
+        bool flag_control_attitude_enabled;
+        bool flag_control_yawrate_override_enabled;
+        bool flag_control_rattitude_enabled;
+        bool flag_control_force_enabled;
+        bool flag_control_acceleration_enabled;
+        bool flag_control_velocity_enabled;
+        bool flag_control_position_enabled;
+        bool flag_control_altitude_enabled;
+        bool flag_control_climb_rate_enabled;
+        bool flag_control_termination_enabled;
+        bool flag_control_fixed_hdg_enabled;
+        std::array<uint8_t, 7> _padding0;
+    };
+
+    struct VehicleStatus
+    {
+        uint64_t timestamp;
+        uint64_t nav_state_timestamp;
+        uint32_t onboard_control_sensors_present;
+        uint32_t onboard_control_sensors_enabled;
+        uint32_t onboard_control_sensors_health;
+        uint8_t nav_state;
+        uint8_t arming_state;
+        uint8_t hil_state;
+        bool failsafe;
+        uint8_t system_type;
+        uint8_t system_id;
+        uint8_t component_id;
+        uint8_t vehicle_type;
+        bool is_vtol;
+        bool is_vtol_tailsitter;
+        bool vtol_fw_permanent_stab;
+        bool in_transition_mode;
+        bool in_transition_to_fw;
+        bool rc_signal_lost;
+        uint8_t rc_input_mode;
+        bool data_link_lost;
+        uint8_t data_link_lost_counter;
+        bool high_latency_data_link_lost;
+        bool engine_failure;
+        bool mission_failure;
+        uint8_t failure_detector_status;
+        uint8_t latest_arming_reason;
+        uint8_t latest_disarming_reason;
+        std::array<uint8_t, 5> _padding0;
+    };
+
+    struct Cpuload
+    {
+        uint64_t timestamp;
+        float load;
+        float ram_usage;
+    };
 
     /// Combined (sensor-)message name with unique ID
     struct SubscriptionData
