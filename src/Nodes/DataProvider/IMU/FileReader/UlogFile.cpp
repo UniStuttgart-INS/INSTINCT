@@ -345,7 +345,7 @@ void NAV::UlogFile::readDefinitions()
                 {
                     if (cell.substr(cell.find(' ') + 1) == "clip_counter")
                     {
-                        [[maybe_unused]] std::array<uint8_t, 3>(clip_counter){};
+                        [[maybe_unused]] std::array<uint8_t, 3> clip_counter{};
                     }
                     else if (cell.substr(cell.find(' ') + 1).compare(0, 8, "_padding") >= 0)
                     {
@@ -488,11 +488,11 @@ void NAV::UlogFile::readDefinitions()
                     }
                     else if (cell.substr(cell.find(' ') + 1) == "q")
                     {
-                        [[maybe_unused]] std::array<uint8_t, 4>(q){};
+                        [[maybe_unused]] std::array<uint8_t, 4> q{};
                     }
                     else if (cell.substr(cell.find(' ') + 1) == "delta_q_reset")
                     {
-                        [[maybe_unused]] std::array<uint8_t, 4>(delta_q_reset){};
+                        [[maybe_unused]] std::array<uint8_t, 4> delta_q_reset{};
                     }
                     else if (cell.substr(cell.find(' ') + 1) == "baro_alt_meter")
                     {
@@ -1014,8 +1014,7 @@ void NAV::UlogFile::readData()
         {
             Ulog::message_dropout_s messageDropout;
             messageDropout.header = ulogMsgHeader.msgHeader;
-            uint16_t duration{};
-            filestream.read(reinterpret_cast<char*>(&messageDropout.duration), sizeof(duration));
+            filestream.read(reinterpret_cast<char*>(&messageDropout.duration), sizeof(messageDropout.duration));
             LOG_WARN("Dropout of duration: {} ms", messageDropout.duration);
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'I')
@@ -1055,13 +1054,12 @@ void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
     Ulog::message_info_s messageInfo;
     messageInfo.header.msg_size = msgSize;
     messageInfo.header.msg_type = msgType;
-    uint8_t key_len{};
-    filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(key_len));
+    filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(messageInfo.key_len));
 
     // Read 'key' identifier ('keylength' byte) and its associated 'value'
     messageInfo.key.resize(messageInfo.key_len);
     filestream.read(messageInfo.key.data(), messageInfo.key_len);
-    messageInfo.value.resize(messageInfo.header.msg_size - 1 - messageInfo.key_len); // 'msg_size' contains key and value, but not header
+    messageInfo.value.resize(static_cast<size_t>(messageInfo.header.msg_size - 1 - messageInfo.key_len)); // 'msg_size' contains key and value, but not header
     filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
     LOG_DATA("Information message - key: {}", messageInfo.key);
     LOG_DATA("Information message - value: {}", messageInfo.value);
@@ -1073,15 +1071,13 @@ void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
     Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
     messageInfoMulti.header.msg_size = msgSize;
     messageInfoMulti.header.msg_type = msgType;
-    uint8_t is_continued{};
-    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(is_continued));
-    uint8_t key_len{};
-    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(key_len));
+    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued));
+    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(messageInfoMulti.key_len));
 
     // Read 'key' identifier ('keylength' byte) and its associated 'value'
     messageInfoMulti.key.resize(messageInfoMulti.key_len);
     filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
-    messageInfoMulti.value.resize(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len); // contains 'is_continued' flag in contrast to information message
+    messageInfoMulti.value.resize(static_cast<size_t>(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len)); // contains 'is_continued' flag in contrast to information message
     filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
     LOG_DATA("Information message multi - key_len: {}", messageInfoMulti.key_len);
     LOG_DATA("Information message multi - key: {}", messageInfoMulti.key);
@@ -1095,8 +1091,7 @@ void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
     Ulog::message_info_s messageParam;
     messageParam.header.msg_size = msgSize;
     messageParam.header.msg_type = msgType;
-    uint8_t key_len{};
-    filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(key_len));
+    filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(messageParam.key_len));
 
     // Read 'key' identifier ('keylength' byte) and its associated 'value'
     messageParam.key.resize(messageParam.key_len);
@@ -1113,7 +1108,7 @@ void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
     }
     else
     {
-        messageParam.value.resize(messageParam.header.msg_size - 1 - messageParam.key_len); // 'msg_size' contains key and value, but not header
+        messageParam.value.resize(static_cast<size_t>(messageParam.header.msg_size - 1 - messageParam.key_len)); // 'msg_size' contains key and value, but not header
         filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
         LOG_DATA("Parameter message - key: {}", messageParam.key);
         LOG_DATA("Parameter message - value: {}", messageParam.value);
@@ -1125,14 +1120,12 @@ void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
     Ulog::ulog_message_parameter_default_header_s messageParamDefault;
     messageParamDefault.header.msg_size = msgSize;
     messageParamDefault.header.msg_type = msgType;
-    uint8_t default_types{};
-    filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(default_types));
-    uint8_t key_len{};
-    filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(key_len));
+    filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(messageParamDefault.default_types));
+    filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(messageParamDefault.key_len));
 
     messageParamDefault.key.resize(messageParamDefault.key_len);
     filestream.read(messageParamDefault.key.data(), messageParamDefault.key_len);
-    messageParamDefault.value.resize(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
+    messageParamDefault.value.resize(static_cast<size_t>(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len));
     filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
     LOG_DEBUG("Parameter default message - key: {}", messageParamDefault.key);
     LOG_DEBUG("Parameter default message - value: {}", messageParamDefault.value);
