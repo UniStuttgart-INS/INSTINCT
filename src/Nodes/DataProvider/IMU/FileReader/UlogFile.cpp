@@ -359,11 +359,11 @@ void NAV::UlogFile::readData()
             Ulog::message_data_s messageData;
             messageData.header = ulogMsgHeader.msgHeader;
             filestream.read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(messageData.msg_id));
-            // LOG_DEBUG("msg_id: {}", messageData.msg_id); //TODO: once callback is enabled, make LOG_DATA
+            LOG_DEBUG("msg_id: {}", messageData.msg_id); //TODO: once callback is enabled, make LOG_DATA
 
             messageData.data.resize(messageData.header.msg_size - 2);
             filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
-            // LOG_DEBUG("messageData.data: {}", std::atof(messageData.data.data())); //NOLINT(cert-err34-c)
+            LOG_INFO("messageData.header.msg_size: {}", messageData.header.msg_size);
 
             if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_accel")
             {
@@ -371,21 +371,67 @@ void NAV::UlogFile::readData()
 
                 const auto& messageFormat = messageFormats.at(subscribedMessages.at(messageData.msg_id).message_name);
 
-                size_t currentDataPos = 0;
+                size_t currentExtractLocation = 0;
                 for (const auto& dataField : messageFormat)
                 {
-                    [[maybe_unused]] char* currentData = messageData.data.data() + currentDataPos;
-                    LOG_WARN("currentData: {}", currentData);
-                    if (dataField.name == "timestamp")
+                    char* currentData = messageData.data.data() + currentExtractLocation;
+                    if (dataField.type == "uint64_t")
                     {
-                        if (dataField.type == "uint64_t")
+                        if (dataField.name == "timestamp")
                         {
-                            sensorAccel.timestamp = 1; // currentData << 0 | currentData << 8; // TODO: Bitshift the data in here
-                            currentDataPos += sizeof(uint64_t);
+                            std::memcpy(&sensorAccel.timestamp, currentData, sizeof(sensorAccel.timestamp));
+                            LOG_DEBUG("sensorAccel.timestamp: {}", sensorAccel.timestamp);
                         }
-                        // TODO: else if (if necessary)
-                        // TODO: else WARN
+                        else if (dataField.name == "timestamp_sample")
+                        {
+                            std::memcpy(&sensorAccel.timestamp_sample, currentData, sizeof(sensorAccel.timestamp_sample));
+                            LOG_DATA("sensorAccel.timestamp_sample: {}", sensorAccel.timestamp_sample);
+                        }
+                        else
+                        {
+                            LOG_WARN("dataField.name = '{}' is unknown", dataField.name);
+                        }
+                        currentExtractLocation += sizeof(uint64_t);
                     }
+                    else if (dataField.type == "uint32_t" || dataField.type == "float")
+                    {
+                        if (dataField.name == "device_id")
+                        {
+                            std::memcpy(&sensorAccel.device_id, currentData, sizeof(sensorAccel.device_id));
+                            LOG_DATA("sensorAccel.device_id: {}", sensorAccel.device_id);
+                        }
+                        else if (dataField.name == "error_count")
+                        {
+                            std::memcpy(&sensorAccel.error_count, currentData, sizeof(sensorAccel.error_count));
+                            LOG_DEBUG("sensorAccel.error_count: {}", sensorAccel.error_count);
+                        }
+                        else if (dataField.name == "x")
+                        {
+                            std::memcpy(&sensorAccel.x, currentData, sizeof(sensorAccel.x));
+                            LOG_DEBUG("sensorAccel.x: {}", sensorAccel.x);
+                        }
+                        else if (dataField.name == "y")
+                        {
+                            std::memcpy(&sensorAccel.y, currentData, sizeof(sensorAccel.y));
+                            LOG_DEBUG("sensorAccel.y: {}", sensorAccel.y);
+                        }
+                        else if (dataField.name == "z")
+                        {
+                            std::memcpy(&sensorAccel.z, currentData, sizeof(sensorAccel.z));
+                            LOG_DEBUG("sensorAccel.z: {}", sensorAccel.z);
+                        }
+                        else if (dataField.name == "temperature")
+                        {
+                            std::memcpy(&sensorAccel.temperature, currentData, sizeof(sensorAccel.temperature));
+                            LOG_DEBUG("sensorAccel.temperature: {}", sensorAccel.temperature);
+                        }
+                        else
+                        {
+                            LOG_WARN("dataField.name = '{}' is unknown", dataField.name);
+                        }
+                        currentExtractLocation += sizeof(uint32_t);
+                    }
+
                     // TODO: else if
                     // TODO: else WARN
                 }
