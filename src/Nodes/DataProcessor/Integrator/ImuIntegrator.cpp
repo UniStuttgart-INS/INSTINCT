@@ -645,7 +645,7 @@ void NAV::ImuIntegrator::integrateObservation()
         y = RungeKutta4(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
     }
 
-    posVelAtt__t0->setState_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) });
+    posVelAtt__t0->setState_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) }.normalized());
 
     LOG_DATA("{}: posVelAtt__t0->position_ecef() = {}", nameId(), posVelAtt__t0->position_ecef().transpose());
     LOG_DATA("{}: posVelAtt__t0->position_lla() - posVelAtt__t1->position_lla() = {} [m]", nameId(),
