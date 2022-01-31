@@ -447,12 +447,12 @@ class LooselyCoupledKF : public Node
     /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
     /// @param[in] q_nb Rotation quaternion from body to navigation coordinates
     /// @param[in] leverArm_InsGnss_b l_{ba}^b lever arm from the INS to the GNSS antenna in body-frame coordinates [m]
-    /// @param[in] angularRate_ib_b Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
+    /// @param[in] omega_ib_b Angular rate of body with respect to inertial system in body-frame coordinates in [rad/s]
     /// @param[in] Omega_ie_n Skew-symmetric matrix of the Earth-rotation vector in local navigation frame axes
     /// @return The 6x1 measurement innovation vector 𝜹𝐳
     [[nodiscard]] static Eigen::Matrix<double, 6, 1> measurementInnovation(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_lla,
                                                                            const Eigen::Vector3d& velocityMeasurement_n, const Eigen::Vector3d& velocityEstimate_n,
                                                                            const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss_b,
-                                                                           const Eigen::Vector3d& angularRate_ib_b, const Eigen::Matrix3d& Omega_ie_n);
+                                                                           const Eigen::Vector3d& omega_ib_b, const Eigen::Matrix3d& Omega_ie_n);
 };
 } // namespace NAV

@@ -75,7 +75,7 @@ namespace NAV
 /// @param[in] velocity_n Velocity in [m/s] in local-navigation frame coordinates
 /// @return Yaw angle in [rad]
 ///
-/// @note See Groves (2013) equation (6.14)
+/// @note See \cite Groves2013 Groves, ch. 6.1.4, eq. 6.14, p. 225
 [[nodiscard]] double calcYawFromVelocity(const Eigen::Vector3d& velocity_n);
 
 /// @brief Calculates the Pitch angle from the trajectory defined by the given velocity
@@ -87,7 +87,7 @@ namespace NAV
 /// @param[in] velocity_n Velocity in [m/s] in local-navigation frame coordinates
 /// @return Pitch angle in [rad]
 ///
-/// @note See Groves (2013) equation (6.17)
+/// @note See \cite Groves2013 Groves, ch. 6.1.4, eq. 6.17, p. 225
 [[nodiscard]] double calcPitchFromVelocity(const Eigen::Vector3d& velocity_n);
 
 } // namespace NAV
