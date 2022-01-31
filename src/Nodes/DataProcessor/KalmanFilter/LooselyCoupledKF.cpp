@@ -771,6 +771,14 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     // System Matrix
     Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, beta_a, beta_omega, R_N, R_E, g_0, r_eS_e);
+
+    if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves) // TODO: Remove later: This is for testing the algorithm
+    {
+        F.block<3, 3>(0, 3) *= -1;  // F_12
+        F.block<3, 3>(0, 6) *= -1;  // F_13
+        F.block<3, 3>(0, 12) *= -1; // F_15
+        F.block<3, 3>(3, 0) *= -1;  // F_21
+    }
     LOG_DATA("{}: F =\n{}", nameId(), F);
 
     if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::VanLoan)
