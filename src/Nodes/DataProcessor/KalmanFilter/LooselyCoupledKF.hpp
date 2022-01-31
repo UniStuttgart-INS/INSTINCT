@@ -178,7 +178,7 @@ class LooselyCoupledKF : public Node
 
     /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    double _variance_bad = 10 /* [µg] */;
+    Eigen::Vector3d _variance_bad = 10 /* [µg] */ * Eigen::Vector3d::Ones();
 
     // ###########################################################################################################
 
@@ -192,7 +192,7 @@ class LooselyCoupledKF : public Node
 
     /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    double _variance_bgd = 1 /* [°/h] */;
+    Eigen::Vector3d _variance_bgd = 1 /* [°/h] */ * Eigen::Vector3d::Ones();
 
     // ###########################################################################################################
 
@@ -418,7 +418,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] tau_s Time interval in [s]
     /// @return The 15x15 matrix of system noise covariances
     [[nodiscard]] static Eigen::Matrix<double, 15, 15> systemNoiseCovarianceMatrix(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                                   const double& sigma2_bad, const double& sigma2_bgd,
+                                                                                   const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                                                    const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
                                                                                    const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 

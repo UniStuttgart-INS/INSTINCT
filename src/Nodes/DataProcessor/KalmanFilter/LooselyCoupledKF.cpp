@@ -162,15 +162,17 @@ void NAV::LooselyCoupledKF::guiConfig()
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves)
         {
-            if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the accelerometer dynamic bias##{}", "Standard deviation", size_t(id)).c_str(),
-                                                  configWidth, unitWidth, &_variance_bad, reinterpret_cast<int*>(&_varianceAccelBiasUnits), "µg\0\0",
-                                                  0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the accelerometer dynamic bias##{}", "Standard deviation", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _variance_bad.data(), reinterpret_cast<int*>(&_varianceAccelBiasUnits), "µg\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: variance_bad changed to {}", nameId(), _variance_bad);
+                LOG_DEBUG("{}: variance_bad changed to {}", nameId(), _variance_bad.transpose());
                 LOG_DEBUG("{}: varianceAccelBiasUnits changed to {}", nameId(), _varianceAccelBiasUnits);
                 flow::ApplyChanges();
             }
         }
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.F);
 
         // ----------------------------------------------- Gyroscope -------------------------------------------------
 
@@ -215,13 +217,13 @@ void NAV::LooselyCoupledKF::guiConfig()
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves)
         {
-            if (gui::widgets::InputDoubleWithUnit(fmt::format("{} of the gyro dynamic bias##{}",
-                                                              _varianceGyroBiasUnits == VarianceGyroBiasUnits::deg_h ? "Standard deviation" : "Variance", size_t(id))
-                                                      .c_str(),
-                                                  configWidth, unitWidth, &_variance_bgd, reinterpret_cast<int*>(&_varianceGyroBiasUnits), "°/h\0\0",
-                                                  0.0, 0.0, "%.4e", ImGuiInputTextFlags_CharsScientific))
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the gyro dynamic bias##{}",
+                                                               _varianceGyroBiasUnits == VarianceGyroBiasUnits::deg_h ? "Standard deviation" : "Variance", size_t(id))
+                                                       .c_str(),
+                                                   configWidth, unitWidth, _variance_bgd.data(), reinterpret_cast<int*>(&_varianceGyroBiasUnits), "°/h\0\0",
+                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: variance_bgd changed to {}", nameId(), _variance_bgd);
+                LOG_DEBUG("{}: variance_bgd changed to {}", nameId(), _variance_bgd.transpose());
                 LOG_DEBUG("{}: varianceGyroBiasUnits changed to {}", nameId(), _varianceGyroBiasUnits);
                 flow::ApplyChanges();
             }
@@ -806,31 +808,30 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves)
     {
         // 𝜎²_bad Variance of the accelerometer dynamic bias
-        double sigma2_bad{};
+        Eigen::Vector3d sigma2_bad{};
         switch (_varianceAccelBiasUnits)
         {
         case VarianceAccelBiasUnits::microg:   // [µg]
             sigma2_bad = _variance_bad * 1e-6; // [g]
             sigma2_bad *= InsConst::G_NORM;    // [m / s^2]
-            sigma2_bad = std::pow(sigma2_bad, 2);
+            sigma2_bad = sigma2_bad.array().pow(2);
             break;
         }
         LOG_DATA("{}: sigma2_bad = {} [µg]", nameId(), sigma2_bad);
         // 𝜎²_bgd Variance of the gyro dynamic bias
-        double sigma2_bgd{};
+        Eigen::Vector3d sigma2_bgd{};
         switch (_varianceGyroBiasUnits)
         {
         case VarianceGyroBiasUnits::deg_h:           // [° / h]
             sigma2_bgd = _variance_bgd / 3600.0;     // [° / s];
             sigma2_bgd = trafo::deg2rad(sigma2_bgd); // [rad / s];
-            sigma2_bgd = std::pow(sigma2_bgd, 2);
+            sigma2_bgd = sigma2_bgd.array().pow(2);
             break;
         }
         LOG_DATA("{}: sigma2_bgd = {} [° / h]", nameId(), sigma2_bgd);
 
         _kalmanFilter.Q = systemNoiseCovarianceMatrix(sigma_ra.array().square(), sigma_rg.array().square(), sigma2_bad, sigma2_bgd,
-                                                      F.block<3, 3>(3, 0),
-                                                      T_rn_p,
+                                                      F.block<3, 3>(3, 0), T_rn_p,
                                                       DCM_nb, _tau_KF);
     }
     _kalmanFilter_Q = _kalmanFilter.Q;
@@ -1214,13 +1215,16 @@ Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation(const E
 //                                     System noise covariance matrix 𝐐
 // ###########################################################################################################
 
-Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg, const double& sigma2_bad, const double& sigma2_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
+Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                 const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                 const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
+                                                                                 const Eigen::Matrix3d& DCM_nb, const double& tau_s)
 {
     // Math: \mathbf{Q}_{INS}^n = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^n}^T & {\mathbf{Q}_{31}^n}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^n}^T \\ \mathbf{Q}_{21}^n & \mathbf{Q}_{22}^n & {\mathbf{Q}_{32}^n}^T & {\mathbf{Q}_{42}^n}^T & \mathbf{Q}_{25}^n \\ \mathbf{Q}_{31}^n & \mathbf{Q}_{32}^n & \mathbf{Q}_{33}^n & \mathbf{Q}_{34}^n & \mathbf{Q}_{35}^n \\ \mathbf{0}_3 & \mathbf{Q}_{42}^n & {\mathbf{Q}_{34}^n}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^n & \mathbf{Q}_{52}^n & {\mathbf{Q}_{35}^n}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \qquad \text{P. Groves}\,(14.80)
-    const double S_ra = psdGyroNoise(sigma2_ra, tau_s);
-    const double S_rg = psdAccelNoise(sigma2_rg, tau_s);
-    const double S_bad = psdAccelBiasVariation(sigma2_bad, tau_s);
-    const double S_bgd = psdGyroBiasVariation(sigma2_bgd, tau_s);
+    const Eigen::Vector3d S_ra = psdGyroNoise(sigma2_ra, tau_s);
+    const Eigen::Vector3d S_rg = psdAccelNoise(sigma2_rg, tau_s);
+    const Eigen::Vector3d S_bad = psdAccelBiasVariation(sigma2_bad, tau_s);
+    const Eigen::Vector3d S_bgd = psdGyroBiasVariation(sigma2_bgd, tau_s);
 
     Eigen::Matrix<double, 15, 15> Q = Eigen::Matrix<double, 15, 15>::Zero();
     Q.block<3, 3>(0, 0) = Q_psi_psi(S_rg, S_bgd, tau_s);                            // Q_11

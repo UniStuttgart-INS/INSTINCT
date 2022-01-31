@@ -25,25 +25,25 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] sigma2_ra 𝜎²_ra standard deviation of the noise on the accelerometer specific-force measurements in [m/s^2]
 /// @param[in] tau_i 𝜏ᵢ interval between the input of successive accelerometer outputs to the inertial navigation equations in [s]
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] double psdGyroNoise(const Eigen::Vector3d& sigma2_ra, const double& tau_i);
+[[nodiscard]] Eigen::Vector3d psdGyroNoise(const Eigen::Vector3d& sigma2_ra, const double& tau_i);
 
 /// @brief S_rg Power Spectral Density of the gyroscope random noise
 /// @param[in] sigma2_rg 𝜎²_rg standard deviation of the noise on the gyroscope angular-rate measurements in [rad/s]
 /// @param[in] tau_i 𝜏ᵢ interval between the input of successive gyroscope outputs to the inertial navigation equations in [s]
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] double psdAccelNoise(const Eigen::Vector3d& sigma2_rg, const double& tau_i);
+[[nodiscard]] Eigen::Vector3d psdAccelNoise(const Eigen::Vector3d& sigma2_rg, const double& tau_i);
 
 /// @brief S_bad Power Spectral Density of the accelerometer bias variation
 /// @param[in] sigma2_bad 𝜎²_bad standard deviation of the accelerometer dynamic bias [m/s^2]
 /// @param[in] tau_i 𝜏ᵢ interval between the input of successive accelerometer outputs to the inertial navigation equations in [s]
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] double psdAccelBiasVariation(const double& sigma2_bad, const double& tau_i);
+[[nodiscard]] Eigen::Vector3d psdAccelBiasVariation(const Eigen::Vector3d& sigma2_bad, const double& tau_i);
 
 /// @brief S_bgd Power Spectral Density of the gyroscope bias variation
 /// @param[in] sigma2_bgd 𝜎²_bgd standard deviation of the gyroscope dynamic bias [rad/s]
 /// @param[in] tau_i 𝜏ᵢ interval between the input of successive gyroscope outputs to the inertial navigation equations in [s]
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] double psdGyroBiasVariation(const double& sigma2_bgd, const double& tau_i);
+[[nodiscard]] Eigen::Vector3d psdGyroBiasVariation(const Eigen::Vector3d& sigma2_bgd, const double& tau_i);
 
 /// @brief Submatrix 𝐐_11 of the system noise covariance matrix 𝐐
 /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
@@ -51,7 +51,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_11
 /// @note See Groves (2013) equation (14.81)
-[[nodiscard]] Eigen::Matrix3d Q_psi_psi(const double& S_rg, const double& S_bgd, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_psi_psi(const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const double& tau_s);
 
 /// @brief Submatrix 𝐐_21 of the system noise covariance matrix 𝐐
 /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
@@ -60,7 +60,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_21
 /// @note See Groves (2013) equation (14.81)
-[[nodiscard]] Eigen::Matrix3d Q_dv_psi(const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_dv_psi(const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s);
 
 /// @brief Submatrix 𝐐_22 of the system noise covariance matrix 𝐐
 /// @param[in] S_ra Power Spectral Density of the accelerometer random noise
@@ -71,7 +71,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_22
 /// @note See Groves (2013) equation (14.81)
-[[nodiscard]] Eigen::Matrix3d Q_dv_dv(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_dv_dv(const Eigen::Vector3d& S_ra, const Eigen::Vector3d& S_bad, const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s);
 
 /// @brief Submatrix 𝐐_25 of the system noise covariance matrix 𝐐
 /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
@@ -80,7 +80,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_25
 /// @note See Groves (2013) equation (14.80)
-[[nodiscard]] Eigen::Matrix3d Q_dv_domega(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_dv_domega(const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
 /// @brief Submatrix 𝐐_31 of the system noise covariance matrix 𝐐
 /// @param[in] S_rg Power Spectral Density of the gyroscope random noise
@@ -90,7 +90,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_31
 /// @note See Groves (2013) equation (14.81)
-[[nodiscard]] Eigen::Matrix3d Q_dr_psi(const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_dr_psi(const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s);
 
 /// @brief Submatrix 𝐐_32 of the system noise covariance matrix 𝐐
 /// @param[in] S_ra Power Spectral Density of the accelerometer random noise
@@ -102,7 +102,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_32
 /// @note See Groves (2013) equation (14.81)
-[[nodiscard]] Eigen::Matrix3d Q_dr_dv(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_dr_dv(const Eigen::Vector3d& S_ra, const Eigen::Vector3d& S_bad, const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s);
 
 /// @brief Submatrix 𝐐_33 of the system noise covariance matrix 𝐐
 /// @param[in] S_ra Power Spectral Density of the accelerometer random noise
@@ -114,7 +114,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_33
 /// @note See Groves (2013) equation (14.81)
-[[nodiscard]] Eigen::Matrix3d Q_dr_dr(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& F_21_n, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_dr_dr(const Eigen::Vector3d& S_ra, const Eigen::Vector3d& S_bad, const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& F_21_n, const double& tau_s);
 
 /// @brief Submatrix 𝐐_34 of the system noise covariance matrix 𝐐
 /// @param[in] S_bad Power Spectral Density of the accelerometer bias variation
@@ -123,7 +123,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_34
 /// @note See Groves (2013) equation (14.81)
-[[nodiscard]] Eigen::Matrix3d Q_dr_df(const double& S_bad, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_dr_df(const Eigen::Vector3d& S_bad, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
 /// @brief Submatrix 𝐐_35 of the system noise covariance matrix 𝐐
 /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
@@ -133,7 +133,7 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_35
 /// @note See Groves (2013) equation (14.81)
-[[nodiscard]] Eigen::Matrix3d Q_dr_domega(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_dr_domega(const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
 /// @brief Submatrix 𝐐_42 of the system noise covariance matrix 𝐐
 /// @param[in] S_bad Power Spectral Density of the accelerometer bias variation
@@ -141,14 +141,14 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_42
 /// @note See Groves (2013) equation (14.80)
-[[nodiscard]] Eigen::Matrix3d Q_df_dv(const double& S_bad, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_df_dv(const Eigen::Vector3d& S_bad, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
 /// @brief Submatrix 𝐐_44 of the system noise covariance matrix 𝐐
 /// @param[in] S_bad Power Spectral Density of the accelerometer bias variation
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_44
 /// @note See Groves (2013) equation (14.80)
-[[nodiscard]] Eigen::Matrix3d Q_df_df(const double& S_bad, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_df_df(const Eigen::Vector3d& S_bad, const double& tau_s);
 
 /// @brief Submatrix 𝐐_51 of the system noise covariance matrix 𝐐
 /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
@@ -156,13 +156,13 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_51
 /// @note See Groves (2013) equation (14.80)
-[[nodiscard]] Eigen::Matrix3d Q_domega_psi(const double& S_bgd, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_domega_psi(const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
 /// @brief Submatrix 𝐐_55 of the system noise covariance matrix 𝐐
 /// @param[in] S_bgd Power Spectral Density of the gyroscope bias variation
 /// @param[in] tau_s Time interval in [s]
 /// @return The 3x3 matrix 𝐐_55
 /// @note See Groves (2013) equation (14.80)
-[[nodiscard]] Eigen::Matrix3d Q_domega_domega(const double& S_bgd, const double& tau_s);
+[[nodiscard]] Eigen::Matrix3d Q_domega_domega(const Eigen::Vector3d& S_bgd, const double& tau_s);
 
 } // namespace NAV
