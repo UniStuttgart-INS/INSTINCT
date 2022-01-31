@@ -94,9 +94,9 @@ Eigen::Matrix3d F_dotdv_dv_n(const Eigen::Vector3d& v_n, double latitude, double
     return F_22_n;
 }
 
-Eigen::Matrix3d F_dotdv_dr_n(const Eigen::Vector3d& v_n, double latitude, double height, double R_N, double R_E)
+Eigen::Matrix3d F_dotdv_dr_n(const Eigen::Vector3d& v_n, double latitude, double height, double R_N, double R_E, double g_0, double r_eS_e)
 {
-    // Math: \mathbf{F}_{23}^n = \begin{bmatrix} -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi} & 0 & \frac{v_E^2\tan{\phi}}{(R_E+h)^2}-\frac{v_Nv_D}{(R_N+h)^2} \\ \frac{v_Nv_E}{(R_E+h)\cos^2{\phi}}+2v_N\omega_{ie}\cos{\phi}-2v_D\omega_{ie}\sin{\phi} & 0 & -\frac{v_Nv_E\tan{\phi}+v_Ev_D}{(R_E+h)^2} \\ 2v_E\omega_{ie}\sin{\phi} & 0 & \frac{v_E^2}{(R_E+h)^2}+\frac{v_N^2}{(R_N+h)^2} \end{bmatrix} \qquad \text{P. Groves}\,(14.69)
+    // Math: \mathbf{F}_{23}^n = \begin{bmatrix} -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi} & 0 & \frac{v_E^2\tan{\phi}}{(R_E+h)^2}-\frac{v_Nv_D}{(R_N+h)^2} \\ \frac{v_Nv_E}{(R_E+h)\cos^2{\phi}}+2v_N\omega_{ie}\cos{\phi}-2v_D\omega_{ie}\sin{\phi} & 0 & -\frac{v_Nv_E\tan{\phi}+v_Ev_D}{(R_E+h)^2} \\ 2v_E\omega_{ie}\sin{\phi} & 0 & \frac{v_E^2}{(R_E+h)^2}+\frac{v_N^2}{(R_N+h)^2}-\frac{2g_0}{r_{eS}^e} \end{bmatrix} \qquad \text{P. Groves}\,(14.69)
     Eigen::Matrix3d F_23_n = Eigen::Matrix3d::Zero(3, 3);
 
     const double& v_N = v_n(0);
@@ -118,7 +118,8 @@ Eigen::Matrix3d F_dotdv_dr_n(const Eigen::Vector3d& v_n, double latitude, double
     F_23_n(2, 0) = 2.0 * v_E * InsConst::omega_ie * std::sin(latitude);
 
     F_23_n(2, 2) = std::pow(v_E, 2) / std::pow(R_E + height, 2.0)
-                   + std::pow(v_N, 2) / std::pow(R_N + height, 2.0);
+                   + std::pow(v_N, 2) / std::pow(R_N + height, 2.0)
+                   - 2 * g_0 / r_eS_e;
 
     return F_23_n;
 }

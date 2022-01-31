@@ -690,6 +690,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(position_lla__t1, R_N, R_E);
     LOG_DATA("{}: T_rn_p =\n{}", nameId(), T_rn_p);
 
+    // Gravity at surface level in [m/s^2]
+    double g_0 = calcGravitation_n_SomiglianaAltitude(position_lla__t1(0), 0).norm();
+
+    // Geocentric Radius in [m]
+    double r_eS_e = calcGeocentricRadius(position_lla__t1(0), R_E);
+
     // a_p Acceleration in [m/s^2], in body coordinates
     const Eigen::Vector3d acceleration_b = inertialNavSol->imuObs->imuPos.quatAccel_bp() * inertialNavSol->imuObs->accelUncompXYZ.value()
                                            - _accumulatedImuBiases.biasAccel_b;
@@ -761,7 +767,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // ---------------------------------------------- Prediction -------------------------------------------------
 
     // System Matrix
-    Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, beta_a, beta_omega, R_N, R_E);
+    Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, beta_a, beta_omega, R_N, R_E, g_0, r_eS_e);
     LOG_DATA("{}: F =\n{}", nameId(), F);
 
     if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::VanLoan)
@@ -1032,7 +1038,9 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::
                                                                    const Eigen::Vector3d& beta_a,
                                                                    const Eigen::Vector3d& beta_omega,
                                                                    double R_N,
-                                                                   double R_E)
+                                                                   double R_E,
+                                                                   double g_0,
+                                                                   double r_eS_e)
 {
     const double& latitude = position_lla(0); // Geodetic latitude of the body in [rad]
     const double& altitude = position_lla(2); // Geodetic height of the body in [m]
@@ -1047,7 +1055,7 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::
     F.block<3, 3>(0, 12) = F_dotpsi_dw_n(quaternion_nb.toRotationMatrix());
     F.block<3, 3>(3, 0) = F_dotdv_psi_n(quaternion_nb * specForce_ib_b);
     F.block<3, 3>(3, 3) = F_dotdv_dv_n(velocity_n, latitude, altitude, R_N, R_E);
-    F.block<3, 3>(3, 6) = F_dotdv_dr_n(velocity_n, latitude, altitude, R_N, R_E);
+    F.block<3, 3>(3, 6) = F_dotdv_dr_n(velocity_n, latitude, altitude, R_N, R_E, g_0, r_eS_e);
     F.block<3, 3>(3, 9) = F_dotdv_df_n(quaternion_nb.toRotationMatrix());
     F.block<3, 3>(6, 3) = F_dotdr_dv_n(latitude, altitude, R_N, R_E);
     F.block<3, 3>(6, 6) = F_dotdr_dr_n(velocity_n, latitude, altitude, R_N, R_E);

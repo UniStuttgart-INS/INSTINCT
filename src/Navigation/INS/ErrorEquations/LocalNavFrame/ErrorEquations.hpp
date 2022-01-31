@@ -66,10 +66,12 @@ namespace NAV
 /// @param[in] height Geodetic height of the body in [m]
 /// @param[in] R_N North/South (meridian) earth radius in [m]
 /// @param[in] R_E East/West (prime vertical) earth radius in [m]
+/// @param[in] g_0 Magnitude of the gravity vector in [m/s^2] (see \cite Groves2013 Groves, ch. 2.4.7, eq. 2.135, p. 70)
+/// @param[in] r_eS_e Geocentric radius. The distance of a point on the Earth's surface from the center of the Earth in [m]
 /// @return 3x3 matrix in [m / s^2] for latitude and [1 / s^2] for height
 /// @note See T. Hobiger (2021) Inertialnavigation V08 - equation (8.14, 8.16)
 /// @note See Groves (2013) equation (14.69)
-[[nodiscard]] Eigen::Matrix3d F_dotdv_dr_n(const Eigen::Vector3d& v_n, double latitude, double height, double R_N, double R_E);
+[[nodiscard]] Eigen::Matrix3d F_dotdv_dr_n(const Eigen::Vector3d& v_n, double latitude, double height, double R_N, double R_E, double g_0, double r_eS_e);
 
 /// @brief Calculates the matrix 𝐅_𝜓'_𝛿f
 /// @param[in] C_nb DCM from body to navigation frame

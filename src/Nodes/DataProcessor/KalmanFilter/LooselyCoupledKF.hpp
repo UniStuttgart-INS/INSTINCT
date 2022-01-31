@@ -357,6 +357,8 @@ class LooselyCoupledKF : public Node
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @param[in] R_N Meridian radius of curvature in [m]
     /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
+    /// @param[in] g_0 Magnitude of the gravity vector in [m/s^2] (see \cite Groves2013 Groves, ch. 2.4.7, eq. 2.135, p. 70)
+    /// @param[in] r_eS_e Geocentric radius. The distance of a point on the Earth's surface from the center of the Earth in [m]
     /// @note See Groves (2013) chapter 14.2.4, equation (14.63)
     static Eigen::Matrix<double, 15, 15> systemMatrixF(const Eigen::Quaterniond& quaternion_nb,
                                                        const Eigen::Vector3d& specForce_ib_b,
@@ -366,7 +368,9 @@ class LooselyCoupledKF : public Node
                                                        const Eigen::Vector3d& beta_a,
                                                        const Eigen::Vector3d& beta_omega,
                                                        double R_N,
-                                                       double R_E);
+                                                       double R_E,
+                                                       double g_0,
+                                                       double r_eS_e);
 
     // ###########################################################################################################
     //                                           Noise input matrix 𝐆
