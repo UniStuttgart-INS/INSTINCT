@@ -45,14 +45,14 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
     nm::CreateOutputPin(this, "PVAError", Pin::Type::Flow, { NAV::PVAError::type() });
     nm::CreateOutputPin(this, "ImuBiases", Pin::Type::Flow, { NAV::ImuBiases::type() });
-    nm::CreateOutputPin(this, "x", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_x);
-    nm::CreateOutputPin(this, "P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_P);
-    nm::CreateOutputPin(this, "Phi", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_Phi);
-    nm::CreateOutputPin(this, "Q", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_Q);
-    nm::CreateOutputPin(this, "z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_z);
-    nm::CreateOutputPin(this, "H", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_H);
-    nm::CreateOutputPin(this, "R", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_R);
-    nm::CreateOutputPin(this, "K", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_K);
+    nm::CreateOutputPin(this, "x", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.x);
+    nm::CreateOutputPin(this, "P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.P);
+    nm::CreateOutputPin(this, "Phi", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Phi);
+    nm::CreateOutputPin(this, "Q", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Q);
+    nm::CreateOutputPin(this, "z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.z);
+    nm::CreateOutputPin(this, "H", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.H);
+    nm::CreateOutputPin(this, "R", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.R);
+    nm::CreateOutputPin(this, "K", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.K);
     nm::CreateOutputPin(this, "K*z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_Kz);
 }
 
@@ -800,7 +800,6 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     {
         LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), _phiCalculationAlgorithm);
     }
-    _kalmanFilter_Phi = _kalmanFilter.Phi;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi);
     LOG_DATA("{}: KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
 
@@ -834,16 +833,13 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                       F.block<3, 3>(3, 0), T_rn_p,
                                                       DCM_nb, _tau_KF);
     }
-    _kalmanFilter_Q = _kalmanFilter.Q;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q);
     LOG_DATA("{}: KF.Q =\n{}", nameId(), _kalmanFilter.Q);
 
     // 3. Propagate the state vector estimate from x(+) and x(-)
     // 4. Propagate the error covariance matrix from P(+) and P(-)
     _kalmanFilter.predict();
-    _kalmanFilter_x = _kalmanFilter.x;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_x);
-    _kalmanFilter_P = _kalmanFilter.P;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_P);
     LOG_DATA("{}: KF.x =\n{}", nameId(), _kalmanFilter.x);
     LOG_DATA("{}: KF.P =\n{}", nameId(), _kalmanFilter.P);
@@ -937,13 +933,11 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // ---------------------------------------------- Correction -------------------------------------------------
     // 5. Calculate the measurement matrix H_k
     _kalmanFilter.H = measurementMatrix(T_rn_p, DCM_nb, angularRate_b, _leverArm_InsGnss_b, Omega_ie_n);
-    _kalmanFilter_H = _kalmanFilter.H;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_H);
     LOG_DATA("{}: KF.H =\n{}", nameId(), _kalmanFilter.H);
 
     // 6. Calculate the measurement noise covariance matrix R_k
     _kalmanFilter.R = measurementNoiseCovariance(gnssSigmaSquaredLatLonAlt, gnssSigmaSquaredVelocity);
-    _kalmanFilter_R = _kalmanFilter.R;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_R);
     LOG_DATA("{}: KF.R =\n{}", nameId(), _kalmanFilter.R);
 
@@ -951,7 +945,6 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     _kalmanFilter.z = measurementInnovation(gnssMeasurement->latLonAlt(), _latestInertialNavSol->latLonAlt(),
                                             gnssMeasurement->velocity_n(), _latestInertialNavSol->velocity_n(),
                                             T_rn_p, _latestInertialNavSol->quaternion_nb(), _leverArm_InsGnss_b, angularRate_b, Omega_ie_n);
-    _kalmanFilter_z = _kalmanFilter.z;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_z);
     LOG_DATA("{}: KF.z =\n{}", nameId(), _kalmanFilter.z);
 
@@ -964,11 +957,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // 9. Update the state vector estimate from x(-) to x(+)
     // 10. Update the error covariance matrix from P(-) to P(+)
     _kalmanFilter.correctWithMeasurementInnovation();
-    _kalmanFilter_K = _kalmanFilter.K;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_K);
-    _kalmanFilter_x = _kalmanFilter.x;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_x);
-    _kalmanFilter_P = _kalmanFilter.P;
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_P);
     LOG_DATA("{}: KF.K =\n{}", nameId(), _kalmanFilter.K);
     LOG_DATA("{}: KF.x =\n{}", nameId(), _kalmanFilter.x);

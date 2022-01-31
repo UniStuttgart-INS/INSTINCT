@@ -11,36 +11,71 @@
 namespace NAV
 {
 /// @brief Generalized Kalman Filter class
-template<typename _Scalar, int _n, int _m>
 class KalmanFilter
 {
   public:
+    /// @brief Constructor
+    /// @param[in] n Number of States
+    /// @param[in] m Number of Measurements
+    KalmanFilter(int n, int m)
+    {
+        // x̂ State vector
+        x = Eigen::MatrixXd::Zero(n, 1);
+
+        // 𝐏 Error covariance matrix
+        P = Eigen::MatrixXd::Zero(n, n);
+
+        // 𝚽 State transition matrix
+        Phi = Eigen::MatrixXd::Zero(n, n);
+
+        // 𝐐 System/Process noise covariance matrix
+        Q = Eigen::MatrixXd::Zero(n, n);
+
+        // 𝐳 Measurement vector
+        z = Eigen::MatrixXd::Zero(m, 1);
+
+        // 𝐇 Measurement sensitivity Matrix
+        H = Eigen::MatrixXd::Zero(m, n);
+
+        // 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
+        R = Eigen::MatrixXd::Zero(m, m);
+
+        // 𝐊 Kalman gain matrix
+        K = Eigen::MatrixXd::Zero(n, m);
+
+        // 𝑰 Identity Matrix
+        I = Eigen::MatrixXd::Identity(n, n);
+    }
+
+    /// @brief Default constructor
+    KalmanFilter() = delete;
+
     /// @brief Sets all Vectors and matrices to 0
     void setZero()
     {
-        /// x̂ State vector
-        x = Eigen::Vector<_Scalar, _n>::Zero();
+        // x̂ State vector
+        x.setZero();
 
-        /// 𝐏 Error covariance matrix
-        P = Eigen::Matrix<_Scalar, _n, _n>::Zero();
+        // 𝐏 Error covariance matrix
+        P.setZero();
 
-        /// 𝚽 State transition matrix
-        Phi = Eigen::Matrix<_Scalar, _n, _n>::Zero();
+        // 𝚽 State transition matrix
+        Phi.setZero();
 
-        /// 𝐐 System/Process noise covariance matrix
-        Q = Eigen::Matrix<_Scalar, _n, _n>::Zero();
+        // 𝐐 System/Process noise covariance matrix
+        Q.setZero();
 
-        /// 𝐳 Measurement vector
-        z = Eigen::Vector<_Scalar, _m>::Zero();
+        // 𝐳 Measurement vector
+        z.setZero();
 
-        /// 𝐇 Measurement sensitivity Matrix
-        H = Eigen::Matrix<_Scalar, _m, _n>::Zero();
+        // 𝐇 Measurement sensitivity Matrix
+        H.setZero();
 
-        /// 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-        R = Eigen::Matrix<_Scalar, _m, _m>::Zero();
+        // 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
+        R.setZero();
 
-        /// 𝐊 Kalman gain matrix
-        K = Eigen::Matrix<_Scalar, _n, _m>::Zero();
+        // 𝐊 Kalman gain matrix
+        K.setZero();
     }
 
     /// @brief Do a Time Update
@@ -91,33 +126,43 @@ class KalmanFilter
         P = (I - K * H) * P * (I - K * H).transpose() + K * R * K.transpose();
     }
 
+    /// @brief Updates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ
+    /// @param[in] F System Matrix
+    /// @param[in] tau_s time interval in [s]
+    /// @note See Groves (2013) chapter 14.2.4, equation (14.72)
+    static Eigen::MatrixXd transitionMatrix(const Eigen::MatrixXd& F, double tau_s)
+    {
+        // Transition matrix 𝚽
+        return Eigen::MatrixXd::Identity(F.rows(), F.cols()) + F * tau_s;
+    }
+
     /// x̂ State vector
-    Eigen::Vector<_Scalar, _n> x = Eigen::Vector<_Scalar, _n>::Zero();
+    Eigen::MatrixXd x;
 
     /// 𝐏 Error covariance matrix
-    Eigen::Matrix<_Scalar, _n, _n> P = Eigen::Matrix<_Scalar, _n, _n>::Zero();
+    Eigen::MatrixXd P;
 
     /// 𝚽 State transition matrix
-    Eigen::Matrix<_Scalar, _n, _n> Phi = Eigen::Matrix<_Scalar, _n, _n>::Zero();
+    Eigen::MatrixXd Phi;
 
     /// 𝐐 System/Process noise covariance matrix
-    Eigen::Matrix<_Scalar, _n, _n> Q = Eigen::Matrix<_Scalar, _n, _n>::Zero();
+    Eigen::MatrixXd Q;
 
     /// 𝐳 Measurement vector
-    Eigen::Vector<_Scalar, _m> z = Eigen::Vector<_Scalar, _m>::Zero();
+    Eigen::MatrixXd z;
 
     /// 𝐇 Measurement sensitivity Matrix
-    Eigen::Matrix<_Scalar, _m, _n> H = Eigen::Matrix<_Scalar, _m, _n>::Zero();
+    Eigen::MatrixXd H;
 
     /// 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix
-    Eigen::Matrix<_Scalar, _m, _m> R = Eigen::Matrix<_Scalar, _m, _m>::Zero();
+    Eigen::MatrixXd R;
 
     /// 𝐊 Kalman gain matrix
-    Eigen::Matrix<_Scalar, _n, _m> K = Eigen::Matrix<_Scalar, _n, _m>::Zero();
+    Eigen::MatrixXd K;
 
   private:
     /// 𝑰 Identity Matrix (n x n)
-    const Eigen::Matrix<_Scalar, _n, _n> I = Eigen::Matrix<_Scalar, _n, _n>::Identity();
+    Eigen::MatrixXd I;
 };
 
 /// @brief Updates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ

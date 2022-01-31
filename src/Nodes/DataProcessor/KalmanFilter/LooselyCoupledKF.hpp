@@ -63,32 +63,8 @@ class LooselyCoupledKF : public Node
     constexpr static size_t OUTPUT_PORT_INDEX_K = 9;          ///< @brief 𝐊 Kalman gain matrix
     constexpr static size_t OUTPUT_PORT_INDEX_Kz = 10;        ///< @brief 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector
 
-    /// 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector (to use on output port)
+    /// 𝐊*𝐳 Kalman gain matrix * 𝐳 Measurement vector
     Eigen::MatrixXd _kalmanFilter_Kz = Eigen::MatrixXd::Zero(15, 1);
-
-    /// x̂ State vector (to use on output port)
-    Eigen::MatrixXd _kalmanFilter_x = Eigen::MatrixXd::Zero(15, 1);
-
-    /// 𝐏 Error covariance matrix (to use on output port)
-    Eigen::MatrixXd _kalmanFilter_P = Eigen::MatrixXd::Zero(15, 15);
-
-    /// 𝚽 State transition matrix (to use on output port)
-    Eigen::MatrixXd _kalmanFilter_Phi = Eigen::MatrixXd::Zero(15, 15);
-
-    /// 𝐐 System/Process noise covariance matrix (to use on output port)
-    Eigen::MatrixXd _kalmanFilter_Q = Eigen::MatrixXd::Zero(15, 15);
-
-    /// 𝐳 Measurement vector (to use on output port)
-    Eigen::MatrixXd _kalmanFilter_z = Eigen::MatrixXd::Zero(6, 1);
-
-    /// 𝐇 Measurement sensitivity Matrix (to use on output port)
-    Eigen::MatrixXd _kalmanFilter_H = Eigen::MatrixXd::Zero(6, 15);
-
-    /// 𝐑 = 𝐸{𝐰ₘ𝐰ₘᵀ} Measurement noise covariance matrix (to use on output port)
-    Eigen::MatrixXd _kalmanFilter_R = Eigen::MatrixXd::Zero(6, 6);
-
-    /// 𝐊 Kalman gain matrix (to use on output port)
-    Eigen::MatrixXd _kalmanFilter_K = Eigen::MatrixXd::Zero(15, 6);
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -119,7 +95,7 @@ class LooselyCoupledKF : public Node
     ImuBiases _accumulatedImuBiases;
 
     /// Kalman Filter representation
-    KalmanFilter<double, 15, 6> _kalmanFilter;
+    KalmanFilter _kalmanFilter{ 15, 6 };
 
     // ###########################################################################################################
     //                                                Parameters
@@ -381,6 +357,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @param[in] quaternion_nb Attitude of the body with respect to n-system
     /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.5)
     Eigen::Matrix<double, 15, 12> noiseInputMatrixG(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                     const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega,
