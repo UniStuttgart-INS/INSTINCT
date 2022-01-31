@@ -283,7 +283,7 @@ void NAV::UlogFile::readDefinitions()
     }
     LOG_DEBUG("Read 'Definitions Section' completed");
 
-    readData(); //FIXME: use pollData
+    readData(); //TODO: use pollData
 }
 
 auto hashSubscriptionData = [](const NAV::UlogFile::SubscriptionData& sData) {
@@ -315,7 +315,7 @@ void NAV::UlogFile::readData()
     } ulogMsgHeader{};
 
     // while (true)
-    for (size_t i = 0; i < 100; i++) //FIXME: Quick fix, enable while loop once eof is reached
+    for (size_t i = 0; i < 100; i++) //TODO: Quick fix, enable while loop once eof is reached
     {
         // Reset cursor to position before the while-loop in 'readDefinitions()' reached its break condition
         if (startDataFlag)
@@ -375,65 +375,70 @@ void NAV::UlogFile::readData()
                 for (const auto& dataField : messageFormat)
                 {
                     char* currentData = messageData.data.data() + currentExtractLocation;
-                    if (dataField.type == "uint64_t")
+                    if (dataField.name == "timestamp")
                     {
-                        if (dataField.name == "timestamp")
-                        {
-                            std::memcpy(&sensorAccel.timestamp, currentData, sizeof(sensorAccel.timestamp));
-                            LOG_DEBUG("sensorAccel.timestamp: {}", sensorAccel.timestamp);
-                        }
-                        else if (dataField.name == "timestamp_sample")
-                        {
-                            std::memcpy(&sensorAccel.timestamp_sample, currentData, sizeof(sensorAccel.timestamp_sample));
-                            LOG_DATA("sensorAccel.timestamp_sample: {}", sensorAccel.timestamp_sample);
-                        }
-                        else
-                        {
-                            LOG_WARN("dataField.name = '{}' is unknown", dataField.name);
-                        }
-                        currentExtractLocation += sizeof(uint64_t);
+                        std::memcpy(&sensorAccel.timestamp, currentData, sizeof(sensorAccel.timestamp));
+                        LOG_DEBUG("sensorAccel.timestamp: {}", sensorAccel.timestamp);
+                        currentExtractLocation += sizeof(sensorAccel.timestamp);
                     }
-                    else if (dataField.type == "uint32_t" || dataField.type == "float")
+                    else if (dataField.name == "timestamp_sample")
                     {
-                        if (dataField.name == "device_id")
-                        {
-                            std::memcpy(&sensorAccel.device_id, currentData, sizeof(sensorAccel.device_id));
-                            LOG_DATA("sensorAccel.device_id: {}", sensorAccel.device_id);
-                        }
-                        else if (dataField.name == "error_count")
-                        {
-                            std::memcpy(&sensorAccel.error_count, currentData, sizeof(sensorAccel.error_count));
-                            LOG_DEBUG("sensorAccel.error_count: {}", sensorAccel.error_count);
-                        }
-                        else if (dataField.name == "x")
-                        {
-                            std::memcpy(&sensorAccel.x, currentData, sizeof(sensorAccel.x));
-                            LOG_DEBUG("sensorAccel.x: {}", sensorAccel.x);
-                        }
-                        else if (dataField.name == "y")
-                        {
-                            std::memcpy(&sensorAccel.y, currentData, sizeof(sensorAccel.y));
-                            LOG_DEBUG("sensorAccel.y: {}", sensorAccel.y);
-                        }
-                        else if (dataField.name == "z")
-                        {
-                            std::memcpy(&sensorAccel.z, currentData, sizeof(sensorAccel.z));
-                            LOG_DEBUG("sensorAccel.z: {}", sensorAccel.z);
-                        }
-                        else if (dataField.name == "temperature")
-                        {
-                            std::memcpy(&sensorAccel.temperature, currentData, sizeof(sensorAccel.temperature));
-                            LOG_DEBUG("sensorAccel.temperature: {}", sensorAccel.temperature);
-                        }
-                        else
-                        {
-                            LOG_WARN("dataField.name = '{}' is unknown", dataField.name);
-                        }
-                        currentExtractLocation += sizeof(uint32_t);
+                        std::memcpy(&sensorAccel.timestamp_sample, currentData, sizeof(sensorAccel.timestamp_sample));
+                        LOG_DATA("sensorAccel.timestamp_sample: {}", sensorAccel.timestamp_sample);
+                        currentExtractLocation += sizeof(sensorAccel.timestamp_sample);
                     }
-
-                    // TODO: else if
-                    // TODO: else WARN
+                    else if (dataField.name == "device_id")
+                    {
+                        std::memcpy(&sensorAccel.device_id, currentData, sizeof(sensorAccel.device_id));
+                        LOG_DATA("sensorAccel.device_id: {}", sensorAccel.device_id);
+                        currentExtractLocation += sizeof(sensorAccel.device_id);
+                    }
+                    else if (dataField.name == "error_count")
+                    {
+                        std::memcpy(&sensorAccel.error_count, currentData, sizeof(sensorAccel.error_count));
+                        LOG_DEBUG("sensorAccel.error_count: {}", sensorAccel.error_count);
+                        currentExtractLocation += sizeof(sensorAccel.error_count);
+                    }
+                    else if (dataField.name == "x")
+                    {
+                        std::memcpy(&sensorAccel.x, currentData, sizeof(sensorAccel.x));
+                        LOG_DEBUG("sensorAccel.x: {}", sensorAccel.x);
+                        currentExtractLocation += sizeof(sensorAccel.x);
+                    }
+                    else if (dataField.name == "y")
+                    {
+                        std::memcpy(&sensorAccel.y, currentData, sizeof(sensorAccel.y));
+                        LOG_DEBUG("sensorAccel.y: {}", sensorAccel.y);
+                        currentExtractLocation += sizeof(sensorAccel.y);
+                    }
+                    else if (dataField.name == "z")
+                    {
+                        std::memcpy(&sensorAccel.z, currentData, sizeof(sensorAccel.z));
+                        LOG_DEBUG("sensorAccel.z: {}", sensorAccel.z);
+                        currentExtractLocation += sizeof(sensorAccel.z);
+                    }
+                    else if (dataField.name == "temperature")
+                    {
+                        std::memcpy(&sensorAccel.temperature, currentData, sizeof(sensorAccel.temperature));
+                        LOG_DEBUG("sensorAccel.temperature: {}", sensorAccel.temperature);
+                        currentExtractLocation += sizeof(sensorAccel.temperature);
+                    }
+                    else if (dataField.name == "clip_counter")
+                    {
+                        std::memcpy(&sensorAccel.clip_counter, currentData, sizeof(sensorAccel.clip_counter));
+                        LOG_DEBUG("sensorAccel.clip_counter: {}", sensorAccel.clip_counter);
+                        currentExtractLocation += sizeof(sensorAccel.clip_counter);
+                    }
+                    else if (dataField.name.compare(0, 7, "_padding"))
+                    {
+                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        LOG_DEBUG("sensorAccel: padding");
+                    }
+                    else
+                    {
+                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
+                    }
                 }
                 if (currentTimestamp < sensorAccel.timestamp)
                 {
@@ -458,6 +463,15 @@ void NAV::UlogFile::readData()
 
                     epochData.insert_or_assign(subscriptionData, sensorAccel);
                 }
+            }
+            // else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gyro")
+            // {
+            //     // TODO: else if
+            //     // TODO: else WARN
+            // }
+            else
+            {
+                LOG_ERROR("UKNOWN: subscribedMessages.at(messageData.msg_id).message_name = {}", subscribedMessages.at(messageData.msg_id).message_name);
             }
 
             // TODO: for loop for multiple multi_ids

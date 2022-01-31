@@ -77,8 +77,10 @@ class UlogFile : public Imu, public FileReader
         float z;
         float temperature;
         uint32_t error_count;
-        std::array<uint8_t, 3> clip_counter;
-        std::array<uint8_t, 5> _padding0;
+        uint8_t clip_counter;
+        uint8_t _padding0;
+        // std::array<uint8_t, 3> clip_counter;
+        // std::array<uint8_t, 5> _padding0;
     };
 
     struct SensorGyro
