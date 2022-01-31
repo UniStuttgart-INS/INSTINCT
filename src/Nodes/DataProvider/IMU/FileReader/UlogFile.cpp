@@ -365,15 +365,15 @@ void NAV::UlogFile::readData()
             filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
             LOG_INFO("messageData.header.msg_size: {}", messageData.header.msg_size);
 
-            if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_accel")
+            const auto& messageFormat = messageFormats.at(subscribedMessages.at(messageData.msg_id).message_name);
+
+            size_t currentExtractLocation = 0;
+            for (const auto& dataField : messageFormat)
             {
-                SensorAccel sensorAccel{};
-
-                const auto& messageFormat = messageFormats.at(subscribedMessages.at(messageData.msg_id).message_name);
-
-                size_t currentExtractLocation = 0;
-                for (const auto& dataField : messageFormat)
+                if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_accel")
                 {
+                    SensorAccel sensorAccel{};
+
                     char* currentData = messageData.data.data() + currentExtractLocation;
                     if (dataField.name == "timestamp")
                     {
@@ -439,54 +439,64 @@ void NAV::UlogFile::readData()
                         //FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
+                    if (currentTimestamp < sensorAccel.timestamp)
+                    {
+                        // If new time has come, erase just the old IMU data
+                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
+                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
+                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_mag" });
+
+                        // Update timestamp
+                        currentTimestamp = sensorAccel.timestamp;
+                    }
+                    else if (currentTimestamp > sensorAccel.timestamp)
+                    {
+                        LOG_WARN("currentTimestamp > sensorAccel.timestamp. Not handled. Needs to be handled?");
+                    }
+
+                    if (currentTimestamp == sensorAccel.timestamp)
+                    {
+                        // Save the data
+                        SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                           subscribedMessages.at(messageData.msg_id).message_name };
+
+                        epochData.insert_or_assign(subscriptionData, sensorAccel);
+                    }
                 }
-                if (currentTimestamp < sensorAccel.timestamp)
+                else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gyro")
                 {
-                    // If new time has come, erase just the old IMU data
-                    epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
-                    epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
-                    epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_mag" });
+                    SensorGyro sensorGyro{};
 
-                    // Update timestamp
-                    currentTimestamp = sensorAccel.timestamp;
+                    char* currentData = messageData.data.data() + currentExtractLocation;
+                    if (dataField.name == "timestamp")
+                    {
+                        std::memcpy(&sensorGyro.timestamp, currentData, sizeof(sensorGyro.timestamp));
+                        LOG_DEBUG("sensorGyro.timestamp: {}", sensorGyro.timestamp);
+                        currentExtractLocation += sizeof(sensorGyro.timestamp);
+
+                        // TODO: else if
+                        // TODO: else WARN
+                    }
+                    else
+                    {
+                        LOG_ERROR("UKNOWN: subscribedMessages.at(messageData.msg_id).message_name = {}", subscribedMessages.at(messageData.msg_id).message_name);
+                    }
                 }
-                else if (currentTimestamp > sensorAccel.timestamp)
+
+                // TODO: for loop for multiple multi_ids
+                if (epochData.contains(SubscriptionData{ 0, "sensor_accel" })
+                    && epochData.contains(SubscriptionData{ 0, "sensor_gyro" })
+                    && epochData.contains(SubscriptionData{ 0, "sensor_mag" }))
                 {
-                    LOG_WARN("currentTimestamp > sensorAccel.timestamp. Not handled. Needs to be handled?");
+                    LOG_INFO("Construct ImuObs and invoke callback");
+
+                    // TODO: invoke callback here
+
+                    // Erase just the IMU data
+                    epochData.erase(SubscriptionData{ 0, "sensor_accel" });
+                    epochData.erase(SubscriptionData{ 0, "sensor_gyro" });
+                    epochData.erase(SubscriptionData{ 0, "sensor_mag" });
                 }
-
-                if (currentTimestamp == sensorAccel.timestamp)
-                {
-                    // Save the data
-                    SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
-                                                       subscribedMessages.at(messageData.msg_id).message_name };
-
-                    epochData.insert_or_assign(subscriptionData, sensorAccel);
-                }
-            }
-            // else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gyro")
-            // {
-            //     // TODO: else if
-            //     // TODO: else WARN
-            // }
-            else
-            {
-                LOG_ERROR("UKNOWN: subscribedMessages.at(messageData.msg_id).message_name = {}", subscribedMessages.at(messageData.msg_id).message_name);
-            }
-
-            // TODO: for loop for multiple multi_ids
-            if (epochData.contains(SubscriptionData{ 0, "sensor_accel" })
-                && epochData.contains(SubscriptionData{ 0, "sensor_gyro" })
-                && epochData.contains(SubscriptionData{ 0, "sensor_mag" }))
-            {
-                LOG_INFO("Construct ImuObs and invoke callback");
-
-                // TODO: invoke callback here
-
-                // Erase just the IMU data
-                epochData.erase(SubscriptionData{ 0, "sensor_accel" });
-                epochData.erase(SubscriptionData{ 0, "sensor_gyro" });
-                epochData.erase(SubscriptionData{ 0, "sensor_mag" });
             }
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'L')
