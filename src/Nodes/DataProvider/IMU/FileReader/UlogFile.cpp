@@ -368,12 +368,11 @@ void NAV::UlogFile::readData()
             const auto& messageFormat = messageFormats.at(subscribedMessages.at(messageData.msg_id).message_name);
 
             size_t currentExtractLocation = 0;
-            for (const auto& dataField : messageFormat)
+            if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_accel")
             {
-                if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_accel")
+                SensorAccel sensorAccel{};
+                for (const auto& dataField : messageFormat)
                 {
-                    SensorAccel sensorAccel{};
-
                     char* currentData = messageData.data.data() + currentExtractLocation;
                     if (dataField.name == "timestamp")
                     {
@@ -383,6 +382,7 @@ void NAV::UlogFile::readData()
                     }
                     else if (dataField.name == "timestamp_sample")
                     {
+                        LOG_DEBUG("sensorAccel.timestamp: {}", sensorAccel.timestamp);
                         std::memcpy(&sensorAccel.timestamp_sample, currentData, sizeof(sensorAccel.timestamp_sample));
                         LOG_DATA("sensorAccel.timestamp_sample: {}", sensorAccel.timestamp_sample);
                         currentExtractLocation += sizeof(sensorAccel.timestamp_sample);
@@ -425,12 +425,14 @@ void NAV::UlogFile::readData()
                     }
                     else if (dataField.name == "clip_counter")
                     {
+                        //TODO: Write to array of 3 uint8_t!!!
                         std::memcpy(&sensorAccel.clip_counter, currentData, sizeof(sensorAccel.clip_counter));
                         LOG_DEBUG("sensorAccel.clip_counter: {}", sensorAccel.clip_counter);
                         currentExtractLocation += sizeof(sensorAccel.clip_counter);
                     }
                     else if (dataField.name.compare(0, 7, "_padding"))
                     {
+                        //TODO: Write to array of 5 uint8_t!!!
                         //FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_DEBUG("sensorAccel: padding");
                     }
@@ -439,8 +441,11 @@ void NAV::UlogFile::readData()
                         //FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
+
+                    // Saving only the current data
                     if (currentTimestamp < sensorAccel.timestamp)
                     {
+                        // LOG_ERROR("subscribedMessages: {}", subscribedMessages);
                         // If new time has come, erase just the old IMU data
                         epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
                         epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
@@ -449,12 +454,7 @@ void NAV::UlogFile::readData()
                         // Update timestamp
                         currentTimestamp = sensorAccel.timestamp;
                     }
-                    else if (currentTimestamp > sensorAccel.timestamp)
-                    {
-                        LOG_WARN("currentTimestamp > sensorAccel.timestamp. Not handled. Needs to be handled?");
-                    }
-
-                    if (currentTimestamp == sensorAccel.timestamp)
+                    else if (currentTimestamp == sensorAccel.timestamp)
                     {
                         // Save the data
                         SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
@@ -462,41 +462,96 @@ void NAV::UlogFile::readData()
 
                         epochData.insert_or_assign(subscriptionData, sensorAccel);
                     }
+                    else if (currentTimestamp > sensorAccel.timestamp)
+                    {
+                        LOG_WARN("currentTimestamp {} > sensorAccel.timestamp {}. Not handled. Needs to be handled?", currentTimestamp, sensorAccel.timestamp);
+                    }
+                    else
+                    {
+                        LOG_ERROR("timestamp comparison failed");
+                    }
                 }
-                else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gyro")
-                {
-                    SensorGyro sensorGyro{};
+            }
+            else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gyro")
+            {
+                SensorGyro sensorGyro{};
 
+                for (const auto& dataField : messageFormat)
+                {
                     char* currentData = messageData.data.data() + currentExtractLocation;
                     if (dataField.name == "timestamp")
                     {
                         std::memcpy(&sensorGyro.timestamp, currentData, sizeof(sensorGyro.timestamp));
                         LOG_DEBUG("sensorGyro.timestamp: {}", sensorGyro.timestamp);
                         currentExtractLocation += sizeof(sensorGyro.timestamp);
-
-                        // TODO: else if
-                        // TODO: else WARN
+                    }
+                    else if (dataField.name == "timestamp_sample")
+                    {
+                        std::memcpy(&sensorGyro.timestamp_sample, currentData, sizeof(sensorGyro.timestamp_sample));
+                        LOG_DEBUG("sensorGyro.timestamp_sample: {}", sensorGyro.timestamp_sample);
+                        currentExtractLocation += sizeof(sensorGyro.timestamp_sample);
+                    }
+                    else if (dataField.name == "device_id")
+                    {
+                        std::memcpy(&sensorGyro.device_id, currentData, sizeof(sensorGyro.device_id));
+                        LOG_DEBUG("sensorGyro.device_id: {}", sensorGyro.device_id);
+                        currentExtractLocation += sizeof(sensorGyro.device_id);
+                    }
+                    else if (dataField.name == "x")
+                    {
+                        std::memcpy(&sensorGyro.x, currentData, sizeof(sensorGyro.x));
+                        LOG_DEBUG("sensorGyro.x: {}", sensorGyro.x);
+                        currentExtractLocation += sizeof(sensorGyro.x);
+                    }
+                    else if (dataField.name == "y")
+                    {
+                        std::memcpy(&sensorGyro.y, currentData, sizeof(sensorGyro.y));
+                        LOG_DEBUG("sensorGyro.y: {}", sensorGyro.y);
+                        currentExtractLocation += sizeof(sensorGyro.y);
+                    }
+                    else if (dataField.name == "z")
+                    {
+                        std::memcpy(&sensorGyro.z, currentData, sizeof(sensorGyro.z));
+                        LOG_DEBUG("sensorGyro.z: {}", sensorGyro.z);
+                        currentExtractLocation += sizeof(sensorGyro.z);
+                    }
+                    else if (dataField.name == "temperature")
+                    {
+                        std::memcpy(&sensorGyro.temperature, currentData, sizeof(sensorGyro.temperature));
+                        LOG_DEBUG("sensorGyro.temperature: {}", sensorGyro.temperature);
+                        currentExtractLocation += sizeof(sensorGyro.temperature);
+                    }
+                    else if (dataField.name == "error_count")
+                    {
+                        std::memcpy(&sensorGyro.error_count, currentData, sizeof(sensorGyro.error_count));
+                        LOG_DEBUG("sensorGyro.error_count: {}", sensorGyro.error_count);
+                        currentExtractLocation += sizeof(sensorGyro.error_count);
                     }
                     else
                     {
-                        LOG_ERROR("UKNOWN: subscribedMessages.at(messageData.msg_id).message_name = {}", subscribedMessages.at(messageData.msg_id).message_name);
+                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
                 }
+            }
+            else
+            {
+                LOG_ERROR("UKNOWN: subscribedMessages.at(messageData.msg_id).message_name = {}", subscribedMessages.at(messageData.msg_id).message_name);
+            }
 
-                // TODO: for loop for multiple multi_ids
-                if (epochData.contains(SubscriptionData{ 0, "sensor_accel" })
-                    && epochData.contains(SubscriptionData{ 0, "sensor_gyro" })
-                    && epochData.contains(SubscriptionData{ 0, "sensor_mag" }))
-                {
-                    LOG_INFO("Construct ImuObs and invoke callback");
+            // TODO: for loop for multiple multi_ids
+            if (epochData.contains(SubscriptionData{ 0, "sensor_accel" })
+                && epochData.contains(SubscriptionData{ 0, "sensor_gyro" })
+                && epochData.contains(SubscriptionData{ 0, "sensor_mag" }))
+            {
+                LOG_INFO("Construct ImuObs and invoke callback");
 
-                    // TODO: invoke callback here
+                // TODO: invoke callback here
 
-                    // Erase just the IMU data
-                    epochData.erase(SubscriptionData{ 0, "sensor_accel" });
-                    epochData.erase(SubscriptionData{ 0, "sensor_gyro" });
-                    epochData.erase(SubscriptionData{ 0, "sensor_mag" });
-                }
+                // Erase just the IMU data
+                epochData.erase(SubscriptionData{ 0, "sensor_accel" });
+                epochData.erase(SubscriptionData{ 0, "sensor_gyro" });
+                epochData.erase(SubscriptionData{ 0, "sensor_mag" });
             }
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'L')
