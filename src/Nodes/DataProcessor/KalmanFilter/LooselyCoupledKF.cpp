@@ -773,10 +773,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
-        Eigen::Matrix<double, 15, 6> G = noiseInputMatrixG(sigma_ra.array().square(), sigma_rg.array().square(), beta_a, beta_omega);
+        Eigen::Matrix<double, 15, 12> G = noiseInputMatrixG(sigma_ra.array().square(), sigma_rg.array().square(), beta_a, beta_omega, quaternion_nb__t1);
         LOG_DATA("{}: G =\n{}", nameId(), G);
 
-        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 6>(F, G, _tau_KF);
+        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 12>(F, G, _tau_KF);
+        LOG_DATA("{}: Phi =\n{}", nameId(), Phi);
+        LOG_DATA("{}: Q =\n{}", nameId(), Q);
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
         _kalmanFilter.Phi = Phi;
@@ -1086,13 +1088,20 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::
 //                                           Noise input matrix 𝐆
 // ###########################################################################################################
 
-Eigen::Matrix<double, 15, 6> NAV::LooselyCoupledKF::noiseInputMatrixG(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega)
+Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrixG(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                       const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega,
+                                                                       const Eigen::Quaterniond& quaternion_nb)
 {
-    // Math: \mathbf{G}_{a} = \begin{bmatrix} 0 & 0 \\ 0 & 0 \\ 0 & 0 \\ \mathbf{G}_{a} & 0 \\ 0 & \mathbf{G}_{\omega} \end{bmatrix} \quad \text{T. Hobiger}\,(6.5)
-    Eigen::Matrix<double, 15, 6> G = Eigen::Matrix<double, 15, 6>::Zero();
+    // DCM matrix from body to navigation frame
+    const Eigen::Matrix3d dcm_nb = quaternion_nb.toRotationMatrix();
 
-    G.block<3, 3>(9, 0) = SCALE_FACTOR_ACCELERATION * noiseInputMatrixG_a(sigma2_ra, beta_a);
-    G.block<3, 3>(12, 3) = SCALE_FACTOR_ANGULAR_RATE * noiseInputMatrixG_omega(sigma2_rg, beta_omega);
+    // Math: \mathbf{G}_{a} = \begin{bmatrix} 0 & 0 \\ 0 & 0 \\ 0 & 0 \\ \mathbf{G}_{a} & 0 \\ 0 & \mathbf{G}_{\omega} \end{bmatrix} \quad \text{T. Hobiger}\,(6.5)
+    Eigen::Matrix<double, 15, 12> G = Eigen::Matrix<double, 15, 12>::Zero();
+
+    G.block<3, 3>(0, 0) = SCALE_FACTOR_ATTITUDE * -dcm_nb;
+    G.block<3, 3>(3, 3) = dcm_nb;
+    G.block<3, 3>(9, 6) = SCALE_FACTOR_ACCELERATION * noiseInputMatrixG_a(sigma2_ra, beta_a);
+    G.block<3, 3>(12, 9) = SCALE_FACTOR_ANGULAR_RATE * noiseInputMatrixG_omega(sigma2_rg, beta_omega);
 
     return G;
 }

@@ -9,6 +9,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include "util/Logger.hpp"
+
 namespace NAV
 {
 
@@ -75,6 +77,9 @@ template<typename _Scalar, int _Dim, int _ColsG>
     //               └                ┘
     Eigen::Matrix<_Scalar, _Dim, _Dim> Phi = B.template bottomRightCorner<_Dim, _Dim>().transpose();
     Eigen::Matrix<_Scalar, _Dim, _Dim> Q = Phi * B.template topRightCorner<_Dim, _Dim>();
+
+    LOG_DATA("Phi =\n{}", Phi);
+    LOG_DATA("Q =\n{}", Q);
 
     return { Phi, Q };
 }

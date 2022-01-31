@@ -382,7 +382,9 @@ class LooselyCoupledKF : public Node
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.5)
-    Eigen::Matrix<double, 15, 6> noiseInputMatrixG(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg, const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega);
+    Eigen::Matrix<double, 15, 12> noiseInputMatrixG(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                    const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega,
+                                                    const Eigen::Quaterniond& quaternion_nb);
 
     /// @brief Submatrix 𝐆_a of the noise input matrix 𝐆
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
