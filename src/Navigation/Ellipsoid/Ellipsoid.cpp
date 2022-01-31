@@ -58,4 +58,11 @@ double calcGeocentricRadius(const double& latitude, const double& R_E, const dou
     return R_E * std::sqrt(std::pow(std::cos(latitude), 2) + std::pow((1.0 - e_squared) * std::sin(latitude), 2));
 }
 
+Eigen::Matrix3d conversionMatrixCartesianCurvilinear(const Eigen::Vector3d& position_lla, const double& R_N, const double& R_E)
+{
+    return Eigen::DiagonalMatrix<double, 3>{ 1.0 / (R_N + position_lla(2)),
+                                             1.0 / ((R_E + position_lla(2)) * std::cos(position_lla(0))),
+                                             -1.0 };
+}
+
 } // namespace NAV

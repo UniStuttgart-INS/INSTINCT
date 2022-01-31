@@ -16,7 +16,8 @@ namespace nm = NAV::NodeManager;
 #include "Navigation/Constants.hpp"
 #include "Navigation/Ellipsoid/Ellipsoid.hpp"
 #include "Navigation/INS/Functions.hpp"
-#include "Navigation/INS/ErrorEquations/LocalNavFrame/ErrorEquations.hpp"
+#include "Navigation/INS/LocalNavFrame/ErrorEquations.hpp"
+#include "Navigation/INS/LocalNavFrame/ProcessNoise.hpp"
 #include "Navigation/Math/Math.hpp"
 #include "Navigation/Math/VanLoan.hpp"
 #include "Navigation/Gravity/Gravity.hpp"
@@ -1100,37 +1101,10 @@ Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrixG(const Eig
 
     G.block<3, 3>(0, 0) = SCALE_FACTOR_ATTITUDE * -dcm_nb;
     G.block<3, 3>(3, 3) = dcm_nb;
-    G.block<3, 3>(9, 6) = SCALE_FACTOR_ACCELERATION * noiseInputMatrixG_a(sigma2_ra, beta_a);
-    G.block<3, 3>(12, 9) = SCALE_FACTOR_ANGULAR_RATE * noiseInputMatrixG_omega(sigma2_rg, beta_omega);
+    G.block<3, 3>(9, 6) = SCALE_FACTOR_ACCELERATION * (_randomProcessAccel == RandomProcess::RandomWalk ? G_RandomWalk(sigma2_ra) : G_GaussMarkov1(sigma2_ra, beta_a));
+    G.block<3, 3>(12, 9) = SCALE_FACTOR_ANGULAR_RATE * (_randomProcessGyro == RandomProcess::RandomWalk ? G_RandomWalk(sigma2_rg) : G_GaussMarkov1(sigma2_rg, beta_omega));
 
     return G;
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_a(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& beta_a)
-{
-    if (_randomProcessAccel == RandomProcess::RandomWalk) // Random walk (beta = 0)
-    {
-        // Math: \mathbf{G}_{a} = \begin{bmatrix} \sqrt{\sigma_{a,1}^2} & 0 & 0 \\ 0 & \sqrt{\sigma_{a,2}^2} & 0 \\ 0 & 0 & \sqrt{\sigma_{a,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-        return Eigen::DiagonalMatrix<double, 3>{ sigma2_ra.cwiseSqrt() };
-    }
-    // else if (randomProcessAccel == RandomProcess::GaussMarkov1)
-
-    // Math: \mathbf{G}_{a} = \begin{bmatrix} \sqrt{2 \sigma_{a,1}^2 \beta_{a,1}} & 0 & 0 \\ 0 & \sqrt{2 \sigma_{a,2}^2 \beta_{a,2}} & 0 \\ 0 & 0 & \sqrt{2 \sigma_{a,3}^2 \beta_{a,3}} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta_a.cwiseProduct(sigma2_ra)).cwiseSqrt() };
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::noiseInputMatrixG_omega(const Eigen::Vector3d& sigma2_rg, const Eigen::Vector3d& beta_omega)
-{
-    if (_randomProcessGyro == RandomProcess::RandomWalk) // Random walk (beta = 0)
-    {
-        // Math: \mathbf{G}_{\omega} = \begin{bmatrix} \sqrt{\sigma_{\omega,1}^2} & 0 & 0 \\ 0 & \sqrt{\sigma_{\omega,2}^2} & 0 \\ 0 & 0 & \sqrt{\sigma_{\omega,3}^2} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-
-        return Eigen::DiagonalMatrix<double, 3>{ sigma2_rg.cwiseSqrt() };
-    }
-    // else if (randomProcessGyro == RandomProcess::GaussMarkov1)
-
-    // Math: \mathbf{G}_{\omega} = \begin{bmatrix} \sqrt{2 \sigma_{\omega,1}^2 \beta_{\omega,1}} & 0 & 0 \\ 0 & \sqrt{2 \sigma_{\omega,2}^2 \beta_{\omega,2}} & 0 \\ 0 & 0 & \sqrt{2 \sigma_{\omega,3}^2 \beta_{\omega,3}} \end{bmatrix} \quad \text{T. Hobiger}\,(6.3)
-    return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta_omega.cwiseProduct(sigma2_rg)).cwiseSqrt() };
 }
 
 // ###########################################################################################################
@@ -1249,19 +1223,19 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix
     const double S_bgd = psdGyroBiasVariation(sigma2_bgd, tau_s);
 
     Eigen::Matrix<double, 15, 15> Q = Eigen::Matrix<double, 15, 15>::Zero();
-    Q.block<3, 3>(0, 0) = systemNoiseCovariance_11(S_rg, S_bgd, tau_s);
-    Q.block<3, 3>(3, 0) = systemNoiseCovariance_21(S_rg, S_bgd, F_21_n, tau_s);
-    Q.block<3, 3>(3, 3) = systemNoiseCovariance_22(S_ra, S_bad, S_rg, S_bgd, F_21_n, tau_s);
-    Q.block<3, 3>(3, 12) = systemNoiseCovariance_25(S_bgd, F_21_n, DCM_nb, tau_s);
-    Q.block<3, 3>(6, 0) = systemNoiseCovariance_31(S_rg, S_bgd, F_21_n, T_rn_p, tau_s);
-    Q.block<3, 3>(6, 3) = systemNoiseCovariance_32(S_ra, S_bad, S_rg, S_bgd, F_21_n, T_rn_p, tau_s);
-    Q.block<3, 3>(6, 6) = systemNoiseCovariance_33(S_ra, S_bad, S_rg, S_bgd, T_rn_p, F_21_n, tau_s);
-    Q.block<3, 3>(6, 9) = systemNoiseCovariance_34(S_bgd, T_rn_p, DCM_nb, tau_s);
-    Q.block<3, 3>(6, 12) = systemNoiseCovariance_35(S_bgd, F_21_n, T_rn_p, DCM_nb, tau_s);
-    Q.block<3, 3>(9, 3) = systemNoiseCovariance_42(S_bad, DCM_nb, tau_s);
-    Q.block<3, 3>(9, 9) = systemNoiseCovariance_44(S_bad, tau_s);
-    Q.block<3, 3>(12, 0) = systemNoiseCovariance_51(S_bgd, DCM_nb, tau_s);
-    Q.block<3, 3>(12, 12) = systemNoiseCovariance_55(S_bad, tau_s);
+    Q.block<3, 3>(0, 0) = Q_psi_psi(S_rg, S_bgd, tau_s);                            // Q_11
+    Q.block<3, 3>(3, 0) = Q_dv_psi(S_rg, S_bgd, F_21_n, tau_s);                     // Q_21
+    Q.block<3, 3>(3, 3) = Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, F_21_n, tau_s);         // Q_22
+    Q.block<3, 3>(3, 12) = Q_dv_domega(S_bgd, F_21_n, DCM_nb, tau_s);               // Q_25
+    Q.block<3, 3>(6, 0) = Q_dr_psi(S_rg, S_bgd, F_21_n, T_rn_p, tau_s);             // Q_31
+    Q.block<3, 3>(6, 3) = Q_dr_dv(S_ra, S_bad, S_rg, S_bgd, F_21_n, T_rn_p, tau_s); // Q_32
+    Q.block<3, 3>(6, 6) = Q_dr_dr(S_ra, S_bad, S_rg, S_bgd, T_rn_p, F_21_n, tau_s); // Q_33
+    Q.block<3, 3>(6, 9) = Q_dr_df(S_bgd, T_rn_p, DCM_nb, tau_s);                    // Q_34
+    Q.block<3, 3>(6, 12) = Q_dr_domega(S_bgd, F_21_n, T_rn_p, DCM_nb, tau_s);       // Q_35
+    Q.block<3, 3>(9, 3) = Q_df_dv(S_bad, DCM_nb, tau_s);                            // Q_42
+    Q.block<3, 3>(9, 9) = Q_df_df(S_bad, tau_s);                                    // Q_44
+    Q.block<3, 3>(12, 0) = Q_domega_psi(S_bgd, DCM_nb, tau_s);                      // Q_51
+    Q.block<3, 3>(12, 12) = Q_domega_domega(S_bad, tau_s);                          // Q_55
 
     Q.block<3, 3>(0, 3) = Q.block<3, 3>(3, 0).transpose();   // Q_21^T
     Q.block<3, 3>(0, 6) = Q.block<3, 3>(6, 0).transpose();   // Q_31^T
@@ -1272,106 +1246,10 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix
     Q.block<3, 3>(3, 9) = Q.block<3, 3>(9, 3).transpose();   // Q_42^T
     Q.block<3, 3>(0, 12) = Q.block<3, 3>(12, 0).transpose(); // Q_51^T
 
-    // TODO: Scale the Q matrix
+    Q.middleRows<3>(0) *= std::pow(SCALE_FACTOR_ATTITUDE, 2);
+    Q.middleRows<2>(6) *= std::pow(SCALE_FACTOR_LAT_LON, 2);
+    Q.middleRows<3>(9) *= std::pow(SCALE_FACTOR_ACCELERATION, 2);
+    Q.middleRows<3>(12) *= std::pow(SCALE_FACTOR_ANGULAR_RATE, 2);
 
     return Q;
-}
-
-double NAV::LooselyCoupledKF::psdGyroNoise(const Eigen::Vector3d& sigma2_ra, const double& tau_i)
-{
-    // Math: S_{ra} = \sigma_{ra}^2\tau_i \qquad \text{P. Groves}\,(14.83)
-    return sigma2_ra.mean() * tau_i; // TODO: This is only a temporary fix. Here the values should be accounted for, for each axis separately.
-}
-
-double NAV::LooselyCoupledKF::psdAccelNoise(const Eigen::Vector3d& sigma2_rg, const double& tau_i)
-{
-    // Math: S_{rg} = \sigma_{rg}^2\tau_i \qquad \text{P. Groves}\,(14.83)
-    return sigma2_rg.mean() * tau_i; // TODO: This is only a temporary fix. Here the values should be accounted for, for each axis separately.
-}
-
-double NAV::LooselyCoupledKF::psdAccelBiasVariation(const double& sigma2_bad, const double& tau_i)
-{
-    // Math: S_{bad} = \frac{\sigma_{bad}^2}{\tau_i} \qquad \text{P. Groves}\,(14.84)
-    return sigma2_bad / tau_i;
-}
-
-double NAV::LooselyCoupledKF::psdGyroBiasVariation(const double& sigma2_bgd, const double& tau_i)
-{
-    // Math: S_{bgd} = \frac{\sigma_{bgd}^2}{\tau_i} \qquad \text{P. Groves}\,(14.84)
-    return sigma2_bgd / tau_i;
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::conversionMatrixCartesianCurvilinear(const Eigen::Vector3d& position_lla, const double& R_N, const double& R_E)
-{
-    return Eigen::DiagonalMatrix<double, 3>{ 1.0 / (R_N + position_lla(2)),
-                                             1.0 / ((R_E + position_lla(2)) * std::cos(position_lla(0))),
-                                             -1.0 };
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_11(const double& S_rg, const double& S_bgd, const double& tau_s)
-{
-    return (S_rg * tau_s + 1.0 / 3.0 * S_bgd * std::pow(tau_s, 3)) * Eigen::Matrix3d::Identity();
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_21(const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s)
-{
-    return (0.5 * S_rg * std::pow(tau_s, 2) + 0.25 * S_bgd * std::pow(tau_s, 4)) * F_21_n;
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_25(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
-{
-    return 1.0 / 3.0 * S_bgd * std::pow(tau_s, 3) * F_21_n * DCM_nb;
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_22(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const double& tau_s)
-{
-    return (S_ra * tau_s + 1.0 / 3.0 * S_bad * std::pow(tau_s, 3)) * Eigen::Matrix3d::Identity()
-           + (1.0 / 3.0 * S_rg * std::pow(tau_s, 3) + 0.2 * S_bgd * std::pow(tau_s, 5)) * F_21_n * F_21_n.transpose();
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_31(const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s)
-{
-    return (1.0 / 3.0 * S_rg * std::pow(tau_s, 3) + 0.2 * S_bgd * std::pow(tau_s, 5)) * T_rn_p * F_21_n;
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_32(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const double& tau_s)
-{
-    return (0.5 * S_ra * std::pow(tau_s, 2) + 0.25 * S_bad * std::pow(tau_s, 4)) * T_rn_p
-           + (0.25 * S_rg * std::pow(tau_s, 4) + 1.0 / 6.0 * S_bgd * std::pow(tau_s, 6)) * T_rn_p * F_21_n * F_21_n.transpose();
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_33(const double& S_ra, const double& S_bad, const double& S_rg, const double& S_bgd, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& F_21_n, const double& tau_s)
-{
-    return (1.0 / 3.0 * S_ra * std::pow(tau_s, 3) + 0.2 * S_bad * std::pow(tau_s, 5)) * T_rn_p * T_rn_p
-           + (0.2 * S_rg * std::pow(tau_s, 5) + 1.0 / 7.0 * S_bgd * std::pow(tau_s, 7)) * T_rn_p * F_21_n * F_21_n.transpose() * T_rn_p;
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_34(const double& S_bad, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
-{
-    return 1.0 / 3.0 * S_bad * std::pow(tau_s, 3) * T_rn_p * DCM_nb.transpose();
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_35(const double& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
-{
-    return 0.25 * S_bgd * std::pow(tau_s, 4) * T_rn_p * F_21_n * DCM_nb.transpose();
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_42(const double& S_bad, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
-{
-    return 0.5 * S_bad * std::pow(tau_s, 2) * DCM_nb;
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_44(const double& S_bad, const double& tau_s)
-{
-    return S_bad * tau_s * Eigen::Matrix3d::Identity();
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_51(const double& S_bgd, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
-{
-    return 0.5 * S_bgd * std::pow(tau_s, 2) * DCM_nb;
-}
-
-Eigen::Matrix3d NAV::LooselyCoupledKF::systemNoiseCovariance_55(const double& S_bgd, const double& tau_s)
-{
-    return S_bgd * tau_s * Eigen::Matrix3d::Identity();
 }
