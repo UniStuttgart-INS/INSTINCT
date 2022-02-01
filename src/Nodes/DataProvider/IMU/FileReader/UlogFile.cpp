@@ -468,7 +468,7 @@ void NAV::UlogFile::readData()
                     }
                     else
                     {
-                        LOG_ERROR("timestamp comparison failed");
+                        LOG_ERROR("sensorAccel - timestamp comparison failed");
                     }
                 }
             }
@@ -531,6 +531,35 @@ void NAV::UlogFile::readData()
                     {
                         //FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
+                    }
+
+                    // Saving only the current data //TODO: Possible to put this in a function?
+                    if (currentTimestamp < sensorGyro.timestamp)
+                    {
+                        // LOG_ERROR("subscribedMessages: {}", subscribedMessages);
+                        // If new time has come, erase just the old IMU data
+                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
+                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
+                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_mag" });
+
+                        // Update timestamp
+                        currentTimestamp = sensorGyro.timestamp;
+                    }
+                    else if (currentTimestamp == sensorGyro.timestamp)
+                    {
+                        // Save the data
+                        SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                           subscribedMessages.at(messageData.msg_id).message_name };
+
+                        epochData.insert_or_assign(subscriptionData, sensorGyro);
+                    }
+                    else if (currentTimestamp > sensorGyro.timestamp)
+                    {
+                        LOG_WARN("currentTimestamp {} > sensorGyro.timestamp {}. Not handled. Needs to be handled?", currentTimestamp, sensorGyro.timestamp);
+                    }
+                    else
+                    {
+                        LOG_ERROR("sensorGyro - timestamp comparison failed");
                     }
                 }
             }
