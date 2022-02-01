@@ -360,7 +360,7 @@ The state transition matrix and the system/process noise covariance matrix are c
 
 1. Form a \f$ 2n \times 2n \f$ matrix called \f$ \mathbf{A} \f$ (\f$ n \f$ is the dimension of \f$ \mathbf{x} \f$ and \f$ \mathbf{W} \f$ is the power spectral density of the noise \f$ W(t) \f$)
 \fl{equation,eq-LCKF_n-Loan-A}
-  \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G} \\
+  \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
                                 \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
 \f}
 

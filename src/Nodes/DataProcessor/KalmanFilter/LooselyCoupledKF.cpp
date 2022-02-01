@@ -1087,7 +1087,7 @@ Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrixG(const Eig
     // DCM matrix from body to navigation frame
     const Eigen::Matrix3d dcm_nb = quaternion_nb.toRotationMatrix();
 
-    // Math: \mathbf{G}_{a} = \begin{bmatrix} 0 & 0 \\ 0 & 0 \\ 0 & 0 \\ \mathbf{G}_{a} & 0 \\ 0 & \mathbf{G}_{\omega} \end{bmatrix} \quad \text{T. Hobiger}\,(6.5)
+    // Math: \mathbf{G}_{a} = \begin{bmatrix} -\mathbf{C}_b^n & 0 & 0 & 0 \\ 0 & \mathbf{C}_b^n & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & \mathbf{G}_{a} & 0 \\ 0 & 0 & 0 & \mathbf{G}_{\omega} \end{bmatrix} \quad \text{T. Hobiger}\,(6.5)
     Eigen::Matrix<double, 15, 12> G = Eigen::Matrix<double, 15, 12>::Zero();
 
     G.block<3, 3>(0, 0) = SCALE_FACTOR_ATTITUDE * -dcm_nb;
