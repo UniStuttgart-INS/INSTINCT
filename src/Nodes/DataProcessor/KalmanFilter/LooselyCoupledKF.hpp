@@ -349,7 +349,7 @@ class LooselyCoupledKF : public Node
     /// @brief Calculates the noise input matrix 𝐆
     /// @param[in] quaternion_nb Attitude of the body with respect to n-system
     /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
-    Eigen::Matrix<double, 15, 12> noiseInputMatrixG(const Eigen::Quaterniond& quaternion_nb);
+    [[nodiscard]] static Eigen::Matrix<double, 15, 12> noiseInputMatrixG(const Eigen::Quaterniond& quaternion_nb);
 
     /// @brief Calculates the noise scale matrix 𝐖
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
@@ -360,10 +360,10 @@ class LooselyCoupledKF : public Node
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @param[in] tau_s Time interval in [s]
     /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
-    Eigen::Matrix<double, 12, 12> noiseScaleMatrixW(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                    const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                    const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega,
-                                                    const double& tau_s);
+    [[nodiscard]] static Eigen::Matrix<double, 12, 12> noiseScaleMatrixW(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                         const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                         const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega,
+                                                                         const double& tau_s);
 
     /// @brief System noise covariance matrix 𝐐_{k-1}
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
