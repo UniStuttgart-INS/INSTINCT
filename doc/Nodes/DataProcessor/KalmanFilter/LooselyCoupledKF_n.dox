@@ -272,23 +272,23 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      -\mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3      \\
-       \mathbf{0}_3   & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_3      \\
-       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3      \\
-       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{G}_f & \mathbf{0}_3      \\
-       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{G}_\omega \\
+      -\mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{I}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-4.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[pink!20]{m-1-1}{m-1-1}
-      \fhighlight[lightgray!20]{m-2-2}{m-2-2}
-      \fhighlight[brown!20]{m-4-3}{m-4-3}
-      \fhighlight[darkgray!20]{m-5-4}{m-5-4}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-4-3}{m-4-3}
+      \fhighlight[lightgray!20]{m-5-4}{m-5-4}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
-  \mathbf{W}
+  \mathbf{w}
 \f}
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -301,20 +301,53 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
 
 Using this we can see that \f$ \highlight[magenta!20]{\boldsymbol{\beta}_f} = \mathbf{0}_3 \f$ and \f$ \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \mathbf{0}_3 \f$.
 
-The terms in \f$ \mathbf{G} \f$ are scaled factors for the noise and depend on the amplitude of the power spectral density (PSD) of the noise process.
-For a random walk (white noise) this is \f$ \sigma^2 \f$ and therefore
+The terms in the noise input matrix \f$ \mathbf{G} \f$ are not scaled and therefore need to be compensated with a noise scale matrix \f$ \mathbf{W} \f$ depending on the amplitude of the power spectral density (PSD) of the noise process.
 
-\fl{equation,eq-LCKF_n-random-walk-G}
-  \highlight[brown!20]{\mathbf{G}_f} = \begin{pmatrix} \sqrt{\sigma_{f}^2} &          0          &          0          \\
-                                                                0          & \sqrt{\sigma_{f}^2} &          0          \\
-                                                                0          &          0          & \sqrt{\sigma_{f}^2} \end{pmatrix}, \qquad
-  \highlight[darkgray!20]{\mathbf{G}_\omega} = \begin{pmatrix} \sqrt{\sigma_{\omega}^2} &            0             &            0             \\
-                                                                          0             & \sqrt{\sigma_{\omega}^2} &            0             \\
-                                                                          0             &            0             & \sqrt{\sigma_{\omega}^2} \end{pmatrix}
+\fl{equation,eq-LCKF_n-random-walk-noise-scale-matrix-W}
+  \mathbf{W} =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
+    {
+      \mathbf{S}_{rg} & \mathbf{0}_3    & \mathbf{0}_3     & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{S}_{ra} & \mathbf{0}_3     & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{0}_3    & \mathbf{S}_{bad} & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{0}_3    & \mathbf{0}_3     & \mathbf{S}_{bgd} \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-3-3}{m-3-3}
+      \fhighlight[lightgray!20]{m-4-4}{m-4-4}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices which entries are filled with the followingPSDs.
+
+White noise has a PSD of \f$ \sigma^2 \f$ and therefore the <b>PSDs of the accelerometer and gyro noise</b> are
+
+\fl{equation,eq-LCKF_n-random-walk-S-noise}
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
 \f}
 where
-- \f$ \sigma_{f}^2 \f$ is the variance of the noise on the accelerometer specific-force measurements
-- \f$ \sigma_{\omega}^2 \f$ is the variance of the noise on the gyro angular-rate measurements
+- \f$ \sigma_{ra} \f$ is the standard deviation of the noise on the accelerometer specific-force measurements
+- \f$ \sigma_{rg} \f$ is the standard deviation of the noise on the gyro angular-rate measurements
+- \f$ \tau_i \f$ is the interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
+
+Similarly, the <b>Bias variation PSDs</b> are
+
+\fl{equation,eq-LCKF_n-random-walk-S-bias}
+  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_i} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_i}, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{bad} \f$ standard deviation of the accelerometer dynamic bias
+- \f$ \sigma_{bgd} \f$ standard deviation of the gyro dynamic bias
+
+see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.83/14.84, p. 592
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -339,10 +372,10 @@ where
 
 The amplitude of the power spectral density (PSD) of a Gauss-Markov-1 process is \f$ 2\sigma^2 \beta \f$ and therefore
 \fl{equation,eq-LCKF_n-gm1-G}
-  \highlight[brown!20]{\mathbf{G}_f} = \begin{pmatrix} \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               &                0               \\
+  \highlight[pink!20]{\mathbf{G}_f} = \begin{pmatrix} \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               &                0               \\
                                                                       0               & \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               \\
                                                                       0               &                0               & \sqrt{2\sigma_{f}^2 \beta_{f}} \end{pmatrix}, \qquad
-  \highlight[darkgray!20]{\mathbf{G}_\omega} = \begin{pmatrix} \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     &                    0                     \\
+  \highlight[lightgray!20]{\mathbf{G}_\omega} = \begin{pmatrix} \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     &                    0                     \\
                                                                                   0                     & \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     \\
                                                                                   0                     &                    0                     & \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} \end{pmatrix}
 \f}
