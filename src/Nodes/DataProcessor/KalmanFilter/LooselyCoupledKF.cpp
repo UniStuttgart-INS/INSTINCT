@@ -779,7 +779,10 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         Eigen::Matrix<double, 15, 12> G = noiseInputMatrixG(sigma_ra.array().square(), sigma_rg.array().square(), beta_a, beta_omega, quaternion_nb__t1);
         LOG_DATA("{}: G =\n{}", nameId(), G);
 
-        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 12>(F, G, _tau_KF);
+        Eigen::Matrix<double, 12, 12> W = Eigen::Matrix<double, 12, 12>::Identity();
+        LOG_DATA("{}: W =\n{}", nameId(), W);
+
+        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 12>(F, G, W, _tau_KF);
         LOG_DATA("{}: Phi =\n{}", nameId(), Phi);
         LOG_DATA("{}: Q =\n{}", nameId(), Q);
 
