@@ -77,10 +77,9 @@ class UlogFile : public Imu, public FileReader
         float z;
         float temperature;
         uint32_t error_count;
-        uint8_t clip_counter;
-        uint8_t _padding0;
-        // std::array<uint8_t, 3> clip_counter;
-        // std::array<uint8_t, 5> _padding0;
+        std::array<uint8_t, 3> clip_counter;
+
+        static constexpr uint8_t padding = 5;
     };
 
     struct SensorGyro
@@ -106,7 +105,8 @@ class UlogFile : public Imu, public FileReader
         float temperature;
         uint32_t error_count;
         bool is_external;
-        std::array<uint8_t, 7> _padding0;
+
+        static constexpr uint8_t padding = 7;
     };
 
     struct VehicleGpsPosition

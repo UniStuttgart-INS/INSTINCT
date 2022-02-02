@@ -425,15 +425,13 @@ void NAV::UlogFile::readData()
                     }
                     else if (dataField.name == "clip_counter")
                     {
-                        //TODO: Write to array of 3 uint8_t!!!
-                        std::memcpy(&sensorAccel.clip_counter, currentData, sizeof(sensorAccel.clip_counter));
-                        LOG_DEBUG("sensorAccel.clip_counter: {}", sensorAccel.clip_counter);
-                        currentExtractLocation += sizeof(sensorAccel.clip_counter);
+                        std::memcpy(sensorAccel.clip_counter.data(), currentData, sensorAccel.clip_counter.size());
+                        LOG_DEBUG("sensorAccel.clip_counter: {}", fmt::join(sensorAccel.clip_counter, ", "));
+                        currentExtractLocation += sensorAccel.clip_counter.size();
                     }
-                    else if (dataField.name.compare(0, 7, "_padding"))
+                    else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
                     {
-                        //TODO: Write to array of 5 uint8_t!!!
-                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        currentExtractLocation += SensorAccel::padding;
                         LOG_DEBUG("sensorAccel: padding");
                     }
                     else
@@ -442,10 +440,9 @@ void NAV::UlogFile::readData()
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
 
-                    // Saving only the current data
+                    // Check timestamp
                     if (currentTimestamp < sensorAccel.timestamp)
                     {
-                        // LOG_ERROR("subscribedMessages: {}", subscribedMessages);
                         // If new time has come, erase just the old IMU data
                         epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
                         epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
@@ -454,21 +451,19 @@ void NAV::UlogFile::readData()
                         // Update timestamp
                         currentTimestamp = sensorAccel.timestamp;
                     }
-                    else if (currentTimestamp == sensorAccel.timestamp)
+                    else if (currentTimestamp > sensorAccel.timestamp)
+                    {
+                        LOG_WARN("currentTimestamp {} > sensorAccel.timestamp {}. Not handled. Needs to be handled?", currentTimestamp, sensorAccel.timestamp);
+                    }
+
+                    // Saving only the current data
+                    if (currentTimestamp == sensorAccel.timestamp)
                     {
                         // Save the data
                         SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
                                                            subscribedMessages.at(messageData.msg_id).message_name };
 
                         epochData.insert_or_assign(subscriptionData, sensorAccel);
-                    }
-                    else if (currentTimestamp > sensorAccel.timestamp)
-                    {
-                        LOG_WARN("currentTimestamp {} > sensorAccel.timestamp {}. Not handled. Needs to be handled?", currentTimestamp, sensorAccel.timestamp);
-                    }
-                    else
-                    {
-                        LOG_ERROR("sensorAccel - timestamp comparison failed");
                     }
                 }
             }
@@ -536,7 +531,6 @@ void NAV::UlogFile::readData()
                     // Saving only the current data //TODO: Possible to put this in a function?
                     if (currentTimestamp < sensorGyro.timestamp)
                     {
-                        // LOG_ERROR("subscribedMessages: {}", subscribedMessages);
                         // If new time has come, erase just the old IMU data
                         epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
                         epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
