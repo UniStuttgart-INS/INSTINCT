@@ -151,7 +151,7 @@ void NAV::LooselyCoupledKF::guiConfig()
             }
         }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the noise on the\naccelerometer specific-force measurements##{}", "Standard deviation", size_t(id)).c_str(),
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\naccelerometer specific-force measurements##{}", size_t(id)).c_str(),
                                                configWidth, unitWidth, _stdev_ra.data(), reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
@@ -162,12 +162,12 @@ void NAV::LooselyCoupledKF::guiConfig()
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the accelerometer dynamic bias##{}", "Standard deviation", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _variance_bad.data(), reinterpret_cast<int*>(&_varianceAccelBiasUnits), "µg\0\0",
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the accelerometer dynamic bias##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _stdev_bad.data(), reinterpret_cast<int*>(&_stdevAccelBiasUnits), "µg\0m/s^2\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: variance_bad changed to {}", nameId(), _variance_bad.transpose());
-                LOG_DEBUG("{}: varianceAccelBiasUnits changed to {}", nameId(), _varianceAccelBiasUnits);
+                LOG_DEBUG("{}: variance_bad changed to {}", nameId(), _stdev_bad.transpose());
+                LOG_DEBUG("{}: varianceAccelBiasUnits changed to {}", nameId(), _stdevAccelBiasUnits);
                 flow::ApplyChanges();
             }
         }
@@ -204,9 +204,7 @@ void NAV::LooselyCoupledKF::guiConfig()
             }
         }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the noise on\nthe gyro angular-rate measurements##{}",
-                                                           _stdevGyroNoiseUnits == StdevGyroNoiseUnits::deg_hr_sqrtHz ? "Standard deviation" : "Variance", size_t(id))
-                                                   .c_str(),
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on\nthe gyro angular-rate measurements##{}", size_t(id)).c_str(),
                                                configWidth, unitWidth, _stdev_rg.data(), reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
@@ -217,14 +215,12 @@ void NAV::LooselyCoupledKF::guiConfig()
 
         if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves)
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("{} of the gyro dynamic bias##{}",
-                                                               _varianceGyroBiasUnits == VarianceGyroBiasUnits::deg_h ? "Standard deviation" : "Variance", size_t(id))
-                                                       .c_str(),
-                                                   configWidth, unitWidth, _variance_bgd.data(), reinterpret_cast<int*>(&_varianceGyroBiasUnits), "°/h\0\0",
+            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the gyro dynamic bias##{}", size_t(id)).c_str(),
+                                                   configWidth, unitWidth, _stdev_bgd.data(), reinterpret_cast<int*>(&_stdevGyroBiasUnits), "°/h\0rad/s\0\0",
                                                    "%.2e", ImGuiInputTextFlags_CharsScientific))
             {
-                LOG_DEBUG("{}: variance_bgd changed to {}", nameId(), _variance_bgd.transpose());
-                LOG_DEBUG("{}: varianceGyroBiasUnits changed to {}", nameId(), _varianceGyroBiasUnits);
+                LOG_DEBUG("{}: variance_bgd changed to {}", nameId(), _stdev_bgd.transpose());
+                LOG_DEBUG("{}: varianceGyroBiasUnits changed to {}", nameId(), _stdevGyroBiasUnits);
                 flow::ApplyChanges();
             }
         }
@@ -384,10 +380,10 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["stdevAccelNoiseUnits"] = _stdevAccelNoiseUnits;
     j["stdev_rg"] = _stdev_rg;
     j["stdevGyroNoiseUnits"] = _stdevGyroNoiseUnits;
-    j["variance_bad"] = _variance_bad;
-    j["varianceAccelBiasUnits"] = _varianceAccelBiasUnits;
-    j["variance_bgd"] = _variance_bgd;
-    j["varianceGyroBiasUnits"] = _varianceGyroBiasUnits;
+    j["variance_bad"] = _stdev_bad;
+    j["varianceAccelBiasUnits"] = _stdevAccelBiasUnits;
+    j["variance_bgd"] = _stdev_bgd;
+    j["varianceGyroBiasUnits"] = _stdevGyroBiasUnits;
 
     j["gnssMeasurementUncertaintyPositionUnit"] = _gnssMeasurementUncertaintyPositionUnit;
     j["gnssMeasurementUncertaintyPosition"] = _gnssMeasurementUncertaintyPosition;
@@ -454,19 +450,19 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     }
     if (j.contains("variance_bad"))
     {
-        _variance_bad = j.at("variance_bad");
+        _stdev_bad = j.at("variance_bad");
     }
     if (j.contains("varianceAccelBiasUnits"))
     {
-        j.at("varianceAccelBiasUnits").get_to(_varianceAccelBiasUnits);
+        j.at("varianceAccelBiasUnits").get_to(_stdevAccelBiasUnits);
     }
     if (j.contains("variance_bgd"))
     {
-        _variance_bgd = j.at("variance_bgd");
+        _stdev_bgd = j.at("variance_bgd");
     }
     if (j.contains("varianceGyroBiasUnits"))
     {
-        j.at("varianceGyroBiasUnits").get_to(_varianceGyroBiasUnits);
+        j.at("varianceGyroBiasUnits").get_to(_stdevGyroBiasUnits);
     }
     // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
     if (j.contains("gnssMeasurementUncertaintyPositionUnit"))
@@ -767,6 +763,32 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     }
     LOG_DATA("{}: sigma_rg = {} [rad / (s · √(s))]", nameId(), sigma_rg.transpose());
 
+    // 𝜎_bad Standard deviation of the accelerometer dynamic bias [m / s^2]
+    Eigen::Vector3d sigma_bad{};
+    switch (_stdevAccelBiasUnits)
+    {
+    case StdevAccelBiasUnits::microg:  // [µg]
+        sigma_bad = _stdev_bad * 1e-6; // [g]
+        sigma_bad *= InsConst::G_NORM; // [m / s^2]
+        break;
+    case StdevAccelBiasUnits::m_s2: // [m / s^2]
+        break;
+    }
+    LOG_DATA("{}: sigma_bad = {} [m / s^2]", nameId(), sigma_bad.transpose());
+
+    // 𝜎_bgd Standard deviation of the gyro dynamic bias [rad / s]
+    Eigen::Vector3d sigma_bgd{};
+    switch (_stdevGyroBiasUnits)
+    {
+    case StdevGyroBiasUnits::deg_h:            // [° / h]
+        sigma_bgd = _stdev_bgd / 3600.0;       // [° / s]
+        sigma_bgd = trafo::deg2rad(sigma_bgd); // [rad / s]
+        break;
+    case StdevGyroBiasUnits::rad_s: // [rad / s]
+        break;
+    }
+    LOG_DATA("{}: sigma_bgd = {} [rad / s]", nameId(), sigma_bgd.transpose());
+
     // ---------------------------------------------- Prediction -------------------------------------------------
 
     // System Matrix
@@ -809,30 +831,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // 2. Calculate the system noise covariance matrix Q_{k-1}
     if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves)
     {
-        // 𝜎²_bad Variance of the accelerometer dynamic bias
-        Eigen::Vector3d sigma2_bad{};
-        switch (_varianceAccelBiasUnits)
-        {
-        case VarianceAccelBiasUnits::microg:   // [µg]
-            sigma2_bad = _variance_bad * 1e-6; // [g]
-            sigma2_bad *= InsConst::G_NORM;    // [m / s^2]
-            sigma2_bad = sigma2_bad.array().pow(2);
-            break;
-        }
-        LOG_DATA("{}: sigma2_bad = {} [µg]", nameId(), sigma2_bad);
-        // 𝜎²_bgd Variance of the gyro dynamic bias
-        Eigen::Vector3d sigma2_bgd{};
-        switch (_varianceGyroBiasUnits)
-        {
-        case VarianceGyroBiasUnits::deg_h:           // [° / h]
-            sigma2_bgd = _variance_bgd / 3600.0;     // [° / s];
-            sigma2_bgd = trafo::deg2rad(sigma2_bgd); // [rad / s];
-            sigma2_bgd = sigma2_bgd.array().pow(2);
-            break;
-        }
-        LOG_DATA("{}: sigma2_bgd = {} [° / h]", nameId(), sigma2_bgd);
-
-        _kalmanFilter.Q = systemNoiseCovarianceMatrix(sigma_ra.array().square(), sigma_rg.array().square(), sigma2_bad, sigma2_bgd,
+        _kalmanFilter.Q = systemNoiseCovarianceMatrix(sigma_ra.array().square(), sigma_rg.array().square(),
+                                                      sigma_bad.array().square(), sigma_bgd.array().square(),
                                                       F.block<3, 3>(3, 0), T_rn_p,
                                                       DCM_nb, _tau_KF);
     }

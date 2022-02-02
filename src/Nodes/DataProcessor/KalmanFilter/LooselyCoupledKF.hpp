@@ -145,30 +145,32 @@ class LooselyCoupledKF : public Node
     // ###########################################################################################################
 
     /// Possible Units for the Variance of the accelerometer dynamic bias
-    enum class VarianceAccelBiasUnits
+    enum class StdevAccelBiasUnits
     {
         microg, ///< [µg]
+        m_s2,   ///< [m / s^2]
     };
     /// Gui selection for the Unit of the input variance_bad parameter
-    VarianceAccelBiasUnits _varianceAccelBiasUnits = VarianceAccelBiasUnits::microg;
+    StdevAccelBiasUnits _stdevAccelBiasUnits = StdevAccelBiasUnits::microg;
 
     /// @brief 𝜎²_bad Variance of the accelerometer dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    Eigen::Vector3d _variance_bad = 10 /* [µg] */ * Eigen::Vector3d::Ones();
+    Eigen::Vector3d _stdev_bad = 10 /* [µg] */ * Eigen::Vector3d::Ones();
 
     // ###########################################################################################################
 
     /// Possible Units for the Variance of the accelerometer dynamic bias
-    enum class VarianceGyroBiasUnits
+    enum class StdevGyroBiasUnits
     {
         deg_h, ///< [°/h]
+        rad_s, ///< [1/s]
     };
     /// Gui selection for the Unit of the input variance_bad parameter
-    VarianceGyroBiasUnits _varianceGyroBiasUnits = VarianceGyroBiasUnits::deg_h;
+    StdevGyroBiasUnits _stdevGyroBiasUnits = StdevGyroBiasUnits::deg_h;
 
     /// @brief 𝜎²_bgd Variance of the gyro dynamic bias
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
-    Eigen::Vector3d _variance_bgd = 1 /* [°/h] */ * Eigen::Vector3d::Ones();
+    Eigen::Vector3d _stdev_bgd = 1 /* [°/h] */ * Eigen::Vector3d::Ones();
 
     // ###########################################################################################################
 

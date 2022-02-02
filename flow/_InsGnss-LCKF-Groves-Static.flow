@@ -612,25 +612,25 @@
                 },
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
-                        "0": 0.005
+                        "0": 0.001
                     },
                     "1": {
-                        "0": 0.005
+                        "0": 0.001
                     },
                     "2": {
-                        "0": 0.01
+                        "0": 0.001
                     }
                 },
                 "gnssMeasurementUncertaintyPositionUnit": 3,
                 "gnssMeasurementUncertaintyVelocity": {
                     "0": {
-                        "0": 0.01
+                        "0": 0.001
                     },
                     "1": {
-                        "0": 0.01
+                        "0": 0.001
                     },
                     "2": {
-                        "0": 0.01
+                        "0": 0.001
                     }
                 },
                 "gnssMeasurementUncertaintyVelocityUnit": 1,
@@ -648,25 +648,25 @@
                 "initCovarianceAttitudeAnglesUnit": 3,
                 "initCovarianceBiasAccel": {
                     "0": {
-                        "0": 1.0
+                        "0": 0.1
                     },
                     "1": {
-                        "0": 1.0
+                        "0": 0.1
                     },
                     "2": {
-                        "0": 1.0
+                        "0": 0.1
                     }
                 },
                 "initCovarianceBiasAccelUnit": 1,
                 "initCovarianceBiasGyro": {
                     "0": {
-                        "0": 1.0
+                        "0": 0.1
                     },
                     "1": {
-                        "0": 1.0
+                        "0": 0.1
                     },
                     "2": {
-                        "0": 1.0
+                        "0": 0.1
                     }
                 },
                 "initCovarianceBiasGyroUnit": 3,
@@ -684,13 +684,13 @@
                 "initCovariancePositionUnit": 3,
                 "initCovarianceVelocity": {
                     "0": {
-                        "0": 0.1
+                        "0": 10.0
                     },
                     "1": {
-                        "0": 0.1
+                        "0": 10.0
                     },
                     "2": {
-                        "0": 0.1
+                        "0": 10.0
                     }
                 },
                 "initCovarianceVelocityUnit": 1,
@@ -702,13 +702,13 @@
                 "stdevGyroNoiseUnits": 1,
                 "stdev_ra": {
                     "0": {
-                        "0": 0.00035
+                        "0": 3.5e-05
                     },
                     "1": {
-                        "0": 0.00035
+                        "0": 3.5e-05
                     },
                     "2": {
-                        "0": 0.00032
+                        "0": 3.2e-05
                     }
                 },
                 "stdev_rg": {
@@ -737,13 +737,13 @@
                 },
                 "variance_bgd": {
                     "0": {
-                        "0": 9.999996109399945e-06
+                        "0": 0.0001
                     },
                     "1": {
-                        "0": 1e-05
+                        "0": 0.0001
                     },
                     "2": {
-                        "0": 1e-05
+                        "0": 0.0001
                     }
                 }
             },
@@ -5668,7 +5668,7 @@
         "node-324": {
             "data": {
                 "FileReader": {
-                    "path": "data/2021-11-18_IhingerHof/PWOne/logs-1/vn310-imu.csv"
+                    "path": "data/2021-10-05_VectorNav310E_Lab_12h/vn310-imu.csv"
                 },
                 "Imu": {
                     "imuPos": {
@@ -5773,7 +5773,7 @@
         "node-326": {
             "data": {
                 "FileReader": {
-                    "path": "data/2021-11-18_IhingerHof/PWOne/logs-1/vn310-gnss.csv"
+                    "path": "data/2021-10-05_VectorNav310E_Lab_12h/vn310-gnss.csv"
                 },
                 "Imu": {
                     "imuPos": {
@@ -5936,7 +5936,7 @@
         },
         "node-337": {
             "data": {
-                "forceStatic": false,
+                "forceStatic": true,
                 "outputType": 1,
                 "posVelSource": 0
             },
