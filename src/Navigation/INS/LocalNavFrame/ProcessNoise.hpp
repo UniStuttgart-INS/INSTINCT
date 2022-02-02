@@ -21,29 +21,17 @@ Eigen::Matrix3d G_RandomWalk(const Eigen::Vector3d& sigma2);
 /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.3)
 Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vector3d& beta);
 
-/// @brief S_ra Power Spectral Density of the accelerometer random noise
-/// @param[in] sigma2_ra 𝜎²_ra standard deviation of the noise on the accelerometer specific-force measurements in [m/s^2]
-/// @param[in] tau_i 𝜏ᵢ interval between the input of successive accelerometer outputs to the inertial navigation equations in [s]
+/// @brief S_ra Power Spectral Density of the random noise
+/// @param[in] sigma2_r 𝜎²_r standard deviation of the noise on the measurements
+/// @param[in] tau_i 𝜏ᵢ interval between the input of successive outputs to the inertial navigation equations in [s]
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] Eigen::Vector3d psdGyroNoise(const Eigen::Vector3d& sigma2_ra, const double& tau_i);
+[[nodiscard]] Eigen::Vector3d psdNoise(const Eigen::Vector3d& sigma2_r, const double& tau_i);
 
-/// @brief S_rg Power Spectral Density of the gyroscope random noise
-/// @param[in] sigma2_rg 𝜎²_rg standard deviation of the noise on the gyroscope angular-rate measurements in [rad/s]
-/// @param[in] tau_i 𝜏ᵢ interval between the input of successive gyroscope outputs to the inertial navigation equations in [s]
+/// @brief S_bad Power Spectral Density of the bias variation
+/// @param[in] sigma2_bd 𝜎²_bd standard deviation of the dynamic bias
+/// @param[in] tau_i 𝜏ᵢ interval between the input of successive outputs to the inertial navigation equations in [s]
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] Eigen::Vector3d psdAccelNoise(const Eigen::Vector3d& sigma2_rg, const double& tau_i);
-
-/// @brief S_bad Power Spectral Density of the accelerometer bias variation
-/// @param[in] sigma2_bad 𝜎²_bad standard deviation of the accelerometer dynamic bias [m/s^2]
-/// @param[in] tau_i 𝜏ᵢ interval between the input of successive accelerometer outputs to the inertial navigation equations in [s]
-/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] Eigen::Vector3d psdAccelBiasVariation(const Eigen::Vector3d& sigma2_bad, const double& tau_i);
-
-/// @brief S_bgd Power Spectral Density of the gyroscope bias variation
-/// @param[in] sigma2_bgd 𝜎²_bgd standard deviation of the gyroscope dynamic bias [rad/s]
-/// @param[in] tau_i 𝜏ᵢ interval between the input of successive gyroscope outputs to the inertial navigation equations in [s]
-/// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] Eigen::Vector3d psdGyroBiasVariation(const Eigen::Vector3d& sigma2_bgd, const double& tau_i);
+[[nodiscard]] Eigen::Vector3d psdBiasVariation(const Eigen::Vector3d& sigma2_bd, const double& tau_i);
 
 /// @brief Submatrix 𝐐_11 of the system noise covariance matrix 𝐐
 /// @param[in] S_rg Power Spectral Density of the gyroscope random noise

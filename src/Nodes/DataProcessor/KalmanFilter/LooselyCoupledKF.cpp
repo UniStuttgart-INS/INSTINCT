@@ -82,34 +82,10 @@ void NAV::LooselyCoupledKF::guiConfig()
     constexpr float unitWidth = 150.0F;
 
     ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Phi calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiCalculationAlgorithm), "Taylor 1st Order\0Van Loan\0\0"))
+    if (ImGui::Combo(fmt::format("Phi/Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiQCalculationAlgorithm), "Taylor 1st Order\0Van Loan\0\0"))
     {
-        LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), _phiCalculationAlgorithm);
-
-        if (_phiCalculationAlgorithm != PhiCalculationAlgorithm::VanLoan)
-        {
-            _qCalculationAlgorithm = QCalculationAlgorithm::Groves;
-        }
-
+        LOG_DEBUG("{}: Phi/Q calculation algorithm changed to {}", nameId(), _phiQCalculationAlgorithm);
         flow::ApplyChanges();
-    }
-    if (_phiCalculationAlgorithm != PhiCalculationAlgorithm::VanLoan)
-    {
-        ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
-    }
-
-    ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_qCalculationAlgorithm), "Groves\0Van Loan\0\0"))
-    {
-        LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), _qCalculationAlgorithm);
-        flow::ApplyChanges();
-    }
-
-    if (_phiCalculationAlgorithm != PhiCalculationAlgorithm::VanLoan)
-    {
-        ImGui::PopItemFlag();
-        ImGui::PopStyleVar();
     }
 
     ImGui::Separator();
@@ -155,21 +131,18 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                configWidth, unitWidth, _stdev_ra.data(), reinterpret_cast<int*>(&_stdevAccelNoiseUnits), "mg/√(Hz)\0m/s^2/√(Hz)\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: variance_ra changed to {}", nameId(), _stdev_ra.transpose());
-            LOG_DEBUG("{}: varianceAccelNoiseUnits changed to {}", nameId(), _stdevAccelNoiseUnits);
+            LOG_DEBUG("{}: stdev_ra changed to {}", nameId(), _stdev_ra.transpose());
+            LOG_DEBUG("{}: stdevAccelNoiseUnits changed to {}", nameId(), _stdevAccelNoiseUnits);
             flow::ApplyChanges();
         }
 
-        if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves)
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the accelerometer dynamic bias##{}", size_t(id)).c_str(),
+                                               configWidth, unitWidth, _stdev_bad.data(), reinterpret_cast<int*>(&_stdevAccelBiasUnits), "µg\0m/s^2\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the accelerometer dynamic bias##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _stdev_bad.data(), reinterpret_cast<int*>(&_stdevAccelBiasUnits), "µg\0m/s^2\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: variance_bad changed to {}", nameId(), _stdev_bad.transpose());
-                LOG_DEBUG("{}: varianceAccelBiasUnits changed to {}", nameId(), _stdevAccelBiasUnits);
-                flow::ApplyChanges();
-            }
+            LOG_DEBUG("{}: stdev_bad changed to {}", nameId(), _stdev_bad.transpose());
+            LOG_DEBUG("{}: stdevAccelBiasUnits changed to {}", nameId(), _stdevAccelBiasUnits);
+            flow::ApplyChanges();
         }
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.F);
@@ -208,21 +181,18 @@ void NAV::LooselyCoupledKF::guiConfig()
                                                configWidth, unitWidth, _stdev_rg.data(), reinterpret_cast<int*>(&_stdevGyroNoiseUnits), "deg/hr/√(Hz)\0rad/s/√(Hz)\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            LOG_DEBUG("{}: variance_rg changed to {}", nameId(), _stdev_rg.transpose());
-            LOG_DEBUG("{}: varianceGyroNoiseUnits changed to {}", nameId(), _stdevGyroNoiseUnits);
+            LOG_DEBUG("{}: stdev_rg changed to {}", nameId(), _stdev_rg.transpose());
+            LOG_DEBUG("{}: stdevGyroNoiseUnits changed to {}", nameId(), _stdevGyroNoiseUnits);
             flow::ApplyChanges();
         }
 
-        if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves)
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the gyro dynamic bias##{}", size_t(id)).c_str(),
+                                               configWidth, unitWidth, _stdev_bgd.data(), reinterpret_cast<int*>(&_stdevGyroBiasUnits), "°/h\0rad/s\0\0",
+                                               "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
-            if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the gyro dynamic bias##{}", size_t(id)).c_str(),
-                                                   configWidth, unitWidth, _stdev_bgd.data(), reinterpret_cast<int*>(&_stdevGyroBiasUnits), "°/h\0rad/s\0\0",
-                                                   "%.2e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: variance_bgd changed to {}", nameId(), _stdev_bgd.transpose());
-                LOG_DEBUG("{}: varianceGyroBiasUnits changed to {}", nameId(), _stdevGyroBiasUnits);
-                flow::ApplyChanges();
-            }
+            LOG_DEBUG("{}: stdev_bgd changed to {}", nameId(), _stdev_bgd.transpose());
+            LOG_DEBUG("{}: stdevGyroBiasUnits changed to {}", nameId(), _stdevGyroBiasUnits);
+            flow::ApplyChanges();
         }
 
         ImGui::TreePop();
@@ -369,8 +339,7 @@ void NAV::LooselyCoupledKF::guiConfig()
 
     json j;
 
-    j["phiCalculation"] = _phiCalculationAlgorithm;
-    j["qCalculation"] = _qCalculationAlgorithm;
+    j["phiQCalculation"] = _phiQCalculationAlgorithm;
 
     j["randomProcessAccel"] = _randomProcessAccel;
     j["beta_accel"] = _beta_accel;
@@ -407,13 +376,9 @@ void NAV::LooselyCoupledKF::guiConfig()
 void NAV::LooselyCoupledKF::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
-    if (j.contains("phiCalculation"))
+    if (j.contains("phiQCalculation"))
     {
-        j.at("phiCalculation").get_to(_phiCalculationAlgorithm);
-    }
-    if (j.contains("qCalculation"))
-    {
-        j.at("qCalculation").get_to(_qCalculationAlgorithm);
+        j.at("phiQCalculation").get_to(_phiQCalculationAlgorithm);
     }
     // ------------------------------- 𝐐 System/Process noise covariance matrix ---------------------------------
     if (j.contains("randomProcessAccel"))
@@ -795,14 +760,19 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     Eigen::Matrix<double, 15, 15> F = systemMatrixF(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, beta_a, beta_omega, R_N, R_E, g_0, r_eS_e);
     LOG_DATA("{}: F =\n{}", nameId(), F);
 
-    if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::VanLoan)
+    if (_phiQCalculationAlgorithm == PhiQCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
-        Eigen::Matrix<double, 15, 12> G = noiseInputMatrixG(sigma_ra.array().square(), sigma_rg.array().square(), beta_a, beta_omega, quaternion_nb__t1);
+        Eigen::Matrix<double, 15, 12> G = noiseInputMatrixG(quaternion_nb__t1);
         LOG_DATA("{}: G =\n{}", nameId(), G);
 
-        Eigen::Matrix<double, 12, 12> W = Eigen::Matrix<double, 12, 12>::Identity();
+        Eigen::Matrix<double, 12, 12> W = noiseScaleMatrixW(sigma_ra.array().square(), sigma_rg.array().square(),
+                                                            sigma_bad.array().square(), sigma_bgd.array().square(),
+                                                            beta_a, beta_omega,
+                                                            _tau_KF);
         LOG_DATA("{}: W =\n{}", nameId(), W);
+
+        LOG_DATA("{}: G*W*G^T =\n{}", nameId(), G * W * G.transpose());
 
         auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 12>(F, G, W, _tau_KF);
         LOG_DATA("{}: Phi =\n{}", nameId(), Phi);
@@ -812,30 +782,25 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         _kalmanFilter.Phi = Phi;
 
         // 2. Calculate the system noise covariance matrix Q_{k-1}
-        if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
-        {
-            _kalmanFilter.Q = Q;
-        }
+        _kalmanFilter.Q = Q;
     }
-    else if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor1)
+    else if (_phiQCalculationAlgorithm == PhiQCalculationAlgorithm::Taylor1)
     {
+        // 1. Calculate the transition matrix 𝚽_{k-1}
         _kalmanFilter.Phi = transitionMatrixApproxOrder1<double, 15>(F, _tau_KF);
-    }
-    else
-    {
-        LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), _phiCalculationAlgorithm);
-    }
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi);
-    LOG_DATA("{}: KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
 
-    // 2. Calculate the system noise covariance matrix Q_{k-1}
-    if (_qCalculationAlgorithm == QCalculationAlgorithm::Groves)
-    {
+        // 2. Calculate the system noise covariance matrix Q_{k-1}
         _kalmanFilter.Q = systemNoiseCovarianceMatrix(sigma_ra.array().square(), sigma_rg.array().square(),
                                                       sigma_bad.array().square(), sigma_bgd.array().square(),
                                                       F.block<3, 3>(3, 0), T_rn_p,
                                                       DCM_nb, _tau_KF);
     }
+    else
+    {
+        LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), _phiQCalculationAlgorithm);
+    }
+    notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi);
+    LOG_DATA("{}: KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q);
     LOG_DATA("{}: KF.Q =\n{}", nameId(), _kalmanFilter.Q);
 
@@ -1080,12 +1045,11 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrixF(const Eigen::
 }
 
 // ###########################################################################################################
-//                                           Noise input matrix 𝐆
+//                                    Noise input matrix 𝐆 & Noise scale matrix 𝐖
+//                                     System noise covariance matrix 𝐐
 // ###########################################################################################################
 
-Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrixG(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                       const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega,
-                                                                       const Eigen::Quaterniond& quaternion_nb)
+Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrixG(const Eigen::Quaterniond& quaternion_nb)
 {
     // DCM matrix from body to navigation frame
     const Eigen::Matrix3d dcm_nb = quaternion_nb.toRotationMatrix();
@@ -1095,10 +1059,67 @@ Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrixG(const Eig
 
     G.block<3, 3>(0, 0) = SCALE_FACTOR_ATTITUDE * -dcm_nb;
     G.block<3, 3>(3, 3) = dcm_nb;
-    G.block<3, 3>(9, 6) = SCALE_FACTOR_ACCELERATION * (_randomProcessAccel == RandomProcess::RandomWalk ? G_RandomWalk(sigma2_ra) : G_GaussMarkov1(sigma2_ra, beta_a));
-    G.block<3, 3>(12, 9) = SCALE_FACTOR_ANGULAR_RATE * (_randomProcessGyro == RandomProcess::RandomWalk ? G_RandomWalk(sigma2_rg) : G_GaussMarkov1(sigma2_rg, beta_omega));
+    G.block<3, 3>(9, 6) = SCALE_FACTOR_ACCELERATION * Eigen::Matrix3d::Identity();
+    G.block<3, 3>(12, 9) = SCALE_FACTOR_ANGULAR_RATE * Eigen::Matrix3d::Identity();
 
     return G;
+}
+Eigen::Matrix<double, 12, 12> NAV::LooselyCoupledKF::noiseScaleMatrixW(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                       const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                       const Eigen::Vector3d& /* beta_a */, const Eigen::Vector3d& /* beta_omega */, // TODO: Gauss-Markov-1
+                                                                       const double& tau_s)
+{
+    Eigen::Matrix<double, 12, 12> W = Eigen::Matrix<double, 12, 12>::Zero();
+
+    W.block<3, 3>(0, 0).diagonal() = psdNoise(sigma2_rg, tau_s);          // S_rg
+    W.block<3, 3>(3, 3).diagonal() = psdNoise(sigma2_ra, tau_s);          // S_ra
+    W.block<3, 3>(6, 6).diagonal() = psdBiasVariation(sigma2_bad, tau_s); // S_bad
+    W.block<3, 3>(7, 7).diagonal() = psdBiasVariation(sigma2_bgd, tau_s); // S_bgd
+
+    return W;
+}
+
+Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                 const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                 const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
+                                                                                 const Eigen::Matrix3d& DCM_nb, const double& tau_s)
+{
+    // Math: \mathbf{Q}_{INS}^n = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^n}^T & {\mathbf{Q}_{31}^n}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^n}^T \\ \mathbf{Q}_{21}^n & \mathbf{Q}_{22}^n & {\mathbf{Q}_{32}^n}^T & {\mathbf{Q}_{42}^n}^T & \mathbf{Q}_{25}^n \\ \mathbf{Q}_{31}^n & \mathbf{Q}_{32}^n & \mathbf{Q}_{33}^n & \mathbf{Q}_{34}^n & \mathbf{Q}_{35}^n \\ \mathbf{0}_3 & \mathbf{Q}_{42}^n & {\mathbf{Q}_{34}^n}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^n & \mathbf{Q}_{52}^n & {\mathbf{Q}_{35}^n}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \qquad \text{P. Groves}\,(14.80)
+    const Eigen::Vector3d S_ra = psdNoise(sigma2_ra, tau_s);
+    const Eigen::Vector3d S_rg = psdNoise(sigma2_rg, tau_s);
+    const Eigen::Vector3d S_bad = psdBiasVariation(sigma2_bad, tau_s);
+    const Eigen::Vector3d S_bgd = psdBiasVariation(sigma2_bgd, tau_s);
+
+    Eigen::Matrix<double, 15, 15> Q = Eigen::Matrix<double, 15, 15>::Zero();
+    Q.block<3, 3>(0, 0) = Q_psi_psi(S_rg, S_bgd, tau_s);                            // Q_11
+    Q.block<3, 3>(3, 0) = Q_dv_psi(S_rg, S_bgd, F_21_n, tau_s);                     // Q_21
+    Q.block<3, 3>(3, 3) = Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, F_21_n, tau_s);         // Q_22
+    Q.block<3, 3>(3, 12) = Q_dv_domega(S_bgd, F_21_n, DCM_nb, tau_s);               // Q_25
+    Q.block<3, 3>(6, 0) = Q_dr_psi(S_rg, S_bgd, F_21_n, T_rn_p, tau_s);             // Q_31
+    Q.block<3, 3>(6, 3) = Q_dr_dv(S_ra, S_bad, S_rg, S_bgd, F_21_n, T_rn_p, tau_s); // Q_32
+    Q.block<3, 3>(6, 6) = Q_dr_dr(S_ra, S_bad, S_rg, S_bgd, T_rn_p, F_21_n, tau_s); // Q_33
+    Q.block<3, 3>(6, 9) = Q_dr_df(S_bgd, T_rn_p, DCM_nb, tau_s);                    // Q_34
+    Q.block<3, 3>(6, 12) = Q_dr_domega(S_bgd, F_21_n, T_rn_p, DCM_nb, tau_s);       // Q_35
+    Q.block<3, 3>(9, 3) = Q_df_dv(S_bad, DCM_nb, tau_s);                            // Q_42
+    Q.block<3, 3>(9, 9) = Q_df_df(S_bad, tau_s);                                    // Q_44
+    Q.block<3, 3>(12, 0) = Q_domega_psi(S_bgd, DCM_nb, tau_s);                      // Q_51
+    Q.block<3, 3>(12, 12) = Q_domega_domega(S_bad, tau_s);                          // Q_55
+
+    Q.block<3, 3>(0, 3) = Q.block<3, 3>(3, 0).transpose();   // Q_21^T
+    Q.block<3, 3>(0, 6) = Q.block<3, 3>(6, 0).transpose();   // Q_31^T
+    Q.block<3, 3>(3, 6) = Q.block<3, 3>(6, 3).transpose();   // Q_32^T
+    Q.block<3, 3>(9, 6) = Q.block<3, 3>(6, 9).transpose();   // Q_34^T
+    Q.block<3, 3>(12, 3) = Q.block<3, 3>(3, 12).transpose(); // Q_25^T
+    Q.block<3, 3>(12, 6) = Q.block<3, 3>(6, 12).transpose(); // Q_35^T
+    Q.block<3, 3>(3, 9) = Q.block<3, 3>(9, 3).transpose();   // Q_42^T
+    Q.block<3, 3>(0, 12) = Q.block<3, 3>(12, 0).transpose(); // Q_51^T
+
+    Q.middleRows<3>(0) *= std::pow(SCALE_FACTOR_ATTITUDE, 2);
+    Q.middleRows<2>(6) *= std::pow(SCALE_FACTOR_LAT_LON, 2);
+    Q.middleRows<3>(9) *= std::pow(SCALE_FACTOR_ACCELERATION, 2);
+    Q.middleRows<3>(12) *= std::pow(SCALE_FACTOR_ANGULAR_RATE, 2);
+
+    return Q;
 }
 
 // ###########################################################################################################
@@ -1198,55 +1219,4 @@ Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation(const E
     innovation << deltaLLA, deltaVel;
 
     return innovation;
-}
-
-// #########################################################################################################################################
-//                                                               Deprecated
-// #########################################################################################################################################
-
-// ###########################################################################################################
-//                                     System noise covariance matrix 𝐐
-// ###########################################################################################################
-
-Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                                 const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                                 const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
-                                                                                 const Eigen::Matrix3d& DCM_nb, const double& tau_s)
-{
-    // Math: \mathbf{Q}_{INS}^n = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^n}^T & {\mathbf{Q}_{31}^n}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^n}^T \\ \mathbf{Q}_{21}^n & \mathbf{Q}_{22}^n & {\mathbf{Q}_{32}^n}^T & {\mathbf{Q}_{42}^n}^T & \mathbf{Q}_{25}^n \\ \mathbf{Q}_{31}^n & \mathbf{Q}_{32}^n & \mathbf{Q}_{33}^n & \mathbf{Q}_{34}^n & \mathbf{Q}_{35}^n \\ \mathbf{0}_3 & \mathbf{Q}_{42}^n & {\mathbf{Q}_{34}^n}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^n & \mathbf{Q}_{52}^n & {\mathbf{Q}_{35}^n}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \qquad \text{P. Groves}\,(14.80)
-    const Eigen::Vector3d S_ra = psdGyroNoise(sigma2_ra, tau_s);
-    const Eigen::Vector3d S_rg = psdAccelNoise(sigma2_rg, tau_s);
-    const Eigen::Vector3d S_bad = psdAccelBiasVariation(sigma2_bad, tau_s);
-    const Eigen::Vector3d S_bgd = psdGyroBiasVariation(sigma2_bgd, tau_s);
-
-    Eigen::Matrix<double, 15, 15> Q = Eigen::Matrix<double, 15, 15>::Zero();
-    Q.block<3, 3>(0, 0) = Q_psi_psi(S_rg, S_bgd, tau_s);                            // Q_11
-    Q.block<3, 3>(3, 0) = Q_dv_psi(S_rg, S_bgd, F_21_n, tau_s);                     // Q_21
-    Q.block<3, 3>(3, 3) = Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, F_21_n, tau_s);         // Q_22
-    Q.block<3, 3>(3, 12) = Q_dv_domega(S_bgd, F_21_n, DCM_nb, tau_s);               // Q_25
-    Q.block<3, 3>(6, 0) = Q_dr_psi(S_rg, S_bgd, F_21_n, T_rn_p, tau_s);             // Q_31
-    Q.block<3, 3>(6, 3) = Q_dr_dv(S_ra, S_bad, S_rg, S_bgd, F_21_n, T_rn_p, tau_s); // Q_32
-    Q.block<3, 3>(6, 6) = Q_dr_dr(S_ra, S_bad, S_rg, S_bgd, T_rn_p, F_21_n, tau_s); // Q_33
-    Q.block<3, 3>(6, 9) = Q_dr_df(S_bgd, T_rn_p, DCM_nb, tau_s);                    // Q_34
-    Q.block<3, 3>(6, 12) = Q_dr_domega(S_bgd, F_21_n, T_rn_p, DCM_nb, tau_s);       // Q_35
-    Q.block<3, 3>(9, 3) = Q_df_dv(S_bad, DCM_nb, tau_s);                            // Q_42
-    Q.block<3, 3>(9, 9) = Q_df_df(S_bad, tau_s);                                    // Q_44
-    Q.block<3, 3>(12, 0) = Q_domega_psi(S_bgd, DCM_nb, tau_s);                      // Q_51
-    Q.block<3, 3>(12, 12) = Q_domega_domega(S_bad, tau_s);                          // Q_55
-
-    Q.block<3, 3>(0, 3) = Q.block<3, 3>(3, 0).transpose();   // Q_21^T
-    Q.block<3, 3>(0, 6) = Q.block<3, 3>(6, 0).transpose();   // Q_31^T
-    Q.block<3, 3>(3, 6) = Q.block<3, 3>(6, 3).transpose();   // Q_32^T
-    Q.block<3, 3>(9, 6) = Q.block<3, 3>(6, 9).transpose();   // Q_34^T
-    Q.block<3, 3>(12, 3) = Q.block<3, 3>(3, 12).transpose(); // Q_25^T
-    Q.block<3, 3>(12, 6) = Q.block<3, 3>(6, 12).transpose(); // Q_35^T
-    Q.block<3, 3>(3, 9) = Q.block<3, 3>(9, 3).transpose();   // Q_42^T
-    Q.block<3, 3>(0, 12) = Q.block<3, 3>(12, 0).transpose(); // Q_51^T
-
-    Q.middleRows<3>(0) *= std::pow(SCALE_FACTOR_ATTITUDE, 2);
-    Q.middleRows<2>(6) *= std::pow(SCALE_FACTOR_LAT_LON, 2);
-    Q.middleRows<3>(9) *= std::pow(SCALE_FACTOR_ACCELERATION, 2);
-    Q.middleRows<3>(12) *= std::pow(SCALE_FACTOR_ANGULAR_RATE, 2);
-
-    return Q;
 }

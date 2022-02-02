@@ -18,28 +18,16 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
     return Eigen::DiagonalMatrix<double, 3>{ (2.0 * beta.cwiseProduct(sigma2)).cwiseSqrt() };
 }
 
-Eigen::Vector3d psdGyroNoise(const Eigen::Vector3d& sigma2_ra, const double& tau_i)
+Eigen::Vector3d psdNoise(const Eigen::Vector3d& sigma2_r, const double& tau_i)
 {
-    // Math: S_{ra} = \sigma_{ra}^2\tau_i \qquad \text{P. Groves}\,(14.83)
-    return sigma2_ra * tau_i; // TODO: This is only a temporary fix. Here the values should be accounted for, for each axis separately.
+    // Math: S_{r} = \sigma_{r}^2\tau_i \qquad \text{P. Groves}\,(14.83)
+    return sigma2_r * tau_i;
 }
 
-Eigen::Vector3d psdAccelNoise(const Eigen::Vector3d& sigma2_rg, const double& tau_i)
+Eigen::Vector3d psdBiasVariation(const Eigen::Vector3d& sigma2_bd, const double& tau_i)
 {
-    // Math: S_{rg} = \sigma_{rg}^2\tau_i \qquad \text{P. Groves}\,(14.83)
-    return sigma2_rg * tau_i; // TODO: This is only a temporary fix. Here the values should be accounted for, for each axis separately.
-}
-
-Eigen::Vector3d psdAccelBiasVariation(const Eigen::Vector3d& sigma2_bad, const double& tau_i)
-{
-    // Math: S_{bad} = \frac{\sigma_{bad}^2}{\tau_i} \qquad \text{P. Groves}\,(14.84)
-    return sigma2_bad / tau_i;
-}
-
-Eigen::Vector3d psdGyroBiasVariation(const Eigen::Vector3d& sigma2_bgd, const double& tau_i)
-{
-    // Math: S_{bgd} = \frac{\sigma_{bgd}^2}{\tau_i} \qquad \text{P. Groves}\,(14.84)
-    return sigma2_bgd / tau_i;
+    // Math: S_{bd} = \frac{\sigma_{bd}^2}{\tau_i} \qquad \text{P. Groves}\,(14.84)
+    return sigma2_bd / tau_i;
 }
 
 Eigen::Matrix3d Q_psi_psi(const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const double& tau_s)

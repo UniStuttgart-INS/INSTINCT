@@ -299,23 +299,14 @@ class LooselyCoupledKF : public Node
 
     // ###########################################################################################################
 
-    /// GUI option for the Phi calculation algorithm
-    enum class PhiCalculationAlgorithm
+    /// GUI option for the Phi and Q calculation algorithm
+    enum class PhiQCalculationAlgorithm
     {
         Taylor1,
         VanLoan,
     };
     /// GUI option for the Phi calculation algorithm
-    PhiCalculationAlgorithm _phiCalculationAlgorithm = PhiCalculationAlgorithm::Taylor1;
-
-    /// GUI option for the Phi calculation algorithm
-    enum class QCalculationAlgorithm
-    {
-        Groves,
-        VanLoan,
-    };
-    /// GUI option for the Phi calculation algorithm
-    QCalculationAlgorithm _qCalculationAlgorithm = QCalculationAlgorithm::Groves;
+    PhiQCalculationAlgorithm _phiQCalculationAlgorithm = PhiQCalculationAlgorithm::Taylor1;
 
     // ###########################################################################################################
     //                                                Prediction
@@ -351,19 +342,43 @@ class LooselyCoupledKF : public Node
                                                        double r_eS_e);
 
     // ###########################################################################################################
-    //                                           Noise input matrix 𝐆
+    //                                    Noise input matrix 𝐆 & Noise scale matrix 𝐖
+    //                                     System noise covariance matrix 𝐐
     // ###########################################################################################################
 
     /// @brief Calculates the noise input matrix 𝐆
+    /// @param[in] quaternion_nb Attitude of the body with respect to n-system
+    /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
+    Eigen::Matrix<double, 15, 12> noiseInputMatrixG(const Eigen::Quaterniond& quaternion_nb);
+
+    /// @brief Calculates the noise scale matrix 𝐖
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
     /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
+    /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
+    /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
     /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
     /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
-    /// @param[in] quaternion_nb Attitude of the body with respect to n-system
-    /// @note See T. Hobiger (2021) Inertialnavigation V06 - equation (6.5)
-    Eigen::Matrix<double, 15, 12> noiseInputMatrixG(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+    /// @param[in] tau_s Time interval in [s]
+    /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
+    Eigen::Matrix<double, 12, 12> noiseScaleMatrixW(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                    const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                     const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega,
-                                                    const Eigen::Quaterniond& quaternion_nb);
+                                                    const double& tau_s);
+
+    /// @brief System noise covariance matrix 𝐐_{k-1}
+    /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
+    /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
+    /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
+    /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
+    /// @param[in] F_21_n Submatrix 𝐅_21 of the system matrix 𝐅
+    /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
+    /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
+    /// @param[in] tau_s Time interval in [s]
+    /// @return The 15x15 matrix of system noise covariances
+    [[nodiscard]] static Eigen::Matrix<double, 15, 15> systemNoiseCovarianceMatrix(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
+                                                                                   const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                   const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
+                                                                                   const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     // ###########################################################################################################
     //                                         Error covariance matrix P
@@ -381,25 +396,6 @@ class LooselyCoupledKF : public Node
                                                                                       const Eigen::Vector3d& variance_lla,
                                                                                       const Eigen::Vector3d& variance_accelBias,
                                                                                       const Eigen::Vector3d& variance_gyroBias);
-
-    // ###########################################################################################################
-    //                                     System noise covariance matrix 𝐐
-    // ###########################################################################################################
-
-    /// @brief System noise covariance matrix 𝐐_{k-1}
-    /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
-    /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
-    /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
-    /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
-    /// @param[in] F_21_n Submatrix 𝐅_21 of the system matrix 𝐅
-    /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
-    /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
-    /// @param[in] tau_s Time interval in [s]
-    /// @return The 15x15 matrix of system noise covariances
-    [[nodiscard]] static Eigen::Matrix<double, 15, 15> systemNoiseCovarianceMatrix(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
-                                                                                   const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                                   const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
-                                                                                   const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 
     // ###########################################################################################################
     //                                                Correction
