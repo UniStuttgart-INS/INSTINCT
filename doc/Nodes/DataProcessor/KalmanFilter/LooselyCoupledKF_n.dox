@@ -272,17 +272,19 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \mathbf{0}_3 & \mathbf{0}_3      \\
-      \mathbf{0}_3 & \mathbf{0}_3      \\
-      \mathbf{0}_3 & \mathbf{0}_3      \\
-      \mathbf{G}_f & \mathbf{0}_3      \\
-      \mathbf{0}_3 & \mathbf{G}_\omega \\
+      -\mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3      \\
+       \mathbf{0}_3   & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_3      \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3      \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{G}_f & \mathbf{0}_3      \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{G}_\omega \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-2.north east);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-4.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[brown!20]{m-4-1}{m-4-1}
-      \fhighlight[darkgray!20]{m-5-2}{m-5-2}
+      \fhighlight[pink!20]{m-1-1}{m-1-1}
+      \fhighlight[lightgray!20]{m-2-2}{m-2-2}
+      \fhighlight[brown!20]{m-4-3}{m-4-3}
+      \fhighlight[darkgray!20]{m-5-4}{m-5-4}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
