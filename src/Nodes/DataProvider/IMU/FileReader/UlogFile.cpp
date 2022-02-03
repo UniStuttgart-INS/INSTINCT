@@ -431,7 +431,7 @@ void NAV::UlogFile::readData()
                     }
                     else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
                     {
-                        currentExtractLocation += SensorAccel::padding;
+                        currentExtractLocation += SensorAccel::padding; // Extraction Location should be moved to account for multiple padding
                         LOG_DEBUG("sensorAccel: padding");
                     }
                     else
@@ -539,14 +539,6 @@ void NAV::UlogFile::readData()
                         // Update timestamp
                         currentTimestamp = sensorGyro.timestamp;
                     }
-                    else if (currentTimestamp == sensorGyro.timestamp)
-                    {
-                        // Save the data
-                        SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
-                                                           subscribedMessages.at(messageData.msg_id).message_name };
-
-                        epochData.insert_or_assign(subscriptionData, sensorGyro);
-                    }
                     else if (currentTimestamp > sensorGyro.timestamp)
                     {
                         LOG_WARN("currentTimestamp {} > sensorGyro.timestamp {}. Not handled. Needs to be handled?", currentTimestamp, sensorGyro.timestamp);
@@ -554,6 +546,116 @@ void NAV::UlogFile::readData()
                     else
                     {
                         LOG_ERROR("sensorGyro - timestamp comparison failed");
+                    }
+
+                    if (currentTimestamp == sensorGyro.timestamp)
+                    {
+                        // Save the data
+                        SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                           subscribedMessages.at(messageData.msg_id).message_name };
+
+                        epochData.insert_or_assign(subscriptionData, sensorGyro);
+                    }
+                }
+            }
+            else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_mag")
+            {
+                SensorMag sensorMag{};
+                for (const auto& dataField : messageFormat)
+                {
+                    char* currentData = messageData.data.data() + currentExtractLocation;
+                    if (dataField.name == "timestamp")
+                    {
+                        std::memcpy(&sensorMag.timestamp, currentData, sizeof(sensorMag.timestamp));
+                        LOG_DEBUG("sensorMag.timestamp: {}", sensorMag.timestamp);
+                        currentExtractLocation += sizeof(sensorMag.timestamp);
+                    }
+                    else if (dataField.name == "timestamp_sample")
+                    {
+                        std::memcpy(&sensorMag.timestamp_sample, currentData, sizeof(sensorMag.timestamp_sample));
+                        LOG_DEBUG("sensorMag.timestamp_sample: {}", sensorMag.timestamp_sample);
+                        currentExtractLocation += sizeof(sensorMag.timestamp_sample);
+                    }
+                    else if (dataField.name == "device_id")
+                    {
+                        std::memcpy(&sensorMag.device_id, currentData, sizeof(sensorMag.device_id));
+                        LOG_DEBUG("sensorMag.device_id: {}", sensorMag.device_id);
+                        currentExtractLocation += sizeof(sensorMag.device_id);
+                    }
+                    else if (dataField.name == "x")
+                    {
+                        std::memcpy(&sensorMag.x, currentData, sizeof(sensorMag.x));
+                        LOG_DEBUG("sensorMag.x: {}", sensorMag.x);
+                        currentExtractLocation += sizeof(sensorMag.x);
+                    }
+                    else if (dataField.name == "y")
+                    {
+                        std::memcpy(&sensorMag.y, currentData, sizeof(sensorMag.y));
+                        LOG_DEBUG("sensorMag.y: {}", sensorMag.y);
+                        currentExtractLocation += sizeof(sensorMag.y);
+                    }
+                    else if (dataField.name == "z")
+                    {
+                        std::memcpy(&sensorMag.z, currentData, sizeof(sensorMag.z));
+                        LOG_DEBUG("sensorMag.z: {}", sensorMag.z);
+                        currentExtractLocation += sizeof(sensorMag.z);
+                    }
+                    else if (dataField.name == "temperature")
+                    {
+                        std::memcpy(&sensorMag.temperature, currentData, sizeof(sensorMag.temperature));
+                        LOG_DEBUG("sensorMag.temperature: {}", sensorMag.temperature);
+                        currentExtractLocation += sizeof(sensorMag.temperature);
+                    }
+                    else if (dataField.name == "error_count")
+                    {
+                        std::memcpy(&sensorMag.error_count, currentData, sizeof(sensorMag.error_count));
+                        LOG_DEBUG("sensorMag.error_count: {}", sensorMag.error_count);
+                        currentExtractLocation += sizeof(sensorMag.error_count);
+                    }
+                    else if (dataField.name == "is_external")
+                    {
+                        std::memcpy(&sensorMag.is_external, currentData, sizeof(sensorMag.is_external));
+                        LOG_DEBUG("sensorMag.is_external: {}", sensorMag.is_external);
+                        currentExtractLocation += sizeof(sensorMag.is_external);
+                    }
+                    else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
+                    {
+                        currentExtractLocation += SensorMag::padding; // Extraction Location should be moved to account for multiple padding
+                        LOG_DEBUG("sensorAccel: padding");
+                    }
+                    else
+                    {
+                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
+                    }
+
+                    // Saving only the current data //TODO: Possible to put this in a function?
+                    if (currentTimestamp < sensorMag.timestamp)
+                    {
+                        // If new time has come, erase just the old IMU data
+                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
+                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
+                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_mag" });
+
+                        // Update timestamp
+                        currentTimestamp = sensorMag.timestamp;
+                    }
+                    else if (currentTimestamp > sensorMag.timestamp)
+                    {
+                        LOG_WARN("currentTimestamp {} > sensorMag.timestamp {}. Not handled. Needs to be handled?", currentTimestamp, sensorMag.timestamp);
+                    }
+                    else
+                    {
+                        LOG_ERROR("sensorMag - timestamp comparison failed");
+                    }
+
+                    if (currentTimestamp == sensorMag.timestamp)
+                    {
+                        // Save the data
+                        SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                           subscribedMessages.at(messageData.msg_id).message_name };
+
+                        epochData.insert_or_assign(subscriptionData, sensorMag);
                     }
                 }
             }
