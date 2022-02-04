@@ -363,7 +363,7 @@ void NAV::UlogFile::readData()
 
             messageData.data.resize(messageData.header.msg_size - 2);
             filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
-            LOG_INFO("messageData.header.msg_size: {}", messageData.header.msg_size);
+            LOG_DEBUG("messageData.header.msg_size: {}", messageData.header.msg_size);
 
             const auto& messageFormat = messageFormats.at(subscribedMessages.at(messageData.msg_id).message_name);
 
@@ -382,7 +382,6 @@ void NAV::UlogFile::readData()
                     }
                     else if (dataField.name == "timestamp_sample")
                     {
-                        LOG_DEBUG("sensorAccel.timestamp: {}", sensorAccel.timestamp);
                         std::memcpy(&sensorAccel.timestamp_sample, currentData, sizeof(sensorAccel.timestamp_sample));
                         LOG_DATA("sensorAccel.timestamp_sample: {}", sensorAccel.timestamp_sample);
                         currentExtractLocation += sizeof(sensorAccel.timestamp_sample);
@@ -396,43 +395,43 @@ void NAV::UlogFile::readData()
                     else if (dataField.name == "error_count")
                     {
                         std::memcpy(&sensorAccel.error_count, currentData, sizeof(sensorAccel.error_count));
-                        LOG_DEBUG("sensorAccel.error_count: {}", sensorAccel.error_count);
+                        LOG_DATA("sensorAccel.error_count: {}", sensorAccel.error_count);
                         currentExtractLocation += sizeof(sensorAccel.error_count);
                     }
                     else if (dataField.name == "x")
                     {
                         std::memcpy(&sensorAccel.x, currentData, sizeof(sensorAccel.x));
-                        LOG_DEBUG("sensorAccel.x: {}", sensorAccel.x);
+                        LOG_DATA("sensorAccel.x: {}", sensorAccel.x);
                         currentExtractLocation += sizeof(sensorAccel.x);
                     }
                     else if (dataField.name == "y")
                     {
                         std::memcpy(&sensorAccel.y, currentData, sizeof(sensorAccel.y));
-                        LOG_DEBUG("sensorAccel.y: {}", sensorAccel.y);
+                        LOG_DATA("sensorAccel.y: {}", sensorAccel.y);
                         currentExtractLocation += sizeof(sensorAccel.y);
                     }
                     else if (dataField.name == "z")
                     {
                         std::memcpy(&sensorAccel.z, currentData, sizeof(sensorAccel.z));
-                        LOG_DEBUG("sensorAccel.z: {}", sensorAccel.z);
+                        LOG_DATA("sensorAccel.z: {}", sensorAccel.z);
                         currentExtractLocation += sizeof(sensorAccel.z);
                     }
                     else if (dataField.name == "temperature")
                     {
                         std::memcpy(&sensorAccel.temperature, currentData, sizeof(sensorAccel.temperature));
-                        LOG_DEBUG("sensorAccel.temperature: {}", sensorAccel.temperature);
+                        LOG_DATA("sensorAccel.temperature: {}", sensorAccel.temperature);
                         currentExtractLocation += sizeof(sensorAccel.temperature);
                     }
                     else if (dataField.name == "clip_counter")
                     {
                         std::memcpy(sensorAccel.clip_counter.data(), currentData, sensorAccel.clip_counter.size());
-                        LOG_DEBUG("sensorAccel.clip_counter: {}", fmt::join(sensorAccel.clip_counter, ", "));
+                        LOG_DATA("sensorAccel.clip_counter: {}", fmt::join(sensorAccel.clip_counter, ", "));
                         currentExtractLocation += sensorAccel.clip_counter.size();
                     }
                     else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
                     {
                         currentExtractLocation += SensorAccel::padding; // Extraction Location should be moved to account for multiple padding
-                        LOG_DEBUG("sensorAccel: padding");
+                        LOG_DATA("sensorAccel: padding");
                     }
                     else
                     {
@@ -453,7 +452,8 @@ void NAV::UlogFile::readData()
                     }
                     else if (currentTimestamp > sensorAccel.timestamp)
                     {
-                        LOG_WARN("currentTimestamp {} > sensorAccel.timestamp {}. Not handled. Needs to be handled?", currentTimestamp, sensorAccel.timestamp);
+                        LOG_WARN("currentTimestamp: {}, difference: {}", currentTimestamp, currentTimestamp - sensorAccel.timestamp);
+                        // LOG_WARN("currentTimestamp > sensorAccel.timestamp - {} > {}. Not handled. Needs to be handled?", currentTimestamp, sensorAccel.timestamp);
                     }
 
                     // Saving only the current data
@@ -483,43 +483,43 @@ void NAV::UlogFile::readData()
                     else if (dataField.name == "timestamp_sample")
                     {
                         std::memcpy(&sensorGyro.timestamp_sample, currentData, sizeof(sensorGyro.timestamp_sample));
-                        LOG_DEBUG("sensorGyro.timestamp_sample: {}", sensorGyro.timestamp_sample);
+                        LOG_DATA("sensorGyro.timestamp_sample: {}", sensorGyro.timestamp_sample);
                         currentExtractLocation += sizeof(sensorGyro.timestamp_sample);
                     }
                     else if (dataField.name == "device_id")
                     {
                         std::memcpy(&sensorGyro.device_id, currentData, sizeof(sensorGyro.device_id));
-                        LOG_DEBUG("sensorGyro.device_id: {}", sensorGyro.device_id);
+                        LOG_DATA("sensorGyro.device_id: {}", sensorGyro.device_id);
                         currentExtractLocation += sizeof(sensorGyro.device_id);
                     }
                     else if (dataField.name == "x")
                     {
                         std::memcpy(&sensorGyro.x, currentData, sizeof(sensorGyro.x));
-                        LOG_DEBUG("sensorGyro.x: {}", sensorGyro.x);
+                        LOG_DATA("sensorGyro.x: {}", sensorGyro.x);
                         currentExtractLocation += sizeof(sensorGyro.x);
                     }
                     else if (dataField.name == "y")
                     {
                         std::memcpy(&sensorGyro.y, currentData, sizeof(sensorGyro.y));
-                        LOG_DEBUG("sensorGyro.y: {}", sensorGyro.y);
+                        LOG_DATA("sensorGyro.y: {}", sensorGyro.y);
                         currentExtractLocation += sizeof(sensorGyro.y);
                     }
                     else if (dataField.name == "z")
                     {
                         std::memcpy(&sensorGyro.z, currentData, sizeof(sensorGyro.z));
-                        LOG_DEBUG("sensorGyro.z: {}", sensorGyro.z);
+                        LOG_DATA("sensorGyro.z: {}", sensorGyro.z);
                         currentExtractLocation += sizeof(sensorGyro.z);
                     }
                     else if (dataField.name == "temperature")
                     {
                         std::memcpy(&sensorGyro.temperature, currentData, sizeof(sensorGyro.temperature));
-                        LOG_DEBUG("sensorGyro.temperature: {}", sensorGyro.temperature);
+                        LOG_DATA("sensorGyro.temperature: {}", sensorGyro.temperature);
                         currentExtractLocation += sizeof(sensorGyro.temperature);
                     }
                     else if (dataField.name == "error_count")
                     {
                         std::memcpy(&sensorGyro.error_count, currentData, sizeof(sensorGyro.error_count));
-                        LOG_DEBUG("sensorGyro.error_count: {}", sensorGyro.error_count);
+                        LOG_DATA("sensorGyro.error_count: {}", sensorGyro.error_count);
                         currentExtractLocation += sizeof(sensorGyro.error_count);
                     }
                     else
@@ -528,7 +528,7 @@ void NAV::UlogFile::readData()
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
 
-                    // Saving only the current data //TODO: Possible to put this in a function?
+                    // Saving only the current data
                     if (currentTimestamp < sensorGyro.timestamp)
                     {
                         // If new time has come, erase just the old IMU data
@@ -541,11 +541,8 @@ void NAV::UlogFile::readData()
                     }
                     else if (currentTimestamp > sensorGyro.timestamp)
                     {
-                        LOG_WARN("currentTimestamp {} > sensorGyro.timestamp {}. Not handled. Needs to be handled?", currentTimestamp, sensorGyro.timestamp);
-                    }
-                    else
-                    {
-                        LOG_ERROR("sensorGyro - timestamp comparison failed");
+                        LOG_WARN("currentTimestamp: {}, difference: {}", currentTimestamp, currentTimestamp - sensorGyro.timestamp);
+                        // LOG_WARN("currentTimestamp > sensorGyro.timestamp - {} > {}. Not handled. Needs to be handled?", currentTimestamp, sensorGyro.timestamp);
                     }
 
                     if (currentTimestamp == sensorGyro.timestamp)
@@ -573,55 +570,55 @@ void NAV::UlogFile::readData()
                     else if (dataField.name == "timestamp_sample")
                     {
                         std::memcpy(&sensorMag.timestamp_sample, currentData, sizeof(sensorMag.timestamp_sample));
-                        LOG_DEBUG("sensorMag.timestamp_sample: {}", sensorMag.timestamp_sample);
+                        LOG_DATA("sensorMag.timestamp_sample: {}", sensorMag.timestamp_sample);
                         currentExtractLocation += sizeof(sensorMag.timestamp_sample);
                     }
                     else if (dataField.name == "device_id")
                     {
                         std::memcpy(&sensorMag.device_id, currentData, sizeof(sensorMag.device_id));
-                        LOG_DEBUG("sensorMag.device_id: {}", sensorMag.device_id);
+                        LOG_DATA("sensorMag.device_id: {}", sensorMag.device_id);
                         currentExtractLocation += sizeof(sensorMag.device_id);
                     }
                     else if (dataField.name == "x")
                     {
                         std::memcpy(&sensorMag.x, currentData, sizeof(sensorMag.x));
-                        LOG_DEBUG("sensorMag.x: {}", sensorMag.x);
+                        LOG_DATA("sensorMag.x: {}", sensorMag.x);
                         currentExtractLocation += sizeof(sensorMag.x);
                     }
                     else if (dataField.name == "y")
                     {
                         std::memcpy(&sensorMag.y, currentData, sizeof(sensorMag.y));
-                        LOG_DEBUG("sensorMag.y: {}", sensorMag.y);
+                        LOG_DATA("sensorMag.y: {}", sensorMag.y);
                         currentExtractLocation += sizeof(sensorMag.y);
                     }
                     else if (dataField.name == "z")
                     {
                         std::memcpy(&sensorMag.z, currentData, sizeof(sensorMag.z));
-                        LOG_DEBUG("sensorMag.z: {}", sensorMag.z);
+                        LOG_DATA("sensorMag.z: {}", sensorMag.z);
                         currentExtractLocation += sizeof(sensorMag.z);
                     }
                     else if (dataField.name == "temperature")
                     {
                         std::memcpy(&sensorMag.temperature, currentData, sizeof(sensorMag.temperature));
-                        LOG_DEBUG("sensorMag.temperature: {}", sensorMag.temperature);
+                        LOG_DATA("sensorMag.temperature: {}", sensorMag.temperature);
                         currentExtractLocation += sizeof(sensorMag.temperature);
                     }
                     else if (dataField.name == "error_count")
                     {
                         std::memcpy(&sensorMag.error_count, currentData, sizeof(sensorMag.error_count));
-                        LOG_DEBUG("sensorMag.error_count: {}", sensorMag.error_count);
+                        LOG_DATA("sensorMag.error_count: {}", sensorMag.error_count);
                         currentExtractLocation += sizeof(sensorMag.error_count);
                     }
                     else if (dataField.name == "is_external")
                     {
                         std::memcpy(&sensorMag.is_external, currentData, sizeof(sensorMag.is_external));
-                        LOG_DEBUG("sensorMag.is_external: {}", sensorMag.is_external);
+                        LOG_DATA("sensorMag.is_external: {}", sensorMag.is_external);
                         currentExtractLocation += sizeof(sensorMag.is_external);
                     }
                     else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
                     {
                         currentExtractLocation += SensorMag::padding; // Extraction Location should be moved to account for multiple padding
-                        LOG_DEBUG("sensorAccel: padding");
+                        LOG_DATA("sensorAccel: padding");
                     }
                     else
                     {
@@ -629,7 +626,7 @@ void NAV::UlogFile::readData()
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
 
-                    // Saving only the current data //TODO: Possible to put this in a function?
+                    // Saving only the current data
                     if (currentTimestamp < sensorMag.timestamp)
                     {
                         // If new time has come, erase just the old IMU data
@@ -642,11 +639,8 @@ void NAV::UlogFile::readData()
                     }
                     else if (currentTimestamp > sensorMag.timestamp)
                     {
-                        LOG_WARN("currentTimestamp {} > sensorMag.timestamp {}. Not handled. Needs to be handled?", currentTimestamp, sensorMag.timestamp);
-                    }
-                    else
-                    {
-                        LOG_ERROR("sensorMag - timestamp comparison failed");
+                        LOG_WARN("currentTimestamp: {}, difference: {}", currentTimestamp, currentTimestamp - sensorMag.timestamp);
+                        // LOG_WARN("currentTimestamp > sensorMag.timestamp - {} > {}. Not handled. Needs to be handled?", currentTimestamp, sensorMag.timestamp);
                     }
 
                     if (currentTimestamp == sensorMag.timestamp)
