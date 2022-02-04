@@ -1072,7 +1072,7 @@ Eigen::Matrix<double, 12, 12> NAV::LooselyCoupledKF::noiseScaleMatrixW(const Eig
     W.block<3, 3>(0, 0).diagonal() = psdNoise(sigma2_rg, tau_s);          // S_rg
     W.block<3, 3>(3, 3).diagonal() = psdNoise(sigma2_ra, tau_s);          // S_ra
     W.block<3, 3>(6, 6).diagonal() = psdBiasVariation(sigma2_bad, tau_s); // S_bad
-    W.block<3, 3>(7, 7).diagonal() = psdBiasVariation(sigma2_bgd, tau_s); // S_bgd
+    W.block<3, 3>(9, 9).diagonal() = psdBiasVariation(sigma2_bgd, tau_s); // S_bgd
 
     return W;
 }
@@ -1101,7 +1101,7 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix
     Q.block<3, 3>(9, 3) = Q_df_dv(S_bad, DCM_nb, tau_s);                            // Q_42
     Q.block<3, 3>(9, 9) = Q_df_df(S_bad, tau_s);                                    // Q_44
     Q.block<3, 3>(12, 0) = Q_domega_psi(S_bgd, DCM_nb, tau_s);                      // Q_51
-    Q.block<3, 3>(12, 12) = Q_domega_domega(S_bad, tau_s);                          // Q_55
+    Q.block<3, 3>(12, 12) = Q_domega_domega(S_bgd, tau_s);                          // Q_55
 
     Q.block<3, 3>(0, 3) = Q.block<3, 3>(3, 0).transpose();   // Q_21^T
     Q.block<3, 3>(0, 6) = Q.block<3, 3>(6, 0).transpose();   // Q_31^T
@@ -1112,10 +1112,15 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix
     Q.block<3, 3>(3, 9) = Q.block<3, 3>(9, 3).transpose();   // Q_42^T
     Q.block<3, 3>(0, 12) = Q.block<3, 3>(12, 0).transpose(); // Q_51^T
 
-    Q.middleRows<3>(0) *= std::pow(SCALE_FACTOR_ATTITUDE, 2);
-    Q.middleRows<2>(6) *= std::pow(SCALE_FACTOR_LAT_LON, 2);
-    Q.middleRows<3>(9) *= std::pow(SCALE_FACTOR_ACCELERATION, 2);
-    Q.middleRows<3>(12) *= std::pow(SCALE_FACTOR_ANGULAR_RATE, 2);
+    Q.middleRows<3>(0) *= SCALE_FACTOR_ATTITUDE;
+    Q.middleRows<2>(6) *= SCALE_FACTOR_LAT_LON;
+    Q.middleRows<3>(9) *= SCALE_FACTOR_ACCELERATION;
+    Q.middleRows<3>(12) *= SCALE_FACTOR_ANGULAR_RATE;
+
+    Q.middleCols<3>(0) *= SCALE_FACTOR_ATTITUDE;
+    Q.middleCols<2>(6) *= SCALE_FACTOR_LAT_LON;
+    Q.middleCols<3>(9) *= SCALE_FACTOR_ACCELERATION;
+    Q.middleCols<3>(12) *= SCALE_FACTOR_ANGULAR_RATE;
 
     return Q;
 }
