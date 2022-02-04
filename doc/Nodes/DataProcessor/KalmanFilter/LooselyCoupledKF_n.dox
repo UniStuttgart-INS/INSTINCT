@@ -353,6 +353,8 @@ see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.83/14.84, p. 592
 
 \subsection LooselyCoupledKF_n-Noise-GM1 Gauss-Markov 1. Order
 
+\f$ \textcolor{red}{\text{[Deprecated] TODO: Update code and documentation}} \f$
+
 \fl{equation,eq-LCKF_n-gauss-markov-1}
   \dotup{x} = -\beta x + W(t)
 \f}
@@ -389,9 +391,11 @@ where
 \section LooselyCoupledKF_n-KF-Matrices Kalman-Filter Matrices
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
-\subsection LooselyCoupledKF_n-KF-Q State transition matrix 𝚽 & Process noise covariance matrix Q
+\subsection LooselyCoupledKF_n-KF-Phi-Q State transition matrix 𝚽 & Process noise covariance matrix Q
 
-The state transition matrix and the system/process noise covariance matrix are calculated with the van Loan method \cite Loan1978 . In short
+\subsubsection LooselyCoupledKF_n-KF-Phi-Q-Van-Loan Van Loan method
+
+The state transition matrix and the system/process noise covariance matrix can be calculated with the van Loan method \cite Loan1978 . In short
 
 1. Form a \f$ 2n \times 2n \f$ matrix called \f$ \mathbf{A} \f$ (\f$ n \f$ is the dimension of \f$ \mathbf{x} \f$ and \f$ \mathbf{W} \f$ is the power spectral density of the noise \f$ W(t) \f$)
 \fl{equation,eq-LCKF_n-Loan-A}
@@ -419,7 +423,11 @@ The state transition matrix and the system/process noise covariance matrix are c
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
 \f}
 
-The white noise scale factor is usually accounted for within the \f$ \mathbf{G} \f$ matrix. Thus, \f$ \mathbf{W} \f$ is and identity matrix with dimensions that are compatible with \f$ \mathbf{G} \f$.
+\subsubsection LooselyCoupledKF_n-KF-Q-Taylor-1 Taylor approximation
+
+The van Loan method has the disadvantage, that the exponential matrix has to be calculated. A computational easier approach is to use a Taylor approximation.
+
+\f$ \textcolor{red}{\text{[Deprecated] TODO: Documentation here}} \f$
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -812,15 +820,20 @@ The unit \f$ m' \f$ is [pseudometre] and is latitude or longitude converted from
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.1em] {
-      \dots                                                              &                                              \\
+      \boldsymbol{\delta \dot{\psi}}                                     & \left[ \frac{\text{rad}}{\text{s}} \right]   \\
+      \boldsymbol{\delta \dot{v}}^{n}                                    & \left[ \frac{\text{m}}{\text{s}^2} \right]   \\
+      \boldsymbol{\delta \dot{p}}_b                                      & \dots                                        \\
       \boldsymbol{\delta \dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} & \left[ \frac{\text{m}}{\text{s}^3} \right]   \\
       \boldsymbol{\delta \dot{\omega}}_{ib}^b                            & \left[ \frac{\text{rad}}{\text{s}^2} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=0.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{\dot{x}}$} ($ (m-1-2.north east) + (0,1pt) $);
+    \draw[decorate,transform canvas={yshift=0.6em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{\dot{x}}$} ($ (m-1-2.north east) + (0,1pt) $);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[red!20]{m-2-1}{m-2-1}
-      \fhighlight[orange!20]{m-3-1}{m-3-1}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
     \end{pgfonlayer}
   \end{tikzpicture}
   =
@@ -828,30 +841,37 @@ The unit \f$ m' \f$ is [pseudometre] and is latitude or longitude converted from
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=3em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \dots &        \dots                                           &           \dots                                              \\
-      \dots & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
-      \dots &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-3.north east);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[magenta!20]{m-2-2}{m-2-2}
-      \fhighlight[olive!20]{m-3-3}{m-3-3}
+      \fhighlight[magenta!20]{m-4-4}{m-4-4}
+      \fhighlight[olive!20]{m-5-5}{m-5-5}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.1em] {
-      \dots                             &                                            \\
+      \boldsymbol{\delta \psi}          & \left[ \text{rad} \right]                  \\
+      \boldsymbol{\delta v}^{n}         & \left[ \frac{\text{m}}{\text{s}} \right]   \\
+      \boldsymbol{\delta p}_b           & \dots                                      \\
       \boldsymbol{\delta f}^b           & \left[ \frac{\text{m}}{\text{s}^2} \right] \\
       \boldsymbol{\delta \omega}_{ib}^b & \left[ \frac{\text{rad}}{\text{s}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{x}$} ($ (m-1-2.north east) + (0,1pt) $);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{x}$} (m-1-2.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[red!20]{m-2-1}{m-2-1}
-      \fhighlight[orange!20]{m-3-1}{m-3-1}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
     \end{pgfonlayer}
   \end{tikzpicture}
   +
@@ -859,37 +879,46 @@ The unit \f$ m' \f$ is [pseudometre] and is latitude or longitude converted from
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=4.8em,align=center},row sep=0.3em, column sep=0.4em]
     {
-          \dots                                                                &     \dots                                                                    \\
-      \mathbf{G}_f \left[ \frac{\text{m} }{\text{s}^2 \sqrt{\text{s}}} \right] & \mathbf{0}_3                                                                 \\
-      \mathbf{0}_3                                                             & \mathbf{G}_\omega \left[ \frac{\text{rad}}{\text{s} \sqrt{\text{s}}} \right] \\
+      -\mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{I}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-2.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[brown!20]{m-2-1}{m-2-1}
-      \fhighlight[darkgray!20]{m-3-2}{m-3-2}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-4-3}{m-4-3}
+      \fhighlight[lightgray!20]{m-5-4}{m-5-4}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
-  \mathbf{W} \left[ \frac{1}{\sqrt{\text{s}}} \right]
+  \mathbf{w} \left[ \frac{1}{\sqrt{\text{s}}} \right]
 \f}
 
 When scaling the biases in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the \f$ \mathbf{\beta} \f$ factors stay unscaled.
-However the \f$ \mathbf{G} \f$ matrices have to be adapted.
+However the \f$ \mathbf{G} \f$ matrix has to be adapted.
 
 \fl{equation,eq-LCKF_n-Units-noise-scaled}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.4em,align=center},row sep=0.3em, column sep=0.1em] {
-      \dots                                                              &                                                            \\
-      \boldsymbol{\delta \dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} &  \left[ \highlight[red!60]{\frac{\text{mg}}{\text{s}}} \right]     \\
-      \boldsymbol{\delta \dot{\omega}}_{ib}^b                            &  \left[ \highlight[red!60]{\frac{\text{mrad}}{\text{s}^2}} \right] \\
+      \boldsymbol{\delta \dot{\psi}}                                     & \left[ \highlight[red!60]{\text{deg}} \right]                     \\
+      \boldsymbol{\delta \dot{v}}^{n}                                    & \left[ \frac{\text{m}}{\text{s}^2} \right]                        \\
+      \boldsymbol{\delta \dot{p}}_b                                      & \dots                                                             \\
+      \boldsymbol{\delta \dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} & \left[ \highlight[red!60]{\frac{\text{mg}}{\text{s}}} \right]     \\
+      \boldsymbol{\delta \dot{\omega}}_{ib}^b                            & \left[ \highlight[red!60]{\frac{\text{mrad}}{\text{s}^2}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=0.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{\dot{x}}$} ($ (m-1-2.north east) + (0,1pt) $);
+    \draw[decorate,transform canvas={yshift=0.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{\dot{x}}$} ($ (m-1-2.north east) - (0,2pt) $);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[red!20]{m-2-1}{m-2-1}
-      \fhighlight[orange!20]{m-3-1}{m-3-1}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
     \end{pgfonlayer}
   \end{tikzpicture}
   =
@@ -897,30 +926,37 @@ However the \f$ \mathbf{G} \f$ matrices have to be adapted.
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=3em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \dots &        \dots                                           &           \dots                                              \\
-      \dots & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
-      \dots &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-3.north east);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[magenta!20]{m-2-2}{m-2-2}
-      \fhighlight[olive!20]{m-3-3}{m-3-3}
+      \fhighlight[magenta!20]{m-4-4}{m-4-4}
+      \fhighlight[olive!20]{m-5-5}{m-5-5}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.4em,align=center},row sep=0.3em, column sep=0.1em] {
-      \dots                             &                                                                 \\
+      \boldsymbol{\delta \dot{\psi}}    & \left[ \highlight[red!60]{\frac{\text{deg}}{\text{s}}} \right]  \\
+      \boldsymbol{\delta \dot{v}}^{n}   & \left[ \frac{\text{m}}{\text{s}^2} \right]   \\
+      \boldsymbol{\delta \dot{p}}_b     & \dots                                        \\
       \boldsymbol{\delta f}^b           & \left[ \highlight[red!60]{\text{mg}} \right]                    \\
       \boldsymbol{\delta \omega}_{ib}^b & \left[ \highlight[red!60]{\frac{\text{mrad}}{\text{s}}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{x}$} ($ (m-1-2.north east) + (0,1pt) $);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{x}$} ($ (m-1-2.north east) - (0,3pt) $);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[red!20]{m-2-1}{m-2-1}
-      \fhighlight[orange!20]{m-3-1}{m-3-1}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
     \end{pgfonlayer}
   \end{tikzpicture}
   +
@@ -929,23 +965,36 @@ However the \f$ \mathbf{G} \f$ matrices have to be adapted.
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=4.8em,align=center},row sep=0.3em, column sep=0.4em]
     {
-          \dots                                                                &     \dots                                                                    \\
-      \mathbf{G}_f \left[ \frac{\text{m} }{\text{s}^2 \sqrt{\text{s}}} \right] & \mathbf{0}_3                                                                 \\
-      \mathbf{0}_3                                                             & \mathbf{G}_\omega \left[ \frac{\text{rad}}{\text{s} \sqrt{\text{s}}} \right] \\
+      -\mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{I}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-2.north east);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-4.north east);
 
-    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-2-1.south west) -- node[left=2pt] {$ \times \frac{10^3}{g} $} (m-2-1.north west);
-    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-3-1.south west) -- node[left=2pt] {$ \times 10^3 $} (m-3-1.north west);
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-1-1.south west) -- node[left=2pt] {$ \times \frac{180}{\pi} $} (m-1-1.north west);
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-4-1.south west) -- node[left=2pt] {$ \times \frac{10^3}{g} $} (m-4-1.north west);
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-5-1.south west) -- node[left=2pt] {$ \times 10^3 $} (m-5-1.north west);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[brown!20]{m-2-1}{m-2-1}
-      \fhighlight[darkgray!20]{m-3-2}{m-3-2}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-4-3}{m-4-3}
+      \fhighlight[lightgray!20]{m-5-4}{m-5-4}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
-  \mathbf{W} \left[ \frac{1}{\sqrt{\text{s}}} \right]
+  \mathbf{w} \left[ \frac{1}{\sqrt{\text{s}}} \right]
 \f}
+
+If the noise input matrix \f$ \mathbf{G} \f$ is scaled, then the noise scale matrix \f$ \mathbf{W} \f$ does not have to be scaled.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_n-Units-Q Process noise covariance matrix Q
+
+If the alternative process noise covariance matrix \f$ \mathbf{Q} \f$ is used, it also has to be scaled.
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -996,7 +1045,7 @@ The error covariance matrix is initialized as a diagonal matrix with the varianc
   \end{tikzpicture}
 \f}
 
-When scaling elements in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the relevant parts of the \f$ \mathbf{P} \f$ matrix have to be adapted.
+When scaling elements in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the relevant parts of the \f$ \mathbf{P} \f$ matrix have to be adapted. This means the scale factors have to be multiplied with the correct rows and columns. As \f$ \mathbf{P} \f$ is a diagonal matrix, this means only the diagonal terms have to be scaled.
 
 \fl{equation,eq-LCKF_n-Units-P-scaled}
   \mathbf{P}_0 =
@@ -1043,10 +1092,17 @@ When scaling elements in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the relevant par
       }
     }
 
-    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-3-1-sw) -- node[left=2pt] {$ \times \frac{180^2}{\pi^2} $} (m-1-1-nw);
-    \draw[decorate,transform canvas={xshift=-0.5em},thick,red] (m-8-7-sw) -- node[left=2pt] {$ \times R_0^2 $} (m-7-7-nw);
-    \draw[decorate,transform canvas={xshift=-0.5em},thick,red] (m-12-10-sw) -- node[left=2pt] {$ \times \frac{10^6}{g^2} $} (m-10-10-nw);
-    \draw[decorate,transform canvas={xshift=-0.5em},thick,red] (m-15-13-sw) -- node[left=2pt] {$ \times 10^6 $} (m-13-13-nw);
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-3-1-sw) -- node[left=2pt] {$ \times \frac{180}{\pi} $} (m-1-1-nw);
+    \draw[decorate,transform canvas={yshift= 0.5em},thick,red] (m-1-1-nw) -- node[above=2pt] {$ \times \frac{180}{\pi} $} (m-1-3-ne);
+
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-8-1-sw) -- node[left=2pt] {$ \times R_0 $} (m-7-1-nw);
+    \draw[decorate,transform canvas={yshift= 0.5em},thick,red] (m-1-7-nw) -- node[above=2pt] {$ \times R_0 $} (m-1-8-ne);
+
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-12-1-sw) -- node[left=2pt] {$ \times \frac{10^3}{g} $} (m-10-1-nw);
+    \draw[decorate,transform canvas={yshift= 0.5em},thick,red] (m-1-10-nw) -- node[above=2pt] {$ \times \frac{10^3}{g} $} (m-1-12-ne);
+
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-15-1-sw) -- node[left=2pt] {$ \times 10^3 $} (m-13-1-nw);
+    \draw[decorate,transform canvas={yshift= 0.5em},thick,red] (m-1-13-nw) -- node[above=2pt] {$ \times 10^3 $} (m-1-15-ne);
 
     \begin{pgfonlayer}{background}
       \fhighlight[green!20]{m-1-1}{m-1-1}
