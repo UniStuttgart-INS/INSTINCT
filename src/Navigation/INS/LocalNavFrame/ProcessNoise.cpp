@@ -70,17 +70,17 @@ Eigen::Matrix3d Q_dr_dr(const Eigen::Vector3d& S_ra, const Eigen::Vector3d& S_ba
 
 Eigen::Matrix3d Q_dr_df(const Eigen::Vector3d& S_bad, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
 {
-    return 1.0 / 3.0 * Eigen::DiagonalMatrix<double, 3>(S_bad) * std::pow(tau_s, 3) * T_rn_p * DCM_nb.transpose();
+    return 1.0 / 3.0 * Eigen::DiagonalMatrix<double, 3>(S_bad) * std::pow(tau_s, 3) * T_rn_p * DCM_nb;
 }
 
 Eigen::Matrix3d Q_dr_domega(const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
 {
-    return 0.25 * Eigen::DiagonalMatrix<double, 3>(S_bgd) * std::pow(tau_s, 4) * T_rn_p * F_21_n * DCM_nb.transpose();
+    return 0.25 * Eigen::DiagonalMatrix<double, 3>(S_bgd) * std::pow(tau_s, 4) * T_rn_p * F_21_n * DCM_nb;
 }
 
 Eigen::Matrix3d Q_df_dv(const Eigen::Vector3d& S_bad, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
 {
-    return 0.5 * Eigen::DiagonalMatrix<double, 3>(S_bad) * std::pow(tau_s, 2) * DCM_nb;
+    return 0.5 * Eigen::DiagonalMatrix<double, 3>(S_bad) * std::pow(tau_s, 2) * DCM_nb.transpose();
 }
 
 Eigen::Matrix3d Q_df_df(const Eigen::Vector3d& S_bad, const double& tau_s)
@@ -90,7 +90,7 @@ Eigen::Matrix3d Q_df_df(const Eigen::Vector3d& S_bad, const double& tau_s)
 
 Eigen::Matrix3d Q_domega_psi(const Eigen::Vector3d& S_bgd, const Eigen::Matrix3d& DCM_nb, const double& tau_s)
 {
-    return 0.5 * Eigen::DiagonalMatrix<double, 3>(S_bgd) * std::pow(tau_s, 2) * DCM_nb;
+    return 0.5 * Eigen::DiagonalMatrix<double, 3>(S_bgd) * std::pow(tau_s, 2) * DCM_nb.transpose();
 }
 
 Eigen::Matrix3d Q_domega_domega(const Eigen::Vector3d& S_bgd, const double& tau_s)
