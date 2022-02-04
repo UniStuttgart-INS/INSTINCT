@@ -785,7 +785,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     else if (_phiQCalculationAlgorithm == PhiQCalculationAlgorithm::Taylor1)
     {
         // 1. Calculate the transition matrix 𝚽_{k-1}
-        _kalmanFilter.Phi = transitionMatrixApproxOrder1<double, 15>(F, _tau_KF);
+        _kalmanFilter.Phi = transitionMatrixApproxOrder1<double, 15>(F, _tau_KF); // TODO: Logic to select algorithm
+        _kalmanFilter.Phi = transitionMatrixApproxOrder2<double, 15>(F, _tau_KF);
+        // _kalmanFilter.Phi = (F * _tau_KF).exp();
 
         // 2. Calculate the system noise covariance matrix Q_{k-1}
         _kalmanFilter.Q = systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
@@ -801,6 +803,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     LOG_DATA("{}: KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q);
     LOG_DATA("{}: KF.Q =\n{}", nameId(), _kalmanFilter.Q);
+
+    LOG_DATA("{}: Q - Q^T =\n{}", nameId(), _kalmanFilter.Q - _kalmanFilter.Q.transpose());
 
     // 3. Propagate the state vector estimate from x(+) and x(-)
     // 4. Propagate the error covariance matrix from P(+) and P(-)

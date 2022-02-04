@@ -176,4 +176,15 @@ Eigen::Matrix<_Scalar, _n, _n> transitionMatrixApproxOrder1(const Eigen::Matrix<
     return Eigen::Matrix<_Scalar, _n, _n>::Identity() + F * tau_s;
 }
 
+/// @brief Updates the state transition matrix 𝚽 limited to second order in 𝐅𝜏ₛ
+/// @param[in] F System Matrix
+/// @param[in] tau_s time interval in [s]
+/// @note See Groves (2013) chapter 14.2.4, equation (14.72)
+template<typename _Scalar, int _n>
+Eigen::Matrix<_Scalar, _n, _n> transitionMatrixApproxOrder2(const Eigen::Matrix<_Scalar, _n, _n>& F, double tau_s)
+{
+    // Transition matrix 𝚽
+    return Eigen::Matrix<_Scalar, _n, _n>::Identity() + F * tau_s + 1. / 2. * F * F * tau_s * tau_s;
+}
+
 } // namespace NAV
