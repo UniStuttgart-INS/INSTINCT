@@ -775,8 +775,6 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         LOG_DATA("{}: G*W*G^T =\n{}", nameId(), G * W * G.transpose());
 
         auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 12>(F, G, W, _tau_KF);
-        LOG_DATA("{}: Phi =\n{}", nameId(), Phi);
-        LOG_DATA("{}: Q =\n{}", nameId(), Q);
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
         _kalmanFilter.Phi = Phi;
@@ -1054,7 +1052,7 @@ Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrixG(const Eig
     // DCM matrix from body to navigation frame
     const Eigen::Matrix3d dcm_nb = quaternion_nb.toRotationMatrix();
 
-    // Math: \mathbf{G}_{a} = \begin{bmatrix} -\mathbf{C}_b^n & 0 & 0 & 0 \\ 0 & \mathbf{C}_b^n & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & \mathbf{G}_{a} & 0 \\ 0 & 0 & 0 & \mathbf{G}_{\omega} \end{bmatrix} \quad \text{T. Hobiger}\,(6.5)
+    // Math: \mathbf{G}_{a} = \begin{bmatrix} -\mathbf{C}_b^n & 0 & 0 & 0 \\ 0 & \mathbf{C}_b^n & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & \mathbf{I}_3 & 0 \\ 0 & 0 & 0 & \mathbf{I}_3 \end{bmatrix} \quad \text{T. Hobiger}\,(6.5)
     Eigen::Matrix<double, 15, 12> G = Eigen::Matrix<double, 15, 12>::Zero();
 
     G.block<3, 3>(0, 0) = SCALE_FACTOR_ATTITUDE * -dcm_nb;
