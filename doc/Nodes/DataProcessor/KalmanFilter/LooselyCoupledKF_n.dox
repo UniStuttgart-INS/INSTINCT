@@ -324,7 +324,7 @@ The terms in the noise input matrix \f$ \mathbf{G} \f$ are not scaled and theref
   \end{tikzpicture}
 \f}
 
-\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices which entries are filled with the followingPSDs.
+\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices which entries are filled with the following PSDs.
 
 White noise has a PSD of \f$ \sigma^2 \f$ and therefore the <b>PSDs of the accelerometer and gyro noise</b> are
 
@@ -392,6 +392,188 @@ where
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 \subsection LooselyCoupledKF_n-KF-Phi-Q State transition matrix 𝚽 & Process noise covariance matrix Q
+
+\subsubsection LooselyCoupledKF_n-KF-Phi State transition matrix 𝚽
+
+#### Exponential Matrix
+
+The state transition matrix is defined as
+
+\fl{equation,eq-LCKF_n-Phi-exp}
+  \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.33, p. 97
+
+#### Taylor series
+
+The exponential matrix cannot be calculated directly and numerical methods are computationally intensive. Therefore the transition matrix can be computed as a power-series expansion
+
+\fl{equation,eq-LCKF_n-Phi-Taylor}
+  \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.34, p. 98
+
+\subsubsection LooselyCoupledKF_n-KF-Q Process noise covariance matrix Q
+
+The process noise covariance matrix is defined as
+
+\fl{equation,eq-LCKF_n-Q-exact}
+  \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
+\f}
+
+This matrix can be approximated and should be validated against the the exact version prior to use.
+
+\fl{equation,eq-LCKF_n-Q-approx}
+  \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.43/3.45, p. 99
+
+Taking the noise input and scale matrices from \eqref{eq-LCKF_n-dynamicModel-short} and \eqref{eq-LCKF_n-random-walk-noise-scale-matrix-W} and putting it into the exact form \eqref{eq-LCKF_n-Q-exact}, it becomes
+
+\fl{equation,eq-LCKF_n-Q-GWGT}
+\begin{aligned}
+  \mathbf{Q}_{k-1} &= \int_{t_k - \tau_s}^{t_k}
+                           \exp{(\mathbf{F}_{k-1} (t_k-t'))}
+                           \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                         nodes={rectangle,text width=4em,align=center},row sep=0.3em, column sep=0.4em]
+                             {
+                               -\mathbf{C}_b^n \cdot \mathbf{S}_{rg} &             \mathbf{0}_3             &             \mathbf{0}_3            &             \mathbf{0}_3            \\
+                                            \mathbf{0}_3             & \mathbf{C}_b^n \cdot \mathbf{S}_{ra} &             \mathbf{0}_3            &             \mathbf{0}_3            \\
+                                            \mathbf{0}_3             &             \mathbf{0}_3             &             \mathbf{0}_3            &             \mathbf{0}_3            \\
+                                            \mathbf{0}_3             &             \mathbf{0}_3             & \mathbf{I}_3 \cdot \mathbf{S}_{bad} &             \mathbf{0}_3            \\
+                                            \mathbf{0}_3             &             \mathbf{0}_3             &             \mathbf{0}_3            & \mathbf{I}_3 \cdot \mathbf{S}_{bgd} \\
+                             };
+
+                             \begin{pgfonlayer}{background}
+                               \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+                               \fhighlight[brown!20]{m-2-2}{m-2-2}
+                               \fhighlight[pink!20]{m-4-3}{m-4-3}
+                               \fhighlight[lightgray!20]{m-5-4}{m-5-4}
+                             \end{pgfonlayer}
+                           \end{tikzpicture}
+                           \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                         nodes={rectangle,text width=4em,align=center},row sep=0.3em, column sep=0.4em]
+                             {
+                               -\mathbf{C}_n^b & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\
+                                \mathbf{0}_3   & \mathbf{C}_n^b & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\
+                                \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 & \mathbf{0}_3 \\
+                                \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{I}_3 \\
+                             };
+
+                             \begin{pgfonlayer}{background}
+                               \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+                               \fhighlight[brown!20]{m-2-2}{m-2-2}
+                               \fhighlight[pink!20]{m-3-4}{m-3-4}
+                               \fhighlight[lightgray!20]{m-4-5}{m-4-5}
+                             \end{pgfonlayer}
+                           \end{tikzpicture}
+                           \exp{(\mathbf{F}_{k-1}^T (t_k-t'))}
+                      dt' \\
+                   &= \int_{t_k - \tau_s}^{t_k}
+                           \exp{(\mathbf{F}_{k-1} (t_k-t'))}
+                           \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                         nodes={rectangle,text width=5em,align=center},row sep=0.3em, column sep=0.4em]
+                             {
+                               \mathbf{C}_b^n \mathbf{S}_{rg} \mathbf{C}_n^b &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                              \mathbf{0}_3                   & \mathbf{C}_b^n \mathbf{S}_{ra} \mathbf{C}_n^b & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                              \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                              \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{S}_{bad} & \mathbf{0}_3     \\
+                                              \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{S}_{bgd} \\
+                             };
+
+                             \begin{pgfonlayer}{background}
+                               \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+                               \fhighlight[brown!20]{m-2-2}{m-2-2}
+                               \fhighlight[pink!20]{m-4-4}{m-4-4}
+                               \fhighlight[lightgray!20]{m-5-5}{m-5-5}
+                             \end{pgfonlayer}
+                           \end{tikzpicture}
+                           \exp{(\mathbf{F}_{k-1}^T (t_k-t'))}
+                      dt'
+\end{aligned}
+\f}
+
+The exponential \f$ \mathbf{F} \f$ matrix shall be approximated by first order. This leads to:
+
+\fl{equation,eq-LCKF_n-Q-GWGT-approx}
+\begin{aligned}
+  \mathbf{Q}_{k-1} &\approx \int_{t_k - \tau_s}^{t_k}
+                                 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                   \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                               nodes={rectangle,text width=5.5em,align=center},row sep=0.3em, column sep=0.4em]
+                                   {
+                                     \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{\psi},\delta \psi}^n \tau_s &                \mathbf{F}_{\delta \dotup{\psi},\delta v}^n \tau_s &                \mathbf{F}_{\delta \dotup{\psi},\delta r}^n \tau_s & \mathbf{0}_3          & -\mathbf{C}_b^n \tau_s \\
+                                                    \mathbf{F}_{\delta \dotup{v},\delta \psi}^n    \tau_s & \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{v},\delta v}^n    \tau_s &                \mathbf{F}_{\delta \dotup{v},\delta r}^n    \tau_s & \mathbf{C}_b^n \tau_s &  \mathbf{0}_3          \\
+                                                    \mathbf{0}_3                                          &                \mathbf{F}_{\delta \dotup{r},\delta v}^n    \tau_s & \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{r},\delta r}^n    \tau_s & \mathbf{0}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{0}_3                                          &                \mathbf{0}_3                                       &                \mathbf{0}_3                                       & \mathbf{I}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{0}_3                                          &                \mathbf{0}_3                                       &                \mathbf{0}_3                                       & \mathbf{0}_3          &  \mathbf{I}_3          \\
+                                   };
+
+                                   \begin{pgfonlayer}{background}
+                                     \fhighlight[green!20]{m-1-1}{m-1-1}
+                                     \fhighlight[yellow!20]{m-1-2}{m-1-2}
+                                     \fhighlight[lime!20]{m-1-3}{m-1-3}
+                                     \fhighlight[orange!20]{m-1-5}{m-1-5}
+                                     \fhighlight[purple!20]{m-2-1}{m-2-1}
+                                     \fhighlight[blue!20]{m-2-2}{m-2-2}
+                                     \fhighlight[violet!20]{m-2-3}{m-2-3}
+                                     \fhighlight[red!20]{m-2-4}{m-2-4}
+                                     \fhighlight[teal!20]{m-3-2}{m-3-2}
+                                     \fhighlight[cyan!20]{m-3-3}{m-3-3}
+                                   \end{pgfonlayer}
+                                 \end{tikzpicture}
+                                 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                   \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                               nodes={rectangle,text width=5em,align=center},row sep=0.3em, column sep=0.4em]
+                                   {
+                                     \mathbf{C}_b^n \mathbf{S}_{rg} \mathbf{C}_n^b &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                                    \mathbf{0}_3                   & \mathbf{C}_b^n \mathbf{S}_{ra} \mathbf{C}_n^b & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                                    \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                                    \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{S}_{bad} & \mathbf{0}_3     \\
+                                                    \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{S}_{bgd} \\
+                                   };
+
+                                   \begin{pgfonlayer}{background}
+                                     \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+                                     \fhighlight[brown!20]{m-2-2}{m-2-2}
+                                     \fhighlight[pink!20]{m-4-4}{m-4-4}
+                                     \fhighlight[lightgray!20]{m-5-5}{m-5-5}
+                                   \end{pgfonlayer}
+                                 \end{tikzpicture}
+                                 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                   \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                               nodes={rectangle,text width=5.5em,align=center},row sep=0.3em, column sep=0.4em]
+                                   {
+                                     \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{\psi},\delta \psi}^n \tau_s &                \mathbf{F}_{\delta \dotup{v},\delta \psi}^n \tau_s &                \mathbf{0}_3                                       & \mathbf{0}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{F}_{\delta \dotup{\psi},\delta v}^n    \tau_s & \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{v},\delta v}^n    \tau_s &                \mathbf{F}_{\delta \dotup{r},\delta v}^n    \tau_s & \mathbf{0}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{F}_{\delta \dotup{\psi},\delta r}^n    \tau_s &                \mathbf{F}_{\delta \dotup{v},\delta r}^n    \tau_s & \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{r},\delta r}^n    \tau_s & \mathbf{0}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{0}_3                                          &                \mathbf{C}_b^n \tau_s                              &                \mathbf{0}_3                                       & \mathbf{I}_3          &  \mathbf{0}_3          \\
+                                                   -\mathbf{C}_b^n \tau_s                                 &                \mathbf{0}_3                                       &                \mathbf{0}_3                                       & \mathbf{0}_3          &  \mathbf{I}_3          \\
+                                   };
+
+                                   \begin{pgfonlayer}{background}
+                                     \fhighlight[green!20]{m-1-1}{m-1-1}
+                                     \fhighlight[yellow!20]{m-2-1}{m-2-1}
+                                     \fhighlight[lime!20]{m-3-1}{m-3-1}
+                                     \fhighlight[orange!20]{m-5-1}{m-5-1}
+                                     \fhighlight[purple!20]{m-1-2}{m-1-2}
+                                     \fhighlight[blue!20]{m-2-2}{m-2-2}
+                                     \fhighlight[violet!20]{m-3-2}{m-3-2}
+                                     \fhighlight[red!20]{m-4-2}{m-4-2}
+                                     \fhighlight[teal!20]{m-2-3}{m-2-3}
+                                     \fhighlight[cyan!20]{m-3-3}{m-3-3}
+                                   \end{pgfonlayer}
+                                 \end{tikzpicture}
+                            dt'
+\end{aligned}
+\f}
+
 
 \subsubsection LooselyCoupledKF_n-KF-Phi-Q-Van-Loan Van Loan method
 
