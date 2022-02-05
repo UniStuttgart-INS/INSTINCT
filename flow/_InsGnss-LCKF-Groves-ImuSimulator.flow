@@ -612,13 +612,13 @@
                 },
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
-                        "0": 0.006
+                        "0": 0.0006
                     },
                     "1": {
-                        "0": 0.006
+                        "0": 0.0006
                     },
                     "2": {
-                        "0": 0.018
+                        "0": 0.0018
                     }
                 },
                 "gnssMeasurementUncertaintyPositionUnit": 3,
@@ -636,25 +636,25 @@
                 "gnssMeasurementUncertaintyVelocityUnit": 1,
                 "initCovarianceAttitudeAngles": {
                     "0": {
-                        "0": 10.0
+                        "0": 1.0
                     },
                     "1": {
-                        "0": 10.0
+                        "0": 1.0
                     },
                     "2": {
-                        "0": 10.0
+                        "0": 1.0
                     }
                 },
                 "initCovarianceAttitudeAnglesUnit": 3,
                 "initCovarianceBiasAccel": {
                     "0": {
-                        "0": 0.01
+                        "0": 0.05
                     },
                     "1": {
-                        "0": 0.01
+                        "0": 0.05
                     },
                     "2": {
-                        "0": 0.01
+                        "0": 0.05
                     }
                 },
                 "initCovarianceBiasAccelUnit": 1,
@@ -669,7 +669,7 @@
                         "0": 0.1
                     }
                 },
-                "initCovarianceBiasGyroUnit": 3,
+                "initCovarianceBiasGyroUnit": 2,
                 "initCovariancePosition": {
                     "0": {
                         "0": 100.0
@@ -694,8 +694,9 @@
                     }
                 },
                 "initCovarianceVelocityUnit": 1,
-                "phiCalculation": 0,
-                "qCalculation": 0,
+                "phiCalculationAlgorithm": 0,
+                "phiCalculationTaylorOrder": 2,
+                "qCalculationAlgorithm": 0,
                 "randomProcessAccel": 2,
                 "randomProcessGyro": 2,
                 "stdevAccelNoiseUnits": 1,
@@ -713,13 +714,13 @@
                 },
                 "stdev_rg": {
                     "0": {
-                        "0": 0.0001
+                        "0": 0.001
                     },
                     "1": {
-                        "0": 0.0001
+                        "0": 0.001
                     },
                     "2": {
-                        "0": 0.0001
+                        "0": 0.001
                     }
                 },
                 "varianceAccelBiasUnits": 0,
@@ -737,13 +738,13 @@
                 },
                 "variance_bgd": {
                     "0": {
-                        "0": 9.999996109399945e-06
+                        "0": 0.01
                     },
                     "1": {
-                        "0": 1e-05
+                        "0": 0.01
                     },
                     "2": {
-                        "0": 1e-05
+                        "0": 0.01
                     }
                 }
             },
@@ -5283,7 +5284,7 @@
                 "plotInfos": [
                     {
                         "autoLimitXaxis": true,
-                        "autoLimitYaxis": true,
+                        "autoLimitYaxis": false,
                         "headerText": "Accelerometer bias (accumulated)",
                         "leftPaneWidth": 180.0,
                         "overrideXAxisLabel": false,
@@ -5621,7 +5622,7 @@
                         "0": 0.0
                     }
                 },
-                "simulationDuration": 2000.0,
+                "simulationDuration": 5001.0,
                 "simulationStopCondition": 0,
                 "startPosition_lla": {
                     "0": {
