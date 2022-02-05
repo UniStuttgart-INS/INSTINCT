@@ -299,14 +299,26 @@ class LooselyCoupledKF : public Node
 
     // ###########################################################################################################
 
-    /// GUI option for the Phi and Q calculation algorithm
-    enum class PhiQCalculationAlgorithm
+    /// GUI option for the Phi calculation algorithm
+    enum class PhiCalculationAlgorithm
     {
-        Taylor1,
-        VanLoan,
+        Exponential,
+        Taylor,
     };
     /// GUI option for the Phi calculation algorithm
-    PhiQCalculationAlgorithm _phiQCalculationAlgorithm = PhiQCalculationAlgorithm::Taylor1;
+    PhiCalculationAlgorithm _phiCalculationAlgorithm = PhiCalculationAlgorithm::Taylor;
+
+    /// GUI option for the order of the Taylor polynom to calculate the Phi matrix
+    int _phiCalculationTaylorOrder = 2;
+
+    /// GUI option for the Q calculation algorithm
+    enum class QCalculationAlgorithm
+    {
+        VanLoan,
+        Taylor1,
+    };
+    /// GUI option for the Q calculation algorithm
+    QCalculationAlgorithm _qCalculationAlgorithm = QCalculationAlgorithm::Taylor1;
 
     // ###########################################################################################################
     //                                                Prediction

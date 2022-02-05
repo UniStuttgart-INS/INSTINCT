@@ -81,10 +81,39 @@ void NAV::LooselyCoupledKF::guiConfig()
     constexpr float configWidth = 380.0F;
     constexpr float unitWidth = 150.0F;
 
-    ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-    if (ImGui::Combo(fmt::format("Phi/Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiQCalculationAlgorithm), "Taylor 1st Order\0Van Loan\0\0"))
+    float taylorOrderWidth = 75.0F;
+
+    if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
     {
-        LOG_DEBUG("{}: Phi/Q calculation algorithm changed to {}", nameId(), _phiQCalculationAlgorithm);
+        ImGui::SetNextItemWidth(configWidth - taylorOrderWidth);
+    }
+    else
+    {
+        ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+    }
+    if (ImGui::Combo(fmt::format("##Phi calculation algorithm {}", size_t(id)).c_str(), reinterpret_cast<int*>(&_phiCalculationAlgorithm), "Van Loan\0Taylor\0\0"))
+    {
+        LOG_DEBUG("{}: Phi calculation algorithm changed to {}", nameId(), _phiCalculationAlgorithm);
+        flow::ApplyChanges();
+    }
+
+    if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
+    {
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(taylorOrderWidth);
+        if (ImGui::InputIntL(fmt::format("##Phi calculation Taylor Order {}", size_t(id)).c_str(), &_phiCalculationTaylorOrder, 1, 9))
+        {
+            LOG_DEBUG("{}: Phi calculation  Taylor Order changed to {}", nameId(), _phiCalculationTaylorOrder);
+            flow::ApplyChanges();
+        }
+    }
+    ImGui::SameLine();
+    ImGui::Text("Phi calculation algorithm%s", _phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor ? " (up to order)" : "");
+
+    ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
+    if (ImGui::Combo(fmt::format("Q calculation algorithm##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_qCalculationAlgorithm), "Van Loan\0Taylor 1st Order\0\0"))
+    {
+        LOG_DEBUG("{}: Q calculation algorithm changed to {}", nameId(), _qCalculationAlgorithm);
         flow::ApplyChanges();
     }
 
@@ -339,7 +368,9 @@ void NAV::LooselyCoupledKF::guiConfig()
 
     json j;
 
-    j["phiQCalculation"] = _phiQCalculationAlgorithm;
+    j["phiCalculationAlgorithm"] = _phiCalculationAlgorithm;
+    j["phiCalculationTaylorOrder"] = _phiCalculationTaylorOrder;
+    j["qCalculationAlgorithm"] = _qCalculationAlgorithm;
 
     j["randomProcessAccel"] = _randomProcessAccel;
     j["beta_accel"] = _beta_accel;
@@ -376,9 +407,17 @@ void NAV::LooselyCoupledKF::guiConfig()
 void NAV::LooselyCoupledKF::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
-    if (j.contains("phiQCalculation"))
+    if (j.contains("phiCalculationAlgorithm"))
     {
-        j.at("phiQCalculation").get_to(_phiQCalculationAlgorithm);
+        j.at("phiCalculationAlgorithm").get_to(_phiCalculationAlgorithm);
+    }
+    if (j.contains("phiCalculationTaylorOrder"))
+    {
+        j.at("phiCalculationTaylorOrder").get_to(_phiCalculationTaylorOrder);
+    }
+    if (j.contains("qCalculationAlgorithm"))
+    {
+        j.at("qCalculationAlgorithm").get_to(_qCalculationAlgorithm);
     }
     // ------------------------------- 𝐐 System/Process noise covariance matrix ---------------------------------
     if (j.contains("randomProcessAccel"))
@@ -760,7 +799,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     Eigen::Matrix<double, 15, 15> F = systemMatrix_F(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, beta_a, beta_omega, R_N, R_E, g_0, r_eS_e);
     LOG_DATA("{}: F =\n{}", nameId(), F);
 
-    if (_phiQCalculationAlgorithm == PhiQCalculationAlgorithm::VanLoan)
+    if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
         Eigen::Matrix<double, 15, 12> G = noiseInputMatrix_G(quaternion_nb__t1);
@@ -782,25 +821,37 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         // 2. Calculate the system noise covariance matrix Q_{k-1}
         _kalmanFilter.Q = Q;
     }
-    else if (_phiQCalculationAlgorithm == PhiQCalculationAlgorithm::Taylor1)
-    {
-        // 1. Calculate the transition matrix 𝚽_{k-1}
-        _kalmanFilter.Phi = transitionMatrixApproxOrder1<double, 15>(F, _tau_KF); // TODO: Logic to select algorithm
-        _kalmanFilter.Phi = transitionMatrixApproxOrder2<double, 15>(F, _tau_KF);
-        // _kalmanFilter.Phi = (F * _tau_KF).exp();
 
+    // If Q was calculated over Van Loan, then the Phi matrix was automatically calculated with the exponential matrix
+    if (_phiCalculationAlgorithm != PhiCalculationAlgorithm::Exponential || _qCalculationAlgorithm != QCalculationAlgorithm::VanLoan)
+    {
+        if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Exponential)
+        {
+            // 1. Calculate the transition matrix 𝚽_{k-1}
+            _kalmanFilter.Phi = transitionMatrix_Phi_exp<double, 15>(F, _tau_KF);
+        }
+        else if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
+        {
+            // 1. Calculate the transition matrix 𝚽_{k-1}
+            _kalmanFilter.Phi = transitionMatrix_Phi_Taylor<double, 15>(F, _tau_KF, static_cast<size_t>(_phiCalculationTaylorOrder));
+        }
+        else
+        {
+            LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), _phiCalculationAlgorithm);
+        }
+    }
+    notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi);
+    LOG_DATA("{}: KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
+
+    if (_qCalculationAlgorithm == QCalculationAlgorithm::Taylor1)
+    {
         // 2. Calculate the system noise covariance matrix Q_{k-1}
         _kalmanFilter.Q = systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                         sigma_bad.array().square(), sigma_bgd.array().square(),
                                                         F.block<3, 3>(3, 0), T_rn_p,
                                                         DCM_nb, _tau_KF);
     }
-    else
-    {
-        LOG_CRITICAL("{}: Calculation algorithm '{}' for the system matrix Phi is not supported.", nameId(), _phiQCalculationAlgorithm);
-    }
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_Phi);
-    LOG_DATA("{}: KF.Phi =\n{}", nameId(), _kalmanFilter.Phi);
+
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q);
     LOG_DATA("{}: KF.Q =\n{}", nameId(), _kalmanFilter.Q);
 

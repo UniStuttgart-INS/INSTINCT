@@ -8,6 +8,8 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
+#include "Navigation/Math/Math.hpp"
+
 namespace NAV
 {
 /// @brief Generalized Kalman Filter class
@@ -165,26 +167,47 @@ class KalmanFilter
     Eigen::MatrixXd I;
 };
 
-/// @brief Updates the state transition matrix 𝚽 limited to first order in 𝐅𝜏ₛ
+/// @brief Calculates the state transition matrix 𝚽 limited to specified order in 𝐅𝜏ₛ
 /// @param[in] F System Matrix
 /// @param[in] tau_s time interval in [s]
-/// @note See Groves (2013) chapter 14.2.4, equation (14.72)
-template<typename _Scalar, int _n>
-Eigen::Matrix<_Scalar, _n, _n> transitionMatrixApproxOrder1(const Eigen::Matrix<_Scalar, _n, _n>& F, double tau_s)
+/// @param[in] order The order of the Taylor polynom to calculate
+/// @note See \cite Groves2013 Groves, ch. 3.2.3, eq. 3.34, p. 98
+template<typename _Scalar, int _Dim>
+Eigen::Matrix<_Scalar, _Dim, _Dim> transitionMatrix_Phi_Taylor(const Eigen::Matrix<_Scalar, _Dim, _Dim>& F, double tau_s, size_t order)
 {
     // Transition matrix 𝚽
-    return Eigen::Matrix<_Scalar, _n, _n>::Identity() + F * tau_s;
+    Eigen::Matrix<_Scalar, _Dim, _Dim> Phi = Eigen::Matrix<_Scalar, _Dim, _Dim>::Identity();
+    // std::cout << "Phi = I";
+
+    for (size_t i = 1; i <= order; i++)
+    {
+        Eigen::Matrix<_Scalar, _Dim, _Dim> Fpower = F;
+        // std::cout << " + (F";
+
+        for (size_t j = 1; j < i; j++) // F^j
+        {
+            // std::cout << "*F";
+            Fpower *= F;
+        }
+        // std::cout << "*tau_s^" << i << ")";
+        // std::cout << "/" << factorial(i);
+        Phi += (Fpower * std::pow(tau_s, i)) / factorial(i);
+    }
+    // std::cout << "\n";
+
+    return Phi;
 }
 
-/// @brief Updates the state transition matrix 𝚽 limited to second order in 𝐅𝜏ₛ
+/// @brief Calculates the state transition matrix 𝚽 using the exponential matrix
 /// @param[in] F System Matrix
 /// @param[in] tau_s time interval in [s]
-/// @note See Groves (2013) chapter 14.2.4, equation (14.72)
-template<typename _Scalar, int _n>
-Eigen::Matrix<_Scalar, _n, _n> transitionMatrixApproxOrder2(const Eigen::Matrix<_Scalar, _n, _n>& F, double tau_s)
+/// @note See \cite Groves2013 Groves, ch. 3.2.3, eq. 3.33, p. 97
+/// @attention The cost of the computation is approximately 20n^3 for matrices of size n. The number 20 depends weakly on the norm of the matrix.
+template<typename _Scalar, int _Dim>
+Eigen::Matrix<_Scalar, _Dim, _Dim> transitionMatrix_Phi_exp(const Eigen::Matrix<_Scalar, _Dim, _Dim>& F, double tau_s)
 {
     // Transition matrix 𝚽
-    return Eigen::Matrix<_Scalar, _n, _n>::Identity() + F * tau_s + 1. / 2. * F * F * tau_s * tau_s;
+    return (F * tau_s).exp();
 }
 
 } // namespace NAV
