@@ -24,10 +24,10 @@ Eigen::Vector3d psdNoise(const Eigen::Vector3d& sigma2_r, const double& tau_i)
     return sigma2_r * tau_i;
 }
 
-Eigen::Vector3d psdBiasVariation(const Eigen::Vector3d& sigma2_bd, const double& tau_i)
+Eigen::Vector3d psdBiasVariation(const Eigen::Vector3d& sigma2_bd, const Eigen::Vector3d& tau_bd)
 {
-    // Math: S_{bd} = \frac{\sigma_{bd}^2}{\tau_i} \qquad \text{P. Groves}\,(14.84)
-    return sigma2_bd / tau_i;
+    // Math: S_{bd} = \frac{\sigma_{bd}^2}{\tau_{bd}} \qquad \text{P. Groves}\,(14.84)
+    return sigma2_bd.array() / tau_bd.array();
 }
 
 Eigen::Matrix3d Q_psi_psi(const Eigen::Vector3d& S_rg, const Eigen::Vector3d& S_bgd, const double& tau_s)

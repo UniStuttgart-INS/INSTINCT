@@ -101,13 +101,8 @@ class LooselyCoupledKF : public Node
     //                                                Parameters
     // ###########################################################################################################
 
-    /// Timestamp of the KF
-    double _tau_KF = 0.01;
-
-    /// GUI Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d _beta_accel = 2.0 / _tau_KF * Eigen::Vector3d::Ones();
-    /// GUI Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d _beta_gyro = 2.0 / _tau_KF * Eigen::Vector3d::Ones();
+    /// Time interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
+    double _tau_i = 0.01;
 
     /// Lever arm between INS and GNSS in [m, m, m]
     Eigen::Vector3d _leverArm_InsGnss_b{ 0.0, 0.0, 0.0 };
@@ -157,6 +152,9 @@ class LooselyCoupledKF : public Node
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
     Eigen::Vector3d _stdev_bad = 10 /* [µg] */ * Eigen::Vector3d::Ones();
 
+    /// @brief Correlation length of the accelerometer dynamic bias in [s]
+    Eigen::Vector3d _tau_bad = 0.1 * Eigen::Vector3d::Ones();
+
     // ###########################################################################################################
 
     /// Possible Units for the Variance of the accelerometer dynamic bias
@@ -172,17 +170,22 @@ class LooselyCoupledKF : public Node
     /// @note Value from VN-310 Datasheet (In-Run Bias Stability (Allan Variance))
     Eigen::Vector3d _stdev_bgd = 1 /* [°/h] */ * Eigen::Vector3d::Ones();
 
+    /// @brief Correlation length of the gyro dynamic bias in [s]
+    Eigen::Vector3d _tau_bgd = 0.1 * Eigen::Vector3d::Ones();
+
     // ###########################################################################################################
 
     /// @brief Available Random processes
     enum class RandomProcess
     {
-        WhiteNoise,     ///< White noise
-        RandomConstant, ///< Random constant
-        RandomWalk,     ///< Random Walk
-        GaussMarkov1,   ///< Gauss-Markov 1st Order
-        GaussMarkov2,   ///< Gauss-Markov 2nd Order
-        GaussMarkov3,   ///< Gauss-Markov 3rd Order
+        // WhiteNoise,     ///< White noise
+        // RandomConstant, ///< Random constant
+
+        RandomWalk,   ///< Random Walk
+        GaussMarkov1, ///< Gauss-Markov 1st Order
+
+        // GaussMarkov2,   ///< Gauss-Markov 2nd Order
+        // GaussMarkov3,   ///< Gauss-Markov 3rd Order
     };
 
     /// @brief Random Process used to estimate the accelerometer biases
@@ -334,24 +337,24 @@ class LooselyCoupledKF : public Node
     /// @param[in] angularRate_in_n Angular rate of navigation system with respect to the inertial system [rad / s], resolved in navigation coordinates.
     /// @param[in] velocity_n Velocity in n-system in [m / s]
     /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
-    /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
-    /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    /// @param[in] tau_bad Correleation length for the accelerometer in [s]
+    /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
     /// @param[in] R_N Meridian radius of curvature in [m]
     /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
     /// @param[in] g_0 Magnitude of the gravity vector in [m/s^2] (see \cite Groves2013 Groves, ch. 2.4.7, eq. 2.135, p. 70)
     /// @param[in] r_eS_e Geocentric radius. The distance of a point on the Earth's surface from the center of the Earth in [m]
     /// @note See Groves (2013) chapter 14.2.4, equation (14.63)
-    static Eigen::Matrix<double, 15, 15> systemMatrix_F(const Eigen::Quaterniond& quaternion_nb,
-                                                        const Eigen::Vector3d& specForce_ib_b,
-                                                        const Eigen::Vector3d& angularRate_in_n,
-                                                        const Eigen::Vector3d& velocity_n,
-                                                        const Eigen::Vector3d& position_lla,
-                                                        const Eigen::Vector3d& beta_a,
-                                                        const Eigen::Vector3d& beta_omega,
-                                                        double R_N,
-                                                        double R_E,
-                                                        double g_0,
-                                                        double r_eS_e);
+    Eigen::Matrix<double, 15, 15> systemMatrix_F(const Eigen::Quaterniond& quaternion_nb,
+                                                 const Eigen::Vector3d& specForce_ib_b,
+                                                 const Eigen::Vector3d& angularRate_in_n,
+                                                 const Eigen::Vector3d& velocity_n,
+                                                 const Eigen::Vector3d& position_lla,
+                                                 const Eigen::Vector3d& tau_bad,
+                                                 const Eigen::Vector3d& tau_bgd,
+                                                 double R_N,
+                                                 double R_E,
+                                                 double g_0,
+                                                 double r_eS_e);
 
     // ###########################################################################################################
     //                                    Noise input matrix 𝐆 & Noise scale matrix 𝐖
@@ -368,20 +371,22 @@ class LooselyCoupledKF : public Node
     /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
     /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
     /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
-    /// @param[in] beta_a Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
-    /// @param[in] beta_omega Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
-    /// @param[in] tau_s Time interval in [s]
+    /// @param[in] tau_bad Correleation length for the accelerometer in [s]
+    /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
+    /// @param[in] tau_i Time interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations in [s]
     /// @note See \cite Groves2013 Groves, ch. 14.2.6, eq. 14.79, p. 590
     [[nodiscard]] static Eigen::Matrix<double, 12, 12> noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                                           const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                          const Eigen::Vector3d& beta_a, const Eigen::Vector3d& beta_omega,
-                                                                          const double& tau_s);
+                                                                          const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                          const double& tau_i);
 
     /// @brief System noise covariance matrix 𝐐_{k-1}
     /// @param[in] sigma2_ra Variance of the noise on the accelerometer specific-force measurements
     /// @param[in] sigma2_rg Variance of the noise on the gyro angular-rate measurements
     /// @param[in] sigma2_bad Variance of the accelerometer dynamic bias
     /// @param[in] sigma2_bgd Variance of the gyro dynamic bias
+    /// @param[in] tau_bad Correleation length for the accelerometer in [s]
+    /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
     /// @param[in] F_21_n Submatrix 𝐅_21 of the system matrix 𝐅
     /// @param[in] T_rn_p Conversion matrix between cartesian and curvilinear perturbations to the position
     /// @param[in] DCM_nb Direction Cosine Matrix from body to navigation coordinates
@@ -389,6 +394,7 @@ class LooselyCoupledKF : public Node
     /// @return The 15x15 matrix of system noise covariances
     [[nodiscard]] static Eigen::Matrix<double, 15, 15> systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                                                      const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                     const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
                                                                                      const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
                                                                                      const Eigen::Matrix3d& DCM_nb, const double& tau_s);
 

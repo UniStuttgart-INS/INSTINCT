@@ -39,7 +39,7 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     LOG_TRACE("{}: called", name);
 
     _hasConfig = true;
-    _guiConfigDefaultWindowSize = { 822, 556 };
+    _guiConfigDefaultWindowSize = { 822, 633 };
 
     nm::CreateInputPin(this, "InertialNavSol", Pin::Type::Flow, { NAV::InertialNavSol::type() }, &LooselyCoupledKF::recvInertialNavigationSolution);
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
@@ -129,31 +129,11 @@ void NAV::LooselyCoupledKF::guiConfig()
         // --------------------------------------------- Accelerometer -----------------------------------------------
 
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessAccel), "White Noise\0"
-                                                                                                                                            "Random Constant\0"
-                                                                                                                                            "Random Walk\0"
-                                                                                                                                            "Gauss-Markov 1st Order\0"
-                                                                                                                                            "Gauss-Markov 2nd Order\0"
-                                                                                                                                            "Gauss-Markov 3rd Order\0\0"))
+        if (ImGui::Combo(fmt::format("Random Process Accelerometer##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessAccel), "Random Walk\0"
+                                                                                                                                            "Gauss-Markov 1st Order\0\0"))
         {
-            if (_randomProcessAccel != RandomProcess::RandomWalk && _randomProcessAccel != RandomProcess::GaussMarkov1)
-            {
-                LOG_ERROR("Currently only 'Random Walk' and 'Gauss-Markov 1st Order' is supported");
-                _randomProcessAccel = RandomProcess::RandomWalk;
-            }
-
             LOG_DEBUG("{}: randomProcessAccel changed to {}", nameId(), _randomProcessAccel);
             flow::ApplyChanges();
-        }
-
-        if (_randomProcessAccel == RandomProcess::GaussMarkov1)
-        {
-            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-            if (ImGui::InputDouble3(fmt::format("Gauss-Markov β Accelerometer##{}", size_t(id)).c_str(), _beta_accel.data(), "%.4e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: beta_accel changed to {}", nameId(), _beta_accel.transpose());
-                flow::ApplyChanges();
-            }
         }
 
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on the\naccelerometer specific-force measurements##{}", size_t(id)).c_str(),
@@ -165,7 +145,7 @@ void NAV::LooselyCoupledKF::guiConfig()
             flow::ApplyChanges();
         }
 
-        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the accelerometer dynamic bias##{}", size_t(id)).c_str(),
+        if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the accel dynamic bias##{}", size_t(id)).c_str(),
                                                configWidth, unitWidth, _stdev_bad.data(), reinterpret_cast<int*>(&_stdevAccelBiasUnits), "µg\0m/s^2\0\0",
                                                "%.2e", ImGuiInputTextFlags_CharsScientific))
         {
@@ -174,36 +154,30 @@ void NAV::LooselyCoupledKF::guiConfig()
             flow::ApplyChanges();
         }
 
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble3L(fmt::format("##Correlation length of the accel dynamic bias {}", size_t(id)).c_str(), _tau_bad.data(), 0., std::numeric_limits<double>::max(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: tau_bad changed to {}", nameId(), _tau_bad);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        int unitCorrelationLength = 0;
+        ImGui::SetNextItemWidth(unitWidth);
+        ImGui::Combo(fmt::format("##Correlation length of the accel dynamic bias unit {}", size_t(id)).c_str(), &unitCorrelationLength, "s\0\0");
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
+        ImGui::TextUnformatted("Correlation length of the accel dynamic bias");
+
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20.F);
 
         // ----------------------------------------------- Gyroscope -------------------------------------------------
 
         ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-        if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessGyro), "White Noise\0"
-                                                                                                                                       "Random Constant\0"
-                                                                                                                                       "Random Walk\0"
-                                                                                                                                       "Gauss-Markov 1st Order\0"
-                                                                                                                                       "Gauss-Markov 2nd Order\0"
-                                                                                                                                       "Gauss-Markov 3rd Order\0\0"))
+        if (ImGui::Combo(fmt::format("Random Process Gyroscope##{}", size_t(id)).c_str(), reinterpret_cast<int*>(&_randomProcessGyro), "Random Walk\0"
+                                                                                                                                       "Gauss-Markov 1st Order\0\0"))
         {
-            // TODO: Implement different Random processes
-            if (_randomProcessGyro != RandomProcess::RandomWalk && _randomProcessGyro != RandomProcess::GaussMarkov1)
-            {
-                LOG_ERROR("Currently only 'Random Walk' and 'Gauss-Markov 1st Order' is supported");
-                _randomProcessGyro = RandomProcess::RandomWalk;
-            }
-
             LOG_DEBUG("{}: randomProcessGyro changed to {}", nameId(), _randomProcessGyro);
             flow::ApplyChanges();
-        }
-        if (_randomProcessGyro == RandomProcess::GaussMarkov1)
-        {
-            ImGui::SetNextItemWidth(configWidth + ImGui::GetStyle().ItemSpacing.x);
-            if (ImGui::InputDouble3(fmt::format("Gauss-Markov β Gyroscope##{}", size_t(id)).c_str(), _beta_gyro.data(), "%.4e", ImGuiInputTextFlags_CharsScientific))
-            {
-                LOG_DEBUG("{}: beta_gyro changed to {}", nameId(), _beta_gyro.transpose());
-                flow::ApplyChanges();
-            }
         }
 
         if (gui::widgets::InputDouble3WithUnit(fmt::format("Standard deviation of the noise on\nthe gyro angular-rate measurements##{}", size_t(id)).c_str(),
@@ -223,6 +197,20 @@ void NAV::LooselyCoupledKF::guiConfig()
             LOG_DEBUG("{}: stdevGyroBiasUnits changed to {}", nameId(), _stdevGyroBiasUnits);
             flow::ApplyChanges();
         }
+
+        ImGui::SetNextItemWidth(configWidth - unitWidth);
+        if (ImGui::InputDouble3L(fmt::format("##Correlation length of the gyro dynamic bias {}", size_t(id)).c_str(), _tau_bgd.data(), 0., std::numeric_limits<double>::max(), "%.2e", ImGuiInputTextFlags_CharsScientific))
+        {
+            LOG_DEBUG("{}: tau_bgd changed to {}", nameId(), _tau_bgd);
+            flow::ApplyChanges();
+        }
+        ImGui::SameLine();
+        unitCorrelationLength = 0;
+        ImGui::SetNextItemWidth(unitWidth);
+        ImGui::Combo(fmt::format("##Correlation length of the gyro dynamic bias unit {}", size_t(id)).c_str(), &unitCorrelationLength, "s\0\0");
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - ImGui::GetStyle().ItemSpacing.x + ImGui::GetStyle().ItemInnerSpacing.x);
+        ImGui::TextUnformatted("Correlation length of the gyro dynamic bias");
 
         ImGui::TreePop();
     }
@@ -373,17 +361,17 @@ void NAV::LooselyCoupledKF::guiConfig()
     j["qCalculationAlgorithm"] = _qCalculationAlgorithm;
 
     j["randomProcessAccel"] = _randomProcessAccel;
-    j["beta_accel"] = _beta_accel;
     j["randomProcessGyro"] = _randomProcessGyro;
-    j["beta_gyro"] = _beta_gyro;
     j["stdev_ra"] = _stdev_ra;
     j["stdevAccelNoiseUnits"] = _stdevAccelNoiseUnits;
     j["stdev_rg"] = _stdev_rg;
     j["stdevGyroNoiseUnits"] = _stdevGyroNoiseUnits;
-    j["variance_bad"] = _stdev_bad;
-    j["varianceAccelBiasUnits"] = _stdevAccelBiasUnits;
-    j["variance_bgd"] = _stdev_bgd;
-    j["varianceGyroBiasUnits"] = _stdevGyroBiasUnits;
+    j["stdev_bad"] = _stdev_bad;
+    j["tau_bad"] = _tau_bad;
+    j["stdevAccelBiasUnits"] = _stdevAccelBiasUnits;
+    j["stdev_bgd"] = _stdev_bgd;
+    j["tau_bgd"] = _tau_bgd;
+    j["stdevGyroBiasUnits"] = _stdevGyroBiasUnits;
 
     j["gnssMeasurementUncertaintyPositionUnit"] = _gnssMeasurementUncertaintyPositionUnit;
     j["gnssMeasurementUncertaintyPosition"] = _gnssMeasurementUncertaintyPosition;
@@ -424,17 +412,9 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         j.at("randomProcessAccel").get_to(_randomProcessAccel);
     }
-    if (j.contains("beta_accel"))
-    {
-        _beta_accel = j.at("beta_accel");
-    }
     if (j.contains("randomProcessGyro"))
     {
         j.at("randomProcessGyro").get_to(_randomProcessGyro);
-    }
-    if (j.contains("beta_gyro"))
-    {
-        _beta_gyro = j.at("beta_gyro");
     }
     if (j.contains("stdev_ra"))
     {
@@ -452,21 +432,29 @@ void NAV::LooselyCoupledKF::restore(json const& j)
     {
         j.at("stdevGyroNoiseUnits").get_to(_stdevGyroNoiseUnits);
     }
-    if (j.contains("variance_bad"))
+    if (j.contains("stdev_bad"))
     {
-        _stdev_bad = j.at("variance_bad");
+        _stdev_bad = j.at("stdev_bad");
     }
-    if (j.contains("varianceAccelBiasUnits"))
+    if (j.contains("tau_bad"))
     {
-        j.at("varianceAccelBiasUnits").get_to(_stdevAccelBiasUnits);
+        _tau_bad = j.at("tau_bad");
     }
-    if (j.contains("variance_bgd"))
+    if (j.contains("stdevAccelBiasUnits"))
     {
-        _stdev_bgd = j.at("variance_bgd");
+        j.at("stdevAccelBiasUnits").get_to(_stdevAccelBiasUnits);
     }
-    if (j.contains("varianceGyroBiasUnits"))
+    if (j.contains("stdev_bgd"))
     {
-        j.at("varianceGyroBiasUnits").get_to(_stdevGyroBiasUnits);
+        _stdev_bgd = j.at("stdev_bgd");
+    }
+    if (j.contains("tau_bgd"))
+    {
+        _tau_bgd = j.at("tau_bgd");
+    }
+    if (j.contains("stdevGyroBiasUnits"))
+    {
+        j.at("stdevGyroBiasUnits").get_to(_stdevGyroBiasUnits);
     }
     // -------------------------------- 𝐑 Measurement noise covariance matrix -----------------------------------
     if (j.contains("gnssMeasurementUncertaintyPositionUnit"))
@@ -643,7 +631,7 @@ void NAV::LooselyCoupledKF::recvInertialNavigationSolution(const std::shared_ptr
 
     if (_latestInertialNavSol)
     {
-        _tau_KF = static_cast<double>((inertialNavSol->insTime.value() - _latestInertialNavSol->insTime.value()).count());
+        _tau_i = static_cast<double>((inertialNavSol->insTime.value() - _latestInertialNavSol->insTime.value()).count());
     }
 
     _latestInertialNavSol = inertialNavSol;
@@ -709,29 +697,6 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                        + calcTransportRate_n(position_lla__t1, velocity_n__t1, R_N, R_E);
     LOG_DATA("{}: angularRate_in_n = {} [rad/s]", nameId(), angularRate_in_n.transpose());
 
-    // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_a = Eigen::Vector3d::Zero();
-    if (_randomProcessAccel == RandomProcess::RandomWalk)
-    {
-        beta_a = Eigen::Vector3d::Zero();
-    }
-    else if (_randomProcessAccel == RandomProcess::GaussMarkov1)
-    {
-        beta_a = _beta_accel;
-    }
-    LOG_DATA("{}: beta_a = {} [1/s]", nameId(), beta_a.transpose());
-    // Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length) - Value from Jekeli (p. 183)
-    Eigen::Vector3d beta_omega = Eigen::Vector3d::Zero();
-    if (_randomProcessGyro == RandomProcess::RandomWalk)
-    {
-        beta_omega = Eigen::Vector3d::Zero();
-    }
-    else if (_randomProcessGyro == RandomProcess::GaussMarkov1)
-    {
-        beta_omega = _beta_gyro;
-    }
-    LOG_DATA("{}: beta_omega = {} [1/s]", nameId(), beta_omega.transpose());
-
     // ------------------------------------------- GUI Parameters ----------------------------------------------
 
     // 𝜎_ra Standard deviation of the noise on the accelerometer specific-force state [m / (s^2 · √(s))]
@@ -796,7 +761,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // ---------------------------------------------- Prediction -------------------------------------------------
 
     // System Matrix
-    Eigen::Matrix<double, 15, 15> F = systemMatrix_F(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, beta_a, beta_omega, R_N, R_E, g_0, r_eS_e);
+    Eigen::Matrix<double, 15, 15> F = systemMatrix_F(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, _tau_bad, _tau_bgd, R_N, R_E, g_0, r_eS_e);
     LOG_DATA("{}: F =\n{}", nameId(), F);
 
     // TODO: Groves signs
@@ -813,13 +778,13 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
         Eigen::Matrix<double, 12, 12> W = noiseScaleMatrix_W(sigma_ra.array().square(), sigma_rg.array().square(),
                                                              sigma_bad.array().square(), sigma_bgd.array().square(),
-                                                             beta_a, beta_omega,
-                                                             _tau_KF);
+                                                             _tau_bad, _tau_bgd,
+                                                             _tau_i);
         LOG_DATA("{}: W =\n{}", nameId(), W);
 
         LOG_DATA("{}: G*W*G^T =\n{}", nameId(), G * W * G.transpose());
 
-        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 12>(F, G, W, _tau_KF);
+        auto [Phi, Q] = calcPhiAndQWithVanLoanMethod<double, 15, 12>(F, G, W, _tau_i);
 
         // 1. Calculate the transition matrix 𝚽_{k-1}
         _kalmanFilter.Phi = Phi;
@@ -834,12 +799,12 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Exponential)
         {
             // 1. Calculate the transition matrix 𝚽_{k-1}
-            _kalmanFilter.Phi = transitionMatrix_Phi_exp<double, 15>(F, _tau_KF);
+            _kalmanFilter.Phi = transitionMatrix_Phi_exp<double, 15>(F, _tau_i);
         }
         else if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
         {
             // 1. Calculate the transition matrix 𝚽_{k-1}
-            _kalmanFilter.Phi = transitionMatrix_Phi_Taylor<double, 15>(F, _tau_KF, static_cast<size_t>(_phiCalculationTaylorOrder));
+            _kalmanFilter.Phi = transitionMatrix_Phi_Taylor<double, 15>(F, _tau_i, static_cast<size_t>(_phiCalculationTaylorOrder));
         }
         else
         {
@@ -854,8 +819,9 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
         // 2. Calculate the system noise covariance matrix Q_{k-1}
         _kalmanFilter.Q = systemNoiseCovarianceMatrix_Q(sigma_ra.array().square(), sigma_rg.array().square(),
                                                         sigma_bad.array().square(), sigma_bgd.array().square(),
+                                                        _tau_bad, _tau_bgd,
                                                         F.block<3, 3>(3, 0), T_rn_p,
-                                                        DCM_nb, _tau_KF);
+                                                        DCM_nb, _tau_i);
     }
 
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q);
@@ -1056,8 +1022,8 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrix_F(const Eigen:
                                                                     const Eigen::Vector3d& angularRate_in_n,
                                                                     const Eigen::Vector3d& velocity_n,
                                                                     const Eigen::Vector3d& position_lla,
-                                                                    const Eigen::Vector3d& beta_a,
-                                                                    const Eigen::Vector3d& beta_omega,
+                                                                    const Eigen::Vector3d& tau_bad,
+                                                                    const Eigen::Vector3d& tau_bgd,
                                                                     double R_N,
                                                                     double R_E,
                                                                     double g_0,
@@ -1065,6 +1031,9 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrix_F(const Eigen:
 {
     const double& latitude = position_lla(0); // Geodetic latitude of the body in [rad]
     const double& altitude = position_lla(2); // Geodetic height of the body in [m]
+
+    const Eigen::Vector3d beta_bad = 1. / tau_bad.array(); // Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+    const Eigen::Vector3d beta_bgd = 1. / tau_bgd.array(); // Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
 
     // System matrix 𝐅
     // Math: \mathbf{F}^n = \begin{pmatrix} \mathbf{F}_{\dot{\psi},\psi}^n & \mathbf{F}_{\dot{\psi},\delta v}^n & \mathbf{F}_{\dot{\psi},\delta r}^n & \mathbf{0}_3 & -\mathbf{C}_b^n \\ \mathbf{F}_{\delta \dot{v},\psi}^n & \mathbf{F}_{\delta \dot{v},\delta v}^n & \mathbf{F}_{\delta \dot{v},\delta r}^n & \mathbf{C}_b^n & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{\delta \dot{r},\delta v}^n & \mathbf{F}_{\delta \dot{r},\delta r}^n & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \end{pmatrix} \qquad \text{T. Hobiger, Inertialnavigation V06 - V09 }
@@ -1080,8 +1049,8 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrix_F(const Eigen:
     F.block<3, 3>(3, 9) = F_dotdv_df_n(quaternion_nb.toRotationMatrix());
     F.block<3, 3>(6, 3) = F_dotdr_dv_n(latitude, altitude, R_N, R_E);
     F.block<3, 3>(6, 6) = F_dotdr_dr_n(velocity_n, latitude, altitude, R_N, R_E);
-    F.block<3, 3>(9, 9) = F_dotdf_df_n(beta_a);
-    F.block<3, 3>(12, 12) = F_dotdw_dw_n(beta_omega);
+    F.block<3, 3>(9, 9) = F_dotdf_df_n(_randomProcessAccel == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bad);
+    F.block<3, 3>(12, 12) = F_dotdw_dw_n(_randomProcessGyro == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bgd);
 
     F.middleRows<3>(0) *= SCALE_FACTOR_ATTITUDE; // 𝜓' [deg / s] = 180/π * ... [rad / s]
     F.middleCols<3>(0) *= 1. / SCALE_FACTOR_ATTITUDE;
@@ -1125,29 +1094,30 @@ Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrix_G(const Ei
 }
 Eigen::Matrix<double, 12, 12> NAV::LooselyCoupledKF::noiseScaleMatrix_W(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                                         const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
-                                                                        const Eigen::Vector3d& /* beta_a */, const Eigen::Vector3d& /* beta_omega */, // TODO: Gauss-Markov-1
-                                                                        const double& tau_s)
+                                                                        const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
+                                                                        const double& tau_i)
 {
     Eigen::Matrix<double, 12, 12> W = Eigen::Matrix<double, 12, 12>::Zero();
 
-    W.block<3, 3>(0, 0).diagonal() = psdNoise(sigma2_rg, tau_s);          // S_rg
-    W.block<3, 3>(3, 3).diagonal() = psdNoise(sigma2_ra, tau_s);          // S_ra
-    W.block<3, 3>(6, 6).diagonal() = psdBiasVariation(sigma2_bad, tau_s); // S_bad
-    W.block<3, 3>(9, 9).diagonal() = psdBiasVariation(sigma2_bgd, tau_s); // S_bgd
+    W.block<3, 3>(0, 0).diagonal() = psdNoise(sigma2_rg, tau_i);            // S_rg
+    W.block<3, 3>(3, 3).diagonal() = psdNoise(sigma2_ra, tau_i);            // S_ra
+    W.block<3, 3>(6, 6).diagonal() = psdBiasVariation(sigma2_bad, tau_bad); // S_bad
+    W.block<3, 3>(9, 9).diagonal() = psdBiasVariation(sigma2_bgd, tau_bgd); // S_bgd
 
     return W;
 }
 
 Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix_Q(const Eigen::Vector3d& sigma2_ra, const Eigen::Vector3d& sigma2_rg,
                                                                                    const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
+                                                                                   const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
                                                                                    const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
                                                                                    const Eigen::Matrix3d& DCM_nb, const double& tau_s)
 {
     // Math: \mathbf{Q}_{INS}^n = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^n}^T & {\mathbf{Q}_{31}^n}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^n}^T \\ \mathbf{Q}_{21}^n & \mathbf{Q}_{22}^n & {\mathbf{Q}_{32}^n}^T & {\mathbf{Q}_{42}^n}^T & \mathbf{Q}_{25}^n \\ \mathbf{Q}_{31}^n & \mathbf{Q}_{32}^n & \mathbf{Q}_{33}^n & \mathbf{Q}_{34}^n & \mathbf{Q}_{35}^n \\ \mathbf{0}_3 & \mathbf{Q}_{42}^n & {\mathbf{Q}_{34}^n}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^n & \mathbf{Q}_{52}^n & {\mathbf{Q}_{35}^n}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \qquad \text{P. Groves}\,(14.80)
     const Eigen::Vector3d S_ra = psdNoise(sigma2_ra, tau_s);
     const Eigen::Vector3d S_rg = psdNoise(sigma2_rg, tau_s);
-    const Eigen::Vector3d S_bad = psdBiasVariation(sigma2_bad, tau_s);
-    const Eigen::Vector3d S_bgd = psdBiasVariation(sigma2_bgd, tau_s);
+    const Eigen::Vector3d S_bad = psdBiasVariation(sigma2_bad, tau_bad);
+    const Eigen::Vector3d S_bgd = psdBiasVariation(sigma2_bgd, tau_bgd);
 
     Eigen::Matrix<double, 15, 15> Q = Eigen::Matrix<double, 15, 15>::Zero();
     Q.block<3, 3>(0, 0) = Q_psi_psi(S_rg, S_bgd, tau_s);                            // Q_11
