@@ -248,22 +248,22 @@ class ImuSimulator : public Imu
 
     /// @brief Calculates the velocity in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
-    /// @param[in] q_ne Rotation quaternion from Earth frame to local-navigation frame
+    /// @param[in] n_Quat_e Rotation quaternion from Earth frame to local-navigation frame
     /// @return v_n in [rad, rad, m]
-    Eigen::Vector3d calcVelocity_n(double time, const Eigen::Quaterniond& q_ne);
+    Eigen::Vector3d calcVelocity_n(double time, const Eigen::Quaterniond& n_Quat_e);
 
     /// @brief Calculates the acceleration in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
-    /// @param[in] q_ne Rotation quaternion from Earth frame to local-navigation frame
+    /// @param[in] n_Quat_e Rotation quaternion from Earth frame to local-navigation frame
     /// @return a_n in [rad, rad, m]
-    Eigen::Vector3d calcTrajectoryAccel_n(double time, const Eigen::Quaterniond& q_ne);
+    Eigen::Vector3d calcTrajectoryAccel_n(double time, const Eigen::Quaterniond& n_Quat_e);
 
     /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in platform coordinates)
     /// @param[in] position_lla Current position as latitude, longitude, altitude [rad, rad, m]
     /// @param[in] velocity_n Velocity in local-navigation frame coordinates [m/s]
     /// @param[in] acceleration_n Acceleration in local-navigation frame coordinates [m/s^2]
     /// @param[in] rollPitchYaw Gimbal angles (roll, pitch, yaw) [rad]
-    /// @param[in] q_bn Rotation quaternion from local-navigation frame to the body frame
+    /// @param[in] b_Quat_n Rotation quaternion from local-navigation frame to the body frame
     /// @param[in] omega_ie_n ω_ie_n Earth rotation rate in local-navigation coordinates
     /// @param[in] omega_en_n ω_en_n Transport rate in local-navigation coordinates
     /// @return ω_ip_p [rad/s]
@@ -271,7 +271,7 @@ class ImuSimulator : public Imu
                                    const Eigen::Vector3d& velocity_n,
                                    const Eigen::Vector3d& acceleration_n,
                                    const Eigen::Vector3d& rollPitchYaw,
-                                   const Eigen::Quaterniond& q_bn,
+                                   const Eigen::Quaterniond& b_Quat_n,
                                    const Eigen::Vector3d& omega_ie_n,
                                    const Eigen::Vector3d& omega_en_n);
 };

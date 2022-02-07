@@ -95,63 +95,63 @@ template<>
 /// @param[in] time Time (t - t0)
 /// @param[in] angularRate_ie Angular velocity in [rad/s] of earth frame with regard to the inertial frame
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_ei(double time, double angularRate_ie = InsConst::omega_ie);
+[[nodiscard]] Eigen::Quaterniond e_Quat_i(double time, double angularRate_ie = InsConst::omega_ie);
 
 /// @brief Quaternion for rotations from Earth-centered-Earth-fixed to inertial frame
 /// @param[in] time Time (t - t0)
 /// @param[in] angularRate_ie Angular velocity in [rad/s] of earth frame with regard to the inertial frame
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_ie(double time, double angularRate_ie = InsConst::omega_ie);
+[[nodiscard]] Eigen::Quaterniond i_Quat_e(double time, double angularRate_ie = InsConst::omega_ie);
 
 /// @brief Quaternion for rotations from navigation to Earth-fixed frame
 /// @param[in] latitude 𝜙 Geodetic latitude in [rad]
 /// @param[in] longitude λ Geodetic longitude in [rad]
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_en(double latitude, double longitude);
+[[nodiscard]] Eigen::Quaterniond e_Quat_n(double latitude, double longitude);
 
 /// @brief Quaternion for rotations from Earth-fixed to navigation frame
 /// @param[in] latitude 𝜙 Geodetic latitude in [rad]
 /// @param[in] longitude λ Geodetic longitude in [rad]
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_ne(double latitude, double longitude);
+[[nodiscard]] Eigen::Quaterniond n_Quat_e(double latitude, double longitude);
 
 /// @brief Quaternion for rotations from body to navigation frame
 /// @param[in] roll Roll angle in [rad]
 /// @param[in] pitch Pitch angle in [rad]
 /// @param[in] yaw Yaw angle in [rad]
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_nb(double roll, double pitch, double yaw);
+[[nodiscard]] Eigen::Quaterniond n_Quat_b(double roll, double pitch, double yaw);
 
 /// @brief Quaternion for rotations from body to navigation frame
 /// @param[in] rollPitchYaw Roll, Pitch, Yaw angle in [rad]
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_nb(const Eigen::Vector3d& rollPitchYaw);
+[[nodiscard]] Eigen::Quaterniond n_Quat_b(const Eigen::Vector3d& rollPitchYaw);
 
 /// @brief Quaternion for rotations from navigation to body frame
 /// @param[in] roll Roll angle in [rad]
 /// @param[in] pitch Pitch angle in [rad]
 /// @param[in] yaw Yaw angle in [rad]
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_bn(double roll, double pitch, double yaw);
+[[nodiscard]] Eigen::Quaterniond b_Quat_n(double roll, double pitch, double yaw);
 
 /// @brief Quaternion for rotations from navigation to body frame
 /// @param[in] rollPitchYaw Roll, Pitch, Yaw angle in [rad]
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_bn(const Eigen::Vector3d& rollPitchYaw);
+[[nodiscard]] Eigen::Quaterniond b_Quat_n(const Eigen::Vector3d& rollPitchYaw);
 
 /// @brief Quaternion for rotations from platform to body frame
 /// @param[in] mountingAngleX Mounting angle to x axis in [rad]. First rotation. (-pi:pi]
 /// @param[in] mountingAngleY Mounting angle to y axis in [rad]. Second rotation. (-pi/2:pi/2]
 /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]. Third rotation. (-pi:pi]
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ);
+[[nodiscard]] Eigen::Quaterniond b_Quat_p(double mountingAngleX, double mountingAngleY, double mountingAngleZ);
 
 /// @brief Quaternion for rotations from body to platform frame
 /// @param[in] mountingAngleX Mounting angle to x axis in [rad]. First rotation. (-pi:pi]
 /// @param[in] mountingAngleY Mounting angle to y axis in [rad]. Second rotation. (-pi/2:pi/2]
 /// @param[in] mountingAngleZ Mounting angle to z axis in [rad]. Third rotation. (-pi:pi]
 /// @return The rotation Quaternion representation
-[[nodiscard]] Eigen::Quaterniond quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ);
+[[nodiscard]] Eigen::Quaterniond p_Quat_b(double mountingAngleX, double mountingAngleY, double mountingAngleZ);
 
 /// @brief Converts ECEF coordinates into local NED coordinates
 /// @param[in] position_e ECEF coordinates in [m] to convert

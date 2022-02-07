@@ -97,7 +97,7 @@ void NAV::Imu::guiConfig()
             }
 
             flow::ApplyChanges();
-            _imuPos._quaternionAccel_bp = trafo::quat_bp(trafo::deg2rad(imuRotAccel.at(0)), trafo::deg2rad(imuRotAccel.at(1)), trafo::deg2rad(imuRotAccel.at(2)));
+            _imuPos._quaternionAccel_bp = trafo::b_Quat_p(trafo::deg2rad(imuRotAccel.at(0)), trafo::deg2rad(imuRotAccel.at(1)), trafo::deg2rad(imuRotAccel.at(2)));
         }
         ImGui::SameLine();
         TrafoHelperMarker(_imuPos.quatAccel_bp());
@@ -133,7 +133,7 @@ void NAV::Imu::guiConfig()
             }
 
             flow::ApplyChanges();
-            _imuPos._quaternionGyro_bp = trafo::quat_bp(trafo::deg2rad(imuRotGyro.at(0)), trafo::deg2rad(imuRotGyro.at(1)), trafo::deg2rad(imuRotGyro.at(2)));
+            _imuPos._quaternionGyro_bp = trafo::b_Quat_p(trafo::deg2rad(imuRotGyro.at(0)), trafo::deg2rad(imuRotGyro.at(1)), trafo::deg2rad(imuRotGyro.at(2)));
         }
         ImGui::SameLine();
         TrafoHelperMarker(_imuPos.quatGyro_bp());
@@ -169,7 +169,7 @@ void NAV::Imu::guiConfig()
             }
 
             flow::ApplyChanges();
-            _imuPos._quaternionMag_bp = trafo::quat_bp(trafo::deg2rad(imuRotMag.at(0)), trafo::deg2rad(imuRotMag.at(1)), trafo::deg2rad(imuRotMag.at(2)));
+            _imuPos._quaternionMag_bp = trafo::b_Quat_p(trafo::deg2rad(imuRotMag.at(0)), trafo::deg2rad(imuRotMag.at(1)), trafo::deg2rad(imuRotMag.at(2)));
         }
         ImGui::SameLine();
         TrafoHelperMarker(_imuPos.quatMag_bp());

@@ -27,7 +27,7 @@ Eigen::Vector4d qCoeffsFromDcm(const Eigen::Matrix3d& C)
     return { b, c, d, a };
 }
 
-Eigen::Matrix3d DCM_nb(double roll, double pitch, double yaw)
+Eigen::Matrix3d n_Dcm_b(double roll, double pitch, double yaw)
 {
     double& R = roll;
     double& P = pitch;
@@ -43,7 +43,7 @@ Eigen::Matrix3d DCM_nb(double roll, double pitch, double yaw)
     return DCM;
 }
 
-Eigen::Matrix3d DCM_en(double latitude, double longitude)
+Eigen::Matrix3d e_Dcm_n(double latitude, double longitude)
 {
     Eigen::Matrix3d DCM;
     // clang-format off
@@ -55,7 +55,7 @@ Eigen::Matrix3d DCM_en(double latitude, double longitude)
     return DCM;
 }
 
-Eigen::Matrix3d DCM_ei(const double time, const double angularRate_ie)
+Eigen::Matrix3d e_Dcm_i(const double time, const double angularRate_ie)
 {
     double a = angularRate_ie * time;
 
@@ -306,11 +306,11 @@ TEST_CASE("[InsTransformations] Negated Quaternion to Euler conversion", "[InsTr
 TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[InsTransformations]")
 {
     double time = 86164.099 / 3.0;
-    auto q_ei = trafo::quat_ei(time, InsConst::omega_ie);
-    CHECK(q_ei.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    auto e_Quat_i = trafo::e_Quat_i(time, InsConst::omega_ie);
+    CHECK(e_Quat_i.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
-    auto C_ei = q_ei.toRotationMatrix();
-    auto C_ei_ref = DCM_ei(time, InsConst::omega_ie);
+    auto C_ei = e_Quat_i.toRotationMatrix();
+    auto C_ei_ref = e_Dcm_i(time, InsConst::omega_ie);
 
     CHECK(C_ei == EigApprox(C_ei_ref).margin(EPSILON).epsilon(0));
 
@@ -318,21 +318,21 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
 
     // Sidereal day: 23h 56min 4.099s
     auto siderialDay4 = 86164.099 / 4.0;
-    q_ei = trafo::quat_ei(siderialDay4, InsConst::omega_ie);
-    CHECK(q_ei.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    e_Quat_i = trafo::e_Quat_i(siderialDay4, InsConst::omega_ie);
+    CHECK(e_Quat_i.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
     // Star day: 23h 56min 4.0905s
     // auto starHalfDay = 86164.0905 / 2.0;
-    // auto q_ei = trafo::quat_ei(starHalfDay);
+    // auto e_Quat_i = trafo::e_Quat_i(starHalfDay);
 
     Eigen::Vector3d x_i{ 1, -2.5, 22 };
-    Eigen::Vector3d x_e = q_ei * x_i;
+    Eigen::Vector3d x_e = e_Quat_i * x_i;
 
     CHECK(x_e == EigApprox(Eigen::Vector3d{ -2.5, -1, 22 }).margin(1e-8).epsilon(0));
 
-    auto q_ie = trafo::quat_ie(siderialDay4, InsConst::omega_ie);
-    CHECK(q_ie.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    auto i_Quat_e = trafo::i_Quat_e(siderialDay4, InsConst::omega_ie);
+    CHECK(i_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
-    auto q_identity = q_ie * q_ei;
+    auto q_identity = i_Quat_e * e_Quat_i;
     CHECK(q_identity == EigApproxQ(Eigen::Quaterniond::Identity()).margin(EPSILON).epsilon(0));
 }
 
@@ -341,11 +341,11 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     double latitude = trafo::deg2rad(88);
     double longitude = trafo::deg2rad(-40);
 
-    auto q_en = trafo::quat_en(latitude, longitude);
-    CHECK(q_en.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    auto e_Quat_n = trafo::e_Quat_n(latitude, longitude);
+    CHECK(e_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
-    auto C_en = q_en.toRotationMatrix();
-    auto C_en_ref = DCM_en(latitude, longitude);
+    auto C_en = e_Quat_n.toRotationMatrix();
+    auto C_en_ref = e_Dcm_n(latitude, longitude);
 
     CHECK(C_en == EigApprox(C_en_ref).margin(EPSILON).epsilon(0));
 
@@ -354,11 +354,11 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     latitude = trafo::deg2rad(90);
     longitude = 0.0;
 
-    auto q_ne = trafo::quat_ne(latitude, longitude);
-    CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    auto n_Quat_e = trafo::n_Quat_e(latitude, longitude);
+    CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     Eigen::Vector3d x_e{ 1, 2, 3 };
-    auto x_n = q_ne * x_e;
+    auto x_n = n_Quat_e * x_e;
 
     CHECK(x_n == EigApprox(Eigen::Vector3d{ -1, 2, -3 }));
 
@@ -367,11 +367,11 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     latitude = trafo::deg2rad(0);
     longitude = trafo::deg2rad(0);
 
-    q_ne = trafo::quat_ne(latitude, longitude);
-    CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    n_Quat_e = trafo::n_Quat_e(latitude, longitude);
+    CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     x_e = { 1, 2, 3 };
-    x_n = q_ne * x_e;
+    x_n = n_Quat_e * x_e;
 
     CHECK(x_n == EigApprox(Eigen::Vector3d{ 3, 2, -1 }));
 
@@ -380,10 +380,10 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     latitude = trafo::deg2rad(0);
     longitude = trafo::deg2rad(0);
 
-    q_ne = trafo::quat_ne(latitude, longitude);
-    CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    n_Quat_e = trafo::n_Quat_e(latitude, longitude);
+    CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
     //                    (0, 0, 7.2921151467e-05)
-    x_n = q_ne * InsConst::omega_ie_e;
+    x_n = n_Quat_e * InsConst::omega_ie_e;
 
     CHECK(x_n == EigApprox(Eigen::Vector3d{ InsConst::omega_ie, 0, 0 }).margin(EPSILON));
 
@@ -392,10 +392,10 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     latitude = trafo::deg2rad(45);
     longitude = trafo::deg2rad(90);
 
-    q_ne = trafo::quat_ne(latitude, longitude);
-    CHECK(q_ne.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    n_Quat_e = trafo::n_Quat_e(latitude, longitude);
+    CHECK(n_Quat_e.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
     //                    (0, 0, 7.2921151467e-05)
-    x_n = q_ne * InsConst::omega_ie_e;
+    x_n = n_Quat_e * InsConst::omega_ie_e;
 
     CHECK(x_n == EigApprox(Eigen::Vector3d{ InsConst::omega_ie / std::sqrt(2), 0, -InsConst::omega_ie / std::sqrt(2) }).margin(EPSILON));
 }
@@ -449,11 +449,11 @@ TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", 
         {
             for (double yaw = -M_PI + delta; yaw <= M_PI + std::numeric_limits<float>::epsilon(); yaw += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
             {
-                auto q_nb = trafo::quat_nb(roll, pitch, yaw);
-                REQUIRE(q_nb.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+                auto n_Quat_b = trafo::n_Quat_b(roll, pitch, yaw);
+                REQUIRE(n_Quat_b.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
-                auto C_nb = q_nb.toRotationMatrix();
-                auto C_nb_ref = DCM_nb(roll, pitch, yaw);
+                auto C_nb = n_Quat_b.toRotationMatrix();
+                auto C_nb_ref = n_Dcm_b(roll, pitch, yaw);
 
                 REQUIRE(C_nb == EigApprox(C_nb_ref).margin(1e-13).epsilon(0));
             }
@@ -468,11 +468,11 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     double roll = trafo::deg2rad(45);
     double pitch = 0.0;
     double yaw = 0.0;
-    auto q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    auto b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
+    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     Eigen::Vector3d x_n{ 1.0, 1.0, 1.0 };
-    Eigen::Vector3d x_b = q_bn * x_n;
+    Eigen::Vector3d x_b = b_Quat_n * x_n;
 
     CHECK(x_b == EigApprox(Eigen::Vector3d{ 1, std::sqrt(2), 0 }).margin(EPSILON).epsilon(0));
 
@@ -481,11 +481,11 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     roll = 0.0;
     pitch = trafo::deg2rad(45);
     yaw = 0.0;
-    q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
+    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     x_n = { 1.0, 1.0, 1.0 };
-    x_b = q_bn * x_n;
+    x_b = b_Quat_n * x_n;
 
     CHECK(x_b == EigApprox(Eigen::Vector3d{ 0, 1, std::sqrt(2) }).margin(EPSILON).epsilon(0));
 
@@ -494,11 +494,11 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     roll = 0.0;
     pitch = 0.0;
     yaw = trafo::deg2rad(-45);
-    q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
+    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     x_n = Eigen::Vector3d{ 1.0, 1.0, 0.0 };
-    x_b = q_bn * x_n;
+    x_b = b_Quat_n * x_n;
 
     CHECK(x_b == EigApprox(Eigen::Vector3d{ 0, std::sqrt(2), 0 }).margin(EPSILON).epsilon(0));
 
@@ -507,11 +507,11 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     roll = 0.0;
     pitch = trafo::deg2rad(90);
     yaw = trafo::deg2rad(90);
-    q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
+    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     x_n = Eigen::Vector3d{ 1.0, 2.0, 3.0 };
-    x_b = q_bn * x_n;
+    x_b = b_Quat_n * x_n;
 
     CHECK(x_b == EigApprox(Eigen::Vector3d{ -3, -1, 2 }).margin(EPSILON).epsilon(0));
 
@@ -520,11 +520,11 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     roll = trafo::deg2rad(90);
     pitch = trafo::deg2rad(90);
     yaw = 0.0;
-    q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
+    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     x_n = Eigen::Vector3d{ 1.0, 2.0, 3.0 };
-    x_b = q_bn * x_n;
+    x_b = b_Quat_n * x_n;
 
     CHECK(x_b == EigApprox(Eigen::Vector3d{ -3, 1, -2 }).margin(EPSILON).epsilon(0));
 
@@ -533,11 +533,11 @@ TEST_CASE("[InsTransformations] Body <=> navigation frame conversion", "[InsTran
     roll = trafo::deg2rad(90);
     pitch = trafo::deg2rad(180);
     yaw = trafo::deg2rad(90);
-    q_bn = trafo::quat_bn(roll, pitch, yaw);
-    CHECK(q_bn.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    b_Quat_n = trafo::b_Quat_n(roll, pitch, yaw);
+    CHECK(b_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     x_n = { 1.0, 2.0, 3.0 };
-    x_b = q_bn * x_n;
+    x_b = b_Quat_n * x_n;
 
     CHECK(x_b == EigApprox(Eigen::Vector3d{ -2, -3, 1 }).margin(EPSILON).epsilon(0));
 }
@@ -548,11 +548,11 @@ TEST_CASE("[InsTransformations] Platform <=> body frame conversion", "[InsTransf
     double mountingAngleY = 0.0;
     double mountingAngleZ = trafo::deg2rad(-90);
 
-    auto q_bp = trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ);
-    CHECK(q_bp.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    auto b_Quat_p = trafo::b_Quat_p(mountingAngleX, mountingAngleY, mountingAngleZ);
+    CHECK(b_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     Eigen::Vector3d x_p{ 2.0, 0.0, 9.81 };
-    Eigen::Vector3d x_b = q_bp * x_p;
+    Eigen::Vector3d x_b = b_Quat_p * x_p;
 
     CHECK(x_b == EigApprox(Eigen::Vector3d{ x_p(1), x_p(2), -x_p(0) }).margin(EPSILON).epsilon(0));
 }
@@ -726,27 +726,27 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     double latitude = trafo::deg2rad(10);
     double longitude = trafo::deg2rad(40);
 
-    Eigen::Quaterniond q_bp(Eigen::AngleAxisd(trafo::deg2rad(-90), Eigen::Vector3d::UnitZ()));
-    Eigen::Quaterniond q_nb = trafo::quat_nb(roll, pitch, yaw);
-    Eigen::Quaterniond q_en = trafo::quat_en(latitude, longitude);
+    Eigen::Quaterniond b_Quat_p(Eigen::AngleAxisd(trafo::deg2rad(-90), Eigen::Vector3d::UnitZ()));
+    Eigen::Quaterniond n_Quat_b = trafo::n_Quat_b(roll, pitch, yaw);
+    Eigen::Quaterniond e_Quat_n = trafo::e_Quat_n(latitude, longitude);
 
-    CHECK(q_bp.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
-    CHECK(q_nb.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
-    CHECK(q_en.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK(b_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK(n_Quat_b.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    CHECK(e_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     Eigen::Vector3d v_p{ 1, 3, 5 };
 
-    Eigen::Vector3d v_b = q_bp * v_p;
-    Eigen::Vector3d v_n = q_nb * v_b;
-    Eigen::Vector3d v_e = q_en * v_n;
+    Eigen::Vector3d v_b = b_Quat_p * v_p;
+    Eigen::Vector3d v_n = n_Quat_b * v_b;
+    Eigen::Vector3d v_e = e_Quat_n * v_n;
 
-    Eigen::Quaterniond q_np = q_nb * q_bp;
-    CHECK(q_np.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
-    Eigen::Vector3d v_n_direct = q_np * v_p;
+    Eigen::Quaterniond n_Quat_p = n_Quat_b * b_Quat_p;
+    CHECK(n_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    Eigen::Vector3d v_n_direct = n_Quat_p * v_p;
 
-    Eigen::Quaterniond q_ep = q_en * q_nb * q_bp;
-    CHECK(q_ep.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
-    Eigen::Vector3d v_e_direct = q_ep * v_p;
+    Eigen::Quaterniond e_Quat_p = e_Quat_n * n_Quat_b * b_Quat_p;
+    CHECK(e_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
+    Eigen::Vector3d v_e_direct = e_Quat_p * v_p;
 
     CHECK(v_n.x() == Approx(v_n_direct.x()).margin(EPSILON).epsilon(0));
     CHECK(v_n.y() == Approx(v_n_direct.y()).margin(EPSILON).epsilon(0));
@@ -756,22 +756,22 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     CHECK(v_e.y() == Approx(v_e_direct.y()).margin(EPSILON).epsilon(0));
     CHECK(v_e.z() == Approx(v_e_direct.z()).margin(EPSILON).epsilon(0));
 
-    Eigen::Matrix3d dcm_en = q_en.toRotationMatrix();
-    Eigen::Matrix3d dcm_nb = q_nb.toRotationMatrix();
+    Eigen::Matrix3d e_Dcm_n = e_Quat_n.toRotationMatrix();
+    Eigen::Matrix3d n_Dcm_b = n_Quat_b.toRotationMatrix();
 
-    Eigen::Matrix3d dcm_en_ref = DCM_en(latitude, longitude);
-    Eigen::Matrix3d dcm_nb_ref = DCM_nb(roll, pitch, yaw);
+    Eigen::Matrix3d e_Dcm_n_ref = e_Dcm_n(latitude, longitude);
+    Eigen::Matrix3d n_Dcm_b_ref = n_Dcm_b(roll, pitch, yaw);
 
-    CHECK(dcm_en_ref == EigApprox(dcm_en).margin(1e-13).epsilon(0));
-    CHECK(dcm_nb_ref == EigApprox(dcm_nb).margin(1e-13).epsilon(0));
+    CHECK(e_Dcm_n_ref == EigApprox(e_Dcm_n).margin(1e-13).epsilon(0));
+    CHECK(n_Dcm_b_ref == EigApprox(n_Dcm_b).margin(1e-13).epsilon(0));
 
-    Eigen::Matrix3d dcm_eb_ref = dcm_en_ref * dcm_nb_ref;
-    Eigen::Matrix3d dcm_eb = dcm_en * dcm_nb;
-    Eigen::Matrix3d dcm_eb_quat = (q_en * q_nb).toRotationMatrix();
+    Eigen::Matrix3d e_Dcm_b_ref = e_Dcm_n_ref * n_Dcm_b_ref;
+    Eigen::Matrix3d e_Dcm_b = e_Dcm_n * n_Dcm_b;
+    Eigen::Matrix3d e_Dcm_b_quat = (e_Quat_n * n_Quat_b).toRotationMatrix();
 
-    CHECK(dcm_eb_quat == EigApprox(dcm_eb).margin(1e-13).epsilon(0));
-    CHECK(dcm_eb_ref == EigApprox(dcm_eb).margin(1e-13).epsilon(0));
-    CHECK(dcm_eb_ref == EigApprox(dcm_eb_quat).margin(1e-13).epsilon(0));
+    CHECK(e_Dcm_b_quat == EigApprox(e_Dcm_b).margin(1e-13).epsilon(0));
+    CHECK(e_Dcm_b_ref == EigApprox(e_Dcm_b).margin(1e-13).epsilon(0));
+    CHECK(e_Dcm_b_ref == EigApprox(e_Dcm_b_quat).margin(1e-13).epsilon(0));
 }
 
 } // namespace NAV

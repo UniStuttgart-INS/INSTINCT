@@ -49,10 +49,10 @@ void NAV::Transformation::guiConfig()
                      "ECEF to LLA [deg]\0"
                      "LLA [rad] to ECEF [m]\0"
                      "LLA [deg] to ECEF [m]\0"
-                     "Quat_nb to Roll, Pitch, Yaw [rad]\0"
-                     "Quat_nb to Roll, Pitch, Yaw [deg]\0"
-                     "Roll, Pitch, Yaw [rad] to Quat_nb\0"
-                     "Roll, Pitch, Yaw [deg] to Quat_nb\0"
+                     "n_Quat_b to Roll, Pitch, Yaw [rad]\0"
+                     "n_Quat_b to Roll, Pitch, Yaw [deg]\0"
+                     "Roll, Pitch, Yaw [rad] to n_Quat_b\0"
+                     "Roll, Pitch, Yaw [deg] to n_Quat_b\0"
                      "ECEF to NED\0"
                      "NED to ECEF\0"
                      //  "Conjugate\0"
@@ -77,21 +77,21 @@ void NAV::Transformation::guiConfig()
             inputPins.at(INPUT_PORT_INDEX_MATRIX).name = "LLA [deg]";
             outputPins.at(OUTPUT_PORT_INDEX_MATRIX).name = "ECEF";
             break;
-        case Type::Quat_nb_2_RollPitchYawRad:
-            inputPins.at(INPUT_PORT_INDEX_MATRIX).name = "Quat_nb";
+        case Type::n_Quat_b_2_RollPitchYawRad:
+            inputPins.at(INPUT_PORT_INDEX_MATRIX).name = "n_Quat_b";
             outputPins.at(OUTPUT_PORT_INDEX_MATRIX).name = "RollPitchYaw [rad]";
             break;
-        case Type::Quat_nb_2_RollPitchYawDeg:
-            inputPins.at(INPUT_PORT_INDEX_MATRIX).name = "Quat_nb";
+        case Type::n_Quat_b_2_RollPitchYawDeg:
+            inputPins.at(INPUT_PORT_INDEX_MATRIX).name = "n_Quat_b";
             outputPins.at(OUTPUT_PORT_INDEX_MATRIX).name = "RollPitchYaw [deg]";
             break;
-        case Type::RollPitchYawRad_2_Quat_nb:
+        case Type::RollPitchYawRad_2_n_Quat_b:
             inputPins.at(INPUT_PORT_INDEX_MATRIX).name = "RollPitchYaw [rad]";
-            outputPins.at(OUTPUT_PORT_INDEX_MATRIX).name = "Quat_nb";
+            outputPins.at(OUTPUT_PORT_INDEX_MATRIX).name = "n_Quat_b";
             break;
-        case Type::RollPitchYawDeg_2_Quat_nb:
+        case Type::RollPitchYawDeg_2_n_Quat_b:
             inputPins.at(INPUT_PORT_INDEX_MATRIX).name = "RollPitchYaw [deg]";
-            outputPins.at(OUTPUT_PORT_INDEX_MATRIX).name = "Quat_nb";
+            outputPins.at(OUTPUT_PORT_INDEX_MATRIX).name = "n_Quat_b";
             break;
         }
         if (!inputMatrixHasSize(nm::FindConnectedPinToInputPin(inputPins.at(INPUT_PORT_INDEX_MATRIX).id)))
@@ -204,19 +204,19 @@ void NAV::Transformation::notifyOnOutputValueChanged(ax::NodeEditor::LinkId link
                     (*inputMatrix)(0, 0) = trafo::rad2deg((*inputMatrix)(0, 0));
                     (*inputMatrix)(1, 0) = trafo::rad2deg((*inputMatrix)(1, 0));
                     break;
-                case Type::Quat_nb_2_RollPitchYawRad:
-                    *inputMatrix = trafo::quat_nb(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0)).coeffs();
+                case Type::n_Quat_b_2_RollPitchYawRad:
+                    *inputMatrix = trafo::n_Quat_b(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0)).coeffs();
                     break;
-                case Type::Quat_nb_2_RollPitchYawDeg:
-                    *inputMatrix = trafo::quat_nb(trafo::deg2rad(_matrix(0, 0)),
-                                                  trafo::deg2rad(_matrix(1, 0)),
-                                                  trafo::deg2rad(_matrix(2, 0)))
+                case Type::n_Quat_b_2_RollPitchYawDeg:
+                    *inputMatrix = trafo::n_Quat_b(trafo::deg2rad(_matrix(0, 0)),
+                                                   trafo::deg2rad(_matrix(1, 0)),
+                                                   trafo::deg2rad(_matrix(2, 0)))
                                        .coeffs();
                     break;
-                case Type::RollPitchYawRad_2_Quat_nb:
+                case Type::RollPitchYawRad_2_n_Quat_b:
                     *inputMatrix = trafo::quat2eulerZYX(Eigen::Quaterniond(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0), _matrix(3, 0)));
                     break;
-                case Type::RollPitchYawDeg_2_Quat_nb:
+                case Type::RollPitchYawDeg_2_n_Quat_b:
                     *inputMatrix = trafo::rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond(_matrix(0, 0),
                                                                                           _matrix(1, 0),
                                                                                           _matrix(2, 0),
@@ -253,19 +253,19 @@ void NAV::Transformation::notifyOnOutputValueChanged(ax::NodeEditor::LinkId link
                     inputMatrix(0, 0) = trafo::rad2deg(inputMatrix(0, 0));
                     inputMatrix(1, 0) = trafo::rad2deg(inputMatrix(1, 0));
                     break;
-                case Type::Quat_nb_2_RollPitchYawRad:
-                    inputMatrix = trafo::quat_nb(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0)).coeffs();
+                case Type::n_Quat_b_2_RollPitchYawRad:
+                    inputMatrix = trafo::n_Quat_b(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0)).coeffs();
                     break;
-                case Type::Quat_nb_2_RollPitchYawDeg:
-                    inputMatrix = trafo::quat_nb(trafo::deg2rad(_matrix(0, 0)),
-                                                 trafo::deg2rad(_matrix(1, 0)),
-                                                 trafo::deg2rad(_matrix(2, 0)))
+                case Type::n_Quat_b_2_RollPitchYawDeg:
+                    inputMatrix = trafo::n_Quat_b(trafo::deg2rad(_matrix(0, 0)),
+                                                  trafo::deg2rad(_matrix(1, 0)),
+                                                  trafo::deg2rad(_matrix(2, 0)))
                                       .coeffs();
                     break;
-                case Type::RollPitchYawRad_2_Quat_nb:
+                case Type::RollPitchYawRad_2_n_Quat_b:
                     inputMatrix = trafo::quat2eulerZYX(Eigen::Quaterniond(_matrix(0, 0), _matrix(1, 0), _matrix(2, 0), _matrix(3, 0)));
                     break;
-                case Type::RollPitchYawDeg_2_Quat_nb:
+                case Type::RollPitchYawDeg_2_n_Quat_b:
                     inputMatrix = trafo::rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond(_matrix(0, 0),
                                                                                          _matrix(1, 0),
                                                                                          _matrix(2, 0),
@@ -312,22 +312,22 @@ void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkI
                     _matrix = trafo::lla2ecef_WGS84(lla);
                     break;
                 }
-                case Type::Quat_nb_2_RollPitchYawRad:
+                case Type::n_Quat_b_2_RollPitchYawRad:
                     _matrix = trafo::quat2eulerZYX(Eigen::Quaterniond((*inputMatrix)(0, 0), (*inputMatrix)(1, 0), (*inputMatrix)(2, 0), (*inputMatrix)(3, 0)));
                     break;
-                case Type::Quat_nb_2_RollPitchYawDeg:
+                case Type::n_Quat_b_2_RollPitchYawDeg:
                     _matrix = trafo::rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond((*inputMatrix)(0, 0),
                                                                                      (*inputMatrix)(1, 0),
                                                                                      (*inputMatrix)(2, 0),
                                                                                      (*inputMatrix)(3, 0))));
                     break;
-                case Type::RollPitchYawRad_2_Quat_nb:
-                    _matrix = trafo::quat_nb((*inputMatrix)(0, 0), (*inputMatrix)(1, 0), (*inputMatrix)(2, 0)).coeffs();
+                case Type::RollPitchYawRad_2_n_Quat_b:
+                    _matrix = trafo::n_Quat_b((*inputMatrix)(0, 0), (*inputMatrix)(1, 0), (*inputMatrix)(2, 0)).coeffs();
                     break;
-                case Type::RollPitchYawDeg_2_Quat_nb:
-                    _matrix = trafo::quat_nb(trafo::deg2rad((*inputMatrix)(0, 0)),
-                                             trafo::deg2rad((*inputMatrix)(1, 0)),
-                                             trafo::deg2rad((*inputMatrix)(2, 0)))
+                case Type::RollPitchYawDeg_2_n_Quat_b:
+                    _matrix = trafo::n_Quat_b(trafo::deg2rad((*inputMatrix)(0, 0)),
+                                              trafo::deg2rad((*inputMatrix)(1, 0)),
+                                              trafo::deg2rad((*inputMatrix)(2, 0)))
                                   .coeffs();
                     break;
                 }
@@ -361,22 +361,22 @@ void NAV::Transformation::notifyOnInputValueChanged(ax::NodeEditor::LinkId linkI
                     _matrix = trafo::lla2ecef_WGS84(lla);
                     break;
                 }
-                case Type::Quat_nb_2_RollPitchYawRad:
+                case Type::n_Quat_b_2_RollPitchYawRad:
                     _matrix = trafo::quat2eulerZYX(Eigen::Quaterniond(inputMatrix(0, 0), inputMatrix(1, 0), inputMatrix(2, 0), inputMatrix(3, 0)));
                     break;
-                case Type::Quat_nb_2_RollPitchYawDeg:
+                case Type::n_Quat_b_2_RollPitchYawDeg:
                     _matrix = trafo::rad2deg(trafo::quat2eulerZYX(Eigen::Quaterniond(inputMatrix(0, 0),
                                                                                      inputMatrix(1, 0),
                                                                                      inputMatrix(2, 0),
                                                                                      inputMatrix(3, 0))));
                     break;
-                case Type::RollPitchYawRad_2_Quat_nb:
-                    _matrix = trafo::quat_nb(inputMatrix(0, 0), inputMatrix(1, 0), inputMatrix(2, 0)).coeffs();
+                case Type::RollPitchYawRad_2_n_Quat_b:
+                    _matrix = trafo::n_Quat_b(inputMatrix(0, 0), inputMatrix(1, 0), inputMatrix(2, 0)).coeffs();
                     break;
-                case Type::RollPitchYawDeg_2_Quat_nb:
-                    _matrix = trafo::quat_nb(trafo::deg2rad(inputMatrix(0, 0)),
-                                             trafo::deg2rad(inputMatrix(1, 0)),
-                                             trafo::deg2rad(inputMatrix(2, 0)))
+                case Type::RollPitchYawDeg_2_n_Quat_b:
+                    _matrix = trafo::n_Quat_b(trafo::deg2rad(inputMatrix(0, 0)),
+                                              trafo::deg2rad(inputMatrix(1, 0)),
+                                              trafo::deg2rad(inputMatrix(2, 0)))
                                   .coeffs();
                     break;
                 }
@@ -402,13 +402,13 @@ bool NAV::Transformation::inputMatrixHasSize(Pin* startPin)
     case Type::ECEF_2_LLAdeg:
     case Type::LLArad_2_ECEF:
     case Type::LLAdeg_2_ECEF:
-    case Type::RollPitchYawRad_2_Quat_nb:
-    case Type::RollPitchYawDeg_2_Quat_nb:
+    case Type::RollPitchYawRad_2_n_Quat_b:
+    case Type::RollPitchYawDeg_2_n_Quat_b:
         rows = 3;
         cols = 1;
         break;
-    case Type::Quat_nb_2_RollPitchYawRad:
-    case Type::Quat_nb_2_RollPitchYawDeg:
+    case Type::n_Quat_b_2_RollPitchYawRad:
+    case Type::n_Quat_b_2_RollPitchYawDeg:
         rows = 4;
         cols = 1;
         break;
@@ -457,12 +457,12 @@ void NAV::Transformation::updateMatrixSize()
     case Type::ECEF_2_LLAdeg:
     case Type::LLArad_2_ECEF:
     case Type::LLAdeg_2_ECEF:
-    case Type::Quat_nb_2_RollPitchYawRad:
-    case Type::Quat_nb_2_RollPitchYawDeg:
+    case Type::n_Quat_b_2_RollPitchYawRad:
+    case Type::n_Quat_b_2_RollPitchYawDeg:
         _matrix = Eigen::MatrixXd::Zero(3, 1);
         break;
-    case Type::RollPitchYawRad_2_Quat_nb:
-    case Type::RollPitchYawDeg_2_Quat_nb:
+    case Type::RollPitchYawRad_2_n_Quat_b:
+    case Type::RollPitchYawDeg_2_n_Quat_b:
         _matrix = Eigen::MatrixXd::Zero(4, 1);
         break;
     }

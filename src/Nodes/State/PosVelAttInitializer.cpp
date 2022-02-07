@@ -484,9 +484,9 @@ void NAV::PosVelAttInitializer::finalizeInit()
 
         if (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))
         {
-            _q_nb_init = trafo::quat_nb(trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)),
-                                        trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)),
-                                        trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)));
+            _n_Quat_b_init = trafo::n_Quat_b(trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)),
+                                             trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)),
+                                             trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)));
         }
 
         [[maybe_unused]] auto latLonAlt = trafo::ecef2lla_WGS84(_p_ecef_init);
@@ -503,7 +503,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
         LOG_INFO("{}: Velocity initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
                  _v_n_init(0), _v_n_init(1), _v_n_init(2));
 
-        [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(_q_nb_init);
+        [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(_n_Quat_b_init);
         LOG_INFO("{}: Attitude initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
                  trafo::rad2deg(rollPitchYaw.x()),
                  trafo::rad2deg(rollPitchYaw.y()),
@@ -512,7 +512,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
         auto posVelAtt = std::make_shared<PosVelAtt>();
         posVelAtt->setPosition_e(_p_ecef_init);
         posVelAtt->setVelocity_n(_v_n_init);
-        posVelAtt->setAttitude_nb(_q_nb_init);
+        posVelAtt->setAttitude_nb(_n_Quat_b_init);
         invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, posVelAtt);
     }
 }
@@ -579,9 +579,9 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
         && (static_cast<double>(obs->timeSinceStartup.value() - _startTime) * 1e-9 >= _initDuration
             || (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))))
     {
-        _q_nb_init = trafo::quat_nb(_overrideRollPitchYaw.at(0) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)) : _averagedAttitude.at(0),
-                                    _overrideRollPitchYaw.at(1) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)) : _averagedAttitude.at(1),
-                                    _overrideRollPitchYaw.at(2) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)) : _averagedAttitude.at(2));
+        _n_Quat_b_init = trafo::n_Quat_b(_overrideRollPitchYaw.at(0) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)) : _averagedAttitude.at(0),
+                                         _overrideRollPitchYaw.at(1) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)) : _averagedAttitude.at(1),
+                                         _overrideRollPitchYaw.at(2) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)) : _averagedAttitude.at(2));
 
         _posVelAttInitialized.at(2) = true;
     }
@@ -728,13 +728,13 @@ void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const 
         {
             const Eigen::Vector3d rollPitchYaw = obs->rollPitchYaw();
 
-            _q_nb_init = trafo::quat_nb(_overrideRollPitchYaw.at(0) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)) : rollPitchYaw(0),
-                                        _overrideRollPitchYaw.at(1) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)) : rollPitchYaw(1),
-                                        _overrideRollPitchYaw.at(2) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)) : rollPitchYaw(2));
+            _n_Quat_b_init = trafo::n_Quat_b(_overrideRollPitchYaw.at(0) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)) : rollPitchYaw(0),
+                                             _overrideRollPitchYaw.at(1) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)) : rollPitchYaw(1),
+                                             _overrideRollPitchYaw.at(2) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)) : rollPitchYaw(2));
         }
         else
         {
-            _q_nb_init = obs->quaternion_nb();
+            _n_Quat_b_init = obs->n_Quat_b();
         }
 
         _posVelAttInitialized.at(2) = true;

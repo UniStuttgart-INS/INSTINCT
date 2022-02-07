@@ -1849,10 +1849,10 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().x()));
     addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().y()));
     addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().z()));
-    addData(pinIndex, i++, obs->quaternion_nb().w());
-    addData(pinIndex, i++, obs->quaternion_nb().x());
-    addData(pinIndex, i++, obs->quaternion_nb().y());
-    addData(pinIndex, i++, obs->quaternion_nb().z());
+    addData(pinIndex, i++, obs->n_Quat_b().w());
+    addData(pinIndex, i++, obs->n_Quat_b().x());
+    addData(pinIndex, i++, obs->n_Quat_b().y());
+    addData(pinIndex, i++, obs->n_Quat_b().z());
 }
 
 void NAV::Plot::plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t pinIndex)

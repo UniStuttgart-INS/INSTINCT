@@ -691,7 +691,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     {
     case PositionBiasUnits::meter:
     {
-        Eigen::Vector3d positionBias_e = trafo::quat_en(posVelAtt->latitude(), posVelAtt->longitude()) * _positionBias;
+        Eigen::Vector3d positionBias_e = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionBias;
         positionBias_lla = trafo::ecef2lla_WGS84(posVelAtt->position_ecef() + positionBias_e) - posVelAtt->latLonAlt();
         break;
     }
@@ -735,7 +735,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     {
     case PositionNoiseUnits::meter:
     {
-        Eigen::Vector3d positionNoiseStd_e = trafo::quat_en(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise;
+        Eigen::Vector3d positionNoiseStd_e = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise;
         positionNoiseStd_lla = trafo::ecef2lla_WGS84(posVelAtt->position_ecef() + positionNoiseStd_e) - posVelAtt->latLonAlt();
         break;
     }
@@ -747,7 +747,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
         break;
     case PositionNoiseUnits::meter2:
     {
-        Eigen::Vector3d positionNoiseStd_e = trafo::quat_en(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise.cwiseSqrt();
+        Eigen::Vector3d positionNoiseStd_e = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise.cwiseSqrt();
         positionNoiseStd_lla = trafo::ecef2lla_WGS84(posVelAtt->position_ecef() + positionNoiseStd_e) - posVelAtt->latLonAlt();
         break;
     }
@@ -804,11 +804,11 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
                               + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(0) }(_velocityRandomNumberGenerator.generator),
                                                  std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(1) }(_velocityRandomNumberGenerator.generator),
                                                  std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(2) }(_velocityRandomNumberGenerator.generator) },
-                          trafo::quat_nb(posVelAtt->rollPitchYaw()
-                                         + attitudeBias
-                                         + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, attitudeNoiseStd(0) }(_attitudeRandomNumberGenerator.generator),
-                                                            std::normal_distribution<double>{ 0.0, attitudeNoiseStd(1) }(_attitudeRandomNumberGenerator.generator),
-                                                            std::normal_distribution<double>{ 0.0, attitudeNoiseStd(2) }(_attitudeRandomNumberGenerator.generator) }));
+                          trafo::n_Quat_b(posVelAtt->rollPitchYaw()
+                                          + attitudeBias
+                                          + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, attitudeNoiseStd(0) }(_attitudeRandomNumberGenerator.generator),
+                                                             std::normal_distribution<double>{ 0.0, attitudeNoiseStd(1) }(_attitudeRandomNumberGenerator.generator),
+                                                             std::normal_distribution<double>{ 0.0, attitudeNoiseStd(2) }(_attitudeRandomNumberGenerator.generator) }));
 
     invokeCallbacks(OUTPUT_PORT_INDEX_FLOW, posVelAtt);
 }

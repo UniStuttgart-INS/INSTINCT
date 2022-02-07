@@ -347,7 +347,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>
             // Push out a message with the initial state and a matching imu Observation
             auto inertialNavSol = std::make_shared<InertialNavSol>();
 
-            inertialNavSol->setState_n(posVelAtt->latLonAlt(), posVelAtt->velocity_n(), posVelAtt->quaternion_nb());
+            inertialNavSol->setState_n(posVelAtt->latLonAlt(), posVelAtt->velocity_n(), posVelAtt->n_Quat_b());
 
             auto imuObsIndex = std::min(static_cast<size_t>(1), _imuObservations.size() - 1); // Casting to int, because Windows does not support std::min(size_t, size_t)
 
@@ -396,7 +396,7 @@ void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeD
 
         inertialNavSol->setState_n(_posVelAttStates.front()->latLonAlt(),
                                    _posVelAttStates.front()->velocity_n(),
-                                   _posVelAttStates.front()->quaternion_nb());
+                                   _posVelAttStates.front()->n_Quat_b());
 
         inertialNavSol->insTime = imuObs->insTime;
         inertialNavSol->imuObs = imuObs;
@@ -432,24 +432,24 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::correctPosVelAtt(const
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
     Eigen::Vector3d attError = pvaError->attitudeError_n();
-    Eigen::Matrix3d dcm_c = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(attError)) * posVelAtt->quaternion_nb().toRotationMatrix();
-    posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(dcm_c).normalized());
+    Eigen::Matrix3d c_Dcm_ = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(attError)) * posVelAtt->n_Quat_b().toRotationMatrix();
+    posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(c_Dcm_).normalized());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
-    // const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb()
+    // const Eigen::Quaterniond& n_Quat_b = posVelAtt->n_Quat_b()
     //                                  * (Eigen::AngleAxisd(attError(0), Eigen::Vector3d::UnitX())
     //                                     * Eigen::AngleAxisd(attError(1), Eigen::Vector3d::UnitY())
     //                                     * Eigen::AngleAxisd(attError(2), Eigen::Vector3d::UnitZ()))
     //                                        .normalized();
-    // posVelAttCorrected->setAttitude_nb(q_nb.normalized());
+    // posVelAttCorrected->setAttitude_nb(n_Quat_b.normalized());
 
     // Eigen::Vector3d attError = pvaError->attitudeError_n();
-    // const Eigen::Quaterniond& q_nb = posVelAtt->quaternion_nb();
-    // Eigen::Quaterniond q_nb_c{ q_nb.w() + 0.5 * (+attError(0) * q_nb.x() + attError(1) * q_nb.y() + attError(2) * q_nb.z()),
-    //                            q_nb.x() + 0.5 * (-attError(0) * q_nb.w() + attError(1) * q_nb.z() - attError(2) * q_nb.y()),
-    //                            q_nb.y() + 0.5 * (-attError(0) * q_nb.z() - attError(1) * q_nb.w() + attError(2) * q_nb.x()),
-    //                            q_nb.z() + 0.5 * (+attError(0) * q_nb.y() - attError(1) * q_nb.x() - attError(2) * q_nb.w()) };
-    // posVelAttCorrected->setAttitude_nb(q_nb_c.normalized());
+    // const Eigen::Quaterniond& n_Quat_b = posVelAtt->n_Quat_b();
+    // Eigen::Quaterniond n_Quat_b_c{ n_Quat_b.w() + 0.5 * (+attError(0) * n_Quat_b.x() + attError(1) * n_Quat_b.y() + attError(2) * n_Quat_b.z()),
+    //                            n_Quat_b.x() + 0.5 * (-attError(0) * n_Quat_b.w() + attError(1) * n_Quat_b.z() - attError(2) * n_Quat_b.y()),
+    //                            n_Quat_b.y() + 0.5 * (-attError(0) * n_Quat_b.z() - attError(1) * n_Quat_b.w() + attError(2) * n_Quat_b.x()),
+    //                            n_Quat_b.z() + 0.5 * (+attError(0) * n_Quat_b.y() - attError(1) * n_Quat_b.x() - attError(2) * n_Quat_b.w()) };
+    // posVelAttCorrected->setAttitude_nb(n_Quat_b_c.normalized());
 
     return posVelAttCorrected;
 }
@@ -558,8 +558,8 @@ void NAV::ImuIntegrator::integrateObservation()
     LOG_DATA("{}: f_p__t0 = {}", nameId(), f_p__t0.transpose());
 
     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-    const Eigen::Quaterniond quaternion_nb__t1 = posVelAtt__t1->quaternion_nb();
-    LOG_DATA("{}: quaternion_nb__t1 = {}", nameId(), quaternion_nb__t1.coeffs().transpose());
+    const Eigen::Quaterniond n_Quat_b__t1 = posVelAtt__t1->n_Quat_b();
+    LOG_DATA("{}: n_Quat_b__t1 = {}", nameId(), n_Quat_b__t1.coeffs().transpose());
 
     // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
     const Eigen::Vector3d& velocity_n__t1 = posVelAtt__t1->velocity_n();
@@ -586,7 +586,7 @@ void NAV::ImuIntegrator::integrateObservation()
     //  0  1  2  3   4    5    6   7  8  9
     // [w, x, y, z, v_N, v_E, v_D, 𝜙, λ, h]^T
     Eigen::Matrix<double, 10, 1> y;
-    y.segment<4>(0) = Eigen::Vector4d{ quaternion_nb__t1.w(), quaternion_nb__t1.x(), quaternion_nb__t1.y(), quaternion_nb__t1.z() };
+    y.segment<4>(0) = Eigen::Vector4d{ n_Quat_b__t1.w(), n_Quat_b__t1.x(), n_Quat_b__t1.y(), n_Quat_b__t1.z() };
     y.segment<3>(4) = velocity_n__t1;
     y.segment<3>(7) = position_lla__t1;
 
@@ -651,7 +651,7 @@ void NAV::ImuIntegrator::integrateObservation()
     LOG_DATA("{}: posVelAtt__t0->position_lla() - posVelAtt__t1->position_lla() = {} [m]", nameId(),
              calcGeographicalDistance(posVelAtt__t0->latitude(), posVelAtt__t0->longitude(), posVelAtt__t1->latitude(), posVelAtt__t1->longitude()));
     LOG_DATA("{}: posVelAtt__t0->velocity_n() = {}", nameId(), posVelAtt__t0->velocity_n().transpose());
-    LOG_DATA("{}: posVelAtt__t0->quaternion_nb() = {}", nameId(), posVelAtt__t0->quaternion_nb().coeffs().transpose());
+    LOG_DATA("{}: posVelAtt__t0->n_Quat_b() = {}", nameId(), posVelAtt__t0->n_Quat_b().coeffs().transpose());
 
     // Cycle lists
     _imuObservations.pop_back();

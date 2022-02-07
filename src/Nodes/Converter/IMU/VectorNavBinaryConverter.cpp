@@ -225,7 +225,7 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
 
 std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
 {
-    std::optional<Eigen::Quaterniond> quat_nb;
+    std::optional<Eigen::Quaterniond> n_Quat_b;
     std::optional<Eigen::Vector3d> p_ecef;
     std::optional<Eigen::Vector3d> p_lla;
     std::optional<Eigen::Vector3d> v_n;
@@ -234,16 +234,16 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     {
         if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_QUATERNION)
         {
-            quat_nb = vnObs->attitudeOutputs->qtn.cast<double>();
+            n_Quat_b = vnObs->attitudeOutputs->qtn.cast<double>();
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_YAWPITCHROLL)
         {
             auto ypr = trafo::deg2rad(vnObs->attitudeOutputs->ypr.cast<double>());
-            quat_nb = trafo::quat_nb(ypr(2), ypr(1), ypr(0));
+            n_Quat_b = trafo::n_Quat_b(ypr(2), ypr(1), ypr(0));
         }
         else if (vnObs->attitudeOutputs->attitudeField & vn::protocol::uart::AttitudeGroup::ATTITUDEGROUP_DCM)
         {
-            quat_nb = vnObs->attitudeOutputs->dcm.cast<double>();
+            n_Quat_b = vnObs->attitudeOutputs->dcm.cast<double>();
         }
     }
 
@@ -269,12 +269,12 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
                  && (p_ecef.has_value() || p_lla.has_value()))
         {
             Eigen::Vector3d lla = p_lla.has_value() ? p_lla.value() : trafo::ecef2lla_WGS84(p_ecef.value());
-            v_n = trafo::quat_ne(lla(0), lla(1)) * vnObs->insOutputs->velEcef.cast<double>();
+            v_n = trafo::n_Quat_e(lla(0), lla(1)) * vnObs->insOutputs->velEcef.cast<double>();
         }
         else if ((vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
-                 && quat_nb.has_value())
+                 && n_Quat_b.has_value())
         {
-            v_n = quat_nb.value() * vnObs->insOutputs->velBody.cast<double>();
+            v_n = n_Quat_b.value() * vnObs->insOutputs->velBody.cast<double>();
         }
     }
 
@@ -305,7 +305,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
                      && (p_ecef.has_value() || p_lla.has_value()))
             {
                 Eigen::Vector3d lla = p_lla.has_value() ? p_lla.value() : trafo::ecef2lla_WGS84(p_ecef.value());
-                v_n = trafo::quat_ne(lla(0), lla(1)) * vnObs->gnss1Outputs->velEcef.cast<double>();
+                v_n = trafo::n_Quat_e(lla(0), lla(1)) * vnObs->gnss1Outputs->velEcef.cast<double>();
             }
         }
     }
@@ -336,7 +336,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
                      && (p_ecef.has_value() || p_lla.has_value()))
             {
                 Eigen::Vector3d lla = p_lla.has_value() ? p_lla.value() : trafo::ecef2lla_WGS84(p_ecef.value());
-                v_n = trafo::quat_ne(lla(0), lla(1)) * vnObs->gnss2Outputs->velEcef.cast<double>();
+                v_n = trafo::n_Quat_e(lla(0), lla(1)) * vnObs->gnss2Outputs->velEcef.cast<double>();
             }
         }
     }
@@ -357,13 +357,13 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         }
         posVelAttObs->setVelocity_n(v_n.value());
 
-        if (!quat_nb.has_value())
+        if (!n_Quat_b.has_value())
         {
             LOG_DEBUG("{}: Conversion succeeded but has no attitude info.", nameId());
         }
         else
         {
-            posVelAttObs->setAttitude_nb(quat_nb.value());
+            posVelAttObs->setAttitude_nb(n_Quat_b.value());
         }
 
         if (_posVelAtt__init == nullptr)
@@ -375,7 +375,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         {
             posVelAttObs->setPosition_e(_posVelAtt__init->position_ecef());
             posVelAttObs->setVelocity_n(Eigen::Vector3d::Zero());
-            posVelAttObs->setAttitude_nb(_posVelAtt__init->quaternion_nb());
+            posVelAttObs->setAttitude_nb(_posVelAtt__init->n_Quat_b());
         }
 
         return posVelAttObs;

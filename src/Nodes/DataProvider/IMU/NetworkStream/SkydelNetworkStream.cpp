@@ -167,13 +167,13 @@ void NAV::SkydelNetworkStream::do_receive()
                 // Set GNSS values
                 Eigen::Vector3d pos_ecef{ posX, posY, posZ };
                 Eigen::Vector3d posLLA = trafo::ecef2lla_WGS84(pos_ecef);
-                Eigen::Quaterniond quat_eb;
-                quat_eb = trafo::quat_en(posLLA(0), posLLA(1)) * trafo::quat_nb(attRoll, attPitch, attYaw);
+                Eigen::Quaterniond e_Quat_b;
+                e_Quat_b = trafo::e_Quat_n(posLLA(0), posLLA(1)) * trafo::n_Quat_b(attRoll, attPitch, attYaw);
 
                 obsG->setPosition_e(pos_ecef);
                 Eigen::Vector3d velDummy{ 0, 0, 0 }; // TODO: Add velocity output in Skydel API and NetStream
                 obsG->setVelocity_e(velDummy);
-                obsG->setAttitude_eb(quat_eb); // Attitude MUST BE set after Position, because the n- to e-sys trafo depends on posLLA
+                obsG->setAttitude_eb(e_Quat_b); // Attitude MUST BE set after Position, because the n- to e-sys trafo depends on posLLA
 
                 // Set IMU values
                 obs->accelCompXYZ.emplace(accelX, accelY, accelZ);

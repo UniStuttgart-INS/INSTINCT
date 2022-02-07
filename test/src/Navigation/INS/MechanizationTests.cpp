@@ -42,16 +42,16 @@ namespace NAV
 //         // ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in navigation coordinates, at the time tₖ
 //         Eigen::Vector3d angularVelocity_ie_e__t0{ 0, 0, 0 };
 //         // q (tₖ₋₁) Quaternion, from platform to body coordinates, at the time tₖ₋₁
-//         Eigen::Quaterniond quaternion_bp__t1 = trafo::quat_bp(0, 0, 0);
+//         Eigen::Quaterniond b_Quat_p__t1 = trafo::b_Quat_p(0, 0, 0);
 
-//         Eigen::Vector3d angularVelocity_ip_b__t0 = quaternion_bp__t1 * angularVelocity_ip_p__t0;
+//         Eigen::Vector3d angularVelocity_ip_b__t0 = b_Quat_p__t1 * angularVelocity_ip_p__t0;
 
 //         for (double longitude = longitudeMin; longitude < longitudeMax - std::numeric_limits<float>::epsilon(); longitude += deltaLatLon) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
 //         {
 //             for (double latitude = latitudeMin; latitude < latitudeMax - std::numeric_limits<float>::epsilon(); latitude += deltaLatLon) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
 //             {
 //                 // q (tₖ₋₁) Quaternion, from navigation earth coordinates, at the time tₖ₋₁
-//                 Eigen::Quaterniond quaternion_en__t1 = trafo::quat_en(latitude, longitude);
+//                 Eigen::Quaterniond e_Quat_n__t1 = trafo::e_Quat_n(latitude, longitude);
 
 //                 // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
 //                 for (double roll = rollMin; roll < rollMax - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
@@ -61,24 +61,24 @@ namespace NAV
 //                         for (double yaw = yawMin; yaw < yawMax - std::numeric_limits<float>::epsilon(); yaw += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
 //                         {
 //                             // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-//                             Eigen::Quaterniond quaternion_nb__t1 = trafo::quat_nb(roll, pitch, yaw);
+//                             Eigen::Quaterniond n_Quat_b__t1 = trafo::n_Quat_b(roll, pitch, yaw);
 
-//                             Eigen::Quaterniond quaternion_ep__t1 = quaternion_en__t1 * quaternion_nb__t1 * quaternion_bp__t1;
+//                             Eigen::Quaterniond e_Quat_p__t1 = e_Quat_n__t1 * n_Quat_b__t1 * b_Quat_p__t1;
 
 //                             // q (tₖ) Quaternion, from earth to platform coordinates, at the time tₖ
-//                             Eigen::Quaterniond quaternion_ep__t0 = updateQuaternion_ep_RungeKutta3(
+//                             Eigen::Quaterniond e_Quat_p__t0 = updateQuaternion_ep_RungeKutta3(
 //                                 timeDifferenceSec,        // Δtₖ = (tₖ - tₖ₋₁) Time difference in [seconds]
 //                                 timeDifferenceSec,        // Δtₖ₋₁ = (tₖ₋₁ - tₖ₋₂) Time difference in [seconds]
 //                                 angularVelocity_ip_p__t0, // ω_ip_p (tₖ) Angular velocity in [rad/s], of the inertial to platform system, in platform coordinates, at the time tₖ
 //                                 angularVelocity_ip_p__t0, // ω_ip_p (tₖ₋₁) Angular velocity in [rad/s], of the inertial to platform system, in platform coordinates, at the time tₖ₋₁
 //                                 angularVelocity_ie_e__t0, // ω_ie_e (tₖ) Angular velocity in [rad/s], of the inertial to earth system, in earth coordinates, at the time tₖ
-//                                 quaternion_ep__t1,        // q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
-//                                 quaternion_ep__t1);       // q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
+//                                 e_Quat_p__t1,        // q (tₖ₋₁) Quaternion, from platform to earth coordinates, at the time tₖ₋₁
+//                                 e_Quat_p__t1);       // q (tₖ₋₂) Quaternion, from platform to earth coordinates, at the time tₖ₋₂
 
-//                             Eigen::Quaterniond quaternion_nb__t0 = quaternion_en__t1.conjugate() * quaternion_ep__t0 * quaternion_bp__t1.conjugate();
+//                             Eigen::Quaterniond n_Quat_b__t0 = e_Quat_n__t1.conjugate() * e_Quat_p__t0 * b_Quat_p__t1.conjugate();
 
 //                             // Roll, Pitch and Yaw angle at the time tₖ
-//                             Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg(trafo::quat2eulerZYX(quaternion_nb__t0));
+//                             Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg(trafo::quat2eulerZYX(n_Quat_b__t0));
 
 //                             // Titterton Ch. 3.6.3.3, eq. 3.52, p. 42
 //                             // Gleason Ch. 6.2.3.1, eq. 6.8, p. 153 (top left term should be cos(theta))
@@ -88,12 +88,12 @@ namespace NAV
 //                                                                                       (angularVelocity_ip_b__t0.y() * std::sin(roll) + angularVelocity_ip_b__t0.z() * std::cos(roll)) / std::cos(pitch) }
 //                                                                          * 2.0 * static_cast<double>(timeDifferenceSec);
 
-//                             Eigen::Quaterniond expectedQuaternion_nb = trafo::quat_nb(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
+//                             Eigen::Quaterniond expectedQuaternion_nb = trafo::n_Quat_b(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
 
-//                             // std::cout << "quaternion_nb__t1 (x,y,z,w) = " << quaternion_nb__t1.coeffs().transpose() << "\n";
+//                             // std::cout << "n_Quat_b__t1 (x,y,z,w) = " << n_Quat_b__t1.coeffs().transpose() << "\n";
 
 //                             Eigen::Vector3d vec_b{ 1, 2, 3 };
-//                             Eigen::Vector3d vec_n = quaternion_nb__t0 * vec_b;
+//                             Eigen::Vector3d vec_n = n_Quat_b__t0 * vec_b;
 //                             Eigen::Vector3d expected_vec_n = expectedQuaternion_nb * vec_b;
 //                             CHECK(vec_n == EigApprox(expected_vec_n).margin(1e-6).epsilon(0));
 
@@ -146,17 +146,17 @@ namespace NAV
 //                 for (double yaw = yawMin; yaw < yawMax - std::numeric_limits<float>::epsilon(); yaw += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
 //                 {
 //                     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-//                     Eigen::Quaterniond quaternion_nb__t1 = trafo::quat_nb(roll, pitch, yaw);
+//                     Eigen::Quaterniond n_Quat_b__t1 = trafo::n_Quat_b(roll, pitch, yaw);
 
 //                     // q (tₖ) Quaternion, from body to navigation coordinates, at the time tₖ
-//                     Eigen::Quaterniond quaternion_nb__t0 = updateQuaternion_nb_RungeKutta1(timeDifferenceSec__t0,
+//                     Eigen::Quaterniond n_Quat_b__t0 = updateQuaternion_nb_RungeKutta1(timeDifferenceSec__t0,
 //                                                                                            angularVelocity_ip_b__t0,
 //                                                                                            angularVelocity_ie_n__t1,
 //                                                                                            angularVelocity_en_n__t1,
-//                                                                                            quaternion_nb__t1);
+//                                                                                            n_Quat_b__t1);
 
 //                     // Roll, Pitch and Yaw angle at the time tₖ
-//                     Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg(trafo::quat2eulerZYX(quaternion_nb__t0));
+//                     Eigen::Vector3d rollPitchYaw__t0 = trafo::rad2deg(trafo::quat2eulerZYX(n_Quat_b__t0));
 
 //                     // Titterton Ch. 3.6.3.3, eq. 3.52, p. 42
 //                     Eigen::Vector3d expectedRollPitchYaw = Eigen::Vector3d{ roll, pitch, yaw }
@@ -165,12 +165,12 @@ namespace NAV
 //                                                                               (angularVelocity_ip_b__t0.y() * std::sin(roll) + angularVelocity_ip_b__t0.z() * std::cos(roll)) / std::cos(pitch) }
 //                                                                  * static_cast<double>(timeDifferenceSec__t0);
 
-//                     Eigen::Quaterniond expectedQuaternion_nb = trafo::quat_nb(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
+//                     Eigen::Quaterniond expectedQuaternion_nb = trafo::n_Quat_b(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
 
-//                     // std::cout << "quaternion_nb__t1 (x,y,z,w) = " << quaternion_nb__t1.coeffs().transpose() << "\n";
+//                     // std::cout << "n_Quat_b__t1 (x,y,z,w) = " << n_Quat_b__t1.coeffs().transpose() << "\n";
 
 //                     Eigen::Vector3d vec_b{ 1, 2, 3 };
-//                     Eigen::Vector3d vec_n = quaternion_nb__t0 * vec_b;
+//                     Eigen::Vector3d vec_n = n_Quat_b__t0 * vec_b;
 //                     Eigen::Vector3d expected_vec_n = expectedQuaternion_nb * vec_b;
 //                     CHECK(vec_n == EigApprox(expected_vec_n).margin(1e-6).epsilon(0));
 
@@ -245,25 +245,25 @@ namespace NAV
 //     size_t count = 10000;
 //     for (size_t i = 0; i < count; i++)
 //     {
-//         Eigen::Quaterniond q_nb = updateQuaternion_nb_RungeKutta3(timeDifferenceSec, timeDifferenceSec,
+//         Eigen::Quaterniond n_Quat_b = updateQuaternion_nb_RungeKutta3(timeDifferenceSec, timeDifferenceSec,
 //                                                                   angularVelocity_ip_b, angularVelocity_ip_b,
 //                                                                   angularVelocity_ie_n,
 //                                                                   angularVelocity_en_n,
 //                                                                   quats_nb.at(1), quats_nb.at(0));
-//         quats_nb.push_back(q_nb);
+//         quats_nb.push_back(n_Quat_b);
 //         quats_nb.pop_front();
 //     }
 
-//     auto q_nb = quats_nb.at(quats_nb.size() - 1);
-//     auto rollPitchYaw = trafo::quat2eulerZYX(q_nb);
+//     auto n_Quat_b = quats_nb.at(quats_nb.size() - 1);
+//     auto rollPitchYaw = trafo::quat2eulerZYX(n_Quat_b);
 
 //     Eigen::Vector3d expectedRollPitchYaw = angularVelocity_ip_b * (static_cast<double>(timeDifferenceSec) * static_cast<double>(count));
-//     Eigen::Quaterniond expectedQuat_nb = trafo::quat_nb(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
+//     Eigen::Quaterniond expectedn_Quat_b = trafo::n_Quat_b(expectedRollPitchYaw.x(), expectedRollPitchYaw.y(), expectedRollPitchYaw.z());
 
-//     CHECK(q_nb.x() == Approx(expectedQuat_nb.x()).margin(1e-13));
-//     CHECK(q_nb.y() == Approx(expectedQuat_nb.y()).margin(1e-13));
-//     CHECK(q_nb.z() == Approx(expectedQuat_nb.z()).margin(1e-13));
-//     CHECK(q_nb.w() == Approx(expectedQuat_nb.w()).margin(1e-13));
+//     CHECK(n_Quat_b.x() == Approx(expectedn_Quat_b.x()).margin(1e-13));
+//     CHECK(n_Quat_b.y() == Approx(expectedn_Quat_b.y()).margin(1e-13));
+//     CHECK(n_Quat_b.z() == Approx(expectedn_Quat_b.z()).margin(1e-13));
+//     CHECK(n_Quat_b.w() == Approx(expectedn_Quat_b.w()).margin(1e-13));
 
 //     CHECK(rollPitchYaw.x() == Approx(expectedRollPitchYaw.x()).margin(1e-13));
 //     CHECK(rollPitchYaw.y() == Approx(expectedRollPitchYaw.y()).margin(1e-13));
@@ -291,20 +291,20 @@ namespace NAV
 
 //     auto gravity = calcGravitation_n_SomiglianaAltitude(latitude, altitude).norm();
 //     Eigen::Vector3d gravity_n{ 0, 0, gravity };
-//     Eigen::Vector3d gravity_e = trafo::quat_en(latitude, longitude) * gravity_n;
+//     Eigen::Vector3d gravity_e = trafo::e_Quat_n(latitude, longitude) * gravity_n;
 
 //     // a_p Acceleration in [m/s^2], in navigation coordinates
 //     Eigen::Vector3d acceleration_n(1, -1, -gravity);
 
-//     Eigen::Vector3d acceleration_p = trafo::quat_pb(mountingAngleX, mountingAngleY, mountingAngleZ)
-//                                      * trafo::quat_bn(roll, pitch, yaw)
+//     Eigen::Vector3d acceleration_p = trafo::p_Quat_b(mountingAngleX, mountingAngleY, mountingAngleZ)
+//                                      * trafo::b_Quat_n(roll, pitch, yaw)
 //                                      * acceleration_n;
 
 //     Eigen::Vector3d position = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
 
-//     Eigen::Quaterniond quaternion_ep = trafo::quat_en(latitude, longitude)
-//                                        * trafo::quat_nb(roll, pitch, yaw)
-//                                        * trafo::quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ);
+//     Eigen::Quaterniond e_Quat_p = trafo::e_Quat_n(latitude, longitude)
+//                                        * trafo::n_Quat_b(roll, pitch, yaw)
+//                                        * trafo::b_Quat_p(mountingAngleX, mountingAngleY, mountingAngleZ);
 
 //     bool suppressCoriolis = false;
 
@@ -320,9 +320,9 @@ namespace NAV
 //                                                        velocities.at(0),
 //                                                        position,
 //                                                        gravity_e,
-//                                                        quaternion_ep,
-//                                                        quaternion_ep,
-//                                                        quaternion_ep,
+//                                                        e_Quat_p,
+//                                                        e_Quat_p,
+//                                                        e_Quat_p,
 //                                                        suppressCoriolis);
 //         velocities.push_back(v_e);
 //         velocities.pop_front();
@@ -330,7 +330,7 @@ namespace NAV
 
 //     auto v_e = velocities.at(velocities.size() - 1);
 
-//     auto v_n = trafo::quat_ne(latitude, longitude) * v_e;
+//     auto v_n = trafo::n_Quat_e(latitude, longitude) * v_e;
 
 //     // Exact values are not achieved
 //     CHECK(v_n.x() == Approx(1).margin(0.03));
@@ -358,12 +358,12 @@ namespace NAV
 
 //     // a_p Acceleration in [m/s^2], in navigation coordinates
 //     Eigen::Vector3d acceleration_n{ 1, 1, -gravity };
-//     Eigen::Vector3d acceleration_b = trafo::quat_bn(roll, pitch, yaw) * acceleration_n;
+//     Eigen::Vector3d acceleration_b = trafo::b_Quat_n(roll, pitch, yaw) * acceleration_n;
 
-//     Eigen::Quaterniond quaternion_nb = trafo::quat_nb(roll, pitch, yaw);
+//     Eigen::Quaterniond n_Quat_b = trafo::n_Quat_b(roll, pitch, yaw);
 
 //     // ω_ie_n Nominal mean angular velocity of the Earth in [rad/s], in navigation coordinates
-//     Eigen::Vector3d angularVelocity_ie_n = trafo::quat_ne(latitude, longitude) * InsConst::OMEGA_ie_e;
+//     Eigen::Vector3d angularVelocity_ie_n = trafo::n_Quat_e(latitude, longitude) * InsConst::OMEGA_ie_e;
 
 //     // North/South (meridian) earth radius [m]
 //     double R_N = calcEarthRadius_N(latitude, InsConst::WGS84_a, InsConst::WGS84_e_squared);
@@ -390,9 +390,9 @@ namespace NAV
 //                                                        gravity_n,
 //                                                        angularVelocity_ie_n,
 //                                                        angularVelocity_en_n,
-//                                                        quaternion_nb,
-//                                                        quaternion_nb,
-//                                                        quaternion_nb,
+//                                                        n_Quat_b,
+//                                                        n_Quat_b,
+//                                                        n_Quat_b,
 //                                                        suppressCoriolis);
 //         velocities.push_back(v_n);
 //         velocities.pop_front();
@@ -418,7 +418,7 @@ namespace NAV
 //     double altitude = 254;
 
 //     Eigen::Vector3d velocity_n{ 2, 0, 0 };
-//     Eigen::Vector3d velocity_e = trafo::quat_en(latitude, longitude) * velocity_n;
+//     Eigen::Vector3d velocity_e = trafo::e_Quat_n(latitude, longitude) * velocity_n;
 
 //     Eigen::Vector3d position_e = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
 
@@ -454,7 +454,7 @@ namespace NAV
 
 //     Eigen::Vector3d velocity_b{ 2, 0, 0 };
 
-//     Eigen::Vector3d velocity_n = trafo::quat_nb(roll, pitch, yaw) * velocity_b;
+//     Eigen::Vector3d velocity_n = trafo::n_Quat_b(roll, pitch, yaw) * velocity_b;
 
 //     Eigen::Vector3d latLonAlt{ latitude, longitude, altitude };
 
@@ -487,7 +487,7 @@ namespace NAV
 //     double pitch = trafo::deg2rad(0.0);
 //     double yaw = trafo::deg2rad(0.0);
 //     auto posVelAtt = std::make_shared<PosVelAtt>();
-//     posVelAtt->setState_n(latLonAlt, vel_n, trafo::quat_nb(roll, pitch, yaw));
+//     posVelAtt->setState_n(latLonAlt, vel_n, trafo::n_Quat_b(roll, pitch, yaw));
 
 //     auto pvaError = std::make_shared<PVAError>();
 //     pvaError->positionError_lla() = Eigen::Vector3d{ trafo::deg2rad(4), trafo::deg2rad(-7), 5 };
@@ -504,7 +504,7 @@ namespace NAV
 
 //     // ###########################################################################################################
 
-//     posVelAtt->setAttitude_nb(trafo::quat_nb(0, trafo::deg2rad(10.0), 0));
+//     posVelAtt->setAttitude_nb(trafo::n_Quat_b(0, trafo::deg2rad(10.0), 0));
 //     pvaError->attitudeError_n() = trafo::deg2rad(Eigen::Vector3d{ 0, 1, 0 });
 
 //     expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();
@@ -514,7 +514,7 @@ namespace NAV
 
 //     // ###########################################################################################################
 
-//     posVelAtt->setAttitude_nb(trafo::quat_nb(0, 0, trafo::deg2rad(10.0)));
+//     posVelAtt->setAttitude_nb(trafo::n_Quat_b(0, 0, trafo::deg2rad(10.0)));
 //     pvaError->attitudeError_n() = trafo::deg2rad(Eigen::Vector3d{ 0, 0, 1 });
 
 //     expectedRollPitchYaw = posVelAtt->rollPitchYaw() - pvaError->attitudeError_n();

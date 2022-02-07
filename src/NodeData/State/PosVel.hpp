@@ -55,7 +55,7 @@ class PosVel : public Pos
     /// @param[in] vel_n The new velocity in the NED frame
     void setVelocity_n(const Eigen::Vector3d& vel_n)
     {
-        _v_e = quaternion_en() * vel_n;
+        _v_e = e_Quat_n() * vel_n;
         _v_n = vel_n;
     }
 

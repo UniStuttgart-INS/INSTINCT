@@ -36,16 +36,16 @@ class Pos : public InsObs
 
     /// @brief Returns the Quaternion from navigation to Earth-fixed frame
     /// @return The Quaternion for the rotation from navigation to earth coordinates
-    [[nodiscard]] Eigen::Quaterniond quaternion_en() const
+    [[nodiscard]] Eigen::Quaterniond e_Quat_n() const
     {
-        return trafo::quat_en(latitude(), longitude());
+        return trafo::e_Quat_n(latitude(), longitude());
     }
 
     /// @brief Returns the Quaternion from Earth-fixed frame to navigation
     /// @return The Quaternion for the rotation from earth navigation coordinates
     [[nodiscard]] Eigen::Quaterniond quaternion_ne() const
     {
-        return quaternion_en().conjugate();
+        return e_Quat_n().conjugate();
     }
 
     /* -------------------------------------------------------------------------------------------------------- */

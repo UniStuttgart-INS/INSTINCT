@@ -663,8 +663,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     const Eigen::Vector3d& position_lla__t1 = inertialNavSol->latLonAlt();
     LOG_DATA("{}: position_lla__t1 = {} [rad, rad, m]", nameId(), position_lla__t1.transpose());
     // q (tₖ₋₁) Quaternion, from body to navigation coordinates, at the time tₖ₋₁
-    const Eigen::Quaterniond& quaternion_nb__t1 = inertialNavSol->quaternion_nb();
-    LOG_DATA("{}: quaternion_nb__t1 --> Roll, Pitch, Yaw = {} [deg]", nameId(), trafo::deg2rad(trafo::quat2eulerZYX(quaternion_nb__t1).transpose()));
+    const Eigen::Quaterniond& n_Quat_b__t1 = inertialNavSol->n_Quat_b();
+    LOG_DATA("{}: n_Quat_b__t1 --> Roll, Pitch, Yaw = {} [deg]", nameId(), trafo::deg2rad(trafo::quat2eulerZYX(n_Quat_b__t1).transpose()));
 
     // Prime vertical radius of curvature (East/West) [m]
     const double R_E = calcEarthRadius_E(position_lla__t1(0));
@@ -674,8 +674,8 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     LOG_DATA("{}: R_N = {} [m]", nameId(), R_N);
 
     // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-    Eigen::Matrix3d DCM_nb = quaternion_nb__t1.toRotationMatrix();
-    LOG_DATA("{}: DCM_nb =\n{}", nameId(), DCM_nb);
+    Eigen::Matrix3d n_Dcm_b = n_Quat_b__t1.toRotationMatrix();
+    LOG_DATA("{}: n_Dcm_b =\n{}", nameId(), n_Dcm_b);
 
     // Conversion matrix between cartesian and curvilinear perturbations to the position
     Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(position_lla__t1, R_N, R_E);
@@ -761,7 +761,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // ---------------------------------------------- Prediction -------------------------------------------------
 
     // System Matrix
-    Eigen::Matrix<double, 15, 15> F = systemMatrix_F(quaternion_nb__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, _tau_bad, _tau_bgd, R_N, R_E, g_0, r_eS_e);
+    Eigen::Matrix<double, 15, 15> F = systemMatrix_F(n_Quat_b__t1, acceleration_b, angularRate_in_n, velocity_n__t1, position_lla__t1, _tau_bad, _tau_bgd, R_N, R_E, g_0, r_eS_e);
     LOG_DATA("{}: F =\n{}", nameId(), F);
 
     // TODO: Groves signs
@@ -773,7 +773,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     if (_qCalculationAlgorithm == QCalculationAlgorithm::VanLoan)
     {
         // Noise Input Matrix
-        Eigen::Matrix<double, 15, 12> G = noiseInputMatrix_G(quaternion_nb__t1);
+        Eigen::Matrix<double, 15, 12> G = noiseInputMatrix_G(n_Quat_b__t1);
         LOG_DATA("{}: G =\n{}", nameId(), G);
 
         Eigen::Matrix<double, 12, 12> W = noiseScaleMatrix_W(sigma_ra.array().square(), sigma_rg.array().square(),
@@ -821,7 +821,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
                                                         sigma_bad.array().square(), sigma_bgd.array().square(),
                                                         _tau_bad, _tau_bgd,
                                                         F.block<3, 3>(3, 0), T_rn_p,
-                                                        DCM_nb, _tau_i);
+                                                        n_Dcm_b, _tau_i);
     }
 
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_Q);
@@ -872,8 +872,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     LOG_DATA("{}: R_N = {} [m]", nameId(), R_N);
 
     // Direction Cosine Matrix from body to navigation coordinates, at the time tₖ₋₁
-    Eigen::Matrix3d DCM_nb = _latestInertialNavSol->quaternion_nb().toRotationMatrix();
-    LOG_DATA("{}: DCM_nb =\n{}", nameId(), DCM_nb);
+    Eigen::Matrix3d n_Dcm_b = _latestInertialNavSol->n_Quat_b().toRotationMatrix();
+    LOG_DATA("{}: n_Dcm_b =\n{}", nameId(), n_Dcm_b);
 
     // Conversion matrix between cartesian and curvilinear perturbations to the position
     Eigen::Matrix3d T_rn_p = conversionMatrixCartesianCurvilinear(position_lla__t1, R_N, R_E);
@@ -925,7 +925,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     // ---------------------------------------------- Correction -------------------------------------------------
     // 5. Calculate the measurement matrix H_k
-    _kalmanFilter.H = measurementMatrix_H(T_rn_p, DCM_nb, angularRate_b, _leverArm_InsGnss_b, Omega_ie_n);
+    _kalmanFilter.H = measurementMatrix_H(T_rn_p, n_Dcm_b, angularRate_b, _leverArm_InsGnss_b, Omega_ie_n);
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_H);
     LOG_DATA("{}: KF.H =\n{}", nameId(), _kalmanFilter.H);
 
@@ -937,7 +937,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // 8. Formulate the measurement z_k
     _kalmanFilter.z = measurementInnovation_dz(gnssMeasurement->latLonAlt(), _latestInertialNavSol->latLonAlt(),
                                                gnssMeasurement->velocity_n(), _latestInertialNavSol->velocity_n(),
-                                               T_rn_p, _latestInertialNavSol->quaternion_nb(), _leverArm_InsGnss_b, angularRate_b, Omega_ie_n);
+                                               T_rn_p, _latestInertialNavSol->n_Quat_b(), _leverArm_InsGnss_b, angularRate_b, Omega_ie_n);
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_z);
     LOG_DATA("{}: KF.z =\n{}", nameId(), _kalmanFilter.z);
 
@@ -1017,7 +1017,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 //                                             System matrix 𝐅
 // ###########################################################################################################
 
-Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrix_F(const Eigen::Quaterniond& quaternion_nb,
+Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrix_F(const Eigen::Quaterniond& n_Quat_b,
                                                                     const Eigen::Vector3d& specForce_ib_b,
                                                                     const Eigen::Vector3d& angularRate_in_n,
                                                                     const Eigen::Vector3d& velocity_n,
@@ -1042,11 +1042,11 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrix_F(const Eigen:
     F.block<3, 3>(0, 0) = F_dotpsi_psi_n(angularRate_in_n);
     F.block<3, 3>(0, 3) = F_dotpsi_dv_n(latitude, altitude, R_N, R_E);
     F.block<3, 3>(0, 6) = F_dotpsi_dr_n(latitude, altitude, velocity_n, R_N, R_E);
-    F.block<3, 3>(0, 12) = F_dotpsi_dw_n(quaternion_nb.toRotationMatrix());
-    F.block<3, 3>(3, 0) = F_dotdv_psi_n(quaternion_nb * specForce_ib_b);
+    F.block<3, 3>(0, 12) = F_dotpsi_dw_n(n_Quat_b.toRotationMatrix());
+    F.block<3, 3>(3, 0) = F_dotdv_psi_n(n_Quat_b * specForce_ib_b);
     F.block<3, 3>(3, 3) = F_dotdv_dv_n(velocity_n, latitude, altitude, R_N, R_E);
     F.block<3, 3>(3, 6) = F_dotdv_dr_n(velocity_n, latitude, altitude, R_N, R_E, g_0, r_eS_e);
-    F.block<3, 3>(3, 9) = F_dotdv_df_n(quaternion_nb.toRotationMatrix());
+    F.block<3, 3>(3, 9) = F_dotdv_df_n(n_Quat_b.toRotationMatrix());
     F.block<3, 3>(6, 3) = F_dotdr_dv_n(latitude, altitude, R_N, R_E);
     F.block<3, 3>(6, 6) = F_dotdr_dr_n(velocity_n, latitude, altitude, R_N, R_E);
     F.block<3, 3>(9, 9) = F_dotdf_df_n(_randomProcessAccel == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bad);
@@ -1077,16 +1077,16 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrix_F(const Eigen:
 //                                     System noise covariance matrix 𝐐
 // ###########################################################################################################
 
-Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrix_G(const Eigen::Quaterniond& quaternion_nb)
+Eigen::Matrix<double, 15, 12> NAV::LooselyCoupledKF::noiseInputMatrix_G(const Eigen::Quaterniond& n_Quat_b)
 {
     // DCM matrix from body to navigation frame
-    const Eigen::Matrix3d dcm_nb = quaternion_nb.toRotationMatrix();
+    const Eigen::Matrix3d n_Dcm_b = n_Quat_b.toRotationMatrix();
 
     // Math: \mathbf{G}_{a} = \begin{bmatrix} -\mathbf{C}_b^n & 0 & 0 & 0 \\ 0 & \mathbf{C}_b^n & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & \mathbf{I}_3 & 0 \\ 0 & 0 & 0 & \mathbf{I}_3 \end{bmatrix} \quad \text{T. Hobiger}\,(6.5)
     Eigen::Matrix<double, 15, 12> G = Eigen::Matrix<double, 15, 12>::Zero();
 
-    G.block<3, 3>(0, 0) = SCALE_FACTOR_ATTITUDE * -dcm_nb;
-    G.block<3, 3>(3, 3) = dcm_nb;
+    G.block<3, 3>(0, 0) = SCALE_FACTOR_ATTITUDE * -n_Dcm_b;
+    G.block<3, 3>(3, 3) = n_Dcm_b;
     G.block<3, 3>(9, 6) = SCALE_FACTOR_ACCELERATION * Eigen::Matrix3d::Identity();
     G.block<3, 3>(12, 9) = SCALE_FACTOR_ANGULAR_RATE * Eigen::Matrix3d::Identity();
 
@@ -1111,7 +1111,7 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix
                                                                                    const Eigen::Vector3d& sigma2_bad, const Eigen::Vector3d& sigma2_bgd,
                                                                                    const Eigen::Vector3d& tau_bad, const Eigen::Vector3d& tau_bgd,
                                                                                    const Eigen::Matrix3d& F_21_n, const Eigen::Matrix3d& T_rn_p,
-                                                                                   const Eigen::Matrix3d& DCM_nb, const double& tau_s)
+                                                                                   const Eigen::Matrix3d& n_Dcm_b, const double& tau_s)
 {
     // Math: \mathbf{Q}_{INS}^n = \begin{pmatrix} \mathbf{Q}_{11} & {\mathbf{Q}_{21}^n}^T & {\mathbf{Q}_{31}^n}^T & \mathbf{0}_3 & {\mathbf{Q}_{51}^n}^T \\ \mathbf{Q}_{21}^n & \mathbf{Q}_{22}^n & {\mathbf{Q}_{32}^n}^T & {\mathbf{Q}_{42}^n}^T & \mathbf{Q}_{25}^n \\ \mathbf{Q}_{31}^n & \mathbf{Q}_{32}^n & \mathbf{Q}_{33}^n & \mathbf{Q}_{34}^n & \mathbf{Q}_{35}^n \\ \mathbf{0}_3 & \mathbf{Q}_{42}^n & {\mathbf{Q}_{34}^n}^T & S_{bad}\tau_s\mathbf{I}_3 & \mathbf{0}_3 \\ \mathbf{Q}_{51}^n & \mathbf{Q}_{52}^n & {\mathbf{Q}_{35}^n}^T & \mathbf{0}_3 & S_{bgd}\tau_s\mathbf{I}_3 \end{pmatrix} \qquad \text{P. Groves}\,(14.80)
     const Eigen::Vector3d S_ra = psdNoise(sigma2_ra, tau_s);
@@ -1123,15 +1123,15 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemNoiseCovarianceMatrix
     Q.block<3, 3>(0, 0) = Q_psi_psi(S_rg, S_bgd, tau_s);                            // Q_11
     Q.block<3, 3>(3, 0) = Q_dv_psi(S_rg, S_bgd, F_21_n, tau_s);                     // Q_21
     Q.block<3, 3>(3, 3) = Q_dv_dv(S_ra, S_bad, S_rg, S_bgd, F_21_n, tau_s);         // Q_22
-    Q.block<3, 3>(3, 12) = Q_dv_domega(S_bgd, F_21_n, DCM_nb, tau_s);               // Q_25
+    Q.block<3, 3>(3, 12) = Q_dv_domega(S_bgd, F_21_n, n_Dcm_b, tau_s);              // Q_25
     Q.block<3, 3>(6, 0) = Q_dr_psi(S_rg, S_bgd, F_21_n, T_rn_p, tau_s);             // Q_31
     Q.block<3, 3>(6, 3) = Q_dr_dv(S_ra, S_bad, S_rg, S_bgd, F_21_n, T_rn_p, tau_s); // Q_32
     Q.block<3, 3>(6, 6) = Q_dr_dr(S_ra, S_bad, S_rg, S_bgd, T_rn_p, F_21_n, tau_s); // Q_33
-    Q.block<3, 3>(6, 9) = Q_dr_df(S_bgd, T_rn_p, DCM_nb, tau_s);                    // Q_34
-    Q.block<3, 3>(6, 12) = Q_dr_domega(S_bgd, F_21_n, T_rn_p, DCM_nb, tau_s);       // Q_35
-    Q.block<3, 3>(9, 3) = Q_df_dv(S_bad, DCM_nb, tau_s);                            // Q_42
+    Q.block<3, 3>(6, 9) = Q_dr_df(S_bgd, T_rn_p, n_Dcm_b, tau_s);                   // Q_34
+    Q.block<3, 3>(6, 12) = Q_dr_domega(S_bgd, F_21_n, T_rn_p, n_Dcm_b, tau_s);      // Q_35
+    Q.block<3, 3>(9, 3) = Q_df_dv(S_bad, n_Dcm_b, tau_s);                           // Q_42
     Q.block<3, 3>(9, 9) = Q_df_df(S_bad, tau_s);                                    // Q_44
-    Q.block<3, 3>(12, 0) = Q_domega_psi(S_bgd, DCM_nb, tau_s);                      // Q_51
+    Q.block<3, 3>(12, 0) = Q_domega_psi(S_bgd, n_Dcm_b, tau_s);                     // Q_51
     Q.block<3, 3>(12, 12) = Q_domega_domega(S_bgd, tau_s);                          // Q_55
 
     Q.block<3, 3>(0, 3) = Q.block<3, 3>(3, 0).transpose();   // Q_21^T
@@ -1184,16 +1184,16 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::initialErrorCovarianceMatri
 //                                                Correction
 // ###########################################################################################################
 
-Eigen::Matrix<double, 6, 15> NAV::LooselyCoupledKF::measurementMatrix_H(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n)
+Eigen::Matrix<double, 6, 15> NAV::LooselyCoupledKF::measurementMatrix_H(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& n_Dcm_b, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n)
 {
     // Math: \mathbf{H}_{G,k}^n = \begin{pmatrix} \mathbf{H}_{r1}^n & \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{H}_{v1}^n & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v5}^n \end{pmatrix}_k \qquad \text{P. Groves}\,(14.113)
     // G denotes GNSS indicated
     Eigen::Matrix<double, 6, 15> H = Eigen::Matrix<double, 6, 15>::Zero();
-    H.block<3, 3>(0, 0) = measurementMatrix_H_r1_n(T_rn_p, DCM_nb, leverArm_InsGnss_b);
+    H.block<3, 3>(0, 0) = measurementMatrix_H_r1_n(T_rn_p, n_Dcm_b, leverArm_InsGnss_b);
     H.block<3, 3>(0, 6) = -Eigen::Matrix3d::Identity();
-    H.block<3, 3>(3, 0) = measurementMatrix_H_v1_n(DCM_nb, angularRate_ib_b, leverArm_InsGnss_b, Omega_ie_n);
+    H.block<3, 3>(3, 0) = measurementMatrix_H_v1_n(n_Dcm_b, angularRate_ib_b, leverArm_InsGnss_b, Omega_ie_n);
     H.block<3, 3>(3, 3) = -Eigen::Matrix3d::Identity();
-    H.block<3, 3>(3, 12) = measurementMatrix_H_v5_n(DCM_nb, leverArm_InsGnss_b);
+    H.block<3, 3>(3, 12) = measurementMatrix_H_v5_n(n_Dcm_b, leverArm_InsGnss_b);
 
     H.middleRows<2>(0) *= SCALE_FACTOR_LAT_LON;
 
@@ -1205,25 +1205,25 @@ Eigen::Matrix<double, 6, 15> NAV::LooselyCoupledKF::measurementMatrix_H(const Ei
     return H;
 }
 
-Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_H_r1_n(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss_b)
+Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_H_r1_n(const Eigen::Matrix3d& T_rn_p, const Eigen::Matrix3d& n_Dcm_b, const Eigen::Vector3d& leverArm_InsGnss_b)
 {
     // Math: \mathbf{H}_{r1}^n \approx \mathbf{\hat{T}}_{r(n)}^p \begin{bmatrix} \begin{pmatrix} \mathbf{C}_b^n \mathbf{l}_{ba}^p \end{pmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    Eigen::Vector3d product = DCM_nb * leverArm_InsGnss_b;
+    Eigen::Vector3d product = n_Dcm_b * leverArm_InsGnss_b;
     return T_rn_p * skewSymmetricMatrix(product);
 }
 
-Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_H_v1_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n)
+Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_H_v1_n(const Eigen::Matrix3d& n_Dcm_b, const Eigen::Vector3d& angularRate_ib_b, const Eigen::Vector3d& leverArm_InsGnss_b, const Eigen::Matrix3d& Omega_ie_n)
 {
     // Math: \mathbf{H}_{v1}^n \approx \begin{bmatrix} \begin{Bmatrix} \mathbf{C}_b^n (\mathbf{\hat{\omega}}_{ib}^b \wedge \mathbf{l}_{ba}^b) - \mathbf{\hat{\Omega}}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{Bmatrix} \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    Eigen::Vector3d product = DCM_nb * (angularRate_ib_b.cross(leverArm_InsGnss_b)) - Omega_ie_n * DCM_nb * leverArm_InsGnss_b;
+    Eigen::Vector3d product = n_Dcm_b * (angularRate_ib_b.cross(leverArm_InsGnss_b)) - Omega_ie_n * n_Dcm_b * leverArm_InsGnss_b;
 
     return skewSymmetricMatrix(product);
 }
 
-Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_H_v5_n(const Eigen::Matrix3d& DCM_nb, const Eigen::Vector3d& leverArm_InsGnss_b)
+Eigen::Matrix3d NAV::LooselyCoupledKF::measurementMatrix_H_v5_n(const Eigen::Matrix3d& n_Dcm_b, const Eigen::Vector3d& leverArm_InsGnss_b)
 {
     // Math: \mathbf{H}_{v5}^n = \mathbf{C}_b^n \begin{bmatrix} \mathbf{l}_{ba}^b \wedge \end{bmatrix} \qquad \text{P. Groves}\,(14.114)
-    return DCM_nb * skewSymmetricMatrix(leverArm_InsGnss_b);
+    return n_Dcm_b * skewSymmetricMatrix(leverArm_InsGnss_b);
 }
 
 Eigen::Matrix<double, 6, 6> NAV::LooselyCoupledKF::measurementNoiseCovariance_R(const Eigen::Vector3d& gnssVarianceLatLonAlt, const Eigen::Vector3d& gnssVarianceVelocity)
@@ -1240,12 +1240,12 @@ Eigen::Matrix<double, 6, 6> NAV::LooselyCoupledKF::measurementNoiseCovariance_R(
 
 Eigen::Matrix<double, 6, 1> NAV::LooselyCoupledKF::measurementInnovation_dz(const Eigen::Vector3d& positionMeasurement_lla, const Eigen::Vector3d& positionEstimate_lla,
                                                                             const Eigen::Vector3d& velocityMeasurement_n, const Eigen::Vector3d& velocityEstimate_n,
-                                                                            const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& q_nb, const Eigen::Vector3d& leverArm_InsGnss_b,
+                                                                            const Eigen::Matrix3d& T_rn_p, const Eigen::Quaterniond& n_Quat_b, const Eigen::Vector3d& leverArm_InsGnss_b,
                                                                             const Eigen::Vector3d& omega_ib_b, const Eigen::Matrix3d& Omega_ie_n)
 {
     // Math: \delta\mathbf{z}_{G,k}^{n-} = \begin{pmatrix} \mathbf{\hat{p}}_{aG} - \mathbf{\hat{p}}_b - \mathbf{\hat{T}}_{r(n)}^p \mathbf{C}_b^n \mathbf{l}_{ba}^b \\ \mathbf{\hat{v}}_{eaG}^n - \mathbf{\hat{v}}_{eb}^n - \mathbf{C}_b^n (\mathbf{\hat{\omega}}_{ib}^b \wedge \mathbf{l}_{ba}^b) + \mathbf{\hat{\Omega}}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \end{pmatrix}_k \qquad \text{P. Groves}\,(14.103)
-    Eigen::Vector3d deltaLLA = positionMeasurement_lla - positionEstimate_lla - T_rn_p * (q_nb * leverArm_InsGnss_b);
-    Eigen::Vector3d deltaVel = velocityMeasurement_n - velocityEstimate_n - q_nb * (omega_ib_b.cross(leverArm_InsGnss_b)) + Omega_ie_n * (q_nb * leverArm_InsGnss_b);
+    Eigen::Vector3d deltaLLA = positionMeasurement_lla - positionEstimate_lla - T_rn_p * (n_Quat_b * leverArm_InsGnss_b);
+    Eigen::Vector3d deltaVel = velocityMeasurement_n - velocityEstimate_n - n_Quat_b * (omega_ib_b.cross(leverArm_InsGnss_b)) + Omega_ie_n * (n_Quat_b * leverArm_InsGnss_b);
 
     deltaLLA.topRows<2>() *= SCALE_FACTOR_LAT_LON;
 

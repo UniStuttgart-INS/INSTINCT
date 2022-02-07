@@ -48,7 +48,7 @@ Eigen::Vector3d quat2eulerZYX(const Eigen::Quaterniond& q)
     return XYZ;
 }
 
-Eigen::Quaterniond quat_ei(const double time, const double angularRate_ie)
+Eigen::Quaterniond e_Quat_i(const double time, const double angularRate_ie)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxisd zAngle(-angularRate_ie * time, Eigen::Vector3d::UnitZ());
@@ -56,12 +56,12 @@ Eigen::Quaterniond quat_ei(const double time, const double angularRate_ie)
     return Eigen::Quaterniond(zAngle).normalized();
 }
 
-Eigen::Quaterniond quat_ie(const double time, const double angularRate_ie)
+Eigen::Quaterniond i_Quat_e(const double time, const double angularRate_ie)
 {
-    return quat_ei(time, angularRate_ie).conjugate();
+    return e_Quat_i(time, angularRate_ie).conjugate();
 }
 
-Eigen::Quaterniond quat_en(const double latitude, const double longitude)
+Eigen::Quaterniond e_Quat_n(const double latitude, const double longitude)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
@@ -71,12 +71,12 @@ Eigen::Quaterniond quat_en(const double latitude, const double longitude)
     return (longitudeAngle * latitudeAngle).normalized();
 }
 
-Eigen::Quaterniond quat_ne(const double latitude, const double longitude)
+Eigen::Quaterniond n_Quat_e(const double latitude, const double longitude)
 {
-    return quat_en(latitude, longitude).conjugate();
+    return e_Quat_n(latitude, longitude).conjugate();
 }
 
-Eigen::Quaterniond quat_bn(const double roll, const double pitch, const double yaw)
+Eigen::Quaterniond b_Quat_n(const double roll, const double pitch, const double yaw)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     // Eigen uses here a different sign convention as the physical system.
@@ -87,22 +87,22 @@ Eigen::Quaterniond quat_bn(const double roll, const double pitch, const double y
     return (rollAngle * pitchAngle * yawAngle).normalized();
 }
 
-Eigen::Quaterniond quat_bn(const Eigen::Vector3d& rollPitchYaw)
+Eigen::Quaterniond b_Quat_n(const Eigen::Vector3d& rollPitchYaw)
 {
-    return quat_bn(rollPitchYaw(0), rollPitchYaw(1), rollPitchYaw(2));
+    return b_Quat_n(rollPitchYaw(0), rollPitchYaw(1), rollPitchYaw(2));
 }
 
-Eigen::Quaterniond quat_nb(const double roll, const double pitch, const double yaw)
+Eigen::Quaterniond n_Quat_b(const double roll, const double pitch, const double yaw)
 {
-    return quat_bn(roll, pitch, yaw).conjugate();
+    return b_Quat_n(roll, pitch, yaw).conjugate();
 }
 
-Eigen::Quaterniond quat_nb(const Eigen::Vector3d& rollPitchYaw)
+Eigen::Quaterniond n_Quat_b(const Eigen::Vector3d& rollPitchYaw)
 {
-    return quat_nb(rollPitchYaw(0), rollPitchYaw(1), rollPitchYaw(2));
+    return n_Quat_b(rollPitchYaw(0), rollPitchYaw(1), rollPitchYaw(2));
 }
 
-Eigen::Quaterniond quat_bp(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
+Eigen::Quaterniond b_Quat_p(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
     Eigen::AngleAxisd xAngle(-mountingAngleX, Eigen::Vector3d::UnitX());
@@ -112,9 +112,9 @@ Eigen::Quaterniond quat_bp(double mountingAngleX, double mountingAngleY, double 
     return (xAngle * yAngle * zAngle).normalized();
 }
 
-Eigen::Quaterniond quat_pb(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
+Eigen::Quaterniond p_Quat_b(double mountingAngleX, double mountingAngleY, double mountingAngleZ)
 {
-    return quat_bp(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
+    return b_Quat_p(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
 }
 
 Eigen::Vector3d ecef2ned(const Eigen::Vector3d& position_e, const Eigen::Vector3d& latLonAlt_ref)

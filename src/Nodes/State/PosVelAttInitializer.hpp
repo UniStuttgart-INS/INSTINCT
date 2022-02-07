@@ -149,7 +149,7 @@ class PosVelAttInitializer : public Node
     std::array<bool, 4> _posVelAttInitialized = { false, false, false, false };
 
     /// Initialized Quaternion body to navigation frame (roll, pitch, yaw)
-    Eigen::Quaterniond _q_nb_init;
+    Eigen::Quaterniond _n_Quat_b_init;
     /// Position in ECEF coordinates
     Eigen::Vector3d _p_ecef_init;
     /// Velocity in navigation coordinates
