@@ -10,7 +10,7 @@
 // #include <vector>
 // #include <fstream>
 
-#include <unordered_map>
+#include <map>
 #include <variant>
 
 #include "Nodes/DataProvider/IMU/Imu.hpp"
@@ -111,7 +111,7 @@ class UlogFile : public Imu, public FileReader
 
     struct VehicleGpsPosition
     {
-        uint64_t timestamp;
+        uint64_t timestamp; ///<
         uint64_t time_utc_usec;
         int32_t lat;
         int32_t lon;
@@ -230,13 +230,22 @@ class UlogFile : public Imu, public FileReader
         std::string message_name;
     };
 
+    struct MeasurementData
+    {
+        uint8_t multi_id;
+        std::string message_name;
+        std::variant<SensorAccel, SensorGyro, SensorMag> data;
+    };
+
     /// Key: msg_id
     std::unordered_map<uint16_t, SubscriptionData> subscribedMessages;
 
-    uint64_t currentTimestamp{};
+    /// The sensor startup UTC time in [µs]
+    uint64_t sensorStartupUTCTime_usec{};
 
   private:
-    constexpr static size_t OutputPortIndex_UlogOutput = 0; ///< @brief Flow (UlogOutput)
+    constexpr static size_t OutputPortIndex_ImuObs = 0;    ///< @brief Flow (ImuObs)
+    constexpr static size_t OutputPortIndex_PosVelAtt = 1; ///< @brief Flow (PosVelAtt)
 
     /// @brief Initialize the node
     bool initialize() override;
@@ -284,5 +293,8 @@ class UlogFile : public Imu, public FileReader
 
     /// @brief Number of messages read
     uint32_t messageCount = 0;
+
+    // Key: [timestamp], Value: [0, "sensor_accel", SensorAccel{}]
+    std::multimap<uint64_t, MeasurementData> epochData;
 };
 } // namespace NAV

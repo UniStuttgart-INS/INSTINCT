@@ -11,6 +11,8 @@ namespace nm = NAV::NodeManager;
 #include "internal/FlowManager.hpp"
 
 #include "UlogFileFormat.hpp"
+#include "NodeData/IMU/ImuObs.hpp"
+#include "NodeData/State/PosVelAtt.hpp"
 
 // ----------------------------------------------------------- Basic Node Functions --------------------------------------------------------------
 
@@ -23,7 +25,9 @@ NAV::UlogFile::UlogFile()
     hasConfig = true;
     // guiConfigDefaultWindowSize = {}; //TODO
 
-    nm::CreateOutputPin(this, "Output", Pin::Type::Flow, { NAV::UlogFile::type() }, &UlogFile::pollData);
+    // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
+    nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
+    nm::CreateOutputPin(this, "PosVelAtt", Pin::Type::Flow, { NAV::PosVelAtt::type() });
 }
 
 NAV::UlogFile::~UlogFile()
@@ -53,6 +57,8 @@ void NAV::UlogFile::guiConfig()
         flow::ApplyChanges();
         initializeNode();
     }
+
+    Imu::guiConfig();
 }
 
 [[nodiscard]] json NAV::UlogFile::save() const
@@ -86,6 +92,7 @@ bool NAV::UlogFile::initialize()
     LOG_TRACE("{}: called", nameId());
 
     messageCount = 0;
+    sensorStartupUTCTime_usec = 0;
 
     return FileReader::initialize();
 }
@@ -282,29 +289,103 @@ void NAV::UlogFile::readDefinitions()
         }
     }
     LOG_DEBUG("Read 'Definitions Section' completed");
-
-    readData(); //TODO: use pollData
 }
 
-auto hashSubscriptionData = [](const NAV::UlogFile::SubscriptionData& sData) {
-    return std::hash<uint8_t>()(sData.multi_id) ^ (std::hash<std::string>()(sData.message_name) << 1);
-};
-/// comparison function
-auto cmpSubscriptionData = [](const NAV::UlogFile::SubscriptionData& lhs, const NAV::UlogFile::SubscriptionData& rhs) {
-    return lhs.message_name == rhs.message_name && lhs.multi_id == rhs.multi_id;
-};
-
-// Key: [multi_id, msg_name], e.g. [0, "sensor_accel"]
-std::unordered_map<NAV::UlogFile::SubscriptionData,                                                               // key
-                   std::variant<NAV::UlogFile::SensorAccel, NAV::UlogFile::SensorGyro, NAV::UlogFile::SensorMag>, // value
-                   decltype(hashSubscriptionData),
-                   decltype(cmpSubscriptionData)>
-    epochData{
-        6, hashSubscriptionData, cmpSubscriptionData
-    };
-
-void NAV::UlogFile::readData()
+void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
 {
+    // Read msg size (2B) and type (1B)
+    Ulog::message_info_s messageInfo;
+    messageInfo.header.msg_size = msgSize;
+    messageInfo.header.msg_type = msgType;
+    filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(messageInfo.key_len));
+
+    // Read 'key' identifier ('keylength' byte) and its associated 'value'
+    messageInfo.key.resize(messageInfo.key_len);
+    filestream.read(messageInfo.key.data(), messageInfo.key_len);
+    messageInfo.value.resize(static_cast<size_t>(messageInfo.header.msg_size - 1 - messageInfo.key_len)); // 'msg_size' contains key and value, but not header
+    filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
+    LOG_DATA("Information message - key: {}", messageInfo.key);
+    LOG_DATA("Information message - value: {}", messageInfo.value);
+}
+
+void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
+{
+    // Read msg size (2B) and type (1B)
+    Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
+    messageInfoMulti.header.msg_size = msgSize;
+    messageInfoMulti.header.msg_type = msgType;
+    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued));
+    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(messageInfoMulti.key_len));
+
+    // Read 'key' identifier ('keylength' byte) and its associated 'value'
+    messageInfoMulti.key.resize(messageInfoMulti.key_len);
+    filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
+    messageInfoMulti.value.resize(static_cast<size_t>(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len)); // contains 'is_continued' flag in contrast to information message
+    filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
+    LOG_DATA("Information message multi - key_len: {}", messageInfoMulti.key_len);
+    LOG_DATA("Information message multi - key: {}", messageInfoMulti.key);
+    LOG_DATA("Information message multi - value: {}", messageInfoMulti.value);
+    //TODO: Use 'is_continued' to generate a list of values with the same key
+}
+
+void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
+{
+    // Read msg size (2B) and type (1B)
+    Ulog::message_info_s messageParam;
+    messageParam.header.msg_size = msgSize;
+    messageParam.header.msg_type = msgType;
+    filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(messageParam.key_len));
+
+    // Read 'key' identifier ('keylength' byte) and its associated 'value'
+    messageParam.key.resize(messageParam.key_len);
+    filestream.read(messageParam.key.data(), messageParam.key_len);
+
+    if (!(messageParam.key.find("int32_t")) && !(messageParam.key.find("float")))
+    {
+        LOG_WARN("Parameter message contains invalid data type. It is neither 'int32_t', nor 'float', instead: {}", messageParam.key);
+    }
+
+    if (messageParam.header.msg_size - 1 - messageParam.key_len < 0)
+    {
+        LOG_WARN("Parameter msg has key_len: {}", messageParam.key_len);
+    }
+    else
+    {
+        messageParam.value.resize(static_cast<size_t>(messageParam.header.msg_size - 1 - messageParam.key_len)); // 'msg_size' contains key and value, but not header
+        filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
+        LOG_DATA("Parameter message - key: {}", messageParam.key);
+        LOG_DATA("Parameter message - value: {}", messageParam.value);
+    }
+}
+
+void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
+{
+    Ulog::ulog_message_parameter_default_header_s messageParamDefault;
+    messageParamDefault.header.msg_size = msgSize;
+    messageParamDefault.header.msg_type = msgType;
+    filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(messageParamDefault.default_types));
+    filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(messageParamDefault.key_len));
+
+    messageParamDefault.key.resize(messageParamDefault.key_len);
+    filestream.read(messageParamDefault.key.data(), messageParamDefault.key_len);
+    messageParamDefault.value.resize(static_cast<size_t>(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len));
+    filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
+    LOG_DEBUG("Parameter default message - key: {}", messageParamDefault.key);
+    LOG_DEBUG("Parameter default message - value: {}", messageParamDefault.value);
+
+    //TODO: Restriction on '1<<0' and '1<<1'
+}
+
+std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
+{
+    std::shared_ptr<NAV::NodeData> obs = nullptr;
+
+    LOG_DEBUG("Start reading Ulog data section");
+    // Get current position
+    auto pollStartPos = filestream.tellg();
+
+    // TODO: Read in one imuObs (accel, gyro, )
+
     LOG_DEBUG("Start reading data");
     bool startDataFlag = true;
     // Read message header
@@ -439,32 +520,10 @@ void NAV::UlogFile::readData()
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
 
-                    // Check timestamp
-                    if (currentTimestamp < sensorAccel.timestamp)
-                    {
-                        // If new time has come, erase just the old IMU data
-                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
-                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
-                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_mag" });
-
-                        // Update timestamp
-                        currentTimestamp = sensorAccel.timestamp;
-                    }
-                    else if (currentTimestamp > sensorAccel.timestamp)
-                    {
-                        LOG_WARN("currentTimestamp: {}, difference: {}", currentTimestamp, currentTimestamp - sensorAccel.timestamp);
-                        // LOG_WARN("currentTimestamp > sensorAccel.timestamp - {} > {}. Not handled. Needs to be handled?", currentTimestamp, sensorAccel.timestamp);
-                    }
-
-                    // Saving only the current data
-                    if (currentTimestamp == sensorAccel.timestamp)
-                    {
-                        // Save the data
-                        SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
-                                                           subscribedMessages.at(messageData.msg_id).message_name };
-
-                        epochData.insert_or_assign(subscriptionData, sensorAccel);
-                    }
+                    epochData.insert(std::make_pair(sensorAccel.timestamp,
+                                                    MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                     subscribedMessages.at(messageData.msg_id).message_name,
+                                                                     sensorAccel }));
                 }
             }
             else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gyro")
@@ -528,31 +587,9 @@ void NAV::UlogFile::readData()
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
 
-                    // Saving only the current data
-                    if (currentTimestamp < sensorGyro.timestamp)
-                    {
-                        // If new time has come, erase just the old IMU data
-                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
-                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
-                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_mag" });
-
-                        // Update timestamp
-                        currentTimestamp = sensorGyro.timestamp;
-                    }
-                    else if (currentTimestamp > sensorGyro.timestamp)
-                    {
-                        LOG_WARN("currentTimestamp: {}, difference: {}", currentTimestamp, currentTimestamp - sensorGyro.timestamp);
-                        // LOG_WARN("currentTimestamp > sensorGyro.timestamp - {} > {}. Not handled. Needs to be handled?", currentTimestamp, sensorGyro.timestamp);
-                    }
-
-                    if (currentTimestamp == sensorGyro.timestamp)
-                    {
-                        // Save the data
-                        SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
-                                                           subscribedMessages.at(messageData.msg_id).message_name };
-
-                        epochData.insert_or_assign(subscriptionData, sensorGyro);
-                    }
+                    epochData.insert(std::make_pair(sensorGyro.timestamp,
+                                                    MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                     subscribedMessages.at(messageData.msg_id).message_name, sensorGyro }));
                 }
             }
             else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_mag")
@@ -626,52 +663,73 @@ void NAV::UlogFile::readData()
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
 
-                    // Saving only the current data
-                    if (currentTimestamp < sensorMag.timestamp)
-                    {
-                        // If new time has come, erase just the old IMU data
-                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_accel" });
-                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_gyro" });
-                        epochData.erase(SubscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id, "sensor_mag" });
-
-                        // Update timestamp
-                        currentTimestamp = sensorMag.timestamp;
-                    }
-                    else if (currentTimestamp > sensorMag.timestamp)
-                    {
-                        LOG_WARN("currentTimestamp: {}, difference: {}", currentTimestamp, currentTimestamp - sensorMag.timestamp);
-                        // LOG_WARN("currentTimestamp > sensorMag.timestamp - {} > {}. Not handled. Needs to be handled?", currentTimestamp, sensorMag.timestamp);
-                    }
-
-                    if (currentTimestamp == sensorMag.timestamp)
-                    {
-                        // Save the data
-                        SubscriptionData subscriptionData{ subscribedMessages.at(messageData.msg_id).multi_id,
-                                                           subscribedMessages.at(messageData.msg_id).message_name };
-
-                        epochData.insert_or_assign(subscriptionData, sensorMag);
-                    }
+                    epochData.insert(std::make_pair(sensorMag.timestamp,
+                                                    MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                     subscribedMessages.at(messageData.msg_id).message_name, sensorMag }));
                 }
             }
+            // TODO:
+            // else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gps")
+            // {
+            //     // FIXME: If GNSS message
+            //     if (!sensorStartupUTCTime_usec)
+            //     {
+            //         sensorStartupUTCTime_usec = time_utc_usec - timestamp;
+            //     }
+            // }
             else
             {
                 LOG_ERROR("UKNOWN: subscribedMessages.at(messageData.msg_id).message_name = {}", subscribedMessages.at(messageData.msg_id).message_name);
             }
 
-            // TODO: for loop for multiple multi_ids
-            if (epochData.contains(SubscriptionData{ 0, "sensor_accel" })
-                && epochData.contains(SubscriptionData{ 0, "sensor_gyro" })
-                && epochData.contains(SubscriptionData{ 0, "sensor_mag" }))
+            // TODO: for loop for multiple multi_ids (redundant sensors)
+
+            // Callbacks
+            bool hasEnoughImuDataToSend = true;       // FIXME: Make function
+            bool hasEnoughPosVelAttDataToSend = true; // FIXME: Make function
+
+            if (hasEnoughImuDataToSend) // This is the hasEnoughData check
             {
-                LOG_INFO("Construct ImuObs and invoke callback");
+                LOG_INFO("{}: Construct ImuObs and invoke callback", nameId());
+                obs = std::make_shared<NAV::ImuObs>(imuPos);
 
-                // TODO: invoke callback here
+                // TODO: Befüllen
 
-                // Erase just the IMU data
-                epochData.erase(SubscriptionData{ 0, "sensor_accel" });
-                epochData.erase(SubscriptionData{ 0, "sensor_gyro" });
-                epochData.erase(SubscriptionData{ 0, "sensor_mag" });
+                // TODO: Erase just the first used measurements from epochdata
+
+                // Calls all the callbacks
+                if (!peek)
+                {
+                    invokeCallbacks(OutputPortIndex_ImuObs, obs);
+                }
+
+                // break out of while loop
             }
+            else if (hasEnoughPosVelAttDataToSend) // This is the hasEnoughData check
+            {
+                LOG_INFO("{}: Construct PosVelAtt and invoke callback", nameId());
+                obs = std::make_shared<NAV::PosVelAtt>();
+
+                // TODO: Befüllen
+
+                // TODO: Erase just the first used measurements from epochdata
+
+                // Calls all the callbacks
+                if (!peek)
+                {
+                    invokeCallbacks(OutputPortIndex_PosVelAtt, obs);
+                }
+
+                // break out of while loop
+            }
+
+            if (peek)
+            {
+                // Return to position before "Read line".
+                filestream.seekg(pollStartPos, std::ios_base::beg);
+            }
+
+            return obs;
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'L')
         {
@@ -819,104 +877,5 @@ void NAV::UlogFile::readData()
             filestream.seekg(-100, std::ios_base::cur);
         }
     }
-}
-
-void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
-{
-    // Read msg size (2B) and type (1B)
-    Ulog::message_info_s messageInfo;
-    messageInfo.header.msg_size = msgSize;
-    messageInfo.header.msg_type = msgType;
-    filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(messageInfo.key_len));
-
-    // Read 'key' identifier ('keylength' byte) and its associated 'value'
-    messageInfo.key.resize(messageInfo.key_len);
-    filestream.read(messageInfo.key.data(), messageInfo.key_len);
-    messageInfo.value.resize(static_cast<size_t>(messageInfo.header.msg_size - 1 - messageInfo.key_len)); // 'msg_size' contains key and value, but not header
-    filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
-    LOG_DATA("Information message - key: {}", messageInfo.key);
-    LOG_DATA("Information message - value: {}", messageInfo.value);
-}
-
-void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
-{
-    // Read msg size (2B) and type (1B)
-    Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
-    messageInfoMulti.header.msg_size = msgSize;
-    messageInfoMulti.header.msg_type = msgType;
-    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued));
-    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(messageInfoMulti.key_len));
-
-    // Read 'key' identifier ('keylength' byte) and its associated 'value'
-    messageInfoMulti.key.resize(messageInfoMulti.key_len);
-    filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
-    messageInfoMulti.value.resize(static_cast<size_t>(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len)); // contains 'is_continued' flag in contrast to information message
-    filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
-    LOG_DATA("Information message multi - key_len: {}", messageInfoMulti.key_len);
-    LOG_DATA("Information message multi - key: {}", messageInfoMulti.key);
-    LOG_DATA("Information message multi - value: {}", messageInfoMulti.value);
-    //TODO: Use 'is_continued' to generate a list of values with the same key
-}
-
-void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
-{
-    // Read msg size (2B) and type (1B)
-    Ulog::message_info_s messageParam;
-    messageParam.header.msg_size = msgSize;
-    messageParam.header.msg_type = msgType;
-    filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(messageParam.key_len));
-
-    // Read 'key' identifier ('keylength' byte) and its associated 'value'
-    messageParam.key.resize(messageParam.key_len);
-    filestream.read(messageParam.key.data(), messageParam.key_len);
-
-    if (!(messageParam.key.find("int32_t")) && !(messageParam.key.find("float")))
-    {
-        LOG_WARN("Parameter message contains invalid data type. It is neither 'int32_t', nor 'float', instead: {}", messageParam.key);
-    }
-
-    if (messageParam.header.msg_size - 1 - messageParam.key_len < 0)
-    {
-        LOG_WARN("Parameter msg has key_len: {}", messageParam.key_len);
-    }
-    else
-    {
-        messageParam.value.resize(static_cast<size_t>(messageParam.header.msg_size - 1 - messageParam.key_len)); // 'msg_size' contains key and value, but not header
-        filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
-        LOG_DATA("Parameter message - key: {}", messageParam.key);
-        LOG_DATA("Parameter message - value: {}", messageParam.value);
-    }
-}
-
-void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
-{
-    Ulog::ulog_message_parameter_default_header_s messageParamDefault;
-    messageParamDefault.header.msg_size = msgSize;
-    messageParamDefault.header.msg_type = msgType;
-    filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(messageParamDefault.default_types));
-    filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(messageParamDefault.key_len));
-
-    messageParamDefault.key.resize(messageParamDefault.key_len);
-    filestream.read(messageParamDefault.key.data(), messageParamDefault.key_len);
-    messageParamDefault.value.resize(static_cast<size_t>(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len));
-    filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
-    LOG_DEBUG("Parameter default message - key: {}", messageParamDefault.key);
-    LOG_DEBUG("Parameter default message - value: {}", messageParamDefault.value);
-
-    //TODO: Restriction on '1<<0' and '1<<1'
-}
-
-std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
-{
-    LOG_DEBUG("Start reading Ulog data section");
-    // Get current position
-    // auto pos = filestream.tellg();
-    // uint8_t i = 0;
-    // std::unique_ptr<UlogFile> packet = nullptr;
-    // while (filestream.readsome(reinterpret_cast<char*>(&i), 1))
-    // {
-    //     // packet =
-    // }
-
-    return nullptr; //TODO
+    return nullptr; // FIXME: Quick fix, since 'return obs' only makes sense in the 'data' msg type
 }
