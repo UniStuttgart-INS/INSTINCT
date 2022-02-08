@@ -42,21 +42,21 @@ Eigen::Vector4d calcTimeDerivativeForQuaternion_nb(const Eigen::Vector3d& omega_
 /// \f}
 ///
 /// @param[in] n_measuredForce f_n = [f_N  f_E  f_D]^T Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-/// @param[in] coriolisAcceleration_n Coriolis acceleration in local-navigation coordinates in [m/s^2]
-/// @param[in] gravitation_n Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
+/// @param[in] n_coriolisAcceleration Coriolis acceleration in local-navigation coordinates in [m/s^2]
+/// @param[in] n_gravitation Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
 /// @param[in] centrifugalAcceleration_n Centrifugal acceleration in local-navigation coordinates in [m/s^2]
 /// @return The time derivative of the velocity in local-navigation frame coordinates
 ///
 /// @note See \ref ImuIntegrator-Mechanization-n-Velocity equation \eqref{eq-ImuIntegrator-Mechanization-n-Velocity}
 Eigen::Vector3d calcTimeDerivativeForVelocity_n(const Eigen::Vector3d& n_measuredForce,
-                                                const Eigen::Vector3d& coriolisAcceleration_n,
-                                                const Eigen::Vector3d& gravitation_n,
+                                                const Eigen::Vector3d& n_coriolisAcceleration,
+                                                const Eigen::Vector3d& n_gravitation,
                                                 const Eigen::Vector3d& centrifugalAcceleration_n);
 
 /// @brief Equations to perform an update of the velocity, including rotational correction
 /// @param[in] n_measuredForce f_n = [f_N  f_E  f_D]^T Specific force vector as measured by a triad of accelerometers and resolved into local-navigation frame coordinates
-/// @param[in] coriolisAcceleration_n Coriolis acceleration in local-navigation coordinates in [m/s^2]
-/// @param[in] gravitation_n Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
+/// @param[in] n_coriolisAcceleration Coriolis acceleration in local-navigation coordinates in [m/s^2]
+/// @param[in] n_gravitation Local gravitation vector (caused by effects of mass attraction) in local-navigation frame coordinates [m/s^2]
 /// @param[in] centrifugalAcceleration_n Centrifugal acceleration in local-navigation coordinates in [m/s^2]
 /// @param[in] omega_ib_b Angular velocity of platform system with respect to inertial system, represented in body coordinates in [rad/s]
 /// @param[in] omega_ie_n Angular velocity of earth with respect to inertial system, represented in n-sys
@@ -66,8 +66,8 @@ Eigen::Vector3d calcTimeDerivativeForVelocity_n(const Eigen::Vector3d& n_measure
 /// @return Derivative of the velocity
 /// @note See Zwiener (2019) - Robuste Zustandsschätzung zur Navigation und Regelung autonomer und bemannter Multikopter mit verteilten Sensoren, chapter 3.3.2
 Eigen::Vector3d calcTimeDerivativeForVelocity_n_RotationCorrection(const Eigen::Vector3d& n_measuredForce,
-                                                                   const Eigen::Vector3d& coriolisAcceleration_n,
-                                                                   const Eigen::Vector3d& gravitation_n,
+                                                                   const Eigen::Vector3d& n_coriolisAcceleration,
+                                                                   const Eigen::Vector3d& n_gravitation,
                                                                    const Eigen::Vector3d& centrifugalAcceleration_n,
                                                                    const Eigen::Vector3d& omega_ib_b,
                                                                    const Eigen::Vector3d& omega_ie_n,

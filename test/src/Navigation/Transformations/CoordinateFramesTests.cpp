@@ -12,6 +12,9 @@ namespace NAV
 {
 constexpr double EPSILON = 10.0 * std::numeric_limits<double>::epsilon();
 
+namespace ref
+{
+
 Eigen::Vector4d qCoeffsFromDcm(const Eigen::Matrix3d& C)
 {
     auto a = 0.5 * std::sqrt(1 + C(0, 0) + C(1, 1) + C(2, 2));
@@ -118,6 +121,8 @@ Eigen::Vector3d ecef2lla_iter(const Eigen::Vector3d& ecef, double a = InsConst::
     return { latitude, longitude, altitude };
 }
 
+} // namespace ref
+
 TEST_CASE("[InsTransformations] Degree to radian conversion", "[InsTransformations]")
 {
     double rad_90 = trafo::deg2rad(90);
@@ -186,7 +191,7 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
         Eigen::Matrix3d C = q.toRotationMatrix();
 
         fmt::print("Roll: {}\n", trafo::rad2deg(roll));
-        REQUIRE(qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
+        REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
     }
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
     for (double roll = -M_PI + delta; roll < M_PI - std::numeric_limits<float>::epsilon(); roll += delta) // NOLINT(clang-analyzer-security.FloatLoopCounter,cert-flp30-c)
@@ -200,7 +205,7 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
             Eigen::Matrix3d C = q.toRotationMatrix();
 
             fmt::print("Roll, Pitch: {}, {}\n", trafo::rad2deg(roll), trafo::rad2deg(pitch));
-            REQUIRE(qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
+            REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-12).epsilon(0));
         }
     }
     // (-pi:pi] x (-pi/2:pi/2] x (-pi:pi]
@@ -231,15 +236,15 @@ TEST_CASE("[InsTransformations] Euler to Quaternion conversion", "[InsTransforma
                 fmt::print("DCM\n{}\n", C);
 
                 // Check if in our notation the scalar quaternion is always positive
-                REQUIRE(qCoeffsFromDcm(C)(3) > 0);
+                REQUIRE(ref::qCoeffsFromDcm(C)(3) > 0);
                 if (q.w() < 0)
                 {
                     Eigen::Vector4d qCoeffsNeg = -q.coeffs();
-                    REQUIRE(qCoeffsFromDcm(C) == EigApprox(qCoeffsNeg).margin(1e-6).epsilon(0));
+                    REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(qCoeffsNeg).margin(1e-6).epsilon(0));
                 }
                 else
                 {
-                    REQUIRE(qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-6).epsilon(0));
+                    REQUIRE(ref::qCoeffsFromDcm(C) == EigApprox(q.coeffs()).margin(1e-6).epsilon(0));
                 }
             }
         }
@@ -310,7 +315,7 @@ TEST_CASE("[InsTransformations] Inertial <=> Earth-fixed frame conversion", "[In
     CHECK(e_Quat_i.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     auto C_ei = e_Quat_i.toRotationMatrix();
-    auto C_ei_ref = e_Dcm_i(time, InsConst::omega_ie);
+    auto C_ei_ref = ref::e_Dcm_i(time, InsConst::omega_ie);
 
     CHECK(C_ei == EigApprox(C_ei_ref).margin(EPSILON).epsilon(0));
 
@@ -345,7 +350,7 @@ TEST_CASE("[InsTransformations] Navigation <=> Earth-fixed frame conversion", "[
     CHECK(e_Quat_n.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
     auto C_en = e_Quat_n.toRotationMatrix();
-    auto C_en_ref = e_Dcm_n(latitude, longitude);
+    auto C_en_ref = ref::e_Dcm_n(latitude, longitude);
 
     CHECK(C_en == EigApprox(C_en_ref).margin(EPSILON).epsilon(0));
 
@@ -453,7 +458,7 @@ TEST_CASE("[InsTransformations] Body <=> navigation DCM/Quaternion comparison", 
                 REQUIRE(n_Quat_b.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
 
                 auto C_nb = n_Quat_b.toRotationMatrix();
-                auto C_nb_ref = n_Dcm_b(roll, pitch, yaw);
+                auto C_nb_ref = ref::n_Dcm_b(roll, pitch, yaw);
 
                 REQUIRE(C_nb == EigApprox(C_nb_ref).margin(1e-13).epsilon(0));
             }
@@ -683,7 +688,7 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
                 Eigen::Vector3d lla{ latitude, longitude, altitude };
                 for (size_t i = 0; i < 10; i++)
                 {
-                    lla = ecef2lla_iter(trafo::lla2ecef_WGS84(lla));
+                    lla = ref::ecef2lla_iter(trafo::lla2ecef_WGS84(lla));
                 }
                 REQUIRE(lla.x() == Approx(latitude).margin(1e-14).epsilon(0));
                 REQUIRE(lla.y() == Approx(longitude).margin(1e-14).epsilon(0));
@@ -698,7 +703,7 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
     double longitude = trafo::deg2rad(0);
     double altitude = 0;
     auto ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
-    auto lla_iter = ecef2lla_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    auto lla_iter = ref::ecef2lla_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
     CHECK(lla_iter.x() == Approx(latitude).margin(EPSILON).epsilon(0));
     CHECK(lla_iter.y() == Approx(longitude).margin(EPSILON).epsilon(0));
@@ -710,7 +715,7 @@ TEST_CASE("[InsTransformations] LLA => ECEF => LLH-iterative conversion", "[InsT
     longitude = trafo::deg2rad(180);
     altitude = 0;
     ecef = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
-    lla_iter = ecef2lla_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    lla_iter = ref::ecef2lla_iter(ecef, InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
     CHECK(lla_iter.x() == Approx(latitude).margin(EPSILON).epsilon(0));
     CHECK(lla_iter.y() == Approx(longitude).margin(EPSILON).epsilon(0));
@@ -759,8 +764,8 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     Eigen::Matrix3d e_Dcm_n = e_Quat_n.toRotationMatrix();
     Eigen::Matrix3d n_Dcm_b = n_Quat_b.toRotationMatrix();
 
-    Eigen::Matrix3d e_Dcm_n_ref = e_Dcm_n(latitude, longitude);
-    Eigen::Matrix3d n_Dcm_b_ref = n_Dcm_b(roll, pitch, yaw);
+    Eigen::Matrix3d e_Dcm_n_ref = ref::e_Dcm_n(latitude, longitude);
+    Eigen::Matrix3d n_Dcm_b_ref = ref::n_Dcm_b(roll, pitch, yaw);
 
     CHECK(e_Dcm_n_ref == EigApprox(e_Dcm_n).margin(1e-13).epsilon(0));
     CHECK(n_Dcm_b_ref == EigApprox(n_Dcm_b).margin(1e-13).epsilon(0));
