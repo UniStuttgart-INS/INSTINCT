@@ -1843,9 +1843,9 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
     addData(pinIndex, i++, obs->position_ecef().x());
     addData(pinIndex, i++, obs->position_ecef().y());
     addData(pinIndex, i++, obs->position_ecef().z());
-    addData(pinIndex, i++, obs->velocity_n().x());
-    addData(pinIndex, i++, obs->velocity_n().y());
-    addData(pinIndex, i++, obs->velocity_n().z());
+    addData(pinIndex, i++, obs->n_velocity().x());
+    addData(pinIndex, i++, obs->n_velocity().y());
+    addData(pinIndex, i++, obs->n_velocity().z());
     addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().x()));
     addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().y()));
     addData(pinIndex, i++, trafo::rad2deg(obs->rollPitchYaw().z()));
@@ -1870,12 +1870,12 @@ void NAV::Plot::plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t 
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
     // PVAError
-    addData(pinIndex, i++, trafo::rad2deg(obs->attitudeError_n()(0)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->attitudeError_n()(1)));
-    addData(pinIndex, i++, trafo::rad2deg(obs->attitudeError_n()(2)));
-    addData(pinIndex, i++, obs->velocityError_n()(0));
-    addData(pinIndex, i++, obs->velocityError_n()(1));
-    addData(pinIndex, i++, obs->velocityError_n()(2));
+    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError()(0)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError()(1)));
+    addData(pinIndex, i++, trafo::rad2deg(obs->n_attitudeError()(2)));
+    addData(pinIndex, i++, obs->n_velocityError()(0));
+    addData(pinIndex, i++, obs->n_velocityError()(1));
+    addData(pinIndex, i++, obs->n_velocityError()(2));
     addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(0)) * 1e-3);
     addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(1)) * 1e-3);
     addData(pinIndex, i++, trafo::rad2deg(obs->positionError_lla()(2)));

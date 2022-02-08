@@ -289,7 +289,7 @@ namespace NAV
 //     double mountingAngleY = 180;
 //     double mountingAngleZ = 0;
 
-//     auto gravity = calcGravitation_n_SomiglianaAltitude(latitude, altitude).norm();
+//     auto gravity = n_calcGravitation_SomiglianaAltitude(latitude, altitude).norm();
 //     Eigen::Vector3d gravity_n{ 0, 0, gravity };
 //     Eigen::Vector3d gravity_e = trafo::e_Quat_n(latitude, longitude) * gravity_n;
 
@@ -330,12 +330,12 @@ namespace NAV
 
 //     auto v_e = velocities.at(velocities.size() - 1);
 
-//     auto v_n = trafo::n_Quat_e(latitude, longitude) * v_e;
+//     auto n_velocity = trafo::n_Quat_e(latitude, longitude) * v_e;
 
 //     // Exact values are not achieved
-//     CHECK(v_n.x() == Approx(1).margin(0.03));
-//     CHECK(v_n.y() == Approx(-1).margin(0.01));
-//     CHECK(v_n.z() == Approx(0).margin(0.02));
+//     CHECK(n_velocity.x() == Approx(1).margin(0.03));
+//     CHECK(n_velocity.y() == Approx(-1).margin(0.01));
+//     CHECK(n_velocity.z() == Approx(0).margin(0.02));
 // }
 
 // TEST_CASE("[InsMechanization] Update Velocity n-frame Runge-Kutta 3. Order", "[InsMechanization]")
@@ -353,7 +353,7 @@ namespace NAV
 //     double pitch = 0;
 //     double yaw = trafo::deg2rad(45);
 
-//     auto gravity = calcGravitation_n_SomiglianaAltitude(latitude, altitude).norm();
+//     auto gravity = n_calcGravitation_SomiglianaAltitude(latitude, altitude).norm();
 //     Eigen::Vector3d gravity_n{ 0, 0, gravity };
 
 //     // a_p Acceleration in [m/s^2], in navigation coordinates
@@ -380,9 +380,9 @@ namespace NAV
 //     for (size_t i = 0; i < count; i++)
 //     {
 //         // ω_en_n (tₖ₋₁) Transport Rate, rotation rate of the Earth frame relative to the navigation frame, in navigation coordinates
-//         Eigen::Vector3d angularVelocity_en_n = calcTransportRate_n({ latitude, longitude, altitude }, velocities.at(1), R_N, R_E);
+//         Eigen::Vector3d angularVelocity_en_n = n_calcTransportRate({ latitude, longitude, altitude }, velocities.at(1), R_N, R_E);
 
-//         Eigen::Vector3d v_n = updateVelocity_n_Simpson(timeDifferenceSec, timeDifferenceSec,
+//         Eigen::Vector3d n_velocity = updateVelocity_n_Simpson(timeDifferenceSec, timeDifferenceSec,
 //                                                        acceleration_b,
 //                                                        acceleration_b,
 //                                                        velocities.at(1),
@@ -394,16 +394,16 @@ namespace NAV
 //                                                        n_Quat_b,
 //                                                        n_Quat_b,
 //                                                        suppressCoriolis);
-//         velocities.push_back(v_n);
+//         velocities.push_back(n_velocity);
 //         velocities.pop_front();
 //     }
 
-//     auto v_n = velocities.at(velocities.size() - 1);
+//     auto n_velocity = velocities.at(velocities.size() - 1);
 
 //     // Exact values are not achieved
-//     CHECK(v_n.x() == Approx(1).margin(0.001));
-//     CHECK(v_n.y() == Approx(1).margin(0.001));
-//     CHECK(v_n.z() == Approx(0).margin(1e-4));
+//     CHECK(n_velocity.x() == Approx(1).margin(0.001));
+//     CHECK(n_velocity.y() == Approx(1).margin(0.001));
+//     CHECK(n_velocity.z() == Approx(0).margin(1e-4));
 // }
 
 // TEST_CASE("[InsMechanization] Update Position e-frame", "[InsMechanization]")
@@ -417,15 +417,15 @@ namespace NAV
 //     double longitude = trafo::deg2rad(9.172012);
 //     double altitude = 254;
 
-//     Eigen::Vector3d velocity_n{ 2, 0, 0 };
-//     Eigen::Vector3d velocity_e = trafo::e_Quat_n(latitude, longitude) * velocity_n;
+//     Eigen::Vector3d n_velocity{ 2, 0, 0 };
+//     Eigen::Vector3d e_velocity = trafo::e_Quat_n(latitude, longitude) * n_velocity;
 
 //     Eigen::Vector3d position_e = trafo::lla2ecef_WGS84({ latitude, longitude, altitude });
 
 //     size_t count = 10000;
 //     for (size_t i = 0; i < count; i++)
 //     {
-//         position_e = updatePosition_e(timeDifferenceSec, position_e, velocity_e);
+//         position_e = updatePosition_e(timeDifferenceSec, position_e, e_velocity);
 //     }
 //     auto lla = trafo::ecef2lla_WGS84(position_e);
 
@@ -454,7 +454,7 @@ namespace NAV
 
 //     Eigen::Vector3d velocity_b{ 2, 0, 0 };
 
-//     Eigen::Vector3d velocity_n = trafo::n_Quat_b(roll, pitch, yaw) * velocity_b;
+//     Eigen::Vector3d n_velocity = trafo::n_Quat_b(roll, pitch, yaw) * velocity_b;
 
 //     Eigen::Vector3d latLonAlt{ latitude, longitude, altitude };
 
@@ -466,7 +466,7 @@ namespace NAV
 //         // East/West (prime vertical) earth radius [m]
 //         double R_E = calcEarthRadius_E(latLonAlt(0), InsConst::WGS84_a, InsConst::WGS84_e_squared);
 
-//         latLonAlt = updatePosition_lla(dt, latLonAlt, velocity_n, R_N, R_E);
+//         latLonAlt = updatePosition_lla(dt, latLonAlt, n_velocity, R_N, R_E);
 //     }
 //     double distance = static_cast<double>(count) * static_cast<double>(dt) * velocity_b.norm();
 
@@ -498,7 +498,7 @@ namespace NAV
 //     auto correctedPVA = correctPosVelAtt(posVelAtt, pvaError);
 
 //     CHECK(posVelAtt->latLonAlt() - pvaError->positionError_lla() == correctedPVA->latLonAlt());
-//     CHECK(posVelAtt->velocity_n() - pvaError->velocityError_n() == correctedPVA->velocity_n());
+//     CHECK(posVelAtt->n_velocity() - pvaError->velocityError_n() == correctedPVA->n_velocity());
 
 //     CHECK(trafo::rad2deg(expectedRollPitchYaw) == trafo::rad2deg(correctedPVA->rollPitchYaw()));
 

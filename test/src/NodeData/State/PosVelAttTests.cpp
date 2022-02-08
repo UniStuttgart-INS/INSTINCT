@@ -46,15 +46,15 @@ TEST_CASE("[PosVelAtt] Velocity Functions", "[PosVelAtt]")
     state.setVelocity_e(vel_e);
 
     CHECK(state.latLonAlt() == latLonAlt);
-    CHECK(state.velocity_e() == vel_e);
-    CHECK(state.velocity_n() == EigApprox(vel_n));
-    CHECK(state.velocity_e().norm() == Approx(state.velocity_n().norm()));
+    CHECK(state.e_velocity() == vel_e);
+    CHECK(state.n_velocity() == EigApprox(vel_n));
+    CHECK(state.e_velocity().norm() == Approx(state.n_velocity().norm()));
 
     state.setVelocity_n(vel_n);
     CHECK(state.latLonAlt() == latLonAlt);
-    CHECK(state.velocity_e() == EigApprox(vel_e));
-    CHECK(state.velocity_n() == vel_n);
-    CHECK(state.velocity_e().norm() == Approx(state.velocity_n().norm()));
+    CHECK(state.e_velocity() == EigApprox(vel_e));
+    CHECK(state.n_velocity() == vel_n);
+    CHECK(state.e_velocity().norm() == Approx(state.n_velocity().norm()));
 }
 
 TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
@@ -72,14 +72,14 @@ TEST_CASE("[PosVelAtt] Attitude Functions", "[PosVelAtt]")
     state.setState_e(trafo::lla2ecef_WGS84(latLonAlt), vel_e, trafo::e_Quat_n(latLonAlt(0), latLonAlt(1)) * trafo::n_Quat_b(roll, pitch, yaw));
 
     CHECK(state.latLonAlt() == EigApprox(latLonAlt));
-    CHECK(state.velocity_e() == vel_e);
+    CHECK(state.e_velocity() == vel_e);
     CHECK(state.n_Quat_b() == EigApproxQ(trafo::n_Quat_b(roll, pitch, yaw)));
     CHECK(state.b_Quat_n() == EigApproxQ(trafo::b_Quat_n(roll, pitch, yaw)));
     CHECK(state.e_Quat_b() == trafo::e_Quat_n(latLonAlt(0), latLonAlt(1)) * trafo::n_Quat_b(roll, pitch, yaw));
     CHECK(state.b_Quat_e() == trafo::b_Quat_n(roll, pitch, yaw) * trafo::n_Quat_e(latLonAlt(0), latLonAlt(1)));
 
     state.setState_n(latLonAlt, vel_n, trafo::n_Quat_b(roll, pitch, yaw));
-    CHECK(state.velocity_n() == vel_n);
+    CHECK(state.n_velocity() == vel_n);
     CHECK(state.n_Quat_b() == trafo::n_Quat_b(roll, pitch, yaw));
     CHECK(state.b_Quat_n() == trafo::b_Quat_n(roll, pitch, yaw));
     CHECK(state.e_Quat_b() == trafo::e_Quat_n(latLonAlt(0), latLonAlt(1)) * trafo::n_Quat_b(roll, pitch, yaw));

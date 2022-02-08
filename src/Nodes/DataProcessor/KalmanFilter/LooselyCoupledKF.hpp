@@ -335,7 +335,7 @@ class LooselyCoupledKF : public Node
     /// @param[in] n_Quat_b Attitude of the body with respect to n-system
     /// @param[in] specForce_ib_b Specific force of the body with respect to inertial frame in [m / s^2], resolved in body coordinates
     /// @param[in] angularRate_in_n Angular rate of navigation system with respect to the inertial system [rad / s], resolved in navigation coordinates.
-    /// @param[in] velocity_n Velocity in n-system in [m / s]
+    /// @param[in] n_velocity Velocity in n-system in [m / s]
     /// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
     /// @param[in] tau_bad Correleation length for the accelerometer in [s]
     /// @param[in] tau_bgd Correleation length for the gyroscope in [s]
@@ -347,7 +347,7 @@ class LooselyCoupledKF : public Node
     Eigen::Matrix<double, 15, 15> systemMatrix_F(const Eigen::Quaterniond& n_Quat_b,
                                                  const Eigen::Vector3d& specForce_ib_b,
                                                  const Eigen::Vector3d& angularRate_in_n,
-                                                 const Eigen::Vector3d& velocity_n,
+                                                 const Eigen::Vector3d& n_velocity,
                                                  const Eigen::Vector3d& position_lla,
                                                  const Eigen::Vector3d& tau_bad,
                                                  const Eigen::Vector3d& tau_bgd,

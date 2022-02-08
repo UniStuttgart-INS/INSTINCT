@@ -382,12 +382,12 @@ void NAV::ImuSimulator::guiConfig()
             ImGui::SetNextItemWidth(230);
             if (ImGui::BeginCombo(fmt::format("Gravitation Model##{}", size_t(id)).c_str(), NAV::to_string(_gravityModel)))
             {
-                for (size_t i = 0; i < static_cast<size_t>(GravityModel::COUNT); i++)
+                for (size_t i = 0; i < static_cast<size_t>(GravitationModel::COUNT); i++)
                 {
                     const bool is_selected = (static_cast<size_t>(_gravityModel) == i);
-                    if (ImGui::Selectable(NAV::to_string(static_cast<GravityModel>(i)), is_selected))
+                    if (ImGui::Selectable(NAV::to_string(static_cast<GravitationModel>(i)), is_selected))
                     {
-                        _gravityModel = static_cast<GravityModel>(i);
+                        _gravityModel = static_cast<GravitationModel>(i);
                         LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(_gravityModel));
                         flow::ApplyChanges();
                     }
@@ -681,7 +681,7 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     LOG_DATA("{}: R_N = {} [m]", nameId(), R_N);
     const double R_E = calcEarthRadius_E(position_lla(0));
     LOG_DATA("{}: R_E = {} [m]", nameId(), R_E);
-    const Eigen::Vector3d omega_en_n = calcTransportRate_n(position_lla, vel_n, R_N, R_E);
+    const Eigen::Vector3d omega_en_n = n_calcTransportRate(position_lla, vel_n, R_N, R_E);
     LOG_DATA("{}: omega_en_n = {} [rad/s]", nameId(), omega_en_n.transpose());
 
     // -------------------------------------------------- Check if a stop condition is met -----------------------------------------------------
@@ -702,19 +702,19 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollImuObs(bool peek)
     Eigen::Vector3d accel_n = trajectoryAccel_n;
     if (_coriolisAccelerationEnabled) // Apply Coriolis Acceleration
     {
-        const Eigen::Vector3d coriolisAcceleration_n = calcCoriolisAcceleration_n(omega_ie_n, omega_en_n, vel_n);
+        const Eigen::Vector3d coriolisAcceleration_n = n_calcCoriolisAcceleration(omega_ie_n, omega_en_n, vel_n);
         LOG_DATA("{}: coriolisAcceleration_n = {} [m/s^2]", nameId(), coriolisAcceleration_n.transpose());
         accel_n += coriolisAcceleration_n;
     }
 
     // Mass attraction of the Earth (gravitation)
-    const Eigen::Vector3d gravitation_n = calcGravitation_n(position_lla, _gravityModel);
+    const Eigen::Vector3d gravitation_n = n_calcGravitation(position_lla, _gravityModel);
     LOG_DATA("gravitation_n = {} [m/s^2] ({})", gravitation_n.transpose(), NAV::to_string(_gravityModel));
     accel_n -= gravitation_n; // Apply the local gravity vector
 
     if (_centrifgalAccelerationEnabled) // Centrifugal acceleration caused by the Earth's rotation
     {
-        const Eigen::Vector3d centrifugalAcceleration_e = calcCentrifugalAcceleration_e(position_e);
+        const Eigen::Vector3d centrifugalAcceleration_e = e_calcCentrifugalAcceleration(position_e);
         LOG_DATA("{}: centrifugalAcceleration_e = {} [m/s^2]", nameId(), centrifugalAcceleration_e.transpose());
         const Eigen::Vector3d centrifugalAcceleration_n = n_Quat_e * centrifugalAcceleration_e;
         LOG_DATA("{}: centrifugalAcceleration_n = {} [m/s^2]", nameId(), centrifugalAcceleration_n.transpose());
@@ -787,11 +787,11 @@ std::shared_ptr<const NAV::NodeData> NAV::ImuSimulator::pollPosVelAtt(bool peek)
     return obs;
 }
 
-std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d& position_lla, const Eigen::Vector3d& velocity_n)
+std::array<double, 3> NAV::ImuSimulator::calcFlightAngles(const Eigen::Vector3d& position_lla, const Eigen::Vector3d& n_velocity)
 {
     double roll = 0;
-    double pitch = calcPitchFromVelocity(velocity_n);
-    double yaw = calcYawFromVelocity(velocity_n);
+    double pitch = calcPitchFromVelocity(n_velocity);
+    double yaw = calcYawFromVelocity(n_velocity);
 
     if (_trajectoryType == TrajectoryType::Fixed)
     {
@@ -831,7 +831,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcPosition_lla(double time, double& lastUpd
         // @return The curvilinear position and velocity derivatives ∂/∂t [𝜙, λ, h, v_N, v_E, v_D]^T
         auto f = [](const Eigen::Vector<double, 6>& y, const Eigen::Vector3d& acceleration_n) {
             Eigen::Vector<double, 6> y_dot;
-            y_dot << calcTimeDerivativeForPosition_lla(y.tail<3>(),              // v_n Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
+            y_dot << lla_calcTimeDerivativeForPosition(y.tail<3>(),              // Velocity with respect to the Earth in local-navigation frame coordinates [m/s]
                                                        y(0),                     // 𝜙 Latitude in [rad]
                                                        y(2),                     // h Altitude in [m]
                                                        calcEarthRadius_N(y(0)),  // North/South (meridian) earth radius [m]
@@ -939,7 +939,7 @@ Eigen::Vector3d NAV::ImuSimulator::calcTrajectoryAccel_n(double time, const Eige
 }
 
 Eigen::Vector3d NAV::ImuSimulator::calcOmega_ip_p(const Eigen::Vector3d& position_lla,
-                                                  const Eigen::Vector3d& velocity_n,
+                                                  const Eigen::Vector3d& n_velocity,
                                                   const Eigen::Vector3d& acceleration_n,
                                                   const Eigen::Vector3d& rollPitchYaw,
                                                   const Eigen::Quaterniond& b_Quat_n,
@@ -950,9 +950,9 @@ Eigen::Vector3d NAV::ImuSimulator::calcOmega_ip_p(const Eigen::Vector3d& positio
     const auto& lambda = position_lla(1);
     const auto& h = position_lla(2);
 
-    const auto& v_N = velocity_n(0);
-    const auto& v_E = velocity_n(1);
-    const auto& v_D = velocity_n(2);
+    const auto& v_N = n_velocity(0);
+    const auto& v_E = n_velocity(1);
+    const auto& v_D = n_velocity(2);
     const auto& v_N_2 = std::pow(v_N, 2);
     const auto& v_E_2 = std::pow(v_E, 2);
     const auto& v_D_2 = std::pow(v_D, 2);

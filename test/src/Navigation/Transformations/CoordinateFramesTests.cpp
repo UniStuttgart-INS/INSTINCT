@@ -742,20 +742,20 @@ TEST_CASE("[InsTransformations] Transformation chains", "[InsTransformations]")
     Eigen::Vector3d v_p{ 1, 3, 5 };
 
     Eigen::Vector3d v_b = b_Quat_p * v_p;
-    Eigen::Vector3d v_n = n_Quat_b * v_b;
-    Eigen::Vector3d v_e = e_Quat_n * v_n;
+    Eigen::Vector3d n_velocity = n_Quat_b * v_b;
+    Eigen::Vector3d v_e = e_Quat_n * n_velocity;
 
     Eigen::Quaterniond n_Quat_p = n_Quat_b * b_Quat_p;
     CHECK(n_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
-    Eigen::Vector3d v_n_direct = n_Quat_p * v_p;
+    Eigen::Vector3d n_velocity_direct = n_Quat_p * v_p;
 
     Eigen::Quaterniond e_Quat_p = e_Quat_n * n_Quat_b * b_Quat_p;
     CHECK(e_Quat_p.norm() == Approx(1.0).margin(EPSILON).epsilon(0));
     Eigen::Vector3d v_e_direct = e_Quat_p * v_p;
 
-    CHECK(v_n.x() == Approx(v_n_direct.x()).margin(EPSILON).epsilon(0));
-    CHECK(v_n.y() == Approx(v_n_direct.y()).margin(EPSILON).epsilon(0));
-    CHECK(v_n.z() == Approx(v_n_direct.z()).margin(EPSILON).epsilon(0));
+    CHECK(n_velocity.x() == Approx(n_velocity_direct.x()).margin(EPSILON).epsilon(0));
+    CHECK(n_velocity.y() == Approx(n_velocity_direct.y()).margin(EPSILON).epsilon(0));
+    CHECK(n_velocity.z() == Approx(n_velocity_direct.z()).margin(EPSILON).epsilon(0));
 
     CHECK(v_e.x() == Approx(v_e_direct.x()).margin(EPSILON).epsilon(0));
     CHECK(v_e.y() == Approx(v_e_direct.y()).margin(EPSILON).epsilon(0));

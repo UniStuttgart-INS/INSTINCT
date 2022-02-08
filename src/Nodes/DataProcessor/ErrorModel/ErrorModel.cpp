@@ -799,7 +799,7 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
                               + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, positionNoiseStd_lla(0) }(_positionRandomNumberGenerator.generator),
                                                  std::normal_distribution<double>{ 0.0, positionNoiseStd_lla(1) }(_positionRandomNumberGenerator.generator),
                                                  std::normal_distribution<double>{ 0.0, positionNoiseStd_lla(2) }(_positionRandomNumberGenerator.generator) },
-                          posVelAtt->velocity_n()
+                          posVelAtt->n_velocity()
                               + velocityBias_n
                               + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(0) }(_velocityRandomNumberGenerator.generator),
                                                  std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(1) }(_velocityRandomNumberGenerator.generator),

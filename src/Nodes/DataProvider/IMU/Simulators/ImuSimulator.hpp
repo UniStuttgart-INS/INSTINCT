@@ -200,7 +200,7 @@ class ImuSimulator : public Imu
     // ###########################################################################################################
 
     /// Gravity model selected in the GUI
-    GravityModel _gravityModel = GravityModel::EGM96;
+    GravitationModel _gravityModel = GravitationModel::EGM96;
 
     /// Apply the coriolis acceleration to the measured accelerations
     bool _coriolisAccelerationEnabled = true;
@@ -235,9 +235,9 @@ class ImuSimulator : public Imu
 
     /// @brief Calculates the flight angles (roll, pitch, yaw)
     /// @param[in] position_lla Current position as latitude, longitude, altitude [rad, rad, m]
-    /// @param[in] velocity_n Velocity in local-navigation frame coordinates [m/s]
+    /// @param[in] n_velocity Velocity in local-navigation frame coordinates [m/s]
     /// @return Roll, pitch, yaw in [rad]
-    std::array<double, 3> calcFlightAngles(const Eigen::Vector3d& position_lla, const Eigen::Vector3d& velocity_n);
+    std::array<double, 3> calcFlightAngles(const Eigen::Vector3d& position_lla, const Eigen::Vector3d& n_velocity);
 
     /// @brief Calculates the position in latLonAlt at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
@@ -249,7 +249,7 @@ class ImuSimulator : public Imu
     /// @brief Calculates the velocity in local-navigation frame coordinates at the given time depending on the trajectoryType
     /// @param[in] time Time in [s]
     /// @param[in] n_Quat_e Rotation quaternion from Earth frame to local-navigation frame
-    /// @return v_n in [rad, rad, m]
+    /// @return n_velocity in [rad, rad, m]
     Eigen::Vector3d calcVelocity_n(double time, const Eigen::Quaterniond& n_Quat_e);
 
     /// @brief Calculates the acceleration in local-navigation frame coordinates at the given time depending on the trajectoryType
@@ -260,7 +260,7 @@ class ImuSimulator : public Imu
 
     /// @brief Calculates ω_ip_p, the gyroscope measurement (turn rate of the platform with respect to the inertial system expressed in platform coordinates)
     /// @param[in] position_lla Current position as latitude, longitude, altitude [rad, rad, m]
-    /// @param[in] velocity_n Velocity in local-navigation frame coordinates [m/s]
+    /// @param[in] n_velocity Velocity in local-navigation frame coordinates [m/s]
     /// @param[in] acceleration_n Acceleration in local-navigation frame coordinates [m/s^2]
     /// @param[in] rollPitchYaw Gimbal angles (roll, pitch, yaw) [rad]
     /// @param[in] b_Quat_n Rotation quaternion from local-navigation frame to the body frame
@@ -268,7 +268,7 @@ class ImuSimulator : public Imu
     /// @param[in] omega_en_n ω_en_n Transport rate in local-navigation coordinates
     /// @return ω_ip_p [rad/s]
     Eigen::Vector3d calcOmega_ip_p(const Eigen::Vector3d& position_lla,
-                                   const Eigen::Vector3d& velocity_n,
+                                   const Eigen::Vector3d& n_velocity,
                                    const Eigen::Vector3d& acceleration_n,
                                    const Eigen::Vector3d& rollPitchYaw,
                                    const Eigen::Quaterniond& b_Quat_n,

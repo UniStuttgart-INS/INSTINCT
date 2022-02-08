@@ -153,7 +153,7 @@ class PosVelAttInitializer : public Node
     /// Position in ECEF coordinates
     Eigen::Vector3d _p_ecef_init;
     /// Velocity in navigation coordinates
-    Eigen::Vector3d _v_n_init;
+    Eigen::Vector3d _n_velocity_init;
 };
 
 } // namespace NAV

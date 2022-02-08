@@ -656,8 +656,8 @@ void NAV::LooselyCoupledKF::recvGNSSNavigationSolution(const std::shared_ptr<con
 void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const InertialNavSol>& inertialNavSol)
 {
     // ------------------------------------------- Data preparation ----------------------------------------------
-    // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& velocity_n__t1 = inertialNavSol->velocity_n();
+    // n_velocity (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d& velocity_n__t1 = inertialNavSol->n_velocity();
     LOG_DATA("{}: velocity_n__t1 = {} [m / s]", nameId(), velocity_n__t1.transpose());
     // Latitude 𝜙, longitude λ and altitude (height above ground) in [rad, rad, m] at the time tₖ₋₁
     const Eigen::Vector3d& position_lla__t1 = inertialNavSol->latLonAlt();
@@ -682,7 +682,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     LOG_DATA("{}: T_rn_p =\n{}", nameId(), T_rn_p);
 
     // Gravity at surface level in [m/s^2]
-    double g_0 = calcGravitation_n_SomiglianaAltitude(position_lla__t1(0), 0).norm();
+    double g_0 = n_calcGravitation_SomiglianaAltitude(position_lla__t1(0), 0).norm();
 
     // Geocentric Radius in [m]
     double r_eS_e = calcGeocentricRadius(position_lla__t1(0), R_E);
@@ -694,7 +694,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     // omega_in^n = omega_ie^n + omega_en^n
     Eigen::Vector3d angularRate_in_n = inertialNavSol->quaternion_ne() * InsConst::omega_ie_e
-                                       + calcTransportRate_n(position_lla__t1, velocity_n__t1, R_N, R_E);
+                                       + n_calcTransportRate(position_lla__t1, velocity_n__t1, R_N, R_E);
     LOG_DATA("{}: angularRate_in_n = {} [rad/s]", nameId(), angularRate_in_n.transpose());
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
@@ -936,7 +936,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 
     // 8. Formulate the measurement z_k
     _kalmanFilter.z = measurementInnovation_dz(gnssMeasurement->latLonAlt(), _latestInertialNavSol->latLonAlt(),
-                                               gnssMeasurement->velocity_n(), _latestInertialNavSol->velocity_n(),
+                                               gnssMeasurement->n_velocity(), _latestInertialNavSol->n_velocity(),
                                                T_rn_p, _latestInertialNavSol->n_Quat_b(), _leverArm_InsGnss_b, angularRate_b, Omega_ie_n);
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_z);
     LOG_DATA("{}: KF.z =\n{}", nameId(), _kalmanFilter.z);
@@ -994,8 +994,8 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     auto pvaError = std::make_shared<PVAError>();
     pvaError->insTime = gnssMeasurement->insTime;
     pvaError->positionError_lla() = _kalmanFilter.x.block<3, 1>(6, 0).array() * Eigen::Array3d(1. / SCALE_FACTOR_LAT_LON, 1. / SCALE_FACTOR_LAT_LON, 1);
-    pvaError->velocityError_n() = _kalmanFilter.x.block<3, 1>(3, 0);
-    pvaError->attitudeError_n() = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
+    pvaError->n_velocityError() = _kalmanFilter.x.block<3, 1>(3, 0);
+    pvaError->n_attitudeError() = _kalmanFilter.x.block<3, 1>(0, 0) * (1. / SCALE_FACTOR_ATTITUDE);
 
     _accumulatedImuBiases.biasAccel_b += _kalmanFilter.x.block<3, 1>(9, 0) * (1. / SCALE_FACTOR_ACCELERATION);
     _accumulatedImuBiases.biasGyro_b += _kalmanFilter.x.block<3, 1>(12, 0) * (1. / SCALE_FACTOR_ANGULAR_RATE);
@@ -1020,7 +1020,7 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
 Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrix_F(const Eigen::Quaterniond& n_Quat_b,
                                                                     const Eigen::Vector3d& specForce_ib_b,
                                                                     const Eigen::Vector3d& angularRate_in_n,
-                                                                    const Eigen::Vector3d& velocity_n,
+                                                                    const Eigen::Vector3d& n_velocity,
                                                                     const Eigen::Vector3d& position_lla,
                                                                     const Eigen::Vector3d& tau_bad,
                                                                     const Eigen::Vector3d& tau_bgd,
@@ -1039,18 +1039,18 @@ Eigen::Matrix<double, 15, 15> NAV::LooselyCoupledKF::systemMatrix_F(const Eigen:
     // Math: \mathbf{F}^n = \begin{pmatrix} \mathbf{F}_{\dot{\psi},\psi}^n & \mathbf{F}_{\dot{\psi},\delta v}^n & \mathbf{F}_{\dot{\psi},\delta r}^n & \mathbf{0}_3 & -\mathbf{C}_b^n \\ \mathbf{F}_{\delta \dot{v},\psi}^n & \mathbf{F}_{\delta \dot{v},\delta v}^n & \mathbf{F}_{\delta \dot{v},\delta r}^n & \mathbf{C}_b^n & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{F}_{\delta \dot{r},\delta v}^n & \mathbf{F}_{\delta \dot{r},\delta r}^n & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\ \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \end{pmatrix} \qquad \text{T. Hobiger, Inertialnavigation V06 - V09 }
     Eigen::MatrixXd F = Eigen::MatrixXd::Zero(15, 15);
 
-    F.block<3, 3>(0, 0) = F_dotpsi_psi_n(angularRate_in_n);
-    F.block<3, 3>(0, 3) = F_dotpsi_dv_n(latitude, altitude, R_N, R_E);
-    F.block<3, 3>(0, 6) = F_dotpsi_dr_n(latitude, altitude, velocity_n, R_N, R_E);
-    F.block<3, 3>(0, 12) = F_dotpsi_dw_n(n_Quat_b.toRotationMatrix());
-    F.block<3, 3>(3, 0) = F_dotdv_psi_n(n_Quat_b * specForce_ib_b);
-    F.block<3, 3>(3, 3) = F_dotdv_dv_n(velocity_n, latitude, altitude, R_N, R_E);
-    F.block<3, 3>(3, 6) = F_dotdv_dr_n(velocity_n, latitude, altitude, R_N, R_E, g_0, r_eS_e);
-    F.block<3, 3>(3, 9) = F_dotdv_df_n(n_Quat_b.toRotationMatrix());
-    F.block<3, 3>(6, 3) = F_dotdr_dv_n(latitude, altitude, R_N, R_E);
-    F.block<3, 3>(6, 6) = F_dotdr_dr_n(velocity_n, latitude, altitude, R_N, R_E);
-    F.block<3, 3>(9, 9) = F_dotdf_df_n(_randomProcessAccel == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bad);
-    F.block<3, 3>(12, 12) = F_dotdw_dw_n(_randomProcessGyro == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bgd);
+    F.block<3, 3>(0, 0) = n_F_dpsi_dpsi(angularRate_in_n);
+    F.block<3, 3>(0, 3) = n_F_dpsi_dv(latitude, altitude, R_N, R_E);
+    F.block<3, 3>(0, 6) = n_F_dpsi_dr(latitude, altitude, n_velocity, R_N, R_E);
+    F.block<3, 3>(0, 12) = n_F_dpsi_dw(n_Quat_b.toRotationMatrix());
+    F.block<3, 3>(3, 0) = n_F_dv_dpsi(n_Quat_b * specForce_ib_b);
+    F.block<3, 3>(3, 3) = n_F_dv_dv(n_velocity, latitude, altitude, R_N, R_E);
+    F.block<3, 3>(3, 6) = n_F_dv_dr(n_velocity, latitude, altitude, R_N, R_E, g_0, r_eS_e);
+    F.block<3, 3>(3, 9) = n_F_dv_df(n_Quat_b.toRotationMatrix());
+    F.block<3, 3>(6, 3) = n_F_dr_dv(latitude, altitude, R_N, R_E);
+    F.block<3, 3>(6, 6) = n_F_dr_dr(n_velocity, latitude, altitude, R_N, R_E);
+    F.block<3, 3>(9, 9) = n_F_df_df(_randomProcessAccel == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bad);
+    F.block<3, 3>(12, 12) = n_F_dw_dw(_randomProcessGyro == RandomProcess::RandomWalk ? Eigen::Vector3d::Zero() : beta_bgd);
 
     F.middleRows<3>(0) *= SCALE_FACTOR_ATTITUDE; // 𝜓' [deg / s] = 180/π * ... [rad / s]
     F.middleCols<3>(0) *= 1. / SCALE_FACTOR_ATTITUDE;

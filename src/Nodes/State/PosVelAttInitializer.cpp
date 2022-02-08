@@ -479,7 +479,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
         }
         if (_overrideVelocity)
         {
-            _v_n_init = Eigen::Vector3d(_overrideValuesVelocity_n.at(0), _overrideValuesVelocity_n.at(1), _overrideValuesVelocity_n.at(2));
+            _n_velocity_init = Eigen::Vector3d(_overrideValuesVelocity_n.at(0), _overrideValuesVelocity_n.at(1), _overrideValuesVelocity_n.at(2));
         }
 
         if (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))
@@ -501,7 +501,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
         }
 
         LOG_INFO("{}: Velocity initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
-                 _v_n_init(0), _v_n_init(1), _v_n_init(2));
+                 _n_velocity_init(0), _n_velocity_init(1), _n_velocity_init(2));
 
         [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(_n_Quat_b_init);
         LOG_INFO("{}: Attitude initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
@@ -511,7 +511,7 @@ void NAV::PosVelAttInitializer::finalizeInit()
 
         auto posVelAtt = std::make_shared<PosVelAtt>();
         posVelAtt->setPosition_e(_p_ecef_init);
-        posVelAtt->setVelocity_n(_v_n_init);
+        posVelAtt->setVelocity_n(_n_velocity_init);
         posVelAtt->setAttitude_nb(_n_Quat_b_init);
         invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, posVelAtt);
     }
@@ -676,9 +676,9 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const Ublo
                 && _lastVelocityAccuracy.at(1) <= _velocityAccuracyThreshold
                 && _lastVelocityAccuracy.at(2) <= _velocityAccuracyThreshold)
             {
-                _v_n_init = Eigen::Vector3d(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
-                                            std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
-                                            std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
+                _n_velocity_init = Eigen::Vector3d(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
+                                                   std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
+                                                   std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
 
                 _posVelAttInitialized.at(1) = true;
             }
@@ -719,7 +719,7 @@ void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const 
     _p_ecef_init = obs->position_ecef();
     _posVelAttInitialized.at(0) = true;
 
-    _v_n_init = obs->velocity_n();
+    _n_velocity_init = obs->n_velocity();
     _posVelAttInitialized.at(1) = true;
 
     if (_attitudeMode == AttitudeMode::BOTH || _attitudeMode == AttitudeMode::GNSS || !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_IMU_OBS).id))

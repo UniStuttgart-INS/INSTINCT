@@ -120,12 +120,12 @@ void NAV::ImuIntegrator::guiConfig()
             ImGui::SetNextItemWidth(230);
             if (ImGui::BeginCombo(fmt::format("Gravity Model##{}", size_t(id)).c_str(), NAV::to_string(_gravityModel)))
             {
-                for (size_t i = 0; i < static_cast<size_t>(GravityModel::COUNT); i++)
+                for (size_t i = 0; i < static_cast<size_t>(GravitationModel::COUNT); i++)
                 {
                     const bool is_selected = (static_cast<size_t>(_gravityModel) == i);
-                    if (ImGui::Selectable(NAV::to_string(static_cast<GravityModel>(i)), is_selected))
+                    if (ImGui::Selectable(NAV::to_string(static_cast<GravitationModel>(i)), is_selected))
                     {
-                        _gravityModel = static_cast<GravityModel>(i);
+                        _gravityModel = static_cast<GravitationModel>(i);
                         LOG_DEBUG("{}: Gravity Model changed to {}", nameId(), NAV::to_string(_gravityModel));
                         flow::ApplyChanges();
                     }
@@ -347,7 +347,7 @@ void NAV::ImuIntegrator::recvPosVelAttInit(const std::shared_ptr<const NodeData>
             // Push out a message with the initial state and a matching imu Observation
             auto inertialNavSol = std::make_shared<InertialNavSol>();
 
-            inertialNavSol->setState_n(posVelAtt->latLonAlt(), posVelAtt->velocity_n(), posVelAtt->n_Quat_b());
+            inertialNavSol->setState_n(posVelAtt->latLonAlt(), posVelAtt->n_velocity(), posVelAtt->n_Quat_b());
 
             auto imuObsIndex = std::min(static_cast<size_t>(1), _imuObservations.size() - 1); // Casting to int, because Windows does not support std::min(size_t, size_t)
 
@@ -395,7 +395,7 @@ void NAV::ImuIntegrator::recvImuObs(const std::shared_ptr<const NodeData>& nodeD
         auto inertialNavSol = std::make_shared<InertialNavSol>();
 
         inertialNavSol->setState_n(_posVelAttStates.front()->latLonAlt(),
-                                   _posVelAttStates.front()->velocity_n(),
+                                   _posVelAttStates.front()->n_velocity(),
                                    _posVelAttStates.front()->n_Quat_b());
 
         inertialNavSol->insTime = imuObs->insTime;
@@ -428,10 +428,10 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::correctPosVelAtt(const
     auto posVelAttCorrected = std::make_shared<PosVelAtt>(*posVelAtt);
     posVelAttCorrected->setPosition_lla(posVelAtt->latLonAlt() - pvaError->positionError_lla());
 
-    posVelAttCorrected->setVelocity_n(posVelAtt->velocity_n() - pvaError->velocityError_n());
+    posVelAttCorrected->setVelocity_n(posVelAtt->n_velocity() - pvaError->n_velocityError());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
-    Eigen::Vector3d attError = pvaError->attitudeError_n();
+    Eigen::Vector3d attError = pvaError->n_attitudeError();
     Eigen::Matrix3d c_Dcm_ = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(attError)) * posVelAtt->n_Quat_b().toRotationMatrix();
     posVelAttCorrected->setAttitude_nb(Eigen::Quaterniond(c_Dcm_).normalized());
 
@@ -561,8 +561,8 @@ void NAV::ImuIntegrator::integrateObservation()
     const Eigen::Quaterniond n_Quat_b__t1 = posVelAtt__t1->n_Quat_b();
     LOG_DATA("{}: n_Quat_b__t1 = {}", nameId(), n_Quat_b__t1.coeffs().transpose());
 
-    // v_n (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
-    const Eigen::Vector3d& velocity_n__t1 = posVelAtt__t1->velocity_n();
+    // n_velocity (tₖ₋₁) Velocity in [m/s], in navigation coordinates, at the time tₖ₋₁
+    const Eigen::Vector3d& velocity_n__t1 = posVelAtt__t1->n_velocity();
     LOG_DATA("{}: velocity_n__t1 = {}", nameId(), velocity_n__t1.transpose());
 
     // [latitude 𝜙, longitude λ, altitude h] (tₖ₋₁) Position in [rad, rad, m] at the time tₖ₋₁
@@ -621,7 +621,7 @@ void NAV::ImuIntegrator::integrateObservation()
             c_new.angularRateTransportRateCompensationEnabled = c.angularRateTransportRateCompensationEnabled;
             c_new.velocityUpdateRotationCorrectionEnabled = c.velocityUpdateRotationCorrectionEnabled;
 
-            return calcPosVelAttDerivative_n(y, c_new);
+            return n_calcPosVelAttDerivative(y, c_new);
         };
         AccelGyroMeasurement z__t0{ omega_ip_b__t0, f_b__t0 };
         AccelGyroMeasurement z__t1{ omega_ip_b__t1, f_b__t1 };
@@ -630,19 +630,19 @@ void NAV::ImuIntegrator::integrateObservation()
     }
     else if (_integrationAlgorithm == IntegrationAlgorithm::RungeKutta1)
     {
-        y = RungeKutta1(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
+        y = RungeKutta1(n_calcPosVelAttDerivative, timeDifferenceSec, y, c);
     }
     else if (_integrationAlgorithm == IntegrationAlgorithm::RungeKutta2)
     {
-        y = RungeKutta2(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
+        y = RungeKutta2(n_calcPosVelAttDerivative, timeDifferenceSec, y, c);
     }
     else if (_integrationAlgorithm == IntegrationAlgorithm::RungeKutta3)
     {
-        y = RungeKutta3(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
+        y = RungeKutta3(n_calcPosVelAttDerivative, timeDifferenceSec, y, c);
     }
     else if (_integrationAlgorithm == IntegrationAlgorithm::RungeKutta4)
     {
-        y = RungeKutta4(calcPosVelAttDerivative_n, timeDifferenceSec, y, c);
+        y = RungeKutta4(n_calcPosVelAttDerivative, timeDifferenceSec, y, c);
     }
 
     posVelAtt__t0->setState_n(y.segment<3>(7), y.segment<3>(4), Eigen::Quaterniond{ y(0), y(1), y(2), y(3) }.normalized());
@@ -650,7 +650,7 @@ void NAV::ImuIntegrator::integrateObservation()
     LOG_DATA("{}: posVelAtt__t0->position_ecef() = {}", nameId(), posVelAtt__t0->position_ecef().transpose());
     LOG_DATA("{}: posVelAtt__t0->position_lla() - posVelAtt__t1->position_lla() = {} [m]", nameId(),
              calcGeographicalDistance(posVelAtt__t0->latitude(), posVelAtt__t0->longitude(), posVelAtt__t1->latitude(), posVelAtt__t1->longitude()));
-    LOG_DATA("{}: posVelAtt__t0->velocity_n() = {}", nameId(), posVelAtt__t0->velocity_n().transpose());
+    LOG_DATA("{}: posVelAtt__t0->n_velocity() = {}", nameId(), posVelAtt__t0->n_velocity().transpose());
     LOG_DATA("{}: posVelAtt__t0->n_Quat_b() = {}", nameId(), posVelAtt__t0->n_Quat_b().coeffs().transpose());
 
     // Cycle lists

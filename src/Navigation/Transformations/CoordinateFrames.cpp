@@ -131,9 +131,7 @@ Eigen::Vector3d ecef2ned(const Eigen::Vector3d& position_e, const Eigen::Vector3
             -std::cos(latitude_ref) * std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref), -std::sin(latitude_ref);
     // clang-format on
 
-    Eigen::Vector3d position_n = R_ne * (position_e - position_e_ref);
-
-    return position_n;
+    return R_ne * (position_e - position_e_ref);
 }
 
 Eigen::Vector3d ned2ecef(const Eigen::Vector3d& position_n, const Eigen::Vector3d& latLonAlt_ref)
@@ -150,9 +148,7 @@ Eigen::Vector3d ned2ecef(const Eigen::Vector3d& position_n, const Eigen::Vector3
                          std::cos(latitude_ref)              ,             0           ,                -std::sin(latitude_ref)           ;
     // clang-format on
 
-    Eigen::Vector3d position_e = position_e_ref + R_en * position_n;
-
-    return position_e;
+    return position_e_ref + R_en * position_n;
 }
 
 Eigen::Vector3d lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_squared)
@@ -239,9 +235,7 @@ Eigen::Vector3d sph2ecef(const Eigen::Vector3d& position_s, const double& elevat
         std::sin(elevation) * std::sin(azimuth), std::cos(elevation) * std::sin(azimuth), std::cos(azimuth),
         std::cos(elevation), -std::sin(elevation), 0.0;
 
-    Eigen::Vector3d position_e = R_se * position_s;
-
-    return position_e;
+    return R_se * position_s;
 }
 
 } // namespace NAV::trafo

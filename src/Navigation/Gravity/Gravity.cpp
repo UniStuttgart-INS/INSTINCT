@@ -17,51 +17,51 @@
 namespace NAV
 {
 
-const char* to_string(GravityModel gravityModel)
+const char* to_string(GravitationModel gravitationModel)
 {
-    switch (gravityModel)
+    switch (gravitationModel)
     {
-    case GravityModel::WGS84:
+    case GravitationModel::WGS84:
         return "WGS84";
-    case GravityModel::WGS84_Skydel:
+    case GravitationModel::WGS84_Skydel:
         return "WGS84 (Skydel Constants)";
-    case GravityModel::Somigliana:
+    case GravitationModel::Somigliana:
         return "Somigliana";
-    case GravityModel::EGM96:
+    case GravitationModel::EGM96:
         return "EGM96";
-    case GravityModel::OFF:
+    case GravitationModel::OFF:
         return "OFF";
-    case GravityModel::COUNT:
+    case GravitationModel::COUNT:
         return "";
     }
     return "";
 }
 
-Eigen::Vector3d calcGravitation_n(const Eigen::Vector3d& latLonAlt, GravityModel gravityModel)
+Eigen::Vector3d n_calcGravitation(const Eigen::Vector3d& latLonAlt, GravitationModel gravitationModel)
 {
     const double& latitude = latLonAlt(0);
     const double& altitude = latLonAlt(2);
 
-    if (gravityModel == GravityModel::WGS84)
+    if (gravitationModel == GravitationModel::WGS84)
     {
-        return calcGravitation_n_WGS84(latitude, altitude);
+        return n_calcGravitation_WGS84(latitude, altitude);
     }
-    if (gravityModel == GravityModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
+    if (gravitationModel == GravitationModel::WGS84_Skydel) // TODO: This function becomes obsolete, once the ImuStream is deactivated due to the 'InstinctDataStream'
     {
-        return calcGravitation_n_WGS84_Skydel(latitude, altitude);
+        return n_calcGravitation_WGS84_Skydel(latitude, altitude);
     }
-    if (gravityModel == GravityModel::Somigliana)
+    if (gravitationModel == GravitationModel::Somigliana)
     {
-        return calcGravitation_n_SomiglianaAltitude(latitude, altitude);
+        return n_calcGravitation_SomiglianaAltitude(latitude, altitude);
     }
-    if (gravityModel == GravityModel::EGM96)
+    if (gravitationModel == GravitationModel::EGM96)
     {
-        return calcGravitation_n_EGM96(latLonAlt);
+        return n_calcGravitation_EGM96(latLonAlt);
     }
     return Eigen::Vector3d::Zero();
 }
 
-Eigen::Vector3d calcGravitation_n_SomiglianaAltitude(const double& latitude, const double& altitude)
+Eigen::Vector3d n_calcGravitation_SomiglianaAltitude(const double& latitude, const double& altitude)
 {
     // eq 6.16 has a fault in the denominator, it should be a sin^2(latitude)
     double g_0 = 9.7803253359 * (1.0 + 1.931853e-3 * std::pow(std::sin(latitude), 2))
@@ -78,7 +78,7 @@ Eigen::Vector3d calcGravitation_n_SomiglianaAltitude(const double& latitude, con
     return { 0.0, 0.0, k * g_0 };
 }
 
-Eigen::Vector3d calcGravitation_n_WGS84_Skydel(const double& latitude, const double& altitude)
+Eigen::Vector3d n_calcGravitation_WGS84_Skydel(const double& latitude, const double& altitude)
 {
     // geocentric latitude determination from geographic latitude
     double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
@@ -93,7 +93,7 @@ Eigen::Vector3d calcGravitation_n_WGS84_Skydel(const double& latitude, const dou
     return { 0, 0, gravitationMagnitude };
 }
 
-Eigen::Vector3d calcGravitation_n_WGS84(const double& latitude, const double& altitude)
+Eigen::Vector3d n_calcGravitation_WGS84(const double& latitude, const double& altitude)
 {
     // Geocentric latitude determination from geographic latitude
     double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
@@ -101,16 +101,14 @@ Eigen::Vector3d calcGravitation_n_WGS84(const double& latitude, const double& al
     double radiusSpheroid = InsConst::WGS84_a * (1.0 - InsConst::WGS84_f * std::pow(std::sin(latitudeGeocentric), 2.0)) + altitude;
 
     // Magnitude of the gravity, i.e. without orientation
-    double gravityMagnitude = InsConst::WGS84_MU * std::pow(radiusSpheroid, -2.0)
-                              - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
-                              - std::pow(InsConst::omega_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
+    double gravitationMagnitude = InsConst::WGS84_MU * std::pow(radiusSpheroid, -2.0)
+                                  - 3 * InsConst::WGS84_MU * InsConst::WGS84_J * std::pow(InsConst::WGS84_a, 2.0) * 0.5 * std::pow(radiusSpheroid, -4.0) * (3 * std::pow(std::sin(latitudeGeocentric), 2.0) - 1)
+                                  - std::pow(InsConst::omega_ie, 2.0) * radiusSpheroid * std::pow(std::cos(latitudeGeocentric), 2.0);
 
-    Eigen::Vector3d gravity_n(0.0, 0.0, gravityMagnitude);
-
-    return gravity_n;
+    return { 0, 0, gravitationMagnitude };
 }
 
-Eigen::Vector3d calcGravitation_n_EGM96(const Eigen::Vector3d& latLonAlt, int ndegree)
+Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& latLonAlt, int ndegree)
 {
     using internal::egm96Coeffs;
     using internal::associatedLegendre;
@@ -126,7 +124,7 @@ Eigen::Vector3d calcGravitation_n_EGM96(const Eigen::Vector3d& latLonAlt, int nd
     double azimuth = latLonAlt(1);                  // [rad]
 
     // Gravitation vector in local-navigation frame coordinates in [m/s^2]
-    Eigen::Vector3d gravity_n = Eigen::Vector3d::Zero();
+    Eigen::Vector3d n_gravity = Eigen::Vector3d::Zero();
 
     double Pnm = 0;
     double Pnmd = 0;
@@ -159,18 +157,18 @@ Eigen::Vector3d calcGravitation_n_EGM96(const Eigen::Vector3d& latLonAlt, int nd
             auto md = static_cast<double>(m);
 
             // Gravity vector from differentiation of the gravity potential in spherical coordinates (see 'GUT User Guide' eq. 7.4.2) - centrifugal acceleration added below
-            gravity_n(0) += std::pow((InsConst::WGS84_a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnmd;
-            gravity_n(1) += std::pow((InsConst::WGS84_a / radius), nd) * md * (C * std::sin(md * azimuth) - S * std::cos(md * azimuth)) * Pnm;
-            gravity_n(2) += (nd + 1.0) * std::pow((InsConst::WGS84_a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnm;
+            n_gravity(0) += std::pow((InsConst::WGS84_a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnmd;
+            n_gravity(1) += std::pow((InsConst::WGS84_a / radius), nd) * md * (C * std::sin(md * azimuth) - S * std::cos(md * azimuth)) * Pnm;
+            n_gravity(2) += (nd + 1.0) * std::pow((InsConst::WGS84_a / radius), nd) * (C * std::cos(md * azimuth) + S * std::sin(md * azimuth)) * Pnm;
         }
     }
 
-    return { -InsConst::WGS84_MU / (radius * radius) * gravity_n(0),
-             (1.0 / std::sin(elevation)) * (-InsConst::WGS84_MU / (radius * radius)) * gravity_n(1),
-             InsConst::WGS84_MU / (radius * radius) * (1.0 + gravity_n(2)) };
+    return { -InsConst::WGS84_MU / (radius * radius) * n_gravity(0),
+             (1.0 / std::sin(elevation)) * (-InsConst::WGS84_MU / (radius * radius)) * n_gravity(1),
+             InsConst::WGS84_MU / (radius * radius) * (1.0 + n_gravity(2)) };
 }
 
-Eigen::Vector3d calcCentrifugalAcceleration(const double& latitude, const double& altitude)
+Eigen::Vector3d n_calcCentrifugalAcceleration(const double& latitude, const double& altitude)
 {
     // Geocentric latitude determination from geographic latitude
     double latitudeGeocentric = std::atan((std::pow(InsConst::WGS84_b, 2.0) / std::pow(InsConst::WGS84_a, 2.0)) * std::tan(latitude));
