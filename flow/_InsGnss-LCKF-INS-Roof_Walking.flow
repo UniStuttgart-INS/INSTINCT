@@ -1191,7 +1191,7 @@
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Accelerometer bias X_b accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias b_X accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
@@ -1230,7 +1230,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Y_b accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
@@ -1269,7 +1269,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Z_b accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
@@ -1308,7 +1308,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias X_b accumulated [rad/s]",
+                                "displayName": "Gyroscope bias b_X accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
@@ -1347,7 +1347,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Y_b accumulated [rad/s]",
+                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
@@ -1386,7 +1386,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Z_b accumulated [rad/s]",
+                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
@@ -5415,7 +5415,7 @@
                         },
                         "title": "Accelerometer bias (accumulated)",
                         "xAxisLabel": "",
-                        "y1AxisLabel": "Accelerometer bias X_b [m/s^2]",
+                        "y1AxisLabel": "Accelerometer bias b_X [m/s^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": ""
                     },
@@ -5447,7 +5447,7 @@
                         },
                         "title": "Gyroscope bias (accumulated)",
                         "xAxisLabel": "",
-                        "y1AxisLabel": "Gyroscope bias X_b [rad/s]",
+                        "y1AxisLabel": "Gyroscope bias b_X [rad/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": ""
                     },

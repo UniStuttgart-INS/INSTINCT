@@ -448,7 +448,7 @@
                 "angularRateTransportRateCompensationEnabled": true,
                 "centrifgalAccelerationCompensationEnabled": true,
                 "coriolisAccelerationCompensationEnabled": true,
-                "gravityModel": 3,
+                "gravitationModel": 3,
                 "integrationAlgorithm": 1,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
@@ -489,7 +489,7 @@
                 "angularRateTransportRateCompensationEnabled": true,
                 "centrifgalAccelerationCompensationEnabled": true,
                 "coriolisAccelerationCompensationEnabled": true,
-                "gravityModel": 0,
+                "gravitationModel": 3,
                 "integrationAlgorithm": 0,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
@@ -534,6 +534,11 @@
             "data": {
                 "attitudeMode": 0,
                 "initDuration": 0.0,
+                "n_overrideValuesVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "overridePosition": false,
                 "overrideRollPitchYaw": [
                     false,
@@ -546,11 +551,6 @@
                     0.0
                 ],
                 "overrideValuesRollPitchYaw": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "overrideValuesVelocity_n": [
                     0.0,
                     0.0,
                     0.0
@@ -588,28 +588,6 @@
         },
         "node-239": {
             "data": {
-                "beta_accel": {
-                    "0": {
-                        "0": 200.0
-                    },
-                    "1": {
-                        "0": 200.0
-                    },
-                    "2": {
-                        "0": 200.0
-                    }
-                },
-                "beta_gyro": {
-                    "0": {
-                        "0": 200.0
-                    },
-                    "1": {
-                        "0": 200.0
-                    },
-                    "2": {
-                        "0": 200.0
-                    }
-                },
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
                         "0": 0.0006
@@ -697,10 +675,34 @@
                 "phiCalculationAlgorithm": 0,
                 "phiCalculationTaylorOrder": 2,
                 "qCalculationAlgorithm": 0,
-                "randomProcessAccel": 2,
-                "randomProcessGyro": 2,
+                "randomProcessAccel": 1,
+                "randomProcessGyro": 1,
+                "stdevAccelBiasUnits": 0,
                 "stdevAccelNoiseUnits": 1,
+                "stdevGyroBiasUnits": 0,
                 "stdevGyroNoiseUnits": 1,
+                "stdev_bad": {
+                    "0": {
+                        "0": 10.0
+                    },
+                    "1": {
+                        "0": 10.0
+                    },
+                    "2": {
+                        "0": 10.0
+                    }
+                },
+                "stdev_bgd": {
+                    "0": {
+                        "0": 1.0
+                    },
+                    "1": {
+                        "0": 1.0
+                    },
+                    "2": {
+                        "0": 1.0
+                    }
+                },
                 "stdev_ra": {
                     "0": {
                         "0": 0.001
@@ -723,28 +725,26 @@
                         "0": 0.001
                     }
                 },
-                "varianceAccelBiasUnits": 0,
-                "varianceGyroBiasUnits": 0,
-                "variance_bad": {
+                "tau_bad": {
                     "0": {
-                        "0": 0.0001
+                        "0": 300.0
                     },
                     "1": {
-                        "0": 0.0001
+                        "0": 300.0
                     },
                     "2": {
-                        "0": 0.0001
+                        "0": 300.0
                     }
                 },
-                "variance_bgd": {
+                "tau_bgd": {
                     "0": {
-                        "0": 0.01
+                        "0": 300.0
                     },
                     "1": {
-                        "0": 0.01
+                        "0": 300.0
                     },
                     "2": {
-                        "0": 0.01
+                        "0": 300.0
                     }
                 }
             },
@@ -1191,7 +1191,7 @@
                                 "plotOnAxisAndPlotStyle": []
                             },
                             {
-                                "displayName": "Accelerometer bias X_b accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias b_X accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
@@ -1230,7 +1230,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Y_b accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias b_Y accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
@@ -1269,7 +1269,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Accelerometer bias Z_b accumulated [m/s^2]",
+                                "displayName": "Accelerometer bias b_Z accumulated [m/s^2]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         0,
@@ -1308,7 +1308,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias X_b accumulated [rad/s]",
+                                "displayName": "Gyroscope bias b_X accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
@@ -1347,7 +1347,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Y_b accumulated [rad/s]",
+                                "displayName": "Gyroscope bias b_Y accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
@@ -1386,7 +1386,7 @@
                                 ]
                             },
                             {
-                                "displayName": "Gyroscope bias Z_b accumulated [rad/s]",
+                                "displayName": "Gyroscope bias b_Z accumulated [rad/s]",
                                 "plotOnAxisAndPlotStyle": [
                                     [
                                         1,
@@ -5310,7 +5310,7 @@
                         },
                         "title": "Accelerometer bias (accumulated)",
                         "xAxisLabel": "",
-                        "y1AxisLabel": "Accelerometer bias X_b [m/s^2]",
+                        "y1AxisLabel": "Accelerometer bias b_X [m/s^2]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": ""
                     },
@@ -5342,7 +5342,7 @@
                         },
                         "title": "Gyroscope bias (accumulated)",
                         "xAxisLabel": "",
-                        "y1AxisLabel": "Gyroscope bias X_b [rad/s]",
+                        "y1AxisLabel": "Gyroscope bias b_X [rad/s]",
                         "y2AxisLabel": "",
                         "y3AxisLabel": ""
                     },
@@ -5498,7 +5498,7 @@
             "data": {
                 "Imu": {
                     "imuPos": {
-                        "posAccel_b": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5509,7 +5509,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posGyro_b": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5520,7 +5520,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posMag_b": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5531,21 +5531,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5559,7 +5545,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5596,12 +5596,13 @@
                     }
                 },
                 "gnssFrequency": 5.0,
-                "gravityModel": 0,
+                "gravitationModel": 3,
                 "helicalTrajectoryVerticalSpeed": 1.0,
                 "imuFrequency": 200.0,
-                "linearTrajectoryAcceleration_n": {
+                "linearTrajectoryDistanceForStop": 100.0,
+                "n_linearTrajectoryAcceleration": {
                     "0": {
-                        "0": 1.0
+                        "0": 0.0
                     },
                     "1": {
                         "0": 0.0
@@ -5610,8 +5611,7 @@
                         "0": 0.0
                     }
                 },
-                "linearTrajectoryDistanceForStop": 100.0,
-                "linearTrajectoryStartVelocity_n": {
+                "n_linearTrajectoryStartVelocity": {
                     "0": {
                         "0": 1.0
                     },
@@ -5673,7 +5673,7 @@
                 },
                 "Imu": {
                     "imuPos": {
-                        "posAccel_b": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5684,7 +5684,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posGyro_b": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5695,7 +5695,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posMag_b": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5706,21 +5706,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5734,7 +5720,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5778,7 +5778,7 @@
                 },
                 "Imu": {
                     "imuPos": {
-                        "posAccel_b": {
+                        "b_positionAccel": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5789,7 +5789,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posGyro_b": {
+                        "b_positionGyro": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5800,7 +5800,7 @@
                                 "0": 0.0
                             }
                         },
-                        "posMag_b": {
+                        "b_positionMag": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5811,21 +5811,7 @@
                                 "0": 0.0
                             }
                         },
-                        "quatAccel_bp": {
-                            "0": {
-                                "0": 0.0
-                            },
-                            "1": {
-                                "0": 0.0
-                            },
-                            "2": {
-                                "0": 0.0
-                            },
-                            "3": {
-                                "0": 1.0
-                            }
-                        },
-                        "quatGyro_bp": {
+                        "b_quatAccel_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -5839,7 +5825,21 @@
                                 "0": 1.0
                             }
                         },
-                        "quatMag_bp": {
+                        "b_quatGyro_p": {
+                            "0": {
+                                "0": 0.0
+                            },
+                            "1": {
+                                "0": 0.0
+                            },
+                            "2": {
+                                "0": 0.0
+                            },
+                            "3": {
+                                "0": 1.0
+                            }
+                        },
+                        "b_quatMag_p": {
                             "0": {
                                 "0": 0.0
                             },
@@ -6334,7 +6334,7 @@
                 "angularRateTransportRateCompensationEnabled": true,
                 "centrifgalAccelerationCompensationEnabled": true,
                 "coriolisAccelerationCompensationEnabled": true,
-                "gravityModel": 3,
+                "gravitationModel": 3,
                 "integrationAlgorithm": 2,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
@@ -9899,7 +9899,7 @@
                 "angularRateTransportRateCompensationEnabled": true,
                 "centrifgalAccelerationCompensationEnabled": true,
                 "coriolisAccelerationCompensationEnabled": true,
-                "gravityModel": 3,
+                "gravitationModel": 3,
                 "integrationAlgorithm": 0,
                 "integrationFrame": 1,
                 "prefereTimeSinceStartupOverInsTime": false,
