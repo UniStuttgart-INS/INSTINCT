@@ -23,9 +23,9 @@ Eigen::Matrix3d G_GaussMarkov1(const Eigen::Vector3d& sigma2, const Eigen::Vecto
 
 /// @brief S_ra Power Spectral Density of the random noise
 /// @param[in] sigma2_r 𝜎²_r standard deviation of the noise on the measurements
-/// @param[in] i_tau 𝜏ᵢ interval between the input of successive outputs to the inertial navigation equations in [s]
+/// @param[in] tau_i 𝜏ᵢ interval between the input of successive outputs to the inertial navigation equations in [s]
 /// @note See P. Groves (2013) - Principles of GNSS, Inertial, and Multisensor Integrated Navigation Systems (ch. 14.2.6)
-[[nodiscard]] Eigen::Vector3d psdNoise(const Eigen::Vector3d& sigma2_r, const double& i_tau);
+[[nodiscard]] Eigen::Vector3d psdNoise(const Eigen::Vector3d& sigma2_r, const double& tau_i);
 
 /// @brief S_bad Power Spectral Density of the bias variation
 /// @param[in] sigma2_bd 𝜎²_bd standard deviation of the dynamic bias
