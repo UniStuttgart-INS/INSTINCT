@@ -57,188 +57,12 @@ class UlogFile : public Imu, public FileReader
     /// @brief Resets the node. Moves the read cursor to the start
     bool resetNode() override;
 
-    /// Key-value pair of the message format
-    struct DataField
-    {
-        std::string type; ///< e.g. "uint64_t"
-        std::string name; ///< e.g. "timestamp"
-    };
-
-    /// Key: message_name, e.g. "sensor_accel"
-    std::unordered_map<std::string, std::vector<DataField>> messageFormats;
-
-    struct SensorAccel
-    {
-        uint64_t timestamp;
-        uint64_t timestamp_sample;
-        uint32_t device_id;
-        float x;
-        float y;
-        float z;
-        float temperature;
-        uint32_t error_count;
-        std::array<uint8_t, 3> clip_counter;
-
-        static constexpr uint8_t padding = 5;
-    };
-
-    struct SensorGyro
-    {
-        uint64_t timestamp;
-        uint64_t timestamp_sample;
-        uint32_t device_id;
-        float x;
-        float y;
-        float z;
-        float temperature;
-        uint32_t error_count;
-    };
-
-    struct SensorMag
-    {
-        uint64_t timestamp;
-        uint64_t timestamp_sample;
-        uint32_t device_id;
-        float x;
-        float y;
-        float z;
-        float temperature;
-        uint32_t error_count;
-        bool is_external;
-
-        static constexpr uint8_t padding = 7;
-    };
-
-    struct VehicleGpsPosition
-    {
-        uint64_t timestamp; ///<
-        uint64_t time_utc_usec;
-        int32_t lat;
-        int32_t lon;
-        int32_t alt;
-        int32_t alt_ellipsoid;
-        float s_variance_m_s;
-        float c_variance_rad;
-        float eph;
-        float epv;
-        float hdop;
-        float vdop;
-        int32_t noise_per_ms;
-        int32_t jamming_indicator;
-        float vel_m_s;
-        float vel_n_m_s;
-        float vel_e_m_s;
-        float vel_d_m_s;
-        float cog_rad;
-        int32_t timestamp_time_relative;
-        float heading;
-        float heading_offset;
-        uint8_t fix_type;
-        bool vel_ned_valid;
-        uint8_t satellites_used;
-        std::array<uint8_t, 5> _padding0;
-    };
-
-    struct VehicleAttitude
-    {
-        uint64_t timestamp;
-        std::array<float, 4> q;
-        std::array<float, 4> delta_q_reset;
-        uint8_t quat_reset_counter;
-        std::array<uint8_t, 7> _padding0;
-    };
-
-    struct VehicleAirData
-    {
-        uint64_t timestamp;
-        uint64_t timestamp_sample;
-        uint32_t baro_device_id;
-        float baro_alt_meter;
-        float baro_temp_celcius;
-        float baro_pressure_pa;
-        float rho;
-        std::array<uint8_t, 4> _padding0;
-    };
-
-    struct VehicleControlMode
-    {
-        uint64_t timestamp;
-        bool flag_armed;
-        bool flag_external_manual_override_ok;
-        bool flag_control_manual_enabled;
-        bool flag_control_auto_enabled;
-        bool flag_control_offboard_enabled;
-        bool flag_control_rates_enabled;
-        bool flag_control_attitude_enabled;
-        bool flag_control_yawrate_override_enabled;
-        bool flag_control_rattitude_enabled;
-        bool flag_control_force_enabled;
-        bool flag_control_acceleration_enabled;
-        bool flag_control_velocity_enabled;
-        bool flag_control_position_enabled;
-        bool flag_control_altitude_enabled;
-        bool flag_control_climb_rate_enabled;
-        bool flag_control_termination_enabled;
-        bool flag_control_fixed_hdg_enabled;
-        std::array<uint8_t, 7> _padding0;
-    };
-
-    struct VehicleStatus
-    {
-        uint64_t timestamp;
-        uint64_t nav_state_timestamp;
-        uint32_t onboard_control_sensors_present;
-        uint32_t onboard_control_sensors_enabled;
-        uint32_t onboard_control_sensors_health;
-        uint8_t nav_state;
-        uint8_t arming_state;
-        uint8_t hil_state;
-        bool failsafe;
-        uint8_t system_type;
-        uint8_t system_id;
-        uint8_t component_id;
-        uint8_t vehicle_type;
-        bool is_vtol;
-        bool is_vtol_tailsitter;
-        bool vtol_fw_permanent_stab;
-        bool in_transition_mode;
-        bool in_transition_to_fw;
-        bool rc_signal_lost;
-        uint8_t rc_input_mode;
-        bool data_link_lost;
-        uint8_t data_link_lost_counter;
-        bool high_latency_data_link_lost;
-        bool engine_failure;
-        bool mission_failure;
-        uint8_t failure_detector_status;
-        uint8_t latest_arming_reason;
-        uint8_t latest_disarming_reason;
-        std::array<uint8_t, 5> _padding0;
-    };
-
-    struct Cpuload
-    {
-        uint64_t timestamp;
-        float load;
-        float ram_usage;
-    };
-
     /// Combined (sensor-)message name with unique ID
     struct SubscriptionData
     {
         uint8_t multi_id;
         std::string message_name;
     };
-
-    struct MeasurementData
-    {
-        uint8_t multi_id;
-        std::string message_name;
-        std::variant<SensorAccel, SensorGyro, SensorMag> data;
-    };
-
-    /// Key: msg_id
-    std::unordered_map<uint16_t, SubscriptionData> subscribedMessages;
 
     /// The sensor startup UTC time in [µs]
     uint64_t sensorStartupUTCTime_usec{};
@@ -290,6 +114,192 @@ class UlogFile : public Imu, public FileReader
     /// @param[in] msgSize size of ulogMsgHeader
     /// @param[in] msgType type of ulogMsgHeader
     void readParameterMessageDefault(uint16_t msgSize, char msgType);
+
+    /// Key-value pair of the message format
+    struct DataField
+    {
+        std::string type; ///< e.g. "uint64_t"
+        std::string name; ///< e.g. "timestamp"
+    };
+
+    /// Key: message_name, e.g. "sensor_accel"
+    std::unordered_map<std::string, std::vector<DataField>> messageFormats;
+
+    /// Px4 acceleration sensor message
+    struct SensorAccel
+    {
+        uint64_t timestamp;        ///< Px4 accelerometer time since startup in [µs]
+        uint64_t timestamp_sample; ///< [µs]
+        uint32_t device_id;        ///< unique device identifier
+        float x;                   ///< Px4 acceleration along x in p-frame [m/s^2]
+        float y;                   ///< Px4 acceleration along y in p-frame [m/s^2]
+        float z;                   ///< Px4 acceleration along z in p-frame [m/s^2]
+        float temperature;         ///< Px4 temperature of accel sensor in [°C]
+        uint32_t error_count;
+        std::array<uint8_t, 3> clip_counter;
+
+        static constexpr uint8_t padding = 5;
+    };
+
+    /// Px4 gyro sensor message
+    struct SensorGyro
+    {
+        uint64_t timestamp;        ///< Px4 gyroscope time since startup in [µs]
+        uint64_t timestamp_sample; ///< [µs]
+        uint32_t device_id;        ///< unique device identifier
+        float x;                   ///< Px4 rotation rate about x in p-frame [//TODO]
+        float y;                   ///< Px4 rotation rate about y in p-frame [//TODO]
+        float z;                   ///< Px4 rotation rate about z in p-frame [//TODO]
+        float temperature;         ///< Px4 temperature of gyro sensor in [°C]
+        uint32_t error_count;
+    };
+
+    /// Px4 magnetometer sensor message
+    struct SensorMag
+    {
+        uint64_t timestamp;        ///< Px4 magnetometer time since startup in [µs]
+        uint64_t timestamp_sample; ///< [µs]
+        uint32_t device_id;        ///< unique device identifier
+        float x;                   ///< Px4 magnetic flux density about x in p-frame [//TODO]
+        float y;                   ///< Px4 magnetic flux density about y in p-frame [//TODO]
+        float z;                   ///< Px4 magnetic flux density about z in p-frame [//TODO]
+        float temperature;         ///< Px4 temperature of gyro sensor in [°C]
+        uint32_t error_count;
+        bool is_external;
+
+        static constexpr uint8_t padding = 7;
+    };
+
+    /// Px4 GPS sensor message
+    struct VehicleGpsPosition
+    {
+        uint64_t timestamp;     ///< Px4 GPS sensor time since startup in [µs]
+        uint64_t time_utc_usec; ///< Px4 GPS UTC time in [µs]
+        int32_t lat;
+        int32_t lon;
+        int32_t alt;
+        int32_t alt_ellipsoid;
+        float s_variance_m_s;
+        float c_variance_rad;
+        float eph;
+        float epv;
+        float hdop;
+        float vdop;
+        int32_t noise_per_ms;
+        int32_t jamming_indicator;
+        float vel_m_s;
+        float vel_n_m_s;
+        float vel_e_m_s;
+        float vel_d_m_s;
+        float cog_rad;
+        int32_t timestamp_time_relative;
+        float heading;
+        float heading_offset;
+        uint8_t fix_type;
+        bool vel_ned_valid;
+        uint8_t satellites_used;
+        std::array<uint8_t, 5> _padding0;
+    };
+
+    /// Px4 GPS attitude message
+    struct VehicleAttitude
+    {
+        uint64_t timestamp;     ///< Px4 GPS sensor time since startup in [µs]
+        std::array<float, 4> q; ///< Px4 GPS attitude quaternion
+        std::array<float, 4> delta_q_reset;
+        uint8_t quat_reset_counter;
+        std::array<uint8_t, 7> _padding0;
+    };
+
+    /// Px4 air data sensor message
+    struct VehicleAirData
+    {
+        uint64_t timestamp;        ///< Px4 air data sensor time since startup in [µs]
+        uint64_t timestamp_sample; ///< [µs]
+        uint32_t baro_device_id;   ///< unique device identifier
+        float baro_alt_meter;      ///< Px4 barometric altitude in [m]
+        float baro_temp_celcius;   ///< Px4 barometric temperature in [°C]
+        float baro_pressure_pa;    ///< Px4 barometric pressure in [Pa]
+        float rho;
+        std::array<uint8_t, 4> _padding0;
+    };
+
+    /// Px4 control data message
+    struct VehicleControlMode
+    {
+        uint64_t timestamp; ///< Px4 controller time since startup in [µs]
+        bool flag_armed;
+        bool flag_external_manual_override_ok;
+        bool flag_control_manual_enabled;
+        bool flag_control_auto_enabled;
+        bool flag_control_offboard_enabled;
+        bool flag_control_rates_enabled;
+        bool flag_control_attitude_enabled;
+        bool flag_control_yawrate_override_enabled;
+        bool flag_control_rattitude_enabled;
+        bool flag_control_force_enabled;
+        bool flag_control_acceleration_enabled;
+        bool flag_control_velocity_enabled;
+        bool flag_control_position_enabled;
+        bool flag_control_altitude_enabled;
+        bool flag_control_climb_rate_enabled;
+        bool flag_control_termination_enabled;
+        bool flag_control_fixed_hdg_enabled;
+        std::array<uint8_t, 7> _padding0;
+    };
+
+    /// Px4 vehicle status message
+    struct VehicleStatus
+    {
+        uint64_t timestamp;           ///< [µs]
+        uint64_t nav_state_timestamp; ///< [µs]
+        uint32_t onboard_control_sensors_present;
+        uint32_t onboard_control_sensors_enabled;
+        uint32_t onboard_control_sensors_health;
+        uint8_t nav_state;
+        uint8_t arming_state;
+        uint8_t hil_state;
+        bool failsafe;
+        uint8_t system_type;
+        uint8_t system_id;
+        uint8_t component_id;
+        uint8_t vehicle_type;
+        bool is_vtol;
+        bool is_vtol_tailsitter;
+        bool vtol_fw_permanent_stab;
+        bool in_transition_mode;
+        bool in_transition_to_fw;
+        bool rc_signal_lost;
+        uint8_t rc_input_mode;
+        bool data_link_lost;
+        uint8_t data_link_lost_counter;
+        bool high_latency_data_link_lost;
+        bool engine_failure;
+        bool mission_failure;
+        uint8_t failure_detector_status;
+        uint8_t latest_arming_reason;
+        uint8_t latest_disarming_reason;
+        std::array<uint8_t, 5> _padding0;
+    };
+
+    /// Px4 CPU status message
+    struct Cpuload
+    {
+        uint64_t timestamp; ///< Px4 CPU time since startup in [µs]
+        float load;         ///< Px4 CPU load
+        float ram_usage;    ///< Px4 RAM usage
+    };
+
+    /// Key: msg_id
+    std::unordered_map<uint16_t, SubscriptionData> subscribedMessages;
+
+    /// Combined  (sensor-)message name with unique ID and data
+    struct MeasurementData
+    {
+        uint8_t multi_id;
+        std::string message_name;
+        std::variant<SensorAccel, SensorGyro, SensorMag> data;
+    };
 
     /// @brief Number of messages read
     uint32_t messageCount = 0;
