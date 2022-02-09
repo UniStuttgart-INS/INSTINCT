@@ -29,7 +29,7 @@ class RtklibPosObs : public InsObs
     }
 
     /// ECEF position [m]
-    std::optional<Eigen::Vector3d> position_ecef;
+    std::optional<Eigen::Vector3d> e_position;
 
     /// 1:fix, 2:float, 3:sbas, 4:dgps, 5:single, 6:ppp
     std::optional<uint8_t> Q;

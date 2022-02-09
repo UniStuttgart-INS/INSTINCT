@@ -11,12 +11,12 @@ namespace NAV
 void to_json(json& j, const ImuPos& pos)
 {
     j = json{
-        { "posAccel_b", pos.posAccel_b() },
-        { "posGyro_b", pos.posGyro_b() },
-        { "posMag_b", pos.posMag_b() },
-        { "quatAccel_bp", pos.quatAccel_bp().coeffs() },
-        { "quatGyro_bp", pos.quatGyro_bp().coeffs() },
-        { "quatMag_bp", pos.quatMag_bp().coeffs() },
+        { "b_positionAccel", pos.b_positionAccel() },
+        { "b_positionGyro", pos.b_positionGyro() },
+        { "b_positionMag", pos.b_positionMag() },
+        { "b_quatAccel_p", pos.b_quatAccel_p().coeffs() },
+        { "b_quatGyro_p", pos.b_quatGyro_p().coeffs() },
+        { "b_quatMag_p", pos.b_quatMag_p().coeffs() },
     };
 }
 /// @brief Converts the provided json object into a imu position object
@@ -24,29 +24,29 @@ void to_json(json& j, const ImuPos& pos)
 /// @param[out] pos Object to fill from the json
 void from_json(const json& j, ImuPos& pos)
 {
-    if (j.contains("posAccel_b"))
+    if (j.contains("b_positionAccel"))
     {
-        j.at("posAccel_b").get_to(pos._positionAccel_b);
+        j.at("b_positionAccel").get_to(pos._b_positionAccel);
     }
-    if (j.contains("positionGyro_b"))
+    if (j.contains("b_positionGyro"))
     {
-        j.at("positionGyro_b").get_to(pos._positionGyro_b);
+        j.at("b_positionGyro").get_to(pos._b_positionGyro);
     }
-    if (j.contains("posMag_b"))
+    if (j.contains("b_positionMag"))
     {
-        j.at("posMag_b").get_to(pos._positionMag_b);
+        j.at("b_positionMag").get_to(pos._b_positionMag);
     }
-    if (j.contains("quatAccel_bp"))
+    if (j.contains("b_quatAccel_p"))
     {
-        j.at("quatAccel_bp").get_to(pos._quaternionAccel_bp.coeffs());
+        j.at("b_quatAccel_p").get_to(pos._b_quatAccel_p.coeffs());
     }
-    if (j.contains("quatGyro_bp"))
+    if (j.contains("b_quatGyro_p"))
     {
-        j.at("quatGyro_bp").get_to(pos._quaternionGyro_bp.coeffs());
+        j.at("b_quatGyro_p").get_to(pos._b_quatGyro_p.coeffs());
     }
-    if (j.contains("quatMag_bp"))
+    if (j.contains("b_quatMag_p"))
     {
-        j.at("quatMag_bp").get_to(pos._quaternionMag_bp.coeffs());
+        j.at("b_quatMag_p").get_to(pos._b_quatMag_p.coeffs());
     }
 }
 

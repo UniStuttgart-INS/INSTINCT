@@ -11,7 +11,7 @@ namespace Instinct {
 \fl{equation,eq-LCKF_n-stateMatrix-short}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
-      \boldsymbol{       \dot{\psi}} \\
+      \boldsymbol{\delta \dot{\psi}} \\
       \boldsymbol{\delta \dot{v}}^{n} \\
       \boldsymbol{\delta \dot{p}}_b \\
       \boldsymbol{\delta \dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} \\
@@ -32,11 +32,11 @@ namespace Instinct {
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \mathbf{F}_{\dotup{\psi},\psi}^n     & \mathbf{F}_{\dotup{\psi},\delta v}^n     & \mathbf{F}_{\dotup{\psi},\delta r}^n     & \mathbf{0}_3   & -\mathbf{C}_b^n \\
-      \mathbf{F}_{\delta \dotup{v},\psi}^n & \mathbf{F}_{\delta \dotup{v},\delta v}^n & \mathbf{F}_{\delta \dotup{v},\delta r}^n & \mathbf{C}_b^n &  \mathbf{0}_3   \\
-      \mathbf{0}_3                         & \mathbf{F}_{\delta \dotup{r},\delta v}^n & \mathbf{F}_{\delta \dotup{r},\delta r}^n & \mathbf{0}_3   &  \mathbf{0}_3   \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   &  \mathbf{0}_3   \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \mathbf{0}_3   &  \mathbf{0}_3   \\
+      \mathbf{F}_{\delta \dotup{\psi},\delta \psi}^n & \mathbf{F}_{\delta \dotup{\psi},\delta v}^n & \mathbf{F}_{\delta \dotup{\psi},\delta r}^n & \mathbf{0}_3   & -\mathbf{C}_b^n \\
+      \mathbf{F}_{\delta \dotup{v},\delta \psi}^n    & \mathbf{F}_{\delta \dotup{v},\delta v}^n    & \mathbf{F}_{\delta \dotup{v},\delta r}^n    & \mathbf{C}_b^n &  \mathbf{0}_3   \\
+      \mathbf{0}_3                                   & \mathbf{F}_{\delta \dotup{r},\delta v}^n    & \mathbf{F}_{\delta \dotup{r},\delta r}^n    & \mathbf{0}_3   &  \mathbf{0}_3   \\
+      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                & \mathbf{0}_3   &  \mathbf{0}_3   \\
+      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                & \mathbf{0}_3   &  \mathbf{0}_3   \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -45,19 +45,19 @@ namespace Instinct {
       \fhighlight[yellow!20]{m-1-2}{m-1-2}
       \fhighlight[lime!20]{m-1-3}{m-1-3}
       \fhighlight[orange!20]{m-1-5}{m-1-5}
-      \fhighlight[blue!20]{m-2-1}{m-2-1}
-      \fhighlight[purple!20]{m-2-2}{m-2-2}
+      \fhighlight[purple!20]{m-2-1}{m-2-1}
+      \fhighlight[blue!20]{m-2-2}{m-2-2}
       \fhighlight[violet!20]{m-2-3}{m-2-3}
       \fhighlight[red!20]{m-2-4}{m-2-4}
-      \fhighlight[cyan!20]{m-3-2}{m-3-2}
-      \fhighlight[teal!20]{m-3-3}{m-3-3}
+      \fhighlight[teal!20]{m-3-2}{m-3-2}
+      \fhighlight[cyan!20]{m-3-3}{m-3-3}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
-      \boldsymbol{       \psi} \\
+      \boldsymbol{\delta \psi} \\
       \boldsymbol{\delta v}^{n} \\
       \boldsymbol{\delta p}_b \\
       \boldsymbol{\delta f}^b \\
@@ -104,21 +104,21 @@ namespace Instinct {
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes in empty cells,
                 row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,minimum height=2.3em,anchor=center},] {
-               0         &  \omega_{in,3}^{n} & -\omega_{in,2}^{n} &                             0                            &                     \frac{1}{R_E + h}                     &                       0                      &                                   -\omega_{ie}\sin{\phi}                                    &      0       &                   -\frac{v_E}{(R_E + h)^2}                   &  &                &  &  &                 & \\
-      -\omega_{in,3}^{n} &          0         &  \omega_{in,1}^{n} &                   -\frac{1}{R_N + h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                    \frac{v_N}{(R_N + h)^2}                   &  &  \mathbf{0}_3  &  &  & -\mathbf{C}_b^n & \\
-       \omega_{in,2}^{n} & -\omega_{in,1}^{n} &          0         &                             0                            &                -\frac{\tan{\phi}}{R_E + h}                &                       0                      &                 -\omega_{ie}\cos{\phi} - \frac{v_E}{(R_E + h)\cos^2{\phi}}                  &      0       &               \frac{v_E \tan{\phi}}{(R_E + h)^2}             &  &                &  &  &                 & \\
-               0         &        -f_D        &         f_E        &                    \frac{v_D}{R_N + h}                   & -2\frac{v_E \tan{\phi}}{R_E + h} - 2\omega_{ie}\sin{\phi} &              \frac{v_N}{R_N + h}             &                -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi}                 &      0       & \frac{v_E^2\tan{\phi}}{(R_E+h)^2} - \frac{v_Nv_D}{(R_N+h)^2} &  &                &  &  &                 & \\
-              f_D        &          0         &        -f_N        &  \frac{v_E \tan{\phi}}{R_E + h} + 2\omega_{ie}\sin{\phi} &            \frac{v_N \tan{\phi} + v_D}{R_E + h}           & \frac{v_E}{R_E + h} + 2\omega_{ie}\cos{\phi} & \frac{v_N v_E}{(R_E+h)\cos^2{\phi}} + 2v_N\omega_{ie}\cos{\phi} - 2v_D\omega_{ie}\sin{\phi} &      0       &        -\frac{v_Nv_E\tan{\phi} + v_Ev_D}{(R_E + h)^2}        &  & \mathbf{C}_b^n &  &  &   \mathbf{0}_3  & \\
-             -f_E        &         f_N        &          0         &                  -\frac{2v_N}{R_N + h}                   &       -\frac{2v_E}{R_E + h} - 2\omega_{ie}\cos{\phi}      &                       0                      &                                  2v_E\omega_{ie}\sin{\phi}                                  &      0       &     \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2}    &  &                &  &  &                 & \\
-                         &                    &                    &                      \frac{1}{R_N+h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                   -\frac{v_N}{(R_N + h)^2}                   &  &                &  &  &                 & \\
-                         &    \mathbf{0}_3    &                    &                             0                            &                \frac{1}{(R_E+h)\cos{\phi}}                &                       0                      &                           \frac{v_E\tan{\phi}}{(R_E+h)\cos{\phi}}                           &      0       &              -\frac{v_E}{(R_E + h)^2\cos{\phi}}              &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
-                         &                    &                    &                             0                            &                             0                             &                      -1                      &                                             0                                               &      0       &                               0                              &  &                &  &  &                 & \\
-                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
-                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                             & \mathbf{0}_3 &                                                              &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
-                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
-                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
-                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                             & \mathbf{0}_3 &                                                              &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
-                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                              &  &                &  &  &                 & \\
+               0         &  \omega_{in,3}^{n} & -\omega_{in,2}^{n} &                             0                            &                     \frac{1}{R_E + h}                     &                       0                      &                                   -\omega_{ie}\sin{\phi}                                    &      0       &                            -\frac{v_E}{(R_E + h)^2}                            &  &                &  &  &                 & \\
+      -\omega_{in,3}^{n} &          0         &  \omega_{in,1}^{n} &                   -\frac{1}{R_N + h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                             \frac{v_N}{(R_N + h)^2}                            &  &  \mathbf{0}_3  &  &  & -\mathbf{C}_b^n & \\
+       \omega_{in,2}^{n} & -\omega_{in,1}^{n} &          0         &                             0                            &                -\frac{\tan{\phi}}{R_E + h}                &                       0                      &                 -\omega_{ie}\cos{\phi} - \frac{v_E}{(R_E + h)\cos^2{\phi}}                  &      0       &                        \frac{v_E \tan{\phi}}{(R_E + h)^2}                      &  &                &  &  &                 & \\
+               0         &        -f_D        &         f_E        &                    \frac{v_D}{R_N + h}                   & -2\frac{v_E \tan{\phi}}{R_E + h} - 2\omega_{ie}\sin{\phi} &              \frac{v_N}{R_N + h}             &                -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi}                 &      0       &          \frac{v_E^2\tan{\phi}}{(R_E+h)^2} - \frac{v_Nv_D}{(R_N+h)^2}          &  &                &  &  &                 & \\
+              f_D        &          0         &        -f_N        &  \frac{v_E \tan{\phi}}{R_E + h} + 2\omega_{ie}\sin{\phi} &            \frac{v_N \tan{\phi} + v_D}{R_E + h}           & \frac{v_E}{R_E + h} + 2\omega_{ie}\cos{\phi} & \frac{v_N v_E}{(R_E+h)\cos^2{\phi}} + 2v_N\omega_{ie}\cos{\phi} - 2v_D\omega_{ie}\sin{\phi} &      0       &                 -\frac{v_Nv_E\tan{\phi} + v_Ev_D}{(R_E + h)^2}                 &  & \mathbf{C}_b^n &  &  &   \mathbf{0}_3  & \\
+             -f_E        &         f_N        &          0         &                  -\frac{2v_N}{R_N + h}                   &       -\frac{2v_E}{R_E + h} - 2\omega_{ie}\cos{\phi}      &                       0                      &                                  2v_E\omega_{ie}\sin{\phi}                                  &      0       & \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2} - \frac{2 g_0}{r_{eS}^e} &  &                &  &  &                 & \\
+                         &                    &                    &                      \frac{1}{R_N+h}                     &                             0                             &                       0                      &                                             0                                               &      0       &                            -\frac{v_N}{(R_N + h)^2}                            &  &                &  &  &                 & \\
+                         &    \mathbf{0}_3    &                    &                             0                            &                \frac{1}{(R_E+h)\cos{\phi}}                &                       0                      &                           \frac{v_E\tan{\phi}}{(R_E+h)\cos{\phi}}                           &      0       &                       -\frac{v_E}{(R_E + h)^2\cos{\phi}}                       &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
+                         &                    &                    &                             0                            &                             0                             &                      -1                      &                                             0                                               &      0       &                                        0                                       &  &                &  &  &                 & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                                                &  &                &  &  &                 & \\
+                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                             & \mathbf{0}_3 &                                                                                &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                                                &  &                &  &  &                 & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                                                &  &                &  &  &                 & \\
+                         &    \mathbf{0}_3    &                    &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                             & \mathbf{0}_3 &                                                                                &  &  \mathbf{0}_3  &  &  &   \mathbf{0}_3  & \\
+                         &                    &                    &                                                          &                                                           &                                              &                                                                                             &              &                                                                                &  &                &  &  &                 & \\
     };
 
     \foreach \r in {1,3,4,6,7,9} {
@@ -145,12 +145,12 @@ namespace Instinct {
       \fhighlight[yellow!20]{m-1-4-nw}{m-3-6-se}
       \fhighlight[lime!20]{m-1-7-nw}{m-3-9-se}
       \fhighlight[orange!20]{m-1-13-nw}{m-3-15-se}
-      \fhighlight[blue!20]{m-4-1-nw}{m-6-3-se}
-      \fhighlight[purple!20]{m-4-4-nw}{m-6-6-se}
+      \fhighlight[purple!20]{m-4-1-nw}{m-6-3-se}
+      \fhighlight[blue!20]{m-4-4-nw}{m-6-6-se}
       \fhighlight[violet!20]{m-4-7-nw}{m-6-9-se}
       \fhighlight[red!20]{m-4-10-nw}{m-6-12-se}
-      \fhighlight[cyan!20]{m-7-4-nw}{m-9-6-se}
-      \fhighlight[teal!20]{m-7-7-nw}{m-9-9-se}
+      \fhighlight[teal!20]{m-7-4-nw}{m-9-6-se}
+      \fhighlight[cyan!20]{m-7-7-nw}{m-9-9-se}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
@@ -203,7 +203,7 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
 \fl{equation,eq-LCKF_n-dynamicModel-short}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
-      \boldsymbol{       \dot{\psi}} \\
+      \boldsymbol{\delta \dot{\psi}} \\
       \boldsymbol{\delta \dot{v}}^{n} \\
       \boldsymbol{\delta \dot{p}}_b \\
       \boldsymbol{\delta \dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} \\
@@ -224,11 +224,11 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.5em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \mathbf{F}_{\dotup{\psi},\psi}^n     & \mathbf{F}_{\dotup{\psi},\delta v}^n     & \mathbf{F}_{\dotup{\psi},\delta r}^n     &    \mathbf{0}_3      &      -\mathbf{C}_b^n      \\
-      \mathbf{F}_{\delta \dotup{v},\psi}^n & \mathbf{F}_{\delta \dotup{v},\delta v}^n & \mathbf{F}_{\delta \dotup{v},\delta r}^n &    \mathbf{C}_b^n    &       \mathbf{0}_3        \\
-      \mathbf{0}_3                         & \mathbf{F}_{\delta \dotup{r},\delta v}^n & \mathbf{F}_{\delta \dotup{r},\delta r}^n &    \mathbf{0}_3      &       \mathbf{0}_3        \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             & \boldsymbol{\beta}_f &       \mathbf{0}_3        \\
-      \mathbf{0}_3                         & \mathbf{0}_3                             & \mathbf{0}_3                             &    \mathbf{0}_3      & \boldsymbol{\beta}_\omega \\
+      \mathbf{F}_{\delta \dotup{\psi},\delta \psi}^n & \mathbf{F}_{\delta \dotup{\psi},\delta v}^n & \mathbf{F}_{\delta \dotup{\psi},\delta r}^n &    \mathbf{0}_3      &      -\mathbf{C}_b^n      \\
+      \mathbf{F}_{\delta \dotup{v},\delta \psi}^n    & \mathbf{F}_{\delta \dotup{v},\delta v}^n    & \mathbf{F}_{\delta \dotup{v},\delta r}^n    &    \mathbf{C}_b^n    &       \mathbf{0}_3        \\
+      \mathbf{0}_3                                   & \mathbf{F}_{\delta \dotup{r},\delta v}^n    & \mathbf{F}_{\delta \dotup{r},\delta r}^n    &    \mathbf{0}_3      &       \mathbf{0}_3        \\
+      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                & \boldsymbol{\beta}_f &       \mathbf{0}_3        \\
+      \mathbf{0}_3                                   & \mathbf{0}_3                                & \mathbf{0}_3                                &    \mathbf{0}_3      & \boldsymbol{\beta}_\omega \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
@@ -237,12 +237,12 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
       \fhighlight[yellow!20]{m-1-2}{m-1-2}
       \fhighlight[lime!20]{m-1-3}{m-1-3}
       \fhighlight[orange!20]{m-1-5}{m-1-5}
-      \fhighlight[blue!20]{m-2-1}{m-2-1}
-      \fhighlight[purple!20]{m-2-2}{m-2-2}
+      \fhighlight[purple!20]{m-2-1}{m-2-1}
+      \fhighlight[blue!20]{m-2-2}{m-2-2}
       \fhighlight[violet!20]{m-2-3}{m-2-3}
       \fhighlight[red!20]{m-2-4}{m-2-4}
-      \fhighlight[cyan!20]{m-3-2}{m-3-2}
-      \fhighlight[teal!20]{m-3-3}{m-3-3}
+      \fhighlight[teal!20]{m-3-2}{m-3-2}
+      \fhighlight[cyan!20]{m-3-3}{m-3-3}
       \fhighlight[magenta!20]{m-4-4}{m-4-4}
       \fhighlight[olive!20]{m-5-5}{m-5-5}
     \end{pgfonlayer}
@@ -251,7 +251,7 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.4em] {
-      \boldsymbol{       \psi} \\
+      \boldsymbol{\delta \psi} \\
       \boldsymbol{\delta v}^{n} \\
       \boldsymbol{\delta p}_b \\
       \boldsymbol{\delta f}^b \\
@@ -272,21 +272,23 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \mathbf{0}_3 & \mathbf{0}_3      \\
-      \mathbf{0}_3 & \mathbf{0}_3      \\
-      \mathbf{0}_3 & \mathbf{0}_3      \\
-      \mathbf{G}_f & \mathbf{0}_3      \\
-      \mathbf{0}_3 & \mathbf{G}_\omega \\
+      -\mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{I}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-2.north east);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-4.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[brown!20]{m-4-1}{m-4-1}
-      \fhighlight[darkgray!20]{m-5-2}{m-5-2}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-4-3}{m-4-3}
+      \fhighlight[lightgray!20]{m-5-4}{m-5-4}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
-  \mathbf{W}
+  \mathbf{w}
 \f}
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -299,24 +301,59 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
 
 Using this we can see that \f$ \highlight[magenta!20]{\boldsymbol{\beta}_f} = \mathbf{0}_3 \f$ and \f$ \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \mathbf{0}_3 \f$.
 
-The terms in \f$ \mathbf{G} \f$ are scaled factors for the noise and depend on the amplitude of the power spectral density (PSD) of the noise process.
-For a random walk (white noise) this is \f$ \sigma^2 \f$ and therefore
+The terms in the noise input matrix \f$ \mathbf{G} \f$ are not scaled and therefore need to be compensated with a noise scale matrix \f$ \mathbf{W} \f$ depending on the amplitude of the power spectral density (PSD) of the noise process.
 
-\fl{equation,eq-LCKF_n-random-walk-G}
-  \highlight[brown!20]{\mathbf{G}_f} = \begin{pmatrix} \sqrt{\sigma_{f}^2} &          0          &          0          \\
-                                                                0          & \sqrt{\sigma_{f}^2} &          0          \\
-                                                                0          &          0          & \sqrt{\sigma_{f}^2} \end{pmatrix}, \qquad
-  \highlight[darkgray!20]{\mathbf{G}_\omega} = \begin{pmatrix} \sqrt{\sigma_{\omega}^2} &            0             &            0             \\
-                                                                          0             & \sqrt{\sigma_{\omega}^2} &            0             \\
-                                                                          0             &            0             & \sqrt{\sigma_{\omega}^2} \end{pmatrix}
+\fl{equation,eq-LCKF_n-random-walk-noise-scale-matrix-W}
+  \mathbf{W} =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
+    {
+      \mathbf{S}_{rg} & \mathbf{0}_3    & \mathbf{0}_3     & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{S}_{ra} & \mathbf{0}_3     & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{0}_3    & \mathbf{S}_{bad} & \mathbf{0}_3     \\
+      \mathbf{0}_3    & \mathbf{0}_3    & \mathbf{0}_3     & \mathbf{S}_{bgd} \\
+    };
+
+    \begin{pgfonlayer}{background}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-3-3}{m-3-3}
+      \fhighlight[lightgray!20]{m-4-4}{m-4-4}
+    \end{pgfonlayer}
+  \end{tikzpicture}
+\f}
+
+\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices which entries are filled with the following PSDs.
+
+White noise has a PSD of \f$ \sigma^2 \f$ and therefore the <b>PSDs of the accelerometer and gyro noise</b> are
+
+\fl{equation,eq-LCKF_n-random-walk-S-noise}
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
 \f}
 where
-- \f$ \sigma_{f}^2 \f$ is the variance of the noise on the accelerometer specific-force measurements
-- \f$ \sigma_{\omega}^2 \f$ is the variance of the noise on the gyro angular-rate measurements
+- \f$ \sigma_{ra} \f$ is the standard deviation of the noise on the accelerometer specific-force measurements
+- \f$ \sigma_{rg} \f$ is the standard deviation of the noise on the gyro angular-rate measurements
+- \f$ \tau_i \f$ is the interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
+
+Similarly, the <b>Bias variation PSDs</b> are
+
+\fl{equation,eq-LCKF_n-random-walk-S-bias}
+  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_i} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_i}, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{bad} \f$ standard deviation of the accelerometer dynamic bias
+- \f$ \sigma_{bgd} \f$ standard deviation of the gyro dynamic bias
+
+see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.83/14.84, p. 592
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
 \subsection LooselyCoupledKF_n-Noise-GM1 Gauss-Markov 1. Order
+
+\f$ \textcolor{red}{\text{[Deprecated] TODO: Update code and documentation}} \f$
 
 \fl{equation,eq-LCKF_n-gauss-markov-1}
   \dotup{x} = -\beta x + W(t)
@@ -337,10 +374,10 @@ where
 
 The amplitude of the power spectral density (PSD) of a Gauss-Markov-1 process is \f$ 2\sigma^2 \beta \f$ and therefore
 \fl{equation,eq-LCKF_n-gm1-G}
-  \highlight[brown!20]{\mathbf{G}_f} = \begin{pmatrix} \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               &                0               \\
+  \highlight[pink!20]{\mathbf{G}_f} = \begin{pmatrix} \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               &                0               \\
                                                                       0               & \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               \\
                                                                       0               &                0               & \sqrt{2\sigma_{f}^2 \beta_{f}} \end{pmatrix}, \qquad
-  \highlight[darkgray!20]{\mathbf{G}_\omega} = \begin{pmatrix} \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     &                    0                     \\
+  \highlight[lightgray!20]{\mathbf{G}_\omega} = \begin{pmatrix} \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     &                    0                     \\
                                                                                   0                     & \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     \\
                                                                                   0                     &                    0                     & \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} \end{pmatrix}
 \f}
@@ -354,13 +391,197 @@ where
 \section LooselyCoupledKF_n-KF-Matrices Kalman-Filter Matrices
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
-\subsection LooselyCoupledKF_n-KF-Q State transition matrix 𝚽 & Process noise covariance matrix Q
+\subsection LooselyCoupledKF_n-KF-Phi-Q State transition matrix 𝚽 & Process noise covariance matrix Q
 
-The state transition matrix and the system/process noise covariance matrix are calculated with the van Loan method \cite Loan1978 . In short
+\subsubsection LooselyCoupledKF_n-KF-Phi State transition matrix 𝚽
+
+#### Exponential Matrix
+
+The state transition matrix is defined as
+
+\fl{equation,eq-LCKF_n-Phi-exp}
+  \boldsymbol{\Phi} = \exp{(\mathbf{F} \tau_s)}
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.33, p. 97
+
+#### Taylor series
+
+The exponential matrix cannot be calculated directly and numerical methods are computationally intensive. Therefore the transition matrix can be computed as a power-series expansion
+
+\fl{equation,eq-LCKF_n-Phi-Taylor}
+  \boldsymbol{\Phi} = \sum_{r=0}^{\infty} \frac{\mathbf{F}^r \tau_s^r}{r!} = \mathbf{I} + \mathbf{F} \tau_s + \frac{1}{2} \mathbf{F}^2 \tau^2 + \frac{1}{6} \mathbf{F}^3 \tau_s^3 + \dots
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.34, p. 98
+
+\subsubsection LooselyCoupledKF_n-KF-Q Process noise covariance matrix Q
+
+The process noise covariance matrix is defined as
+
+\fl{equation,eq-LCKF_n-Q-exact}
+  \mathbf{Q}_{k-1} = \int_{t_k - \tau_s}^{t_k} \exp{(\mathbf{F}_{k-1} (t_k-t'))} \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \exp{(\mathbf{F}_{k-1}^T (t_k-t'))} dt'
+\f}
+
+This matrix can be approximated and should be validated against the the exact version prior to use.
+
+\fl{equation,eq-LCKF_n-Q-approx}
+  \mathbf{Q}_{k-1} \approx \mathbf{G}_{k-1} \mathbf{W}_{k-1} \mathbf{G}_{k-1}^T \tau_s
+\f}
+
+see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.43/3.45, p. 99
+
+Taking the noise input and scale matrices from \eqref{eq-LCKF_n-dynamicModel-short} and \eqref{eq-LCKF_n-random-walk-noise-scale-matrix-W} and putting it into the exact form \eqref{eq-LCKF_n-Q-exact}, it becomes
+
+\fl{equation,eq-LCKF_n-Q-GWGT}
+\begin{aligned}
+  \mathbf{Q}_{k-1} &= \int_{t_k - \tau_s}^{t_k}
+                           \exp{(\mathbf{F}_{k-1} (t_k-t'))}
+                           \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                         nodes={rectangle,text width=4em,align=center},row sep=0.3em, column sep=0.4em]
+                             {
+                               -\mathbf{C}_b^n \cdot \mathbf{S}_{rg} &             \mathbf{0}_3             &             \mathbf{0}_3            &             \mathbf{0}_3            \\
+                                            \mathbf{0}_3             & \mathbf{C}_b^n \cdot \mathbf{S}_{ra} &             \mathbf{0}_3            &             \mathbf{0}_3            \\
+                                            \mathbf{0}_3             &             \mathbf{0}_3             &             \mathbf{0}_3            &             \mathbf{0}_3            \\
+                                            \mathbf{0}_3             &             \mathbf{0}_3             & \mathbf{I}_3 \cdot \mathbf{S}_{bad} &             \mathbf{0}_3            \\
+                                            \mathbf{0}_3             &             \mathbf{0}_3             &             \mathbf{0}_3            & \mathbf{I}_3 \cdot \mathbf{S}_{bgd} \\
+                             };
+
+                             \begin{pgfonlayer}{background}
+                               \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+                               \fhighlight[brown!20]{m-2-2}{m-2-2}
+                               \fhighlight[pink!20]{m-4-3}{m-4-3}
+                               \fhighlight[lightgray!20]{m-5-4}{m-5-4}
+                             \end{pgfonlayer}
+                           \end{tikzpicture}
+                           \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                         nodes={rectangle,text width=4em,align=center},row sep=0.3em, column sep=0.4em]
+                             {
+                               -\mathbf{C}_n^b & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\
+                                \mathbf{0}_3   & \mathbf{C}_n^b & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 \\
+                                \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 & \mathbf{0}_3 \\
+                                \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{I}_3 \\
+                             };
+
+                             \begin{pgfonlayer}{background}
+                               \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+                               \fhighlight[brown!20]{m-2-2}{m-2-2}
+                               \fhighlight[pink!20]{m-3-4}{m-3-4}
+                               \fhighlight[lightgray!20]{m-4-5}{m-4-5}
+                             \end{pgfonlayer}
+                           \end{tikzpicture}
+                           \exp{(\mathbf{F}_{k-1}^T (t_k-t'))}
+                      dt' \\
+                   &= \int_{t_k - \tau_s}^{t_k}
+                           \exp{(\mathbf{F}_{k-1} (t_k-t'))}
+                           \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                         nodes={rectangle,text width=5em,align=center},row sep=0.3em, column sep=0.4em]
+                             {
+                               \mathbf{C}_b^n \mathbf{S}_{rg} \mathbf{C}_n^b &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                              \mathbf{0}_3                   & \mathbf{C}_b^n \mathbf{S}_{ra} \mathbf{C}_n^b & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                              \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                              \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{S}_{bad} & \mathbf{0}_3     \\
+                                              \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{S}_{bgd} \\
+                             };
+
+                             \begin{pgfonlayer}{background}
+                               \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+                               \fhighlight[brown!20]{m-2-2}{m-2-2}
+                               \fhighlight[pink!20]{m-4-4}{m-4-4}
+                               \fhighlight[lightgray!20]{m-5-5}{m-5-5}
+                             \end{pgfonlayer}
+                           \end{tikzpicture}
+                           \exp{(\mathbf{F}_{k-1}^T (t_k-t'))}
+                      dt'
+\end{aligned}
+\f}
+
+The exponential \f$ \mathbf{F} \f$ matrix shall be approximated by first order. This leads to:
+
+\fl{equation,eq-LCKF_n-Q-GWGT-approx}
+\begin{aligned}
+  \mathbf{Q}_{k-1} &\approx \int_{t_k - \tau_s}^{t_k}
+                                 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                   \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                               nodes={rectangle,text width=5.5em,align=center},row sep=0.3em, column sep=0.4em]
+                                   {
+                                     \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{\psi},\delta \psi}^n \tau_s &                \mathbf{F}_{\delta \dotup{\psi},\delta v}^n \tau_s &                \mathbf{F}_{\delta \dotup{\psi},\delta r}^n \tau_s & \mathbf{0}_3          & -\mathbf{C}_b^n \tau_s \\
+                                                    \mathbf{F}_{\delta \dotup{v},\delta \psi}^n    \tau_s & \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{v},\delta v}^n    \tau_s &                \mathbf{F}_{\delta \dotup{v},\delta r}^n    \tau_s & \mathbf{C}_b^n \tau_s &  \mathbf{0}_3          \\
+                                                    \mathbf{0}_3                                          &                \mathbf{F}_{\delta \dotup{r},\delta v}^n    \tau_s & \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{r},\delta r}^n    \tau_s & \mathbf{0}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{0}_3                                          &                \mathbf{0}_3                                       &                \mathbf{0}_3                                       & \mathbf{I}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{0}_3                                          &                \mathbf{0}_3                                       &                \mathbf{0}_3                                       & \mathbf{0}_3          &  \mathbf{I}_3          \\
+                                   };
+
+                                   \begin{pgfonlayer}{background}
+                                     \fhighlight[green!20]{m-1-1}{m-1-1}
+                                     \fhighlight[yellow!20]{m-1-2}{m-1-2}
+                                     \fhighlight[lime!20]{m-1-3}{m-1-3}
+                                     \fhighlight[orange!20]{m-1-5}{m-1-5}
+                                     \fhighlight[purple!20]{m-2-1}{m-2-1}
+                                     \fhighlight[blue!20]{m-2-2}{m-2-2}
+                                     \fhighlight[violet!20]{m-2-3}{m-2-3}
+                                     \fhighlight[red!20]{m-2-4}{m-2-4}
+                                     \fhighlight[teal!20]{m-3-2}{m-3-2}
+                                     \fhighlight[cyan!20]{m-3-3}{m-3-3}
+                                   \end{pgfonlayer}
+                                 \end{tikzpicture}
+                                 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                   \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                               nodes={rectangle,text width=5em,align=center},row sep=0.3em, column sep=0.4em]
+                                   {
+                                     \mathbf{C}_b^n \mathbf{S}_{rg} \mathbf{C}_n^b &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                                    \mathbf{0}_3                   & \mathbf{C}_b^n \mathbf{S}_{ra} \mathbf{C}_n^b & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                                    \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{0}_3     \\
+                                                    \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{S}_{bad} & \mathbf{0}_3     \\
+                                                    \mathbf{0}_3                   &                \mathbf{0}_3                   & \mathbf{0}_3 & \mathbf{0}_3     & \mathbf{S}_{bgd} \\
+                                   };
+
+                                   \begin{pgfonlayer}{background}
+                                     \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+                                     \fhighlight[brown!20]{m-2-2}{m-2-2}
+                                     \fhighlight[pink!20]{m-4-4}{m-4-4}
+                                     \fhighlight[lightgray!20]{m-5-5}{m-5-5}
+                                   \end{pgfonlayer}
+                                 \end{tikzpicture}
+                                 \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                   \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                                               nodes={rectangle,text width=5.5em,align=center},row sep=0.3em, column sep=0.4em]
+                                   {
+                                     \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{\psi},\delta \psi}^n \tau_s &                \mathbf{F}_{\delta \dotup{v},\delta \psi}^n \tau_s &                \mathbf{0}_3                                       & \mathbf{0}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{F}_{\delta \dotup{\psi},\delta v}^n    \tau_s & \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{v},\delta v}^n    \tau_s &                \mathbf{F}_{\delta \dotup{r},\delta v}^n    \tau_s & \mathbf{0}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{F}_{\delta \dotup{\psi},\delta r}^n    \tau_s &                \mathbf{F}_{\delta \dotup{v},\delta r}^n    \tau_s & \mathbf{I}_3 + \mathbf{F}_{\delta \dotup{r},\delta r}^n    \tau_s & \mathbf{0}_3          &  \mathbf{0}_3          \\
+                                                    \mathbf{0}_3                                          &                \mathbf{C}_b^n \tau_s                              &                \mathbf{0}_3                                       & \mathbf{I}_3          &  \mathbf{0}_3          \\
+                                                   -\mathbf{C}_b^n \tau_s                                 &                \mathbf{0}_3                                       &                \mathbf{0}_3                                       & \mathbf{0}_3          &  \mathbf{I}_3          \\
+                                   };
+
+                                   \begin{pgfonlayer}{background}
+                                     \fhighlight[green!20]{m-1-1}{m-1-1}
+                                     \fhighlight[yellow!20]{m-2-1}{m-2-1}
+                                     \fhighlight[lime!20]{m-3-1}{m-3-1}
+                                     \fhighlight[orange!20]{m-5-1}{m-5-1}
+                                     \fhighlight[purple!20]{m-1-2}{m-1-2}
+                                     \fhighlight[blue!20]{m-2-2}{m-2-2}
+                                     \fhighlight[violet!20]{m-3-2}{m-3-2}
+                                     \fhighlight[red!20]{m-4-2}{m-4-2}
+                                     \fhighlight[teal!20]{m-2-3}{m-2-3}
+                                     \fhighlight[cyan!20]{m-3-3}{m-3-3}
+                                   \end{pgfonlayer}
+                                 \end{tikzpicture}
+                            dt'
+\end{aligned}
+\f}
+
+
+\subsubsection LooselyCoupledKF_n-KF-Phi-Q-Van-Loan Van Loan method
+
+The state transition matrix and the system/process noise covariance matrix can be calculated with the van Loan method \cite Loan1978 . In short
 
 1. Form a \f$ 2n \times 2n \f$ matrix called \f$ \mathbf{A} \f$ (\f$ n \f$ is the dimension of \f$ \mathbf{x} \f$ and \f$ \mathbf{W} \f$ is the power spectral density of the noise \f$ W(t) \f$)
 \fl{equation,eq-LCKF_n-Loan-A}
-  \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G} \\
+  \mathbf{A} = \begin{bmatrix} -\mathbf{F} & \mathbf{G} \mathbf{W} \mathbf{G}^T \\
                                 \mathbf{0} &            \mathbf{F}^T          \end{bmatrix} \Delta t
 \f}
 
@@ -384,7 +605,11 @@ The state transition matrix and the system/process noise covariance matrix are c
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
 \f}
 
-The white noise scale factor is usually accounted for within the \f$ \mathbf{G} \f$ matrix. Thus, \f$ \mathbf{W} \f$ is and identity matrix with dimensions that are compatible with \f$ \mathbf{G} \f$.
+\subsubsection LooselyCoupledKF_n-KF-Q-Taylor-1 Taylor approximation
+
+The van Loan method has the disadvantage, that the exponential matrix has to be calculated. A computational easier approach is to use a Taylor approximation.
+
+\f$ \textcolor{red}{\text{[Deprecated] TODO: Documentation here}} \f$
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -397,11 +622,11 @@ The error covariance matrix is initialized as a diagonal matrix with the varianc
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,text width=2.5em,align=center,minimum height=2.3em,anchor=center},] {
-      \boldsymbol{\sigma}_{\boldsymbol{\psi}}^2 &                                                 &                      \dots                      &                                                 &                        \mathbf{0}_3                       \\
-                                                & \boldsymbol{\sigma}_{\boldsymbol{\delta v^n}}^2 &                                                 &                    \iddots                      &                                                           \\
-                        \vdots                  &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta p_b}}^2 &                                                 &                          \vdots                           \\
-                                                &                    \iddots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta f^b}}^2 &                                                           \\
-                     \mathbf{0}_3               &                                                 &                      \dots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta \omega^b_{ib}}}^2 \\
+      \boldsymbol{\sigma}_{\boldsymbol{\delta \psi}}^2 &                                                 &                      \dots                      &                                                 &                        \mathbf{0}_3                       \\
+                                                       & \boldsymbol{\sigma}_{\boldsymbol{\delta v^n}}^2 &                                                 &                    \iddots                      &                                                           \\
+                           \vdots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta p_b}}^2 &                                                 &                          \vdots                           \\
+                                                       &                    \iddots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta f^b}}^2 &                                                           \\
+                        \mathbf{0}_3                   &                                                 &                      \dots                      &                                                 & \boldsymbol{\sigma}_{\boldsymbol{\delta \omega^b_{ib}}}^2 \\
     };
 
     \begin{pgfonlayer}{background}
@@ -450,8 +675,8 @@ see
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,text width=2.5em,align=center,minimum height=2.3em,anchor=center},] {
-      \mathbf{H}_{r,\psi}^n &  \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3                   \\
-      \mathbf{H}_{v,\psi}^n & -\mathbf{I}_3 &  \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{v,\omega_{ib}^b}^n \\
+      \mathbf{H}_{r,\delta \psi}^n &  \mathbf{0}_3 & -\mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3                          \\
+      \mathbf{H}_{v,\delta \psi}^n & -\mathbf{I}_3 &  \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{H}_{\delta v,\omega_{ib}^b}^n \\
     };
 
     \begin{pgfonlayer}{background}
@@ -467,8 +692,8 @@ see
 where
 \fl{equation,eq-LCKF_n-H-sub}
 \begin{aligned}
-  \highlight[green!20]{\mathbf{H}_{r,\psi}^n}           &\approx \mathbf{T}_{r(n)}^{p} \left[ (\mathbf{C}_b^n \mathbf{l}_{ba}^b) \times \right] \\
-  \highlight[green!20]{\mathbf{H}_{v,\psi}^n}           &\approx \left[ \left\{ \mathbf{C}_b^n (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \right\} \times \right] \\
+  \highlight[green!20]{\mathbf{H}_{r,\delta \psi}^n}    &\approx \mathbf{T}_{r(n)}^{p} \left[ (\mathbf{C}_b^n \mathbf{l}_{ba}^b) \times \right] \\
+  \highlight[green!20]{\mathbf{H}_{v,\delta \psi}^n}    &\approx \left[ \left\{ \mathbf{C}_b^n (\boldsymbol{\omega}_{ib}^b \times \mathbf{l}_{ba}^b) - \boldsymbol{\Omega}_{ie}^n \mathbf{C}_b^n \mathbf{l}_{ba}^b \right\} \times \right] \\
   \highlight[orange!20]{\mathbf{H}_{v,\omega_{ib}^b}^n} &\approx \mathbf{C}_b^n \left[ \mathbf{l}_{ba}^b \times \right] \\
 \end{aligned}
 \f}
@@ -593,12 +818,12 @@ The units of the state vector \f$ \mathbf{x} \f$ and the \f$ \mathbf{F} \f$ matr
       \fhighlight[yellow!20]{m-1-4-nw}{m-3-6-se}
       \fhighlight[lime!20]{m-1-7-nw}{m-3-9-se}
       \fhighlight[orange!20]{m-1-13-nw}{m-3-15-se}
-      \fhighlight[blue!20]{m-4-1-nw}{m-6-3-se}
-      \fhighlight[purple!20]{m-4-4-nw}{m-6-6-se}
+      \fhighlight[purple!20]{m-4-1-nw}{m-6-3-se}
+      \fhighlight[blue!20]{m-4-4-nw}{m-6-6-se}
       \fhighlight[violet!20]{m-4-7-nw}{m-6-9-se}
       \fhighlight[red!20]{m-4-10-nw}{m-6-12-se}
-      \fhighlight[cyan!20]{m-7-4-nw}{m-9-6-se}
-      \fhighlight[teal!20]{m-7-7-nw}{m-9-9-se}
+      \fhighlight[teal!20]{m-7-4-nw}{m-9-6-se}
+      \fhighlight[cyan!20]{m-7-7-nw}{m-9-9-se}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
@@ -727,12 +952,12 @@ When scaling elements in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the relevant par
       \fhighlight[yellow!20]{m-1-4-nw}{m-3-6-se}
       \fhighlight[lime!20]{m-1-7-nw}{m-3-9-se}
       \fhighlight[orange!20]{m-1-13-nw}{m-3-15-se}
-      \fhighlight[blue!20]{m-4-1-nw}{m-6-3-se}
-      \fhighlight[purple!20]{m-4-4-nw}{m-6-6-se}
+      \fhighlight[purple!20]{m-4-1-nw}{m-6-3-se}
+      \fhighlight[blue!20]{m-4-4-nw}{m-6-6-se}
       \fhighlight[violet!20]{m-4-7-nw}{m-6-9-se}
       \fhighlight[red!20]{m-4-10-nw}{m-6-12-se}
-      \fhighlight[cyan!20]{m-7-4-nw}{m-9-6-se}
-      \fhighlight[teal!20]{m-7-7-nw}{m-9-9-se}
+      \fhighlight[teal!20]{m-7-4-nw}{m-9-6-se}
+      \fhighlight[cyan!20]{m-7-7-nw}{m-9-9-se}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
@@ -777,15 +1002,20 @@ The unit \f$ m' \f$ is [pseudometre] and is latitude or longitude converted from
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.1em] {
-      \dots                                                              &                                              \\
+      \boldsymbol{\delta \dot{\psi}}                                     & \left[ \frac{\text{rad}}{\text{s}} \right]   \\
+      \boldsymbol{\delta \dot{v}}^{n}                                    & \left[ \frac{\text{m}}{\text{s}^2} \right]   \\
+      \boldsymbol{\delta \dot{p}}_b                                      & \dots                                        \\
       \boldsymbol{\delta \dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} & \left[ \frac{\text{m}}{\text{s}^3} \right]   \\
       \boldsymbol{\delta \dot{\omega}}_{ib}^b                            & \left[ \frac{\text{rad}}{\text{s}^2} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=0.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{\dot{x}}$} ($ (m-1-2.north east) + (0,1pt) $);
+    \draw[decorate,transform canvas={yshift=0.6em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{\dot{x}}$} ($ (m-1-2.north east) + (0,1pt) $);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[red!20]{m-2-1}{m-2-1}
-      \fhighlight[orange!20]{m-3-1}{m-3-1}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
     \end{pgfonlayer}
   \end{tikzpicture}
   =
@@ -793,30 +1023,37 @@ The unit \f$ m' \f$ is [pseudometre] and is latitude or longitude converted from
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=3em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \dots &        \dots                                           &           \dots                                              \\
-      \dots & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
-      \dots &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-3.north east);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[magenta!20]{m-2-2}{m-2-2}
-      \fhighlight[olive!20]{m-3-3}{m-3-3}
+      \fhighlight[magenta!20]{m-4-4}{m-4-4}
+      \fhighlight[olive!20]{m-5-5}{m-5-5}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=1.8em,align=center},row sep=0.3em, column sep=0.1em] {
-      \dots                             &                                            \\
+      \boldsymbol{\delta \psi}          & \left[ \text{rad} \right]                  \\
+      \boldsymbol{\delta v}^{n}         & \left[ \frac{\text{m}}{\text{s}} \right]   \\
+      \boldsymbol{\delta p}_b           & \dots                                      \\
       \boldsymbol{\delta f}^b           & \left[ \frac{\text{m}}{\text{s}^2} \right] \\
       \boldsymbol{\delta \omega}_{ib}^b & \left[ \frac{\text{rad}}{\text{s}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{x}$} ($ (m-1-2.north east) + (0,1pt) $);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{x}$} (m-1-2.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[red!20]{m-2-1}{m-2-1}
-      \fhighlight[orange!20]{m-3-1}{m-3-1}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
     \end{pgfonlayer}
   \end{tikzpicture}
   +
@@ -824,37 +1061,46 @@ The unit \f$ m' \f$ is [pseudometre] and is latitude or longitude converted from
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=4.8em,align=center},row sep=0.3em, column sep=0.4em]
     {
-          \dots                                                                &     \dots                                                                    \\
-      \mathbf{G}_f \left[ \frac{\text{m} }{\text{s}^2 \sqrt{\text{s}}} \right] & \mathbf{0}_3                                                                 \\
-      \mathbf{0}_3                                                             & \mathbf{G}_\omega \left[ \frac{\text{rad}}{\text{s} \sqrt{\text{s}}} \right] \\
+      -\mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{I}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-2.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[brown!20]{m-2-1}{m-2-1}
-      \fhighlight[darkgray!20]{m-3-2}{m-3-2}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-4-3}{m-4-3}
+      \fhighlight[lightgray!20]{m-5-4}{m-5-4}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
-  \mathbf{W} \left[ \frac{1}{\sqrt{\text{s}}} \right]
+  \mathbf{w} \left[ \frac{1}{\sqrt{\text{s}}} \right]
 \f}
 
 When scaling the biases in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the \f$ \mathbf{\beta} \f$ factors stay unscaled.
-However the \f$ \mathbf{G} \f$ matrices have to be adapted.
+However the \f$ \mathbf{G} \f$ matrix has to be adapted.
 
 \fl{equation,eq-LCKF_n-Units-noise-scaled}
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.4em,align=center},row sep=0.3em, column sep=0.1em] {
-      \dots                                                              &                                                            \\
-      \boldsymbol{\delta \dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} &  \left[ \highlight[red!60]{\frac{\text{mg}}{\text{s}}} \right]     \\
-      \boldsymbol{\delta \dot{\omega}}_{ib}^b                            &  \left[ \highlight[red!60]{\frac{\text{mrad}}{\text{s}^2}} \right] \\
+      \boldsymbol{\delta \dot{\psi}}                                     & \left[ \highlight[red!60]{\text{deg}} \right]                     \\
+      \boldsymbol{\delta \dot{v}}^{n}                                    & \left[ \frac{\text{m}}{\text{s}^2} \right]                        \\
+      \boldsymbol{\delta \dot{p}}_b                                      & \dots                                                             \\
+      \boldsymbol{\delta \dot{f}}^{\raise-0.45ex\hbox{$\scriptstyle b$}} & \left[ \highlight[red!60]{\frac{\text{mg}}{\text{s}}} \right]     \\
+      \boldsymbol{\delta \dot{\omega}}_{ib}^b                            & \left[ \highlight[red!60]{\frac{\text{mrad}}{\text{s}^2}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=0.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{\dot{x}}$} ($ (m-1-2.north east) + (0,1pt) $);
+    \draw[decorate,transform canvas={yshift=0.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{\dot{x}}$} ($ (m-1-2.north east) - (0,2pt) $);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[red!20]{m-2-1}{m-2-1}
-      \fhighlight[orange!20]{m-3-1}{m-3-1}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
     \end{pgfonlayer}
   \end{tikzpicture}
   =
@@ -862,30 +1108,37 @@ However the \f$ \mathbf{G} \f$ matrices have to be adapted.
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=3em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      \dots &        \dots                                           &           \dots                                              \\
-      \dots & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
-      \dots &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+          \dots    &     \dots    &     \dots    &        \dots                                           &           \dots                                              \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \boldsymbol{\beta}_f \left[ \frac{1}{\text{s}} \right] &        \mathbf{0}_3                                          \\
+      \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 &    \mathbf{0}_3                                        &  \boldsymbol{\beta}_\omega \left[ \frac{1}{\text{s}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-3.north east);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{F}$} (m-1-5.north east);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[magenta!20]{m-2-2}{m-2-2}
-      \fhighlight[olive!20]{m-3-3}{m-3-3}
+      \fhighlight[magenta!20]{m-4-4}{m-4-4}
+      \fhighlight[olive!20]{m-5-5}{m-5-5}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2.4em,align=center},row sep=0.3em, column sep=0.1em] {
-      \dots                             &                                                                 \\
+      \boldsymbol{\delta \dot{\psi}}    & \left[ \highlight[red!60]{\frac{\text{deg}}{\text{s}}} \right]  \\
+      \boldsymbol{\delta \dot{v}}^{n}   & \left[ \frac{\text{m}}{\text{s}^2} \right]   \\
+      \boldsymbol{\delta \dot{p}}_b     & \dots                                        \\
       \boldsymbol{\delta f}^b           & \left[ \highlight[red!60]{\text{mg}} \right]                    \\
       \boldsymbol{\delta \omega}_{ib}^b & \left[ \highlight[red!60]{\frac{\text{mrad}}{\text{s}}} \right] \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{x}$} ($ (m-1-2.north east) + (0,1pt) $);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\boldsymbol{\delta} \mathbf{x}$} ($ (m-1-2.north east) - (0,3pt) $);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[red!20]{m-2-1}{m-2-1}
-      \fhighlight[orange!20]{m-3-1}{m-3-1}
+      \fhighlight[green!20]{m-1-1}{m-1-1}
+      \fhighlight[blue!20]{m-2-1}{m-2-1}
+      \fhighlight[cyan!20]{m-3-1}{m-3-1}
+      \fhighlight[red!20]{m-4-1}{m-4-1}
+      \fhighlight[orange!20]{m-5-1}{m-5-1}
     \end{pgfonlayer}
   \end{tikzpicture}
   +
@@ -894,23 +1147,36 @@ However the \f$ \mathbf{G} \f$ matrices have to be adapted.
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=4.8em,align=center},row sep=0.3em, column sep=0.4em]
     {
-          \dots                                                                &     \dots                                                                    \\
-      \mathbf{G}_f \left[ \frac{\text{m} }{\text{s}^2 \sqrt{\text{s}}} \right] & \mathbf{0}_3                                                                 \\
-      \mathbf{0}_3                                                             & \mathbf{G}_\omega \left[ \frac{\text{rad}}{\text{s} \sqrt{\text{s}}} \right] \\
+      -\mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{I}_3 & \mathbf{0}_3 \\
+       \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{I}_3 \\
     };
-    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-2.north east);
+    \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{G}$} (m-1-4.north east);
 
-    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-2-1.south west) -- node[left=2pt] {$ \times \frac{10^3}{g} $} (m-2-1.north west);
-    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-3-1.south west) -- node[left=2pt] {$ \times 10^3 $} (m-3-1.north west);
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-1-1.south west) -- node[left=2pt] {$ \times \frac{180}{\pi} $} (m-1-1.north west);
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-4-1.south west) -- node[left=2pt] {$ \times \frac{10^3}{g} $} (m-4-1.north west);
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-5-1.south west) -- node[left=2pt] {$ \times 10^3 $} (m-5-1.north west);
 
     \begin{pgfonlayer}{background}
-      \fhighlight[brown!20]{m-2-1}{m-2-1}
-      \fhighlight[darkgray!20]{m-3-2}{m-3-2}
+      \fhighlight[darkgray!20]{m-1-1}{m-1-1}
+      \fhighlight[brown!20]{m-2-2}{m-2-2}
+      \fhighlight[pink!20]{m-4-3}{m-4-3}
+      \fhighlight[lightgray!20]{m-5-4}{m-5-4}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
-  \mathbf{W} \left[ \frac{1}{\sqrt{\text{s}}} \right]
+  \mathbf{w} \left[ \frac{1}{\sqrt{\text{s}}} \right]
 \f}
+
+If the noise input matrix \f$ \mathbf{G} \f$ is scaled, then the noise scale matrix \f$ \mathbf{W} \f$ does not have to be scaled.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_n-Units-Q Process noise covariance matrix Q
+
+If the alternative process noise covariance matrix \f$ \mathbf{Q} \f$ is used, it also has to be scaled.
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -961,7 +1227,7 @@ The error covariance matrix is initialized as a diagonal matrix with the varianc
   \end{tikzpicture}
 \f}
 
-When scaling elements in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the relevant parts of the \f$ \mathbf{P} \f$ matrix have to be adapted.
+When scaling elements in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the relevant parts of the \f$ \mathbf{P} \f$ matrix have to be adapted. This means the scale factors have to be multiplied with the correct rows and columns. As \f$ \mathbf{P} \f$ is a diagonal matrix, this means only the diagonal terms have to be scaled.
 
 \fl{equation,eq-LCKF_n-Units-P-scaled}
   \mathbf{P}_0 =
@@ -1008,10 +1274,17 @@ When scaling elements in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the relevant par
       }
     }
 
-    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-3-1-sw) -- node[left=2pt] {$ \times \frac{180^2}{\pi^2} $} (m-1-1-nw);
-    \draw[decorate,transform canvas={xshift=-0.5em},thick,red] (m-8-7-sw) -- node[left=2pt] {$ \times R_0^2 $} (m-7-7-nw);
-    \draw[decorate,transform canvas={xshift=-0.5em},thick,red] (m-12-10-sw) -- node[left=2pt] {$ \times \frac{10^6}{g^2} $} (m-10-10-nw);
-    \draw[decorate,transform canvas={xshift=-0.5em},thick,red] (m-15-13-sw) -- node[left=2pt] {$ \times 10^6 $} (m-13-13-nw);
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-3-1-sw) -- node[left=2pt] {$ \times \frac{180}{\pi} $} (m-1-1-nw);
+    \draw[decorate,transform canvas={yshift= 0.5em},thick,red] (m-1-1-nw) -- node[above=2pt] {$ \times \frac{180}{\pi} $} (m-1-3-ne);
+
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-8-1-sw) -- node[left=2pt] {$ \times R_0 $} (m-7-1-nw);
+    \draw[decorate,transform canvas={yshift= 0.5em},thick,red] (m-1-7-nw) -- node[above=2pt] {$ \times R_0 $} (m-1-8-ne);
+
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-12-1-sw) -- node[left=2pt] {$ \times \frac{10^3}{g} $} (m-10-1-nw);
+    \draw[decorate,transform canvas={yshift= 0.5em},thick,red] (m-1-10-nw) -- node[above=2pt] {$ \times \frac{10^3}{g} $} (m-1-12-ne);
+
+    \draw[decorate,transform canvas={xshift=-1.4em},thick,red] (m-15-1-sw) -- node[left=2pt] {$ \times 10^3 $} (m-13-1-nw);
+    \draw[decorate,transform canvas={yshift= 0.5em},thick,red] (m-1-13-nw) -- node[above=2pt] {$ \times 10^3 $} (m-1-15-ne);
 
     \begin{pgfonlayer}{background}
       \fhighlight[green!20]{m-1-1}{m-1-1}
@@ -1161,12 +1434,12 @@ When scaling elements in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the relevant par
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,text width=2.8em,align=center,minimum height=2.3em,anchor=center},] {
-      &                                                                & &                     &                     &                     & -1 \left[ - \right] &  0                  &  0                  & &              & & &                                                        &  \\
-      & \mathbf{H}_{r,\psi}^n \left[ \text{rad} \right]                & &                     &     \mathbf{0}_3    &                     &  0                  & -1 \left[ - \right] &  0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                  &  \\
-      &                                                                & &                     &                     &                     &  0                  &  0                  & -1 \left[ - \right] & &              & & &                                                        &  \\
-      &                                                                & & -1 \left[ - \right] &  0                  &  0                  &                     &                     &                     & &              & & &                                                        &  \\
-      & \mathbf{H}_{v,\psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & &  0                  & -1 \left[ - \right] &  0                  &                     &     \mathbf{0}_3    &                     & & \mathbf{0}_3 & & & \mathbf{H}_{v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
-      &                                                                & &  0                  &  0                  & -1 \left[ - \right] &                     &                     &                     & &              & & &                                                        &  \\
+      &                                                                       & &                     &                     &                     & -1 \left[ - \right] &  0                  &  0                  & &              & & &                                                               &  \\
+      & \mathbf{H}_{r,\delta \psi}^n \left[ \text{rad} \right]                & &                     &     \mathbf{0}_3    &                     &  0                  & -1 \left[ - \right] &  0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                         &  \\
+      &                                                                       & &                     &                     &                     &  0                  &  0                  & -1 \left[ - \right] & &              & & &                                                               &  \\
+      &                                                                       & & -1 \left[ - \right] &  0                  &  0                  &                     &                     &                     & &              & & &                                                               &  \\
+      & \mathbf{H}_{v,\delta \psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & &  0                  & -1 \left[ - \right] &  0                  &                     &     \mathbf{0}_3    &                     & & \mathbf{0}_3 & & & \mathbf{H}_{\delta v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
+      &                                                                       & &  0                  &  0                  & -1 \left[ - \right] &                     &                     &                     & &              & & &                                                               &  \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{H}$} (m-1-15.north east);
 
@@ -1234,12 +1507,12 @@ When scaling elements in \f$ \boldsymbol{\delta} \mathbf{x} \f$ the relevant par
   \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
     \matrix (m)[matrix of math nodes,nodes in empty cells,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,text width=2.8em,align=center,minimum height=2.3em,anchor=center},] {
-      &                                                                & &                     &                     &                     & -1 \left[ - \right] &  0                  &  0                  & &              & & &                                                        &  \\
-      & \mathbf{H}_{r,\psi}^n \left[ \text{rad} \right]                & &                     &     \mathbf{0}_3    &                     &  0                  & -1 \left[ - \right] &  0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                  &  \\
-      &                                                                & &                     &                     &                     &  0                  &  0                  & -1 \left[ - \right] & &              & & &                                                        &  \\
-      &                                                                & & -1 \left[ - \right] &  0                  &  0                  &                     &                     &                     & &              & & &                                                        &  \\
-      & \mathbf{H}_{v,\psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & &  0                  & -1 \left[ - \right] &  0                  &                     &     \mathbf{0}_3    &                     & & \mathbf{0}_3 & & & \mathbf{H}_{v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
-      &                                                                & &  0                  &  0                  & -1 \left[ - \right] &                     &                     &                     & &              & & &                                                        &  \\
+      &                                                                       & &                     &                     &                     & -1 \left[ - \right] &  0                  &  0                  & &              & & &                                                               &  \\
+      & \mathbf{H}_{r,\delta \psi}^n \left[ \text{rad} \right]                & &                     &     \mathbf{0}_3    &                     &  0                  & -1 \left[ - \right] &  0                  & & \mathbf{0}_3 & & &          \mathbf{0}_3                                         &  \\
+      &                                                                       & &                     &                     &                     &  0                  &  0                  & -1 \left[ - \right] & &              & & &                                                               &  \\
+      &                                                                       & & -1 \left[ - \right] &  0                  &  0                  &                     &                     &                     & &              & & &                                                               &  \\
+      & \mathbf{H}_{v,\delta \psi}^n \left[ \frac{\text{m}}{\text{s}} \right] & &  0                  & -1 \left[ - \right] &  0                  &                     &     \mathbf{0}_3    &                     & & \mathbf{0}_3 & & & \mathbf{H}_{\delta v,\omega_{ib}^b}^n \left[ \text{m} \right] &  \\
+      &                                                                       & &  0                  &  0                  & -1 \left[ - \right] &                     &                     &                     & &              & & &                                                               &  \\
     };
     \draw[decorate,transform canvas={yshift=.5em},thick] (m-1-1.north west) -- node[above=2pt] {$\mathbf{H}$} (m-1-15.north east);
 
@@ -1394,9 +1667,9 @@ Differential of left and right side neglecting errors in \f$R_N \f$ and \f$R_E \
 
 \fl{equation,eq-LCKF_n-Derivation-Position-differential}
 \begin{aligned}
-  \delta\dotup{\phi}    &= \frac{\partial \dotup{\phi}}{\partial v_N} \delta v_N + \frac{\partial \dotup{\phi}}{\partial h} \delta h = \highlight[cyan!20]{\dfrac{1}{R_N + h}} \delta v_N \highlight[teal!20]{- \dfrac{v_N}{(R_N + h)^2}} \delta h \\
-  \delta\dotup{\lambda} &= \frac{\partial \dotup{\lambda}}{\partial v_E} \delta v_E + \frac{\partial \dotup{\lambda}}{\partial h} \delta h + \frac{\partial \dotup{\lambda}}{\partial \phi} \delta \phi = \highlight[cyan!20]{\dfrac{1}{(R_E + h)\cos{\phi}}} \delta v_E \highlight[teal!20]{- \dfrac{v_E}{(R_E + h)^2\cos{\phi}}} \delta h + \highlight[teal!20]{\dfrac{v_E \tan{\phi}}{(R_E + h)\cos{\phi}}} \delta \phi \\
-  \delta\dotup{h}       &= \frac{\partial \dotup{h}}{\partial v_D} \delta v_D = \highlight[cyan!20]{-1} \cdot \delta v_D \\
+  \delta\dotup{\phi}    &= \frac{\partial \dotup{\phi}}{\partial v_N} \delta v_N + \frac{\partial \dotup{\phi}}{\partial h} \delta h = \highlight[teal!20]{\dfrac{1}{R_N + h}} \delta v_N \highlight[cyan!20]{- \dfrac{v_N}{(R_N + h)^2}} \delta h \\
+  \delta\dotup{\lambda} &= \frac{\partial \dotup{\lambda}}{\partial v_E} \delta v_E + \frac{\partial \dotup{\lambda}}{\partial h} \delta h + \frac{\partial \dotup{\lambda}}{\partial \phi} \delta \phi = \highlight[teal!20]{\dfrac{1}{(R_E + h)\cos{\phi}}} \delta v_E \highlight[cyan!20]{- \dfrac{v_E}{(R_E + h)^2\cos{\phi}}} \delta h + \highlight[cyan!20]{\dfrac{v_E \tan{\phi}}{(R_E + h)\cos{\phi}}} \delta \phi \\
+  \delta\dotup{h}       &= \frac{\partial \dotup{h}}{\partial v_D} \delta v_D = \highlight[teal!20]{-1} \cdot \delta v_D \\
 \end{aligned}
 \f}
 
@@ -1506,7 +1779,7 @@ and neglect error product terms. This leads to (same as \cite Titterton2004 Titt
 
 Finally by performing an element by element comparison with
 \fl{equation,eq-LCKF_n-Derivation-Attitude-element-comp}
-  \boldsymbol{\psi} \times = \mathbf{\Psi} \qquad\quad
+  \boldsymbol{\delta \psi} \times = \mathbf{\Psi} \qquad\quad
   \boldsymbol{\omega}_{in}^n \times = \mathbf{\Omega}_{in}^n \qquad\quad
   \boldsymbol{\delta \omega}_{in}^n \times = \boldsymbol{\delta}\mathbf{\Omega}_{in}^n \qquad\quad
   \boldsymbol{\delta \omega}_{ib}^b \times = \boldsymbol{\delta}\mathbf{\Omega}_{ib}^b
@@ -1515,12 +1788,12 @@ Finally by performing an element by element comparison with
 the equation can be expressed in vector form as:
 \fl{equation,eq-LCKF_n-Derivation-Attitude-differential}
 \begin{aligned}
-  \boldsymbol{\dot{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\psi}
-                                   + \boldsymbol{\delta \omega}_{in}^n
-                                   \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b \\
-                          &= \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\psi}
-                             + \boldsymbol{\delta}(\boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n)
-                             \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
+  \boldsymbol{\delta \dot{\psi}} &\approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\delta \psi}
+                                                + \boldsymbol{\delta \omega}_{in}^n
+                                                \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b \\
+                                       &= \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\delta \psi}
+                                          + \boldsymbol{\delta}(\boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n)
+                                          \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
 \end{aligned}
 \f}
 
@@ -1569,70 +1842,70 @@ The differential of left and right side is
 
 Substituting \eqref{eq-LCKF_n-Derivation-Attitude-transport-rate-differential} and \eqref{eq-LCKF_n-Derivation-Attitude-earth-rotation-n-differential} into \eqref{eq-LCKF_n-Derivation-Attitude-differential} gives:
 \fl{equation,eq-LCKF_n-Derivation-Attitude-differential-final}
-  \boldsymbol{\dot{\psi}} \approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\psi}
-                                  + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-                                      \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
-                                                  nodes={rectangle,minimum height=2.3em,anchor=center}] {
-                                        -\omega_{ie}\sin{\phi} \\
-                                                   0           \\
-                                        -\omega_{ie}\cos{\phi} \\
-                                      };
-                                      \begin{pgfonlayer}{background} \fhighlight[lime!20]{m-1-1}{m-3-1} \end{pgfonlayer}
-                                    \end{tikzpicture}
-                                    \delta \phi
-                                  + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-                                      \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
-                                                  nodes={rectangle,minimum height=2.3em,anchor=center}] {
-                                                 0         &      \frac{1}{R_E + h}      & 0 \\
-                                        -\frac{1}{R_N + h} &              0              & 0 \\
-                                                 0         & -\frac{\tan{\phi}}{R_E + h} & 0 \\
-                                      };
+  \boldsymbol{\delta \dot{\psi}} \approx \highlight[green!20]{-\boldsymbol{\omega}_{in}^n \times} \boldsymbol{\delta \psi}
+                                         + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                                                         nodes={rectangle,minimum height=2.3em,anchor=center}] {
+                                               -\omega_{ie}\sin{\phi} \\
+                                                          0           \\
+                                               -\omega_{ie}\cos{\phi} \\
+                                             };
+                                             \begin{pgfonlayer}{background} \fhighlight[lime!20]{m-1-1}{m-3-1} \end{pgfonlayer}
+                                           \end{tikzpicture}
+                                           \delta \phi
+                                         + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                                                         nodes={rectangle,minimum height=2.3em,anchor=center}] {
+                                                        0         &      \frac{1}{R_E + h}      & 0 \\
+                                               -\frac{1}{R_N + h} &              0              & 0 \\
+                                                        0         & -\frac{\tan{\phi}}{R_E + h} & 0 \\
+                                             };
 
-                                      \foreach \r in {1,3} {
-                                        \foreach \c in {1,3} {
-                                          \coordinate (m-\r-\c-nw) at (100,-100);
-                                          \coordinate (m-\r-\c-se) at (-100,100);
+                                             \foreach \r in {1,3} {
+                                               \foreach \c in {1,3} {
+                                                 \coordinate (m-\r-\c-nw) at (100,-100);
+                                                 \coordinate (m-\r-\c-se) at (-100,100);
 
-                                          \foreach \row in {1,...,3} {
-                                            \path let \p1=(m-\row-\c.west), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at ({min(\x1,\x2)},\y2);
-                                            \path let \p1=(m-\row-\c.east), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at ({max(\x1,\x2)},\y2);
-                                          }
-                                          \foreach \col in {1,...,3} {
-                                            \path let \p1=(m-\r-\col.north), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at (\x2,{max(\y1,\y2)});
-                                            \path let \p1=(m-\r-\col.south), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at (\x2,{min(\y1,\y2)});
-                                          }
-                                        }
-                                      }
-                                      \begin{pgfonlayer}{background} \fhighlight[yellow!20]{m-1-1-nw}{m-3-3-se} \end{pgfonlayer}
-                                    \end{tikzpicture}
-                                    \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_D \end{pmatrix}
-                                  + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
-                                      \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
-                                                  nodes={rectangle,minimum height=2.3em,anchor=center}] {
-                                                         0                  & 0 &       -\frac{v_E}{(R_E + h)^2}      \\
-                                                         0                  & 0 &        \frac{v_N}{(R_N + h)^2}      \\
-                                        - \frac{v_E}{(R_E + h)\cos^2{\phi}} & 0 &  \frac{v_E \tan{\phi}}{(R_E + h)^2} \\
-                                      };
+                                                 \foreach \row in {1,...,3} {
+                                                   \path let \p1=(m-\row-\c.west), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at ({min(\x1,\x2)},\y2);
+                                                   \path let \p1=(m-\row-\c.east), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at ({max(\x1,\x2)},\y2);
+                                                 }
+                                                 \foreach \col in {1,...,3} {
+                                                   \path let \p1=(m-\r-\col.north), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at (\x2,{max(\y1,\y2)});
+                                                   \path let \p1=(m-\r-\col.south), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at (\x2,{min(\y1,\y2)});
+                                                 }
+                                               }
+                                             }
+                                             \begin{pgfonlayer}{background} \fhighlight[yellow!20]{m-1-1-nw}{m-3-3-se} \end{pgfonlayer}
+                                           \end{tikzpicture}
+                                           \begin{pmatrix} \delta v_N \\ \delta v_E \\ \delta v_D \end{pmatrix}
+                                         + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+                                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
+                                                         nodes={rectangle,minimum height=2.3em,anchor=center}] {
+                                                                0                  & 0 &       -\frac{v_E}{(R_E + h)^2}      \\
+                                                                0                  & 0 &        \frac{v_N}{(R_N + h)^2}      \\
+                                               - \frac{v_E}{(R_E + h)\cos^2{\phi}} & 0 &  \frac{v_E \tan{\phi}}{(R_E + h)^2} \\
+                                             };
 
-                                      \foreach \r in {1,3} {
-                                        \foreach \c in {1,3} {
-                                          \coordinate (m-\r-\c-nw) at (100,-100);
-                                          \coordinate (m-\r-\c-se) at (-100,100);
+                                             \foreach \r in {1,3} {
+                                               \foreach \c in {1,3} {
+                                                 \coordinate (m-\r-\c-nw) at (100,-100);
+                                                 \coordinate (m-\r-\c-se) at (-100,100);
 
-                                          \foreach \row in {1,...,3} {
-                                            \path let \p1=(m-\row-\c.west), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at ({min(\x1,\x2)},\y2);
-                                            \path let \p1=(m-\row-\c.east), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at ({max(\x1,\x2)},\y2);
-                                          }
-                                          \foreach \col in {1,...,3} {
-                                            \path let \p1=(m-\r-\col.north), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at (\x2,{max(\y1,\y2)});
-                                            \path let \p1=(m-\r-\col.south), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at (\x2,{min(\y1,\y2)});
-                                          }
-                                        }
-                                      }
-                                      \begin{pgfonlayer}{background} \fhighlight[lime!20]{m-1-1-nw}{m-3-3-se} \end{pgfonlayer}
-                                    \end{tikzpicture}
-                                    \begin{pmatrix} \delta \phi \\ \delta \lambda \\ \delta h \end{pmatrix}
-                                  \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
+                                                 \foreach \row in {1,...,3} {
+                                                   \path let \p1=(m-\row-\c.west), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at ({min(\x1,\x2)},\y2);
+                                                   \path let \p1=(m-\row-\c.east), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at ({max(\x1,\x2)},\y2);
+                                                 }
+                                                 \foreach \col in {1,...,3} {
+                                                   \path let \p1=(m-\r-\col.north), \p2=(m-\r-\c-nw) in coordinate (m-\r-\c-nw) at (\x2,{max(\y1,\y2)});
+                                                   \path let \p1=(m-\r-\col.south), \p2=(m-\r-\c-se) in coordinate (m-\r-\c-se) at (\x2,{min(\y1,\y2)});
+                                                 }
+                                               }
+                                             }
+                                             \begin{pgfonlayer}{background} \fhighlight[lime!20]{m-1-1-nw}{m-3-3-se} \end{pgfonlayer}
+                                           \end{tikzpicture}
+                                           \begin{pmatrix} \delta \phi \\ \delta \lambda \\ \delta h \end{pmatrix}
+                                         \highlight[orange!20]{- \mathbf{C}_b^n} \boldsymbol{\delta \omega}_{ib}^b
 \f}
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -1700,21 +1973,21 @@ we get
                                    - (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{\hat{v}}^n
                                        + (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{v}^n
                                    + \boldsymbol{\delta} \mathbf{g}^n \\
-                                &= - \boldsymbol{\psi} \times \mathbf{C}_b^n \boldsymbol{\hat{f}}^b
+                                &= - \boldsymbol{\delta \psi} \times \mathbf{C}_b^n \boldsymbol{\hat{f}}^b
                                    + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
                                    - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{\delta v}^n
                                    - (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{\hat{v}}^n
                                    + \boldsymbol{\delta} \mathbf{g}^n \\
-                                &= (\mathbf{C}_b^n \boldsymbol{\delta f}^b + \mathbf{C}_b^n \boldsymbol{f}^b) \times \boldsymbol{\psi}
+                                &= (\mathbf{C}_b^n \boldsymbol{\delta f}^b + \mathbf{C}_b^n \boldsymbol{f}^b) \times \boldsymbol{\delta \psi}
                                    + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
                                    - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{\delta v}^n
                                    - (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times (\boldsymbol{\delta v}^n + \boldsymbol{v}^n)
                                    + \boldsymbol{\delta} \mathbf{g}^n \\
 \end{aligned}
 \f}
-Now neglecting error product terms \f$ \boldsymbol{\delta f}^b \times \boldsymbol{\psi} \approx 0 \f$ and \f$ (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{\delta v}^n \approx 0\f$
+Now neglecting error product terms \f$ \boldsymbol{\delta f}^b \times \boldsymbol{\delta \psi} \approx 0 \f$ and \f$ (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{\delta v}^n \approx 0\f$
 \fl{equation,eq-LCKF_n-Derivation-Velocity-timeDerivative-differential-transformation-neglect}
-  \boldsymbol{\delta \dot{v}}^n \approx \highlight[blue!20]{\boldsymbol{f}^n \times} \boldsymbol{\psi}
+  \boldsymbol{\delta \dot{v}}^n \approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                    + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
                                    - (2 \boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \boldsymbol{\delta v}^n
                                    - (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \boldsymbol{v}^n
@@ -1726,7 +1999,7 @@ Substituting equations \eqref{eq-LCKF_n-Derivation-Attitude-transport-rate}, \eq
 \fl{equation,eq-LCKF_n-Derivation-Velocity-timeDerivative-final-pre}
 \renewcommand*{\arraystretch}{1.9}
 \begin{aligned}
-  \boldsymbol{\delta \dot{v}}^n &\approx \highlight[blue!20]{\boldsymbol{f}^n \times} \boldsymbol{\psi}
+  \boldsymbol{\delta \dot{v}}^n &\approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                    + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
                                    - \left[\begin{pmatrix} 2 \omega_{ie} \cos{\phi} \\ 0 \\ - 2 \omega_{ie} \sin{\phi} \end{pmatrix}
                                       + \begin{pmatrix} \frac{v_E}{R_E + h} \\ -\frac{v_N}{R_N + h} \\ -\frac{v_E \tan{\phi}}{R_E + h} \end{pmatrix} \right]
@@ -1739,7 +2012,7 @@ Substituting equations \eqref{eq-LCKF_n-Derivation-Attitude-transport-rate}, \eq
                                         \end{pmatrix} \right]
                                           \times \begin{pmatrix} v_N \\ v_E \\ v_D \end{pmatrix}
                                    + \boldsymbol{\delta} \mathbf{g}^n \\
-                                &= \highlight[blue!20]{\boldsymbol{f}^n \times} \boldsymbol{\psi}
+                                &= \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                    + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
                                    + \begin{pmatrix} - 2 \omega_{ie} \cos{\phi} - \frac{v_E}{R_E + h} \\
                                                       \frac{v_N}{R_N + h} \\
@@ -1758,7 +2031,7 @@ Substituting equations \eqref{eq-LCKF_n-Derivation-Attitude-transport-rate}, \eq
                                                             v_D \\
                                             \end{pmatrix}
                                    + \boldsymbol{\delta} \mathbf{g}^n \\
-                                &= \highlight[blue!20]{\boldsymbol{f}^n \times} \boldsymbol{\psi}
+                                &= \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                    + \highlight[red!20]{\mathbf{C}_b^n \boldsymbol{\delta f}^b}
                                    + \begin{pmatrix} \left(\frac{v_N}{R_N + h} \right) \cdot \delta v_D
                                                             - \left(2 \omega_{ie} \sin{\phi} + \frac{v_E \tan{\phi}}{R_E + h} \right) \cdot \delta v_E \\
@@ -1779,7 +2052,7 @@ Substituting equations \eqref{eq-LCKF_n-Derivation-Attitude-transport-rate}, \eq
 
 Reordering the terms leads to the final form (neglecting gravity errors)
 \fl{equation,eq-LCKF_n-Derivation-Velocity-timeDerivative-final}
-  \boldsymbol{\delta \dot{v}}^n \approx \highlight[blue!20]{\boldsymbol{f}^n \times} \boldsymbol{\psi}
+  \boldsymbol{\delta \dot{v}}^n \approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                         + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
                                             \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},row sep=0.3em, column sep=0.4em,
                                                         nodes={rectangle,minimum height=2.3em,anchor=center}] {
@@ -1803,7 +2076,7 @@ Reordering the terms leads to the final form (neglecting gravity errors)
                                                 }
                                               }
                                             }
-                                            \begin{pgfonlayer}{background} \fhighlight[purple!20]{m-1-1-nw}{m-3-3-se} \end{pgfonlayer}
+                                            \begin{pgfonlayer}{background} \fhighlight[blue!20]{m-1-1-nw}{m-3-3-se} \end{pgfonlayer}
                                           \end{tikzpicture}
                                           \begin{pmatrix} \delta v_N \\
                                                           \delta v_E \\
@@ -1915,12 +2188,12 @@ Reordering the terms leads to the final form (neglecting gravity errors)
       \fhighlight[yellow!20]{m-1-4-nw}{m-3-6-se}
       \fhighlight[lime!20]{m-1-7-nw}{m-3-9-se}
       \fhighlight[orange!20]{m-1-13-nw}{m-3-15-se}
-      \fhighlight[blue!20]{m-4-1-nw}{m-6-3-se}
-      \fhighlight[purple!20]{m-4-4-nw}{m-6-6-se}
+      \fhighlight[purple!20]{m-4-1-nw}{m-6-3-se}
+      \fhighlight[blue!20]{m-4-4-nw}{m-6-6-se}
       \fhighlight[violet!20]{m-4-7-nw}{m-6-9-se}
       \fhighlight[red!20]{m-4-10-nw}{m-6-12-se}
-      \fhighlight[cyan!20]{m-7-4-nw}{m-9-6-se}
-      \fhighlight[teal!20]{m-7-7-nw}{m-9-9-se}
+      \fhighlight[teal!20]{m-7-4-nw}{m-9-6-se}
+      \fhighlight[cyan!20]{m-7-7-nw}{m-9-9-se}
     \end{pgfonlayer}
   \end{tikzpicture}
   \cdot
@@ -1959,11 +2232,11 @@ where
 As all signs related to the attitude error have a different sign, it cab be explained by the attitude error being defined in the opposite direction.
 To check this, we can look at the definition of the correction of the state with the attitude errors (\cite Groves2013 Groves, ch. 14.1.1, eq. 14.7, p. 564)
 \fl{equation,eq-LCKF_n-stateMatrix-Groves-attitude-correction}
-  \mathbf{C}_b^n \approx (\mathbf{I}_3 - [\boldsymbol{\psi}_{nb}^n \times]) \mathbf{\hat{C}}_b^n
+  \mathbf{C}_b^n \approx (\mathbf{I}_3 - [\boldsymbol{\delta \psi}_{nb}^n \times]) \mathbf{\hat{C}}_b^n
 \f}
 while Titterton rearranges equation \eqref{eq-LCKF_n-Derivation-Attitude-estimate-errors} and defines the correction as (\cite Titterton2004 Titterton, ch. 13.6.2.3, eq. 13.15, p. 407)
 \fl{equation,eq-LCKF_n-stateMatrix-Groves-attitude-correction-Titterton}
-  \mathbf{C}_b^n = (\mathbf{I}_3 + [\boldsymbol{\psi} \times]) \mathbf{\hat{C}}_b^n
+  \mathbf{C}_b^n = (\mathbf{I}_3 + [\boldsymbol{\delta \psi} \times]) \mathbf{\hat{C}}_b^n
 \f}
 Therefore the attitude error is defined differently in Groves and Titterton, which explains the sign change in the error equations.
 
@@ -1975,7 +2248,7 @@ Therefore the attitude error is defined differently in Groves and Titterton, whi
 \fl{equation,eq-LCKF_n-stateMatrix-Gleason-position-error}
 \begin{aligned}
   \boldsymbol{\delta} \mathbf{\dot{p}}  &= T' \boldsymbol{\delta} \mathbf{p}^n + T \boldsymbol{\delta v}^n \\
-  \boldsymbol{\delta \dot{v}}^n         &= \highlight[blue!20]{\left[ (\mathbf{C}_b^n \boldsymbol{f}^b) \times \right]} \boldsymbol{\delta \psi}_{nb}^n
+  \boldsymbol{\delta \dot{v}}^n         &= \highlight[purple!20]{\left[ (\mathbf{C}_b^n \boldsymbol{f}^b) \times \right]} \boldsymbol{\delta \psi}_{nb}^n
                                             \highlight[red!20]{+ \mathbf{C}_b^n} \boldsymbol{\delta f}^b
                                            - \left[ \highlight[red!60]{ 2 ( }\boldsymbol{\omega}_{ie}^n + \boldsymbol{\omega}_{en}^n) \times \right] \boldsymbol{\delta v}^n
                                            - \left[ (2 \boldsymbol{\delta \omega}_{ie}^n + \boldsymbol{\delta \omega}_{en}^n) \times \right] \boldsymbol{v}^n

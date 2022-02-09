@@ -39,7 +39,7 @@ Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrix(const Eigen::Matrix<_Scalar, 3,
 /// @return Square of skew symmetric matrix
 template<typename _Scalar,
          typename = std::enable_if_t<std::is_arithmetic_v<_Scalar>>>
-Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrix2(const Eigen::Matrix<_Scalar, 3, 1>& a)
+Eigen::Matrix<_Scalar, 3, 3> skewSymmetricMatrixSquared(const Eigen::Matrix<_Scalar, 3, 1>& a)
 {
     Eigen::Matrix<_Scalar, 3, 3> skewMat2;
     skewMat2 << std::pow(a(2), 2) + std::pow(a(1), 2), a(0) * a(1), a(0) * a(2),

@@ -17,7 +17,8 @@ namespace NAV
 /// @tparam _Dim Dimension of the square matrix F
 /// @tparam _ColsG Columns of the matrix G
 /// @param[in] F System model matrix
-/// @param[in] G Noise model matrix (includes scale factors)
+/// @param[in] G Noise model matrix
+/// @param[in] W Noise scale factors
 /// @param[in] dt Time step in [s]
 /// @return A pair with the matrices {𝚽, 𝐐}
 ///
@@ -50,7 +51,7 @@ namespace NAV
 /// @note See C.F. van Loan (1978) - Computing Integrals Involving the Matrix Exponential \cite Loan1978
 template<typename _Scalar, int _Dim, int _ColsG>
 [[nodiscard]] std::pair<Eigen::Matrix<_Scalar, _Dim, _Dim>, Eigen::Matrix<_Scalar, _Dim, _Dim>>
-    calcPhiAndQWithVanLoanMethod(const Eigen::Matrix<_Scalar, _Dim, _Dim>& F, const Eigen::Matrix<_Scalar, _Dim, _ColsG>& G, _Scalar dt)
+    calcPhiAndQWithVanLoanMethod(const Eigen::Matrix<_Scalar, _Dim, _Dim>& F, const Eigen::Matrix<_Scalar, _Dim, _ColsG>& G, const Eigen::Matrix<_Scalar, _ColsG, _ColsG>& W, _Scalar dt)
 {
     //     ┌            ┐
     //     │ -F  ┊ GWG^T│
@@ -61,7 +62,7 @@ template<typename _Scalar, int _Dim, int _ColsG>
     // W = Identity, as noise scale factor is included within G matrix
     Eigen::Matrix<_Scalar, 2 * _Dim, 2 * _Dim> A = Eigen::Matrix<_Scalar, 2 * _Dim, 2 * _Dim>::Zero();
     A.template topLeftCorner<_Dim, _Dim>() = -F; // template keyword: http://eigen.tuxfamily.org/dox-devel/TopicTemplateKeyword.html
-    A.template topRightCorner<_Dim, _Dim>() = G /* * W */ * G.transpose();
+    A.template topRightCorner<_Dim, _Dim>() = G * W * G.transpose();
     A.template bottomRightCorner<_Dim, _Dim>() = F.transpose();
     A *= dt;
 
