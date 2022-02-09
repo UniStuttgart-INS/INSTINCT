@@ -145,7 +145,7 @@ void NAV::UlogFile::readHeader()
             Ulog::ulog_Header_s header;
         } ulogHeader{};
 
-        filestream.read(ulogHeader.data.data(), ulogHeader.data.size());
+        filestream.read(ulogHeader.data.data(), ulogHeader.data.size()); //TODO: move up?
 
         // Check "ULog" at beginning of file
         if (!((ulogHeader.header.fileMagic[0] == 'U') && (ulogHeader.header.fileMagic[1] == 'L') && (ulogHeader.header.fileMagic[2] == 'o') && (ulogHeader.header.fileMagic[3] == 'g')))
@@ -157,237 +157,144 @@ void NAV::UlogFile::readHeader()
         LOG_DATA("version: {}", static_cast<int>(ulogHeader.header.version)); // No use so far, hence just a LOG_DATA
 
         LOG_DATA("time stamp [µs]: {}", ulogHeader.header.timeStamp);
+        // Read message header
+        union
+        {
+            std::array<char, 3> data{};
+            Ulog::message_header_s msgHeader;
+        } ulogMsgHeader{};
 
-        readDefinitions();
+        while (!((ulogMsgHeader.msgHeader.msg_type == 'A') || (ulogMsgHeader.msgHeader.msg_type == 'L')))
+        {
+            filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
+
+            LOG_DATA("msgSize: {}", ulogMsgHeader.msgHeader.msg_size);
+            LOG_DATA("msgType: {}", ulogMsgHeader.msgHeader.msg_type);
+
+            // Read definition message
+            // Flag bitset message
+            if (ulogMsgHeader.msgHeader.msg_type == 'B')
+            {
+                if (ulogMsgHeader.msgHeader.msg_size > 40)
+                {
+                    LOG_WARN("Exceeding bytes in 'flag bitset message' are ignored. Check for ULog file format update.");
+                }
+
+                union
+                {
+                    std::array<char, 40> data{};
+                    Ulog::ulog_message_flag_bits_s ulogMsgFlagBits_s;
+                } ulogMsgFlagBits{};
+
+                filestream.read(ulogMsgFlagBits.data.data(), ulogMsgFlagBits.data.size() * sizeof(char)); // 'sizeof' is optional here, but it is the solution in general, since data types can be larger than one byte
+            }
+
+            // Format definition for a single (composite) type that can be logged or used in another definition as a nested type
+            else if (ulogMsgHeader.msgHeader.msg_type == 'F')
+            {
+                Ulog::message_format_s messageFormat;
+                messageFormat.header = ulogMsgHeader.msgHeader;
+
+                LOG_DATA("messageFormat.header.msg_size: {}", messageFormat.header.msg_size);
+
+                messageFormat.format.resize(messageFormat.header.msg_size);
+                filestream.read(messageFormat.format.data(), ulogMsgHeader.msgHeader.msg_size);
+                LOG_DATA("messageFormat.format.data(): {}", messageFormat.format.data());
+
+                std::string msgName = messageFormat.format.substr(0, messageFormat.format.find(':'));
+
+                // Decoding data format fields
+                std::stringstream lineStream(messageFormat.format.substr(messageFormat.format.find(':') + 1));
+                std::string cell;
+
+                std::vector<DataField> msgDataFields;
+
+                while (std::getline(lineStream, cell, ';'))
+                {
+                    DataField data_field{ cell.substr(0, cell.find(' ')), cell.substr(cell.find(' ') + 1) };
+                    msgDataFields.push_back(data_field);
+                }
+
+                if (msgName == "sensor_accel")
+                {
+                    messageFormats.insert_or_assign(msgName, msgDataFields);
+                }
+                else if (msgName == "sensor_gyro")
+                {
+                    messageFormats.insert_or_assign(msgName, msgDataFields);
+                }
+                else if (msgName == "sensor_mag")
+                {
+                    messageFormats.insert_or_assign(msgName, msgDataFields);
+                }
+                else if (msgName == "vehicle_gps_position")
+                {
+                    messageFormats.insert_or_assign(msgName, msgDataFields);
+                }
+                else if (msgName == "vehicle_attitude")
+                {
+                    messageFormats.insert_or_assign(msgName, msgDataFields);
+                }
+                else if (msgName == "vehicle_air_data")
+                {
+                    messageFormats.insert_or_assign(msgName, msgDataFields);
+                }
+                else if (msgName == "vehicle_control_mode")
+                {
+                    messageFormats.insert_or_assign(msgName, msgDataFields);
+                }
+                else if (msgName == "vehicle_status")
+                {
+                    messageFormats.insert_or_assign(msgName, msgDataFields);
+                }
+                else if (msgName == "cpuload")
+                {
+                    messageFormats.insert_or_assign(msgName, msgDataFields);
+                }
+                else
+                {
+                    LOG_ERROR("Data format '{}' could not be decoded", msgName);
+                }
+            }
+
+            // Information message
+            else if (ulogMsgHeader.msgHeader.msg_type == 'I')
+            {
+                readInformationMessage(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
+            }
+
+            // Information message multi
+            else if (ulogMsgHeader.msgHeader.msg_type == 'M')
+            {
+                readInformationMessageMulti(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
+            }
+
+            // Parameter message
+            else if (ulogMsgHeader.msgHeader.msg_type == 'P')
+            {
+                readParameterMessage(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
+            }
+
+            // Parameter message default
+            else if (ulogMsgHeader.msgHeader.msg_type == 'Q')
+            {
+                readParameterMessageDefault(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
+            }
+        }
+        filestream.seekg(-3, std::ios_base::cur); // 'msg_size' + 'msg_type' = 3 Byte
+        LOG_DEBUG("Read 'Definitions Section' completed");
     }
 }
 
-void NAV::UlogFile::readDefinitions()
+std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek)
 {
-    // Read message header
-    union
-    {
-        std::array<char, 3> data{};
-        Ulog::message_header_s msgHeader;
-    } ulogMsgHeader{};
-
-    while (!((ulogMsgHeader.msgHeader.msg_type == 'A') || (ulogMsgHeader.msgHeader.msg_type == 'L')))
-    {
-        filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
-
-        LOG_DATA("msgSize: {}", ulogMsgHeader.msgHeader.msg_size);
-        LOG_DATA("msgType: {}", ulogMsgHeader.msgHeader.msg_type);
-
-        // Read definition message
-        // Flag bitset message
-        if (ulogMsgHeader.msgHeader.msg_type == 'B')
-        {
-            if (ulogMsgHeader.msgHeader.msg_size > 40)
-            {
-                LOG_WARN("Exceeding bytes in 'flag bitset message' are ignored. Check for ULog file format update.");
-            }
-
-            union
-            {
-                std::array<char, 40> data{};
-                Ulog::ulog_message_flag_bits_s ulogMsgFlagBits_s;
-            } ulogMsgFlagBits{};
-
-            filestream.read(ulogMsgFlagBits.data.data(), ulogMsgFlagBits.data.size() * sizeof(char)); // 'sizeof' is optional here, but it is the solution in general, since data types can be larger than one byte
-        }
-
-        // Format definition for a single (composite) type that can be logged or used in another definition as a nested type
-        else if (ulogMsgHeader.msgHeader.msg_type == 'F')
-        {
-            Ulog::message_format_s messageFormat;
-            messageFormat.header = ulogMsgHeader.msgHeader;
-
-            LOG_DATA("messageFormat.header.msg_size: {}", messageFormat.header.msg_size);
-
-            messageFormat.format.resize(messageFormat.header.msg_size);
-            filestream.read(messageFormat.format.data(), ulogMsgHeader.msgHeader.msg_size);
-            LOG_DATA("messageFormat.format.data(): {}", messageFormat.format.data());
-
-            std::string msgName = messageFormat.format.substr(0, messageFormat.format.find(':'));
-
-            // Decoding data format fields
-            std::stringstream lineStream(messageFormat.format.substr(messageFormat.format.find(':') + 1));
-            std::string cell;
-
-            std::vector<DataField> msgDataFields;
-
-            while (std::getline(lineStream, cell, ';'))
-            {
-                DataField data_field{ cell.substr(0, cell.find(' ')), cell.substr(cell.find(' ') + 1) };
-                msgDataFields.push_back(data_field);
-            }
-
-            if (msgName == "sensor_accel")
-            {
-                messageFormats.insert_or_assign(msgName, msgDataFields);
-            }
-            else if (msgName == "sensor_gyro")
-            {
-                messageFormats.insert_or_assign(msgName, msgDataFields);
-            }
-            else if (msgName == "sensor_mag")
-            {
-                messageFormats.insert_or_assign(msgName, msgDataFields);
-            }
-            else if (msgName == "vehicle_gps_position")
-            {
-                messageFormats.insert_or_assign(msgName, msgDataFields);
-            }
-            else if (msgName == "vehicle_attitude")
-            {
-                messageFormats.insert_or_assign(msgName, msgDataFields);
-            }
-            else if (msgName == "vehicle_air_data")
-            {
-                messageFormats.insert_or_assign(msgName, msgDataFields);
-            }
-            else if (msgName == "vehicle_control_mode")
-            {
-                messageFormats.insert_or_assign(msgName, msgDataFields);
-            }
-            else if (msgName == "vehicle_status")
-            {
-                messageFormats.insert_or_assign(msgName, msgDataFields);
-            }
-            else if (msgName == "cpuload")
-            {
-                messageFormats.insert_or_assign(msgName, msgDataFields);
-            }
-            else
-            {
-                LOG_ERROR("Data format '{}' could not be decoded", msgName);
-            }
-        }
-
-        // Information message
-        else if (ulogMsgHeader.msgHeader.msg_type == 'I')
-        {
-            readInformationMessage(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
-        }
-
-        // Information message multi
-        else if (ulogMsgHeader.msgHeader.msg_type == 'M')
-        {
-            readInformationMessageMulti(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
-        }
-
-        // Parameter message
-        else if (ulogMsgHeader.msgHeader.msg_type == 'P')
-        {
-            readParameterMessage(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
-        }
-
-        // Parameter message default
-        else if (ulogMsgHeader.msgHeader.msg_type == 'Q')
-        {
-            readParameterMessageDefault(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
-        }
-    }
-    LOG_DEBUG("Read 'Definitions Section' completed");
-}
-
-void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
-{
-    // Read msg size (2B) and type (1B)
-    Ulog::message_info_s messageInfo;
-    messageInfo.header.msg_size = msgSize;
-    messageInfo.header.msg_type = msgType;
-    filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(messageInfo.key_len));
-
-    // Read 'key' identifier ('keylength' byte) and its associated 'value'
-    messageInfo.key.resize(messageInfo.key_len);
-    filestream.read(messageInfo.key.data(), messageInfo.key_len);
-    messageInfo.value.resize(static_cast<size_t>(messageInfo.header.msg_size - 1 - messageInfo.key_len)); // 'msg_size' contains key and value, but not header
-    filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
-    LOG_DATA("Information message - key: {}", messageInfo.key);
-    LOG_DATA("Information message - value: {}", messageInfo.value);
-}
-
-void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
-{
-    // Read msg size (2B) and type (1B)
-    Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
-    messageInfoMulti.header.msg_size = msgSize;
-    messageInfoMulti.header.msg_type = msgType;
-    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued));
-    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(messageInfoMulti.key_len));
-
-    // Read 'key' identifier ('keylength' byte) and its associated 'value'
-    messageInfoMulti.key.resize(messageInfoMulti.key_len);
-    filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
-    messageInfoMulti.value.resize(static_cast<size_t>(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len)); // contains 'is_continued' flag in contrast to information message
-    filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
-    LOG_DATA("Information message multi - key_len: {}", messageInfoMulti.key_len);
-    LOG_DATA("Information message multi - key: {}", messageInfoMulti.key);
-    LOG_DATA("Information message multi - value: {}", messageInfoMulti.value);
-    //TODO: Use 'is_continued' to generate a list of values with the same key
-}
-
-void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
-{
-    // Read msg size (2B) and type (1B)
-    Ulog::message_info_s messageParam;
-    messageParam.header.msg_size = msgSize;
-    messageParam.header.msg_type = msgType;
-    filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(messageParam.key_len));
-
-    // Read 'key' identifier ('keylength' byte) and its associated 'value'
-    messageParam.key.resize(messageParam.key_len);
-    filestream.read(messageParam.key.data(), messageParam.key_len);
-
-    if (!(messageParam.key.find("int32_t")) && !(messageParam.key.find("float")))
-    {
-        LOG_WARN("Parameter message contains invalid data type. It is neither 'int32_t', nor 'float', instead: {}", messageParam.key);
-    }
-
-    if (messageParam.header.msg_size - 1 - messageParam.key_len < 0)
-    {
-        LOG_WARN("Parameter msg has key_len: {}", messageParam.key_len);
-    }
-    else
-    {
-        messageParam.value.resize(static_cast<size_t>(messageParam.header.msg_size - 1 - messageParam.key_len)); // 'msg_size' contains key and value, but not header
-        filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
-        LOG_DATA("Parameter message - key: {}", messageParam.key);
-        LOG_DATA("Parameter message - value: {}", messageParam.value);
-    }
-}
-
-void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
-{
-    Ulog::ulog_message_parameter_default_header_s messageParamDefault;
-    messageParamDefault.header.msg_size = msgSize;
-    messageParamDefault.header.msg_type = msgType;
-    filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(messageParamDefault.default_types));
-    filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(messageParamDefault.key_len));
-
-    messageParamDefault.key.resize(messageParamDefault.key_len);
-    filestream.read(messageParamDefault.key.data(), messageParamDefault.key_len);
-    messageParamDefault.value.resize(static_cast<size_t>(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len));
-    filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
-    LOG_DEBUG("Parameter default message - key: {}", messageParamDefault.key);
-    LOG_DEBUG("Parameter default message - value: {}", messageParamDefault.value);
-
-    //TODO: Restriction on '1<<0' and '1<<1'
-}
-
-std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek) //NOLINT(readability-convert-member-functions-to-static)
-{
-    std::shared_ptr<NAV::NodeData> obs = nullptr;
+    // std::shared_ptr<NAV::NodeData> obs = nullptr;
 
     LOG_DEBUG("Start reading Ulog data section");
     // Get current position
     auto pollStartPos = filestream.tellg();
 
     // TODO: Read in one imuObs (accel, gyro, )
-
-    LOG_DEBUG("Start reading data");
-    bool startDataFlag = true;
     // Read message header
     union
     {
@@ -395,16 +302,9 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
         Ulog::message_header_s msgHeader;
     } ulogMsgHeader{};
 
-    // while (true)
-    for (size_t i = 0; i < 100; i++) //TODO: Quick fix, enable while loop once eof is reached
+    while (true)
+    // for (size_t i = 0; i < 100; i++) //TODO: Quick fix, enable while loop once eof is reached
     {
-        // Reset cursor to position before the while-loop in 'readDefinitions()' reached its break condition
-        if (startDataFlag)
-        {
-            filestream.seekg(-3, std::ios_base::cur); // 'msg_size' + 'msg_type' = 3 Byte
-            startDataFlag = false;
-        }
-
         filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
 
         LOG_DATA("msgSize: {}", ulogMsgHeader.msgHeader.msg_size);
@@ -484,18 +384,21 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
                         std::memcpy(&sensorAccel.x, currentData, sizeof(sensorAccel.x));
                         LOG_DATA("sensorAccel.x: {}", sensorAccel.x);
                         currentExtractLocation += sizeof(sensorAccel.x);
+                        messageCount++;
                     }
                     else if (dataField.name == "y")
                     {
                         std::memcpy(&sensorAccel.y, currentData, sizeof(sensorAccel.y));
                         LOG_DATA("sensorAccel.y: {}", sensorAccel.y);
                         currentExtractLocation += sizeof(sensorAccel.y);
+                        messageCount++;
                     }
                     else if (dataField.name == "z")
                     {
                         std::memcpy(&sensorAccel.z, currentData, sizeof(sensorAccel.z));
                         LOG_DATA("sensorAccel.z: {}", sensorAccel.z);
                         currentExtractLocation += sizeof(sensorAccel.z);
+                        messageCount++;
                     }
                     else if (dataField.name == "temperature")
                     {
@@ -519,12 +422,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
                         //FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
-
-                    epochData.insert(std::make_pair(sensorAccel.timestamp,
-                                                    MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
-                                                                     subscribedMessages.at(messageData.msg_id).message_name,
-                                                                     sensorAccel }));
                 }
+                epochData.insert(std::make_pair(sensorAccel.timestamp,
+                                                MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                 subscribedMessages.at(messageData.msg_id).message_name,
+                                                                 sensorAccel }));
             }
             else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gyro")
             {
@@ -586,11 +488,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
                         //FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
-
-                    epochData.insert(std::make_pair(sensorGyro.timestamp,
-                                                    MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
-                                                                     subscribedMessages.at(messageData.msg_id).message_name, sensorGyro }));
                 }
+                epochData.insert(std::make_pair(sensorGyro.timestamp,
+                                                MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                 subscribedMessages.at(messageData.msg_id).message_name,
+                                                                 sensorGyro }));
             }
             else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_mag")
             {
@@ -662,11 +564,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
                         //FIXME: move 'currentExtractLocation', if yes, how far?
                         LOG_WARN("dataField.name = '{}' or dataField.type = '{}' is unknown", dataField.name, dataField.type);
                     }
-
-                    epochData.insert(std::make_pair(sensorMag.timestamp,
-                                                    MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
-                                                                     subscribedMessages.at(messageData.msg_id).message_name, sensorMag }));
                 }
+                epochData.insert(std::make_pair(sensorMag.timestamp,
+                                                MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                 subscribedMessages.at(messageData.msg_id).message_name,
+                                                                 sensorMag }));
             }
             // TODO:
             // else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gps")
@@ -679,57 +581,73 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
             // }
             else
             {
-                LOG_ERROR("UKNOWN: subscribedMessages.at(messageData.msg_id).message_name = {}", subscribedMessages.at(messageData.msg_id).message_name);
+                LOG_ERROR("{}: UKNOWN: subscribedMessages.at(messageData.msg_id).message_name = {}", nameId(), subscribedMessages.at(messageData.msg_id).message_name);
             }
 
             // TODO: for loop for multiple multi_ids (redundant sensors)
 
             // Callbacks
-            bool hasEnoughImuDataToSend = true;       // FIXME: Make function
-            bool hasEnoughPosVelAttDataToSend = true; // FIXME: Make function
+            bool hasEnoughPosVelAttDataToSend = false; // FIXME: Make function
 
-            if (hasEnoughImuDataToSend) // This is the hasEnoughData check
+            // Breakpoint to debug 'epochData' --> see how it's filled
+            if (std::holds_alternative<SensorAccel>(epochData.end()->second.data) && messageCount == 3) // This is the hasEnoughData check
             {
                 LOG_INFO("{}: Construct ImuObs and invoke callback", nameId());
-                obs = std::make_shared<NAV::ImuObs>(imuPos);
+                // obs = std::make_shared<NAV::ImuObs>(imuPos);
+                auto obs = std::make_shared<ImuObs>(this->imuPos);
+
+                // auto test1 = epochData.begin()->first; // key
+
+                // auto test2 = std::get<SensorAccel>(epochData.end()->second.data).timestamp;
+
+                // LOG_ERROR("{}: value: {}", nameId(), test2);
+
+                obs->timeSinceStartup = 1000 * epochData.end()->first; // latest timestamp in [ns]
+                // auto latestTimeStamp = obs->timeSinceStartup;
+                // LOG_DEBUG("{}: obs->timeSinceStartup = {}", nameId(), latestTimeStamp);
+
+                // auto accelX = std::get<SensorAccel>(epochData.end()->second.data).x;
+                // auto accelY = std::get<SensorAccel>(epochData.end()->second.data).y;
+                // auto accelZ = std::get<SensorAccel>(epochData.end()->second.data).z;
+                // obs->accelUncompXYZ.emplace(accelX, accelY, accelZ);
+
+                // LOG_ERROR("{}: accelX: {}", nameId(), accelX);
 
                 // TODO: Befüllen
 
                 // TODO: Erase just the first used measurements from epochdata
 
-                // Calls all the callbacks
                 if (!peek)
                 {
                     invokeCallbacks(OutputPortIndex_ImuObs, obs);
                 }
-
-                // break out of while loop
+                else
+                {
+                    // Return to position before "Read line".
+                    filestream.seekg(pollStartPos, std::ios_base::beg);
+                }
+                return obs;
             }
-            else if (hasEnoughPosVelAttDataToSend) // This is the hasEnoughData check
+            if (hasEnoughPosVelAttDataToSend) // This is the hasEnoughData check
             {
                 LOG_INFO("{}: Construct PosVelAtt and invoke callback", nameId());
-                obs = std::make_shared<NAV::PosVelAtt>();
+                auto obs = std::make_shared<NAV::PosVelAtt>();
 
                 // TODO: Befüllen
 
                 // TODO: Erase just the first used measurements from epochdata
 
-                // Calls all the callbacks
                 if (!peek)
                 {
                     invokeCallbacks(OutputPortIndex_PosVelAtt, obs);
                 }
-
-                // break out of while loop
+                else
+                {
+                    // Return to position before "Read line".
+                    filestream.seekg(pollStartPos, std::ios_base::beg);
+                }
+                return obs;
             }
-
-            if (peek)
-            {
-                // Return to position before "Read line".
-                filestream.seekg(pollStartPos, std::ios_base::beg);
-            }
-
-            return obs;
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'L')
         {
@@ -864,7 +782,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
         {
             readParameterMessageDefault(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
         }
-
         else
         {
             std::string nextChars;
@@ -878,4 +795,89 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
         }
     }
     return nullptr; // FIXME: Quick fix, since 'return obs' only makes sense in the 'data' msg type
+}
+
+void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
+{
+    // Read msg size (2B) and type (1B)
+    Ulog::message_info_s messageInfo;
+    messageInfo.header.msg_size = msgSize;
+    messageInfo.header.msg_type = msgType;
+    filestream.read(reinterpret_cast<char*>(&messageInfo.key_len), sizeof(messageInfo.key_len));
+
+    // Read 'key' identifier ('keylength' byte) and its associated 'value'
+    messageInfo.key.resize(messageInfo.key_len);
+    filestream.read(messageInfo.key.data(), messageInfo.key_len);
+    messageInfo.value.resize(static_cast<size_t>(messageInfo.header.msg_size - 1 - messageInfo.key_len)); // 'msg_size' contains key and value, but not header
+    filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
+    LOG_DATA("Information message - key: {}", messageInfo.key);
+    LOG_DATA("Information message - value: {}", messageInfo.value);
+}
+
+void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
+{
+    // Read msg size (2B) and type (1B)
+    Ulog::ulog_message_info_multiple_header_s messageInfoMulti;
+    messageInfoMulti.header.msg_size = msgSize;
+    messageInfoMulti.header.msg_type = msgType;
+    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.is_continued), sizeof(messageInfoMulti.is_continued));
+    filestream.read(reinterpret_cast<char*>(&messageInfoMulti.key_len), sizeof(messageInfoMulti.key_len));
+
+    // Read 'key' identifier ('keylength' byte) and its associated 'value'
+    messageInfoMulti.key.resize(messageInfoMulti.key_len);
+    filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
+    messageInfoMulti.value.resize(static_cast<size_t>(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len)); // contains 'is_continued' flag in contrast to information message
+    filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
+    LOG_DATA("Information message multi - key_len: {}", messageInfoMulti.key_len);
+    LOG_DATA("Information message multi - key: {}", messageInfoMulti.key);
+    LOG_DATA("Information message multi - value: {}", messageInfoMulti.value);
+    //TODO: Use 'is_continued' to generate a list of values with the same key
+}
+
+void NAV::UlogFile::readParameterMessage(uint16_t msgSize, char msgType)
+{
+    // Read msg size (2B) and type (1B)
+    Ulog::message_info_s messageParam;
+    messageParam.header.msg_size = msgSize;
+    messageParam.header.msg_type = msgType;
+    filestream.read(reinterpret_cast<char*>(&messageParam.key_len), sizeof(messageParam.key_len));
+
+    // Read 'key' identifier ('keylength' byte) and its associated 'value'
+    messageParam.key.resize(messageParam.key_len);
+    filestream.read(messageParam.key.data(), messageParam.key_len);
+
+    if (!(messageParam.key.find("int32_t")) && !(messageParam.key.find("float")))
+    {
+        LOG_WARN("Parameter message contains invalid data type. It is neither 'int32_t', nor 'float', instead: {}", messageParam.key);
+    }
+
+    if (messageParam.header.msg_size - 1 - messageParam.key_len < 0)
+    {
+        LOG_WARN("Parameter msg has key_len: {}", messageParam.key_len);
+    }
+    else
+    {
+        messageParam.value.resize(static_cast<size_t>(messageParam.header.msg_size - 1 - messageParam.key_len)); // 'msg_size' contains key and value, but not header
+        filestream.read(messageParam.value.data(), messageParam.header.msg_size - 1 - messageParam.key_len);
+        LOG_DATA("Parameter message - key: {}", messageParam.key);
+        LOG_DATA("Parameter message - value: {}", messageParam.value);
+    }
+}
+
+void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
+{
+    Ulog::ulog_message_parameter_default_header_s messageParamDefault;
+    messageParamDefault.header.msg_size = msgSize;
+    messageParamDefault.header.msg_type = msgType;
+    filestream.read(reinterpret_cast<char*>(&messageParamDefault.default_types), sizeof(messageParamDefault.default_types));
+    filestream.read(reinterpret_cast<char*>(&messageParamDefault.key_len), sizeof(messageParamDefault.key_len));
+
+    messageParamDefault.key.resize(messageParamDefault.key_len);
+    filestream.read(messageParamDefault.key.data(), messageParamDefault.key_len);
+    messageParamDefault.value.resize(static_cast<size_t>(messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len));
+    filestream.read(messageParamDefault.value.data(), messageParamDefault.header.msg_size - 2 - messageParamDefault.key_len);
+    LOG_DEBUG("Parameter default message - key: {}", messageParamDefault.key);
+    LOG_DEBUG("Parameter default message - value: {}", messageParamDefault.value);
+
+    //TODO: Restriction on '1<<0' and '1<<1'
 }

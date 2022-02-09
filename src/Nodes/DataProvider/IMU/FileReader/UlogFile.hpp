@@ -89,12 +89,6 @@ class UlogFile : public Imu, public FileReader
     /// @brief Read the Header of the file
     void readHeader() override;
 
-    /// @brief Read the ULog Definitions, i.e. a variable length section containing version information, format definitions and (initial) parameter values (see https://docs.px4.io/master/en/dev_log/ulog_file_format.html#definitions-section)
-    void readDefinitions();
-
-    //TODO: Replace with 'pollData', once callbacks are enabled
-    void readData();
-
     /// @brief Read msg type 'I'
     /// @param[in] msgSize size of ulogMsgHeader
     /// @param[in] msgType type of ulogMsgHeader
