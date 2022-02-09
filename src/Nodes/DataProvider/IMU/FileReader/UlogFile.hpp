@@ -298,6 +298,9 @@ class UlogFile : public Imu, public FileReader
     /// @brief Number of messages read
     uint32_t messageCount = 0;
 
+    /// @brief Number of accelerometer values that are read-in
+    uint8_t accelAxisCount = 0;
+
     // Key: [timestamp], Value: [0, "sensor_accel", SensorAccel{}]
     std::multimap<uint64_t, MeasurementData> epochData;
 };

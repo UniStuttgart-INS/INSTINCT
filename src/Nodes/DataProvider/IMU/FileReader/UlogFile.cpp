@@ -92,6 +92,7 @@ bool NAV::UlogFile::initialize()
     LOG_TRACE("{}: called", nameId());
 
     messageCount = 0;
+    accelAxisCount = 0;
     sensorStartupUTCTime_usec = 0;
 
     return FileReader::initialize();
@@ -384,21 +385,21 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
                         std::memcpy(&sensorAccel.x, currentData, sizeof(sensorAccel.x));
                         LOG_DATA("{}: sensorAccel.x: {}", nameId(), sensorAccel.x);
                         currentExtractLocation += sizeof(sensorAccel.x);
-                        messageCount++;
+                        accelAxisCount++;
                     }
                     else if (dataField.name == "y")
                     {
                         std::memcpy(&sensorAccel.y, currentData, sizeof(sensorAccel.y));
                         LOG_DATA("{}: sensorAccel.y: {}", nameId(), sensorAccel.y);
                         currentExtractLocation += sizeof(sensorAccel.y);
-                        messageCount++;
+                        accelAxisCount++;
                     }
                     else if (dataField.name == "z")
                     {
                         std::memcpy(&sensorAccel.z, currentData, sizeof(sensorAccel.z));
                         LOG_DATA("{}: sensorAccel.z: {}", nameId(), sensorAccel.z);
                         currentExtractLocation += sizeof(sensorAccel.z);
-                        messageCount++;
+                        accelAxisCount++;
                     }
                     else if (dataField.name == "temperature")
                     {
@@ -590,7 +591,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
             bool hasEnoughPosVelAttDataToSend = false; // FIXME: Make function
 
             // Breakpoint to debug 'epochData' --> see how it's filled
-            if (std::holds_alternative<SensorAccel>(epochData.end()->second.data) && messageCount == 3) // This is the hasEnoughData check
+            if (std::holds_alternative<SensorAccel>(epochData.end()->second.data) && accelAxisCount == 3) // This is the hasEnoughData check
             {
                 LOG_INFO("{}: Construct ImuObs and invoke callback", nameId());
                 // obs = std::make_shared<NAV::ImuObs>(imuPos);
