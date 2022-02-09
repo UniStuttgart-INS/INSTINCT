@@ -305,13 +305,13 @@ std::shared_ptr<const NAV::NodeData> NAV::RtklibPosFile::pollData(bool peek)
     }
     if (positionX.has_value() && positionY.has_value() && positionZ.has_value())
     {
-        obs->position_ecef.emplace(positionX.value(), positionY.value(), positionZ.value());
+        obs->e_position.emplace(positionX.value(), positionY.value(), positionZ.value());
     }
     if (positionLat.has_value() && positionLon.has_value() && positionHeight.has_value())
     {
-        if (!obs->position_ecef.has_value())
+        if (!obs->e_position.has_value())
         {
-            obs->position_ecef.emplace(trafo::lla2ecef_WGS84({ positionLat.value(), positionLon.value(), positionHeight.value() }));
+            obs->e_position.emplace(trafo::lla2ecef_WGS84({ positionLat.value(), positionLon.value(), positionHeight.value() }));
         }
     }
     if (sdX.has_value() && sdY.has_value() && sdZ.has_value())

@@ -18,7 +18,7 @@ constexpr double omega_ie = 7.2921151467e-05;
 constexpr double omega_ie_Skydel = 7.2921155e-5; // FIXME: Skydel (for compatibility with Skydel's IMU plugin)
 
 /// ω_ie_e = ω_ie_i Nominal mean angular velocity of the Earth in [rad/s], in earth coordinates
-const static Eigen::Vector3d omega_ie_e{ 0.0, 0.0, omega_ie };
+const static Eigen::Vector3d e_omega_ie{ 0.0, 0.0, omega_ie };
 
 /// @brief Conversion factor between latitude and longitude in [rad] to [pseudometre]
 constexpr double pseudometre = 6370000;

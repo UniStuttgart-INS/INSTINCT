@@ -117,7 +117,7 @@ class PosVelAttInitializer : public Node
     /// Whether the GNSS values should be used or we want to override the values manually
     bool _overridePosition = false;
     /// Values to override the Position in [deg, deg, m]
-    std::array<float, 3> _overrideValuesPosition_lla = {};
+    std::array<float, 3> _lla_overrideValuesPosition = {};
     /// Position Accuracy to achieve in [cm]
     float _positionAccuracyThreshold = 10;
     /// Last position accuracy in [cm] for XYZ or NED
@@ -128,7 +128,7 @@ class PosVelAttInitializer : public Node
     /// Whether the GNSS values should be used or we want to override the values manually
     bool _overrideVelocity = false;
     /// Values to override the Velocity in [m/s]
-    std::array<float, 3> _overrideValuesVelocity_n = {};
+    std::array<float, 3> _n_overrideValuesVelocity = {};
     /// Velocity Accuracy to achieve in [cm/s]
     float _velocityAccuracyThreshold = 10;
     /// Last velocity accuracy in [cm/s] for XYZ or NED
@@ -149,11 +149,11 @@ class PosVelAttInitializer : public Node
     std::array<bool, 4> _posVelAttInitialized = { false, false, false, false };
 
     /// Initialized Quaternion body to navigation frame (roll, pitch, yaw)
-    Eigen::Quaterniond _q_nb_init;
+    Eigen::Quaterniond _n_Quat_b_init;
     /// Position in ECEF coordinates
-    Eigen::Vector3d _p_ecef_init;
+    Eigen::Vector3d _e_initPosition;
     /// Velocity in navigation coordinates
-    Eigen::Vector3d _v_n_init;
+    Eigen::Vector3d _n_initVelocity;
 };
 
 } // namespace NAV

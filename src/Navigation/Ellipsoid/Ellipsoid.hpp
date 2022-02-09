@@ -57,11 +57,11 @@ namespace NAV
 [[nodiscard]] double calcGeocentricRadius(const double& latitude, const double& R_E, const double& e_squared = InsConst::WGS84_e_squared);
 
 /// @brief Conversion matrix between cartesian and curvilinear perturbations to the position
-/// @param[in] position_lla Position as Lat Lon Alt in [rad rad m]
+/// @param[in] lla_position Position as Lat Lon Alt in [rad rad m]
 /// @param[in] R_N Meridian radius of curvature in [m]
 /// @param[in] R_E Prime vertical radius of curvature (East/West) [m]
 /// @return T_rn_p A 3x3 matrix
 /// @note See \cite Groves2013 Groves, ch. 2.4.3, eq. 2.119, p. 63
-[[nodiscard]] Eigen::Matrix3d conversionMatrixCartesianCurvilinear(const Eigen::Vector3d& position_lla, const double& R_N, const double& R_E);
+[[nodiscard]] Eigen::Matrix3d conversionMatrixCartesianCurvilinear(const Eigen::Vector3d& lla_position, const double& R_N, const double& R_E);
 
 } // namespace NAV

@@ -68,13 +68,13 @@ void compareIntegratorResults()
     REQUIRE(integratorResult->latitude() == Approx(integratorResultRef->latitude()).margin(EPSILON));
     REQUIRE(integratorResult->longitude() == Approx(integratorResultRef->longitude()).margin(EPSILON));
     REQUIRE(integratorResult->altitude() == Approx(integratorResultRef->altitude()).margin(EPSILON));
-    REQUIRE(integratorResult->velocity_n()(0) == Approx(integratorResultRef->velocity_n()(0)).margin(EPSILON));
-    REQUIRE(integratorResult->velocity_n()(1) == Approx(integratorResultRef->velocity_n()(1)).margin(EPSILON));
-    REQUIRE(integratorResult->velocity_n()(2) == Approx(integratorResultRef->velocity_n()(2)).margin(EPSILON));
-    REQUIRE(integratorResult->quaternion_nb().w() == Approx(integratorResultRef->quaternion_nb().w()).margin(EPSILON));
-    REQUIRE(integratorResult->quaternion_nb().x() == Approx(integratorResultRef->quaternion_nb().x()).margin(EPSILON));
-    REQUIRE(integratorResult->quaternion_nb().y() == Approx(integratorResultRef->quaternion_nb().y()).margin(EPSILON));
-    REQUIRE(integratorResult->quaternion_nb().z() == Approx(integratorResultRef->quaternion_nb().z()).margin(EPSILON));
+    REQUIRE(integratorResult->n_velocity()(0) == Approx(integratorResultRef->n_velocity()(0)).margin(EPSILON));
+    REQUIRE(integratorResult->n_velocity()(1) == Approx(integratorResultRef->n_velocity()(1)).margin(EPSILON));
+    REQUIRE(integratorResult->n_velocity()(2) == Approx(integratorResultRef->n_velocity()(2)).margin(EPSILON));
+    REQUIRE(integratorResult->n_Quat_b().w() == Approx(integratorResultRef->n_Quat_b().w()).margin(EPSILON));
+    REQUIRE(integratorResult->n_Quat_b().x() == Approx(integratorResultRef->n_Quat_b().x()).margin(EPSILON));
+    REQUIRE(integratorResult->n_Quat_b().y() == Approx(integratorResultRef->n_Quat_b().y()).margin(EPSILON));
+    REQUIRE(integratorResult->n_Quat_b().z() == Approx(integratorResultRef->n_Quat_b().z()).margin(EPSILON));
 
     // ------------------------------------------------- Reset ---------------------------------------------------
     integratorResult.reset();

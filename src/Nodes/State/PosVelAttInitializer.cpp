@@ -271,17 +271,17 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::Indent();
 
         ImGui::SetNextItemWidth(100);
-        if (ImGui::DragFloat(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &_overrideValuesPosition_lla.at(0), 1.0F, -90.0F, 90.0F, "%.6f"))
+        if (ImGui::DragFloat(fmt::format("Latitude [deg]##{}", size_t(id)).c_str(), &_lla_overrideValuesPosition.at(0), 1.0F, -90.0F, 90.0F, "%.6f"))
         {
             flow::ApplyChanges();
         }
         ImGui::SetNextItemWidth(100);
-        if (ImGui::DragFloat(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &_overrideValuesPosition_lla.at(1), 1.0F, -180.0F, 180.0F, "%.6f"))
+        if (ImGui::DragFloat(fmt::format("Longitude [deg]##{}", size_t(id)).c_str(), &_lla_overrideValuesPosition.at(1), 1.0F, -180.0F, 180.0F, "%.6f"))
         {
             flow::ApplyChanges();
         }
         ImGui::SetNextItemWidth(100);
-        if (ImGui::DragFloat(fmt::format("Altitude [m]##{}", size_t(id)).c_str(), &_overrideValuesPosition_lla.at(2)))
+        if (ImGui::DragFloat(fmt::format("Altitude [m]##{}", size_t(id)).c_str(), &_lla_overrideValuesPosition.at(2)))
         {
             flow::ApplyChanges();
         }
@@ -298,17 +298,17 @@ void NAV::PosVelAttInitializer::guiConfig()
         ImGui::Indent();
 
         ImGui::SetNextItemWidth(100);
-        if (ImGui::DragFloat(fmt::format("Velocity N [m/s]##{}", size_t(id)).c_str(), &_overrideValuesVelocity_n.at(0)))
+        if (ImGui::DragFloat(fmt::format("Velocity N [m/s]##{}", size_t(id)).c_str(), &_n_overrideValuesVelocity.at(0)))
         {
             flow::ApplyChanges();
         }
         ImGui::SetNextItemWidth(100);
-        if (ImGui::DragFloat(fmt::format("Velocity E [m/s]##{}", size_t(id)).c_str(), &_overrideValuesVelocity_n.at(1)))
+        if (ImGui::DragFloat(fmt::format("Velocity E [m/s]##{}", size_t(id)).c_str(), &_n_overrideValuesVelocity.at(1)))
         {
             flow::ApplyChanges();
         }
         ImGui::SetNextItemWidth(100);
-        if (ImGui::DragFloat(fmt::format("Velocity D [m/s]##{}", size_t(id)).c_str(), &_overrideValuesVelocity_n.at(2)))
+        if (ImGui::DragFloat(fmt::format("Velocity D [m/s]##{}", size_t(id)).c_str(), &_n_overrideValuesVelocity.at(2)))
         {
             flow::ApplyChanges();
         }
@@ -382,9 +382,9 @@ void NAV::PosVelAttInitializer::guiConfig()
     j["positionAccuracyThreshold"] = _positionAccuracyThreshold;
     j["velocityAccuracyThreshold"] = _velocityAccuracyThreshold;
     j["overridePosition"] = _overridePosition;
-    j["overrideValuesPosition_lla"] = _overrideValuesPosition_lla;
+    j["overrideValuesPosition_lla"] = _lla_overrideValuesPosition;
     j["overrideVelocity"] = _overrideVelocity;
-    j["overrideValuesVelocity_n"] = _overrideValuesVelocity_n;
+    j["n_overrideValuesVelocity"] = _n_overrideValuesVelocity;
     j["overrideRollPitchYaw"] = _overrideRollPitchYaw;
     j["overrideValuesRollPitchYaw"] = _overrideValuesRollPitchYaw;
 
@@ -417,15 +417,15 @@ void NAV::PosVelAttInitializer::restore(json const& j)
     }
     if (j.contains("overrideValuesPosition_lla"))
     {
-        j.at("overrideValuesPosition_lla").get_to(_overrideValuesPosition_lla);
+        j.at("overrideValuesPosition_lla").get_to(_lla_overrideValuesPosition);
     }
     if (j.contains("overrideVelocity"))
     {
         j.at("overrideVelocity").get_to(_overrideVelocity);
     }
-    if (j.contains("overrideValuesVelocity_n"))
+    if (j.contains("n_overrideValuesVelocity"))
     {
-        j.at("overrideValuesVelocity_n").get_to(_overrideValuesVelocity_n);
+        j.at("n_overrideValuesVelocity").get_to(_n_overrideValuesVelocity);
     }
     if (j.contains("overrideRollPitchYaw"))
     {
@@ -473,46 +473,46 @@ void NAV::PosVelAttInitializer::finalizeInit()
 
         if (_overridePosition)
         {
-            _p_ecef_init = trafo::lla2ecef_WGS84(Eigen::Vector3d(trafo::deg2rad(_overrideValuesPosition_lla.at(0)),
-                                                                 trafo::deg2rad(_overrideValuesPosition_lla.at(1)),
-                                                                 _overrideValuesPosition_lla.at(2)));
+            _e_initPosition = trafo::lla2ecef_WGS84(Eigen::Vector3d(trafo::deg2rad(_lla_overrideValuesPosition.at(0)),
+                                                                    trafo::deg2rad(_lla_overrideValuesPosition.at(1)),
+                                                                    _lla_overrideValuesPosition.at(2)));
         }
         if (_overrideVelocity)
         {
-            _v_n_init = Eigen::Vector3d(_overrideValuesVelocity_n.at(0), _overrideValuesVelocity_n.at(1), _overrideValuesVelocity_n.at(2));
+            _n_initVelocity = Eigen::Vector3d(_n_overrideValuesVelocity.at(0), _n_overrideValuesVelocity.at(1), _n_overrideValuesVelocity.at(2));
         }
 
         if (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))
         {
-            _q_nb_init = trafo::quat_nb(trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)),
-                                        trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)),
-                                        trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)));
+            _n_Quat_b_init = trafo::n_Quat_b(trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)),
+                                             trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)),
+                                             trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)));
         }
 
-        [[maybe_unused]] auto latLonAlt = trafo::ecef2lla_WGS84(_p_ecef_init);
+        [[maybe_unused]] auto lla_position = trafo::ecef2lla_WGS84(_e_initPosition);
         LOG_INFO("{}: Position initialized to Lat {:3.4f} [°], Lon {:3.4f} [°], Alt {:4.4f} [m]", nameId(),
-                 trafo::rad2deg(latLonAlt.x()),
-                 trafo::rad2deg(latLonAlt.y()),
-                 latLonAlt.z());
+                 trafo::rad2deg(lla_position.x()),
+                 trafo::rad2deg(lla_position.y()),
+                 lla_position.z());
 
-        if (latLonAlt.z() < 0)
+        if (lla_position.z() < 0)
         {
-            LOG_WARN("{}: Altitude has a value of {} which is below the ellipsoid height.", nameId(), latLonAlt.z());
+            LOG_WARN("{}: Altitude has a value of {} which is below the ellipsoid height.", nameId(), lla_position.z());
         }
 
         LOG_INFO("{}: Velocity initialized to v_N {:3.5f} [m/s], v_E {:3.5f} [m/s], v_D {:3.5f} [m/s]", nameId(),
-                 _v_n_init(0), _v_n_init(1), _v_n_init(2));
+                 _n_initVelocity(0), _n_initVelocity(1), _n_initVelocity(2));
 
-        [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(_q_nb_init);
+        [[maybe_unused]] auto rollPitchYaw = trafo::quat2eulerZYX(_n_Quat_b_init);
         LOG_INFO("{}: Attitude initialized to Roll {:3.5f} [°], Pitch {:3.5f} [°], Yaw {:3.4f} [°]", nameId(),
                  trafo::rad2deg(rollPitchYaw.x()),
                  trafo::rad2deg(rollPitchYaw.y()),
                  trafo::rad2deg(rollPitchYaw.z()));
 
         auto posVelAtt = std::make_shared<PosVelAtt>();
-        posVelAtt->setPosition_e(_p_ecef_init);
-        posVelAtt->setVelocity_n(_v_n_init);
-        posVelAtt->setAttitude_nb(_q_nb_init);
+        posVelAtt->setPosition_e(_e_initPosition);
+        posVelAtt->setVelocity_n(_n_initVelocity);
+        posVelAtt->setAttitude_n_Quat_b(_n_Quat_b_init);
         invokeCallbacks(OUTPUT_PORT_INDEX_POS_VEL_ATT, posVelAtt);
     }
 }
@@ -550,13 +550,13 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
     const Eigen::Vector3d& accel_p = obs->accelCompXYZ.has_value() ? obs->accelCompXYZ.value() : obs->accelUncompXYZ.value();
 
     // Calculate Magnetic Heading
-    const Eigen::Vector3d mag_b = imuPosition.quatMag_bp() * mag_p;
-    auto magneticHeading = -std::atan2(mag_b.y(), mag_b.x());
+    const Eigen::Vector3d b_mag = imuPosition.b_quatMag_p() * mag_p;
+    auto magneticHeading = -std::atan2(b_mag.y(), b_mag.x());
 
     // Calculate Roll and Pitch from gravity vector direction (only valid under static conditions)
-    const Eigen::Vector3d accel_b = imuPosition.quatAccel_bp() * accel_p * -1;
-    auto roll = calcRollFromStaticAcceleration(accel_b);
-    auto pitch = calcPitchFromStaticAcceleration(accel_b);
+    const Eigen::Vector3d b_accel = imuPosition.b_quatAccel_p() * accel_p * -1;
+    auto roll = calcRollFromStaticAcceleration(b_accel);
+    auto pitch = calcPitchFromStaticAcceleration(b_accel);
 
     // TODO: Determine Velocity first and if vehicle not static, initialize the attitude from velocity
 
@@ -579,9 +579,9 @@ void NAV::PosVelAttInitializer::receiveImuObs(const std::shared_ptr<const NodeDa
         && (static_cast<double>(obs->timeSinceStartup.value() - _startTime) * 1e-9 >= _initDuration
             || (_overrideRollPitchYaw.at(0) && _overrideRollPitchYaw.at(1) && _overrideRollPitchYaw.at(2))))
     {
-        _q_nb_init = trafo::quat_nb(_overrideRollPitchYaw.at(0) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)) : _averagedAttitude.at(0),
-                                    _overrideRollPitchYaw.at(1) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)) : _averagedAttitude.at(1),
-                                    _overrideRollPitchYaw.at(2) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)) : _averagedAttitude.at(2));
+        _n_Quat_b_init = trafo::n_Quat_b(_overrideRollPitchYaw.at(0) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)) : _averagedAttitude.at(0),
+                                         _overrideRollPitchYaw.at(1) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)) : _averagedAttitude.at(1),
+                                         _overrideRollPitchYaw.at(2) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)) : _averagedAttitude.at(2));
 
         _posVelAttInitialized.at(2) = true;
     }
@@ -640,9 +640,9 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const Ublo
                 && _lastPositionAccuracy.at(1) <= _positionAccuracyThreshold
                 && _lastPositionAccuracy.at(2) <= _positionAccuracyThreshold)
             {
-                _p_ecef_init = Eigen::Vector3d(std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
-                                               std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
-                                               std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
+                _e_initPosition = Eigen::Vector3d(std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefX * 1e-2,
+                                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefY * 1e-2,
+                                                  std::get<sensors::ublox::UbxNavPosecef>(obs->data).ecefZ * 1e-2);
 
                 _posVelAttInitialized.at(0) = true;
             }
@@ -657,11 +657,11 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const Ublo
                 && _lastPositionAccuracy.at(1) <= _positionAccuracyThreshold
                 && _lastPositionAccuracy.at(2) <= _positionAccuracyThreshold)
             {
-                Eigen::Vector3d latLonAlt(trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
-                                          trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
-                                          std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
+                Eigen::Vector3d lla_position(trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lat * 1e-7),
+                                             trafo::deg2rad(std::get<sensors::ublox::UbxNavPosllh>(obs->data).lon * 1e-7),
+                                             std::get<sensors::ublox::UbxNavPosllh>(obs->data).height * 1e-3);
 
-                _p_ecef_init = trafo::lla2ecef_WGS84(latLonAlt);
+                _e_initPosition = trafo::lla2ecef_WGS84(lla_position);
 
                 _posVelAttInitialized.at(0) = true;
             }
@@ -676,9 +676,9 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const Ublo
                 && _lastVelocityAccuracy.at(1) <= _velocityAccuracyThreshold
                 && _lastVelocityAccuracy.at(2) <= _velocityAccuracyThreshold)
             {
-                _v_n_init = Eigen::Vector3d(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
-                                            std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
-                                            std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
+                _n_initVelocity = Eigen::Vector3d(std::get<sensors::ublox::UbxNavVelned>(obs->data).velN * 1e-2,
+                                                  std::get<sensors::ublox::UbxNavVelned>(obs->data).velE * 1e-2,
+                                                  std::get<sensors::ublox::UbxNavVelned>(obs->data).velD * 1e-2);
 
                 _posVelAttInitialized.at(1) = true;
             }
@@ -688,7 +688,7 @@ void NAV::PosVelAttInitializer::receiveUbloxObs(const std::shared_ptr<const Ublo
 
 void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs)
 {
-    if (obs->position_ecef.has_value())
+    if (obs->e_position.has_value())
     {
         if (obs->sdXYZ.has_value())
         {
@@ -707,7 +707,7 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<const 
             && _lastPositionAccuracy.at(1) <= _positionAccuracyThreshold
             && _lastPositionAccuracy.at(2) <= _positionAccuracyThreshold)
         {
-            _p_ecef_init = obs->position_ecef.value();
+            _e_initPosition = obs->e_position.value();
 
             _posVelAttInitialized.at(0) = true;
         }
@@ -716,10 +716,10 @@ void NAV::PosVelAttInitializer::receiveRtklibPosObs(const std::shared_ptr<const 
 
 void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const PosVelAtt>& obs)
 {
-    _p_ecef_init = obs->position_ecef();
+    _e_initPosition = obs->e_position();
     _posVelAttInitialized.at(0) = true;
 
-    _v_n_init = obs->velocity_n();
+    _n_initVelocity = obs->n_velocity();
     _posVelAttInitialized.at(1) = true;
 
     if (_attitudeMode == AttitudeMode::BOTH || _attitudeMode == AttitudeMode::GNSS || !nm::IsPinLinked(inputPins.at(INPUT_PORT_INDEX_IMU_OBS).id))
@@ -728,13 +728,13 @@ void NAV::PosVelAttInitializer::receivePosVelAttObs(const std::shared_ptr<const 
         {
             const Eigen::Vector3d rollPitchYaw = obs->rollPitchYaw();
 
-            _q_nb_init = trafo::quat_nb(_overrideRollPitchYaw.at(0) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)) : rollPitchYaw(0),
-                                        _overrideRollPitchYaw.at(1) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)) : rollPitchYaw(1),
-                                        _overrideRollPitchYaw.at(2) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)) : rollPitchYaw(2));
+            _n_Quat_b_init = trafo::n_Quat_b(_overrideRollPitchYaw.at(0) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(0)) : rollPitchYaw(0),
+                                             _overrideRollPitchYaw.at(1) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(1)) : rollPitchYaw(1),
+                                             _overrideRollPitchYaw.at(2) ? trafo::deg2rad(_overrideValuesRollPitchYaw.at(2)) : rollPitchYaw(2));
         }
         else
         {
-            _q_nb_init = obs->quaternion_nb();
+            _n_Quat_b_init = obs->n_Quat_b();
         }
 
         _posVelAttInitialized.at(2) = true;
