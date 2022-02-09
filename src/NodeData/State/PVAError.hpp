@@ -49,9 +49,9 @@ class PVAError : public InsObs
     [[nodiscard]] Eigen::Ref<Eigen::Vector3d const> n_velocityError() const { return _x.segment<3>(3); }
 
     /// δ𝐩 = [δ𝜙 δλ δ𝘩] The position error (latitude, longitude, altitude) in [rad, rad, m]
-    Eigen::Ref<Eigen::Vector3d> positionError_lla() { return _x.segment<3>(6); }
+    Eigen::Ref<Eigen::Vector3d> lla_positionError() { return _x.segment<3>(6); }
     /// δ𝐩 = [δ𝜙 δλ δ𝘩] The position error (latitude, longitude, altitude) in [rad, rad, m]
-    [[nodiscard]] Eigen::Ref<Eigen::Vector3d const> positionError_lla() const { return _x.segment<3>(6); }
+    [[nodiscard]] Eigen::Ref<Eigen::Vector3d const> lla_positionError() const { return _x.segment<3>(6); }
 
   private:
     /// x̂ State vector

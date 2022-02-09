@@ -37,10 +37,10 @@ const char* to_string(GravitationModel gravitationModel)
     return "";
 }
 
-Eigen::Vector3d n_calcGravitation(const Eigen::Vector3d& latLonAlt, GravitationModel gravitationModel)
+Eigen::Vector3d n_calcGravitation(const Eigen::Vector3d& lla_position, GravitationModel gravitationModel)
 {
-    const double& latitude = latLonAlt(0);
-    const double& altitude = latLonAlt(2);
+    const double& latitude = lla_position(0);
+    const double& altitude = lla_position(2);
 
     if (gravitationModel == GravitationModel::WGS84)
     {
@@ -56,7 +56,7 @@ Eigen::Vector3d n_calcGravitation(const Eigen::Vector3d& latLonAlt, GravitationM
     }
     if (gravitationModel == GravitationModel::EGM96)
     {
-        return n_calcGravitation_EGM96(latLonAlt);
+        return n_calcGravitation_EGM96(lla_position);
     }
     return Eigen::Vector3d::Zero();
 }
@@ -108,20 +108,20 @@ Eigen::Vector3d n_calcGravitation_WGS84(const double& latitude, const double& al
     return { 0, 0, gravitationMagnitude };
 }
 
-Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& latLonAlt, int ndegree)
+Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, int ndegree)
 {
     using internal::egm96Coeffs;
     using internal::associatedLegendre;
 
-    Eigen::Vector3d pos_ecef = trafo::lla2ecef_WGS84(latLonAlt);
+    Eigen::Vector3d e_position = trafo::lla2ecef_WGS84(lla_position);
 
     // Geocentric latitude determination from Groves (2013) - eq. (2.114)
-    double latitudeGeocentric = std::atan(pos_ecef(2) / std::sqrt(pos_ecef(0) * pos_ecef(0) + pos_ecef(1) * pos_ecef(1)));
+    double latitudeGeocentric = std::atan(e_position(2) / std::sqrt(e_position(0) * e_position(0) + e_position(1) * e_position(1)));
 
     // Spherical coordinates
-    double radius = std::sqrt(pos_ecef(0) * pos_ecef(0) + pos_ecef(1) * pos_ecef(1) + pos_ecef(2) * pos_ecef(2));
+    double radius = std::sqrt(e_position(0) * e_position(0) + e_position(1) * e_position(1) + e_position(2) * e_position(2));
     double elevation = M_PI_2 - latitudeGeocentric; // [rad]
-    double azimuth = latLonAlt(1);                  // [rad]
+    double azimuth = lla_position(1);               // [rad]
 
     // Gravitation vector in local-navigation frame coordinates in [m/s^2]
     Eigen::Vector3d n_gravity = Eigen::Vector3d::Zero();

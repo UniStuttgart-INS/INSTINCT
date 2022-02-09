@@ -48,7 +48,7 @@ class PosVel : public Pos
     void setVelocity_e(const Eigen::Vector3d& e_velocity)
     {
         _e_velocity = e_velocity;
-        _n_velocity = quaternion_ne() * e_velocity;
+        _n_velocity = n_Quat_e() * e_velocity;
     }
 
     /// @brief Set the Velocity in the NED frame

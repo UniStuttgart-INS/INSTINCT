@@ -141,7 +141,7 @@ class ImuIntegrator : public Node
     // #########################################################################################################################################
 
     /// @brief Gravity model selected in the GUI
-    GravitationModel _gravityModel = GravitationModel::EGM96;
+    GravitationModel _gravitationModel = GravitationModel::EGM96;
 
     /// Apply the coriolis acceleration compensation to the measured accelerations
     bool _coriolisAccelerationCompensationEnabled = true;

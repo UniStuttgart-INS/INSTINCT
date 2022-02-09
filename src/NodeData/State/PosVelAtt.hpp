@@ -94,40 +94,40 @@ class PosVelAtt : public PosVel
 
     /// @brief Set the Quaternion from body to earth frame
     /// @param[in] e_Quat_b Quaternion from body to earth frame
-    void setAttitude_eb(const Eigen::Quaterniond& e_Quat_b)
+    void setAttitude_e_Quat_b(const Eigen::Quaterniond& e_Quat_b)
     {
         _e_Quat_b = e_Quat_b;
-        _n_Quat_b = quaternion_ne() * e_Quat_b;
+        _n_Quat_b = n_Quat_e() * e_Quat_b;
     }
 
     /// @brief Set the Quaternion from body to navigation frame
     /// @param[in] n_Quat_b Quaternion from body to navigation frame
-    void setAttitude_nb(const Eigen::Quaterniond& n_Quat_b)
+    void setAttitude_n_Quat_b(const Eigen::Quaterniond& n_Quat_b)
     {
         _e_Quat_b = e_Quat_n() * n_Quat_b;
         _n_Quat_b = n_Quat_b;
     }
 
     /// @brief Set the State
-    /// @param[in] pos_ecef New Position in ECEF coordinates
-    /// @param[in] vel_e The new velocity in the earth frame
+    /// @param[in] e_position New Position in ECEF coordinates
+    /// @param[in] e_velocity The new velocity in the earth frame
     /// @param[in] e_Quat_b Quaternion from body to earth frame
-    void setState_e(const Eigen::Vector3d& pos_ecef, const Eigen::Vector3d& vel_e, const Eigen::Quaterniond& e_Quat_b)
+    void setState_e(const Eigen::Vector3d& e_position, const Eigen::Vector3d& e_velocity, const Eigen::Quaterniond& e_Quat_b)
     {
-        setPosition_e(pos_ecef);
-        setVelocity_e(vel_e);
-        setAttitude_eb(e_Quat_b);
+        setPosition_e(e_position);
+        setVelocity_e(e_velocity);
+        setAttitude_e_Quat_b(e_Quat_b);
     }
 
     /// @brief Set the State
-    /// @param[in] pos_lla New Position in LatLonAlt coordinates
-    /// @param[in] vel_n The new velocity in the NED frame
+    /// @param[in] lla_position New Position in LatLonAlt coordinates
+    /// @param[in] n_velocity The new velocity in the NED frame
     /// @param[in] n_Quat_b Quaternion from body to navigation frame
-    void setState_n(const Eigen::Vector3d& pos_lla, const Eigen::Vector3d& vel_n, const Eigen::Quaterniond& n_Quat_b)
+    void setState_n(const Eigen::Vector3d& lla_position, const Eigen::Vector3d& n_velocity, const Eigen::Quaterniond& n_Quat_b)
     {
-        setPosition_lla(pos_lla);
-        setVelocity_n(vel_n);
-        setAttitude_nb(n_Quat_b);
+        setPosition_lla(lla_position);
+        setVelocity_n(n_velocity);
+        setAttitude_n_Quat_b(n_Quat_b);
     }
 
     /* -------------------------------------------------------------------------------------------------------- */

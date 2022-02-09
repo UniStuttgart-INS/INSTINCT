@@ -226,8 +226,8 @@ std::shared_ptr<const NAV::ImuObsWDelta> NAV::VectorNavBinaryConverter::convert2
 std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2PosVelAtt(const std::shared_ptr<const VectorNavBinaryOutput>& vnObs)
 {
     std::optional<Eigen::Quaterniond> n_Quat_b;
-    std::optional<Eigen::Vector3d> p_ecef;
-    std::optional<Eigen::Vector3d> p_lla;
+    std::optional<Eigen::Vector3d> e_position;
+    std::optional<Eigen::Vector3d> lla_position;
     std::optional<Eigen::Vector3d> n_velocity;
 
     if (vnObs->attitudeOutputs)
@@ -252,13 +252,13 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     {
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSLLA)
         {
-            p_lla = { trafo::deg2rad(vnObs->insOutputs->posLla(0)),
-                      trafo::deg2rad(vnObs->insOutputs->posLla(1)),
-                      vnObs->insOutputs->posLla(2) };
+            lla_position = { trafo::deg2rad(vnObs->insOutputs->posLla(0)),
+                             trafo::deg2rad(vnObs->insOutputs->posLla(1)),
+                             vnObs->insOutputs->posLla(2) };
         }
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_POSECEF)
         {
-            p_ecef = vnObs->insOutputs->posEcef;
+            e_position = vnObs->insOutputs->posEcef;
         }
 
         if (vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELNED)
@@ -266,9 +266,9 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
             n_velocity = vnObs->insOutputs->velNed.cast<double>();
         }
         else if ((vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELECEF)
-                 && (p_ecef.has_value() || p_lla.has_value()))
+                 && (e_position.has_value() || lla_position.has_value()))
         {
-            Eigen::Vector3d lla = p_lla.has_value() ? p_lla.value() : trafo::ecef2lla_WGS84(p_ecef.value());
+            Eigen::Vector3d lla = lla_position.has_value() ? lla_position.value() : trafo::ecef2lla_WGS84(e_position.value());
             n_velocity = trafo::n_Quat_e(lla(0), lla(1)) * vnObs->insOutputs->velEcef.cast<double>();
         }
         else if ((vnObs->insOutputs->insField & vn::protocol::uart::InsGroup::INSGROUP_VELBODY)
@@ -281,17 +281,17 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Gnss1)
         && vnObs->gnss1Outputs && vnObs->gnss1Outputs->fix >= 2)
     {
-        if (!p_ecef.has_value() && !p_lla.has_value())
+        if (!e_position.has_value() && !lla_position.has_value())
         {
             if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
             {
-                p_lla = { trafo::deg2rad(vnObs->gnss1Outputs->posLla(0)),
-                          trafo::deg2rad(vnObs->gnss1Outputs->posLla(1)),
-                          vnObs->gnss1Outputs->posLla(2) };
+                lla_position = { trafo::deg2rad(vnObs->gnss1Outputs->posLla(0)),
+                                 trafo::deg2rad(vnObs->gnss1Outputs->posLla(1)),
+                                 vnObs->gnss1Outputs->posLla(2) };
             }
             if (vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
             {
-                p_ecef = vnObs->gnss1Outputs->posEcef;
+                e_position = vnObs->gnss1Outputs->posEcef;
             }
         }
 
@@ -302,9 +302,9 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
                 n_velocity = vnObs->gnss1Outputs->velNed.cast<double>();
             }
             else if ((vnObs->gnss1Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
-                     && (p_ecef.has_value() || p_lla.has_value()))
+                     && (e_position.has_value() || lla_position.has_value()))
             {
-                Eigen::Vector3d lla = p_lla.has_value() ? p_lla.value() : trafo::ecef2lla_WGS84(p_ecef.value());
+                Eigen::Vector3d lla = lla_position.has_value() ? lla_position.value() : trafo::ecef2lla_WGS84(e_position.value());
                 n_velocity = trafo::n_Quat_e(lla(0), lla(1)) * vnObs->gnss1Outputs->velEcef.cast<double>();
             }
         }
@@ -312,17 +312,17 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
     if ((_posVelSource == PosVelSource_Best || _posVelSource == PosVelSource_Gnss2)
         && vnObs->gnss2Outputs && vnObs->gnss2Outputs->fix >= 2)
     {
-        if (!p_ecef.has_value() && !p_lla.has_value())
+        if (!e_position.has_value() && !lla_position.has_value())
         {
             if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSLLA)
             {
-                p_lla = { trafo::deg2rad(vnObs->gnss2Outputs->posLla(0)),
-                          trafo::deg2rad(vnObs->gnss2Outputs->posLla(1)),
-                          vnObs->gnss2Outputs->posLla(2) };
+                lla_position = { trafo::deg2rad(vnObs->gnss2Outputs->posLla(0)),
+                                 trafo::deg2rad(vnObs->gnss2Outputs->posLla(1)),
+                                 vnObs->gnss2Outputs->posLla(2) };
             }
             if (vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_POSECEF)
             {
-                p_ecef = vnObs->gnss2Outputs->posEcef;
+                e_position = vnObs->gnss2Outputs->posEcef;
             }
         }
 
@@ -333,9 +333,9 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
                 n_velocity = vnObs->gnss2Outputs->velNed.cast<double>();
             }
             else if ((vnObs->gnss2Outputs->gnssField & vn::protocol::uart::GpsGroup::GPSGROUP_VELECEF)
-                     && (p_ecef.has_value() || p_lla.has_value()))
+                     && (e_position.has_value() || lla_position.has_value()))
             {
-                Eigen::Vector3d lla = p_lla.has_value() ? p_lla.value() : trafo::ecef2lla_WGS84(p_ecef.value());
+                Eigen::Vector3d lla = lla_position.has_value() ? lla_position.value() : trafo::ecef2lla_WGS84(e_position.value());
                 n_velocity = trafo::n_Quat_e(lla(0), lla(1)) * vnObs->gnss2Outputs->velEcef.cast<double>();
             }
         }
@@ -345,15 +345,15 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
 
     posVelAttObs->insTime = vnObs->insTime;
 
-    if ((p_ecef.has_value() || p_lla.has_value()) && n_velocity.has_value())
+    if ((e_position.has_value() || lla_position.has_value()) && n_velocity.has_value())
     {
-        if (p_ecef.has_value())
+        if (e_position.has_value())
         {
-            posVelAttObs->setPosition_e(p_ecef.value());
+            posVelAttObs->setPosition_e(e_position.value());
         }
         else
         {
-            posVelAttObs->setPosition_lla(p_lla.value());
+            posVelAttObs->setPosition_lla(lla_position.value());
         }
         posVelAttObs->setVelocity_n(n_velocity.value());
 
@@ -363,7 +363,7 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
         }
         else
         {
-            posVelAttObs->setAttitude_nb(n_Quat_b.value());
+            posVelAttObs->setAttitude_n_Quat_b(n_Quat_b.value());
         }
 
         if (_posVelAtt__init == nullptr)
@@ -373,9 +373,9 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::VectorNavBinaryConverter::convert2Pos
 
         if (_forceStatic)
         {
-            posVelAttObs->setPosition_e(_posVelAtt__init->position_ecef());
+            posVelAttObs->setPosition_e(_posVelAtt__init->e_position());
             posVelAttObs->setVelocity_n(Eigen::Vector3d::Zero());
-            posVelAttObs->setAttitude_nb(_posVelAtt__init->n_Quat_b());
+            posVelAttObs->setAttitude_n_Quat_b(_posVelAtt__init->n_Quat_b());
         }
 
         return posVelAttObs;

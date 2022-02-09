@@ -686,33 +686,33 @@ void NAV::ErrorModel::receiveImuObs(const std::shared_ptr<ImuObs>& imuObs)
 void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelAtt)
 {
     // Position Bias in latLonAlt in [rad, rad, m]
-    Eigen::Vector3d positionBias_lla = Eigen::Vector3d::Zero();
+    Eigen::Vector3d lla_positionBias = Eigen::Vector3d::Zero();
     switch (_positionBiasUnit)
     {
     case PositionBiasUnits::meter:
     {
-        Eigen::Vector3d positionBias_e = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionBias;
-        positionBias_lla = trafo::ecef2lla_WGS84(posVelAtt->position_ecef() + positionBias_e) - posVelAtt->latLonAlt();
+        Eigen::Vector3d e_positionBias = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionBias;
+        lla_positionBias = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionBias) - posVelAtt->lla_position();
         break;
     }
     case PositionBiasUnits::rad_rad_m:
-        positionBias_lla = _positionBias;
+        lla_positionBias = _positionBias;
         break;
     case PositionBiasUnits::deg_deg_m:
-        positionBias_lla = Eigen::Vector3d{ trafo::deg2rad(_positionBias(0)), trafo::deg2rad(_positionBias(1)), _positionBias(2) };
+        lla_positionBias = Eigen::Vector3d{ trafo::deg2rad(_positionBias(0)), trafo::deg2rad(_positionBias(1)), _positionBias(2) };
         break;
     }
-    LOG_DATA("{}: positionBias_lla = {} [rad, rad, m]", nameId(), positionBias_lla.transpose());
+    LOG_DATA("{}: lla_positionBias = {} [rad, rad, m]", nameId(), lla_positionBias.transpose());
 
     // Velocity bias in local-navigation coordinates in [m/s]
-    Eigen::Vector3d velocityBias_n = Eigen::Vector3d::Zero();
+    Eigen::Vector3d n_velocityBias = Eigen::Vector3d::Zero();
     switch (_velocityBiasUnit)
     {
     case VelocityBiasUnits::m_s:
-        velocityBias_n = _velocityBias;
+        n_velocityBias = _velocityBias;
         break;
     }
-    LOG_DATA("{}: velocityBias_n = {} [m/s]", nameId(), velocityBias_n.transpose());
+    LOG_DATA("{}: n_velocityBias = {} [m/s]", nameId(), n_velocityBias.transpose());
 
     // Roll, pitch, yaw bias in [rad]
     Eigen::Vector3d attitudeBias = Eigen::Vector3d::Zero();
@@ -730,48 +730,48 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
     // #########################################################################################################################################
 
     // Position Noise standard deviation in latitude, longitude and altitude [rad, rad, m]
-    Eigen::Vector3d positionNoiseStd_lla = Eigen::Vector3d::Zero();
+    Eigen::Vector3d lla_positionNoiseStd = Eigen::Vector3d::Zero();
     switch (_positionNoiseUnit)
     {
     case PositionNoiseUnits::meter:
     {
-        Eigen::Vector3d positionNoiseStd_e = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise;
-        positionNoiseStd_lla = trafo::ecef2lla_WGS84(posVelAtt->position_ecef() + positionNoiseStd_e) - posVelAtt->latLonAlt();
+        Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise;
+        lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
         break;
     }
     case PositionNoiseUnits::rad_rad_m:
-        positionNoiseStd_lla = _positionNoise;
+        lla_positionNoiseStd = _positionNoise;
         break;
     case PositionNoiseUnits::deg_deg_m:
-        positionNoiseStd_lla = trafo::deg2rad(_positionNoise);
+        lla_positionNoiseStd = trafo::deg2rad(_positionNoise);
         break;
     case PositionNoiseUnits::meter2:
     {
-        Eigen::Vector3d positionNoiseStd_e = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise.cwiseSqrt();
-        positionNoiseStd_lla = trafo::ecef2lla_WGS84(posVelAtt->position_ecef() + positionNoiseStd_e) - posVelAtt->latLonAlt();
+        Eigen::Vector3d e_positionNoiseStd = trafo::e_Quat_n(posVelAtt->latitude(), posVelAtt->longitude()) * _positionNoise.cwiseSqrt();
+        lla_positionNoiseStd = trafo::ecef2lla_WGS84(posVelAtt->e_position() + e_positionNoiseStd) - posVelAtt->lla_position();
         break;
     }
     case PositionNoiseUnits::rad2_rad2_m2:
-        positionNoiseStd_lla = _positionNoise.cwiseSqrt();
+        lla_positionNoiseStd = _positionNoise.cwiseSqrt();
         break;
     case PositionNoiseUnits::deg2_deg2_m2:
-        positionNoiseStd_lla = trafo::deg2rad(_positionNoise.cwiseSqrt());
+        lla_positionNoiseStd = trafo::deg2rad(_positionNoise.cwiseSqrt());
         break;
     }
-    LOG_DATA("{}: positionNoiseStd_lla = {} [rad, rad, m]", nameId(), positionNoiseStd_lla.transpose());
+    LOG_DATA("{}: lla_positionNoiseStd = {} [rad, rad, m]", nameId(), lla_positionNoiseStd.transpose());
 
     // Velocity Noise standard deviation in local-navigation coordinates in [m/s]
-    Eigen::Vector3d velocityNoiseStd_n = Eigen::Vector3d::Zero();
+    Eigen::Vector3d n_velocityNoiseStd = Eigen::Vector3d::Zero();
     switch (_velocityNoiseUnit)
     {
     case VelocityNoiseUnits::m_s:
-        velocityNoiseStd_n = _velocityNoise;
+        n_velocityNoiseStd = _velocityNoise;
         break;
     case VelocityNoiseUnits::m2_s2:
-        velocityNoiseStd_n = _velocityNoise.cwiseSqrt();
+        n_velocityNoiseStd = _velocityNoise.cwiseSqrt();
         break;
     }
-    LOG_DATA("{}: velocityNoiseStd_n = {} [m/s]", nameId(), velocityNoiseStd_n.transpose());
+    LOG_DATA("{}: n_velocityNoiseStd = {} [m/s]", nameId(), n_velocityNoiseStd.transpose());
 
     // Attitude Noise standard deviation in [rad]
     Eigen::Vector3d attitudeNoiseStd = Eigen::Vector3d::Zero();
@@ -794,16 +794,16 @@ void NAV::ErrorModel::receivePosVelAtt(const std::shared_ptr<PosVelAtt>& posVelA
 
     // #########################################################################################################################################
 
-    posVelAtt->setState_n(posVelAtt->latLonAlt()
-                              + positionBias_lla
-                              + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, positionNoiseStd_lla(0) }(_positionRandomNumberGenerator.generator),
-                                                 std::normal_distribution<double>{ 0.0, positionNoiseStd_lla(1) }(_positionRandomNumberGenerator.generator),
-                                                 std::normal_distribution<double>{ 0.0, positionNoiseStd_lla(2) }(_positionRandomNumberGenerator.generator) },
+    posVelAtt->setState_n(posVelAtt->lla_position()
+                              + lla_positionBias
+                              + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, lla_positionNoiseStd(0) }(_positionRandomNumberGenerator.generator),
+                                                 std::normal_distribution<double>{ 0.0, lla_positionNoiseStd(1) }(_positionRandomNumberGenerator.generator),
+                                                 std::normal_distribution<double>{ 0.0, lla_positionNoiseStd(2) }(_positionRandomNumberGenerator.generator) },
                           posVelAtt->n_velocity()
-                              + velocityBias_n
-                              + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(0) }(_velocityRandomNumberGenerator.generator),
-                                                 std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(1) }(_velocityRandomNumberGenerator.generator),
-                                                 std::normal_distribution<double>{ 0.0, velocityNoiseStd_n(2) }(_velocityRandomNumberGenerator.generator) },
+                              + n_velocityBias
+                              + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, n_velocityNoiseStd(0) }(_velocityRandomNumberGenerator.generator),
+                                                 std::normal_distribution<double>{ 0.0, n_velocityNoiseStd(1) }(_velocityRandomNumberGenerator.generator),
+                                                 std::normal_distribution<double>{ 0.0, n_velocityNoiseStd(2) }(_velocityRandomNumberGenerator.generator) },
                           trafo::n_Quat_b(posVelAtt->rollPitchYaw()
                                           + attitudeBias
                                           + Eigen::Vector3d{ std::normal_distribution<double>{ 0.0, attitudeNoiseStd(0) }(_attitudeRandomNumberGenerator.generator),

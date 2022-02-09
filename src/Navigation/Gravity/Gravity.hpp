@@ -27,10 +27,10 @@ enum class GravitationModel : int
 const char* to_string(GravitationModel gravitationModel);
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth)
-/// @param[in] latLonAlt [ϕ, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]
+/// @param[in] lla_position [ϕ, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]
 /// @param[in] gravitationModel Gravitation model to use
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
-[[nodiscard]] Eigen::Vector3d n_calcGravitation(const Eigen::Vector3d& latLonAlt, GravitationModel gravitationModel = GravitationModel::EGM96);
+[[nodiscard]] Eigen::Vector3d n_calcGravitation(const Eigen::Vector3d& lla_position, GravitationModel gravitationModel = GravitationModel::EGM96);
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
 ///        using the Somigliana model and makes corrections for altitude
@@ -61,12 +61,12 @@ const char* to_string(GravitationModel gravitationModel);
 
 /// @brief Calculates the gravitation (acceleration due to mass attraction of the Earth) at the WGS84 reference ellipsoid
 ///        using the EGM96 spherical harmonic model (up to order 10)
-/// @param[in] latLonAlt [ϕ, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]
+/// @param[in] lla_position [ϕ, λ, h] Latitude, Longitude, Altitude in [rad, rad, m]
 /// @param[in] ndegree Degree of the EGM96 (1 <= ndegree <= 10)
 /// @return Gravitation vector in local-navigation frame coordinates in [m/s^2]
 ///
 /// @note See Groves (2013) Chapter 2.4.3 and 'GUT User Guide' (2018) Chapter 7.4
-[[nodiscard]] Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& latLonAlt, int ndegree = 10);
+[[nodiscard]] Eigen::Vector3d n_calcGravitation_EGM96(const Eigen::Vector3d& lla_position, int ndegree = 10);
 
 /// @brief Calculates the centrifugal acceleration
 /// @param[in] latitude Latitude in [rad]

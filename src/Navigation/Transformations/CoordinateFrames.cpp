@@ -10,21 +10,21 @@ namespace NAV::trafo
 // ###########################################################################################################
 
 /// @brief Converts latitude, longitude and altitude into Earth-centered-Earth-fixed coordinates
-/// @param[in] latLonAlt [𝜙 latitude, λ longitude, altitude]^T in [rad, rad, m]
+/// @param[in] lla_position [𝜙 latitude, λ longitude, altitude]^T in [rad, rad, m]
 /// @param[in] a Semi-major axis of the reference ellipsoid
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return The ECEF coordinates in [m]
 /// @note See C. Jekeli, 2001, Inertial Navigation Systems with Geodetic Applications. pp. 23
-[[nodiscard]] Eigen::Vector3d lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_squared);
+[[nodiscard]] Eigen::Vector3d lla2ecef(const Eigen::Vector3d& lla_position, double a, double e_squared);
 
 /// @brief Converts Earth-centered-Earth-fixed coordinates into latitude, longitude and altitude
-/// @param[in] ecef Vector with coordinates in ECEF frame in [m]
+/// @param[in] e_position Vector with coordinates in ECEF frame in [m]
 /// @param[in] a Semi-major axis of the reference ellipsoid
 /// @param[in] b Semi-minor axis of the reference ellipsoid
 /// @param[in] e_squared Square of the first eccentricity of the ellipsoid
 /// @return Vector containing [latitude 𝜙, longitude λ, altitude]^T in [rad, rad, m]
 /// @note See See S. Gleason (2009) - GNSS Applications and Methods: Software example 'Chapter6_GNSS_INS_1/wgsxyz2lla.m' (J.A. Farrel and M. Barth, 1999, GPS & Inertal Navigation. McGraw-Hill. pp. 29.)
-[[nodiscard]] Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double e_squared); // TODO: Take "Exact conversion of earth-centered, earth-fixed coordinates to geodetic coordinates" by Jijie Zhu instead of Gleason's Matlab code
+[[nodiscard]] Eigen::Vector3d ecef2lla(const Eigen::Vector3d& e_position, double a, double b, double e_squared); // TODO: Take "Exact conversion of earth-centered, earth-fixed coordinates to geodetic coordinates" by Jijie Zhu instead of Gleason's Matlab code
 
 // ###########################################################################################################
 //                                             Public functions
@@ -48,17 +48,17 @@ Eigen::Vector3d quat2eulerZYX(const Eigen::Quaterniond& q)
     return XYZ;
 }
 
-Eigen::Quaterniond e_Quat_i(const double time, const double angularRate_ie)
+Eigen::Quaterniond e_Quat_i(const double time, const double omega_ie)
 {
     // Initialize angle-axis rotation from an angle in radian and an axis which must be normalized.
-    Eigen::AngleAxisd zAngle(-angularRate_ie * time, Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd zAngle(-omega_ie * time, Eigen::Vector3d::UnitZ());
 
     return Eigen::Quaterniond(zAngle).normalized();
 }
 
-Eigen::Quaterniond i_Quat_e(const double time, const double angularRate_ie)
+Eigen::Quaterniond i_Quat_e(const double time, const double omega_ie)
 {
-    return e_Quat_i(time, angularRate_ie).conjugate();
+    return e_Quat_i(time, omega_ie).conjugate();
 }
 
 Eigen::Quaterniond e_Quat_n(const double latitude, const double longitude)
@@ -117,12 +117,12 @@ Eigen::Quaterniond p_Quat_b(double mountingAngleX, double mountingAngleY, double
     return b_Quat_p(mountingAngleX, mountingAngleY, mountingAngleZ).conjugate();
 }
 
-Eigen::Vector3d ecef2ned(const Eigen::Vector3d& position_e, const Eigen::Vector3d& latLonAlt_ref)
+Eigen::Vector3d ecef2ned(const Eigen::Vector3d& e_position, const Eigen::Vector3d& lla_position_ref)
 {
-    const auto& latitude_ref = latLonAlt_ref(0);  // 𝜙 Geodetic latitude
-    const auto& longitude_ref = latLonAlt_ref(1); // λ Geodetic longitude
+    const auto& latitude_ref = lla_position_ref(0);  // 𝜙 Geodetic latitude
+    const auto& longitude_ref = lla_position_ref(1); // λ Geodetic longitude
 
-    auto position_e_ref = lla2ecef_WGS84(latLonAlt_ref);
+    auto e_position_ref = lla2ecef_WGS84(lla_position_ref);
 
     Eigen::Matrix3d R_ne;
     // clang-format off
@@ -131,15 +131,15 @@ Eigen::Vector3d ecef2ned(const Eigen::Vector3d& position_e, const Eigen::Vector3
             -std::cos(latitude_ref) * std::cos(longitude_ref), -std::cos(latitude_ref) * std::sin(longitude_ref), -std::sin(latitude_ref);
     // clang-format on
 
-    return R_ne * (position_e - position_e_ref);
+    return R_ne * (e_position - e_position_ref);
 }
 
-Eigen::Vector3d ned2ecef(const Eigen::Vector3d& position_n, const Eigen::Vector3d& latLonAlt_ref)
+Eigen::Vector3d ned2ecef(const Eigen::Vector3d& n_position, const Eigen::Vector3d& lla_position_ref)
 {
-    const auto& latitude_ref = latLonAlt_ref(0);  // 𝜙 Geodetic latitude
-    const auto& longitude_ref = latLonAlt_ref(1); // λ Geodetic longitude
+    const auto& latitude_ref = lla_position_ref(0);  // 𝜙 Geodetic latitude
+    const auto& longitude_ref = lla_position_ref(1); // λ Geodetic longitude
 
-    auto position_e_ref = lla2ecef_WGS84(latLonAlt_ref);
+    auto e_position_ref = lla2ecef_WGS84(lla_position_ref);
 
     Eigen::Matrix3d R_en;
     // clang-format off
@@ -148,14 +148,14 @@ Eigen::Vector3d ned2ecef(const Eigen::Vector3d& position_n, const Eigen::Vector3
                          std::cos(latitude_ref)              ,             0           ,                -std::sin(latitude_ref)           ;
     // clang-format on
 
-    return position_e_ref + R_en * position_n;
+    return e_position_ref + R_en * n_position;
 }
 
-Eigen::Vector3d lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_squared)
+Eigen::Vector3d lla2ecef(const Eigen::Vector3d& lla_position, double a, double e_squared)
 {
-    const auto& latitude = latLonAlt(0);  // 𝜙 Geodetic latitude
-    const auto& longitude = latLonAlt(1); // λ Geodetic longitude
-    const auto& altitude = latLonAlt(2);  // Altitude (Height above ground)
+    const auto& latitude = lla_position(0);  // 𝜙 Geodetic latitude
+    const auto& longitude = lla_position(1); // λ Geodetic longitude
+    const auto& altitude = lla_position(2);  // Altitude (Height above ground)
 
     // Radius of curvature of the ellipsoid in the prime vertical plane,
     // i.e., the plane containing the normal at P and perpendicular to the meridian (eq. 1.81)
@@ -167,21 +167,21 @@ Eigen::Vector3d lla2ecef(const Eigen::Vector3d& latLonAlt, double a, double e_sq
              (R_E * (1 - e_squared) + altitude) * std::sin(latitude) };
 }
 
-Eigen::Vector3d lla2ecef_WGS84(const Eigen::Vector3d& latLonAlt)
+Eigen::Vector3d lla2ecef_WGS84(const Eigen::Vector3d& lla_position)
 {
-    return lla2ecef(latLonAlt, InsConst::WGS84_a, InsConst::WGS84_e_squared);
+    return lla2ecef(lla_position, InsConst::WGS84_a, InsConst::WGS84_e_squared);
 }
 
-Eigen::Vector3d lla2ecef_GRS80(const Eigen::Vector3d& latLonAlt)
+Eigen::Vector3d lla2ecef_GRS80(const Eigen::Vector3d& lla_position)
 {
-    return lla2ecef(latLonAlt, InsConst::GRS80_a, InsConst::GRS80_e_squared);
+    return lla2ecef(lla_position, InsConst::GRS80_a, InsConst::GRS80_e_squared);
 }
 
-Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double e_squared)
+Eigen::Vector3d ecef2lla(const Eigen::Vector3d& e_position, double a, double b, double e_squared)
 {
-    auto x = ecef(0);
-    auto y = ecef(1);
-    auto z = ecef(2);
+    auto x = e_position(0);
+    auto y = e_position(1);
+    auto z = e_position(2);
 
     // Calculate longitude
 
@@ -189,7 +189,7 @@ Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double
 
     // Start computing intermediate variables needed to compute altitude
 
-    auto p = ecef.head(2).norm();
+    auto p = e_position.head(2).norm();
     auto E = std::sqrt(a * a - b * b);
     auto F = 54 * std::pow(b * z, 2);
     auto G = p * p + (1 - e_squared) * z * z - e_squared * E * E;
@@ -218,14 +218,14 @@ Eigen::Vector3d ecef2lla(const Eigen::Vector3d& ecef, double a, double b, double
     return { lat, lon, alt };
 }
 
-Eigen::Vector3d ecef2lla_WGS84(const Eigen::Vector3d& ecef)
+Eigen::Vector3d ecef2lla_WGS84(const Eigen::Vector3d& e_position)
 {
-    return ecef2lla(ecef, InsConst::WGS84_a, InsConst::WGS84_b, InsConst::WGS84_e_squared);
+    return ecef2lla(e_position, InsConst::WGS84_a, InsConst::WGS84_b, InsConst::WGS84_e_squared);
 }
 
-Eigen::Vector3d ecef2lla_GRS80(const Eigen::Vector3d& ecef)
+Eigen::Vector3d ecef2lla_GRS80(const Eigen::Vector3d& e_position)
 {
-    return ecef2lla(ecef, InsConst::GRS80_a, InsConst::GRS80_b, InsConst::GRS80_e_squared);
+    return ecef2lla(e_position, InsConst::GRS80_a, InsConst::GRS80_b, InsConst::GRS80_e_squared);
 }
 
 Eigen::Vector3d sph2ecef(const Eigen::Vector3d& position_s, const double& elevation, const double& azimuth)
