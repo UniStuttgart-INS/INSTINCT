@@ -152,6 +152,12 @@ class ScrollingBuffer
         return _maxSize - (_dataStart - _dataEnd);
     }
 
+    /// @brief Returns the number of elements that can be held in currently allocated storage
+    [[nodiscard]] size_t capacity() const
+    {
+        return _infiniteBuffer ? 0 : _maxSize;
+    }
+
     // ###########################################################################################################
     //                                                 Modifiers
     // ###########################################################################################################
