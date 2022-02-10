@@ -401,8 +401,10 @@
             "args": [
                 "-j4",
                 "--output-on-failure",
-                "--exclude-regex",
-                "'\\[flow\\]'"
+                // "--exclude-regex",
+                // "'\\[flow\\]'",
+                "--tests-regex",
+                "'ScrollingBuffer'"
                 // "--verbose",
             ],
             "options": {

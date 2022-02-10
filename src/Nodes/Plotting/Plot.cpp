@@ -18,6 +18,10 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV
 {
+
+/// Extra data points for the buffer to avoid connecting the first and last point
+// constexpr size_t SCROLLING_BUFFER_PADDING = 2;
+
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] style Object to read info from
