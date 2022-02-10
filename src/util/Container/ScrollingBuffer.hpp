@@ -71,11 +71,13 @@ class ScrollingBuffer
                                     + std::to_string(pos) + ") >= this->size() (which is " + std::to_string(size()) + ")");
         }
 
+        //     start/end
+        //     |
         // 8 9 3 4 5 6 7
         // at(0) = 3, at(4) = 7, at(5) = 8
-        if (_dataStart + pos >= size())
+        if (_dataStart + pos >= _maxSize)
         {
-            return _data.at(pos - (size() - _dataStart));
+            return _data.at(_dataStart + pos - _maxSize);
         }
 
         return _data.at(_dataStart + pos);
@@ -137,7 +139,17 @@ class ScrollingBuffer
     /// @brief Returns the number of elements in the container
     [[nodiscard]] size_t size() const
     {
-        return _data.size() - (_dataStart - _dataEnd);
+        if (_dataStart == 0 && _dataEnd == 0) // Buffer empty
+        {
+            return _data.size();
+        }
+        if (_dataStart < _dataEnd) // unscrolled buffer
+        {
+            return _dataEnd - _dataStart;
+        }
+
+        // scrolled buffer
+        return _maxSize - (_dataStart - _dataEnd);
     }
 
     // ###########################################################################################################
@@ -164,14 +176,12 @@ class ScrollingBuffer
         else if (_data.size() < _maxSize) // The real buffer is smaller than the allowed buffer size
         {
             _data.push_back(value);
+            _dataEnd = (_dataEnd + 1) % _maxSize;
         }
         else // The real buffer as large as or bigger than the allowed buffer size, so we have to scroll the buffer
         {
             _data.at(_dataEnd) = value;
-            if (_dataStart == _dataEnd)
-            {
-                _dataStart = (_dataStart + 1) % _maxSize;
-            }
+            _dataStart = (_dataStart + 1) % _maxSize;
             _dataEnd = (_dataEnd + 1) % _maxSize;
         }
     }
@@ -185,7 +195,7 @@ class ScrollingBuffer
             _infiniteBuffer = true;
             // 6, 7, 3, 4, 5,
             // 3, 4, 5, 6, 7,
-            if (_dataStart != 0) // Buffer is scrolled and needs to be sorted
+            if (_dataStart != 0) // Buffer is scrolled and needs to be sorted in order of insertion
             {
                 std::vector<T> to_vector;
                 std::copy(std::next(_data.begin(), static_cast<int64_t>(_dataStart)), _data.end(),
@@ -231,6 +241,7 @@ class ScrollingBuffer
                         std::copy(std::next(_data.begin(), diff), _data.end(), _data.begin());
                         _data.resize(targetSize);
                         _maxSize = targetSize;
+                        _dataEnd = 0;
                     }
                 }
                 else // (_dataStart != 0) Buffer is scrolled, so the correct values have to be erased from the buffer when shrinking

@@ -32,16 +32,27 @@ TEST_CASE("[ScrollingBuffer] push_back", "[ScrollingBuffer]")
     std::cout << "Empty Buffer  : " << buffer1; // _, _, _, _, _,
     REQUIRE(buffer1.empty());
     REQUIRE(buffer1.offset() == 0);
-    for (int i = 0; i < 5; i++)
+
+    for (int i = 0; i < 4; i++)
     {
+        REQUIRE(buffer1.size() == static_cast<size_t>(i));
         buffer1.push_back(i);
     }
+    std::cout << "Filled Buffer : " << buffer1; // 0, 1, 2, 3, _,
+    REQUIRE(buffer1.size() == 4);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(!buffer1.empty());
+    REQUIRE(buffer1.front() == 0);
+    REQUIRE(buffer1.back() == 3);
+
+    buffer1.push_back(4);
     std::cout << "Filled Buffer : " << buffer1; // 0, 1, 2, 3, 4,
     REQUIRE(buffer1.size() == 5);
     REQUIRE(buffer1.offset() == 0);
     REQUIRE(!buffer1.empty());
     REQUIRE(buffer1.front() == 0);
     REQUIRE(buffer1.back() == 4);
+
     for (int i = 5; i < 7; i++)
     {
         buffer1.push_back(i);
@@ -115,7 +126,7 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions", "[ScrollingBuffer]")
     REQUIRE_THROWS_AS(buffer1.at(0), std::out_of_range);
 }
 
-TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer", "[ScrollingBuffer]")
+TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer", "[ScrollingBuffer][Debug]")
 {
     ScrollingBuffer<int> buffer1(6);
     for (int i = 0; i < 4; i++)
