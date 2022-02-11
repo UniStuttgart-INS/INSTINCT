@@ -5,6 +5,8 @@
 
 namespace NAV
 {
+constexpr size_t PADDING = 2;
+
 TEST_CASE("[ScrollingBuffer] InitializerList", "[ScrollingBuffer]")
 {
     ScrollingBuffer<int> buffer1({});
@@ -73,8 +75,6 @@ TEST_CASE("[ScrollingBuffer] push_back", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] push_back (padding)", "[ScrollingBuffer]")
 {
-    constexpr size_t PADDING = 2;
-
     ScrollingBuffer<int> buffer1(5, PADDING);
     std::cout << "Empty Buffer  : " << buffer1; // X, X, _, _, _, _, _
     REQUIRE(buffer1.empty());
@@ -187,8 +187,6 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions", "[ScrollingBuffer]")
 
 // TEST_CASE("[ScrollingBuffer<double>] All Functions (padding)", "[ScrollingBuffer]")
 // {
-//     constexpr size_t PADDING = 2;
-
 //     ScrollingBuffer<double> buffer1(5, PADDING);
 //     std::cout << "Empty Buffer  : " << buffer1; // X, X, _, _, _, _, _
 //     REQUIRE(buffer1.empty());
@@ -366,6 +364,48 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer", "[ScrollingBuffer][Debug]"
     REQUIRE(buffer1.offset() == 0);
     REQUIRE(buffer1.front() == 6);
     REQUIRE(buffer1.back() == 6);
+}
+
+TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffer]")
+{
+    ScrollingBuffer<int> buffer1(5, PADDING);
+    for (int i = 0; i < 7; i++)
+    {
+        buffer1.push_back(i);
+    }
+    std::cout << "Buffer (5): " << buffer1; // 5, 6, X, X, 2, 3, 4
+    REQUIRE(buffer1.size() == 5);
+    REQUIRE(buffer1.capacity() == 5);
+
+    buffer1.resize(3);
+    std::cout << "Shrink (3): " << buffer1; // 5, 6, X, X, 4
+    REQUIRE(buffer1.size() == 3);
+    REQUIRE(buffer1.capacity() == 3);
+    REQUIRE(buffer1.offset() == 2);
+    REQUIRE(buffer1.front() == 4);
+    REQUIRE(buffer1.back() == 6);
+
+    buffer1.resize(1);
+    std::cout << "Shrink (1): " << buffer1; // 6, X, X
+    REQUIRE(buffer1.size() == 1);
+    REQUIRE(buffer1.capacity() == 1);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 6);
+    REQUIRE(buffer1.back() == 6);
+
+    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    for (int i = 0; i < 11; i++)
+    {
+        buffer1.push_back(i);
+    }
+    std::cout << "Buffer (5): " << buffer1; // X, 6, 7, 8, 9, 10, X
+    buffer1.resize(2);
+    std::cout << "Shrink (2): " << buffer1; // X, 9, 10, X
+    REQUIRE(buffer1.size() == 2);
+    REQUIRE(buffer1.capacity() == 2);
+    REQUIRE(buffer1.offset() == 1);
+    REQUIRE(buffer1.front() == 9);
+    REQUIRE(buffer1.back() == 10);
 }
 
 TEST_CASE("[ScrollingBuffer] Grow scrolled buffer", "[ScrollingBuffer]")
