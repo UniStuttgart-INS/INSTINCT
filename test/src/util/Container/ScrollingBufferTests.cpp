@@ -255,7 +255,7 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions", "[ScrollingBuffer]")
 //     REQUIRE_THROWS_AS(buffer1.at(0), std::out_of_range);
 // }
 
-TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer", "[ScrollingBuffer]")
+TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer", "[ScrollingBuffer][Debug]")
 {
     ScrollingBuffer<int> buffer1(6);
     for (int i = 0; i < 4; i++)
@@ -302,6 +302,69 @@ TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer", "[ScrollingBuffer]")
     REQUIRE(buffer1.back() == 4);
 
     buffer1 = ScrollingBuffer<int>(5);
+    for (int i = 0; i < 4; i++)
+    {
+        buffer1.push_back(i);
+    }
+    std::cout << "Buffer (5): " << buffer1; // 0, 1, 2, 3, _
+    REQUIRE(buffer1.capacity() == 5);
+
+    buffer1.resize(3);
+    std::cout << "Shrink (3): " << buffer1; // 1, 2, 3
+    REQUIRE(buffer1.size() == 3);
+    REQUIRE(buffer1.capacity() == 3);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 1);
+    REQUIRE(buffer1.back() == 3);
+}
+
+TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer (padding)", "[ScrollingBuffer][Debug]") // TODO
+{
+    ScrollingBuffer<int> buffer1(6, PADDING);
+    for (int i = 0; i < 4; i++)
+    {
+        buffer1.push_back(i);
+    }
+    std::cout << "Buffer (6): " << buffer1; // X, X, 0, 1, 2, 3, _, _
+    REQUIRE(buffer1.size() == 4);
+    REQUIRE(buffer1.capacity() == 6);
+    REQUIRE(buffer1.offset() == PADDING);
+    REQUIRE(buffer1.front() == 0);
+    REQUIRE(buffer1.back() == 3);
+
+    buffer1.resize(5);
+    std::cout << "Buffer (5): " << buffer1; // X, X, 0, 1, 2, 3, _
+    REQUIRE(buffer1.size() == 4);
+    REQUIRE(buffer1.capacity() == 5);
+    REQUIRE(buffer1.offset() == PADDING);
+    REQUIRE(buffer1.front() == 0);
+    REQUIRE(buffer1.back() == 3);
+
+    buffer1.resize(4);
+    std::cout << "Shrink (4): " << buffer1; // X, X, 0, 1, 2, 3
+    REQUIRE(buffer1.size() == 4);
+    REQUIRE(buffer1.capacity() == 4);
+    REQUIRE(buffer1.offset() == PADDING);
+    REQUIRE(buffer1.front() == 0);
+    REQUIRE(buffer1.back() == 3);
+
+    buffer1.resize(2);
+    std::cout << "Shrink (2): " << buffer1; // X, X, 2, 3
+    REQUIRE(buffer1.size() == 2);
+    REQUIRE(buffer1.capacity() == 2);
+    REQUIRE(buffer1.offset() == PADDING);
+    REQUIRE(buffer1.front() == 2);
+    REQUIRE(buffer1.back() == 3);
+
+    buffer1.push_back(4);
+    std::cout << "Add Value : " << buffer1; // 4, X, X, 3
+    REQUIRE(buffer1.size() == 2);
+    REQUIRE(buffer1.capacity() == 2);
+    REQUIRE(buffer1.offset() == PADDING + 1);
+    REQUIRE(buffer1.front() == 3);
+    REQUIRE(buffer1.back() == 4);
+
+    buffer1 = ScrollingBuffer<int>(5, PADDING);
     for (int i = 0; i < 4; i++)
     {
         buffer1.push_back(i);
@@ -366,7 +429,7 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer", "[ScrollingBuffer][Debug]"
     REQUIRE(buffer1.back() == 6);
 }
 
-TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffer]")
+TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffer][Debug]")
 {
     ScrollingBuffer<int> buffer1(5, PADDING);
     for (int i = 0; i < 7; i++)
@@ -381,7 +444,7 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffe
     std::cout << "Shrink (3): " << buffer1; // 5, 6, X, X, 4
     REQUIRE(buffer1.size() == 3);
     REQUIRE(buffer1.capacity() == 3);
-    REQUIRE(buffer1.offset() == 2);
+    REQUIRE(buffer1.offset() == PADDING + 2);
     REQUIRE(buffer1.front() == 4);
     REQUIRE(buffer1.back() == 6);
 
