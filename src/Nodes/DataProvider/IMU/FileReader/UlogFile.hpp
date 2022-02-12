@@ -298,10 +298,28 @@ class UlogFile : public Imu, public FileReader
     /// @brief Number of messages read
     uint32_t messageCount = 0;
 
-    /// @brief Number of accelerometer values that are read-in
-    uint8_t accelAxisCount = 0;
+    /// @brief First absolute time is available (e.g. from GPS)
+    bool firstAbsoluteTime = false;
 
     // Key: [timestamp], Value: [0, "sensor_accel", SensorAccel{}]
     std::multimap<uint64_t, MeasurementData> epochData;
+
+    /// @brief Checks 'epochData' whether there is enough data available to output one ImuObs
+    /// @param[in] dataMap
+    bool enoughImuDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap);
+
+    /// @brief Flag to check whether 'epochData' contains accelerometer reading
+    bool holdsAccel = false;
+    /// @brief Flag to check whether 'epochData' contains gyro reading
+    bool holdsGyro = false;
+    /// @brief Flag to check whether 'epochData' contains magnetometer reading
+    bool holdsMag = false;
+
+    /// @brief Timestamp of the latest accelerometer reading
+    uint64_t accelKey{};
+    /// @brief Timestamp of the latest gyro reading
+    uint64_t gyroKey{};
+    /// @brief Timestamp of the latest magnetometer reading
+    uint64_t magKey{};
 };
 } // namespace NAV

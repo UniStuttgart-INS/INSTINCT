@@ -23,7 +23,11 @@ NAV::UlogFile::UlogFile()
     LOG_TRACE("{}: called", name);
 
     hasConfig = true;
-    // guiConfigDefaultWindowSize = {}; //TODO
+    guiConfigDefaultWindowSize = { 589, 257 };
+    firstAbsoluteTime = false;
+    holdsAccel = false;
+    holdsGyro = false;
+    holdsMag = false;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
@@ -92,7 +96,6 @@ bool NAV::UlogFile::initialize()
     LOG_TRACE("{}: called", nameId());
 
     messageCount = 0;
-    accelAxisCount = 0;
     sensorStartupUTCTime_usec = 0;
 
     return FileReader::initialize();
@@ -287,15 +290,11 @@ void NAV::UlogFile::readHeader()
     }
 }
 
-std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bool peek)
+std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 {
-    // std::shared_ptr<NAV::NodeData> obs = nullptr;
-
-    LOG_DEBUG("{}: Start reading Ulog data section", nameId());
     // Get current position
     auto pollStartPos = filestream.tellg();
 
-    // TODO: Read in one imuObs (accel, gyro, )
     // Read message header
     union
     {
@@ -304,7 +303,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
     } ulogMsgHeader{};
 
     while (true)
-    // for (size_t i = 0; i < 100; i++) //TODO: Quick fix, enable while loop once eof is reached
     {
         filestream.read(ulogMsgHeader.data.data(), ulogMsgHeader.data.size());
 
@@ -345,7 +343,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
 
             messageData.data.resize(messageData.header.msg_size - 2);
             filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
-            LOG_DEBUG("{}: messageData.header.msg_size: {}", nameId(), messageData.header.msg_size);
+            LOG_DEBUG("{}: messageData.header.msg_size: {}", nameId(), messageData.header.msg_size); //TODO: once callback is enabled, make LOG_DATA
 
             const auto& messageFormat = messageFormats.at(subscribedMessages.at(messageData.msg_id).message_name);
 
@@ -385,21 +383,18 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
                         std::memcpy(&sensorAccel.x, currentData, sizeof(sensorAccel.x));
                         LOG_DATA("{}: sensorAccel.x: {}", nameId(), sensorAccel.x);
                         currentExtractLocation += sizeof(sensorAccel.x);
-                        accelAxisCount++;
                     }
                     else if (dataField.name == "y")
                     {
                         std::memcpy(&sensorAccel.y, currentData, sizeof(sensorAccel.y));
                         LOG_DATA("{}: sensorAccel.y: {}", nameId(), sensorAccel.y);
                         currentExtractLocation += sizeof(sensorAccel.y);
-                        accelAxisCount++;
                     }
                     else if (dataField.name == "z")
                     {
                         std::memcpy(&sensorAccel.z, currentData, sizeof(sensorAccel.z));
                         LOG_DATA("{}: sensorAccel.z: {}", nameId(), sensorAccel.z);
                         currentExtractLocation += sizeof(sensorAccel.z);
-                        accelAxisCount++;
                     }
                     else if (dataField.name == "temperature")
                     {
@@ -591,32 +586,67 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData([[maybe_unused]] bo
             bool hasEnoughPosVelAttDataToSend = false; // FIXME: Make function
 
             // Breakpoint to debug 'epochData' --> see how it's filled
-            if (std::holds_alternative<SensorAccel>(epochData.end()->second.data) && accelAxisCount == 3) // This is the hasEnoughData check
+            // This is the hasEnoughData check for an ImuObs
+            if (enoughImuDataAvailable(epochData))
             {
-                LOG_INFO("{}: Construct ImuObs and invoke callback", nameId());
-                // obs = std::make_shared<NAV::ImuObs>(imuPos);
+                LOG_DEBUG("{}: Construct ImuObs and invoke callback", nameId());
+
                 auto obs = std::make_shared<ImuObs>(this->imuPos);
 
-                // auto test1 = epochData.begin()->first; // key
+                obs->timeSinceStartup = 1000 * epochData.rbegin()->first; // latest timestamp in [ns]
+                LOG_INFO("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
 
-                // auto test2 = std::get<SensorAccel>(epochData.end()->second.data).timestamp;
+                for (auto& i : epochData)
+                {
+                    if (i.second.data.index() == 0)
+                    {
+                        accelKey = i.first;
+                    }
+                    else if (i.second.data.index() == 1)
+                    {
+                        gyroKey = i.first;
+                    }
+                    else if (i.second.data.index() == 2)
+                    {
+                        magKey = i.first;
+                    }
+                    else
+                    {
+                        if (i.first != accelKey && i.first != gyroKey && i.first != magKey)
+                        {
+                            epochData.erase(i.first);
+                        }
+                    }
 
-                // LOG_ERROR("{}: value: {}", nameId(), test2);
+                    if (accelKey != 0 && gyroKey != 0 && magKey != 0)
+                    {
+                        break;
+                    }
+                }
 
-                obs->timeSinceStartup = 1000 * epochData.end()->first; // latest timestamp in [ns]
-                // auto latestTimeStamp = obs->timeSinceStartup;
-                // LOG_DEBUG("{}: obs->timeSinceStartup = {}", nameId(), latestTimeStamp);
+                float accelX = std::get<SensorAccel>(epochData.find(accelKey)->second.data).x;
+                float accelY = std::get<SensorAccel>(epochData.find(accelKey)->second.data).y;
+                float accelZ = std::get<SensorAccel>(epochData.find(accelKey)->second.data).z;
+                obs->accelUncompXYZ.emplace(accelX, accelY, accelZ);
+                LOG_DATA("{}: accelX = {}, accelY = {}, accelZ = {}", nameId(), accelX, accelY, accelZ);
 
-                // auto accelX = std::get<SensorAccel>(epochData.end()->second.data).x;
-                // auto accelY = std::get<SensorAccel>(epochData.end()->second.data).y;
-                // auto accelZ = std::get<SensorAccel>(epochData.end()->second.data).z;
-                // obs->accelUncompXYZ.emplace(accelX, accelY, accelZ);
-
-                // LOG_ERROR("{}: accelX: {}", nameId(), accelX);
+                float gyroX = std::get<SensorGyro>(epochData.find(gyroKey)->second.data).x;
+                float gyroY = std::get<SensorGyro>(epochData.find(gyroKey)->second.data).y;
+                float gyroZ = std::get<SensorGyro>(epochData.find(gyroKey)->second.data).z;
+                obs->gyroUncompXYZ.emplace(gyroX, gyroY, gyroZ);
+                LOG_DEBUG("{}: gyroX = {}, gyroY = {}, gyroZ = {}", nameId(), gyroX, gyroY, gyroZ);
 
                 // TODO: Befüllen
 
                 // TODO: Erase just the first used measurements from epochdata
+
+                holdsAccel = false;
+                holdsGyro = false;
+                holdsMag = false;
+
+                accelKey = 0;
+                gyroKey = 0;
+                magKey = 0;
 
                 if (!peek)
                 {
@@ -881,4 +911,24 @@ void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
     LOG_DEBUG("{}: Parameter default message - value: {}", nameId(), messageParamDefault.value);
 
     //TODO: Restriction on '1<<0' and '1<<1'
+}
+
+bool NAV::UlogFile::enoughImuDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap)
+{
+    if (dataMap.rbegin()->second.data.index() == 0)
+    {
+        holdsAccel = true;
+    }
+    if (dataMap.rbegin()->second.data.index() == 1)
+    {
+        holdsGyro = true;
+    }
+    if (dataMap.rbegin()->second.data.index() == 2)
+    {
+        holdsMag = true;
+    }
+
+    //TODO: add 'firstAbsoluteTime' to check
+
+    return (holdsAccel & holdsGyro) != 0;
 }
