@@ -25,21 +25,18 @@ class ScrollingBuffer
     /// @param[in] maxSize The maximum size of the scrolling buffer
     /// @param[in] padding The padding to offset the start of the data to prevent multithreaded overrides of the first value
     explicit ScrollingBuffer(size_t maxSize = 2000, size_t padding = 0)
-        : _maxSize(maxSize + padding), _padding(padding), _dataStart(padding), _dataEnd(padding)
+        : _infiniteBuffer(maxSize == 0), _maxSize(maxSize + padding), _padding(padding), _dataStart(padding), _dataEnd(_infiniteBuffer ? 0 : padding)
     {
         _data.reserve(maxSize + padding);
         _data.resize(padding);
-
-        resize(maxSize); // In case 0 was provided to make the buffer infinite
     }
 
     /// @brief Constructs a new container with the contents of the initializer list init.
     /// @param[in] init initializer list to initialize the elements of the container with
     ScrollingBuffer(std::initializer_list<T> init)
-        : _maxSize(init.size())
+        : _infiniteBuffer(init.size() == 0), _maxSize(init.size())
     {
-        _data.reserve(_maxSize);
-        resize(_maxSize); // In case 0 was provided to make the buffer infinite
+        _data.reserve(init.size());
 
         for (auto& val : init)
         {
@@ -163,8 +160,13 @@ class ScrollingBuffer
     void clear()
     {
         _data.clear();
-        _dataStart = 0;
-        _dataEnd = 0;
+        _dataStart = _padding;
+        _dataEnd = _infiniteBuffer ? 0 : _padding;
+
+        for (size_t i = 0; i < _padding; i++)
+        {
+            _data.push_back(0);
+        }
     }
 
     /// @brief Appends the given element value to the end of the container.
@@ -196,21 +198,36 @@ class ScrollingBuffer
         if (targetSize == 0) // Buffer should grow indefinitely when adding new values
         {
             _infiniteBuffer = true;
-            // 6, 7, 3, 4, 5,
-            // 3, 4, 5, 6, 7,
-            if (_dataStart != 0) // Buffer is scrolled and needs to be sorted in order of insertion
+
+            if (isScrolled()) // Buffer is scrolled and needs to be sorted in order of insertion
             {
+                //       se                e     s                 e     s              s               e
+                // 5, 6, 2, 3, 4  // 5, 6, _, _, 2, 3, 4  // 5, 6, X, X, 2, 3, 4  // X, 6, 7, 8, 9, 10, X
+                // 2, 3, 4, 5, 6  // 2, 3, 4, 5, 6, _, _  // X, X, 2, 3, 4, 5, 6  // X, X, 6, 7, 8, 9, 10
                 std::vector<T> to_vector;
-                std::copy(std::next(_data.begin(), static_cast<int64_t>(_dataStart)), _data.end(),
+
+                if (_dataEnd > _dataStart)
+                {
+                    std::copy(std::next(_data.begin(), static_cast<int64_t>(_dataEnd)), _data.end(),
+                              std::back_inserter(to_vector));
+                    _maxSize = _dataEnd;
+                }
+
+                std::copy(std::next(_data.begin(), std::max(static_cast<int64_t>(_dataStart - _padding), 0L)),
+                          std::next(_data.begin(), static_cast<int64_t>(std::max(_dataEnd, _maxSize))),
                           std::back_inserter(to_vector));
 
-                std::copy(_data.begin(), std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
-                          std::back_inserter(to_vector));
+                if (int64_t elementsFront = std::min(static_cast<int64_t>(_dataEnd), static_cast<int64_t>(_dataStart - _padding));
+                    elementsFront > 0)
+                {
+                    std::copy(_data.begin(), std::next(_data.begin(), elementsFront),
+                              std::back_inserter(to_vector));
+                }
                 _data.swap(to_vector);
 
                 _maxSize = _data.size();
 
-                _dataStart = 0;
+                _dataStart = _padding;
                 _dataEnd = 0;
             }
         }
@@ -230,7 +247,7 @@ class ScrollingBuffer
                         // 1, 2, 3, _, _,  // X, X, 1, 2, 3, _, _,
                         // 1, 2, 3, _,     // X, X, 1, 2, 3, _,
                         _maxSize -= emptyAtTheBackToDelete;
-                        _dataEnd %= _maxSize;
+                        _dataEnd %= _maxSize; // NOLINT(clang-analyzer-core.DivideZero) // this lint is wrong, even when wrapped by `if(_maxSize != 0)` appearing
                         elementsToDelete -= emptyAtTheBackToDelete;
                         // 1, 2, 3,        // X, X, 1, 2, 3,
                     }
@@ -244,7 +261,7 @@ class ScrollingBuffer
                         _maxSize -= elementsToDelete;
                     }
                 }
-                else // (_dataStart != 0) Buffer is scrolled, so the correct values have to be erased from the buffer when shrinking
+                else // Buffer is scrolled, so the correct values have to be erased from the buffer when shrinking
                 {
                     // 5, 6, _, _, 2, 3, 4, // 5, 6, _, _, X, X, 2, 3, 4,
                     // 6,                   // 6, X, X
@@ -262,19 +279,30 @@ class ScrollingBuffer
                     {
                         // 5, 6, _, _, 2, 3, 4, // 5, 6, _, _, X, X, 2, 3, 4,
                         _data.erase(std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
-                                    std::next(_data.begin(), static_cast<int64_t>(_dataEnd - 1 + emptyInBetweenToDelete)));
+                                    std::next(_data.begin(), static_cast<int64_t>(_dataEnd + emptyInBetweenToDelete)));
                         // 5, 6, _, 2, 3, 4,    // 5, 6, _, X, X, 2, 3, 4,
                         _dataStart -= emptyInBetweenToDelete;
                         _maxSize -= emptyInBetweenToDelete;
                         elementsToDelete -= emptyInBetweenToDelete;
                     }
 
+                    //       s                   e
+                    //  X  , 6, 7 ,   8 , 9, 10, X
+                    // X(8), 9, 10, X(7)
+                    if (int64_t elementsToCopyIntoPadding = -static_cast<int64_t>(_dataStart - _padding);
+                        elementsToCopyIntoPadding > 0)
+                    {
+                        std::copy(std::next(_data.begin(), std::max(static_cast<int64_t>(_dataStart - _padding), 0L)),
+                                  std::next(_data.begin(), static_cast<int64_t>(std::max(_dataEnd, _maxSize))),
+                                  std::back_inserter(to_vector)); // TODO:
+                    }
+
                     if (size_t elementsAtTheBack = _maxSize - _dataStart - (_dataEnd > _dataStart ? _maxSize - _dataEnd : 0);
                         size_t elementsAtTheBackToDelete = std::min(elementsAtTheBack, elementsToDelete))
                     {
                         // 5, 6, 2, 3, 4,       // 5, 6, X, X, 2, 3, 4,
-                        _data.erase(std::next(_data.begin(), static_cast<int64_t>(_dataStart)),
-                                    std::next(_data.begin(), static_cast<int64_t>(_dataStart + elementsAtTheBackToDelete)));
+                        _data.erase(std::next(_data.begin(), static_cast<int64_t>(_dataStart - _padding)),
+                                    std::next(_data.begin(), static_cast<int64_t>(_dataStart - _padding + elementsAtTheBackToDelete)));
                         // 5, 6, 4,             // 5, 6, X, X, 4,
                         // 5, 6,                // 5, 6, X, X,
                         _maxSize -= elementsAtTheBackToDelete;
@@ -302,27 +330,31 @@ class ScrollingBuffer
             }
             else if (_maxSize - _padding < targetSize) // We make the buffer bigger
             {
-                // 1, 2, 3, _, _,
-                // 1, 2, 3, _, _, _, _,
-                if (_dataStart == 0) // Buffer not scrolled, so we can simply reserve more space
+                // 1, 2, 3, _, _,        // X, X, 0, 1, 2, 3, _, _
+                // 1, 2, 3, _, _, _, _,  // X, X, 0, 1, 2, 3, _, _, _, _
+                if (!isScrolled()) // Buffer not scrolled, so we can simply reserve more space
                 {
-                    _data.reserve(targetSize);
-                    _maxSize = targetSize;
+                    _maxSize = targetSize + _padding;
+                    _data.reserve(_maxSize);
                 }
-                // 6, 7, 3, 4, 5,
-                // 6, 7, _, 3, 4, 5,
+                //      se                      e     s                 s               e
+                // 6, 7, 3, 4, 5,      // 5, 6, X, X, 2, 3, 4     // X, 6, 7, 8, 9, 10, X
+                // 6, 7, _, 3, 4, 5,   // 5, 6, _, X, X, 2, 3, 4  // X, 6, 7, 8, 9, 10, _, _, X
                 else // (_dataStart != 0) // Buffer scrolled, so we need to copy the values to the correct positions
                 {
-                    _data.resize(targetSize);
+                    _data.resize(targetSize + _padding);
 
-                    std::copy_backward(std::next(_data.begin(), static_cast<int64_t>(_dataStart)),
+                    std::copy_backward(std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
                                        std::next(_data.begin(), static_cast<int64_t>(_maxSize)),
-                                       std::next(_data.begin(), static_cast<int64_t>(targetSize)));
+                                       std::next(_data.begin(), static_cast<int64_t>(targetSize + _padding)));
 
-                    auto diff = targetSize - _maxSize;
-                    _dataStart += diff;
+                    auto diff = targetSize + _padding - _maxSize;
+                    if (_dataStart >= _dataEnd)
+                    {
+                        _dataStart += diff;
+                    }
 
-                    _maxSize = targetSize;
+                    _maxSize = targetSize + _padding;
                 }
             }
         }
@@ -378,35 +410,38 @@ class ScrollingBuffer
     /// @return The output stream given as parameter
     friend std::ostream& operator<<(std::ostream& os, const ScrollingBuffer<T>& buffer)
     {
-        for (int i = 0; static_cast<size_t>(i) < buffer._maxSize; i++)
+        // Scrolled
+        //       e        s
+        // 5, 6, _, _, X, 2, 3, 4
+
+        //      se
+        // 5, 6, 2, 3, 4
+
+        // Not scrolled
+        //       s           e
+        // X, X, 0, 1, 2, 3, _, _
+
+        //    s               e
+        // X, 6, 7, 8, 9, 10, _, _, X
+
+        // s  e
+        // 6, X, X,
+
+        // s  e
+        // 6, _, X, X,
+
+        //       se
+        // X, X, _, _, _,
+
+        for (int i = 0; static_cast<size_t>(i) < buffer._maxSize; i++) // X, 6, 7, 8, 9, 10, _, _, X
         {
-            // Scrolled
-            //       e        s
-            // 5, 6, _, _, X, 2, 3, 4
-
-            //      se
-            // 5, 6, 2, 3, 4
-
-            // Not scrolled
-            //       s           e
-            // X, X, 0, 1, 2, 3, _, _
-
-            //    s           e
-            // X, 0, 1, 2, 3, _, _, X
-
-            // s  e
-            // 6, X, X,
-
-            // s  e
-            // 6, _, X, X,
-
             if ((i >= static_cast<int>(buffer._dataStart - buffer._padding) && static_cast<size_t>(i) < buffer._dataStart)
                 || (static_cast<size_t>(i) >= buffer._dataStart + buffer._maxSize - buffer._padding))
             {
                 os << "X"; // padding
             }
             else if (bool scrolled = buffer.isScrolled();
-                     (scrolled && static_cast<size_t>(i) >= buffer._dataEnd && i < static_cast<int>(buffer._dataStart - buffer._padding))
+                     (scrolled && static_cast<size_t>(i) >= buffer._dataEnd && (static_cast<int>(buffer._dataStart - buffer._padding) < 0 || i < static_cast<int>(buffer._dataStart - buffer._padding)))
                      || (!scrolled && static_cast<size_t>(i) >= buffer._dataEnd))
             {
                 os << "_"; // empty
@@ -420,7 +455,7 @@ class ScrollingBuffer
                 os << ", ";
             }
         }
-        return os << '\n';
+        return os;
     }
 
   private:
@@ -451,11 +486,10 @@ class ScrollingBuffer
         }
 
         return _dataEnd < _dataStart
-               || (_dataStart == _dataEnd && _dataStart != 0)
                || (_dataStart != _padding);
 
-        //      se
-        // 5, 6, 2, 3, 4
+        //      se        //       se
+        // 5, 6, 2, 3, 4  // X, X, _, _, _
 
         //    s           e
         // X, 0, 1, 2, 3, _, _, X // Scrolled
