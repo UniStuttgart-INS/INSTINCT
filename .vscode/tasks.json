@@ -241,7 +241,7 @@
                     "--build",
                     "build/${input:buildType}-${input:compiler}",
                     "--",
-                    "-j",
+                    "-j8",
                 ],
             },
             "windows": {
@@ -273,7 +273,7 @@
                     "--build",
                     "build/Debug-${input:compiler}",
                     "--",
-                    "-j",
+                    "-j8",
                 ],
             },
             "windows": {
@@ -305,7 +305,7 @@
                 "--build",
                 "build/Debug-cov",
                 "--",
-                "-j",
+                "-j8",
             ],
             "dependsOn": [
                 "CMAKE: Coverage",
@@ -401,10 +401,10 @@
             "args": [
                 "-j4",
                 "--output-on-failure",
-                // "--exclude-regex",
-                // "'\\[flow\\]'",
-                "--tests-regex",
-                "'ScrollingBuffer'"
+                "--exclude-regex",
+                "'\\[flow\\]'",
+                // "--tests-regex",
+                // "'ScrollingBuffer'"
                 // "--verbose",
             ],
             "options": {

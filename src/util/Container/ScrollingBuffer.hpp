@@ -289,13 +289,19 @@ class ScrollingBuffer
                     //       s                   e
                     //  X  , 6, 7 ,   8 , 9, 10, X
                     // X(8), 9, 10, X(7)
-                    if (int64_t elementsToCopyIntoPadding = -static_cast<int64_t>(_dataStart - _padding);
-                        elementsToCopyIntoPadding > 0)
+                    if (size_t paddingAtTheEnd = static_cast<size_t>(std::max(static_cast<int64_t>(_padding - _dataStart), 0L));
+                        size_t paddingAtTheEndToDelete = std::min(paddingAtTheEnd, elementsToDelete))
                     {
-                        std::copy(std::next(_data.begin(), std::max(static_cast<int64_t>(_dataStart - _padding), 0L)),
-                                  std::next(_data.begin(), static_cast<int64_t>(std::max(_dataEnd, _maxSize))),
-                                  std::back_inserter(to_vector)); // TODO:
+                        _data.erase(std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
+                                    std::next(_data.begin(), static_cast<int64_t>(_dataEnd + paddingAtTheEndToDelete)));
+                        _maxSize -= paddingAtTheEndToDelete;
+                        _dataStart += paddingAtTheEndToDelete;
+                        _dataEnd %= _maxSize;
+                        elementsToDelete -= paddingAtTheEndToDelete;
                     }
+                    // e     s
+                    // X, X, 6, 7 , 8 , 9, 10
+                    // X, X, 7 , 8 , 9, 10
 
                     if (size_t elementsAtTheBack = _maxSize - _dataStart - (_dataEnd > _dataStart ? _maxSize - _dataEnd : 0);
                         size_t elementsAtTheBackToDelete = std::min(elementsAtTheBack, elementsToDelete))

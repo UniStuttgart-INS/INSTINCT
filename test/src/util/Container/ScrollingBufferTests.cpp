@@ -684,37 +684,81 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffe
     sstream.clear();
     sstream.str(std::string());
     sstream << buffer1;
-    REQUIRE(sstream.str() == "X, 7, 8, 9, 10, X"); // TODO
+    REQUIRE(sstream.str() == "X, X, 7, 8, 9, 10");
     std::cout << "Shrink (2): " << buffer1 << '\n';
     REQUIRE(buffer1.size() == 4);
     REQUIRE(buffer1.capacity() == 4);
-    REQUIRE(buffer1.offset() == 1);
+    REQUIRE(buffer1.offset() == PADDING);
     REQUIRE(buffer1.front() == 7);
     REQUIRE(buffer1.back() == 10);
     const int* raw = buffer1.data();
-    REQUIRE(raw[0] == 6);
-    REQUIRE(raw[1] == 7);
-    REQUIRE(raw[2] == 8);
-    REQUIRE(raw[3] == 9);
-    REQUIRE(raw[4] == 10);
-    REQUIRE(raw[5] == 5);
+    REQUIRE(raw[0] == 5);
+    REQUIRE(raw[1] == 6);
+    REQUIRE(raw[2] == 7);
+    REQUIRE(raw[3] == 8);
+    REQUIRE(raw[4] == 9);
+    REQUIRE(raw[5] == 10);
+
+    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    for (int i = 0; i < 11; i++)
+    {
+        buffer1.push_back(i);
+    }
+    sstream.clear();
+    sstream.str(std::string());
+    sstream << buffer1;
+    REQUIRE(sstream.str() == "X, 6, 7, 8, 9, 10, X");
+    std::cout << "Buffer (5): " << buffer1 << '\n';
 
     buffer1.resize(2);
     sstream.clear();
     sstream.str(std::string());
     sstream << buffer1;
-    REQUIRE(sstream.str() == "X, 9, 10, X");
+    REQUIRE(sstream.str() == "X, X, 9, 10");
     std::cout << "Shrink (2): " << buffer1 << '\n';
     REQUIRE(buffer1.size() == 2);
     REQUIRE(buffer1.capacity() == 2);
-    REQUIRE(buffer1.offset() == 1);
+    REQUIRE(buffer1.offset() == PADDING);
     REQUIRE(buffer1.front() == 9);
     REQUIRE(buffer1.back() == 10);
-    const int* raw = buffer1.data();
-    REQUIRE(raw[0] == 8);
-    REQUIRE(raw[1] == 9);
-    REQUIRE(raw[2] == 10);
-    REQUIRE(raw[3] == 7);
+    raw = buffer1.data();
+    REQUIRE(raw[0] == 7);
+    REQUIRE(raw[1] == 8);
+    REQUIRE(raw[2] == 9);
+    REQUIRE(raw[3] == 10);
+
+    buffer1 = ScrollingBuffer<int>(5, 7);
+    for (int i = 0; i < 11; i++)
+    {
+        buffer1.push_back(i);
+    }
+    sstream.clear();
+    sstream.str(std::string());
+    sstream << buffer1;
+    REQUIRE(sstream.str() == "X, 6, 7, 8, 9, 10, X, X, X, X, X, X");
+    std::cout << "Buffer (5): " << buffer1 << '\n';
+
+    buffer1.resize(2);
+    sstream.clear();
+    sstream.str(std::string());
+    sstream << buffer1;
+    REQUIRE(sstream.str() == "X, X, X, X, 9, 10, X, X, X");
+    std::cout << "Shrink (2): " << buffer1 << '\n';
+    REQUIRE(buffer1.size() == 2);
+    REQUIRE(buffer1.capacity() == 2);
+    REQUIRE(buffer1.offset() == 4);
+    REQUIRE(buffer1.front() == 9);
+    REQUIRE(buffer1.back() == 10);
+    raw = buffer1.data();
+    REQUIRE(raw[0] == 5);
+    REQUIRE(raw[1] == 6);
+    REQUIRE(raw[2] == 7);
+    REQUIRE(raw[3] == 8);
+    REQUIRE(raw[4] == 9);
+    REQUIRE(raw[5] == 10);
+    REQUIRE(raw[6] == 2);
+    REQUIRE(raw[7] == 3);
+    REQUIRE(raw[8] == 4);
 }
 
 TEST_CASE("[ScrollingBuffer] Grow scrolled buffer", "[ScrollingBuffer]")
