@@ -119,7 +119,7 @@ class Plot : public Node
             /// @param[in] displayName Display name of the contained data
             /// @param[in] size Size of the buffer
             explicit PlotData(std::string displayName, size_t size)
-                : displayName(std::move(displayName)), buffer(size) {}
+                : displayName(std::move(displayName)), buffer(size, PinData::SCROLLING_BUFFER_PADDING) {}
 
             /// Display name of the contained data
             std::string displayName;
@@ -203,6 +203,9 @@ class Plot : public Node
         PinType pinType = PinType::Flow;
         /// Amount of points to skip for plotting
         int stride = 1;
+
+        /// Extra data points for the buffer to avoid connecting the first and last point
+        static constexpr size_t SCROLLING_BUFFER_PADDING = 0;
     };
 
     /// @brief Information specifying the look of each plot
