@@ -213,7 +213,7 @@ class ScrollingBuffer
                     _maxSize = _dataEnd;
                 }
 
-                std::copy(std::next(_data.begin(), std::max(static_cast<int64_t>(_dataStart - _padding), 0L)),
+                std::copy(std::next(_data.begin(), std::max(static_cast<int>(_dataStart - _padding), 0)),
                           std::next(_data.begin(), static_cast<int64_t>(std::max(_dataEnd, _maxSize))),
                           std::back_inserter(to_vector));
 
@@ -289,7 +289,7 @@ class ScrollingBuffer
                     //       s                   e
                     //  X  , 6, 7 ,   8 , 9, 10, X
                     // X(8), 9, 10, X(7)
-                    if (size_t paddingAtTheEnd = static_cast<size_t>(std::max(static_cast<int64_t>(_padding - _dataStart), 0L));
+                    if (size_t paddingAtTheEnd = static_cast<size_t>(std::max(static_cast<int>(_padding - _dataStart), 0));
                         size_t paddingAtTheEndToDelete = std::min(paddingAtTheEnd, elementsToDelete))
                     {
                         _data.erase(std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
