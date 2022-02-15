@@ -192,7 +192,8 @@ class UlogFile : public Imu, public FileReader
         uint8_t fix_type;
         bool vel_ned_valid;
         uint8_t satellites_used;
-        std::array<uint8_t, 5> _padding0;
+
+        static constexpr uint8_t padding = 5;
     };
 
     /// Px4 GPS attitude message
@@ -202,7 +203,8 @@ class UlogFile : public Imu, public FileReader
         std::array<float, 4> q; ///< Px4 GPS attitude quaternion
         std::array<float, 4> delta_q_reset;
         uint8_t quat_reset_counter;
-        std::array<uint8_t, 7> _padding0;
+
+        static constexpr uint8_t padding = 7;
     };
 
     /// Px4 air data sensor message
@@ -292,7 +294,7 @@ class UlogFile : public Imu, public FileReader
     {
         uint8_t multi_id;
         std::string message_name;
-        std::variant<SensorAccel, SensorGyro, SensorMag> data;
+        std::variant<SensorAccel, SensorGyro, SensorMag, VehicleGpsPosition, VehicleAttitude> data;
     };
 
     /// @brief Number of messages read

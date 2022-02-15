@@ -553,7 +553,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
                     {
                         currentExtractLocation += SensorMag::padding; // Extraction Location should be moved to account for multiple padding
-                        LOG_DATA("{}: sensorAccel: padding", nameId());
+                        LOG_DATA("{}: sensorMag: padding", nameId());
                     }
                     else
                     {
@@ -566,6 +566,225 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                                                                  subscribedMessages.at(messageData.msg_id).message_name,
                                                                  sensorMag }));
             }
+            else if (subscribedMessages.at(messageData.msg_id).message_name == "vehicle_gps_position")
+            {
+                VehicleGpsPosition vehicleGpsPosition{};
+                for (const auto& dataField : messageFormat)
+                {
+                    char* currentData = messageData.data.data() + currentExtractLocation;
+                    if (dataField.name == "timestamp")
+                    {
+                        std::memcpy(&vehicleGpsPosition.timestamp, currentData, sizeof(vehicleGpsPosition.timestamp));
+                        LOG_DEBUG("{}: vehicleGpsPosition.timestamp: {}", nameId(), vehicleGpsPosition.timestamp);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.timestamp);
+                    }
+                    else if (dataField.name == "time_utc_usec")
+                    {
+                        std::memcpy(&vehicleGpsPosition.time_utc_usec, currentData, sizeof(vehicleGpsPosition.time_utc_usec));
+                        LOG_DEBUG("{}: vehicleGpsPosition.time_utc_usec: {}", nameId(), vehicleGpsPosition.time_utc_usec);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.time_utc_usec);
+                    }
+                    else if (dataField.name == "lat")
+                    {
+                        std::memcpy(&vehicleGpsPosition.lat, currentData, sizeof(vehicleGpsPosition.lat));
+                        LOG_DEBUG("{}: vehicleGpsPosition.lat: {}", nameId(), vehicleGpsPosition.lat);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.lat);
+                    }
+                    else if (dataField.name == "lon")
+                    {
+                        std::memcpy(&vehicleGpsPosition.lon, currentData, sizeof(vehicleGpsPosition.lon));
+                        LOG_DEBUG("{}: vehicleGpsPosition.lon: {}", nameId(), vehicleGpsPosition.lon);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.lon);
+                    }
+                    else if (dataField.name == "alt")
+                    {
+                        std::memcpy(&vehicleGpsPosition.alt, currentData, sizeof(vehicleGpsPosition.alt));
+                        LOG_DEBUG("{}: vehicleGpsPosition.alt: {}", nameId(), vehicleGpsPosition.alt);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.alt);
+                    }
+                    else if (dataField.name == "alt_ellipsoid")
+                    {
+                        std::memcpy(&vehicleGpsPosition.alt_ellipsoid, currentData, sizeof(vehicleGpsPosition.alt_ellipsoid));
+                        LOG_DEBUG("{}: vehicleGpsPosition.alt_ellipsoid: {}", nameId(), vehicleGpsPosition.alt_ellipsoid);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.alt_ellipsoid);
+                    }
+                    else if (dataField.name == "s_variance_m_s")
+                    {
+                        std::memcpy(&vehicleGpsPosition.s_variance_m_s, currentData, sizeof(vehicleGpsPosition.s_variance_m_s));
+                        LOG_DEBUG("{}: vehicleGpsPosition.s_variance_m_s: {}", nameId(), vehicleGpsPosition.s_variance_m_s);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.s_variance_m_s);
+                    }
+                    else if (dataField.name == "c_variance_rad")
+                    {
+                        std::memcpy(&vehicleGpsPosition.c_variance_rad, currentData, sizeof(vehicleGpsPosition.c_variance_rad));
+                        LOG_DEBUG("{}: vehicleGpsPosition.c_variance_rad: {}", nameId(), vehicleGpsPosition.c_variance_rad);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.c_variance_rad);
+                    }
+                    else if (dataField.name == "eph")
+                    {
+                        std::memcpy(&vehicleGpsPosition.eph, currentData, sizeof(vehicleGpsPosition.eph));
+                        LOG_DEBUG("{}: vehicleGpsPosition.eph: {}", nameId(), vehicleGpsPosition.eph);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.eph);
+                    }
+                    else if (dataField.name == "epv")
+                    {
+                        std::memcpy(&vehicleGpsPosition.epv, currentData, sizeof(vehicleGpsPosition.epv));
+                        LOG_DEBUG("{}: vehicleGpsPosition.epv: {}", nameId(), vehicleGpsPosition.epv);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.epv);
+                    }
+                    else if (dataField.name == "hdop")
+                    {
+                        std::memcpy(&vehicleGpsPosition.hdop, currentData, sizeof(vehicleGpsPosition.hdop));
+                        LOG_DEBUG("{}: vehicleGpsPosition.hdop: {}", nameId(), vehicleGpsPosition.hdop);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.hdop);
+                    }
+                    else if (dataField.name == "vdop")
+                    {
+                        std::memcpy(&vehicleGpsPosition.vdop, currentData, sizeof(vehicleGpsPosition.lat));
+                        LOG_DEBUG("{}: vehicleGpsPosition.vdop: {}", nameId(), vehicleGpsPosition.vdop);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.vdop);
+                    }
+                    else if (dataField.name == "noise_per_ms")
+                    {
+                        std::memcpy(&vehicleGpsPosition.noise_per_ms, currentData, sizeof(vehicleGpsPosition.noise_per_ms));
+                        LOG_DEBUG("{}: vehicleGpsPosition.noise_per_ms: {}", nameId(), vehicleGpsPosition.noise_per_ms);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.noise_per_ms);
+                    }
+                    else if (dataField.name == "jamming_indicator")
+                    {
+                        std::memcpy(&vehicleGpsPosition.jamming_indicator, currentData, sizeof(vehicleGpsPosition.jamming_indicator));
+                        LOG_DEBUG("{}: vehicleGpsPosition.jamming_indicator: {}", nameId(), vehicleGpsPosition.jamming_indicator);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.jamming_indicator);
+                    }
+                    else if (dataField.name == "vel_m_s")
+                    {
+                        std::memcpy(&vehicleGpsPosition.vel_m_s, currentData, sizeof(vehicleGpsPosition.vel_m_s));
+                        LOG_DEBUG("{}: vehicleGpsPosition.vel_m_s: {}", nameId(), vehicleGpsPosition.vel_m_s);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.vel_m_s);
+                    }
+                    else if (dataField.name == "vel_n_m_s")
+                    {
+                        std::memcpy(&vehicleGpsPosition.vel_n_m_s, currentData, sizeof(vehicleGpsPosition.vel_n_m_s));
+                        LOG_DEBUG("{}: vehicleGpsPosition.vel_n_m_s: {}", nameId(), vehicleGpsPosition.vel_n_m_s);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.vel_n_m_s);
+                    }
+                    else if (dataField.name == "vel_e_m_s")
+                    {
+                        std::memcpy(&vehicleGpsPosition.vel_e_m_s, currentData, sizeof(vehicleGpsPosition.vel_e_m_s));
+                        LOG_DEBUG("{}: vehicleGpsPosition.vel_e_m_s: {}", nameId(), vehicleGpsPosition.vel_e_m_s);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.vel_e_m_s);
+                    }
+                    else if (dataField.name == "vel_d_m_s")
+                    {
+                        std::memcpy(&vehicleGpsPosition.vel_d_m_s, currentData, sizeof(vehicleGpsPosition.vel_d_m_s));
+                        LOG_DEBUG("{}: vehicleGpsPosition.vel_d_m_s: {}", nameId(), vehicleGpsPosition.vel_d_m_s);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.vel_d_m_s);
+                    }
+                    else if (dataField.name == "cog_rad")
+                    {
+                        std::memcpy(&vehicleGpsPosition.cog_rad, currentData, sizeof(vehicleGpsPosition.cog_rad));
+                        LOG_DEBUG("{}: vehicleGpsPosition.cog_rad: {}", nameId(), vehicleGpsPosition.cog_rad);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.cog_rad);
+                    }
+                    else if (dataField.name == "timestamp_time_relative")
+                    {
+                        std::memcpy(&vehicleGpsPosition.timestamp_time_relative, currentData, sizeof(vehicleGpsPosition.timestamp_time_relative));
+                        LOG_DEBUG("{}: vehicleGpsPosition.timestamp_time_relative: {}", nameId(), vehicleGpsPosition.timestamp_time_relative);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.timestamp_time_relative);
+                    }
+                    else if (dataField.name == "heading")
+                    {
+                        std::memcpy(&vehicleGpsPosition.heading, currentData, sizeof(vehicleGpsPosition.heading));
+                        LOG_DEBUG("{}: vehicleGpsPosition.heading: {}", nameId(), vehicleGpsPosition.heading);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.heading);
+                    }
+                    else if (dataField.name == "heading_offset")
+                    {
+                        std::memcpy(&vehicleGpsPosition.heading_offset, currentData, sizeof(vehicleGpsPosition.heading_offset));
+                        LOG_DEBUG("{}: vehicleGpsPosition.heading_offset: {}", nameId(), vehicleGpsPosition.heading_offset);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.heading_offset);
+                    }
+                    else if (dataField.name == "fix_type")
+                    {
+                        std::memcpy(&vehicleGpsPosition.fix_type, currentData, sizeof(vehicleGpsPosition.fix_type));
+                        LOG_DEBUG("{}: vehicleGpsPosition.fix_type: {}", nameId(), vehicleGpsPosition.fix_type);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.fix_type);
+                    }
+                    else if (dataField.name == "vel_ned_valid")
+                    {
+                        std::memcpy(&vehicleGpsPosition.vel_ned_valid, currentData, sizeof(vehicleGpsPosition.vel_ned_valid));
+                        LOG_DEBUG("{}: vehicleGpsPosition.vel_ned_valid: {}", nameId(), vehicleGpsPosition.vel_ned_valid);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.vel_ned_valid);
+                    }
+                    else if (dataField.name == "satellites_used")
+                    {
+                        std::memcpy(&vehicleGpsPosition.satellites_used, currentData, sizeof(vehicleGpsPosition.satellites_used));
+                        LOG_DEBUG("{}: vehicleGpsPosition.satellites_used: {}", nameId(), vehicleGpsPosition.satellites_used);
+                        currentExtractLocation += sizeof(vehicleGpsPosition.satellites_used);
+                    }
+                    else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
+                    {
+                        currentExtractLocation += VehicleGpsPosition::padding; // Extraction Location should be moved to account for multiple padding
+                        LOG_DATA("{}: vehicleGpsPosition: padding", nameId());
+                    }
+                    else
+                    {
+                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
+                    }
+                }
+                epochData.insert(std::make_pair(vehicleGpsPosition.timestamp,
+                                                MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                 subscribedMessages.at(messageData.msg_id).message_name,
+                                                                 vehicleGpsPosition }));
+            }
+            else if (subscribedMessages.at(messageData.msg_id).message_name == "vehicle_attitude")
+            {
+                VehicleAttitude vehicleAttitude{};
+                for (const auto& dataField : messageFormat)
+                {
+                    char* currentData = messageData.data.data() + currentExtractLocation;
+                    if (dataField.name == "timestamp")
+                    {
+                        std::memcpy(&vehicleAttitude.timestamp, currentData, sizeof(vehicleAttitude.timestamp));
+                        LOG_DEBUG("{}: vehicleAttitude.timestamp: {}", nameId(), vehicleAttitude.timestamp);
+                        currentExtractLocation += sizeof(vehicleAttitude.timestamp);
+                    }
+                    else if (dataField.name == "q")
+                    {
+                        std::memcpy(vehicleAttitude.q.data(), currentData, vehicleAttitude.q.size());
+                        LOG_DATA("{}: vehicleAttitude.q: {}", nameId(), fmt::join(vehicleAttitude.q, ", "));
+                        currentExtractLocation += vehicleAttitude.q.size();
+                    }
+                    else if (dataField.name == "delta_q_reset")
+                    {
+                        std::memcpy(vehicleAttitude.delta_q_reset.data(), currentData, vehicleAttitude.delta_q_reset.size());
+                        LOG_DATA("{}: vehicleAttitude.delta_q_reset: {}", nameId(), fmt::join(vehicleAttitude.delta_q_reset, ", "));
+                        currentExtractLocation += vehicleAttitude.delta_q_reset.size();
+                    }
+                    if (dataField.name == "quat_reset_counter")
+                    {
+                        std::memcpy(&vehicleAttitude.quat_reset_counter, currentData, sizeof(vehicleAttitude.quat_reset_counter));
+                        LOG_DEBUG("{}: vehicleAttitude.quat_reset_counter: {}", nameId(), vehicleAttitude.quat_reset_counter);
+                        currentExtractLocation += sizeof(vehicleAttitude.quat_reset_counter);
+                    }
+                    else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
+                    {
+                        currentExtractLocation += VehicleAttitude::padding; // Extraction Location should be moved to account for multiple padding
+                        LOG_DATA("{}: VehicleAttitude: padding", nameId());
+                    }
+                    else
+                    {
+                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
+                    }
+                }
+                epochData.insert(std::make_pair(vehicleAttitude.timestamp,
+                                                MeasurementData{ subscribedMessages.at(messageData.msg_id).multi_id,
+                                                                 subscribedMessages.at(messageData.msg_id).message_name,
+                                                                 vehicleAttitude }));
+            }
+
             // TODO:
             // else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gps")
             // {
@@ -596,7 +815,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 obs->timeSinceStartup = 1000 * epochData.rbegin()->first; // latest timestamp in [ns]
                 LOG_INFO("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
 
-                for (auto& i : epochData)
+                for (auto const& i : epochData)
                 {
                     if (i.second.data.index() == 0)
                     {
@@ -612,9 +831,9 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                     else
                     {
-                        if (i.first != accelKey && i.first != gyroKey && i.first != magKey)
+                        if (epochData.contains(i.first) && i.first != accelKey && i.first != gyroKey && i.first != magKey)
                         {
-                            epochData.erase(i.first);
+                            // epochData.erase(i.first);
                         }
                     }
 
