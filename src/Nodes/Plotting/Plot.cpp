@@ -18,6 +18,7 @@ namespace nm = NAV::NodeManager;
 
 namespace NAV
 {
+
 /// @brief Write info to a json object
 /// @param[out] j Json output
 /// @param[in] style Object to read info from
@@ -405,6 +406,7 @@ void NAV::Plot::guiConfig()
                     {
                         pinData.size = 0;
                     }
+                    std::lock_guard<std::mutex> guard(pinData.mutex);
                     for (auto& plotData : pinData.plotData)
                     {
                         flow::ApplyChanges();
@@ -719,6 +721,9 @@ void NAV::Plot::guiConfig()
                                 || (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_2 && (plotInfo.plotFlags & ImPlotFlags_YAxis2))
                                 || (plotData.plotOnAxis.at(plotNum).first == ImPlotYAxis_3 && (plotInfo.plotFlags & ImPlotFlags_YAxis3))))
                         {
+                            // Lock the buffer so no data can be inserted till plotting finishes
+                            std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
                             ImPlot::SetPlotYAxis(plotData.plotOnAxis.at(plotNum).first);
 
                             // Style options
@@ -1004,6 +1009,8 @@ bool NAV::Plot::initialize()
 
     for (auto& pinData : _pinData)
     {
+        std::lock_guard<std::mutex> guard(pinData.mutex); // Lock the buffer for multithreaded access
+
         for (auto& plotData : pinData.plotData)
         {
             plotData.hasData = false;
@@ -1618,6 +1625,8 @@ void NAV::Plot::plotBoolean(ax::NodeEditor::LinkId linkId)
 
             size_t i = 0;
 
+            std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
             // InsObs
             addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - _startValue_Time);
             addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
@@ -1645,6 +1654,8 @@ void NAV::Plot::plotInteger(ax::NodeEditor::LinkId linkId)
 
             size_t i = 0;
 
+            std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
             // InsObs
             addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - _startValue_Time);
             addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
@@ -1671,6 +1682,8 @@ void NAV::Plot::plotFloat(ax::NodeEditor::LinkId linkId)
             }
 
             size_t i = 0;
+
+            std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
             // InsObs
             addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - _startValue_Time);
@@ -1703,6 +1716,8 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
 
                     size_t i = 0;
 
+                    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
                     // InsObs
                     addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow) - _startValue_Time);
                     addData(pinIndex, i++, static_cast<double>(currentTime.toGPSweekTow().tow));
@@ -1728,6 +1743,8 @@ void NAV::Plot::plotMatrix(ax::NodeEditor::LinkId linkId)
                     }
 
                     size_t i = 0;
+
+                    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
                     auto matrix = (*value)();
 
@@ -1831,6 +1848,8 @@ void NAV::Plot::plotPosVelAtt(const std::shared_ptr<const PosVelAtt>& obs, size_
                                                lla_position.x(), _startValue_East)
                       * sign;
 
+    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
     // InsObs
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
@@ -1866,6 +1885,8 @@ void NAV::Plot::plotPVAError(const std::shared_ptr<const PVAError>& obs, size_t 
     }
     size_t i = 0;
 
+    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
     // InsObs
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
@@ -1891,6 +1912,8 @@ void NAV::Plot::plotImuBiases(const std::shared_ptr<const ImuBiases>& obs, size_
         }
     }
     size_t i = 0;
+
+    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
     // InsObs
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
@@ -1946,6 +1969,8 @@ void NAV::Plot::plotRtklibPosObs(const std::shared_ptr<const RtklibPosObs>& obs,
         lla_position->x() = trafo::rad2deg(lla_position->x());
         lla_position->y() = trafo::rad2deg(lla_position->y());
     }
+
+    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
     // InsObs
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
@@ -2055,6 +2080,9 @@ void NAV::Plot::plotUbloxObs(const std::shared_ptr<const UbloxObs>& obs, size_t 
     }
 
     size_t i = 0;
+
+    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
+
     // InsObs
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) : std::nan(""));
@@ -2082,6 +2110,8 @@ void NAV::Plot::plotImuObs(const std::shared_ptr<const ImuObs>& obs, size_t pinI
         }
     }
     size_t i = 0;
+
+    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
     // InsObs
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
@@ -2119,6 +2149,8 @@ void NAV::Plot::plotKvhObs(const std::shared_ptr<const KvhObs>& obs, size_t pinI
         }
     }
     size_t i = 0;
+
+    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
     // InsObs
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
@@ -2159,6 +2191,8 @@ void NAV::Plot::plotImuObsWDeltaObs(const std::shared_ptr<const ImuObsWDelta>& o
         }
     }
     size_t i = 0;
+
+    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
     // InsObs
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));
@@ -2204,6 +2238,8 @@ void NAV::Plot::plotVectorNavBinaryObs(const std::shared_ptr<const VectorNavBina
         }
     }
     size_t i = 0;
+
+    std::lock_guard<std::mutex> guard(_pinData.at(pinIndex).mutex);
 
     // InsObs
     addData(pinIndex, i++, obs->insTime.has_value() ? static_cast<double>(obs->insTime->toGPSweekTow().tow) - _startValue_Time : std::nan(""));

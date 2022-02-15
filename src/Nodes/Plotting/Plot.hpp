@@ -8,6 +8,7 @@
 #include <implot.h>
 
 #include <map>
+#include <mutex>
 
 #include "internal/Node/Node.hpp"
 
@@ -144,6 +145,59 @@ class Plot : public Node
             Matrix, ///< Matrix Object
         };
 
+        /// @brief Constructor
+        PinData() = default;
+        /// @brief Destructor
+        ~PinData() = default;
+        /// @brief Copy constructor
+        /// @param[in] other The other element to copy
+        PinData(const PinData& other)
+            : size(other.size),
+              dataIdentifier(other.dataIdentifier),
+              plotData(other.plotData),
+              pinType(other.pinType),
+              stride(other.stride) {}
+
+        /// @brief Move constructor
+        /// @param[in] other The other element to move
+        PinData(PinData&& other) noexcept
+            : size(other.size),
+              dataIdentifier(std::move(other.dataIdentifier)),
+              plotData(std::move(other.plotData)),
+              pinType(other.pinType),
+              stride(other.stride) {}
+
+        /// @brief Copy assignment operator
+        /// @param[in] rhs The other element to copy
+        PinData& operator=(const PinData& rhs)
+        {
+            if (&rhs != this)
+            {
+                size = rhs.size;
+                dataIdentifier = rhs.dataIdentifier;
+                plotData = rhs.plotData;
+                pinType = rhs.pinType;
+                stride = rhs.stride;
+            }
+
+            return *this;
+        }
+        /// @brief Move assignment operator
+        /// @param[in] rhs The other element to move
+        PinData& operator=(PinData&& rhs) noexcept
+        {
+            if (&rhs != this)
+            {
+                size = rhs.size;
+                dataIdentifier = std::move(rhs.dataIdentifier);
+                plotData = std::move(rhs.plotData);
+                pinType = rhs.pinType;
+                stride = rhs.stride;
+            }
+
+            return *this;
+        }
+
         /// @brief Adds a plotData Element to the list
         /// @param[in] dataIndex Index where to add the data to
         /// @param[in] displayName Display name of the contained data
@@ -174,9 +228,7 @@ class Plot : public Node
                 }
                 else // Item exists already. Developer reordered the items in the list
                 {
-                    auto tmpPlotData = *searchIter;     // Copy the oldelement
-                    plotData.erase(searchIter);         // Delete the old element
-                    plotData.insert(iter, tmpPlotData); // Put the found element at the right position
+                    std::rotate(searchIter, searchIter + 1, iter);
                 }
                 iter->markedForDelete = false;
             }
@@ -193,6 +245,7 @@ class Plot : public Node
                 plotData.emplace_back(displayName, static_cast<size_t>(size));
             }
         }
+
         /// Size of all buffers of the plotData elements
         int size = 2000;
         /// Data Identifier of the connected pin
@@ -203,6 +256,8 @@ class Plot : public Node
         PinType pinType = PinType::Flow;
         /// Amount of points to skip for plotting
         int stride = 1;
+        /// Mutex to lock the buffer so that the GUI thread and the calculation threads don't cause a data race
+        std::mutex mutex;
     };
 
     /// @brief Information specifying the look of each plot
