@@ -306,6 +306,9 @@ class UlogFile : public Imu, public FileReader
     // Key: [timestamp], Value: [0, "sensor_accel", SensorAccel{}]
     std::multimap<uint64_t, MeasurementData> epochData;
 
+    /// @brief Iterator to reversly loop through epochData
+    std::multimap<uint64_t, NAV::UlogFile::MeasurementData>::reverse_iterator it;
+
     /// @brief Checks 'epochData' whether there is enough data available to output one ImuObs
     /// @param[in] dataMap
     bool enoughImuDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap);

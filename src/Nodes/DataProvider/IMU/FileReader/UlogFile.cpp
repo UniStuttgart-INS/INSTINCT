@@ -815,57 +815,54 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 obs->timeSinceStartup = 1000 * epochData.rbegin()->first; // latest timestamp in [ns]
                 LOG_INFO("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
 
-                for (auto const& i : epochData)
+                // Construct ImuObs
+                for (it = epochData.rbegin(); it != epochData.rend(); it++)
                 {
-                    if (i.second.data.index() == 0)
+                    // Add accel data to ImuObs
+                    if (it->second.data.index() == 0)
                     {
-                        accelKey = i.first;
+                        accelKey = it->first;
+                        float accelX = std::get<SensorAccel>(epochData.find(accelKey)->second.data).x;
+                        float accelY = std::get<SensorAccel>(epochData.find(accelKey)->second.data).y;
+                        float accelZ = std::get<SensorAccel>(epochData.find(accelKey)->second.data).z;
+                        obs->accelUncompXYZ.emplace(accelX, accelY, accelZ);
+                        LOG_DATA("{}: accelX = {}, accelY = {}, accelZ = {}", nameId(), accelX, accelY, accelZ);
                     }
-                    else if (i.second.data.index() == 1)
+                    // Add gyro data to ImuObs
+                    else if (it->second.data.index() == 1)
                     {
-                        gyroKey = i.first;
+                        gyroKey = it->first;
+                        float gyroX = std::get<SensorGyro>(epochData.find(gyroKey)->second.data).x;
+                        float gyroY = std::get<SensorGyro>(epochData.find(gyroKey)->second.data).y;
+                        float gyroZ = std::get<SensorGyro>(epochData.find(gyroKey)->second.data).z;
+                        obs->gyroUncompXYZ.emplace(gyroX, gyroY, gyroZ);
+                        LOG_DEBUG("{}: gyroX = {}, gyroY = {}, gyroZ = {}", nameId(), gyroX, gyroY, gyroZ);
                     }
-                    else if (i.second.data.index() == 2)
+                    // Add mag data to ImuObs
+                    else if (it->second.data.index() == 2)
                     {
-                        magKey = i.first;
-                    }
-                    else
-                    {
-                        if (epochData.contains(i.first) && i.first != accelKey && i.first != gyroKey && i.first != magKey)
-                        {
-                            // epochData.erase(i.first);
-                        }
+                        magKey = it->first;
                     }
 
+                    // continue after one of each sensors is read
                     if (accelKey != 0 && gyroKey != 0 && magKey != 0)
                     {
                         break;
                     }
                 }
 
-                float accelX = std::get<SensorAccel>(epochData.find(accelKey)->second.data).x;
-                float accelY = std::get<SensorAccel>(epochData.find(accelKey)->second.data).y;
-                float accelZ = std::get<SensorAccel>(epochData.find(accelKey)->second.data).z;
-                obs->accelUncompXYZ.emplace(accelX, accelY, accelZ);
-                LOG_DATA("{}: accelX = {}, accelY = {}, accelZ = {}", nameId(), accelX, accelY, accelZ);
-
-                float gyroX = std::get<SensorGyro>(epochData.find(gyroKey)->second.data).x;
-                float gyroY = std::get<SensorGyro>(epochData.find(gyroKey)->second.data).y;
-                float gyroZ = std::get<SensorGyro>(epochData.find(gyroKey)->second.data).z;
-                obs->gyroUncompXYZ.emplace(gyroX, gyroY, gyroZ);
-                LOG_DEBUG("{}: gyroX = {}, gyroY = {}, gyroZ = {}", nameId(), gyroX, gyroY, gyroZ);
-
                 // TODO: Befüllen
 
                 // TODO: Erase just the first used measurements from epochdata
-
-                holdsAccel = false;
-                holdsGyro = false;
-                holdsMag = false;
+                epochData.clear();
 
                 accelKey = 0;
                 gyroKey = 0;
                 magKey = 0;
+
+                holdsAccel = false;
+                holdsGyro = false;
+                holdsMag = false;
 
                 if (!peek)
                 {
