@@ -618,7 +618,7 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer", "[ScrollingBuffer]")
     REQUIRE(buffer1.back() == 6);
 }
 
-TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffer][Debug]")
+TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffer]")
 {
     ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
@@ -788,19 +788,19 @@ TEST_CASE("[ScrollingBuffer] Grow scrolled buffer", "[ScrollingBuffer]")
     REQUIRE(buffer1.front() == 2);
     REQUIRE(buffer1.back() == 6);
 
-    buffer1.resize(1);
+    buffer1.push_back(7);
     sstream.clear();
     sstream.str(std::string());
     sstream << buffer1;
-    REQUIRE(sstream.str() == "6");
-    std::cout << "Shrink (1): " << buffer1 << '\n';
-    REQUIRE(buffer1.size() == 1);
-    REQUIRE(buffer1.capacity() == 1);
-    REQUIRE(buffer1.offset() == 0);
-    REQUIRE(buffer1.front() == 6);
-    REQUIRE(buffer1.back() == 6);
+    REQUIRE(sstream.str() == "5, 6, 7, _, 2, 3, 4");
+    std::cout << "Grow   (7): " << buffer1 << '\n';
+    REQUIRE(buffer1.size() == 6);
+    REQUIRE(buffer1.capacity() == 7);
+    REQUIRE(buffer1.offset() == 4);
+    REQUIRE(buffer1.front() == 2);
+    REQUIRE(buffer1.back() == 7);
 
-    buffer1.push_back(7);
+    buffer1.resize(1);
     sstream.clear();
     sstream.str(std::string());
     sstream << buffer1;
@@ -811,6 +811,18 @@ TEST_CASE("[ScrollingBuffer] Grow scrolled buffer", "[ScrollingBuffer]")
     REQUIRE(buffer1.offset() == 0);
     REQUIRE(buffer1.front() == 7);
     REQUIRE(buffer1.back() == 7);
+
+    buffer1.push_back(8);
+    sstream.clear();
+    sstream.str(std::string());
+    sstream << buffer1;
+    REQUIRE(sstream.str() == "8");
+    std::cout << "Shrink (1): " << buffer1 << '\n';
+    REQUIRE(buffer1.size() == 1);
+    REQUIRE(buffer1.capacity() == 1);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 8);
+    REQUIRE(buffer1.back() == 8);
 }
 
 TEST_CASE("[ScrollingBuffer] Grow scrolled buffer (padding)", "[ScrollingBuffer]")
@@ -841,29 +853,41 @@ TEST_CASE("[ScrollingBuffer] Grow scrolled buffer (padding)", "[ScrollingBuffer]
     REQUIRE(buffer1.front() == 2);
     REQUIRE(buffer1.back() == 6);
 
-    buffer1.resize(1);
-    sstream.clear();
-    sstream.str(std::string());
-    sstream << buffer1;
-    REQUIRE(sstream.str() == "6, X, X");
-    std::cout << "Shrink (1): " << buffer1 << '\n';
-    REQUIRE(buffer1.size() == 1);
-    REQUIRE(buffer1.capacity() == 1);
-    REQUIRE(buffer1.offset() == 0);
-    REQUIRE(buffer1.front() == 6);
-    REQUIRE(buffer1.back() == 6);
-
     buffer1.push_back(7);
     sstream.clear();
     sstream.str(std::string());
     sstream << buffer1;
-    REQUIRE(sstream.str() == "X, 7, X");
+    REQUIRE(sstream.str() == "5, 6, 7, _, X, X, 2, 3, 4");
+    std::cout << "Grow   (7): " << buffer1 << '\n';
+    REQUIRE(buffer1.size() == 6);
+    REQUIRE(buffer1.capacity() == 7);
+    REQUIRE(buffer1.offset() == PADDING + 4);
+    REQUIRE(buffer1.front() == 2);
+    REQUIRE(buffer1.back() == 7);
+
+    buffer1.resize(1);
+    sstream.clear();
+    sstream.str(std::string());
+    sstream << buffer1;
+    REQUIRE(sstream.str() == "7, X, X");
+    std::cout << "Shrink (1): " << buffer1 << '\n';
+    REQUIRE(buffer1.size() == 1);
+    REQUIRE(buffer1.capacity() == 1);
+    REQUIRE(buffer1.offset() == 0);
+    REQUIRE(buffer1.front() == 7);
+    REQUIRE(buffer1.back() == 7);
+
+    buffer1.push_back(8);
+    sstream.clear();
+    sstream.str(std::string());
+    sstream << buffer1;
+    REQUIRE(sstream.str() == "X, 8, X");
     std::cout << "Shrink (1): " << buffer1 << '\n';
     REQUIRE(buffer1.size() == 1);
     REQUIRE(buffer1.capacity() == 1);
     REQUIRE(buffer1.offset() == 1);
-    REQUIRE(buffer1.front() == 7);
-    REQUIRE(buffer1.back() == 7);
+    REQUIRE(buffer1.front() == 8);
+    REQUIRE(buffer1.back() == 8);
 
     buffer1 = ScrollingBuffer<int, PADDING>(5);
     for (int i = 0; i < 11; i++)

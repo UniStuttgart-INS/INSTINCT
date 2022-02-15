@@ -186,7 +186,12 @@ class ScrollingBuffer
         else // The real buffer as large as or bigger than the allowed buffer size, so we have to scroll the buffer
         {
             _data.at(_dataEnd) = value;
-            _dataStart = (_dataStart + 1) % _maxSize;
+            if (size() >= capacity())
+            {
+                // "5, 6, _, _, 2, 3, 4"
+                // "5, 6, 7, _, 2, 3, 4"
+                _dataStart = (_dataStart + 1) % _maxSize;
+            }
             _dataEnd = (_dataEnd + 1) % _maxSize;
         }
     }
