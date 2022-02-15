@@ -21,9 +21,16 @@ void NAV::sensors::ublox::UbloxUartSensor::resetTracking()
     _binaryPayloadLength1Found = false;
     _binaryPayloadLength2Found = false;
 
+#if (defined(__GNUC__) || defined(__GNUG__)) && !defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
     _binaryMsgClass = 0;
     _binaryMsgId = 0;
     _binaryPayloadLength = 0;
+#if (defined(__GNUC__) || defined(__GNUG__)) && !defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
     _buffer.resize(0);
     _numOfBytesRemainingForCompletePacket = 0;

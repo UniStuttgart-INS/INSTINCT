@@ -1,11 +1,11 @@
 [requires]
-spdlog/1.8.2
-fmt/7.1.2
-boost/1.76.0
+spdlog/1.9.2
+fmt/8.0.1
+boost/1.78.0
 eigen/3.4.0
-catch2/2.13.3
-nlohmann_json/3.9.1
-zlib/1.2.8
+catch2/2.13.8
+nlohmann_json/3.10.5
+zlib/1.2.11
 
 [options]
 boost:without_atomic=True
