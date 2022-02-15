@@ -21,9 +21,12 @@ void NAV::sensors::ublox::UbloxUartSensor::resetTracking()
     _binaryPayloadLength1Found = false;
     _binaryPayloadLength2Found = false;
 
+#pragma GCC diagnostic push // FIXME: This is necessary, because gcc 10.3.0 throws a warning here. This can be removed when the gcc compiler is updated
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
     _binaryMsgClass = 0;
     _binaryMsgId = 0;
     _binaryPayloadLength = 0;
+#pragma GCC diagnostic pop
 
     _buffer.resize(0);
     _numOfBytesRemainingForCompletePacket = 0;
