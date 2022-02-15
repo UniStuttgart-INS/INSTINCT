@@ -784,6 +784,133 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                                                                  subscribedMessages.at(messageData.msg_id).message_name,
                                                                  vehicleAttitude }));
             }
+            else if (subscribedMessages.at(messageData.msg_id).message_name == "vehicle_control_mode")
+            {
+                VehicleControlMode vehicleControlMode{};
+                for (const auto& dataField : messageFormat)
+                {
+                    char* currentData = messageData.data.data() + currentExtractLocation;
+                    if (dataField.name == "timestamp")
+                    {
+                        std::memcpy(&vehicleControlMode.timestamp, currentData, sizeof(vehicleControlMode.timestamp));
+                        LOG_DEBUG("{}: vehicleControlMode.timestamp: {}", nameId(), vehicleControlMode.timestamp);
+                        currentExtractLocation += sizeof(vehicleControlMode.timestamp);
+                    }
+                    else if (dataField.name == "flag_armed")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_armed, currentData, sizeof(vehicleControlMode.flag_armed));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_armed: {}", nameId(), vehicleControlMode.flag_armed);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_armed);
+                    }
+                    else if (dataField.name == "flag_external_manual_override_ok")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_external_manual_override_ok, currentData, sizeof(vehicleControlMode.flag_external_manual_override_ok));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_external_manual_override_ok: {}", nameId(), vehicleControlMode.flag_external_manual_override_ok);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_external_manual_override_ok);
+                    }
+                    else if (dataField.name == "flag_control_manual_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_manual_enabled, currentData, sizeof(vehicleControlMode.flag_control_manual_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_manual_enabled: {}", nameId(), vehicleControlMode.flag_control_manual_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_manual_enabled);
+                    }
+                    else if (dataField.name == "flag_control_auto_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_auto_enabled, currentData, sizeof(vehicleControlMode.flag_control_auto_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_auto_enabled: {}", nameId(), vehicleControlMode.flag_control_auto_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_auto_enabled);
+                    }
+                    else if (dataField.name == "flag_control_offboard_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_offboard_enabled, currentData, sizeof(vehicleControlMode.flag_control_offboard_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_offboard_enabled: {}", nameId(), vehicleControlMode.flag_control_offboard_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_offboard_enabled);
+                    }
+                    else if (dataField.name == "flag_control_rates_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_rates_enabled, currentData, sizeof(vehicleControlMode.flag_control_rates_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_rates_enabled: {}", nameId(), vehicleControlMode.flag_control_rates_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_rates_enabled);
+                    }
+                    else if (dataField.name == "flag_control_attitude_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_attitude_enabled, currentData, sizeof(vehicleControlMode.flag_control_attitude_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_attitude_enabled: {}", nameId(), vehicleControlMode.flag_control_attitude_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_attitude_enabled);
+                    }
+                    else if (dataField.name == "flag_control_yawrate_override_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_yawrate_override_enabled, currentData, sizeof(vehicleControlMode.flag_control_yawrate_override_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_yawrate_override_enabled: {}", nameId(), vehicleControlMode.flag_control_yawrate_override_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_yawrate_override_enabled);
+                    }
+                    else if (dataField.name == "flag_control_rattitude_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_rattitude_enabled, currentData, sizeof(vehicleControlMode.flag_control_rattitude_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_rattitude_enabled: {}", nameId(), vehicleControlMode.flag_control_rattitude_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_rattitude_enabled);
+                    }
+                    else if (dataField.name == "flag_control_force_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_force_enabled, currentData, sizeof(vehicleControlMode.flag_control_force_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_force_enabled: {}", nameId(), vehicleControlMode.flag_control_force_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_force_enabled);
+                    }
+                    else if (dataField.name == "flag_control_acceleration_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_acceleration_enabled, currentData, sizeof(vehicleControlMode.flag_control_acceleration_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_acceleration_enabled: {}", nameId(), vehicleControlMode.flag_control_acceleration_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_acceleration_enabled);
+                    }
+                    else if (dataField.name == "flag_control_velocity_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_velocity_enabled, currentData, sizeof(vehicleControlMode.flag_control_velocity_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_velocity_enabled: {}", nameId(), vehicleControlMode.flag_control_velocity_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_velocity_enabled);
+                    }
+                    else if (dataField.name == "flag_control_position_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_position_enabled, currentData, sizeof(vehicleControlMode.flag_control_position_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_position_enabled: {}", nameId(), vehicleControlMode.flag_control_position_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_position_enabled);
+                    }
+                    else if (dataField.name == "flag_control_altitude_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_altitude_enabled, currentData, sizeof(vehicleControlMode.flag_control_altitude_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_altitude_enabled: {}", nameId(), vehicleControlMode.flag_control_altitude_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_altitude_enabled);
+                    }
+                    else if (dataField.name == "flag_control_climb_rate_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_climb_rate_enabled, currentData, sizeof(vehicleControlMode.flag_control_climb_rate_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_climb_rate_enabled: {}", nameId(), vehicleControlMode.flag_control_climb_rate_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_climb_rate_enabled);
+                    }
+                    else if (dataField.name == "flag_control_termination_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_termination_enabled, currentData, sizeof(vehicleControlMode.flag_control_termination_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_termination_enabled: {}", nameId(), vehicleControlMode.flag_control_termination_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_termination_enabled);
+                    }
+                    else if (dataField.name == "flag_control_fixed_hdg_enabled")
+                    {
+                        std::memcpy(&vehicleControlMode.flag_control_fixed_hdg_enabled, currentData, sizeof(vehicleControlMode.flag_control_fixed_hdg_enabled));
+                        LOG_DEBUG("{}: vehicleControlMode.flag_control_fixed_hdg_enabled: {}", nameId(), vehicleControlMode.flag_control_fixed_hdg_enabled);
+                        currentExtractLocation += sizeof(vehicleControlMode.flag_control_fixed_hdg_enabled);
+                    }
+                    else if (dataField.name.compare(0, 7, "_padding")) // e.g. '_padding0', '_padding1'
+                    {
+                        currentExtractLocation += VehicleControlMode::padding; // Extraction Location should be moved to account for multiple padding
+                        LOG_DATA("{}: VehicleControlMode: padding", nameId());
+                    }
+                    else
+                    {
+                        //FIXME: move 'currentExtractLocation', if yes, how far?
+                        LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
+                    }
+                }
+                //TODO: insert to epochData necessary here?
+            }
 
             // TODO:
             // else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gps")

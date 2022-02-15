@@ -241,7 +241,8 @@ class UlogFile : public Imu, public FileReader
         bool flag_control_climb_rate_enabled;
         bool flag_control_termination_enabled;
         bool flag_control_fixed_hdg_enabled;
-        std::array<uint8_t, 7> _padding0;
+
+        static constexpr uint8_t padding = 7;
     };
 
     /// Px4 vehicle status message
