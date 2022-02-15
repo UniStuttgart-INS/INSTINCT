@@ -101,7 +101,7 @@ TEST_CASE("[ScrollingBuffer] push_back", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] push_back (padding)", "[ScrollingBuffer]")
 {
-    ScrollingBuffer<int> buffer1(5, PADDING);
+    ScrollingBuffer<int, PADDING> buffer1(5);
     sstream.clear();
     sstream.str(std::string());
     sstream << buffer1;
@@ -248,7 +248,7 @@ TEST_CASE("[ScrollingBuffer<double>] All Functions", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer<double>] All Functions (padding)", "[ScrollingBuffer]")
 {
-    ScrollingBuffer<double> buffer1(5, PADDING);
+    ScrollingBuffer<double, PADDING> buffer1(5);
     sstream.clear();
     sstream.str(std::string());
     sstream << buffer1;
@@ -430,7 +430,7 @@ TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer (padding)", "[ScrollingBuffer]")
 {
-    ScrollingBuffer<int> buffer1(6, PADDING);
+    ScrollingBuffer<int, PADDING> buffer1(6);
     for (int i = 0; i < 4; i++)
     {
         buffer1.push_back(i);
@@ -494,7 +494,7 @@ TEST_CASE("[ScrollingBuffer] Shrink unscrolled buffer (padding)", "[ScrollingBuf
     REQUIRE(buffer1.front() == 3);
     REQUIRE(buffer1.back() == 4);
 
-    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    buffer1 = ScrollingBuffer<int, PADDING>(5);
     for (int i = 0; i < 4; i++)
     {
         buffer1.push_back(i);
@@ -549,7 +549,7 @@ TEST_CASE("[ScrollingBuffer] Grow unscrolled buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Grow unscrolled buffer (padding)", "[ScrollingBuffer]")
 {
-    ScrollingBuffer<int> buffer1(5, PADDING);
+    ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 4; i++)
     {
         buffer1.push_back(i);
@@ -620,7 +620,7 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffer][Debug]")
 {
-    ScrollingBuffer<int> buffer1(5, PADDING);
+    ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
     {
         buffer1.push_back(i);
@@ -669,7 +669,7 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffe
     REQUIRE(buffer1.front() == 7);
     REQUIRE(buffer1.back() == 7);
 
-    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    buffer1 = ScrollingBuffer<int, PADDING>(5);
     for (int i = 0; i < 11; i++)
     {
         buffer1.push_back(i);
@@ -699,7 +699,7 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffe
     REQUIRE(raw[4] == 9);
     REQUIRE(raw[5] == 10);
 
-    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    buffer1 = ScrollingBuffer<int, PADDING>(5);
     for (int i = 0; i < 11; i++)
     {
         buffer1.push_back(i);
@@ -727,29 +727,29 @@ TEST_CASE("[ScrollingBuffer] Shrink scrolled buffer (padding)", "[ScrollingBuffe
     REQUIRE(raw[2] == 9);
     REQUIRE(raw[3] == 10);
 
-    buffer1 = ScrollingBuffer<int>(5, 7);
+    ScrollingBuffer<int, 7> buffer2(5);
     for (int i = 0; i < 11; i++)
     {
-        buffer1.push_back(i);
+        buffer2.push_back(i);
     }
     sstream.clear();
     sstream.str(std::string());
-    sstream << buffer1;
+    sstream << buffer2;
     REQUIRE(sstream.str() == "X, 6, 7, 8, 9, 10, X, X, X, X, X, X");
-    std::cout << "Buffer (5): " << buffer1 << '\n';
+    std::cout << "Buffer (5): " << buffer2 << '\n';
 
-    buffer1.resize(2);
+    buffer2.resize(2);
     sstream.clear();
     sstream.str(std::string());
-    sstream << buffer1;
+    sstream << buffer2;
     REQUIRE(sstream.str() == "X, X, X, X, 9, 10, X, X, X");
-    std::cout << "Shrink (2): " << buffer1 << '\n';
-    REQUIRE(buffer1.size() == 2);
-    REQUIRE(buffer1.capacity() == 2);
-    REQUIRE(buffer1.offset() == 4);
-    REQUIRE(buffer1.front() == 9);
-    REQUIRE(buffer1.back() == 10);
-    raw = buffer1.data();
+    std::cout << "Shrink (2): " << buffer2 << '\n';
+    REQUIRE(buffer2.size() == 2);
+    REQUIRE(buffer2.capacity() == 2);
+    REQUIRE(buffer2.offset() == 4);
+    REQUIRE(buffer2.front() == 9);
+    REQUIRE(buffer2.back() == 10);
+    raw = buffer2.data();
     REQUIRE(raw[0] == 5);
     REQUIRE(raw[1] == 6);
     REQUIRE(raw[2] == 7);
@@ -815,7 +815,7 @@ TEST_CASE("[ScrollingBuffer] Grow scrolled buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Grow scrolled buffer (padding)", "[ScrollingBuffer]")
 {
-    ScrollingBuffer<int> buffer1(5, PADDING);
+    ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
     {
         buffer1.push_back(i);
@@ -865,7 +865,7 @@ TEST_CASE("[ScrollingBuffer] Grow scrolled buffer (padding)", "[ScrollingBuffer]
     REQUIRE(buffer1.front() == 7);
     REQUIRE(buffer1.back() == 7);
 
-    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    buffer1 = ScrollingBuffer<int, PADDING>(5);
     for (int i = 0; i < 11; i++)
     {
         buffer1.push_back(i);
@@ -919,7 +919,7 @@ TEST_CASE("[ScrollingBuffer] Raw data", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Raw data (padding)", "[ScrollingBuffer]")
 {
-    ScrollingBuffer<int> buffer1(5, PADDING);
+    ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
     {
         buffer1.push_back(i);
@@ -1065,7 +1065,7 @@ TEST_CASE("[ScrollingBuffer] Infinite buffer", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Infinite buffer (padding)", "[ScrollingBuffer]")
 {
-    ScrollingBuffer<int> buffer1(5, PADDING);
+    ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
     {
         buffer1.push_back(i);
@@ -1105,7 +1105,7 @@ TEST_CASE("[ScrollingBuffer] Infinite buffer (padding)", "[ScrollingBuffer]")
     REQUIRE(buffer1.front() == 2);
     REQUIRE(buffer1.back() == 9);
 
-    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    buffer1 = ScrollingBuffer<int, PADDING>(5);
     for (int i = 0; i < 7; i++)
     {
         buffer1.push_back(i);
@@ -1139,7 +1139,7 @@ TEST_CASE("[ScrollingBuffer] Infinite buffer (padding)", "[ScrollingBuffer]")
     REQUIRE(buffer1.front() == 2);
     REQUIRE(buffer1.back() == 6);
 
-    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    buffer1 = ScrollingBuffer<int, PADDING>(5);
     for (int i = 0; i < 7; i++)
     {
         buffer1.push_back(i * (i % 2 ? 1 : -1));
@@ -1167,7 +1167,7 @@ TEST_CASE("[ScrollingBuffer] Infinite buffer (padding)", "[ScrollingBuffer]")
     REQUIRE(buffer1.front() == -2);
     REQUIRE(buffer1.back() == -6);
 
-    buffer1 = ScrollingBuffer<int>(0, PADDING);
+    buffer1 = ScrollingBuffer<int, PADDING>(0);
     for (int i = 0; i < 8; i++)
     {
         buffer1.push_back(i);
@@ -1183,7 +1183,7 @@ TEST_CASE("[ScrollingBuffer] Infinite buffer (padding)", "[ScrollingBuffer]")
     REQUIRE(buffer1.front() == 0);
     REQUIRE(buffer1.back() == 7);
 
-    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    buffer1 = ScrollingBuffer<int, PADDING>(5);
     for (int i = 0; i < 11; i++)
     {
         buffer1.push_back(i);
@@ -1211,7 +1211,7 @@ TEST_CASE("[ScrollingBuffer] Infinite buffer (padding)", "[ScrollingBuffer]")
     REQUIRE(buffer1.front() == 6);
     REQUIRE(buffer1.back() == 10);
 
-    buffer1 = ScrollingBuffer<int>(5, PADDING);
+    buffer1 = ScrollingBuffer<int, PADDING>(5);
     for (int i = 0; i < 5; i++)
     {
         buffer1.push_back(i);
@@ -1274,7 +1274,7 @@ TEST_CASE("[ScrollingBuffer] Clear", "[ScrollingBuffer]")
 
 TEST_CASE("[ScrollingBuffer] Clear (padding)", "[ScrollingBuffer]")
 {
-    ScrollingBuffer<int> buffer1(5, PADDING);
+    ScrollingBuffer<int, PADDING> buffer1(5);
     for (int i = 0; i < 7; i++)
     {
         buffer1.push_back(i);

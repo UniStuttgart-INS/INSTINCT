@@ -13,7 +13,8 @@ namespace NAV
 {
 /// @brief A buffer which is overwriting itself from the start when full
 /// @tparam T Type of data stored in the buffer
-template<class T>
+/// @tparam _Padding The padding are empty values at the start of the buffer to prevent overriding the start value in multithreaded applications
+template<class T, size_t _Padding = 0>
 class ScrollingBuffer
 {
   public:
@@ -23,12 +24,11 @@ class ScrollingBuffer
 
     /// @brief Reserves space for the buffer but does not fill the buffer with values
     /// @param[in] maxSize The maximum size of the scrolling buffer
-    /// @param[in] padding The padding to offset the start of the data to prevent multithreaded overrides of the first value
-    explicit ScrollingBuffer(size_t maxSize = 2000, size_t padding = 0)
-        : _infiniteBuffer(maxSize == 0), _maxSize(maxSize + padding), _padding(padding), _dataStart(padding), _dataEnd(_infiniteBuffer ? 0 : padding)
+    explicit ScrollingBuffer(size_t maxSize = 2000)
+        : _infiniteBuffer(maxSize == 0), _maxSize(maxSize + _Padding), _dataStart(_Padding), _dataEnd(_infiniteBuffer ? 0 : _Padding)
     {
-        _data.reserve(maxSize + padding);
-        _data.resize(padding);
+        _data.reserve(maxSize + _Padding);
+        _data.resize(_Padding);
     }
 
     /// @brief Constructs a new container with the contents of the initializer list init.
@@ -133,9 +133,9 @@ class ScrollingBuffer
     /// @brief Returns the number of elements in the container
     [[nodiscard]] size_t size() const
     {
-        if (_dataStart == _padding && _dataEnd == _padding) // Buffer empty or full and not scrolled
+        if (_dataStart == _Padding && _dataEnd == _Padding) // Buffer empty or full and not scrolled
         {
-            return _data.size() - _padding;
+            return _data.size() - _Padding;
         }
         if (_dataStart < _dataEnd) // not scrolled buffer
         {
@@ -149,7 +149,7 @@ class ScrollingBuffer
     /// @brief Returns the number of elements that can be held in currently allocated storage
     [[nodiscard]] size_t capacity() const
     {
-        return _infiniteBuffer ? 0 : (_maxSize - _padding);
+        return _infiniteBuffer ? 0 : (_maxSize - _Padding);
     }
 
     // ###########################################################################################################
@@ -160,10 +160,10 @@ class ScrollingBuffer
     void clear()
     {
         _data.clear();
-        _dataStart = _padding;
-        _dataEnd = _infiniteBuffer ? 0 : _padding;
+        _dataStart = _Padding;
+        _dataEnd = _infiniteBuffer ? 0 : _Padding;
 
-        for (size_t i = 0; i < _padding; i++)
+        for (size_t i = 0; i < _Padding; i++)
         {
             _data.push_back(0);
         }
@@ -213,11 +213,11 @@ class ScrollingBuffer
                     _maxSize = _dataEnd;
                 }
 
-                std::copy(std::next(_data.begin(), std::max(static_cast<int>(_dataStart - _padding), 0)),
+                std::copy(std::next(_data.begin(), std::max(static_cast<int>(_dataStart - _Padding), 0)),
                           std::next(_data.begin(), static_cast<int64_t>(std::max(_dataEnd, _maxSize))),
                           std::back_inserter(to_vector));
 
-                if (int64_t elementsFront = std::min(static_cast<int64_t>(_dataEnd), static_cast<int64_t>(_dataStart - _padding));
+                if (int64_t elementsFront = std::min(static_cast<int64_t>(_dataEnd), static_cast<int64_t>(_dataStart - _Padding));
                     elementsFront > 0)
                 {
                     std::copy(_data.begin(), std::next(_data.begin(), elementsFront),
@@ -227,7 +227,7 @@ class ScrollingBuffer
 
                 _maxSize = _data.size();
 
-                _dataStart = _padding;
+                _dataStart = _Padding;
                 _dataEnd = 0;
             }
         }
@@ -235,11 +235,11 @@ class ScrollingBuffer
         {
             _infiniteBuffer = false;
 
-            if (_maxSize - _padding > targetSize) // We make the buffer smaller
+            if (_maxSize - _Padding > targetSize) // We make the buffer smaller
             {
                 if (!isScrolled()) // Buffer is not scrolled, so shrinking removes the values from the front of the buffer
                 {
-                    size_t elementsToDelete = _maxSize - _padding - targetSize;
+                    size_t elementsToDelete = _maxSize - _Padding - targetSize;
 
                     if (size_t emptyAtTheBack = _maxSize - _dataEnd;
                         size_t emptyAtTheBackToDelete = std::min(emptyAtTheBack, elementsToDelete))
@@ -272,9 +272,9 @@ class ScrollingBuffer
                     // X, 6, 7, 8, 9, 10, X
                     // X, 9, 10, X
 
-                    size_t elementsToDelete = _maxSize - _padding - targetSize;
+                    size_t elementsToDelete = _maxSize - _Padding - targetSize;
 
-                    if (size_t emptyInBetween = static_cast<size_t>(std::max(static_cast<int>(_dataStart - _padding - _dataEnd), 0));
+                    if (size_t emptyInBetween = static_cast<size_t>(std::max(static_cast<int>(_dataStart - _Padding - _dataEnd), 0));
                         size_t emptyInBetweenToDelete = std::min(emptyInBetween, elementsToDelete))
                     {
                         // 5, 6, _, _, 2, 3, 4, // 5, 6, _, _, X, X, 2, 3, 4,
@@ -289,7 +289,7 @@ class ScrollingBuffer
                     //       s                   e
                     //  X  , 6, 7 ,   8 , 9, 10, X
                     // X(8), 9, 10, X(7)
-                    if (size_t paddingAtTheEnd = static_cast<size_t>(std::max(static_cast<int>(_padding - _dataStart), 0));
+                    if (size_t paddingAtTheEnd = static_cast<size_t>(std::max(static_cast<int>(_Padding - _dataStart), 0));
                         size_t paddingAtTheEndToDelete = std::min(paddingAtTheEnd, elementsToDelete))
                     {
                         _data.erase(std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
@@ -307,8 +307,8 @@ class ScrollingBuffer
                         size_t elementsAtTheBackToDelete = std::min(elementsAtTheBack, elementsToDelete))
                     {
                         // 5, 6, 2, 3, 4,       // 5, 6, X, X, 2, 3, 4,
-                        _data.erase(std::next(_data.begin(), static_cast<int64_t>(_dataStart - _padding)),
-                                    std::next(_data.begin(), static_cast<int64_t>(_dataStart - _padding + elementsAtTheBackToDelete)));
+                        _data.erase(std::next(_data.begin(), static_cast<int64_t>(_dataStart - _Padding)),
+                                    std::next(_data.begin(), static_cast<int64_t>(_dataStart - _Padding + elementsAtTheBackToDelete)));
                         // 5, 6, 4,             // 5, 6, X, X, 4,
                         // 5, 6,                // 5, 6, X, X,
                         _maxSize -= elementsAtTheBackToDelete;
@@ -324,7 +324,7 @@ class ScrollingBuffer
                     {
                         // 5, 6,                // 5, 6, X, X,
                         _data.erase(std::next(_data.begin(), static_cast<int64_t>(_dataStart)),
-                                    std::next(_data.begin(), static_cast<int64_t>(std::min(_dataStart + elementsToDelete, _maxSize - _padding))));
+                                    std::next(_data.begin(), static_cast<int64_t>(std::min(_dataStart + elementsToDelete, _maxSize - _Padding))));
                         // 6,                   // 6, X, X
                         _maxSize -= elementsToDelete;
                         if (_dataEnd >= elementsToDelete)
@@ -334,13 +334,13 @@ class ScrollingBuffer
                     }
                 }
             }
-            else if (_maxSize - _padding < targetSize) // We make the buffer bigger
+            else if (_maxSize - _Padding < targetSize) // We make the buffer bigger
             {
                 // 1, 2, 3, _, _,        // X, X, 0, 1, 2, 3, _, _
                 // 1, 2, 3, _, _, _, _,  // X, X, 0, 1, 2, 3, _, _, _, _
                 if (!isScrolled()) // Buffer not scrolled, so we can simply reserve more space
                 {
-                    _maxSize = targetSize + _padding;
+                    _maxSize = targetSize + _Padding;
                     _data.reserve(_maxSize);
                 }
                 //      se                      e     s                 s               e
@@ -348,19 +348,19 @@ class ScrollingBuffer
                 // 6, 7, _, 3, 4, 5,   // 5, 6, _, X, X, 2, 3, 4  // X, 6, 7, 8, 9, 10, _, _, X
                 else // (_dataStart != 0) // Buffer scrolled, so we need to copy the values to the correct positions
                 {
-                    _data.resize(targetSize + _padding);
+                    _data.resize(targetSize + _Padding);
 
                     std::copy_backward(std::next(_data.begin(), static_cast<int64_t>(_dataEnd)),
                                        std::next(_data.begin(), static_cast<int64_t>(_maxSize)),
-                                       std::next(_data.begin(), static_cast<int64_t>(targetSize + _padding)));
+                                       std::next(_data.begin(), static_cast<int64_t>(targetSize + _Padding)));
 
-                    auto diff = targetSize + _padding - _maxSize;
+                    auto diff = targetSize + _Padding - _maxSize;
                     if (_dataStart >= _dataEnd)
                     {
                         _dataStart += diff;
                     }
 
-                    _maxSize = targetSize + _padding;
+                    _maxSize = targetSize + _Padding;
                 }
             }
         }
@@ -414,7 +414,7 @@ class ScrollingBuffer
     /// @param[in, out] os The output stream to print to
     /// @param[in] buffer The buffer to print
     /// @return The output stream given as parameter
-    friend std::ostream& operator<<(std::ostream& os, const ScrollingBuffer<T>& buffer)
+    friend std::ostream& operator<<(std::ostream& os, const ScrollingBuffer<T, _Padding>& buffer)
     {
         // Scrolled
         //       e        s
@@ -441,13 +441,13 @@ class ScrollingBuffer
 
         for (int i = 0; static_cast<size_t>(i) < buffer._maxSize; i++) // X, 6, 7, 8, 9, 10, _, _, X
         {
-            if ((i >= static_cast<int>(buffer._dataStart - buffer._padding) && static_cast<size_t>(i) < buffer._dataStart)
-                || (static_cast<size_t>(i) >= buffer._dataStart + buffer._maxSize - buffer._padding))
+            if ((i >= static_cast<int>(buffer._dataStart - _Padding) && static_cast<size_t>(i) < buffer._dataStart)
+                || (static_cast<size_t>(i) >= buffer._dataStart + buffer._maxSize - _Padding))
             {
                 os << "X"; // padding
             }
             else if (bool scrolled = buffer.isScrolled();
-                     (scrolled && static_cast<size_t>(i) >= buffer._dataEnd && (static_cast<int>(buffer._dataStart - buffer._padding) < 0 || i < static_cast<int>(buffer._dataStart - buffer._padding)))
+                     (scrolled && static_cast<size_t>(i) >= buffer._dataEnd && (static_cast<int>(buffer._dataStart - _Padding) < 0 || i < static_cast<int>(buffer._dataStart - _Padding)))
                      || (!scrolled && static_cast<size_t>(i) >= buffer._dataEnd))
             {
                 os << "_"; // empty
@@ -470,8 +470,6 @@ class ScrollingBuffer
     /// The maximum amount of objects to store in the buffer before overwriting itself when full
     /// When _infiniteBuffer == true, then this corresponds to m_data.size()
     size_t _maxSize;
-    /// The padding are empty values at the start of the buffer to prevent overriding the start value in multithreaded applications
-    size_t _padding{ 0 };
     /// The index of the first element in the scrolling buffer (0 if the buffer is empty)
     size_t _dataStart{ 0 };
     /// The index one after the last element (0 if the buffer is empty)
@@ -492,7 +490,7 @@ class ScrollingBuffer
         }
 
         return _dataEnd < _dataStart
-               || (_dataStart != _padding);
+               || (_dataStart != _Padding);
 
         //      se        //       se
         // 5, 6, 2, 3, 4  // X, X, _, _, _

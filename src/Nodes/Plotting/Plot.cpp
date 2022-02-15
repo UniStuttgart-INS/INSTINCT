@@ -145,7 +145,7 @@ void from_json(const json& j, Plot::PinData& data)
         j.at("plotData").get_to(data.plotData);
         for (auto& plotData : data.plotData)
         {
-            plotData.buffer = ScrollingBuffer<double>(static_cast<size_t>(data.size), Plot::PinData::SCROLLING_BUFFER_PADDING);
+            plotData.buffer = ScrollingBuffer<double>(static_cast<size_t>(data.size));
         }
     }
     if (j.contains("pinType"))
