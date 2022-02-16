@@ -5598,6 +5598,8 @@ bool NAV::VectorNavSensor::initialize()
     size_t binaryOutputRegisterCounter = 1; // To give a proper error message
     try
     {
+        // The sensor does somehow report wrong flags here, so we can't check if it actually worked
+
         // auto checkBinaryRegister = [&](const vn::sensors::BinaryOutputRegister& current, const vn::sensors::BinaryOutputRegister& target) {
         //     if (current.asyncMode != target.asyncMode
         //         || current.rateDivisor != target.rateDivisor
