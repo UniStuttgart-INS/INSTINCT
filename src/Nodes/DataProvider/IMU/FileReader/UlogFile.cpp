@@ -28,6 +28,7 @@ NAV::UlogFile::UlogFile()
     holdsAccel = false;
     holdsGyro = false;
     holdsMag = false;
+    keyValueEmpty = false;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
@@ -97,6 +98,11 @@ bool NAV::UlogFile::initialize()
 
     messageCount = 0;
     sensorStartupUTCTime_usec = 0;
+    firstAbsoluteTime = false;
+    holdsAccel = false;
+    holdsGyro = false;
+    holdsMag = false;
+    keyValueEmpty = false;
 
     return FileReader::initialize();
 }
@@ -1208,6 +1214,10 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         else if (ulogMsgHeader.msgHeader.msg_type == 'M')
         {
             readInformationMessageMulti(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
+            if (keyValueEmpty)
+            {
+                break;
+            }
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'P')
         {
@@ -1263,9 +1273,16 @@ void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
     filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
     messageInfoMulti.value.resize(static_cast<size_t>(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len)); // contains 'is_continued' flag in contrast to information message
     filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
-    LOG_DATA("{}: Information message multi - key_len: {}", nameId(), messageInfoMulti.key_len);
-    LOG_DATA("{}: Information message multi - key: {}", nameId(), messageInfoMulti.key);
-    LOG_DATA("{}: Information message multi - value: {}", nameId(), messageInfoMulti.value);
+    LOG_DEBUG("{}: Information message multi - key_len: {}", nameId(), messageInfoMulti.key_len);
+    LOG_DEBUG("{}: Information message multi - key: {}", nameId(), messageInfoMulti.key);
+    LOG_DEBUG("{}: Information message multi - value: {}", nameId(), messageInfoMulti.value);
+
+    if (messageInfoMulti.key.empty() && messageInfoMulti.value.empty())
+    {
+        LOG_WARN("{}: Information message multi 'key' and 'value' empty", nameId());
+        keyValueEmpty = true; //TODO: is this necessary to stop execution? The if condition is checking the case that occurs after msgs with 'perf_counter_postflight' (o.Ä.)
+    }
+
     //TODO: Use 'is_continued' to generate a list of values with the same key
 }
 
@@ -1319,15 +1336,20 @@ void NAV::UlogFile::readParameterMessageDefault(uint16_t msgSize, char msgType)
 
 bool NAV::UlogFile::enoughImuDataAvailable(std::multimap<uint64_t, MeasurementData> dataMap)
 {
-    if (dataMap.rbegin()->second.data.index() == 0)
+    if (dataMap.empty())
+    {
+        return false;
+    }
+
+    if (dataMap.rbegin()->second.data.index() == 0) // corresponds to 'SensorAccel' alternative in NAV::UlogFile::MeasurementData::data (std::variant)
     {
         holdsAccel = true;
     }
-    if (dataMap.rbegin()->second.data.index() == 1)
+    if (dataMap.rbegin()->second.data.index() == 1) // corresponds to 'SensorGyro' alternative in NAV::UlogFile::MeasurementData::data (std::variant)
     {
         holdsGyro = true;
     }
-    if (dataMap.rbegin()->second.data.index() == 2)
+    if (dataMap.rbegin()->second.data.index() == 2) // corresponds to 'SensorMag' alternative in NAV::UlogFile::MeasurementData::data (std::variant)
     {
         holdsMag = true;
     }
