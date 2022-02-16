@@ -217,7 +217,8 @@ class UlogFile : public Imu, public FileReader
         float baro_temp_celcius;   ///< Px4 barometric temperature in [°C]
         float baro_pressure_pa;    ///< Px4 barometric pressure in [Pa]
         float rho;
-        std::array<uint8_t, 4> _padding0;
+
+        static constexpr uint8_t padding = 4;
     };
 
     /// Px4 control data message
