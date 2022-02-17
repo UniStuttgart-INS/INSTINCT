@@ -6103,6 +6103,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         obs->gnss1Outputs->satInfo.numSats = p.extractUint8();
                         p.extractUint8(); // Reserved for future use
+
+                        LOG_DATA("{}: SatInfo: numSats {}", vnSensor->nameId(), obs->gnss1Outputs->satInfo.numSats);
                         for (size_t i = 0; i < obs->gnss1Outputs->satInfo.numSats; i++)
                         {
                             auto sys = p.extractInt8();
@@ -6113,6 +6115,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             auto el = p.extractInt8();
                             auto az = p.extractInt16();
                             obs->gnss1Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
+                            LOG_DATA("{}: SatInfo:   sys {}, svId {}, flags {}, cno {}, qi {}, el {}, az {}", vnSensor->nameId(),
+                                     sys, svId, flags, cno, qi, el, az);
                         }
                     }
                     if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
@@ -6121,6 +6125,9 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->gnss1Outputs->raw.week = p.extractUint16();
                         obs->gnss1Outputs->raw.numSats = p.extractUint8();
                         p.extractUint8(); // Reserved for future use
+                        LOG_DATA("{}: RawMeas: tow {}, week {}, numSats {}", vnSensor->nameId(),
+                                 obs->gnss1Outputs->raw.tow, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.numSats);
+
                         for (size_t i = 0; i < obs->gnss1Outputs->raw.numSats; i++)
                         {
                             auto sys = p.extractUint8();
@@ -6134,6 +6141,9 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             auto cp = p.extractDouble();
                             auto dp = p.extractFloat();
                             obs->gnss1Outputs->raw.satellites.emplace_back(sys, svId, freq, chan, slot, cno, flags, pr, cp, dp);
+                            LOG_DATA("{}: RawMeas:   sys {}, svId {}, freq {}, chan {}, slot {}, cno {}, flags {}, pr {}, cp {}, dp {}",
+                                     vnSensor->nameId(), static_cast<int>(sys), static_cast<int>(svId), static_cast<int>(freq), static_cast<int>(chan),
+                                     static_cast<int>(slot), static_cast<int>(cno), static_cast<int>(flags), pr, cp, dp);
                         }
                     }
                 }
