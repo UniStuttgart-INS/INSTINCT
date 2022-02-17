@@ -642,7 +642,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
     /*  4 */ { "TimeSyncIn", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn event trigger expressed in nano seconds."); } },
     /*  5 */ { "TimeGpsPps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS, []() { ImGui::TextUnformatted("Time since last GPS PPS trigger.\n\nThe time since the last GPS PPS trigger event expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
     /*  6 */ { "TimeUTC", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC, []() { ImGui::TextUnformatted("UTC time.\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
-    /*  7 */ { "SyncInCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT, []() { ImGui::TextUnformatted("SyncIn trigger count.\n\nThe number of SyncIn trigger events that have occurred."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
+    /*  7 */ { "SyncInCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT, []() { ImGui::TextUnformatted("SyncIn trigger count.\n\nThe number of SyncIn trigger events that have occurred."); } },
     /*  8 */ { "SyncOutCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT, []() { ImGui::TextUnformatted("SyncOut trigger count.\n\nThe number of SyncOut trigger events that have occurred."); } },
     /*  9 */ { "TimeStatus", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS, []() { ImGui::TextUnformatted("Time valid status flags.");
                                                                                          if (ImGui::BeginTable("VectorNavTimeStatusTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
@@ -1382,7 +1382,10 @@ void NAV::VectorNavSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
-        deinitializeNode();
+        if (isInitialized() && !isDeinitializing())
+        {
+            deinitializeNode();
+        }
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("COM port where the sensor is attached to\n"
@@ -4362,18 +4365,18 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("Controls the mode of operation for the onboard real-time magnetometer hard/soft iron compensation algorithm.");
 
-            static constexpr std::array<std::pair<vn::protocol::uart::HsiOutput, const char*>, 3> magnetometerCalibrationControlHsiOutputs = {
+            static constexpr std::array<std::pair<vn::protocol::uart::HsiOutput, const char*>, 2> magnetometerCalibrationControlHsiOutputs = {
                 { { vn::protocol::uart::HsiOutput::HSIOUTPUT_NOONBOARD, "Onboard HSI is not applied to the magnetic measurements" },
                   { vn::protocol::uart::HsiOutput::HSIOUTPUT_USEONBOARD, "Onboard HSI is applied to the magnetic measurements" } }
             };
             if (ImGui::BeginCombo(fmt::format("HSI Output##{}", size_t(id)).c_str(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiOutput).c_str()))
             {
-                for (const auto& magnetometerCalibrationControlHsiOutput : magnetometerCalibrationControlHsiOutputs)
+                for (const auto& [magnetometerCalibrationControlHsiOutputMode, magnetometerCalibrationControlHsiOutputDescription] : magnetometerCalibrationControlHsiOutputs)
                 {
-                    const bool isSelected = (_magnetometerCalibrationControlRegister.hsiOutput == magnetometerCalibrationControlHsiOutput.first);
-                    if (ImGui::Selectable(vn::protocol::uart::str(magnetometerCalibrationControlHsiOutput.first).c_str(), isSelected))
+                    const bool isSelected = (_magnetometerCalibrationControlRegister.hsiOutput == magnetometerCalibrationControlHsiOutputMode);
+                    if (ImGui::Selectable(vn::protocol::uart::str(magnetometerCalibrationControlHsiOutputMode).c_str(), isSelected))
                     {
-                        _magnetometerCalibrationControlRegister.hsiOutput = magnetometerCalibrationControlHsiOutput.first;
+                        _magnetometerCalibrationControlRegister.hsiOutput = magnetometerCalibrationControlHsiOutputMode;
                         LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiOutput changed to {}", nameId(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiOutput));
                         flow::ApplyChanges();
                         if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
@@ -4396,7 +4399,7 @@ void NAV::VectorNavSensor::guiConfig()
                     if (ImGui::IsItemHovered())
                     {
                         ImGui::BeginTooltip();
-                        ImGui::TextUnformatted(magnetometerCalibrationControlHsiOutput.second);
+                        ImGui::TextUnformatted(magnetometerCalibrationControlHsiOutputDescription);
                         ImGui::EndTooltip();
                     }
 
