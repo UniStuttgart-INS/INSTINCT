@@ -1697,7 +1697,7 @@ void NAV::VectorNavSensor::guiConfig()
 
             static constexpr std::array<std::pair<vn::protocol::uart::SyncOutMode, const char*>, 5> synchronizationControlSyncOutModes = {
                 { { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_NONE, "None" },
-                  { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_ITEMSTART, "Trigger at start of IMU sampling" },
+                  { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_IMUSTART, "Trigger at start of IMU sampling" },
                   { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_IMUREADY, "Trigger when IMU measurements are available" },
                   { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_INS, "Trigger when attitude measurements are available" },
                   { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS, "Trigger on a GPS PPS event (1 Hz) when a 3D fix is valid." } }
