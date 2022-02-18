@@ -1382,7 +1382,7 @@ void NAV::VectorNavSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
-        if (isInitialized() && !isDeinitializing())
+        if (isInitialized())
         {
             deinitializeNode();
         }
