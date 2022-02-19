@@ -193,7 +193,7 @@ However in section \ref LooselyCoupledKF_n-Appendix-ErrorStateEquations-LocalLev
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 \section LooselyCoupledKF_n-Noise Augmented State with Noise
 <!-- --------------------------------------------------------------------------------------------------------------- -->
-The continuos linear dynamic system can be expressed as
+The continuous linear dynamic system can be expressed as
 \fl{equation,eq-LCKF_n-dynamicModel}
   \boldsymbol{\delta} \mathbf{\dot{x}} = \mathbf{F} \cdot \boldsymbol{\delta} \mathbf{x} + \mathbf{G} \cdot \mathbf{w}
 \f}
