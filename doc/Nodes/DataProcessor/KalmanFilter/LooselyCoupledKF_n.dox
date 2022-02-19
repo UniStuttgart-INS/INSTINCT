@@ -195,7 +195,7 @@ However in section \ref LooselyCoupledKF_n-Appendix-ErrorStateEquations-LocalLev
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 The continuos linear dynamic system can be expressed as
 \fl{equation,eq-LCKF_n-dynamicModel}
-  \boldsymbol{\delta} \mathbf{\dot{x}} = \mathbf{F} \cdot \boldsymbol{\delta} \mathbf{ x} + \mathbf{G} \cdot \mathbf{w}
+  \boldsymbol{\delta} \mathbf{\dot{x}} = \mathbf{F} \cdot \boldsymbol{\delta} \mathbf{x} + \mathbf{G} \cdot \mathbf{w}
 \f}
 
 Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ matrices in the accelerometer and gyroscope bias terms. Therefore the error equations can be extended as follows
@@ -272,7 +272,7 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
                 nodes={rectangle,text width=2em,align=center},row sep=0.3em, column sep=0.4em]
     {
-      -\mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
+       \mathbf{C}_b^n & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
        \mathbf{0}_3   & \mathbf{C}_b^n & \mathbf{0}_3 & \mathbf{0}_3 \\
        \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{0}_3 & \mathbf{0}_3 \\
        \mathbf{0}_3   & \mathbf{0}_3   & \mathbf{I}_3 & \mathbf{0}_3 \\
@@ -295,13 +295,65 @@ Process noise is introduced into the \f$ \mathbf{F} \f$ and \f$ \mathbf{G} \f$ m
 
 \subsection LooselyCoupledKF_n-Noise-RW Random Walk
 
+The random noise on the accelerometer and gyro measurements can be estimated as a Random Walk in the angle and velocity errors.
+
 \fl{equation,eq-LCKF_n-random-walk}
   \dotup{x} = 0 + W(t)
 \f}
 
-Using this we can see that \f$ \highlight[magenta!20]{\boldsymbol{\beta}_f} = \mathbf{0}_3 \f$ and \f$ \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \mathbf{0}_3 \f$.
-
 The terms in the noise input matrix \f$ \mathbf{G} \f$ are not scaled and therefore need to be compensated with a noise scale matrix \f$ \mathbf{W} \f$ depending on the amplitude of the power spectral density (PSD) of the noise process.
+
+White noise has a PSD of \f$ \sigma^2 \f$ and therefore the <b>PSDs of the accelerometer and gyro noise</b> are
+
+\fl{equation,eq-LCKF_n-random-walk-S-noise}
+  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
+  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{ra} \f$ is the standard deviation of the noise on the accelerometer specific-force measurements
+- \f$ \sigma_{rg} \f$ is the standard deviation of the noise on the gyro angular-rate measurements
+- \f$ \tau_i \f$ is the interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
+
+see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.83, p. 592
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_n-Noise-GM1 Gauss-Markov 1. Order
+
+On the other hand, the dynamic bias of the accelerometer and gyro can be estimated with a Gauss-Markov 1. Order.
+
+\fl{equation,eq-LCKF_n-gauss-markov-1}
+  \dotup{x} = -\beta x + W(t)
+\f}
+
+The terms in the  \f$ \mathbf{F} \f$ matrix are
+\fl{equation,eq-LCKF_n-random-walk-beta}
+  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} -\beta_{f} &      0     &      0     \\
+                                                                    0       & -\beta_{f} &      0     \\
+                                                                    0       &      0     & -\beta_{f} \end{pmatrix}, \qquad
+  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} -\beta_{\omega} &        0        &        0        \\
+                                                                           0        & -\beta_{\omega} &        0        \\
+                                                                           0        &        0        & -\beta_{\omega} \end{pmatrix}
+\f}
+where
+- \f$ \beta_{f} \f$ is the Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+- \f$ \beta_{\omega} \f$ is the Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
+
+Like before, the scaling is done inside the noise scale matrix and the <b>Bias variation PSDs</b> are
+
+\fl{equation,eq-LCKF_n-random-walk-S-bias}
+  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_{bad}} , \qquad
+  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_{bgd}}, \qquad\qquad j \in x,y,z
+\f}
+where
+- \f$ \sigma_{bad} \f$ and \f$ \sigma_{bgd} \f$ are the standard deviations of the accelerometer and gyro dynamic biases
+- \f$ \tau_{bad} \f$ and \f$ \tau_{bgd} \f$ are the correlation times of the dynamic accelerometer and gyro biases
+
+see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.84, p. 592
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_n-Noise-Scale-matrix Noise scale matrix W
 
 \fl{equation,eq-LCKF_n-random-walk-noise-scale-matrix-W}
   \mathbf{W} =
@@ -324,66 +376,8 @@ The terms in the noise input matrix \f$ \mathbf{G} \f$ are not scaled and theref
   \end{tikzpicture}
 \f}
 
-\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices which entries are filled with the following PSDs.
+\f$ \mathbf{S}_{rg}, \mathbf{S}_{ra}, \mathbf{S}_{bad}, \mathbf{S}_{bgd} \f$ are diagonal matrices which entries are filled with the PSDs from \eqref{eq-LCKF_n-random-walk-S-noise} and \eqref{eq-LCKF_n-random-walk-S-bias}.
 
-White noise has a PSD of \f$ \sigma^2 \f$ and therefore the <b>PSDs of the accelerometer and gyro noise</b> are
-
-\fl{equation,eq-LCKF_n-random-walk-S-noise}
-  \highlight[darkgray!20]{S_{ra,j}} = \sigma_{ra,j}^2 \tau_i, \qquad
-  \highlight[brown!20]{S_{rg,j}} = \sigma_{rg,j}^2 \tau_i, \qquad\qquad j \in x,y,z
-\f}
-where
-- \f$ \sigma_{ra} \f$ is the standard deviation of the noise on the accelerometer specific-force measurements
-- \f$ \sigma_{rg} \f$ is the standard deviation of the noise on the gyro angular-rate measurements
-- \f$ \tau_i \f$ is the interval between the input of successive accelerometer and gyro outputs to the inertial navigation equations
-
-Similarly, the <b>Bias variation PSDs</b> are
-
-\fl{equation,eq-LCKF_n-random-walk-S-bias}
-  \highlight[pink!20]{S_{bad,j}} = \frac{\sigma_{bad,j}^2}{\tau_i} , \qquad
-  \highlight[lightgray!20]{S_{bgd,j}} = \frac{\sigma_{bgd,j}^2}{\tau_i}, \qquad\qquad j \in x,y,z
-\f}
-where
-- \f$ \sigma_{bad} \f$ standard deviation of the accelerometer dynamic bias
-- \f$ \sigma_{bgd} \f$ standard deviation of the gyro dynamic bias
-
-see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.83/14.84, p. 592
-
-<!-- --------------------------------------------------------------------------------------------------------------- -->
-
-\subsection LooselyCoupledKF_n-Noise-GM1 Gauss-Markov 1. Order
-
-\f$ \textcolor{red}{\text{[Deprecated] TODO: Update code and documentation}} \f$
-
-\fl{equation,eq-LCKF_n-gauss-markov-1}
-  \dotup{x} = -\beta x + W(t)
-\f}
-
-The terms in the  \f$ \mathbf{F} \f$ matrix are
-\fl{equation,eq-LCKF_n-random-walk-beta}
-  \highlight[magenta!20]{\boldsymbol{\beta}_f} = \begin{pmatrix} -\beta_{f} &      0     &      0     \\
-                                                                    0       & -\beta_{f} &      0     \\
-                                                                    0       &      0     & -\beta_{f} \end{pmatrix}, \qquad
-  \highlight[olive!20]{\boldsymbol{\beta}_\omega} = \begin{pmatrix} -\beta_{\omega} &        0        &        0        \\
-                                                                           0        & -\beta_{\omega} &        0        \\
-                                                                           0        &        0        & -\beta_{\omega} \end{pmatrix}
-\f}
-where
-- \f$ \beta_{f} \f$ is the Gauss-Markov constant for the accelerometer 𝛽 = 1 / 𝜏 (𝜏 correlation length)
-- \f$ \beta_{\omega} \f$ is the Gauss-Markov constant for the gyroscope 𝛽 = 1 / 𝜏 (𝜏 correlation length)
-
-The amplitude of the power spectral density (PSD) of a Gauss-Markov-1 process is \f$ 2\sigma^2 \beta \f$ and therefore
-\fl{equation,eq-LCKF_n-gm1-G}
-  \highlight[pink!20]{\mathbf{G}_f} = \begin{pmatrix} \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               &                0               \\
-                                                                      0               & \sqrt{2\sigma_{f}^2 \beta_{f}} &                0               \\
-                                                                      0               &                0               & \sqrt{2\sigma_{f}^2 \beta_{f}} \end{pmatrix}, \qquad
-  \highlight[lightgray!20]{\mathbf{G}_\omega} = \begin{pmatrix} \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     &                    0                     \\
-                                                                                  0                     & \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} &                    0                     \\
-                                                                                  0                     &                    0                     & \sqrt{2\sigma_{\omega}^2 \beta_{\omega}} \end{pmatrix}
-\f}
-where
-- \f$ \sigma_{f}^2 \f$ is the variance of the noise on the accelerometer specific-force measurements
-- \f$ \sigma_{\omega}^2 \f$ is the variance of the noise on the gyro angular-rate measurements
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -574,6 +568,7 @@ The exponential \f$ \mathbf{F} \f$ matrix shall be approximated by first order. 
 \end{aligned}
 \f}
 
+TODO: \f$ \textcolor{red}{\text{Documentation here}} \f$
 
 \subsubsection LooselyCoupledKF_n-KF-Phi-Q-Van-Loan Van Loan method
 
@@ -605,11 +600,6 @@ The state transition matrix and the system/process noise covariance matrix can b
   \mathbf{Q} = \mathbf{\Phi} \mathbf{B}_{12}
 \f}
 
-\subsubsection LooselyCoupledKF_n-KF-Q-Taylor-1 Taylor approximation
-
-The van Loan method has the disadvantage, that the exponential matrix has to be calculated. A computational easier approach is to use a Taylor approximation.
-
-\f$ \textcolor{red}{\text{[Deprecated] TODO: Documentation here}} \f$
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
@@ -730,6 +720,8 @@ The measurement noise covariance matrix is a diagonal matrix with the variances 
     \end{pgfonlayer}
   \end{tikzpicture}
 \f}
+
+This variances can be set static or ideally come from the GNSS receiver.
 
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
@@ -2048,9 +2040,18 @@ Substituting equations \eqref{eq-LCKF_n-Derivation-Attitude-transport-rate}, \eq
 \end{aligned}
 \f}
 
-\f$ \textcolor{red}{\text{TODO: Dont neglect gravity terms but look into Groves and derive the term}}\f$
+The gravity error can be expressed as (see \cite Groves2013 Groves, ch. 14.2.4, eq. 14.59, p. 586)
+\fl{equation,eq-LCKF_n-Derivation-Velocity-gravityError}
+\begin{aligned}
+  \boldsymbol{\delta} \mathbf{g}^e \approx - \frac{2 g_0}{r_{eS}^e} \delta h \mathbf{u}_D^e
+\end{aligned}
+\f}
+where
+- \f$ \mathbf{u}_D^e \f$ is the local navigation frame down unit vector
+- \f$ h << r_{eS}^e \f$ is assumed
+- centrifugal term and latitude-error dependence have been neglected
 
-Reordering the terms leads to the final form (neglecting gravity errors)
+Reordering the terms leads to the final form
 \fl{equation,eq-LCKF_n-Derivation-Velocity-timeDerivative-final}
   \boldsymbol{\delta \dot{v}}^n \approx \highlight[purple!20]{\boldsymbol{f}^n \times} \boldsymbol{\delta \psi}
                                         + \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
@@ -2087,7 +2088,7 @@ Reordering the terms leads to the final form (neglecting gravity errors)
                                                         nodes={rectangle,minimum height=2.3em,anchor=center}] {
                                                         - \frac{v_E^2}{(R_E + h)\cos^2{\phi}} - 2 v_E \omega_{ie}\cos{\phi} & 0 & \frac{v_E^2 \tan{\phi}}{(R_E + h)^2} - \frac{v_N v_D}{(R_N + h)^2} \\
                                                         \frac{v_N v_E}{(R_E + h)\cos^2{\phi}} + 2 v_N \omega_{ie}\cos{\phi} - 2 v_D \omega_{ie}\sin{\phi} & 0 & - \frac{v_N v_E \tan{\phi}}{(R_E + h)^2} - \frac{v_E v_D}{(R_E + h)^2} \\
-                                                        2 v_E \omega_{ie}\sin{\phi} & 0 & \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2} \\
+                                                        2 v_E \omega_{ie}\sin{\phi} & 0 & \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2} - \frac{2 g_0}{r_{eS}^e} \\
                                             };
 
                                             \foreach \r in {1,3} {
@@ -2147,21 +2148,21 @@ Reordering the terms leads to the final form (neglecting gravity errors)
     \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},nodes in empty cells,
                 row sep=0.3em, column sep=0.4em,
                 nodes={rectangle,minimum height=2.3em,anchor=center},] {
-                  0            &     \omega_{in,3}^{n}    &    -\omega_{in,2}^{n}    &                             0                            &         \highlight[red!60]{-}\frac{1}{R_E + h}            &                       0                      &                             \highlight[red!60]{+}\omega_{ie}\sin{\phi}                             &      0       &                          \highlight[red!60]{+}\frac{v_E}{(R_E + h)^2}                            &  &                &  &  &                                     & \\
-         -\omega_{in,3}^{n}    &             0            &     \omega_{in,1}^{n}    &        \highlight[red!60]{+}\frac{1}{R_N + h}            &                             0                             &                       0                      &                                                0                                                   &      0       &                          \highlight[red!60]{-}\frac{v_N}{(R_N + h)^2}                            &  &  \mathbf{0}_3  &  &  & \highlight[red!60]{+}\mathbf{C}_b^n & \\
-          \omega_{in,2}^{n}    &    -\omega_{in,1}^{n}    &             0            &                             0                            &       \highlight[red!60]{+}\frac{\tan{\phi}}{R_E + h}     &                       0                      & \highlight[red!60]{+}\omega_{ie}\cos{\phi} \highlight[red!60]{+} \frac{v_E}{(R_E + h)\cos^2{\phi}} &      0       &                      \highlight[red!60]{-}\frac{v_E \tan{\phi}}{(R_E + h)^2}                     &  &                &  &  &                                     & \\
-                  0            & \highlight[red!60]{+}f_D & \highlight[red!60]{-}f_E &                    \frac{v_D}{R_N + h}                   & -2\frac{v_E \tan{\phi}}{R_E + h} - 2\omega_{ie}\sin{\phi} &              \frac{v_N}{R_N + h}             &                   -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi}                     &      0       &                   \frac{v_E^2\tan{\phi}}{(R_E+h)^2} - \frac{v_Nv_D}{(R_N+h)^2}                   &  &                &  &  &                                     & \\
-      \highlight[red!60]{-}f_D &             0            & \highlight[red!60]{+}f_N &  \frac{v_E \tan{\phi}}{R_E + h} + 2\omega_{ie}\sin{\phi} &            \frac{v_N \tan{\phi} + v_D}{R_E + h}           & \frac{v_E}{R_E + h} + 2\omega_{ie}\cos{\phi} &    \frac{v_N v_E}{(R_E+h)\cos^2{\phi}} + 2v_N\omega_{ie}\cos{\phi} - 2v_D\omega_{ie}\sin{\phi}     &      0       &                          -\frac{v_Nv_E\tan{\phi} + v_Ev_D}{(R_E + h)^2}                          &  & \mathbf{C}_b^n &  &  &             \mathbf{0}_3            & \\
-      \highlight[red!60]{+}f_E & \highlight[red!60]{-}f_N &             0            &                  -\frac{2v_N}{R_N + h}                   &       -\frac{2v_E}{R_E + h} - 2\omega_{ie}\cos{\phi}      &                       0                      &                                     2v_E\omega_{ie}\sin{\phi}                                      &      0       & \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2} \highlight[red!60]{-\frac{2g_0}{r_{eS}^e}} &  &                &  &  &                                     & \\
-                               &                          &                          &                      \frac{1}{R_N+h}                     &                             0                             &                       0                      &                                                0                                                   &      0       &                                     -\frac{v_N}{(R_N + h)^2}                                     &  &                &  &  &                                     & \\
-                               &       \mathbf{0}_3       &                          &                             0                            &                \frac{1}{(R_E+h)\cos{\phi}}                &                       0                      &                              \frac{v_E\tan{\phi}}{(R_E+h)\cos{\phi}}                               &      0       &                                -\frac{v_E}{(R_E + h)^2\cos{\phi}}                                &  &  \mathbf{0}_3  &  &  &             \mathbf{0}_3            & \\
-                               &                          &                          &                             0                            &                             0                             &                      -1                      &                                                0                                                   &      0       &                                                 0                                                &  &                &  &  &                                     & \\
-                               &                          &                          &                                                          &                                                           &                                              &                                                                                                    &              &                                                                                                  &  &                &  &  &                                     & \\
-                               &       \mathbf{0}_3       &                          &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                                    & \mathbf{0}_3 &                                                                                                  &  &  \mathbf{0}_3  &  &  &             \mathbf{0}_3            & \\
-                               &                          &                          &                                                          &                                                           &                                              &                                                                                                    &              &                                                                                                  &  &                &  &  &                                     & \\
-                               &                          &                          &                                                          &                                                           &                                              &                                                                                                    &              &                                                                                                  &  &                &  &  &                                     & \\
-                               &       \mathbf{0}_3       &                          &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                                    & \mathbf{0}_3 &                                                                                                  &  &  \mathbf{0}_3  &  &  &             \mathbf{0}_3            & \\
-                               &                          &                          &                                                          &                                                           &                                              &                                                                                                    &              &                                                                                                  &  &                &  &  &                                     & \\
+                  0            &     \omega_{in,3}^{n}    &    -\omega_{in,2}^{n}    &                             0                            &         \highlight[red!60]{-}\frac{1}{R_E + h}            &                       0                      &                             \highlight[red!60]{+}\omega_{ie}\sin{\phi}                             &      0       &                \highlight[red!60]{+}\frac{v_E}{(R_E + h)^2}                  &  &                &  &  &                                     & \\
+         -\omega_{in,3}^{n}    &             0            &     \omega_{in,1}^{n}    &        \highlight[red!60]{+}\frac{1}{R_N + h}            &                             0                             &                       0                      &                                                0                                                   &      0       &                \highlight[red!60]{-}\frac{v_N}{(R_N + h)^2}                  &  &  \mathbf{0}_3  &  &  & \highlight[red!60]{+}\mathbf{C}_b^n & \\
+          \omega_{in,2}^{n}    &    -\omega_{in,1}^{n}    &             0            &                             0                            &       \highlight[red!60]{+}\frac{\tan{\phi}}{R_E + h}     &                       0                      & \highlight[red!60]{+}\omega_{ie}\cos{\phi} \highlight[red!60]{+} \frac{v_E}{(R_E + h)\cos^2{\phi}} &      0       &            \highlight[red!60]{-}\frac{v_E \tan{\phi}}{(R_E + h)^2}           &  &                &  &  &                                     & \\
+                  0            & \highlight[red!60]{+}f_D & \highlight[red!60]{-}f_E &                    \frac{v_D}{R_N + h}                   & -2\frac{v_E \tan{\phi}}{R_E + h} - 2\omega_{ie}\sin{\phi} &              \frac{v_N}{R_N + h}             &                   -\frac{v_E^2}{(R_E+h)\cos^2{\phi}}-2v_E\omega_{ie}\cos{\phi}                     &      0       &         \frac{v_E^2\tan{\phi}}{(R_E+h)^2} - \frac{v_Nv_D}{(R_N+h)^2}         &  &                &  &  &                                     & \\
+      \highlight[red!60]{-}f_D &             0            & \highlight[red!60]{+}f_N &  \frac{v_E \tan{\phi}}{R_E + h} + 2\omega_{ie}\sin{\phi} &            \frac{v_N \tan{\phi} + v_D}{R_E + h}           & \frac{v_E}{R_E + h} + 2\omega_{ie}\cos{\phi} &    \frac{v_N v_E}{(R_E+h)\cos^2{\phi}} + 2v_N\omega_{ie}\cos{\phi} - 2v_D\omega_{ie}\sin{\phi}     &      0       &                -\frac{v_Nv_E\tan{\phi} + v_Ev_D}{(R_E + h)^2}                &  & \mathbf{C}_b^n &  &  &             \mathbf{0}_3            & \\
+      \highlight[red!60]{+}f_E & \highlight[red!60]{-}f_N &             0            &                  -\frac{2v_N}{R_N + h}                   &       -\frac{2v_E}{R_E + h} - 2\omega_{ie}\cos{\phi}      &                       0                      &                                     2v_E\omega_{ie}\sin{\phi}                                      &      0       & \frac{v_E^2}{(R_E + h)^2} + \frac{v_N^2}{(R_N + h)^2} -\frac{2g_0}{r_{eS}^e} &  &                &  &  &                                     & \\
+                               &                          &                          &                      \frac{1}{R_N+h}                     &                             0                             &                       0                      &                                                0                                                   &      0       &                           -\frac{v_N}{(R_N + h)^2}                           &  &                &  &  &                                     & \\
+                               &       \mathbf{0}_3       &                          &                             0                            &                \frac{1}{(R_E+h)\cos{\phi}}                &                       0                      &                              \frac{v_E\tan{\phi}}{(R_E+h)\cos{\phi}}                               &      0       &                      -\frac{v_E}{(R_E + h)^2\cos{\phi}}                      &  &  \mathbf{0}_3  &  &  &             \mathbf{0}_3            & \\
+                               &                          &                          &                             0                            &                             0                             &                      -1                      &                                                0                                                   &      0       &                                       0                                      &  &                &  &  &                                     & \\
+                               &                          &                          &                                                          &                                                           &                                              &                                                                                                    &              &                                                                              &  &                &  &  &                                     & \\
+                               &       \mathbf{0}_3       &                          &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                                    & \mathbf{0}_3 &                                                                              &  &  \mathbf{0}_3  &  &  &             \mathbf{0}_3            & \\
+                               &                          &                          &                                                          &                                                           &                                              &                                                                                                    &              &                                                                              &  &                &  &  &                                     & \\
+                               &                          &                          &                                                          &                                                           &                                              &                                                                                                    &              &                                                                              &  &                &  &  &                                     & \\
+                               &       \mathbf{0}_3       &                          &                                                          &                       \mathbf{0}_3                        &                                              &                                                                                                    & \mathbf{0}_3 &                                                                              &  &  \mathbf{0}_3  &  &  &             \mathbf{0}_3            & \\
+                               &                          &                          &                                                          &                                                           &                                              &                                                                                                    &              &                                                                              &  &                &  &  &                                     & \\
     };
 
     \foreach \r in {1,3,4,6,7,9} {
@@ -2218,17 +2219,6 @@ Reordering the terms leads to the final form (neglecting gravity errors)
   \end{tikzpicture}
 \f}
 
-#### Gravity error term
-Groves approximates the gravity error term instead of neglecting it as (\cite Groves2013 Groves, ch. 14.2.4, eq. 14.59, p. 586)
-\fl{equation,eq-LCKF_n-stateMatrix-Groves-gravity-error}
-  \boldsymbol{\delta} \mathbf{g}^n = \mathbf{\hat{g}}^n - \mathbf{g}^n \approx -\frac{2g_0}{r_{eS}^e} \delta h \mathbf{\hat{u}}_D^n
-\f}
-where
-- \f$ \mathbf{\hat{u}}_D^n \f$ is the local navigation frame down unit vector
-- \f$ h << r_{eS}^e \f$ is assumed
-- centrifugal term and latitude-error dependence have been neglected
-
-#### Signs
 As all signs related to the attitude error have a different sign, it cab be explained by the attitude error being defined in the opposite direction.
 To check this, we can look at the definition of the correction of the state with the attitude errors (\cite Groves2013 Groves, ch. 14.1.1, eq. 14.7, p. 564)
 \fl{equation,eq-LCKF_n-stateMatrix-Groves-attitude-correction}
