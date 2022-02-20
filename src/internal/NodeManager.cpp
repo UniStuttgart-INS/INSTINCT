@@ -622,6 +622,49 @@ NAV::Pin* NAV::NodeManager::CreateOutputPin(NAV::Node* node, const char* name, N
     return &node->outputPins.back();
 }
 
+bool NAV::NodeManager::DeleteOutputPin(ax::NodeEditor::PinId id)
+{
+    LOG_TRACE("called for pin ({})", size_t(id));
+
+    Pin* pin = FindPin(id);
+    if (!pin)
+    {
+        return false;
+    }
+
+    auto connectedLinks = FindConnectedLinksToOutputPin(id);
+    for (auto* connectedLink : connectedLinks)
+    {
+        NAV::NodeManager::DeleteLink(connectedLink->id);
+    }
+
+    size_t pinIndex = pin->parentNode->pinIndexFromId(id);
+    pin->parentNode->outputPins.erase(pin->parentNode->outputPins.begin() + static_cast<int64_t>(pinIndex));
+
+    return true;
+}
+
+bool NAV::NodeManager::DeleteInputPin(ax::NodeEditor::PinId id)
+{
+    LOG_TRACE("called for pin ({})", size_t(id));
+
+    Pin* pin = FindPin(id);
+    if (!pin)
+    {
+        return false;
+    }
+
+    if (auto* connectedLink = FindConnectedLinkToInputPin(id))
+    {
+        NAV::NodeManager::DeleteLink(connectedLink->id);
+    }
+
+    size_t pinIndex = pin->parentNode->pinIndexFromId(id);
+    pin->parentNode->inputPins.erase(pin->parentNode->inputPins.begin() + static_cast<int64_t>(pinIndex));
+
+    return true;
+}
+
 size_t NAV::NodeManager::GetNextId()
 {
     return m_NextId++;
