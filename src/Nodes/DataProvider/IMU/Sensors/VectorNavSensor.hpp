@@ -24,6 +24,13 @@ class VectorNavFile;
 class VectorNavSensor : public Imu, public UartSensor
 {
   public:
+    /// Information needed to sync Master/Slave sensors
+    struct TimeSync
+    {
+        InsTime ppsTime{};     ///< Time of the last message with GNSS Time available (or empty otherwise)
+        uint32_t syncOutCnt{}; ///< The number of SyncOut trigger events that have occurred.
+    };
+
     /// @brief Default constructor
     VectorNavSensor();
     /// @brief Destructor
@@ -137,6 +144,12 @@ class VectorNavSensor : public Imu, public UartSensor
         0,                                                             // SyncOutSkipFactor
         100000000                                                      // SyncOutPulseWidth
     };
+
+    /// @brief Time synchronization for master sensors
+    TimeSync _timeSyncOut;
+
+    /// Show the SyncIn Pin
+    bool _syncInPin = false;
 
     /// @brief Communication Protocol Control.
     ///
