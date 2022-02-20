@@ -71,6 +71,11 @@ bool NAV::Node::initializeNode()
 
 void NAV::Node::deinitializeNode()
 {
+    if (isDeinitializing())
+    {
+        return;
+    }
+
     // Lock the node against recursive calling
     _isDeinitializing = true;
 

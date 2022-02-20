@@ -642,7 +642,7 @@ const std::array<NAV::VectorNavSensor::BinaryGroupData, 10> NAV::VectorNavSensor
     /*  4 */ { "TimeSyncIn", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESYNCIN, []() { ImGui::TextUnformatted("Time since last SyncIn trigger.\n\nThe time since the last SyncIn event trigger expressed in nano seconds."); } },
     /*  5 */ { "TimeGpsPps", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPSPPS, []() { ImGui::TextUnformatted("Time since last GPS PPS trigger.\n\nThe time since the last GPS PPS trigger event expressed in nano seconds."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
     /*  6 */ { "TimeUTC", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC, []() { ImGui::TextUnformatted("UTC time.\n\nThe current UTC time. The year is given as a signed byte year offset from the year 2000. For example the\nyear 2013 would be given as year 13."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; }, [](vn::sensors::BinaryOutputRegister& bor, uint32_t& /* binaryField */) { (bor.timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEUTC) && (bor.timeField |= vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS); } },
-    /*  7 */ { "SyncInCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT, []() { ImGui::TextUnformatted("SyncIn trigger count.\n\nThe number of SyncIn trigger events that have occurred."); }, [](VectorNavModel sensorModel, const vn::sensors::BinaryOutputRegister& /* bor */, uint32_t /* binaryField */) { return sensorModel == VectorNavModel::VN310; } },
+    /*  7 */ { "SyncInCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCINCNT, []() { ImGui::TextUnformatted("SyncIn trigger count.\n\nThe number of SyncIn trigger events that have occurred."); } },
     /*  8 */ { "SyncOutCnt", vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT, []() { ImGui::TextUnformatted("SyncOut trigger count.\n\nThe number of SyncOut trigger events that have occurred."); } },
     /*  9 */ { "TimeStatus", vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS, []() { ImGui::TextUnformatted("Time valid status flags.");
                                                                                          if (ImGui::BeginTable("VectorNavTimeStatusTooltip", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
@@ -1382,7 +1382,10 @@ void NAV::VectorNavSensor::guiConfig()
     {
         LOG_DEBUG("{}: SensorPort changed to {}", nameId(), _sensorPort);
         flow::ApplyChanges();
-        deinitializeNode();
+        if (isInitialized())
+        {
+            deinitializeNode();
+        }
     }
     ImGui::SameLine();
     gui::widgets::HelpMarker("COM port where the sensor is attached to\n"
@@ -1547,6 +1550,25 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::TextUnformatted("Contains parameters which allow the timing of the VN-310E to be\n"
                                    "synchronized with external devices.");
 
+            if (ImGui::Checkbox(fmt::format("Show SyncIn Pin##{}", size_t(id)).c_str(), &_syncInPin))
+            {
+                LOG_DEBUG("{}: syncInPin changed to {}", nameId(), _syncInPin);
+                if (_syncInPin)
+                {
+                    _synchronizationControlRegister.syncInMode = vn::protocol::uart::SyncInMode::SYNCINMODE_COUNT;
+                    LOG_DEBUG("{}: synchronizationControlRegister.syncInMode changed to {}", nameId(), vn::protocol::uart::str(_synchronizationControlRegister.syncInMode));
+                }
+                flow::ApplyChanges();
+                if (_syncInPin && inputPins.empty())
+                {
+                    nm::CreateInputPin(this, "SyncIn", Pin::Type::Object, { "TimeSync" });
+                }
+                else if (!_syncInPin && !inputPins.empty())
+                {
+                    nm::DeleteInputPin(outputPins.front().id);
+                }
+            }
+
             static constexpr std::array<std::pair<vn::protocol::uart::SyncInMode, const char*>, 4> synchronizationControlSyncInModes = {
                 { { vn::protocol::uart::SyncInMode::SYNCINMODE_COUNT, "Count number of trigger events on SYNC_IN" },
                   { vn::protocol::uart::SyncInMode::SYNCINMODE_IMU, "Start IMU sampling on trigger of SYNC_IN" },
@@ -1558,6 +1580,12 @@ void NAV::VectorNavSensor::guiConfig()
                                                                        "Async message set by the Async Data Output Register, the user configurate binary output messages set\n"
                                                                        "by the Binary Output Registers, as well as the NMEA messages configured by the NMEA Output Registers." } }
             };
+            if (_syncInPin)
+            {
+                ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5F);
+            }
+
             if (ImGui::BeginCombo(fmt::format("SyncIn Mode##{}", size_t(id)).c_str(), vn::protocol::uart::str(_synchronizationControlRegister.syncInMode).c_str()))
             {
                 for (const auto& synchronizationControlSyncInMode : synchronizationControlSyncInModes)
@@ -1605,6 +1633,11 @@ void NAV::VectorNavSensor::guiConfig()
                                      "loop will run on a SyncIn event. The relationship between the SyncIn event and a SyncIn trigger is defined "
                                      "by the SyncInEdge and SyncInSkipFactor parameters. If set to ASYNC then the VN-100 will output "
                                      "asynchronous serial messages upon each trigger event.");
+            if (_syncInPin)
+            {
+                ImGui::PopItemFlag();
+                ImGui::PopStyleVar();
+            }
 
             static constexpr std::array<std::pair<vn::protocol::uart::SyncInEdge, const char*>, 2> synchronizationControlSyncInEdges = {
                 { { vn::protocol::uart::SyncInEdge::SYNCINEDGE_RISING, "Trigger on rising edge" },
@@ -1694,7 +1727,7 @@ void NAV::VectorNavSensor::guiConfig()
 
             static constexpr std::array<std::pair<vn::protocol::uart::SyncOutMode, const char*>, 5> synchronizationControlSyncOutModes = {
                 { { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_NONE, "None" },
-                  { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_ITEMSTART, "Trigger at start of IMU sampling" },
+                  { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_IMUSTART, "Trigger at start of IMU sampling" },
                   { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_IMUREADY, "Trigger when IMU measurements are available" },
                   { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_INS, "Trigger when attitude measurements are available" },
                   { vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS, "Trigger on a GPS PPS event (1 Hz) when a 3D fix is valid." } }
@@ -1708,6 +1741,18 @@ void NAV::VectorNavSensor::guiConfig()
                     {
                         _synchronizationControlRegister.syncOutMode = synchronizationControlSyncOutMode.first;
                         LOG_DEBUG("{}: synchronizationControlRegister.syncOutMode changed to {}", nameId(), vn::protocol::uart::str(_synchronizationControlRegister.syncOutMode));
+
+                        if (_synchronizationControlRegister.syncOutMode == vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS
+                            && outputPins.size() <= 4)
+                        {
+                            nm::CreateOutputPin(this, "SyncOut", Pin::Type::Object, { "TimeSync" }, &_timeSyncOut);
+                        }
+                        else if (_synchronizationControlRegister.syncOutMode != vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS
+                                 && outputPins.size() == 5)
+                        {
+                            nm::DeleteOutputPin(outputPins.at(4).id);
+                        }
+
                         flow::ApplyChanges();
                         if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
                         {
@@ -4362,18 +4407,18 @@ void NAV::VectorNavSensor::guiConfig()
             ImGui::SameLine();
             gui::widgets::HelpMarker("Controls the mode of operation for the onboard real-time magnetometer hard/soft iron compensation algorithm.");
 
-            static constexpr std::array<std::pair<vn::protocol::uart::HsiOutput, const char*>, 3> magnetometerCalibrationControlHsiOutputs = {
+            static constexpr std::array<std::pair<vn::protocol::uart::HsiOutput, const char*>, 2> magnetometerCalibrationControlHsiOutputs = {
                 { { vn::protocol::uart::HsiOutput::HSIOUTPUT_NOONBOARD, "Onboard HSI is not applied to the magnetic measurements" },
                   { vn::protocol::uart::HsiOutput::HSIOUTPUT_USEONBOARD, "Onboard HSI is applied to the magnetic measurements" } }
             };
             if (ImGui::BeginCombo(fmt::format("HSI Output##{}", size_t(id)).c_str(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiOutput).c_str()))
             {
-                for (const auto& magnetometerCalibrationControlHsiOutput : magnetometerCalibrationControlHsiOutputs)
+                for (const auto& [magnetometerCalibrationControlHsiOutputMode, magnetometerCalibrationControlHsiOutputDescription] : magnetometerCalibrationControlHsiOutputs)
                 {
-                    const bool isSelected = (_magnetometerCalibrationControlRegister.hsiOutput == magnetometerCalibrationControlHsiOutput.first);
-                    if (ImGui::Selectable(vn::protocol::uart::str(magnetometerCalibrationControlHsiOutput.first).c_str(), isSelected))
+                    const bool isSelected = (_magnetometerCalibrationControlRegister.hsiOutput == magnetometerCalibrationControlHsiOutputMode);
+                    if (ImGui::Selectable(vn::protocol::uart::str(magnetometerCalibrationControlHsiOutputMode).c_str(), isSelected))
                     {
-                        _magnetometerCalibrationControlRegister.hsiOutput = magnetometerCalibrationControlHsiOutput.first;
+                        _magnetometerCalibrationControlRegister.hsiOutput = magnetometerCalibrationControlHsiOutputMode;
                         LOG_DEBUG("{}: magnetometerCalibrationControlRegister.hsiOutput changed to {}", nameId(), vn::protocol::uart::str(_magnetometerCalibrationControlRegister.hsiOutput));
                         flow::ApplyChanges();
                         if (isInitialized() && _vs.isConnected() && _vs.verifySensorConnectivity())
@@ -4396,7 +4441,7 @@ void NAV::VectorNavSensor::guiConfig()
                     if (ImGui::IsItemHovered())
                     {
                         ImGui::BeginTooltip();
-                        ImGui::TextUnformatted(magnetometerCalibrationControlHsiOutput.second);
+                        ImGui::TextUnformatted(magnetometerCalibrationControlHsiOutputDescription);
                         ImGui::EndTooltip();
                     }
 
@@ -4835,6 +4880,7 @@ void NAV::VectorNavSensor::guiConfig()
     j["asyncDataOutputType"] = _asyncDataOutputType;
     j["asyncDataOutputFrequency"] = _asyncDataOutputFrequency;
     j["asciiOutputBufferSize"] = _asciiOutputBufferSize;
+    j["syncInPin"] = _syncInPin;
     j["synchronizationControlRegister"] = _synchronizationControlRegister;
     j["communicationProtocolControlRegister"] = _communicationProtocolControlRegister;
     for (size_t b = 0; b < 3; b++)
@@ -4930,9 +4976,22 @@ void NAV::VectorNavSensor::restore(json const& j)
         j.at("asciiOutputBufferSize").get_to(_asciiOutputBufferSize);
         _asciiOutputBuffer.resize(static_cast<size_t>(_asciiOutputBufferSize));
     }
+    if (j.contains("syncInPin"))
+    {
+        j.at("syncInPin").get_to(_syncInPin);
+        if (_syncInPin && inputPins.empty())
+        {
+            nm::CreateInputPin(this, "SyncIn", Pin::Type::Object, { "TimeSync" });
+        }
+    }
     if (j.contains("synchronizationControlRegister"))
     {
         j.at("synchronizationControlRegister").get_to(_synchronizationControlRegister);
+        if (_synchronizationControlRegister.syncOutMode == vn::protocol::uart::SyncOutMode::SYNCOUTMODE_GPSPPS
+            && outputPins.size() <= 4)
+        {
+            nm::CreateOutputPin(this, "SyncOut", Pin::Type::Object, { "TimeSync" }, &_timeSyncOut);
+        }
     }
     if (j.contains("communicationProtocolControlRegister"))
     {
@@ -5065,6 +5124,9 @@ void NAV::VectorNavSensor::restore(json const& j)
 
 bool NAV::VectorNavSensor::resetNode()
 {
+    _timeSyncOut.ppsTime = InsTime{};
+    _timeSyncOut.syncOutCnt = 0;
+
     return true;
 }
 
@@ -5598,6 +5660,8 @@ bool NAV::VectorNavSensor::initialize()
     size_t binaryOutputRegisterCounter = 1; // To give a proper error message
     try
     {
+        // The sensor does somehow report wrong flags here, so we can't check if it actually worked
+
         // auto checkBinaryRegister = [&](const vn::sensors::BinaryOutputRegister& current, const vn::sensors::BinaryOutputRegister& target) {
         //     if (current.asyncMode != target.asyncMode
         //         || current.rateDivisor != target.rateDivisor
@@ -6101,6 +6165,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                     {
                         obs->gnss1Outputs->satInfo.numSats = p.extractUint8();
                         p.extractUint8(); // Reserved for future use
+
+                        LOG_DATA("{}: SatInfo: numSats {}", vnSensor->nameId(), obs->gnss1Outputs->satInfo.numSats);
                         for (size_t i = 0; i < obs->gnss1Outputs->satInfo.numSats; i++)
                         {
                             auto sys = p.extractInt8();
@@ -6111,6 +6177,8 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             auto el = p.extractInt8();
                             auto az = p.extractInt16();
                             obs->gnss1Outputs->satInfo.satellites.emplace_back(sys, svId, flags, cno, qi, el, az);
+                            LOG_DATA("{}: SatInfo:   sys {}, svId {}, flags {}, cno {}, qi {}, el {}, az {}", vnSensor->nameId(),
+                                     sys, svId, flags, cno, qi, el, az);
                         }
                     }
                     if (vnSensor->_binaryOutputRegister.at(b).gpsField & vn::protocol::uart::GpsGroup::GPSGROUP_RAWMEAS)
@@ -6119,6 +6187,9 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         obs->gnss1Outputs->raw.week = p.extractUint16();
                         obs->gnss1Outputs->raw.numSats = p.extractUint8();
                         p.extractUint8(); // Reserved for future use
+                        LOG_DATA("{}: RawMeas: tow {}, week {}, numSats {}", vnSensor->nameId(),
+                                 obs->gnss1Outputs->raw.tow, obs->gnss1Outputs->raw.week, obs->gnss1Outputs->raw.numSats);
+
                         for (size_t i = 0; i < obs->gnss1Outputs->raw.numSats; i++)
                         {
                             auto sys = p.extractUint8();
@@ -6132,6 +6203,9 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                             auto cp = p.extractDouble();
                             auto dp = p.extractFloat();
                             obs->gnss1Outputs->raw.satellites.emplace_back(sys, svId, freq, chan, slot, cno, flags, pr, cp, dp);
+                            LOG_DATA("{}: RawMeas:   sys {}, svId {}, freq {}, chan {}, slot {}, cno {}, flags {}, pr {}, cp {}, dp {}",
+                                     vnSensor->nameId(), static_cast<int>(sys), static_cast<int>(svId), static_cast<int>(freq), static_cast<int>(chan),
+                                     static_cast<int>(slot), static_cast<int>(cno), static_cast<int>(flags), pr, cp, dp);
                         }
                     }
                 }
@@ -6384,28 +6458,50 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
 
                 // --------------------------------------------- Fetch InsTime -----------------------------------------------
                 // Group 2 (Time)
-                if (obs->timeOutputs)
+                if (obs->timeOutputs
+                    && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
+                    && obs->timeOutputs->timeStatus.dateOk())
                 {
-                    if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMESTATUS)
+                    if (obs->timeOutputs->timeStatus.timeOk()
+                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
+                        && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
                     {
-                        if (obs->timeOutputs->timeStatus.dateOk())
-                        {
-                            if (obs->timeOutputs->timeStatus.timeOk()
-                                && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSTOW)
-                                && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_GPSWEEK))
-                            {
-                                obs->insTime.emplace(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
-                                util::time::SetCurrentTime(obs->insTime.value());
-                            }
-                            else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
-                            {
-                                auto secondsSinceEpoche = static_cast<long double>(obs->timeOutputs->timeGps) * 1e-9L;
-                                auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
-                                auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
+                        obs->insTime.emplace(InsTime_GPSweekTow(0, obs->timeOutputs->gpsWeek, obs->timeOutputs->gpsTow * 1e-9L));
 
-                                obs->insTime.emplace(InsTime_GPSweekTow(0, week, tow));
-                                util::time::SetCurrentTime(obs->insTime.value());
+                        if (vnSensor->_synchronizationControlRegister.syncOutMode == vn::protocol::uart::SYNCOUTMODE_GPSPPS
+                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT))
+                        {
+                            if (vnSensor->_timeSyncOut.syncOutCnt == 0)
+                            {
+                                LOG_INFO("{}: Found GNSS time {} and is providing it to connected nodes", vnSensor->nameId(), obs->insTime->toGPSweekTow());
                             }
+                            vnSensor->_timeSyncOut.ppsTime = InsTime(0, obs->timeOutputs->gpsWeek, std::floor(obs->timeOutputs->gpsTow * 1e-9L));
+                            vnSensor->_timeSyncOut.syncOutCnt = obs->timeOutputs->syncOutCnt;
+                            LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}",
+                                     vnSensor->nameId(), obs->insTime->toGPSweekTow(),
+                                     vnSensor->_timeSyncOut.ppsTime.toGPSweekTow(), vnSensor->_timeSyncOut.syncOutCnt);
+                        }
+                    }
+                    else if (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_TIMEGPS)
+                    {
+                        auto secondsSinceEpoche = static_cast<long double>(obs->timeOutputs->timeGps) * 1e-9L;
+                        auto week = static_cast<uint16_t>(secondsSinceEpoche / static_cast<long double>(InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK));
+                        auto tow = secondsSinceEpoche - week * InsTimeUtil::SECONDS_PER_DAY * InsTimeUtil::DAYS_PER_WEEK;
+
+                        obs->insTime.emplace(InsTime_GPSweekTow(0, week, tow));
+
+                        if (vnSensor->_synchronizationControlRegister.syncOutMode == vn::protocol::uart::SYNCOUTMODE_GPSPPS
+                            && (obs->timeOutputs->timeField & vn::protocol::uart::TimeGroup::TIMEGROUP_SYNCOUTCNT))
+                        {
+                            if (vnSensor->_timeSyncOut.syncOutCnt == 0)
+                            {
+                                LOG_INFO("{}: Found GNSS time {} and is providing it to its connected nodes", vnSensor->nameId(), obs->insTime->toGPSweekTow());
+                            }
+                            vnSensor->_timeSyncOut.ppsTime = InsTime(0, week, std::floor(tow));
+                            vnSensor->_timeSyncOut.syncOutCnt = obs->timeOutputs->syncOutCnt;
+                            LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}",
+                                     vnSensor->nameId(), obs->insTime->toGPSweekTow(),
+                                     vnSensor->_timeSyncOut.ppsTime.toGPSweekTow(), vnSensor->_timeSyncOut.syncOutCnt);
                         }
                     }
                 }
@@ -6475,7 +6571,27 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                 //     }
                 // }
 
-                if (!obs->insTime.has_value() || obs->insTime->empty())
+                if ((!obs->insTime.has_value() || obs->insTime->empty())                        // Look for master to give GNSS time
+                    && (obs->timeOutputs->timeField & vn::protocol::uart::TIMEGROUP_TIMESYNCIN) // We need syncin time for this
+                    && vnSensor->_syncInPin && nm::IsPinLinked(vnSensor->inputPins.front().id)) // Try to get a sync from the master
+                {
+                    if (const auto* timeSyncMaster = vnSensor->getInputValue<TimeSync>(0);
+                        timeSyncMaster && !timeSyncMaster->ppsTime.empty())
+                    {
+                        // This can have the following values
+                        // - -1: PPS -> VN310 message -> VN100 message (which happened before the VN310 message)
+                        // -  0: PPS -> VN310 message -> VN100 message
+                        // -  1: PPS -> VN100 message -> VN310 message
+                        int64_t syncCntDiff = obs->timeOutputs->syncInCnt - timeSyncMaster->syncOutCnt;
+                        obs->insTime = timeSyncMaster->ppsTime + std::chrono::nanoseconds(obs->timeOutputs->timeSyncIn)
+                                       + std::chrono::seconds(syncCntDiff);
+                        LOG_DATA("{}: Syncing time {}, pps {}, syncOutCnt {}, syncInCnt {}, syncCntDiff {}",
+                                 vnSensor->nameId(), obs->insTime->toGPSweekTow(), timeSyncMaster->ppsTime.toGPSweekTow(),
+                                 timeSyncMaster->syncOutCnt, obs->timeOutputs->syncInCnt, syncCntDiff);
+                    }
+                }
+
+                if (!obs->insTime.has_value() || obs->insTime->empty()) // Look if other sensors have set a global time
                 {
                     if (InsTime currentTime = util::time::GetCurrentInsTime();
                         !currentTime.empty())
@@ -6492,8 +6608,9 @@ void NAV::VectorNavSensor::asciiOrBinaryAsyncMessageReceived(void* userData, vn:
                         // NOLINTNEXTLINE(hicpp-use-nullptr, modernize-use-nullptr)
                         if (obs->insTime.value() - vnSensor->_lastMessageTime.at(b) >= std::chrono::microseconds(static_cast<int>(1.5 / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor * 1e6)))
                         {
-                            LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds.", vnSensor->nameId(),
-                                     vnSensor->_lastMessageTime.at(b), obs->insTime.value(), (obs->insTime.value() - vnSensor->_lastMessageTime.at(b)).count());
+                            LOG_WARN("{}: Potentially lost a message. Previous message was at {} and current message at {} which is a time difference of {} seconds but we expect a rate of {} seconds.", vnSensor->nameId(),
+                                     vnSensor->_lastMessageTime.at(b), obs->insTime.value(), (obs->insTime.value() - vnSensor->_lastMessageTime.at(b)).count(),
+                                     1. / IMU_DEFAULT_FREQUENCY * vnSensor->_binaryOutputRegister.at(b).rateDivisor);
                         }
                     }
                     vnSensor->_lastMessageTime.at(b) = obs->insTime.value();
