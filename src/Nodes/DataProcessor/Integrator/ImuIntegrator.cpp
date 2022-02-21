@@ -432,8 +432,8 @@ std::shared_ptr<const NAV::PosVelAtt> NAV::ImuIntegrator::correctPosVelAtt(const
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.15
     Eigen::Vector3d attError = pvaError->n_attitudeError();
-    Eigen::Matrix3d c_Dcm_ = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(attError)) * posVelAtt->n_Quat_b().toRotationMatrix();
-    posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(c_Dcm_).normalized());
+    Eigen::Matrix3d n_DcmCorrected_b = (Eigen::Matrix3d::Identity() - skewSymmetricMatrix(attError)) * posVelAtt->n_Quat_b().toRotationMatrix();
+    posVelAttCorrected->setAttitude_n_Quat_b(Eigen::Quaterniond(n_DcmCorrected_b).normalized());
 
     // Attitude correction, see Titterton and Weston (2004), p. 407 eq. 13.16
     // const Eigen::Quaterniond& n_Quat_b = posVelAtt->n_Quat_b()
