@@ -45,15 +45,6 @@ NAV::LooselyCoupledKF::LooselyCoupledKF()
     nm::CreateInputPin(this, "GNSSNavigationSolution", Pin::Type::Flow, { NAV::PosVelAtt::type() }, &LooselyCoupledKF::recvGNSSNavigationSolution);
     nm::CreateOutputPin(this, "PVAError", Pin::Type::Flow, { NAV::PVAError::type() });
     nm::CreateOutputPin(this, "ImuBiases", Pin::Type::Flow, { NAV::ImuBiases::type() });
-    nm::CreateOutputPin(this, "x", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.x);
-    nm::CreateOutputPin(this, "P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.P);
-    nm::CreateOutputPin(this, "Phi", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Phi);
-    nm::CreateOutputPin(this, "Q", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Q);
-    nm::CreateOutputPin(this, "z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.z);
-    nm::CreateOutputPin(this, "H", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.H);
-    nm::CreateOutputPin(this, "R", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.R);
-    nm::CreateOutputPin(this, "K", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.K);
-    nm::CreateOutputPin(this, "K*z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter_Kz);
 }
 
 NAV::LooselyCoupledKF::~LooselyCoupledKF()
@@ -76,12 +67,59 @@ std::string NAV::LooselyCoupledKF::category()
     return "Data Processor";
 }
 
+void NAV::LooselyCoupledKF::addKalmanMatricesPins()
+{
+    LOG_TRACE("{}: called", nameId());
+
+    if (outputPins.size() == 2)
+    {
+        nm::CreateOutputPin(this, "x", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.x);
+        nm::CreateOutputPin(this, "P", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.P);
+        nm::CreateOutputPin(this, "Phi", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Phi);
+        nm::CreateOutputPin(this, "Q", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.Q);
+        nm::CreateOutputPin(this, "z", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.z);
+        nm::CreateOutputPin(this, "H", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.H);
+        nm::CreateOutputPin(this, "R", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.R);
+        nm::CreateOutputPin(this, "K", Pin::Type::Matrix, { "Eigen::MatrixXd" }, &_kalmanFilter.K);
+    }
+}
+
+void NAV::LooselyCoupledKF::removeKalmanMatricesPins()
+{
+    LOG_TRACE("{}: called", nameId());
+    while (outputPins.size() > 2)
+    {
+        nm::DeleteOutputPin(outputPins.back().id);
+    }
+}
+
 void NAV::LooselyCoupledKF::guiConfig()
 {
     constexpr float configWidth = 380.0F;
     constexpr float unitWidth = 150.0F;
 
     float taylorOrderWidth = 75.0F;
+
+    if (ImGui::Checkbox(fmt::format("Show Kalman Filter matrices as output pins##{}", size_t(id)).c_str(), &_showKalmanFilterOutputPins))
+    {
+        LOG_DEBUG("{}: showKalmanFilterOutputPins {}", nameId(), _showKalmanFilterOutputPins);
+        if (_showKalmanFilterOutputPins)
+        {
+            addKalmanMatricesPins();
+        }
+        else
+        {
+            removeKalmanMatricesPins();
+        }
+        flow::ApplyChanges();
+    }
+    if (ImGui::Checkbox(fmt::format("Rank check for Kalman filter matrices##{}", size_t(id)).c_str(), &_checkKalmanMatricesRanks))
+    {
+        LOG_DEBUG("{}: checkKalmanMatricesRanks {}", nameId(), _checkKalmanMatricesRanks);
+        flow::ApplyChanges();
+    }
+
+    ImGui::Separator();
 
     if (_phiCalculationAlgorithm == PhiCalculationAlgorithm::Taylor)
     {
@@ -356,6 +394,9 @@ void NAV::LooselyCoupledKF::guiConfig()
 
     json j;
 
+    j["showKalmanFilterOutputPins"] = _showKalmanFilterOutputPins;
+    j["checkKalmanMatricesRanks"] = _checkKalmanMatricesRanks;
+
     j["phiCalculationAlgorithm"] = _phiCalculationAlgorithm;
     j["phiCalculationTaylorOrder"] = _phiCalculationTaylorOrder;
     j["qCalculationAlgorithm"] = _qCalculationAlgorithm;
@@ -395,6 +436,20 @@ void NAV::LooselyCoupledKF::guiConfig()
 void NAV::LooselyCoupledKF::restore(json const& j)
 {
     LOG_TRACE("{}: called", nameId());
+
+    if (j.contains("showKalmanFilterOutputPins"))
+    {
+        j.at("showKalmanFilterOutputPins").get_to(_showKalmanFilterOutputPins);
+        if (_showKalmanFilterOutputPins)
+        {
+            addKalmanMatricesPins();
+        }
+    }
+    if (j.contains("checkKalmanMatricesRanks"))
+    {
+        j.at("checkKalmanMatricesRanks").get_to(_checkKalmanMatricesRanks);
+    }
+
     if (j.contains("phiCalculationAlgorithm"))
     {
         j.at("phiCalculationAlgorithm").get_to(_phiCalculationAlgorithm);
@@ -521,8 +576,6 @@ bool NAV::LooselyCoupledKF::initialize()
     LOG_TRACE("{}: called", nameId());
 
     _kalmanFilter.setZero();
-
-    _kalmanFilter_Kz.setZero();
 
     _latestInertialNavSol = nullptr;
     _accumulatedImuBiases.b_biasAccel.setZero();
@@ -694,7 +747,7 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
 
     // omega_in^n = omega_ie^n + omega_en^n
     Eigen::Vector3d n_omega_in = inertialNavSol->n_Quat_e() * InsConst::e_omega_ie
-                                       + n_calcTransportRate(lla_position__t1, n_velocity__t1, R_N, R_E);
+                                 + n_calcTransportRate(lla_position__t1, n_velocity__t1, R_N, R_E);
     LOG_DATA("{}: n_omega_in = {} [rad/s]", nameId(), n_omega_in.transpose());
 
     // ------------------------------------------- GUI Parameters ----------------------------------------------
@@ -851,9 +904,13 @@ void NAV::LooselyCoupledKF::looselyCoupledPrediction(const std::shared_ptr<const
     // LOG_DEBUG("{}: P\n{}\n", nameId(), _kalmanFilter.P);
     // LOG_DEBUG("{}: P - P^T\n{}\n", nameId(), _kalmanFilter.P - _kalmanFilter.P.transpose());
 
-    if (auto rank = _kalmanFilter.P.fullPivLu().rank(); rank != 15)
+    if (_checkKalmanMatricesRanks)
     {
-        LOG_WARN("{}: P.rank = {}", nameId(), rank);
+        auto rank = _kalmanFilter.P.fullPivLu().rank();
+        if (rank != _kalmanFilter.P.rows())
+        {
+            LOG_WARN("{}: P.rank = {}", nameId(), rank);
+        }
     }
 }
 
@@ -941,9 +998,13 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     notifyOutputValueChanged(OUTPUT_PORT_INDEX_z);
     LOG_DATA("{}: KF.z =\n{}", nameId(), _kalmanFilter.z);
 
-    if (auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank(); rank != 6)
+    if (_checkKalmanMatricesRanks)
     {
-        LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+        auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank();
+        if (rank != _kalmanFilter.H.rows())
+        {
+            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+        }
     }
 
     // 7. Calculate the Kalman gain matrix K_k
@@ -957,20 +1018,22 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     LOG_DATA("{}: KF.x =\n{}", nameId(), _kalmanFilter.x);
     LOG_DATA("{}: KF.P =\n{}", nameId(), _kalmanFilter.P);
 
-    _kalmanFilter_Kz = _kalmanFilter.K * _kalmanFilter.z;
-    notifyOutputValueChanged(OUTPUT_PORT_INDEX_Kz);
-
     // Averaging of P to avoid numerical problems with symmetry (did not work)
     // _kalmanFilter.P = ((_kalmanFilter.P + _kalmanFilter.P.transpose()) / 2.0);
 
-    if (auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank(); rank != 6)
+    if (_checkKalmanMatricesRanks)
     {
-        LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
-    }
+        auto rank = (_kalmanFilter.H * _kalmanFilter.P * _kalmanFilter.H.transpose() + _kalmanFilter.R).fullPivLu().rank();
+        if (rank != _kalmanFilter.H.rows())
+        {
+            LOG_WARN("{}: (HPH^T + R).rank = {}", nameId(), rank);
+        }
 
-    if (auto rank = _kalmanFilter.K.fullPivLu().rank(); rank != 6)
-    {
-        LOG_WARN("{}: K.rank = {}", nameId(), rank);
+        rank = _kalmanFilter.K.fullPivLu().rank();
+        if (rank != _kalmanFilter.K.rows())
+        {
+            LOG_WARN("{}: K.rank = {}", nameId(), rank);
+        }
     }
 
     // LOG_DEBUG("{}: H\n{}\n", nameId(), _kalmanFilter.H);
@@ -984,10 +1047,13 @@ void NAV::LooselyCoupledKF::looselyCoupledUpdate(const std::shared_ptr<const Pos
     // LOG_DEBUG("{}: K * z\n{}\n", nameId(), _kalmanFilter.K * _kalmanFilter.z);
 
     // LOG_DEBUG("{}: P - P^T\n{}\n", nameId(), _kalmanFilter.P - _kalmanFilter.P.transpose());
-
-    if (auto rank = _kalmanFilter.P.fullPivLu().rank(); rank != 15)
+    if (_checkKalmanMatricesRanks)
     {
-        LOG_WARN("{}: P.rank = {}", nameId(), rank);
+        auto rank = _kalmanFilter.P.fullPivLu().rank();
+        if (rank != _kalmanFilter.P.rows())
+        {
+            LOG_WARN("{}: P.rank = {}", nameId(), rank);
+        }
     }
 
     // Push out the new data
