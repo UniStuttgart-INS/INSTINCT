@@ -143,17 +143,6 @@
             "id": 275,
             "startPinId": 237
         },
-        "link-277": {
-            "color": {
-                "a": 255,
-                "b": 0,
-                "g": 165,
-                "r": 255
-            },
-            "endPinId": 276,
-            "id": 277,
-            "startPinId": 238
-        },
         "link-322": {
             "color": {
                 "a": 255,
@@ -459,6 +448,7 @@
         },
         "node-239": {
             "data": {
+                "checkKalmanMatricesRanks": true,
                 "gnssMeasurementUncertaintyPosition": {
                     "0": {
                         "0": 0.1
@@ -548,6 +538,7 @@
                 "qCalculationAlgorithm": 1,
                 "randomProcessAccel": 1,
                 "randomProcessGyro": 1,
+                "showKalmanFilterOutputPins": true,
                 "stdevAccelBiasUnits": 0,
                 "stdevAccelNoiseUnits": 1,
                 "stdevGyroBiasUnits": 0,
@@ -661,9 +652,6 @@
                 },
                 {
                     "id": 237
-                },
-                {
-                    "id": 238
                 }
             ],
             "pos": {
@@ -678,7 +666,7 @@
         },
         "node-250": {
             "data": {
-                "nInputPins": 11,
+                "nInputPins": 10,
                 "nPlots": 6,
                 "overridePositionStartValues": false,
                 "pinData": [
@@ -5179,82 +5167,6 @@
                         ],
                         "size": 0,
                         "stride": 8
-                    },
-                    {
-                        "dataIdentifier": "K*z",
-                        "pinType": 4,
-                        "plotData": [
-                            {
-                                "displayName": "Time [s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "GPS time of week [s]",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "0, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "1, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "2, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "3, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "4, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "5, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "6, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "7, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "8, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "9, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "10, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "11, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "12, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "13, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            },
-                            {
-                                "displayName": "14, 0",
-                                "plotOnAxisAndPlotStyle": []
-                            }
-                        ],
-                        "size": 0,
-                        "stride": 8
                     }
                 ],
                 "plotInfos": [
@@ -5268,7 +5180,6 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 1,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -5309,7 +5220,6 @@
                             0,
                             0,
                             0,
-                            0,
                             0
                         ],
                         "size": {
@@ -5332,7 +5242,6 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 0,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -5373,7 +5282,6 @@
                             0,
                             0,
                             0,
-                            0,
                             0
                         ],
                         "size": {
@@ -5405,7 +5313,6 @@
                             0,
                             0,
                             0,
-                            0,
                             0
                         ],
                         "size": {
@@ -5428,7 +5335,6 @@
                         "rightPaneWidth": 400.0,
                         "selectedPin": 3,
                         "selectedXdata": [
-                            0,
                             0,
                             0,
                             0,
@@ -5484,9 +5390,6 @@
                 },
                 {
                     "id": 265
-                },
-                {
-                    "id": 276
                 }
             ],
             "kind": "Blueprint",
