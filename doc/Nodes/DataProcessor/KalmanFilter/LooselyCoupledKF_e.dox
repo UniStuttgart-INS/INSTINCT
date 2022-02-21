@@ -409,7 +409,7 @@ see \cite Groves2013 Groves, ch. 3.2.3, eq. 3.43/3.45, p. 99
 
 Taking the noise input and scale matrices from \eqref{eq-LCKF_n-dynamicModel-short} and \eqref{eq-LCKF_n-random-walk-noise-scale-matrix-W} and putting it into the exact form \eqref{eq-LCKF_n-Q-exact}, it becomes
 
-TODO: \f$ \text{\textcolor{red}{Add content here}} \f$
+//TODO: \f$ \text{\textcolor{red}{Add content here}} \f$
 
 \subsubsection LooselyCoupledKF_e-KF-Phi-Q-Van-Loan Van Loan method
 
@@ -552,6 +552,57 @@ The measurement noise covariance matrix is a diagonal matrix with the variances 
 \f}
 
 This variances can be set static or ideally come from the GNSS receiver.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+\section LooselyCoupledKF_e-Corrections Corrections
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+This section describes how the errors are applied to the total state.
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Corrections-State Position, Velocity, Attitude
+
+The position and velocity errors get applied by simply subtracting them from the previous total state
+
+\fl{equation,eq-LCKF_e-correction-position-velocity}
+\begin{aligned}
+  \boldsymbol{r}^{e,+} &= \boldsymbol{r}^{e,-} - \boldsymbol{\delta r}^{e} \\
+  \boldsymbol{v}^{e,+} &= \boldsymbol{v}^{e,-} - \boldsymbol{\delta v}^{e}
+\end{aligned}
+\f}
+
+The attitude correction can be derived from equation \eqref{eq-LCKF_e-Derivation-Attitude-estimate-errors}
+\fl{equation,eq-LCKF_e-correction-attitude}
+  \mathbf{C}_b^{e,+} = (\mathbf{I}_3 - [\boldsymbol{\delta \psi} \times]) \mathbf{C}_b^{e,-}
+\f}
+
+After applying the errors to the total state, the errors have to be reset to zero (closed-loop).
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+
+\subsection LooselyCoupledKF_e-Corrections-Bias Biases
+
+To correct the accelerometer and gyroscope measurements, we need to accumulate the error states. This has to be done, because contrary to the normal state, the expected value of the biases is not zero.
+
+\fl{equation,eq-LCKF_e-correction-accel-gyro-accumulate}
+\begin{aligned}
+  \boldsymbol{\Delta f}^{b,+}           &= \boldsymbol{\Delta f}^{b,-}           + \boldsymbol{\delta f}^b \\
+  \boldsymbol{\Delta \omega}_{ib}^{b,+} &= \boldsymbol{\Delta \omega}_{ib}^{b,-} + \boldsymbol{\delta \omega}_{ib}^b
+\end{aligned}
+\f}
+
+Afterwards this accumulated value can be applied to the measurements by subtracting it
+
+\fl{equation,eq-LCKF_e-correction-accel-gyro}
+\begin{aligned}
+  \boldsymbol{f}^{p,+}           &= \boldsymbol{f}^{p,-}           - \mathbf{C}_b^p \boldsymbol{\Delta f}^{b,+} \\
+  \boldsymbol{\omega}_{ib}^{p,+} &= \boldsymbol{\omega}_{ib}^{p,-} - \mathbf{C}_b^p \boldsymbol{\Delta \omega}_{ib}^{b,+}
+\end{aligned}
+\f}
+
+Afterwards the bias in the error state gets reset to zero, as it is accounted for in the accumulated value.
 
 <!-- --------------------------------------------------------------------------------------------------------------- -->
 
