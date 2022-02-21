@@ -570,6 +570,25 @@ The exponential \f$ \mathbf{F} \f$ matrix shall be approximated by first order. 
 
 //TODO: \f$ \textcolor{red}{\text{Documentation here}} \f$
 
+The final equation is
+
+\fl{equation,eq-LCKF_n-Q-final}
+  \mathbf{Q} =
+  \begin{tikzpicture}[baseline=-\the\dimexpr\fontdimen22\textfont2\relax,decoration=brace]
+    \matrix (m)[matrix of math nodes,left delimiter={(},right delimiter={)},
+                nodes={rectangle},row sep=0.3em, column sep=0.4em]
+    {
+      (\mathbf{S}_{rg}\tau_s + \frac{1}{3} \mathbf{S}_{bgd} \tau_s^3) \mathbf{I} & (\frac{1}{2} \mathbf{S}_{rg} \tau_s^2 + \frac{1}{4} \mathbf{S}_{bgd} \tau_s^4) \mathbf{F}_{\delta \dotup{v},\delta \psi}^n & \\
+    };
+  \end{tikzpicture}
+\f}
+//TODO: \f$ \textcolor{red}{\text{Finish formula}} \f$
+
+where
+- \f$ \tau_s \f$ is the propagation interval (as we trigger the prediction every time we get IMU measurements this corresponds to \f$ \tau_i \f$, the time between measurements)
+
+see \cite Groves2013 Groves, ch. 14.2.6, eq. 14.80/14.81, p. 591
+
 \subsubsection LooselyCoupledKF_n-KF-Phi-Q-Van-Loan Van Loan method
 
 The state transition matrix and the system/process noise covariance matrix can be calculated with the van Loan method \cite Loan1978 . In short
