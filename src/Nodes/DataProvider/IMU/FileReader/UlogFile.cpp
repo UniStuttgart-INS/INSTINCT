@@ -28,6 +28,7 @@ NAV::UlogFile::UlogFile()
     holdsAccel = false;
     holdsGyro = false;
     holdsMag = false;
+    isReRun = false;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
@@ -95,6 +96,13 @@ bool NAV::UlogFile::initialize()
 {
     LOG_TRACE("{}: called", nameId());
 
+    // Clear container at re-init
+    if (!epochData.empty())
+    {
+        epochData.clear();
+        isReRun = false;
+    }
+
     messageCount = 0;
     sensorStartupUTCTime_usec = 0;
     firstAbsoluteTime = false;
@@ -153,7 +161,7 @@ void NAV::UlogFile::readHeader()
             Ulog::ulog_Header_s header;
         } ulogHeader{};
 
-        filestream.read(ulogHeader.data.data(), ulogHeader.data.size()); //TODO: move up?
+        filestream.read(ulogHeader.data.data(), ulogHeader.data.size());
 
         // Check "ULog" at beginning of file
         if (!((ulogHeader.header.fileMagic[0] == 'U') && (ulogHeader.header.fileMagic[1] == 'L') && (ulogHeader.header.fileMagic[2] == 'o') && (ulogHeader.header.fileMagic[3] == 'g')))
@@ -165,6 +173,7 @@ void NAV::UlogFile::readHeader()
         LOG_DATA("{}: version: {}", nameId(), static_cast<int>(ulogHeader.header.version)); // No use so far, hence just a LOG_DATA
 
         LOG_DATA("{}: time stamp [µs]: {}", nameId(), ulogHeader.header.timeStamp);
+
         // Read message header
         union
         {
@@ -296,6 +305,12 @@ void NAV::UlogFile::readHeader()
 
 std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 {
+    if (isReRun)
+    {
+        epochData.clear();
+        isReRun = false;
+    }
+
     // Get current position
     auto pollStartPos = filestream.tellg();
 
@@ -343,11 +358,11 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             Ulog::message_data_s messageData;
             messageData.header = ulogMsgHeader.msgHeader;
             filestream.read(reinterpret_cast<char*>(&messageData.msg_id), sizeof(messageData.msg_id));
-            LOG_DEBUG("{}: msg_id: {}", nameId(), messageData.msg_id); //TODO: once callback is enabled, make LOG_DATA
+            LOG_DEBUG("{}: msg_id: {}", nameId(), messageData.msg_id); //TODO: once data processing logic is finished, make LOG_DATA
 
             messageData.data.resize(messageData.header.msg_size - 2);
             filestream.read(messageData.data.data(), messageData.header.msg_size - 2);
-            LOG_DEBUG("{}: messageData.header.msg_size: {}", nameId(), messageData.header.msg_size); //TODO: once callback is enabled, make LOG_DATA
+            LOG_DEBUG("{}: messageData.header.msg_size: {}", nameId(), messageData.header.msg_size); //TODO: once data processing logic is finished, make LOG_DATA
 
             const auto& messageFormat = messageFormats.at(subscribedMessages.at(messageData.msg_id).message_name);
 
@@ -913,7 +928,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
-                //TODO: insert to epochData necessary here?
+                //TODO: insert to epochData necessary for 'vehicleControlMode'?
             }
             else if (subscribedMessages.at(messageData.msg_id).message_name == "vehicle_air_data")
             {
@@ -974,18 +989,8 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         LOG_WARN("{}: dataField.name = '{}' or dataField.type = '{}' is unknown", nameId(), dataField.name, dataField.type);
                     }
                 }
-                //TODO: insert to epochData necessary here?
+                //TODO: insert to epochData necessary for 'vehicleAirData'?
             }
-
-            // TODO:
-            // else if (subscribedMessages.at(messageData.msg_id).message_name == "sensor_gps")
-            // {
-            //     // FIXME: If GNSS message
-            //     if (!sensorStartupUTCTime_usec)
-            //     {
-            //         sensorStartupUTCTime_usec = time_utc_usec - timestamp;
-            //     }
-            // }
             else
             {
                 LOG_ERROR("{}: UKNOWN: subscribedMessages.at(messageData.msg_id).message_name = {}", nameId(), subscribedMessages.at(messageData.msg_id).message_name);
@@ -1235,6 +1240,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
         if (!filestream.good() || filestream.eof())
         {
+            isReRun = true;
             break;
         }
     }

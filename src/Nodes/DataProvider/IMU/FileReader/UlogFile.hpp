@@ -328,5 +328,8 @@ class UlogFile : public Imu, public FileReader
     uint64_t gyroKey{};
     /// @brief Timestamp of the latest magnetometer reading
     uint64_t magKey{};
+
+    /// @brief Flag to check whether loop is run again without re-initialization
+    bool isReRun = false;
 };
 } // namespace NAV
