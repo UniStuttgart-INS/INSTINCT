@@ -28,7 +28,6 @@ NAV::UlogFile::UlogFile()
     holdsAccel = false;
     holdsGyro = false;
     holdsMag = false;
-    keyValueEmpty = false;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
     nm::CreateOutputPin(this, "ImuObs", Pin::Type::Flow, { NAV::ImuObs::type() }, &UlogFile::pollData);
@@ -102,7 +101,6 @@ bool NAV::UlogFile::initialize()
     holdsAccel = false;
     holdsGyro = false;
     holdsMag = false;
-    keyValueEmpty = false;
 
     return FileReader::initialize();
 }
@@ -1214,10 +1212,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
         else if (ulogMsgHeader.msgHeader.msg_type == 'M')
         {
             readInformationMessageMulti(ulogMsgHeader.msgHeader.msg_size, ulogMsgHeader.msgHeader.msg_type);
-            if (keyValueEmpty)
-            {
-                break;
-            }
         }
         else if (ulogMsgHeader.msgHeader.msg_type == 'P')
         {
@@ -1238,8 +1232,13 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
             // Reset read cursor
             filestream.seekg(-100, std::ios_base::cur);
         }
+
+        if (!filestream.good() || filestream.eof())
+        {
+            break;
+        }
     }
-    return nullptr; // FIXME: Quick fix, since 'return obs' only makes sense in the 'data' msg type
+    return nullptr;
 }
 
 void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
@@ -1253,6 +1252,11 @@ void NAV::UlogFile::readInformationMessage(uint16_t msgSize, char msgType)
     // Read 'key' identifier ('keylength' byte) and its associated 'value'
     messageInfo.key.resize(messageInfo.key_len);
     filestream.read(messageInfo.key.data(), messageInfo.key_len);
+    // if (!filestream.good() || filestream.eof())
+    // {
+    //     return false;
+    // }
+
     messageInfo.value.resize(static_cast<size_t>(messageInfo.header.msg_size - 1 - messageInfo.key_len)); // 'msg_size' contains key and value, but not header
     filestream.read(messageInfo.value.data(), messageInfo.header.msg_size - 1 - messageInfo.key_len);
     LOG_DATA("{}: Information message - key: {}", nameId(), messageInfo.key);
@@ -1276,12 +1280,6 @@ void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
     LOG_DEBUG("{}: Information message multi - key_len: {}", nameId(), messageInfoMulti.key_len);
     LOG_DEBUG("{}: Information message multi - key: {}", nameId(), messageInfoMulti.key);
     LOG_DEBUG("{}: Information message multi - value: {}", nameId(), messageInfoMulti.value);
-
-    if (messageInfoMulti.key.empty() && messageInfoMulti.value.empty())
-    {
-        LOG_WARN("{}: Information message multi 'key' and 'value' empty", nameId());
-        keyValueEmpty = true; //TODO: is this necessary to stop execution? The if condition is checking the case that occurs after msgs with 'perf_counter_postflight' (o.Ä.)
-    }
 
     //TODO: Use 'is_continued' to generate a list of values with the same key
 }
