@@ -479,21 +479,23 @@ void NAV::Plot::guiConfig()
     {
         auto& plotInfo = _plotInfos.at(plotNum);
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::CollapsingHeader((plotInfo.headerText + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
+        if (ImGui::CollapsingHeader(fmt::format("{}##Plot Header {} - {}", plotInfo.headerText, size_t(id), plotNum).c_str()))
         {
             ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
-            if (ImGui::TreeNode(("Options##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
+            if (ImGui::TreeNode(fmt::format("Options##{} - {}", size_t(id), plotNum).c_str()))
             {
-                ImGui::InputText(("Title##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.title);
-                if (plotInfo.headerText != plotInfo.title && !ImGui::IsItemActive())
+                std::string headerTitle = plotInfo.headerText;
+                ImGui::InputText(fmt::format("Header Title##{} - {}", size_t(id), plotNum).c_str(), &headerTitle);
+                if (plotInfo.headerText != headerTitle && !ImGui::IsItemActive())
                 {
-                    plotInfo.headerText = plotInfo.title;
+                    plotInfo.headerText = headerTitle;
                     flow::ApplyChanges();
-                    LOG_DEBUG("{}: # Header changed to {}", nameId(), plotInfo.headerText);
+                    LOG_DEBUG("{}: Header changed to {}", nameId(), plotInfo.headerText);
                 }
-                if (ImGui::SliderFloat(("Plot Height##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.size.y, 0.0F, 1000, "%.0f"))
+                if (ImGui::InputText(fmt::format("Plot Title##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.title))
                 {
                     flow::ApplyChanges();
+                    LOG_DEBUG("{}: Plot Title changed to {}", nameId(), plotInfo.title);
                 }
                 if (ImGui::Checkbox(("Override X Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.overrideXAxisLabel))
                 {
@@ -611,10 +613,8 @@ void NAV::Plot::guiConfig()
 
             ImGui::SetNextItemWidth(plotInfo.leftPaneWidth - 2.0F);
             ImGui::BeginGroup();
-            if (ImGui::BeginCombo(("##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                  ("Pin " + std::to_string(plotInfo.selectedPin + 1)
-                                   + " - " + _pinData.at(static_cast<size_t>(plotInfo.selectedPin)).dataIdentifier)
-                                      .c_str()))
+            if (ImGui::BeginCombo(fmt::format("##Data source pin selection{} - {}", size_t(id), plotNum).c_str(),
+                                  fmt::format("Pin {} - {}", plotInfo.selectedPin + 1, _pinData.at(static_cast<size_t>(plotInfo.selectedPin)).dataIdentifier).c_str()))
             {
                 for (int n = 0; n < _nInputPins; n++)
                 {
