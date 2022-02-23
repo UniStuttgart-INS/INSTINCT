@@ -316,7 +316,7 @@ std::string NAV::Plot::category()
 void NAV::Plot::guiConfig()
 {
     ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
-    if (ImGui::CollapsingHeader(("Options##" + std::to_string(size_t(id))).c_str()))
+    if (ImGui::CollapsingHeader(fmt::format("Options##{}", size_t(id)).c_str()))
     {
         if (ImGui::InputInt("# Input Pins", &_nInputPins))
         {
@@ -338,7 +338,7 @@ void NAV::Plot::guiConfig()
             flow::ApplyChanges();
             updateNumberOfPlots();
         }
-        if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id))).c_str(), 4,
+        if (ImGui::BeginTable(fmt::format("Pin Settings##{}", size_t(id)).c_str(), 4,
                               ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
         {
             ImGui::TableSetupColumn("Pin");
@@ -356,7 +356,7 @@ void NAV::Plot::guiConfig()
 
                 ImGui::TableNextColumn(); // Pin Type
                 ImGui::SetNextItemWidth(100.0F);
-                if (ImGui::Combo(("##Pin Type for Pin " + std::to_string(pinIndex + 1) + " - " + std::to_string(size_t(id))).c_str(),
+                if (ImGui::Combo(fmt::format("##Pin Type for Pin {} - {}", pinIndex + 1, size_t(id)).c_str(),
                                  reinterpret_cast<int*>(&pinData.pinType), "Flow\0Bool\0Int\0Float\0Matrix\0\0"))
                 {
                     if (Link* connectedLink = nm::FindConnectedLinkToInputPin(inputPins.at(pinIndex).id))
@@ -399,7 +399,7 @@ void NAV::Plot::guiConfig()
 
                 ImGui::TableNextColumn(); // # Data Points
                 ImGui::SetNextItemWidth(100.0F);
-                if (ImGui::DragInt(("##Data Points" + std::to_string(size_t(id)) + " - " + std::to_string(pinIndex + 1)).c_str(),
+                if (ImGui::DragInt(fmt::format("##Data Points {} - {}", size_t(id), pinIndex + 1).c_str(),
                                    &pinData.size, 10.0F, 0, INT32_MAX / 2))
                 {
                     if (pinData.size < 0)
@@ -420,7 +420,7 @@ void NAV::Plot::guiConfig()
 
                 ImGui::TableNextColumn(); // Stride
                 ImGui::SetNextItemWidth(100.0F);
-                if (ImGui::InputInt(("##Stride" + std::to_string(size_t(id)) + " - " + std::to_string(pinIndex + 1)).c_str(),
+                if (ImGui::InputInt(fmt::format("##Stride {} - {}", size_t(id), pinIndex + 1).c_str(),
                                     &pinData.stride))
                 {
                     if (pinData.stride < 1)
@@ -479,52 +479,58 @@ void NAV::Plot::guiConfig()
     {
         auto& plotInfo = _plotInfos.at(plotNum);
         ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-        if (ImGui::CollapsingHeader((plotInfo.headerText + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
+        if (ImGui::CollapsingHeader(fmt::format("{}##Plot Header {} - {}", plotInfo.headerText, size_t(id), plotNum).c_str()))
         {
             ImGui::SetNextItemOpen(false, ImGuiCond_FirstUseEver);
-            if (ImGui::TreeNode(("Options##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
+            if (ImGui::TreeNode(fmt::format("Options##{} - {}", size_t(id), plotNum).c_str()))
             {
-                ImGui::InputText(("Title##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.title);
-                if (plotInfo.headerText != plotInfo.title && !ImGui::IsItemActive())
+                std::string headerTitle = plotInfo.headerText;
+                ImGui::InputText(fmt::format("Header Title##{} - {}", size_t(id), plotNum).c_str(), &headerTitle);
+                if (plotInfo.headerText != headerTitle && !ImGui::IsItemActive())
                 {
-                    plotInfo.headerText = plotInfo.title;
+                    plotInfo.headerText = headerTitle;
                     flow::ApplyChanges();
-                    LOG_DEBUG("{}: # Header changed to {}", nameId(), plotInfo.headerText);
+                    LOG_DEBUG("{}: Header changed to {}", nameId(), plotInfo.headerText);
                 }
-                if (ImGui::SliderFloat(("Plot Height##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.size.y, 0.0F, 1000, "%.0f"))
+                if (ImGui::InputText(fmt::format("Plot Title##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.title))
+                {
+                    flow::ApplyChanges();
+                    LOG_DEBUG("{}: Plot Title changed to {}", nameId(), plotInfo.title);
+                }
+                if (ImGui::SliderFloat(fmt::format("Plot Height##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.size.y, 0.0F, 1000, "%.0f"))
                 {
                     flow::ApplyChanges();
                 }
-                if (ImGui::Checkbox(("Override X Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.overrideXAxisLabel))
+                if (ImGui::Checkbox(fmt::format("Override X Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.overrideXAxisLabel))
                 {
                     flow::ApplyChanges();
                 }
                 if (plotInfo.overrideXAxisLabel)
                 {
-                    if (ImGui::InputText(("X Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.xAxisLabel))
+                    if (ImGui::InputText(fmt::format("X Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.xAxisLabel))
                     {
                         flow::ApplyChanges();
                     }
                 }
-                if (ImGui::InputText(("Y1 Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.y1AxisLabel))
+                if (ImGui::InputText(fmt::format("Y1 Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.y1AxisLabel))
                 {
                     flow::ApplyChanges();
                 }
                 if (plotInfo.plotFlags & ImPlotFlags_YAxis2)
                 {
-                    if (ImGui::InputText(("Y2 Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.y2AxisLabel))
+                    if (ImGui::InputText(fmt::format("Y2 Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.y2AxisLabel))
                     {
                         flow::ApplyChanges();
                     }
                 }
                 if (plotInfo.plotFlags & ImPlotFlags_YAxis3)
                 {
-                    if (ImGui::InputText(("Y3 Axis Label##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), &plotInfo.y3AxisLabel))
+                    if (ImGui::InputText(fmt::format("Y3 Axis Label##{} - {}", size_t(id), plotNum).c_str(), &plotInfo.y3AxisLabel))
                     {
                         flow::ApplyChanges();
                     }
                 }
-                if (ImGui::BeginTable(("Pin Settings##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), 2,
+                if (ImGui::BeginTable(fmt::format("Pin Settings##{} - {}", size_t(id), plotNum).c_str(), 2,
                                       ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(0.0F, 0.0F)))
                 {
                     ImGui::TableSetupColumn("Pin");
@@ -543,7 +549,7 @@ void NAV::Plot::guiConfig()
                         if (!pinData.plotData.empty())
                         {
                             ImGui::SetNextItemWidth(200.0F);
-                            if (ImGui::BeginCombo(("##X Data for Pin " + std::to_string(pinIndex + 1) + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                            if (ImGui::BeginCombo(fmt::format("##X Data for Pin {} - {} - {}", pinIndex + 1, size_t(id), plotNum).c_str(),
                                                   pinData.plotData.at(plotInfo.selectedXdata.at(pinIndex)).displayName.c_str()))
                             {
                                 for (size_t plotDataIndex = 0; plotDataIndex < pinData.plotData.size(); plotDataIndex++)
@@ -579,25 +585,25 @@ void NAV::Plot::guiConfig()
                     ImGui::EndTable();
                 }
 
-                if (ImGui::CheckboxFlags(("Y-Axis 2##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                if (ImGui::CheckboxFlags(fmt::format("Y-Axis 2##{} - {}", size_t(id), plotNum).c_str(),
                                          &plotInfo.plotFlags, ImPlotFlags_YAxis2))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::SameLine();
-                if (ImGui::CheckboxFlags(("Y-Axis 3##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                if (ImGui::CheckboxFlags(fmt::format("Y-Axis 3##{} - {}", size_t(id), plotNum).c_str(),
                                          &plotInfo.plotFlags, ImPlotFlags_YAxis3))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::SameLine();
-                if (ImGui::Checkbox(("Auto Limit X-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                if (ImGui::Checkbox(fmt::format("Auto Limit X-Axis##{} - {}", size_t(id), plotNum).c_str(),
                                     &plotInfo.autoLimitXaxis))
                 {
                     flow::ApplyChanges();
                 }
                 ImGui::SameLine();
-                if (ImGui::Checkbox(("Auto Limit Y-Axis##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                if (ImGui::Checkbox(fmt::format("Auto Limit Y-Axis##{} - {}", size_t(id), plotNum).c_str(),
                                     &plotInfo.autoLimitYaxis))
                 {
                     flow::ApplyChanges();
@@ -606,22 +612,18 @@ void NAV::Plot::guiConfig()
                 ImGui::TreePop();
             }
 
-            gui::widgets::Splitter((std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+            gui::widgets::Splitter(fmt::format("Splitter {} - {}", size_t(id), plotNum).c_str(),
                                    true, 4.0F, &plotInfo.leftPaneWidth, &plotInfo.rightPaneWidth, 150.0F, 80.0F, plotInfo.size.y);
 
             ImGui::SetNextItemWidth(plotInfo.leftPaneWidth - 2.0F);
             ImGui::BeginGroup();
-            if (ImGui::BeginCombo(("##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
-                                  ("Pin " + std::to_string(plotInfo.selectedPin + 1)
-                                   + " - " + _pinData.at(static_cast<size_t>(plotInfo.selectedPin)).dataIdentifier)
-                                      .c_str()))
+            if (ImGui::BeginCombo(fmt::format("##Data source pin selection{} - {}", size_t(id), plotNum).c_str(),
+                                  fmt::format("Pin {} - {}", plotInfo.selectedPin + 1, _pinData.at(static_cast<size_t>(plotInfo.selectedPin)).dataIdentifier).c_str()))
             {
                 for (int n = 0; n < _nInputPins; n++)
                 {
                     const bool is_selected = (plotInfo.selectedPin == n);
-                    if (ImGui::Selectable(("Pin " + std::to_string(n + 1)
-                                           + " - " + _pinData.at(static_cast<size_t>(n)).dataIdentifier)
-                                              .c_str(),
+                    if (ImGui::Selectable(fmt::format("Pin {} - {}", n + 1, _pinData.at(static_cast<size_t>(n)).dataIdentifier).c_str(),
                                           is_selected, 0))
                     {
                         plotInfo.selectedPin = n;
@@ -636,7 +638,7 @@ void NAV::Plot::guiConfig()
                 ImGui::EndCombo();
             }
             auto comboBoxSize = ImGui::GetItemRectSize();
-            if (ImGui::Button(("Clear##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(), ImVec2(plotInfo.leftPaneWidth - 2.0F, 0)))
+            if (ImGui::Button(fmt::format("Clear##{} - {}", size_t(id), plotNum).c_str(), ImVec2(plotInfo.leftPaneWidth - 2.0F, 0)))
             {
                 for (auto& pinData : _pinData)
                 {
@@ -652,7 +654,7 @@ void NAV::Plot::guiConfig()
             }
             if (ImGui::BeginDragDropTarget())
             {
-                if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
+                if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str()))
                 {
                     auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
                     plotData->plotOnAxis.erase(plotNum);
@@ -661,7 +663,7 @@ void NAV::Plot::guiConfig()
                 ImGui::EndDragDropTarget();
             }
             auto buttonSize = ImGui::GetItemRectSize();
-            ImGui::BeginChild(("Data Drag" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+            ImGui::BeginChild(fmt::format("Data Drag{} - {}", size_t(id), plotNum).c_str(),
                               ImVec2(plotInfo.leftPaneWidth - 2.0F, plotInfo.size.y - comboBoxSize.y - buttonSize.y - 2 * ImGui::GetStyle().ItemSpacing.y),
                               true);
 
@@ -682,7 +684,7 @@ void NAV::Plot::guiConfig()
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
                 {
                     auto* ptrPlotData = &plotData;
-                    ImGui::SetDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                    ImGui::SetDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str(),
                                               &ptrPlotData, sizeof(PinData::PlotData*));
                     ImGui::TextUnformatted(label.c_str());
                     ImGui::EndDragDropSource();
@@ -707,7 +709,7 @@ void NAV::Plot::guiConfig()
             const char* y3Label = (plotInfo.plotFlags & ImPlotFlags_YAxis3) && !plotInfo.y3AxisLabel.empty() ? plotInfo.y3AxisLabel.c_str() : nullptr;
 
             ImPlot::FitNextPlotAxes(plotInfo.autoLimitXaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis, plotInfo.autoLimitYaxis);
-            if (ImPlot::BeginPlot((plotInfo.title + "##" + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+            if (ImPlot::BeginPlot(fmt::format("{}##{} - {}", plotInfo.title, size_t(id), plotNum).c_str(),
                                   xLabel, y1Label, plotInfo.size, plotInfo.plotFlags,
                                   ImPlotAxisFlags_None, ImPlotAxisFlags_None, ImPlotAxisFlags_NoGridLines, ImPlotAxisFlags_NoGridLines, y2Label, y3Label))
             {
@@ -729,7 +731,7 @@ void NAV::Plot::guiConfig()
                             // Style options
                             if (plotData.plotOnAxis.at(plotNum).second.legendName.empty())
                             {
-                                plotData.plotOnAxis.at(plotNum).second.legendName = plotData.displayName + " (" + std::to_string(pinIndex + 1) + " - " + _pinData.at(pinIndex).dataIdentifier + ")";
+                                plotData.plotOnAxis.at(plotNum).second.legendName = fmt::format("{} ({} - {})", plotData.displayName, pinIndex + 1, _pinData.at(pinIndex).dataIdentifier);
                             }
                             if (plotData.plotOnAxis.at(plotNum).second.color.w == -1)
                             {
@@ -781,7 +783,7 @@ void NAV::Plot::guiConfig()
                             if (ImPlot::BeginLegendDragDropSource(plotName.c_str()))
                             {
                                 auto* ptrPlotData = &plotData;
-                                ImGui::SetDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str(),
+                                ImGui::SetDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str(),
                                                           &ptrPlotData, sizeof(PinData::PlotData*));
                                 ImGui::TextUnformatted(plotData.displayName.c_str());
                                 ImPlot::EndLegendDragDropSource();
@@ -872,7 +874,7 @@ void NAV::Plot::guiConfig()
                 // make our plot a drag and drop target
                 if (ImGui::BeginDragDropTarget())
                 {
-                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(("DND_DATA " + std::to_string(size_t(id)) + " - " + std::to_string(plotNum)).c_str()))
+                    if (const ImGuiPayload* payloadData = ImGui::AcceptDragDropPayload(fmt::format("DND_DATA {} - {}", size_t(id), plotNum).c_str()))
                     {
                         auto* plotData = *static_cast<PinData::PlotData**>(payloadData->Data);
 
@@ -1504,7 +1506,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
                 {
                     for (int col = 0; col < matrix->cols(); col++)
                     {
-                        _pinData.at(pinIndex).addPlotDataItem(i++, std::to_string(row) + ", " + std::to_string(col));
+                        _pinData.at(pinIndex).addPlotDataItem(i++, fmt::format("{}, {}", row, col));
                     }
                 }
             }
@@ -1518,7 +1520,7 @@ void NAV::Plot::afterCreateLink(Pin* startPin, Pin* endPin)
                 {
                     for (int col = 0; col < matrix.cols(); col++)
                     {
-                        _pinData.at(pinIndex).addPlotDataItem(i++, std::to_string(row) + ", " + std::to_string(col));
+                        _pinData.at(pinIndex).addPlotDataItem(i++, fmt::format("{}, {}", row, col));
                     }
                 }
             }
@@ -1549,7 +1551,7 @@ void NAV::Plot::updateNumberOfInputPins()
 {
     while (inputPins.size() < static_cast<size_t>(_nInputPins))
     {
-        nm::CreateInputPin(this, ("Pin " + std::to_string(inputPins.size() + 1)).c_str(), Pin::Type::Flow,
+        nm::CreateInputPin(this, fmt::format("Pin {}", inputPins.size() + 1).c_str(), Pin::Type::Flow,
                            _dataIdentifier, &Plot::plotData);
         _pinData.emplace_back();
     }
@@ -1588,7 +1590,7 @@ void NAV::Plot::updateNumberOfPlots()
 {
     while (static_cast<size_t>(_nPlots) > _plotInfos.size())
     {
-        _plotInfos.emplace_back("Plot " + std::to_string(_plotInfos.size() + 1), _nInputPins);
+        _plotInfos.emplace_back(fmt::format("Plot {}", _plotInfos.size() + 1), _nInputPins);
     }
     while (static_cast<size_t>(_nPlots) < _plotInfos.size())
     {
