@@ -14,6 +14,8 @@ namespace nm = NAV::NodeManager;
 #include "NodeData/IMU/ImuObs.hpp"
 #include "NodeData/State/PosVelAtt.hpp"
 
+#include <ctime>
+
 // ----------------------------------------------------------- Basic Node Functions --------------------------------------------------------------
 
 NAV::UlogFile::UlogFile()
@@ -28,6 +30,8 @@ NAV::UlogFile::UlogFile()
     holdsAccel = false;
     holdsGyro = false;
     holdsMag = false;
+    holdsGps = false;
+    firstGpsTime = false;
     isReRun = false;
 
     // All message types are polled from the first output pin, but then send out on the correct pin over invokeCallbacks
@@ -109,6 +113,8 @@ bool NAV::UlogFile::initialize()
     holdsAccel = false;
     holdsGyro = false;
     holdsMag = false;
+    holdsGps = false;
+    firstGpsTime = false;
 
     return FileReader::initialize();
 }
@@ -309,6 +315,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
     {
         epochData.clear();
         isReRun = false;
+        firstGpsTime = false;
     }
 
     // Get current position
@@ -602,6 +609,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                         std::memcpy(&vehicleGpsPosition.time_utc_usec, currentData, sizeof(vehicleGpsPosition.time_utc_usec));
                         LOG_DEBUG("{}: vehicleGpsPosition.time_utc_usec: {}", nameId(), vehicleGpsPosition.time_utc_usec);
                         currentExtractLocation += sizeof(vehicleGpsPosition.time_utc_usec);
+                        firstGpsTime = true;
                     }
                     else if (dataField.name == "lat")
                     {
@@ -812,7 +820,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     if (dataField.name == "timestamp")
                     {
                         std::memcpy(&vehicleControlMode.timestamp, currentData, sizeof(vehicleControlMode.timestamp));
-                        LOG_DEBUG("{}: vehicleControlMode.timestamp: {}", nameId(), vehicleControlMode.timestamp);
+                        LOG_DATA("{}: vehicleControlMode.timestamp: {}", nameId(), vehicleControlMode.timestamp);
                         currentExtractLocation += sizeof(vehicleControlMode.timestamp);
                     }
                     else if (dataField.name == "flag_armed")
@@ -939,7 +947,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     if (dataField.name == "timestamp")
                     {
                         std::memcpy(&vehicleAirData.timestamp, currentData, sizeof(vehicleAirData.timestamp));
-                        LOG_DEBUG("{}: vehicleAirData.timestamp: {}", nameId(), vehicleAirData.timestamp);
+                        LOG_DATA("{}: vehicleAirData.timestamp: {}", nameId(), vehicleAirData.timestamp);
                         currentExtractLocation += sizeof(vehicleAirData.timestamp);
                     }
                     else if (dataField.name == "timestamp_sample")
@@ -1009,6 +1017,16 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
 
                 auto obs = std::make_shared<ImuObs>(this->imuPos);
 
+                if (firstGpsTime)
+                {
+                    auto utcTime = static_cast<time_t>(std::get<VehicleGpsPosition>(epochData.rbegin()->second.data).time_utc_usec);
+                    auto* utcTimeCtime = std::gmtime(&utcTime);
+
+                    auto utcInsTime = NAV::InsTime_YMDHMS{ utcTimeCtime->tm_year, utcTimeCtime->tm_mon, utcTimeCtime->tm_mday, utcTimeCtime->tm_hour, utcTimeCtime->tm_min, static_cast<long double>(utcTimeCtime->tm_sec) };
+
+                    obs->insTime = NAV::InsTime(utcInsTime);
+                }
+
                 obs->timeSinceStartup = 1000 * epochData.rbegin()->first; // latest timestamp in [ns]
                 LOG_INFO("{}: *obs->timeSinceStartup = {} s", nameId(), static_cast<double>(*obs->timeSinceStartup) * 1e-9);
 
@@ -1048,8 +1066,6 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                     }
                 }
 
-                // TODO: Befüllen
-
                 // TODO: Erase just the first used measurements from epochdata
                 epochData.clear();
 
@@ -1060,6 +1076,7 @@ std::shared_ptr<const NAV::NodeData> NAV::UlogFile::pollData(bool peek)
                 holdsAccel = false;
                 holdsGyro = false;
                 holdsMag = false;
+                holdsGps = false;
 
                 if (!peek)
                 {
@@ -1283,9 +1300,9 @@ void NAV::UlogFile::readInformationMessageMulti(uint16_t msgSize, char msgType)
     filestream.read(messageInfoMulti.key.data(), messageInfoMulti.key_len);
     messageInfoMulti.value.resize(static_cast<size_t>(messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len)); // contains 'is_continued' flag in contrast to information message
     filestream.read(messageInfoMulti.value.data(), messageInfoMulti.header.msg_size - 2 - messageInfoMulti.key_len);
-    LOG_DEBUG("{}: Information message multi - key_len: {}", nameId(), messageInfoMulti.key_len);
-    LOG_DEBUG("{}: Information message multi - key: {}", nameId(), messageInfoMulti.key);
-    LOG_DEBUG("{}: Information message multi - value: {}", nameId(), messageInfoMulti.value);
+    LOG_DATA("{}: Information message multi - key_len: {}", nameId(), messageInfoMulti.key_len);
+    LOG_DATA("{}: Information message multi - key: {}", nameId(), messageInfoMulti.key);
+    LOG_DATA("{}: Information message multi - value: {}", nameId(), messageInfoMulti.value);
 
     //TODO: Use 'is_continued' to generate a list of values with the same key
 }
@@ -1357,8 +1374,12 @@ bool NAV::UlogFile::enoughImuDataAvailable(std::multimap<uint64_t, MeasurementDa
     {
         holdsMag = true;
     }
+    if (dataMap.rbegin()->second.data.index() == 3) // corresponds to 'SensorMag' alternative in NAV::UlogFile::MeasurementData::data (std::variant)
+    {
+        holdsGps = true;
+    }
 
     //TODO: add 'firstAbsoluteTime' to check
 
-    return (holdsAccel & holdsGyro) != 0;
+    return (holdsAccel & holdsGyro & holdsGps) != 0;
 }

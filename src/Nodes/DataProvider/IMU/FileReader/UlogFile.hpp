@@ -321,6 +321,10 @@ class UlogFile : public Imu, public FileReader
     bool holdsGyro = false;
     /// @brief Flag to check whether 'epochData' contains magnetometer reading
     bool holdsMag = false;
+    /// @brief Flag to check whether 'epochData' contains GPS reading
+    bool holdsGps = false;
+    /// @brief Flag to check whether 'epochData' has received an absolute timestamp
+    bool firstGpsTime = false;
 
     /// @brief Timestamp of the latest accelerometer reading
     uint64_t accelKey{};
